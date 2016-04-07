@@ -787,6 +787,8 @@ define([
 							top: ui.position.top,
 							left: ui.position.left
 						});
+						// Set position dots on drag
+						me.setAlignDotsOnDrag(ui.position.top, ui.position.left);
 					},
 					stop: function(e, ui){
 						canvas.css({
@@ -800,6 +802,44 @@ define([
 			;
 			me.setResizingLimits();
 
+		},
+		
+		setAlignDotsOnDrag: function(top, left) {
+			limits = this.getContainment(),
+			limitRight = limits[0],
+			limitBottom = limits[1],
+			limitLeft = limits[2],
+			limitTop = limits[3];
+			
+			// Image is top left
+			if(limitLeft === left && limitTop === top) {
+				this.setDotAlignPosition('top', 'left');
+			}
+			
+			// Image is top right
+			if(limitRight === left && limitTop === top) {
+				this.setDotAlignPosition('top', 'right');
+			}
+			
+			// Image is bottom left
+			if(limitLeft === left && limitBottom === top) {
+				this.setDotAlignPosition('bottom', 'left');
+			}
+			
+			// Image is bottom right
+			if(limitRight === left && limitBottom === top) {
+				this.setDotAlignPosition('bottom', 'right');
+			}
+		},
+		
+		setDotAlignPosition: function(valign, align) {
+			// Make sure we call it only once
+			if(this.align !== align || this.valign !== valign) {
+				this.isDotAlign = true;
+				this.align = align;
+				this.valign = valign;
+				this.higlighActiveDot();
+			}
 		},
 
 		addGridLines: function(initialPoint, maskHeight){
@@ -1053,6 +1093,15 @@ define([
 
 			this.open(options);
 		},
+		
+		clearDotAlign: function(center) {
+			this.isDotAlign = false;
+			this.$el.find('.image-align-point').removeClass('active-alignment-point');
+
+			if(center === true) {
+				this.setAlign('center', 'center');
+			}
+		},
 
 		fitImage: function(){
 			var canvas = this.$('#uimage-canvas'),
@@ -1079,6 +1128,8 @@ define([
 			this.centerImage(true);
 
 			this.setResizingLimits();
+			
+			this.clearDotAlign(true);
 
 			$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
 
@@ -1141,6 +1192,8 @@ define([
 			this.centerImage(true);
 
 			this.setResizingLimits();
+			
+			this.clearDotAlign(true);
 
 			$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
 
