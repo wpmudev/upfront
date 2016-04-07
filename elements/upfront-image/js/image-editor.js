@@ -184,6 +184,7 @@ define([
 
 					if(sizeButtons.length) {
 						sizeButtons.find('.image-increase-size').click(function(e) {
+							e.preventDefault();
 							var step = 1;
 							
 							if(typeof e.shiftKey !== "undefined" && e.shiftKey === true) {
@@ -194,6 +195,7 @@ define([
 						});
 						
 						sizeButtons.find('.image-decrease-size').click(function(e) {
+							e.preventDefault();
 							var step = 1;
 							
 							if(typeof e.shiftKey !== "undefined" && e.shiftKey === true) {

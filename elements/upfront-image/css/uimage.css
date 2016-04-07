@@ -1428,6 +1428,11 @@ div.uimage-controls i.upfront-icon:before,
 	text-align: center;
 	font-weight: bold;
 	margin-bottom: 1px;
+	cursor: pointer;
+	-webkit-user-select: none; /* webkit (safari, chrome) browsers */
+    -moz-user-select: none; /* mozilla browsers */
+    -khtml-user-select: none; /* webkit (konqueror) browsers */
+    -ms-user-select: none; /* IE10+ */
 }
 .image-crop-edit-button input {
 	background-image: linear-gradient(-180deg, #FAFDFF 0%, #F@F9FF 100%);
