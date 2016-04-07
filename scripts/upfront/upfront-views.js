@@ -258,43 +258,50 @@ define([
 					this.update_background_color();
 				}
 
+				var post = Upfront.data.posts[_upfront_post_data.post_id];
 				if(me.$el.children('.feature_image_selector').length < 1 && !Upfront.Application.is_builder()) {
 					var feature_selector = $('<a href="#" class="feature_image_selector">Add Feature Image</a>');
 					feature_selector.bind('click', function() {
-							Upfront.Views.Editor.ImageSelector.open().done(function(images){
-								var sizes = {},
-									imageId = 0
-								;
-								_.each(images, function(image, id){
-									sizes = image;
-									imageId = id;
-								});
-								var imageInfo = {
-										src: sizes.medium ? sizes.medium[0] : sizes.full[0],
-										srcFull: sizes.full[0],
-										srcOriginal: sizes.full[0],
-										fullSize: {width: sizes.full[1], height: sizes.full[2]},
-										size: sizes.medium ? {width: sizes.medium[1], height: sizes.medium[2]} : {width: sizes.full[1], height: sizes.full[2]},
-										position: false,
-										rotation: 0,
-										id: imageId
-									}
-								;
-								$('<img>').attr('src', imageInfo.srcFull).load(function(){
-									var post = Upfront.data.posts[_upfront_post_data.post_id];
-									post.meta.setValue('_thumbnail_id', imageInfo.id);
-									post.meta.setValue('_thumbnail_data', imageInfo);
+						Upfront.Views.Editor.ImageSelector.open().done(function(images){
+							var sizes = {},
+								imageId = 0
+							;
+							_.each(images, function(image, id){
+								sizes = image;
+								imageId = id;
+							});
+							var imageInfo = {
+									src: sizes.medium ? sizes.medium[0] : sizes.full[0],
+									srcFull: sizes.full[0],
+									srcOriginal: sizes.full[0],
+									fullSize: {width: sizes.full[1], height: sizes.full[2]},
+									size: sizes.medium ? {width: sizes.medium[1], height: sizes.medium[2]} : {width: sizes.full[1], height: sizes.full[2]},
+									position: false,
+									rotation: 0,
+									id: imageId
+								}
+							;
+							$('<img>').attr('src', imageInfo.srcFull).load(function(){
+								post.meta.setValue('_thumbnail_id', imageInfo.id);
+								post.meta.setValue('_thumbnail_data', imageInfo);
 
-									post.meta.save().done(function(){
-										$('<img>').attr('src', imageInfo.srcOriginal).load(function() {
-											me.update_background();
-											Upfront.Views.Editor.ImageSelector.close();
-										});
+								post.meta.save().done(function(){
+									$('<img>').attr('src', imageInfo.srcOriginal).load(function() {
+										me.update_background();
+										Upfront.Views.Editor.ImageSelector.close();
 									});
 								});
 							});
 						});
-					me.$el.append(feature_selector);
+					});
+
+					if (Upfront.Application.user_can("EDIT") === false) {
+						if (parseInt(post.get('post_author'), 10) === Upfront.data.currentUser.id && Upfront.Application.user_can("EDIT_OWN") === true) {
+							me.$el.append(feature_selector);
+						}
+					} else {
+						me.$el.append(feature_selector);
+					}
 				}
 
 				Upfront.Util.post({action: 'this_post-get_thumbnail', post_id: _upfront_post_data.post_id})
@@ -929,7 +936,7 @@ define([
 					if (!this.$control_el || this.$control_el.length === 0) {
 						this.$control_el = this.$el;
 					}
-					
+
 					this.$control_el.find('.upfront-element-controls').remove();
 				}
 			},
@@ -3369,7 +3376,7 @@ define([
 				} else {
 					this.$el.html(template);
 				}
-				
+
 				this.$bg = this.$el.find('.upfront-module-group-bg');
 				this.update();
 				var local_view = this._modules_view || new Modules({"model": this.model.get("modules")});
@@ -3889,10 +3896,10 @@ define([
 				var me= this,
 					currentEntity = Upfront.data.currentEntity
 				;
-				
+
 				// Disable UnGrouping
 				if (!Upfront.Application.user_can_modify_layout()) return false;
-				
+
 				if (this.hidden) return false;
 				// Deactivate previous ObjectView
 				if(typeof(Upfront.data.prevEntity) !== 'undefined' && Upfront.data.prevEntity !== false) {
