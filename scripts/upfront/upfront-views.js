@@ -4005,7 +4005,7 @@ define([
 				// Render immediately in that case
 				// Otherwise add to RenderQueue
 				if ( Upfront.Application.layout_ready ) {
-				this.model.each(function (module) {
+					this.model.each(function (module) {
 						me.render_module(module);
 					})
 					me.apply_flexbox_clear();
@@ -4014,15 +4014,15 @@ define([
 				else {
 					this.model.each(function (module) {
 						RenderQueue.add(function () {
-						me.render_module(module); // surrounding with function to keep context juggling to the minimum
-					// });
+							me.render_module(module); // surrounding with function to keep context juggling to the minimum
 						});
+					});
 
-				// RenderQueue.addToEnd(function() {
-					me.apply_flexbox_clear();
-					me.apply_wrapper_height();
-					Upfront.Events.trigger("entity:modules:after_render", me, me.model);
-				// });
+					RenderQueue.addToEnd(function() {
+						me.apply_flexbox_clear();
+						me.apply_wrapper_height();
+						Upfront.Events.trigger("entity:modules:after_render", me, me.model);
+					});
 				}
 			},
 			render_module: function (module, options) {
