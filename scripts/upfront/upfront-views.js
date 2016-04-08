@@ -3835,11 +3835,17 @@ define([
 				this.update_size_hint();
 			},
 			on_dblclick: function (e) {
+				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
 				// We don't want to activate the Group when Settings sidebar is open
 				if($('#element-settings-sidebar').html() !== '' || $('#settings').html() !== '') return false;
 				if ( this.$el.hasClass('upfront-module-group-on-edit') || this.$el.hasClass('upfront-module-group-disabled') ) return;
 				this.closeControlPanel(false);
-				this.on_edit();
+				if ( !breakpoint || breakpoint.default ) {
+					this.on_edit();
+				}
+				else {
+					this.on_reorder();
+				}
 			},
 			on_hide_click: function (e) {
 				_Upfront_EditableEntity.prototype.on_hide_click.call(this, e);
