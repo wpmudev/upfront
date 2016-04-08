@@ -119,6 +119,26 @@
 	}
 
 	/**
+	 * Utility function for gathering elements dependent on layout editing capability
+	 *
+	 * Elements are scoped to a particular role
+	 *
+	 * @param {String} role Role ID to scope elements to
+	 *
+	 * @return {Object} jQuery nodeset
+	 */
+	function get_layout_editing_dependent_cap_elements (role) {
+		var role_selector = ' [data-role_id="' + role + '"]',
+			$els = $('[data-capability_id="responsive_mode"]' + role_selector)
+				.add('[data-capability_id="singlepost_layout_mode"]' + role_selector)
+				.add('[data-capability_id="modify_element_presets"]' + role_selector)
+				.add('[data-capability_id="delete_element_presets"]' + role_selector)
+				.add('[data-capability_id="switch_element_presets"]' + role_selector)
+		;
+		return $els;
+	}
+
+	/**
 	 * Process the checkbox states based on the editor boot capability
 	 */
 	function process_boot_upfront_state () {
@@ -175,11 +195,7 @@
 			if (!(role || {}).role) return true; // Unknown role, who knows what
 			if ((role || {}).able) return true; // Role can modify, we're good
 
-			var role_selector = ' [data-role_id="' + role.role + '"]',
-				$roots = $('[data-capability_id="responsive_mode"]' + role_selector)
-					.add('[data-capability_id="modify_element_presets"]' + role_selector)
-					.add('[data-capability_id="delete_element_presets"]' + role_selector)
-					.add('[data-capability_id="switch_element_presets"]' + role_selector),
+			var $roots = get_layout_editing_dependent_cap_elements(role.role),
 				$checks = $roots.find(':checkbox')
 			;
 			$checks.each(function () {
@@ -232,11 +248,7 @@
 	function handle_modify_layouts_change () {
 		var $check = $(this),
 			role = $check.closest('[data-role_id]').attr("data-role_id"),
-			role_selector = ' [data-role_id="' + role + '"]',
-			$del = $('[data-capability_id="responsive_mode"]' + role_selector)
-				.add('[data-capability_id="modify_element_presets"]' + role_selector)
-				.add('[data-capability_id="delete_element_presets"]' + role_selector)
-				.add('[data-capability_id="switch_element_presets"]' + role_selector)
+			$del = get_layout_editing_dependent_cap_elements(role)
 		;
 		$del.find(":checkbox").attr("checked", false);
 		if ($check.is(":checked")) {
