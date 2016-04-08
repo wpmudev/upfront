@@ -603,3 +603,18 @@ div.upfront-general-settings .upfront-debug-block a.upfront_button.loading{
     padding-right: 28px;
     background-repeat: no-repeat;
 }
+
+.upfront_help_icon {
+    background-image: url(../img/uf-admin-sprite.svg);
+    background-repeat: no-repeat;
+    display: block;
+    background-position: -10px -153px;
+    width: 16px;
+	position: relative;
+	top: 3px;
+	left: 5px;
+    height: 16px;
+    overflow: hidden;
+    display: inline-block;
+	cursor: pointer;
+}

@@ -94,7 +94,7 @@ class Upfront_Admin_General
 						<button id="upfront_reset_cache"><?php _e("Reset Upfront Cache", Upfront::TextDomain) ?></button>
 					</div>
 					<div class="upfront-debug-block">
-						<p class="left"><?php _e("Reset Upfront CacheThis will run Upfront in DEV mode. Useful for reporting Console errors to our team.", Upfront::TextDomain) ?></p>
+						<p class="left"><?php _e("Reset Upfront CacheThis will run Upfront in DEV mode. Useful for reporting Console errors to our team.", Upfront::TextDomain) ?><i class="upfront_help_icon" title="<?php _e("DEV Mode will load default layouts. Don’t worry, your customized layouts are still in the database & live on your site.", Upfront::TextDomain) ?>">&nbsp;</i></p>
 						<a target="_blank" class="upfront_button" href="<?php echo home_url("?editmode=true&dev=true") ?>"><?php _e("Run in dev mode", Upfront::TextDomain) ?></a>
 					</div>
 					<div class="upfront-debug-block lightgrey">
@@ -120,7 +120,7 @@ class Upfront_Admin_General
 					</div>
 					<div class="upfront-debug-block">
 						<p class="left"><?php _e("Reset Theme to Default State", Upfront::TextDomain) ?></p>
-						<p class="left"><?php esc_html_x('<small><strong class="warning-text">WARNING:</strong> This will return your active theme to the same state it was when you first installed it. This can not be undone, so please back-up before proceeding</small>', Upfront::TextDomain); ?></p>
+						<p class="left"><?php _e('<small><strong class="warning-text">WARNING:</strong> This will return your active theme to the same state it was when you first installed it. This can not be undone, so please back-up before proceeding</small>', Upfront::TextDomain); ?></p>
 						<button class="warning" id="upfront_reset_theme"><?php _e("Reset Theme", Upfront::TextDomain) ?></button>
 					</div>
 				</div>
