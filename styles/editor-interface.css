@@ -2634,6 +2634,8 @@ div#page.upfront-layout-view.upfront-layout-view .upfront-editable_entity.upfron
 .upfront-edit-layout .upfront-region-container:hover > .upfront-region-edit-trigger,
 .upfront-edit-theme .upfront-region-container:hover > .upfront-region-edit-trigger,
 .upfront-edit-responsive .default-breakpoint .upfront-region-container:hover > .upfront-region-edit-trigger,
+.upfront-edit-layout .upfront-region-side-fixed.upfront-region-has-modules:hover > .upfront-region-edit-trigger-small-fixed,
+.upfront-edit-theme .upfront-region-side-fixed.upfront-region-has-modules:hover > .upfront-region-edit-trigger-small-fixed,
 .upfront-edit-layout .upfront-region-empty:hover > .upfront-region-edit-trigger-full,
 .upfront-edit-theme .upfront-region-empty:hover > .upfront-region-edit-trigger-full,
 .upfront-edit-responsive .upfront-region-empty:hover > .upfront-region-edit-trigger-full,
@@ -2643,11 +2645,14 @@ div#page.upfront-layout-view.upfront-layout-view .upfront-editable_entity.upfron
 
 .upfront-region-container.upfront-region-module-activated .upfront-region-edit-trigger,
 .upfront-region-container.upfront-region-module-activated:hover .upfront-region-edit-trigger,
-.upfront-region-container.upfront-region-module-activated .upfront-region:hover .upfront-region-edit-trigger,
+.upfront-region-container.upfront-region-module-activated .upfront-region:hover .upfront-region-edit-trigger {
+  display: none; }
+
 .upfront-region-editing .upfront-region-container .upfront-region-edit-trigger,
 .upfront-region-editing .upfront-region-container:hover .upfront-region-edit-trigger,
 .upfront-region-fixed-editing .upfront-region-container .upfront-region-edit-trigger,
 .upfront-region-fixed-editing .upfront-region-container:hover .upfront-region-edit-trigger,
+.upfront-region-fixed-editing .upfront-region-side-fixed.upfront-region-has-modules:hover .upfront-region-edit-trigger,
 .upfront-edit-responsive .upfront-region-hidden > .upfront-region-edit-trigger,
 .upfront-region-container.upfront-region-container-nav-open .upfront-region-edit-trigger,
 .upfront-region-container.upfront-region-container-nav-open:hover .upfront-region-edit-trigger,
@@ -4735,7 +4740,7 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-region-lightbox-editing .upfront-region-side-lightbox > .upfront-entity_meta {
   display: block; }
 
-.upfront-region-side-fixed > .upfront-entity_meta {
+.upfront-region-fixed-editing .upfront-region-side-fixed > .upfront-entity_meta {
   top: 10px;
   right: 15px;
   z-index: 999999;

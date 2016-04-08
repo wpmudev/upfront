@@ -5629,8 +5629,8 @@ define([
 
 					if( 'fixed' === this.model.get('type')  ){ //  If it's a floating region!
 						this.parent_view.get_container_view(this.model).close_edit();
-						this.collection.remove(this.model, {silent:true});
-						this.remove();
+						this.collection.remove(this.model);
+						//this.remove();
 					}else{
 						this.collection.remove(this.model);
 					}
@@ -5819,7 +5819,7 @@ define([
 			},
 			render: function () {
 				this.constructor.__super__.render.call(this);
-				var	$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small upfront-ui" title="' + l10n.change_background + '"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
+				var	$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small upfront-region-edit-trigger-small-fixed upfront-ui" title="' + l10n.change_background + '"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
 					$edit_full = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-full upfront-ui"><div class="upfront-region-edit-text">' + l10n.click_to_edit_floating_region + '</div></div>'),
 					$ok = $('<div class="upfront-region-finish-edit-fixed upfront-ui">' + l10n.ok + '</div>'),
 					$size = $('<div class="upfront-region-size-hint upfront-ui"></div>'),
@@ -5996,7 +5996,7 @@ define([
 					css = {};
 
 				if((scroll_bottom < container_view.$el.offset().top || scroll_top > container_view.$el.offset().top + container_view.$el.outerHeight()) !== true) {
-					if(right == 0) {
+					if(right === 0) {
 						this.$el.find('.upfront-region-edit-trigger').css({
 							right: 30
 						})
@@ -6545,7 +6545,7 @@ define([
 						});
 						if ( main_view ) main_view.update();
 					}
-					if ( container_view.sub_model.length == 0 ){
+					if ( !Upfront.data.region_views[container_view.model.cid] && container_view.sub_model.length == 0 ){
 						delete this.container_views[container_view.model.cid];
 						if ( container_view.region_fixed_panels ){
 							container_view.region_fixed_panels.unbind();

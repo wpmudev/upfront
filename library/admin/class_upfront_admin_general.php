@@ -22,7 +22,7 @@ class Upfront_Admin_General
 			<div class="upfront-col-left">
 				<div class="postbox-container">
 					<div class='postbox'>
-						<h2 class="title">Version Info</h2>
+						<h2 class="title"><?php _e("Version Info", Upfront::TextDomain) ?></h2>
 						<div class="inside version-info">
 							<div class="upfront-debug-block">
 								Upfront <span>V <?php echo $core_version; ?></span>
@@ -43,7 +43,7 @@ class Upfront_Admin_General
 			<div class="upfront-col-right">
 				<div class="postbox-container">
 					<div class='postbox'>
-						<h2 class="title">Helpful Resources</h2>
+						<h2 class="title"><?php _e("Helpful Resources", Upfront::TextDomain) ?></h2>
 						<div class="inside">
 							<!--
 							* Hide until we have documentation
@@ -52,22 +52,22 @@ class Upfront_Admin_General
 							</div>
 							-->
 							<div class="upfront-debug-block">
-								<h4>Online Articles</h4>
+								<h4><?php _e("Online Articles", Upfront::TextDomain) ?></h4>
 								<ul>
 								
-									<li><a href='https://premium.wpmudev.org/blog/upfront-1-0/' target="_blank">Upfront 1.0</a></li>
-									<li><a href='https://premium.wpmudev.org/blog/upfront-basics/' target="_blank">Upfront Part 1: The Basics, Theme Colors and Typography</a></li>
-									<li><a href='https://premium.wpmudev.org/blog/upfront-regions/' target="_blank">Upfront Part 2: Structuring Your Site with Regions</a></li>
-									<li><a href='https://premium.wpmudev.org/blog/upfront-elements/' target="_blank">Upfront Part 3: Laying Out Your Site with Elements</a></li>
-									<li><a href='https://premium.wpmudev.org/blog/upfront-custom-css/' target="_blank">Upfront Part 4: Tweaking Elements with Custom Code</a></li>
-									<li><a href='https://premium.wpmudev.org/blog/upfront-plugins/' target="_blank">Upfront Part 5: Adding Plugins and Styling Gravity Forms</a></li>
-									<li><a href='https://premium.wpmudev.org/blog/upfront-responsive/' target="_blank">Upfront Part 6: Creating Responsive Websites</a></li>
-									<li><a href='https://premium.wpmudev.org/blog/upfront-pages-posts/' target="_blank">Upfront Part 7: Working With Pages and Posts</a></li>
+									<li><a href='https://premium.wpmudev.org/blog/upfront-1-0/' target="_blank"><?php _e("Upfront 1.0", Upfront::TextDomain) ?></a></li>
+									<li><a href='https://premium.wpmudev.org/blog/upfront-basics/' target="_blank"><?php _e("Upfront Part 1: The Basics, Theme Colors and Typography", Upfront::TextDomain) ?></a></li>
+									<li><a href='https://premium.wpmudev.org/blog/upfront-regions/' target="_blank"><?php _e("Upfront Part 2: Structuring Your Site with Regions", Upfront::TextDomain) ?></a></li>
+									<li><a href='https://premium.wpmudev.org/blog/upfront-elements/' target="_blank"><?php _e("Upfront Part 3: Laying Out Your Site with Elements", Upfront::TextDomain) ?></a></li>
+									<li><a href='https://premium.wpmudev.org/blog/upfront-custom-css/' target="_blank"><?php _e("Upfront Part 4: Tweaking Elements with Custom Code", Upfront::TextDomain) ?></a></li>
+									<li><a href='https://premium.wpmudev.org/blog/upfront-plugins/' target="_blank"><?php _e("Upfront Part 5: Adding Plugins and Styling Gravity Forms", Upfront::TextDomain) ?></a></li>
+									<li><a href='https://premium.wpmudev.org/blog/upfront-responsive/' target="_blank"><?php _e("Upfront Part 6: Creating Responsive Websites", Upfront::TextDomain) ?></a></li>
+									<li><a href='https://premium.wpmudev.org/blog/upfront-pages-posts/' target="_blank"><?php _e("Upfront Part 7: Working With Pages and Posts", Upfront::TextDomain) ?></a></li>
 								</ul>
 							</div>
 							<div class="upfront-debug-block">
-								<h4>WPMUDEV Help</h4>
-								<a class="upfront_button visit-forum" href="http://premium.wpmudev.org/support/" target="_blank">Visit Forums</a> <a class="upfront_button" href="http://premium.wpmudev.org/forums/forum/support#question" target="_blank">Ask a Question</a>
+								<h4><?php _e("WPMUDEV Help", Upfront::TextDomain) ?></h4>
+								<a class="upfront_button visit-forum" href="http://premium.wpmudev.org/support/" target="_blank"><?php _e("Visit Forums", Upfront::TextDomain) ?></a> <a class="upfront_button" href="http://premium.wpmudev.org/forums/forum/support#question" target="_blank"><?php _e("Ask a Question", Upfront::TextDomain) ?></a>
 							</div>
 						</div>
 					</div>
@@ -84,22 +84,22 @@ class Upfront_Admin_General
 		?>
 		<div class="postbox-container">
 			<div class='postbox'>
-				<h2 class="title">Debug Options</h2>
+				<h2 class="title"><?php _e("Debug Options", Upfront::TextDomain) ?></h2>
 				<div class="inside debug-options">
 					<div class="upfront-debug-block lightgrey">
-						<p>Here you will find various Debug helpers that you might want to try if something goes wrong. Prior to trying any of the below, please make sure you have performed an <a href="#"><strong>Empty Cache &amp; Hard Reload</strong></a>, that usually resolves most issue.</p>
+						<p><?php printf( __('Here you will find various Debug helpers that you might want to try if something goes wrong. Prior to trying any of the below, please make sure you have performed an <a target="_blank" href="%s"><strong>Empty Cache &amp; Hard Reload</strong></a>, that usually resolves most issue.', Upfront::TextDomain ), "http://refreshyourcache.com/en/home/"); ?> </p>
 					</div>
 					<div class="upfront-debug-block">
-						<p class="left">Can be helpful after core upgrades</p>
-						<button id="upfront_reset_cache">Reset Upfront Cache</button>
+						<p class="left"><?php _e("Can be helpful after core upgrades", Upfront::TextDomain) ?></p>
+						<button id="upfront_reset_cache"><?php _e("Reset Upfront Cache", Upfront::TextDomain) ?></button>
 					</div>
 					<div class="upfront-debug-block">
-						<p class="left">This will run Upfront in DEV mode. Useful for reporting Console errors to our team.</p>
-						<a target="_blank" class="upfront_button" href="<?php echo home_url("?editmode=true&dev=true") ?>">Run in dev mode</a>
+						<p class="left"><?php _e("Reset Upfront CacheThis will run Upfront in DEV mode. Useful for reporting Console errors to our team.", Upfront::TextDomain) ?></p>
+						<a target="_blank" class="upfront_button" href="<?php echo home_url("?editmode=true&dev=true") ?>"><?php _e("Run in dev mode", Upfront::TextDomain) ?></a>
 					</div>
 					<div class="upfront-debug-block lightgrey">
 						<p class="left">
-							<small>Resets layout to default look, be careful</small>
+							<small><?php _e("Resets layout to default look, be careful", Upfront::TextDomain) ?></small>
 						</p>
 						<p class="left">
 							<?php
@@ -119,9 +119,9 @@ class Upfront_Admin_General
 						<button id="upfront_reset_layout" disabled="disabled" ><?php _e("Reset Layout", Upfront::TextDomain) ?></button>
 					</div>
 					<div class="upfront-debug-block">
-						<p class="left">Reset Theme to Default State</p>
-						<p class="left"><small><strong class="warning-text">WARNING:</strong> This will return your active theme to the same state it was when you first installed it. This can not be undone, so please back-up before proceeding</small></p>
-						<button class="warning" id="upfront_reset_theme">Reset Theme</button>
+						<p class="left"><?php _e("Reset Theme to Default State", Upfront::TextDomain) ?></p>
+						<p class="left"><?php esc_html_x('<small><strong class="warning-text">WARNING:</strong> This will return your active theme to the same state it was when you first installed it. This can not be undone, so please back-up before proceeding</small>', Upfront::TextDomain); ?></p>
+						<button class="warning" id="upfront_reset_theme"><?php _e("Reset Theme", Upfront::TextDomain) ?></button>
 					</div>
 				</div>
 			</div>

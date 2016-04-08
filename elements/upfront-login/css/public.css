@@ -209,6 +209,7 @@ div.upfront-output-upfront-login_element form#loginform label {
 	margin-bottom:0.3em;
 	display: inline-block;
 	font-weight: 100;
+	cursor: pointer;
 }
 input#rememberme {
   width:18px;
