@@ -131,6 +131,9 @@
 		var role_selector = ' [data-role_id="' + role + '"]',
 			$els = $('[data-capability_id="responsive_mode"]' + role_selector)
 				.add('[data-capability_id="singlepost_layout_mode"]' + role_selector)
+				.add('[data-capability_id="singlepage_layout_mode"]' + role_selector)
+				.add('[data-capability_id="home_layout_mode"]' + role_selector)
+				.add('[data-capability_id="archive_layout_mode"]' + role_selector)
 				.add('[data-capability_id="modify_element_presets"]' + role_selector)
 				.add('[data-capability_id="delete_element_presets"]' + role_selector)
 				.add('[data-capability_id="switch_element_presets"]' + role_selector)
