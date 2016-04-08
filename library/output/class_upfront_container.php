@@ -8,13 +8,21 @@ abstract class Upfront_Container extends Upfront_Entity {
 	protected $_wrapper;
 	protected $_wrapper_is_spacer;
 
+	/**
+	 * Array of child views, it's only filled in self::get_markup foreach loop
+	 * 
+	 * @var array
+	 */
+	protected $_child_views = array();
+
 	public function get_markup () {
 		$html='';
 		$wrap='';
 
 		if (!empty($this->_data[$this->_children])) {
+
 			foreach ($this->_data[$this->_children] as $idx => $child) {
-				$child_view = $this->instantiate_child($child, $idx);
+				$this->_child_views[] = $child_view  = $this->instantiate_child($child, $idx);
 				if ($child_view instanceof Upfront_Entity) {
 					// Have wrapper? If so, then add wrappers
 					$wrapper = $child_view->get_wrapper();
@@ -49,6 +57,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 		if ( isset($wrapper) && $wrapper && $this->_wrapper ) {
 			$html .= $this->_wrapper->wrap($wrap);
 		}
+
 		return $this->wrap($html);
 	}
 
@@ -86,6 +95,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 			$classes = $this->_get_property('class');
 			$column = upfront_get_class_num('c', $classes);
 			$class = $slug === "uposts" ? "c" . $column . " uposts-object" : upfront_get_property_value('class', $data);
+
 			$usingNew = upfront_get_property_value('usingNewAppearance', $data);
 			if(!empty( $usingNew )) {
 				// Augment the output with preset map, in addition to other stuff going on in there
@@ -146,10 +156,13 @@ abstract class Upfront_Container extends Upfront_Entity {
 	}
 
 	public function wrap ($out) {
+
 		$class = $this->get_css_class();
 		$style = $this->get_css_inline();
 		$attr = $this->get_attr();
 		$element_id = $this->get_id();
+
+		$class .= $this->get_additional_classes();
 
 		if ($this->_debugger->is_active(Upfront_Debug::MARKUP)) {
 			$name = $this->get_name();
@@ -172,4 +185,19 @@ abstract class Upfront_Container extends Upfront_Entity {
 	}
 
 
+	/**
+	 * Returns additional classes
+	 *
+	 * @return string
+	 */
+	protected function get_additional_classes(){
+		$additional_classes = "";
+
+		foreach( $this->_child_views as $child_view ){
+			if( is_a($child_view, "Upfront_LoginView" ) ) // Check to see if any of the child views have a login el
+				$additional_classes .= " upfront-bumped-z-index";
+		}
+
+		return $additional_classes;
+	}
 }

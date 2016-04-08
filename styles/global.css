@@ -562,6 +562,9 @@ body .upfront-edit_layout a {
   line-height: inherit;
 }
 
+.upfront-bumped-z-index{
+    z-index: 2;
+}
 /* Firefox checkboxes and radios are styled to match the rest of the browsers */
 @-moz-document url-prefix() { 
   input[type=checkbox] {
