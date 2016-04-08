@@ -1195,6 +1195,12 @@ var Application = new (Backbone.Router.extend({
 		if ( 'item' in _upfront_post_data.layout && 'single-'+post_type === _upfront_post_data.layout.item ) return true;
 		return false;
 	},
+	is_archive: function(item){
+		if ( !('type' in _upfront_post_data.layout && 'archive' === _upfront_post_data.layout.type) ) return false;
+		if ( typeof item === "undefined" ) return true;
+		if ( 'item' in _upfront_post_data.layout && 'archive-'+item === _upfront_post_data.layout.item ) return true;
+		return false;
+	},
 	urlCache: {},
 
 	current_subapplication: false,
@@ -1986,9 +1992,16 @@ var Application = new (Backbone.Router.extend({
 	 * @return {Boolean}
 	 */
 	user_can_modify_layout: function () {
-		var is_single_post = Upfront.Application.is_single('post');
-		if ( !is_single_post && Upfront.Application.user_can("LAYOUT_MODE") ) return true;
-		if ( is_single_post && Upfront.Application.user_can("SINGLEPOST_LAYOUT_MODE") && Upfront.Application.user_can("LAYOUT_MODE") ) return true;
+		var is_archive = this.is_archive(),
+			is_home = this.is_archive('home'),
+			is_single = this.is_single(),
+			is_single_page = this.is_single('page')
+		;
+		if ( !this.user_can("LAYOUT_MODE") ) return false;
+		if ( is_home && this.user_can("HOME_LAYOUT_MODE") ) return true;
+		if ( !is_home && is_archive && this.user_can("ARCHIVE_LAYOUT_MODE") ) return true;
+		if ( is_single_page && this.user_can("SINGLEPAGE_LAYOUT_MODE") ) return true;
+		if ( !is_single_page && is_single && this.user_can("SINGLEPOST_LAYOUT_MODE") ) return true;
 		return false;
 	}
 

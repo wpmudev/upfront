@@ -22,6 +22,9 @@ class Upfront_Permissions {
 
 	const LAYOUT_MODE = 'layout_mode';
 	const SINGLEPOST_LAYOUT_MODE = 'singlepost_layout_mode';
+	const SINGLEPAGE_LAYOUT_MODE = 'singlepage_layout_mode';
+	const HOME_LAYOUT_MODE = 'home_layout_mode';
+	const ARCHIVE_LAYOUT_MODE = 'archive_layout_mode';
 	const CONTENT_MODE = 'content_mode';
 	const THEME_MODE = 'theme_mode';
 	const POSTLAYOUT_MODE = 'postlayout_mode';
@@ -60,9 +63,15 @@ class Upfront_Permissions {
 	 */
 	public static function can_modify_layout ($arg=false) {
 		$layout = Upfront_Layout::get_parsed_cascade();
-		$is_single_post = ('single' === $layout['type'] && !empty($layout['item']) && 'single-post' === $layout['item']);
-		if ( !$is_single_post && self::current(self::LAYOUT_MODE, $arg) ) return true;
-		if ( $is_single_post && self::current(self::SINGLEPOST_LAYOUT_MODE, $arg) && self::current(self::LAYOUT_MODE, $arg) ) return true;
+		$is_archive = ('archive' === $layout['type']);
+		$is_home = ($is_archive && !empty($layout['item']) && 'archive-home' === $layout['item']);
+		$is_single = ('single' === $layout['type']);
+		$is_single_page = ($is_single && !empty($layout['item']) && 'single-page' === $layout['item']);
+		if ( !self::current(self::LAYOUT_MODE, $arg) ) return false;
+		if ( $is_home && self::current(self::HOME_LAYOUT_MODE, $arg) ) return true;
+		if ( !$is_home && $is_archive && self::current(self::ARCHIVE_LAYOUT_MODE, $arg) ) return true;
+		if ( $is_single_page && self::current(self::SINGLEPAGE_LAYOUT_MODE, $arg) ) return true;
+		if ( !$is_single_page && $is_single && self::current(self::SINGLEPOST_LAYOUT_MODE, $arg) ) return true;
 		return false;
 	}
 
@@ -152,6 +161,9 @@ class Upfront_Permissions {
 			self::BOOT => 'edit_theme_options',// 'edit_posts',
 			self::LAYOUT_MODE => 'edit_theme_options',
 			self::SINGLEPOST_LAYOUT_MODE => 'edit_theme_options',
+			self::SINGLEPAGE_LAYOUT_MODE => 'edit_theme_options',
+			self::HOME_LAYOUT_MODE => 'edit_theme_options',
+			self::ARCHIVE_LAYOUT_MODE => 'edit_theme_options',
 			//self::POSTLAYOUT_MODE => 'edit_theme_options', // This one is for old postlayout mode from this_post element
 			self::UPLOAD => 'upload_files',
 			self::RESIZE => 'edit_theme_options',// 'edit_posts',
@@ -440,6 +452,9 @@ class Upfront_Permissions {
 			self::BOOT => __('Can Access Upfront Editor Mode', Upfront::TextDomain ),
 			self::LAYOUT_MODE => __('Can Modify Upfront Layouts', Upfront::TextDomain ),
 			self::SINGLEPOST_LAYOUT_MODE => __('Can Modify Single Post Layout', Upfront::TextDomain ),
+			self::SINGLEPAGE_LAYOUT_MODE => __('Can Modify Page Layout', Upfront::TextDomain ),
+			self::HOME_LAYOUT_MODE => __('Can Modify Homepage Layout', Upfront::TextDomain ),
+			self::ARCHIVE_LAYOUT_MODE => __('Can Modify Archive Layout', Upfront::TextDomain ),
 			self::UPLOAD => __('Can Upload Media', Upfront::TextDomain ),
 			self::RESIZE => __('Can Resize Media (in Layouts)', Upfront::TextDomain ),
 			self::MODIFY_ELEMENT_PRESETS => __('Can Create / Modify Element Presets', Upfront::TextDomain ),

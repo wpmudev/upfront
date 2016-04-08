@@ -337,6 +337,9 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			'EDIT_OWN' => (bool)Upfront_Permissions::current(Upfront_Permissions::EDIT_OWN),
 			'LAYOUT_MODE' => (bool)Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE),
 			'SINGLEPOST_LAYOUT_MODE' => (bool)Upfront_Permissions::current(Upfront_Permissions::SINGLEPOST_LAYOUT_MODE),
+			'SINGLEPAGE_LAYOUT_MODE' => (bool)Upfront_Permissions::current(Upfront_Permissions::SINGLEPAGE_LAYOUT_MODE),
+			'HOME_LAYOUT_MODE' => (bool)Upfront_Permissions::current(Upfront_Permissions::HOME_LAYOUT_MODE),
+			'ARCHIVE_LAYOUT_MODE' => (bool)Upfront_Permissions::current(Upfront_Permissions::ARCHIVE_LAYOUT_MODE),
 			'RESPONSIVE_MODE' => (bool)Upfront_Permissions::current(Upfront_Permissions::RESPONSIVE_MODE),
 		));
 
