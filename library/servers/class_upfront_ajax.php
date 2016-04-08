@@ -325,23 +325,19 @@ class Upfront_Ajax extends Upfront_Server {
 		if( $layout === array() )
 			$this->_out(new Upfront_JsonResponse_Error("Please specify layout to reset"));
 
-		$layout_key = $stylesheet . "-" . $layout;
-		delete_option( $layout_key );
+
 
 		if( $stylesheet_dev ){
 			$layout_key = $stylesheet_dev . "-" . $layout;
+			$alternative_layout_key = wp_get_theme($stylesheet)->get("Name") . "_dev-" . $layout;
 			delete_option( $layout_key );
+			delete_option( $alternative_layout_key );
+		}else{
+			$layout_key = $stylesheet . "-" . $layout;
+			$alternative_layout_key = wp_get_theme($stylesheet)->get("Name") . "-" . $layout;
+			delete_option( $layout_key );
+			delete_option( $alternative_layout_key );
 		}
-//		upfront_switch_stylesheet($stylesheet); Soft delete for now
-//		$layout = Upfront_Layout::from_php($data, $storage_key);
-//		$layout = Upfront_Layout::from_entity_ids($layout, null, !empty($stylesheet_dev));
-//		$layout->delete(true);
-//		delete_option('upfront_' . $stylesheet . '_styles');
-//		delete_option('upfront_' . $stylesheet . '_theme_colors');
-//		delete_option('upfront_' . $stylesheet . '_button_presets');
-//		if (!empty($stylesheet_dev)) delete_option('upfront_' . $stylesheet_dev . '_styles');
-//		if (!empty($stylesheet_dev)) delete_option('upfront_' . $stylesheet_dev . '_theme_colors');
-//		if (!empty($stylesheet_dev)) delete_option('upfront_' . $stylesheet_dev . '_button_presets');
 
 		$this->_out(new Upfront_JsonResponse_Success("Layout {$layout} reset"));
 	}
