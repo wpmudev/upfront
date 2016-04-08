@@ -1986,8 +1986,9 @@ var Application = new (Backbone.Router.extend({
 	 * @return {Boolean}
 	 */
 	user_can_modify_layout: function () {
-		if ( Upfront.Application.user_can("LAYOUT_MODE") ) return true;
-		if ( Upfront.Application.is_single('post') && Upfront.Application.user_can("SINGLEPOST_LAYOUT_MODE") ) return true;
+		var is_single_post = Upfront.Application.is_single('post');
+		if ( !is_single_post && Upfront.Application.user_can("LAYOUT_MODE") ) return true;
+		if ( is_single_post && Upfront.Application.user_can("SINGLEPOST_LAYOUT_MODE") && Upfront.Application.user_can("LAYOUT_MODE") ) return true;
 		return false;
 	}
 
