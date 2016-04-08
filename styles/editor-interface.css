@@ -204,6 +204,19 @@ em {
 .upfront-edit-layout .upfront-module-editing .uf-click-to-edit-text, .redactor-box .uf-click-to-edit-text {
   cursor: text; }
 
+/* --- Text alignments --- */
+.text-justify {
+  text-align: justify; }
+
+.text-center {
+  text-align: center; }
+
+.text-left {
+  text-align: left; }
+
+.text-right {
+  text-align: right; }
+
 /* @import 'sass/partials/button'; */
 #properties {
   position: fixed;

@@ -213,8 +213,22 @@ RedactorPlugins.stateButtons = function() {
 RedactorPlugins.stateAlignment = function() {
     return {
         align: function( alignment ){
-            $(this.selection.getBlock()).css('text-align', alignment );
-            $(this.selection.getBlocks()).css('text-align', alignment );
+            // changing this as conflicting custom css when inlining this css
+            // $(this.selection.getBlock()).css('text-align', alignment );
+            // $(this.selection.getBlocks()).css('text-align', alignment );
+						
+            // clearing first what was previously set
+            $(this.selection.getBlock()).css('text-align', '' );
+            $(this.selection.getBlocks()).css('text-align', '' );
+            $(this.selection.getBlock()).removeClass( 'text-justify' );
+            $(this.selection.getBlock()).removeClass( 'text-left' );
+            $(this.selection.getBlock()).removeClass( 'text-right' );
+            $(this.selection.getBlock()).removeClass( 'text-center' );
+						
+            // append text alignment class instead
+            $(this.selection.getBlock()).addClass( 'text-' + alignment );
+            $(this.selection.getBlocks()).addClass( 'text-' + alignment );
+						
             this.selection.restore();
             this.code.sync();
         },
