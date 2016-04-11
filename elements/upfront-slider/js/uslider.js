@@ -1112,8 +1112,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			slide = this.model.slideCollection.get(currentSlide.id),
 			editorOpts = this.getEditorOptions(slide)
 		;
-		
-		if (!Upfront.Application.user_can("RESIZE")) return false;	
 
 		if(slide.get('status') != 'ok'){
 			var selectorOptions = {
@@ -1299,13 +1297,11 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		moreOptions.icon = 'more';
 		moreOptions.tooltip = l10n.cap_position;
 		moreOptions.sub_items = {}
-		
-		if (Upfront.Application.user_can("RESIZE")) {
-			moreOptions.sub_items['add'] = this.createControl('add', l10n.add_slide, 'openImageSelector');
-			moreOptions.sub_items['crop'] = this.createControl('crop', l10n.edit_img, 'imageEditMask');
-			moreOptions.sub_items['remove'] = this.createControl('remove', l10n.remove_slide, 'onRemoveSlide');
-		}
-		
+
+		moreOptions.sub_items['add'] = this.createControl('add', l10n.add_slide, 'openImageSelector');
+		moreOptions.sub_items['crop'] = this.createControl('crop', l10n.edit_img, 'imageEditMask');
+		moreOptions.sub_items['remove'] = this.createControl('remove', l10n.remove_slide, 'onRemoveSlide');
+
 		if( multiControls ) {
 			moreOptions.sub_items['caption'] = captionControl;
 		}

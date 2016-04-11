@@ -355,18 +355,16 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel();
 
 		if (Upfront.Application.user_can_modify_layout()) {
-		panel.items = _([
-			this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask', 30, 30),
-			this.createLinkControl(image)
-		]);
+			panel.items = _([
+				this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask', 30, 30),
+				this.createLinkControl(image)
+			]);
 		} else {
-			panel.items = _([]);
+			panel.items = _([
+				this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask')
+			]);
 		}
 
-		if (Upfront.Application.user_can("RESIZE")) {
-			panel.items.unshift(this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask'));
-		}
-		
 		if (Upfront.Application.user_can_modify_layout()) {
 		if (this.property('labelFilters') === 'true') {
 			panel.items.push(this.createLabelControl(image));
@@ -1338,8 +1336,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			image = this.images.get(item.attr('rel')),
 			editorOpts;
 
-		if (!Upfront.Application.user_can("RESIZE")) return false;	
-
 		if(image.get('status') !== 'ok'){
 			var selectorOptions = {
 				multiple: false,
@@ -1741,10 +1737,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		moreOptions.tooltip = l10n.ctrl.caption_position;
 
 		moreOptions.sub_items = {}
-		if (Upfront.Application.user_can("RESIZE")) {
-			moreOptions.sub_items['add'] = this.createControl('add', l10n.template.add_img, 'openImageSelector', 38, 38);
-			moreOptions.sub_items['toggle-sorting'] = this.createControl('toggle-sorting', l10n.toggle_dnd, 'toggleSorting', 38, 38);
-		}
+		moreOptions.sub_items['add'] = this.createControl('add', l10n.template.add_img, 'openImageSelector', 38, 38);
+		moreOptions.sub_items['toggle-sorting'] = this.createControl('toggle-sorting', l10n.toggle_dnd, 'toggleSorting', 38, 38);
 
 		return _([
 			moreOptions,

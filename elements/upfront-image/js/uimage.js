@@ -1405,10 +1405,7 @@ define([
 				$('<img>')
 					.load(function(){
 						Upfront.Views.Editor.ImageSelector.close();
-						
-						if (Upfront.Application.user_can("RESIZE")) {
-							me.openEditor(true, imageInfo);
-						}
+						me.openEditor(true, imageInfo);
 					})
 					.on("error", function () {
 						Upfront.Views.Editor.ImageSelector.close();
@@ -1456,11 +1453,6 @@ define([
 
 		editRequest: function () {
 			var me = this;
-			
-			if (!Upfront.Application.user_can("RESIZE")) {
-				Upfront.Views.Editor.notify(l10n.external_nag, 'error');
-				return false;
-			}
 
 			if(this.property('image_status') === 'ok' && this.property('image_id')) {
 				if (this.isThemeImage() && 'themeExporter' in Upfront) {
@@ -1576,8 +1568,6 @@ define([
 			if(Upfront.Application.responsiveMode !== 'desktop') {
 				return Upfront.Views.Editor.notify(l10n.desktop_nag, 'error');
 			}
-			
-			if (!Upfront.Application.user_can("RESIZE")) return false;	
 
 			var me = this,
 				options = {
@@ -1722,11 +1712,8 @@ define([
 			moreOptions.tooltip = l10n.ctrl.caption_position;
 
 			moreOptions.sub_items = {}
-			if (Upfront.Application.user_can("RESIZE")) {
-				moreOptions.sub_items['swap'] = this.createControl('swap', l10n.btn.swap_image, 'openImageSelector');
-				moreOptions.sub_items['crop'] = this.createControl('crop', l10n.ctrl.edit_image, 'editRequest');
-			}
-
+			moreOptions.sub_items['swap'] = this.createControl('swap', l10n.btn.swap_image, 'openImageSelector');
+			moreOptions.sub_items['crop'] = this.createControl('crop', l10n.ctrl.edit_image, 'editRequest');
 			moreOptions.sub_items['link'] = this.createLinkControl();
 			moreOptions.sub_items['lock'] = this.createControl(lock_icon, l10n.ctrl.lock_image, 'lockImage');
 

@@ -327,7 +327,6 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			'OPTIONS' => (bool)Upfront_Permissions::current(Upfront_Permissions::OPTIONS),
 			'EMBED' => (bool)Upfront_Permissions::current(Upfront_Permissions::EMBED),
 			'UPLOAD' => (bool)Upfront_Permissions::current(Upfront_Permissions::UPLOAD),
-			'RESIZE' => (bool)Upfront_Permissions::current(Upfront_Permissions::RESIZE),
 			'DEBUG' => (bool)Upfront_Permissions::current(Upfront_Permissions::SEE_USE_DEBUG),
 			'SWITCH_PRESET' => (bool)Upfront_Permissions::current(Upfront_Permissions::SWITCH_ELEMENT_PRESETS),
 			'MODIFY_PRESET' => (bool)Upfront_Permissions::current(Upfront_Permissions::MODIFY_ELEMENT_PRESETS),

@@ -640,8 +640,6 @@ PostContentEditor.prototype = {
 					})
 				;
 
-				if (!Upfront.Application.user_can("RESIZE")) return false;
-
 				//console.log(this, mask, row, editorOptions);
 				setTimeout(function() {
 					$('#image-edit-button-align').hide();
@@ -1313,8 +1311,6 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 			]
 		})
 		;
-
-		if (!Upfront.Application.user_can("RESIZE")) return false;
 
 		setTimeout(function() {
 			$('#image-edit-button-align').hide();

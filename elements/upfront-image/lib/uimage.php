@@ -411,11 +411,11 @@ class Upfront_Uimage_Server extends Upfront_Server {
 				//return $this->_out(new Upfront_JsonResponse_Error("Invalid image ID"));
 
 			//if(!current_user_can('edit_post', $imageData['id']) ){
-			if (!Upfront_Permissions::current(Upfront_Permissions::RESIZE, $imageData['id'])) {
-				$images[$imageData['id']] = array('error' => true, 'msg' => Upfront_UimageView::_get_l10n('not_allowed'));
-				continue;
+			//if (!Upfront_Permissions::current(Upfront_Permissions::RESIZE, $imageData['id'])) {
+			//	$images[$imageData['id']] = array('error' => true, 'msg' => Upfront_UimageView::_get_l10n('not_allowed'));
+			//	continue;
 				//wp_die( -1 );
-			}
+			//}
 
 			$image = get_post($imageData['id']);
 			if( $image instanceof WP_Post && $image->post_mime_type == 'image/gif'){ //Gif are not really resized/croped to preserve animations

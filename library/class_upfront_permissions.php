@@ -7,7 +7,6 @@ class Upfront_Permissions {
 	const EDIT_OWN = 'edit_posts';
 	const EMBED = 'embed_stuff';
 	const UPLOAD = 'upload_stuff';
-	const RESIZE = 'resize_media';
 	const MODIFY_ELEMENT_PRESETS = 'modify_element_presets';
 	const DELETE_ELEMENT_PRESETS = 'delete_element_presets';
 	const SWITCH_ELEMENT_PRESETS = 'switch_element_presets';
@@ -167,7 +166,6 @@ class Upfront_Permissions {
 			self::EDIT =>  'edit_theme_options',// 'edit_others_posts',
 			
 			self::UPLOAD => 'upload_files',
-			self::RESIZE => 'edit_theme_options',// 'edit_posts',
 			self::EMBED => 'edit_theme_options',// 'edit_posts',
 			
 			self::LAYOUT_MODE => 'edit_theme_options',
@@ -203,7 +201,6 @@ class Upfront_Permissions {
 		if (isset($levels[self::DEFAULT_LEVEL])) unset($levels[self::DEFAULT_LEVEL]);
 		if (isset($levels[self::CONTENT_MODE])) unset($levels[self::CONTENT_MODE]);
 		if (isset($levels[self::THEME_MODE])) unset($levels[self::THEME_MODE]);
-		if (isset($levels[self::RESIZE])) unset($levels[self::RESIZE]); // Temporarily disable media resize
 		return $levels;
 	}
 
@@ -431,7 +428,6 @@ class Upfront_Permissions {
 			self::EDIT,
 			self::EMBED,
 			self::UPLOAD,
-			self::RESIZE,
 			self::SAVE,
 
 			self::ANONYMOUS,
@@ -464,7 +460,6 @@ class Upfront_Permissions {
 			self::HOME_LAYOUT_MODE => __('Can Modify Homepage Layout', Upfront::TextDomain ),
 			self::ARCHIVE_LAYOUT_MODE => __('Can Modify Archive Layout', Upfront::TextDomain ),
 			self::UPLOAD => __('Can Upload Media', Upfront::TextDomain ),
-			self::RESIZE => __('Can Resize Media (in Layouts)', Upfront::TextDomain ),
 			self::MODIFY_ELEMENT_PRESETS => __('Can Create / Modify Element Presets', Upfront::TextDomain ),
 			self::DELETE_ELEMENT_PRESETS => __('Can Delete Element Presets', Upfront::TextDomain ),
 			self::SWITCH_ELEMENT_PRESETS => __('Can Switch Between Element Presets', Upfront::TextDomain ),
