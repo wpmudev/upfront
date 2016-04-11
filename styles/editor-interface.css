@@ -6312,6 +6312,21 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-icon-element-code:before {
   background-position: -39px -755px; }
 
+.upfront-icon-element-post_data:before {
+  background-position: -287px -549px; }
+
+.upfront-icon-element-author:before {
+  background-position: -258px -549px; }
+
+.upfront-icon-element-taxonomy:before {
+  background-position: -288px -579px; }
+
+.upfront-icon-element-featured_image:before {
+  background-position: -259px -581px; }
+
+.upfront-icon-element-comments:before {
+  background-position: -259px -607px; }
+
 .upfront-tabs-container .tabs-tab i {
   z-index: 2; }
 
