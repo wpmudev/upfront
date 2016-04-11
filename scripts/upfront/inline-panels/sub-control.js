@@ -77,6 +77,7 @@ define([
 				}
 
 				item.render();
+				item.delegateEvents();
 				captionControl.append(item.$el);
 				item_count++;
 			});
