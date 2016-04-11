@@ -69,6 +69,7 @@
     opacity: 0.70;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-control-dialog-open .upfront-icon,
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-icon,
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon:hover {
     opacity: 1;
 }
@@ -78,10 +79,34 @@
     height: 18px;
     opacity: 0.75;
 }
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-settings:hover:before {
+    background-position: -231px -371px;
+    width: 18px;
+    height: 18px;
+    opacity: 0.75;
+}
+.upfront-element-controls .upfront-inline-panel .upfront-control-dialog-open .upfront-icon-region-settings:before {
+    background-position: -231px -371px;
+    width: 18px;
+    height: 18px;
+    opacity: 1;
+}
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-padding:before {
     background-position: -261px -341px;
     width: 18px;
     height: 18px;
+}
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-padding:hover:before {
+    background-position: -231px -341px;
+    width: 18px;
+    height: 18px;
+	opacity: 0.75;
+}
+.upfront-element-controls .upfront-inline-panel .upfront-control-dialog-open.upfront-inline-panel-item .upfront-icon-region-padding:before {
+    background-position: -231px -341px !important;
+    width: 18px;
+    height: 18px;
+	opacity: 1;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-reorder:before {
     background-position: -261px -521px;
@@ -103,11 +128,17 @@
     height: 24px;
     opacity: 0.75;
 }
-.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-icon-region-more:before {
-    background-position: -291px -521px;
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-more:hover:before {
+    background-position: -291px -491px;
     width: 24px;
     height: 24px;
-    opacity: 1;
+    opacity: 0.75;
+}
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-icon-region-more:before {
+    background-position: -291px -491px;
+    width: 24px;
+    height: 24px;
+    opacity: 1 !important;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-inline-panel-item,
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open {
