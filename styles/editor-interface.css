@@ -9931,6 +9931,10 @@ div.sp-replacer:before {
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open {
   background: #E6ECF2; }
 
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .slider-caption-second-level .upfront-inline-panel-item,
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .slider-caption-second-level {
+  background: #DAE0E6; }
+
 .upfront-element-controls .control-panel-overlay {
   width: 100%;
   height: 100%;

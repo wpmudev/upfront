@@ -110,8 +110,13 @@
     opacity: 1;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-inline-panel-item,
-.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open{
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open {
     background: #E6ECF2;
+}
+
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .slider-caption-second-level .upfront-inline-panel-item,
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .slider-caption-second-level {
+	background: #DAE0E6;
 }
 
 .upfront-element-controls .control-panel-overlay {
