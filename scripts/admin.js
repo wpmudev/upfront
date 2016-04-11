@@ -211,12 +211,36 @@
 	}
 
 	/**
+	 * Process the checkbox states based on the edit posts capability
+	 */
+	function process_edit_content_state () {
+		var roles = get_roles("edit_posts");
+
+		$.each(roles, function (idx, role) {
+			if (!(role || {}).role) return true; // Unknown role, who knows what
+			if ((role || {}).able) return true; // Role can modify, we're good
+
+			var $roots = $('[data-capability_id="edit_others_posts"] [data-role_id="' + role.role + '"]'),
+				$checks = $roots.find(':checkbox')
+			;
+			$checks.each(function () {
+				var $me = $(this);
+				$me
+					.attr("checked", false)
+					.closest(".upfront_toggle").addClass("hide")
+				;
+			});
+		});
+	}
+
+	/**
 	 * Process all toggle states
 	 */
 	function process_toggles_state () {
 		process_boot_upfront_state();
 		process_modify_presets_state();
 		process_modify_layouts_state();
+		process_edit_content_state();
 	}
 
 	function handle_bootable_change (e) {
@@ -262,10 +286,24 @@
 		process_toggles_state();
 	}
 
+	function handle_edit_content_change () {
+		var $check = $(this),
+			role = $check.closest('[data-role_id]').attr("data-role_id"),
+			$del = $('[data-capability_id="edit_others_posts"] [data-role_id="' + role + '"]')
+		;
+		$del.find(":checkbox").attr("checked", false);
+		if ($check.is(":checked")) {
+			$del.find(".upfront_toggle").removeClass("hide");
+		} else {
+			$del.find(".upfront_toggle").addClass("hide");
+		}
+	}
+
 	function boot_event_listeners () {
 		$(document).on("change", '[data-capability_id="boot_upfront"] :checkbox', handle_bootable_change);
 		$(document).on("change", '[data-capability_id="modify_element_presets"] :checkbox', handle_modify_presets_change);
 		$(document).on("change", '[data-capability_id="layout_mode"] :checkbox', handle_modify_layouts_change);
+		$(document).on("change", '[data-capability_id="edit_posts"] :checkbox', handle_edit_content_change);
 	}
 
 	function init () {
