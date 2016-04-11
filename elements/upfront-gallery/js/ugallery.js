@@ -77,7 +77,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			'click .upfront-quick-swap': 'openImageSelector',
 			'click': 'preventNavigation',
 			'dblclick .ugallery-thumb-title': 'startCaptionEditor',
-      'click .ugallery_item_lightbox': 'openLightbox'
+			'click .ugallery_item_lightbox': 'openLightbox'
 		});
 
 		images = this.property('images');
@@ -931,8 +931,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				}
 				image.controls = controls;
 			});
-
-
 		}, 300);
 
 		if (this.isSortingActive === true) {
@@ -1735,9 +1733,21 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	},
 
 	getControlItems: function(){
+		var me = this;
+		
+		this.moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl()
+		
+		this.moreOptions.icon = 'more';
+		this.moreOptions.tooltip = l10n.ctrl.caption_position;
+
+		this.moreOptions.sub_items = {}
+		if (Upfront.Application.user_can("RESIZE")) {
+			this.moreOptions.sub_items['add'] = this.createControl('add', l10n.template.add_img, 'openImageSelector', 38, 38);
+			this.moreOptions.sub_items['toggle-sorting'] = this.createControl('toggle-sorting', l10n.toggle_dnd, 'toggleSorting', 38, 38);
+		}
+
 		return _([
-			this.createControl('add', l10n.template.add_img, 'openImageSelector', 38, 38),
-			this.createControl('toggle-sorting', l10n.toggle_dnd, 'toggleSorting', 38, 38),
+			this.moreOptions,
 			this.createPaddingControl(),
 			this.createControl('settings', l10n.settings, 'on_settings_click', 38, 38)
 		]);
