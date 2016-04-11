@@ -203,6 +203,7 @@ class Upfront_Permissions {
 		if (isset($levels[self::DEFAULT_LEVEL])) unset($levels[self::DEFAULT_LEVEL]);
 		if (isset($levels[self::CONTENT_MODE])) unset($levels[self::CONTENT_MODE]);
 		if (isset($levels[self::THEME_MODE])) unset($levels[self::THEME_MODE]);
+		if (isset($levels[self::RESIZE])) unset($levels[self::RESIZE]); // Temporarily disable media resize
 		return $levels;
 	}
 
