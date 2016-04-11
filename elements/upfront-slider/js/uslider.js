@@ -1235,6 +1235,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		if( !this.model.slideCollection.length ) return _([]); // We need no controls when there is no slide
 		var me = this,
 			captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl(),
+			moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl(),
 			slideCollection = this.model.slideCollection;
 			multiBelow = {
 				above: ['above', l10n.above_img],
@@ -1262,6 +1263,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 
 		captionControl.sub_items = {};
+		captionControl.wrapperClass = 'slider-caption-second-level';
+
 		if(primaryStyle == 'below')
 			multiControls = multiBelow;
 		else if(primaryStyle == 'over')
@@ -1292,22 +1295,30 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				}
 			});
 		}
+		
+		moreOptions.icon = 'more';
+		moreOptions.tooltip = l10n.cap_position;
+		moreOptions.sub_items = {}
+		
+		if (Upfront.Application.user_can("RESIZE")) {
+			moreOptions.sub_items['add'] = this.createControl('add', l10n.add_slide, 'openImageSelector');
+			moreOptions.sub_items['crop'] = this.createControl('crop', l10n.edit_img, 'imageEditMask');
+			moreOptions.sub_items['remove'] = this.createControl('remove', l10n.remove_slide, 'onRemoveSlide');
+		}
+		
+		if( multiControls ) {
+			moreOptions.sub_items['caption'] = captionControl;
+		}
+		
+		moreOptions.sub_items['link'] = this.createLinkControl();
 
 		var controls = _([
 			//this.createControl('next', l10n.css.next_label, 'nextSlide'),
 			//this.createControl('prev', l10n.css.prev_label, 'prevSlide'),
-			this.createLinkControl(),
-			
-			captionControl,
+			moreOptions,
 			this.createPaddingControl(),
 			this.createControl('settings', l10n.settings, 'on_settings_click')
 		]);
-		
-		if (Upfront.Application.user_can("RESIZE")) {
-			controls.splice(0, 0, this.createControl('add', l10n.add_slide, 'openImageSelector'));
-			controls.splice(1, 0, this.createControl('crop', l10n.edit_img, 'imageEditMask'));
-			controls.splice(3, 0, this.createControl('remove', l10n.remove_slide, 'onRemoveSlide'));
-		}
 
 		if( !multiControls ){
 			controls = _( controls.without( captionControl ) );
