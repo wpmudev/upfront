@@ -47,14 +47,12 @@ define([
 		open: function() {
 			this.isOpen = true;
 			this.$el.addClass('upfront-sub-control-dialog-open');
-			this.$el.siblings().find('i').css("opacity", 0.4);
 			Upfront.Events.trigger('upfront:hide:paddingPanel');
 		},
 
 		close: function() {
 			this.isOpen = false;
 			this.$el.removeClass('upfront-sub-control-dialog-open');
-			this.$el.siblings().find('i').css("opacity", 0.7);
 		},
 
 		render: function() {
