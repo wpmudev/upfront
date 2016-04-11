@@ -444,7 +444,7 @@ var PostDataElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	_post_parts: [],
 
 	render: function () {
-		//this.$el.addClass('upfront-icon-element upfront-icon-element-post-data');
+		this.$el.addClass('upfront-icon-element upfront-icon-element-' + this._default_data.type);
 		this.$el.html(this._default_data.name);
 	},
 

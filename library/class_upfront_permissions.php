@@ -159,23 +159,30 @@ class Upfront_Permissions {
 	private function _get_default_levels_map(){
 		return apply_filters('upfront-access-permissions-map', array(
 			self::BOOT => 'edit_theme_options',// 'edit_posts',
+			
+			self::OPTIONS => 'manage_options',
+			
+			self::CREATE_POST_PAGE => 'edit_posts',
+			self::EDIT_OWN =>  'edit_theme_options',// 'edit_posts',
+			self::EDIT =>  'edit_theme_options',// 'edit_others_posts',
+			
+			self::UPLOAD => 'upload_files',
+			self::RESIZE => 'edit_theme_options',// 'edit_posts',
+			self::EMBED => 'edit_theme_options',// 'edit_posts',
+			
 			self::LAYOUT_MODE => 'edit_theme_options',
+			self::RESPONSIVE_MODE => 'edit_theme_options',
+
+			self::SWITCH_ELEMENT_PRESETS => 'edit_theme_options',
+			self::MODIFY_ELEMENT_PRESETS => 'edit_theme_options',
+			self::DELETE_ELEMENT_PRESETS => 'edit_theme_options',
+			
 			self::SINGLEPOST_LAYOUT_MODE => 'edit_theme_options',
 			self::SINGLEPAGE_LAYOUT_MODE => 'edit_theme_options',
 			self::HOME_LAYOUT_MODE => 'edit_theme_options',
 			self::ARCHIVE_LAYOUT_MODE => 'edit_theme_options',
 			//self::POSTLAYOUT_MODE => 'edit_theme_options', // This one is for old postlayout mode from this_post element
-			self::UPLOAD => 'upload_files',
-			self::RESIZE => 'edit_theme_options',// 'edit_posts',
-			self::MODIFY_ELEMENT_PRESETS => 'edit_theme_options',
-			self::DELETE_ELEMENT_PRESETS => 'edit_theme_options',
-			self::SWITCH_ELEMENT_PRESETS => 'edit_theme_options',
-			self::OPTIONS => 'manage_options',
-			self::CREATE_POST_PAGE => 'edit_posts',
-			self::EDIT =>  'edit_theme_options',// 'edit_others_posts',
-			self::EDIT_OWN =>  'edit_theme_options',// 'edit_posts',
-			self::EMBED => 'edit_theme_options',// 'edit_posts',
-			self::RESPONSIVE_MODE => 'edit_theme_options',
+						
 			self::MODIFY_RESTRICTIONS => 'promote_users',
 			self::SEE_USE_DEBUG => "edit_themes",
 
@@ -196,6 +203,7 @@ class Upfront_Permissions {
 		if (isset($levels[self::DEFAULT_LEVEL])) unset($levels[self::DEFAULT_LEVEL]);
 		if (isset($levels[self::CONTENT_MODE])) unset($levels[self::CONTENT_MODE]);
 		if (isset($levels[self::THEME_MODE])) unset($levels[self::THEME_MODE]);
+		if (isset($levels[self::RESIZE])) unset($levels[self::RESIZE]); // Temporarily disable media resize
 		return $levels;
 	}
 

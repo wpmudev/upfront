@@ -54,7 +54,7 @@ class Upfront_Admin
      *
      */
     function add_menus(){
-        add_menu_page( __("General Settings", Upfront::TextDomain), __("Upfront", Upfront::TextDomain), "edit_theme_options",  self::$menu_slugs['main'], null, "", "3.013");
+        add_menu_page( __("General Settings", Upfront::TextDomain), __("Upfront", Upfront::TextDomain), "edit_theme_options",  self::$menu_slugs['main'], null, "", 58);
         new Upfront_Admin_General();
         new Upfront_Admin_Restrictions();
         new Upfront_Admin_Experimental();
