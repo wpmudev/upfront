@@ -23,55 +23,20 @@ span.role_ex_mark:before {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-}
-.upfront_toggle.hide {
-    display: none;
+    &.hide {
+        display: none;
+    }
 }
 input.upfront_toggle_checkbox {
     display: none;
-}
-.upfront_toggle_label {
-    display: block;
-    overflow: hidden;
-    cursor: pointer;
-    border: 1px solid #ddd;
-    border-radius: 50px;
-}
-.upfront_toggle_inner:after,
-.upfront_toggle_inner:before {
-    display: block;
-    float: left;
-    width: 50%;
-    height: 5px;
-    padding: 0;
-    line-height: 5px;
-    font-size: 10px;
-    color: white;
-    font-family: Trebuchet, Arial, sans-serif;
-    font-weight: bold;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    box-shadow: 0 1px 0 rgba(0,0,0,0.2) inset;
-}
-.upfront_toggle_inner:before {
-    content: "";
-    padding-left: 5px;
-    background-color: #0074A2;
-}
-.upfront_toggle_inner:after {
-    content: "";
-    padding-right: 5px;
-    background-color: #EEEEEE;
-    text-align: right;
 }
 .upfront_toggle_switch {
     display: block;
     width: 20px;
     height: 20px;
     background-color: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 15px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
     box-shadow: 0 5px 2px 0 rgba(0, 0, 0, 0.1), 0 0 15px 0 rgba(0, 0, 0, 0.1);
     position: absolute;
     top: 0;
@@ -82,88 +47,24 @@ input.upfront_toggle_checkbox {
     box-sizing: border-box;
     -webkit-transition: transform 0.2s;
     transition: transform 0.2s;
-}
-.upfront_toggle_checkbox:checked + .upfront_toggle_label .upfront_toggle_switch {
-    -webkit-transform: translateX(20px);
-    transform: translateX(20px);
-    border-color: #1abc9c;
-}
-.upfront_toggle_inner {
-    display: none;
-}
-.upfront_toggle_checkbox:checked + .upfront_toggle_label .upfront_toggle_inner {
-    margin-left: 0;
+    .upfront_toggle_checkbox:checked + .upfront_toggle_label & {
+        -webkit-transform: translateX(20px);
+        transform: translateX(20px);
+        border-color: #1abc9c;
+    }
 }
 .upfront_toggle_label {
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+    border-radius: 50px;
     border: 0;
     height: 20px;
     background: #ddd;
+    .upfront_toggle_checkbox:checked + & {
+        background: #1abc9c;
+    }
 }
-.upfront_toggle_checkbox:checked + .upfront_toggle_label {
-    background: #1abc9c;
-}
-.upfront_toggle_description {
-    display: inline-block;
-    width: 80%;
-    vertical-align: middle;
-    margin-left: 30px;
-}
-.upfront_toggle_description span.upfront_toggle_checkbox_main_label {
-    font-family: 'Roboto';
-    font-size: 14px;
-    color: #333;
-}
-.upfront_toggle_description span.upfront_toggle_checkbox_sub_label {
-    font-family: 'Roboto';
-    font-size: 12px;
-    color: #777;
-    display: block;
-}
-.upfront_toggle_radio input {
+.upfront_toggle_inner {
     display: none;
-}
-.upfront_toggle_radio span {
-    display: inline-block;
-    vertical-align: top;
-}
-.upfront_toggle_radio span.upfront_toggle_radio_button {
-    width: 16px;
-    height: 16px;
-    background-color: rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
-    box-shadow: inset 0 2px 2px 0 rgba(186, 190, 195, 0.5);
-    border: solid 1px #babec3;
-    position: relative;
-}
-.upfront_toggle_radio span.upfront_toggle_radio_button:before {
-    content: " ";
-    width: 6px;
-    height: 6px;
-    background-color: #118bc0;
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    border-radius: 50%;
-    display: none;
-}
-.float_left .upfront_toggle_radio label.upfront_toggle_radio_label {
-    display: inline-block;
-    padding-right: 30px;
-}
-.upfront_toggle_radio input:checked + label.upfront_toggle_radio_label span.upfront_toggle_radio_button:before {
-    display: block;
-}
-.upfront_toggle_radio span.upfront_toggle_radio_main_label {
-    font-family: 'Roboto';
-    font-size: 14px;
-    color: #333;
-    padding-left: 8px;
-}
-.upfront_toggle_radio span.upfront_toggle_radio_sub_label {
-    font-family: 'Roboto';
-    font-size: 12px;
-    color: #777;
-    padding-left: 30px;
-    padding-right: 50px;
-    display: block;
 }
