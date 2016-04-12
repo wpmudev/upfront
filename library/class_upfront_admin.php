@@ -37,7 +37,7 @@ class Upfront_Admin
 
         if( !( in_array( str_replace("upfront_page_", "", $hook), self::$menu_slugs ) || "toplevel_page_upfront" === $hook ) ) return;
 
-        wp_enqueue_style( 'upfront_admin', Upfront::get_root_url() . "/styles/admin.css", array(), Upfront_ChildTheme::get_version() );// todo Sam: add proper version
+        wp_enqueue_style( 'upfront_admin', Upfront::get_root_url() . "/styles/build/admin.css", array(), Upfront_ChildTheme::get_version() );// todo Sam: add proper version
         wp_register_script( 'upfront_admin_js', Upfront::get_root_url() . "/scripts/admin.js", array("jquery"), Upfront_ChildTheme::get_version(), true);
         wp_localize_script( 'upfront_admin_js', "Upfront_Data", array(
             'l10n' => array(
@@ -74,8 +74,8 @@ class Upfront_Admin
 		function RemoveAddMediaButtonsForNonAdmins(){
 				remove_action( 'media_buttons', 'media_buttons' );
 		}
-		
-		
+
+
 }
 
 new Upfront_Admin;
