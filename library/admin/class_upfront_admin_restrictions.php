@@ -67,41 +67,42 @@ class Upfront_Admin_Restrictions
 									$user_role_can = Upfront_Permissions::role( $role_id, $cap_id );
 								?>
                                 <li class="upfront_restrictions_functionality_role" data-role_id="<?php echo esc_attr($role_id); ?>">
-									<?php
-									// If it's an administrator but have no edit access, show UIs only.
-									if ( ! $can_edit ) { ?>
-											<?php if ( $user_role_can ) { ?>
+									<?php if ( current_user_can( 'manage_options' ) && ! $can_edit ) {
+										// If current admin have no edit access, show UIs only.
+											if ( $user_role_can ) {
+											?>
 												<span class="role_check_mark"></span>
 											<?php } else { ?>
 												<span class="role_ex_mark"></span>
-											<?php } ?>
-									<?php
+											<?php } 
 										continue; // No need to go further
 									} ?>
-                                    <?php if ( $role_id == "administrator" ) { ?>
-											<?php if ( ! is_multisite() ) { ?>
-												<span class="role_check_mark"></span>
-												<!-- hidden input for admin and set to always true for single site -->
-												<input  value='1' type="checkbox" name="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" class="upfront_toggle_checkbox" id="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" checked="checked" />
-											<?php } else { ?>
-												<?php if( ! is_super_admin() ) { ?>
-														<?php if( $user_role_can ) { ?>
-															<span class="role_check_mark"></span>
-														<?php } else { ?>
-															<span class="role_ex_mark"></span>
-														<?php } ?>
-														<input  value='1' type="checkbox" name="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" class="upfront_toggle_checkbox" id="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" <?php checked(true, $user_role_can ); ?>  />
-												<?php continue; } ?>
-											<?php } ?>
-                                    <?php } ?>
-									<?php
+                                    <?php
+									$is_editable = $can_edit;
+
+									if ( 'administrator' == $role_id ) {
+										if ( ! is_multisite() ) {
+											$user_role_can = true;
+											$is_editable = false;
+										} else {
+											$is_editable = is_super_admin();
+										}
+									}
+
+									// Check administrator first
+									if ( ! $is_editable ) { ?>
+											<span class="role_check_mark"></span>
+											<!-- hidden input for admin and set to always true for single site -->
+											<input  value='1' type="checkbox" name="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" class="upfront_toggle_checkbox" id="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" <?php checked(true, $user_role_can ); ?> />
+                                    <?php } 
 									/**
+									 * Hide this logic for now. Not sure what these are for :)
 									if (in_array($cap_id, $content_restrictions) && !$this->_wp_role_can($role_id, 'edit_posts')) { ?>
                                         <!--<span class="role_ex_mark"></span>-->
                                     <?php } else if (in_array($cap_id, $upload_restrictions) && !$this->_wp_role_can($role_id, 'upload_files')) { ?>
                                     <?php } else if (in_array($cap_id, $admin_restrictions) && !$this->_wp_role_can($role_id, 'manage_options')) {
-                                    **/ ?>
-                                    <?php if ( $can_edit ) { ?>
+                                    **/ 
+									else { ?>
                                         <div class="<?php echo $this->_toggle_class($role_id,$cap_id); ?>">
                                             <input  value='1' type="checkbox" name="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" class="upfront_toggle_checkbox" id="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" <?php checked(true, Upfront_Permissions::role( $role_id, $cap_id )); ?> />
                                             <label class="upfront_toggle_label" for="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]">
