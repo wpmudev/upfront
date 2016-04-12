@@ -18,11 +18,10 @@ define([
 				firstStateSettings = false
 			;
 
-			if(
+			if (
 				(Upfront.Application.get_current() === Upfront.Application.MODE.THEME || this.options.model.get('theme_preset') !== true)
 				&& this.options.model.get('id') !== 'default'
 				&& Upfront.Application.user_can("DELETE_PRESET")
-				&& Upfront.Application.user_can("MODIFY_PRESET")
 			) {
 				var fields = [
 					new Upfront.Views.Editor.Field.Button({
@@ -40,7 +39,6 @@ define([
 			} else if (
 				Upfront.Application.get_current() !== Upfront.Application.MODE.THEME
 				&& (this.options.model.get('id') === 'default' || this.options.model.get('theme_preset') === true)
-				&& Upfront.Application.user_can("DELETE_PRESET")
 				&& Upfront.Application.user_can("MODIFY_PRESET")
 			) {
 				var fields = [
@@ -58,59 +56,61 @@ define([
 				var fields = [];
 			}
 
-			// First add global settings
-			_.each(this.options.stateModules, function(stateModules, state) {
-				if(state === "Global") {
-					var stateSettings = new StateSettings({
-						model: this.model,
-						modules: stateModules,
-						state: state
-					});
-					fields.push(stateSettings);
-				}
-			}, this);
-
-			// Than add settings state tabs
-			_.each(this.options.stateModules, function(stateModules, state) {
-				if(state !== "Global") {
-					var showStateButton = new ShowStateSettingsButton({
-						state: state
-					});
-					fields.push(showStateButton);
-					this.listenTo(showStateButton, 'upfront:presets:state_show', this.showState);
-
-					if (!firstStateButton) {
-						firstStateButton = showStateButton;
+			if (Upfront.Application.user_can("MODIFY_PRESET")) {
+				// First add global settings
+				_.each(this.options.stateModules, function(stateModules, state) {
+					if(state === "Global") {
+						var stateSettings = new StateSettings({
+							model: this.model,
+							modules: stateModules,
+							state: state
+						});
+						fields.push(stateSettings);
 					}
-				}
-			}, this);
+				}, this);
 
-			// Than add non-global settings state panels
-			_.each(this.options.stateModules, function(stateModules, state) {
-				if(state !== "Global") {
-					var stateSettings = new StateSettings({
-						model: this.model,
-						modules: stateModules,
-						state: state
-					});
-					fields.push(stateSettings);
-					if (!firstStateSettings) {
-						firstStateSettings = stateSettings;
-					} else {
-						stateSettings.$el.hide();
+				// Than add settings state tabs
+				_.each(this.options.stateModules, function(stateModules, state) {
+					if(state !== "Global") {
+						var showStateButton = new ShowStateSettingsButton({
+							state: state
+						});
+						fields.push(showStateButton);
+						this.listenTo(showStateButton, 'upfront:presets:state_show', this.showState);
+
+						if (!firstStateButton) {
+							firstStateButton = showStateButton;
+						}
 					}
-				}
-			}, this);
+				}, this);
 
-			//Wrap tab buttons
-			setTimeout(function(){
-				me.$el.find('.state_settings_button').wrapAll('<div class="state_settings_button_wrapper">');
+				// Than add non-global settings state panels
+				_.each(this.options.stateModules, function(stateModules, state) {
+					if(state !== "Global") {
+						var stateSettings = new StateSettings({
+							model: this.model,
+							modules: stateModules,
+							state: state
+						});
+						fields.push(stateSettings);
+						if (!firstStateSettings) {
+							firstStateSettings = stateSettings;
+						} else {
+							stateSettings.$el.hide();
+						}
+					}
+				}, this);
 
-				var wrapper = me.$el.find('.state_settings_button_wrapper');
-				if(wrapper.prev().hasClass('delete_preset')) {
-					wrapper.addClass('move-wrapper-top');
-				}
-			}, 50);
+				//Wrap tab buttons
+				setTimeout(function(){
+					me.$el.find('.state_settings_button').wrapAll('<div class="state_settings_button_wrapper">');
+
+					var wrapper = me.$el.find('.state_settings_button_wrapper');
+					if(wrapper.prev().hasClass('delete_preset')) {
+						wrapper.addClass('move-wrapper-top');
+					}
+				}, 50);
+			}
 
 			if (firstStateButton) firstStateButton.$el.addClass('active');
 			if (firstStateSettings) firstStateSettings.$el.show();

@@ -26,7 +26,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 		$comp = Upfront_Behavior::compression();
 		if (!$comp->has_experiments_level($comp->constant('HARDCORE'))) return false;
 		if (!empty($_GET['editmode'])) return false; // Absolutely don't do this if we're to auto-boot
-		wp_dequeue_script('jquery'); // Oooooh yeah we went there!
+		wp_deregister_script('jquery'); // Oooooh yeah we went there!
 	}
 
 	/**
