@@ -876,13 +876,14 @@ define([
 				captionHeight = this.get_preset_property("caption-position") === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
 				// padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
 				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
-				hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
-				vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
+				elementWidth = parseInt(attr.width),
+				elementHeight = parseInt(attr.height) - captionHeight,
 				ratio,
 				newSize;
 
 			// data.elementSize = {width: attr.width - (2 * padding), height: attr.height - (2 * padding) - captionHeight};
-			data.elementSize = {width: parseInt(attr.width) - hPadding, height: parseInt(attr.height) - vPadding - captionHeight};
+			data.elementSize = {width: elementWidth < 0 ? 10 : elementWidth, height: elementHeight < 0 ? 10 : elementHeight};
+
 			newSize = this.getElementShapeSize(data.elementSize);
 			if ( false !== newSize ) {
 				data.elementSize = newSize;
