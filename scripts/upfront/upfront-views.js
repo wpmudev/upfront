@@ -2038,8 +2038,26 @@ define([
 
 				//this.update_position();
 				this.checkUiOffset();
+				
+				// ensure all controls updated on breakpoint change
+				if ( typeof this.parent_module_view !== "undefined" && this.parent_module_view ) {
+					this.$control_el = this.parent_module_view.$('.upfront-module');
+					this.updateControls();
+					var me = this;
+					setTimeout(function() {
+						if( typeof me.paddingControl !== 'undefined' && typeof me.paddingControl.model !== 'undefined' ) {
+							me.paddingControl.refresh(me.paddingControl.model);
+							me.apply_paddings($obj);
+							me.after_breakpoint_change();
+						}						
+					}, 300);
+				}
 			},
-
+			
+			after_breakpoint_change: function(){
+				//Override this method on Element views for specifics
+			},
+			
 			activate: function () {
 				// Deactivate previous ObjectView
 				if(typeof(Upfront.data.prevEntity) !== 'undefined' && Upfront.data.prevEntity !== false) {

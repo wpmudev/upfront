@@ -95,7 +95,7 @@ define([
 
 			this.listenTo(Upfront.Events, 'upfront:layout_size:change_breakpoint', function(newMode){
 				if(newMode.id !== 'desktop') {
-					this.setMobileMode();
+					this.mobileMode = true;
 				} else {
 					this.unsetMobileMode();
 				}
@@ -157,6 +157,7 @@ define([
 
 		setDefaults: function(){
 			this.sizes = false;
+			this.originalDesktopElementSize = {width: 0, height: 0};
 			this.elementSize = {width: 0, height: 0};
 			this.imageId = 0;
 			this.imageSize = {width: 0, height: 0};
@@ -781,9 +782,6 @@ define([
 
 		unsetMobileMode: function(){
 			this.mobileMode = false;
-			if(this.parent_module_view){
-				this.render();
-			}
 		},
 
 		updateBreakpointPadding: function(breakpointColumnPadding) {
@@ -794,6 +792,15 @@ define([
 			}
 
 			return breakpointColumnPadding;
+		},
+		
+		after_breakpoint_change: function(){
+		
+			this.originalDesktopElementSize = this.property('element_size');
+			
+			if(this.mobileMode) {
+				this.render();
+			}
 		},
 
 		/***************************************************************************/
@@ -1137,6 +1144,12 @@ define([
 		},
 
 		saveResizing: function() {
+		
+			// to fix responsive bug that crops the desktop image on save
+			if(this.mobileMode) {
+				this.property('element_size', this.originalDesktopElementSize);
+			}
+		
 			var me = this;
 			if(this.cropTimer){
 				clearTimeout(this.cropTimer);

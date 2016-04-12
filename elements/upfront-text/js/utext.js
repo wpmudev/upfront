@@ -87,6 +87,11 @@
 				var is_edited = this.model.get_property_value_by_name('is_edited');
 				return is_edited ? true : false;
 			},
+			after_breakpoint_change: function(){
+				if(this.parent_module_view){
+					this.render();
+				}
+			},
 			on_render: function() {
 				var me = this,
 				blurTimeout = false;
