@@ -42,6 +42,10 @@ class Upfront_Posts_PostsData {
 
 			// list_type===custom settings
 			'posts_list' => '', // JSON map of id/permalink pairs
+			
+			'thumbnail_size' => 'medium', // thumbnail, medium, large, uf_post_featured_image, uf_custom_thumbnail_size
+			'custom_thumbnail_width' => 200, 
+			'custom_thumbnail_height' => 200, 
 
 			// Post parts
 			'post_parts' => $enabled_parts,
@@ -234,6 +238,14 @@ class Upfront_Posts_PostsData {
 			'sticky_ignore' => __('Ignore sticky posts', 'upfront'),
 			'sticky_prepend' => __('Prepend sticky posts', 'upfront'),
 			'sticky_exclude' => __('Exclude sticky posts', 'upfront'),
+			'thumbnail_size' => __('Thumbnail Size', 'upfront'),
+			'thumbnail_size_thumbnail' => __('Thumbnail', 'upfront'),
+			'thumbnail_size_medium' => __('Medium', 'upfront'),
+			'thumbnail_size_large' => __('Large', 'upfront'),
+			'thumbnail_size_post_feature' => __('Post Feature Image', 'upfront'),
+			'thumbnail_size_custom' => __('Custom', 'upfront'),
+			'thumbnail_size_custom_width' => __('Custom Width', 'upfront'),
+			'thumbnail_size_custom_height' => __('Custom Height', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

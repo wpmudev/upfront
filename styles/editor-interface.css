@@ -5615,6 +5615,12 @@ a.upfront-region-name-edit-trigger:before {
   white-space: nowrap;
   height: 10px; }
 
+#element-settings-sidebar .upfront-settings-item.upfront-thumbnail-size {
+  padding-bottom: 15px; }
+
+.upfront-field-wrap-radios.upfront-thumbnail-size-choices {
+  margin-top: 0; }
+
 #element-settings-sidebar {
   position: fixed;
   top: 46px;
