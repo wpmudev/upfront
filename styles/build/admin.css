@@ -101,23 +101,26 @@ input.upfront_toggle_checkbox {
 
 .upfront_toggle_switch {
   display: block;
-  width: 18px;
-  height: 18px;
-  margin: 0 1px;
+  width: 20px;
+  height: 20px;
   background-color: #fff;
-  border: solid 1px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 15px;
   box-shadow: 0 5px 2px 0 rgba(0, 0, 0, 0.1), 0 0 15px 0 rgba(0, 0, 0, 0.1);
   position: absolute;
   top: 0;
   bottom: 0;
   right: 20px;
-  -webkit-transition: right 0.2s;
-  transition: right 0.2s; }
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-transition: transform 0.2s;
+  transition: transform 0.2s; }
 
 .upfront_toggle_checkbox:checked + .upfront_toggle_label .upfront_toggle_switch {
-  right: 0;
-  border: 1px solid #1abc9c; }
+  -webkit-transform: translateX(20px);
+  transform: translateX(20px);
+  border-color: #1abc9c; }
 
 .upfront_toggle_inner {
   display: none; }
