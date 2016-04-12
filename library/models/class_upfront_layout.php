@@ -358,9 +358,10 @@ class Upfront_Layout extends Upfront_JsonModel {
 		global $wpdb;
 		self::set_storage_key($storage_key);
 		$storage_key = self::get_storage_key();
+		$sql_storage_key = $wpdb->esc_like($storage_key);
 
 		$results = array();
-		$list = $wpdb->get_row("SELECT option_name FROM $wpdb->options WHERE ( `option_name` LIKE '{$storage_key}-single%' OR `option_name` LIKE '{$storage_key}-archive%' )");
+		$list = $wpdb->get_col("SELECT option_name FROM $wpdb->options WHERE ( `option_name` LIKE '{$storage_key}-single%' OR `option_name` LIKE '{$storage_key}-archive%' )");
 		if (empty($list)) return $results;
 
 		foreach ($list as $item) {
