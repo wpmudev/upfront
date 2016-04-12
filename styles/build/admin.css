@@ -358,6 +358,9 @@ div.upfront-general-settings .upfront-debug-block button.loading {
   font-weight: normal;
   color: #333; }
 
+ul.upfront_restrictions_functionality_row:hover li {
+  background-color: #f1f1f1; }
+
 #upfront_user_restrictions_listing li.upfront_restrictions_functionality_role {
   width: 10%; }
 
