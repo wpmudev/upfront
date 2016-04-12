@@ -15,6 +15,13 @@ _.mixin({
 	}
 });
 
+var _tpl = _.template;
+_.template = function (tpl, data) {
+	if (typeof undefined === typeof data) return _tpl(tpl);
+	var tmp = _tpl(tpl);
+	return tmp(data);
+}
+
 //requestFrameAnimation polyfill
 var rAFPollyfill = function(callback){
 		var currTime = new Date().getTime(),
