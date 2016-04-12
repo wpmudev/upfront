@@ -223,7 +223,11 @@ define([
 				this.stopListening(this.editPresetModule);
 			}
 
-			if (Upfront.Application.user_can("SWITCH_PRESET") && Upfront.Application.user_can("MODIFY_PRESET")) { // Don't build the control if we can't do this
+			if (
+				Upfront.Application.user_can("SWITCH_PRESET") 
+				&& 
+				(Upfront.Application.user_can("MODIFY_PRESET") || Upfront.Application.user_can("DELETE_PRESET"))
+			) { // Don't build the control if we can't do this
 				this.editPresetModule = new EditPresetModule({
 					model: presetModel,
 					stateModules: this.stateModules
