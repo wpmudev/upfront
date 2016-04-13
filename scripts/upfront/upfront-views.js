@@ -296,7 +296,8 @@ define([
 					});
 
 					if (Upfront.Application.user_can("EDIT") === false) {
-						if (parseInt(post.get('post_author'), 10) === Upfront.data.currentUser.id && Upfront.Application.user_can("EDIT_OWN") === true) {
+						// Make sure post is not undefined else editor is not loading
+						if (typeof post !== "undefined" && parseInt(post.get('post_author'), 10) === Upfront.data.currentUser.id && Upfront.Application.user_can("EDIT_OWN") === true) {
 							me.$el.append(feature_selector);
 						}
 					} else {
