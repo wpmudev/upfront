@@ -37,8 +37,10 @@ class Upfront_Admin_Restrictions
         $content_restrictions = Upfront_Permissions::boot()->get_content_restrictions();
         $admin_restrictions = Upfront_Permissions::boot()->get_admin_restrictions();
         $upload_restrictions = Upfront_Permissions::boot()->get_upload_restrictions();
-		$can_edit = ( is_multisite() && is_super_admin() ) || ( current_user_can( 'manage_options' ) && Upfront_Permissions::role( 'administrator', 'modify_restrictions' ) );
-        ?>
+		$current_user = wp_get_current_user();
+		$current_user_role = isset( $current_user->roles ) ? $current_user->roles[0] : '';
+		$can_edit = ( is_multisite() && is_super_admin() ) || ( current_user_can( 'manage_options' ) && Upfront_Permissions::role( $current_user_role, 'modify_restrictions' ) );
+		?>
         <div class="wrap upfront_admin upfront_admin_restrictions">
             <h1><?php esc_html_e("User Restrictions", Upfront::TextDomain); ?><span class="upfront_logo"></span></h1>
             <form action="<?php echo esc_url( add_query_arg( array("page" => "upfront_restrictions") ) ) ?>" method="post" id="upfront_restrictions_form">
@@ -78,7 +80,7 @@ class Upfront_Admin_Restrictions
 										continue; // No need to go further
 									} ?>
                                     <?php
-									$is_editable = $can_edit;
+									$is_editable = true;
 
 									if ( 'administrator' == $role_id ) {
 										if ( ! is_multisite() ) {
@@ -87,22 +89,25 @@ class Upfront_Admin_Restrictions
 										} else {
 											$is_editable = is_super_admin();
 										}
+									} else {
+										if ( (in_array($cap_id, $content_restrictions) && !$this->_wp_role_can($role_id, 'edit_posts') )
+											 || ( in_array($cap_id, $upload_restrictions) && !$this->_wp_role_can($role_id, 'upload_files') )
+											 || ( in_array($cap_id, $admin_restrictions) && !$this->_wp_role_can($role_id, 'manage_options') )
+										) {
+												$is_editable = false;
+											}
 									}
 
-									// Check administrator first
-									if ( ! $is_editable ) { ?>
-											<span class="role_check_mark"></span>
+									if ( ! $is_editable) {
+										// Stop the user from editing it's own caps.
+										if ( 'administrator' == $role_id || $current_user_role == $role_id ) { ?>
+											<?php if ( $user_role_can ) { ?>
+												<span class="role_check_mark"></span>
+											<?php } ?>
 											<!-- hidden input for admin and set to always true for single site -->
 											<input  value='1' type="checkbox" name="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" class="upfront_toggle_checkbox" id="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" <?php checked(true, $user_role_can ); ?> />
-                                    <?php } 
-									/**
-									 * Hide this logic for now. Not sure what these are for :)
-									if (in_array($cap_id, $content_restrictions) && !$this->_wp_role_can($role_id, 'edit_posts')) { ?>
-                                        <!--<span class="role_ex_mark"></span>-->
-                                    <?php } else if (in_array($cap_id, $upload_restrictions) && !$this->_wp_role_can($role_id, 'upload_files')) { ?>
-                                    <?php } else if (in_array($cap_id, $admin_restrictions) && !$this->_wp_role_can($role_id, 'manage_options')) {
-                                    **/ 
-									else { ?>
+										<?php } ?>
+									<?php } else { ?>
                                         <div class="<?php echo $this->_toggle_class($role_id,$cap_id); ?>">
                                             <input  value='1' type="checkbox" name="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" class="upfront_toggle_checkbox" id="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" <?php checked(true, Upfront_Permissions::role( $role_id, $cap_id )); ?> />
                                             <label class="upfront_toggle_label" for="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]">
