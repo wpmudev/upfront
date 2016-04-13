@@ -1276,12 +1276,14 @@ var Application = new (Backbone.Router.extend({
 			loading_notice: Upfront.Settings.l10n.global.application.long_loading_notice,
 			loading_type: 'upfront-boot',
 			done: Upfront.Settings.l10n.global.application.thank_you_for_waiting,
-			fixed: true
+			fixed: true,
+			remove_on_event: true,
+			remove_on_event_event: 'upfront:renderingqueue:start'
 		});
 		app.loading.on_finish(function(){
 			$(Upfront.Settings.LayoutEditor.Selectors.sidebar).show();
 			$(".upfront-editable_trigger").hide();
-			
+
 			// Disable settings if LAYOUT_MODE permission is disabled
 			if (!Upfront.Application.user_can_modify_layout()) {
 				app.setup_edit_layout();
@@ -1354,7 +1356,7 @@ var Application = new (Backbone.Router.extend({
 		var last = this.mode.last || this.MODE.DEFAULT;
 		this.start(last);
 	},
-	
+
 	setup_edit_layout: function() {
 		var app = this;
 
@@ -1363,7 +1365,7 @@ var Application = new (Backbone.Router.extend({
 
 			//Remove region edit button
 			$page.find('.upfront-region-edit-trigger').remove();
-			
+
 			//Remove delete buttons
 			$('a.upfront-entity-delete_trigger').remove();
 		});
@@ -1945,7 +1947,9 @@ var Application = new (Backbone.Router.extend({
 			loading = new Upfront.Views.Editor.Loading({
 				loading: message,
 				done: done,
-				fixed: true
+				fixed: true,
+				remove_on_event: true,
+				remove_on_event_event: 'upfront:renderingqueue:start'
 			});
 			loading.render();
 			$('body').append(loading.$el);
