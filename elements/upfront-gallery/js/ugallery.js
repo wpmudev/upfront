@@ -541,6 +541,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 					'max-width': maxWidth,
 					'max-height': maxHeight
 				});
+
+				// Resize lightbox on window resize
+				me.resizeLightboxContainer();
 			}
 		;
 
@@ -640,8 +643,20 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			$('body').append('<style id="' + containerClass + '"></style>');
 		}
 		$('style#' + containerClass).html(this.property('styles'));
-	},
 
+		//Resize lightbox to fit editor container
+		this.resizeLightboxContainer();
+	},
+	resizeLightboxContainer: function() {
+		var currentLightbox = $( '.mfp-bg, .mfp-wrap' ),
+			sidebar_ui = $( '#sidebar-ui' ),
+			sidebar_ui_width = sidebar_ui.width(),
+			lightbox_content = currentLightbox.find( '.mfp-container' )
+		;
+
+		currentLightbox.css( 'left', sidebar_ui_width );
+		lightbox_content.css( 'width', currentLightbox.width() - sidebar_ui_width );
+	},
 	createLightboxSettings: function () {
 		$('.mfp-container').append(_.template(lightboxTpl, {
 			edit_lightbox_css: l10n.lightbox.edit_css,
