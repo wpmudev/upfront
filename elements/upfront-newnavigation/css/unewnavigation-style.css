@@ -15,7 +15,7 @@ ul.menu {
   background: #333;
 }
 ul.sub-menu {
-  background-color:#262626;
+  /* background-color:#262626; */
 }
 ul.menu li a {
   color:#fff;
@@ -126,7 +126,7 @@ div.upfront-navigation div[data-style="horizontal"] ul.sub-menu > li > ul {
 }
 
 div.upfront-navigation div[data-style="horizontal"] ul.sub-menu > li > ul > li a {
-	border-left:1px #dadee1 solid;
+	/* border-left:1px #dadee1 solid; */
 }
 
 /* VERTICAL */
@@ -141,7 +141,7 @@ div.upfront-navigation div[data-style="vertical"] ul.sub-menu {
   top: 0;
 }
 div.upfront-navigation div[data-style="vertical"] ul.sub-menu > li > ul > li a {
-	border-left:1px #dadee1 solid;
+	/* border-left:1px #dadee1 solid; */
 }
 
 /* BURGER */
