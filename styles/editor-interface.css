@@ -5621,6 +5621,10 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-field-wrap-radios.upfront-thumbnail-size-choices {
   margin-top: 0; }
 
+.upfront-field-wrap-radios.upfront-thumbnail-size-choices em {
+  font-style: italic;
+  font-size: 10px; }
+
 #element-settings-sidebar {
   position: fixed;
   top: 46px;

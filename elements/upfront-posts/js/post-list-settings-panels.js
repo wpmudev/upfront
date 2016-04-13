@@ -401,6 +401,7 @@ var ThumbnailSettings = Upfront.Views.Editor.Settings.Item.extend({
 		this.options = opts;
 		this.was_changed = false;
 		this.populate_thumbnail_size_options();
+		Upfront.Events.once('element:settings:saved', this.save_custom_thumbnail_sizes, this);
 	},
 
 	render: function () {
@@ -435,7 +436,7 @@ var ThumbnailSettings = Upfront.Views.Editor.Settings.Item.extend({
 			}
 		}));
 		
-		if ( 'custom' === size ) this.populate_thumbnail_custom_sizes();
+		if ( 'uf_custom_thumbnail_size' === size ) this.populate_thumbnail_custom_sizes();
 		
 		if ( me.was_changed ) {
 			this.$el.empty();
@@ -469,6 +470,26 @@ var ThumbnailSettings = Upfront.Views.Editor.Settings.Item.extend({
 				me.model.set_property('custom_thumbnail_height', value, true); 
 			}
 		}));
+	},
+	
+	save_custom_thumbnail_sizes: function () {		
+		var me = this,
+			size = this.model.get_property_value_by_name('thumbnail_size'),
+			width = this.model.get_property_value_by_name('custom_thumbnail_width'),
+			height = this.model.get_property_value_by_name('custom_thumbnail_height')
+		;
+		
+		if ( 'uf_custom_thumbnail_size' === size ) {
+			var saveData = {
+				action: 'upfront_add_custom_thumbnail_size',
+				thumbnail_size: JSON.stringify({
+					name: size,
+					thumbnail_width: width,
+					thumbnail_height: height
+				})
+			};
+			Upfront.Util.post(saveData);
+		}
 	}
 	
 });
