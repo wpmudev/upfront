@@ -1277,8 +1277,7 @@ var Application = new (Backbone.Router.extend({
 			loading_type: 'upfront-boot',
 			done: Upfront.Settings.l10n.global.application.thank_you_for_waiting,
 			fixed: true,
-			remove_on_event: true,
-			remove_on_event_event: 'upfront:renderingqueue:start'
+			remove_on_event: 'upfront:renderingqueue:start'
 		});
 		app.loading.on_finish(function(){
 			$(Upfront.Settings.LayoutEditor.Selectors.sidebar).show();
@@ -1948,8 +1947,7 @@ var Application = new (Backbone.Router.extend({
 				loading: message,
 				done: done,
 				fixed: true,
-				remove_on_event: true,
-				remove_on_event_event: 'upfront:renderingqueue:start'
+				remove_on_event: 'upfront:renderingqueue:start'
 			});
 			loading.render();
 			$('body').append(loading.$el);

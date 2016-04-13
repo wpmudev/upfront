@@ -9144,12 +9144,10 @@
 
 				// Allow loaders to not overlap, kill this one on start of next one
 				if (me.options.remove_on_event) {
-					Upfront.Events.once(me.options.remove_on_event_event, function() {
-						setTimeout( function() {
-							me.remove();
-							clearTimeout(me.done_timeout);
-							if ( me.done_callback ) _(me.done_callback).each(function(cbk) { if (cbk && cbk.call) cbk.call(me); });
-						}, 50);
+					Upfront.Events.once(me.options.remove_on_event, function() {
+						me.remove();
+						clearTimeout(me.done_timeout);
+						if ( me.done_callback ) _(me.done_callback).each(function(cbk) { if (cbk && cbk.call) cbk.call(me); });
 					});
 				}
 
