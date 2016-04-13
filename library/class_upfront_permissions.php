@@ -232,7 +232,7 @@ class Upfront_Permissions {
 			array(self::NOT_LOAD_WP_ROLES => 'not_load')
 		);
 
-		return !!update_option(self::RESTRICTIONS_KEY, $restrictions, false);
+		return !!update_site_option(self::RESTRICTIONS_KEY, $restrictions, false);
 	}
 
 	/**
@@ -241,7 +241,7 @@ class Upfront_Permissions {
 	 * @return array Upfront access levels map
 	 */
 	public function get_restrictions () {
-		$map = get_option(self::RESTRICTIONS_KEY, array());
+		$map = get_site_option(self::RESTRICTIONS_KEY, array());
 		return !empty($map)
 			? wp_parse_args($map, $this->_get_default_levels_map())
 			: $this->_get_default_levels_map()
@@ -340,8 +340,12 @@ class Upfront_Permissions {
 	 * @param bool $arg
 	 * @return bool
 	 */
-	private function _current_user_can ($level, $arg=false) {
-		$level = $this->_resolve_level_to_capability($level);
+	private function _current_user_can ($_level, $arg=false) {
+		if (empty($_level)) return false;
+		if( current_user_can("administrator") && !is_super_admin()  )
+			return self::role( "administrator", $_level );
+
+		$level = $this->_resolve_level_to_capability($_level);
 		if (empty($level)) return false;
 		if (
 			!is_user_logged_in() &&
