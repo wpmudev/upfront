@@ -329,6 +329,7 @@ div.upfront-general-settings .upfront-debug-block button.loading {
 
 #upfront_user_restrictions_listing {
   display: table;
+  table-layout: fixed;
   width: 100%;
   height: 100%;
   background: white;
