@@ -195,8 +195,10 @@ abstract class Upfront_Entity {
 			$background_default = $this->_get_breakpoint_property('background_default', $breakpoint_id);
 			if ($type == 'featured' && has_post_thumbnail(Upfront_Output::get_post_id())) {
 				$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( Upfront_Output::get_post_id() ), 'single-post-thumbnail' );
-				$background_image = $featured_image[0];
-				$background_image_ratio = round($featured_image[2]/$featured_image[1], 2);
+				if (!empty($featured_image)) {
+					$background_image = $featured_image[0];
+					$background_image_ratio = round($featured_image[2]/$featured_image[1], 2);
+				}
 			} else if (!$type || $type == 'image' || ($type == 'featured' && $background_default == 'image')) {
 				$background_image = $this->_get_breakpoint_property('background_image', $breakpoint_id);
 				$background_image_ratio = $this->_get_breakpoint_property('background_image_ratio', $breakpoint_id);
