@@ -25,6 +25,7 @@ class Upfront_Admin_Restrictions
             );
             add_action( 'load-' . $save_restriction , array($this, 'save_user_restriction') );
         }
+            add_action( 'update_option' , array($this, 'update_user_role_capabilities'), 10, 3);
     }
 
     /**
@@ -32,7 +33,7 @@ class Upfront_Admin_Restrictions
      */
     function render_page () {
         if (!$this->_can_modify_restrictions()) wp_die("Nope.");
-        
+
         $roles = $this->_get_roles();
         $content_restrictions = Upfront_Permissions::boot()->get_content_restrictions();
         $admin_restrictions = Upfront_Permissions::boot()->get_admin_restrictions();
@@ -89,7 +90,7 @@ class Upfront_Admin_Restrictions
         </div>
         <?php
     }
-		
+
     /**
      * Saves the User Restrictions set
      */
@@ -99,7 +100,7 @@ class Upfront_Admin_Restrictions
 
         $restrictions = (array) filter_input( INPUT_POST, "restrictions", FILTER_VALIDATE_BOOLEAN , FILTER_FORCE_ARRAY );
         $this->_update_capabilities($restrictions);
-        
+
         wp_safe_redirect(add_query_arg('saved', true));
         die;
     }
@@ -113,7 +114,7 @@ class Upfront_Admin_Restrictions
         if ( is_super_admin() ) {
             return true;
         }
-        
+
         $current_user = wp_get_current_user();
         return isset($current_user->roles[0])
             ? Upfront_Permissions::role( $current_user->roles[0], Upfront_Permissions::MODIFY_RESTRICTIONS )
@@ -136,7 +137,7 @@ class Upfront_Admin_Restrictions
 
         return !!$role->has_cap($capability);
     }
-		
+
 	/**
      * Utility for setting default toggle class
      *
@@ -161,7 +162,7 @@ class Upfront_Admin_Restrictions
         $labels = Upfront_Permissions::boot()->get_capability_labels();
         return isset( $labels[$cap_id] ) ? $labels[$cap_id] : sprintf(__("No label set for &quot;%s&quot;", Upfront::TextDomain), $cap_id);
     }
-		
+
     /**
      * Updates all capabilities of each role
      * @param array $restrictions saved
@@ -174,7 +175,7 @@ class Upfront_Admin_Restrictions
             foreach ($caps as $cap => $allowed) {
                 if (!$allowed) continue;
                 if (!isset($output[$cap])) $output[$cap] = array();
-                
+
                 $output[$cap][] = $role;
 
                 // If this role needs saving then let's grant the `Upfront_Permissions::SAVE`
@@ -188,4 +189,37 @@ class Upfront_Admin_Restrictions
 
         Upfront_Permissions::boot()->set_restrictions($output);
     }
+
+		/**
+		 * If for any reason user role capabilities change we need to reflect that in
+		 * Upfront Permissions. For start handle 'edit_posts' and 'edit_pages' capabilities revocation
+		 * by nuking role capabilites for interacting with posts/pages.
+		 */
+		public function update_user_role_capabilities($option_name, $old, $new) {
+			if ($option_name !== 'wp_user_roles') return;
+
+			// Find if any role has lost edit_pages or edit posts capability
+			$revoked_edit_cap_role = false;
+
+			foreach($old as $role=>$data) {
+				// Check if role has lost edit_pages cap
+				if (array_key_exists('edit_pages', $old[$role]['capabilities']) && false === array_key_exists('edit_pages', $new[$role]['capabilities'])) {
+					$revoked_edit_cap_role = $role;
+				}
+				// Check if role has lost edit_posts cap
+				if (array_key_exists('edit_posts', $old[$role]['capabilities']) && false === array_key_exists('edit_posts', $new[$role]['capabilities'])) {
+					$revoked_edit_cap_role = $role;
+				}
+			}
+
+			if ($revoked_edit_cap_role === false) return;
+
+			$restrictions = Upfront_Permissions::boot()->get_restrictions();
+			// Nuke role capabilities for working with posts/pages
+			$restrictions['create_post_page'] = array_diff($restrictions['create_post_page'], array($revoked_edit_cap_role));
+			$restrictions['edit_posts'] = array_diff($restrictions['edit_posts'], array($revoked_edit_cap_role));
+			$restrictions['edit_others_posts'] = array_diff($restrictions['edit_others_posts'], array($revoked_edit_cap_role));
+
+			Upfront_Permissions::boot()->set_restrictions($restrictions);
+		}
 }
