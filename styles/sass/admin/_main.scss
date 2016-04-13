@@ -32,3 +32,13 @@
     display: table;
     content: " ";
 }
+
+#toplevel_page_upfront .wp-menu-image:before {
+    content: "";
+    background-image: url("../../img/uf-admin-sprite.svg");
+    background-repeat: no-repeat;
+    background-position: -10px -85px;
+    width: 18px;
+    height: 18px;
+    margin-top: 7px;
+}

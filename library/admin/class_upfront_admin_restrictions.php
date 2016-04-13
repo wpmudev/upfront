@@ -19,7 +19,7 @@ class Upfront_Admin_Restrictions
                 "upfront",
                 __("User Restrictions", Upfront::TextDomain),
                 __("User Restrictions", Upfront::TextDomain),
-                'read',
+                'manage_options',
                 Upfront_Admin::$menu_slugs['restrictions'],
                 array($this, "render_page")
             );

@@ -414,7 +414,7 @@ class Upfront_MediaServer extends Upfront_Server {
 				if(is_dir($dirPath . '/' . $file))
 					continue;
 
-				if(preg_match('/\.(jpg|jpeg|gif|svg|png|bmp)$/i', $file)) {
+				if(preg_match('/\.(jpg|jpeg|gif|svg|png)$/i', $file)) {
 					$imageWidth = 0;
 					$imageHeight = 0;
 					$imageSize = getimagesize($dirUrl .$file);
@@ -453,7 +453,7 @@ class Upfront_MediaServer extends Upfront_Server {
 		$file = $_FILES['media'];
 		$filename = $file['name'];
 
-		if(!preg_match('/\.(jpg|jpeg|gif|svg|png|bmp)$/i', $filename))
+		if(!preg_match('/\.(jpg|jpeg|gif|svg|png)$/i', $filename))
 			$this->_out(new Upfront_JsonResponse_Error("The file is not an image."));
 
 		$relpath = false;
@@ -564,7 +564,14 @@ class Upfront_MediaServer extends Upfront_Server {
 						@unlink("{$pfx}{$filename}");
 						$this->_out(new Upfront_JsonResponse_Error("Error uploading the media item: {$media->error}"));
 				}
+				
 				$filename = $media->name;
+				
+				if(!preg_match('/\.(jpg|jpeg|gif|svg|png)$/i', $filename)) {
+					// We have an error happening!
+					@unlink("{$pfx}{$filename}");
+					$this->_out(new Upfront_JsonResponse_Error("Sorry, this file type is not permitted for security reasons."));
+				}
 
 				// Clean up the file name
 				$raw_filename = $filename;

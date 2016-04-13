@@ -182,10 +182,12 @@ abstract class Upfront_EntityResolver {
 				$post_type = get_post_type_object('page');
 			}
 
-			$name = is_object($post_type->labels)
-				? $post_type->labels->singular_name 
-				: $post_type->labels['singular_name']
-			;
+			if (!empty($post_type)) {
+				$name = is_object($post_type->labels)
+					? $post_type->labels->singular_name 
+					: $post_type->labels['singular_name']
+				;
+			}
 			
 			return !empty($specificity)
 				? sprintf("Single %s: %s", $name, $specificity)
@@ -242,15 +244,17 @@ abstract class Upfront_EntityResolver {
 	/**
 	 * Returns name of the layout from the layouts saved in db
 	 *
-	 * @param strin $item name of layout in db
+	 * @param string $str name of layout in db
 	 * @return string|void
 	 */
-	public static function db_layout_to_name( $item ){
-		$type = substr( $item, 0, strpos( $item, "-" ) );
-		$args = array(
-			'item' => $item,
-			'type' => $type
-		);
+	public static function db_layout_to_name( $str ){
+		$bits = explode('-', $str, 4);
+		$args = array();
+
+		if (!empty($bits[0])) $args['type'] = $bits[0];
+		if (!empty($bits[1])) $args['item'] = $bits[1];
+		if (!empty($bits[2])) $args['specificity'] = $bits[2];
+
 		return self::layout_to_name( $args );
 	}
 }

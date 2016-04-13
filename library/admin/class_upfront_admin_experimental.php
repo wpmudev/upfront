@@ -8,8 +8,10 @@ class Upfront_Admin_Experimental
     const FORM_NONCE_ACTION = "upfront_experimental_save";
 
     public function __construct () {
-        add_submenu_page( "upfront", __("Experimental Features", Upfront::TextDomain),  __("Experimental", Upfront::TextDomain), 'promote_users', Upfront_Admin::$menu_slugs['experimental'], array($this, "render_page") );
-    }
+		if (Upfront_Permissions::current( Upfront_Permissions::SEE_USE_DEBUG )) {
+			add_submenu_page( "upfront", __("Experimental Features", Upfront::TextDomain),  __("Experimental", Upfront::TextDomain), 'manage_options', Upfront_Admin::$menu_slugs['experimental'], array($this, "render_page") );
+		}
+	}
 
     /**
      * Validates and saves data submitted via POST request

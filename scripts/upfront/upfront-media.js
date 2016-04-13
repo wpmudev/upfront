@@ -17,6 +17,13 @@ define([
 
 // ----- Models -----
 
+	var MediaItem_Model = Backbone.Model.extend({
+		defaults: {
+			thumbnail: "<span class='upfront-image-upload-placeholder'></span>",
+            insert_option: "image_insert"
+		}
+	});
+	
 	var MediaCollection_Model = Backbone.Collection.extend({
 		defaults:{
 			thumbnail: '',
@@ -135,17 +142,12 @@ define([
 			this.trigger("change");
 		}
 	});
-	var MediaItem_Model = Backbone.Model.extend({
-		defaults: {
-			thumbnail: "<span class='upfront-image-upload-placeholder'></span>",
-            insert_option: "image_insert"
-		}
+
+	var MediaFilter_Item = Backbone.Model.extend({
 	});
 
 	var MediaFilter_Collection = Backbone.Collection.extend({
-		model: Media_FilterItem
-	});
-	var MediaFilter_Item = Backbone.Model.extend({
+		model: MediaFilter_Item
 	});
 
 	var ActiveMediaFilter_Collection = Backbone.Model.extend({
@@ -1914,7 +1916,7 @@ define([
 		},
 		initialize: function (collection, opts) {
 			var data = data || {};
-			if(collection.models)
+			if((collection || {}).models)
 				collection = new MediaCollection_Model(collection);
 			else
 				collection = new MediaCollection_Model();

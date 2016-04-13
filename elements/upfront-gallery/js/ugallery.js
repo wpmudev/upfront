@@ -417,6 +417,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		control.tooltip = l10n.ctrl.edit_labels;
 		control.id = 'edit_labels';
 
+		//Set icon width & height
+		control.width = 30;
+		control.height = 30;
+
 		me.listenTo(control, 'panel:open', function(){
 			me.lastOpenedControl = control;
 			setTimeout(function() {
