@@ -3175,6 +3175,9 @@ define([
 				this.listenTo(Upfront.Events, "command:module_group:finish_edit", this.on_finish);
 				this.listenTo(Upfront.Events, "command:module_group:close_panel", this.closeControlPanel);
 
+				this.listenTo(Upfront.Events, 'upfront:element:edit:start', this.on_element_edit_start);
+				this.listenTo(Upfront.Events, 'upfront:element:edit:stop', this.on_element_edit_stop);
+
 
 				this.editing = false;
 				this.hidden = false;
@@ -3412,6 +3415,8 @@ define([
 				else {
 					this._modules_view.delegateEvents();
 				}
+
+				if (!Upfront.Application.user_can_modify_layout()) this.$el.addClass('upfront-module-group-no-edit');
 
 				this.createInlineControlPanel();
 
@@ -3855,6 +3860,18 @@ define([
 				e.stopPropagation();
 				Upfront.Events.trigger("entity:module_group:hide_toggle", this, this.model);
 			},
+			on_element_edit_start: function (edit, post) {
+				if ( edit == 'write' ){
+					this.$el.addClass('upfront-module-group-element-editing');
+					this.disable_interaction(true, false, false);
+				}
+			},
+			on_element_edit_stop: function (edit, post, saving_draft) {
+				if ( edit == 'write' && saving_draft !== true ){
+					this.$el.removeClass('upfront-module-group-element-editing');
+					this.enable_interaction();
+				}
+			},
 			disable_interaction: function (prevent_edit, resize, drag) {
 				if ( prevent_edit ) {
 					this.$el.addClass('upfront-module-group-disabled');
@@ -3932,6 +3949,7 @@ define([
 				}
 				Upfront.data.prevEntity = this;
 				if (this.activate_condition && !this.activate_condition()) return false;
+				if (this.$el.hasClass('upfront-module-group-element-editing')) return false;
 				if (currentEntity && currentEntity == this) return false;
 				if (currentEntity && currentEntity != this) {
 					currentEntity.trigger('deactivated');
