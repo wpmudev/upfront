@@ -94,10 +94,6 @@ class Upfront_Admin_General
 						<p class="left"><?php esc_html_e("Can be helpful after core upgrades", Upfront::TextDomain) ?></p>
 						<button id="upfront_reset_cache"><?php esc_html_e("Reset Upfront Cache", Upfront::TextDomain) ?></button>
 					</div>
-					<div class="upfront-debug-block">
-						<p class="left"><?php esc_html_e("Reset Upfront CacheThis will run Upfront in DEV mode. Useful for reporting Console errors to our team.", Upfront::TextDomain) ?><i class="upfront_help_icon" title="<?php echo esc_attr(__("DEV Mode will load default layouts. Don’t worry, your customized layouts are still in the database & live on your site.", Upfront::TextDomain)); ?>">&nbsp;</i></p>
-						<a target="_blank" class="upfront_button" href="<?php echo home_url("?editmode=true&dev=true") ?>"><?php esc_html_e("Run in dev mode", Upfront::TextDomain) ?></a>
-					</div>
 					<div class="upfront-debug-block lightgrey">
 						<p class="left">
 							<small><?php esc_html_e("Resets layout to default look, be careful", Upfront::TextDomain) ?></small>
