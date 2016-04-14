@@ -439,6 +439,7 @@ a.image-edit-button.deactivated:hover {
 	background: #3ea;
 }
 
+
 #image-edit-button-align{
 	display: inline-block;
 	margin-left: 0;
@@ -683,8 +684,8 @@ a.image-edit-button.deactivated:hover {
 	border-bottom-color: rgb(99, 134, 166);
 }
 
-.upfront-inline-panel-item.upfront-control-dialog-open {
-	background: rgb(42,70,95);
+.ueditor-insert .upfront-inline-panel-item.upfront-control-dialog-open {
+	background: rgb(230,236,242);
 	border-bottom: 1px solid #2A465F;
 	z-index: 51;
 }
@@ -1597,4 +1598,10 @@ div.uimage-controls i.upfront-icon:before,
     bottom: 0;
     background: #F2F9FF;
     left: 0;
+}
+
+/* Image Insert Panel Style Fixes */
+.ueditor-insert .upfront-inline-panel-item {
+	background: rgb(245,245,245);
+	border-bottom: none;
 }

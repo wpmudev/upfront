@@ -2304,15 +2304,15 @@ div.uinsert-selector a:hover {
 .upfront-postpart-featured_image {
   overflow: hidden; }
 
-.uimage-control-panel-content label {
-  color: #fff; }
-
+/*
 .uimage-control-panel-content .upfront-field-radio {
-  border-color: #97aec6; }
+  border-color: #97aec6;
+}
 
 .uimage-control-panel-content .upfront-field-radio:checked {
-  border-color: #fff; }
-
+  border-color: #fff;
+} 
+*/
 .ueditor-insert:hover .upfront-resize-handle-e,
 .ueditor-insert:hover .upfront-resize-handle-w {
   display: block !important; }
