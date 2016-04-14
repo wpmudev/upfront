@@ -878,11 +878,17 @@ define([
 				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
 				elementWidth = parseInt(attr.width),
 				elementHeight = parseInt(attr.height) - captionHeight,
+				hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
+				vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
 				ratio,
 				newSize;
 
 			// data.elementSize = {width: attr.width - (2 * padding), height: attr.height - (2 * padding) - captionHeight};
 			data.elementSize = {width: elementWidth < 0 ? 10 : elementWidth, height: elementHeight < 0 ? 10 : elementHeight};
+			
+			if(attr.axis === "e" || attr.axis === "w") {
+				data.elementSize.height = data.elementSize.height - vPadding;
+			}
 
 			newSize = this.getElementShapeSize(data.elementSize);
 			if ( false !== newSize ) {
@@ -894,7 +900,7 @@ define([
 			if(starting.length){
 				return starting.outerHeight(data.elementSize.height);
 			}
-
+			
 			//Wonderful stuff from here down
 			this.$('.uimage').css('height', data.elementSize.height);
 			
