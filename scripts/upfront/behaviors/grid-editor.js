@@ -1201,7 +1201,7 @@ var GridEditor = {
 				});
 				$resize_placeholder.insertBefore($me);
 
-				view.trigger('entity:resize_start', {row: me.row, col: me.col, height: me.height, width: me.width}, view, view.model);
+				view.trigger('entity:resize_start', {row: me.row, col: me.col, height: me.height, width: me.width, axis: axis}, view, view.model);
 				Upfront.Events.trigger("entity:resize_start", view, view.model);
 			},
 			resize: function(e, ui){
@@ -1254,7 +1254,7 @@ var GridEditor = {
 					$resize_placeholder.css('height', rsz_row*ed.baseline);
 				view.update_size_hint(rsz_col*ed.col_size, rsz_row*ed.baseline);
 
-				view.trigger('entity:resizing', {row: rsz_row, col: rsz_col, height: rsz_row*ed.baseline, width: rsz_col*ed.col_size}, view, view.model);
+				view.trigger('entity:resizing', {row: rsz_row, col: rsz_col, height: rsz_row*ed.baseline, width: rsz_col*ed.col_size, axis: axis}, view, view.model);
 			},
 			stop: function(e, ui){
 				Upfront.Events.trigger("entity:pre_resize_stop", view, view.model, ui);
@@ -1395,7 +1395,7 @@ var GridEditor = {
 				$me.removeData('resize-col');
 				$me.removeData('resize-row');
 
-				view.trigger('entity:resize_stop', {row: rsz_row, col: rsz_col, height: rsz_row*ed.baseline, width: rsz_col*ed.col_size}, view, view.model);
+				view.trigger('entity:resize_stop', {row: rsz_row, col: rsz_col, height: rsz_row*ed.baseline, width: rsz_col*ed.col_size, axis: axis}, view, view.model);
 				Upfront.Events.trigger("entity:resize_stop", view, view.model, ui);
 				Upfront.Events.trigger("entity:resized", view, view.model);
 			}
@@ -1767,16 +1767,16 @@ var GridEditor = {
 
 				// Trigger child events
 				_.each(child_els, function (child) {
-					child.view.trigger('entity:resize_start', {row: child.el.row, col: child.el.col, height: child.el.height, width: child.el.width}, child.view, child.view.model);
+					child.view.trigger('entity:resize_start', {row: child.el.row, col: child.el.col, height: child.el.height, width: child.el.width, axis: axis}, child.view, child.view.model);
 				});
 				_.each(also_child_els, function (child) {
-					child.view.trigger('entity:resize_start', {row: child.el.row, col: child.el.col, height: child.el.height, width: child.el.width}, child.view, child.view.model);
+					child.view.trigger('entity:resize_start', {row: child.el.row, col: child.el.col, height: child.el.height, width: child.el.width, axis: ( axis == 'w' ? 'e' : 'w' )}, child.view, child.view.model);
 				});
 
 				// Trigger main event
-				view.trigger('entity:wrapper:resize_start', {row: me.row, col: me.col, height: me.height, width: me.width}, view, view.model);
+				view.trigger('entity:wrapper:resize_start', {row: me.row, col: me.col, height: me.height, width: me.width, axis: axis}, view, view.model);
 				if ( also_view ) {
-					also_view.trigger('entity:wrapper:resize_start', {row: also_resize.row, col: also_resize.col, height: also_resize.height, width: also_resize.width}, also_view, also_view.model);
+					also_view.trigger('entity:wrapper:resize_start', {row: also_resize.row, col: also_resize.col, height: also_resize.height, width: also_resize.width, axis: ( axis == 'w' ? 'e' : 'w' )}, also_view, also_view.model);
 				}
 				Upfront.Events.trigger("entity:wrapper:resize_start", view, view.model, also_view, also_view.model);
 
@@ -1842,16 +1842,16 @@ var GridEditor = {
 
 				// Trigger child events
 				_.each(child_els, function (child) {
-					child.view.trigger('entity:resizing', {row: child.el.row, col: rsz_col, height: child.el.height, width: rsz_col*ed.col_size}, child.view, child.view.model);
+					child.view.trigger('entity:resizing', {row: child.el.row, col: rsz_col, height: child.el.height, width: rsz_col*ed.col_size, axis: axis}, child.view, child.view.model);
 				});
 				_.each(also_child_els, function (child) {
-					child.view.trigger('entity:resizing', {row: child.el.row, col: also_col, height: child.el.height, width: also_col*ed.col_size}, child.view, child.view.model);
+					child.view.trigger('entity:resizing', {row: child.el.row, col: also_col, height: child.el.height, width: also_col*ed.col_size, axis: ( axis == 'w' ? 'e' : 'w' )}, child.view, child.view.model);
 				});
 
 				// Trigger main event
-				view.trigger('entity:wrapper:resizing', {row: me.row, col: rsz_col, height: me.height, width: rsz_col*ed.col_size}, view, view.model);
+				view.trigger('entity:wrapper:resizing', {row: me.row, col: rsz_col, height: me.height, width: rsz_col*ed.col_size, axis: axis}, view, view.model);
 				if ( also_view ) {
-					also_view.trigger('entity:wrapper:resizing', {row: also_resize.row, col: also_col, height: also_resize.height, width: also_col*ed.col_size}, also_view, also_view.model);
+					also_view.trigger('entity:wrapper:resizing', {row: also_resize.row, col: also_col, height: also_resize.height, width: also_col*ed.col_size, axis: ( axis == 'w' ? 'e' : 'w' )}, also_view, also_view.model);
 				}
 				ed.time_end('fn wrapper_resize_resizing');
 			},
@@ -1982,17 +1982,17 @@ var GridEditor = {
 
 				// Trigger child events
 				_.each(child_els, function (child) {
-					child.view.trigger('entity:resize_stop', {row: child.el.row, col: rsz_col, height: child.el.height, width: rsz_col*ed.col_size}, child.view, child.view.model);
+					child.view.trigger('entity:resize_stop', {row: child.el.row, col: rsz_col, height: child.el.height, width: rsz_col*ed.col_size, axis: axis}, child.view, child.view.model);
 				});
 				_.each(also_child_els, function (child) {
-					child.view.trigger('entity:resize_stop', {row: child.el.row, col: also_col, height: child.el.height, width: also_col*ed.col_size}, child.view, child.view.model);
+					child.view.trigger('entity:resize_stop', {row: child.el.row, col: also_col, height: child.el.height, width: also_col*ed.col_size, axis: ( axis == 'w' ? 'e' : 'w' )}, child.view, child.view.model);
 				});
 
 				// Trigger main event
-				view.trigger('entity:wrapper:resize_stop', {row: me.row, col: rsz_col, height: me.height, width: rsz_col*ed.col_size}, view, view.model);
+				view.trigger('entity:wrapper:resize_stop', {row: me.row, col: rsz_col, height: me.height, width: rsz_col*ed.col_size, axis: axis}, view, view.model);
 				view.trigger('entity:wrapper:resize', {col: rsz_col}, view, view.model);
 				if ( also_view ) {
-					also_view.trigger('entity:wrapper:resize_stop', {row: also_resize.row, col: also_col, height: also_resize.height, width: rsz_col*ed.col_size}, also_view, also_view.model);
+					also_view.trigger('entity:wrapper:resize_stop', {row: also_resize.row, col: also_col, height: also_resize.height, width: rsz_col*ed.col_size, axis: ( axis == 'w' ? 'e' : 'w' )}, also_view, also_view.model);
 					also_view.trigger('entity:wrapper:resize', {col: also_col}, also_view, also_view.model);
 				}
 				Upfront.Events.trigger("entity:wrapper:resize_stop", view, view.model, also_view, also_view.model, ui);
