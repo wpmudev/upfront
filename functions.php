@@ -19,6 +19,8 @@ require_once(dirname(__FILE__) . '/library/class_upfront_media.php');
 require_once(dirname(__FILE__) . '/library/class_ufront_ufc.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_codec.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_compat.php');
+require_once(dirname(__FILE__) . '/library/class_upfront_postpart.php');
+require_once(dirname(__FILE__) . '/library/class_upfront_admin.php');
 
 
 Upfront_Behavior::debug()->set_baseline();
@@ -65,11 +67,14 @@ class Upfront {
 		add_action('admin_bar_menu', array($this, 'add_edit_menu'), 85);
 
 		if (is_admin()) {
+		
 			require_once(dirname(__FILE__) . '/library/servers/class_upfront_admin.php');
 			if (class_exists('Upfront_Server_Admin')) Upfront_Server_Admin::serve();
 		}
 
 
+		if( is_rtl() )
+			add_action('wp_head', array($this, "inject_rtl_dependencies"), 99);
 
 	}
 
@@ -169,7 +174,7 @@ class Upfront {
 		$cls[] = $grid->get_grid_scope();
 		return $cls;
 	}
-
+	
 	public function inject_core_wp_dependencies () {
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
 
@@ -221,6 +226,8 @@ class Upfront {
 		;
 		wp_enqueue_style('upfront-global', self::get_root_url() . $global_style, array(), Upfront_ChildTheme::get_version());
 
+
+
         if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
             // Don't queue the front grid if has permission to boot Upfront, queue editor grid instead
     		wp_enqueue_style('upfront-front-grid', admin_url('admin-ajax.php?action=upfront_load_grid'), array(), Upfront_ChildTheme::get_version());
@@ -229,7 +236,9 @@ class Upfront {
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			do_action('upfront-core-wp_dependencies');
 
-			wp_enqueue_style('upfront-editor-interface', self::get_root_url() . '/styles/editor-interface.css', array(), Upfront_ChildTheme::get_version());
+			wp_enqueue_style('upfront-editor-interface', self::get_root_url() . ( $this->_debugger->is_dev()  ?  '/styles/editor-interface.css' : '/styles/editor-interface.min.css' ) , array(), Upfront_ChildTheme::get_version());
+
+
 
 			$link_urls =  array(
 				admin_url('admin-ajax.php?action=upfront_load_editor_grid'),
@@ -247,6 +256,7 @@ class Upfront {
 				'600italic',
 				'700italic',
 			));
+
 
 			add_action('wp_footer', array($this, 'add_responsive_css'));
 		}
@@ -272,10 +282,11 @@ class Upfront {
 			$save_storage_key .= '_dev';
 		}
 
+		$main_source = $this->_debugger->is_dev() ? "scripts/main.js" : "build/main.js";
 		$script_urls = array(
 			"{$url}/scripts/require.js",
 			admin_url('admin-ajax.php?action=upfront_load_main' . $is_ssl),
-			"{$url}/scripts/main.js",
+			"{$url}/{$main_source}",
 		);
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
 		foreach ($script_urls as $url) {
@@ -306,6 +317,13 @@ EOAdditivemarkup;
 		include(self::get_root_dir().'/styles/editor-interface-responsive.html');
 	}
 
+	/**
+	 * Injects dependencies for rtl languages
+	 */
+	function inject_rtl_dependencies(){
+
+		wp_enqueue_style('upfront-global-rtl', self::get_root_url() . ( $this->_debugger->is_dev() ? "/styles/global-rtl.css" : "/styles/global-rtl.min.css" ), array(), Upfront_ChildTheme::get_version());
+	}
 }
 add_action('init', array('Upfront', 'serve'), 0);
 add_action('after_setup_theme', array('Upfront', "load_textdomain"));
@@ -352,7 +370,6 @@ function uf_image_caption_shortcode( $out, $attr, $content ){
 
 	if( $is_wp_cation ) return; // returning null let's wp do it's own logic and rendering for caption shortcode
 
-//		$html = '<img class="" src="http://images.dressale.hk/images/320x480/201301/B/petite-girl-s-favorite-a-line-graduation-dress-with-empire-waist_1358440282519.jpg" alt="" width="320" height="480" /> Petite Girl';
 	$image_reg = preg_match('/src="([^"]+)"/', $content, $image_arr);
 	$href_reg = preg_match('/href="([^"]+)"/', $content, $anchor_arr);
 
@@ -368,7 +385,7 @@ function uf_image_caption_shortcode( $out, $attr, $content ){
 
 	), $attr, 'caption' );
 
-	 return Upfront_ThisPostView::get_post_image_markup($data);
+	 return Upfront_Post_Data_PartView::get_post_image_markup($data);
 
 }
 

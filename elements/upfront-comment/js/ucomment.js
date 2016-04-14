@@ -35,14 +35,14 @@ var UcommentView = Upfront.Views.ObjectView.extend({
 	},
 
 	on_render: function () {
-		if ( !$(document).data('upfront-comment-' + _upfront_post_data.post_id) )
+		if ( !$(document).data('upfront-comment-' + _upfront_post_data.post_id) ) {
 			this._get_comment_markup();
-		var discussion_settings = Upfront.Settings.Application.PERMS.OPTIONS
-			? new DiscussionSettings_View({model: this.model})
-			: new DiscussionFallback_View({model: this.model})
-		;
-		discussion_settings.render();
-		this.$el.append(discussion_settings.$el);
+		}
+		if ( Upfront.Settings.Application.PERMS.OPTIONS ) {
+			var discussion_settings = new DiscussionSettings_View({model: this.model});
+			discussion_settings.render();
+			this.$el.append(discussion_settings.$el);
+		}
 	},
 
 	_get_comment_markup: function () {
@@ -553,6 +553,8 @@ var Settings = ElementSettings.extend({
 });
 
 var UcommentElement = Upfront.Views.Editor.Sidebar.Element.extend({
+
+	draggable: false,
 
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-comment');

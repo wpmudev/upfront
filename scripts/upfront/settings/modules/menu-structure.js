@@ -391,7 +391,8 @@ define([
 				}
 			).done(
 				function() {
-					me.setup();
+					// me.setup();
+					me.model.trigger('change');
 				}
 			).fail(
 				function(response) {

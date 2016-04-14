@@ -60,6 +60,9 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_get_theme_colors', array($this, 'getThemeColors'), 10, 2);
 		add_filter('upfront_get_theme_colors_styles', array($this, 'getThemeColorsStyles'), 10, 1);
 		add_filter('upfront_get_post_image_variants', array($this, 'getPostImageVariants'), 10, 2);
+		add_filter('upfront_get_prev_post_image_variants', array($this, 'get_prev_post_image_variants'), 10, 2);
+		add_filter('upfront_get_other_post_image_variants', array($this, 'get_all_other_theme_variants'), 10, 2);
+		
 		add_filter('upfront_get_button_presets', array($this, 'getButtonPresets'), 10, 2);
 		add_filter('upfront_get_tab_presets', array($this, 'getTabPresets'), 10, 2);
 		add_filter('upfront_get_accordion_presets', array($this, 'getAccordionPresets'), 10, 2);
@@ -73,6 +76,14 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_get_posts_presets', array($this, 'getPostsPresets'), 10, 2);
 		add_filter('upfront_get_thispost_presets', array($this, 'getPostPresets'), 10, 2);
 		add_filter('upfront_get_ucomment_presets', array($this, 'getCommentPresets'), 10, 2);
+
+		add_filter('upfront_get_post_data_element_presets', array($this, 'get_post_data_presets'), 10, 2);
+		add_filter('upfront_get_author_element_presets', array($this, 'get_author_presets'), 10, 2);
+		add_filter('upfront_get_featured_image_element_presets', array($this, 'get_featured_image_presets'), 10, 2);
+		add_filter('upfront_get_taxonomy_element_presets', array($this, 'get_taxonomy_presets'), 10, 2);
+		add_filter('upfront_get_comments_element_presets', array($this, 'get_comments_presets'), 10, 2);
+		add_filter('upfront_get_meta_element_presets', array($this, 'get_meta_presets'), 10, 2);
+
 		add_filter('upfront_get_theme_styles', array($this, 'getThemeStyles'));
 		add_filter('upfront_get_global_regions', array($this, 'getGlobalRegions'));
 		add_filter('upfront_get_responsive_settings', array($this, 'getResponsiveSettings'));
@@ -355,6 +366,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	}
 
 	private function getActiveIconFont() {
+		//error_log('getting active icon font' . $this->get_theme_settings()->get('icon_fonts'));
 		$fonts = json_decode($this->get_theme_settings()->get('icon_fonts'), true);
 		$active_font = false;
 		if(empty($fonts)) return false;
@@ -690,6 +702,56 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		}
 
 		return json_decode($presets, $as_array);
+	}
+
+	public function get_post_data_presets ($presets, $args) {
+		if (empty($presets) === false) return $presets;
+		return $this->_get_prepared_presets('post_data_element_presets', $args);
+	}
+
+	public function get_author_presets ($presets, $args) {
+		if (empty($presets) === false) return $presets;
+		return $this->_get_prepared_presets('author_element_presets', $args);
+	}
+
+	public function get_featured_image_presets ($presets, $args) {
+		if (empty($presets) === false) return $presets;
+		return $this->_get_prepared_presets('featured_image_element_presets', $args);
+	}
+	
+	public function get_taxonomy_presets ($presets, $args) {
+		if (empty($presets) === false) return $presets;
+		return $this->_get_prepared_presets('taxonomy_element_presets', $args);
+	}
+
+	public function get_comments_presets ($presets, $args) {
+		if (empty($presets) === false) return $presets;
+		return $this->_get_prepared_presets('comments_element_presets', $args);
+	}
+
+	public function get_meta_presets ($presets, $args) {
+		if (empty($presets) === false) return $presets;
+		return $this->_get_prepared_presets('meta_element_presets', $args);
+	}
+
+	/**
+	 * Attempt to remove at least _some_ of the code duplication :/
+	 *
+	 * @param string $key Theme settings key to use
+	 * @param array $args Arguments...
+	 *
+	 * @return mixed
+	 */
+	private function _get_prepared_presets ($key, $args) {
+		$presets = $this->get_theme_settings()->get($key);
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);	
 	}
 
 	public function getAccordionPresets($presets, $args) {
@@ -1204,12 +1266,14 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
         if( $prev_variant ){
             /**
              * Find a variant with matching image left and top
+			 *
+			 * Commented as it won't work well with new variant
              */
-            foreach( $current_variants as $variant ){
+            /*foreach( $current_variants as $variant ){
                 if( trim( $variant->image->left ) == trim( $prev_variant->image->left ) && trim( $variant->image->top ) == trim( $prev_variant->image->top ) ){
                     return $variant;
                 }
-            }
+            }*/
 
             /**
              * Find a variant with matching image order
@@ -1227,12 +1291,14 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
         if( $old_theme_variant ){
             /**
              * Find a variant with matching image left and top
+			 *
+			 * Commented as it won't work well with new variant
              */
-            foreach( $current_variants as $variant ){
+            /*foreach( $current_variants as $variant ){
                 if( trim( $variant->image->left ) == trim( $old_theme_variant->image->left ) && trim( $variant->image->top ) == trim( $prev_variant->image->top ) ){
                     return $variant;
                 }
-            }
+            }*/
 
             /**
              * Find a variant with matching image order
@@ -1328,10 +1394,14 @@ VRT;
        update_option(self::_get_post_image_variant_key(), self::get_post_image_variants_from_settings() );
     }
 
-    public static function get_prev_post_image_variants(){
+    public static function get_prev_post_image_variants($args = null){
         $prev_theme = self::get_prev_stylesheet();
+		if ( !$prev_theme ) return false;
+		$image_variants = self::get_post_image_variants_from_db( $prev_theme );
 
-        return $prev_theme ?  json_decode( self::get_post_image_variants_from_db( $prev_theme ) ) : false;
+		if (isset($args['json']) && $args['json']) return $image_variants;
+
+        return json_decode( $image_variants );
     }
 
     /**
@@ -1354,17 +1424,25 @@ VRT;
      *
      * @return array
      */
-    public static function get_all_other_theme_variants(){
+    public static function get_all_other_theme_variants($args = null){
         $variants = array();
+		$theme = wp_get_theme();
+		$current_theme = $theme->get_stylesheet();
+		$prev_theme = self::get_prev_stylesheet();
 
         foreach( self::get_all_uf_theme_names()  as $theme_name ){
+			if ( $theme_name == $current_theme ) continue;
+			if ( $prev_theme && $theme_name == $prev_theme ) continue;
             $theme_variants = self::get_post_image_variants_from_db( $theme_name );
-            $theme_variants = is_array($theme_variants) ? $theme_variants : array();
-            if( $theme_variants  )
+            $theme_variants = $theme_variants !== false ? json_decode($theme_variants) : array();
+            if( $theme_variants  ) {
                 $variants = array_merge( $variants, $theme_variants );
+			}
         }
 
-        return $variants;
+		if (isset($args['json']) && $args['json']) return json_encode($variants);
+
+		return $variants;
 
     }
 

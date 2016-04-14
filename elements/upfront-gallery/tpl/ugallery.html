@@ -22,7 +22,7 @@
 <?php if($imagesLength){ ?>
 	<div class="ugallery_items ugallery_grid" rel="<?php echo $element_id ?>">
 	<?php for($i=0; $i<$imagesLength; $i++) { ?>
-	<div class="ugallery_item ugallery_item_<?php echo !empty($images[$i]['imageLinkType']) && $images[$i]['imageLinkType'] == 'image' ? 'image' : $images[$i]['imageLinkType'] ?> <?php if($captionType === 'over') { ?>ugallery_caption_on_hover_<?php echo $showCaptionOnHover['length'] ?><?php } ?>" style="position:relative; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>" data-groups='[<?php echo $image_labels[$images[$i]['id']] ?>]'>
+	<div class="ugallery_item <?php if($in_editor) { ?>upfront-editing<?php } ?> ugallery_item_<?php echo !empty($images[$i]['imageLinkType']) && $images[$i]['imageLinkType'] == 'image' ? 'image' : $images[$i]['imageLinkType'] ?> <?php if($captionType === 'over') { ?>ugallery_caption_on_hover_<?php echo $showCaptionOnHover['length'] ?><?php } ?>" style="position:relative; width:<?php echo $thumbWidth ?>px;" rel="<?php echo $images[$i]['id'] ?>" data-groups='[<?php echo $image_labels[$images[$i]['id']] ?>]'>
 		<?php $images[$i]['imageLinkType'] = !empty($images[$i]['imageLinkType']) ? $images[$i]['imageLinkType'] : false; ?>
 		  <?php if ($images[$i]['imageLinkType'] !== 'unlink') { ?>
 			<a class="ugallery_link ugallery_link<?php echo !empty($images[$i]['imageLinkType']) && $images[$i]['imageLinkType'] == 'image' ? ' ugallery_lightbox_link' : $images[$i]['imageLinkType'] ?>" href="<?php echo $images[$i]['imageLinkUrl'] ?>" target="<?php echo $images[$i]['imageLinkTarget'] ?>" title="">
@@ -54,12 +54,16 @@
 	<?php if(! $editing) { ?>
 		<?php echo $l10n['no_images'] ?>
 	<?php } else { ?>
+		<?php if($cap) { ?>
 		<div class="ugallery-starting-wrapper upfront-ui upfront-initial-overlay-wrapper">
 				<div class="ugallery-starting-container upfront-initial-overlay-wrapper">
 					<span class="upfront-image-resizethiselement"><?php echo $l10n['add_img'] ?></span>
 					<div class=""><a class="upfront-image-select button" href="#" title="<?php echo $l10n['add_images'] ?>">+</a></div>
 				</div>
 		</div>
+		<?php } else { ?>
+			<?php echo $l10n['no_images'] ?>
+		<?php } ?>
 	<?php } ?>
 <?php } ?>
 </div>

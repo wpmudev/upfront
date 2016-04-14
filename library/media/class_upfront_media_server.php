@@ -81,6 +81,10 @@ class Upfront_MediaServer extends Upfront_Server {
 			'item_in_use_nag' => __("The selected media file is already in use. Are you sure?", 'upfront'),
 			'files_selected' => __('%d files selected', 'upfront'),
 			'media_title' => __("Media Title", 'upfront'),
+			'natural_size' => __("Natural Size", 'upfront'),
+			'px_label' => __("px", 'upfront'),
+			'width_label' => __("W", 'upfront'),
+			'height_label' => __("H", 'upfront'),
 			'add_labels' => __("Add Label(s)", 'upfront'),
 			'current_labels' => __("Current Label(s)", 'upfront'),
 			'additional_sizes' => __("Additional sizes", 'upfront'),
@@ -133,6 +137,9 @@ class Upfront_MediaServer extends Upfront_Server {
 			'insert_options' => __('Insert Options', 'upfront'),
 			'image_inserts' => __('Image Inserts', 'upfront'),
 			'wp_default' => __('WP Default', 'upfront'),
+			'confirm_delete_items' => __("Are you sure you want to delete selected items?", 'upfront'),
+			'on_this_page' => __("on this page", 'upfront'),
+			'display' => __('Display', 'upfront'),
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
@@ -300,6 +307,11 @@ class Upfront_MediaServer extends Upfront_Server {
 		while (file_exists("{$pfx}{$filename}")) {
 			$filename = rand() . $filename;
 		}
+
+		// Clean up the file name
+		$raw_filename = $filename;
+		$filename = Upfront_UploadHandler::to_clean_file_name($filename);
+
 		file_put_contents("{$pfx}{$filename}", $image);
 		$data = getimagesize("{$pfx}{$filename}");
 		if (empty($data['mime']) || !preg_match('/^image\//i', $data['mime'])) {
@@ -312,7 +324,7 @@ class Upfront_MediaServer extends Upfront_Server {
 		$attachment = array(
 			'guid' => $wp_upload_dir['url'] . '/' . basename($filename),
 			'post_mime_type' => $wp_filetype['type'],
-			'post_title' => preg_replace('/\.[^.]+$/', '', basename($filename)),
+			'post_title' => preg_replace('/\.[^.]+$/', '', basename($raw_filename)),
 			'post_content' => '',
 			'post_status' => 'inherit'
 		);
@@ -380,8 +392,7 @@ class Upfront_MediaServer extends Upfront_Server {
 		$data = stripslashes_deep($_POST);
 		$data['type'] = !empty($data['type']) ? $data['type'] : array('images');
 		$query = Upfront_MediaCollection::apply_filters($data);
-		if (!$query->is_empty()) $this->_out(new Upfront_JsonResponse_Success($query->to_php()));
-		else $this->_out(new Upfront_JsonResponse_Error("No items"));
+		$this->_out(new Upfront_JsonResponse_Success($query->to_php()));
 	}
 
 	public function list_theme_images () {
@@ -403,14 +414,28 @@ class Upfront_MediaServer extends Upfront_Server {
 				if(is_dir($dirPath . '/' . $file))
 					continue;
 
-				if(preg_match('/\.(jpg|jpeg|gif|svg|png|bmp)$/i', $file))
+				if(preg_match('/\.(jpg|jpeg|gif|svg|png)$/i', $file)) {
+					$imageWidth = 0;
+					$imageHeight = 0;
+					$imageSize = getimagesize($dirUrl .$file);
+					if ( $imageSize ) {
+						$imageWidth = isset($imageSize[0]) ? $imageSize[0] : $imageWidth;
+						$imageHeight = isset($imageSize[1]) ? $imageSize[1] : $imageHeight;
+					}
 					$images[] = array(
 						'ID' => $i++,
 						'thumbnail' => '<img style="max-height: 75px; max-width: 75px" src="' . $dirUrl . $file . '">',
 						'post_title' => $file,
 						'labels' => array(),
-						'original_url' => $dirUrl . $file
+						'original_url' => $dirUrl . $file,
+						'image' => array(
+							'src' => $dirUrl . $file,
+							'width' => $imageWidth,
+							'height' => $imageHeight,
+							'resized' => false
+						)
 					);
+				}
 			}
 		}
 		$meta = array('max_pages' => 1);
@@ -428,7 +453,7 @@ class Upfront_MediaServer extends Upfront_Server {
 		$file = $_FILES['media'];
 		$filename = $file['name'];
 
-		if(!preg_match('/\.(jpg|jpeg|gif|svg|png|bmp)$/i', $filename))
+		if(!preg_match('/\.(jpg|jpeg|gif|svg|png)$/i', $filename))
 			$this->_out(new Upfront_JsonResponse_Error("The file is not an image."));
 
 		$relpath = false;
@@ -442,6 +467,10 @@ class Upfront_MediaServer extends Upfront_Server {
 
 		$dirPath = trailingslashit(trailingslashit(get_stylesheet_directory()) . $relpath);
 		$dirUrl = trailingslashit(get_stylesheet_directory_uri()) . trailingslashit($relpath);
+
+		// Clean up the file name
+		$raw_filename = $filename;
+		$filename = Upfront_UploadHandler::to_clean_file_name($filename);
 
 		$destination = $dirPath . $filename;
 		move_uploaded_file($file["tmp_name"], $destination);
@@ -457,7 +486,7 @@ class Upfront_MediaServer extends Upfront_Server {
 			'ID' => rand(1111,9999), //Whatever high number is ok
 			'original_url' => $dirUrl . $filename,
 			'thumbnail' => '<img style="max-height: 75px; max-width: 75px" src="' . $dirUrl . $filename . '">',
-			'post_title' => $filename,
+			'post_title' => $raw_filename,
 			'labels' => array()
 		)));
 	}
@@ -535,12 +564,24 @@ class Upfront_MediaServer extends Upfront_Server {
 						@unlink("{$pfx}{$filename}");
 						$this->_out(new Upfront_JsonResponse_Error("Error uploading the media item: {$media->error}"));
 				}
+				
 				$filename = $media->name;
+				
+				if(!preg_match('/\.(jpg|jpeg|gif|svg|png)$/i', $filename)) {
+					// We have an error happening!
+					@unlink("{$pfx}{$filename}");
+					$this->_out(new Upfront_JsonResponse_Error("Sorry, this file type is not permitted for security reasons."));
+				}
+
+				// Clean up the file name
+				$raw_filename = $filename;
+				$filename = Upfront_UploadHandler::to_clean_file_name($filename);
+
 				$wp_filetype = wp_check_filetype(basename($filename), null);
 				$attachment = array(
 						'guid' => $wp_upload_dir['url'] . '/' . basename($filename),
 						'post_mime_type' => $wp_filetype['type'],
-						'post_title' => preg_replace('/\.[^.]+$/', '', basename($filename)),
+						'post_title' => preg_replace('/\.[^.]+$/', '', basename($raw_filename)),
 						'post_content' => '',
 						'post_status' => 'inherit'
 				);
@@ -567,8 +608,15 @@ function upfront_media_file_upload () {
 	$base_url = Upfront::get_root_url();
 
 	$deps = Upfront_CoreDependencies_Registry::get_instance();
-	$deps->add_script("{$base_url}/scripts/file_upload/jquery.fileupload.js");
-	$deps->add_script("{$base_url}/scripts/file_upload/jquery.iframe-transport.js");
+
+	if( Upfront_Debug::get_debugger()->is_dev() ){
+		$deps->add_script("{$base_url}/scripts/file_upload/jquery.fileupload.js");
+		$deps->add_script("{$base_url}/scripts/file_upload/jquery.iframe-transport.js");
+	}else{
+		$deps->add_script("{$base_url}/build/file_upload/jquery.fileupload.js");
+		$deps->add_script("{$base_url}/build/file_upload/jquery.iframe-transport.js");
+	}
+
 	
 	echo '<script>var _upfront_media_upload=' . json_encode(array(
 		'normal' => Upfront_UploadHandler::get_action_url('upfront-media-upload'),

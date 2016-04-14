@@ -89,8 +89,16 @@ function upfront_get_page_template_slug ($layout) {
 }
 
 
+/**
+ * Returns some JS to automatically boot the editor
+ *
+ * @param string $mode Mode to boot into
+ *
+ * @return mixed (string)Boot sequence script, or (bool)false if not able to boot
+ */
 function upfront_boot_editor_trigger ($mode = '') {
-	if (defined("UPFRONT_INTERNAL_FLAG_EDITOR_BOOT_REQUESTED")) return false;
+	if (class_exists('Upfront_Server_LayoutRevisions') && Upfront_Server_LayoutRevisions::is_preview()) return false; // Never auto-boot when in preview mode
+	if (defined("UPFRONT_INTERNAL_FLAG_EDITOR_BOOT_REQUESTED")) return false; // Already done this
 	define("UPFRONT_INTERNAL_FLAG_EDITOR_BOOT_REQUESTED", true, true);
 	return '<script>' .
 		'(function ($) { $(document).data("upfront-auto_start", true); $(document).on("upfront-load", function () { Upfront.Application.start(' . ( $mode ? '"'.$mode.'"' : '' ) . '); }); })(jQuery);' .

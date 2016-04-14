@@ -383,10 +383,11 @@ li.menu-item .uimage-controls.image-element-controls .upfront-inline-panel .upfr
 	display: inline-block;
 	vertical-align: middle;
 }
-li.menu-item .uimage-controls.image-element-controls .upfront-inline-panel .upfront-inline-panel-item.labeled span {
+.upfront-navigation li.menu-item .uimage-controls.image-element-controls .upfront-inline-panel .upfront-inline-panel-item.labeled span {
 	display: inline-block;
 	vertical-align: middle;
-	width: auto!important;
+	width: auto;
+	line-height: 36px;
 }
 li.menu-item .uimage-controls.image-element-controls {
 	display: block;
@@ -406,6 +407,7 @@ li.menu-item.controls-visible > .uimage-controls.image-element-controls {
 }
 li.menu-item.controls-visible > .uimage-controls.image-element-controls .upfront-inline-panel {
 	visibility: visible;
+	top: 8px;
 }
 li.menu-item .open-item-controls {
 	display: block;
@@ -435,7 +437,7 @@ li.menu-item .uimage-controls .inline-panel-control-dialog {
 	min-width: 190px;
 }
 li.menu-item .uimage-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-control-dialog-open:first-child {
-	height: 31px!important;
+	/*height: 39px!important;*/
 }
 li.menu-item .uimage-controls .upfront-inline-panel .upfront-inline-panel-item {
   background-image: -moz-linear-gradient(-89deg, #2F445D 0%, #152841 100%);
@@ -464,7 +466,7 @@ div.upfront-navigation li.menu-item .uimage-controls a {
 
 /* style adjustments */
 .upfront-navigation .upfront-field-select {
-	max-width:170px;
+	/*max-width:170px;*/
 }
 
 .newnavigation_squished .upfront-editable_entity.upfront-navigation:hover .responsive_nav_toggler {
@@ -500,4 +502,7 @@ div.preset-manager-panel .menustyle_settings_item .menu_alignment {
 div.preset-manager-panel .menustyle_settings_item  .burger_alignment {
 	margin-top: 5px;
 	width: 215px;
+}
+.upfront-navigation .upfront-ui .upfront-icon-region-link:before{
+	background-position: -256px -245px;
 }

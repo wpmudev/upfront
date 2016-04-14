@@ -60,6 +60,11 @@ define([
 			this.presets = new Backbone.Collection(Upfront.mainData[this.mainDataCollection] || []);
 
 			var savePreset = function(properties) {
+				if (!Upfront.Application.user_can("MODIFY_PRESET")) {
+					me.model.trigger("preset:updated", properties.id);
+					return false;
+				}
+				
 				Upfront.Util.post({
 					action: 'upfront_save_' + this.ajaxActionSlug + '_preset',
 					data: properties
@@ -191,10 +196,13 @@ define([
 				this.selectPresetModule.stopListening();
 				this.stopListening(this.selectPresetModule);
 			}
-			this.selectPresetModule = new SelectPresetModule({
-				model: this.model,
-				presets: this.presets
-			});
+
+			if (Upfront.Application.user_can("SWITCH_PRESET")) { // Don't build the control if we can't do this
+				this.selectPresetModule = new SelectPresetModule({
+					model: this.model,
+					presets: this.presets
+				});
+			}
 
 			// Setup preset model so that it uses breakpoint values
 			if (this.options.hasBreakpointSettings === true) {
@@ -214,19 +222,29 @@ define([
 				this.editPresetModule.stopListening();
 				this.stopListening(this.editPresetModule);
 			}
-			this.editPresetModule = new EditPresetModule({
-				model: presetModel,
-				stateModules: this.stateModules
-			});
+
+			if (
+				Upfront.Application.user_can("SWITCH_PRESET") 
+				&& 
+				(Upfront.Application.user_can("MODIFY_PRESET") || Upfront.Application.user_can("DELETE_PRESET"))
+			) { // Don't build the control if we can't do this
+				this.editPresetModule = new EditPresetModule({
+					model: presetModel,
+					stateModules: this.stateModules
+				});
+			}
 
 			if (this.presetCssModule && this.presetCssModule.stopListening) {
 				this.presetCssModule.stopListening();
 				this.stopListening(this.presetCssModule);
 			}
-			this.presetCssModule = new PresetCssModule({
-				model: this.model,
-				preset: presetModel
-			});
+
+			if (Upfront.Application.user_can("SWITCH_PRESET") && Upfront.Application.user_can("MODIFY_PRESET")) { // Don't build the control if we can't do this
+				this.presetCssModule = new PresetCssModule({
+					model: this.model,
+					preset: presetModel
+				});
+			}
 
 			//When element is not migrated yet
 			this.migratePresetModule = new MigratePresetModule({
@@ -235,14 +253,18 @@ define([
 				elementPreset: this.styleElementPrefix
 			});
 
-			this.listenTo(this.selectPresetModule, 'upfront:presets:new', this.createPreset);
-			this.listenTo(this.selectPresetModule, 'upfront:presets:change', this.changePreset);
-			this.listenTo(this.editPresetModule, 'upfront:presets:delete', this.deletePreset);
-			this.listenTo(this.editPresetModule, 'upfront:presets:reset', this.resetPreset);
-			this.listenTo(this.editPresetModule, 'upfront:presets:update', this.updatePreset);
-			this.listenTo(this.editPresetModule, 'upfront:presets:state_show', this.stateShow);
-			this.listenTo(this.presetCssModule, 'upfront:presets:update', this.updatePreset);
-			this.listenTo(this.selectPresetModule, 'upfront:presets:migrate', this.migratePreset);
+			if (Upfront.Application.user_can("SWITCH_PRESET")) {
+				if (this.selectPresetModule && Upfront.Application.user_can("SWITCH_PRESET")) this.listenTo(this.selectPresetModule, 'upfront:presets:change', this.changePreset);
+				if (this.selectPresetModule && Upfront.Application.user_can("SWITCH_PRESET")) this.listenTo(this.selectPresetModule, 'upfront:presets:migrate', this.migratePreset);
+
+				if (this.editPresetModule && Upfront.Application.user_can("DELETE_PRESET")) this.listenTo(this.editPresetModule, 'upfront:presets:delete', this.deletePreset);
+				if (this.editPresetModule && Upfront.Application.user_can("DELETE_PRESET")) this.listenTo(this.editPresetModule, 'upfront:presets:reset', this.resetPreset);
+
+				if (this.editPresetModule && Upfront.Application.user_can("MODIFY_PRESET")) this.listenTo(this.editPresetModule, 'upfront:presets:state_show', this.stateShow);
+				if (this.editPresetModule && Upfront.Application.user_can("MODIFY_PRESET")) this.listenTo(this.editPresetModule, 'upfront:presets:update', this.updatePreset);
+				if (this.presetCssModule && Upfront.Application.user_can("MODIFY_PRESET")) this.listenTo(this.presetCssModule, 'upfront:presets:update', this.updatePreset);
+				if (this.selectPresetModule && Upfront.Application.user_can("MODIFY_PRESET")) this.listenTo(this.selectPresetModule, 'upfront:presets:new', this.createPreset);
+			}
 
 			//Migration listeners
 			this.listenTo(this.migratePresetModule, 'upfront:presets:preview', this.previewPreset);
@@ -279,7 +301,9 @@ define([
 		getPresetDefaults: function(presetName) {
 			return _.extend(this.presetDefaults, {
 				id: presetName.toLowerCase().replace(/ /g, '-'),
-				name: presetName
+				name: presetName,
+				// should always be empty
+				preset_style: ''
 			});
 		},
 
@@ -663,6 +687,7 @@ define([
 			}
 
 			this.settings.each(function (setting) {
+				if (!(setting || {}).render) return true;
 				if ( ! setting.panel ) setting.panel = me;
 				setting.render();
 				$body.append(setting.el)

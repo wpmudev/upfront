@@ -523,8 +523,10 @@
 	overflow-y: auto;
 }
 
-#sidebar-ui .sidebar-panel-elements .sidebar-panel-content {
+#sidebar-ui .sidebar-panel-elements .sidebar-panel-content,
+#sidebar-ui .sidebar-panel-elements .sidebar-tab-content .panel-section {
 	padding: 0;
+	margin: 0;
 }
 
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content {
@@ -1115,47 +1117,6 @@ span.draggable-post-element.element-dragging
 }
 #sidebar-ui .upfront-post-trash a:hover{
 	color: #E3474A;
-}
-/*------------------- Setting sections tabs -----------------------*/
-#sidebar-ui ul.sidebar-panel-tabspane {
-    width: 100%;
-    background: #d9edff;
-    padding: 0 0 5px 10px;
-    display: none;
-		line-height: 10px;
-}
-#sidebar-ui .expanded ul.sidebar-panel-tabspane {
-	display: block;
-}
-.sidebar-panel-tabspane li {
-    display: inline-block;
-    margin-left: 5px;
-    color: #0F9969;
-    cursor: pointer;
-    padding: 3px 5px;
-    font:normal 11px/10px Verdana, sans-serif;
-}
-#sidebar-ui ul.panel-setting-theme-colors-shades-range-labels {
-    width: 100%;
-    overflow: hidden;
-    margin-top: 9px;
-}
-.panel-setting-theme-colors-shades-range-labels li {
-    display: inline-block;
-    float: left;
-    font:11px normal verdana, sans-serif;
-    color: #476580;
-}
-.panel-setting-theme-colors-shades-range-labels li:last-child {
-    float: right;
-}
-.sidebar-panel-tabspane li.active{
-    color:#E5F3FF;
-    background: #85A9CC;
-    border-radius: 5px;-moz-border-radius: 5px;-webkit-border-radius: 5px;
-}
-.sidebar-tab-content{
-    display: none;
 }
 #sidebar-ui [class^=command-],
 #sidebar-ui [class^=sidebar-command-]{

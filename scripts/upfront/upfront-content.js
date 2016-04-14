@@ -7,7 +7,303 @@ var deps = [
 ];
 
 define("content", deps, function(postTpl, ContentTools) {
-	var PostEditor = Backbone.View.extend({
+
+	var PostEditor = function (opts) {
+		var me = this;
+		this.postId = opts.post_id;
+		this.autostart = opts.autostart || false;
+		this.content_mode = opts.content_mode;
+		this.changed = {};
+
+		_.extend(this, Backbone.Events);
+
+		//If the post is in the cache, prepare it!
+		if(Upfront.data.posts[this.postId]){
+			this.post = Upfront.data.posts[this.postId];
+			if(!this.post.meta.length)
+				this.post.meta.fetch();
+
+			this.loadingPost = new $.Deferred();
+			this.loadingPost.resolve(this.post);
+		}
+
+		//this.postView = opts.view;
+		this.contentEditor = false;
+		this.getPost().done(function(){
+			me.contentEditor = new ContentTools.PostContentEditor({
+				post: me.post,
+				//postView: me.postView,
+				content_mode: me.content_mode,
+				/*authorTpl: this.getTemplate('author'),
+				partOptions: this.postView.partOptions,*/
+			});
+			me.listenTo(me.contentEditor, 'cancel', me.cancelChanges);
+			me.listenTo(me.contentEditor, 'publish', me.publish);
+			me.listenTo(me.contentEditor, 'draft', me.saveDraft);
+			me.listenTo(me.contentEditor, 'auto-draft', me.saveAutoDraft);
+			me.listenTo(me.contentEditor, 'trash', me.trash);
+			// Listen to edit start/stop
+			me.listenTo(me.contentEditor, 'edit:start', me.editStart);
+			me.listenTo(me.contentEditor, 'edit:stop', me.editStop);
+			// Specific change event handles
+			me.listenTo(me.contentEditor, 'change:title', me.changeTitle);
+			me.listenTo(me.contentEditor, 'change:content', me.changeContent);
+			me.listenTo(me.contentEditor, 'change:author', me.changeAuthor);
+			me.listenTo(me.contentEditor, 'change:date', me.changeDate);
+			me.listenTo(me.contentEditor, 'bar:date:updated', me.changeDate);
+		});
+
+		//this.getPostLayout();
+	};
+
+	PostEditor.prototype = {
+		_partViews: [],
+
+		addPartView: function (type, el, model, parentModel) {
+			var deferred = new $.Deferred();
+			this._partViews.push({
+				type: type,
+				el: el,
+				model: model,
+				parentModel: parentModel,
+				deferred: deferred
+			});
+			this.setPartViews();
+			return deferred.promise();
+		},
+
+		setPartViews: function () {
+			if ( !this.contentEditor )
+				return;
+			var partView = this._partViews.pop();
+			if ( !partView )
+				return;
+			var view = this.contentEditor.setView(partView.type, partView.el, partView.model, partView.parentModel);
+			partView.deferred.resolve(view);
+		},
+
+		setDefaults: function(){
+			this.mode = 'content'; // Also 'layout' to edit post layout.
+		},
+
+		getPost: function(){
+			var deferred = $.Deferred();
+			if(this.post){
+				deferred.resolve(this.post);
+				this.loadingPost = deferred.promise();
+			}
+			if(this.loadingPost) {
+				return this.loadingPost;
+			}
+
+			var post = Upfront.data.posts[this.postId];
+			if(post){
+				this.post = post;
+				deferred.resolve(post);
+				this.loadingPost = deferred.promise();
+				return this.loadingPost;
+			}
+
+			return this.fetchPost();
+		},
+
+		fetchPost: function(){
+			var me = this,
+				deferred = $.Deferred()
+			;
+			this.post = new Upfront.Models.Post({ID: this.postId});
+
+			//this.bindPostEvents();
+			me.loadingPost = deferred.promise();
+			this.post.fetch({withMeta: true, filterContent: true}).done(function(response){
+				if(!Upfront.data.posts)
+					Upfront.data.posts = {};
+				Upfront.data.posts[me.postId] = me.post;
+				deferred.resolve(me.post);
+			});
+
+
+			return this.loadingPost;
+		},
+
+		stopEditContents: function(){
+			this.contentEditor.stopEditors();
+			this.trigger('stop');
+		},
+
+		cancelChanges: function(){
+			this.stopEditContents();
+			this.trigger('post:cancel');
+		},
+
+		publish: function(results){
+			this.save(results, 'publish', Upfront.Settings.l10n.global.content.publishing.replace(/%s/, this.post.get('post_type')), Upfront.Settings.l10n.global.content.published.replace(/%s/, this.capitalize(this.post.get('post_type'))));
+		},
+
+		saveDraft:function(results){
+			this.save(results, 'draft', Upfront.Settings.l10n.global.content.saving.replace(/%s/, this.post.get('post_type')), Upfront.Settings.l10n.global.content.drafted.replace(/%s/, this.capitalize(this.post.get('post_type'))));
+		},
+
+		saveAutoDraft:function(results){
+			this.save(results, 'auto-draft');
+		},
+
+		trash: function(){
+			var me = this,
+				postType = this.post.get('post_type'),
+				$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+				loading = new Upfront.Views.Editor.Loading({
+					loading: Upfront.Settings.l10n.global.content.deleting.replace(/%s/, postType),
+					done: Upfront.Settings.l10n.global.content.here_we_are,
+					fixed: false
+				})
+			;
+			loading.render();
+			$main.append(loading.$el);
+			this.post.set('post_status', 'trash').save().done(function(){
+				loading.$el.remove();
+				Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.content.deleted.replace(/%s/, postType));
+				me.stopEditContents();
+				me.trigger('post:trash');
+
+				// navigate to home
+				Upfront.Application.sidebar.toggleSidebar();
+				Upfront.Application.navigate( "/" , true);
+			});
+		},
+
+		save: function(results, status, loadingMsg, successMsg){
+			var me = this,
+				changed = this.changed,
+				updateMeta = true,
+				metaUpdated = !updateMeta,
+				is_auto_draft = status === "auto-draft",
+				post_name = this.post.get("post_name"),
+				$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+				loading = new Upfront.Views.Editor.Loading({
+					loading: loadingMsg,
+					done: Upfront.Settings.l10n.global.content.here_we_are,
+					fixed: true
+				}),
+				postUpdated = false
+			;
+
+			if ( !is_auto_draft ) {
+				loading.render();
+				$main.append(loading.$el);
+			} else {
+				status = "draft";
+			}
+
+
+
+			if ( results.title ) {
+				this.post.set('post_title', results.title);
+			}
+			if ( results.excerpt ) {
+				this.post.set('post_excerpt', results.content);
+			}
+			if ( results.content ) {
+				this.post.set('post_content', results.content);
+			}
+			if ( results.author ) {
+				this.post.set('post_author', results.author);
+			}
+
+			if ( results.inserts ) {
+				this.post.meta.setValue('_inserts_data', results.inserts);
+			}
+
+			if ( results.date ) {
+				this.post.set('post_date', results.date);
+			}
+
+			if ( results.visibility ) {
+				this.post.setVisibility(results.visibility);
+				if ( results.pass ) {
+					this.post.set('post_password', results.pass);
+				}
+			}
+
+			this.post.set('post_status', status);
+
+			/* If this is a new post, take out the default post_name so that the system assigns a new one based on the edited title */
+			if($('body').hasClass('is_new'))
+				this.post.set('post_name', '');
+
+			this.post.save().done(function(result){
+				if ( me.post.is_new && post_name.length ) {
+					me.post.set("post_name", post_name).save();
+				}
+				me.post.set("post_name", result.data.post_name);
+				me.post.permalink = result.data.permalink;
+				if ( metaUpdated ) {
+					if( !is_auto_draft ) {
+						loading.done();
+						Upfront.Views.Editor.notify(successMsg);
+						me.stopEditContents();
+						me.trigger('post:saved');
+					}
+				}
+				postUpdated = true;
+			});
+
+			if ( updateMeta ) {
+				me.post.meta.save().done(function(){
+					if ( postUpdated ) {
+						if( !is_auto_draft ) {
+							loading.done();
+							Upfront.Views.Editor.notify(successMsg);
+							me.stopEditContents();
+							me.trigger('post:saved');
+						}
+					}
+					metaUpdated = true;
+				});
+			}
+			else {
+				metaUpdated = true;
+			}
+
+			this.post.is_new = false;
+		},
+
+		capitalize: function(str){
+			return str.charAt(0).toUpperCase() + str.slice(1);
+		},
+
+		preventLinkNavigation: function(e){
+			e.preventDefault();
+		},
+
+		editStart: function () {
+			this.trigger('editor:edit:start');
+		},
+
+		editStop: function () {
+			this.trigger('editor:edit:stop');
+		},
+
+		changeTitle: function (title) {
+			this.trigger('editor:change:title', title);
+		},
+
+		changeContent: function (content, isExcerpt) {
+			this.trigger('editor:change:content', content, isExcerpt);
+		},
+
+		changeAuthor: function (authorId) {
+			this.trigger('editor:change:author', authorId);
+		},
+
+		changeDate: function (date) {
+			this.trigger('editor:change:date', date);
+		}
+	};
+
+	_.extend(PostEditor.prototype, Backbone.Events.prototype);
+
+	var PostEditorLegacy = Backbone.View.extend(_.extend({}, PostEditor.prototype, {
 		tpl: Upfront.Util.template(postTpl),
 		events: {
 			'dblclick': 'editContents',
@@ -36,31 +332,6 @@ define("content", deps, function(postTpl, ContentTools) {
 
 			this.getPostLayout();
 
-		},
-
-		setDefaults: function(){
-			this.mode = 'content'; // Also 'layout' to edit post layout.
-		},
-
-		getPost: function(){
-			var deferred = $.Deferred();
-			if(this.post){
-				deferred.resolve(this.post);
-				this.loadingPost = deferred.promise();
-			}
-			if(this.loadingPost) {
-				return this.loadingPost;
-			}
-
-			var post = Upfront.data.posts[this.postId];
-			if(post){
-				this.post = post;
-				deferred.resolve(post);
-				this.loadingPost = deferred.promise();
-				return this.loadingPost;
-			}
-
-			return this.fetchPost();
 		},
 
 
@@ -158,9 +429,9 @@ define("content", deps, function(postTpl, ContentTools) {
 				}
 			;
 
-			_.each(wrappers, function(wrapper, w){
+			_.each(wrappers, function(wrapper){
 				wrapper.objectsLength = wrapper.objects.length;
-				_.each(wrapper.objects, function(object, o){
+				_.each(wrapper.objects, function(object){
 
 					var attributes = options && options[object.slug] && options[object.slug].attributes ? options[object.slug].attributes : {},
 						attrs = ''
@@ -172,13 +443,8 @@ define("content", deps, function(postTpl, ContentTools) {
 					layout.attributes[object.slug] = attrs;
 					layout.extraClasses[object.slug] = options && options[object.slug] && options[object.slug].extraClasses ? options[object.slug].extraClasses : '';
 
-					if ( object.slug in me.parts.classes && me.parts.classes[object.slug] && me.parts.classes[object.slug].length ) {
+					if ( object.slug in me.parts.classes && me.parts.classes[object.slug] && me.parts.classes[object.slug].length )
 						layout.extraClasses[object.slug] = me.parts.classes[object.slug].join(' ');
-					}
-					
-					if ( object.classes.indexOf('part-module-' + object.slug) === -1 ) {
-						object.classes += ' part-module-' + object.slug;
-					}
 
 					object.markup = markupper.markup(object.slug, me.parts.replacements, me.getTemplate(object.slug));
 				});
@@ -203,26 +469,15 @@ define("content", deps, function(postTpl, ContentTools) {
 			return Upfront.data.thisPost.templates[part];
 		},
 
-		fetchPost: function(){
-			var me = this,
-				deferred = $.Deferred()
-			;
-			this.post = new Upfront.Models.Post({ID: this.postId});
+		editContents: function(e, focusElement) {
+			if (Upfront.Application.user_can("EDIT") === false) {
+				if (parseInt(this.post.get('post_author'), 10) === Upfront.data.currentUser.id && Upfront.Application.user_can("EDIT_OWN") === true) {
+					// Pass through
+				} else {
+					return;
+				}
+			}
 
-			//this.bindPostEvents();
-			me.loadingPost = deferred.promise();
-			this.post.fetch({withMeta: true, filterContent: true}).done(function(response){
-				if(!Upfront.data.posts)
-					Upfront.data.posts = {};
-				Upfront.data.posts[me.postId] = me.post;
-				deferred.resolve(me.post);
-			});
-
-
-			return this.loadingPost;
-		},
-
-		editContents: function(e, focusElement){
 			var me = this,
 				ram = function () {
 					arguments.callee.iter = arguments.callee.iter || 0;
@@ -255,7 +510,7 @@ define("content", deps, function(postTpl, ContentTools) {
 			var target = e ? $(e.currentTarget) : focusElement;
 
 
-			this.contentEditor = new ContentTools.PostContentEditor({
+			this.contentEditor = new ContentTools.PostContentEditorLegacy({
 				post: this.post,
 				postView: this.postView,
 				content_mode: this.content_mode,
@@ -293,15 +548,6 @@ define("content", deps, function(postTpl, ContentTools) {
 			this.render();
 		},
 
-		publish: function(results){
-			this.save(results, 'publish', Upfront.Settings.l10n.global.content.publishing.replace(/%s/, this.post.get('post_type')), Upfront.Settings.l10n.global.content.published.replace(/%s/, this.capitalize(this.post.get('post_type'))));
-		},
-		saveDraft:function(results){
-			this.save(results, 'draft', Upfront.Settings.l10n.global.content.saving.replace(/%s/, this.post.get('post_type')), Upfront.Settings.l10n.global.content.drafted.replace(/%s/, this.capitalize(this.post.get('post_type'))));
-		},
-        saveAutoDraft:function(results){
-            this.save(results, 'auto-draft');
-        },
 		trash: function(){
 			var me = this,
 				postType = this.post.get('post_type'),
@@ -321,124 +567,25 @@ define("content", deps, function(postTpl, ContentTools) {
 				if(me.postView.property('type') == 'UpostsModel')
 					me.postView.refreshMarkup();
 
-                // navigate to home
-                Upfront.Application.sidebar.toggleSidebar();
-                Upfront.Application.navigate( "/" , true);
+				// navigate to home
+				Upfront.Application.sidebar.toggleSidebar();
+				Upfront.Application.navigate( "/" , true);
 			});
 		},
 
 		save: function(results, status, loadingMsg, successMsg){
 			var me = this,
-				changed = this.changed,
-				updateMeta = true,
-				metaUpdated = !updateMeta,
-                is_auto_draft = status === "auto-draft",
-                post_name = this.post.get("post_name"),
-                loading = new Upfront.Views.Editor.Loading({
-					loading: loadingMsg,
-					done: Upfront.Settings.l10n.global.content.here_we_are,
-					fixed: false
-				}),
-				postUpdated = false
-			;
-
-            if (!is_auto_draft && status !== 'draft') {
-                loading.render();
-                this.$el.append(loading.$el);
-                this.contentEditor.box.$el.hide();
-            } else {
-                status = "draft";
-            }
-
-
-
-			if(results.title)
-				this.post.set('post_title', results.title);
-			if(results.content) {
-				if(this.postView.property('content_type') == 'excerpt')
-					this.post.set('post_excerpt', results.content);
-				else
-					this.post.set('post_content', results.content);
-			}
-			if(results.author)
-				this.post.set('post_author', results.author);
-
-            if(results.excerpt)
-                this.post.set('post_excerpt', results.excerpt);
-
-			if(results.inserts){
-				this.post.meta.setValue('_inserts_data', results.inserts);
-			}
-
-			if(results.date)
-				this.post.set('post_date', results.date);
-
-			if(results.visibility){
-				this.post.setVisibility(results.visibility);
-				if(results.pass)
-					this.post.set('post_password', results.pass);
-			}
-
-			if(results.visibility == 'private')
-				this.post.set('post_status', 'private');
-			else
-				this.post.set('post_status', status);
-
-			/* If this is a new post, take out the default post_name so that the system assigns a new one based on the edited title */
-			if($('body').hasClass('is_new'))
-				this.post.set('post_name', '');
-
-			this.post.save().done(function(result){
-                if( me.post.is_new && post_name.length){
-                    me.post.set("post_name", post_name).save();
-                }
-                me.post.set("post_name", result.data.post_name);
-                me.post.permalink = result.data.permalink;
-				if(metaUpdated){
-                    if( !is_auto_draft ) {
-                        loading.done();
-                        Upfront.Views.Editor.notify(successMsg);
-                    }
+				rerender = function(){
 					me.fetchPostLayout().then(function(){
-                        //if (!is_auto_draft && 'draft' !== status) { // let it stop editor to make image shortcodes look better
-                            me.stopEditContents();
-                            me.render();
-                        //}
+						me.render();
 					});
-				}
-
-				postUpdated = true;
-			});
-
-			if(updateMeta){
-				me.post.meta.save().done(function(){
-                    if(postUpdated){
-                        if( !is_auto_draft ) {
-                            loading.done();
-                            Upfront.Views.Editor.notify(successMsg);
-                        }
-						me.fetchPostLayout().then(function(){
-                            //if( !is_auto_draft ) { let it stop editor to make image shortcodes look better
-                                me.stopEditContents();
-                                me.render();
-                            //}
-						});
-					}
-					metaUpdated = true;
-				});
+				};
+			this.once('post:saved', rerender);
+			if( results.content && this.postView.property('content_type') == 'excerpt' ) {
+				results.excerpt = results.content;
+				results.content = false;
 			}
-			else
-				metaUpdated
-
-            this.post.is_new = false;
-		},
-
-		capitalize: function(str){
-			return str.charAt(0).toUpperCase() + str.slice(1);
-		},
-
-		preventLinkNavigation: function(e){
-			e.preventDefault();
+			PostEditor.prototype.save.call(this, results, status, loadingMsg, successMsg);
 		},
 
 		setContentPadding: function(){
@@ -459,12 +606,13 @@ define("content", deps, function(postTpl, ContentTools) {
 
 			styles.html(rules);
 		}
-	});
+	}));
 
 	// Publish the post editor to the Upfront.Content object, make sure Upfront.Content object exists
 	if(!Upfront.Content)
 		Upfront.Content = {};
 	Upfront.Content.PostEditor = PostEditor;
+	Upfront.Content.PostEditorLegacy = PostEditorLegacy;
 });
 
 })(jQuery);

@@ -148,7 +148,7 @@ class Upfront_Posts_PostView {
 	public function expand_featured_image_template () {
 		if (empty($this->_post->ID)) return '';
 
-		$thumbnail = upfront_get_edited_post_thumbnail($this->_post->ID);
+		$thumbnail = upfront_get_edited_post_thumbnail($this->_post->ID, false, 'medium');
 		if (empty($thumbnail)) return '';
 
         $resize_featured = isset($this->_data['resize_featured'])

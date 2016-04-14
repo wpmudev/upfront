@@ -20,6 +20,7 @@ class Upfront_Server_ThemeColorsServer extends Upfront_Server {
 
 	public function update() {
 		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+		if (!Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE)) $this->_reject();
 
 		$theme_colors = isset($_POST['theme_colors']) ? $_POST['theme_colors'] : array();
 		$range = isset($_POST['range']) ? $_POST['range'] : 0;

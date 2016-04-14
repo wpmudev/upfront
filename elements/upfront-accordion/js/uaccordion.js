@@ -79,12 +79,14 @@ define([
 			event.preventDefault();
 			this.property('accordion').push({
 				title: l10n.panel_label + ' ' + (1 + this.property('accordion_count')),
-				content: l10n.content_label.replace("</p>",   ' ' + (1 + this.property('accordion_count') + "</p>" ) ) // inject the number into p tag
+				content: $.trim(  l10n.content_label.replace("</p>",   ' ' + (1 + this.property('accordion_count') + "</p>" ) ) ) // inject the number into p tag
 			});
 			this.property('accordion_count', this.property('accordion').length, false);
 		},
 
 		deletePanel: function(event) {
+			if (!Upfront.Application.user_can_modify_layout()) return false;
+
 			var element = $(event.currentTarget);
 			var panel = element.parents('.accordion-panel');
 			var id = panel.index();
@@ -120,6 +122,7 @@ define([
 		 * @param {Object} e Event object
 		 */
 		onPanelTitleDblClick: function (e) {
+			if (!Upfront.Application.user_can_modify_layout()) return false;
 			var $panel = this.$el.find('.accordion-panel-active'),
 				$title = $panel.find(".accordion-panel-title"),
 				ed = $title.data("ueditor")
@@ -203,67 +206,71 @@ define([
 			var count = 1,
 				self = this
 			;
-			this.$el.find('.accordion-panel-title').each(function () {
-				var $title = $(this);
-				if ($title.data('ueditor')) {
-					return true;
-				}
-				$title
-					.ueditor({
-						linebreaks: false,
-						disableLineBreak: true,
-						airButtons: false,
-						placeholder: 'Panel '+count
-					})
-					.on('start', function () {
-						Upfront.Events.trigger('upfront:element:edit:start', 'text');
-					})
-					.on('stop', function () {
-						self.save_panel_content();
-						self.render();
-						Upfront.Events.trigger('upfront:element:edit:stop');
-					})
-					.on('syncAfter', function () { self.save_panel_content(); })
-					.on('keydown', function (e) {
-						// ... so apparently, `linebreaks` argument above wreaks havoc on everything when set to `true`,
-						// and `disableLineBreak` does nothing.
-						// Very well then, do it ourselves.
-						if (13 === e.which) return false;
-						if (e.which === 9) {
-							e.preventDefault();
-							self.editContent();
-						}
-					})
-					.addClass('uf-click-to-edit-text')
-				;
+			if (Upfront.Application.user_can_modify_layout()) {
+				this.$el.find('.accordion-panel-title').each(function () {
+					var $title = $(this);
+					if ($title.data('ueditor')) {
+						return true;
+					}
+					$title
+						.ueditor({
+							linebreaks: false,
+							disableLineBreak: true,
+							airButtons: false,
+							placeholder: 'Panel '+count
+						})
+						.on('start', function () {
+							Upfront.Events.trigger('upfront:element:edit:start', 'text');
+						})
+						.on('stop', function () {
+							self.save_panel_content();
+							self.render();
+							Upfront.Events.trigger('upfront:element:edit:stop');
+						})
+						.on('syncAfter', function () { self.save_panel_content(); })
+						.on('keydown', function (e) {
+							// ... so apparently, `linebreaks` argument above wreaks havoc on everything when set to `true`,
+							// and `disableLineBreak` does nothing.
+							// Very well then, do it ourselves.
+							if (13 === e.which) return false;
+							if (e.which === 9) {
+								e.preventDefault();
+								self.editContent();
+							}
+						})
+						.addClass('uf-click-to-edit-text')
+					;
 
-				$title.data('ueditor').stop();
-				count++;
-			});
-			self.$el.find('.accordion-panel-content').each(function() {
-				var $me = $(this);
-				if ($me.data('ueditor')) {
-					return true;
-				}
-				$me
-					.ueditor({
-						linebreaks: false,
-						autostart: false,
-						paragraphize: false,
-						focus: false,
-						placeholder: false
-					})
-					.on('start', function(){
-						Upfront.Events.trigger('upfront:element:edit:start');
-					})
-					.on('syncAfter', function () { self.save_panel_content(); })
-					.on('stop', function(){
-						self.save_panel_content();
-						self.render();
-						Upfront.Events.trigger('upfront:element:edit:stop');
-					})
-				;
-			});
+					$title.data('ueditor').stop();
+					count++;
+				});
+				self.$el.find('.accordion-panel-content').each(function() {
+					var $me = $(this);
+					if ($me.data('ueditor')) {
+						return true;
+					}
+					$me
+						.ueditor({
+							linebreaks: false,
+							autostart: false,
+							paragraphize: false,
+							focus: false,
+							placeholder: false
+						})
+						.on('start', function(){
+							Upfront.Events.trigger('upfront:element:edit:start');
+						})
+						.on('syncAfter', function () { self.save_panel_content(); })
+						.on('stop', function(){
+							self.save_panel_content();
+							self.render();
+							Upfront.Events.trigger('upfront:element:edit:stop');
+						})
+					;
+				});
+			} else {
+				this.$el.find('.accordion-panel i').remove();
+			}
 			this.$el.find('.accordion-panel:not(.accordion-panel-active) .accordion-panel-content').hide();
 
 		},

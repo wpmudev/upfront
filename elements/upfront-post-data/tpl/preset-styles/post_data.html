@@ -1,0 +1,66 @@
+<?php if (!empty($properties['static-date_posted-use-typography'])) { ?>
+
+.<?php echo $properties['id'] ?> .upfront-post-data-part .date_posted {
+
+	<?php if (!empty($properties['static-date_posted-font-family'])) { ?>
+		font-family: <?php echo $properties['static-date_posted-font-family'] ?>;
+	<?php } ?>
+
+	<?php if (!empty($properties['static-date_posted-style'])) { ?>
+		font-style: <?php echo $properties['static-date_posted-style'] ?>;
+	<?php } ?>
+
+	<?php if (!empty($properties['static-date_posted-weight'])) { ?>
+		font-weight: <?php echo $properties['static-date_posted-weight'] ?>;
+	<?php } ?>
+
+	<?php if (!empty($properties['static-date_posted-font-size'])) { ?>
+		font-size: <?php echo $properties['static-date_posted-font-size'] ?>px;
+	<?php } ?>
+
+	<?php if (!empty($properties['static-date_posted-font-color'])) { ?>
+		color: <?php echo $properties['static-date_posted-font-color'] ?>;
+	<?php } ?>
+
+	<?php if (!empty($properties['static-date_posted-line-height'])) { ?>
+		line-height: <?php echo $properties['static-date_posted-line-height'] ?>;
+	<?php } ?>
+
+}
+
+<?php } ?>
+
+<?php if (!empty($properties['static-title-use-typography'])) { ?>
+
+.<?php echo $properties['id'] ?> .upfront-post-data-part .title * {
+
+	<?php if (!empty($properties['static-title-font-family'])) { ?>
+		font-family: <?php echo $properties['static-title-font-family'] ?>;
+	<?php } ?>
+
+	<?php if (!empty($properties['static-title-style'])) { ?>
+		font-style: <?php echo $properties['static-title-style'] ?>;
+	<?php } ?>
+
+	<?php if (!empty($properties['static-title-weight'])) { ?>
+		font-weight: <?php echo $properties['static-title-weight'] ?>;
+	<?php } ?>
+
+	<?php if (!empty($properties['static-title-font-size'])) { ?>
+		font-size: <?php echo $properties['static-title-font-size'] ?>px;
+	<?php } ?>
+
+	<?php if (!empty($properties['static-title-font-color'])) { ?>
+		color: <?php echo $properties['static-title-font-color'] ?>;
+	<?php } ?>
+
+	<?php if (!empty($properties['static-title-line-height'])) { ?>
+		line-height: <?php echo $properties['static-title-line-height'] ?>;
+	<?php } ?>
+
+}
+
+<?php } ?>
+
+
+<?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>

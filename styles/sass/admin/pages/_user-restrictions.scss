@@ -1,0 +1,116 @@
+#upfront_restrictions_form {
+    padding: 0 10px;
+}
+#upfront_user_restrictions_listing {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+    height: 100%;
+    background: white;
+    -mox-border-radius: 5px;
+    -o-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    margin-top: 40px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid rgb(228, 228, 228);
+}
+#upfront_user_restrictions_listing ul {
+    margin: 0;
+    display: table-row;
+}
+#upfront_user_restrictions_listing li {
+    display: table-cell;
+    height: 50px;
+    border: 1px solid rgb(239, 239, 239);
+    border-top: none;
+    border-left: none;
+    padding: 0;
+    text-align: center;
+    min-width: 7%;
+    font-family: 'Roboto';
+    font-size: 14px;
+    font-weight: normal;
+    color: #333;
+}
+ul.upfront_restrictions_functionality_row:hover li {
+    background-color: #f1f1f1;
+}
+#upfront_user_restrictions_listing li.upfront_restrictions_functionality_role {
+    width: 10%;
+}
+#upfront_user_restrictions_listing li:last-child {
+    border-right: none;
+}
+#upfront_user_restrictions_listing ul.upfront_user_restrictions_head {
+    height: 60px;
+    line-height: 60px;
+    margin: 0;
+    font-weight: bold;
+}
+#upfront_user_restrictions_listing ul.upfront_restrictions_functionality_row {
+    min-height: 50px;
+}
+.upfront_restrictions_functionality_row li {
+    background: rgb(249, 249, 249);
+    line-height: 50px;
+    margin: 0;
+    padding: 14px 30px 16px;
+}
+#upfront_user_restrictions_listing ul li.upfront_restrictions_functionality_name {
+    width: 35%;
+    text-align: left;
+    padding: 0 0 0 30px;
+}
+.upfront_restrictions_functionality_name .description {
+    font-family: 'Roboto';
+    font-weight: normal;
+    font-size: 12px;
+    font-style: normal;
+    line-height: 1.7;
+    color: #777;
+}
+#upfront_user_restrictions_listing ul.upfront_restrictions_functionality_row li.upfront_restrictions_functionality_name {
+    line-height: 15px;
+    padding-top: 18px;
+    height: 32px;
+}
+#upfront_user_restrictions_listing ul.upfront_user_restrictions_head li {
+    margin: 0;
+    height: 60px;
+    min-width: 7%;
+    font-family: 'Roboto';
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+}
+#upfront_user_restrictions_listing ul.upfront_user_restrictions_head li.upfront_restrictions_functionality_name {
+    text-transform: uppercase;
+    font-family: 'Roboto Condensed';
+    font-size: 18px;
+    font-weight: bold;
+    color: #777;
+}
+.upfront_restrictions_functionality_row li:first-child {
+    background: #fff;
+    text-align: left;
+}
+#upront_restrictions_submit {
+    display: block;
+    width: 187px;
+    height: 40px;
+    background-color: #00cf8d;
+    box-shadow: 0 3px 0 0 #00b37a;
+    font-family: 'Roboto';
+    font-size: 15px;
+    color: #fff;
+    margin: 30px auto;
+    border: none;
+    text-align: center;
+    -mox-border-radius: 4px;
+    -o-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    cursor: pointer;
+}

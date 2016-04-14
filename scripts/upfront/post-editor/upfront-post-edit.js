@@ -50,34 +50,42 @@ var Box = Backbone.View.extend({
         });
     },
 
-    render: function(){
-        this.destroy();
-        if (!Upfront.Settings.Application.MODE.ALLOW.match(Upfront.Settings.Application.MODE.CONTENT)) return false; // Drop the entire bar rendering if we're unable to deal with it
-        var me = this,
-            postData = this.post.toJSON(),
-            extraData = {},
-            base = me.post.get("guid")
-            ;
+		render: function(){
+			this.destroy();
+			if (Upfront.Application.user_can("EDIT") === false) {
+				if (parseInt(this.post.get('post_author'), 10) === Upfront.data.currentUser.id && Upfront.Application.user_can("EDIT_OWN") === true) {
+					// Pass through
+				} else {
+					return;
+				}
+			}
 
-        extraData.rootUrl = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
-        postData.permalink = this.permalink = extraData.rootUrl + this.post.get("post_name");
-        postData.previewLink = this.post.get("guid") + "&preview=true";
+			var me = this,
+			postData = this.post.toJSON(),
+				extraData = {},
+				base = me.post.get("guid")
+					;
 
-        postData.buttonText = this.getButtonText();
-        postData.draftButton = ['publish', 'future'].indexOf(this.initialStatus) == -1;
-        postData.cancelButton = !(this.post.is_new);
+			extraData.rootUrl = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
+			postData.permalink = this.permalink = extraData.rootUrl + this.post.get("post_name");
+			postData.previewLink = this.post.get("guid") + "&preview=true";
 
-        postData.cid = this.cid;
+			postData.buttonText = this.getButtonText();
+			postData.draftButton = ['publish', 'future'].indexOf(this.initialStatus) == -1;
+			postData.cancelButton = !(this.post.is_new);
 
-        extraData.post_type_conditional_box_title = this._post_type_has_taxonomy('post_tag') && this._post_type_has_taxonomy('category')
-            ? Upfront.Settings.l10n.global.content.tags_cats_url
-            : Upfront.Settings.l10n.global.content.no_tax_url
-        ;
-        extraData.url_label = "post" === me.post.get("post_type") ? Upfront.Settings.l10n.global.content.post_url : Upfront.Settings.l10n.global.content.page_url;
-        this.$el.html(this.tpl(_.extend({}, postData, extraData) ));
-        this.populateSections();
-        return this;
-    },
+			postData.cid = this.cid;
+
+			extraData.post_type_conditional_box_title = this._post_type_has_taxonomy('post_tag') && this._post_type_has_taxonomy('category')
+				? Upfront.Settings.l10n.global.content.tags_cats_url
+				: Upfront.Settings.l10n.global.content.no_tax_url
+				;
+			extraData.url_label = "post" === me.post.get("post_type") ? Upfront.Settings.l10n.global.content.post_url : Upfront.Settings.l10n.global.content.page_url;
+			this.$el.html(this.tpl(_.extend({}, postData, extraData) ));
+			this.populateSections();
+			return this;
+		},
+
     navigate_to_preview: function(e){
         e.preventDefault();
 
@@ -166,14 +174,28 @@ var Box = Backbone.View.extend({
     },
 
     setPosition: function(){
-        var $container = $(".upfront-output-this_post").length ? $(".upfront-output-this_post") : this.$el.closest(".upfront-postcontent-editor"),
-            right_space = $("body").width() - ( $container.width() + ( _.isUndefined( $container.offset() ) ? 0 : $container.offset().left ) ),
+        var $container = $(".upost-data-object-post_data, .upfront-output-this_post").length ? $(".upost-data-object-post_data, .upfront-output-this_post") : this.$el.closest(".upfront-postcontent-editor"),
+            container_pos = $container.map(function(){
+               return {
+                   right: $(this).width() + $(this).offset().left,
+                   $el: $(this)
+               };
+            }),
+            right_container = _.max(container_pos, function(container){ return container.right; }),
+            right_space = $("body").width() - right_container.right,
             right = right_space > this.$el.width() ? right_space - this.$el.width() :  10
-            ;
+        ;
 
-        this.$el.css({
-            right: right + 10
-        });
+        if( Upfront.Util.isRTL() ){
+            this.$el.css({
+                left: right + 10,
+                right: "auto"
+            });
+        }else{
+            this.$el.css({
+                right: right + 10
+            });
+        }
 
     },
 
@@ -182,11 +204,7 @@ var Box = Backbone.View.extend({
     },
 
     destroy: function(){
-        //$(window)
-        //    .off('scroll', this.onScrollFunction)
-        //    .off('resize', this.onScrollFunction)
-        //;
-        //this.onScrollFunction = false;
+    	Upfront.Events.off("upfront:element:edit:stop", this.element_stop_prop);
     },
 
     _stop_overlay: function () {
@@ -204,8 +222,8 @@ var Box = Backbone.View.extend({
             this.post.trigger('editor:cancel');
             this.trigger('cancel');
             Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
-            Upfront.Application.sidebar.toggleSidebar();
             this.fadein_other_elements();
+            this.remove();
         }
     },
     fadein_other_elements: function(){
@@ -221,7 +239,7 @@ var Box = Backbone.View.extend({
          */
 
         e.preventDefault();
-        //this.destroy();
+        this.destroy();
 
         this.post.trigger('editor:publish');
 
@@ -234,8 +252,8 @@ var Box = Backbone.View.extend({
         this._stop_overlay();
         //$(".editing-overlay").remove();
 
-        Upfront.Application.sidebar.toggleSidebar();
         this.toggleRegionClass(false);
+        this.remove();
 
 
     },
@@ -248,6 +266,7 @@ var Box = Backbone.View.extend({
         this.post.trigger('editor:draft');
         this.trigger('draft');
         Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post, true);// last true means 'saving draft'
+        this.remove();
     },
 
     trash: function(e){
@@ -256,6 +275,7 @@ var Box = Backbone.View.extend({
             this.destroy();
             this.trigger('trash');
             Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
+            this.remove();
         }
     },
 

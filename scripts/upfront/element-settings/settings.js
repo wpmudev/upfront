@@ -21,7 +21,9 @@ define([
 				panels = {},
 				currentBreakpoint,
 				breakpointsData,
-				breakpointData;
+				breakpointData,
+				skip_appearance = !Upfront.Application.user_can("SWITCH_PRESET") && !Upfront.Application.user_can("MODIFY_PRESET") && !Upfront.Application.user_can("DELETE_PRESET")
+			;
 
 			// Setup model so that it uses breakpoint values
 			if (this.hasBreakpointSettings === true) {
@@ -38,7 +40,7 @@ define([
 
 			// Instantiate panels
 			_.each(this.panels, function(panel, index) {
-				if (index === 'Appearance') {
+				if (index === 'Appearance' && !skip_appearance) {
 					this.appearancePanel = new PresetManager(
 					_.extend(
 							{
@@ -62,7 +64,7 @@ define([
 
 			// Hard wiring here instead having every element define advanced panel
 			// because all elements have identical advanced settings panel
-			panels.Advanced = new AdvancedSettings({model: this.model});
+			if (Upfront.Application.user_can("MODIFY_PRESET")) panels.Advanced = new AdvancedSettings({model: this.model});
 
 			// Have to do this because overwriting own property
 			this.panels = panels;

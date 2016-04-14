@@ -117,17 +117,19 @@ a.ueditor-action-pickercancel{
 .upfront-wp-inserted_image-wrapper{
   max-width: 100%;
 }
-/*.upfront-inserted_image-wrapper .wp-caption-text,
-.uinsert-image-wrapper{
-	padding: 15px;
-}*/
+.upfront-wp-inserted_image-wrapper .wp-caption {
+	position: relative;
+}
+.upfront-wp-inserted_image-wrapper .wp-caption .upfront-inline-panel {
+	top: 15px !important;
+}
+
 .uinsert-image-wrapper img{
 	width: 100%;
 	height: 100%;
 }
 .ueditor-insert .upfront-inline-panel-item i:before {
-//	background-image: url('../img/uf-ui-sprite.png');
-//	background-image: url('../img/uf-ui-sprite.svg'), none;
+
   background-image: url('../img/uf-core-el-sprite.svg');
   display: block;
   content: "";
@@ -138,10 +140,9 @@ i.upfront-icon.upfront-icon-region-style:before{
 i.upfront-icon.upfront-icon-region-style:hover:before{
   background-position:-808px -906px;
 }
-i.upfront-icon.upfront-icon-region-remove:before{
-/* //  background-position:-807px -900px;
-  content:"x";
-  color:red;*/
+
+.upfront-icon-region-caption {
+	height: 38px;
 }
 
 .upfront-inline-panel-item i.upfront-icon.upfront-icon-region-caption:before{
@@ -179,10 +180,12 @@ i.upfront-icon.upfront-icon-region-remove:before{
 }
 
 .upfront-inline-panel-item i.upfront-icon.upfront-icon-region-change_image:before{
-  background-position: -699px -745px;
+  background-position: -290px -341px;
+  opacity:0.7;
 }
 .upfront-inline-panel-item i.upfront-icon.upfront-icon-region-change_image:hover:before{
-  background-position: -807px -745px;
+  background-position: -290px -341px;
+  opacity:1;
 }
 
 .ueditor-insert .upfront-icon-region-embed {
@@ -240,15 +243,15 @@ div.uinsert-selector a:hover {
 .upfront-postpart-featured_image {
 	overflow: hidden;
 }
-.uimage-control-panel-content label{
-    color:#fff;
-}
+/*
 .uimage-control-panel-content .upfront-field-radio {
   border-color: #97aec6;
 }
+
 .uimage-control-panel-content .upfront-field-radio:checked {
   border-color: #fff;
-}
+} 
+*/
 .ueditor-insert:hover .upfront-resize-handle-e,
 .ueditor-insert:hover .upfront-resize-handle-w {
 	display: block !important;
@@ -262,7 +265,7 @@ div.uinsert-selector a:hover {
 	background: #f2b530;
 }
 
-.upfront-control-dialog-open .inline-panel-control-dialog{
+.upfront-control-dialog-open .inline-panel-control-dialog {
   display: block;
 }
 .ueditor-insert-variant-group {
@@ -296,7 +299,7 @@ div.uinsert-selector a:hover {
     width: auto;
     text-align: center;
 }
-#page.responsive-breakpoint .upfront-inserted_image-wrapper .wp-caption-text, 
+#page.responsive-breakpoint .upfront-inserted_image-wrapper .wp-caption-text,
 #page.responsive-breakpoint .upfront-inserted_image-wrapper .uinsert-image-wrapper {
     min-height: 0 !important;
     margin-top: 0;
@@ -429,4 +432,8 @@ div.uinsert-selector a:hover {
 .wp-caption-text p:last-child{
   margin-bottom: 0;
   padding-bottom: 0;
+}
+
+div#page.upfront-layout-view.upfront-layout-view .upfront-editable_entity.upfront-module .content-only.upost-data-object-post_data .content ul li.upfront-field-select-option {
+  text-indent:0px;
 }

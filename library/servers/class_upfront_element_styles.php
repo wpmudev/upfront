@@ -154,7 +154,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 	public function add_script_load_url ($urls) {
 		$raw_cache_key = $this->_get_cached_scripts();
 		if (empty($raw_cache_key)) return $urls;
-		
+
 		$url = $this->_get_enqueueing_url(self::TYPE_SCRIPT, $raw_cache_key);
 		$urls[] = $url;
 		return $urls;
@@ -210,6 +210,69 @@ class Upfront_ElementStyles extends Upfront_Server {
 
 		$this->_out($response, true);
 	}
+	
+	public function get_closeset_breakpoints($width, $breakpoints) {
+		$prev = $next = false;
+		$prev_width = $next_width = 0;
+		foreach ( $breakpoints as $name => $point ){
+			$point_width = $point->get_width();
+			if ( $point_width > $width && ( $point_width < $next_width || $next_width == 0) ){
+				$next = $point;
+				$next_width = $point_width;
+			}
+			else if ( $point_width < $width && ( $point_width > $prev_width || $prev_width == 0 ) ){
+				$prev = $point;
+				$prev_width = $point_width;
+			}
+		}
+
+		return array(
+			'prev' => $prev_width,
+			'next' => $next_width
+		);
+	}
+	
+	/**
+	 * Serve breakpoint widths array.
+	 */
+	public function serve_breakpoints_array () {
+		$js_return = '';
+		$breakpoints_array = array();
+		$breakpoints = Upfront_Grid::get_grid()->get_breakpoints();
+		foreach ( $breakpoints as $name => $point ){
+			$min_width = $max_width = 0;
+			$width = $point->get_width();
+			$closest = $this->get_closeset_breakpoints($width, $breakpoints);
+			
+			if ( $closest['prev'] ){
+				$min_width = $width;
+			}
+			if ( $closest['next'] ){
+				$max_width = $closest['next'] - 1;
+			}
+			
+			$breakpoints_array[$point->get_id()] = array(
+				'min_width' => $min_width,
+				'max_width' => $max_width
+			);
+		}
+		
+		$js_return .= "jQuery(function($){\n";
+		$js_return .= "window.get_breakpoint_ie8 = function(width) {\n";
+		foreach($breakpoints_array as $id => $breakpoint) {
+			if($breakpoint['max_width'] > 0) {
+				$js_return .= "if(width >= ".$breakpoint['min_width']." && width <= ".$breakpoint['max_width'].") {\n";
+			} else {
+				$js_return .= "if(width >= ".$breakpoint['min_width'].") {\n";
+			}
+			$js_return .= "return '".$id."';\n";
+			$js_return .= "}\n";
+		}
+		$js_return .= "}\n";
+		$js_return .= "});\n";
+		
+		return $js_return;
+	}
 
 	/**
 	 * Serve layout element scripts according to the requested key.
@@ -219,6 +282,14 @@ class Upfront_ElementStyles extends Upfront_Server {
 		$key->set_hash(stripslashes($_REQUEST['key']));
 
 		$cache = $this->_cache->get($key);
+		
+		$breakpoints = $this->serve_breakpoints_array();
+		
+
+		if(!empty($breakpoints)) {
+			$cache = $breakpoints . $cache;
+		}
+
 		$response = empty($cache)
 			? new Upfront_JavascriptResponse_Error('')
 			: new Upfront_JavascriptResponse_Success($cache)
@@ -330,24 +401,44 @@ class Upfront_SmushServer implements IUpfront_Server {
 		$me->_add_hooks();
 	}
 
-	private function _add_hooks () {
-		if (!class_exists('WpSmush')) return false; // Do we have Smush plugin?
+	private function _add_hooks() {
+		if ( ! class_exists( 'WpSmush' ) ) {
+			return false;
+		} // Do we have Smush plugin?
 		global $WpSmush;
 		if ( ! defined( 'WpSmush::API_SERVER' ) && ( is_object( $WpSmush ) && ! $WpSmush->api_server ) ) {
 			return false;
 		} // Is it ours?
 
-		add_action('upfront-media-images-image_changed', array($this, 'pass_over_to_smush'), 10, 2);
+		add_action('upfront-media-images-image_changed', array($this, 'pass_over_to_smush'), 10, 5);
 	}
 
-	public function pass_over_to_smush ($path, $url) {
-		if (empty($path) || empty($url)) return false;
-		if (!is_readable($path)) return false;
+	public function pass_over_to_smush ($path, $url, $saved, $meta, $imageData ) {
+		if ( empty( $path ) || empty( $url ) || ! is_readable( $path ) ) {
+			return false;
+		}
 
 		global $WpSmush;
-		if (!is_callable(array($WpSmush, 'do_smushit'))) return false;
+		if ( ! is_callable( array( $WpSmush, 'do_smushit' ) ) ) {
+			return false;
+		}
 
-		$res = $WpSmush->do_smushit($path, $url);
+		//Smush Image and Get the response
+		$res = $WpSmush->do_smushit( $path, $url );
+
+		//If the smushing was succesful, store a flag in meta
+		if ( ! is_wp_error( $res ) && ! empty( $res['data'] ) ) {
+
+			//Get the post id and element id
+			$id         = ! empty( $imageData['id'] ) ? $imageData['id'] : '';
+			$element_id = ! empty( $imageData['element_id'] ) ? $imageData['element_id'] : '';
+
+			//If we have all the params and meta is set for element
+			if ( ! empty( $id ) && ! empty( $element_id ) && isset( $meta[ $element_id ] ) ) {
+				$meta[ $element_id ]['is_smushed'] = 1;
+				update_post_meta( $id, 'upfront_used_image_sizes', $meta );
+			}
+		}
 
 		return $res;
 	}

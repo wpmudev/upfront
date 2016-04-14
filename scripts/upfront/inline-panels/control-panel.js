@@ -57,7 +57,7 @@ define([
 
 		delegateEvents: function(){
 			Backbone.View.prototype.delegateEvents.call(this, arguments);
-			this.items.each(function(item){
+			if (this.items && this.items.each) this.items.each(function(item){
 				item.delegateEvents();
 			});
 		}

@@ -601,8 +601,13 @@
                         button_text: l10n.change_image,
                         hide_sizes: this.data.get("insert_type") === "image_insert"
                     }).done(function (popup, result) {
+                        var ueditor;
                         if(_.isEmpty(  result ) ) return;
                         self.start( result );
+                        if ( self.$editor && self.$editor.data('ueditor') ) {
+                            ueditor = self.$editor.data('ueditor');
+                            ueditor.redactor.code.sync();
+                        }
                     });
                     return false;
                 }

@@ -21,7 +21,9 @@
 }
 
 .upfront-region-container-has-posts .upfront-region,
-.upfront-region-container-has-this_post .upfront-region {
+.upfront-region-container-has-this_post .upfront-region,
+.upfront-region-container-has-content .upfront-region,
+.upfront-region-container-has-comments .upfront-region {
   min-height: 0 !important;
 }
 
@@ -151,10 +153,8 @@
 .upfront-edit-layout .upfront-region-container:hover > .upfront-region-edit-trigger,
 .upfront-edit-theme .upfront-region-container:hover > .upfront-region-edit-trigger,
 .upfront-edit-responsive .default-breakpoint .upfront-region-container:hover > .upfront-region-edit-trigger,
-.upfront-edit-layout .upfront-region-has-modules:hover > .upfront-region-edit-trigger-small,
-.upfront-edit-theme .upfront-region-has-modules:hover > .upfront-region-edit-trigger-small,
-.upfront-edit-responsive .upfront-region-has-modules:hover > .upfront-region-edit-trigger-small,
-.upfront-edit-responsive .responsive-breakpoint .upfront-region:hover > .upfront-region-edit-trigger-small,
+.upfront-edit-layout .upfront-region-side-fixed.upfront-region-has-modules:hover > .upfront-region-edit-trigger-small-fixed,
+.upfront-edit-theme .upfront-region-side-fixed.upfront-region-has-modules:hover > .upfront-region-edit-trigger-small-fixed,
 .upfront-edit-layout .upfront-region-empty:hover > .upfront-region-edit-trigger-full,
 .upfront-edit-theme .upfront-region-empty:hover > .upfront-region-edit-trigger-full,
 .upfront-edit-responsive .upfront-region-empty:hover > .upfront-region-edit-trigger-full,
@@ -165,14 +165,15 @@
 }
 .upfront-region-container.upfront-region-module-activated .upfront-region-edit-trigger,
 .upfront-region-container.upfront-region-module-activated:hover .upfront-region-edit-trigger,
-.upfront-region-container.upfront-region-module-activated .upfront-region:hover .upfront-region-edit-trigger,
+.upfront-region-container.upfront-region-module-activated .upfront-region:hover .upfront-region-edit-trigger {
+	display: none;
+}
 .upfront-region-editing .upfront-region-container .upfront-region-edit-trigger,
 .upfront-region-editing .upfront-region-container:hover .upfront-region-edit-trigger,
 .upfront-region-fixed-editing .upfront-region-container .upfront-region-edit-trigger,
 .upfront-region-fixed-editing .upfront-region-container:hover .upfront-region-edit-trigger,
+.upfront-region-fixed-editing .upfront-region-side-fixed.upfront-region-has-modules:hover .upfront-region-edit-trigger,
 .upfront-edit-responsive .upfront-region-hidden > .upfront-region-edit-trigger,
-.upfront-edit-responsive .upfront-region-editing.responsive-breakpoint .upfront-region:hover > .upfront-region-edit-trigger-small,
-.upfront-edit-responsive .responsive-breakpoint .upfront-region-hidden:hover > .upfront-region-edit-trigger-small,
 .upfront-region-container.upfront-region-container-nav-open .upfront-region-edit-trigger,
 .upfront-region-container.upfront-region-container-nav-open:hover .upfront-region-edit-trigger,
 .upfront-edit-responsive .upfront-region-container.upfront-region-container-nav-open .upfront-region-edit-trigger,
@@ -183,7 +184,8 @@
 .upfront-region-finish-edit,
 .upfront-region-finish-edit-fixed,
 .upfront-region-finish-edit-lightbox,
-.upfront-module-group-finish-edit {
+.upfront-module-group-finish-edit,
+.upfront-object-group-finish-edit {
 	position: absolute;
 	bottom: -51px;
 	right: 0;
@@ -213,10 +215,12 @@
 .upfront-region-fixed-editing .upfront-region-side-fixed .upfront-region-finish-edit-fixed/*,
 .upfront-region-fixed-editing .upfront-region-container-active .upfront-region-finish-edit*/,
 .upfront-module-group-on-edit .upfront-module-group-finish-edit,
+.upfront-object-group-on-edit .upfront-object-group-finish-edit,
 .upfront-region-lightbox-editing .upfront-region-side-lightbox .upfront-region-finish-edit-lightbox {
 	display: block;
 }
-.upfront-module-group-nav-open.upfront-module-group-on-edit .upfront-module-group-finish-edit {
+.upfront-module-group-nav-open.upfront-module-group-on-edit .upfront-module-group-finish-edit,
+.upfront-module-group-element-editing .upfront-module-group-finish-edit {
 	display: none;
 }
 .upfront-region-title {
@@ -923,7 +927,7 @@
 }
 .upfront-inline-panel-item .upfront-icon {
 	display: block;
-	padding: 6px 6px 0 6px;
+	padding: 10px 6px 10px 10px;
 }
 .upfront-inline-panel-item.labeled{
     line-height: 40px !important;

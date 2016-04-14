@@ -15,13 +15,18 @@ var singleclickcount = 0;
 var elementClasses = '';
 var ButtonView = Upfront.Views.ObjectView.extend({
 	model: ButtonModel,
-	className: 'upfront-button',
+	className: 'upfront-object-view upfront-button',
 	buttonTpl: Upfront.Util.template(buttonTpl),
 	initialize: function() {
 		var me = this;
 
 		//Get all element classes without preset
 		this.elementClasses = this.$el.attr('class');
+
+		// For unknown reason some buttons have id_slug button and some
+		// ubutton. Normalizing id_slug here for rendering and other stuff
+		// to work properly
+		this.model.set_property('id_slug', 'ubutton');
 
 		if(! (this.model instanceof ButtonModel)){
 			this.model = new ButtonModel({properties: this.model.get('properties')});
@@ -72,7 +77,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		this.clearPresetClass(this.$el);
 		this.$el.addClass(this.property('preset'));
 	},
-	
+
 	clearPresetClass: function($el) {
 		$el.removeClass();
 		$el.addClass(this.elementClasses);
@@ -241,7 +246,9 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		blurTimeout = false;
 		this.delegateEvents();
 		var $target = this.$el.find('.upfront-object-content a.upfront_cta');
-		  $target.ueditor({
+		
+		if (Upfront.Application.user_can_modify_layout()) {
+			$target.ueditor({
 				linebreaks: true,
 				disableLineBreak: true,
 				airButtons: ['stateAlignCTA', 'upfrontIcons'],
@@ -263,6 +270,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			.on('syncAfter', function(){
 				me.saveTitle($(this));
 			});
+		}
 
 		// this.createInlineControlPanel();
 		this.clearPresetClass(this.$el);
@@ -303,7 +311,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 		return linkPanelControl;
 	},
-	
+
 	/* Hide LinkTo button */
 	/*
 	createVisitLinkControl: function() {

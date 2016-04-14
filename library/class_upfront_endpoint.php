@@ -47,9 +47,9 @@ abstract class Upfront_VirtualPage extends Upfront_Server {
 		if (!empty($request[1]) && !empty($this->_subpages)) {
 			foreach($this->_subpages as $subpage) {
 				if ($subpage->get_slug() !== $request[1]) continue;
-				
+
 				status_header(200);
-				
+
 				if ($render) $subpage->render($request);
 				else $subpage->parse($request);
 
@@ -230,7 +230,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 	private function _add_hooks () {
 		upfront_add_ajax('upfront-edit-publish', array($this, "publish_post"));
-		
+
 		upfront_add_ajax('upfront-create-post_type', array($this, "create_post_type"));
 
 		upfront_add_ajax('upfront-edit-draft', array($this, "draft_post"));
@@ -279,9 +279,12 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 	}
 
 	function create_post_type () {
-		if (!Upfront_Permissions::current(Upfront_Permissions::EDIT)) $this->_reject();
+		if (!Upfront_Permissions::current(Upfront_Permissions::CREATE_POST_PAGE)) {
+			$this->_reject();
+		}
+
 		$data = wp_parse_args(
-			stripslashes_deep($_POST['data']), 
+			stripslashes_deep($_POST['data']),
 			array(
 				'post_type' => 'post',
 				'title' => 'Write a title...',
@@ -518,7 +521,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 				return $this->_out(new Upfront_JsonResponse_Error('Error'));
 			}
 		}
-		
+
 
 		if($post){
 			if(!empty($data['filterContent'])){

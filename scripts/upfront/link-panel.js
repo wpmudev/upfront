@@ -73,6 +73,7 @@ define([
 			image: false,
 			lightbox: true,
 			email: true,
+			phone: true,
 			homepage: true
 		},
 
@@ -213,6 +214,8 @@ define([
 					return { value: 'external', label: contentL10n.url };
 				case 'email':
 					return { value: 'email', label: contentL10n.email };
+				case 'phone':
+					return { value: 'phone', label: contentL10n.phone };
 				case 'entry':
 					return { value: 'entry', label: contentL10n.post_or_page };
 				case 'anchor':
@@ -279,13 +282,16 @@ define([
 		/* Handle manually entered urls: external and email */
 		onUrlInputBlur: function(event) {
 			var userInput = $(event.currentTarget).val().trim();
-			if (this.model.get('type') === 'external' && !userInput.match(/https?:\/\//)) {
+			if (this.model.get('type') === 'external' && !userInput.match(/https?:\/\//) && !_.isEmpty( userInput ) ) {
 				userInput = 'http://' + userInput;
 			}
 			if (this.model.get('type') === 'email' && !userInput.match(/^mailto:/)) {
 				userInput = 'mailto:' + userInput;
 			}
-
+			if (this.model.get('type') === 'phone' && !userInput.match(/^tel:/)) {
+				userInput = 'tel:' + userInput;
+				this.model.set({'target': "_self"});
+			}
 			this.model.set({'url': userInput});
 			this.render();
 		},
@@ -355,12 +361,12 @@ define([
 			var me = this;
 
 			this.targetRadio = new Upfront.Views.Editor.Field.Radios({
-				label: 'Target:',
+				label: Upfront.Settings.l10n.global.content.target,
 				default_value: this.model.get('target') || '_self',
 				layout: 'horizontal-inline',
 				values: [
-					{ label: 'blank', value: '_blank' },
-					{ label: 'self', value: '_self' }
+					{ label: Upfront.Settings.l10n.global.content.blank, value: '_blank' },
+					{ label: Upfront.Settings.l10n.global.content.self, value: '_self' }
 				],
 				change: function () {
 					me.model.set({'target': this.get_value()});
