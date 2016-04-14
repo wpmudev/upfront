@@ -241,7 +241,12 @@ class Upfront_Admin_Restrictions
 			// Find if any role has lost edit_pages or edit posts capability
 			$revoked_edit_cap_role = false;
 
+			if (is_array($old) === false || is_array($new) === false) return;
+
 			foreach($old as $role=>$data) {
+				if (isset($old[$role]) === false || isset($old[$role]['capabilities']) === false ||
+					isset($new[$role]) === false || isset($new[$role]['capabilities']) === false) continue;
+
 				// Check if role has lost edit_pages cap
 				if (array_key_exists('edit_pages', $old[$role]['capabilities']) && false === array_key_exists('edit_pages', $new[$role]['capabilities'])) {
 					$revoked_edit_cap_role = $role;
@@ -255,6 +260,7 @@ class Upfront_Admin_Restrictions
 			if ($revoked_edit_cap_role === false) return;
 
 			$restrictions = Upfront_Permissions::boot()->get_restrictions();
+
 			// Nuke role capabilities for working with posts/pages
 			$restrictions['create_post_page'] = array_diff($restrictions['create_post_page'], array($revoked_edit_cap_role));
 			$restrictions['edit_posts'] = array_diff($restrictions['edit_posts'], array($revoked_edit_cap_role));
