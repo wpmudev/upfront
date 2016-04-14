@@ -1229,7 +1229,7 @@ define([
 				).done(function(results){
 					var imageData = results.data.images[imageId];
 
-					if(imageData.error){
+					if(imageData.error && !me.isThemeImage){
 						Upfront.Views.Editor.notify(l10n.process_error, 'error');
 						return;
 					}

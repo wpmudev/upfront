@@ -4,9 +4,10 @@ class Upfront_Admin_General
 {
 	
     function __construct(){
-
-        add_submenu_page( Upfront_Admin::$menu_slugs['main'], __("General Settings", Upfront::TextDomain),  __("General", Upfront::TextDomain), 'edit_theme_options', Upfront_Admin::$menu_slugs['main'], array($this, "render_page") );
-    }
+		if (Upfront_Permissions::current( Upfront_Permissions::SEE_USE_DEBUG )) {
+			add_submenu_page( Upfront_Admin::$menu_slugs['main'], __("General Settings", Upfront::TextDomain),  __("General", Upfront::TextDomain), 'manage_options', Upfront_Admin::$menu_slugs['main'], array($this, "render_page") );
+		}
+   }
 
 	function render_page() {
 		$core_version = $child_version = '0';

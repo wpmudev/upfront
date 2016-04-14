@@ -2926,7 +2926,7 @@
 					elements: new SidebarPanel_DraggableElements({"model": this.model}),
 					settings: new SidebarPanel_Settings({"model": this.model})
 				};
-				
+
 				// Dev feature only
 				//if ( Upfront.Settings.Debug.dev )
 				//	this.panels.settings = new SidebarPanel_Settings({"model": this.model});
@@ -2935,7 +2935,7 @@
 				var me = this;
 				_.each(this.panels, function(panel){
 					panel.render();
-					
+
 					//Render panels to init styles, but do not append to $el
 					if ( typeof panel.global_option !== "undefined" && panel.global_option ) {
 						if (Upfront.Settings.Application.PERMS.OPTIONS) {
@@ -2946,7 +2946,7 @@
 							me.$el.append(panel.el);
 						}
 					}
-					
+
 					panel.delegateEvents();
 				});
 			}
@@ -2961,7 +2961,7 @@
 					this.commands.push(new Command_NewPage({"model": this.model}));
 				}
 				this.commands.push(new Command_PopupList({"model": this.model}));
-				
+
 				if (Upfront.Application.user_can_modify_layout()) {
 					this.commands.push(new Command_OpenMediaGallery());
 				}
@@ -3006,7 +3006,7 @@
 			initialize: function () {
 				var MODE = Upfront.Settings.Application.MODE;
 				var current_app = Upfront.Application.get_current();
-				
+
 				if (Upfront.Application.user_can_modify_layout()) {
 					if ( current_app !== MODE.THEME ) {
 						this.commands = _([
@@ -3105,9 +3105,9 @@
 				 this.views.push(new ResponsiveCommand_BrowseLayout());
 				 }
 				 */
-				
+
 				this.views.push(new SidebarPanel_ResponsiveSettings({"model": this.model}));
-				
+
 			},
 			render: function() {
 				if (!Upfront.Application.user_can_modify_layout()) return false;
@@ -9142,10 +9142,19 @@
 				if (this.options.loading) this.$el.append('<p class="upfront-loading-text">' + this.options.loading + '</p>');
 				if (this.options.loading_notice) this.$el.append('<p class="upfront-loading-notice">' + this.options.loading_notice + '</p>');
 
+				// Allow loaders to not overlap, kill this one on start of next one
+				if (me.options.remove_on_event) {
+					Upfront.Events.once(me.options.remove_on_event, function() {
+						me.remove();
+						clearTimeout(me.done_timeout);
+						if ( me.done_callback ) _(me.done_callback).each(function(cbk) { if (cbk && cbk.call) cbk.call(me); });
+					});
+				}
+
 				this.$el.find('.upfront-loading-ani').on('animationend webkitAnimationEnd MSAnimationEnd oAnimationEnd', function(){
 					var state = me.$el.hasClass('upfront-loading-repeat') ? 'repeat' : (me.$el.hasClass('upfront-loading-done') ? 'done' : 'start');
 					if ( state == 'start' ){
-						if ( me.is_done ){
+						if ( me.is_done && !me.options.remove_on_event){
 							var done = me.done_text || me.options.done;
 							me.$el.addClass('upfront-loading-done');
 							me.$el.find('.upfront-loading-text').text(done);
@@ -9157,6 +9166,7 @@
 						me.$el.removeClass('upfront-loading-repeat');
 					}
 					else if ( state == 'done' ) {
+						if (me.options.remove_on_event) return;
 						me.remove();
 						clearTimeout(me.done_timeout);
 						if ( me.done_callback ) _(me.done_callback).each(function(cbk) { if (cbk && cbk.call) cbk.call(me); });
@@ -11815,7 +11825,7 @@
 				this.model.set({ 'active': true });
 				// hide all Edit Region for responsive
 				// Edit Region will show on mouseenter
-				$('.upfront-region-edit-trigger-small').removeClass('visible'); 
+				$('.upfront-region-edit-trigger-small').removeClass('visible');
 			}
 		});
 
