@@ -324,6 +324,7 @@
 		} else {
 			$del.find(".upfront_toggle").addClass("hide");
 		}
+		process_toggles_state();
 	}
 	
 	function handle_edit_content_change () {
