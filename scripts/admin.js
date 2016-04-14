@@ -56,7 +56,7 @@
 			layout: layout
 		}).done(function(res){
 			$this.removeClass("loading");
-			if( $dropdown.find("option").length === 2 ){
+			if( $dropdown.find("option").length >= 2 ){
 				$dropdown.find("option[value="+ layout + "]").remove();
 				$dropdown.val( 0 );
 				$this.attr("disabled", true);
