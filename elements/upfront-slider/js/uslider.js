@@ -1013,7 +1013,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		var me = this,
 			mask = this.$('.upfront-default-slider-item-current').find('.uslide-image'),
-			text = this.get_preset_properties().primaryStyle == 'below' ? current.find('.uslide-caption') : [],
+			text = this.get_preset_properties().primaryStyle == 'below' ? mask.find('.uslide-caption') : [],
 			textHeight = text.length ? text.height() : 0,
 			column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
 			vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
