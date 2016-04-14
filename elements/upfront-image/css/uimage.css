@@ -664,6 +664,7 @@ a.image-edit-button.deactivated:hover {
 	top: 38px;
 	text-align: left;
 }
+
 .upfront-ui.uimage-control-panel .upfront-save_settings {
 	box-shadow: none;
 	height: 36px;
@@ -686,7 +687,6 @@ a.image-edit-button.deactivated:hover {
 
 .ueditor-insert .upfront-inline-panel-item.upfront-control-dialog-open {
 	background: rgb(230,236,242);
-	border-bottom: 1px solid #2A465F;
 	z-index: 51;
 }
 .upfront-inline-panel-item.uimage-caption-control.open {
@@ -1601,7 +1601,21 @@ div.uimage-controls i.upfront-icon:before,
 }
 
 /* Image Insert Panel Style Fixes */
+.ueditor-insert .upfront-inline-panel-item .upfront-icon {
+	padding: 9px;
+}
 .ueditor-insert .upfront-inline-panel-item {
 	background: rgb(245,245,245);
 	border-bottom: none;
+}
+.inline-panel-control-dialog-link .upfront-field-wrap {
+	margin-top:5px;
+}
+
+.inline-panel-control-dialog-link .upfront-field-wrap .upfront-field-checkbox, 
+.inline-panel-control-dialog-link .upfront-field-wrap .upfront-field-radio {
+	margin-right:5px;
+}
+.inline-panel-control-dialog-link .upfront-field-wrap input.upfront-field-text[type] {
+	margin:2px 0 5px;
 }
