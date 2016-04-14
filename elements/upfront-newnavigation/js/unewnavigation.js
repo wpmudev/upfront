@@ -73,6 +73,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		});
 
 		this.listenTo(Upfront.Events, 'entity:drag_stop', this.onElementReposition);
+		this.delegateEvents();
 	},
 
 	on_element_resize: function (attr) {
@@ -156,9 +157,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 	},
 	editMenuItem: function(e) {
-		
+
 		if (!Upfront.Application.user_can_modify_layout()) return false;
-		
+
 		this.editModeOn(e);
 		var me = this;
 		var target, ueditor_target;
@@ -373,7 +374,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		}
 
 		me.$el.find('div.upfront-object-content').html('');
-		
+
 		if (!Upfront.Application.user_can_modify_layout()) return false;
 
 		var menuItems = new Upfront.Views.Editor.Field.Select({
@@ -999,10 +1000,10 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		else {
 			region_container.removeClass('upfront-region-container-has-nav');
 		}
-		
+
 		var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 			usingNewAppearance = this.property('usingNewAppearance');
-	
+
 		presetProperties.breakpoint = usingNewAppearance ? this.get_preset_properties().breakpoint : this.fallbackBreakpointData();
 
 		if (!breakpoint || breakpoint.default) {
