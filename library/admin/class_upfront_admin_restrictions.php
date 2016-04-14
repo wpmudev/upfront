@@ -38,17 +38,19 @@ class Upfront_Admin_Restrictions
         $content_restrictions = Upfront_Permissions::boot()->get_content_restrictions();
         $admin_restrictions = Upfront_Permissions::boot()->get_admin_restrictions();
         $upload_restrictions = Upfront_Permissions::boot()->get_upload_restrictions();
-        ?>
+		$current_user = wp_get_current_user();
+		$current_user_role = isset( $current_user->roles ) ? $current_user->roles[0] : '';
+		$can_edit = ( is_multisite() && is_super_admin() ) || ( current_user_can( 'manage_options' ) && Upfront_Permissions::role( $current_user_role, 'modify_restrictions' ) );
+		?>
         <div class="wrap upfront_admin upfront_admin_restrictions">
             <h1><?php esc_html_e("User Restrictions", Upfront::TextDomain); ?><span class="upfront_logo"></span></h1>
             <form action="<?php echo esc_url( add_query_arg( array("page" => "upfront_restrictions") ) ) ?>" method="post" id="upfront_restrictions_form">
                 <div id="upfront_user_restrictions_listing">
-
                     <ul class="upfront_user_restrictions_head">
                         <li class="upfront_restrictions_functionality_name"><?php esc_html_e("Functionality", Upfront::TextDomain); ?></li>
-                        <?php if ( is_multisite() ) { ?>
-                            <li class="upfront_restrictions_role_super_admin"><?php echo esc_html_e("Super Admin", Upfront::TextDomain);  ?></li>
-                        <?php } ?>
+						<?php if( is_multisite() && is_super_admin() ) { ?>
+							<li class="upfront_restriction_role_administrator"><?php esc_html_e( 'Super Admin', 'upfront' ); ?></li>
+						<?php } ?>
                         <?php foreach( $roles as $role_id => $role ) { ?>
                             <li class="upfront_restrictions_role_<?php echo $role_id ?>"><?php echo esc_html($role['name']);  ?></li>
                         <?php } ?>
@@ -56,21 +58,57 @@ class Upfront_Admin_Restrictions
 
                     <?php foreach( Upfront_Permissions::boot()->get_upfront_capability_map() as $cap_id => $capability ) { ?>
                         <ul class="upfront_restrictions_functionality_row" data-capability_id="<?php echo esc_attr($cap_id); ?>">
-                            <li class="upfront_restrictions_functionality_name"><?php echo _e($this->_get_cap_label( $cap_id )) ?></li>
-                            <?php if ( is_multisite() ) { ?>
-                                <li class="upfront_restrictions_functionality_role"><span class="role_check_mark"></span></li>
-                            <?php } ?>
-                            <?php foreach( $roles as $role_id => $role ) { ?>
+                            <li class="upfront_restrictions_functionality_name"><?php _e($this->_get_cap_label( $cap_id )) ?></li>
+							<?php
+							// Only multi-site super_admin can see this
+							if ( is_multisite() && is_super_admin() ) { ?>
+								<li class="upfront_restrictions_functionality_role">
+									<span class="role_check_mark"></span>
+								</li>
+							<?php } ?>
+                            <?php foreach( $roles as $role_id => $role ) {
+									$user_role_can = Upfront_Permissions::role( $role_id, $cap_id );
+								?>
                                 <li class="upfront_restrictions_functionality_role" data-role_id="<?php echo esc_attr($role_id); ?>">
-                                    <?php if ( !is_multisite() && $role_id == "administrator" ) { ?>
-                                        <span class="role_check_mark"></span>
-                                        <!-- hidden input for admin and set to always true for single site -->
-                                        <input  value='1' type="checkbox" name="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" class="upfront_toggle_checkbox" id="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" checked="checked" />
-                                    <?php } else if (in_array($cap_id, $content_restrictions) && !$this->_wp_role_can($role_id, 'edit_posts')) { ?>
-                                        <!--<span class="role_ex_mark"></span>-->
-                                    <?php } else if (in_array($cap_id, $upload_restrictions) && !$this->_wp_role_can($role_id, 'upload_files')) { ?>
-                                    <?php } else if (in_array($cap_id, $admin_restrictions) && !$this->_wp_role_can($role_id, 'manage_options')) { ?>
-                                    <?php } else { ?>
+									<?php if ( current_user_can( 'manage_options' ) && ! $can_edit ) {
+										// If current admin have no edit access, show UIs only.
+											if ( $user_role_can ) {
+											?>
+												<span class="role_check_mark"></span>
+											<?php } else { ?>
+												<span class="role_ex_mark"></span>
+											<?php } 
+										continue; // No need to go further
+									} ?>
+                                    <?php
+									$is_editable = true;
+
+									if ( 'administrator' == $role_id ) {
+										if ( ! is_multisite() ) {
+											$user_role_can = true;
+											$is_editable = false;
+										} else {
+											$is_editable = is_super_admin();
+										}
+									} else {
+										if ( (in_array($cap_id, $content_restrictions) && !$this->_wp_role_can($role_id, 'edit_posts') )
+											 || ( in_array($cap_id, $upload_restrictions) && !$this->_wp_role_can($role_id, 'upload_files') )
+											 || ( in_array($cap_id, $admin_restrictions) && !$this->_wp_role_can($role_id, 'manage_options') )
+										) {
+												$is_editable = false;
+											}
+									}
+
+									if ( ! $is_editable) {
+										// Stop the user from editing it's own caps.
+										if ( 'administrator' == $role_id || $current_user_role == $role_id ) { ?>
+											<?php if ( $user_role_can ) { ?>
+												<span class="role_check_mark"></span>
+											<?php } ?>
+											<!-- hidden input for admin and set to always true for single site -->
+											<input  value='1' type="checkbox" name="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" class="upfront_toggle_checkbox" id="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" <?php checked(true, $user_role_can ); ?> />
+										<?php } ?>
+									<?php } else { ?>
                                         <div class="<?php echo $this->_toggle_class($role_id,$cap_id); ?>">
                                             <input  value='1' type="checkbox" name="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" class="upfront_toggle_checkbox" id="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]" <?php checked(true, Upfront_Permissions::role( $role_id, $cap_id )); ?> />
                                             <label class="upfront_toggle_label" for="restrictions[<?php echo esc_attr($role_id); ?>][<?php echo esc_attr($cap_id); ?>]">
@@ -85,7 +123,9 @@ class Upfront_Admin_Restrictions
                     <?php } ?>
                 </div>
                 <?php wp_nonce_field(self::FORM_NONCE_ACTION, self::FORM_NONCE_KEY); ?>
+				<?php if ( $can_edit ) { ?>
                 <button type="submit" name="upront_restrictions_submit" id="upront_restrictions_submit"><?php esc_attr_e("Save Changes", Upfront::TextDomain); ?></button>
+				<?php } ?>
             </form>
         </div>
         <?php
@@ -111,7 +151,7 @@ class Upfront_Admin_Restrictions
      * @return bool
      */
     private function _can_modify_restrictions () {
-        if ( is_super_admin() ) {
+        if ( current_user_can( 'manage_options' ) ) {
             return true;
         }
 
