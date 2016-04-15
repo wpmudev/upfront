@@ -884,15 +884,24 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	
 	addSliderPreset: function () {
 		var style = this.model.get_property_value_by_name('primaryStyle');
-		var presetDefaults = Upfront.mainData.presetDefaults.slider;
-		var presetName = this.cid + 'preset';
-		var preset = _.extend(presetDefaults, {
-                id: presetName.toLowerCase().replace(/ /g, '-'),
+
+		// Skip if default
+		if(style === "default") return false;
+		
+		var defaultPreset = PresetUtil.getPresetProperties('slider', 'default') || {},
+			presetDefaults = defaultPreset || Upfront.mainData.presetDefaults.slider,
+			presetStyle = presetDefaults.preset_style,
+			presetName = this.cid + 'preset',
+			presetID = presetName.toLowerCase().replace(/ /g, '-'),
+			preset = _.extend(presetDefaults, {
+                id: presetID,
                 name: presetName,
-								primaryStyle: style,
+				primaryStyle: style,
                 // should always be empty
-                preset_style: ''
+                preset_style: presetStyle.replace(/ .default/g, ' .' + presetID + ' '),
+				theme_preset: false
             });
+
 		this.presets = new Backbone.Collection(Upfront.mainData['sliderPresets'] || []);
 		this.presets.add(preset);
 		this.model.set_property('preset', preset.id, true);
