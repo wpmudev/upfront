@@ -54,6 +54,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			this.model = new USliderModel({properties: this.model.get('properties')});
 		}
 		this.first_time_opening_slider = false;
+		this.presets = new Backbone.Collection(Upfront.mainData['sliderPresets'] || []);
 		this.model.view = this;
 
 		this.constructor.__super__.initialize.call(this, [options]);
@@ -127,7 +128,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			defaults = {
 				below: 'below',
 				over: 'bottomOver',
-				side: 'right'
+				side: 'right',
+				notext: 'nocaption'
 			}
 		;
 		Upfront.data.uslider.slideDefaults.style = defaults[primary];
@@ -180,7 +182,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		var me = this,
 			props,
 			rendered = {};
-
+		
 		this.checkStyles();
 
 		props = this.extract_properties();
@@ -470,9 +472,11 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			defaults = {
 				below: 'below',
 				over: 'bottomOver',
-				side: 'right'
+				side: 'right',
+				notxt: 'nocaption'
 			}
 		;
+		
 		if(primary != this.lastStyle){
 			this.model.slideCollection.each(function(slide){
 				var style = slide.get('style');
@@ -497,7 +501,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	
 	setSliderType: function (e) {
 		var primaryStyle = $(e.currentTarget).val(),
-			style = 'nocaption'
+			style = 'default'
 		;
 		
 		if(primaryStyle == 'over')
@@ -506,6 +510,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			style = 'below';
 		else if(primaryStyle == 'side')
 			style = 'right';
+		else if(primaryStyle == 'notxt')
+			style = 'nocaption';
 		
 		this.model.set_property('primaryStyle', primaryStyle, true);
 		this.property('style', style);
@@ -850,6 +856,10 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 
 	openImageSelector: function(e, replaceId){
+		
+		//Update slide defaults to match preset settings
+		this.updateSlideDefaults();
+		
 		var me = this,
 			sizer = this.model.slideCollection.length ? this.$('.upfront-default-slider-item-current').find('.uslide-image') : this.$('.upfront-object-content'),
 			selectorOptions = {
@@ -883,7 +893,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 	
 	addSliderPreset: function () {
-		var style = this.model.get_property_value_by_name('primaryStyle');
+		var style = this.model.get_property_value_by_name('primaryStyle'),
+			element_id = this.model.get_property_value_by_name("element_id")
+		;
 
 		// Skip if default
 		if(style === "default") return false;
@@ -891,18 +903,16 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		var defaultPreset = PresetUtil.getPresetProperties('slider', 'default') || {},
 			presetDefaults = defaultPreset || Upfront.mainData.presetDefaults.slider,
 			presetStyle = presetDefaults.preset_style,
-			presetName = this.cid + 'preset',
+			presetName = element_id + ' preset',
 			presetID = presetName.toLowerCase().replace(/ /g, '-'),
 			preset = _.extend(presetDefaults, {
-                id: presetID,
-                name: presetName,
+        id: presetID,
+        name: presetName,
 				primaryStyle: style,
-                // should always be empty
-                preset_style: presetStyle.replace(/ .default/g, ' .' + presetID + ' '),
+        preset_style: presetStyle.replace(/ .default/g, ' .' + presetID + ' '),
 				theme_preset: false
-            });
-
-		this.presets = new Backbone.Collection(Upfront.mainData['sliderPresets'] || []);
+      });
+		
 		this.presets.add(preset);
 		this.model.set_property('preset', preset.id, true);
 		this.updateSliderPreset(preset);
@@ -914,20 +924,10 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		PresetUtil.updatePresetStyle('slider', properties, settingsStyleTpl);
 		this.debouncedSavePreset(properties);
 		
-		var index;
-
-		_.each(Upfront.mainData['sliderPresets'], function(preset, presetIndex) {
-			if (preset.id === properties.id) {
-				index = presetIndex;
-			}
+		Upfront.mainData['sliderPresets'] = [];
+		_.each(this.presets.models, function(preset, presetIndex) {
+			Upfront.mainData['sliderPresets'].push(preset.attributes);
 		});
-
-		if (typeof index !== 'undefined') {
-			Upfront.mainData['sliderPresets'][index] = properties;
-		} else {
-			Upfront.mainData['sliderPresets'].push(properties);
-		}
-		
 	},
 
 	addSlides: function(images, replaceId){
