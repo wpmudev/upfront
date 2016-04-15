@@ -118,6 +118,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		// Let's not flood server on some nuber property firing changes like crazy
 		this.debouncedSavePreset = _.debounce(saveSliderPreset, 1000);
+		
+		this.delegateEvents();
 	},
 	
 	updateSlideDefaults: function() {
