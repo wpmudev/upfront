@@ -356,7 +356,7 @@ define([
 					styles = (this.model.get_breakpoint_property_value("background_use_custom_map_code", true) ? JSON.parse(this.model.get_breakpoint_property_value("map_styles", true)) : false),
 					options = {
 						center: new google.maps.LatLng(center[0], center[1]),
-						zoom: parseInt(zoom),
+						zoom: parseInt(zoom, 10) || 0,
 						mapTypeId: google.maps.MapTypeId[style],
 						panControl: (controls.indexOf("pan") >= 0),
 						zoomControl: (controls.indexOf("zoom") >= 0),
