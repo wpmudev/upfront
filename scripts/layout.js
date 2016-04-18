@@ -691,47 +691,45 @@ jQuery(document).ready(function($){
 		close= $('<div class="upfront-ui close_lightbox"></div>'),
 		close_icon= $('<div class="upfront-icon upfront-icon-popup-close"></div>');
 
-	$( "[data-group-link]" ).each( function() {
-		$(this).css({'cursor': 'pointer'});
-		$(this).live( "click", function () {
-			var url = $(this).data("groupLink");
-			var target = $(this).data("groupTarget");
+	$("[data-group-link]").css({'cursor': 'pointer'});
+	$(document).on("click", "[data-group-link]", function () {
+		var url = $(this).data("groupLink");
+		var target = $(this).data("groupTarget");
 
-			if(url.indexOf('#') === -1) {
-				// Not an anchor, follow link
-				window.open(url, $(this).data("groupTarget"));
-				return;
-			}
+		if(url.indexOf('#') === -1) {
+			// Not an anchor, follow link
+			window.open(url, $(this).data("groupTarget"));
+			return;
+		}
 
-			// It is an anchor
-			if (url.match(/^#.*/) !== null) {
-				// Starts with #, it's safe to do the jQuery stuff
-				var nav = $('.upfront-output-region-container[data-sticky="1"], .upfront-output-region-sub-container[data-sticky="1"]').first();
-				var height = nav.height() ? nav.height() : 0;
-				$('html,body').animate({scrollTop: $(url).offset().top - height },'slow');
-				return;
-			}
+		// It is an anchor
+		if (url.match(/^#.*/) !== null) {
+			// Starts with #, it's safe to do the jQuery stuff
+			var nav = $('.upfront-output-region-container[data-sticky="1"], .upfront-output-region-sub-container[data-sticky="1"]').first();
+			var height = nav.height() ? nav.height() : 0;
+			$('html,body').animate({scrollTop: $(url).offset().top - height },'slow');
+			return;
+		}
 
-			// It's an absolute url with anchor
-			var urlParts = url.split('#');
-			if (urlParts[0] === location.origin + location.pathname) {
-				// Target is on the current page
-				var nav = $('.upfront-output-region-container[data-sticky="1"], .upfront-output-region-sub-container[data-sticky="1"]').first();
-				var height = nav.height() ? nav.height() : 0;
-				$('html,body').animate({scrollTop: $('#' + urlParts[1]).offset().top - height },'slow');
-				return;
-			}
+		// It's an absolute url with anchor
+		var urlParts = url.split('#');
+		if (urlParts[0] === location.origin + location.pathname) {
+			// Target is on the current page
+			var nav = $('.upfront-output-region-container[data-sticky="1"], .upfront-output-region-sub-container[data-sticky="1"]').first();
+			var height = nav.height() ? nav.height() : 0;
+			$('html,body').animate({scrollTop: $('#' + urlParts[1]).offset().top - height },'slow');
+			return;
+		}
 
-			// It's not on the current page
-			if ($(this).attr('target') === '_blank') {
-				// Open in a new window
-				window.open(url);
-				return;
-			}
+		// It's not on the current page
+		if ($(this).attr('target') === '_blank') {
+			// Open in a new window
+			window.open(url);
+			return;
+		}
 
-			// Open in this window
-			window.location = url;
-		});
+		// Open in this window
+		window.location = url;
 	});
 
 	$(document).on('click', 'a', function(e) {
