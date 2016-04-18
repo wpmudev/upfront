@@ -204,7 +204,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
     editPostContent: function(){
         this.editor.editContents();
-        Upfront.Events.trigger('upfront:element:edit:start', 'write', this);
+        //Upfront.Events.trigger('upfront:element:edit:start', 'write', this);
     },
 
 	refreshMarkup: function () {
