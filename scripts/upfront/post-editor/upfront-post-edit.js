@@ -1,4 +1,9 @@
 ;(function($){define(["text!upfront/templates/post-editor/edition-box.html"], function(editionBox_tpl){
+	
+var l10n = Upfront.Settings && Upfront.Settings.l10n
+			? Upfront.Settings.l10n
+			: Upfront.mainData.l10n
+		;
 
 var Box = Backbone.View.extend({
     className: 'ueditor-box-wrapper upfront-ui',
@@ -23,7 +28,6 @@ var Box = Backbone.View.extend({
     initialize: function(options){
         var me = this;
         this.post = options.post;
-
 
         this.statusSection = new PostStatusView({post: this.post});
         this.visibilitySection = new PostVisibilityView({post: this.post});
@@ -77,10 +81,10 @@ var Box = Backbone.View.extend({
 			postData.cid = this.cid;
 
 			extraData.post_type_conditional_box_title = this._post_type_has_taxonomy('post_tag') && this._post_type_has_taxonomy('category')
-				? Upfront.Settings.l10n.global.content.tags_cats_url
-				: Upfront.Settings.l10n.global.content.no_tax_url
+				? l10n.global.content.tags_cats_url
+				: l10n.global.content.no_tax_url
 				;
-			extraData.url_label = "post" === me.post.get("post_type") ? Upfront.Settings.l10n.global.content.post_url : Upfront.Settings.l10n.global.content.page_url;
+			extraData.url_label = "post" === me.post.get("post_type") ? l10n.global.content.post_url : l10n.global.content.page_url;
 			this.$el.html(this.tpl(_.extend({}, postData, extraData) ));
 			this.populateSections();
 			return this;
@@ -163,13 +167,13 @@ var Box = Backbone.View.extend({
 
         if(now < date) {
             if(initial == 'future')
-                return Upfront.Settings.l10n.global.content.update;
-            return Upfront.Settings.l10n.global.content.schedule;
+                return l10n.global.content.update;
+            return l10n.global.content.schedule;
         }
         else {
             if(initial == 'publish')
-                return Upfront.Settings.l10n.global.content.update;
-            return Upfront.Settings.l10n.global.content.publish;
+                return l10n.global.content.update;
+            return l10n.global.content.publish;
         }
     },
 
@@ -216,7 +220,7 @@ var Box = Backbone.View.extend({
 
     cancel: function(e){
         e.preventDefault();
-        if(confirm(Upfront.Settings.l10n.global.content.discard_changes.replace(/%s/, this.post.get('post_title')))){
+        if(confirm(l10n.global.content.discard_changes.replace(/%s/, this.post.get('post_title')))){
             this.toggleRegionClass(false);
             this.destroy();
             this.post.trigger('editor:cancel');
@@ -271,7 +275,7 @@ var Box = Backbone.View.extend({
 
     trash: function(e){
         e.preventDefault();
-        if(confirm( Upfront.Settings.l10n.global.content.delete_confirm.replace(/%s/, this.post.get('post_type')))){
+        if(confirm( l10n.global.content.delete_confirm.replace(/%s/, this.post.get('post_type')))){
             this.destroy();
             this.trigger('trash');
             Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
@@ -543,7 +547,7 @@ var PostUrlEditor = PostSectionView.extend({
         this.$el.html(this.tpl({
             rootUrl: base,
             slug: self.post.get('post_name'),
-            url_label : "post" === self.post.get("post_type") ? Upfront.Settings.l10n.global.content.post_url : Upfront.Settings.l10n.global.content.page_url
+            url_label : "post" === self.post.get("post_type") ? l10n.global.content.post_url : l10n.global.content.page_url
     }));
     },
     update: function(e){
@@ -559,13 +563,13 @@ var PostUrlEditor = PostSectionView.extend({
 
 var PostStatusView = PostSectionView.extend({
     statusOptions: {
-        future: {value:'future', name: Upfront.Settings.l10n.global.content.scheduled},
-        publish: {value: 'publish', name: Upfront.Settings.l10n.global.content.published},
-        pending: {value: 'pending', name: Upfront.Settings.l10n.global.content.pending_review},
-        draft: {value: 'draft', name: Upfront.Settings.l10n.global.content.draft},
-        'private': {value: 'private', name: Upfront.Settings.l10n.global.content.private_post},
-        'auto-draft': {value: 'auto-draft', name: Upfront.Settings.l10n.global.content.new_post},
-        'trash': {value: 'trash', name: Upfront.Settings.l10n.global.content.deleted_post}
+        future: {value:'future', name: l10n.global.content.scheduled},
+        publish: {value: 'publish', name: l10n.global.content.published},
+        pending: {value: 'pending', name: l10n.global.content.pending_review},
+        draft: {value: 'draft', name: l10n.global.content.draft},
+        'private': {value: 'private', name: l10n.global.content.private_post},
+        'auto-draft': {value: 'auto-draft', name: l10n.global.content.new_post},
+        'trash': {value: 'trash', name: l10n.global.content.deleted_post}
     },
     initialStatus: false,
     tpl: _.template($(editionBox_tpl).find('#post-status-tpl').html()),
@@ -623,10 +627,10 @@ var PostVisibilityView = PostSectionView.extend({
     post_password: "",
     postVisibility: false,
     visibilityOptions: {
-        'public': {value: 'public', name:Upfront.Settings.l10n.global.content.public_post},
-        'sticky': {value: 'sticky', name:Upfront.Settings.l10n.global.content.sticky},
-        'password': {value: 'password', name: Upfront.Settings.l10n.global.content.protected_post},
-        'private': {value: 'private', name: Upfront.Settings.l10n.global.content.is_private}
+        'public': {value: 'public', name:l10n.global.content.public_post},
+        'sticky': {value: 'sticky', name:l10n.global.content.sticky},
+        'password': {value: 'password', name: l10n.global.content.protected_post},
+        'private': {value: 'private', name: l10n.global.content.is_private}
     },
     initialize: function(opts){
         this.post = opts.post;
@@ -647,7 +651,7 @@ var PostVisibilityView = PostSectionView.extend({
             ;
         if(now == 'password')
             return [
-                {value: 'password', name: Upfront.Settings.l10n.global.content.edit_pwd},
+                {value: 'password', name: l10n.global.content.edit_pwd},
                 ops.public,
                 ops.sticky,
                 ops.private
@@ -714,31 +718,31 @@ var PostScheduleView = PostSectionView.extend({
             ;
         if(!date && !this.initialDate)
             return {
-                key: Upfront.Settings.l10n.global.content.publish,
-                text: Upfront.Settings.l10n.global.content.immediately
+                key: l10n.global.content.publish,
+                text: l10n.global.content.immediately
             };
 
         if(date.getTime() == this.initialDate){
             if(date.getTime() < now.getTime())
                 return {
-                    key: Upfront.Settings.l10n.global.content.published,
+                    key: l10n.global.content.published,
                     text: formatDate(date, true)
                 };
             else
                 return {
-                    key: Upfront.Settings.l10n.global.content.scheduled,
+                    key: l10n.global.content.scheduled,
                     text: formatDate(date, true)
                 };
         }
 
         if(date.getTime() < now.getTime())
             return {
-                key: Upfront.Settings.l10n.global.content.publish_on,
+                key: l10n.global.content.publish_on,
                 text: formatDate(date, true)
             };
         else
             return {
-                key: Upfront.Settings.l10n.global.content.scheduled_for,
+                key: l10n.global.content.scheduled_for,
                 text: formatDate(date, true)
             };
     },
