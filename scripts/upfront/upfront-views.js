@@ -1678,7 +1678,8 @@ define([
 				Upfront.Events.trigger("entity:settings:deactivate");
 			},
 			render: function () {
-				var grid = Upfront.Settings.LayoutEditor.Grid,
+				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+					grid = Upfront.Settings.LayoutEditor.Grid,
 					props = {},
 					me = this,
 					buttons = (this.get_buttons ? this.get_buttons() : ''),
@@ -1820,6 +1821,10 @@ define([
 					}, 300);
 				}
 
+				if ( breakpoint && !breakpoint.default ) {
+					this.update_position();
+				}
+
 				//**
 				// * Make sure it's rendered and then adjust top panel position
 				// */
@@ -1860,7 +1865,7 @@ define([
 					this.update_position();
 
 					var current_property = value.current_property,
-						breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+						breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 						val = value[breakpoint.id] && value[breakpoint.id][current_property] ? value[breakpoint.id][current_property] : false;
 					;
 
@@ -2388,7 +2393,7 @@ define([
 					this.update_position();
 
 					var current_property = value.current_property,
-						breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+						breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 						val = value[breakpoint.id] && value[breakpoint.id][current_property] ? value[breakpoint.id][current_property] : false;
 					;
 
