@@ -6564,7 +6564,7 @@ define([
 								container_view.sub_model.splice(i, 1);
 							}
 							else {
-								var sub_view = Upfront.data.region_views[sub.cid];
+								var sub_view = Upfront.data.region_views[(sub || {}).cid];
 								if ( sub_view ) sub_view.update();
 							}
 						});
