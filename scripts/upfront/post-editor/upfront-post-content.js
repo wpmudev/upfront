@@ -772,9 +772,7 @@ PostContentEditor.prototype = {
 		this.box = new Edit.Box({post: this.post});
 		this.bindBarEvents();
 		this.box.render();
-		$main.append(this.box.$el);
-		_.delay(  _.bind(this.box.setPosition, this.box), 10 );
-		return this;
+		return this.box.$el;
 	},
 
 	bindBarEvents: function(){

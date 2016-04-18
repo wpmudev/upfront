@@ -236,6 +236,7 @@
 		"scripts/upfront/inline-panels/inline-panels",
 		"scripts/upfront/element-settings/sidebar",
 		"scripts/upfront/link-panel", // If adding more arguments adjust _.rest in line 72
+		"upfront/post-editor/upfront-post-edit",
 		"text!upfront/templates/property.html",
 		"text!upfront/templates/properties.html",
 		"text!upfront/templates/property_edit.html",
@@ -249,7 +250,7 @@
 		"text!upfront/templates/sidebar_settings_theme_colors.html",
 		"text!upfront/templates/color_picker.html",
 		'spectrum'
-	], function (chosen, globalEventHandlers, InlinePanelsLoader, ElementSettingsSidebar, LinkPanel) {
+	], function (chosen, globalEventHandlers, InlinePanelsLoader, ElementSettingsSidebar, LinkPanel, PostEditorBox) {
 		var _template_files = [
 			"text!upfront/templates/property.html",
 			"text!upfront/templates/properties.html",
@@ -266,7 +267,7 @@
 		];
 
 		// Auto-assign the template contents to internal variable
-		var _template_args = _.rest(arguments, 5),
+		var _template_args = _.rest(arguments, 6),
 			_Upfront_Templates = {}
 			;
 		_(_template_files).each(function (file, idx) {
@@ -1794,10 +1795,10 @@
 		
 		var SidebarPanel_PostEditor = SidebarPanel.extend({
 			"className": "sidebar-panel sidebar-panel-post-editor",
-			initialize: function () {
+			initialize: function (opts) {
 				this.active = true;
 				this.sections = _([
-					new SidebarPanel_Settings_Section_PostDetails({"model": this.model}),
+					new SidebarPanel_Settings_Section_PostDetails({"model": this.model, "postId": opts.postId}),
 				]);
 
 				Upfront.Events.on("command:layout:save", this.on_save, this);
@@ -1830,7 +1831,8 @@
 		});
 		
 		var SidebarPanel_Settings_Section_PostDetails = SidebarPanel_Settings_Section.extend({
-			initialize: function () {
+			initialize: function (opts) {
+				this.options = opts;
 				this.settings = _([]);
 			},
 			get_name: function () {
@@ -1840,7 +1842,20 @@
 				return "Post Details";
 			},
 			on_render: function () {
-				
+				var me = this;
+
+				if(typeof Upfront.Content !== "undefined" && !this.postEditor) {
+					this.postEditor = new Upfront.Content.PostEditor({
+						editor_id: 'this_post_' + this.options.postId,
+						post_id: this.options.postId,
+						content_mode: 'post_content'
+					});
+
+					this.listenTo(this.postEditor, 'editor:loaded', function(contentEditor) {
+						var boxEl = contentEditor.prepareBox();
+						me.$el.append(boxEl);
+					});
+				}
 			},
 		});
 
@@ -2973,16 +2988,33 @@
 			"tagName": "ul",
 			"className": "sidebar-panels",
 			initialize: function () {
-				this.panels = {
-					posts: new SidebarPanel_Posts({"model": this.model}),
-					posts_edit: new SidebarPanel_PostEditor({"model": this.model}),
-					elements: new SidebarPanel_DraggableElements({"model": this.model}),
-					settings: new SidebarPanel_Settings({"model": this.model})
-				};
+				this.postId = this.getPostId();
+				this.panels = {};
+
+				if(typeof this.postId !== "undefined" && this.postId) {
+					this.panels['posts_edit'] = new SidebarPanel_PostEditor({"model": this.model, "postId": this.postId});
+				}
+
+				this.panels['posts'] = new SidebarPanel_Posts({"model": this.model});
+				this.panels['elements'] = new SidebarPanel_DraggableElements({"model": this.model});
+				this.panels['settings'] = new SidebarPanel_Settings({"model": this.model});
 
 				// Dev feature only
 				//if ( Upfront.Settings.Debug.dev )
 				//	this.panels.settings = new SidebarPanel_Settings({"model": this.model});
+			},
+			getPostId: function() {
+				postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
+				if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.THEME ) {
+					// We're dealing with a theme exporter request
+					// Okay, so let's fake a post
+					postId = "fake_post";
+				}
+				else if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.CONTENT_STYLE ){
+					postId = "fake_styled_post";
+				}
+				
+				return postId;
 			},
 			render: function () {
 				var me = this;

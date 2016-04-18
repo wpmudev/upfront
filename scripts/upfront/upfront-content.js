@@ -37,6 +37,9 @@ define("content", deps, function(postTpl, ContentTools) {
 				/*authorTpl: this.getTemplate('author'),
 				partOptions: this.postView.partOptions,*/
 			});
+			
+			me.trigger('editor:loaded', me.contentEditor);
+			
 			me.listenTo(me.contentEditor, 'cancel', me.cancelChanges);
 			me.listenTo(me.contentEditor, 'publish', me.publish);
 			me.listenTo(me.contentEditor, 'draft', me.saveDraft);
