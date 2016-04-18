@@ -1032,15 +1032,15 @@ var PostContentEditor = new (Subapplication.extend({
 		var $page = $('#page');
 
 		//There is no need of start the application, just set the current one
-		Application.set_current(Application.MODE.POSTCONTENT);
-		$page.find('.upfront-module').each(function(){
-			if ( $(this).is('.ui-draggable') )
-				$(this).draggable('disable');
-			if ( $(this).is('.ui-resizable') )
-				$(this).resizable('disable');
-		});
-		Upfront.Events.trigger('upfront:element:edit:start', 'write', contentEditor.post);
-		$page.find('.upfront-region-edit-trigger').hide();
+		//Application.set_current(Application.MODE.POSTCONTENT);
+		//$page.find('.upfront-module').each(function(){
+		//	if ( $(this).is('.ui-draggable') )
+		//		$(this).draggable('disable');
+		//	if ( $(this).is('.ui-resizable') )
+		//		$(this).resizable('disable');
+		//});
+		//Upfront.Events.trigger('upfront:element:edit:start', 'write', contentEditor.post);
+		//$page.find('.upfront-region-edit-trigger').hide();
 
 		Upfront.Events.on('content:insertcount:updated', this.updateInsertCount);
 	},
@@ -1675,8 +1675,6 @@ var Application = new (Backbone.Router.extend({
 		} else if(mode && this.MODE.POSTCONTENT == mode) {
 			this.mode.current = this.MODE.POSTCONTENT;
 			this.current_subapplication = this.PostContentEditor;
-            if ( this.sidebar.visible && this.is_editor())
-                this.sidebar.toggleSidebar();
 		} else if(mode && this.MODE.RESPONSIVE == mode) {
 			this.mode.current = this.MODE.RESPONSIVE;
 			this.current_subapplication = this.ResponsiveEditor;

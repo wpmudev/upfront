@@ -720,8 +720,6 @@ PostContentEditor.prototype = {
 		_.each(this._viewInstances, function (view) {
 			view.editContent();
 		});
-		if ( Upfront.Application.sidebar.visible )
-			Upfront.Application.sidebar.toggleSidebar();
 		this._editing = true;
 		$main.addClass('upfront-editing-post-content');
 		this.trigger('edit:start');
@@ -744,8 +742,6 @@ PostContentEditor.prototype = {
 			view.stopEditContent();
 		});
 
-		if ( !Upfront.Application.sidebar.visible )
-			Upfront.Application.sidebar.toggleSidebar();
 		this.box = false;
 		this._editing = false;
 		$main.removeClass('upfront-editing-post-content');
@@ -1627,9 +1623,6 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 		var draggable = this.$el.closest('.ui-draggable');
 		if(draggable.length)
 			cancel = draggable.draggable('enable');
-
-		if ( !Upfront.Application.sidebar.visible )
-			Upfront.Application.sidebar.toggleSidebar();
 
 		this.$('a').data('bypass', false);
 	},
