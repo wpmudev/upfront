@@ -1791,6 +1791,58 @@
 				});
 			}
 		});
+		
+		var SidebarPanel_PostEditor = SidebarPanel.extend({
+			"className": "sidebar-panel sidebar-panel-post-editor",
+			initialize: function () {
+				this.active = true;
+				this.sections = _([
+					new SidebarPanel_Settings_Section_PostDetails({"model": this.model}),
+				]);
+
+				Upfront.Events.on("command:layout:save", this.on_save, this);
+				Upfront.Events.on("command:layout:save_as", this.on_save, this);
+				Upfront.Events.on("command:layout:publish", this.on_save, this);
+				//Upfront.Events.on("command:layout:preview", this.on_preview, this); // Do NOT drop shadow region from layout on preview build
+				Upfront.Events.on("command:layout:save_success", this.on_save_after, this);
+				Upfront.Events.on("command:layout:save_error", this.on_save_after, this);
+				Upfront.Events.on("entity:drag_stop", this.reset_modules, this);
+				Upfront.Events.on("layout:render", this.apply_state_binding, this);
+			},
+			get_title: function () {
+				return l10n.post_settings;
+			},
+			on_save: function () {
+				var regions = this.model.get('regions');
+				this._shadow_region = regions.get_by_name('shadow');
+				regions.remove(this._shadow_region, {silent: true});
+			},
+			on_preview: function () { return this.on_save(); },
+			apply_state_binding: function () {
+				Upfront.Events.on("command:undo", this.reset_modules, this);
+				Upfront.Events.on("command:redo", this.reset_modules, this);
+			},
+			on_render: function () {
+				//this.reset_modules();
+				if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME )
+					this.$el.find('.sidebar-panel-title').trigger('click');
+			},
+		});
+		
+		var SidebarPanel_Settings_Section_PostDetails = SidebarPanel_Settings_Section.extend({
+			initialize: function () {
+				this.settings = _([]);
+			},
+			get_name: function () {
+				return 'post_details';
+			},
+			get_title: function () {
+				return "Post Details";
+			},
+			on_render: function () {
+				
+			},
+		});
 
 
 		var SidebarPanel_Settings_Section_DataElements = SidebarPanel_Settings_Section_LayoutElements.extend({
@@ -2923,6 +2975,7 @@
 			initialize: function () {
 				this.panels = {
 					posts: new SidebarPanel_Posts({"model": this.model}),
+					posts_edit: new SidebarPanel_PostEditor({"model": this.model}),
 					elements: new SidebarPanel_DraggableElements({"model": this.model}),
 					settings: new SidebarPanel_Settings({"model": this.model})
 				};
