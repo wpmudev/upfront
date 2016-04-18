@@ -401,6 +401,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'browse_layouts' => __('Browse Layouts', 'upfront'),
 				'no_title' => __('No title', 'upfront'),
 				'draggable_elements' => __('Draggable Elements', 'upfront'),
+				'post_settings' => __('Post Settings', 'upfront'),
 				'post_components' => __('Post components', 'upfront'),
 				'no_defined_fonts' => __('You have not defined any theme fonts yet. Please begin by adding fonts you want to use to the theme.', 'upfront'),
 				'select_fonts_to_use' => __('Select fonts to use', 'upfront'),
