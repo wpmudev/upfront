@@ -10481,14 +10481,8 @@ a.ueditor-select-option:hover {
   padding: 4px 6px; }
 
 .ueditor-box-wrapper {
-  position: fixed;
-  top: 40px;
   display: block;
-  width: 250px;
-  background: #f2f9ff;
-  border: 1px solid #b8d0e6;
-  z-index: 9999;
-  right: 0; }
+  width: 250px; }
 
 .ueditor-box-title {
   height: 30px;
