@@ -1844,17 +1844,100 @@
 			on_render: function () {
 				var me = this;
 
-				if(typeof Upfront.Content !== "undefined" && !this.postEditor) {
-					this.postEditor = new Upfront.Content.PostEditor({
+				if(typeof Upfront.Content !== "undefined") {
+					if ( typeof PostDataEditor !== "undefined" ) return false;
+					
+					PostDataEditor = new Upfront.Content.PostEditor({
 						editor_id: 'this_post_' + this.options.postId,
 						post_id: this.options.postId,
 						content_mode: 'post_content'
 					});
 
-					this.listenTo(this.postEditor, 'loaded', function(contentEditor) {
+					this.listenTo(PostDataEditor, 'loaded', function(contentEditor) {
 						var boxEl = contentEditor.prepareBox();
 						me.$el.append(boxEl);
 					});
+					
+					this.listenTo(PostDataEditor, 'post:saved post:trash', this.on_render);
+					this.listenTo(PostDataEditor, 'post:cancel', this.on_cancel);
+					this.listenTo(PostDataEditor, 'editor:edit:start', this.on_edit_start);
+					this.listenTo(PostDataEditor, 'editor:edit:stop', this.on_edit_stop);
+					// Listen to change event too
+					this.listenTo(PostDataEditor, 'editor:change:title', this.on_title_change);
+					this.listenTo(PostDataEditor, 'editor:change:content', this.on_content_change);
+					this.listenTo(PostDataEditor, 'editor:change:author', this.on_author_change);
+					this.listenTo(PostDataEditor, 'editor:change:date', this.on_date_change);
+					
+					this.editor = PostDataEditor;
+				}
+			},
+			
+			/**
+			 * On cancel handler, do rerender with cached data
+			 */
+			on_cancel: function () {
+				if ( ! this.child_view ) return;
+				this.child_view.rerender();
+			},
+
+			/**
+			 * On edit start handler, don't cache data on requested rendering
+			 */
+			on_edit_start: function () {
+				if ( ! this.child_view ) return;
+				this.child_view._do_cache = false;
+			},
+
+			/**
+			 * On edit stop handler, do enable caching back
+			 */
+			on_edit_stop: function () {
+				if ( ! this.child_view ) return;
+				this.child_view._do_cache = true;
+			},
+
+			/**
+			 * On title change handler, do nothing for now, just for handy reference in case we need it
+			 * @param {String} title
+			 */
+			on_title_change: function (title) {
+
+			},
+
+			/**
+			 * On content change handler, do nothing for now, just for handy reference in case we need it
+			 * @param {String} content
+			 * @param {Bool} isExcerpt
+			 */
+			on_content_change: function (content, isExcerpt) {
+
+			},
+
+			/**
+			 * On author change handler, rerender if this is author element
+			 * @param {Object} authorId
+			 */
+			on_author_change: function (authorId) {
+				if ( ! this.child_view ) return;
+				var type = this.model.get_property_value_by_name("data_type");
+				this.authorId = authorId;
+				// Render again if it's author element
+				if ( 'author' == type ) {
+					this.child_view.render();
+				}
+			},
+
+			/**
+			 * On date change handler, rerender if this is post data element
+			 * @param {Object} date
+			 */
+			on_date_change: function (date) {
+				if ( ! this.child_view ) return;
+				var type = this.model.get_property_value_by_name("data_type");
+				this.postDate = Upfront.Util.format_date(date, true, true).replace(/\//g, '-');
+				// Render again if it's post data element
+				if ( 'post_data' == type ) {
+					this.child_view.render(['date_posted']); // Only render the date_posted part
 				}
 			},
 		});

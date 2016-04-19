@@ -719,7 +719,7 @@ PostContentEditor.prototype = {
 
 		var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 		if ( this._editing ) return;
-		this.prepareBox();
+		//this.prepareBox();
 		_.each(this._viewInstances, function (view) {
 			view.editContent();
 		});
@@ -984,7 +984,7 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
         $(".upfront-module").not(".editing-content").addClass("fadedOut").fadeTo( "slow" , 0.3 );
         $(".change_feature_image").addClass("ueditor-display-block");
 		this.prepareEditableRegions();
-		this.prepareBox();
+		//this.prepareBox();
 	},
     title_blurred: function(){
         if( this.post.is_new && !this.box.urlEditor.hasDefinedSlug && !_.isEmpty(this.parts.titles.html()) ){
