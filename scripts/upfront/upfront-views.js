@@ -310,9 +310,13 @@ define([
 						if(typeof(response.data.featured_image) != 'undefined') {
 
 							if (response.data.featured_image != '') {
-								me.$el.children('.feature_image_selector').addClass('change_feature_image');
+								me.$el.children('.feature_image_selector')
+									.addClass('change_feature_image')
+									.text('Change Feature Image');
 							} else {
-								me.$el.children('.feature_image_selector').removeClass('change_feature_image');
+								me.$el.children('.feature_image_selector')
+									.removeClass('change_feature_image')
+									.text('Add Feature Image');
 							}
 
 							image = response.data.featured_image;
