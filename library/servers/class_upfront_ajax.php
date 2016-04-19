@@ -262,14 +262,16 @@ class Upfront_Ajax extends Upfront_Server {
 		if (!$data) $this->_out(new Upfront_JsonResponse_Error("Unknown layout"));
 		$storage_key = $_POST['storage_key'];
 		$stylesheet = $_POST['stylesheet'] ? $_POST['stylesheet'] : get_stylesheet();
+		$template_id = (isset($_POST['template_id'])) ? $_POST['template_id'] : '';
 
 		upfront_switch_stylesheet($stylesheet);
 
 		$layout = Upfront_Layout::from_php($data, $storage_key);
-		$key = $layout->save();
+		// $key = $layout->save();
+		$key = Upfront_Server_PageTemplate::get_instance()->save_template($template_id, $layout);
 
 		// For single page layouts, also drop page templates
-		$layout_data = $layout->get('layout');
+		/* $layout_data = $layout->get('layout');
 		if (!empty($layout_data['specificity']) && preg_match('/single-page-\d+$/', $layout_data['specificity'])) {
 			$page_id = preg_replace('/single-page-(\d+)$/', '\1', $layout_data['specificity']);
 			// If we have a page template set...
@@ -283,7 +285,7 @@ class Upfront_Ajax extends Upfront_Server {
 					'post_status' => 'publish',
 				));
 			}
-		}
+		} */
 
 		$this->_out(new Upfront_JsonResponse_Success($key));
 	}
