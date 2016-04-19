@@ -1854,11 +1854,16 @@
 					});
 
 					this.listenTo(PostDataEditor, 'loaded', function(contentEditor) {
-						var boxEl = contentEditor.prepareBox();
-						me.$el.append(boxEl);
+						me.append_box(contentEditor);
 					});
 					
-					this.listenTo(PostDataEditor, 'post:saved post:trash', this.on_render);
+					this.listenTo(PostDataEditor, 'post:saved', function() {
+						if(typeof PostDataEditor !== "undefined") {
+							me.append_box(PostDataEditor.contentEditor);
+						}
+					});
+
+					this.listenTo(PostDataEditor, 'post:saved post:trash', this.on_save);
 					this.listenTo(PostDataEditor, 'post:cancel', this.on_cancel);
 					this.listenTo(PostDataEditor, 'editor:edit:start', this.on_edit_start);
 					this.listenTo(PostDataEditor, 'editor:edit:stop', this.on_edit_stop);
@@ -1870,6 +1875,12 @@
 					
 					this.editor = PostDataEditor;
 				}
+			},
+			
+			append_box: function (contentEditor) {
+				var boxEl = contentEditor.prepareBox();
+				this.$el.empty();
+				this.$el.append(boxEl);
 			},
 			
 			/**

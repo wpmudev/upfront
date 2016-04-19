@@ -247,7 +247,7 @@ PostContentEditor.prototype = {
 				var isExcerpt = ( this.model.get_property_value_by_name('content') == 'excerpt' ),
 					content
 				;
-				
+
 				if(typeof this.editor !== "undefined") {
 					// Clean inserts markup
 					this.$content.find(".upfront-inline-panel").remove();
@@ -262,6 +262,7 @@ PostContentEditor.prototype = {
 					});
 
 					content = $.trim( this.editor.getValue() );
+	
 					content = content.replace(/(\n)*?<br\s*\/?>\n*/g, "<br/>");
 					if ( isExcerpt ) {
 						this.parent.currentData.excerpt = content;
@@ -770,7 +771,6 @@ PostContentEditor.prototype = {
 	prepareBox: function(){
 		var self = this,
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main);
-		if ( this.box ) return;
 		this.box = new Edit.Box({post: this.post});
 		this.bindBarEvents();
 		this.box.render();
