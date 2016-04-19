@@ -22,6 +22,7 @@ class Upfront_Ajax extends Upfront_Server {
 	private function _add_hooks () {
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			upfront_add_ajax('upfront_load_layout', array($this, "load_layout"));
+			// upfront_add_ajax('upfront_load_layout', array($this, "load_page_layout"));
 			upfront_add_ajax('upfront_create_layout', array($this, "create_layout"));
             
             upfront_add_ajax('upfront_list_scoped_regions', array($this, "list_scoped_regions"));
@@ -50,6 +51,7 @@ class Upfront_Ajax extends Upfront_Server {
 
 	// STUB LOADING
 	function load_layout () {
+	
 		$layout_ids = $_POST['data'];
 		$storage_key = $_POST['storage_key'];
 		$stylesheet = $_POST['stylesheet'];
@@ -170,6 +172,37 @@ class Upfront_Ajax extends Upfront_Server {
 
 		$this->_out(new Upfront_JsonResponse_Success($response));
 	}
+	
+	function load_page_layout () {
+	
+		$layout_ids = $_POST['data'];
+		$storage_key = $_POST['storage_key'];
+		$stylesheet = $_POST['stylesheet'];
+		$layout_slug = !empty($_POST['layout_slug']) ? $_POST['layout_slug'] : false;
+		$load_dev = $_POST['load_dev'] == 1 ? true : false;
+		$post_type = isset($_POST['new_post']) ? $_POST['new_post'] : false;
+		$parsed = false;
+
+		//Check if assigned WP template and delete DB layout
+		if(isset($_POST['post_id']) && !empty($_POST['post_id']) && isset($_POST['data']['specificity']) && !empty($_POST['data']['specificity'])) {
+			$template = get_post_meta((int)$_POST['post_id'], '_wp_page_template', true);
+			$theme = Upfront_ChildTheme::get_instance();
+			$prefix = $theme->get_prefix();
+			if(!empty($template) && $template != "default") {
+				delete_option($prefix.'-'.$_POST['data']['specificity']);
+			}
+		}
+
+
+		$response = array(
+			'post' => $post,
+			'layout' => $layout->to_php(),
+			'cascade' => $layout_ids,
+			'query' => $upfront_ajax_query
+		);
+
+		$this->_out(new Upfront_JsonResponse_Success($response));
+	}
 
 	function create_layout () {
 		$layout_ids = $_POST['data'];
@@ -262,16 +295,30 @@ class Upfront_Ajax extends Upfront_Server {
 		if (!$data) $this->_out(new Upfront_JsonResponse_Error("Unknown layout"));
 		$storage_key = $_POST['storage_key'];
 		$stylesheet = $_POST['stylesheet'] ? $_POST['stylesheet'] : get_stylesheet();
-		$template_id = (isset($_POST['template_id'])) ? $_POST['template_id'] : '';
+		$template_post_id = false;
 
 		upfront_switch_stylesheet($stylesheet);
 
-		$layout = Upfront_Layout::from_php($data, $storage_key);
+		// $layout = Upfront_Layout::from_php($data, $storage_key);
 		// $key = $layout->save();
-		$key = Upfront_Server_PageTemplate::get_instance()->save_template($template_id, $layout);
-
+		
+		$raw_data = stripslashes_deep($_POST);
+		$json_data = !empty($raw_data['data']) ? $raw_data['data'] : '';
+		$post_id = (isset($_POST['post_id'])) ? $_POST['post_id'] : false;
+		
+		if ( $post_id ) {
+			$layout = Upfront_Layout::from_json($json_data);
+			// get corresponding template post id
+			$template_post_id = get_post_meta($post_id, 'template_post_id', true);
+			// save the page template
+			$template_post_id = Upfront_Server_PageTemplate::get_instance()->save_template($template_post_id, $layout);
+			// add/update the template post id
+			if ( $template_post_id ) update_post_meta($post_id, 'template_post_id', $template_post_id);
+		}
+		
 		// For single page layouts, also drop page templates
-		/* $layout_data = $layout->get('layout');
+		$layout = Upfront_Layout::from_php($data, $storage_key);
+		$layout_data = $layout->get('layout');
 		if (!empty($layout_data['specificity']) && preg_match('/single-page-\d+$/', $layout_data['specificity'])) {
 			$page_id = preg_replace('/single-page-(\d+)$/', '\1', $layout_data['specificity']);
 			// If we have a page template set...
@@ -284,10 +331,10 @@ class Upfront_Ajax extends Upfront_Server {
 					'ID' => $page_id,
 					'post_status' => 'publish',
 				));
+				
 			}
-		} */
-
-		$this->_out(new Upfront_JsonResponse_Success($key));
+		}
+		$this->_out(new Upfront_JsonResponse_Success($template_post_id));
 	}
 
     function list_scoped_regions () {

@@ -33,35 +33,53 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 	 * Registering model requirements. Should probably refactor.
 	 */
 	public function register_requirements () {
-		register_post_type(Upfront_PageTemplate::PAGE_TEMPLATE_TYPE, array(
-			"public" => false,
-			"supports" => false,
-			"has_archive" => false,
-			"rewrite" => false,
+		register_post_type(Upfront_PageTemplate::LAYOUT_TEMPLATE_TYPE, array(
+			"public" => true,
+			// "supports" => false,
+			// "has_archive" => false,
+			// "rewrite" => false,
+			"label" => "Page Templates", // TODO to remove later
 		));
-		
+		register_post_status(Upfront_PageTemplate::LAYOUT_TEMPLATE_STATUS, array(
+			'public' => Upfront_Permissions::current(Upfront_Permissions::BOOT),
+			'exclude_from_search' => true,
+			'show_in_admin_all_list' => false,
+			'show_in_admin_status_list' => false,
+		));
 		$this->_data = new Upfront_PageTemplate;
-		// $this->test_data();
 	}
 	
 	public function save_template ($template_id, $layout) {
-		print_r('save_template was called oh yeah');
-		// print_r($layout);
+		return $this->_data->save_page_template($template_id, $layout);
+	}
+	
+	/**
+	 * Outputs a single page template as JSON data, or JSON error
+	 */
+	public function get_template () {
+		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE_REVISION)) $this->_out(new Upfront_JsonResponse_Error("No way"));
 		
-		$this->_data->save_page_template($template_id, $layout);
-		
-		print_r($this->test_data());
-		print_r($layout->get_id());
-		// return $layout->get_id();
+		$data = stripslashes_deep($_POST);
+		$template_post_id = !empty($data['template_id']) ? $data['template_id'] : false;
+		if (empty($template_post_id)) $this->_out(new Upfront_JsonResponse_Error("No data received"));
+
+		$template = $this->_data->get_page_template($template_post_id);
+		if (empty($template)) $this->_out(new Upfront_JsonResponse_Error("No data found"));
+
+		$this->_out(new Upfront_JsonResponse_Success(array(
+			'template' => $template,
+		)));
 	}
 	
 	// TODO: to remove later, just for unit testing
 	public function test_data () {
 		$templates = $this->_data->get_all_page_templates();
-		print_r('templates <br/>');
+		print_r('templates | ');
 		print_r($templates);
+		print_r('post types | ');
+		print_r(get_post_types());
 	}
 	
 }
-
+// Upfront_Server_PageTemplate::serve();
 add_action('init', array('Upfront_Server_PageTemplate', 'serve'), 0);

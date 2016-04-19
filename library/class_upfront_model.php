@@ -220,8 +220,8 @@ abstract class Upfront_Cache {
 require_once('models/class_upfront_entity_resolver.php');
 require_once('models/class_upfront_json_model.php');
 require_once('models/class_upfront_layout.php');
-require_once('models/class_upfront_page_template.php');
 require_once('models/class_upfront_post_model.php');
 require_once('models/class_upfront_postmeta_model.php');
 require_once('models/class_upfront_layout_revisions.php');
+require_once('models/class_upfront_page_template.php');
 require_once('models/class_upfront_model_google_fonts.php');
