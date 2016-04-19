@@ -56,15 +56,20 @@ define([
 			Item.prototype.render.call(this, arguments);
 			var captionControl = this.$('.uimage-caption-control'),
 				me = this,
-				selectedItem
+				selectedItem,
+				wrapperClass = ''
 			;
 
 			if(!this.$el.hasClass('uimage-caption-control-item')) {
 				this.$el.addClass('uimage-caption-control-item');
 			}
 
+			if(typeof this.wrapperClass !== "undefined") {
+				wrapperClass = this.wrapperClass;
+			}
+
 			if(!captionControl.length){
-				captionControl = $('<div class="uimage-caption-control inline-panel-control-dialog"></div>');
+				captionControl = $('<div class="uimage-caption-control inline-panel-control-dialog '+ wrapperClass +'"></div>');
 				this.$el.append(captionControl);
 			}
 			_.each(this.sub_items, function(item, key){

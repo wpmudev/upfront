@@ -96,7 +96,7 @@ define([
 			PresetManager.prototype.setupItems.apply(this, arguments);
 
 			// Make sure we update hidden objects on preset change
-			this.listenTo(this.selectPresetModule, 'upfront:presets:change', function () {
+			if (this.selectPresetModule) this.listenTo(this.selectPresetModule, 'upfront:presets:change', function () {
 				this.model.get("objects").trigger("change");
 				var me = this,
 					preset = this.property("preset"),
@@ -205,7 +205,7 @@ define([
 	return {
 		get_panel: function (data_type) {
 			var pnls = {};
-			_.each(Upfront.data['upfront_post_data_' + data_type].type_parts, function (part) {
+			if (Upfront.Application.user_can("MODIFY_PRESET")) _.each(Upfront.data['upfront_post_data_' + data_type].type_parts, function (part) {
 				var part_name = 'part_' + part,
 					option = Modules[part_name] ? Modules[part_name] : false
 				;

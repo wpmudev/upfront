@@ -73,91 +73,92 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 	},
 
 	on_render: function() {
-
-		var me = this;
-		$button = this.$el.find('button.submit-field > span');
-
-		$button.ueditor({
-			linebreaks: true,
-			disableLineBreak: true,
-			//focus: true,
-
-			airButtons: ['upfrontLink', 'stateAlignCTA', 'upfrontIcons'],
-			autostart: false
-		})
-		.on('stop', function() {
-
-			var ed = $button.data("ueditor"),
-					text = ''
-				;
-
-			try { text = $button.text(); } catch (e) { text = ''; }
-
-			if (text) me.model.set_property('form_button_text', text, true);
-		})
-		;
-
-		$labels = this.$el.find('.upfront-field-container > label');
-
-		$labels.each(function() {
-			//var content = $(this).html();
-			//$(this).html('').append($('<div>').html(content));
-			$label = $(this);//.children('div');
-			$label.ueditor({
+		if (Upfront.Application.user_can_modify_layout()) {
+			var me = this;
+			$button = this.$el.find('button.submit-field > span');
+			$button.ueditor({
 				linebreaks: true,
 				disableLineBreak: true,
 				//focus: true,
 
-				airButtons: ['upfrontIcons'],
+				airButtons: ['upfrontLink', 'stateAlignCTA', 'upfrontIcons'],
 				autostart: false
 			})
-			.on('start', function(e) {
-				$(e.target).closest('.upfront-field-container').children('input, textarea').attr('placeholder', '');
-				$(e.target).css('opacity', 1);
+			.on('stop', function() {
 
-			})
-			.on('stop', function(e) {
-				$label = $(this);
-
-				var ed = $label.data("ueditor"),
+				var ed = $button.data("ueditor"),
 						text = ''
 					;
 
-				if(me.model.get_property_value_by_name('form_label_position') == 'over') {
-					$label.find('span').remove();
-					text = $label.text();
+				try { text = $button.text(); } catch (e) { text = ''; }
 
-					$(e.target).closest('.upfront-field-container').children('input, textarea').attr('placeholder', text);
-
-					$(e.target).css('opacity', 0 );
-				}
-				else {
-
-					try { text = $label.text() } catch (e) { text = ''; }
-				}
-
-				var targetproperty = false;
-
-				if($label.attr('for') == 'sendername')
-					targetproperty = 'form_name_label';
-				else if($label.attr('for') == 'senderemail')
-					targetproperty = 'form_email_label';
-				else if($label.attr('for') == 'sendermessage')
-					targetproperty = 'form_message_label';
-				else if($label.attr('for') == 'subject')
-					targetproperty = 'form_subject_label';
-				else if($label.attr('for') == 'realPerson')
-					targetproperty = 'form_captcha_label';
-
-				if (text && targetproperty) me.model.set_property(targetproperty, text, true);
+				if (text) me.model.set_property('form_button_text', text, true);
 			})
 			;
 
-			if(me.model.get_property_value_by_name('form_label_position') == 'over') {
-				$label.css('opacity', 0 );
-				$label.siblings('input, textarea').attr('placeholder', $label.text());
-			}
-		});
+			$labels = this.$el.find('.upfront-field-container > label');
+
+			$labels.each(function() {
+				//var content = $(this).html();
+				//$(this).html('').append($('<div>').html(content));
+				$label = $(this);//.children('div');
+				$label.ueditor({
+					linebreaks: true,
+					disableLineBreak: true,
+					//focus: true,
+
+					airButtons: ['upfrontIcons'],
+					autostart: false
+				})
+				.on('start', function(e) {
+					$(e.target).closest('.upfront-field-container').children('input, textarea').attr('placeholder', '');
+					$(e.target).css('opacity', 1);
+
+				})
+				.on('stop', function(e) {
+					$label = $(this);
+
+					var ed = $label.data("ueditor"),
+							text = ''
+						;
+
+					if(me.model.get_property_value_by_name('form_label_position') == 'over') {
+						$label.find('span').remove();
+						text = $label.text();
+
+						$(e.target).closest('.upfront-field-container').children('input, textarea').attr('placeholder', text);
+
+						$(e.target).css('opacity', 0 );
+					}
+					else {
+
+						try { text = $label.text() } catch (e) { text = ''; }
+					}
+
+					var targetproperty = false;
+
+					if($label.attr('for') == 'sendername')
+						targetproperty = 'form_name_label';
+					else if($label.attr('for') == 'senderemail')
+						targetproperty = 'form_email_label';
+					else if($label.attr('for') == 'sendermessage')
+						targetproperty = 'form_message_label';
+					else if($label.attr('for') == 'subject')
+						targetproperty = 'form_subject_label';
+					else if($label.attr('for') == 'realPerson')
+						targetproperty = 'form_captcha_label';
+
+					if (text && targetproperty) me.model.set_property(targetproperty, text, true);
+				})
+				;
+
+				if(me.model.get_property_value_by_name('form_label_position') == 'over') {
+					$label.css('opacity', 0 );
+					$label.siblings('input, textarea').attr('placeholder', $label.text());
+				}
+			});
+		
+		}
 	},
 	handleButtonclick: function(e) {
 		e.preventDefault();
@@ -165,26 +166,27 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 	editButtontext: function(e) {
 		e.preventDefault();
 		e.stopPropagation();
-
-		$button = this.$el.find('button.submit-field > span');
-		var ueditor = $button.data('ueditor');
-		
-		//Check if ueditor is defined ( prevent JS error when double click for select all )
-		if(typeof ueditor !== "undefined") {
-			ueditor.start();
+		if (Upfront.Application.user_can_modify_layout()) {
+			$button = this.$el.find('button.submit-field > span');
+			var ueditor = $button.data('ueditor');
+			
+			//Check if ueditor is defined ( prevent JS error when double click for select all )
+			if(typeof ueditor !== "undefined") {
+				ueditor.start();
+			}
 		}
 	},
 	editLabeltext: function(e) {
 		e.preventDefault();
 		e.stopPropagation();
+		
+		if (Upfront.Application.user_can_modify_layout()) {
+			$label = $(e.target);
+			$label.css('opacity', 1);
+			var ueditor = $label.data('ueditor');
 
-		$label = $(e.target);
-		$label.css('opacity', 1);
-		var ueditor = $label.data('ueditor');
-
-		ueditor.start();
-
-
+			ueditor.start();
+		}
 	},
 	checkDeleteElement: function() {
 	},

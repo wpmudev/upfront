@@ -63,6 +63,8 @@ define([
 			this.clicked(e);
 
 			this.$el.siblings('.upfront-control-dialog-open').removeClass('upfront-control-dialog-open');
+			
+			this.listenTo(Upfront.Events, "upfront:hide:paddingPanel", this.close);
 
 			if (this.isOpen) {
 				this.close();
@@ -75,6 +77,7 @@ define([
 			this.isOpen = true;
 			this.refresh();
 			this.$el.addClass('upfront-control-dialog-open');
+			Upfront.Events.trigger('upfront:hide:subControl');
 		},
 
 		close: function() {

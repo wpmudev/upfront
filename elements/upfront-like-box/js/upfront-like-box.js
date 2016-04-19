@@ -159,13 +159,17 @@
 
 				return '<iframe src="//www.facebook.com/v2.5/plugins/page.php?adapt_container_width=true&amp;container_width='+wide+'&amp;width='+wide+'&amp;height='+(this.model.get_property_value_by_name('element_size').height-30)+'&amp;hide_cover='+hide_cover+'&amp;href=https%3A%2F%2Fwww.facebook.com%2F'+ (pageName ? pageName : 'wpmudev' )+'&amp;show_facepile='+show_friends+'&amp;show_posts='+show_posts+'&amp;small_header='+small_header+'" scrolling="no" frameborder="0" style="border:none; display:block; overflow:hidden; margin:auto; width:'+wide+'px; height:'+(this.model.get_property_value_by_name('element_size').height-30)+'px;"" allowTransparency="true"></iframe><div class="upfront-like-box_overlay"></div>'+ (!pageName ? '<span class="alert-url">!</span>' : '' );
 
-			}else{
+			} else {
 				this.model.set_property('facebook_url', '', true);
-				return '<div class="upfront-likebox-overlay upfront-initial-overlay-wrapper" style="min-height: 200px;">' +
-						'<div class="upfront-like-box_placeholder upfront-initial-overlay-wrapper" style="height: 150px;">' +
-						'<div class="upfront-like-box_placeholder_guide">'+l10n.placeholder_guide+'</div>' +
-						'<div class="upfront-like-box_url_wrapper"><input type="text" class="upfront-like-box_url" placeholder="' + l10n.placeholder + '" /></div>' +
-						'<button type="button" class="upfront-like-box_button">'+l10n.ok+'</button></div></div>';
+				if (Upfront.Application.user_can_modify_layout()) {
+					return '<div class="upfront-likebox-overlay upfront-initial-overlay-wrapper" style="min-height: 200px;">' +
+							'<div class="upfront-like-box_placeholder upfront-initial-overlay-wrapper" style="height: 150px;">' +
+							'<div class="upfront-like-box_placeholder_guide">'+l10n.placeholder_guide+'</div>' +
+							'<div class="upfront-like-box_url_wrapper"><input type="text" class="upfront-like-box_url" placeholder="' + l10n.placeholder + '" /></div>' +
+							'<button type="button" class="upfront-like-box_button">'+l10n.ok+'</button></div></div>';
+				} else {
+					return '';
+				}
 			}
 		},
 

@@ -16,6 +16,8 @@ main.js
 D:/xampp/htdocs/upfront/wp-includes/js/underscore.min.js
 D:/xampp/htdocs/upfront/wp-includes/js/backbone.min.js
 upfront/upfront-models.js
+D:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/render-queue.js
+D:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/render-queue-reporter.js
 text.js
 text!upfront/templates/object.html
 text!upfront/templates/object_group.html
@@ -35,11 +37,13 @@ D:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/control.js
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/multi-control.js
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/tooltip-control.js
+D:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/sub-control.js
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/padding-control.js
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/collapsed-multi-control.js
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/control-panel.js
 text!scripts/upfront/inline-panels/templates/panel-control-template.html
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/dialog-control.js
+D:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/image-control.js
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/controls/visit-link.js
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/controls/link-panel.js
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/link-model.js
@@ -66,6 +70,7 @@ D:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/behaviors/layo
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/behaviors/dragdrop.js
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/behaviors/resize.js
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/behaviors/grid-editor.js
+D:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/behaviors/shortcuts.js
 upfront/upfront-behaviors.js
 jquery/jquery-dateFormat.min.js
 jquery/jquery.simulate.js
@@ -180,6 +185,7 @@ D:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-image/js/imag
 text!elements/upfront-image/tpl/preset-style.html
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-image/js/image-settings.js
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-image/js/image-selector.js
+D:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-image/js/crop-controls.js
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-image/js/image-editor.js
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-image/js/model.js
 D:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-image/js/image-element.js

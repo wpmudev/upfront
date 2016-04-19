@@ -140,7 +140,7 @@
 	/*padding-bottom:15px;*/
 }
 .uimage-upfront-module-view .upfront-editable_entity.ui-resizable-resizing {
-	overflow: visible;
+	overflow: hidden;
 }
 
 .upfront-wrapper {
@@ -185,7 +185,9 @@
 .upfront-module-group-bg {
   z-index: -2;
 }
-.upfront-module-group-on-edit:after {
+.upfront-module-group-on-edit:after,
+.upfront-module-group-element-editing:after,
+.upfront-module-group-no-edit:after {
 	display: none;
 }
 .upfront-module-group:hover {
@@ -489,6 +491,10 @@
 .upfront-module-group.upfront-module-group-on-edit > .upfront-selected-border {
 	display: block;
 }
+.upfront-module-group.upfront-module-group-element-editing > .upfront-selected-border,
+.upfront-module-group.upfront-module-group-no-edit > .upfront-selected-border {
+	display: none;
+}
 .upfront-module-group .upfront-editable_entities_container .ui-resizable-handle,
 .upfront-object-group .upfront-editable_entities_container .ui-resizable-handle {
   visibility: hidden;
@@ -567,7 +573,7 @@
 .upfront-region-lightbox-editing .upfront-region-side-lightbox > .upfront-entity_meta {
 	display: block;
 }
-.upfront-region-side-fixed > .upfront-entity_meta {
+.upfront-region-fixed-editing .upfront-region-side-fixed > .upfront-entity_meta {
 	top: 10px;
 	right: 15px;
 	z-index: 999999;
@@ -645,7 +651,7 @@
   right: 5px;
   background: #fff;
   border-radius:3px;
-  box-shadow: 0px 0px 3px 0px rgba(36,57,77,0.2);
+  box-shadow: 0 0 5px 0 rgba(36,57,77,.5);
   z-index: -1;
 }
 .upfront-wrapper:not(.upfront-inline-panel-item-open):hover > .upfront-wrapper-meta,
@@ -723,6 +729,10 @@
 }
 .upfront-module-group-on-edit > .upfront-entity-size-hint,
 .upfront-module-group-on-edit:hover > .upfront-entity-size-hint,
+.upfront-module-group.upfront-module-group-element-editing > .upfront-entity-size-hint,
+.upfront-module-group.upfront-module-group-element-editing:hover > .upfront-entity-size-hint,
+.upfront-module-group.upfront-module-group-no-edit > .upfront-entity-size-hint,
+.upfront-module-group.upfront-module-group-no-edit:hover > .upfront-entity-size-hint,
 .upfront-module:hover .upfront-object-group .upfront-object-view .upfront-entity-size-hint {
   display: none;
 }
@@ -804,7 +814,8 @@
 .upfront-module-group.controls-visible > .open-item-controls {
   display: block;
 }
-.upfront-module-group.upfront-module-group-on-edit > .open-item-controls {
+.upfront-module-group.upfront-module-group-on-edit > .open-item-controls,
+.upfront-module-group.upfront-module-group-element-editing > .open-item-controls {
   display: none;
 }
 .upfront-module-group > .upfront-module-group-controls .inline-panel-control-dialog {

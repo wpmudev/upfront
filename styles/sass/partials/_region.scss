@@ -153,6 +153,8 @@
 .upfront-edit-layout .upfront-region-container:hover > .upfront-region-edit-trigger,
 .upfront-edit-theme .upfront-region-container:hover > .upfront-region-edit-trigger,
 .upfront-edit-responsive .default-breakpoint .upfront-region-container:hover > .upfront-region-edit-trigger,
+.upfront-edit-layout .upfront-region-side-fixed.upfront-region-has-modules:hover > .upfront-region-edit-trigger-small-fixed,
+.upfront-edit-theme .upfront-region-side-fixed.upfront-region-has-modules:hover > .upfront-region-edit-trigger-small-fixed,
 .upfront-edit-layout .upfront-region-empty:hover > .upfront-region-edit-trigger-full,
 .upfront-edit-theme .upfront-region-empty:hover > .upfront-region-edit-trigger-full,
 .upfront-edit-responsive .upfront-region-empty:hover > .upfront-region-edit-trigger-full,
@@ -163,11 +165,14 @@
 }
 .upfront-region-container.upfront-region-module-activated .upfront-region-edit-trigger,
 .upfront-region-container.upfront-region-module-activated:hover .upfront-region-edit-trigger,
-.upfront-region-container.upfront-region-module-activated .upfront-region:hover .upfront-region-edit-trigger,
+.upfront-region-container.upfront-region-module-activated .upfront-region:hover .upfront-region-edit-trigger {
+	display: none;
+}
 .upfront-region-editing .upfront-region-container .upfront-region-edit-trigger,
 .upfront-region-editing .upfront-region-container:hover .upfront-region-edit-trigger,
 .upfront-region-fixed-editing .upfront-region-container .upfront-region-edit-trigger,
 .upfront-region-fixed-editing .upfront-region-container:hover .upfront-region-edit-trigger,
+.upfront-region-fixed-editing .upfront-region-side-fixed.upfront-region-has-modules:hover .upfront-region-edit-trigger,
 .upfront-edit-responsive .upfront-region-hidden > .upfront-region-edit-trigger,
 .upfront-region-container.upfront-region-container-nav-open .upfront-region-edit-trigger,
 .upfront-region-container.upfront-region-container-nav-open:hover .upfront-region-edit-trigger,
@@ -214,7 +219,8 @@
 .upfront-region-lightbox-editing .upfront-region-side-lightbox .upfront-region-finish-edit-lightbox {
 	display: block;
 }
-.upfront-module-group-nav-open.upfront-module-group-on-edit .upfront-module-group-finish-edit {
+.upfront-module-group-nav-open.upfront-module-group-on-edit .upfront-module-group-finish-edit,
+.upfront-module-group-element-editing .upfront-module-group-finish-edit {
 	display: none;
 }
 .upfront-region-title {

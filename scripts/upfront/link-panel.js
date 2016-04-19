@@ -73,6 +73,7 @@ define([
 			image: false,
 			lightbox: true,
 			email: true,
+			phone: true,
 			homepage: true
 		},
 
@@ -213,6 +214,8 @@ define([
 					return { value: 'external', label: contentL10n.url };
 				case 'email':
 					return { value: 'email', label: contentL10n.email };
+				case 'phone':
+					return { value: 'phone', label: contentL10n.phone };
 				case 'entry':
 					return { value: 'entry', label: contentL10n.post_or_page };
 				case 'anchor':
@@ -285,7 +288,10 @@ define([
 			if (this.model.get('type') === 'email' && !userInput.match(/^mailto:/)) {
 				userInput = 'mailto:' + userInput;
 			}
-
+			if (this.model.get('type') === 'phone' && !userInput.match(/^tel:/)) {
+				userInput = 'tel:' + userInput;
+				this.model.set({'target': "_self"});
+			}
 			this.model.set({'url': userInput});
 			this.render();
 		},

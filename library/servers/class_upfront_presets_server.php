@@ -40,6 +40,10 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			return;
 		}
 
+		if (!Upfront_Permissions::current(Upfront_Permissions::DELETE_ELEMENT_PRESETS)) {
+			$this->_reject();
+		}
+
 		$properties = stripslashes_deep($_POST['data']);
 		do_action('upfront_delete_' . $this->elementName . '_preset', $properties, $this->elementName);
 
@@ -64,6 +68,10 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	public function reset() {
 		if (!isset($_POST['data'])) {
 			return;
+		}
+
+		if (!Upfront_Permissions::current(Upfront_Permissions::DELETE_ELEMENT_PRESETS)) {
+			$this->_reject();
 		}
 
 		$properties = stripslashes_deep($_POST['data']);
@@ -170,6 +178,10 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	public function save() {
 		if (!isset($_POST['data'])) {
 			return;
+		}
+
+		if (!Upfront_Permissions::current(Upfront_Permissions::MODIFY_ELEMENT_PRESETS)) {
+			$this->_reject();
 		}
 
 		$properties = $_POST['data'];
@@ -420,14 +432,17 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		$breakpoint = $grid->get_default_breakpoint();
 		$typography = $breakpoint->get_typography();
 		
-		//We load this in case typography is empty or specific tag is empty
-		$layout_properties = Upfront_ChildTheme::get_instance()->getLayoutProperties();
-		$theme_typography = upfront_get_property_value('typography', array('properties'=>$layout_properties));
 		$theme_typography_array = array();
 		
-		//Make sure we use array not an object recursively
-		foreach($theme_typography as $key => $object) {
-			$theme_typography_array[$key] = get_object_vars($object);
+		if(!is_null(Upfront_ChildTheme::get_instance())) {
+			//We load this in case typography is empty or specific tag is empty
+			$layout_properties = Upfront_ChildTheme::get_instance()->getLayoutProperties();
+			$theme_typography = upfront_get_property_value('typography', array('properties'=>$layout_properties));
+
+			//Make sure we use array not an object recursively
+			foreach($theme_typography as $key => $object) {
+				$theme_typography_array[$key] = get_object_vars($object);
+			}
 		}
 
 		//Set child theme typography if breakpoint typography is empty

@@ -22,7 +22,8 @@
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
-#wpadminbar .upfront-edit_layout .ab-icon:before {
+#wpadminbar .upfront-edit_layout .ab-icon:before,
+.toplevel_page_upfront .dashicons-admin-generic:before {
     font-family: icomoon;
     content: "\e900";
     font-size: 20px;

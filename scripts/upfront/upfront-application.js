@@ -1067,12 +1067,16 @@ var ContentEditor = new (Subapplication.extend({
 
 	start: function () {
 		Upfront.Util.log("Starting the content edit mode");
+		if ( !Upfront.Behaviors.GridEditor.grid ) {
+			Upfront.Behaviors.GridEditor.init();
+		}
 
 		$("html").removeClass("upfront-edit-layout upfront-edit-theme upfront-edit-postlayout upfront-edit-responsive").addClass("upfront-edit-content");
 	},
 
 	stop: function () {
 		Upfront.Util.log("Stopping the content edit mode");
+		this.stopListening(Upfront.Events);
 	}
 }))();
 
@@ -1185,6 +1189,18 @@ var Application = new (Backbone.Router.extend({
 	is_editor: function(){
 		return !this.is_builder();
 	},
+	is_single: function(post_type){
+		if ( !('type' in _upfront_post_data.layout && 'single' === _upfront_post_data.layout.type) ) return false;
+		if ( typeof post_type === "undefined" ) return true;
+		if ( 'item' in _upfront_post_data.layout && 'single-'+post_type === _upfront_post_data.layout.item ) return true;
+		return false;
+	},
+	is_archive: function(item){
+		if ( !('type' in _upfront_post_data.layout && 'archive' === _upfront_post_data.layout.type) ) return false;
+		if ( typeof item === "undefined" ) return true;
+		if ( 'item' in _upfront_post_data.layout && 'archive-'+item === _upfront_post_data.layout.item ) return true;
+		return false;
+	},
 	urlCache: {},
 
 	current_subapplication: false,
@@ -1260,11 +1276,17 @@ var Application = new (Backbone.Router.extend({
 			loading_notice: Upfront.Settings.l10n.global.application.long_loading_notice,
 			loading_type: 'upfront-boot',
 			done: Upfront.Settings.l10n.global.application.thank_you_for_waiting,
-			fixed: true
+			fixed: true,
+			remove_on_event: 'upfront:renderingqueue:start'
 		});
 		app.loading.on_finish(function(){
 			$(Upfront.Settings.LayoutEditor.Selectors.sidebar).show();
 			$(".upfront-editable_trigger").hide();
+
+			// Disable settings if LAYOUT_MODE permission is disabled
+			if (!Upfront.Application.user_can_modify_layout()) {
+				app.setup_edit_layout();
+			}
 		});
 		app.loading.render();
 		$('body').append(app.loading.$el);
@@ -1333,6 +1355,21 @@ var Application = new (Backbone.Router.extend({
 		var last = this.mode.last || this.MODE.DEFAULT;
 		this.start(last);
 	},
+
+	setup_edit_layout: function() {
+		var app = this;
+
+		app.loading.on_finish(function(){
+			var $page = $('#page');
+
+			//Remove region edit button
+			$page.find('.upfront-region-edit-trigger').remove();
+
+			//Remove delete buttons
+			$('a.upfront-entity-delete_trigger').remove();
+		});
+	},
+
 
 	load_layout: function (layout_ids, additional) {
 		var app = this,
@@ -1455,13 +1492,17 @@ var Application = new (Backbone.Router.extend({
 
 		else Upfront.Util.log("No current subapplication");
 
+		Upfront.Events.once("layout:after_render", function(){
+			me.layout_ready = true;
+		});
+
 		//if (!me.layout_view) {
 		me.layout_view = new Upfront.Views.Layout({
 			"model": me.layout,
 			"el": $(Upfront.Settings.LayoutEditor.Selectors.main)
 		});
+		Upfront.Events.trigger('upfront:renderingqueue:settotal', me.layout_view);
 		Upfront.Events.trigger("layout:render", me.current_subapplication);
-		me.layout_ready = true;
 		//}
 
 		Upfront.Application.loading.done(function () {
@@ -1573,13 +1614,13 @@ var Application = new (Backbone.Router.extend({
 	},
 
 	post_set_up: function(postData){
-		
+
 		//Create the post with meta
 		postData.meta = [];
 		var post = new Upfront.Models.Post(postData);
-				
+
 		post.is_new = postData.post_status === 'draft' && postData.post_content.indexOf('<p') < 0 ;//postData.post_status == 'auto-draft' && postData.post_content === '';
-		
+
 		//Set global variables
 		Upfront.data.posts[post.id] = post;
 		_upfront_post_data.post_id = post.id;
@@ -1655,7 +1696,7 @@ var Application = new (Backbone.Router.extend({
 		}
 		//this.sidebar.render(); <-- Subapplications do this
 	},
-	
+
 	recursiveExistenceMigration: function(selector, clean_selector) {
 		var splitted = clean_selector.split(' ');
 		var me = this;
@@ -1905,7 +1946,8 @@ var Application = new (Backbone.Router.extend({
 			loading = new Upfront.Views.Editor.Loading({
 				loading: message,
 				done: done,
-				fixed: true
+				fixed: true,
+				remove_on_event: 'upfront:renderingqueue:start'
 			});
 			loading.render();
 			$('body').append(loading.$el);
@@ -1933,6 +1975,37 @@ var Application = new (Backbone.Router.extend({
 			me.responsiveMode = newMode.id;
 		});
 	},
+
+	/**
+	 * Determine user ability to perform something
+	 *
+	 * @param {String} what Ability to check
+	 *
+	 * @return {Boolean}
+	 */
+	user_can: function (what) {
+		what = (_.isString(what) ? what : "").toUpperCase();
+		return !!((Upfront.Settings.Application || {}).PERMS || {})[what];
+	},
+
+	/**
+	 * Check if user can modify layout
+	 *
+	 * @return {Boolean}
+	 */
+	user_can_modify_layout: function () {
+		var is_archive = this.is_archive(),
+			is_home = this.is_archive('home'),
+			is_single = this.is_single(),
+			is_single_page = this.is_single('page')
+		;
+		if ( !this.user_can("LAYOUT_MODE") ) return false;
+		if ( is_home && this.user_can("HOME_LAYOUT_MODE") ) return true;
+		if ( !is_home && is_archive && this.user_can("ARCHIVE_LAYOUT_MODE") ) return true;
+		if ( is_single_page && this.user_can("SINGLEPAGE_LAYOUT_MODE") ) return true;
+		if ( !is_single_page && is_single && this.user_can("SINGLEPOST_LAYOUT_MODE") ) return true;
+		return false;
+	}
 
 }))();
 

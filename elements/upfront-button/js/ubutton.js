@@ -246,7 +246,9 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		blurTimeout = false;
 		this.delegateEvents();
 		var $target = this.$el.find('.upfront-object-content a.upfront_cta');
-		  $target.ueditor({
+		
+		if (Upfront.Application.user_can_modify_layout()) {
+			$target.ueditor({
 				linebreaks: true,
 				disableLineBreak: true,
 				airButtons: ['stateAlignCTA', 'upfrontIcons'],
@@ -268,6 +270,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			.on('syncAfter', function(){
 				me.saveTitle($(this));
 			});
+		}
 
 		// this.createInlineControlPanel();
 		this.clearPresetClass(this.$el);

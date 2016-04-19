@@ -12,6 +12,8 @@
 	border-top: 1px solid transparent;
 	border-bottom: 1px solid transparent;
 	line-height: 18px;
+	overflow: hidden;
+	max-height: 28px;
 }
 
 .upfront-list-items .upfront-list_item {
@@ -115,9 +117,15 @@
 }
 .upfront-list_item-component.upfront-title {
 	width: 45%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 .upfront-list_item-component.upfront-author {
 	width: 15%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 .upfront-list_item-component.upfront-comments-count {
 	width: 10%;

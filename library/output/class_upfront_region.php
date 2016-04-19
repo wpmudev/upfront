@@ -113,6 +113,12 @@ class Upfront_Region extends Upfront_Container {
 		$is_overlay = $this->_is_background_overlay($point->get_id());
 		$is_default_overlay = $this->_is_background_overlay();
 		$bg_css = $this->_get_background_css(false, true, $point->get_id());
+		if ('featured' === $this->get_background_type($point->get_id()) && !has_post_thumbnail(Upfront_Output::get_post_id())) {
+			$bg_default = $this->_get_breakpoint_property('background_default', $point->get_id());
+			if ( 'hide' === $bg_default ) {
+				$bg_css = '';
+			}
+		}
 		if ( ! empty($bg_css) ) {
 			$css .= sprintf('%s #%s {%s}',
 					'.' . ltrim($scope, '. '),

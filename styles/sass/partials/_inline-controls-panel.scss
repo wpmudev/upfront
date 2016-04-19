@@ -18,7 +18,7 @@
     box-shadow: 0 0 3px 0 rgba(36,57,77,0.3);
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item {
-    background: #FFFFFF;
+    background: #F5F5F5;
     border-bottom: 0;
     cursor: default;
 }
@@ -66,9 +66,10 @@
     background: #fff;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon {
-    opacity: 0.75;
+    opacity: 0.70;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-control-dialog-open .upfront-icon,
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-icon,
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon:hover {
     opacity: 1;
 }
@@ -78,10 +79,34 @@
     height: 18px;
     opacity: 0.75;
 }
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-settings:hover:before {
+    background-position: -231px -371px;
+    width: 18px;
+    height: 18px;
+    opacity: 0.75;
+}
+.upfront-element-controls .upfront-inline-panel .upfront-control-dialog-open .upfront-icon-region-settings:before {
+    background-position: -231px -371px;
+    width: 18px;
+    height: 18px;
+    opacity: 1;
+}
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-padding:before {
     background-position: -261px -341px;
     width: 18px;
     height: 18px;
+}
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-padding:hover:before {
+    background-position: -231px -341px;
+    width: 18px;
+    height: 18px;
+	opacity: 0.75;
+}
+.upfront-element-controls .upfront-inline-panel .upfront-control-dialog-open.upfront-inline-panel-item .upfront-icon-region-padding:before {
+    background-position: -231px -341px !important;
+    width: 18px;
+    height: 18px;
+	opacity: 1;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-reorder:before {
     background-position: -261px -521px;
@@ -93,4 +118,42 @@
     width: 24px;
     height: 24px;
     background-image: url("../img/uf-ui-sprite.svg")!important;
+}
+.upfront-icon-region-more {
+	height: 38px;
+}
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-more:before {
+    background-position: -291px -460px;
+    width: 24px;
+    height: 24px;
+    opacity: 0.75;
+}
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-more:hover:before {
+    background-position: -291px -490px;
+    width: 24px;
+    height: 24px;
+    opacity: 0.75;
+}
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-icon-region-more:before {
+    background-position: -291px -490px;
+    width: 24px;
+    height: 24px;
+    opacity: 1 !important;
+}
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-inline-panel-item,
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open {
+    background: #E6ECF2;
+}
+
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .slider-caption-second-level .upfront-inline-panel-item,
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .slider-caption-second-level {
+	background: #DAE0E6;
+}
+
+.upfront-element-controls .control-panel-overlay {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	z-index: 99;
+	opacity: 0;
 }

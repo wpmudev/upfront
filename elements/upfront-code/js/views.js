@@ -15,13 +15,14 @@ define([
 				"click .create": "create_code"
 			},
 			render: function () {
-				this.$el.empty()
-					.append(
-						'<p class="code-element-choose"><button type="button" class="embed">' + l10n.intro.embed + '</button>' +
-						'&nbsp;or&nbsp;' +
-						'<button type="button" class="create">' + l10n.intro.code + '</button></p>'
-					)
-				;
+				this.$el.empty();
+				this.$el.append('<p class="code-element-choose"></p>');
+				if (Upfront.Application.user_can_modify_layout()) {
+					if ( Upfront.Settings.Application.PERMS.EMBED ) {
+						this.$el.find('p.code-element-choose').append('<button type="button" class="embed">' + l10n.intro.embed + '</button>' + '&nbsp;or&nbsp;');
+					}
+					this.$el.find('p.code-element-choose').append('<button type="button" class="create">' + l10n.intro.code + '</button>');
+				}
 			},
 			embed_code: function () {
 				this.model.set_property("code_selection_type", "Embed", true);
@@ -137,6 +138,8 @@ define([
 			 */
 			on_edit_content: function (){
 				if (this.is_editing) return false;
+				
+				if (!Upfront.Application.user_can_modify_layout()) return false;
 
 				// Since we're doing double duty here, let's first check if content editing mode is to boot
 				var $contenteditables = this.$el.find('.upfront_code-element ' + this.content_editable_selector);
@@ -582,6 +585,8 @@ define([
 			on_edit: function () {
 				if (this.is_editing)
 					return false;
+				
+				if (!Upfront.Application.user_can_modify_layout()) return false;
 
 				this.is_editing = true;
 

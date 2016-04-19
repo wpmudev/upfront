@@ -103,6 +103,10 @@ var LayoutEditor = {
 	parse_selections: function () {
 		if ( !$(".upfront-ui-selected").length )
 			return false;
+		
+		// Disable Grouping
+		if (!Upfront.Application.user_can_modify_layout()) return false;
+
 		var ed = this,
 			regions = Upfront.Application.layout.get('regions'),
 			$region = $(".upfront-ui-selected:first").closest('.upfront-region'),

@@ -328,12 +328,12 @@ function upfront_get_attachment_image_lazy ($attachment_id, $ref_size = 'full') 
 	return $out;
 }
 
-function upfront_get_edited_post_thumbnail ($post_id = null, $return_src = false) {
+function upfront_get_edited_post_thumbnail ($post_id = null, $return_src = false, $size = 'full') {
 	$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
 	$image_id = get_post_thumbnail_id($post_id);
 	$data = get_post_meta($post_id, '_thumbnail_data', true);
 	if ( empty($data) || empty( $data['imageId'] ) || $data['imageId'] != $image_id || empty($data['src']) ) // no edited thumbnail
-		return get_the_post_thumbnail($post_id);
+		return get_the_post_thumbnail($post_id, $size);
 	if ( $return_src)
 		return $data['src'];
 	$image = get_post($image_id);

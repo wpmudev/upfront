@@ -50,34 +50,42 @@ var Box = Backbone.View.extend({
         });
     },
 
-    render: function(){
-        this.destroy();
-        if (!Upfront.Settings.Application.MODE.ALLOW.match(Upfront.Settings.Application.MODE.CONTENT)) return false; // Drop the entire bar rendering if we're unable to deal with it
-        var me = this,
-            postData = this.post.toJSON(),
-            extraData = {},
-            base = me.post.get("guid")
-            ;
+		render: function(){
+			this.destroy();
+			if (Upfront.Application.user_can("EDIT") === false) {
+				if (parseInt(this.post.get('post_author'), 10) === Upfront.data.currentUser.id && Upfront.Application.user_can("EDIT_OWN") === true) {
+					// Pass through
+				} else {
+					return;
+				}
+			}
 
-        extraData.rootUrl = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
-        postData.permalink = this.permalink = extraData.rootUrl + this.post.get("post_name");
-        postData.previewLink = this.post.get("guid") + "&preview=true";
+			var me = this,
+			postData = this.post.toJSON(),
+				extraData = {},
+				base = me.post.get("guid")
+					;
 
-        postData.buttonText = this.getButtonText();
-        postData.draftButton = ['publish', 'future'].indexOf(this.initialStatus) == -1;
-        postData.cancelButton = !(this.post.is_new);
+			extraData.rootUrl = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
+			postData.permalink = this.permalink = extraData.rootUrl + this.post.get("post_name");
+			postData.previewLink = this.post.get("guid") + "&preview=true";
 
-        postData.cid = this.cid;
+			postData.buttonText = this.getButtonText();
+			postData.draftButton = ['publish', 'future'].indexOf(this.initialStatus) == -1;
+			postData.cancelButton = !(this.post.is_new);
 
-        extraData.post_type_conditional_box_title = this._post_type_has_taxonomy('post_tag') && this._post_type_has_taxonomy('category')
-            ? Upfront.Settings.l10n.global.content.tags_cats_url
-            : Upfront.Settings.l10n.global.content.no_tax_url
-        ;
-        extraData.url_label = "post" === me.post.get("post_type") ? Upfront.Settings.l10n.global.content.post_url : Upfront.Settings.l10n.global.content.page_url;
-        this.$el.html(this.tpl(_.extend({}, postData, extraData) ));
-        this.populateSections();
-        return this;
-    },
+			postData.cid = this.cid;
+
+			extraData.post_type_conditional_box_title = this._post_type_has_taxonomy('post_tag') && this._post_type_has_taxonomy('category')
+				? Upfront.Settings.l10n.global.content.tags_cats_url
+				: Upfront.Settings.l10n.global.content.no_tax_url
+				;
+			extraData.url_label = "post" === me.post.get("post_type") ? Upfront.Settings.l10n.global.content.post_url : Upfront.Settings.l10n.global.content.page_url;
+			this.$el.html(this.tpl(_.extend({}, postData, extraData) ));
+			this.populateSections();
+			return this;
+		},
+
     navigate_to_preview: function(e){
         e.preventDefault();
 

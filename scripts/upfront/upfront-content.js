@@ -7,16 +7,16 @@ var deps = [
 ];
 
 define("content", deps, function(postTpl, ContentTools) {
-	
+
 	var PostEditor = function (opts) {
 		var me = this;
 		this.postId = opts.post_id;
 		this.autostart = opts.autostart || false;
 		this.content_mode = opts.content_mode;
 		this.changed = {};
-		
+
 		_.extend(this, Backbone.Events);
-		
+
 		//If the post is in the cache, prepare it!
 		if(Upfront.data.posts[this.postId]){
 			this.post = Upfront.data.posts[this.postId];
@@ -55,10 +55,10 @@ define("content", deps, function(postTpl, ContentTools) {
 
 		//this.getPostLayout();
 	};
-	
+
 	PostEditor.prototype = {
 		_partViews: [],
-		
+
 		addPartView: function (type, el, model, parentModel) {
 			var deferred = new $.Deferred();
 			this._partViews.push({
@@ -71,7 +71,7 @@ define("content", deps, function(postTpl, ContentTools) {
 			this.setPartViews();
 			return deferred.promise();
 		},
-		
+
 		setPartViews: function () {
 			if ( !this.contentEditor )
 				return;
@@ -85,7 +85,7 @@ define("content", deps, function(postTpl, ContentTools) {
 		setDefaults: function(){
 			this.mode = 'content'; // Also 'layout' to edit post layout.
 		},
-		
+
 		getPost: function(){
 			var deferred = $.Deferred();
 			if(this.post){
@@ -129,7 +129,7 @@ define("content", deps, function(postTpl, ContentTools) {
 		stopEditContents: function(){
 			this.contentEditor.stopEditors();
 			this.trigger('stop');
-		},		
+		},
 
 		cancelChanges: function(){
 			this.stopEditContents();
@@ -139,15 +139,15 @@ define("content", deps, function(postTpl, ContentTools) {
 		publish: function(results){
 			this.save(results, 'publish', Upfront.Settings.l10n.global.content.publishing.replace(/%s/, this.post.get('post_type')), Upfront.Settings.l10n.global.content.published.replace(/%s/, this.capitalize(this.post.get('post_type'))));
 		},
-		
+
 		saveDraft:function(results){
 			this.save(results, 'draft', Upfront.Settings.l10n.global.content.saving.replace(/%s/, this.post.get('post_type')), Upfront.Settings.l10n.global.content.drafted.replace(/%s/, this.capitalize(this.post.get('post_type'))));
 		},
-		
+
 		saveAutoDraft:function(results){
 			this.save(results, 'auto-draft');
 		},
-		
+
 		trash: function(){
 			var me = this,
 				postType = this.post.get('post_type'),
@@ -165,7 +165,7 @@ define("content", deps, function(postTpl, ContentTools) {
 				Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.content.deleted.replace(/%s/, postType));
 				me.stopEditContents();
 				me.trigger('post:trash');
-				
+
 				// navigate to home
 				Upfront.Application.sidebar.toggleSidebar();
 				Upfront.Application.navigate( "/" , true);
@@ -196,7 +196,7 @@ define("content", deps, function(postTpl, ContentTools) {
 			}
 
 
-			
+
 			if ( results.title ) {
 				this.post.set('post_title', results.title);
 			}
@@ -275,34 +275,34 @@ define("content", deps, function(postTpl, ContentTools) {
 		preventLinkNavigation: function(e){
 			e.preventDefault();
 		},
-		
+
 		editStart: function () {
 			this.trigger('editor:edit:start');
 		},
-		
+
 		editStop: function () {
 			this.trigger('editor:edit:stop');
 		},
-		
+
 		changeTitle: function (title) {
 			this.trigger('editor:change:title', title);
 		},
-		
+
 		changeContent: function (content, isExcerpt) {
 			this.trigger('editor:change:content', content, isExcerpt);
 		},
-		
+
 		changeAuthor: function (authorId) {
 			this.trigger('editor:change:author', authorId);
 		},
-		
+
 		changeDate: function (date) {
 			this.trigger('editor:change:date', date);
 		}
 	};
-	
+
 	_.extend(PostEditor.prototype, Backbone.Events.prototype);
-	
+
 	var PostEditorLegacy = Backbone.View.extend(_.extend({}, PostEditor.prototype, {
 		tpl: Upfront.Util.template(postTpl),
 		events: {
@@ -469,7 +469,15 @@ define("content", deps, function(postTpl, ContentTools) {
 			return Upfront.data.thisPost.templates[part];
 		},
 
-		editContents: function(e, focusElement){
+		editContents: function(e, focusElement) {
+			if (Upfront.Application.user_can("EDIT") === false) {
+				if (parseInt(this.post.get('post_author'), 10) === Upfront.data.currentUser.id && Upfront.Application.user_can("EDIT_OWN") === true) {
+					// Pass through
+				} else {
+					return;
+				}
+			}
+
 			var me = this,
 				ram = function () {
 					arguments.callee.iter = arguments.callee.iter || 0;
@@ -533,13 +541,13 @@ define("content", deps, function(postTpl, ContentTools) {
 			this.contentEditor = false;
 			this.$el.closest('.upfront-wrapper').removeClass('upfront-postcontent-editor');
 			Upfront.Events.trigger('post:content:edit:stop', this.contentEditor);
-		},		
+		},
 
 		cancelChanges: function(){
 			this.stopEditContents();
 			this.render();
 		},
-		
+
 		trash: function(){
 			var me = this,
 				postType = this.post.get('post_type'),
@@ -564,7 +572,7 @@ define("content", deps, function(postTpl, ContentTools) {
 				Upfront.Application.navigate( "/" , true);
 			});
 		},
-		
+
 		save: function(results, status, loadingMsg, successMsg){
 			var me = this,
 				rerender = function(){

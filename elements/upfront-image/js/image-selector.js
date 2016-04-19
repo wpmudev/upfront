@@ -113,8 +113,25 @@ define([
 					input.removeAttr('multiple');
 					input.attr('name', 'media');
 				}
-
-				$('#upront-image-placeholder')
+				
+				me.updateSelector();
+				me.resizeOverlay();
+				
+			});
+		},
+		
+		updateSelector: function() {
+			var me = this,
+				$imagePlaceholder = $('#upront-image-placeholder'),
+				$imageSelectorContainer = $imagePlaceholder.find('.upfront-image-selector-container');
+					
+			if ( !Upfront.Settings.Application.PERMS.UPLOAD ) {
+				var $mediaGallery = $imagePlaceholder.find('a.open-media-gallery').parent();
+				var $mediaGalleryUL = $('<ul></ul>').append($mediaGallery);
+				$imageSelectorContainer.empty();
+				$imageSelectorContainer.append($mediaGalleryUL);
+			} else {
+				$imagePlaceholder
 					.on('dragenter', function(e){
 						e.preventDefault();
 						e.stopPropagation();
@@ -146,11 +163,9 @@ define([
 							}
 						}
 					});
-
-				me.resizeOverlay();
-			});
+			}
 		},
-
+		
 		openProgress: function(callback){
 			var me = this;
 			this.openOverlaySection(this.progressTpl, {}, function() {

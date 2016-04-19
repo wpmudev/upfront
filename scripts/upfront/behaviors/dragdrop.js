@@ -119,6 +119,16 @@ DragDrop.prototype = {
 			}
 			return false;
 		}
+		//Disable drag when LAYOUT_MODE permission disabled
+		if (!Upfront.Application.user_can_modify_layout()) {
+			if ( this.$me.data('ui-draggable') ){
+				if ( this.is_group || !this.is_disabled ) {
+					this.$me.draggable('option', 'disabled', false);
+				}
+			}
+
+			return false;
+		}
 		
 		this.$me.draggable({
 			revert: true,
