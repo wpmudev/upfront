@@ -1851,7 +1851,7 @@
 						content_mode: 'post_content'
 					});
 
-					this.listenTo(this.postEditor, 'editor:loaded', function(contentEditor) {
+					this.listenTo(this.postEditor, 'loaded', function(contentEditor) {
 						var boxEl = contentEditor.prepareBox();
 						me.$el.append(boxEl);
 					});
