@@ -1796,10 +1796,25 @@
 		var SidebarPanel_PostEditor = SidebarPanel.extend({
 			"className": "sidebar-panel sidebar-panel-post-editor",
 			initialize: function (opts) {
+				var me = this;
 				this.active = true;
 				this.sections = _([
 					new SidebarPanel_Settings_Section_PostDetails({"model": this.model, "postId": opts.postId}),
 				]);
+
+				post = new Upfront.Models.Post({ID: opts.postId});
+				post.fetch().done(function(response){
+					if(me._post_type_has_taxonomy('post_tag', post) && me._post_type_has_taxonomy('category', post)) {
+						me.sections.push(new SidebarPanel_Settings_Section_PostTagCategory({"model": me.model, "postId": opts.postId}))
+					} else {
+						me.sections.push(new SidebarPanel_Settings_Section_PageTemplate({"model": me.model, "postId": opts.postId}))
+					}
+				});
+
+				if(Upfront.data.posts[this.postId]){
+					this.post = Upfront.data.posts[this.postId];
+					
+				}
 
 				Upfront.Events.on("command:layout:save", this.on_save, this);
 				Upfront.Events.on("command:layout:save_as", this.on_save, this);
@@ -1828,6 +1843,45 @@
 				if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME )
 					this.$el.find('.sidebar-panel-title').trigger('click');
 			},
+			_post_type_has_taxonomy: function (tax, post) {
+				if (!tax) return true;
+				var type = post.get("post_type") || 'post';
+				return "page" !== type;
+			},
+		});
+		
+		var SidebarPanel_Settings_Section_PageTemplate = SidebarPanel_Settings_Section.extend({
+			initialize: function (opts) {
+				this.options = opts;
+				this.settings = _([]);
+			},
+			get_name: function () {
+				return 'templates';
+			},
+			get_title: function () {
+				return "Templates";
+			},
+			on_render: function () {
+				var me = this;
+
+			}
+		});
+		
+		var SidebarPanel_Settings_Section_PostTagCategory = SidebarPanel_Settings_Section.extend({
+			initialize: function (opts) {
+				this.options = opts;
+				this.settings = _([]);
+			},
+			get_name: function () {
+				return 'tag_category';
+			},
+			get_title: function () {
+				return "Cats / Tags";
+			},
+			on_render: function () {
+				var me = this;
+
+			}
 		});
 		
 		var SidebarPanel_Settings_Section_PostDetails = SidebarPanel_Settings_Section.extend({
