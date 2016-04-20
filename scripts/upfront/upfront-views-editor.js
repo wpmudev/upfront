@@ -1845,13 +1845,15 @@
 				var me = this;
 
 				if(typeof Upfront.Content !== "undefined") {
-					if ( typeof PostDataEditor !== "undefined" ) return false;
-					
 					PostDataEditor = new Upfront.Content.PostEditor({
-						editor_id: 'this_post_' + this.options.postId,
-						post_id: this.options.postId,
+						editor_id: 'this_post_' + this.getPostId(),
+						post_id: this.getPostId(),
 						content_mode: 'post_content'
 					});
+					
+					if(PostDataEditor.contentEditor) {
+						me.append_box(PostDataEditor.contentEditor);
+					}
 
 					this.listenTo(PostDataEditor, 'loaded', function(contentEditor) {
 						me.append_box(contentEditor);
@@ -1877,10 +1879,28 @@
 				}
 			},
 			
+			getPostId: function() {
+				postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
+				if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.THEME ) {
+					// We're dealing with a theme exporter request
+					// Okay, so let's fake a post
+					postId = "fake_post";
+				}
+				else if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.CONTENT_STYLE ){
+					postId = "fake_styled_post";
+				}
+				
+				return postId;
+			},
+			
 			append_box: function (contentEditor) {
-				var boxEl = contentEditor.prepareBox();
-				this.$el.empty();
-				this.$el.append(boxEl);
+				var me = this,
+					boxEl = contentEditor.prepareBox();
+
+				setTimeout(function () {
+					me.$el.empty();
+					me.$el.append(boxEl);
+				}, 200);
 			},
 			
 			/**
@@ -3085,10 +3105,6 @@
 				this.postId = this.getPostId();
 				this.panels = {};
 
-				if(typeof this.postId !== "undefined" && this.postId) {
-					this.panels['posts_edit'] = new SidebarPanel_PostEditor({"model": this.model, "postId": this.postId});
-				}
-
 				this.panels['posts'] = new SidebarPanel_Posts({"model": this.model});
 				this.panels['elements'] = new SidebarPanel_DraggableElements({"model": this.model});
 				this.panels['settings'] = new SidebarPanel_Settings({"model": this.model});
@@ -3112,6 +3128,18 @@
 			},
 			render: function () {
 				var me = this;
+				
+				this.postId = this.getPostId();
+
+				if(typeof this.postId !== "undefined" && this.postId) {
+					var postPanel = {
+						postDetails: new SidebarPanel_PostEditor({"model": this.model, "postId": this.postId})
+					}
+					this.panels = _.extend({}, postPanel, this.panels);
+				}
+				
+				this.$el.empty();
+				
 				_.each(this.panels, function(panel){
 					panel.render();
 
