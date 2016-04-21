@@ -769,6 +769,8 @@ var PostScheduleView = PostSectionView.extend({
 
 return {
     Box: Box,
+	ContentEditorTaxonomy_Hierarchical: ContentEditorTaxonomy_Hierarchical,
+	ContentEditorTaxonomy_Flat: ContentEditorTaxonomy_Flat
 }
 
 });})(jQuery);

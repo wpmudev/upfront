@@ -1805,16 +1805,11 @@
 				post = new Upfront.Models.Post({ID: opts.postId});
 				post.fetch().done(function(response){
 					if(me._post_type_has_taxonomy('post_tag', post) && me._post_type_has_taxonomy('category', post)) {
-						me.sections.push(new SidebarPanel_Settings_Section_PostTagCategory({"model": me.model, "postId": opts.postId}))
+						me.sections.push(new SidebarPanel_Settings_Section_PostTagCategory({"model": me.model, "postId": opts.postId, "post": post}));
 					} else {
-						me.sections.push(new SidebarPanel_Settings_Section_PageTemplate({"model": me.model, "postId": opts.postId}))
+						me.sections.push(new SidebarPanel_Settings_Section_PageTemplate({"model": me.model, "postId": opts.postId, "post": post}));
 					}
 				});
-
-				if(Upfront.data.posts[this.postId]){
-					this.post = Upfront.data.posts[this.postId];
-					
-				}
 
 				Upfront.Events.on("command:layout:save", this.on_save, this);
 				Upfront.Events.on("command:layout:save_as", this.on_save, this);
@@ -1863,7 +1858,6 @@
 			},
 			on_render: function () {
 				var me = this;
-
 			}
 		});
 		
@@ -1880,8 +1874,36 @@
 			},
 			on_render: function () {
 				var me = this;
+				
+				this.$el.empty();
+				this.renderTaxonomyEditor(this.options.postId, 'category');
+				this.renderTaxonomyEditor(this.options.postId, 'post_tag');
+			},
+			renderTaxonomyEditor: function(postId, tax){
+				var self = this,
+					tax = typeof tax === "undefined" ? "category" : tax,
+					termsList = new Upfront.Collections.TermList([], {postId: postId, taxonomy: tax})
+				;
 
-			}
+				if (!this._post_type_has_taxonomy(tax, this.options.post)) {
+					return false;
+				}
+
+				termsList.fetch({allTerms: true}).done(function(response){
+					var tax_view_constructor = response.data.taxonomy.hierarchical ? PostEditorBox.ContentEditorTaxonomy_Hierarchical : PostEditorBox.ContentEditorTaxonomy_Flat;
+					var tax_view = new tax_view_constructor({collection: termsList, tax: tax});
+
+					tax_view.allTerms = new Upfront.Collections.TermList(response.data.allTerms);
+					tax_view.render();
+					self.$el.append(tax_view.$el);
+				});
+
+			},
+			_post_type_has_taxonomy: function (tax, post) {
+				if (!tax) return true;
+				var type = post.get("post_type") || 'post';
+				return "page" !== type;
+			},
 		});
 		
 		var SidebarPanel_Settings_Section_PostDetails = SidebarPanel_Settings_Section.extend({
