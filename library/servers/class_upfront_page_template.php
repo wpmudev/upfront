@@ -40,6 +40,13 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 			// "rewrite" => false,
 			"label" => "Page Templates", // TODO to remove later
 		));
+		register_post_type(Upfront_PageTemplate::LAYOUT_TEMPLATE_DEV_TYPE, array(
+			"public" => true,
+			// "supports" => false,
+			// "has_archive" => false,
+			// "rewrite" => false,
+			"label" => "Page Dev Templates", // TODO to remove later
+		));
 		register_post_status(Upfront_PageTemplate::LAYOUT_TEMPLATE_STATUS, array(
 			'public' => Upfront_Permissions::current(Upfront_Permissions::BOOT),
 			'exclude_from_search' => true,
@@ -49,26 +56,26 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 		$this->_data = new Upfront_PageTemplate;
 	}
 	
-	public function save_template ($template_id, $layout) {
-		return $this->_data->save_page_template($template_id, $layout);
+	public function save_template ($template_id, $layout, $dev) {
+		return $this->_data->save_page_template($template_id, $layout, $dev);
 	}
 	
 	/**
 	 * Outputs a single page template as JSON data, or JSON error
 	 */
-	public function get_template () {
-		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE_REVISION)) $this->_out(new Upfront_JsonResponse_Error("No way"));
+	public function get_template ($template_id, $load_dev) {
+		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_out(new Upfront_JsonResponse_Error("No way"));
 		
-		$data = stripslashes_deep($_POST);
-		$template_post_id = !empty($data['template_id']) ? $data['template_id'] : false;
-		if (empty($template_post_id)) $this->_out(new Upfront_JsonResponse_Error("No data received"));
+		if (empty($template_id)) return false;
 
-		$template = $this->_data->get_page_template($template_post_id);
-		if (empty($template)) $this->_out(new Upfront_JsonResponse_Error("No data found"));
-
-		$this->_out(new Upfront_JsonResponse_Success(array(
-			'template' => $template,
-		)));
+		$template = $this->_data->get_page_template($template_id, $load_dev);
+		if (empty($template)) return false;
+		
+		return $template;
+	}
+	
+	public function get_template_id_by_slug ($slug, $load_dev) {
+		return $this->_data->get_id_by_slug($slug, $load_dev);
 	}
 	
 	// TODO: to remove later, just for unit testing

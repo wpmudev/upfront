@@ -3,6 +3,7 @@
 class Upfront_PageTemplate {
 
 	const LAYOUT_TEMPLATE_TYPE = 'upfront_template';
+	const LAYOUT_TEMPLATE_DEV_TYPE = 'upfront_dev_template';
 	const LAYOUT_TEMPLATE_STATUS = 'uft';
 	
 	public function __construct () {}
@@ -23,13 +24,18 @@ class Upfront_PageTemplate {
 	 * @param Upfront_Layout $layout layout to store
 	 * @return mixed (bool)false on failure, (string)layout ID key on success
 	 */
-	public function save_page_template ($ID, $layout) {
+	public function save_page_template ($ID, $layout, $dev) {
 		$cascade = $layout->get_cascade();
 		$store = $layout->to_php();
 		// $layout_id_key = self::to_hash($store);
 		$layout_id = $layout->get_id();
-
-		$existing_page_template = $this->get_page_template($ID);
+		
+		$post_type = ( $dev )
+			? self::LAYOUT_TEMPLATE_DEV_TYPE
+			: self::LAYOUT_TEMPLATE_TYPE
+		;
+		
+		$existing_page_template = $this->get_page_template($ID, $dev);
 		
 		if ( !empty($ID) && !empty($existing_page_template) ) {
 			// update page template
@@ -46,7 +52,7 @@ class Upfront_PageTemplate {
 				"post_content" => base64_encode(serialize($store)),
 				"post_title" => $layout_id,
 				"post_name" => $layout_id,
-				"post_type" => self::LAYOUT_TEMPLATE_TYPE,
+				"post_type" => $post_type,
 				"post_status" => self::LAYOUT_TEMPLATE_STATUS,
 				"post_author" => get_current_user_id(),
 			));
@@ -63,18 +69,46 @@ class Upfront_PageTemplate {
 	 * @param string $ID Requested page template post ID
 	 * @return mixed (Upfront_Layout)revision on success, (bool)false on failure
 	 */
-	public function get_page_template ($ID) {
+	public function get_page_template ($ID, $load_dev) {
 	
 		if ( empty($ID) ) return false;
-	
+		
+		$post_type = ( $load_dev )
+			? self::LAYOUT_TEMPLATE_DEV_TYPE
+			: self::LAYOUT_TEMPLATE_TYPE
+		;
+		
 		$query = new WP_Query(array(
-			"p" => $ID,
-			"post_type" => self::LAYOUT_TEMPLATE_TYPE,
+			'p' => $ID,
+			'post_type' => $post_type,
 			'suppress_filters' => true,
 
 		));
+		
 		return !empty($query->posts[0]) && !empty($query->posts[0]->post_content)
 			? unserialize(base64_decode($query->posts[0]->post_content))
+			: false
+		;
+	}
+	
+	public function get_id_by_slug ($slug, $load_dev) {
+	
+		if ( empty($slug) ) return false;
+		
+		$post_type = ( $load_dev )
+			? self::LAYOUT_TEMPLATE_DEV_TYPE
+			: self::LAYOUT_TEMPLATE_TYPE
+		;
+		
+		$query = new WP_Query(array(
+			'name' => $slug,
+			'post_type' => $post_type,
+			'suppress_filters' => true,
+			'posts_per_page' => 1,
+		));
+		
+		return !empty($query->posts[0]) && !empty($query->posts[0]->ID)
+			? $query->posts[0]->ID
 			: false
 		;
 	}

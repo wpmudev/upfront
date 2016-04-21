@@ -23,13 +23,47 @@ class Upfront_Output {
 	}
 
 	public static function get_layout ($layout_ids, $apply = false) {
-		$layout = Upfront_Layout::from_entity_ids($layout_ids);
-
-		if ($layout->is_empty()) {
-			$layout = Upfront_Layout::create_layout($layout_ids);
-		}
-
 		$post_id = is_singular() ? get_the_ID() : '';
+		$is_dev = Upfront_Debug::get_debugger()->is_dev();
+		$load_from_options = true;
+		
+		if ( $post_id ) {
+			
+			$template_meta_name = ( $is_dev ) 
+				? 'template_dev_post_id'
+				: 'template_post_id'
+			;
+			$template_post_id = get_post_meta($post_id, $template_meta_name, true);
+			
+		} else {
+			// if special archive pages like homepage, use slug to get template post id
+			$layout_id = '';
+			if ( isset($layout_ids['specificity']) ) {
+				$layout_id = $layout_ids['specificity'];
+			} else if ( isset($layout_ids['item']) ) {
+				$layout_id = $layout_ids['item'];
+			}
+			$store_key = Upfront_Layout::get_storage_key() . '-' . $layout_id;
+			$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($store_key, $is_dev);
+		}
+		
+		if ( $template_post_id ) {
+			$page_template = Upfront_Server_PageTemplate::get_instance()->get_template($template_post_id, $is_dev);
+			if ( $page_template ) {
+				$layout = Upfront_Layout::from_php($page_template, Upfront_Layout::STORAGE_KEY);
+				$load_from_options = false;
+			}
+		}
+		
+		// load layouts not yet saved on custom post type
+		if ( $load_from_options ) {
+			$layout = Upfront_Layout::from_entity_ids($layout_ids);
+		
+			if ($layout->is_empty()) {
+				$layout = Upfront_Layout::create_layout($layout_ids);
+			}
+		}
+		
 		$post = get_post($post_id);
 		self::$_instance = new self($layout, $post);
 
