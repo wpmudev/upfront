@@ -131,9 +131,10 @@ var Box = Backbone.View.extend({
         this.$('.misc-pub-schedule').html(this.scheduleSection.$el);
 
         this.$(".misc-pub-section.misc-pub-post-url").html( this.urlEditor.$el  );
-
-        this.renderTaxonomyEditor(this.$(".misc-pub-post-category"), "category");
-        this.renderTaxonomyEditor(this.$(".misc-pub-post-tags"), "post_tag");
+		
+		// We dont need this as we have another tab for them
+        //this.renderTaxonomyEditor(this.$(".misc-pub-post-category"), "category");
+        //this.renderTaxonomyEditor(this.$(".misc-pub-post-tags"), "post_tag");
     },
 
     /**
