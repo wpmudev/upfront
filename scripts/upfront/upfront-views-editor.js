@@ -3477,7 +3477,7 @@
 			currentPanel: false,
 			render: function () {
 				this.$el.addClass("upfront-entity_list upfront-icon upfront-icon-browse");
-				if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.LAYOUT )
+				if ( Upfront.Application.is_single( "post" ) )
 					this.$el.html('<a title="'+ l10n.posts_pages_comments +'">' + l10n.posts_pages_comments + '</a>');
 				else
 					this.$el.html('<a title="'+ l10n.posts_pages +'">' + l10n.posts_pages + '</a>');
