@@ -505,6 +505,7 @@
 						data: _.extend({post_type: this.postType}, {})
 					}).done(function (resp) {
 					//Upfront.Util.log(resp.data);
+					if(_upfront_post_data) _upfront_post_data.post_id = resp.data.post_id;
 					Upfront.Application.navigate('/edit/post/' + resp.data.post_id, {trigger: true});
 				})
 				;
@@ -561,6 +562,7 @@
 						data: _.extend({post_type: me.postType}, me.modal._data)
 					}).done(function (resp) {
 						//Upfront.Util.log(resp.data);
+						if(_upfront_post_data) _upfront_post_data.post_id = resp.data.post_id;
 						Upfront.Application.navigate('/edit/page/' + resp.data.post_id, {trigger: true});
 
 					});
@@ -4084,6 +4086,7 @@
 			handle_post_edit: function (e) {
 				e.preventDefault();
 				var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
+				if(_upfront_post_data) _upfront_post_data.post_id = postId;
 				Upfront.Application.navigate('/edit/post/' + postId, {trigger: true});
 			},
 			handle_post_view: function (e) {
@@ -4128,6 +4131,7 @@
 					// Respect dev=true
 					if (window.location.search.indexOf('dev=true') > -1) path += '?dev=true';
 					Upfront.Popup.close();
+					if(_upfront_post_data) _upfront_post_data.post_id = post.id;
 					Upfront.Application.navigate(path, {trigger: true});
 				});
 
@@ -4194,6 +4198,7 @@
 					// Respect dev=true
 					if (window.location.search.indexOf('dev=true') > -1) path += '?dev=true';
 					Upfront.Popup.close();
+					if(_upfront_post_data) _upfront_post_data.post_id = page.get('ID');
 					Upfront.Application.navigate(path, {trigger: true});
 				});
 			},
@@ -4210,6 +4215,7 @@
 		handle_post_edit: function (e) {
 			e.preventDefault();
 			var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
+			if(_upfront_post_data) _upfront_post_data.post_id = postId;
 			Upfront.Application.navigate('/edit/page/' + postId, {trigger: true});
 		},
 			handle_post_view: function (e) {

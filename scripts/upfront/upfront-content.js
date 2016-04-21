@@ -171,6 +171,7 @@ define("content", deps, function(postTpl, ContentTools) {
 
 				// navigate to home
 				Upfront.Application.sidebar.toggleSidebar();
+				if(_upfront_post_data) _upfront_post_data.post_id = false;
 				Upfront.Application.navigate( "/" , true);
 			});
 		},
@@ -572,6 +573,7 @@ define("content", deps, function(postTpl, ContentTools) {
 
 				// navigate to home
 				Upfront.Application.sidebar.toggleSidebar();
+				if(_upfront_post_data) _upfront_post_data.post_id = false;
 				Upfront.Application.navigate( "/" , true);
 			});
 		},

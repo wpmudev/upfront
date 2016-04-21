@@ -60,25 +60,7 @@ class Upfront_Ajax extends Upfront_Server {
 		$parsed = false;
 		$post_id = (isset($_POST['post_id'])) ? (int)$_POST['post_id'] : false;
 		
-		if ( $post_id ) {
-			// if page then skip to load_page_layout()
-			$post = get_post($post_id);
-			if ( $post->post_type === 'page' ) return $this->load_page_layout();
-		}
 		
-		// if post_id is false, still load_page_layout()
-		if ( !$post_id ) return $this->load_page_layout();
-
-		//Check if assigned WP template and delete DB layout
-		if(isset($_POST['post_id']) && !empty($_POST['post_id']) && isset($_POST['data']['specificity']) && !empty($_POST['data']['specificity'])) {
-			$template = get_post_meta((int)$_POST['post_id'], '_wp_page_template', true);
-			$theme = Upfront_ChildTheme::get_instance();
-			$prefix = $theme->get_prefix();
-			if(!empty($template) && $template != "default") {
-				delete_option($prefix.'-'.$_POST['data']['specificity']);
-			}
-		}
-
 		if (empty($layout_ids))
 			$this->_out(new Upfront_JsonResponse_Error("No such layout"));
 
@@ -88,6 +70,27 @@ class Upfront_Ajax extends Upfront_Server {
 			$layout_ids = Upfront_EntityResolver::ids_from_url($layout_ids);
 			$parsed = true;
 		}
+		
+		if ( $post_id ) {
+			$post = get_post($post_id);
+			// if page then skip to load_page_layout()
+			if ( $post->post_type === 'page' ) return $this->load_page_layout();
+		}
+		
+		// if post_id is false, still load_page_layout()
+		if ( !$post_id ) return $this->load_page_layout();
+		
+		//TODO: remove page template related later if proven safe
+		
+		/* //Check if assigned WP template and delete DB layout
+		if(isset($_POST['post_id']) && !empty($_POST['post_id']) && isset($_POST['data']['specificity']) && !empty($_POST['data']['specificity'])) {
+			$template = get_post_meta((int)$_POST['post_id'], '_wp_page_template', true);
+			$theme = Upfront_ChildTheme::get_instance();
+			$prefix = $theme->get_prefix();
+			if(!empty($template) && $template != "default") {
+				delete_option($prefix.'-'.$_POST['data']['specificity']);
+			}
+		} */
 
 		$layout = Upfront_Layout::from_entity_ids($layout_ids, $storage_key, $load_dev);
 
@@ -96,7 +99,7 @@ class Upfront_Ajax extends Upfront_Server {
 			$layout = Upfront_Layout::create_layout($layout_ids, $layout_slug);
 		}
 
-		global $post, $upfront_ajax_query;
+		global $upfront_ajax_query;
 
 		if(!$upfront_ajax_query)
 			$upfront_ajax_query = false;
@@ -112,11 +115,11 @@ class Upfront_Ajax extends Upfront_Server {
 
 			$layout_ids = Upfront_EntityResolver::get_entity_ids($cascade);
 		}
-		else {
-			if($_POST['post_id']){
-				$posts = get_posts(array('include' => $_POST['post_id'], 'suppress_filters' => false));
-				if(sizeof($posts)) $post = $posts[0];
-			}
+		// else {
+			// if($_POST['post_id']){
+				// $posts = get_posts(array('include' => $_POST['post_id'], 'suppress_filters' => false));
+				// if(sizeof($posts)) $post = $posts[0];
+			// }
 			
 			//TODO: remove page template related later if proven safe
 			
@@ -178,7 +181,7 @@ class Upfront_Ajax extends Upfront_Server {
 				}
 				// End page templates workaround
 			} */
-		}
+		// }
 
 		$response = array(
 			'post' => $post,
@@ -390,8 +393,8 @@ class Upfront_Ajax extends Upfront_Server {
 		$post_id = (isset($_POST['post_id'])) ? (int)$_POST['post_id'] : false;
 		
 		if ( $post_id ) {
-			// if page then skip to save_page_layout()
 			$post = get_post($post_id);
+			// if page then skip to save_page_layout()
 			if ( $post->post_type === 'page' ) return $this->save_page_layout();
 		}
 		
