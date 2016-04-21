@@ -40,7 +40,9 @@ var LayoutEditorSubapplication = Subapplication.extend({
 
 	_save_layout: function (preferred_layout, publish) {
 		var data = Upfront.Util.model_to_json(this.layout),
-			storage_key = publish === true ? _upfront_storage_key : _upfront_save_storage_key;
+			storage_key = publish === true ? _upfront_storage_key : _upfront_save_storage_key,
+			post_id = ( typeof _upfront_post_data.post_id !== 'undefined' ) ? _upfront_post_data.post_id : '',
+			save_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 );
 		data.layout = _upfront_post_data.layout;
 		data.preferred_layout = preferred_layout;
 		data = JSON.stringify(data, undefined, 2);
@@ -51,8 +53,14 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			Upfront.Events.trigger("command:layout:save_success");
 			return false;
 		}
-		data = Upfront.Util.colors.update_colors_to_match_ufc(data);
-		Upfront.Util.post({"action": Upfront.Application.actions.save, "data": data, "storage_key": storage_key})
+		data = Upfront.Util.colors.update_colors_to_match_ufc(data);		
+		Upfront.Util.post({
+				"action": Upfront.Application.actions.save, 
+				"data": data, 
+				"storage_key": storage_key, 
+				"post_id": post_id,
+				"save_dev": save_dev
+			})
 			.success(function () {
 				Upfront.Util.log("layout saved");
 				Upfront.Events.trigger("command:layout:save_success");
