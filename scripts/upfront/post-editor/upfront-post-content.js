@@ -247,27 +247,31 @@ PostContentEditor.prototype = {
 				var isExcerpt = ( this.model.get_property_value_by_name('content') == 'excerpt' ),
 					content
 				;
-				// Clean inserts markup
-				this.$content.find(".upfront-inline-panel").remove();
-				this.$content.find(".ueditor-insert-remove").remove();
-				// replace image inserts with their shortcodes
-				this.$content.find(".upfront-inserted_image-wrapper").each(function () {
-					var $this = $(this),
-						$shortcode = $this.find(".post-images-shortcode").length ? $this.find(".post-images-shortcode") : $this.find(".post-images-shortcode-wp"),
-						shortcode = $.trim( $shortcode.html().replace(/(\r\n|\n|\r)/gm,"") )
-					;
-					$this.replaceWith( shortcode );
-				});
 
-				content = $.trim( this.editor.getValue() );
-				content = content.replace(/(\n)*?<br\s*\/?>\n*/g, "<br/>");
-				if ( isExcerpt ) {
-					this.parent.currentData.excerpt = content;
+				if(typeof this.editor !== "undefined") {
+					// Clean inserts markup
+					this.$content.find(".upfront-inline-panel").remove();
+					this.$content.find(".ueditor-insert-remove").remove();
+					// replace image inserts with their shortcodes
+					this.$content.find(".upfront-inserted_image-wrapper").each(function () {
+						var $this = $(this),
+							$shortcode = $this.find(".post-images-shortcode").length ? $this.find(".post-images-shortcode") : $this.find(".post-images-shortcode-wp"),
+							shortcode = $.trim( $shortcode.html().replace(/(\r\n|\n|\r)/gm,"") )
+						;
+						$this.replaceWith( shortcode );
+					});
+
+					content = $.trim( this.editor.getValue() );
+	
+					content = content.replace(/(\n)*?<br\s*\/?>\n*/g, "<br/>");
+					if ( isExcerpt ) {
+						this.parent.currentData.excerpt = content;
+					}
+					else {
+						this.parent.currentData.content = content;
+					}
+					this.parent.currentData.inserts = this.editor.getInsertsData();
 				}
-				else {
-					this.parent.currentData.content = content;
-				}
-				this.parent.currentData.inserts = this.editor.getInsertsData();
 			},
 			focus: function () {
 				var node = this.$content.get(0);
@@ -716,7 +720,7 @@ PostContentEditor.prototype = {
 
 		var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 		if ( this._editing ) return;
-		this.prepareBox();
+		//this.prepareBox();
 		_.each(this._viewInstances, function (view) {
 			view.editContent();
 		});
@@ -742,7 +746,6 @@ PostContentEditor.prototype = {
 			view.stopEditContent();
 		});
 
-		this.box = false;
 		this._editing = false;
 		$main.removeClass('upfront-editing-post-content');
 		this.trigger('edit:stop');
@@ -768,7 +771,6 @@ PostContentEditor.prototype = {
 	prepareBox: function(){
 		var self = this,
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main);
-		if ( this.box ) return;
 		this.box = new Edit.Box({post: this.post});
 		this.bindBarEvents();
 		this.box.render();
@@ -982,7 +984,7 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
         $(".upfront-module").not(".editing-content").addClass("fadedOut").fadeTo( "slow" , 0.3 );
         $(".change_feature_image").addClass("ueditor-display-block");
 		this.prepareEditableRegions();
-		this.prepareBox();
+		//this.prepareBox();
 	},
     title_blurred: function(){
         if( this.post.is_new && !this.box.urlEditor.hasDefinedSlug && !_.isEmpty(this.parts.titles.html()) ){

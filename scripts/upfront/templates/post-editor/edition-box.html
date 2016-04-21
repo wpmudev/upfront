@@ -2,41 +2,35 @@
 
     <script id="ueditor-box-main" type="text/template">
         <div class="ueditor-box ueditable" id="{{cid}}">
-            <ul>
-                <li id="ueditor-box-publish" class="ueditor-box-section active show">
-                    <div class="ueditor-box-title">{{Upfront.Settings.l10n.global.content.publish}}</div>
-                    <div class="ueditor-box-content-wrap">
-                        <div class="ueditor-bix-top-buttons">
-                            {[ if(draftButton){ ]}
-                            <a class="ueditor-action ueditor-action-draft" href="#">{{Upfront.Settings.l10n.global.content.save_draft}}</a>
-                            {[ } ]}
-                            <a class="ueditor-action ueditor-action-preview" target="_blank" href="{{previewLink}}">{{Upfront.Settings.l10n.global.content.preview}}</a>
-                        </div>
-                        <div class="ueditor-box-content">
-                            <div class="misc-pub-section misc-pub-post-status"></div>
-                            <div class="misc-pub-section misc-pub-visibility"></div>
-                            <div class="misc-pub-section  misc-pub-schedule"></div>
-                        </div>
-                        <div class="ueditor-box-bottom-buttons">
-                            {[ if(cancelButton){ ]}
-                            <a class="ueditor-button-cancel-edit" href="#">{{Upfront.Settings.l10n.global.content.cancel}}</a>
-                            {[ } ]}
-                            <a class="ueditor-action-publish" href="#">{{buttonText}}</a>
-                            <a href="#" class="ueditor-action-trash ueditor-box-icon ueditor-box-icon-text" title="{{Upfront.Settings.l10n.global.content.trash}}">{{Upfront.Settings.l10n.global.content.trash}}</a>
-                        </div>
-                    </div>
-                </li>
-                <li id="ueditor-box-cats-tags" class="ueditor-box-section">
-                    <div class="ueditor-box-title">{{post_type_conditional_box_title}}</div>
-                    <div class="ueditor-box-content-wrap">
-                        <div class="ueditor-box-content">
-                            <div class="misc-pub-section misc-pub-post-category"></div>
-                            <div class="misc-pub-section misc-pub-post-tags"></div>
-                            <div class="misc-pub-section misc-pub-post-url"></div>
-                        </div>
-                    </div>
-                </li>
-            </ul>
+			<div class="ueditor-box-title">{{Upfront.Settings.l10n.global.content.publish}}</div>
+			<div class="ueditor-box-content-wrap">
+				<div class="ueditor-bix-top-buttons">
+					{[ if(draftButton){ ]}
+					<a class="ueditor-action ueditor-action-draft" href="#">{{Upfront.Settings.l10n.global.content.save_draft}}</a>
+					{[ } ]}
+					<a class="ueditor-action ueditor-action-preview" target="_blank" href="{{previewLink}}">{{Upfront.Settings.l10n.global.content.preview}}</a>
+				</div>
+				<div class="ueditor-box-content">
+					<div class="misc-pub-section misc-pub-post-status"></div>
+					<div class="misc-pub-section misc-pub-visibility"></div>
+					<div class="misc-pub-section  misc-pub-schedule"></div>
+				</div>
+				<div class="ueditor-box-bottom-buttons">
+					{[ if(cancelButton){ ]}
+					<a class="ueditor-button-cancel-edit" href="#">{{Upfront.Settings.l10n.global.content.cancel}}</a>
+					{[ } ]}
+					<a class="ueditor-action-publish" href="#">{{buttonText}}</a>
+					<a href="#" class="ueditor-action-trash ueditor-box-icon ueditor-box-icon-text" title="{{Upfront.Settings.l10n.global.content.trash}}">{{Upfront.Settings.l10n.global.content.trash}}</a>
+				</div>
+			</div>
+			<div class="ueditor-box-title">{{post_type_conditional_box_title}}</div>
+			<div class="ueditor-box-content-wrap">
+				<div class="ueditor-box-content">
+					<div class="misc-pub-section misc-pub-post-category"></div>
+					<div class="misc-pub-section misc-pub-post-tags"></div>
+					<div class="misc-pub-section misc-pub-post-url"></div>
+				</div>
+			</div>
         </div>
     </script>
 

@@ -221,13 +221,13 @@ var Box = Backbone.View.extend({
     cancel: function(e){
         e.preventDefault();
         if(confirm(l10n.global.content.discard_changes.replace(/%s/, this.post.get('post_title')))){
-            this.toggleRegionClass(false);
-            this.destroy();
+            //this.toggleRegionClass(false);
+            //this.destroy();
             this.post.trigger('editor:cancel');
             this.trigger('cancel');
             Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
             this.fadein_other_elements();
-            this.remove();
+            //this.remove();
         }
     },
     fadein_other_elements: function(){
@@ -256,8 +256,8 @@ var Box = Backbone.View.extend({
         this._stop_overlay();
         //$(".editing-overlay").remove();
 
-        this.toggleRegionClass(false);
-        this.remove();
+        //this.toggleRegionClass(false);
+        //this.remove();
 
 
     },
