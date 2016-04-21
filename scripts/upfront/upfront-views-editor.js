@@ -1868,6 +1868,7 @@
 		var SidebarPanel_Settings_Section_PostTagCategory = SidebarPanel_Settings_Section.extend({
 			initialize: function (opts) {
 				this.options = opts;
+				this.options.call = false;
 				this.settings = _([]);
 			},
 			get_name: function () {
@@ -1879,9 +1880,11 @@
 			on_render: function () {
 				var me = this;
 				
-				this.$el.empty();
-				this.renderTaxonomyEditor(this.options.postId, 'category');
-				this.renderTaxonomyEditor(this.options.postId, 'post_tag');
+				if(!this.options.call) {
+					this.renderTaxonomyEditor(this.options.postId, 'category');
+					this.renderTaxonomyEditor(this.options.postId, 'post_tag');
+					this.options.call = true;
+				}
 			},
 			renderTaxonomyEditor: function(postId, tax){
 				var self = this,
@@ -3183,11 +3186,11 @@
 			"className": "sidebar-panels",
 			initialize: function () {
 				this.postId = this.getPostId();
-				this.panels = {};
-
-				this.panels['posts'] = new SidebarPanel_Posts({"model": this.model});
-				this.panels['elements'] = new SidebarPanel_DraggableElements({"model": this.model});
-				this.panels['settings'] = new SidebarPanel_Settings({"model": this.model});
+				this.panels = {
+					'posts': new SidebarPanel_Posts({"model": this.model}),
+					'elements': new SidebarPanel_DraggableElements({"model": this.model}),
+					'settings': new SidebarPanel_Settings({"model": this.model})
+				};
 
 				// Dev feature only
 				//if ( Upfront.Settings.Debug.dev )
