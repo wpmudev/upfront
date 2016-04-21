@@ -307,9 +307,16 @@ var PostSectionView = Backbone.View.extend({
     toggleEditor: function(e){
         e.preventDefault();
         var $button = $(e.target),
-            $this_togglable = $button.siblings(".ueditor-togglable"),
+			$this_togglable,
             $this_prev_data_toggle = $button.closest(".misc-pub-section").find(".ueditor-previous-data-toggle")
             ;
+		
+		if($button.hasClass('ueditor-edit-post-url')) {
+			$this_togglable = $button.parent().siblings(".ueditor-togglable");
+		} else {
+			$this_togglable = $button.siblings(".ueditor-togglable");
+		}
+		
         $(".ueditor-box-content-wrap .ueditor-togglable").not($this_togglable).slideUp();
         $(".ueditor-box-content-wrap .ueditor-btn-edit").show();
         $(".ueditor-previous-data-toggle").not( $this_prev_data_toggle ).show();
