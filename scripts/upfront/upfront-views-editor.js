@@ -1836,9 +1836,11 @@
 				Upfront.Events.on("command:redo", this.reset_modules, this);
 			},
 			on_render: function () {
-				//this.reset_modules();
-				if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME )
-					this.$el.find('.sidebar-panel-title').trigger('click');
+				var me = this;
+				// Delay to make it active after all other are rendered
+				setTimeout( function() {
+					me.$el.find('.sidebar-panel-title').trigger('click');
+				}, 200);
 			},
 			_post_type_has_taxonomy: function (tax, post) {
 				if (!tax) return true;
