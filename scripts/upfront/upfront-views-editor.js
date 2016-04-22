@@ -1807,16 +1807,11 @@
 				post = new Upfront.Models.Post({ID: opts.postId});
 				post.fetch().done(function(response){
 					if(me._post_type_has_taxonomy('post_tag', post) && me._post_type_has_taxonomy('category', post)) {
-						me.sections.push(new SidebarPanel_Settings_Section_PostTagCategory({"model": me.model, "postId": opts.postId}))
+						me.sections.push(new SidebarPanel_Settings_Section_PostTagCategory({"model": me.model, "postId": opts.postId, "post": post}));
 					} else {
-						me.sections.push(new SidebarPanel_Settings_Section_PageTemplate({"model": me.model, "postId": opts.postId}))
+						me.sections.push(new SidebarPanel_Settings_Section_PageTemplate({"model": me.model, "postId": opts.postId, "post": post}));
 					}
 				});
-
-				if(Upfront.data.posts[this.postId]){
-					this.post = Upfront.data.posts[this.postId];
-					
-				}
 
 				Upfront.Events.on("command:layout:save", this.on_save, this);
 				Upfront.Events.on("command:layout:save_as", this.on_save, this);
@@ -1841,9 +1836,11 @@
 				Upfront.Events.on("command:redo", this.reset_modules, this);
 			},
 			on_render: function () {
-				//this.reset_modules();
-				if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME )
-					this.$el.find('.sidebar-panel-title').trigger('click');
+				var me = this;
+				// Delay to make it active after all other are rendered
+				setTimeout( function() {
+					me.$el.find('.sidebar-panel-title').trigger('click');
+				}, 200);
 			},
 			_post_type_has_taxonomy: function (tax, post) {
 				if (!tax) return true;
@@ -1865,13 +1862,13 @@
 			},
 			on_render: function () {
 				var me = this;
-
 			}
 		});
 		
 		var SidebarPanel_Settings_Section_PostTagCategory = SidebarPanel_Settings_Section.extend({
 			initialize: function (opts) {
 				this.options = opts;
+				this.options.call = false;
 				this.settings = _([]);
 			},
 			get_name: function () {
@@ -1882,14 +1879,45 @@
 			},
 			on_render: function () {
 				var me = this;
+				
+				if(!this.options.call) {
+					this.renderTaxonomyEditor(this.options.postId, 'category');
+					this.renderTaxonomyEditor(this.options.postId, 'post_tag');
+					this.options.call = true;
+				}
+			},
+			renderTaxonomyEditor: function(postId, tax){
+				var self = this,
+					tax = typeof tax === "undefined" ? "category" : tax,
+					termsList = new Upfront.Collections.TermList([], {postId: postId, taxonomy: tax})
+				;
 
-			}
+				if (!this._post_type_has_taxonomy(tax, this.options.post)) {
+					return false;
+				}
+
+				termsList.fetch({allTerms: true}).done(function(response){
+					var tax_view_constructor = response.data.taxonomy.hierarchical ? PostEditorBox.ContentEditorTaxonomy_Hierarchical : PostEditorBox.ContentEditorTaxonomy_Flat;
+					var tax_view = new tax_view_constructor({collection: termsList, tax: tax});
+
+					tax_view.allTerms = new Upfront.Collections.TermList(response.data.allTerms);
+					tax_view.render();
+					self.$el.append(tax_view.$el);
+				});
+
+			},
+			_post_type_has_taxonomy: function (tax, post) {
+				if (!tax) return true;
+				var type = post.get("post_type") || 'post';
+				return "page" !== type;
+			},
 		});
 		
 		var SidebarPanel_Settings_Section_PostDetails = SidebarPanel_Settings_Section.extend({
 			initialize: function (opts) {
 				this.options = opts;
 				this.settings = _([]);
+				Upfront.Events.on("editor:post_editor:created", _.bind(this.set_editor, this));
 			},
 			get_name: function () {
 				return 'post_details';
@@ -1897,9 +1925,26 @@
 			get_title: function () {
 				return "Post Details";
 			},
+			set_editor: function(editor){
+				this.editor = editor;
+				var self = this;
+				if(self.editor.contentEditor) {
+					self.append_box(self.editor.contentEditor);
+				}
+
+				this.listenTo(self.editor, 'loaded', function(contentEditor) {
+					self.append_box(contentEditor);
+				});
+
+				this.listenTo(self.editor, 'post:saved', function() {
+					if(typeof self.editor !== "undefined") {
+						self.append_box(self.editor.contentEditor);
+					}
+				});
+			},
 			on_render: function () {
 				var me = this;
-
+				return;
 				if(typeof Upfront.Content !== "undefined") {
 					PostDataEditor = new Upfront.Content.PostEditor({
 						editor_id: 'this_post_' + this.getPostId(),
@@ -3159,11 +3204,11 @@
 			"className": "sidebar-panels",
 			initialize: function () {
 				this.postId = this.getPostId();
-				this.panels = {};
-
-				this.panels['posts'] = new SidebarPanel_Posts({"model": this.model});
-				this.panels['elements'] = new SidebarPanel_DraggableElements({"model": this.model});
-				this.panels['settings'] = new SidebarPanel_Settings({"model": this.model});
+				this.panels = {
+					'posts': new SidebarPanel_Posts({"model": this.model}),
+					'elements': new SidebarPanel_DraggableElements({"model": this.model}),
+					'settings': new SidebarPanel_Settings({"model": this.model})
+				};
 
 				// Dev feature only
 				//if ( Upfront.Settings.Debug.dev )
@@ -3187,10 +3232,10 @@
 				
 				this.postId = this.getPostId();
 
-				if(typeof this.postId !== "undefined" && this.postId) {
+				if(typeof this.postId !== "undefined" && this.postId && !this.panels.postDetails ) {
 					var postPanel = {
 						postDetails: new SidebarPanel_PostEditor({"model": this.model, "postId": this.postId})
-					}
+					};
 					this.panels = _.extend({}, postPanel, this.panels);
 				}
 				
