@@ -1,19 +1,7 @@
 .ueditor-box-wrapper{
   display: block;
-  // width: 280px;
-    width: 250px;
-}
-
-.ueditor-box-title{
-  height: 30px;
-  text-align: left;
-  color: #3d5266;
-  padding-left: 10px;
-  // border-bottom: 1px solid #b8d0e6;
-  font:normal 600 12px/30px Open Sans, Hevletica Neueu, Helvetica, sans-serif;
-  background: #e5f3ff;
-  position: relative;
-  cursor: pointer;
+  width: 250px;
+  margin-left: -15px;
 }
 .ueditor-box-section .ueditor-box-content-wrap{
   display: none;
@@ -21,44 +9,78 @@
 .ueditor-box-section.active .ueditor-box-content-wrap{
   display: block;
 }
-.ueditor-box-section .ueditor-box-title:after{
-  border-right: none;
-  border-left: 4px solid #85aacc;
-  border-top: 4px solid transparent;
-  border-bottom: 4px solid transparent;
-  top: 12px;
-  right: 14px;
-  content: " ";
-  display: block;
-  width: 0;
-  height: 0;
-  z-index: 5;
-  position: absolute;
-}
-
-.ueditor-box-section.show .ueditor-box-title:after{
-  border-right: none;
-  border-top: 4px solid #85aacc;
-  border-right: 4px solid transparent;
-  border-left: 4px solid transparent;
-  top: 12px;
-  right: 15px;
-  content: " ";
-  display: block;
-  width: 0;
-  height: 0;
-  z-index: 5;
-  position: absolute;
-}
 .ueditor-box-content-wrap{
 //  display: none;
 }
 .ueditor-box-content-wrap:first-child{
   display: block;
 }
-.ueditor-box-content{
-  padding: 10px 0;
+
+/* Styles */
+.sidebar-tab-content, #sidebar-ui .sidebar-panel-post-editor .sidebar-panel-content {
+	background-color: #f2f9ff;
 }
+
+#post-url-display-label {
+	font-family: Open Sans, Hevletica Neueu, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 11px;
+	letter-spacing: 0.3px;
+	color: #2f475f;
+	text-transform: uppercase;
+}
+
+#post-url-display {
+	font-family: Verdana;
+	font-size: 10px;
+	color: #779cbd;
+}
+
+#post-url-slug span {
+	font-family: Verdana;
+	font-size: 11px;
+	color: #2f475f;
+}
+
+#sidebar-ui a.ueditor-btn-edit {
+	display: inline;
+	cursor: pointer;
+	text-decoration: underline;
+	font-family: Open Sans, Hevletica Neueu, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #00ce8d;
+}
+
+#sidebar-ui a.ueditor-action {
+	background-image: linear-gradient(to bottom, #fafdff, #f2f9ff);
+	border: solid 1px #a2bfda;
+	font-family: Open Sans;
+	font-size: 12px;
+	line-height: 1.3;
+	color: #6486a6;
+	text-shadow: 0 1px 0 #ffffff;
+	padding: 5px 15px;
+	border-radius: 2px;
+	font-weight: 500;
+	margin: 0px;
+}
+
+#sidebar-ui a.ueditor-action-preview {
+	display: inline-block;
+	float: right;
+}
+
+.misc-pub-section .ueditor-previous-data {
+	font-family: Open Sans;
+	font-size: 12px;
+	color: #3d5266;
+	font-weight: bold;
+}
+
+#post-url-display {
+	font-weight: normal;
+}
+
 .screen-reader-text {
   position: absolute;
   margin: -1px;
@@ -79,28 +101,8 @@
   clear: both;
   font:normal 12px/20px Open Sans, Hevletica Neueu, Helvetica, sans-serif;
 }
-#ueditor-box-cats-tags .misc-pub-section{
-  border-bottom: 1px solid #d5e4f3;
-}
 #ueditor-box-cats-tags .misc-pub-section:last-child{
   border: none;
-}
-.ueditor-previous-data{
-  color:#3d5266;
-  font-weight: 600;
-}
-.ueditor-previous-data-small{
-  font-size: 13px;
-  font-weight: normal;
-  line-height: 21px;
-  margin-bottom: 10px;
-  clear: both;
-}
-.ueditor-box-wrapper label{
-  color:#3d5276;
-}
-#ueditor-box-cats-tags .ueditor-box-wrapper label{
-  font-weight: bold;
 }
 .ueditor-box-wrapper label.ueditor-icon-label:before{
   background: transparent url(../img/uf-ui-sprite.svg);
@@ -120,73 +122,11 @@
 .ueditor-box-wrapper label#publication-time:before{
   background-position: -644px -385px;
 }
-
-a.ueditor-btn-edit{
-  color: #00B37A;
-  display: inline;
-  cursor: pointer;
-  border-bottom:1px solid rgba(0,166,113,0.3);
-}
 .ueditor-bix-top-buttons{
-  padding: 10px 15px 0;
-  // border-bottom:1px solid #b8d0e6;
-}
-
-.ueditor-box-bottom-buttons{
-  min-height: 54px;
-  max-height: 90px;
-  padding: 9px 11px;
-  display: block;
-  border-top: 1px solid #b8d0e6;
-  border-bottom: 1px solid #b8d0e6;
-  overflow: hidden;
-}
-a.ueditor-button-cancel-edit{
-  margin-top: 5px;
-}
-a.ueditor-action-publish {
-  text-align: center;
-  color: #fff !important;
-  padding: 7px 20px;
-  background: #1fcd8f;
-  float: right;
-  display: block;
-  height: 36px;
-  width: 120px;
-  line-height: 23px;
-}
-
-a.ueditor-action-publish:hover {
-  text-decoration: none;
-  background: #3ea;
-}
-
-a.ueditor-action-draft,
-a.ueditor-action-preview,
-a.ueditor-button-cancel-edit,
-#add-new-taxonomies-btn {
-
-  display: inline-block;
-  font:600 12px/24px Open Sans, Helvetica Neueu, Helvetica, sans-serif;
-  color: #6486A6;
-  padding: 0 15px;
-  cursor: pointer;
-  background-image: linear-gradient(-180deg, #FAFDFF 0%, #F2F9FF 100%);
-  border: 1px solid #A2BFDA;
-  border-radius: 3px;
-  text-shadow: 0px 1px 0px #FFFFFF;
-
-}
-
-a.ueditor-action-preview {
-  float:right;
-}
-
-a.ueditor-action-draft:hover,
-a.ueditor-action-preview:hover,
-a.ueditor-button-cancel-edit:hover,
-#add-new-taxonomies-btn:hover {
-  border:1px solid #537ea6;
+  margin: 15px 15px 15px;
+  border-top:1px solid rgba(184, 207, 230, 0.3);
+  padding-top: 15px;
+  margin-top: 10px;
 }
 
 a.ueditor-action-trash{
@@ -216,7 +156,6 @@ a.ueditor-action-trash:before {
   position: absolute;
 }
 .ueditor-box-icon {
-
   padding: 3px 12px;
   margin-right: 5px;
   display: block;
@@ -230,18 +169,6 @@ a.ueditor-action-trash:before {
 .ueditor-post-url-root{
   display: inline;
   font-size: 11px;
-}
-
-.ueditor-button-small-ok,
-.ueditor-button-small{
-  background: #1fcd8f;
-  color: #fff !important;
-  height: 25px;
-  min-width: 40px;
-  display: inline-block;
-  text-align: center;
-  line-height: 25px;
-  padding: 0 10px;
 }
 .ueditor-togglable-post-schedule-date{
   font-size: 14px;
@@ -257,12 +184,12 @@ a.ueditor-action-trash:before {
 #ueditor-box-cats-tags select,
 #ueditor-box-cats-tags .upfront-tax-new_term,
 #ueditor-box-cats-tags .upfront-flat-tax-new_term {
-  background: #F2F9FF;
-  border: 1px solid #A2BFDA;
-  padding: 12px;
-  margin: 10px 0;
-  height: 26px;
-  color: #607F99;
+	background: #F2F9FF;
+	border: 1px solid #A2BFDA;
+	padding: 12px;
+	margin: 10px 0;
+	height: 26px;
+	color: #607F99;
 }
 
 .ueditor-select-options {
@@ -270,28 +197,28 @@ a.ueditor-action-trash:before {
 }
 
 #ueditor-box-publish .ueditor-row {
-  margin:10px 0;
+	margin:10px 0;
 }
 
 /* Taxonomies */
 
 #ueditor-box-cats-tags a.upfront-taxonomy-list-choose-from-prev {
-  width: 100%;
-  font:normal 13px/20px Open Sans, Hevletica Neueu, Helvetica, sans-serif;
-  color: #3d5266;
+	width: 100%;
+	font:normal 13px/20px Open Sans, Hevletica Neueu, Helvetica, sans-serif;
+	color: #3d5266;
 }
 
 #ueditor-box-cats-tags #upfront-taxonomy-list {
-  overflow-y: scroll;
-  margin: 10px 0;
-  padding: 0;
-  // border: 1px solid #A2BFDA;
-  border-radius: 3px;
-  max-height: 202px;  
-  position: relative; 
+	overflow-y: scroll;
+	margin: 10px 0;
+	padding: 0;
+	// border: 1px solid #A2BFDA;
+	border-radius: 3px;
+	max-height: 202px;  
+	position: relative; 
 }
 #ueditor-box-cats-tags #upfront-taxonomy-list-all {
-  background: #fff;
+	background: #fff;
 }
 .upfront-taxonomy_item {
     border: 1px solid #A2BFDA;
@@ -301,10 +228,9 @@ a.ueditor-action-trash:before {
     margin:2px 0;
 }
 #ueditor-box-cats-tags .upfront-taxonomy_item .icon-plus {
-  margin:0;
+	margin:0;
 }
 
 #ueditor-box-cats-tags .upfront-taxonomy-list-panel-previously-used {
-  max-height: none;
+	max-height: none;
 }
-

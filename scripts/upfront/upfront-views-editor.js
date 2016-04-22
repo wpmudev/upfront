@@ -1945,39 +1945,6 @@
 			on_render: function () {
 				var me = this;
 				return;
-				if(typeof Upfront.Content !== "undefined") {
-					PostDataEditor = new Upfront.Content.PostEditor({
-						editor_id: 'this_post_' + this.getPostId(),
-						post_id: this.getPostId(),
-						content_mode: 'post_content'
-					});
-					
-					if(PostDataEditor.contentEditor) {
-						me.append_box(PostDataEditor.contentEditor);
-					}
-
-					this.listenTo(PostDataEditor, 'loaded', function(contentEditor) {
-						me.append_box(contentEditor);
-					});
-					
-					this.listenTo(PostDataEditor, 'post:saved', function() {
-						if(typeof PostDataEditor !== "undefined") {
-							me.append_box(PostDataEditor.contentEditor);
-						}
-					});
-
-					this.listenTo(PostDataEditor, 'post:saved post:trash', this.on_save);
-					this.listenTo(PostDataEditor, 'post:cancel', this.on_cancel);
-					this.listenTo(PostDataEditor, 'editor:edit:start', this.on_edit_start);
-					this.listenTo(PostDataEditor, 'editor:edit:stop', this.on_edit_stop);
-					// Listen to change event too
-					this.listenTo(PostDataEditor, 'editor:change:title', this.on_title_change);
-					this.listenTo(PostDataEditor, 'editor:change:content', this.on_content_change);
-					this.listenTo(PostDataEditor, 'editor:change:author', this.on_author_change);
-					this.listenTo(PostDataEditor, 'editor:change:date', this.on_date_change);
-					
-					this.editor = PostDataEditor;
-				}
 			},
 			
 			getPostId: function() {
