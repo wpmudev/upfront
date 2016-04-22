@@ -670,6 +670,10 @@ PostContentEditor.prototype = {
 					$('#image-edit-button-align').show();
 
 					img.attr('src', imageData.src);
+				}).fail(function(data){
+					if(data && data.reason === 'changeImage') {
+						me.openImageSelector();
+					}
 				});
 			}
 		}),
@@ -1333,6 +1337,10 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 			$('#image-edit-button-align').show();
 
 			img.attr('src', imageData.src);
+		}).fail(function(data){
+			if(data && data.reason === 'changeImage') {
+				me.openImageSelector();
+			}
 		});
 	},
 

@@ -82,7 +82,7 @@ define([
 			Upfront.Application.cssEditor.elementTypes.PostDataModel = Upfront.Application.cssEditor.elementTypes.PostDataModel || {id: this.data_type, label: this.data_type};
 		},
 		setupItems: function () {
-			var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default';
+			var preset = this.clear_preset_name(this.model.decode_preset() || 'default');
 			var preset_model = this.presets.findWhere({id: preset});
 
 			// So what do we do when we don't have the appropriate preset model?
@@ -98,19 +98,17 @@ define([
 			// Make sure we update hidden objects on preset change
 			if (this.selectPresetModule) this.listenTo(this.selectPresetModule, 'upfront:presets:change', function () {
 				this.model.get("objects").trigger("change");
-				var me = this,
-					preset = this.property("preset"),
-					preset_model = this.presets.findWhere({id: preset})
-				;
-				setTimeout(function () {
-					var
-						hidden_parts = preset_model.get("hidden_parts") || [],
-						parts = me.model.get_property_value_by_name("type_parts") || []
-					;
-					_.each(parts, function (part) {
-						me.update_object(part, hidden_parts.indexOf(part) < 0);
-					});
-					me.model.get("objects").trigger("change");
+				var me = this;
+				setTimeout(function(){
+					me.update_parts();
+				});
+			}, this);
+			// If properties changed (i.e cancel)
+			this.listenTo(this.model, 'change', function (attr) {
+				if ( !('changed' in attr && 'properties' in attr.changed)  ) return;
+				var me = this;
+				setTimeout(function(){
+					me.update_parts();
 				});
 			}, this);
 			// Yeah, so that's done
@@ -122,7 +120,7 @@ define([
 
 				var me = this;
 				this.listenTo(pnl, "part:hide:toggle", function (part_type, enable) {
-					this.update_object(part_type, (enable ? 1 : 0));
+					this.update_parts();
 					//this.updatePreset(preset_model.toJSON()); // Not needed, since we're sending (current local) preset data with request
 					this.updatePreset(preset_model.toJSON()); // Update: actually *still* needed, because presets aren't necessarily being saved on preset save...
 				}, this);
@@ -132,6 +130,39 @@ define([
 		},
 		getTitle: function() {
 			return 'Presets';
+		},
+
+		update_parts: function () {
+			var me = this,
+				preset = this.property("preset"),
+				preset_model = this.presets.findWhere({id: preset}),
+				hidden_parts = preset_model.get("hidden_parts") || [],
+				parts = this.model.get_property_value_by_name("type_parts") || [],
+				breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled(),
+				active_breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON()
+			;
+			_.each(parts, function (part) {
+				me.update_object(part, hidden_parts.indexOf(part) < 0);
+			});
+			if  ( active_breakpoint.default ) {
+				// Also update the responsive part
+				_.each(breakpoints, function (breakpoint) {
+					var breakpoint = breakpoint.toJSON(),
+						breakpoint_presets = me.property("breakpoint_presets")
+					;
+					if ( breakpoint.default ) return;
+					if ( !breakpoint_presets ) return;
+					if ( !(breakpoint.id in breakpoint_presets) || !('preset' in breakpoint_presets[breakpoint.id]) ) return;
+					var preset = breakpoint_presets[breakpoint.id].preset,
+						preset_model = me.presets.findWhere({id: preset}),
+						hidden_parts = preset_model.get("hidden_parts") || []
+					;
+					_.each(parts, function (part) {
+						me.update_object(part, hidden_parts.indexOf(part) < 0, breakpoint);
+					});
+				});
+			}
+			this.model.get("objects").trigger("change");
 		},
 
 		has_object: function (type) {
@@ -152,9 +183,9 @@ define([
 			;
 			return wrappers.get_by_wrapper_id(wrapper_id);
 		},
-		update_object: function (type, enable) {
+		update_object: function (type, enable, breakpoint) {
 			var enable = ( enable == 1 ),
-				breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
+				breakpoint = breakpoint ? breakpoint : Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 				objects = this.model.get('objects'),
 				wrappers = this.model.get('wrappers'),
 				object = this.find_object(type)
@@ -190,7 +221,7 @@ define([
 			else {
 				// On responsive, just hide/show available object
 				if ( object ) {
-					object.set_breakpoint_property('hide', (enable ? 0 : 1));
+					object.set_breakpoint_property('hide', (enable ? 0 : 1), false, breakpoint);
 				}
 			}
 		}

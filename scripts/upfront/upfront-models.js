@@ -214,8 +214,8 @@ var _alpha = "alpha",
 		is_visible: function () {
 			return this.get_property_value_by_name("visibility");
 		},
-		get_breakpoint_property_value: function (property, return_default, default_value) {
-			var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+		get_breakpoint_property_value: function (property, return_default, default_value, breakpoint) {
+			var breakpoint = breakpoint ? breakpoint : Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
 			default_value = typeof default_value === "undefined" ? false : default_value;
 
 			if ( !breakpoint || breakpoint.default )
@@ -227,8 +227,8 @@ var _alpha = "alpha",
 				return this.get_property_value_by_name(property);
 			return default_value;
 		},
-		set_breakpoint_property: function (property, value, silent) {
-			var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+		set_breakpoint_property: function (property, value, silent, breakpoint) {
+			var breakpoint = breakpoint ? breakpoint : Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
 			if ( !breakpoint || breakpoint.default ) {
 				this.set_property(property, value, silent);
 			}
