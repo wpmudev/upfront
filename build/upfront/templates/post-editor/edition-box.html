@@ -22,7 +22,7 @@
 					<div class="misc-pub-section misc-pub-visibility"></div>
 					<div class="misc-pub-section  misc-pub-schedule"></div>
 				</div>
-				<!--
+				
 				<div class="ueditor-box-bottom-buttons">
 					{[ if(cancelButton){ ]}
 					<a class="ueditor-button-cancel-edit" href="#">{{Upfront.Settings.l10n.global.content.cancel}}</a>
@@ -30,7 +30,7 @@
 					<a class="ueditor-action-publish" href="#">{{buttonText}}</a>
 					<a href="#" class="ueditor-action-trash ueditor-box-icon ueditor-box-icon-text" title="{{Upfront.Settings.l10n.global.content.trash}}">{{Upfront.Settings.l10n.global.content.trash}}</a>
 				</div>
-				-->
+				
 			</div>
         </div>
     </script>
@@ -98,37 +98,14 @@
 
     <script type="text/template" id="upfront-flat-term-list-tpl">
         <label id="post-tags-display-label">{{ labels.name }}:</label>
-        <a href="#" class="ueditor-edit-tags ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
-        <p id="post-tags-display" class="ueditor-previous-data ueditor-previous-data-toggle ueditor-previous-data-small">
-            {{currentTerms.pluck("name").join(", ").trim()}}
-        </p>
-        <div class="ueditor-togglable">
-            <div class="upfront-taxonomy-list-panel upfront-scroll-panel" id="upfront-taxonomy-list-current">
-                {[ currentTerms.each(function(term, idx){ ]}
-                {{ termTemplate({ term: term }) }}
-                {[ }); ]}
-            </div>
-            <div id="upfront-taxonomy-add">
-                <input type="text" class="upfront-flat-tax-new_term" id="upfront-flat-tax-new_term-{{labels.singular_name}}" placeholder="{{Upfront.Settings.l10n.global.content.enter.replace('%s', labels.singular_name)}}" />
-                <button id="upfront-flat-tax-add_term-{{ labels.singular_name }}" class="ueditor-button-small ueditor-button-small-flat-tax-add">{{Upfront.Settings.l10n.global.content.add}}</button>
-            </div>
-            <div id="upfront-taxonomy-list" class="clearfix">
-
-                <div class="upfront-taxonomy-list-panel upfront-taxonomy-list-panel-previously-used" id="upfront-taxonomy-list-all">
-                    <a class="upfront-taxonomy-list-choose-from-prev" href="#">{{Upfront.Settings.l10n.global.content.choose_from_prev.replace("%s", labels.name)}}</a>
-                    <div class="upfront-scroll-panel upfront-inner-scroll-panel ueditor-togglable-child">
-                        {[ otherTerms.each(function(term, idx){ ]}
-                        {{ termTemplate({ term: term }) }}
-                        {[ }); ]}
-                    </div>
-                </div>
-            </div>
-            <p>
-                <a href="" class="save-post-flat-tax  ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
-                <a href="" class="cancel-post-flat-tax  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
-            </p>
-        </div>
-    </script>
+        <div class="upfront-taxonomy-list-panel upfront-scroll-panel" id="upfront-taxonomy-list-current">
+			{[ currentTerms.each(function(term, idx){ ]}
+			{{ termTemplate({ term: term }) }}
+			{[ }); ]}
+		</div>
+		
+		<div class="upfront-taxonomy-chosen"></div>
+	</script>
 
     <script type="text/template" id="upfront-term-flat-single-tpl">
         <div class="upfront-taxonomy_item upfront-taxonomy_item-flat" id="upfront-term_item-{{ term.get('term_id') }}" data-term_id="{{ term.get('term_id') }}">
