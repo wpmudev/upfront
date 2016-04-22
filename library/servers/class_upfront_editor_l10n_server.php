@@ -399,7 +399,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'go_to_preview_page' => __('Go to Type Preview Page', 'upfront'),
 				'export_str' => __('Export', 'upfront'),
 				'create_responsive_layouts' => __('Create Responsive Layouts', 'upfront'),
-				'responsive_mode' => __('Responsive Mode', 'upfront'),
+				'responsive_mode' => __('Responsive', 'upfront'),
 				'exit_responsive' => __('Exit Responsive', 'upfront'),
 				'activate_breakpoints' => __('Activate Breakpoints', 'upfront'),
 				'new_breakpoint' => __('New Custom Breakpoint', 'upfront'),

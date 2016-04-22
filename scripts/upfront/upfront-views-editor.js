@@ -765,7 +765,8 @@
 			},
 			render: function () {
 				this.$el.addClass('upfront-icon upfront-icon-undo');
-				this.$el.html(l10n.undo);
+				// We do not need label anymore
+				// this.$el.html(l10n.undo);
 				this.$el.prop("title", l10n.undo);
 				if (this.model.has_undo_states()) this.activate();
 				else this.deactivate();
@@ -813,7 +814,8 @@
 			},
 			render: function () {
 				this.$el.addClass('upfront-icon upfront-icon-redo');
-				this.$el.html(l10n.redo);
+				// We do not need label anymore
+				// this.$el.html(l10n.redo);
 				this.$el.prop("title", l10n.redo);
 				if (this.model.has_redo_states()) this.activate();
 				else this.deactivate();
@@ -3287,8 +3289,13 @@
 						this.commands = _([
 							new Command_Undo({"model": this.model}),
 							new Command_Redo({"model": this.model}),
-							new Command_ToggleGrid({"model": this.model}),
 						]);
+						if (Upfront.Application.user_can("RESPONSIVE_MODE") && current_app !== MODE.THEME) {
+							this.commands.push(
+								new Command_StartResponsiveMode({model: this.model})
+							);
+						}
+						this.commands.push(new Command_ToggleGrid({"model": this.model}));
 					} else {
 						this.commands = _([
 							new Command_ToggleGrid({"model": this.model}),
@@ -3310,11 +3317,6 @@
 					this.commands.push(new Command_SaveLayout({"model": this.model}));
 				} else if (current_app !== MODE.THEME && Upfront.Settings.Application.PERMS.REVISIONS) {
 					this.commands.push(new Command_PreviewLayout({"model": this.model}));
-				}
-				if (Upfront.Application.user_can("RESPONSIVE_MODE") && current_app !== MODE.THEME) {
-					this.commands.push(
-						new Command_StartResponsiveMode({model: this.model})
-					);
 				}
 				// Dev feature only
 				if ( Upfront.Settings.Debug.dev ) {

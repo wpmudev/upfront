@@ -1002,8 +1002,16 @@ i.upfront-field-icon-burger-trigger {
 }
 .upfront-icon-button-add-spacer,
 .upfront-ui .upfront-icon-button-add-spacer:hover {
-  background: #1fcd8f;
-  border:1px solid #fff;
-  box-shadow: 0px 0px 3px 0px rgba(36,57,77,0.4);
-  border-radius: 9px;
+	background: #1fcd8f;
+	border:1px solid #fff;
+	box-shadow: 0px 0px 3px 0px rgba(36,57,77,0.4);
+	border-radius: 9px;
+}
+.upfront-icon-undo {
+	margin-right: 2px;
+}
+.upfront-icon-redo:before, .upfront-icon-undo:before {
+	position: relative;
+    top: 0px;
+    left: 7px;
 }

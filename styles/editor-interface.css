@@ -576,7 +576,7 @@ em {
   height: 40px;
   line-height: 24px;
   padding: 8px 0 0;
-  margin: 0 12px 10px;
+  margin: 0 6px 8px 10px;
   color: #85a9cb; }
 
 #sidebar-ui .sidebar-commands-control .command-undo,
@@ -584,9 +584,10 @@ em {
   padding: 4px 0 0;
   line-height: 18px;
   margin-bottom: 0;
-  font-size: 14px;
-  height: 20px;
-  max-width: 48px; }
+  border: 1px solid #6c8dac;
+  border-radius: 2px;
+  width: 26px;
+  height: 26px; }
 
 #sidebar-ui .sidebar-commands-control .command-redo {
   margin-left: 8px; }
@@ -608,11 +609,19 @@ em {
   margin-top: 8px; }
 
 #sidebar-ui .sidebar-commands-control .command-start-responsive {
-  margin: 10px 0 0 10px;
+  margin: 0px;
   font-size: 13px;
   max-width: 122px;
-  line-height: 27px;
-  padding: 5px 0 0; }
+  line-height: 26px;
+  padding: 0px 6px;
+  height: auto;
+  max-height: 26px;
+  border: 1px solid #6c8dac;
+  border-radius: 2px;
+  margin-left: 10px; }
+
+#sidebar-ui .sidebar-commands-control .command-start-responsive:before {
+  opacity: 1; }
 
 #sidebar-ui .sidebar-commands-control .command-save:hover {
   border-color: #3ea;
@@ -650,11 +659,12 @@ em {
   margin-top: 6px; }
 
 #sidebar-ui .sidebar-commands-control .command-grid {
-  border: 2px solid #263a4d;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-  margin: 1px 12px 8px 77px; }
+  border: 1px solid #6c8dac;
+  border-radius: 2px;
+  width: 26px;
+  height: 26px;
+  padding: 2px;
+  margin: 1px 12px 8px 20px; }
 
 #sidebar-ui .sidebar-panels {
   color: #395773;
@@ -7186,6 +7196,14 @@ i.upfront-field-icon-burger-trigger {
   border: 1px solid #fff;
   box-shadow: 0px 0px 3px 0px rgba(36, 57, 77, 0.4);
   border-radius: 9px; }
+
+.upfront-icon-undo {
+  margin-right: 2px; }
+
+.upfront-icon-redo:before, .upfront-icon-undo:before {
+  position: relative;
+  top: 0px;
+  left: 7px; }
 
 /* Tooltips */
 .nav_tooltip {
