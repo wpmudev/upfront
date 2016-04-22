@@ -6,8 +6,6 @@
  */
 class Upfront_Server_PageTemplate extends Upfront_Server {
 
-	const HOOK = 'uf-preview';
-	
 	private static $_instance;
 	
 	private $_data;
@@ -24,8 +22,6 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 	}
 	
 	private function _add_hooks () {
-		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false;
-
 		$this->register_requirements();
 	}
 	
@@ -34,25 +30,32 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 	 */
 	public function register_requirements () {
 		register_post_type(Upfront_PageTemplate::LAYOUT_TEMPLATE_TYPE, array(
-			"public" => true,
+			"exclude_from_search" => false,
+			"publicly_queryable" => true,
+			"show_ui" => true, // TODO make false later
+			"show_in_nav_menus" => true, // TODO make false later
 			// "supports" => false,
 			// "has_archive" => false,
 			// "rewrite" => false,
 			"label" => "Page Templates", // TODO to remove later
 		));
 		register_post_type(Upfront_PageTemplate::LAYOUT_TEMPLATE_DEV_TYPE, array(
-			"public" => true,
+			"exclude_from_search" => false,
+			"publicly_queryable" => true,
+			"show_ui" => true, // TODO make false later
+			"show_in_nav_menus" => true, // TODO make false later
 			// "supports" => false,
 			// "has_archive" => false,
 			// "rewrite" => false,
 			"label" => "Page Dev Templates", // TODO to remove later
 		));
 		register_post_status(Upfront_PageTemplate::LAYOUT_TEMPLATE_STATUS, array(
-			'public' => Upfront_Permissions::current(Upfront_Permissions::BOOT),
-			'exclude_from_search' => true,
+			'public' => true,
+			'exclude_from_search' => false,
 			'show_in_admin_all_list' => false,
 			'show_in_admin_status_list' => false,
 		));
+		
 		$this->_data = new Upfront_PageTemplate;
 	}
 	
@@ -61,11 +64,9 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 	}
 	
 	/**
-	 * Outputs a single page template as JSON data, or JSON error
+	 * Outputs a single page template as JSON data
 	 */
 	public function get_template ($template_id, $load_dev) {
-		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_out(new Upfront_JsonResponse_Error("No way"));
-		
 		if (empty($template_id)) return false;
 
 		$template = $this->_data->get_page_template($template_id, $load_dev);

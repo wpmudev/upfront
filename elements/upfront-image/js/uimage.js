@@ -1272,7 +1272,12 @@ define([
 				this.property('element_size', this.originalDesktopElementSize);
 			}
 		
-			var me = this;
+			var me = this,
+				post_id = ( typeof _upfront_post_data.post_id !== 'undefined' ) ? _upfront_post_data.post_id : false,
+				$layout_ids = ( typeof _upfront_post_data.layout !== 'undefined' ) ? _upfront_post_data.layout : '',
+				load_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 )
+			;
+			
 			if(this.cropTimer){
 				clearTimeout(this.cropTimer);
 				this.cropTimer = false;
@@ -1280,6 +1285,9 @@ define([
 				this.saveTemporaryResizing().done(function(){
 					var saveData = {
 						element: JSON.stringify(Upfront.Util.model_to_json(me.model)),
+						post_id: post_id,
+						layout_ids: layout_ids,
+						load_dev: load_dev,
 						action: 'upfront_update_layout_element'
 					};
 					Upfront.Util.post(saveData);

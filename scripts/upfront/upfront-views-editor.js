@@ -1917,6 +1917,7 @@
 			initialize: function (opts) {
 				this.options = opts;
 				this.settings = _([]);
+				Upfront.Events.on("editor:post_editor:created", _.bind(this.set_editor, this));
 			},
 			get_name: function () {
 				return 'post_details';
@@ -1924,9 +1925,26 @@
 			get_title: function () {
 				return "Post Details";
 			},
+			set_editor: function(editor){
+				this.editor = editor;
+				var self = this;
+				if(self.editor.contentEditor) {
+					self.append_box(self.editor.contentEditor);
+				}
+
+				this.listenTo(self.editor, 'loaded', function(contentEditor) {
+					self.append_box(contentEditor);
+				});
+
+				this.listenTo(self.editor, 'post:saved', function() {
+					if(typeof self.editor !== "undefined") {
+						self.append_box(self.editor.contentEditor);
+					}
+				});
+			},
 			on_render: function () {
 				var me = this;
-
+				return;
 				if(typeof Upfront.Content !== "undefined") {
 					PostDataEditor = new Upfront.Content.PostEditor({
 						editor_id: 'this_post_' + this.getPostId(),
@@ -3214,10 +3232,10 @@
 				
 				this.postId = this.getPostId();
 
-				if(typeof this.postId !== "undefined" && this.postId) {
+				if(typeof this.postId !== "undefined" && this.postId && !this.panels.postDetails ) {
 					var postPanel = {
 						postDetails: new SidebarPanel_PostEditor({"model": this.model, "postId": this.postId})
-					}
+					};
 					this.panels = _.extend({}, postPanel, this.panels);
 				}
 				

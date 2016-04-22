@@ -300,6 +300,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 				post_id: this.postId,
 				content_mode: 'post_content'
 			});
+			Upfront.Events.trigger("editor:post_editor:created", PostDataEditor);
 		}
 		this.listenTo(PostDataEditor, 'post:saved post:trash', this.on_render);
 		this.listenTo(PostDataEditor, 'post:cancel', this.on_cancel);
