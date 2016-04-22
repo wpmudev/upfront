@@ -458,6 +458,17 @@
 	padding: 2px;
 	margin: 1px 12px 8px 20px;
 }
+#sidebar-ui .sidebar-commands-control .command-trash {
+	float: left;
+    color: #e75757;
+    padding: 1px 10px 1px 20px;
+    border: 1px solid #E5575A;
+    border-radius: 3px;
+    height: auto;
+    position: relative;
+    margin-top: 15px;
+    opacity: 1;
+}
 #sidebar-ui .sidebar-panels {
 	color: #395773;
 	border-right: 1px solid #324253;

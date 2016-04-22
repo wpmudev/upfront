@@ -666,6 +666,17 @@ em {
   padding: 2px;
   margin: 1px 12px 8px 20px; }
 
+#sidebar-ui .sidebar-commands-control .command-trash {
+  float: left;
+  color: #e75757;
+  padding: 1px 10px 1px 20px;
+  border: 1px solid #E5575A;
+  border-radius: 3px;
+  height: auto;
+  position: relative;
+  margin-top: 15px;
+  opacity: 1; }
+
 #sidebar-ui .sidebar-panels {
   color: #395773;
   border-right: 1px solid #324253; }
@@ -6681,6 +6692,14 @@ a.upfront-region-name-edit-trigger:before {
   width: 10px;
   height: 24px;
   margin: 0 6px 0 0; }
+
+.upfront-icon-trash:before {
+  background: transparent url(../img/uf-core-el-sprite.svg);
+  background-position: -665px -78px;
+  width: 10px;
+  height: 14px;
+  left: 8px;
+  top: 7px; }
 
 .upfront-icon-undo:before {
   background-position: -197px -44px;

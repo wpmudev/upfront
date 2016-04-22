@@ -749,6 +749,16 @@
 				Upfront.Events.trigger("command:layout:publish");
 			}
 		});
+		
+		var Command_Trash = Command.extend({
+			className: "command-trash upfront-icon-trash",
+			render: function () {
+				this.$el.html(l10n.trash);
+			},
+			on_click: function () {
+				Upfront.Events.trigger("command:layout:publish");
+			}
+		});
 
 		var Command_Undo = Command.extend({
 			"className": "command-undo",
@@ -3313,6 +3323,11 @@
 				if ( current_app == MODE.THEME ) {
 					this.commands.push(new Command_ExportLayout({"model": this.model}));
 				}
+
+				if (typeof _upfront_post_data !== "undefined" && _upfront_post_data.layout.type === "single") {
+					this.commands.push(new Command_Trash({"model": this.model}));
+				}
+				
 				if (!Upfront.Settings.Application.NO_SAVE && current_app !== MODE.THEME && Upfront.Application.user_can_modify_layout()) {
 					this.commands.push(new Command_SaveLayout({"model": this.model}));
 				} else if (current_app !== MODE.THEME && Upfront.Settings.Application.PERMS.REVISIONS) {

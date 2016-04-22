@@ -498,6 +498,14 @@
 	height: 24px;
 	margin: 0 6px 0 0;
 }
+.upfront-icon-trash:before {
+    background: transparent url(../img/uf-core-el-sprite.svg);
+    background-position: -665px -78px;
+    width: 10px;
+    height: 14px;
+    left: 8px;
+    top: 7px;
+}
 .upfront-icon-undo:before {
 	background-position: -197px -44px;
 	height: 14px;
