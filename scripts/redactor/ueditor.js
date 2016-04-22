@@ -1964,9 +1964,10 @@ var InsertManager = Backbone.View.extend({
 			});
 	},
 	show_tooltip_in_this_location: function(redactor){
-		var $block = $( redactor.selection.getCurrent());
+		var current = redactor.selection.getCurrent(),
+            $block = $( current );
 
-		if(_.isEmpty( $block ) ) return false;
+		if( !current || _.isEmpty( $block ) ) return false;
 
 		var $image_embed_insert_wrappers = $(".upfront-inserted_image-wrapper, .upfront-inserted_embed-wrapper"),
 			block_top = $block.offset().top,

@@ -35,9 +35,6 @@ var PostDataModel = Upfront.Models.ObjectGroup.extend({
 	}
 });
 
-
-var PostDataEditor = null; // Store editor instance
-
 var PostDataPartView = Upfront.Views.ObjectView.extend({
 	init: function () {
 	},
@@ -73,8 +70,8 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			this.editor_view.setElement(node);
 			this.trigger_edit();
 		}
-		else if ( !this._editor_prepared && PostDataEditor ) {
-			PostDataEditor.addPartView(type, node.get(0), this.model, this.object_group_view.model).done(function(view){
+		else if ( !this._editor_prepared && Upfront.Views.PostDataEditor ) {
+			Upfront.Views.PostDataEditor.addPartView(type, node.get(0), this.model, this.object_group_view.model).done(function(view){
 				me.editor_view = view;
 				me.trigger_edit();
 			});
@@ -94,14 +91,14 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	 */
 	trigger_edit: function () {
 		if (Upfront.Application.user_can("EDIT") === false) {
-			if (parseInt(PostDataEditor.post.get('post_author'), 10) === Upfront.data.currentUser.id && Upfront.Application.user_can("EDIT_OWN") === true) {
+			if (parseInt(Upfront.Views.PostDataEditor.post.get('post_author'), 10) === Upfront.data.currentUser.id && Upfront.Application.user_can("EDIT_OWN") === true) {
 				// Pass through
 			} else {
 				return;
 			}
 		}
 
-		if ( !PostDataEditor.contentEditor || !PostDataEditor.contentEditor._editing ) return;
+		if ( !Upfront.Views.PostDataEditor.contentEditor || !Upfront.Views.PostDataEditor.contentEditor._editing ) return;
 		this.editor_view.editContent();
 	},
 

@@ -716,7 +716,7 @@ PostContentEditor.prototype = {
 	triggerEditors: function () {
 		if (Upfront.Application.user_can("EDIT") === false) {
 			if (parseInt(this.post.get('post_author'), 10) === Upfront.data.currentUser.id && Upfront.Application.user_can("EDIT_OWN") === true) {
-				// Pass through
+				// Pass THROUGH
 			} else {
 				return;
 			}
