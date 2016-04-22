@@ -23,6 +23,8 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 	
 	private function _add_hooks () {
 		$this->register_requirements();
+		
+		add_action('upfront-style-base_layout', array($this, 'intercept_page_style_loading'));
 	}
 	
 	/**
@@ -77,6 +79,38 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 	
 	public function get_template_id_by_slug ($slug, $load_dev) {
 		return $this->_data->get_id_by_slug($slug, $load_dev);
+	}
+	
+	/**
+	 * This fires in style parsing AJAX request and overrides the used layout.
+	 *
+	 * @param Upfront_Layout $layout Style layout for parsing
+	 * @return Upfront_Layout
+	 */
+	public function intercept_page_style_loading ($layout) {
+		$load_dev = $_GET['load_dev'] == 1 ? true : false;
+		$is_revision = !empty($_GET['layout']['layout_revision'])
+			? $_GET['layout']['layout_revision']
+			: false
+		;
+		
+		if ( !$is_revision ) {
+			if ( !empty($_GET['layout']['specificity']) ) {
+				$slug = Upfront_Layout::get_storage_key() . '-' . $_GET['layout']['specificity'];
+			} else {
+				$slug = Upfront_Layout::get_storage_key() . '-' . $_GET['layout']['item'];
+			}
+			$template_post_id = $this->get_template_id_by_slug($slug, $load_dev);
+			if ( $template_post_id ) {
+				$page_template = $this->get_template($template_post_id, $load_dev);
+				if ( $page_template ) {
+					$layout = Upfront_Layout::from_php($page_template, Upfront_Layout::STORAGE_KEY);
+				}
+			}
+			
+		} 
+		
+		return $layout;
 	}
 	
 	// TODO: to remove later, just for unit testing

@@ -23,7 +23,7 @@ class Upfront_Output {
 	}
 
 	public static function get_layout ($layout_ids, $apply = false) {
-		$post_id = is_singular() ? get_the_ID() : '';
+		$post_id = self::get_post_id();
 		$is_dev = Upfront_Debug::get_debugger()->is_dev();
 		$load_from_options = true;
 		
