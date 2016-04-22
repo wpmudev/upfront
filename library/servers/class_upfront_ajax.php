@@ -195,7 +195,8 @@ class Upfront_Ajax extends Upfront_Server {
 	
 	function load_page_layout () {
 		// TODO: 
-		// - FE should display what's in UF editor
+		// - some styles on UF editor not rendered on FE
+		// - post FE should display what's in UF editor
 		// - new page not yet covered
 		// - take care build preview
 		// - update reset cache
