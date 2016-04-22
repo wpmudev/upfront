@@ -106,6 +106,11 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'preview_size' => __('Preview Size', 'upfront')
 			),
 			'content' => array(
+				'add_label' => __('Add', 'upfront'),
+				'tags_placeholder' => __('Pick Tag', 'upfront'),
+				'tags_label' => __('Choose or Create Tag'),
+				'category_placeholder' => __('Pick Tag', 'upfront'),
+				'category_label' => __('Choose or Create Category'),
 				'loading' => __('Loading', 'upfront'),
 				'publishing' => __('Publishing %s...', 'upfront'),
 				'published' => __('%s published', 'upfront'),

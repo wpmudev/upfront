@@ -3199,7 +3199,7 @@
 				
 				this.postId = this.getPostId();
 
-				if(typeof this.postId !== "undefined" && this.postId && !this.panels.postDetails ) {
+				if(typeof this.postId !== "undefined" && this.postId && !this.panels.postDetails ) {					
 					var postPanel = {
 						postDetails: new SidebarPanel_PostEditor({"model": this.model, "postId": this.postId})
 					};
