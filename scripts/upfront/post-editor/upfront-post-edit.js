@@ -384,8 +384,74 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
                 labels: this.collection.taxonomyObject.labels
             }))
         );
+		
+		// Get chosen select
+		var selectAddTaxonomy = this.chosen_field();
+		var termsChosen = this.normalize_tax_object(this.allTerms);
+		
+		// Init chosen select
+		this.taxonomySelect = new selectAddTaxonomy({
+			model: this.model,
+			label: l10n.global.content.category_label,
+			values: termsChosen,
+			placeholder: l10n.global.content.category_placeholder,
+			change: function(value) {
+				//me.model.set_property('preset', this.get_value());
+			}
+		});
+		this.taxonomySelect.render();
+		
+		this.listenTo(this.taxonomySelect, 'taxonomy:new', this.handle_new_term);
+		this.listenTo(this.taxonomySelect, 'taxonomy:changed', this.handle_choose_term);
+
+		// Attach chosen select to template
+		this.$el.find('.upfront-taxonomy-chosen').html(this.taxonomySelect.$el);
 
     },
+	
+	normalize_tax_object: function(otherTerms) {
+		var termsChosen = {};
+		otherTerms.each(function (term, idx) {
+			termsChosen[term.get('term_id')] = { label: term.get('name'), value: term.get('term_id') }
+		});
+		
+		return termsChosen;
+	},
+	
+	chosen_field: function() {
+		var chosenField = Upfront.Views.Editor.Field.Chosen_Select.extend({
+			className: 'select-taxonomy-chosen',
+			render: function() {
+				Upfront.Views.Editor.Field.Chosen_Select.prototype.render.call(this);
+				var me = this;
+				var selectWidth = '230px';
+
+				this.$el.find('.upfront-chosen-select').chosen({
+					search_contains: true,
+					width: selectWidth,
+					disable_search: false,
+				});
+
+				var html = ['<a href="#" title="'+ l10n.global.content.add_label +'" class="upfront-taxonomy-add">'+ l10n.global.content.add_label +'</a>'];
+				this.$el.find('.chosen-search').append(html.join(''));
+
+				this.$el.on('click', '.upfront-taxonomy-add', function(e) {
+					e.preventDefault();
+					var taxonomy_value = me.$el.find('.chosen-search input').val();
+					me.trigger('taxonomy:new', taxonomy_value.trim());
+				});
+
+				return this;
+			},
+			on_change: function() {
+				this.$el.find('.chosen-drop').css('display', 'none');
+				this.trigger('changed');
+				this.trigger('taxonomy:changed', this.get_value());
+			},
+		});
+		
+		return chosenField;
+	},
 
     handle_new_term: function() {
         var me = this,
