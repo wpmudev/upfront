@@ -1922,14 +1922,13 @@
 				if (!tax) return true;
 				var type = post.get("post_type") || 'post';
 				return "page" !== type;
-			},
+			}
 		});
-		
+
 		var SidebarPanel_Settings_Section_PostDetails = SidebarPanel_Settings_Section.extend({
 			initialize: function (opts) {
 				this.options = opts;
 				this.settings = _([]);
-				Upfront.Events.on("editor:post_editor:created", _.bind(this.set_editor, this));
 			},
 			get_name: function () {
 				return 'post_details';
@@ -1937,26 +1936,31 @@
 			get_title: function () {
 				return "Post Details";
 			},
-			set_editor: function(editor){
-				this.editor = editor;
+			on_render: function () {
 				var self = this;
-				if(self.editor.contentEditor) {
-					self.append_box(self.editor.contentEditor);
+				if ( !Upfront.Views.PostDataEditor || Upfront.Views.PostDataEditor.postId != this.getPostId() && !_.isUndefined( Upfront.Content.PostEditor ) ){
+					Upfront.Views.PostDataEditor = new Upfront.Content.PostEditor({
+						editor_id: 'this_post_' + this.getPostId(),
+						post_id: this.getPostId(),
+						content_mode: 'post_content'
+					});
+					Upfront.Events.trigger("editor:post_editor:created", Upfront.Views.PostDataEditor);
 				}
 
-				this.listenTo(self.editor, 'loaded', function(contentEditor) {
+				if(Upfront.Views.PostDataEditor.contentEditor) {
+					self.append_box(Upfront.Views.PostDataEditor.contentEditor);
+				}
+
+				this.listenTo(Upfront.Views.PostDataEditor, 'loaded', function(contentEditor) {
 					self.append_box(contentEditor);
 				});
 
-				this.listenTo(self.editor, 'post:saved', function() {
-					if(typeof self.editor !== "undefined") {
-						self.append_box(self.editor.contentEditor);
+				this.listenTo(Upfront.Views.PostDataEditor, 'post:saved', function() {
+					if(typeof Upfront.Views.PostDataEditor !== "undefined") {
+						self.append_box(Upfront.Views.PostDataEditor.contentEditor);
 					}
 				});
-			},
-			on_render: function () {
-				var me = this;
-				return;
+				this.editor = Upfront.Views.PostDataEditor;
 			},
 			
 			getPostId: function() {
@@ -12308,6 +12312,7 @@
 			}
 		});
 
+
 		return {
 			"Editor": {
 				"Property": Property,
@@ -12337,7 +12342,7 @@
 					"AnchorSetting": _Settings_AnchorSetting
 				},
 				"Button": {
-					"Presets": button_presets_collection,
+					"Presets": button_presets_collection
 				},
 				"Fonts": {
 					"System": system_fonts_storage,

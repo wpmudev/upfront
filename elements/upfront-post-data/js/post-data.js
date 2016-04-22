@@ -276,6 +276,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			: new Views[Views.DEFAULT]({model: this.model})
 		;
 		view.element = this;
+		view.element.postId = this.editor.postId;
 		view.render();
 
 		this.child_view = view;
@@ -285,33 +286,16 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	},
 
 	prepare_editor: function () {
-		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
-		if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.THEME ) {
-			// We're dealing with a theme exporter request
-			// Okay, so let's fake a post
-			this.postId = "fake_post";
-		}
-		else if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.CONTENT_STYLE ){
-			this.postId = "fake_styled_post";
-		}
-		if ( !PostDataEditor || PostDataEditor.postId != this.postId ){
-			PostDataEditor = new Upfront.Content.PostEditor({
-				editor_id: 'this_post_' + this.postId,
-				post_id: this.postId,
-				content_mode: 'post_content'
-			});
-			Upfront.Events.trigger("editor:post_editor:created", PostDataEditor);
-		}
-		this.listenTo(PostDataEditor, 'post:saved post:trash', this.on_render);
-		this.listenTo(PostDataEditor, 'post:cancel', this.on_cancel);
-		this.listenTo(PostDataEditor, 'editor:edit:start', this.on_edit_start);
-		this.listenTo(PostDataEditor, 'editor:edit:stop', this.on_edit_stop);
+		this.listenTo(Upfront.Views.PostDataEditor, 'post:saved post:trash', this.on_render);
+		this.listenTo(Upfront.Views.PostDataEditor, 'post:cancel', this.on_cancel);
+		this.listenTo(Upfront.Views.PostDataEditor, 'editor:edit:start', this.on_edit_start);
+		this.listenTo(Upfront.Views.PostDataEditor, 'editor:edit:stop', this.on_edit_stop);
 		// Listen to change event too
-		this.listenTo(PostDataEditor, 'editor:change:title', this.on_title_change);
-		this.listenTo(PostDataEditor, 'editor:change:content', this.on_content_change);
-		this.listenTo(PostDataEditor, 'editor:change:author', this.on_author_change);
-		this.listenTo(PostDataEditor, 'editor:change:date', this.on_date_change);
-		this.editor = PostDataEditor;
+		this.listenTo(Upfront.Views.PostDataEditor, 'editor:change:title', this.on_title_change);
+		this.listenTo(Upfront.Views.PostDataEditor, 'editor:change:content', this.on_content_change);
+		this.listenTo(Upfront.Views.PostDataEditor, 'editor:change:author', this.on_author_change);
+		this.listenTo(Upfront.Views.PostDataEditor, 'editor:change:date', this.on_date_change);
+		this.editor = Upfront.Views.PostDataEditor;
 	},
 
 	/**
