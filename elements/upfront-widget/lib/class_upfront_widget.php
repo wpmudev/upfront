@@ -70,7 +70,7 @@ class Upfront_Uwidget {
 			'title' => '',
 		));
 
-		if( is_a($callback[0], "WP_Widget_Calendar") ){
+		if( defined( "DOING_AJAX" ) && DOING_AJAX && is_a($callback[0], "WP_Widget_Calendar")  ){
 			$this->_increment_calendar_widget_instance( $callback[0] );
 		}
 
