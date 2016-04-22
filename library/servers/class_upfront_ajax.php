@@ -195,8 +195,11 @@ class Upfront_Ajax extends Upfront_Server {
 	
 	function load_page_layout () {
 		// TODO: 
+		// - FE should display what's in UF editor
 		// - new page not yet covered
 		// - take care build preview
+		// - update reset cache
+		// - update reset theme
 		
 		$layout_ids = $_POST['data'];
 		$storage_key = $_POST['storage_key'];
@@ -402,7 +405,8 @@ class Upfront_Ajax extends Upfront_Server {
 		if ( !$post_id ) return $this->save_page_layout();
 
 		upfront_switch_stylesheet($stylesheet);
-
+	
+		// for post still save on options
 		$layout = Upfront_Layout::from_php($data, $storage_key);
 		$key = $layout->save();
 		
@@ -596,9 +600,11 @@ class Upfront_Ajax extends Upfront_Server {
 	}
 
 	function update_layout_element() {
+		
 		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
 
 		$data = !empty($_POST) ? stripslashes_deep($_POST) : false;
+		$post_id = (isset($_POST['post_id'])) ? (int)$_POST['post_id'] : false;
 
 		if(!$data)
 			return $this->_out(new Upfront_JsonResponse_Error("No data"));
@@ -608,6 +614,15 @@ class Upfront_Ajax extends Upfront_Server {
 			return $this->_out(new Upfront_JsonResponse_Error("No element data given"));
 
 		$element = json_decode($data['element'], true);
+		
+		if ( $post_id ) {
+			$post = get_post($post_id);
+			// if page then skip to update_page_layout_element()
+			if ( $post->post_type === 'page' ) return $this->update_page_layout_element();
+		}
+		
+		// if post_id is false, still use update_page_layout_element()
+		if ( !$post_id ) return $this->update_page_layout_element();
 
 		$layout = Upfront_Layout::from_entity_ids($data['layout'], $data['storage_key']);
 		if(empty($layout))
@@ -618,6 +633,61 @@ class Upfront_Ajax extends Upfront_Server {
 			return $this->_out(new Upfront_JsonResponse_Error("Error updating the layout"));
 
 		$layout->save();
+		
+		$this->_out(new Upfront_JsonResponse_Success("Layout updated"));
+	}
+	
+	function update_page_layout_element() {
+		$data = !empty($_POST) ? stripslashes_deep($_POST) : false;
+		$post_id = (isset($_POST['post_id'])) ? (int)$_POST['post_id'] : false;
+		$element = json_decode($data['element'], true);
+		$layout_ids = $_POST['layout_ids'];
+		$load_dev = $_POST['load_dev'] == 1 ? true : false;
+		$load_from_options = true;
+		
+		$template_meta_name = ( $load_dev ) 
+			? 'template_dev_post_id'
+			: 'template_post_id'
+		;
+		
+		if ( $post_id ) {
+			$post = get_post($post_id);
+			$template_post_id = get_post_meta($post_id, $template_meta_name, true);
+		} else {
+			// if special archive pages like homepage, use slug to get template post id
+			$store_key = Upfront_Layout::get_storage_key() . '-' . $layout_ids['item'];
+			$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($store_key, $load_dev);
+		}
+		
+		if ( $template_post_id ) {
+			$page_template = Upfront_Server_PageTemplate::get_instance()->get_template($template_post_id, $load_dev);
+			if ( $page_template ) {
+				$layout = Upfront_Layout::from_php($page_template, $storage_key);
+				
+				$updated = $layout->set_element_data($element);
+				if(!$updated)
+					return $this->_out(new Upfront_JsonResponse_Error("Error updating the layout"));
+				
+				// save the layout on CPT
+				$template_post_id = Upfront_Server_PageTemplate::get_instance()->save_template($template_post_id, $layout, $load_dev);
+				// update the template post id
+				if ( $template_post_id && $post_id ) update_post_meta((int)$post_id, $template_meta_name, $template_post_id);
+				$load_from_options = false;
+			}
+		}
+		
+		if ( $load_from_options ) {
+			$layout = Upfront_Layout::from_entity_ids($data['layout'], $data['storage_key']);
+			if(empty($layout))
+				return $this->_out(new Upfront_JsonResponse_Error("Unkown layout"));
+
+			$updated = $layout->set_element_data($element);
+			if(!$updated)
+				return $this->_out(new Upfront_JsonResponse_Error("Error updating the layout"));
+
+			$layout->save();
+		} 
+		
 		$this->_out(new Upfront_JsonResponse_Success("Layout updated"));
 	}
 

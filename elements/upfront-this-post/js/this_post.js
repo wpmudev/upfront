@@ -264,6 +264,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	redirectPostEdit: function (post) {
 		//window.location = Upfront.Settings.Content.edit.post + post.id;
 		var path = '/edit/' + post.get('post_type') + '/' + post.id;
+		if(_upfront_post_data) _upfront_post_data.post_id = post.id;
 		Upfront.Application.navigate(path, {trigger: true});
 		if (Upfront.Application.user_can("EDIT"))
 			Upfront.Application.set_current(Upfront.Settings.Application.MODE.LAYOUT);
