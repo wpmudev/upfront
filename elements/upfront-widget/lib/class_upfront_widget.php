@@ -70,6 +70,10 @@ class Upfront_Uwidget {
 			'title' => '',
 		));
 
+		if( is_a($callback[0], "WP_Widget_Calendar") ){
+			$this->_increment_calendar_widget_instance( $callback[0] );
+		}
+
 		ob_start();
 		call_user_func_array($callback, array($args, $instance));
 		$out = ob_get_clean();
@@ -155,6 +159,25 @@ class Upfront_Uwidget {
 
 	public function get_widget_admin_fields () {
 		return $this->_get_admin_fields();
+	}
+
+
+	/**
+	 * Sets  WP_Widget_Calendar::$instance to 1 to prevent this widget from adding css id
+	 *
+	 *
+	 * @param WP_Widget_Calendar $callback
+	 * @return void|WP_Widget_Calendar
+	 */
+	private function _increment_calendar_widget_instance(WP_Widget_Calendar $callback ){
+		if( !class_exists( "ReflectionClass" ) ) return;
+
+		$reflected = new ReflectionClass( $callback );
+		$property = $reflected->getProperty( "instance" );
+		$property->setAccessible( true );
+		$property->setValue( null, 1 );
+
+		return $callback;
 	}
 
 }
