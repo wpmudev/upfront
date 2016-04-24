@@ -100,11 +100,13 @@ var _partView = Backbone.View.extend({
 		if ( !this.canTriggerEdit ) return;
 		this.parent.triggerEditors();
 		this.focus();
+
+		this.$el.closest(".upfront-editable_entity.upfront-module").draggable("disable");
 	},
 	editContent: function () {
 	},
 	stopEditContent: function () {
-
+		this.$el.closest(".upfront-editable_entity.upfront-module").draggable("enable");
 	},
 	focus: function () {
 
