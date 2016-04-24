@@ -101,12 +101,12 @@ var _partView = Backbone.View.extend({
 		this.parent.triggerEditors();
 		this.focus();
 
-		this.$el.closest(".upfront-editable_entity.upfront-module").draggable("disable");
+		this.$el.closest(".upfront-editable_entity.upfront-module").draggable("disable"); // Todo Sam: make it mode elegant
 	},
 	editContent: function () {
 	},
 	stopEditContent: function () {
-		this.$el.closest(".upfront-editable_entity.upfront-module").draggable("enable");
+		this.$el.closest(".upfront-editable_entity.upfront-module").draggable("enable");// Todo Sam: make it mode elegant
 	},
 	focus: function () {
 
