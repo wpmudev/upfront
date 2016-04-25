@@ -106,14 +106,12 @@
 
         <div id="post-status-select" class="ueditor-togglable">
             <div class="ueditor-select-status"></div>
-            <select class="ueditor-select-options">
+            <select class="ueditor-select-options ueditor-status-select">
                 {[ _.each(options, function(option){ ]}
                 <option class="ueditor-select-option ueditor-action-status" value="{{option.value}}" {[ if( status.value == option.value ) { ]} selected="selected"  {[ } ]} >{{option.name}}</option>
                 {[ }); ]}
             </select>
-            <br/>
-            <a href="" class="save-post-status  ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
-            <a href="" class="cancel-post-status  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
+            <a href="" class="save-post-status  ueditor-button-small-ok ueditor-ok-button">{{Upfront.Settings.l10n.global.content.ok}}</a>
         </div>
     </script>
 

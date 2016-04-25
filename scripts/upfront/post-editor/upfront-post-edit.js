@@ -317,6 +317,7 @@ var PostSectionView = Backbone.View.extend({
 			$this_togglable = $button.siblings(".ueditor-togglable");
 		}
 		
+		$(".ueditor-box-content-wrap .ueditor-togglable").parent().removeClass('upfront-settings-toggled');
         $(".ueditor-box-content-wrap .ueditor-togglable").not($this_togglable).slideUp();
         $(".ueditor-box-content-wrap .ueditor-btn-edit").show();
         $(".ueditor-previous-data-toggle").not( $this_prev_data_toggle ).show();
@@ -324,6 +325,7 @@ var PostSectionView = Backbone.View.extend({
         $this_prev_data_toggle.hide();
         $button.hide();
         $this_togglable.slideDown(100);
+		$this_togglable.parent().addClass('upfront-settings-toggled');
     },
     cancelEdit: function(e){
         e.preventDefault();
@@ -333,6 +335,7 @@ var PostSectionView = Backbone.View.extend({
         $this_prev_data_toggle.show();
         $button.closest(".ueditor-togglable").slideUp(100, function(){
             $button.closest(".ueditor-togglable").siblings(".ueditor-btn-edit").show();
+			$button.closest(".ueditor-togglable").parent().removeClass('upfront-settings-toggled');
         });
 
     },
@@ -751,6 +754,14 @@ var PostStatusView = PostSectionView.extend({
     },
     update: function(e){
         e.preventDefault();
+
+		var $button = $(e.target);
+		$button.closest(".ueditor-togglable").slideUp(100, function(){
+            $button.closest(".ueditor-togglable").siblings(".ueditor-btn-edit").show();
+        });
+		
+		$button.closest(".ueditor-togglable").parent().removeClass('upfront-settings-toggled');
+
         var status = this.$("select").val();
         if(!_.isEmpty( status ) && status !== this.initialStatus ){
             this.post.set("post_status", status);

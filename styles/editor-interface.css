@@ -10603,6 +10603,20 @@ a.ueditor-select-option:hover {
 #sidebar-ui a.chosen-search {
   position: relative; }
 
+.upfront-settings-toggled {
+  background-color: #e6edf2;
+  margin: 0px -15px;
+  padding: 0px 15px; }
+
+.ueditor-togglable select {
+  background: #F2F9FF;
+  border: 1px solid #A2BFDA;
+  padding: 12px;
+  margin: 10px 0;
+  height: 26px;
+  color: #607F99;
+  border-radius: 3px; }
+
 .screen-reader-text {
   position: absolute;
   margin: -1px;
@@ -10765,6 +10779,29 @@ a.ueditor-action-trash:before {
 
 #ueditor-box-cats-tags .upfront-taxonomy-list-panel-previously-used {
   max-height: none; }
+
+#sidebar-ui .ueditor-ok-button {
+  background-image: linear-gradient(to bottom, #fafdff, #f2f9ff);
+  border: solid 1px #a2bfda;
+  width: 37px;
+  height: 26px;
+  display: inline-block;
+  text-align: center;
+  line-height: 26px;
+  font-family: Open Sans, Hevletica Neueu, Helvetica, sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  color: #6486a6;
+  text-shadow: 0 1px 0 #ffffff;
+  margin: 0px;
+  position: relative;
+  top: -9px;
+  border-radius: 3px;
+  right: -10px; }
+
+.ueditor-status-select {
+  width: 170px;
+  display: inline-block; }
 
 .upost_thumbnail_changer {
   color: #3f5870;
