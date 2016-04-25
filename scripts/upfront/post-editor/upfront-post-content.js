@@ -101,12 +101,12 @@ var _partView = Backbone.View.extend({
 		this.parent.triggerEditors();
 		this.focus();
 
-		this.$el.closest(".upfront-editable_entity.upfront-module").draggable("disable"); // Todo Sam: make it mode elegant
+
 	},
 	editContent: function () {
 	},
 	stopEditContent: function () {
-		this.$el.closest(".upfront-editable_entity.upfront-module").draggable("enable");// Todo Sam: make it mode elegant
+
 	},
 	focus: function () {
 
@@ -155,6 +155,7 @@ PostContentEditor.prototype = {
 							.off('keypress')
 							.on('keypress', _.bind(this.keypress, this));
 				}
+				this.$title.closest(".upfront-editable_entity.upfront-module").draggable("disable");
 			},
 			stopEditContent: function () {
 				if ( this.$title.length ) {
@@ -163,6 +164,7 @@ PostContentEditor.prototype = {
 							.off('blur')
 							.off('keyup')
 							.off('keypress');
+					this.$title.closest(".upfront-editable_entity.upfront-module").draggable("enable");
 				}
 			},
 			blur: function () {
@@ -233,6 +235,7 @@ PostContentEditor.prototype = {
 							.on('blur', _.bind(this.blur, this))
 					;
 				}
+				this.$content.closest(".upfront-editable_entity.upfront-module").draggable("disable");
 
 			},
 			stopEditContent: function () {
@@ -240,6 +243,8 @@ PostContentEditor.prototype = {
 				if ( this.$content.length ){
 					this.$content.off('blur');
 				}
+				this.$content.closest(".upfront-editable_entity.upfront-module").draggable("enable");
+
 			},
 			blur: function () {
 				var html = this.$content.html();
