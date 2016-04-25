@@ -114,15 +114,50 @@ class Upfront_PageTemplate {
 	}
 	
 	/**
-	 * Fetches all page templates
+	 * Fetches all page templates for current active theme
 	 */
 	public function get_all_page_templates () {
-		$query = new WP_Query(array(
-			'posts_per_page' => -1,
-			'post_type' => self::LAYOUT_TEMPLATE_TYPE,
-			'post_status' => self::LAYOUT_TEMPLATE_STATUS,
-		));
-		return $query->posts;
+		global $wpdb;
+		$theme_key = $wpdb->esc_like(Upfront_Model::get_storage_key()) . '%';
+		
+		$sql = $wpdb->prepare("SELECT * FROM {$wpdb->posts} WHERE post_name LIKE %s AND post_status = %s", 
+			$theme_key, self::LAYOUT_TEMPLATE_STATUS);
+		
+		return $wpdb->get_results($sql, OBJECT);
+	}
+	
+	/**
+	 * Deletes the requested page template.
+	 * Also validated we have actually deleted a page template.
+	 * @param int $ID Page Template post ID to remove
+	 * @return bool
+	 */
+	public function drop_page_template ($ID, $dev) {
+		if (empty($ID) || !is_numeric($ID)) return false;
+		$template = get_post($ID);
+		if ( $dev ) {
+			if (self::LAYOUT_TEMPLATE_DEV_TYPE !== $template->post_type) return false;
+		} else {
+			if (self::LAYOUT_TEMPLATE_TYPE !== $template->post_type) return false;
+		}
+		return (bool)wp_delete_post($ID, true);
+	}
+	
+	/**
+	 * Deletes all layouts for current theme
+	 * Also validated we have actually deleted all theme page templates.
+	 * @return bool
+	 */
+	public function drop_all_theme_page_templates () {
+		$result = true;
+		$templates = $this->get_all_page_templates();
+		foreach ( $templates as $template ) {
+			if ( !(bool)wp_delete_post($template->ID, true) ) {
+				$result = false;
+				break;
+			}
+		}
+		return $result;
 	}
 	
 }

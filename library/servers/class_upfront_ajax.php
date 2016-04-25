@@ -516,19 +516,27 @@ class Upfront_Ajax extends Upfront_Server {
 
 	function reset_layout () {
 		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
-
+		
 		$data = !empty($_POST) ? stripslashes_deep($_POST) : false;
 		$layout = !empty($data['layout']) && $data['layout'] !== "0" ? $data['layout'] : array();
 		$stylesheet = isset( $data['stylesheet'] ) ? $data['stylesheet'] : get_stylesheet();
 		$stylesheet_dev = false;
-		if (!empty($data['dev'])) {
-			$stylesheet_dev = "{$stylesheet}_dev"; // Handle dev-mode names
-		}
-
+		$is_dev = !empty($data['dev']);
+		
 		if( $layout === array() )
 			$this->_out(new Upfront_JsonResponse_Error("Please specify layout to reset"));
-
-
+		
+		// delete first custom post type template
+		$store_key = Upfront_Layout::get_storage_key() . '-' . $layout;
+		$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($store_key, $is_dev);
+		
+		if( $template_post_id )
+			Upfront_Server_PageTemplate::get_instance()->delete_template((int)$template_post_id, $is_dev);
+		
+		// deletes what's in option table from previous implementation
+		if ($is_dev) {
+			$stylesheet_dev = "{$stylesheet}_dev"; // Handle dev-mode names
+		}
 
 		if( $stylesheet_dev ){
 			$layout_key = $stylesheet_dev . "-" . $layout;
@@ -536,7 +544,8 @@ class Upfront_Ajax extends Upfront_Server {
 			delete_option( $layout_key );
 			delete_option( $alternative_layout_key );
 		}else{
-			$layout_key = $stylesheet . "-" . $layout;
+			// $layout_key = $stylesheet . "-" . $layout;
+			$layout_key = Upfront_Layout::get_storage_key() . "-" . $layout;
 			$alternative_layout_key = wp_get_theme($stylesheet)->get("Name") . "-" . $layout;
 			delete_option( $layout_key );
 			delete_option( $alternative_layout_key );
@@ -561,6 +570,7 @@ class Upfront_Ajax extends Upfront_Server {
 			'grid_front_response',
 			'styles_main',
 		);
+		
 		$rx = '_transient(_timeout)?_(' . join("|", $keys) . ')(_uf_)?[a-f0-9]+';
 		
 		$sql = "DELETE FROM {$wpdb->options} WHERE option_name REGEXP %s";
@@ -569,10 +579,14 @@ class Upfront_Ajax extends Upfront_Server {
 
 	function reset_all_from_db () {
 		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
-
+		
 		$data = !empty($_POST) ? stripslashes_deep($_POST) : false;
 		$stylesheet = isset( $data['stylesheet'] ) ? $data['stylesheet'] : get_stylesheet();
-
+		
+		// delete all layout from custom post type for this theme
+		Upfront_Server_PageTemplate::get_instance()->delete_all_theme_templates();
+		
+		// delete from options table (previous implementation)
 		global $wpdb;
 		$theme_key = $wpdb->esc_like(Upfront_Model::get_storage_key()) . '%';
 		$stylesheet_key = $wpdb->esc_like($stylesheet) . '%';
