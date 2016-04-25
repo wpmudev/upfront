@@ -6766,7 +6766,7 @@
 				var request = Upfront.Util.post({action: "upfront_list_google_fonts"});
 
 				// We're gonna pipe response since we need to convert it to fonts collection first.
-				request = request.pipe(
+				request = request.then(
 					function(response) {
 						fonts = new Fonts_Collection(response.data);
 						// Return collection instead original response
