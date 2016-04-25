@@ -145,7 +145,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			;
 			$(this).css('height', height);
 			// Make sure image is loaded first
-			$('<img>').attr('src', $img.attr('src')).load(function(){
+			$('<img>').attr('src', $img.attr('src')).on('load', function(){
 				if ( $(this).attr('data-resize') == "1" ) {
 					img.src = $img.attr('src');
 					img_h = img.height;
