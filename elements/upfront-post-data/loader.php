@@ -42,9 +42,11 @@ class Upfront_Post_Data extends Upfront_Server {
 		require_once (dirname(__FILE__) . '/lib/class_upfront_post_data_data.php');
 		require_once (dirname(__FILE__) . '/lib/class_upfront_post_data_part_view.php');
 		require_once (dirname(__FILE__) . '/lib/class_upfront_post_data_presets_server.php');
+		require_once (dirname(__FILE__) . '/lib/class_upfront_post_data_l10n_server.php');
 		require_once (dirname(__FILE__) . '/lib/class_upfront_post_data_frontend_view.php');
 
 		Upfront_PostData_Elements_Server::serve();
+		Upfront_PostData_L10n_Server::serve();
 
 		upfront_add_layout_editor_entity('upostdata', upfront_relative_element_url('js/post-data', __FILE__));
 		upfront_add_element_style('upfront-post-data', array('css/public.css', __FILE__));
@@ -53,7 +55,6 @@ class Upfront_Post_Data extends Upfront_Server {
 		}
 
 		add_filter('upfront_data', array('Upfront_Post_Data_Data', 'add_js_defaults'));
-		add_filter('upfront_l10n', array('Upfront_Post_Data_Data', 'add_l10n_strings'));
 
 		upfront_add_ajax('upfront_post-data-load', array($this, "load_post"));
 

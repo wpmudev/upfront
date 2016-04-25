@@ -2,40 +2,41 @@ define([
 	'elements/upfront-post-data/js/panel-abstractions',
 	'text!elements/upfront-post-data/tpl/preset-styles/post_data.html',
 ], function (Panel, template) {
+	var l10n = Upfront.Settings.l10n.post_data_element;
 
 	var Modules = {};
 	Modules.template = template;
 
 	Modules.part_date_posted = Panel.Toggleable.extend({
-		title: "Date posted",
+		title: l10n.post.date_part_title,
 		data_part: 'date_posted',
 		get_fields: function () {
 			return [
 				{
 					type: "Select",
-					label: "Date Format",
+					label: l10n.post.date_format,
 					multiple: false,
 					property: "predefined_date_format",
 					values: [
-						{ label: "WordPress date", value: "wp_date" },
-						{ label: "30 Jan 2015", value: "d M Y" },
-						{ label: "Jan 30 2015", value: "M d Y" },
-						{ label: "30 01 2015", value: "d m Y" },
-						{ label: "01 30 2015", value: "m d Y" },
-						{ label: "Custom PHP Format", value: "0" },
+						{ label: l10n.post.wp_date, value: "wp_date" },
+						{ label: l10n.post.dMY, value: "d M Y" },
+						{ label: l10n.post.MdY, value: "M d Y" },
+						{ label: l10n.post.dmY, value: "d m Y" },
+						{ label: l10n.post.mdY, value: "m d Y" },
+						{ label: l10n.post.custom_format, value: "0" },
 					],
 					default_value: "wp_date"
 				},
 				{
 					type: "Text",
-					label: "PHP Format",
+					label: l10n.post.php_format,
 					className: 'php_date_format',
 					label_style: 'inline',
 					property: "date_posted_format"
 				},
 				{
 					type: "Button",
-					label: "Reference",
+					label: l10n.post.reference,
 					className: 'php_date_reference',
 					compact: true,
 					on_click: function (e) {
@@ -78,10 +79,10 @@ define([
 		}
 	});
 
-	Modules.part_title = Panel.Toggleable.extend({ title: "Title", data_part: 'title' });
+	Modules.part_title = Panel.Toggleable.extend({ title: l10n.post.title_part_title, data_part: 'title' });
 	
 	Modules.part_content = Panel.Toggleable.extend({
-		title: "Contents",
+		title: l10n.post.content_part_title,
 		data_part: 'content',
 		get_fields: function () {
 			var grid_size = Upfront.Settings.LayoutEditor.Grid.size || 24,
@@ -98,7 +99,7 @@ define([
 */
 				{
 					type: "Number",
-					label: "Left indent",
+					label: l10n.post.left_indent,
 					label_style: 'inline',
 					min: 0,
 					max: half_grid,
@@ -108,7 +109,7 @@ define([
 				},
 				{
 					type: "Number",
-					label: "Right indent",
+					label: l10n.post.right_indent,
 					label_style: 'inline',
 					min: 0,
 					max: half_grid,
@@ -120,17 +121,17 @@ define([
 					type: "Checkboxes",
 					property: "trigger_splitters",
 					default_value: 0,
-					values: [{ label: 'Convert 3 Returns into Divider', value: '1' }]
+					values: [{ label: l10n.post.returns_into_dividers, value: '1' }]
 				},
 				{
 					type: "Checkboxes",
 					property: "allow_splitting",
 					default_value: 0,
-					values: [{ label: 'Allow content splitting', value: '1' }]
+					values: [{ label: l10n.post.allow_splitting, value: '1' }]
 				},
 				{
 					type: "Number",
-					label: "Content part",
+					label: l10n.post.content_part,
 					default_value: 0,
 					min: 0,
 					label_style: 'inline',
