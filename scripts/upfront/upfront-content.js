@@ -184,17 +184,18 @@ define("content", deps, function(postTpl, ContentTools) {
 				is_auto_draft = status === "auto-draft",
 				post_name = this.post.get("post_name"),
 				$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
-				loading = new Upfront.Views.Editor.Loading({
-					loading: loadingMsg,
-					done: Upfront.Settings.l10n.global.content.here_we_are,
-					fixed: true
-				}),
+				//loading = new Upfront.Views.Editor.Loading({
+				//	loading: loadingMsg,
+				//	done: Upfront.Settings.l10n.global.content.here_we_are,
+				//	fixed: true
+				//}),
 				postUpdated = false
 			;
 
 			if ( !is_auto_draft ) {
-				loading.render();
-				$main.append(loading.$el);
+				// We dont need loading anymore
+				//loading.render();
+				//$main.append(loading.$el);
 			} else {
 				status = "draft";
 			}
@@ -243,7 +244,7 @@ define("content", deps, function(postTpl, ContentTools) {
 				me.post.permalink = result.data.permalink;
 				if ( metaUpdated ) {
 					if( !is_auto_draft ) {
-						loading.done();
+						//loading.done();
 						Upfront.Views.Editor.notify(successMsg);
 						me.stopEditContents();
 						me.trigger('post:saved');
@@ -256,7 +257,7 @@ define("content", deps, function(postTpl, ContentTools) {
 				me.post.meta.save().done(function(){
 					if ( postUpdated ) {
 						if( !is_auto_draft ) {
-							loading.done();
+							//loading.done();
 							Upfront.Views.Editor.notify(successMsg);
 							me.stopEditContents();
 							me.trigger('post:saved');

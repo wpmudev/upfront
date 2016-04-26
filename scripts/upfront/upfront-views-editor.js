@@ -756,7 +756,7 @@
 				this.$el.html(l10n.trash);
 			},
 			on_click: function () {
-				Upfront.Events.trigger("command:layout:publish");
+				Upfront.Events.trigger("command:layout:trash");
 			}
 		});
 
