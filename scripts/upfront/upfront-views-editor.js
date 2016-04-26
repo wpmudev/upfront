@@ -1931,7 +1931,7 @@
 				this.settings = _([]);
 				var self = this;
 
-				if ( !Upfront.Views.PostDataEditor || Upfront.Views.PostDataEditor.postId != this.getPostId() && !_.isUndefined( Upfront.Content.PostEditor ) ){
+				if ( !Upfront.Views.PostDataEditor && typeof Upfront.Content !== "undefined" ){
 					Upfront.Views.PostDataEditor = new Upfront.Content.PostEditor({
 						editor_id: 'this_post_' + this.getPostId(),
 						post_id: this.getPostId(),
@@ -1961,6 +1961,12 @@
 			},
 			on_render: function () {
 				var self = this;
+
+				if (typeof Upfront.Events.PostBox === "undefined") {
+					if (typeof Upfront.Views.PostDataEditor.contentEditor !== "undefined" && Upfront.Views.PostDataEditor.contentEditor !== false) {
+						Upfront.Events.PostBox = Upfront.Views.PostDataEditor.contentEditor.prepareBox();
+					}
+				}
 
 				if(Upfront.Views.PostDataEditor && Upfront.Events.PostBox) {
 					self.append_box(Upfront.Events.PostBox);
