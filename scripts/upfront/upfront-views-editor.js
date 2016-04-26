@@ -1929,15 +1929,8 @@
 			initialize: function (opts) {
 				this.options = opts;
 				this.settings = _([]);
-			},
-			get_name: function () {
-				return 'post_details';
-			},
-			get_title: function () {
-				return "Post Details";
-			},
-			on_render: function () {
 				var self = this;
+
 				if ( !Upfront.Views.PostDataEditor || Upfront.Views.PostDataEditor.postId != this.getPostId() && !_.isUndefined( Upfront.Content.PostEditor ) ){
 					Upfront.Views.PostDataEditor = new Upfront.Content.PostEditor({
 						editor_id: 'this_post_' + this.getPostId(),
@@ -1947,20 +1940,31 @@
 					Upfront.Events.trigger("editor:post_editor:created", Upfront.Views.PostDataEditor);
 				}
 
-				if(Upfront.Views.PostDataEditor.contentEditor) {
-					self.append_box(Upfront.Views.PostDataEditor.contentEditor);
-				}
-
 				this.listenTo(Upfront.Views.PostDataEditor, 'loaded', function(contentEditor) {
-					self.append_box(contentEditor);
+					Upfront.Events.PostBox = contentEditor.prepareBox();
+					self.append_box();
 				});
 
 				this.listenTo(Upfront.Views.PostDataEditor, 'post:saved', function() {
-					if(typeof Upfront.Views.PostDataEditor !== "undefined") {
-						self.append_box(Upfront.Views.PostDataEditor.contentEditor);
+					if(typeof Upfront.Events.PostBox !== "undefined") {
+						self.append_box();
 					}
 				});
+
 				this.editor = Upfront.Views.PostDataEditor;
+			},
+			get_name: function () {
+				return 'post_details';
+			},
+			get_title: function () {
+				return "Post Details";
+			},
+			on_render: function () {
+				var self = this;
+
+				if(Upfront.Views.PostDataEditor && Upfront.Events.PostBox) {
+					self.append_box(Upfront.Events.PostBox);
+				}
 			},
 			
 			getPostId: function() {
@@ -1977,9 +1981,9 @@
 				return postId;
 			},
 			
-			append_box: function (contentEditor) {
+			append_box: function () {
 				var me = this,
-					boxEl = contentEditor.prepareBox();
+				boxEl = Upfront.Events.PostBox;
 
 				setTimeout(function () {
 					me.$el.empty();

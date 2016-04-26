@@ -39,7 +39,7 @@ var Box = Backbone.View.extend({
         //Upfront.Events.trigger('upfront:element:edit:start', 'write', this.post);
 
         Upfront.Events.on("upfront:element:edit:stop", this.element_stop_prop, this);
-		
+
 		this.listenTo(Upfront.Events, "command:layout:trash", this.trash, this);
 		this.listenTo(Upfront.Events, "command:layout:save", this.publish, this);
     },
