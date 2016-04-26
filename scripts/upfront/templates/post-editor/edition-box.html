@@ -53,18 +53,34 @@
         </div>
     </script>
 
-    <script type="text/template" id="upfront-term-list-tpl">
+<script type="text/template" id="upfront-term-list-tpl">
         <label id="post-categories-display-label">{{labels.name}}:</label>
+        <a href="#" class="ueditor-edit-categories ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
         <p id="post-category-display" class="ueditor-previous-data ueditor-previous-data-toggle ueditor-previous-data-small">
             {{postTerms.pluck("name").join(", ").trim()}}
         </p>
-        <div id="upfront-taxonomy-list" class="upfront-scroll-panel">
-			{[ _.each( allTerms, function(term, idx){ ]}
-			{{ termTemplate({term: term, termTemplate: termTemplate, termId: term.get('term_id'), postTerms: postTerms}) }}
-			{[ }); ]}
-		</div>
-		
-		<div class="upfront-taxonomy-chosen"></div>
+        <div class="ueditor-togglable">
+            <div id="upfront-taxonomy-list" class="upfront-scroll-panel">
+                {[ _.each( allTerms, function(term, idx){ ]}
+                {{ termTemplate({term: term, termTemplate: termTemplate, termId: term.get('term_id'), postTerms: postTerms}) }}
+                {[ }); ]}
+            </div>
+            <a href="#" id="add-new-taxonomies-btn">+ {{Upfront.Settings.l10n.global.content.add_new.replace("%s", labels.singular_name)}}</a>
+            <div id="upfront-taxonomy-add" class="ueditor-togglable-child">
+                <input type="text" class="upfront-tax-new_term" placeholder="{{Upfront.Settings.l10n.global.content.enter.replace('%s', labels.singular_name)}}" />
+                <select id="upfront-taxonomy-parents">
+                    <option value="0">-- {{Upfront.Settings.l10n.global.content.parent_category}} --</option>
+                    {[ _(allTerms).each(function(term, idx) { ]}
+                    <option value="{{ term.get('term_id') }}">{{ term.get('name') }}</option>
+                    {[ }) ]}
+                </select>
+                <button id="upfront-tax-add_term" class="ueditor-button-small"> {{Upfront.Settings.l10n.global.content.add_new}} {{ labels.singular_name }}</button>
+            </div>
+            <p>
+                <a href="#" class="ueditor-save-post-hie-tax  ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
+                <a href="#" class="ueditor-cancel-hie-tax  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
+            </p>
+        </div>
     </script>
 
     <script type="text/template" id="upfront-term-single-tpl">
