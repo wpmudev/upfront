@@ -1816,14 +1816,11 @@
 					new SidebarPanel_Settings_Section_PostDetails({"model": this.model, "postId": opts.postId}),
 				]);
 
-				post = new Upfront.Models.Post({ID: opts.postId});
-				post.fetch().done(function(response){
-					if(me._post_type_has_taxonomy('post_tag', post) && me._post_type_has_taxonomy('category', post)) {
-						me.sections.push(new SidebarPanel_Settings_Section_PostTagCategory({"model": me.model, "postId": opts.postId, "post": post}));
-					} else {
-						me.sections.push(new SidebarPanel_Settings_Section_PageTemplate({"model": me.model, "postId": opts.postId, "post": post}));
-					}
-				});
+				if ( Upfront.Application.is_single( "post" ) ) {
+					me.sections.push(new SidebarPanel_Settings_Section_PostTagCategory({"model": me.model, "postId": opts.postId}));
+				} else if ( Upfront.Application.is_single( "page" ) ) {
+					me.sections.push(new SidebarPanel_Settings_Section_PageTemplate({"model": me.model, "postId": opts.postId}));
+				}
 
 				Upfront.Events.on("command:layout:save", this.on_save, this);
 				Upfront.Events.on("command:layout:save_as", this.on_save, this);
@@ -1835,7 +1832,11 @@
 				Upfront.Events.on("layout:render", this.apply_state_binding, this);
 			},
 			get_title: function () {
-				return l10n.post_settings;
+				if ( Upfront.Application.is_single( "post" ) ) {
+					return l10n.post_settings;
+				} else if ( Upfront.Application.is_single( "page" ) ) {
+					return l10n.page_settings;
+				}
 			},
 			on_save: function () {
 				var regions = this.model.get('regions');
@@ -1893,18 +1894,22 @@
 				var me = this;
 				
 				if(!this.options.call) {
-					this.renderTaxonomyEditor(this.options.postId, 'category');
-					this.renderTaxonomyEditor(this.options.postId, 'post_tag');
+					post = new Upfront.Models.Post({ID: this.options.postId});
+					post.fetch().done(function(response){
+						this.renderTaxonomyEditor(this.options.postId, 'category', post);
+						this.renderTaxonomyEditor(this.options.postId, 'post_tag', post);
+					});
+					
 					this.options.call = true;
 				}
 			},
-			renderTaxonomyEditor: function(postId, tax){
+			renderTaxonomyEditor: function(postId, tax, post){
 				var self = this,
 					tax = typeof tax === "undefined" ? "category" : tax,
 					termsList = new Upfront.Collections.TermList([], {postId: postId, taxonomy: tax})
 				;
 
-				if (!this._post_type_has_taxonomy(tax, this.options.post)) {
+				if (!this._post_type_has_taxonomy(tax, post)) {
 					return false;
 				}
 
@@ -1957,7 +1962,11 @@
 				return 'post_details';
 			},
 			get_title: function () {
-				return "Post Details";
+				if ( Upfront.Application.is_single( "post" ) ) {
+					return l10n.post_settings;
+				} else if ( Upfront.Application.is_single( "page" ) ) {
+					return l10n.page_settings;
+				}
 			},
 			on_render: function () {
 				var self = this;
