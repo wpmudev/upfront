@@ -93,6 +93,16 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 		return $this->_data->get_all_page_templates();
 	}
 	
+	public function parse_theme_templates () {
+		$results = array();
+		$storage_key = Upfront_Layout::get_storage_key();
+		$templates = $this->get_all_theme_templates();
+		foreach ($templates as $template) {
+			$results[$template->post_name] = preg_replace('/^' . preg_quote($storage_key, '/') . '-?/', '', $template->post_name);
+		}
+		return wp_parse_args($results, Upfront_Layout::get_db_layouts());
+	}
+	
 	/**
 	 * This fires in style parsing AJAX request and overrides the used layout.
 	 *

@@ -193,15 +193,7 @@ class Upfront_Ajax extends Upfront_Server {
 		$this->_out(new Upfront_JsonResponse_Success($response));
 	}
 	
-	function load_page_layout () {
-		// TODO: 
-		// - some styles on UF editor not rendered on FE
-		// - post FE should display what's in UF editor
-		// - new page not yet covered
-		// - take care build preview
-		// - update reset cache
-		// - update reset theme
-		
+	function load_page_layout () {		
 		$layout_ids = $_POST['data'];
 		$storage_key = $_POST['storage_key'];
 		$stylesheet = $_POST['stylesheet'];

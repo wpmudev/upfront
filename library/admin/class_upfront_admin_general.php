@@ -99,7 +99,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 						</p>
 						<p class="left">
 							<?php
-							$db_layouts = Upfront_Layout::get_db_layouts();
+							$db_layouts = Upfront_Server_PageTemplate::get_instance()->parse_theme_templates();
 							if( $db_layouts ): ?>
 								<select class="upfront-layouts-list">
 									<option value="0"><?php esc_html_e("Please select layout to reset", Upfront::TextDomain); ?></option>
