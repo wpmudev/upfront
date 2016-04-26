@@ -1963,7 +1963,7 @@
 				var self = this;
 
 				if (typeof Upfront.Events.PostBox === "undefined") {
-					if (typeof Upfront.Views.PostDataEditor.contentEditor !== "undefined" && Upfront.Views.PostDataEditor.contentEditor !== false) {
+					if (typeof Upfront.Views.PostDataEditor !== "undefined" && Upfront.Views.PostDataEditor.contentEditor !== false) {
 						Upfront.Events.PostBox = Upfront.Views.PostDataEditor.contentEditor.prepareBox();
 					}
 				}
