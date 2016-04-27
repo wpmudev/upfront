@@ -672,6 +672,132 @@ var ContentEditorTaxonomy_Flat = PostSectionView.extend({
 });
 
 
+var PageTemplateEditor = PostSectionView.extend({
+    "className": "upfront-page-template-editor",
+    pageTemplateListTpl: _.template($(editionBox_tpl).find('#upfront-page-template-list-tpl').html()),
+    // pageTemplateTpl: _.template($(editionBox_tpl).find('#upfront-page-template-tpl').html()),
+    changed: false,
+    updateTimer: false,
+    events: _.extend({}, PostSectionView.prototype.events, {
+			
+    }),
+    initialize: function(options){
+        this.collection.on('add remove', this.update, this);
+    },
+    render: function () {
+        var me = this;
+				
+				this.$el.html(this.pageTemplateListTpl({
+            
+        }));
+				
+				var selectAddPageTemplate = this.chosen_field();
+				this.pageTemplateSelect = new selectAddPageTemplate({
+					model: me.model,
+					label: l10n.global.content.tags_label,
+					values: '',
+					placeholder: l10n.global.content.tags_placeholder,
+					change: function(value) {
+						
+					}
+				});
+				
+				
+				
+				
+				this.pageTemplateSelect.render();
+				
+				// Attach chosen select to template
+				// this.$el.find('.upfront-page-template-chosen').html(this.pageTemplateSelect.$el);
+				
+        /* this.allTerms.each(function (term, idx) {
+            term.children = [];
+            if(me.collection.get(term.get('term_id')))
+                currentTerms.add(term);
+            else
+                otherTerms.add(term);
+        });
+
+        this.$el.html(this.termListTpl({
+            currentTerms: currentTerms,
+            otherTerms: otherTerms,
+            termTemplate: this.pageTemplateTpl,
+            labels: this.collection.taxonomyObject.labels
+        }));
+		
+				// Get chosen select
+				var selectAddTaxonomy = this.chosen_field();
+				var termsChosen = this.normalize_tax_object(otherTerms);
+				
+				// Init chosen select
+				this.taxonomySelect = new selectAddTaxonomy({
+					model: this.model,
+					label: l10n.global.content.tags_label,
+					values: termsChosen,
+					placeholder: l10n.global.content.tags_placeholder,
+					change: function(value) {
+						
+					}
+				});
+				this.taxonomySelect.render(); */
+				
+
+				// Attach chosen select to template
+				// this.$el.find('.upfront-taxonomy-chosen').html(this.taxonomySelect.$el);
+    },
+	
+	normalize_tax_object: function(otherTerms) {
+		var termsChosen = {};
+		otherTerms.each(function (term, idx) {
+			termsChosen[term.get('term_id')] = { label: term.get('name'), value: term.get('term_id') }
+		});
+		
+		return termsChosen;
+	},
+	
+	chosen_field: function() {
+		var chosenField = Upfront.Views.Editor.Field.Chosen_Select.extend({
+			className: 'select-page-template-chosen',
+			render: function() {
+				Upfront.Views.Editor.Field.Chosen_Select.prototype.render.call(this);
+				var me = this;
+				var selectWidth = '230px';
+
+				this.$el.find('.upfront-chosen-select').chosen({
+					search_contains: true,
+					width: selectWidth,
+					disable_search: false,
+				});
+
+				var html = ['<a href="#" title="'+ l10n.global.content.add_label +'" class="upfront-page-template-add">'+ l10n.global.content.add_label +'</a>'];
+				this.$el.find('.chosen-search').append(html.join(''));
+
+				this.$el.on('click', '.upfront-page-template-add', function(e) {
+					e.preventDefault();
+					var page_template_value = me.$el.find('.chosen-search input').val();
+					// me.trigger('page_template:new', page_template_value.trim());
+				});
+
+				return this;
+			},
+			on_change: function() {
+				this.$el.find('.chosen-drop').css('display', 'none');
+				this.trigger('changed');
+				// this.trigger('page_template:changed', this.get_value());
+			},
+		});
+		
+		return chosenField;
+	},
+
+	update: function(e){
+			this.collection.save();
+			Upfront.Events.trigger("editor:post:tax:updated", this.collection, this.tax);
+			this.render();
+	}
+});
+
+
 
 var PostUrlEditor = PostSectionView.extend({
     hasDefinedSlug : false,
@@ -920,7 +1046,8 @@ var PostScheduleView = PostSectionView.extend({
 return {
     Box: Box,
 	ContentEditorTaxonomy_Hierarchical: ContentEditorTaxonomy_Hierarchical,
-	ContentEditorTaxonomy_Flat: ContentEditorTaxonomy_Flat
+	ContentEditorTaxonomy_Flat: ContentEditorTaxonomy_Flat,
+	PageTemplateEditor: PageTemplateEditor
 }
 
 });})(jQuery);

@@ -116,14 +116,22 @@ class Upfront_PageTemplate {
 	/**
 	 * Fetches all page templates for current active theme
 	 */
-	public function get_all_page_templates () {
+	public function get_all_page_templates ($load = 'all') {
 		global $wpdb;
 		$theme_key = $wpdb->esc_like(Upfront_Model::get_storage_key()) . '%';
 		
-		$sql = $wpdb->prepare("SELECT * FROM {$wpdb->posts} WHERE post_name LIKE %s AND post_status = %s", 
-			$theme_key, self::LAYOUT_TEMPLATE_STATUS);
+		if ( $load == 'all' ) {
+			$filter_dev = "";
+		} elseif ( $load == self::LAYOUT_TEMPLATE_DEV_TYPE ) {
+			$filter_dev = " post_type = '". self::LAYOUT_TEMPLATE_DEV_TYPE ."' AND";
+		} else {
+			$filter_dev = " post_type = '". self::LAYOUT_TEMPLATE_TYPE ."' AND";
+		}
 		
-		return $wpdb->get_results($sql, OBJECT);
+		$sql = "SELECT * FROM {$wpdb->posts} WHERE {$filter_dev} post_name LIKE %s AND post_status = %s";
+		$query = $wpdb->prepare($sql, $theme_key, self::LAYOUT_TEMPLATE_STATUS);
+		
+		return $wpdb->get_results($query, OBJECT);
 	}
 	
 	/**

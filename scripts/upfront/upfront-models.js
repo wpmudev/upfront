@@ -1441,6 +1441,18 @@ var _alpha = "alpha",
 			return this.meta.fetch();
 		}
 	}),
+	
+	PageTemplate = WPModel.extend({
+		modelName: 'template',
+		defaults: {
+			
+		},
+		
+		initialize: function(model, options){
+			var me = this;
+		},
+
+	}),
 
 	PostList = WPCollection.extend({
 		collectionName: 'post_list',
@@ -1462,6 +1474,19 @@ var _alpha = "alpha",
 					this.withMeta = options.withMeta;
 				if(options.withAuthor)
 					this.withAuthor = options.withAuthor;
+			}
+		}
+	});
+	
+	PageTemplateList = WPCollection.extend({
+		collectionName: 'page_templates',
+		model: PageTemplate,
+		postId: false,
+		fetchAttributes: ['postId'],
+		initialize: function(models, options){
+			if(options){
+				if(options.postId)
+					this.postId = options.postId;
 			}
 		}
 	});
@@ -1754,7 +1779,8 @@ return {
       "MetaList": MetaList,
       "PostList": PostList,
       "TermList": TermList,
-      "ImageVariants" : ImageVariants
+      "ImageVariants" : ImageVariants,
+      "PageTemplateList" : PageTemplateList
     }
   };
 });

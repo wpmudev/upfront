@@ -387,6 +387,21 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		)));
 
 	}
+	
+	function fetch_page_templates($data){
+		$template_type = ( (int)$data['load_dev'] == 1 ) 
+			? Upfront_PageTemplate::LAYOUT_TEMPLATE_DEV_TYPE
+			: Upfront_PageTemplate::LAYOUT_TEMPLATE_TYPE
+		;
+		
+		$templates = Upfront_Server_PageTemplate::get_instance()->get_all_theme_templates($template_type);
+		
+		// TODO: append layouts saved on options table (from old implementation)
+	
+		$this->_out(new Upfront_JsonResponse_Success(array(
+			"results" => $templates
+		)));
+	}
 
 	function parse_single_meta($metadata){
 		$parsed = array();

@@ -743,6 +743,9 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 					'save' => __('Save', 'upfront'),
 				),
 				'advanced_padding' => __('Advanced Padding', 'upfront'),
+				'label_page_template' => __('Templates:', 'upfront'),
+				'label_page_details' => __('Page Details', 'upfront'),
+				'label_post_details' => __('Post Details', 'upfront'),
 			),
 		);
 		return !empty($key)

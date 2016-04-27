@@ -1812,13 +1812,15 @@
 			initialize: function (opts) {
 				var me = this;
 				this.active = true;
-				this.sections = _([
-					new SidebarPanel_Settings_Section_PostDetails({"model": this.model, "postId": opts.postId}),
-				]);
-
+				
 				post = new Upfront.Models.Post({ID: opts.postId});
+				
+				this.sections = _([
+					new SidebarPanel_Settings_Section_PostDetails({"model": me.model, "postId": opts.postId, "post": post})
+				]);
+				
 				post.fetch().done(function(response){
-					if(me._post_type_has_taxonomy('post_tag', post) && me._post_type_has_taxonomy('category', post)) {
+					if( post.get("post_type") == 'post' ) {
 						me.sections.push(new SidebarPanel_Settings_Section_PostTagCategory({"model": me.model, "postId": opts.postId, "post": post}));
 					} else {
 						me.sections.push(new SidebarPanel_Settings_Section_PageTemplate({"model": me.model, "postId": opts.postId, "post": post}));
@@ -1864,16 +1866,38 @@
 		var SidebarPanel_Settings_Section_PageTemplate = SidebarPanel_Settings_Section.extend({
 			initialize: function (opts) {
 				this.options = opts;
+				this.options.call = false;
 				this.settings = _([]);
 			},
 			get_name: function () {
 				return 'templates';
 			},
 			get_title: function () {
-				return "Templates";
+				return l10n.label_page_template;
 			},
 			on_render: function () {
 				var me = this;
+				
+				if(!this.options.call) {
+					this.renderPageTemplateEditor(this.options.postId, 'category');
+					this.options.call = true;
+				}
+				
+				
+			},
+			renderPageTemplateEditor: function(postId, tax){
+				var me = this,
+					templateList = new Upfront.Collections.PageTemplateList([], {postId: postId}),
+					load_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 )
+				;
+				
+				templateList.fetch({load_dev: load_dev}).done(function(response){
+					var template_editor_view = new PostEditorBox.PageTemplateEditor({collection: templateList});
+					template_editor_view.allPageTemplates = new Upfront.Collections.PageTemplateList(response.results);
+					template_editor_view.render();
+					me.$el.append(template_editor_view.$el);
+				});
+
 			}
 		});
 		
@@ -1934,7 +1958,10 @@
 				return 'post_details';
 			},
 			get_title: function () {
-				return "Post Details";
+				return ( this.options.post.get("post_type") == 'post' ) 
+					? l10n.label_post_details
+					: l10n.label_page_details
+				;
 			},
 			on_render: function () {
 				var self = this;
