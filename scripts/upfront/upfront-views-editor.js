@@ -1911,8 +1911,8 @@
 				if(!this.options.call) {
 					post = new Upfront.Models.Post({ID: this.options.postId});
 					post.fetch().done(function(response){
-						this.renderTaxonomyEditor(me.options.postId, 'category', post);
-						this.renderTaxonomyEditor(me.options.postId, 'post_tag', post);
+						me.renderTaxonomyEditor(me.options.postId, 'category', post);
+						me.renderTaxonomyEditor(me.options.postId, 'post_tag', post);
 					});
 					
 					this.options.call = true;
