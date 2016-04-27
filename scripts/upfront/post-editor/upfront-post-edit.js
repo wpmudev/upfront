@@ -677,14 +677,30 @@ var PageTemplateEditor = PostSectionView.extend({
     }),
     initialize: function(options){
         this.collection.on('add remove', this.update, this);
-				this.label = options.label;
+		this.label = options.label;
     },
     render: function () {
         var me = this;
 				
-				this.$el.html(this.pageTemplateListTpl({
+		this.$el.html(this.pageTemplateListTpl({
             label: me.label
         }));
+		
+		// Get chosen select
+		var selectTemplate = this.chosen_field();
+		var templatesChosen = this.normalize_tax_object(this.allPageTemplates);
+
+		// Init chosen select
+		this.taxonomySelect = new selectTemplate({
+			model: this.model,
+			label: l10n.global.content.category_label,
+			values: templatesChosen,
+			placeholder: l10n.global.content.category_placeholder,
+			change: function(value) {
+				//me.model.set_property('preset', this.get_value());
+			}
+		});
+		this.taxonomySelect.render();
     },
 	
 	normalize_tax_object: function(otherTerms) {
