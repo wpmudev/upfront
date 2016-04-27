@@ -1866,6 +1866,7 @@
 			initialize: function (opts) {
 				this.options = opts;
 				this.settings = _([]);
+				this.options.call = false;
 			},
 			get_name: function () {
 				return 'templates';
@@ -1879,12 +1880,16 @@
 					load_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 )
 					;
 				
-				templateList.fetch({load_dev: load_dev}).done(function(response){
-					var template_editor_view = new PostEditorBox.PageTemplateEditor({collection: templateList, label: l10n.label_page_template});
-					template_editor_view.allPageTemplates = new Upfront.Collections.PageTemplateList(response.results);
-					template_editor_view.render();
-					me.$el.append(template_editor_view.$el);
-				});
+				if(!this.options.call) {
+					templateList.fetch({load_dev: load_dev}).done(function(response){
+						var template_editor_view = new PostEditorBox.PageTemplateEditor({collection: templateList, label: l10n.label_page_template});
+						template_editor_view.allPageTemplates = new Upfront.Collections.PageTemplateList(response.results);
+						template_editor_view.render();
+						me.$el.append(template_editor_view.$el);
+					});
+					
+					this.options.call = true;
+				}
 			}
 		});
 		
@@ -1946,7 +1951,7 @@
 				this.settings = _([]);
 				var self = this;
 
-				if ( !Upfront.Views.PostDataEditor && typeof Upfront.Content !== "undefined" ){
+				if ( !Upfront.Views.PostDataEditor && typeof Upfront.Content !== "undefined" && typeof Upfront.Content.PostEditor !== "undefined"){
 					Upfront.Views.PostDataEditor = new Upfront.Content.PostEditor({
 						editor_id: 'this_post_' + this.getPostId(),
 						post_id: this.getPostId(),
@@ -1967,8 +1972,6 @@
 				});
 
 				this.editor = Upfront.Views.PostDataEditor;
-				console.log(Upfront.Views.PostDataEditor);
-				console.log(this.editor);
 			},
 			get_name: function () {
 				return 'post_details';
@@ -4225,7 +4228,7 @@
 				"click .upfront-page-path-item": "handle_page_activate",
 				"change #upfront-page_template-select": "template_change",
 				"click .editaction.trash": "trash_page",
-			"click .editaction.edit": "handle_post_edit",
+				"click .editaction.edit": "handle_post_edit",
 				"click .editaction.view": "handle_post_view",
 			},
 			currentPage: false,
