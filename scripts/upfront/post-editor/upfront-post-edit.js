@@ -39,6 +39,9 @@ var Box = Backbone.View.extend({
         //Upfront.Events.trigger('upfront:element:edit:start', 'write', this.post);
 
         Upfront.Events.on("upfront:element:edit:stop", this.element_stop_prop, this);
+
+		this.listenTo(Upfront.Events, "command:layout:trash", this.trash, this);
+		this.listenTo(Upfront.Events, "command:layout:save", this.publish, this);
     },
 
     element_stop_prop: function () {
@@ -237,19 +240,12 @@ var Box = Backbone.View.extend({
         $(".upfront-module.fadedOut").fadeTo( "fast" , 1).removeClass("fadedOut");
         $(".ueditor-display-block").removeClass("ueditor-display-block");
     },
-    publish: function(e){
-
-        /*
-         if(this.currentStatus == 'draft') return this.saveDraft(e); // Why? This is just asking for problems...
-         */
-
-        e.preventDefault();
+    publish: function(){
         this.destroy();
 
         this.post.trigger('editor:publish');
 
         this.trigger('publish');
-
 
         Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
         Upfront.Events.trigger('upfront:post:edit:stop', 'write', this.post.toJSON());
@@ -274,8 +270,7 @@ var Box = Backbone.View.extend({
         this.remove();
     },
 
-    trash: function(e){
-        e.preventDefault();
+    trash: function(){
         if(confirm( l10n.global.content.delete_confirm.replace(/%s/, this.post.get('post_type')))){
             this.destroy();
             this.trigger('trash');
