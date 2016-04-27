@@ -1885,7 +1885,7 @@
 						var template_editor_view = new PostEditorBox.PageTemplateEditor({collection: templateList, label: l10n.label_page_template});
 						template_editor_view.allPageTemplates = new Upfront.Collections.PageTemplateList(response.results);
 						template_editor_view.render();
-						me.$el.append(template_editor_view.$el);
+						me.$el.append('asdasd');
 					});
 					
 					this.options.call = true;
@@ -1951,10 +1951,10 @@
 				this.settings = _([]);
 				var self = this;
 
-				if ( !Upfront.Views.PostDataEditor && typeof Upfront.Content !== "undefined" && typeof Upfront.Content.PostEditor !== "undefined"){
-					this.prepare_editor();
-				} else {
-					this.listenTo(Upfront.Events, 'editor:post_editor:loaded', this.prepare_editor);
+				if ( !Upfront.Views.PostDataEditor ) {
+					require(['content'], function() {
+						self.prepare_editor();
+					});	
 				}
 
 				this.listenTo(Upfront.Views.PostDataEditor, 'loaded', function(contentEditor) {
