@@ -117,10 +117,15 @@
         </div>
     </script>
 		
-		<script type="text/template" id="upfront-page-template-list-tpl">
-        <label id="page-template-display-label">Templates:</label>
+	<script type="text/template" id="upfront-page-template-list-tpl">
+		<label id="post-tags-display-label">{{ label }}:</label>
+		<div class="upfront-page-template-list-panel upfront-scroll-panel" id="upfront-page-template-list-current">
+		
 		</div>
-
+		
+		<div class="upfront-page-template-chosen"></div>
+	</script>
+		
     <script type="text/template" id="post-status-tpl">
         <label id="post-status-display-label" class="ueditor-icon-label">{{Upfront.Settings.l10n.global.content.status}}:</label>
         <span id="post-status-display" class="ueditor-previous-data">{{status.name}}</span>

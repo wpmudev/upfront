@@ -1871,10 +1871,20 @@
 				return 'templates';
 			},
 			get_title: function () {
-				return "Templates";
+				return l10n.label_page_template;
 			},
 			on_render: function () {
-				var me = this;
+				var me = this,
+					templateList = new Upfront.Collections.PageTemplateList([], {postId: this.options.postId}),
+					load_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 )
+					;
+				
+				templateList.fetch({load_dev: load_dev}).done(function(response){
+					var template_editor_view = new PostEditorBox.PageTemplateEditor({collection: templateList, label: l10n.label_page_template});
+					template_editor_view.allPageTemplates = new Upfront.Collections.PageTemplateList(response.results);
+					template_editor_view.render();
+					me.$el.append(template_editor_view.$el);
+				});
 			}
 		});
 		
@@ -1957,6 +1967,8 @@
 				});
 
 				this.editor = Upfront.Views.PostDataEditor;
+				console.log(Upfront.Views.PostDataEditor);
+				console.log(this.editor);
 			},
 			get_name: function () {
 				return 'post_details';

@@ -1482,13 +1482,23 @@ var _alpha = "alpha",
 		collectionName: 'page_templates',
 		model: PageTemplate,
 		postId: false,
+		templateObject: false,
 		fetchAttributes: ['postId'],
 		initialize: function(models, options){
 			if(options){
 				if(options.postId)
 					this.postId = options.postId;
 			}
+		},
+		fetch: function(options){
+			var me = this;
+			 return WPCollection.prototype.fetch.call(this, options)
+				.done(function(response){
+					me.templateObject = response.results;
+				})
+			;
 		}
+		
 	});
 
 	var Comment = WPModel.extend({

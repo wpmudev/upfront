@@ -670,7 +670,6 @@ var ContentEditorTaxonomy_Flat = PostSectionView.extend({
 var PageTemplateEditor = PostSectionView.extend({
     "className": "upfront-page-template-editor",
     pageTemplateListTpl: _.template($(editionBox_tpl).find('#upfront-page-template-list-tpl').html()),
-    // pageTemplateTpl: _.template($(editionBox_tpl).find('#upfront-page-template-tpl').html()),
     changed: false,
     updateTimer: false,
     events: _.extend({}, PostSectionView.prototype.events, {
@@ -678,67 +677,14 @@ var PageTemplateEditor = PostSectionView.extend({
     }),
     initialize: function(options){
         this.collection.on('add remove', this.update, this);
+				this.label = options.label;
     },
     render: function () {
         var me = this;
 				
 				this.$el.html(this.pageTemplateListTpl({
-            
+            label: me.label
         }));
-				
-				var selectAddPageTemplate = this.chosen_field();
-				this.pageTemplateSelect = new selectAddPageTemplate({
-					model: me.model,
-					label: l10n.global.content.tags_label,
-					values: '',
-					placeholder: l10n.global.content.tags_placeholder,
-					change: function(value) {
-						
-					}
-				});
-				
-				
-				
-				
-				this.pageTemplateSelect.render();
-				
-				// Attach chosen select to template
-				// this.$el.find('.upfront-page-template-chosen').html(this.pageTemplateSelect.$el);
-				
-        /* this.allTerms.each(function (term, idx) {
-            term.children = [];
-            if(me.collection.get(term.get('term_id')))
-                currentTerms.add(term);
-            else
-                otherTerms.add(term);
-        });
-
-        this.$el.html(this.termListTpl({
-            currentTerms: currentTerms,
-            otherTerms: otherTerms,
-            termTemplate: this.pageTemplateTpl,
-            labels: this.collection.taxonomyObject.labels
-        }));
-		
-				// Get chosen select
-				var selectAddTaxonomy = this.chosen_field();
-				var termsChosen = this.normalize_tax_object(otherTerms);
-				
-				// Init chosen select
-				this.taxonomySelect = new selectAddTaxonomy({
-					model: this.model,
-					label: l10n.global.content.tags_label,
-					values: termsChosen,
-					placeholder: l10n.global.content.tags_placeholder,
-					change: function(value) {
-						
-					}
-				});
-				this.taxonomySelect.render(); */
-				
-
-				// Attach chosen select to template
-				// this.$el.find('.upfront-taxonomy-chosen').html(this.taxonomySelect.$el);
     },
 	
 	normalize_tax_object: function(otherTerms) {
