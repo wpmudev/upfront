@@ -1952,12 +1952,9 @@
 				var self = this;
 
 				if ( !Upfront.Views.PostDataEditor && typeof Upfront.Content !== "undefined" && typeof Upfront.Content.PostEditor !== "undefined"){
-					Upfront.Views.PostDataEditor = new Upfront.Content.PostEditor({
-						editor_id: 'this_post_' + this.getPostId(),
-						post_id: this.getPostId(),
-						content_mode: 'post_content'
-					});
-					Upfront.Events.trigger("editor:post_editor:created", Upfront.Views.PostDataEditor);
+					this.prepare_editor();
+				} else {
+					this.listenTo(Upfront.Events, 'editor:post_editor:loaded', this.prepare_editor);
 				}
 
 				this.listenTo(Upfront.Views.PostDataEditor, 'loaded', function(contentEditor) {
@@ -1995,6 +1992,15 @@
 				if(Upfront.Views.PostDataEditor && Upfront.Events.PostBox) {
 					self.append_box(Upfront.Events.PostBox);
 				}
+			},
+			
+			prepare_editor: function () {
+				Upfront.Views.PostDataEditor = new Upfront.Content.PostEditor({
+					editor_id: 'this_post_' + this.getPostId(),
+					post_id: this.getPostId(),
+					content_mode: 'post_content'
+				});
+				Upfront.Events.trigger("editor:post_editor:created", Upfront.Views.PostDataEditor);
 			},
 			
 			getPostId: function() {

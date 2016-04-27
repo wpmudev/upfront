@@ -55,7 +55,8 @@ define("content", deps, function(postTpl, ContentTools) {
 			me.listenTo(me.contentEditor, 'change:date', me.changeDate);
 			me.listenTo(me.contentEditor, 'bar:date:updated', me.changeDate);
 		});
-
+		
+		Upfront.Events.trigger("editor:post_editor:loaded", Upfront.Views.PostDataEditor);
 		//this.getPostLayout();
 	};
 
