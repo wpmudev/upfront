@@ -231,7 +231,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'post_featured_image' => __('Post Featured Image', 'upfront'),
 				'edit_html_tpl' => __('Edit HTML template', 'upfront'),
 				'save_layout_nag' => __('This Post has some Layout Changes. Would you like to apply those changes to All Posts or just This Post?', 'upfront'),
-				'template_nag' => __('Your current layout has changes that are not saved in the Default Template. Clicking Update Template will apply those changes to Default Template (for future posts only).', 'upfront'),
+				'template_nag' => __('Your current layout has changes that are not saved in the Default Template. Clicking <strong>Update Template</strong> will apply those changes to Default Template (for future posts only).', 'upfront'),
 				'tags_cats_url' => __('Categories, Tags & URL', 'upfront'),
 				'no_tax_url' => __('Edit URL', 'upfront'),
 				'visibility' => __('Visibility:', 'upfront'),

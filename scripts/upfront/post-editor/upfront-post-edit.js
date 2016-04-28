@@ -691,7 +691,6 @@ var PageTemplateEditor = PostSectionView.extend({
 			// Get chosen select and type checkbox
 			var selectTemplate = this.chosen_field();
 			var templateOptions = this.get_options();
-			this.typeCheckbox = this.type_field();
 
 			// Init chosen select
 			this.templateSelect = new selectTemplate({
@@ -704,11 +703,9 @@ var PageTemplateEditor = PostSectionView.extend({
 			});
 
 			this.templateSelect.render();
-			this.typeCheckbox.render();
-			
+
 			// Attach chosen select and type checkbox to template
 			this.$el.find('.upfront-page-template-chosen').html(this.templateSelect.$el);
-			this.$el.find('.upfront-page-template-type').html(this.typeCheckbox.$el);
     },
 	
 	on_module_update: function(module) {
@@ -739,7 +736,14 @@ var PageTemplateEditor = PostSectionView.extend({
 			render: function() {
 				Upfront.Views.Editor.Field.Chosen_Select.prototype.render.call(this);
 				var me = this;
-				var selectWidth = '230px';
+				var selectWidth = '170px';
+				
+				this.typeCheckbox = this.type_field();
+				this.typeCheckbox.render();
+
+				setTimeout( function () {
+					me.$el.find('.chosen-drop').prepend(me.typeCheckbox.$el);
+				}, 200);
 
 				this.$el.find('.upfront-chosen-select').chosen({
 					search_contains: true,
@@ -765,26 +769,49 @@ var PageTemplateEditor = PostSectionView.extend({
 				string += '</optgroup>';
 				return string;
 			},
+			type_field: function() {
+				var typeField = new Upfront.Views.Editor.Field.Checkboxes({
+					label: l10n.global.views.label_show_templates + ':',
+					className: 'chosen-checkbox-filter',
+					default_value: ['pages','layouts'],
+					layout: 'horizontal-inline',
+					multiple: true,
+					values: [
+						{label: l10n.global.views.pages, value: 'pages'},
+						{label: l10n.global.views.layouts, value: 'layouts'}
+					],
+					change: function () {
+
+					}
+				});
+				return typeField;
+			},
+			openOptions: function(e) {
+				var me = this;
+				_.delay(function() { // Delay because opening animation causes wrong outerHeight results
+					var in_sidebar = me.$el.parents('#sidebar-ui').length,
+						in_settings = me.$el.parents('#element-settings-sidebar').length,
+						settingsTitleHeight = 44;
+
+					// Apply if select field is in sidebar or settings sidebar
+					if(in_sidebar == 1 || in_settings == 1) {
+						var select_dropdown = me.$el.find('.chosen-drop'),
+							select = select_dropdown.parent(),
+							dropDownTop = (select.offset().top - $('#element-settings-sidebar').offset().top) + select.height();
+						dropDownTop = dropDownTop + settingsTitleHeight;
+
+						select_dropdown.css("width", select.width());
+						select_dropdown.css('top', dropDownTop + "px");
+						select_dropdown.css('left', select.offset().left + "px");
+						select_dropdown.css('display', 'block');
+					}
+				}, 20);
+
+				me.$el.find('.chosen-drop').show();
+			},
 		});
 		
 		return chosenField;
-	},
-	
-	type_field: function() {
-		var typeField = new Upfront.Views.Editor.Field.Checkboxes({
-			label: l10n.global.views.label_show_templates + ':',
-			default_value: ['pages','layouts'],
-			layout: 'horizontal-inline',
-			multiple: true,
-			values: [
-				{label: l10n.global.views.pages, value: 'pages'},
-				{label: l10n.global.views.layouts, value: 'layouts'}
-			],
-			change: function () {
-				
-			}
-		});
-		return typeField;
 	},
 
 	update: function(e){
