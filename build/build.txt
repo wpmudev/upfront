@@ -67,6 +67,7 @@ text!upfront/templates/region_edit_panel.html
 text!upfront/templates/sidebar_settings_theme_colors.html
 text!upfront/templates/color_picker.html
 spectrum/spectrum.js
+upfront/upfront-content.js
 upfront/upfront-views-editor.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/behaviors/layout-editor.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/behaviors/dragdrop.js
@@ -83,7 +84,6 @@ upfront/objects/loading.js
 upfront/upfront-objects.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-media/insert-options-item-control.js
 upfront/upfront-media.js
-upfront/upfront-content.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/bg-settings/mixins.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/bg-settings/color-item.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/bg-settings/image-item.js

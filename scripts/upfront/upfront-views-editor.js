@@ -1965,7 +1965,7 @@
 
 				if ( !Upfront.Views.PostDataEditor ) {
 					require(['content'], function() {
-						self.prepare_editor();
+						setTimeout(self.prepare_editor(self));
 					});	
 				}
 
@@ -2006,10 +2006,10 @@
 				}
 			},
 			
-			prepare_editor: function () {
+			prepare_editor: function (me) {
 				Upfront.Views.PostDataEditor = new Upfront.Content.PostEditor({
-					editor_id: 'this_post_' + this.getPostId(),
-					post_id: this.getPostId(),
+					editor_id: 'this_post_' + me.getPostId(),
+					post_id: me.getPostId(),
 					content_mode: 'post_content'
 				});
 				Upfront.Events.trigger("editor:post_editor:created", Upfront.Views.PostDataEditor);
