@@ -687,9 +687,10 @@ var PageTemplateEditor = PostSectionView.extend({
 						label: me.label
 				}));
 			
-				// Get chosen select
+				// Get chosen select and type checkbox
 				var selectTemplate = this.chosen_field();
 				var templateOptions = this.normalize_template_object(this.allPageTemplates);
+				this.typeCheckbox = this.type_field();
 
 				// Init chosen select
 				this.templateSelect = new selectTemplate({
@@ -697,13 +698,15 @@ var PageTemplateEditor = PostSectionView.extend({
 					label: '',
 					values: templateOptions,
 					change: function(value) {
-						//me.model.set_property('preset', this.get_value());
+						
 					}
 				});
 				this.templateSelect.render();
+				this.typeCheckbox.render();
 				
-				// Attach chosen select to template
+				// Attach chosen select and type checkbox to template
 				this.$el.find('.upfront-page-template-chosen').html(this.templateSelect.$el);
+				this.$el.find('.upfront-page-template-type').html(this.typeCheckbox.$el);
     },
 	
 	normalize_template_object: function(templates) {
@@ -726,16 +729,7 @@ var PageTemplateEditor = PostSectionView.extend({
 				this.$el.find('.upfront-chosen-select').chosen({
 					search_contains: true,
 					width: selectWidth,
-					disable_search: false,
-				});
-
-				var html = ['<a href="#" title="'+ l10n.global.content.add_label +'" class="upfront-page-template-add">'+ l10n.global.content.add_label +'</a>'];
-				this.$el.find('.chosen-search').append(html.join(''));
-
-				this.$el.on('click', '.upfront-page-template-add', function(e) {
-					e.preventDefault();
-					var page_template_value = me.$el.find('.chosen-search input').val();
-					// me.trigger('page_template:new', page_template_value.trim());
+					disable_search: true,
 				});
 
 				return this;
@@ -743,11 +737,28 @@ var PageTemplateEditor = PostSectionView.extend({
 			on_change: function() {
 				this.$el.find('.chosen-drop').css('display', 'none');
 				this.trigger('changed');
-				// this.trigger('page_template:changed', this.get_value());
+				
 			},
 		});
 		
 		return chosenField;
+	},
+	
+	type_field: function() {
+		var typeField = new Upfront.Views.Editor.Field.Checkboxes({
+			label: l10n.global.views.label_show_templates + ':',
+			default_value: ['pages','layouts'],
+			layout: 'horizontal-inline',
+			multiple: true,
+			values: [
+				{label: l10n.global.views.pages, value: 'pages'},
+				{label: l10n.global.views.layouts, value: 'layouts'}
+			],
+			change: function () {
+				
+			}
+		});
+		return typeField;
 	},
 
 	update: function(e){
