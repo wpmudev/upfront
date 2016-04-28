@@ -672,44 +672,47 @@ var PageTemplateEditor = PostSectionView.extend({
     pageTemplateListTpl: _.template($(editionBox_tpl).find('#upfront-page-template-list-tpl').html()),
     changed: false,
     updateTimer: false,
+    allPageTemplates: false,
     events: _.extend({}, PostSectionView.prototype.events, {
 			
     }),
     initialize: function(options){
         this.collection.on('add remove', this.update, this);
-		this.label = options.label;
+				this.label = options.label;
     },
     render: function () {
         var me = this;
 				
-		this.$el.html(this.pageTemplateListTpl({
-            label: me.label
-        }));
-		
-		// Get chosen select
-		var selectTemplate = this.chosen_field();
-		var templatesChosen = this.normalize_tax_object(this.allPageTemplates);
+				this.$el.html(this.pageTemplateListTpl({
+						label: me.label
+				}));
+			
+				// Get chosen select
+				var selectTemplate = this.chosen_field();
+				var templateOptions = this.normalize_template_object(this.allPageTemplates);
 
-		// Init chosen select
-		this.taxonomySelect = new selectTemplate({
-			model: this.model,
-			label: l10n.global.content.category_label,
-			values: templatesChosen,
-			placeholder: l10n.global.content.category_placeholder,
-			change: function(value) {
-				//me.model.set_property('preset', this.get_value());
-			}
-		});
-		this.taxonomySelect.render();
+				// Init chosen select
+				this.templateSelect = new selectTemplate({
+					model: me.model,
+					label: '',
+					values: templateOptions,
+					change: function(value) {
+						//me.model.set_property('preset', this.get_value());
+					}
+				});
+				this.templateSelect.render();
+				
+				// Attach chosen select to template
+				this.$el.find('.upfront-page-template-chosen').html(this.templateSelect.$el);
     },
 	
-	normalize_tax_object: function(otherTerms) {
-		var termsChosen = {};
-		otherTerms.each(function (term, idx) {
-			termsChosen[term.get('term_id')] = { label: term.get('name'), value: term.get('term_id') }
+	normalize_template_object: function(templates) {
+		var templateOptions = {};
+		templates.each(function (template, idx) {
+			templateOptions[template.get('ID')] = { label: template.get('post_name'), value: template.get('ID') }
 		});
 		
-		return termsChosen;
+		return templateOptions;
 	},
 	
 	chosen_field: function() {

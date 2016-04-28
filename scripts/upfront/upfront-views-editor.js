@@ -1866,7 +1866,11 @@
 			initialize: function (opts) {
 				this.options = opts;
 				this.settings = _([]);
+				this.templates = _([]);
 				this.options.call = false;
+				this.is_rendered = false;
+				this.templateList = new Upfront.Collections.PageTemplateList([], {postId: this.options.postId});
+				this.load_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 );
 			},
 			get_name: function () {
 				return 'templates';
@@ -1875,20 +1879,28 @@
 				return l10n.label_page_template;
 			},
 			on_render: function () {
-				var me = this,
-					templateList = new Upfront.Collections.PageTemplateList([], {postId: this.options.postId}),
-					load_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 )
-					;
+				var me = this;
 				
-				if(!this.options.call) {
-					templateList.fetch({load_dev: load_dev}).done(function(response){
-						var template_editor_view = new PostEditorBox.PageTemplateEditor({collection: templateList, label: l10n.label_page_template});
-						template_editor_view.allPageTemplates = new Upfront.Collections.PageTemplateList(response.results);
-						template_editor_view.render();
-						me.$el.append('asdasd');
+				// fetching templates data from custom post type
+				if( !this.options.call ) {
+					this.templateList.fetch({load_dev: me.load_dev}).done(function(response){
+						me.templates = new Upfront.Collections.PageTemplateList(response.data.results);
 					});
-					
 					this.options.call = true;
+				}
+				
+				// append the PageTemplateEditor
+				if ( this.options.call && !this.is_rendered && Upfront.Views.PostDataEditor && Upfront.Events.PostBox ) {
+					var template_editor_view = new PostEditorBox.PageTemplateEditor({collection: me.templateList, label: l10n.label_page_template});
+					template_editor_view.allPageTemplates = me.templates;
+					template_editor_view.render();
+					
+					setTimeout(function () {
+						me.$el.empty();
+						me.$el.append(template_editor_view.$el);
+					}, 300);
+					
+					this.is_rendered = true;
 				}
 			}
 		});
