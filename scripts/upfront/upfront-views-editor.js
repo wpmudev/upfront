@@ -1893,6 +1893,7 @@
 				if ( this.options.call && !this.is_rendered && Upfront.Views.PostDataEditor && Upfront.Views.PostBox ) {
 					var template_editor_view = new PostEditorBox.PageTemplateEditor({collection: me.templateList, label: l10n.label_page_template});
 					template_editor_view.allPageTemplates = me.templates;
+					template_editor_view.allPageLayouts = me.templates;
 					template_editor_view.render();
 					
 					setTimeout(function () {

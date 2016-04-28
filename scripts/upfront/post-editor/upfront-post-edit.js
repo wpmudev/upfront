@@ -678,36 +678,51 @@ var PageTemplateEditor = PostSectionView.extend({
     }),
     initialize: function(options){
         this.collection.on('add remove', this.update, this);
-				this.label = options.label;
+		this.label = options.label;
+		this.listenTo(Upfront.Events, 'entity:module:update', this.on_module_update);
     },
     render: function () {
         var me = this;
 				
-				this.$el.html(this.pageTemplateListTpl({
-						label: me.label
-				}));
-			
-				// Get chosen select and type checkbox
-				var selectTemplate = this.chosen_field();
-				var templateOptions = this.normalize_template_object(this.allPageTemplates);
-				this.typeCheckbox = this.type_field();
+			this.$el.html(this.pageTemplateListTpl({
+					label: me.label
+			}));
+		
+			// Get chosen select and type checkbox
+			var selectTemplate = this.chosen_field();
+			var templateOptions = this.get_options();
+			this.typeCheckbox = this.type_field();
 
-				// Init chosen select
-				this.templateSelect = new selectTemplate({
-					model: me.model,
-					label: '',
-					values: templateOptions,
-					change: function(value) {
-						
-					}
-				});
-				this.templateSelect.render();
-				this.typeCheckbox.render();
-				
-				// Attach chosen select and type checkbox to template
-				this.$el.find('.upfront-page-template-chosen').html(this.templateSelect.$el);
-				this.$el.find('.upfront-page-template-type').html(this.typeCheckbox.$el);
+			// Init chosen select
+			this.templateSelect = new selectTemplate({
+				model: me.model,
+				label: '',
+				values: templateOptions,
+				change: function(value) {
+					
+				}
+			});
+
+			this.templateSelect.render();
+			this.typeCheckbox.render();
+			
+			// Attach chosen select and type checkbox to template
+			this.$el.find('.upfront-page-template-chosen').html(this.templateSelect.$el);
+			this.$el.find('.upfront-page-template-type').html(this.typeCheckbox.$el);
     },
+	
+	on_module_update: function(module) {
+		//console.log(module);
+	},
+	
+	get_options: function () {
+		var options = {
+			templates: this.normalize_template_object(this.allPageTemplates),
+			layouts: this.normalize_template_object(this.allPageLayouts)
+		}
+		
+		return options;
+	},
 	
 	normalize_template_object: function(templates) {
 		var templateOptions = {};
@@ -738,6 +753,17 @@ var PageTemplateEditor = PostSectionView.extend({
 				this.$el.find('.chosen-drop').css('display', 'none');
 				this.trigger('changed');
 				
+			},
+			get_value_html: function (value, index) {
+				var selected = '',
+					string = '';
+				
+				string += '<optgroup label="'+ index +'">';
+				_.each(value,  function(option){
+					string += '<option value="'+ option.value +'">'+ option.label +'</option>';
+				});
+				string += '</optgroup>';
+				return string;
 			},
 		});
 		
