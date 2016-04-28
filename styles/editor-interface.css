@@ -10617,6 +10617,45 @@ a.ueditor-select-option:hover {
   color: #607F99;
   border-radius: 3px; }
 
+#sidebar-ui .select-page-template-chosen .chosen-container .chosen-drop {
+  border-radius: 3px;
+  background-color: #f7fbff;
+  box-shadow: 0 0 5px 0 rgba(47, 71, 95, 0.5);
+  margin-top: -24px;
+  border: none;
+  width: 190px !important; }
+
+#sidebar-ui .select-page-template-chosen label {
+  font-family: Verdana;
+  font-size: 11px;
+  color: #2f475f;
+  text-transform: uppercase; }
+
+#sidebar-ui .upfront-page-template-description {
+  opacity: 0.8;
+  font-family: Open Sans;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #2f475f; }
+
+#sidebar-ui .select-page-template-chosen .group-result {
+  font-family: Open Sans;
+  font-weight: bold;
+  font-size: 11px;
+  color: #85a9cc;
+  text-transform: uppercase;
+  border-top: 1px solid rgba(184, 207, 230, 0.3);
+  margin-top: 3px; }
+
+#sidebar-ui .select-page-template-chosen .group-result:first-child {
+  border-top: none;
+  margin-top: 0px; }
+
+#sidebar-ui .chosen-checkbox-filter {
+  padding: 10px;
+  padding-bottom: 5px;
+  background-image: linear-gradient(to bottom, #f7fbff, rgba(235, 239, 242, 0.7)); }
+
 .screen-reader-text {
   position: absolute;
   margin: -1px;
@@ -10783,8 +10822,6 @@ a.ueditor-action-trash:before {
 #sidebar-ui .ueditor-ok-button {
   background-image: linear-gradient(to bottom, #fafdff, #f2f9ff);
   border: solid 1px #a2bfda;
-  width: 37px;
-  height: 26px;
   display: inline-block;
   text-align: center;
   line-height: 26px;
@@ -10792,7 +10829,11 @@ a.ueditor-action-trash:before {
   font-weight: 400;
   font-size: 12px;
   color: #6486a6;
-  text-shadow: 0 1px 0 #ffffff;
+  text-shadow: 0 1px 0 #ffffff; }
+
+.save-post-status {
+  width: 37px;
+  height: 26px;
   margin: 0px;
   position: relative;
   top: -9px;
