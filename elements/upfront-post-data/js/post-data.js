@@ -176,16 +176,18 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		this.listenTo(this.model.get('objects'), 'change', this.on_render);
 		this.listenTo(this.model.get('objects'), 'add', this.on_render);
 		this.listenTo(this.model.get('objects'), 'remove', this.on_render);
-		this.listenTo(Upfront.Events, 'editor:post_editor:created', this.render_view_type);
+		// this.listenTo(Upfront.Events, 'editor:post_details:ready', this.render_view_type);
 
 		/*_.extend(this.events, {
 			'click .upfront-post-part-trigger': 'on_edit_click'
 		});*/
-		this.delegateEvents();
+		
 
 		this.prepare_editor();
 
 		this._multiple = false;
+		
+		this.delegateEvents();
 	},
 
 	get_extra_buttons: function(){
@@ -241,13 +243,16 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	render_view_type: function () {
 		var type = this.model.get_property_value_by_name("data_type");
 		this.render_view(type);
+		
 	},
 
 	on_render: function () {
 		var type = this.model.get_property_value_by_name("data_type"),
 			objects = this.get_child_objects(false)
 		;
-
+		
+		this.render_view_type();
+		
 		if ( this.parent_module_view ) {
 			this.$control_el = this.$el;
 			if ( this.controls && ( ( objects.length > 1 && !this._multiple ) || ( objects.length == 1 && this._multiple ) ) ) {

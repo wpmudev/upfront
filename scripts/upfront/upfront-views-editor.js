@@ -1961,6 +1961,7 @@
 			initialize: function (opts) {
 				this.options = opts;
 				this.settings = _([]);
+				this.appended = false;
 				var self = this;
 
 				if ( !Upfront.Views.PostDataEditor ) {
@@ -1994,15 +1995,15 @@
 			},
 			on_render: function () {
 				var self = this;
-
 				if (typeof Upfront.Events.PostBox === "undefined") {
 					if (typeof Upfront.Views.PostDataEditor !== "undefined" && Upfront.Views.PostDataEditor.contentEditor !== false) {
 						Upfront.Events.PostBox = Upfront.Views.PostDataEditor.contentEditor.prepareBox();
 					}
 				}
 
-				if(Upfront.Views.PostDataEditor && Upfront.Events.PostBox) {
+				if( !this.appended && Upfront.Views.PostDataEditor && Upfront.Events.PostBox ) {
 					self.append_box(Upfront.Events.PostBox);
+					this.appended = true;
 				}
 			},
 			
@@ -2012,7 +2013,7 @@
 					post_id: this.getPostId(),
 					content_mode: 'post_content'
 				});
-				Upfront.Events.trigger("editor:post_editor:created", Upfront.Views.PostDataEditor);
+				// Upfront.Events.trigger("editor:post_editor:created", Upfront.Views.PostDataEditor);
 			},
 			
 			getPostId: function() {
