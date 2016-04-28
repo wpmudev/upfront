@@ -1961,7 +1961,6 @@
 			initialize: function (opts) {
 				this.options = opts;
 				this.settings = _([]);
-				this.appended = false;
 				var self = this;
 
 				if ( !Upfront.Views.PostDataEditor ) {
@@ -2001,9 +2000,8 @@
 					}
 				}
 
-				if( !this.appended && Upfront.Views.PostDataEditor && Upfront.Events.PostBox ) {
+				if( Upfront.Views.PostDataEditor && Upfront.Events.PostBox ) {
 					self.append_box(Upfront.Events.PostBox);
-					this.appended = true;
 				}
 			},
 			
