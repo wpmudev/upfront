@@ -106,6 +106,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'preview_size' => __('Preview Size', 'upfront')
 			),
 			'content' => array(
+				'apply' => __('Apply', 'upfront'),
 				'add_label' => __('Add', 'upfront'),
 				'tags_placeholder' => __('Pick Tag', 'upfront'),
 				'tags_label' => __('Choose or Create Tag'),
@@ -265,7 +266,9 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'self' => __('Self', 'upfront'),
 				'add' => __('Add &raquo;', 'upfront'),
 				'choose_from_prev' => __('Choose from the previously used %s', 'upfront'),
-				'enter' => __('Enter %s', 'upfront')
+				'enter' => __('Enter %s', 'upfront'),
+				'update_template' => __('Update Template', 'upfront'),
+				'save_template' => __('Save As', 'upfront'),
 			),
 			'ueditor' => array(
 				'text_align' => __('Text alignment', 'upfront'),

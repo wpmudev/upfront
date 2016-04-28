@@ -736,7 +736,7 @@ var PageTemplateEditor = PostSectionView.extend({
 			render: function() {
 				Upfront.Views.Editor.Field.Chosen_Select.prototype.render.call(this);
 				var me = this;
-				var selectWidth = '170px';
+				var selectWidth = '155px';
 				
 				this.typeCheckbox = this.type_field();
 				this.typeCheckbox.render();

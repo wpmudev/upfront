@@ -115,6 +115,11 @@
 	border-radius: 3px;
 }
 
+#sidebar-ui .upfront-page-template-chosen {
+	width: 155px;
+	display: inline-block;
+}
+
 #sidebar-ui .select-page-template-chosen .chosen-container .chosen-drop {
 	border-radius: 3px;
 	background-color: #f7fbff;
@@ -159,6 +164,44 @@
 	padding-bottom: 5px;
 	background-image: linear-gradient(to bottom, #f7fbff, rgba(235, 239, 242, 0.7));
 }
+
+#sidebar-ui .upfront-select-template-button {
+	background-image: linear-gradient(to bottom, #fafdff, #f2f9ff);
+	border: solid 1px #a2bfda;
+	display: inline-block;
+	padding: 5px 15px;
+	font-family: Open Sans;
+	font-size: 12px;
+	line-height: 1.3;
+	color: #6486a6;
+	text-shadow: 0 1px 0 #ffffff;
+	margin: 0px;
+	border-radius: 2px;
+}
+
+#sidebar-ui .update-post-template {
+	float: left;
+}
+
+#sidebar-ui .apply-post-template,
+#sidebar-ui .save-post-template {
+	float: right;
+}
+
+#sidebar-ui .upfront-page-template-action,
+#sidebar-ui .upfront-page-template-description {
+	margin-top: 15px;
+}
+
+#sidebar-ui .upfront-page-template-action {
+	min-height: 26px;
+	padding-bottom: 15px;
+}
+
+#sidebar-ui .upfront-page-template-description strong {
+	font-weight: bold;
+}
+
 .screen-reader-text {
   position: absolute;
   margin: -1px;

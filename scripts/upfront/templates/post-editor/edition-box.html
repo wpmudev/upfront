@@ -119,10 +119,15 @@
 		
 	<script type="text/template" id="upfront-page-template-list-tpl">
 		<label id="post-tags-display-label">{{ label }}:</label>
-		<div class="upfront-page-template-type"></div>
-		<div class="upfront-page-template-chosen"></div>
+		<div class="upfront-page-template-dropdown">
+			<div class="upfront-page-template-chosen"></div>
+			<a href="" class="apply-post-template upfront-select-template-button">{{Upfront.Settings.l10n.global.content.apply}}</a>
+		</div>
 		<div class="upfront-page-template-description">{{Upfront.Settings.l10n.global.content.template_nag}}</div>
-		<div class="upfront-page-template-action"></div>
+		<div class="upfront-page-template-action">
+			<a href="" class="update-post-template upfront-select-template-button">{{Upfront.Settings.l10n.global.content.update_template}}</a>
+			<a href="" class="save-post-template upfront-select-template-button">{{Upfront.Settings.l10n.global.content.save_template}}</a>
+		</div>
 	</script>
 		
     <script type="text/template" id="post-status-tpl">

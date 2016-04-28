@@ -19,6 +19,11 @@
 	height: 24px;
 	max-height: 24px;
 }
+#sidebar-ui .upfront-page-template-dropdown .chosen-container-single .chosen-single {
+	height: 27px;
+	min-height: 27px;
+	line-height: 25px;
+}
 #insert-font-widget .chosen-container-single .chosen-single:hover,
 #sidebar-ui .chosen-container-single .chosen-single:hover,
 #upfront-popup .chosen-container-single .chosen-single:hover,
@@ -197,6 +202,10 @@
 	border-left: 4px solid transparent;
 	border-right: 4px solid transparent;
 	margin-top: 9px;
+}
+
+#sidebar-ui .upfront-page-template-dropdown .chosen-container-single .chosen-single div b {
+	margin-top: 12px;
 }
 #insert-font-widget .chosen-with-drop .chosen-single div b,
 #sidebar-ui .chosen-with-drop .chosen-single div b,
