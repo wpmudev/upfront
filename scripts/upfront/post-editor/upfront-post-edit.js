@@ -725,10 +725,10 @@ var PageTemplateEditor = PostSectionView.extend({
 		var templateOptions = {};
 		templates.each(function (template, idx) {
 			if ( typeof template.get('ID') !== 'undefined' ) {
-				templateOptions[template.get('ID')] = { label: template.get('post_name'), value: template.get('ID') };
+				templateOptions[idx] = { label: template.get('post_name'), value: template.get('ID') };
 			} else if ( typeof template.get('template_type') !== 'undefined' && template.get('template_type') == 'page' ) {
 				var page_template_value = template.get('name') + '|' + template.get('file');
-				templateOptions[template.get('file')] = { label: template.get('name'), value: page_template_value };
+				templateOptions[idx] = { label: template.get('name'), value: page_template_value };
 			}
 		});
 		

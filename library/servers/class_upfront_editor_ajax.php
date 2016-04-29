@@ -397,9 +397,19 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			? Upfront_PageTemplate::LAYOUT_TEMPLATE_DEV_TYPE
 			: Upfront_PageTemplate::LAYOUT_TEMPLATE_TYPE
 		;
-		$templates = array();
+		$templates = ( $template_type == 'page' )
+			? array((object) array(
+					'name' => 'Default Template',
+					'file' => '',
+					'template_type' => $template_type
+				))
+			: array()
+		;
 		
-		$templates = Upfront_Server_PageTemplate::get_instance()->get_all_theme_templates($dev_type, $template_type);
+		$custom_post_type_templates = Upfront_Server_PageTemplate::get_instance()->get_all_theme_templates($dev_type, $template_type);
+		foreach ( $custom_post_type_templates as $custom_template ) {
+			array_push($templates, $custom_template);
+		}
 		
 		if ( $template_type == 'page' ) {
 			$page_templates = get_page_templates();
