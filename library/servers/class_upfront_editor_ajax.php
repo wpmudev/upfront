@@ -389,12 +389,29 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 	}
 	
 	function fetch_page_templates($data){
-		$template_type = ( (int)$data['load_dev'] == 1 ) 
+		$template_type = isset($data['template_type']) 
+			? $data['template_type']
+			: false 
+		;
+		$dev_type = ( (int)$data['load_dev'] == 1 ) 
 			? Upfront_PageTemplate::LAYOUT_TEMPLATE_DEV_TYPE
 			: Upfront_PageTemplate::LAYOUT_TEMPLATE_TYPE
 		;
+		$templates = array();
 		
-		$templates = Upfront_Server_PageTemplate::get_instance()->get_all_theme_templates($template_type);
+		$templates = Upfront_Server_PageTemplate::get_instance()->get_all_theme_templates($dev_type, $template_type);
+		
+		if ( $template_type == 'page' ) {
+			$page_templates = get_page_templates();
+			foreach ( $page_templates as $template_name => $template_filename ) {
+				array_push($templates, (object) array(
+						'name' => $template_name,
+						'file' => $template_filename,
+						'template_type' => $template_type
+					)
+				);
+			}
+		}
 		
 		// TODO: append layouts saved on options table (from old implementation)
 	

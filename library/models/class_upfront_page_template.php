@@ -18,16 +18,15 @@ class Upfront_PageTemplate {
 	}
 	
 	/**
-	 * Saves the layout and returns the layout ID key.
-	 * Layout ID key is *not* the same as layout ID,
-	 * it's a hash used to resolve this particular layout.
+	 * Saves the layout and returns the layout post ID.
+	 * @param $ID if given, it will update the existing layout template
 	 * @param Upfront_Layout $layout layout to store
+	 * @param bool $dev template for dev or not
 	 * @return mixed (bool)false on failure, (string)layout ID key on success
 	 */
 	public function save_page_template ($ID, $layout, $dev) {
 		$cascade = $layout->get_cascade();
 		$store = $layout->to_php();
-		// $layout_id_key = self::to_hash($store);
 		$layout_id = $layout->get_id();
 		
 		$post_type = ( $dev )
@@ -67,6 +66,7 @@ class Upfront_PageTemplate {
 	/**
 	 * Fetches a single page template, as determined by supplied post ID.
 	 * @param string $ID Requested page template post ID
+	 * @param string $load_dev template for dev or not
 	 * @return mixed (Upfront_Layout)revision on success, (bool)false on failure
 	 */
 	public function get_page_template ($ID, $load_dev) {
@@ -91,6 +91,9 @@ class Upfront_PageTemplate {
 		;
 	}
 	
+	/**
+	 * Fetches layout template id by a given slug
+	 */
 	public function get_id_by_slug ($slug, $load_dev) {
 	
 		if ( empty($slug) ) return false;
@@ -115,8 +118,10 @@ class Upfront_PageTemplate {
 	
 	/**
 	 * Fetches all page templates for current active theme
+	 * @param string $load whether to load all or just dev templates
+	 * @param mixed $template_type whether to load all or just Page/Layout templates
 	 */
-	public function get_all_page_templates ($load = 'all') {
+	public function get_all_page_templates ($load = 'all', $template_type = false) {
 		global $wpdb;
 		$theme_key = $wpdb->esc_like(Upfront_Model::get_storage_key()) . '%';
 		
@@ -131,6 +136,21 @@ class Upfront_PageTemplate {
 		$sql = "SELECT * FROM {$wpdb->posts} WHERE {$filter_dev} post_name LIKE %s AND post_status = %s";
 		$query = $wpdb->prepare($sql, $theme_key, self::LAYOUT_TEMPLATE_STATUS);
 		
+		if ( $template_type ) {
+			$sql = "
+				SELECT      p.*
+				FROM        {$wpdb->posts} p
+				INNER JOIN  {$wpdb->postmeta} m 
+										ON p.ID = m.post_id
+										AND m.meta_key = %s 
+				WHERE       {$filter_dev}
+										m.meta_value = %s
+										AND p.post_name LIKE %s 
+										AND p.post_status = %s
+				";
+			$query = $wpdb->prepare($sql, 'template_type', $template_type, $theme_key, self::LAYOUT_TEMPLATE_STATUS);
+		}
+		
 		return $wpdb->get_results($query, OBJECT);
 	}
 	
@@ -138,6 +158,7 @@ class Upfront_PageTemplate {
 	 * Deletes the requested page template.
 	 * Also validated we have actually deleted a page template.
 	 * @param int $ID Page Template post ID to remove
+	 * @param bool $dev template for dev or not
 	 * @return bool
 	 */
 	public function drop_page_template ($ID, $dev) {

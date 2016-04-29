@@ -89,8 +89,8 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 		return $this->_data->drop_all_theme_page_templates();
 	}
 	
-	public function get_all_theme_templates ($load = 'all') {
-		return $this->_data->get_all_page_templates($load);
+	public function get_all_theme_templates ($load = 'all', $template_type = false) {
+		return $this->_data->get_all_page_templates($load, $template_type);
 	}
 	
 	public function parse_theme_templates () {

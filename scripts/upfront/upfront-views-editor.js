@@ -1867,9 +1867,10 @@
 				this.options = opts;
 				this.settings = _([]);
 				this.templates = _([]);
+				this.layouts = _([]);
 				this.options.call = false;
 				this.is_rendered = false;
-				this.templateList = new Upfront.Collections.PageTemplateList([], {postId: this.options.postId});
+				this.layoutList = new Upfront.Collections.PageTemplateList([], {postId: this.options.postId});
 				this.load_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 );
 			},
 			get_name: function () {
@@ -1881,9 +1882,12 @@
 			on_render: function () {
 				var me = this;
 				
-				// fetching templates data from custom post type
 				if( !this.options.call ) {
-					this.templateList.fetch({load_dev: me.load_dev}).done(function(response){
+					// fetching page and layout templates data from custom post type and from a file (for page templates)
+					this.layoutList.fetch({load_dev: me.load_dev, template_type: 'layout'}).done(function(response){
+						me.layouts = new Upfront.Collections.PageTemplateList(response.data.results);
+					});
+					this.layoutList.fetch({load_dev: me.load_dev, template_type: 'page'}).done(function(response){
 						me.templates = new Upfront.Collections.PageTemplateList(response.data.results);
 					});
 					this.options.call = true;
@@ -1891,9 +1895,9 @@
 				
 				// append the PageTemplateEditor
 				if ( this.options.call && !this.is_rendered && Upfront.Views.PostDataEditor && Upfront.Views.PostBox ) {
-					var template_editor_view = new PostEditorBox.PageTemplateEditor({collection: me.templateList, label: l10n.label_page_template});
+					var template_editor_view = new PostEditorBox.PageTemplateEditor({collection: me.layoutList, label: l10n.label_page_template});
 					template_editor_view.allPageTemplates = me.templates;
-					template_editor_view.allPageLayouts = me.templates;
+					template_editor_view.allPageLayouts = me.layouts;
 					template_editor_view.render();
 					
 					setTimeout(function () {
