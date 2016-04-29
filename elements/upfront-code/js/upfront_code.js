@@ -65,7 +65,8 @@ var CodeView = Upfront.Views.ObjectView.extend({
 		view.render();
 
 		view.on("code:model:updated", this.propagate_model_update, this);
-		this.$el.empty().append( view.$el.html() );
+		// we have double upfront-view-object classes one for the this.$el and another for view.$el so let's remove one!
+		this.$el.empty().append( view.$el.removeClass("upfront-view-object") );
 		this.updateControls();
 
 		// Dynamically bind settings click to view editing action

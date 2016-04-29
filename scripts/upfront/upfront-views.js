@@ -310,9 +310,15 @@ define([
 						if(typeof(response.data.featured_image) != 'undefined') {
 
 							if (response.data.featured_image != '') {
-								me.$el.children('.feature_image_selector').addClass('change_feature_image');
+								me.$el.children('.feature_image_selector')
+									.addClass('change_feature_image')
+									.text(l10n.change_featured_image)
+								;
 							} else {
-								me.$el.children('.feature_image_selector').removeClass('change_feature_image');
+								me.$el.children('.feature_image_selector')
+									.removeClass('change_feature_image')
+									.text(l10n.add_featured_image)
+								;
 							}
 
 							image = response.data.featured_image;
@@ -356,7 +362,7 @@ define([
 					styles = (this.model.get_breakpoint_property_value("background_use_custom_map_code", true) ? JSON.parse(this.model.get_breakpoint_property_value("map_styles", true)) : false),
 					options = {
 						center: new google.maps.LatLng(center[0], center[1]),
-						zoom: parseInt(zoom),
+						zoom: parseInt(zoom, 10) || 0,
 						mapTypeId: google.maps.MapTypeId[style],
 						panControl: (controls.indexOf("pan") >= 0),
 						zoomControl: (controls.indexOf("zoom") >= 0),
@@ -1678,7 +1684,8 @@ define([
 				Upfront.Events.trigger("entity:settings:deactivate");
 			},
 			render: function () {
-				var grid = Upfront.Settings.LayoutEditor.Grid,
+				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+					grid = Upfront.Settings.LayoutEditor.Grid,
 					props = {},
 					me = this,
 					buttons = (this.get_buttons ? this.get_buttons() : ''),
@@ -1820,6 +1827,10 @@ define([
 					}, 300);
 				}
 
+				if ( breakpoint && !breakpoint.default ) {
+					this.update_position();
+				}
+
 				//**
 				// * Make sure it's rendered and then adjust top panel position
 				// */
@@ -1860,7 +1871,7 @@ define([
 					this.update_position();
 
 					var current_property = value.current_property,
-						breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+						breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 						val = value[breakpoint.id] && value[breakpoint.id][current_property] ? value[breakpoint.id][current_property] : false;
 					;
 
@@ -2388,7 +2399,7 @@ define([
 					this.update_position();
 
 					var current_property = value.current_property,
-						breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+						breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 						val = value[breakpoint.id] && value[breakpoint.id][current_property] ? value[breakpoint.id][current_property] : false;
 					;
 
@@ -6564,7 +6575,7 @@ define([
 								container_view.sub_model.splice(i, 1);
 							}
 							else {
-								var sub_view = Upfront.data.region_views[sub.cid];
+								var sub_view = Upfront.data.region_views[(sub || {}).cid];
 								if ( sub_view ) sub_view.update();
 							}
 						});

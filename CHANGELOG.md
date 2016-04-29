@@ -2,6 +2,16 @@ Change Log
 ============
 
 
+1.2.1 - 2016-04-28
+-------------------------------------------------------------------------------
+- Fix: featured image swap button issue.
+- Fix: admin area shared abstraction checks.
+- Fix: make the posts and comments dialog link context-aware.
+- Fix: same ID being used with multiple calendar widgets.
+- Fix: include new strings for l10n.
+- Fix: refactor deprecated jQuery calls.
+- Fix: allow responsive per-preset post data element indents.
+
 1.2 - 2016-04-14
 -------------------------------------------------------------------------------
 - Add: admin interface.

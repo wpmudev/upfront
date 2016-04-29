@@ -3477,7 +3477,7 @@
 			currentPanel: false,
 			render: function () {
 				this.$el.addClass("upfront-entity_list upfront-icon upfront-icon-browse");
-				if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.LAYOUT )
+				if ( Upfront.Application.is_single( "post" ) )
 					this.$el.html('<a title="'+ l10n.posts_pages_comments +'">' + l10n.posts_pages_comments + '</a>');
 				else
 					this.$el.html('<a title="'+ l10n.posts_pages +'">' + l10n.posts_pages + '</a>');
@@ -5164,7 +5164,7 @@
 				var select_label = ( this.options.select_label ) ? this.options.select_label : ( this.options.placeholder ? this.options.placeholder : '' );
 				var $select_value = this.$el.find('.upfront-field-select-value');
 				var $checked = this.$el.find('.upfront-field-select-option input:checked');
-				if ( $checked.size() == 1 && !this.multiple ) {
+				if ( $checked.length == 1 && !this.multiple ) {
 					var $option = $checked.closest('.upfront-field-select-option'),
 						select_text = $option.text(),
 						$select_icon = $option.find('.upfront-field-icon').clone();
@@ -5177,10 +5177,10 @@
 					$checked.each(function(){
 						select_texts.push( $(this).closest('.upfront-field-select-option').text() );
 					});
-					$select_value.text( $checked.size() == 0 ? select_label : select_texts.join(', ') );
+					$select_value.text( $checked.length == 0 ? select_label : select_texts.join(', ') );
 				}
 				this.$el.find('.upfront-field-select-option').each(function(){
-					if ( $(this).find('input:checked').size() > 0 )
+					if ( $(this).find('input:checked').length > 0 )
 						$(this).addClass('upfront-field-select-option-selected');
 					else
 						$(this).removeClass('upfront-field-select-option-selected');
@@ -6766,7 +6766,7 @@
 				var request = Upfront.Util.post({action: "upfront_list_google_fonts"});
 
 				// We're gonna pipe response since we need to convert it to fonts collection first.
-				request = request.pipe(
+				request = request.then(
 					function(response) {
 						fonts = new Fonts_Collection(response.data);
 						// Return collection instead original response

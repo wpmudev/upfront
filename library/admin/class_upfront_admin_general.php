@@ -1,15 +1,14 @@
 <?php
 
-class Upfront_Admin_General
-{
+class Upfront_Admin_General extends Upfront_Admin_Page {
 	
     function __construct(){
-		if (Upfront_Permissions::current( Upfront_Permissions::SEE_USE_DEBUG )) {
+		if ($this->_can_access( Upfront_Permissions::SEE_USE_DEBUG )) {
 			add_submenu_page( Upfront_Admin::$menu_slugs['main'], __("General Settings", Upfront::TextDomain),  __("General", Upfront::TextDomain), 'manage_options', Upfront_Admin::$menu_slugs['main'], array($this, "render_page") );
 		}
    }
 
-	function render_page() {
+	public function render_page() {
 		$core_version = $child_version = '0';
 		$current = wp_get_theme();
 		// Deal with caches

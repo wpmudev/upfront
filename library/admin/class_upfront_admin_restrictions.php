@@ -6,8 +6,7 @@
  * Date: 3/12/16
  * Time: 9:53 PM
  */
-class Upfront_Admin_Restrictions
-{
+class Upfront_Admin_Restrictions extends Upfront_Admin_Page {
 
     const FORM_NONCE_KEY = "upfront_restrictions_wpnonce";
 
@@ -31,7 +30,7 @@ class Upfront_Admin_Restrictions
     /**
      * Renders the page
      */
-    function render_page () {
+    public function render_page () {
         if (!$this->_can_modify_restrictions()) wp_die("Nope.");
 
         $roles = $this->_get_roles();
@@ -151,15 +150,7 @@ class Upfront_Admin_Restrictions
      * @return bool
      */
     private function _can_modify_restrictions () {
-        if ( current_user_can( 'manage_options' ) ) {
-            return true;
-        }
-
-        $current_user = wp_get_current_user();
-        return isset($current_user->roles[0])
-            ? Upfront_Permissions::role( $current_user->roles[0], Upfront_Permissions::MODIFY_RESTRICTIONS )
-            : Upfront_Permissions::current( Upfront_Permissions::MODIFY_RESTRICTIONS )
-        ;
+        return $this->_can_access(Upfront_Permissions::MODIFY_RESTRICTIONS);
     }
 
 

@@ -1,4 +1,5 @@
 <?php
+include_once "admin/class_upfront_admin_page.php";
 include_once "admin/class_upfront_admin_general.php";
 include_once "admin/class_upfront_admin_restrictions.php";
 include_once "admin/class_upfront_admin_experimental.php";
@@ -88,3 +89,4 @@ class Upfront_Admin
 }
 
 new Upfront_Admin;
+
