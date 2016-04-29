@@ -915,7 +915,16 @@ var Application = new (Backbone.Router.extend({
 		var me = this,
 			data = $.extend(true, {}, layoutData.data.layout) || {} //Deep cloning
 		;
-
+		
+		if ( layoutData.data.post === null ) {
+			_upfront_post_data.template_type = ( layoutData.data.template_post_id )
+				? layoutData.data.template_type
+				: 'page'
+			;
+		} else if ( layoutData.data.post.post_type === 'page' ) {
+			_upfront_post_data.template_type = layoutData.data.template_type;
+		}
+		
 		if (layoutData.data.post)
 			this.post_set_up(layoutData.data.post);
 

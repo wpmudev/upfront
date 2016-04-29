@@ -79,18 +79,6 @@ class Upfront_Ajax extends Upfront_Server {
 		
 		// if post_id is false, still load_page_layout()
 		if ( !$post_id ) return $this->load_page_layout();
-		
-		//TODO: remove page template related later if proven safe
-		
-		/* //Check if assigned WP template and delete DB layout
-		if(isset($_POST['post_id']) && !empty($_POST['post_id']) && isset($_POST['data']['specificity']) && !empty($_POST['data']['specificity'])) {
-			$template = get_post_meta((int)$_POST['post_id'], '_wp_page_template', true);
-			$theme = Upfront_ChildTheme::get_instance();
-			$prefix = $theme->get_prefix();
-			if(!empty($template) && $template != "default") {
-				delete_option($prefix.'-'.$_POST['data']['specificity']);
-			}
-		} */
 
 		$layout = Upfront_Layout::from_entity_ids($layout_ids, $storage_key, $load_dev);
 
@@ -115,73 +103,6 @@ class Upfront_Ajax extends Upfront_Server {
 
 			$layout_ids = Upfront_EntityResolver::get_entity_ids($cascade);
 		}
-		// else {
-			// if($_POST['post_id']){
-				// $posts = get_posts(array('include' => $_POST['post_id'], 'suppress_filters' => false));
-				// if(sizeof($posts)) $post = $posts[0];
-			// }
-			
-			//TODO: remove page template related later if proven safe
-			
-			/* 
-			$post = $post;
-			if ($post && is_singular()) {
-				if (!is_page($post->ID)) {
-					$layout_ids = Upfront_EntityResolver::get_entity_ids();
-				} else {
-					// Deal with page templates
-					$template = get_post_meta((int)$post->ID, '_wp_page_template', true);
-					$theme = Upfront_ChildTheme::get_instance();
-					$settings = $theme->get_theme_settings();
-					if (!empty($template) && !empty($settings)) {
-						$tpl = preg_replace('/page-(.*)\.php$/', '\1', $template);
-						$required_pages = $settings->get('required_pages');
-						if (!empty($required_pages)) $required_pages = json_decode($required_pages, true);
-						$specificity = !empty($required_pages[$tpl]['layout']) ? $required_pages[$tpl]['layout'] : false;
-						if (!empty($specificity)) {
-							$template_layout = Upfront_Layout::from_entity_ids(array('specificity' => $specificity));
-							if (!empty($template_layout) && !$template_layout->is_empty()) {
-								$layout = $template_layout;
-								$query = new WP_Query(array(
-									'page_id' => (int)$post->ID,
-								));
-								$layout_ids = Upfront_EntityResolver::get_entity_ids(Upfront_EntityResolver::get_entity_cascade($query));
-								$layout->set('layout', $layout_ids);
-								$layout->set('current_layout', $layout_ids['specificity']);
-							}
-						}
-					}
-					// End page templates workaround
-				}
-			} else if($_POST['post_id']){
-				$posts = get_posts(array('include' => $_POST['post_id'], 'suppress_filters' => false));
-				if(sizeof($posts)) $post = $posts[0];
-				
-				// Deal with page templates
-				$template = get_post_meta((int)$_POST['post_id'], '_wp_page_template', true);
-				$theme = Upfront_ChildTheme::get_instance();
-				$settings = $theme instanceof Upfront_ChildTheme ? $theme->get_theme_settings() : false;
-				if (!empty($template) && !empty($settings)) {
-					$tpl = preg_replace('/page-(.*)\.php$/', '\1', $template);
-					$required_pages = $settings->get('required_pages');
-					if (!empty($required_pages)) $required_pages = json_decode($required_pages, true);
-					$specificity = !empty($required_pages[$tpl]['layout']) ? $required_pages[$tpl]['layout'] : false;
-					if (!empty($specificity)) {
-						$template_layout = Upfront_Layout::from_entity_ids(array('specificity' => $specificity));
-						if (!empty($template_layout) && !$template_layout->is_empty()) {
-							$layout = $template_layout;
-							$query = new WP_Query(array(
-								'page_id' => (int)$_POST['post_id'],
-							));
-							$layout_ids = Upfront_EntityResolver::get_entity_ids(Upfront_EntityResolver::get_entity_cascade($query));
-							$layout->set('layout', $layout_ids);
-							$layout->set('current_layout', $layout_ids['specificity']);
-						}
-					}
-				}
-				// End page templates workaround
-			} */
-		// }
 
 		$response = array(
 			'post' => $post,
@@ -203,7 +124,7 @@ class Upfront_Ajax extends Upfront_Server {
 		$parsed = false;
 		$load_from_options = true;
 		$post_id = (isset($_POST['post_id'])) ? (int)$_POST['post_id'] : false;
-
+		
 		//Check if assigned WP template and delete DB layout
 		if( $post_id && isset($_POST['data']['specificity']) && !empty($_POST['data']['specificity']) ) {
 			$template = get_post_meta((int)$post_id, '_wp_page_template', true);
@@ -283,12 +204,23 @@ class Upfront_Ajax extends Upfront_Server {
 			}
 			// End page templates workaround
 		}
+		
+		if ( $template_post_id ) {
+			$template_type = get_post_meta($template_post_id, 'template_type', true);
+			if ( !$template_type ) $template_type =  $layout->get('template_type');
+		} else {
+			$template_type =  $layout->get('template_type');
+		}
+		
+		// if layout loaded from a file then it belongs to Page Template type
+		if ( $template_type == 'file' ) $template_type =  'page';
 
 		$response = array(
 			'post' => $post,
 			'layout' => $layout->to_php(),
 			'cascade' => $layout_ids,
 			'template_post_id' => $template_post_id,
+			'template_type' => $template_type,
 			'query' => $upfront_ajax_query
 		);
 
@@ -402,24 +334,6 @@ class Upfront_Ajax extends Upfront_Server {
 		// for post still save on options
 		$layout = Upfront_Layout::from_php($data, $storage_key);
 		$key = $layout->save();
-		
-		// TODO: can be removed later if proven safe
-		// For single page layouts, also drop page templates
-		/* $layout_data = $layout->get('layout');
-		if (!empty($layout_data['specificity']) && preg_match('/single-page-\d+$/', $layout_data['specificity'])) {
-			$page_id = preg_replace('/single-page-(\d+)$/', '\1', $layout_data['specificity']);
-			// If we have a page template set...
-			if (!empty($page_id) && get_post_meta($page_id, '_wp_page_template', true)) {
-				// Kill it, as we just saved the layout for it
-				delete_post_meta($page_id, '_wp_page_template');
-			}
-			if (!empty($page_id)) {
-				wp_update_post(array(
-					'ID' => $page_id,
-					'post_status' => 'publish',
-				));
-			}
-		} */
 
 		$this->_out(new Upfront_JsonResponse_Success($key));
 	}
