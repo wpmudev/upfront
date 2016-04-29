@@ -366,7 +366,7 @@ define([
 		},
 
 		isSmallImage: function() {
-			var elementSize = this.property('element_size');
+			var elementSize = this.model.get_breakpoint_property_value('element_size', true);
 			if (this.resizingData.data && this.resizingData.data.elementSize) {
 				elementSize = this.resizingData.data.elementSize;
 			}
@@ -402,7 +402,7 @@ define([
 		},
 
 		get_content_markup: function () {
-			var elementSize = this.property('element_size'),
+			var elementSize = this.model.get_breakpoint_property_value('element_size', true),
 				me = this,
 				props = this.extract_properties(),
 				rendered,
@@ -427,6 +427,7 @@ define([
 			props.url = this.property('when_clicked') ? this.property('image_link') : false;
 			props.url = this.link.get('type') !== 'unlink' ? this.link.get('url') : false;
 			props.link_target = this.link.get('target');
+			props.element_size = elementSize;
 			props.size = this.temporaryProps.size;
 			props.position = this.temporaryProps.position;
 			props.marginTop = Math.max(0, -props.position.top);
@@ -567,7 +568,7 @@ define([
 		},
 
 		update_style: function() {
-			var elementSize = this.property('element_size'),
+			var elementSize = this.model.get_breakpoint_property_value('element_size', true),
 				newSize = this.getElementShapeSize(elementSize)
 			;
 
@@ -575,7 +576,7 @@ define([
 				if ( elementSize.width != newSize.width || elementSize.height != newSize.height ) {
 					if ( ! this.resizeImage(newSize) ) {
 						// Can't resize? At least set the element_size
-						this.property('element_size', newSize);
+						this.model.set_breakpoint_property('element_size', newSize);
 					}
 				}
 				return newSize;
@@ -587,7 +588,7 @@ define([
 		on_render: function() {
 			var me = this,
 				onTop = ['bottom', 'fill_bottom'].indexOf(this.property('caption_alignment')) !== -1 || this.get_preset_property("caption-position") === 'below_image' ? ' sizehint-top' : '',
-				elementSize = this.property('element_size');
+				elementSize = this.model.get_breakpoint_property_value('element_size', true);
 
 			//Bind resizing events
 			if (!this.parent_module_view.$el.data('resizeHandling')) {
@@ -1017,7 +1018,7 @@ define([
 					height: attr.height - (2 * padding),
 					width: attr.width - (2 * padding)
 				};
-				this.property('element_size', this.elementSize);
+				this.model.set_breakpoint_property('element_size', this.elementSize);
 				return;
 
 			//} else if (this.property('quick_swap')) {
@@ -1037,7 +1038,7 @@ define([
 				position: imgPosition
 			};
 
-			this.property('element_size', this.resizingData.data.elementSize);
+			this.model.set_breakpoint_property('element_size', this.resizingData.data.elementSize);
 
 			this.cropTimer = setTimeout(function(){
 				me.saveTemporaryResizing();
@@ -1051,7 +1052,7 @@ define([
 			var me = this,
 				size = this.property('size'),
 				checkSize = this.checkSize(),
-				elementSize = this.property('element_size'),
+				elementSize = this.model.get_breakpoint_property_value('element_size', true),
 				minWidth = Math.min(size.width, elementSize.width),
 				minHeight = Math.min(size.height, elementSize.height),
 				newSize;
@@ -1208,7 +1209,7 @@ define([
 
 		saveTemporaryResizing: function() {
 			var me = this,
-				elementSize = me.property('element_size'),
+				elementSize = me.model.get_breakpoint_property_value('element_size', true),
 				crop = {},
 				imageId = me.property('image_id'),
 				resize = me.temporaryProps.size,
@@ -1268,9 +1269,9 @@ define([
 		saveResizing: function() {
 		
 			// to fix responsive bug that crops the desktop image on save
-			if(this.mobileMode) {
+			/*if(this.mobileMode) {
 				this.property('element_size', this.originalDesktopElementSize);
-			}
+			}*/
 		
 			var me = this;
 			if(this.cropTimer){
@@ -1335,7 +1336,7 @@ define([
 					size: imgSize,
 					position: imgPosition
 				};
-				this.property('element_size', size);
+				this.model.set_breakpoint_property('element_size', size);
 				this.saveTemporaryResizing();
 				return true;
 			}
@@ -1376,7 +1377,7 @@ define([
 				// elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight}
 				elementSize = {width: ( width && !isNaN(width) ? width : resizer.width() ) - hPadding, height: ( height && !isNaN(height) ? height : resizer.height() ) - vPadding - captionHeight - (2 * borderWidth)}
 			;
-			this.property('element_size', elementSize);
+			this.model.set_breakpoint_property('element_size', elementSize);
 			this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
 					width: elementSize.width,
 					height: elementSize.height,
@@ -1513,7 +1514,7 @@ define([
 		},
 		
 		fitImage: function() {
-			var maskSize = this.property('element_size'),
+			var maskSize = this.model.get_breakpoint_property_value('element_size', true),
 				position = this.property('position'),
 				size = this.property('size');
 				
@@ -1541,7 +1542,7 @@ define([
 		},
 		
 		checkSize: function() {
-			var maskSize = this.property('element_size'),
+			var maskSize = this.model.get_breakpoint_property_value('element_size', true),
 				size = this.property('size');
 
 			if(size.width >= maskSize.width && size.height >= maskSize.height) {
