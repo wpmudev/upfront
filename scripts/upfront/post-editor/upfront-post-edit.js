@@ -727,8 +727,7 @@ var PageTemplateEditor = PostSectionView.extend({
 			if ( typeof template.get('ID') !== 'undefined' ) {
 				templateOptions[idx] = { label: template.get('post_name'), value: template.get('ID') };
 			} else if ( typeof template.get('template_type') !== 'undefined' && template.get('template_type') == 'page' ) {
-				var page_template_value = template.get('name') + '|' + template.get('file');
-				templateOptions[idx] = { label: template.get('name'), value: page_template_value };
+				templateOptions[idx] = { label: template.get('name'), value: template.get('slug') };
 			}
 		});
 		

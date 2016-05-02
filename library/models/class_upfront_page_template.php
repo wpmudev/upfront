@@ -22,12 +22,16 @@ class Upfront_PageTemplate {
 	 * @param $ID if given, it will update the existing layout template
 	 * @param Upfront_Layout $layout layout to store
 	 * @param bool $dev template for dev or not
+	 * @param mixed $slug if template slug was provided 
 	 * @return mixed (bool)false on failure, (string)layout ID key on success
 	 */
-	public function save_page_template ($ID, $layout, $dev) {
+	public function save_page_template ($ID, $layout, $dev, $slug = false) {
 		$cascade = $layout->get_cascade();
 		$store = $layout->to_php();
-		$layout_id = $layout->get_id();
+		$layout_id = ( $slug )
+			? $slug
+			: $layout->get_id()
+		;
 		
 		$post_type = ( $dev )
 			? self::LAYOUT_TEMPLATE_DEV_TYPE

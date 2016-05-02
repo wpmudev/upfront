@@ -61,8 +61,8 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 		$this->_data = new Upfront_PageTemplate;
 	}
 	
-	public function save_template ($template_id, $layout, $dev) {
-		return $this->_data->save_page_template($template_id, $layout, $dev);
+	public function save_template ($template_id, $layout, $dev, $slug = false) {
+		return $this->_data->save_page_template($template_id, $layout, $dev, $slug);
 	}
 	
 	/**
@@ -117,12 +117,18 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 		;
 		
 		if ( !$is_revision ) {
-			if ( !empty($_GET['layout']['specificity']) ) {
-				$slug = Upfront_Layout::get_storage_key() . '-' . $_GET['layout']['specificity'];
+			if ( isset($_GET['template_post_id']) ) {
+				$template_post_id = (int) $_GET['template_post_id'];
+				
 			} else {
-				$slug = Upfront_Layout::get_storage_key() . '-' . $_GET['layout']['item'];
+				if ( !empty($_GET['layout']['specificity']) ) {
+					$slug = Upfront_Layout::get_storage_key() . '-' . $_GET['layout']['specificity'];
+				} else {
+					$slug = Upfront_Layout::get_storage_key() . '-' . $_GET['layout']['item'];
+				}
+				$template_post_id = $this->get_template_id_by_slug($slug, $load_dev);
 			}
-			$template_post_id = $this->get_template_id_by_slug($slug, $load_dev);
+			
 			if ( $template_post_id ) {
 				$page_template = $this->get_template($template_post_id, $load_dev);
 				if ( $page_template ) {

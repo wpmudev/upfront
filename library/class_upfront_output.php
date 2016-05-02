@@ -10,6 +10,7 @@ class Upfront_Output {
 	public static $current_object;
 	public static $current_module;
 	public static $grid;
+	public static $template_post_id;
 
 	public function __construct ($layout, $post) {
 		$this->_layout = $layout;
@@ -30,9 +31,10 @@ class Upfront_Output {
 		if ( $post_id ) {
 			
 			$template_meta_name = ( $is_dev ) 
-				? 'template_dev_post_id'
-				: 'template_post_id'
+				? Upfront_Layout::get_storage_key() . '-template_dev_post_id'
+				: Upfront_Layout::get_storage_key() . '-template_post_id'
 			;
+			
 			$template_post_id = get_post_meta($post_id, $template_meta_name, true);
 			
 		} else {
@@ -48,11 +50,14 @@ class Upfront_Output {
 		}
 		
 		if ( $template_post_id ) {
+			self::$template_post_id = $template_post_id;
 			$page_template = Upfront_Server_PageTemplate::get_instance()->get_template($template_post_id, $is_dev);
 			if ( $page_template ) {
 				$layout = Upfront_Layout::from_php($page_template, Upfront_Layout::STORAGE_KEY);
 				$load_from_options = false;
 			}
+		} else {
+			self::$template_post_id = false;
 		}
 		
 		// load layouts not yet saved on custom post type
@@ -66,7 +71,7 @@ class Upfront_Output {
 		
 		$post = get_post($post_id);
 		self::$_instance = new self($layout, $post);
-
+		
 		// Add actions
 		add_action('wp_enqueue_scripts', array(self::$_instance, 'add_styles'));
 		add_action('wp_enqueue_scripts', array(self::$_instance, 'add_scripts'), 2);
@@ -179,7 +184,9 @@ class Upfront_Output {
 	}
 
 	function add_styles () {
-		wp_enqueue_style('upfront-main', upfront_ajax_url('upfront_load_styles'), array(), Upfront_ChildTheme::get_version(), 'all');
+		$load_style_url = upfront_ajax_url('upfront_load_styles') . '&template_post_id=' . self::$template_post_id;
+		wp_enqueue_style('upfront-main', $load_style_url, array(), Upfront_ChildTheme::get_version(), 'all');
+		// wp_enqueue_style('upfront-main', upfront_ajax_url('upfront_load_styles'), array(), Upfront_ChildTheme::get_version(), 'all');
 
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
 
