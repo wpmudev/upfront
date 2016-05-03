@@ -33,9 +33,45 @@ var LayoutEditorSubapplication = Subapplication.extend({
 	save_layout: function () {
 		this._save_layout(this.layout.get("current_layout"));
 	},
-
+	
+	save_layout_meta: function () {
+		this._save_layout_meta(this.layout.get("current_layout"));
+	},
+	
 	publish_layout: function () {
 		this._save_layout(this.layout.get("current_layout"), true);
+	},
+	
+	_save_layout_meta: function (preferred_layout, publish) {
+		var storage_key = publish === true ? _upfront_storage_key : _upfront_save_storage_key,
+			post_id = ( typeof _upfront_post_data.post_id !== 'undefined' ) ? _upfront_post_data.post_id : '',
+			template_type = ( typeof _upfront_post_data.template_type !== 'undefined' ) ? _upfront_post_data.template_type : 'layout',
+			template_slug = ( typeof _upfront_post_data.template_slug !== 'undefined' ) ? _upfront_post_data.template_slug : '',
+			save_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 );
+
+		Upfront.Events.trigger("command:layout:save_start");
+
+		if (Upfront.Settings.Application.NO_SAVE) {
+			Upfront.Events.trigger("command:layout:save_success");
+			return false;
+		}
+		Upfront.Util.post({
+				"action": Upfront.Application.actions.save_meta, 
+				"storage_key": storage_key, 
+				"post_id": post_id,
+				"save_dev": save_dev,
+				"template_type": template_type,
+				"template_slug": template_slug
+			})
+			.success(function () {
+				Upfront.Util.log("layout saved");
+				Upfront.Events.trigger("command:layout:save_success");
+			})
+			.error(function () {
+				Upfront.Util.log("error saving layout");
+				Upfront.Events.trigger("command:layout:save_error");
+			})
+		;
 	},
 
 	_save_layout: function (preferred_layout, publish) {
@@ -190,6 +226,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		// Layout manipulation
 		this.listenTo(Upfront.Events, "command:exit", this.destroy_editor);
 		this.listenTo(Upfront.Events, "command:layout:save", this.save_layout);
+		this.listenTo(Upfront.Events, "command:layout:save_meta", this.save_layout_meta);
 		this.listenTo(Upfront.Events, "command:layout:save_as", this.save_layout_as);
 		this.listenTo(Upfront.Events, "command:layout:preview", this.preview_layout);
 		this.listenTo(Upfront.Events, "command:layout:publish", this.publish_layout);
@@ -607,6 +644,7 @@ var Application = new (Backbone.Router.extend({
 
 	actions: {
 		"save": "upfront_save_layout",
+		"save_meta": "upfront_save_layout_meta",
 		"load": "upfront_load_layout"
 	},
 
