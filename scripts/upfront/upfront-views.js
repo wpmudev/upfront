@@ -312,11 +312,13 @@ define([
 							if (response.data.featured_image != '') {
 								me.$el.children('.feature_image_selector')
 									.addClass('change_feature_image')
-									.text('Change Feature Image');
+									.text(l10n.change_featured_image)
+								;
 							} else {
 								me.$el.children('.feature_image_selector')
 									.removeClass('change_feature_image')
-									.text('Add Feature Image');
+									.text(l10n.add_featured_image)
+								;
 							}
 
 							image = response.data.featured_image;

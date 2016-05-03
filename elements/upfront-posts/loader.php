@@ -25,31 +25,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 
-/**
- * This is the entity entry point, where we inform Upfront of our existence.
- */
-/*
-function uposts_initialize () {
-	// Include the backend support stuff
-	require_once (dirname(__FILE__) . '/lib/upfront_posts.php');
-
-	// Expose our JavaScript definitions to the Upfront API
-	upfront_add_layout_editor_entity('uposts', upfront_relative_element_url('js/uposts', __FILE__));
-
-	// Add element defaults to data object
-	add_action('upfront_data', array('Upfront_UpostsView', 'add_js_defaults'));
-
-	add_filter('upfront_l10n', array('Upfront_UpostsView', 'add_l10n_strings'));
-
-	// Add the public stylesheet
-	//add_action('wp_enqueue_scripts', array('Upfront_UpostsView', 'add_public_style'));
-
-	add_filter('post_thumbnail_html', array('Upfront_UpostsView', 'set_featured_image'), 10 , 2);
-}
-// Initialize the entity when Upfront is good and ready
-add_action('upfront-core-initialized', 'uposts_initialize');
-*/
-
 class Upfront_Posts extends Upfront_Server {
 
 	public static function serve () {

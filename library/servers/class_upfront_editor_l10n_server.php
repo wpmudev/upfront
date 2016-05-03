@@ -314,6 +314,8 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'type_link_phone' => __('Type Phone Number', Upfront::TextDomain)
 			),
 			'views' => array(
+				'change_featured_image' => __('Change Feature Image', 'upfront'),
+				'add_featured_image' => __('Add Feature Image', 'upfront'),
 				'unsaved_changes_nag' => __('You have unsaved changes you\'re about to lose by navigating off this page.', 'upfront'),
 				'already_edited_nag' => __('Someone is already working on this: %s', 'upfront'),
 				'trash' => __('Trash', 'upfront'),

@@ -116,7 +116,7 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 				$content = $this->_get_content_part($part, $content);
 			}
 		}
-
+/*
 		$left_indent = !empty($this->_data['left_indent']) && is_numeric($this->_data['left_indent'])
 			? (int)$this->_data['left_indent']
 			: 0
@@ -129,15 +129,11 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 		if ($right_indent < 0) $right_indent = 0;
 		
 		$grid = Upfront_Grid::get_grid();
-		/*$full = is_callable(array($grid, 'get_max_columns'))
-			? $grid->get_max_columns()
-			: false
-		;
-		if (!$full) $full = 24;*/
 		$breakpoint = $grid->get_default_breakpoint();
 		$col_size = $breakpoint->get_column_width();
 
 		$full = $this->_get_object_col('content');
+
 		$half = (int)(($full - 1) / 2);
 		$paddings = array();
 
@@ -147,12 +143,10 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 		if (!empty($right_indent) && $right_indent > 0 && $right_indent <= $half) {
 			$paddings['right'] = 'padding-right:' . $right_indent * $col_size . 'px';
 		}
-
+		$content = '<div class="upfront-indented_content" style="' . esc_attr(join(";", $paddings)) . '">' . $content . '</div>';
+*/
+		$content = '<div class="upfront-indented_content">' . $content . '</div>';
 		$out = $this->_get_template('content');
-		$content = empty($paddings)
-			? $content
-			: '<div class="upfront-indented_content" style="' . esc_attr(join(";", $paddings)) . '">' . $content . '</div>'
-		;
 
 		$out = Upfront_Codec::get()->expand($out, "content", $content);
 
