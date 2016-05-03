@@ -93,6 +93,10 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 		return $this->_data->get_all_page_templates($load, $template_type);
 	}
 	
+	public function get_pages_by_template ($template_id, $template_meta_name) {
+		return $this->_data->get_pages_using_template($template_id, $template_meta_name);
+	}
+	
 	public function parse_theme_templates ($load_dev) {
 		$results = array();
 		$storage_key = Upfront_Layout::get_storage_key();

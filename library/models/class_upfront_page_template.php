@@ -159,6 +159,26 @@ class Upfront_PageTemplate {
 	}
 	
 	/**
+	 * Fetches all pages that are using the specified template
+	 * @param int $template_id meta value that was attached to each page
+	 * @param string $meta_name meta key for custom post type template
+	 */
+	public function get_pages_using_template ($template_id, $meta_name) {
+		global $wpdb;
+		$sql = "
+			SELECT      p.ID
+			FROM        {$wpdb->posts} p
+			INNER JOIN  {$wpdb->postmeta} m 
+									ON p.ID = m.post_id
+									AND m.meta_key = %s 
+			WHERE       m.meta_value = %s
+			";
+		$query = $wpdb->prepare($sql, $meta_name, $template_id);
+		
+		return $wpdb->get_results($query, OBJECT);
+	}
+	
+	/**
 	 * Deletes the requested page template.
 	 * Also validated we have actually deleted a page template.
 	 * @param int $ID Page Template post ID to remove

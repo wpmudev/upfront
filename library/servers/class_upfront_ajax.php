@@ -428,7 +428,10 @@ class Upfront_Ajax extends Upfront_Server {
 		$layout = !empty($data['layout']) && $data['layout'] !== "0" ? $data['layout'] : array();
 		$stylesheet = isset( $data['stylesheet'] ) ? $data['stylesheet'] : get_stylesheet();
 		$stylesheet_dev = false;
-		$is_dev = !empty($data['dev']);
+		$is_dev = ( !empty($data['dev']) )
+			? (bool) $data['dev']
+			: false
+		;
 		
 		if( $layout === array() )
 			$this->_out(new Upfront_JsonResponse_Error("Please specify layout to reset"));
@@ -437,8 +440,24 @@ class Upfront_Ajax extends Upfront_Server {
 		$store_key = Upfront_Layout::get_storage_key() . '-' . $layout;
 		$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($store_key, $is_dev);
 		
-		if( $template_post_id )
+		if( $template_post_id ) {
 			Upfront_Server_PageTemplate::get_instance()->delete_template((int)$template_post_id, $is_dev);
+			
+			// get all pages that were using this custom post type template
+			$template_meta_name = ( $is_dev ) 
+				? Upfront_Layout::get_storage_key() . '-template_dev_post_id'
+				: Upfront_Layout::get_storage_key() . '-template_post_id'
+			;
+			$pages = Upfront_Server_PageTemplate::get_instance()->get_pages_by_template((int)$template_post_id, $template_meta_name);
+			foreach ( $pages as $page ) {
+				// delete reference to custom post type template
+				delete_post_meta($page->ID, $template_meta_name);
+				// revert back to template file
+				$template_file = get_post_meta($page->ID, 'orig_wp_page_template', true);
+				update_post_meta($page->ID, '_wp_page_template', $template_file);
+			}
+		}
+			
 		
 		// deletes what's in option table from previous implementation
 		if ($is_dev) {

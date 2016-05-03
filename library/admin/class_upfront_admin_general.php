@@ -112,7 +112,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 							<?php endif; ?>
 
 						</p>
-						<button id="upfront_reset_layout" disabled="disabled" ><?php esc_html_e("Reset Layout", Upfront::TextDomain) ?></button>
+						<button id="upfront_reset_layout" disabled="disabled" data-dev="<?php echo (int)Upfront_Debug::get_debugger()->is_dev();?>"><?php esc_html_e("Reset Layout", Upfront::TextDomain) ?></button>
 					</div>
 					<div class="upfront-debug-block">
 						<p class="left"><?php esc_html_e("Reset Theme to Default State", Upfront::TextDomain) ?></p>
