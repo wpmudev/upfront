@@ -754,8 +754,10 @@ var PageTemplateEditor = PostSectionView.extend({
 	},
 	
 	on_module_update: function(module) {
-		//console.log(module);
-		
+		var $dot = this.$el.find('.chosen-container .changes-dot');
+		if($dot.length) return;
+
+		this.$el.find('.chosen-container').append('<div class="changes-dot"></div>');
 	},
 	
 	get_options: function () {
@@ -925,6 +927,7 @@ var PostUrlEditor = PostSectionView.extend({
         this.post = opts.post;
         this.hasDefinedSlug = _.isEmpty( this.post.get("post_name") ) ? false : true;
         this.render();
+
     },
     render: function(){
         var self = this,

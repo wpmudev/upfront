@@ -10746,6 +10746,16 @@ a.ueditor-select-option:hover {
   height: 100%;
   z-index: 9; }
 
+#sidebar-ui .changes-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #1fcd8f;
+  border: solid 1px #19a674;
+  border-radius: 50%;
+  position: absolute;
+  top: 7px;
+  left: 110px; }
+
 .screen-reader-text {
   position: absolute;
   margin: -1px;
