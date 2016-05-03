@@ -728,6 +728,8 @@ var PageTemplateEditor = PostSectionView.extend({
 				templateOptions[idx] = { label: template.get('post_name'), value: template.get('ID') };
 			} else if ( typeof template.get('template_type') !== 'undefined' && template.get('template_type') == 'page' ) {
 				templateOptions[idx] = { label: template.get('name'), value: template.get('slug') };
+			} else {
+				templateOptions[idx] = { label: template.get('name'), value: template.get('slug') };
 			}
 		});
 		

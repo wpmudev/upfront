@@ -423,10 +423,16 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			foreach ( $custom_post_type_templates as $custom_template ) {
 				array_push($templates, $custom_template);
 			}
+			// append layouts saved on options table (from old implementation)
+			$db_option_layouts = Upfront_Layout::get_db_layouts();
+			foreach ( $db_option_layouts as $key => $db_layout ) {
+				array_push($templates, (object) array(
+					'slug' => $db_layout,
+					'name' => Upfront_Server_PageTemplate::get_instance()->db_layout_to_name($db_layout),
+				));
+			}
 		}
 		
-		// TODO: append layouts saved on options table (from old implementation)
-	
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			"results" => $templates
 		)));
