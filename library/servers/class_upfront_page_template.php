@@ -93,14 +93,30 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 		return $this->_data->get_all_page_templates($load, $template_type);
 	}
 	
-	public function parse_theme_templates () {
+	public function parse_theme_templates ($load_dev) {
 		$results = array();
 		$storage_key = Upfront_Layout::get_storage_key();
-		$templates = $this->get_all_theme_templates();
+		
+		$load = ( $load_dev ) 
+			? Upfront_PageTemplate::LAYOUT_TEMPLATE_DEV_TYPE
+			: Upfront_PageTemplate::LAYOUT_TEMPLATE_TYPE
+		;
+		
+		$templates = $this->get_all_theme_templates($load);
 		foreach ($templates as $template) {
-			$results[$template->post_name] = preg_replace('/^' . preg_quote($storage_key, '/') . '-?/', '', $template->post_name);
+			$post_name = preg_replace('/^' . preg_quote($storage_key, '/') . '-?/', '', $template->post_name);
+			$results[$template->post_name] = array(
+				'name' => $post_name,
+				'source' => 'cpt' // from custom post type
+			);
 		}
 		return wp_parse_args($results, Upfront_Layout::get_db_layouts());
+	}
+	
+	public function db_layout_to_name ($item) {
+		if ( !is_array($item) && !isset($item['source']) ) return Upfront_EntityResolver::db_layout_to_name($item);
+		
+		return ucwords(preg_replace(array('/-template/', '/[\-]/'), array('',' '), $item['name']));
 	}
 	
 	/**
