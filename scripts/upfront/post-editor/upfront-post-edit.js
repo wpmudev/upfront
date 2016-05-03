@@ -675,6 +675,7 @@ var PageTemplateEditor = PostSectionView.extend({
     allPageTemplates: false,
     events: _.extend({}, PostSectionView.prototype.events, {
 		"click .save-post-template": "handle_save_as",
+		"click .apply-post-template": "apply_template",
     }),
     initialize: function(options){
         this.collection.on('add remove', this.update, this);
@@ -709,6 +710,18 @@ var PageTemplateEditor = PostSectionView.extend({
 			// Attach chosen select and type checkbox to template
 			this.$el.find('.upfront-page-template-chosen').html(this.templateSelect.$el);
     },
+		
+		apply_template: function(e) {	
+			e.preventDefault();
+			// TODO: show warning as per Invision flow
+			
+			// save selected layout
+			var selected = this.$el.find('.upfront-chosen-select').val();
+			_upfront_post_data.template_slug = selected;
+			Upfront.Events.trigger("command:layout:save_meta");
+			
+			// navigate back to this page to apply the new layout
+		},
 	
 	handle_save_as: function(e) {
 		var me = this;
@@ -716,21 +729,33 @@ var PageTemplateEditor = PostSectionView.extend({
 		this.save_fields = new SaveLayoutFields({ model: this.model });
 		this.save_fields.render();
 		this.$el.find('.upfront-page-template-action').html(this.save_fields.$el);
+		this.add_overlay();
+		
 		this.listenTo(this.save_fields, 'click:cancel', this.cancel_save);
 		this.listenTo(this.save_fields, 'click:save', this.save);
 	},
 	
 	cancel_save: function() {
 		this.$el.find('.upfront-page-template-action').html(_.template($(editionBox_tpl).find('#upfront-page-action').html()));
+		this.remove_overlay();
+	},
+
+	save: function(value) {
+		this.cancel_save();
 	},
 	
-	save: function(value) {
-		console.log(value);
-		this.cancel_save();
+	add_overlay: function() {
+		this.$el.find('.upfront-page-template-dropdown, .upfront-page-template-description').append('<div class="upfront-templates-overlay"></div>').css({opacity: 0.6});
+	},
+	
+	remove_overlay: function() {
+		this.$el.find('.upfront-page-template-dropdown .upfront-templates-overlay, .upfront-page-template-description .upfront-templates-overlay').remove();
+		this.$el.find('.upfront-page-template-dropdown, .upfront-page-template-description').css({opacity: 1});
 	},
 	
 	on_module_update: function(module) {
 		//console.log(module);
+		
 	},
 	
 	get_options: function () {
