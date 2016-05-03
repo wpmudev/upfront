@@ -152,6 +152,10 @@ class Upfront_Ajax extends Upfront_Server {
 			$template_file = get_post_meta($post_id, '_wp_page_template', true);
 			
 			if ( $template_file ) {
+				// save post meta backup for template file, we need this later when resetting layouts
+				update_post_meta($post_id, 'orig_wp_page_template', $template_file);
+				
+				// taking care $template_slug
 				$page_templates = get_page_templates();
 				foreach ( $page_templates as $template_name => $template_filename ) {
 					if ( $template_filename == $template_file ) {
