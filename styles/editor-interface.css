@@ -10691,6 +10691,47 @@ a.ueditor-select-option:hover {
 #sidebar-ui .upfront-page-template-description strong {
   font-weight: bold; }
 
+#sidebar-ui .save-form-cancel,
+#sidebar-ui .save-form-name,
+#sidebar-ui .save-form-save {
+  display: inline-block; }
+
+#sidebar-ui .save-form-cancel input {
+  width: 52px;
+  height: 22px;
+  background: #fff;
+  border: 1px solid #becbd7;
+  border-radius: 3px;
+  font-family: Verdana;
+  font-size: 11px;
+  color: #a1b5c9;
+  line-height: 20px;
+  text-align: center;
+  margin-right: 10px; }
+
+#sidebar-ui .save-form-name input {
+  width: 117px;
+  height: 32px;
+  background: #fff;
+  border: 1px solid #a2bfda;
+  border-right: none;
+  font-family: Verdana;
+  font-size: 11px;
+  color: #758596; }
+
+#sidebar-ui .save-form-save input {
+  width: 45px;
+  height: 32px;
+  background: #1fcd8f;
+  border: 1px solid #1bb37d;
+  font-family: Verdana;
+  font-size: 11px;
+  color: #fff;
+  text-align: center;
+  line-height: 32px;
+  position: relative;
+  top: 1px; }
+
 .screen-reader-text {
   position: absolute;
   margin: -1px;

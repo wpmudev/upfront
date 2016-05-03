@@ -674,7 +674,7 @@ var PageTemplateEditor = PostSectionView.extend({
     updateTimer: false,
     allPageTemplates: false,
     events: _.extend({}, PostSectionView.prototype.events, {
-			
+		"click .save-post-template": "handle_save_as",
     }),
     initialize: function(options){
         this.collection.on('add remove', this.update, this);
@@ -687,7 +687,9 @@ var PageTemplateEditor = PostSectionView.extend({
 			this.$el.html(this.pageTemplateListTpl({
 					label: me.label
 			}));
-		
+			
+			this.$el.find('.upfront-page-template-action').html(_.template($(editionBox_tpl).find('#upfront-page-action').html()));
+			
 			// Get chosen select and type checkbox
 			var selectTemplate = this.chosen_field();
 			var templateOptions = this.get_options();
@@ -707,6 +709,25 @@ var PageTemplateEditor = PostSectionView.extend({
 			// Attach chosen select and type checkbox to template
 			this.$el.find('.upfront-page-template-chosen').html(this.templateSelect.$el);
     },
+	
+	handle_save_as: function(e) {
+		var me = this;
+		e.preventDefault();
+		this.save_fields = new SaveLayoutFields({ model: this.model });
+		this.save_fields.render();
+		this.$el.find('.upfront-page-template-action').html(this.save_fields.$el);
+		this.listenTo(this.save_fields, 'click:cancel', this.cancel_save);
+		this.listenTo(this.save_fields, 'click:save', this.save);
+	},
+	
+	cancel_save: function() {
+		this.$el.find('.upfront-page-template-action').html(_.template($(editionBox_tpl).find('#upfront-page-action').html()));
+	},
+	
+	save: function(value) {
+		console.log(value);
+		this.cancel_save();
+	},
 	
 	on_module_update: function(module) {
 		//console.log(module);
@@ -735,7 +756,7 @@ var PageTemplateEditor = PostSectionView.extend({
 		
 		return templateOptions;
 	},
-	
+
 	chosen_field: function() {
 		var chosenField = Upfront.Views.Editor.Field.Chosen_Select.extend({
 			className: 'select-page-template-chosen',
@@ -827,7 +848,49 @@ var PageTemplateEditor = PostSectionView.extend({
 	}
 });
 
+var SaveLayoutFields = Backbone.View.extend({
+	initialize: function(options) {
+		var me = this;
 
+		this.editor = options.editor;
+
+		this.fields = [
+			new Upfront.Views.Editor.Field.Button({
+				className: 'save-form-cancel',
+				model: this.model,
+				label: l10n.global.content.cancel,
+				compact: true,
+				on_click: function(){
+					me.trigger('click:cancel');
+				}
+			}),
+			new Upfront.Views.Editor.Field.Text({
+				className: 'save-form-name',
+				model: this.model,
+				compact: true,
+			}),
+			new Upfront.Views.Editor.Field.Button({
+				className: 'save-form-save',
+				model: this.model,
+				label: l10n.global.content.ok,
+				compact: true,
+				on_click: function(){
+					me.trigger('click:save', me.$el.find('.save-form-name input').val());
+				}
+			})
+		];
+	},
+	render: function() {
+		this.$el.html('');
+		_.each(this.fields, function(field) {
+			field.render();
+			field.delegateEvents();
+			this.$el.append(field.el);
+		}, this);
+
+		return this;
+	}
+});	
 
 var PostUrlEditor = PostSectionView.extend({
     hasDefinedSlug : false,
