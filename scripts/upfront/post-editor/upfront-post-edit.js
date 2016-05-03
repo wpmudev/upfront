@@ -674,7 +674,7 @@ var PageTemplateEditor = PostSectionView.extend({
     updateTimer: false,
     allPageTemplates: false,
     events: _.extend({}, PostSectionView.prototype.events, {
-			
+			"click .apply-post-template": "apply_template",
     }),
     initialize: function(options){
         this.collection.on('add remove', this.update, this);
@@ -707,9 +707,22 @@ var PageTemplateEditor = PostSectionView.extend({
 			// Attach chosen select and type checkbox to template
 			this.$el.find('.upfront-page-template-chosen').html(this.templateSelect.$el);
     },
+		
+		apply_template: function(e) {	
+			e.preventDefault();
+			// TODO: show warning as per Invision flow
+			
+			// save selected layout
+			var selected = this.$el.find('.upfront-chosen-select').val();
+			_upfront_post_data.template_slug = selected;
+			Upfront.Events.trigger("command:layout:save_meta");
+			
+			// navigate back to this page to apply the new layout
+		},
 	
 	on_module_update: function(module) {
 		//console.log(module);
+		
 	},
 	
 	get_options: function () {

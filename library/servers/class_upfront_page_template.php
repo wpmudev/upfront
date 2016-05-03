@@ -34,22 +34,22 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 		register_post_type(Upfront_PageTemplate::LAYOUT_TEMPLATE_TYPE, array(
 			"exclude_from_search" => false,
 			"publicly_queryable" => true,
-			"show_ui" => true, // TODO make false later
-			"show_in_nav_menus" => true, // TODO make false later
-			// "supports" => false,
-			// "has_archive" => false,
-			// "rewrite" => false,
-			"label" => "Page Templates", // TODO to remove later
+			"supports" => false,
+			"has_archive" => false,
+			"rewrite" => false,
+			"label" => "Page Templates", // uncomment this if want to check on admin
+			"show_ui" => true, // uncomment this if want to check on admin
+			"show_in_nav_menus" => true, // uncomment this if want to check on admin
 		));
 		register_post_type(Upfront_PageTemplate::LAYOUT_TEMPLATE_DEV_TYPE, array(
 			"exclude_from_search" => false,
 			"publicly_queryable" => true,
-			"show_ui" => true, // TODO make false later
-			"show_in_nav_menus" => true, // TODO make false later
-			// "supports" => false,
-			// "has_archive" => false,
-			// "rewrite" => false,
-			"label" => "Page Dev Templates", // TODO to remove later
+			"supports" => false,
+			"has_archive" => false,
+			"rewrite" => false,
+			"label" => "Page Dev Templates", // uncomment this if want to check on admin
+			"show_ui" => true, // uncomment this if want to check on admin
+			"show_in_nav_menus" => true, // uncomment this if want to check on admin
 		));
 		register_post_status(Upfront_PageTemplate::LAYOUT_TEMPLATE_STATUS, array(
 			'public' => true,
@@ -159,15 +159,6 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 		} 
 		
 		return $layout;
-	}
-	
-	// TODO: to remove later, just for unit testing
-	public function test_data () {
-		$templates = $this->_data->get_all_page_templates();
-		print_r('templates | ');
-		print_r($templates);
-		print_r('post types | ');
-		print_r(get_post_types());
 	}
 	
 }
