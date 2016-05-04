@@ -3244,6 +3244,7 @@
 			initialize: function () {
 				this.postId = this.getPostId();
 				this.panels = {
+					'post_editor': new SidebarPanel_PostEditor({"model": this.model, "postId": this.postId}),
 					'posts': new SidebarPanel_Posts({"model": this.model}),
 					'elements': new SidebarPanel_DraggableElements({"model": this.model}),
 					'settings': new SidebarPanel_Settings({"model": this.model})
@@ -3268,16 +3269,6 @@
 			},
 			render: function () {
 				var me = this;
-				
-				this.postId = this.getPostId();
-
-				if(typeof this.postId !== "undefined" && this.postId && !this.panels.postDetails ) {					
-					var postPanel = {
-						postDetails: new SidebarPanel_PostEditor({"model": this.model, "postId": this.postId})
-					};
-					this.panels = _.extend({}, postPanel, this.panels);
-				}
-				
 				this.$el.empty();
 				
 				_.each(this.panels, function(panel){
