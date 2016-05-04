@@ -715,12 +715,10 @@ var PageTemplateEditor = PostSectionView.extend({
 			e.preventDefault();
 			// TODO: show warning as per Invision flow
 			
-			// save selected layout
+			// apply selected layout
 			var selected = this.$el.find('.upfront-chosen-select').val();
 			_upfront_post_data.template_slug = selected;
 			Upfront.Events.trigger("command:layout:save_meta");
-			
-			// navigate back to this page to apply the new layout
 		},
 	
 	handle_save_as: function(e) {

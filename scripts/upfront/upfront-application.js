@@ -43,7 +43,8 @@ var LayoutEditorSubapplication = Subapplication.extend({
 	},
 	
 	_save_layout_meta: function (preferred_layout, publish) {
-		var storage_key = publish === true ? _upfront_storage_key : _upfront_save_storage_key,
+		var me = this,
+			storage_key = publish === true ? _upfront_storage_key : _upfront_save_storage_key,
 			post_id = ( typeof _upfront_post_data.post_id !== 'undefined' ) ? _upfront_post_data.post_id : '',
 			template_type = ( typeof _upfront_post_data.template_type !== 'undefined' ) ? _upfront_post_data.template_type : 'layout',
 			template_slug = ( typeof _upfront_post_data.template_slug !== 'undefined' ) ? _upfront_post_data.template_slug : '',
@@ -64,8 +65,10 @@ var LayoutEditorSubapplication = Subapplication.extend({
 				"template_slug": template_slug
 			})
 			.success(function () {
-				Upfront.Util.log("layout saved");
+				Upfront.Util.log("layout applied");
 				Upfront.Events.trigger("command:layout:save_success");
+				Application.load_layout(_upfront_post_data.layout);
+				
 			})
 			.error(function () {
 				Upfront.Util.log("error saving layout");
@@ -967,8 +970,9 @@ var Application = new (Backbone.Router.extend({
 		
 		if ( layoutData.data.template_slug ) _upfront_post_data.template_slug = layoutData.data.template_slug;
 		
-		if (layoutData.data.post)
+		if (layoutData.data.post) {
 			this.post_set_up(layoutData.data.post);
+		}
 
 		//Set the query for the posts
 		var query = layoutData.data.query || {};
