@@ -1998,6 +1998,10 @@
 						self.append_box();
 					}
 				});
+				
+				this.listenTo(Upfront.Events, 'click:edit:navigate', function () {
+					setTimeout(self.prepare_editor(self));
+				});
 
 				this.editor = Upfront.Views.PostDataEditor;
 			},
@@ -4174,6 +4178,7 @@
 				var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
 				if(_upfront_post_data) _upfront_post_data.post_id = postId;
 				Upfront.Application.navigate('/edit/post/' + postId, {trigger: true});
+				Upfront.Events.trigger('click:edit:navigate', postId);
 			},
 			handle_post_view: function (e) {
 				e.preventDefault();
@@ -4288,22 +4293,23 @@
 					Upfront.Application.navigate(path, {trigger: true});
 				});
 			},
-		handle_sort_request: function (e) {
-			var $option = $(e.target).closest('.upfront-list_item-component'),
-				sortby = $option.attr('data-sortby'),
-				order = this.collection.order;
-			if(sortby){
-				if(sortby == this.collection.orderby)
-					order = order == 'desc' ? 'asc' : 'desc';
-				this.collection.reSort(sortby, order);
-			}
-		},
-		handle_post_edit: function (e) {
-			e.preventDefault();
-			var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
-			if(_upfront_post_data) _upfront_post_data.post_id = postId;
-			Upfront.Application.navigate('/edit/page/' + postId, {trigger: true});
-		},
+			handle_sort_request: function (e) {
+				var $option = $(e.target).closest('.upfront-list_item-component'),
+					sortby = $option.attr('data-sortby'),
+					order = this.collection.order;
+				if(sortby){
+					if(sortby == this.collection.orderby)
+						order = order == 'desc' ? 'asc' : 'desc';
+					this.collection.reSort(sortby, order);
+				}
+			},
+			handle_post_edit: function (e) {
+				e.preventDefault();
+				var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
+				if(_upfront_post_data) _upfront_post_data.post_id = postId;
+				Upfront.Application.navigate('/edit/page/' + postId, {trigger: true});
+				Upfront.Events.trigger('click:edit:navigate', postId);
+			},
 			handle_post_view: function (e) {
 				e.preventDefault();
 				var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
