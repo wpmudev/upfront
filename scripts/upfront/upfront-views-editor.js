@@ -1999,10 +1999,9 @@
 			},
 			on_render: function () {
 				var self = this;
-				if (typeof Upfront.Views.PostBox === "undefined") {
-					if (typeof Upfront.Views.PostDataEditor !== "undefined" && Upfront.Views.PostDataEditor.contentEditor !== false) {
-						Upfront.Views.PostBox = Upfront.Views.PostDataEditor.contentEditor.prepareBox();
-					}
+
+				if (typeof Upfront.Views.PostDataEditor !== "undefined" && Upfront.Views.PostDataEditor.contentEditor !== false) {
+					Upfront.Views.PostBox = Upfront.Views.PostDataEditor.contentEditor.prepareBox();
 				}
 
 				if( Upfront.Views.PostDataEditor && Upfront.Views.PostBox ) {
