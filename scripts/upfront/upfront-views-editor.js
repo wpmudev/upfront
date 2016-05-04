@@ -3249,6 +3249,10 @@
 					'elements': new SidebarPanel_DraggableElements({"model": this.model}),
 					'settings': new SidebarPanel_Settings({"model": this.model})
 				};
+				
+				if(typeof _upfront_post_data.post_id === "undefined" || _upfront_post_data.post_id === false) {
+					this.panels = _.omit(this.panels, 'post_editor');
+				}
 
 				// Dev feature only
 				//if ( Upfront.Settings.Debug.dev )
@@ -3269,8 +3273,7 @@
 			},
 			render: function () {
 				var me = this;
-				this.$el.empty();
-				
+
 				_.each(this.panels, function(panel){
 					panel.render();
 
