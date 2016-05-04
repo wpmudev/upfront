@@ -1812,14 +1812,15 @@
 			initialize: function (opts) {
 				var me = this;
 				this.active = true;
+				this.postId = this.getPostId();
 				this.sections = _([
-					new SidebarPanel_Settings_Section_PostDetails({"model": this.model, "postId": opts.postId}),
+					new SidebarPanel_Settings_Section_PostDetails({"model": this.model, "postId": this.postId}),
 				]);
 
 				if ( Upfront.Application.is_single( "post" ) ) {
-					me.sections.push(new SidebarPanel_Settings_Section_PostTagCategory({"model": me.model, "postId": opts.postId}));
+					me.sections.push(new SidebarPanel_Settings_Section_PostTagCategory({"model": me.model, "postId": this.postId}));
 				} else if ( Upfront.Application.is_single( "page" ) ) {
-					me.sections.push(new SidebarPanel_Settings_Section_PageTemplate({"model": me.model, "postId": opts.postId}));
+					me.sections.push(new SidebarPanel_Settings_Section_PageTemplate({"model": me.model, "postId": this.postId}));
 				}
 
 				Upfront.Events.on("command:layout:save", this.on_save, this);
@@ -1859,6 +1860,19 @@
 				if (!tax) return true;
 				var type = post.get("post_type") || 'post';
 				return "page" !== type;
+			},
+			getPostId: function() {
+				postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
+				if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.THEME ) {
+					// We're dealing with a theme exporter request
+					// Okay, so let's fake a post
+					postId = "fake_post";
+				}
+				else if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.CONTENT_STYLE ){
+					postId = "fake_styled_post";
+				}
+				
+				return postId;
 			},
 		});
 		
@@ -3241,9 +3255,8 @@
 			"tagName": "ul",
 			"className": "sidebar-panels",
 			initialize: function () {
-				this.postId = this.getPostId();
 				this.panels = {
-					'post_editor': new SidebarPanel_PostEditor({"model": this.model, "postId": this.postId}),
+					'post_editor': new SidebarPanel_PostEditor({"model": this.model}),
 					'posts': new SidebarPanel_Posts({"model": this.model}),
 					'elements': new SidebarPanel_DraggableElements({"model": this.model}),
 					'settings': new SidebarPanel_Settings({"model": this.model})
@@ -3257,23 +3270,14 @@
 				//if ( Upfront.Settings.Debug.dev )
 				//	this.panels.settings = new SidebarPanel_Settings({"model": this.model});
 			},
-			getPostId: function() {
-				postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
-				if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.THEME ) {
-					// We're dealing with a theme exporter request
-					// Okay, so let's fake a post
-					postId = "fake_post";
-				}
-				else if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.CONTENT_STYLE ){
-					postId = "fake_styled_post";
-				}
-				
-				return postId;
-			},
 			render: function () {
 				var me = this;
 
-				_.each(this.panels, function(panel){
+				_.each(this.panels, function(panel, index){
+					if(index === "post_editor") {
+						// Make sure we re-initialize panels
+						panel.initialize();
+					}
 					panel.render();
 
 					//Render panels to init styles, but do not append to $el
