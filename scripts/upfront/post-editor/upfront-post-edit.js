@@ -312,8 +312,10 @@ var PostSectionView = Backbone.View.extend({
 			$this_togglable = $button.siblings(".ueditor-togglable");
 		}
 		
-		$(".ueditor-box-content-wrap .ueditor-togglable").parent().removeClass('upfront-settings-toggled');
-        $(".ueditor-box-content-wrap .ueditor-togglable").not($this_togglable).slideUp();
+		if(!$button.hasClass('ueditor-edit-post-url')) {
+			$(".ueditor-box-content-wrap .ueditor-togglable").parent().removeClass('upfront-settings-toggled');
+        }
+		$(".ueditor-box-content-wrap .ueditor-togglable").not($this_togglable).slideUp();
         $(".ueditor-box-content-wrap .ueditor-btn-edit").show();
         $(".ueditor-previous-data-toggle").not( $this_prev_data_toggle ).show();
 
@@ -1095,15 +1097,20 @@ var PostScheduleView = PostSectionView.extend({
         this.render();
     },
     render: function(){
-        var date = new Object();
+        var date = new Object(),
+			me = this;
         this.initialDate = this.post.get("post_date");
         date.currentMonth = this.initialDate.getMonth();
         date.currentYear = this.initialDate.getFullYear();
         date.currentDay = this.initialDate.getDate();
+		date.date = this.initialDate.getDate();
         date.currentHour = this.initialDate.getHours();
         date.currentMinute = this.initialDate.getMinutes();
         this.schedule = this.getSchedule();
         this.$el.html( this.tpl(_.extend( {}, this.post, date, {schedule: this.schedule }) ) );
+		
+		this.$('#upfront-datepicker').datepicker();
+
         return this;
     },
     getSchedule: function(){

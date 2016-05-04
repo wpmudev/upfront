@@ -191,16 +191,9 @@
         <a href="#" class="edit-timestamp ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
         <div class="ueditor-togglable ueditor-togglable-post-schedule-date">
             <div class="timestamp-wrap">
-                <label class="screen-reader-text">{{Upfront.Settings.l10n.global.content.month}}</label>
-                <select name="mm">
-                    {[ _.each(_.sortBy(Upfront.Settings.l10n.global.views.month_names), function(month, idx){ ]}
-                    <option value="{{idx}}" {[ if( idx == currentMonth ) { ]} selected="selected" {[ } ]}>{{month}}</option>
-                    {[ }); ]}
-                </select>
-                <label class="screen-reader-text">{{Upfront.Settings.l10n.global.content.day}}</label>
-                <input type="text" name="jj" value="{{currentDay}}" size="2" maxlength="2" autocomplete="off">,
-                <label class="screen-reader-text">{{Upfront.Settings.l10n.global.content.year}}</label>
-                <input type="text" name="yy" value="{{currentYear}}" size="4" maxlength="4" autocomplete="off">
+				<div class="upfront-bar-datepicker">
+					 <input id="upfront-datepicker" type="text" name="date" value="{{date}}">
+				</div>
                 @
                 <label class="screen-reader-text">{{Upfront.Settings.l10n.global.content.hour}}</label>
                 <input type="text"  name="hh" value="{{currentHour}}" size="2" maxlength="2" autocomplete="off">
