@@ -259,7 +259,7 @@ jQuery(document).ready(function($){
 				min_height = height = 0;
 			if ( $regions.length > 1 ){
 				$regions.each(function(){
-					var min = parseInt($(this).css('min-height')),
+					var min = parseInt($(this).css('min-height'), 10),
 						h = $(this).outerHeight();
 					if ( min )
 						min_height = min > min_height ? min : min_height;
@@ -290,7 +290,7 @@ jQuery(document).ready(function($){
 			});
 			// Keep element position to ratio if enabled
 			var behavior = $(this).attr('data-behavior'),
-				original_height = parseInt($(this).attr('data-original-height'))
+				original_height = parseInt($(this).attr('data-original-height'), 10)
 			;
 			if ( behavior == 'keep-ratio' && original_height > 0 ){
 				var $wrappers = $region.find('> .upfront-region-wrapper > .upfront-output-wrapper'),
@@ -640,9 +640,9 @@ jQuery(document).ready(function($){
 				container_offset = $container.offset(),
 				container_bottom = container_offset.top + container_height,
 				height = $(this).height(),
-				top = is_float ? parseInt($(this).attr('data-top')) : 0,
+				top = is_float ? parseInt($(this).attr('data-top'), 10) : 0,
 				is_top = is_float ? ( typeof $(this).attr('data-top') != "undefined" ) : ( $(this).nextAll('.upfront-grid-layout').length > 0 ),
-				bottom = is_float ? parseInt($(this).attr('data-bottom')) : 0,
+				bottom = is_float ? parseInt($(this).attr('data-bottom'), 10) : 0,
 				is_bottom = is_float ? ( typeof $(this).attr('data-bottom') != "undefined" ) : ( $(this).prevAll('.upfront-grid-layout').length > 0 ),
 				css = {}
 			;
@@ -665,10 +665,10 @@ jQuery(document).ready(function($){
 					if ( typeof bg_position_y == 'string' && bg_position_y.match(/%$/) ){
 						var img = new Image;
 						img.src = $bg_image.css('background-image').replace(/^url\(\s*['"]?\s*/, '').replace(/\s*['"]?\s*\)$/, '');
-						bg_position_y = parseInt(bg_position_y)/100 * (height-img.height);
+						bg_position_y = parseInt(bg_position_y, 10)/100 * (height-img.height);
 					}
 					else {
-						bg_position_y = parseInt(bg_position_y);
+						bg_position_y = parseInt(bg_position_y, 10);
 					}
 				}
 			}
