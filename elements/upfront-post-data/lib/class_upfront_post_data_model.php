@@ -11,8 +11,9 @@ class Upfront_Post_Data_Model {
 	 * @param  integer $post_id Raw data (element properties)
 	 */
 	public static function get_post ($post_id = null) {
+		global $wp_query;
 		$post = get_post($post_id);
-			
+		$wp_query->in_the_loop = true;
 		return $post;
 	}
 
