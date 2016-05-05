@@ -783,7 +783,8 @@ var PageTemplateEditor = PostSectionView.extend({
 	on_module_update: function(module) {
 		var $dot = this.$el.find('.chosen-container .changes-dot');
 		if($dot.length) return;
-
+		
+		this.$el.find('.upfront-page-template-description').show();
 		this.$el.find('.chosen-container').append('<div class="changes-dot"></div>');
 	},
 	
