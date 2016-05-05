@@ -815,6 +815,11 @@ var PageTemplateEditor = PostSectionView.extend({
 		var template_editor = this;
 		var chosenField = Upfront.Views.Editor.Field.Chosen_Select.extend({
 			className: 'select-page-template-chosen',
+			initialize: function(options) {
+				this.options = options;
+				//Close dropdown on parent scroll
+				$('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, this.closeChosen);
+			},
 			render: function() {
 				Upfront.Views.Editor.Field.Chosen_Select.prototype.render.call(this);
 				var me = this;
@@ -834,9 +839,14 @@ var PageTemplateEditor = PostSectionView.extend({
 					display_disabled_options: false
 				});
 				
+				this.$el.find('.upfront-chosen-select').on('chosen:hiding_dropdown', function() {
+					me.allowMouseWheel();
+				});
+				
 				return this;
 			},
 			on_change: function() {
+				this.allowMouseWheel();
 				this.$el.find('.chosen-drop').css('display', 'none');
 				this.trigger('changed');
 			},
@@ -870,6 +880,12 @@ var PageTemplateEditor = PostSectionView.extend({
 			},
 			openOptions: function(e) {
 				var me = this;
+				
+				//Disable scroll when chosen is opened
+				$('.sidebar-panel-content .sidebar-tab-content').bind('mousewheel', function() {
+					return false;
+				});
+
 				_.delay(function() { // Delay because opening animation causes wrong outerHeight results
 					var in_sidebar = me.$el.parents('#sidebar-ui').length,
 						in_settings = me.$el.parents('#element-settings-sidebar').length,
@@ -891,6 +907,21 @@ var PageTemplateEditor = PostSectionView.extend({
 
 				me.$el.find('.chosen-drop').show();
 			},
+			closeChosen: function(e) {
+				var me = e.data;
+				var in_sidebar = me.$el.parents('#sidebar-ui').length,
+					in_settings = me.$el.parents('#element-settings-sidebar').length;
+
+				if(in_sidebar == 1 || in_settings == 1) {
+					me.$el.find('.chosen-drop').css('display', 'none');
+				}
+				me.$el.find('select').trigger("chosen:close");
+				me.allowMouseWheel();
+			},
+			allowMouseWheel: function() {
+				//Enable scroll when chosen is closed
+				$('.sidebar-panel-content .sidebar-tab-content').unbind('mousewheel');
+			}
 		});
 		
 		return chosenField;

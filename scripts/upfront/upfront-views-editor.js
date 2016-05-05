@@ -5585,16 +5585,45 @@
 			multiple: false,
 
 			initialize: function(options) {
+				this.options = options;
 				Field.prototype.initialize.call(this, options);
 				//Close dropdown on parent scroll
 				$('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, this.closeChosen);
-
-				//Disable scroll when chosen is opened
-				$('.sidebar-panel-content .sidebar-tab-content').bind('mousewheel', function() {
-					return false
-				});
 			},
+			
+			render: function () {
+				var me = this;
 
+				this.$el.html('');
+
+				if ( this.label ) {
+					this.$el.append(this.get_label_html());
+				}
+				this.$el.append(this.get_field_html());
+
+				this.stop_scroll_propagation(this.$el.find('.upfront-field-select-options'));
+
+				if ( ! this.multiple && ! this.get_saved_value() ) {
+					this.$el.find('.upfront-field-select-option:eq(0) input').prop('checked', true);
+				}
+
+				this.update_select_display_value();
+
+				if ( this.options.width ) {
+					this.$el.find('.upfront-field-select').css('width', this.options.width);
+				}
+
+				if (this.options.additional_classes) {
+					this.$el.addClass(this.options.additional_classes);
+				}
+				
+				this.$el.find('select').on('chosen:hiding_dropdown', function() {
+					me.allowMouseWheel();
+				});
+
+				this.trigger('rendered');
+			},
+			
 			get_field_html: function() {
 				var multiple = this.multiple ? 'multiple' : '';
 				return ['<select class="upfront-chosen-select"' , multiple, ' data-placeholder="', this.options.placeholder,  '">', this.get_values_html(), '</select>'].join('');
@@ -5605,6 +5634,7 @@
 				return ['<option value="', value.value, '"', selected, '>', value.label, '</option>'].join('');
 			},
 			on_change: function(e) {
+				this.allowMouseWheel();
 				this.$el.find('.chosen-drop').css('display', 'none');
 				this.trigger('changed');
 			},
@@ -5615,6 +5645,12 @@
 				this.$el.find('select').val(value).trigger('chosen:updated');
 			},
 			openOptions: function(e) {
+				
+				//Disable scroll when chosen is opened
+				$('.sidebar-panel-content .sidebar-tab-content, #sidebar-scroll-wrapper').bind('mousewheel', function() {
+					return false
+				});
+				
 				var me = this;
 				_.delay(function() { // Delay because opening animation causes wrong outerHeight results
 					var in_sidebar = me.$el.parents('#sidebar-ui').length,
@@ -5647,8 +5683,11 @@
 				}
 				me.$el.find('select').trigger("chosen:close");
 
+				me.allowMouseWheel();
+			},
+			allowMouseWheel: function() {
 				//Enable scroll when chosen is closed
-				$('.sidebar-panel-content .sidebar-tab-content').unbind('mousewheel');
+				$('.sidebar-panel-content .sidebar-tab-content, #sidebar-scroll-wrapper').unbind('mousewheel');
 			}
 		});
 
