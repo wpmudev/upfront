@@ -704,6 +704,7 @@ var PageTemplateEditor = PostSectionView.extend({
 				values: templateOptions,
 				change: function(value) {
 					console.log('templateSelect changed');
+					console.log(value);
 				}
 			});
 
@@ -739,7 +740,14 @@ var PageTemplateEditor = PostSectionView.extend({
 		},
 		
 		filter_list: function(selected) {
-			console.log(selected);
+			// disable all first
+			this.$el.find('optgroup').attr('disabled','disabled');
+			// enable selected
+			for ( key in selected ) {
+				this.$el.find('optgroup[label="'+ selected[key] +'"]').removeAttr('disabled');
+			}
+			// trigger chosen update
+			this.$el.find('.upfront-chosen-select').trigger("chosen:updated");
 		},
 	
 	handle_save_as: function(e) {
@@ -823,6 +831,7 @@ var PageTemplateEditor = PostSectionView.extend({
 					search_contains: true,
 					width: selectWidth,
 					disable_search: true,
+					display_disabled_options: false
 				});
 				
 				return this;
@@ -830,7 +839,6 @@ var PageTemplateEditor = PostSectionView.extend({
 			on_change: function() {
 				this.$el.find('.chosen-drop').css('display', 'none');
 				this.trigger('changed');
-				
 			},
 			get_value_html: function (value, index) {
 				var selected = '',
@@ -847,11 +855,11 @@ var PageTemplateEditor = PostSectionView.extend({
 				var typeField = new Upfront.Views.Editor.Field.Checkboxes({
 					label: l10n.global.views.label_show_templates + ':',
 					className: 'chosen-checkbox-filter',
-					default_value: ['pages','layouts'],
+					default_value: ['templates','layouts'],
 					layout: 'horizontal-inline',
 					multiple: true,
 					values: [
-						{label: l10n.global.views.pages, value: 'pages'},
+						{label: l10n.global.views.pages, value: 'templates'},
 						{label: l10n.global.views.layouts, value: 'layouts'}
 					],
 					change: function (e) {
