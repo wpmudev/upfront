@@ -2546,11 +2546,13 @@ define([
 				this.listenTo(this.model, 'change', this.rerender_objects);
 				this.listenTo(this.model, 'reset', this.on_reset);
 
+				this.lazy_apply_wrapper_height = _.debounce(this.apply_wrapper_height, 1000);
+
 				//this.listenTo(Upfront.Events, "entity:drag_stop", this.apply_flexbox_clear);
-				this.listenTo(Upfront.Events, "entity:drag_stop", this.apply_wrapper_height);
+				this.listenTo(Upfront.Events, "entity:drag_stop", this.lazy_apply_wrapper_height);
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.apply_adapt_to_breakpoints);
 				//this.listenTo(Upfront.Events, "entity:resized", this.apply_flexbox_clear);
-				this.listenTo(Upfront.Events, "entity:resized", this.apply_wrapper_height);
+				this.listenTo(Upfront.Events, "entity:resized", this.lazy_apply_wrapper_height);
 				this.listenTo(Upfront.Events, "entity:resized", this.apply_adapt_to_breakpoints);
 				this.listenTo(Upfront.Events, "entity:wrapper:resized", this.on_wrapper_resize);
 				this.listenTo(Upfront.Events, "entity:wrappers:update", this.on_wrappers_update);
@@ -2766,10 +2768,10 @@ define([
 			},
 			on_after_layout_render: function () {
 				//this.apply_flexbox_clear();
-				this.apply_wrapper_height();
+				this.lazy_apply_wrapper_height();
 				this.apply_adapt_to_breakpoints();
 				//this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.apply_flexbox_clear);
-				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.apply_wrapper_height);
+				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.lazy_apply_wrapper_height);
 			},
 			on_wrappers_update: function (parent_model) {
 				if ( _.isObject(parent_model) && parent_model.get('objects') != this.model )
@@ -2781,18 +2783,18 @@ define([
 					local_view.update_position();
 				});
 				//this.apply_flexbox_clear();
-				this.apply_wrapper_height();
+				this.lazy_apply_wrapper_height();
 			},
 			on_wrapper_resize: function (view, model) {
 				if ( view.parent_view && view.parent_view != this ) return;
 				//this.apply_flexbox_clear();
-				this.apply_wrapper_height();
+				this.lazy_apply_wrapper_height();
 				this.apply_adapt_to_breakpoints();
 			},
 			on_object_refresh: function (view) {
 				if ( !this.object_group_view ) return;
 				if ( view.parent_view && view.parent_view != this ) return;
-				this.apply_wrapper_height();
+				this.lazy_apply_wrapper_height();
 			},
 			on_add: function (model, collection, options) {
 				var update = typeof options.update != 'undefined' ? options.update : true;
@@ -2800,7 +2802,7 @@ define([
 				this.render_object(model, options);
 				if ( update ) {
 					//this.apply_flexbox_clear();
-					this.apply_wrapper_height();
+					this.lazy_apply_wrapper_height();
 					this.apply_adapt_to_breakpoints();
 				}
 				Upfront.Events.trigger("entity:added:after");
@@ -2809,7 +2811,7 @@ define([
 				var update = typeof options.update != 'undefined' ? options.update : true;
 				this.remove_model(model);
 				if ( update ) {
-					this.apply_wrapper_height();
+					this.lazy_apply_wrapper_height();
 					this.apply_adapt_to_breakpoints();
 				}
 			},
@@ -2828,7 +2830,7 @@ define([
 						me.render_object(object, {index: index});
 					});
 					//this.apply_flexbox_clear();
-					this.apply_wrapper_height();
+					this.lazy_apply_wrapper_height();
 					this.apply_adapt_to_breakpoints();
 				}
 			},
@@ -2837,7 +2839,7 @@ define([
 				// Make sure clearing flexbox is applied, set a timeout to let other positioning finish
 				setTimeout(function(){
 					//me.apply_flexbox_clear();
-					me.apply_wrapper_height();
+					me.lazy_apply_wrapper_height();
 				}, 1000);
 			},
 			remove: function() {
@@ -4014,11 +4016,15 @@ define([
 				this.listenTo(Upfront.Events, "entity:module:hide_toggle", this.on_module_hide);
 				this.listenTo(Upfront.Events, "entity:module_group:hide_toggle", this.on_module_hide);
 				this.listenTo(Upfront.Events, "entity:object:refresh", this.on_object_refresh);
+				this.listenTo(Upfront.Events, "entity:object:update", this.on_object_refresh);
+				this.listenTo(Upfront.Events, "entity:module_group:update", this.on_module_refresh);
 				this.listenTo(Upfront.Events, "entity:module_group:group", this.on_group);
 				this.listenTo(Upfront.Events, "entity:module_group:ungroup", this.on_ungroup);
 				this.listenTo(Upfront.Events, "layout:after_render", this.on_after_layout_render);
 				this.listenTo(Upfront.Events, "upfront:csseditor:ready", this.on_csseditor_ready);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+
+				this.lazy_apply_wrapper_height = _.debounce(this.apply_wrapper_height, 1000);
 			},
 			on_entity_remove: function(e, view) {
 				Upfront.Events.trigger("entity:removed:before");
@@ -4070,7 +4076,7 @@ define([
 						me.render_module(module);
 					})
 					me.apply_flexbox_clear();
-					me.apply_wrapper_height();
+					me.lazy_apply_wrapper_height();
 				}
 				else {
 					this.model.each(function (module) {
@@ -4081,7 +4087,7 @@ define([
 
 					RenderQueue.addToEnd(function() {
 						me.apply_flexbox_clear();
-						me.apply_wrapper_height();
+						me.lazy_apply_wrapper_height();
 						Upfront.Events.trigger("entity:modules:after_render", me, me.model);
 					});
 				}
@@ -4194,37 +4200,42 @@ define([
 					local_view.update_position();
 				});
 				this.apply_flexbox_clear();
-				this.apply_wrapper_height();
+				this.lazy_apply_wrapper_height();
 			},
 			on_drop: function (view, model) {
 				if ( view.parent_view && view.parent_view != this ) return;
 				//this.apply_flexbox_clear();
-				this.apply_wrapper_height();
+				this.lazy_apply_wrapper_height();
 				this.apply_adapt_to_breakpoints();
 			},
 			on_resize: function (view, model) {
 
 				if ( view.parent_view && view.parent_view != this ) return;
 				//this.apply_flexbox_clear();
-				this.apply_wrapper_height();
+				this.lazy_apply_wrapper_height();
 				this.apply_adapt_to_breakpoints();
 			},
 			on_wrapper_resize: function (view, model) {
 				if ( view.parent_view && view.parent_view != this ) return;
 				//this.apply_flexbox_clear();
-				this.apply_wrapper_height();
+				this.lazy_apply_wrapper_height();
 				this.apply_adapt_to_breakpoints();
 			},
 			on_module_hide: function (view, model) {
 				if ( view.parent_view && view.parent_view != this ) return;
 				//this.apply_flexbox_clear();
-				this.apply_wrapper_height();
+				this.lazy_apply_wrapper_height();
 				this.apply_adapt_to_breakpoints();
 			},
 			on_object_refresh: function (view) {
 				if ( !view.parent_module_view ) return;
 				if ( view.parent_module_view.parent_view && view.parent_module_view.parent_view != this ) return;
-				this.apply_wrapper_height();
+				this.lazy_apply_wrapper_height();
+			},
+			on_module_refresh: function (view) {
+				if ( !view.parent_view ) return;
+				if ( view.parent_view != this ) return;
+				this.lazy_apply_wrapper_height();
 			},
 			on_add: function (model, collection, options) {
 				var update = typeof options.update != 'undefined' ? options.update : true;
@@ -4232,7 +4243,7 @@ define([
 				this.render_module(model, options);
 				if ( update ) {
 					//this.apply_flexbox_clear();
-					this.apply_wrapper_height();
+					this.lazy_apply_wrapper_height();
 					this.apply_adapt_to_breakpoints();
 				}
 				Upfront.Events.trigger("entity:added:after");
@@ -4241,7 +4252,7 @@ define([
 				var update = typeof options.update != 'undefined' ? options.update : true;
 				this.remove_model(model);
 				if ( update ) {
-					this.apply_wrapper_height();
+					this.lazy_apply_wrapper_height();
 					this.apply_adapt_to_breakpoints();
 				}
 			},
@@ -4260,7 +4271,7 @@ define([
 						me.render_module(module, {index: index});
 					});
 					this.apply_flexbox_clear();
-					this.apply_wrapper_height();
+					this.lazy_apply_wrapper_height();
 					this.apply_adapt_to_breakpoints();
 				}
 			},
@@ -4270,11 +4281,11 @@ define([
 				this.apply_adapt_to_breakpoints();
 				this.normalize_child_spacing();
 				setTimeout(function(){
-					me.apply_wrapper_height();
+					me.lazy_apply_wrapper_height();
 				}, 1000); // Wait for other positioning finished
 			},
 			on_csseditor_ready: function () {
-				//this.apply_wrapper_height();
+				//this.lazy_apply_wrapper_height();
 			},
 			apply_flexbox_clear: function () {
 				this.fix_flexbox_clear(this.$el);
@@ -4348,7 +4359,7 @@ define([
 				// Make sure clearing flexbox is applied, set a timeout to let other positioning finish
 				setTimeout(function(){
 					me.apply_flexbox_clear();
-					me.apply_wrapper_height();
+					me.lazy_apply_wrapper_height();
 				}, 1000);
 			},
 			remove: function() {
@@ -6197,7 +6208,7 @@ define([
 					should be applied on the modules once the contents of the lightbox show up
 				**/
 				this._modules_view.apply_flexbox_clear();
-				this._modules_view.apply_wrapper_height();
+				this._modules_view.lazy_apply_wrapper_height();
 
 				Upfront.Events.trigger('upfront:lightbox:show');
 
