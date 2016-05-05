@@ -13120,8 +13120,10 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-e
   left: 38px;
   top: 7px; }
 
-#element-settings-sidebar .padding-lock input[type=checkbox]:after {
-  content: '';
+#element-settings-sidebar .padding-lock input[type=checkbox] {
+  display: none; }
+
+#element-settings-sidebar .padding-lock label {
   display: block;
   height: 15px;
   width: 15px;
@@ -13129,11 +13131,12 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-e
   background-image: url("../img/uf-core-el-sprite.svg"), none;
   background-position: -661px -172px;
   background-color: #f7fbff;
-  left: -3px;
-  top: -3px;
-  position: relative; }
+  left: 30px;
+  top: 3px;
+  position: relative;
+  cursor: pointer; }
 
-#element-settings-sidebar .padding-lock input[type=checkbox]:checked:after {
+#element-settings-sidebar .padding-lock .upfront-field-multiple-selected label {
   background-position: -661px -140px; }
 
 #element-settings-sidebar .padding-lock {
