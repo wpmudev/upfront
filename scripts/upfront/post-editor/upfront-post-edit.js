@@ -1125,19 +1125,23 @@ var PostScheduleView = PostSectionView.extend({
         this.render();
     },
     render: function(){
+		this.initialDate = this.post.get("post_date");
+		 
         var date = new Object(),
+			objDate = new Date(this.initialDate),
+			locale = "en-us",
+			month = objDate.toLocaleString(locale, { month: "short" });
 			me = this;
-        this.initialDate = this.post.get("post_date");
-        date.currentMonth = this.initialDate.getMonth();
-        date.currentYear = this.initialDate.getFullYear();
-        date.currentDay = this.initialDate.getDate();
-		date.date = this.initialDate.getDate();
+       
+		date.date = month + " " +this.initialDate.getDate() + ", " + this.initialDate.getFullYear();
         date.currentHour = this.initialDate.getHours();
         date.currentMinute = this.initialDate.getMinutes();
         this.schedule = this.getSchedule();
         this.$el.html( this.tpl(_.extend( {}, this.post, date, {schedule: this.schedule }) ) );
 		
-		this.$('#upfront-datepicker').datepicker();
+		this.$('#upfront-schedule-datepicker').datepicker({
+			dateFormat: "M d, yy"
+		});
 
         return this;
     },
@@ -1177,10 +1181,12 @@ var PostScheduleView = PostSectionView.extend({
             };
     },
     update: function(){
-        var date = new Date(),
-            year = this.$("input[name='yy']").val(),
-            month = this.$("select[name='mm']").val(),
-            day = this.$("input[name='jj']").val(),
+		
+		var dateField = this.$('#upfront-schedule-datepicker').datepicker( 'getDate' ),
+			date = new Date(),
+            year = dateField.getFullYear(),
+            month = dateField.getMonth(),
+            day = dateField.getDate(),
             hour = this.$("input[name='hh']").val(),
             minute = this.$("input[name='mn']").val()
             ;
