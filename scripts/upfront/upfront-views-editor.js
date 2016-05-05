@@ -547,27 +547,16 @@
 			on_click: function(e){
 				e.preventDefault();
 				var me = this;
-
-				this.spawn_modal();
-				this.modal.render();
-				$('body').append(this.modal.el);
-
-				this.modal.open(function () {
-					me.render_modal();
-					me.trigger("new_page:modal:open");
-				}).done(function () {
-					me.trigger("new_page:modal:close");
-					Upfront.Util.post({
+				
+				Upfront.Util
+					.post({
 						action: "upfront-create-post_type",
-						data: _.extend({post_type: me.postType}, me.modal._data)
+						data: _.extend({post_type: me.postType, title: me._default_label}, {})
 					}).done(function (resp) {
-						//Upfront.Util.log(resp.data);
-						if(_upfront_post_data) _upfront_post_data.post_id = resp.data.post_id;
-						Upfront.Application.navigate('/edit/page/' + resp.data.post_id, {trigger: true});
-
-					});
-					//Upfront.Application.navigate('/create_new/page', {trigger: true});
+					if(_upfront_post_data) _upfront_post_data.post_id = resp.data.post_id;
+					Upfront.Application.navigate('/edit/page/' + resp.data.post_id, {trigger: true});
 				})
+				;
 			},
 			render_modal: function () {
 				var me = this,
