@@ -10551,7 +10551,34 @@ a.ueditor-select-option:hover {
 #post-url-slug span {
   font-family: Verdana;
   font-size: 11px;
-  color: #2f475f; }
+  color: #2f475f;
+  font-weight: normal; }
+
+.ueditor-post-url-text {
+  width: 172px !important;
+  height: 25px !important;
+  background-color: #ffffff;
+  border: solid 1px #a2bfda;
+  margin: 0px;
+  display: inline-block; }
+
+#sidebar-ui .ueditor-save-post-data {
+  width: 42px;
+  height: 26px;
+  background-color: #1fcd8f;
+  border: solid 1px #1bb37d;
+  font-family: Open Sans;
+  font-weight: 400;
+  font-size: 11px;
+  color: #ffffff;
+  display: inline-block;
+  text-align: center;
+  font-weight: bold;
+  margin: 0px;
+  position: relative;
+  left: -5px;
+  top: -1px;
+  line-height: 23px; }
 
 #sidebar-ui a.ueditor-btn-edit {
   display: inline;
@@ -10922,6 +10949,9 @@ div#ui-datepicker-div td a {
 
 .upfront-toggleable-content .upfront-field-checkbox, .upfront-toggleable-content .upfront-field-radio {
   margin-right: 5px; }
+
+.upfront-slug_editor-url {
+  background: none !important; }
 
 .screen-reader-text {
   position: absolute;

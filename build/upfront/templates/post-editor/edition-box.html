@@ -40,17 +40,13 @@
     <script id="post-url-editor" type="text/template">
         <label id="post-url-display-label">{{url_label}}:</label>
         
-        <p id="post-url-display" class="ueditor-previous-data ueditor-previous-data-toggle ueditor-previous-data-small">{{rootUrl}}</p>
-		<p id="post-url-slug"><span>{{slug}}</span> <a href="#" class="ueditor-edit-post-url ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a></p>
+        <p id="post-url-display">{{rootUrl}}</p>
+		<p id="post-url-slug" class="ueditor-previous-data ueditor-previous-data-toggle"><span>{{slug}}</span> <a href="#" class="ueditor-edit-post-url ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a></p>
 
         <div class="ueditor-togglable ueditor-togglable-post-url">
             <div class="ueditor-row">
-                <span class="ueditor-post-url-root">{{rootUrl}}</span>
                 <input type="text" class="upfront-field-text ueditor-post-url-text" value="{{slug}}">
-            </div>
-            <div class="ueditor-row">
-                <a href="#" class="ueditor-save-post-data  ueditor-button-save ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
-                <a href="#" class="cancel-post-url  ueditor-button-cancel">{{Upfront.Settings.l10n.global.content.cancel}}</a>
+				<a href="#" class="ueditor-save-post-data  ueditor-button-save ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
             </div>
         </div>
     </script>
