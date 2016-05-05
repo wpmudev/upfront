@@ -157,20 +157,20 @@
 
         <div id="post-visibility-select" class="ueditor-togglable">
             <input type="checkbox" style="display:none" name="hidden_post_sticky" id="hidden-post-sticky" value="sticky">
-            <input type="radio" name="visibility" id="visibility-radio-public" value="public" {[ if( status.value == "public" ) { ]} checked="checked" {[ } ]} >
+            <input type="radio" name="visibility" id="visibility-radio-public" value="public" class="upfront-field-radio" {[ if( status.value == "public" ) { ]} checked="checked" {[ } ]} >
             <label for="visibility-radio-public">{{Upfront.Settings.l10n.global.content.public_post}}</label>
             <br>
             <span id="sticky-span" class="ueditor-togglable-child ueditor-togglable-child-public" {[ if( status.value == "public" ) { ]} style="display:block" {[ } ]}>
-            <input name="sticky" type="checkbox" value="sticky">
+            <input name="sticky" type="checkbox" value="sticky" class="upfront-field-checkbox">
             <label>{{Upfront.Settings.l10n.global.content.sticky_post_label}}</label>
             </span>
-            <input type="radio" name="visibility" id="visibility-radio-password" value="password" {[ if( status.value == "password" ) { ]} checked="checked" {[ } ]}>
+            <input type="radio" name="visibility" id="visibility-radio-password" value="password" class="upfront-field-radio" {[ if( status.value == "password" ) { ]} checked="checked" {[ } ]}>
             <label for="visibility-radio-password">{{Upfront.Settings.l10n.global.content.password_protected}}</label>
             <br>
             <span id="password-span" class="ueditor-togglable-child ueditor-togglable-child-password" {[ if( status.value == "password" ) { ]} style="display:block" {[ } ]}>
             <input type="password" class="upfront-field-text ueditor-post-pass" value="{{post_password}}" placeholder="{{Upfront.Settings.l10n.global.content.password}}">
             </span>
-            <input type="radio" name="visibility" id="visibility-radio-private" value="private" {[ if( status.value == "private" ) { ]} checked="checked" {[ } ]}>
+            <input type="radio" name="visibility" id="visibility-radio-private" value="private" class="upfront-field-radio" {[ if( status.value == "private" ) { ]} checked="checked" {[ } ]}>
             <label for="visibility-radio-private">{{Upfront.Settings.l10n.global.content.is_private}}</label>
             <br>
             <p>

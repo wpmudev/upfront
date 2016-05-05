@@ -10876,7 +10876,7 @@ div#ui-datepicker-div td a {
   top: -2px; }
 
 #sticky-span, #password-span input {
-  margin-bottom: 8px; }
+  margin-bottom: 5px; }
 
 #post-visibility-select {
   margin-top: 5px; }
@@ -10919,6 +10919,9 @@ div#ui-datepicker-div td a {
 
 .upfront-toggleable-content.upfront-settings-toggled {
   padding: 3px 15px; }
+
+.upfront-toggleable-content .upfront-field-checkbox, .upfront-toggleable-content .upfront-field-radio {
+  margin-right: 5px; }
 
 .screen-reader-text {
   position: absolute;
