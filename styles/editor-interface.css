@@ -10794,7 +10794,7 @@ a.ueditor-select-option:hover {
   border-radius: 50%;
   position: relative;
   overflow: hidden;
-  top: 7px; }
+  top: 8px; }
 
 #ui-datepicker-div .ui-datepicker-prev {
   float: left; }
@@ -10853,6 +10853,73 @@ div#ui-datepicker-div td a {
   border-top: 1px solid #accae6;
   text-align: center; }
 
+#upfront-schedule-datepicker {
+  width: 94px;
+  height: 25px;
+  background-color: #ffffff;
+  border: solid 1px #a2bfda;
+  font-family: Verdana;
+  font-size: 11px;
+  color: #2f475f;
+  padding: 0px 5px; }
+
+#upfront-schedule-datepicker:focus {
+  border: solid 2px #a3bfd9; }
+
+#sticky-span {
+  border-left: 2px solid #c3ced9;
+  padding-left: 10px;
+  height: 15px; }
+
+#sticky-span label {
+  position: relative;
+  top: -2px; }
+
+#sticky-span, #password-span input {
+  margin-bottom: 8px; }
+
+#post-visibility-select {
+  margin-top: 5px; }
+
+.timestamp-wrap {
+  margin-top: 8px;
+  margin-bottom: 5px; }
+
+.schedule-hours, .schedule-minutes, .schedule-hours:hover, .schedule-minutes:hover {
+  width: 26px;
+  height: 25px;
+  background-color: #ffffff;
+  border: solid 1px #a2bfda !important;
+  font-family: Verdana;
+  font-size: 11px;
+  color: #2f475f;
+  padding: 0px 5px; }
+
+.upfront-bar-datepicker {
+  display: inline-block; }
+
+.ueditor-save-post-date {
+  width: 37px;
+  height: 26px;
+  margin: 0px;
+  position: relative;
+  top: -9px;
+  border-radius: 3px;
+  right: -10px; }
+
+.save-post-visibility {
+  width: 67px;
+  height: 26px;
+  margin: 0px;
+  border-radius: 3px;
+  margin-bottom: 5px !important; }
+
+.upfront-toggleable-content {
+  padding: 3px 0px; }
+
+.upfront-toggleable-content.upfront-settings-toggled {
+  padding: 3px 15px; }
+
 .screen-reader-text {
   position: absolute;
   margin: -1px;
@@ -10868,7 +10935,7 @@ div#ui-datepicker-div td a {
   display: none; }
 
 .misc-pub-section {
-  padding: 2px 15px;
+  padding: 0px 15px;
   overflow: hidden;
   clear: both;
   font: normal 12px/20px Open Sans, Hevletica Neueu, Helvetica, sans-serif; }

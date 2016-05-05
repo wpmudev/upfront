@@ -989,6 +989,7 @@ var PostStatusView = PostSectionView.extend({
         'trash': {value: 'trash', name: l10n.global.content.deleted_post}
     },
     initialStatus: false,
+	className: 'upfront-toggleable-content',
     tpl: _.template($(editionBox_tpl).find('#post-status-tpl').html()),
     initialize: function(options){
         this.post = options.post;
@@ -1051,6 +1052,7 @@ var PostVisibilityView = PostSectionView.extend({
     tpl: _.template($(editionBox_tpl).find('#post-visibility-tpl').html()),
     post_password: "",
     postVisibility: false,
+	className: 'upfront-toggleable-content',
     visibilityOptions: {
         'public': {value: 'public', name:l10n.global.content.public_post},
         'sticky': {value: 'sticky', name:l10n.global.content.sticky},
@@ -1120,6 +1122,7 @@ var PostVisibilityView = PostSectionView.extend({
 
 var PostScheduleView = PostSectionView.extend({
     tpl: _.template($(editionBox_tpl).find('#post-schedule-tpl').html()),
+	className: 'upfront-toggleable-content',
     initialize: function(options){
         this.post = options.post;
         this.render();
