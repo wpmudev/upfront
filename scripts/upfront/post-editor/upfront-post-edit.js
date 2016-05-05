@@ -703,7 +703,7 @@ var PageTemplateEditor = PostSectionView.extend({
 				label: '',
 				values: templateOptions,
 				change: function(value) {
-					
+					console.log('templateSelect changed');
 				}
 			});
 
@@ -711,6 +711,16 @@ var PageTemplateEditor = PostSectionView.extend({
 
 			// Attach chosen select and type checkbox to template
 			this.$el.find('.upfront-page-template-chosen').html(this.templateSelect.$el);
+			
+			// overwriting click event on chosen.jquery.min.js
+			setTimeout( function () {
+				me.$el.find('.upfront-field-multiple input').bind('click.chosen', function(e){
+					me.stop_bubble(e);
+				});
+				me.$el.find('.upfront-field-multiple span.upfront-field-label-text').bind('click.chosen', function(e){
+					me.stop_bubble(e);
+				});
+			}, 500);
     },
 		
 		apply_template: function(e) {	
@@ -721,6 +731,15 @@ var PageTemplateEditor = PostSectionView.extend({
 			var selected = this.$el.find('.upfront-chosen-select').val();
 			_upfront_post_data.template_slug = selected;
 			Upfront.Events.trigger("command:layout:save_meta");
+		},
+		
+		stop_bubble: function(e) {
+			e.stopImmediatePropagation();
+			return true;
+		},
+		
+		filter_list: function(selected) {
+			console.log(selected);
 		},
 	
 	handle_save_as: function(e) {
@@ -785,6 +804,7 @@ var PageTemplateEditor = PostSectionView.extend({
 	},
 
 	chosen_field: function() {
+		var template_editor = this;
 		var chosenField = Upfront.Views.Editor.Field.Chosen_Select.extend({
 			className: 'select-page-template-chosen',
 			render: function() {
@@ -804,7 +824,7 @@ var PageTemplateEditor = PostSectionView.extend({
 					width: selectWidth,
 					disable_search: true,
 				});
-
+				
 				return this;
 			},
 			on_change: function() {
@@ -834,8 +854,8 @@ var PageTemplateEditor = PostSectionView.extend({
 						{label: l10n.global.views.pages, value: 'pages'},
 						{label: l10n.global.views.layouts, value: 'layouts'}
 					],
-					change: function () {
-
+					change: function (e) {
+						template_editor.filter_list(this.get_value());
 					}
 				});
 				return typeField;
