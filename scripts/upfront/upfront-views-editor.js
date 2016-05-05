@@ -1883,7 +1883,6 @@
 				this.templates = _([]);
 				this.layouts = _([]);
 				this.options.call = false;
-				this.is_rendered = false;
 				this.layoutList = new Upfront.Collections.PageTemplateList([], {postId: this.options.postId});
 				this.load_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 );
 			},
@@ -1897,30 +1896,32 @@
 				var me = this;
 				
 				if( !this.options.call ) {
-					// fetching page and layout templates data from custom post type and from a file (for page templates)
+					// fetching layout templates data from custom post type
 					this.layoutList.fetch({load_dev: me.load_dev, template_type: 'layout'}).done(function(response){
 						me.layouts = new Upfront.Collections.PageTemplateList(response.data.results);
+						
+						// fetching page template files in sequence after layout templates
+						me.layoutList.fetch({load_dev: me.load_dev, template_type: 'page'}).done(function(response){
+							me.templates = new Upfront.Collections.PageTemplateList(response.data.results);
+							// append the Template UI
+							me.append_template_box();
+						});
 					});
-					this.layoutList.fetch({load_dev: me.load_dev, template_type: 'page'}).done(function(response){
-						me.templates = new Upfront.Collections.PageTemplateList(response.data.results);
-					});
+					
 					this.options.call = true;
 				}
+			},
+			append_template_box: function () {
+				var me = this;
+				var template_editor_view = new PostEditorBox.PageTemplateEditor({collection: me.layoutList, label: l10n.label_page_template});
 				
-				// append the PageTemplateEditor
-				if ( this.options.call && !this.is_rendered && Upfront.Views.PostDataEditor && Upfront.Views.PostBox ) {
-					var template_editor_view = new PostEditorBox.PageTemplateEditor({collection: me.layoutList, label: l10n.label_page_template});
+				setTimeout(function () {
 					template_editor_view.allPageTemplates = me.templates;
 					template_editor_view.allPageLayouts = me.layouts;
 					template_editor_view.render();
-					
-					setTimeout(function () {
-						me.$el.empty();
-						me.$el.append(template_editor_view.$el);
-					}, 300);
-					
-					this.is_rendered = true;
-				}
+					me.$el.empty();
+					me.$el.append(template_editor_view.$el);
+				}, 300);
 			}
 		});
 		
