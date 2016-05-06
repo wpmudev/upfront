@@ -666,9 +666,12 @@ var ContentEditorTaxonomy_Flat = PostSectionView.extend({
         this.$(".ueditor-togglable-child").slideToggle();
     },
     update: function(e){
+		var me = this;
         this.collection.save();
         Upfront.Events.trigger("editor:post:tax:updated", this.collection, this.tax);
-        this.render();
+		setTimeout( function () {
+			me.render();
+		}, 50);
     }
 });
 
