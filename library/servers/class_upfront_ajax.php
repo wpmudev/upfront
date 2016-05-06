@@ -142,9 +142,10 @@ class Upfront_Ajax extends Upfront_Server {
 		if(!$upfront_ajax_query)
 			$upfront_ajax_query = false;
 		
+		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
 		$template_meta_name = ( $load_dev ) 
-			? Upfront_Layout::get_storage_key() . '-template_dev_post_id'
-			: Upfront_Layout::get_storage_key() . '-template_post_id'
+			? $store_key . '-template_dev_post_id'
+			: $store_key . '-template_post_id'
 		;
 		
 		if ( $post_id ) {
@@ -160,7 +161,7 @@ class Upfront_Ajax extends Upfront_Server {
 				$page_templates = get_page_templates();
 				foreach ( $page_templates as $template_name => $template_filename ) {
 					if ( $template_filename == $template_file ) {
-						$template_slug = Upfront_Layout::get_storage_key() . '-' . str_replace(' ','-',strtolower($template_name));
+						$template_slug = $store_key . '-' . str_replace(' ','-',strtolower($template_name));
 						break;
 					}
 				}
@@ -186,7 +187,7 @@ class Upfront_Ajax extends Upfront_Server {
 			
 		} else {
 			// if special archive pages like homepage, use slug to get template post id
-			$store_key = Upfront_Layout::get_storage_key() . '-' . $layout_ids['item'];
+			$store_key = $store_key . '-' . $layout_ids['item'];
 			$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($store_key, $load_dev);
 		}		
 		
@@ -361,16 +362,17 @@ class Upfront_Ajax extends Upfront_Server {
 		$post_id = (isset($_POST['post_id'])) ? (int)$_POST['post_id'] : false;
 		
 		$layout = Upfront_Layout::from_json($json_data);
+		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
 		
 		if ( $post_id ) {
 		
 			$template_meta_name = ( $save_dev ) 
-				? Upfront_Layout::get_storage_key() . '-template_dev_post_id'
-				: Upfront_Layout::get_storage_key() . '-template_post_id'
+				? $store_key . '-template_dev_post_id'
+				: $store_key . '-template_post_id'
 			;
 			// get corresponding template post id only if not "save as"
 			if ( $save_as ) {
-				$template_slug = Upfront_Layout::get_storage_key() . '-' . str_replace(' ','-',strtolower($template_slug));
+				$template_slug = $store_key . '-' . str_replace(' ','-',strtolower($template_slug));
 			} else {
 				$template_post_id = get_post_meta((int)$post_id, $template_meta_name, true);
 			}
@@ -390,7 +392,7 @@ class Upfront_Ajax extends Upfront_Server {
 			
 		} else {
 			// if special archive pages like homepage, use slug to get template post id
-			$slug = Upfront_Layout::get_storage_key() . '-' . $layout->get('layout')['item'];
+			$slug = $store_key . '-' . $layout->get('layout')['item'];
 			$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($slug, $save_dev);
 			// save the page template
 			$saved_template_post_id = Upfront_Server_PageTemplate::get_instance()->save_template($template_post_id, $layout, $save_dev);
@@ -409,11 +411,13 @@ class Upfront_Ajax extends Upfront_Server {
 		$template_slug = (!empty($_POST['template_slug'])) ? $_POST['template_slug'] : false;
 		$post_id = (isset($_POST['post_id'])) ? (int)$_POST['post_id'] : false;
 		
+		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
+		
 		if ( $post_id ) {
 		
 			$template_meta_name = ( $save_dev ) 
-				? Upfront_Layout::get_storage_key() . '-template_dev_post_id'
-				: Upfront_Layout::get_storage_key() . '-template_post_id'
+				? $store_key . '-template_dev_post_id'
+				: $store_key . '-template_post_id'
 			;
 			
 			// get the template_post_id of selected template slug
@@ -427,7 +431,6 @@ class Upfront_Ajax extends Upfront_Server {
 			} elseif ( $template_slug ) {
 				// meaning selected template slug coming from a file
 				$page_templates = get_page_templates();
-				$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
 				foreach ( $page_templates as $template_name => $template_filename ) {
 					$slug = $store_key . '-' . str_replace(' ','-',strtolower($template_name));
 					if ( $slug == $template_slug ) {
@@ -482,20 +485,22 @@ class Upfront_Ajax extends Upfront_Server {
 			: false
 		;
 		
+		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
+		
 		if( $layout === array() )
 			$this->_out(new Upfront_JsonResponse_Error("Please specify layout to reset"));
 		
 		// delete first custom post type template
-		$store_key = Upfront_Layout::get_storage_key() . '-' . $layout;
-		$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($store_key, $is_dev);
+		$key = $store_key . '-' . $layout;
+		$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($key, $is_dev);
 		
 		if( $template_post_id ) {
 			Upfront_Server_PageTemplate::get_instance()->delete_template((int)$template_post_id, $is_dev);
 			
 			// get all pages that were using this custom post type template
 			$template_meta_name = ( $is_dev ) 
-				? Upfront_Layout::get_storage_key() . '-template_dev_post_id'
-				: Upfront_Layout::get_storage_key() . '-template_post_id'
+				? $store_key . '-template_dev_post_id'
+				: $store_key . '-template_post_id'
 			;
 			$pages = Upfront_Server_PageTemplate::get_instance()->get_pages_by_template((int)$template_post_id, $template_meta_name);
 			foreach ( $pages as $page ) {
@@ -519,8 +524,7 @@ class Upfront_Ajax extends Upfront_Server {
 			delete_option( $layout_key );
 			delete_option( $alternative_layout_key );
 		}else{
-			// $layout_key = $stylesheet . "-" . $layout;
-			$layout_key = Upfront_Layout::get_storage_key() . "-" . $layout;
+			$layout_key = $store_key . "-" . $layout;
 			$alternative_layout_key = wp_get_theme($stylesheet)->get("Name") . "-" . $layout;
 			delete_option( $layout_key );
 			delete_option( $alternative_layout_key );
@@ -557,13 +561,14 @@ class Upfront_Ajax extends Upfront_Server {
 		
 		$data = !empty($_POST) ? stripslashes_deep($_POST) : false;
 		$stylesheet = isset( $data['stylesheet'] ) ? $data['stylesheet'] : get_stylesheet();
+		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
 		
 		// delete all layout from custom post type for this theme
 		Upfront_Server_PageTemplate::get_instance()->delete_all_theme_templates();
 		
 		// delete all post meta for custom post type templates
-		delete_post_meta_by_key( Upfront_Layout::get_storage_key() . '-template_post_id' );
-		delete_post_meta_by_key( Upfront_Layout::get_storage_key() . '-template_dev_post_id' );
+		delete_post_meta_by_key( $store_key . '-template_post_id' );
+		delete_post_meta_by_key( $store_key . '-template_dev_post_id' );
 		
 		// delete from options table (previous implementation)
 		global $wpdb;
@@ -638,10 +643,11 @@ class Upfront_Ajax extends Upfront_Server {
 		$layout_ids = $_POST['layout_ids'];
 		$load_dev = $_POST['load_dev'] == 1 ? true : false;
 		$load_from_options = true;
+		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
 		
 		$template_meta_name = ( $load_dev ) 
-			? Upfront_Layout::get_storage_key() . '-template_dev_post_id'
-			: Upfront_Layout::get_storage_key() . '-template_post_id'
+			? $store_key . '-template_dev_post_id'
+			: $store_key . '-template_post_id'
 		;
 		
 		if ( $post_id ) {
@@ -649,8 +655,8 @@ class Upfront_Ajax extends Upfront_Server {
 			$template_post_id = get_post_meta($post_id, $template_meta_name, true);
 		} else {
 			// if special archive pages like homepage, use slug to get template post id
-			$store_key = Upfront_Layout::get_storage_key() . '-' . $layout_ids['item'];
-			$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($store_key, $load_dev);
+			$key = $store_key . '-' . $layout_ids['item'];
+			$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($key, $load_dev);
 		}
 		
 		if ( $template_post_id ) {

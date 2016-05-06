@@ -389,18 +389,19 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 	}
 	
 	function fetch_page_templates($data){
+		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
 		$template_type = isset($data['template_type']) 
 			? $data['template_type']
 			: false 
 		;
-		$dev_type = ( (int)$data['load_dev'] == 1 ) 
+		$dev_type = ( $data['load_dev'] == 1 ) 
 			? Upfront_PageTemplate::LAYOUT_TEMPLATE_DEV_TYPE
 			: Upfront_PageTemplate::LAYOUT_TEMPLATE_TYPE
 		;
 		$templates = ( $template_type == 'page' )
 			? array((object) array(
 					'name' => 'Default Template',
-					'slug' => Upfront_Layout::get_storage_key() . '-default',
+					'slug' => $store_key . '-default',
 					'file' => '',
 					'template_type' => $template_type
 				))
@@ -412,7 +413,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			foreach ( $page_templates as $template_name => $template_filename ) {
 				array_push($templates, (object) array(
 						'name' => $template_name,
-						'slug' => Upfront_Layout::get_storage_key() . '-' . str_replace(' ','-',strtolower($template_name)),
+						'slug' => $store_key . '-' . str_replace(' ','-',strtolower($template_name)),
 						'file' => $template_filename,
 						'template_type' => $template_type
 					)

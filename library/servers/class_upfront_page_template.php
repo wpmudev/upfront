@@ -34,9 +34,9 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 		register_post_type(Upfront_PageTemplate::LAYOUT_TEMPLATE_TYPE, array(
 			"exclude_from_search" => false,
 			"publicly_queryable" => true,
-			"supports" => false,
-			"has_archive" => false,
-			"rewrite" => false,
+			// "supports" => false,
+			// "has_archive" => false,
+			// "rewrite" => false,
 			"label" => "Page Templates", // uncomment this if want to check on admin
 			"show_ui" => true, // uncomment this if want to check on admin
 			"show_in_nav_menus" => true, // uncomment this if want to check on admin
@@ -44,9 +44,9 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 		register_post_type(Upfront_PageTemplate::LAYOUT_TEMPLATE_DEV_TYPE, array(
 			"exclude_from_search" => false,
 			"publicly_queryable" => true,
-			"supports" => false,
-			"has_archive" => false,
-			"rewrite" => false,
+			// "supports" => false,
+			// "has_archive" => false,
+			// "rewrite" => false,
 			"label" => "Page Dev Templates", // uncomment this if want to check on admin
 			"show_ui" => true, // uncomment this if want to check on admin
 			"show_in_nav_menus" => true, // uncomment this if want to check on admin
@@ -99,7 +99,7 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 	
 	public function parse_theme_templates ($load_dev) {
 		$results = array();
-		$storage_key = Upfront_Layout::get_storage_key();
+		$storage_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
 		
 		$load = ( $load_dev ) 
 			? Upfront_PageTemplate::LAYOUT_TEMPLATE_DEV_TYPE
@@ -124,7 +124,8 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 	}
 	
 	public function slug_layout_to_name ($slug) {
-		return ucwords(preg_replace(array('/'. Upfront_Layout::get_storage_key() .'/', '/[\-]/'), array('',' '), $slug));
+		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
+		return ucwords(preg_replace(array('/'. $store_key .'/', '/[\-]/'), array('',' '), $slug));
 	}
 	
 	/**
@@ -139,6 +140,7 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 			? $_GET['layout']['layout_revision']
 			: false
 		;
+		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
 		
 		if ( !$is_revision ) {
 			if ( isset($_GET['template_post_id']) ) {
@@ -146,9 +148,9 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 				
 			} else {
 				if ( !empty($_GET['layout']['specificity']) ) {
-					$slug = Upfront_Layout::get_storage_key() . '-' . $_GET['layout']['specificity'];
+					$slug = $store_key . '-' . $_GET['layout']['specificity'];
 				} else {
-					$slug = Upfront_Layout::get_storage_key() . '-' . $_GET['layout']['item'];
+					$slug = $store_key . '-' . $_GET['layout']['item'];
 				}
 				$template_post_id = $this->get_template_id_by_slug($slug, $load_dev);
 			}

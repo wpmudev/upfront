@@ -30,9 +30,11 @@ class Upfront_Output {
 		
 		if ( $post_id ) {
 			
+			$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
+			
 			$template_meta_name = ( $is_dev ) 
-				? Upfront_Layout::get_storage_key() . '-template_dev_post_id'
-				: Upfront_Layout::get_storage_key() . '-template_post_id'
+				? $store_key . '-template_dev_post_id'
+				: $store_key . '-template_post_id'
 			;
 			
 			$template_post_id = get_post_meta($post_id, $template_meta_name, true);
@@ -45,7 +47,8 @@ class Upfront_Output {
 			} else if ( isset($layout_ids['item']) ) {
 				$layout_id = $layout_ids['item'];
 			}
-			$store_key = Upfront_Layout::get_storage_key() . '-' . $layout_id;
+			$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
+			$store_key = $store_key . '-' . $layout_id;
 			$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($store_key, $is_dev);
 		}
 		

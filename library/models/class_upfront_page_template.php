@@ -127,7 +127,8 @@ class Upfront_PageTemplate {
 	 */
 	public function get_all_page_templates ($load = 'all', $template_type = false) {
 		global $wpdb;
-		$theme_key = $wpdb->esc_like(Upfront_Model::get_storage_key()) . '%';
+		$store_key = str_replace('_dev','',Upfront_Model::get_storage_key());
+		$theme_key = $wpdb->esc_like($store_key) . '%';
 		
 		if ( $load == 'all' ) {
 			$filter_dev = "";
