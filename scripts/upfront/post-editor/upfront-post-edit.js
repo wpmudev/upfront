@@ -579,7 +579,7 @@ var ContentEditorTaxonomy_Flat = PostSectionView.extend({
     },
 	
 	normalize_tax_object: function(otherTerms) {
-		var termsChosen = {};
+		var termsChosen = { label: '', value: ''};
 		otherTerms.each(function (term, idx) {
 			termsChosen[term.get('term_id')] = { label: term.get('name'), value: term.get('term_id') }
 		});
@@ -822,7 +822,7 @@ var PageTemplateEditor = PostSectionView.extend({
 	},
 	
 	normalize_template_object: function(templates) {
-		var templateOptions = {};
+		var templateOptions = { label: '', value: ''};
 		templates.each(function (template, idx) {
 			if ( typeof template.get('ID') !== 'undefined' ) {
 				templateOptions[idx] = { label: template.get('post_name'), value: template.get('ID') };
