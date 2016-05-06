@@ -701,11 +701,7 @@ var PageTemplateEditor = PostSectionView.extend({
 			this.templateSelect = new selectTemplate({
 				model: me.model,
 				label: '',
-				values: templateOptions,
-				change: function(value) {
-					console.log('templateSelect changed');
-					console.log(value);
-				}
+				values: templateOptions
 			});
 
 			this.templateSelect.render();
@@ -768,6 +764,14 @@ var PageTemplateEditor = PostSectionView.extend({
 	},
 
 	save: function(value) {
+		// all saved templates will be considered as Layout template
+		_upfront_post_data.template_type = 'layout';
+		_upfront_post_data.template_slug = value;
+		_upfront_post_data.save_as = 1;
+		
+		Upfront.Events.trigger("command:layout:save");
+		
+		// hide overlay
 		this.cancel_save();
 	},
 	

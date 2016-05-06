@@ -123,6 +123,10 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 		return ucwords(preg_replace(array('/-template/', '/[\-]/'), array('',' '), $item['name']));
 	}
 	
+	public function slug_layout_to_name ($slug) {
+		return ucwords(preg_replace(array('/'. Upfront_Layout::get_storage_key() .'/', '/[\-]/'), array('',' '), $slug));
+	}
+	
 	/**
 	 * This fires in style parsing AJAX request and overrides the used layout.
 	 *

@@ -350,6 +350,7 @@ class Upfront_Ajax extends Upfront_Server {
 		$storage_key = $_POST['storage_key'];
 		$stylesheet = ($_POST['stylesheet']) ? $_POST['stylesheet'] : get_stylesheet();
 		$template_post_id = false;
+		$save_as = $_POST['save_as'] == 1 ? true : false;
 		$save_dev = $_POST['save_dev'] == 1 ? true : false;
 		$template_slug = (!empty($_POST['template_slug'])) ? $_POST['template_slug'] : false;
 		
@@ -367,10 +368,13 @@ class Upfront_Ajax extends Upfront_Server {
 				? Upfront_Layout::get_storage_key() . '-template_dev_post_id'
 				: Upfront_Layout::get_storage_key() . '-template_post_id'
 			;
-			
-			// get corresponding template post id
-			$template_post_id = get_post_meta((int)$post_id, $template_meta_name, true);
-			// save the page template
+			// get corresponding template post id only if not "save as"
+			if ( $save_as ) {
+				$template_slug = Upfront_Layout::get_storage_key() . '-' . str_replace(' ','-',strtolower($template_slug));
+			} else {
+				$template_post_id = get_post_meta((int)$post_id, $template_meta_name, true);
+			}
+			// create or update page template
 			$saved_template_post_id = Upfront_Server_PageTemplate::get_instance()->save_template($template_post_id, $layout, $save_dev, $template_slug);
 			// add/update the template post id
 			if ( $saved_template_post_id ) {

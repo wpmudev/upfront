@@ -83,6 +83,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			post_id = ( typeof _upfront_post_data.post_id !== 'undefined' ) ? _upfront_post_data.post_id : '',
 			template_type = ( typeof _upfront_post_data.template_type !== 'undefined' ) ? _upfront_post_data.template_type : 'layout',
 			template_slug = ( typeof _upfront_post_data.template_slug !== 'undefined' ) ? _upfront_post_data.template_slug : '',
+			save_as = ( typeof _upfront_post_data.save_as !== 'undefined' ) ? _upfront_post_data.save_as : 0,
 			save_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 );
 		data.layout = _upfront_post_data.layout;
 		data.preferred_layout = preferred_layout;
@@ -100,6 +101,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 				"data": data, 
 				"storage_key": storage_key, 
 				"post_id": post_id,
+				"save_as": save_as,
 				"save_dev": save_dev,
 				"template_type": template_type,
 				"template_slug": template_slug
