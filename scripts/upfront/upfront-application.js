@@ -42,6 +42,10 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this._save_layout(this.layout.get("current_layout"), true);
 	},
 	
+	delete_layout: function () {
+		this._delete_layout();
+	},
+	
 	_save_layout_meta: function (preferred_layout, publish) {
 		var me = this,
 			storage_key = publish === true ? _upfront_storage_key : _upfront_save_storage_key,
@@ -113,6 +117,22 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			.error(function () {
 				Upfront.Util.log("error saving layout");
 				Upfront.Events.trigger("command:layout:save_error");
+			})
+		;
+	},
+	
+	_delete_layout: function () {
+		var me = this,
+			template_slug = ( typeof _upfront_post_data.template_slug !== 'undefined' ) ? _upfront_post_data.template_slug : '',
+			dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 );
+
+		Upfront.Util.post({
+				"action": Upfront.Application.actions.delete_layout, 
+				"template_slug": template_slug,
+				"dev": dev
+			})
+			.done(function () {
+				// reload the layout
 			})
 		;
 	},
@@ -232,6 +252,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this.listenTo(Upfront.Events, "command:exit", this.destroy_editor);
 		this.listenTo(Upfront.Events, "command:layout:save", this.save_layout);
 		this.listenTo(Upfront.Events, "command:layout:save_meta", this.save_layout_meta);
+		this.listenTo(Upfront.Events, "command:layout:delete_layout", this.delete_layout);
 		this.listenTo(Upfront.Events, "command:layout:save_as", this.save_layout_as);
 		this.listenTo(Upfront.Events, "command:layout:preview", this.preview_layout);
 		this.listenTo(Upfront.Events, "command:layout:publish", this.publish_layout);
@@ -650,6 +671,7 @@ var Application = new (Backbone.Router.extend({
 	actions: {
 		"save": "upfront_save_layout",
 		"save_meta": "upfront_save_layout_meta",
+		"delete_layout": "upfront_reset_layout",
 		"load": "upfront_load_layout"
 	},
 

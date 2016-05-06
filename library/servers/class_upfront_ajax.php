@@ -472,7 +472,7 @@ class Upfront_Ajax extends Upfront_Server {
         $regions = Upfront_Layout::delete_scoped_regions($name, $scope, $storage_key);
         $this->_out(new Upfront_JsonResponse_Success($regions));
     }
-
+	
 	function reset_layout () {
 		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
 		
@@ -486,6 +486,11 @@ class Upfront_Ajax extends Upfront_Server {
 		;
 		
 		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
+		
+		if ( isset($data['template_slug']) && !empty($data['template_slug']) ) {
+			$to_clear = $store_key . '-';
+			$layout = str_replace($to_clear, '', $data['template_slug']);
+		}
 		
 		if( $layout === array() )
 			$this->_out(new Upfront_JsonResponse_Error("Please specify layout to reset"));

@@ -762,7 +762,8 @@ var PageTemplateEditor = PostSectionView.extend({
 			e.preventDefault();
 			
 			// delete current layout template
-			
+			//TODO: show popup warning first if really want to delete template
+			Upfront.Events.trigger("command:layout:delete_layout");
 		},
 		
 		stop_bubble: function(e) {
