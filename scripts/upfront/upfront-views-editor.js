@@ -3252,6 +3252,15 @@
 			"tagName": "ul",
 			"className": "sidebar-panels",
 			initialize: function () {
+				this.init_modules();
+				
+				this.listenTo(Upfront.Events, 'click:edit:navigate', this.init_modules);
+
+				// Dev feature only
+				//if ( Upfront.Settings.Debug.dev )
+				//	this.panels.settings = new SidebarPanel_Settings({"model": this.model});
+			},
+			init_modules: function () {
 				this.panels = {
 					'post_editor': new SidebarPanel_PostEditor({"model": this.model}),
 					'posts': new SidebarPanel_Posts({"model": this.model}),
@@ -3262,13 +3271,11 @@
 				if(typeof _upfront_post_data.post_id === "undefined" || _upfront_post_data.post_id === false) {
 					this.panels = _.omit(this.panels, 'post_editor');
 				}
-
-				// Dev feature only
-				//if ( Upfront.Settings.Debug.dev )
-				//	this.panels.settings = new SidebarPanel_Settings({"model": this.model});
 			},
 			render: function () {
 				var me = this;
+				
+				me.$el.empty();
 
 				_.each(this.panels, function(panel, index){
 					if(index === "post_editor") {
