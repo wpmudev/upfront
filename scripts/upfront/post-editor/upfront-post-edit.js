@@ -41,11 +41,11 @@ var Box = Backbone.View.extend({
         Upfront.Events.on("upfront:element:edit:stop", this.element_stop_prop, this);
 		
 		// We should clear old events
-		Upfront.Events.off("command:layout:trash");
-		Upfront.Events.off("command:layout:save");
-
-		Upfront.Events.on("command:layout:trash", this.trash, this);
-		Upfront.Events.on("command:layout:save", this.publish, this);
+		this.stopListening(Upfront.Events, "command:layout:trash");
+-		this.stopListening(Upfront.Events, "command:layout:save");
+		// re-listen events
+		this.listenTo(Upfront.Events, "command:layout:trash", this.trash, this);
+-		this.listenTo(Upfront.Events, "command:layout:save", this.publish, this);
     },
 
     element_stop_prop: function () {
