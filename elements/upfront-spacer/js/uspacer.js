@@ -23,8 +23,21 @@ define([
 			return "";
 		},
 		init: function () {
-			this.listenTo(Upfront.Events, 'upfront:wrappers:before_fix_height', this.before_apply_height_from_wrapper);
-			this.listenTo(Upfront.Events, 'upfront:wrappers:after_fix_height', this.apply_height_from_wrapper);
+			var me = this;
+
+			var debouncedBeforeApply = _.debounce(this.before_apply_height_from_wrapper, 1000);
+			var debouncedApply = _.debounce(this.apply_height_from_wrapper, 1000);
+
+			this.listenTo(Upfront.Events, 'upfront:wrappers:before_fix_height', debouncedBeforeApply);
+			this.listenTo(Upfront.Events, 'upfront:wrappers:after_fix_height', debouncedApply);
+
+			this.dontRunVisible = true;
+			Upfront.Events.on('upfront:renderingqueue:start', function() {
+				me.dontRunVisible = true;
+			});
+			Upfront.Events.on('upfront:renderingqueue:done', function() {
+				me.dontRunVisible = false;
+			});
 		},
 		render: function () {
 			var grid = Upfront.Settings.LayoutEditor.Grid,
@@ -100,6 +113,8 @@ define([
 		_is_applying: function (from_view) {
 			if (this.parent_view && this.parent_view == from_view) return true;
 			if (this.parent_module_view && this.parent_module_view.parent_view && this.parent_module_view.parent_view == from_view) return true;
+
+			if (this.dontRunVisible === true) return;
 			if (this.$el.is(':visible')) return true;
 			return false;
 		},

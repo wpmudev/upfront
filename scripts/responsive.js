@@ -11,7 +11,10 @@
 				max_height = normalize_size($(this).attr('data-max-height')),
 				styles = $(this).html(),
 				applied_styles = {},
-				lazyApplyBinding;
+				lazyApplyBinding,
+				delayedStyleRender = true,
+				styleRenderQueue = [],
+
 
 			lazyApplyBinding = _.throttle(function(e){
 				if ( e.target == this )
@@ -23,7 +26,7 @@
 			$(window).on('load', apply_binding_all);
 			$(window).on('resize', lazyApplyBinding);
 			$(document).on('upfront-load', function(){
-				if ( typeof Upfront.Events != 'undefined' ){
+				if ( typeof Upfront.Events != 'undefined' ) {
 					// Attach events after render complete to improve load time
 					Upfront.Events.once("layout:render", function(){
 						on_editor = true;
@@ -46,6 +49,17 @@
 							apply_binding_all();
 						});
 					});
+
+					Upfront.Events.on('upfront:renderingqueue:done', function() {
+						delayedStyleRender = false;
+						_.each(styleRenderQueue, function(callback) {
+							callback();
+						});
+						styleRenderQueue = [];
+					});
+					Upfront.Events.on('upfront:renderingqueue:start', function() {
+						delayedStyleRender = true;
+					});
 				}
 			});
 			function apply_binding_all (sel) {
@@ -65,12 +79,11 @@
 				}
 			}
 			function apply_binding ($sel, single) {
-				var $style = $('#'+r_id),
-					changed = false
-				;
+				var changed = false;
+
 				if ( editor && !on_editor ) return;
 				$sel.find(bind+':visible').each(function(){
-					var $el = single ? $(this).closest('.upfront-module') : $(this)
+					var $el = single ? $(this).closest('.upfront-module') : $(this),
 						id = $(this).attr('id') || 'bind-'+(Math.floor(Math.random()*100000)),
 						width = parseFloat($el.css('width')),
 						height = parseFloat($el.css('height'))
@@ -103,15 +116,24 @@
 				if ( !changed ) {
 					return;
 				}
-				var styles_all = $.map(applied_styles, function(style, id){
-					return style;
-				});
-				if ( !$style.length ){
-					$style = $('<style id="' + r_id + '">' + styles_all.join("\n") + '</style>');
-					$('body').append($style);
-				}
-				else {
-					$style.html( styles_all.join("\n") );
+
+				var appendStyles = function() {
+					var $style;
+					var styles_all = $.map(applied_styles, function(style, id){
+						return style;
+					});
+					if ( !$('#'+r_id).length ) {
+						$style = $('<style id="' + r_id + '">' + styles_all.join("\n") + '</style>');
+						$('body').append($style);
+					} else {
+						$('#'+r_id).html( styles_all.join("\n") );
+					}
+				};
+
+				if (delayedStyleRender) {
+					styleRenderQueue.push(appendStyles);
+				} else {
+					appendStyles();
 				}
 			}
 			function normalize_size (size) {
