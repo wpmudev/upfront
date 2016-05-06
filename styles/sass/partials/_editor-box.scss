@@ -209,6 +209,23 @@
 	border-radius: 2px;
 }
 
+#sidebar-ui .upfront-delete-template-button {
+	color: #e75757;
+	margin-left: 0;
+	font-size: 14px;
+}
+
+#sidebar-ui .upfront-delete-template-button:before {
+	content: " ";
+	background-repeat: no-repeat;
+	display: inline-block;
+	background-image: url(../img/uf-core-el-sprite.svg);
+	width: 9px;
+	height: 12px;
+	background-position: -665px -77px;
+	margin-right: 5px;
+}
+
 #sidebar-ui .update-post-template {
 	float: left;
 }
