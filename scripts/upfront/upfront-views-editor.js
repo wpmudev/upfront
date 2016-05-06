@@ -1971,6 +1971,9 @@
 				this.options = opts;
 				this.settings = _([]);
 				var self = this;
+				
+				this.listenTo(Upfront.Events, "command:layout:trash", this.trash, this);
+				this.listenTo(Upfront.Events, "command:layout:save", this.publish, this);
 
 				if ( !Upfront.Views.PostDataEditor ) {
 					require(['content'], function() {
@@ -2042,14 +2045,14 @@
 			
 			append_box: function () {
 				var me = this,
-				boxEl = Upfront.Views.PostBox;
+				box = Upfront.Views.PostBox;
 
 				setTimeout(function () {
 					me.$el.empty();
-					me.$el.append(boxEl);
+					me.$el.append(box.$el);
 				}, 200);
 			},
-			
+
 			/**
 			 * On cancel handler, do rerender with cached data
 			 */
