@@ -990,9 +990,9 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 		if(draggable.length)
 			cancel = draggable.draggable('disable');
 
-        this.$el.closest(".upfront-module-view").append("<div class='editing-overlay'></div>");
-        this.$el.closest(".upfront-module").addClass("editing-content");
-        $(".upfront-module").not(".editing-content").addClass("fadedOut").fadeTo( "slow" , 0.3 );
+        //this.$el.closest(".upfront-module-view").append("<div class='editing-overlay'></div>");
+        //this.$el.closest(".upfront-module").addClass("editing-content");
+        // $(".upfront-module").not(".editing-content").addClass("fadedOut").fadeTo( "slow" , 0.3 );
         $(".change_feature_image").addClass("ueditor-display-block");
 		this.prepareEditableRegions();
 		//this.prepareBox();
