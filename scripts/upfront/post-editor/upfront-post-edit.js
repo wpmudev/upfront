@@ -39,14 +39,27 @@ var Box = Backbone.View.extend({
         //Upfront.Events.trigger('upfront:element:edit:start', 'write', this.post);
 
         Upfront.Events.on("upfront:element:edit:stop", this.element_stop_prop, this);
-		
+
 		// We should clear old events
 		this.stopListening(Upfront.Events, "command:layout:trash");
--		this.stopListening(Upfront.Events, "command:layout:save");
+		this.stopListening(Upfront.Events, "command:layout:save");
+		this.stopListening(Upfront.Events, "command:layout:save_as");
+	
 		// re-listen events
 		this.listenTo(Upfront.Events, "command:layout:trash", this.trash, this);
--		this.listenTo(Upfront.Events, "command:layout:save", this.publish, this);
+		this.listenTo(Upfront.Events, "command:layout:save", this.publish, this);
+		this.listenTo(Upfront.Events, "command:layout:save_as", this.publish, this);
     },
+	
+	updateEvents: function() {
+		this.delegateEvents();
+		this.statusSection.delegateEvents();
+        this.visibilitySection.delegateEvents();
+		this.scheduleSection.render();
+        this.scheduleSection.delegateEvents();
+        this.urlEditor.delegateEvents();
+		return false;
+	},
 
     element_stop_prop: function () {
         if (
@@ -61,41 +74,43 @@ var Box = Backbone.View.extend({
         });
     },
 
-		render: function(){
-			this.destroy();
-			if (Upfront.Application.user_can("EDIT") === false) {
-				if (parseInt(this.post.get('post_author'), 10) === Upfront.data.currentUser.id && Upfront.Application.user_can("EDIT_OWN") === true) {
-					// Pass through
-				} else {
-					return;
-				}
+	render: function(){
+		this.destroy();
+		if (Upfront.Application.user_can("EDIT") === false) {
+			if (parseInt(this.post.get('post_author'), 10) === Upfront.data.currentUser.id && Upfront.Application.user_can("EDIT_OWN") === true) {
+				// Pass through
+			} else {
+				return;
 			}
+		}
 
-			var me = this,
-			postData = this.post.toJSON(),
-				extraData = {},
-				base = me.post.get("guid")
-					;
-
-			extraData.rootUrl = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
-			postData.permalink = this.permalink = extraData.rootUrl + this.post.get("post_name");
-			postData.previewLink = this.post.get("guid") + "&preview=true";
-
-			postData.buttonText = this.getButtonText();
-			postData.draftButton = ['publish', 'future'].indexOf(this.initialStatus) == -1;
-			postData.cancelButton = !(this.post.is_new);
-
-			postData.cid = this.cid;
-
-			extraData.post_type_conditional_box_title = this._post_type_has_taxonomy('post_tag') && this._post_type_has_taxonomy('category')
-				? l10n.global.content.tags_cats_url
-				: l10n.global.content.no_tax_url
+		var me = this,
+		postData = this.post.toJSON(),
+			extraData = {},
+			base = me.post.get("guid")
 				;
-			extraData.url_label = "post" === me.post.get("post_type") ? l10n.global.content.post_url : l10n.global.content.page_url;
-			this.$el.html(this.tpl(_.extend({}, postData, extraData) ));
-			this.populateSections();
-			return this;
-		},
+
+		extraData.rootUrl = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
+		postData.permalink = this.permalink = extraData.rootUrl + this.post.get("post_name");
+		postData.previewLink = this.post.get("guid") + "&preview=true";
+
+		postData.buttonText = this.getButtonText();
+		postData.draftButton = ['publish', 'future'].indexOf(this.initialStatus) == -1;
+		postData.cancelButton = !(this.post.is_new);
+
+		postData.cid = this.cid;
+
+		Upfront.Events.trigger('upfront:box:rendered', this.getButtonText());
+
+		extraData.post_type_conditional_box_title = this._post_type_has_taxonomy('post_tag') && this._post_type_has_taxonomy('category')
+			? l10n.global.content.tags_cats_url
+			: l10n.global.content.no_tax_url
+			;
+		extraData.url_label = "post" === me.post.get("post_type") ? l10n.global.content.post_url : l10n.global.content.page_url;
+		this.$el.html(this.tpl(_.extend({}, postData, extraData) ));
+		this.populateSections();
+		return this;
+	},
 
     navigate_to_preview: function(e){
         e.preventDefault();
@@ -245,12 +260,8 @@ var Box = Backbone.View.extend({
         $(".ueditor-display-block").removeClass("ueditor-display-block");
     },
     publish: function(){
-        this.destroy();
-
         this.post.trigger('editor:publish');
-
         this.trigger('publish');
-
         Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
         Upfront.Events.trigger('upfront:post:edit:stop', 'write', this.post.toJSON());
         this.fadein_other_elements();

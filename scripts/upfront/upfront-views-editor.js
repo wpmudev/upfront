@@ -644,9 +644,17 @@
 		var Command_SaveLayout = Command.extend({
 			"className": "command-save",
 			render: function () {
+				Upfront.Events.on("upfront:box:rendered", this.update_label, this);
 				// this.$el.addClass('upfront-icon upfront-icon-save');
 				this.$el.html(l10n.save);
 				this.$el.prop("title", l10n.save);
+			},
+			update_label: function (label) {
+				var self = this;
+				setTimeout( function () {
+					self.$el.html(label);
+					self.$el.prop("title", label);	
+				}, 200);
 			},
 			on_click: function () {
 				if ( _upfront_post_data.layout.specificity && _upfront_post_data.layout.item && !_upfront_post_data.layout.item.match(/-page/) )
@@ -1987,9 +1995,7 @@
 				});
 
 				this.listenTo(Upfront.Views.PostDataEditor, 'post:saved', function() {
-					if(typeof Upfront.Views.PostBox !== "undefined") {
-						self.append_box();
-					}
+					this.render();
 				});
 				
 				this.listenTo(Upfront.Events, 'click:edit:navigate', function () {
@@ -2049,7 +2055,7 @@
 
 				setTimeout(function () {
 					me.$el.empty();
-					me.$el.append(box.$el);
+					me.$el.html(box.$el);
 				}, 200);
 			},
 
