@@ -782,6 +782,13 @@ PostContentEditor.prototype = {
 	prepareBox: function(){
 		var self = this,
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main);
+		
+		if(this.box) {
+			this.box.render();
+			this.box.updateEvents();
+			return this.box;
+		}
+			
 		this.box = new Edit.Box({post: this.post});
 		this.bindBarEvents();
 		this.box.render();
