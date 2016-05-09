@@ -590,6 +590,12 @@ class Upfront_MediaServer extends Upfront_Server {
 				wp_update_attachment_metadata( $attach_id, $attach_data );
 				$new_ids[] = $attach_id;
 		}
+
+		// Drop transients for quotas et al
+		if (is_multisite()) {
+			delete_transient('dirsize_cache');
+		}
+
 		$this->_out(new Upfront_JsonResponse_Success($new_ids));
 	}
 
