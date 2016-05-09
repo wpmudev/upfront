@@ -552,7 +552,7 @@ class Upfront_MediaServer extends Upfront_Server {
 		if (!$this->_check_valid_request_level(Upfront_Permissions::UPLOAD)) $this->_out(new Upfront_JsonResponse_Error("You can't do this."));
 		$upload = new Upfront_UploadHandler;
 		$result = $upload->handle();
-		if (empty($result['media'])) $this->_out(new Upfront_JsonResponse_Error("Error uploading the media item"));
+		if (empty($result['media'])) $this->_out(new Upfront_JsonResponse_Error(__("Error uploading the media item", 'upfront')));
 
 		if (!function_exists('wp_generate_attachment_metadata')) require_once(ABSPATH . 'wp-admin/includes/image.php');
 		$wp_upload_dir = wp_upload_dir();
@@ -573,7 +573,7 @@ class Upfront_MediaServer extends Upfront_Server {
 			if (!empty($media->error)) {
 				// We have an error happening!
 				@unlink("{$pfx}{$filename}");
-				$this->_out(new Upfront_JsonResponse_Error("Error uploading the media item: {$media->error}"));
+				$this->_out(new Upfront_JsonResponse_Error(sprintf(__("Error uploading the media item: %s", 'upfront'), $media->error)));
 			}
 			
 			$filename = $media->name;
@@ -585,13 +585,13 @@ class Upfront_MediaServer extends Upfront_Server {
 			if ($space_allowed && $file_size && $file_size + $space_used > $space_allowed) {
 				// Upload quota exceeded
 				@unlink("{$pfx}{$filename}");
-				$this->_out(new Upfront_JsonResponse_Error("Error uploading the media item: allocated space quota exceeded"));
+				$this->_out(new Upfront_JsonResponse_Error(__("Error uploading the media item: allocated space quota exceeded", 'upfront')));
 			}
 			
 			if(!preg_match('/\.(jpg|jpeg|gif|svg|png)$/i', $filename)) {
 				// We have an error happening!
 				@unlink("{$pfx}{$filename}");
-				$this->_out(new Upfront_JsonResponse_Error("Sorry, this file type is not permitted for security reasons."));
+				$this->_out(new Upfront_JsonResponse_Error(__("Sorry, this file type is not permitted for security reasons.", 'upfront')));
 			}
 
 			// Clean up the file name
