@@ -2055,8 +2055,8 @@
 
 				setTimeout(function () {
 					me.$el.empty();
-					me.$el.html(box.$el);
-				}, 200);
+					me.$el.append(box.$el);
+				}, 50);
 			},
 
 			/**
