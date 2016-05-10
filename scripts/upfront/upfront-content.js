@@ -228,7 +228,12 @@ define("content", deps, function(postTpl, ContentTools) {
 					this.post.set('post_password', results.pass);
 				}
 			}
-
+			
+			if ( results.date ) {
+				this.post.set('post_date', results.date);
+			}
+			
+			// If we set results.status instead of status we should manually change the status dropdown no matter we have Publish button
 			this.post.set('post_status', status);
 
 			/* If this is a new post, take out the default post_name so that the system assigns a new one based on the edited title */
