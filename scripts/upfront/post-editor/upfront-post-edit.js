@@ -53,25 +53,25 @@ var Box = Backbone.View.extend({
     },
 	
 	rebindEvents: function () {
-		// Rebind events for status section
-		this.statusSection.render();
-		this.statusSection.delegateEvents();
-		
-		// Rebind events for visibility section
-		this.visibilitySection.render();
-        this.visibilitySection.delegateEvents();
-		
-		// Rebind events for schedule section
-		this.scheduleSection.render();
-        this.scheduleSection.delegateEvents();
-		
-		// Rebind events for url section
-		this.urlEditor.render();
-        this.urlEditor.delegateEvents();
-		
 		//Rebind events for whole box
 		this.render();
 		this.delegateEvents();
+
+		// Rebind events for status section
+		this.statusSection.render();
+		this.statusSection.delegateEvents();
+
+		// Rebind events for visibility section
+		this.visibilitySection.render();
+        this.visibilitySection.delegateEvents();
+
+		// Rebind events for schedule section
+		this.scheduleSection.render();
+        this.scheduleSection.delegateEvents();
+
+		// Rebind events for url section
+		this.urlEditor.render();
+        this.urlEditor.delegateEvents();
 	},
 
     element_stop_prop: function () {

@@ -2034,10 +2034,7 @@
 					post_id: me.getPostId(),
 					content_mode: 'post_content'
 				});
-				
-				if ( Upfront.Views.PostBox ) {
-					Upfront.Views.PostBox.destroy();
-				}
+
 				// Upfront.Events.trigger("editor:post_editor:created", Upfront.Views.PostDataEditor);
 			},
 			
@@ -2059,11 +2056,10 @@
 				var me = this,
 				box = Upfront.Views.PostBox;
 
-				box.rebindEvents();
-
 				setTimeout(function () {
 					me.$el.empty();
 					me.$el.append(box.$el);
+					box.rebindEvents();
 				}, 50);
 			},
 
