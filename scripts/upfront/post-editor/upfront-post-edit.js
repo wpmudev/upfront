@@ -691,7 +691,7 @@ var PageTemplateEditor = PostSectionView.extend({
     allPageTemplates: false,
     events: _.extend({}, PostSectionView.prototype.events, {
 		"click .save-post-template": "handle_save_as",
-		"click .apply-post-template": "apply_template",
+		"click .apply-post-template": "show_apply_template",
 		"click .update-post-template": "update_template",
 		"click .delete-post-template": "delete_template",
     }),
@@ -743,12 +743,73 @@ var PageTemplateEditor = PostSectionView.extend({
 				
 				// set default value
 				if ( typeof _upfront_post_data.template_slug !== 'undefined' ) me.templateSelect.set_value(_upfront_post_data.template_slug);
+				me.prev_template_name = me.$el.find('select.upfront-chosen-select option[value="'+ _upfront_post_data.template_slug +'"]').first().text(),
+				
+				me.spawn_apply_template_modal();
+				
 			}, 500);
     },
 		
-		apply_template: function(e) {	
+		spawn_apply_template_modal: function () {
+			if ( this.apply_modal ) return;
+			
+			var me = this;
+			
+			this.apply_modal = new Upfront.Views.Editor.Modal({to: $('body'), button: false, top: 120, width: 540});
+			this.apply_modal.render();
+			$('body').append(this.apply_modal.el);
+			
+			var $content = me.apply_modal.$el.find('.upfront-inline-modal-content');
+			$content
+				.empty()
+				.append(_.template($(editionBox_tpl).find('#upfront-apply-page-action').html()))
+			;
+			
+			var cancel_button = new Upfront.Views.Editor.Field.Button({
+				label: l10n.global.views.cancel,
+				classname: 'upfront-cancel-apply-template',
+				compact: true,
+				on_click: function(e) {
+					e.preventDefault();
+					me.apply_modal.close();
+				}
+			});
+			cancel_button.render();
+			cancel_button.delegateEvents();
+			$content.find('.upfront-apply-page-modal').append(cancel_button.$el);
+			
+			var continue_button = new Upfront.Views.Editor.Field.Button({
+				label: l10n.global.content.continue,
+				classname: 'upfront-continue-apply-template',
+				compact: true,
+				on_click: function(e) {
+					me.apply_modal.close();
+					me.apply_template(e);
+				}
+			});
+			continue_button.render();
+			continue_button.delegateEvents();
+			$content.find('.upfront-apply-page-modal').append(continue_button.$el);
+			
+			
+		},
+		
+		show_apply_template: function(e) {	
 			e.preventDefault();
-			// TODO: show warning as per Invision flow
+			var me = this,
+				$content = this.apply_modal.$el.find('.upfront-inline-modal-content'),
+				new_template_name = this.$el.find('select.upfront-chosen-select option:selected').text()
+			;
+			
+			this.apply_modal.open(function () {
+				// update description template name for old and new
+				$content.find('span.old_template_name').text(me.prev_template_name);
+				$content.find('span.new_template_name').text(new_template_name);
+			});
+		},
+		
+		apply_template: function (e) {
+			e.preventDefault();
 			
 			// apply selected layout
 			var selected = this.$el.find('.upfront-chosen-select').val();
@@ -756,7 +817,7 @@ var PageTemplateEditor = PostSectionView.extend({
 			Upfront.Events.trigger("command:layout:save_meta");
 		},
 		
-		update_template: function(e) {	
+		update_template: function (e) {	
 			e.preventDefault();
 			
 			// save selected layout

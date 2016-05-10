@@ -657,9 +657,10 @@
 				}, 200);
 			},
 			on_click: function () {
-				if ( _upfront_post_data.layout.specificity && _upfront_post_data.layout.item && !_upfront_post_data.layout.item.match(/-page/) )
+				if ( _upfront_post_data.layout.specificity && _upfront_post_data.layout.item && !_upfront_post_data.layout.item.match(/-page/) ) {
+					console.log('saving as');
 					Upfront.Events.trigger("command:layout:save_as");
-				else {
+				} else {
 					Upfront.Events.trigger("command:layout:save");
 				}
 			}

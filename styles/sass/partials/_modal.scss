@@ -34,7 +34,46 @@
 	margin-top: 14px;
 }
 
-
-
-
+.upfront-apply-page-modal {
+	padding: 14px;
+	text-align: center;
+}
+.upfront-apply-page-modal p {
+	font-size: 18px;
+	line-height: 1.8;
+	color: #2f475f;
+	font-family: 'Source Sans Pro', sans-serif;
+}
+.upfront-apply-page-modal p span {
+	font-weight: bold;
+}
+.upfront-apply-page-modal .upfront-field-wrap-button {
+  background-image: linear-gradient(to bottom, #fafdff, #f2f9ff);
+	display: inline-block;
+	width: 150px;
+	margin-top: 40px;
+}
+.upfront-apply-page-modal .upfront-field-wrap-button input {
+  text-shadow: 0 1px 0 #ffffff;
+	font-family: 'Source Sans Pro', sans-serif;
+	padding-top: 12px;
+	padding-bottom: 12px;
+	font-size: 15px;
+	font-weight: 600;
+  line-height: 1.2;
+}
+.upfront-apply-page-modal .upfront-field-wrap-button.upfront-cancel-apply-template {
+  border: solid 1px #becbd7;
+	margin-right: 60px;
+}
+.upfront-apply-page-modal .upfront-field-wrap-button.upfront-cancel-apply-template input {
+	color: #6486a6;
+	opacity: 0.7;
+}
+.upfront-apply-page-modal .upfront-field-wrap-button.upfront-continue-apply-template {
+  border: solid 1px #a2bfda;
+}
+.upfront-apply-page-modal .upfront-field-wrap-button.upfront-continue-apply-template input {
+  color: #6486a6;
+}
 
