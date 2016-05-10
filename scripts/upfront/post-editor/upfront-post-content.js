@@ -820,12 +820,13 @@ PostContentEditor.prototype = {
 					// }
 					// if(me.selectedDate)
 						// results.date = me.selectedDate;
-					// if(me.postStatus)
-						// results.status = me.postStatus;
-					// if(me.postVisibility)
-						// results.visibility = me.postVisibility;
-					// if(me.postPassword)
-						// results.pass = me.postPassword;
+
+					if(me.postStatus)
+						results.status = me.postStatus;
+					if(me.postVisibility)
+						results.visibility = me.postVisibility;
+					if(me.postPassword)
+						results.pass = me.postPassword;
 				}
 				me.trigger(e, results);
 			});
@@ -835,11 +836,20 @@ PostContentEditor.prototype = {
 		this
 			.listenTo(me.box.scheduleSection, 'date:updated', me.updateDateFromBar)
 			// //.listenTo(me.box.scheduleSection, 'date:cancel', me.editDateCancel)
-			// .listenTo(me.box.statusSection, 'status:change', me.updateStatus)
-			// .listenTo(me.box.visibilitySection , 'visibility:change', me.updateVisibility)
+		    .listenTo(me.box.statusSection, 'status:change', me.updateStatus)
+			.listenTo(me.box.visibilitySection , 'visibility:change', me.updateVisibility)
 		;
 
 		//Upfront.Events.on("editor:post:tax:updated", _.bind(me.refreshTaxonomies, me));
+	},
+
+	updateStatus: function(status){
+		this.postStatus = status;
+	},
+	
+	updateVisibility: function(visibility, password){
+		this.postVisibility = visibility;
+		this.postPassword = password;
 	},
 
 	getExcerptEditorOptions: function(){
