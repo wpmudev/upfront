@@ -1821,13 +1821,26 @@
 					me.sections.push(new SidebarPanel_Settings_Section_PageTemplate({"model": me.model, "postId": this.postId}));
 				}
 
+				Upfront.Events.off("command:layout:save", this.on_save, this);
 				Upfront.Events.on("command:layout:save", this.on_save, this);
+
+				Upfront.Events.off("command:layout:save_as", this.on_save, this);
 				Upfront.Events.on("command:layout:save_as", this.on_save, this);
+
+				Upfront.Events.off("command:layout:publish", this.on_save, this);
 				Upfront.Events.on("command:layout:publish", this.on_save, this);
+
 				//Upfront.Events.on("command:layout:preview", this.on_preview, this); // Do NOT drop shadow region from layout on preview build
+				Upfront.Events.off("command:layout:save_success", this.on_save_after, this);
 				Upfront.Events.on("command:layout:save_success", this.on_save_after, this);
+
+				Upfront.Events.off("command:layout:save_error", this.on_save_after, this);
 				Upfront.Events.on("command:layout:save_error", this.on_save_after, this);
+
+				Upfront.Events.off("entity:drag_stop", this.reset_modules, this);
 				Upfront.Events.on("entity:drag_stop", this.reset_modules, this);
+
+				Upfront.Events.off("layout:render", this.apply_state_binding, this);
 				Upfront.Events.on("layout:render", this.apply_state_binding, this);
 			},
 			get_title: function () {
@@ -3273,10 +3286,10 @@
 			},
 			init_modules: function () {
 				this.panels = {
-					'post_editor': new SidebarPanel_PostEditor({"model": this.model}),
-					'posts': new SidebarPanel_Posts({"model": this.model}),
-					'elements': new SidebarPanel_DraggableElements({"model": this.model}),
-					'settings': new SidebarPanel_Settings({"model": this.model})
+					'post_editor': SidebarPanel_PostEditor,
+					'posts': SidebarPanel_Posts,
+					'elements': SidebarPanel_DraggableElements,
+					'settings': SidebarPanel_Settings
 				};
 				
 				if(typeof _upfront_post_data.post_id === "undefined" || _upfront_post_data.post_id === false) {
@@ -3289,10 +3302,19 @@
 				me.$el.empty();
 
 				_.each(this.panels, function(panel, index){
-					if(index === "post_editor") {
-						// Make sure we re-initialize panels
-						panel.initialize();
+					if( typeof me.panels[ index ] === "undefined" || typeof me.panels[ index ] === "function" ){
+						panel = new panel( {'model': me.model} );
+						me.panels[ index ] = panel;
+					}else{
+						panel.remove();
+						panel = me.panels[ index ];
+						if(index === "post_editor") {
+							// Make sure we re-initialize panels
+							panel.initialize();
+						}
 					}
+
+
 					panel.render();
 
 					//Render panels to init styles, but do not append to $el
