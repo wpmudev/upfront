@@ -1917,6 +1917,7 @@
 					template_editor_view.allPageTemplates = me.templates;
 					template_editor_view.allPageLayouts = me.layouts;
 					template_editor_view.render();
+					template_editor_view.delegateEvents();
 					me.$el.empty();
 					me.$el.append(template_editor_view.$el);
 				}, 300);

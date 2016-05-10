@@ -962,18 +962,15 @@ var PageTemplateEditor = PostSectionView.extend({
 			templates: this.normalize_template_object(this.allPageTemplates),
 			layouts: this.normalize_template_object(this.allPageLayouts)
 		}
-		
 		return options;
 	},
 	
 	normalize_template_object: function(templates) {
-		var templateOptions = { label: '', value: ''};
+		var templateOptions = [];
 		templates.each(function (template, idx) {
 			if ( typeof template.get('ID') !== 'undefined' ) {
 				templateOptions[idx] = { label: template.get('post_name'), value: template.get('ID') };
-			} else if ( typeof template.get('template_type') !== 'undefined' && template.get('template_type') == 'page' ) {
-				templateOptions[idx] = { label: template.get('name'), value: template.get('slug') };
-			} else {
+			} else if ( typeof template.get('name') !== 'undefined' && typeof template.get('slug') !== 'undefined' ) {
 				templateOptions[idx] = { label: template.get('name'), value: template.get('slug') };
 			}
 		});
