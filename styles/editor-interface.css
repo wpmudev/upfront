@@ -10597,7 +10597,7 @@ a.ueditor-select-option:hover {
   color: #2f475f;
   font-weight: normal; }
 
-.ueditor-post-url-text {
+.ueditor-post-url-text, .upfront-tax-new_term {
   width: 172px !important;
   height: 25px !important;
   background-color: #ffffff;
@@ -10605,7 +10605,7 @@ a.ueditor-select-option:hover {
   margin: 0px;
   display: inline-block; }
 
-#sidebar-ui .ueditor-save-post-data {
+#sidebar-ui .ueditor-save-post-data, #sidebar-ui #upfront-tax-add_term {
   width: 42px;
   height: 26px;
   background-color: #1fcd8f;
@@ -10955,7 +10955,8 @@ div#ui-datepicker-div td a {
 #sticky-span {
   border-left: 2px solid #c3ced9;
   padding-left: 10px;
-  height: 15px; }
+  height: 15px;
+  width: 100%; }
 
 #sticky-span label {
   position: relative;
@@ -10993,7 +10994,7 @@ div#ui-datepicker-div td a {
   border-radius: 3px;
   right: -10px; }
 
-.save-post-visibility {
+.save-post-visibility, .ueditor-save-post-hie-tax {
   width: 67px;
   height: 26px;
   margin: 0px;
