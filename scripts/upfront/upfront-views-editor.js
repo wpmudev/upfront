@@ -640,7 +640,7 @@
 
 			}
 		});
-
+		
 		var Command_SaveLayout = Command.extend({
 			"className": "command-save",
 			render: function () {
@@ -1979,9 +1979,6 @@
 				this.options = opts;
 				this.settings = _([]);
 				var self = this;
-				
-				this.listenTo(Upfront.Events, "command:layout:trash", this.trash, this);
-				this.listenTo(Upfront.Events, "command:layout:save", this.publish, this);
 
 				if ( !Upfront.Views.PostDataEditor ) {
 					require(['content'], function() {
@@ -1992,6 +1989,7 @@
 				this.listenTo(Upfront.Views.PostDataEditor, 'loaded', function(contentEditor) {
 					Upfront.Views.PostBox = contentEditor.prepareBox();
 					self.append_box();
+					Upfront.Views.PostBox.appended = true;
 				});
 
 				this.listenTo(Upfront.Views.PostDataEditor, 'post:saved', function() {

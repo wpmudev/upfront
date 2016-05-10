@@ -28,7 +28,7 @@ var Box = Backbone.View.extend({
     initialize: function(options){
         var me = this;
         this.post = options.post;
-
+				
         this.statusSection = new PostStatusView({post: this.post});
         this.visibilitySection = new PostVisibilityView({post: this.post});
         this.scheduleSection = new PostScheduleView({post: this.post});
@@ -39,16 +39,24 @@ var Box = Backbone.View.extend({
         //Upfront.Events.trigger('upfront:element:edit:start', 'write', this.post);
 
         Upfront.Events.on("upfront:element:edit:stop", this.element_stop_prop, this);
-
-		// We should clear old events
-		Upfront.Events.off("command:layout:trash");
-		Upfront.Events.off("command:layout:save");
-		Upfront.Events.off("command:layout:save_as");
-	
-		// re-listen events
-		Upfront.Events.on("command:layout:trash", this.trash, this);
-		Upfront.Events.on("command:layout:save", this.publish, this);
-		Upfront.Events.on("command:layout:save_as", this.publish, this);
+			
+			if( Upfront.Views.PostDataEditor && Upfront.Views.PostBox && typeof Upfront.Views.PostBox.appended !== 'undefined' && Upfront.Views.PostBox.appended ) {
+				
+				// We should clear old events
+				this.stopListening(Upfront.Events, "command:layout:trash");
+				this.stopListening(Upfront.Events, "command:layout:save");
+				this.stopListening(Upfront.Events, "command:layout:save_as");
+			
+				// re-listen events
+				this.listenTo(Upfront.Events, "command:layout:trash", this.trash, this);
+				this.listenTo(Upfront.Events, "command:layout:save", this.publish, this);
+				this.listenTo(Upfront.Events, "command:layout:save_as", this.publish, this);
+				
+				// only set listeners if PostBox already appended on sidebar
+				// this is to avoid initializing event listeners multiple times
+				Upfront.Views.PostBox.appended = false;
+			}
+		
     },
 
     element_stop_prop: function () {
@@ -260,8 +268,6 @@ var Box = Backbone.View.extend({
 
         //this.toggleRegionClass(false);
         //this.remove();
-
-
     },
 
     saveDraft: function(e){
