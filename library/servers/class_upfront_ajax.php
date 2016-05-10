@@ -373,6 +373,14 @@ class Upfront_Ajax extends Upfront_Server {
 			// get corresponding template post id only if not "save as"
 			if ( $save_as ) {
 				$template_slug = $store_key . '-' . str_replace(' ','-',strtolower($template_slug));
+				// check if already existing
+				$original_slug = $template_slug;
+				$slug_num = (int) $template_slug;
+				while ( $this->_check_template_slug($template_slug) ) {
+					$slug_num++;
+					$slug_num_padded = sprintf("%02s", $slug_num);
+					$template_slug = $original_slug . $slug_num_padded;
+				}
 			} else {
 				$template_post_id = get_post_meta((int)$post_id, $template_meta_name, true);
 			}
@@ -402,6 +410,39 @@ class Upfront_Ajax extends Upfront_Server {
 		if ( $saved_template_post_id && !empty($template_type) ) update_post_meta((int)$saved_template_post_id, 'template_type', $template_type);
 		
 		$this->_out(new Upfront_JsonResponse_Success($saved_template_post_id));
+	}
+	
+	private function _check_template_slug ($template_slug) {
+		$templates = $this->_parse_all_template_slugs();
+		return ( empty($templates) )
+			? false
+			: in_array($template_slug, $templates, true)
+		;
+	}
+	
+	private function _parse_all_template_slugs () {
+		$templates = array();
+		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
+		
+		array_push($templates, $store_key . '-default');
+		
+		$page_templates = get_page_templates();
+		foreach ( $page_templates as $template_name => $template_filename ) {
+			array_push($templates, $store_key . '-' . str_replace(' ','-',strtolower($template_name)));
+		}
+		
+		$custom_post_type_templates = Upfront_Server_PageTemplate::get_instance()->get_all_theme_templates('all', 'layout');
+		foreach ( $custom_post_type_templates as $custom_template ) {
+			array_push($templates, $custom_template->post_name);
+		}
+		
+		// append layouts saved on options table (from old implementation)
+		$db_option_layouts = Upfront_Layout::get_db_layouts();
+		foreach ( $db_option_layouts as $key => $db_layout ) {
+			array_push($templates, $db_layout);
+		}
+		
+		return $templates;
 	}
 	
 	function save_page_layout_meta () {
