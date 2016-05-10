@@ -2000,6 +2000,14 @@
 				this.listenTo(Upfront.Events, 'click:edit:navigate', function () {
 					setTimeout(self.prepare_editor(self));
 				});
+				
+				if (typeof Upfront.Views.PostDataEditor !== "undefined" && Upfront.Views.PostDataEditor.contentEditor !== false) {
+					Upfront.Views.PostBox = Upfront.Views.PostDataEditor.contentEditor.prepareBox();
+				}
+
+				if( Upfront.Views.PostDataEditor && Upfront.Views.PostBox ) {
+					self.append_box(Upfront.Views.PostBox);
+				}
 
 				this.editor = Upfront.Views.PostDataEditor;
 			},
@@ -2013,24 +2021,23 @@
 					return l10n.page_settings;
 				}
 			},
+			
 			on_render: function () {
-				var self = this;
-
-				if (typeof Upfront.Views.PostDataEditor !== "undefined" && Upfront.Views.PostDataEditor.contentEditor !== false) {
-					Upfront.Views.PostBox = Upfront.Views.PostDataEditor.contentEditor.prepareBox();
-				}
-
 				if( Upfront.Views.PostDataEditor && Upfront.Views.PostBox ) {
-					self.append_box(Upfront.Views.PostBox);
+					this.append_box(Upfront.Views.PostBox);
 				}
 			},
-			
+
 			prepare_editor: function (me) {
 				Upfront.Views.PostDataEditor = new Upfront.Content.PostEditor({
 					editor_id: 'this_post_' + me.getPostId(),
 					post_id: me.getPostId(),
 					content_mode: 'post_content'
 				});
+				
+				if ( Upfront.Views.PostBox ) {
+					Upfront.Views.PostBox.destroy();
+				}
 				// Upfront.Events.trigger("editor:post_editor:created", Upfront.Views.PostDataEditor);
 			},
 			
@@ -2051,6 +2058,8 @@
 			append_box: function () {
 				var me = this,
 				box = Upfront.Views.PostBox;
+
+				box.rebindEvents();
 
 				setTimeout(function () {
 					me.$el.empty();

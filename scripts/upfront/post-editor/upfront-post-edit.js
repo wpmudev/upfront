@@ -39,25 +39,40 @@ var Box = Backbone.View.extend({
         //Upfront.Events.trigger('upfront:element:edit:start', 'write', this.post);
 
         Upfront.Events.on("upfront:element:edit:stop", this.element_stop_prop, this);
-			
-			if( Upfront.Views.PostDataEditor && Upfront.Views.PostBox && typeof Upfront.Views.PostBox.appended !== 'undefined' && Upfront.Views.PostBox.appended ) {
-				
-				// We should clear old events
-				this.stopListening(Upfront.Events, "command:layout:trash");
-				this.stopListening(Upfront.Events, "command:layout:save");
-				this.stopListening(Upfront.Events, "command:layout:save_as");
-			
-				// re-listen events
-				this.listenTo(Upfront.Events, "command:layout:trash", this.trash, this);
-				this.listenTo(Upfront.Events, "command:layout:save", this.publish, this);
-				this.listenTo(Upfront.Events, "command:layout:save_as", this.publish, this);
-				
-				// only set listeners if PostBox already appended on sidebar
-				// this is to avoid initializing event listeners multiple times
-				Upfront.Views.PostBox.appended = false;
-			}
-		
+
+		// We should clear old events
+		this.stopListening(Upfront.Events, "command:layout:trash");
+		this.stopListening(Upfront.Events, "command:layout:save");
+		this.stopListening(Upfront.Events, "command:layout:save_as");
+	
+		// re-listen events
+		this.listenTo(Upfront.Events, "command:layout:trash", this.trash, this);
+		this.listenTo(Upfront.Events, "command:layout:save", this.publish, this);
+		this.listenTo(Upfront.Events, "command:layout:save_as", this.publish, this);
+
     },
+	
+	rebindEvents: function () {
+		// Rebind events for status section
+		this.statusSection.render();
+		this.statusSection.delegateEvents();
+		
+		// Rebind events for visibility section
+		this.visibilitySection.render();
+        this.visibilitySection.delegateEvents();
+		
+		// Rebind events for schedule section
+		this.scheduleSection.render();
+        this.scheduleSection.delegateEvents();
+		
+		// Rebind events for url section
+		this.urlEditor.render();
+        this.urlEditor.delegateEvents();
+		
+		//Rebind events for whole box
+		this.render();
+		this.delegateEvents();
+	},
 
     element_stop_prop: function () {
         if (
