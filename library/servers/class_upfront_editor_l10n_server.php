@@ -272,6 +272,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'delete_template' => __('Delete Template', 'upfront'),
 				'continue' => __('Continue', 'upfront'),
 				'apply_template_warning' => __('You have made changes to your Layout using <span class="old_template_name">Default Template</span>. Setting this page to use <span class="new_template_name">Our Staff</span> template will lose those changes. Are you sure you want to continue?', 'upfront'),
+				'delete_template_warning' => __('Are you sure you want to delete <span class="template_name">Default Template</span> template?', 'upfront'),
 			),
 			'ueditor' => array(
 				'text_align' => __('Text alignment', 'upfront'),

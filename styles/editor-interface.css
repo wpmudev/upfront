@@ -5160,7 +5160,8 @@ a.upfront-region-name-edit-trigger:before {
   color: #6486a6;
   opacity: 0.7; }
 
-.upfront-apply-page-modal .upfront-field-wrap-button.upfront-continue-apply-template {
+.upfront-apply-page-modal .upfront-field-wrap-button.upfront-continue-apply-template,
+.upfront-apply-page-modal .upfront-field-wrap-button.upfront-delete-selected-template {
   border: solid 1px #a2bfda; }
 
 .upfront-apply-page-modal .upfront-field-wrap-button.upfront-continue-apply-template input {
