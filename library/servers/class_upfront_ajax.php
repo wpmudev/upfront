@@ -37,7 +37,7 @@ class Upfront_Ajax extends Upfront_Server {
 			upfront_add_ajax('upfront_reset_cache', array($this, "reset_cache"));
 			upfront_add_ajax('upfront_reset_all_from_db', array($this, "reset_all_from_db"));
 			upfront_add_ajax('upfront_update_layout_element', array($this, "update_layout_element"));
-
+			upfront_add_ajax('upfront_add_custom_thumbnail_size', array($this, "add_custom_thumbnail_size"));
 			upfront_add_ajax('upfront_update_insertcount', array($this, "update_insertcount"));
 		}
 	}
@@ -729,6 +729,31 @@ class Upfront_Ajax extends Upfront_Server {
 		} 
 		
 		$this->_out(new Upfront_JsonResponse_Success("Layout updated"));
+	}
+	
+	function add_custom_thumbnail_size() {
+		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+		
+		$data = !empty($_POST) ? stripslashes_deep($_POST) : false;
+
+		if(!$data)
+			return $this->_out(new Upfront_JsonResponse_Error("No data"));
+		if( !isset($data['layout']) || empty($data['layout']) )
+			return $this->_out(new Upfront_JsonResponse_Error("No layout id given"));
+		if( !isset($data['thumbnail_size']) || empty($data['thumbnail_size']) )
+			return $this->_out(new Upfront_JsonResponse_Error("No thumbnail size given"));
+			
+		$thumbnail_size = json_decode($data['thumbnail_size']);
+		if( $thumbnail_size->name != 'uf_custom_thumbnail_size' )
+			return $this->_out(new Upfront_JsonResponse_Error("Incorrect thumbnail size"));
+		if( empty($thumbnail_size->thumbnail_width) )
+			return $this->_out(new Upfront_JsonResponse_Error("No thumbnail width given"));
+		if( empty($thumbnail_size->thumbnail_height) )
+			return $this->_out(new Upfront_JsonResponse_Error("No thumbnail height given"));
+		
+		update_option('upfront_custom_thumbnail_size', $data['thumbnail_size']);
+		
+		$this->_out(new Upfront_JsonResponse_Success("Custom thumbnail size saved"));
 	}
 
 	function update_insertcount() {

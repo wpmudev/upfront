@@ -4921,7 +4921,7 @@
 		var Field_Button = Field.extend({
 			className: 'upfront-field-wrap upfront-field-wrap-button',
 			events: {
-				'click': 'on_click'
+				'click' : 'on_click'
 			},
 			render: function () {
 				this.$el.html('');
@@ -4936,6 +4936,7 @@
 				if (this.options.classname) this.$el.addClass(this.options.classname);
 
 				this.trigger('rendered');
+				this.delegateEvents();
 			},
 			get_info_html: function() {
 				return '<span class="button-info">' + this.options.info + '</span>';
@@ -10377,7 +10378,7 @@
 					$region_name.find('.upfront-region-name-edit-value').text(this.model.get('title'));
 					if ( this.model.get('scope') == 'global' ) {
 						$region_name.find('.upfront-region-bg-setting-is-global').show();
-						make_global.$el.hide()
+						make_global.$el.hide();
 						if ( !this.model.is_main() && sub ) {
 							var main_region = this.model.collection.get_by_name(this.model.get('container'));
 							if ( main_region && main_region.get('scope') == 'global' ){
