@@ -769,6 +769,8 @@ var PageTemplateEditor = PostSectionView.extend({
 			
 			this.template_modal = new Upfront.Views.Editor.Modal({to: $('body'), button: false, top: 120, width: 540});
 			this.template_modal.render();
+			this.template_modal.on('modal:close', this.reset_cancel_button_data, this);
+			this.template_modal.delegateEvents();
 			$('body').append(this.template_modal.el);
 			
 			var $content = me.template_modal.$el.find('.upfront-inline-modal-content');
@@ -818,6 +820,13 @@ var PageTemplateEditor = PostSectionView.extend({
 			$content.find('.upfront-apply-page-modal').append(delete_button.$el);
 		},
 		
+		reset_cancel_button_data: function () {
+			this.template_modal.$el.find('.upfront-cancel-apply-template').css('margin-right','');
+			this.template_modal.$el.find('.upfront-cancel-apply-template').attr('title',l10n.global.views.cancel);
+			this.template_modal.$el.find('.upfront-cancel-apply-template input').val(l10n.global.views.cancel);
+			this.template_modal.$el.find('.upfront-cancel-apply-template input').attr('placeholder',l10n.global.views.cancel);
+		},
+		
 		show_apply_template_modal: function(e) {	
 			e.preventDefault();
 			var me = this,
@@ -847,11 +856,28 @@ var PageTemplateEditor = PostSectionView.extend({
 		
 		update_template: function (e) {	
 			e.preventDefault();
+			_upfront_post_data.update_template = 1;
 			
-			// save selected layout
-			Upfront.Events.trigger("command:layout:save");
+			this.stopListening(Upfront.Events, 'page:layout:updated');
+			this.listenTo(Upfront.Events, 'page:layout:updated', this.on_page_layout_updated);
 			
-			// TODO: show notification as per Invision flow
+			// save selected layout but not published
+			Upfront.Events.trigger("command:layout:save_only");
+		},
+		
+		on_page_layout_updated: function () {
+			var me = this;
+			
+			this.template_modal.$el.find('.upfront-continue-apply-template').hide();
+			this.template_modal.$el.find('.upfront-delete-selected-template').hide();
+			
+			this.template_modal.open(function () {
+				me.template_modal.$el.find('.upfront-apply-page-modal p').html(l10n.global.content.update_template_notification);
+				me.template_modal.$el.find('.upfront-cancel-apply-template').css('margin-right','0');
+				me.template_modal.$el.find('.upfront-cancel-apply-template').attr('title',l10n.global.content.ok);
+				me.template_modal.$el.find('.upfront-cancel-apply-template input').val(l10n.global.content.ok);
+				me.template_modal.$el.find('.upfront-cancel-apply-template input').attr('placeholder',l10n.global.content.ok);
+			});
 		},
 		
 		show_delete_template_modal: function(e) {	
