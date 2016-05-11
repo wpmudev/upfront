@@ -1952,6 +1952,8 @@
 				var me = this;
 				
 				if(!this.options.call) {
+					this.$el.append('<div class="upfront-categories-wrapper"></div>');
+					this.$el.append('<div class="upfront-tags-wrapper"></div>');
 					post = new Upfront.Models.Post({ID: this.options.postId});
 					post.fetch().done(function(response){
 						me.renderTaxonomyEditor(me.options.postId, 'category', post);
@@ -1977,7 +1979,11 @@
 
 					tax_view.allTerms = new Upfront.Collections.TermList(response.data.allTerms);
 					tax_view.render();
-					self.$el.append(tax_view.$el);
+					if(response.data.taxonomy.hierarchical) {
+						self.$el.find('.upfront-categories-wrapper').append(tax_view.$el);
+					} else {
+						self.$el.find('.upfront-tags-wrapper').append(tax_view.$el);
+					}
 				});
 
 			},
