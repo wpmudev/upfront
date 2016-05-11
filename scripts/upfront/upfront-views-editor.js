@@ -435,6 +435,7 @@
 					this.$el.html('<a class="upfront-logo upfront-logo-small" href="' + url + '"></a>');
 			},
 			on_click: function () {
+				Upfront.Events.trigger('click:edit:navigate', false);
 				/*var root = Upfront.Settings.site_url;
 				 root = root[root.length - 1] == '/' ? root : root + '/';
 
@@ -1641,9 +1642,13 @@
 				Upfront.Events.on("command:redo", this.reset_modules, this);
 			},
 			on_render: function () {
+				var me = this;
 				this.reset_modules();
-				if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME )
-					this.$el.find('.sidebar-panel-title').trigger('click');
+				if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME ) {
+					setTimeout( function() {
+						me.$el.find('.sidebar-panel-title').trigger('click');
+					}, 100);
+				}
 			},
 			on_save_after: function () {
 				var regions = this.model.get('regions');
@@ -3288,7 +3293,7 @@
 				//if ( Upfront.Settings.Debug.dev )
 				//	this.panels.settings = new SidebarPanel_Settings({"model": this.model});
 			},
-			init_modules: function () {
+			init_modules: function (postId) {
 				this.panels = {
 					'post_editor': new SidebarPanel_PostEditor({"model": this.model}),
 					'posts': new SidebarPanel_Posts({"model": this.model}),
@@ -3296,8 +3301,14 @@
 					'settings': new SidebarPanel_Settings({"model": this.model})
 				};
 				
-				if(typeof _upfront_post_data.post_id === "undefined" || _upfront_post_data.post_id === false) {
-					this.panels = _.omit(this.panels, 'post_editor');
+				if(typeof postId !== "undefined") {
+					if(postId === false) {
+						this.panels = _.omit(this.panels, 'post_editor');
+					}
+				} else {
+					if(typeof _upfront_post_data.post_id === "undefined" || _upfront_post_data.post_id === false) {
+						this.panels = _.omit(this.panels, 'post_editor');
+					}
 				}
 			},
 			render: function () {
