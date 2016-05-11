@@ -748,7 +748,7 @@
 		});
 		
 		var Command_Trash = Command.extend({
-			className: "command-trash upfront-icon-trash",
+			className: "command-trash upfront-icon upfront-icon-trash",
 			render: function () {
 				this.$el.html(l10n.trash);
 			},

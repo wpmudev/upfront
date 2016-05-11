@@ -6747,12 +6747,13 @@ a.upfront-region-name-edit-trigger:before {
   margin: 0 6px 0 0; }
 
 .upfront-icon-trash:before {
-  background: transparent url(../img/uf-core-el-sprite.svg);
-  background-position: -665px -78px;
+  background: url(../img/uf-core-el-sprite.svg) !important;
+  background-position: -665px -78px !important;
   width: 10px;
   height: 14px;
   left: 8px;
-  top: 7px; }
+  top: 7px;
+  position: absolute; }
 
 .upfront-icon-undo:before {
   background-position: -197px -44px;
