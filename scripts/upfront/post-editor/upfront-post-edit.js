@@ -708,10 +708,8 @@ var PageTemplateEditor = PostSectionView.extend({
 			var me = this;
 			this.label = options.label;
 			
-			// this.stopListening(Upfront.Events, 'layout:after_render');
 			Upfront.Events.off('layout:after_render', this.on_layout_loaded, this);
 			Upfront.Events.on('layout:after_render', this.on_layout_loaded, this);
-			// this.listenTo(Upfront.Events, 'layout:after_render', this.on_layout_loaded);
     },
     render: function () {
         var me = this;
@@ -934,6 +932,7 @@ var PageTemplateEditor = PostSectionView.extend({
 	
 	cancel_save: function() {
 		this.$el.find('.upfront-page-template-action').html(_.template($(editionBox_tpl).find('#upfront-page-action').html()));
+		this.$el.find('.upfront-page-template-action a.delete-post-template').hide();
 		this.remove_overlay();
 	},
 
