@@ -4,7 +4,7 @@
 	color: #476d8a;
 }
 #upfront-taxonomy-list {
-	max-height: 200px;
+	max-height: 150px;
 }
 #upfront-taxonomy-list label {
 	clear:right;
@@ -23,7 +23,7 @@
 .upfront-taxonomy-hierarchical .upfront-taxonomy_item {
 	padding-left: 1em;
 	float: left;
-	margin: 0 0 10px;
+	margin: 0px;
     clear: both;
 }
 .upfront-taxonomy-hierarchical .upfront-taxonomy_item input {
@@ -32,7 +32,7 @@
 .upfront-taxonomy-hierarchical .upfront-taxonomy_item .upfront-taxonomy_item {
 	clear:left;
 	width: 100%;
-	padding: 10px 0 0 10px;
+	padding: 3px 0 0 10px;
 	margin: 0 0 0 7px;
 }
 
