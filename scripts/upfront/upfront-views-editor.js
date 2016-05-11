@@ -3276,9 +3276,6 @@
 			"className": "sidebar-panels",
 			initialize: function () {
 				this.init_modules();
-				
-				this.listenTo(Upfront.Events, 'click:edit:navigate', this.init_modules);
-
 				// Dev feature only
 				//if ( Upfront.Settings.Debug.dev )
 				//	this.panels.settings = new SidebarPanel_Settings({"model": this.model});
