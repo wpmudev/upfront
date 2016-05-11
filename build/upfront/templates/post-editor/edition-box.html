@@ -199,9 +199,9 @@
 				</div>
                 @
                 <label class="screen-reader-text">{{Upfront.Settings.l10n.global.content.hour}}</label>
-                <input type="text" class="schedule-hours" name="hh" value="{{currentHour}}" size="2" maxlength="2" autocomplete="off">
+                <input type="text" class="schedule-hours" name="hh" value="{{currentHour}}" size="2" maxlength="2" min="0" max="24" autocomplete="off">
                 : <label class="screen-reader-text">{{Upfront.Settings.l10n.global.content.minute}}</label>
-                <input type="text" class="schedule-minutes" name="mn" value="{{currentMinute}}" size="2" maxlength="2" autocomplete="off">
+                <input type="text" class="schedule-minutes" name="mn" value="{{currentMinute}}" size="2" maxlength="2" min="0" max="59" autocomplete="off">
 				
 				 <a href="#" class="ueditor-save-post-date  ueditor-button-small-ok ueditor-ok-button">{{Upfront.Settings.l10n.global.content.ok}}</a>
             </div>

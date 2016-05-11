@@ -1393,9 +1393,25 @@ var PostScheduleView = PostSectionView.extend({
 		this.$('#upfront-schedule-datepicker').datepicker({
 			dateFormat: "M d, yy"
 		});
-
+		
+		this.validateDate();
+		
         return this;
     },
+	validateDate: function () {
+		this.$('.schedule-hours, .schedule-minutes').change(function() {
+			var max = parseInt($(this).attr('max'));
+			var min = parseInt($(this).attr('min'));     
+			
+			if ($(this).val() > max) {
+				$(this).val(max);
+			} else if ($(this).val() < min) {
+				$(this).val(min);
+			} else if (isNaN($(this).val())) {
+				$(this).val('0');
+			}
+		}); 
+	},
     getSchedule: function(){
         var now = new Date(),
             date = this.initialDate,
