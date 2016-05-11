@@ -147,6 +147,9 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			})
 			.done(function () {
 				// reload the layout
+				var self_link = Backbone.history.fragment;
+				Backbone.history.fragment = null;
+				Upfront.Application.navigate(self_link, {trigger: true});
 			})
 		;
 	},

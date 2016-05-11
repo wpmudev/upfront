@@ -184,11 +184,12 @@ class Upfront_Ajax extends Upfront_Server {
 					$template_slug = $template_post->post_name;
 				}
 			}
-			
 		} else {
 			// if special archive pages like homepage, use slug to get template post id
 			$store_key = $store_key . '-' . $layout_ids['item'];
 			$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($store_key, $load_dev);
+			// if no template slug then it is the default template
+			if ( !$template_slug ) $template_slug = $store_key . '-default';
 		}		
 		
 		if ( $template_post_id ) {
@@ -217,7 +218,21 @@ class Upfront_Ajax extends Upfront_Server {
 		}
 		
 		// if layout loaded from a file then it belongs to Page Template type
-		if ( $template_type == 'file' ) $template_type =  'page';
+		if ( $template_type == 'file' ) {
+			$template_type =  'page';
+			
+			if ( !$template_slug && $post_id ) {
+				$page_templates = get_page_templates();
+				foreach ( $page_templates as $template_name => $template_filename ) {
+					$filename = preg_replace('/page_tpl-(.*)\.php$/', '\1', $template_filename);
+					if ( $filename == $post->post_name ) {
+						$template_slug = $store_key . '-' . str_replace(' ','-',strtolower($template_name));
+						break;
+					}
+				}
+				
+			}
+		}
 		
 		$response = array(
 			'post' => $post,

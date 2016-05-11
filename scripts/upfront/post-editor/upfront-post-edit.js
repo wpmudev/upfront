@@ -758,6 +758,9 @@ var PageTemplateEditor = PostSectionView.extend({
 				me.disable_apply_template = true;
 				me.$el.find('a.apply-post-template').css({cursor: 'default', opacity: 0.6});
 				
+				if ( typeof _upfront_post_data.template_type !== 'undefined' && _upfront_post_data.template_type === 'page' ) 
+					me.$el.find('.upfront-page-template-action a.delete-post-template').hide();
+				
 			}, 500);
     },
 		
@@ -967,9 +970,6 @@ var PageTemplateEditor = PostSectionView.extend({
 		var $dot = this.$el.find('.chosen-container .changes-dot');
 		if($dot.length) return;
 		
-		this.$el.find('.chosen-container').append('<div class="changes-dot"></div>');
-		
-		this.$el.find('.upfront-page-template-description').show();
 		this.$el.find('.chosen-container').append('<div class="changes-dot"></div>');
 		
 		// show update / save as
