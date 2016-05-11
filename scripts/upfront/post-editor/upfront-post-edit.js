@@ -398,7 +398,7 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
 
         this.$el.html(
             this.termListingTpl(_.extend({}, this.defaults, {
-                allTerms: this.allTerms.where({'parent': '0'}),
+                allTerms: this.allTerms.where({'parent': 0}),
                 postTerms: this.collection,
                 termTemplate: this.termSingleTpl,
                 labels: this.collection.taxonomyObject.labels
