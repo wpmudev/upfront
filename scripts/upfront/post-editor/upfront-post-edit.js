@@ -39,10 +39,14 @@ var Box = Backbone.View.extend({
         //Upfront.Events.trigger('upfront:element:edit:start', 'write', this.post);
 
         Upfront.Events.on("upfront:element:edit:stop", this.element_stop_prop, this);
+		
+		Upfront.Events.off("command:layout:trash", this.trash);
+		Upfront.Events.off("command:layout:save", this.publish);
+		Upfront.Events.off("command:layout:save_as", this.publish);
 
-		this.listenTo(Upfront.Events, "command:layout:trash", this.trash, this);
-		this.listenTo(Upfront.Events, "command:layout:save", this.publish, this);
-		this.listenTo(Upfront.Events, "command:layout:save_as", this.publish, this);
+		Upfront.Events.on("command:layout:trash", this.trash, this);
+		Upfront.Events.on("command:layout:save", this.publish, this);
+		Upfront.Events.on("command:layout:save_as", this.publish, this);
 
     },
 	
@@ -375,11 +379,10 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
     className: "upfront-taxonomy-hierarchical",
     events: _.extend({},PostSectionView.prototype.events, this.events, {
         "click #upfront-tax-add_term": "handle_new_term",
-        "click #add-new-taxonomies-btn": "toggle_add_new",
+        "click .add-new-taxonomies-btn": "toggle_add_new",
         "keydown #upfront-add_term": "handle_enter_new_term",
         "change .upfront-taxonomy_item": "handle_terms_update",
         'keydown #upfront-new_term': 'handle_enter_new_term',
-        'click .ueditor-save-post-hie-tax': 'update'
     }),
     updateTimer: false,
     allTerms: false,
@@ -514,6 +517,8 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
         }
         else
             this.collection.add(this.allTerms.get(termId));
+		
+		this.update();
 
     },
 
@@ -528,8 +533,16 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
         this.render();
 
     },
-    toggle_add_new: function(){
-        this.$(".ueditor-togglable-child").slideToggle();
+    toggle_add_new: function(e){
+		e.preventDefault();
+		$target = $(e.currentTarget);
+		
+		if($target.hasClass('upfront-add-active')) {
+			$target.removeClass('upfront-add-active');
+		} else {
+			$target.addClass('upfront-add-active');
+		}
+        this.$el.find(".ueditor-togglable-child").toggle();
     }
 });
 

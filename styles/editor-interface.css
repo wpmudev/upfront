@@ -5684,6 +5684,16 @@ a.upfront-region-name-edit-trigger:before {
   white-space: nowrap;
   height: 10px; }
 
+#element-settings-sidebar .upfront-settings-item.upfront-thumbnail-size {
+  padding-bottom: 15px; }
+
+.upfront-field-wrap-radios.upfront-thumbnail-size-choices {
+  margin-top: 0; }
+
+.upfront-field-wrap-radios.upfront-thumbnail-size-choices em {
+  font-style: italic;
+  font-size: 10px; }
+
 #element-settings-sidebar {
   position: fixed;
   top: 46px;
@@ -7626,7 +7636,6 @@ i.upfront-field-icon-burger-trigger {
   width: 100%; }
 
 .upfront-taxonomy-hierarchical .upfront-taxonomy_item {
-  padding-left: 1em;
   float: left;
   margin: 0px;
   clear: both; }
@@ -10597,9 +10606,36 @@ a.ueditor-select-option:hover {
   color: #2f475f;
   font-weight: normal; }
 
-.ueditor-post-url-text, .upfront-tax-new_term {
+.ueditor-post-url-text {
   width: 172px !important;
   height: 25px !important;
+  background-color: #ffffff;
+  border: solid 1px #a2bfda;
+  margin: 0px;
+  display: inline-block; }
+
+#sidebar-ui .upfront-tax-new_term {
+  width: 166px !important;
+  height: 26px !important;
+  background-color: #ffffff;
+  border: solid 1px #a2bfda;
+  margin: 0px;
+  display: inline-block;
+  color: #263a4d;
+  padding: 0px 10px;
+  font-size: 11px;
+  font-family: verdana, sans-serif;
+  line-height: 1; }
+
+#sidebar-ui .upfront-tax-new_term::placeholder {
+  padding: 0px 10px;
+  font-size: 11px;
+  font-family: verdana, sans-serif;
+  line-height: 1; }
+
+#sidebar-ui .upfront-tax-new_term:hover {
+  width: 166px !important;
+  height: 26px !important;
   background-color: #ffffff;
   border: solid 1px #a2bfda;
   margin: 0px;
@@ -10622,6 +10658,15 @@ a.ueditor-select-option:hover {
   left: -5px;
   top: -1px;
   line-height: 23px; }
+
+#upfront-taxonomy-parents {
+  width: 207px !important;
+  font-size: 11px;
+  color: #334458;
+  font-family: verdana, sans-serif; }
+
+#sidebar-ui #upfront-tax-add_term {
+  top: 0px; }
 
 #sidebar-ui a.ueditor-btn-edit {
   display: inline;
@@ -10678,7 +10723,7 @@ a.ueditor-select-option:hover {
   margin: 0px -15px;
   padding: 0px 15px; }
 
-.ueditor-togglable select {
+.ueditor-togglable select, .ueditor-taxonomy-wrapper select {
   background: #F2F9FF;
   border: 1px solid #A2BFDA;
   padding: 0px 5px;
@@ -11013,6 +11058,27 @@ div#ui-datepicker-div td a {
 .upfront-slug_editor-url, .upfront-taxonomy-hierarchical {
   background: none !important; }
 
+.add-new-taxonomies-btn {
+  width: 150px;
+  height: 26px;
+  margin: 0px;
+  position: relative;
+  border-radius: 3px;
+  color: #7189a5;
+  margin-top: 10px !important; }
+
+.add-new-taxonomies-btn.upfront-add-active {
+  background: #a2bddc !important;
+  color: #fff !important;
+  border-color: #97b2d1 !important;
+  text-shadow: 0 1px 0 #ccc !important; }
+
+#upfront-taxonomy-add {
+  border-left: 2px solid #dce6f1;
+  padding-left: 10px;
+  margin-top: 10px;
+  padding-bottom: 8px; }
+
 .screen-reader-text {
   position: absolute;
   margin: -1px;
@@ -11150,6 +11216,22 @@ a.ueditor-action-trash:before {
   font-family: Verdana;
   margin: 2px 0; }
 
+.upfront-taxonomy-tab-wrapper .upfront-taxonomy_item {
+  line-height: 18px; }
+
+.upfront-taxonomy-tab-wrapper #upfront-taxonomy-list {
+  background: #e5ecf2;
+  padding: 7px; }
+
+.upfront-taxonomy-tab {
+  width: 90px;
+  text-align: center;
+  background: #e5ecf2;
+  font-weight: normal;
+  font-family: Tahoma;
+  font-size: 11px;
+  color: #374456; }
+
 #post-tags-display-label, #post-categories-display-label {
   font-family: Open Sans, Hevletica Neueu, Helvetica, sans-serif;
   font-size: 11px;
@@ -11160,6 +11242,9 @@ a.ueditor-action-trash:before {
 
 .select-taxonomy-chosen {
   margin-top: 5px;
+  padding-bottom: 10px; }
+
+.ueditor-taxonomy-wrapper {
   border-bottom: 1px solid rgba(184, 207, 230, 0.5);
   padding-bottom: 10px; }
 

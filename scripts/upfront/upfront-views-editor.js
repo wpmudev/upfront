@@ -1952,6 +1952,8 @@
 				var me = this;
 				
 				if(!this.options.call) {
+					this.$el.append('<div class="upfront-categories-wrapper"></div>');
+					this.$el.append('<div class="upfront-tags-wrapper"></div>');
 					post = new Upfront.Models.Post({ID: this.options.postId});
 					post.fetch().done(function(response){
 						me.renderTaxonomyEditor(me.options.postId, 'category', post);
@@ -1977,7 +1979,11 @@
 
 					tax_view.allTerms = new Upfront.Collections.TermList(response.data.allTerms);
 					tax_view.render();
-					self.$el.append(tax_view.$el);
+					if(response.data.taxonomy.hierarchical) {
+						self.$el.find('.upfront-categories-wrapper').append(tax_view.$el);
+					} else {
+						self.$el.find('.upfront-tags-wrapper').append(tax_view.$el);
+					}
 				});
 
 			},
@@ -3276,16 +3282,18 @@
 			"className": "sidebar-panels",
 			initialize: function () {
 				this.init_modules();
+				
+				this.listenTo(Upfront.Events, 'click:edit:navigate', this.init_modules);
 				// Dev feature only
 				//if ( Upfront.Settings.Debug.dev )
 				//	this.panels.settings = new SidebarPanel_Settings({"model": this.model});
 			},
 			init_modules: function () {
 				this.panels = {
-					'post_editor': SidebarPanel_PostEditor,
-					'posts': SidebarPanel_Posts,
-					'elements': SidebarPanel_DraggableElements,
-					'settings': SidebarPanel_Settings
+					'post_editor': new SidebarPanel_PostEditor({"model": this.model}),
+					'posts': new SidebarPanel_Posts({"model": this.model}),
+					'elements': new SidebarPanel_DraggableElements({"model": this.model}),
+					'settings': new SidebarPanel_Settings({"model": this.model})
 				};
 				
 				if(typeof _upfront_post_data.post_id === "undefined" || _upfront_post_data.post_id === false) {
@@ -3298,18 +3306,12 @@
 				me.$el.empty();
 
 				_.each(this.panels, function(panel, index){
-					if( typeof me.panels[ index ] === "undefined" || typeof me.panels[ index ] === "function" ){
-						panel = new panel( {'model': me.model} );
-						me.panels[ index ] = panel;
-					}else{
-						panel.remove();
-						panel = me.panels[ index ];
-						if(index === "post_editor") {
-							// Make sure we re-initialize panels
-							panel.initialize();
-						}
+					panel.remove();
+					panel = me.panels[ index ];
+					if(index === "post_editor") {
+						// Make sure we re-initialize panels
+						panel.initialize();
 					}
-
 
 					panel.render();
 
@@ -4915,7 +4917,7 @@
 		var Field_Button = Field.extend({
 			className: 'upfront-field-wrap upfront-field-wrap-button',
 			events: {
-				'click': 'on_click'
+				'click' : 'on_click'
 			},
 			render: function () {
 				this.$el.html('');
@@ -4930,6 +4932,7 @@
 				if (this.options.classname) this.$el.addClass(this.options.classname);
 
 				this.trigger('rendered');
+				this.delegateEvents();
 			},
 			get_info_html: function() {
 				return '<span class="button-info">' + this.options.info + '</span>';
@@ -10371,7 +10374,7 @@
 					$region_name.find('.upfront-region-name-edit-value').text(this.model.get('title'));
 					if ( this.model.get('scope') == 'global' ) {
 						$region_name.find('.upfront-region-bg-setting-is-global').show();
-						make_global.$el.hide()
+						make_global.$el.hide();
 						if ( !this.model.is_main() && sub ) {
 							var main_region = this.model.collection.get_by_name(this.model.get('container'));
 							if ( main_region && main_region.get('scope') == 'global' ){

@@ -163,7 +163,7 @@ define([
 		},
 
 		initialize: function (opts) {
-
+			selected_widget = current_widget = false;
 			// Call the super constructor here, so that the appearance panel is instantiated
 			this.constructor.__super__.initialize.call(this, opts);
 			

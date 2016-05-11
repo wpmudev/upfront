@@ -51,19 +51,25 @@
         </div>
     </script>
 
-<script type="text/template" id="upfront-term-list-tpl">
+	<script type="text/template" id="upfront-term-list-tpl">
         <label id="post-categories-display-label">{{labels.name}}:</label>
-        <a href="#" class="ueditor-edit-categories ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
-        <p id="post-category-display" class="ueditor-previous-data ueditor-previous-data-toggle ueditor-previous-data-small">
+        <!--
+		<a href="#" class="ueditor-edit-categories ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
+        
+		<p id="post-category-display" class="ueditor-previous-data ueditor-previous-data-toggle ueditor-previous-data-small">
             {{postTerms.pluck("name").join(", ").trim()}}
         </p>
-        <div class="ueditor-togglable">
-            <div id="upfront-taxonomy-list" class="upfront-scroll-panel">
-                {[ _.each( allTerms, function(term, idx){ ]}
-                {{ termTemplate({term: term, termTemplate: termTemplate, termId: term.get('term_id'), postTerms: postTerms}) }}
-                {[ }); ]}
-            </div>
-            <a href="#" id="add-new-taxonomies-btn">+ {{Upfront.Settings.l10n.global.content.add_new.replace("%s", labels.singular_name)}}</a>
+		-->
+        <div class="ueditor-taxonomy-wrapper">
+			<div class="upfront-taxonomy-tab-wrapper">
+				<div class="upfront-taxonomy-tab">{{Upfront.Settings.l10n.global.content.all_categories}}</div>
+				<div id="upfront-taxonomy-list" class="upfront-scroll-panel">
+					{[ _.each( allTerms, function(term, idx){ ]}
+					{{ termTemplate({term: term, termTemplate: termTemplate, termId: term.get('term_id'), postTerms: postTerms}) }}
+					{[ }); ]}
+				</div>
+			</div>
+            <a href="#" class="add-new-taxonomies-btn ueditor-ok-button">{{Upfront.Settings.l10n.global.content.add_new.replace("%s", labels.singular_name)}}</a>
             <div id="upfront-taxonomy-add" class="ueditor-togglable-child">
                 <select id="upfront-taxonomy-parents">
                     <option value="0">-- {{Upfront.Settings.l10n.global.content.parent_category}} --</option>
@@ -72,11 +78,8 @@
                     {[ }) ]}
                 </select>
 				<input type="text" class="upfront-tax-new_term" placeholder="{{Upfront.Settings.l10n.global.content.enter.replace('%s', labels.singular_name)}}" />
-                <button id="upfront-tax-add_term" class="ueditor-button-small"> {{Upfront.Settings.l10n.global.content.add}} {{ labels.singular_name }}</button>
+                <button id="upfront-tax-add_term" class="ueditor-button-small"> {{Upfront.Settings.l10n.global.content.add_label}}</button>
             </div>
-            <p>
-                <a href="#" class="ueditor-save-post-hie-tax ueditor-button-save ueditor-button-small-ok ueditor-ok-button">{{Upfront.Settings.l10n.global.content.ok}}</a>
-            </p>
         </div>
     </script>
 
