@@ -72,7 +72,6 @@ var LayoutEditorSubapplication = Subapplication.extend({
 				Upfront.Util.log("layout applied");
 				Upfront.Events.trigger("command:layout:save_success");
 				Application.load_layout(_upfront_post_data.layout);
-				
 			})
 			.error(function () {
 				Upfront.Util.log("error saving layout");
@@ -113,6 +112,19 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			.success(function () {
 				Upfront.Util.log("layout saved");
 				Upfront.Events.trigger("command:layout:save_success");
+				
+				// refresh current page
+				if ( save_as === 1 ) {
+					var self_link = Backbone.history.fragment;
+					Backbone.history.fragment = null;
+					Upfront.Application.navigate(self_link, {trigger: true});
+				}
+				
+				// for updating page template
+				if ( typeof _upfront_post_data.update_template !== 'undefined' && _upfront_post_data.update_template === 1 ) {
+					Upfront.Events.trigger("page:layout:updated");
+				}
+				
 			})
 			.error(function () {
 				Upfront.Util.log("error saving layout");
@@ -251,6 +263,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		// Layout manipulation
 		this.listenTo(Upfront.Events, "command:exit", this.destroy_editor);
 		this.listenTo(Upfront.Events, "command:layout:save", this.save_layout);
+		this.listenTo(Upfront.Events, "command:layout:save_only", this.save_layout);
 		this.listenTo(Upfront.Events, "command:layout:save_meta", this.save_layout_meta);
 		this.listenTo(Upfront.Events, "command:layout:delete_layout", this.delete_layout);
 		this.listenTo(Upfront.Events, "command:layout:save_as", this.save_layout_as);

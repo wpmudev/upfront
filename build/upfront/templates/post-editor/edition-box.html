@@ -65,26 +65,28 @@
             </div>
             <a href="#" id="add-new-taxonomies-btn">+ {{Upfront.Settings.l10n.global.content.add_new.replace("%s", labels.singular_name)}}</a>
             <div id="upfront-taxonomy-add" class="ueditor-togglable-child">
-                <input type="text" class="upfront-tax-new_term" placeholder="{{Upfront.Settings.l10n.global.content.enter.replace('%s', labels.singular_name)}}" />
                 <select id="upfront-taxonomy-parents">
                     <option value="0">-- {{Upfront.Settings.l10n.global.content.parent_category}} --</option>
                     {[ _(allTerms).each(function(term, idx) { ]}
                     <option value="{{ term.get('term_id') }}">{{ term.get('name') }}</option>
                     {[ }) ]}
                 </select>
-                <button id="upfront-tax-add_term" class="ueditor-button-small"> {{Upfront.Settings.l10n.global.content.add_new}} {{ labels.singular_name }}</button>
+				<input type="text" class="upfront-tax-new_term" placeholder="{{Upfront.Settings.l10n.global.content.enter.replace('%s', labels.singular_name)}}" />
+                <button id="upfront-tax-add_term" class="ueditor-button-small"> {{Upfront.Settings.l10n.global.content.add}} {{ labels.singular_name }}</button>
             </div>
             <p>
-                <a href="#" class="ueditor-save-post-hie-tax ueditor-button-save ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
+                <a href="#" class="ueditor-save-post-hie-tax ueditor-button-save ueditor-button-small-ok ueditor-ok-button">{{Upfront.Settings.l10n.global.content.ok}}</a>
             </p>
         </div>
     </script>
 
     <script type="text/template" id="upfront-term-single-tpl">
         <div class="upfront-taxonomy_item" id="upfront-term_item-{{ termId }}">
+            
+            <input type="checkbox" id="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}" class="upfront-field-checkbox" value="{{ termId }}" {{ postTerms.get(termId) || typeof selected !== "undefined" ? 'checked="checked"' : '' }} />
             <label for="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}">
-                <input type="checkbox" id="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}" value="{{ termId }}" {{ postTerms.get(termId) || typeof selected !== "undefined" ? 'checked="checked"' : '' }} /> {{ term.get('name') }}
-            </label>
+				 {{ term.get('name') }}
+			</label>
             {[ if( term.children ) { ]}
             {[ term.children.each(function(child, idx){ ]}
             {{ termTemplate({term: child, termTemplate: termTemplate, termId: child.get('term_id'), postTerms: postTerms}) }}
@@ -164,7 +166,7 @@
             <br>
             <span id="sticky-span" class="ueditor-togglable-child ueditor-togglable-child-public" {[ if( status.value == "public" ) { ]} style="display:block" {[ } ]}>
             <input name="sticky" type="checkbox" value="sticky" class="upfront-field-checkbox">
-            <label>{{Upfront.Settings.l10n.global.content.sticky_post_label}}</label>
+            <label>{{Upfront.Settings.l10n.global.content.sticky_post_label}}</label><br>
             </span>
             <input type="radio" name="visibility" id="visibility-radio-password" value="password" class="upfront-field-radio" {[ if( status.value == "password" ) { ]} checked="checked" {[ } ]}>
             <label for="visibility-radio-password">{{Upfront.Settings.l10n.global.content.password_protected}}</label>

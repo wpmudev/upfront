@@ -758,6 +758,8 @@ var PageTemplateEditor = PostSectionView.extend({
 				me.prev_template_name = me.$el.find('select.upfront-chosen-select option[value="'+ _upfront_post_data.template_slug +'"]').first().text(),
 				
 				me.spawn_template_modal();
+				me.disable_apply_template = true;
+				me.$el.find('a.apply-post-template').css({cursor: 'default', opacity: 0.6});
 				
 			}, 500);
     },
@@ -769,6 +771,8 @@ var PageTemplateEditor = PostSectionView.extend({
 			
 			this.template_modal = new Upfront.Views.Editor.Modal({to: $('body'), button: false, top: 120, width: 540});
 			this.template_modal.render();
+			this.template_modal.on('modal:close', this.reset_cancel_button_data, this);
+			this.template_modal.delegateEvents();
 			$('body').append(this.template_modal.el);
 			
 			var $content = me.template_modal.$el.find('.upfront-inline-modal-content');
@@ -818,8 +822,18 @@ var PageTemplateEditor = PostSectionView.extend({
 			$content.find('.upfront-apply-page-modal').append(delete_button.$el);
 		},
 		
+		reset_cancel_button_data: function () {
+			this.template_modal.$el.find('.upfront-cancel-apply-template').css('margin-right','');
+			this.template_modal.$el.find('.upfront-cancel-apply-template').attr('title',l10n.global.views.cancel);
+			this.template_modal.$el.find('.upfront-cancel-apply-template input').val(l10n.global.views.cancel);
+			this.template_modal.$el.find('.upfront-cancel-apply-template input').attr('placeholder',l10n.global.views.cancel);
+		},
+		
 		show_apply_template_modal: function(e) {	
 			e.preventDefault();
+			
+			if ( this.disable_apply_template ) return;
+			
 			var me = this,
 				$content = this.template_modal.$el.find('.upfront-inline-modal-content'),
 				new_template_name = this.$el.find('select.upfront-chosen-select option:selected').text()
@@ -848,10 +862,30 @@ var PageTemplateEditor = PostSectionView.extend({
 		update_template: function (e) {	
 			e.preventDefault();
 			
-			// save selected layout
-			Upfront.Events.trigger("command:layout:save");
+			if ( this.disable_update_template ) return;
 			
-			// TODO: show notification as per Invision flow
+			_upfront_post_data.update_template = 1;
+			
+			this.stopListening(Upfront.Events, 'page:layout:updated');
+			this.listenTo(Upfront.Events, 'page:layout:updated', this.on_page_layout_updated);
+			
+			// save selected layout but not published
+			Upfront.Events.trigger("command:layout:save_only");
+		},
+		
+		on_page_layout_updated: function () {
+			var me = this;
+			
+			this.template_modal.$el.find('.upfront-continue-apply-template').hide();
+			this.template_modal.$el.find('.upfront-delete-selected-template').hide();
+			
+			this.template_modal.open(function () {
+				me.template_modal.$el.find('.upfront-apply-page-modal p').html(l10n.global.content.update_template_notification);
+				me.template_modal.$el.find('.upfront-cancel-apply-template').css('margin-right','0');
+				me.template_modal.$el.find('.upfront-cancel-apply-template').attr('title',l10n.global.content.ok);
+				me.template_modal.$el.find('.upfront-cancel-apply-template input').val(l10n.global.content.ok);
+				me.template_modal.$el.find('.upfront-cancel-apply-template input').attr('placeholder',l10n.global.content.ok);
+			});
 		},
 		
 		show_delete_template_modal: function(e) {	
@@ -910,7 +944,7 @@ var PageTemplateEditor = PostSectionView.extend({
 		_upfront_post_data.template_slug = value;
 		_upfront_post_data.save_as = 1;
 		
-		Upfront.Events.trigger("command:layout:save");
+		Upfront.Events.trigger("command:layout:save_only");
 		
 		// hide overlay
 		this.cancel_save();
@@ -1010,6 +1044,18 @@ var PageTemplateEditor = PostSectionView.extend({
 				this.allowMouseWheel();
 				this.$el.find('.chosen-drop').css('display', 'none');
 				this.trigger('changed');
+				
+				if ( typeof _upfront_post_data.template_slug !== 'undefined' && this.get_value() == _upfront_post_data.template_slug ) {
+					template_editor.disable_apply_template = true;
+					template_editor.$el.find('a.apply-post-template').css({cursor: 'default', opacity: .6});
+					template_editor.disable_update_template = false;
+					template_editor.$el.find('a.update-post-template').css({cursor: '', opacity: 1});
+				} else {
+					template_editor.disable_apply_template = false;
+					template_editor.$el.find('a.apply-post-template').css({cursor: '', opacity: 1});
+					template_editor.disable_update_template = true;
+					template_editor.$el.find('a.update-post-template').css({cursor: 'default', opacity: .6});
+				}
 			},
 			get_value_html: function (value, index) {
 				var selected = '',

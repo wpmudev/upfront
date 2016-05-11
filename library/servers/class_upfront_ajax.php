@@ -392,12 +392,6 @@ class Upfront_Ajax extends Upfront_Server {
 				// remove _wp_page_template since we have already saved it on custom post type
 				delete_post_meta($post_id, '_wp_page_template');
 			}
-			// publish the page
-			wp_update_post(array(
-				'ID' => $post_id,
-				'post_status' => 'publish'
-			));
-			
 		} else {
 			// if special archive pages like homepage, use slug to get template post id
 			$slug = $store_key . '-' . $layout->get('layout')['item'];
