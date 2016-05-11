@@ -716,12 +716,9 @@ var PageTemplateEditor = PostSectionView.extend({
     initialize: function(options){
 			var me = this;
 			this.label = options.label;
-			this.layout_loaded = false;
 			
-			this.stopListening(Upfront.Events, 'entity:module:update');
-			this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
-			this.stopListening(Upfront.Events, 'layout:after_render');
-			this.listenTo(Upfront.Events, 'layout:after_render', this.on_layout_loaded);
+			Upfront.Events.off('layout:after_render', this.on_layout_loaded, this);
+			Upfront.Events.on('layout:after_render', this.on_layout_loaded, this);
     },
     render: function () {
         var me = this;
@@ -748,11 +745,6 @@ var PageTemplateEditor = PostSectionView.extend({
 			// Attach chosen select and type checkbox to template
 			this.$el.find('.upfront-page-template-chosen').html(this.templateSelect.$el);
 			
-			// Hide first Update Template / Save As
-			this.$el.find('.upfront-page-template-description').hide();
-			this.$el.find('.upfront-page-template-action a.update-post-template').hide();
-			this.$el.find('.upfront-page-template-action a.save-post-template').hide();
-			
 			setTimeout( function () {
 				// overwriting click event on chosen.jquery.min.js
 				me.$el.find('.upfront-field-multiple input').bind('click.chosen', function(e){
@@ -761,6 +753,11 @@ var PageTemplateEditor = PostSectionView.extend({
 				me.$el.find('.upfront-field-multiple span.upfront-field-label-text').bind('click.chosen', function(e){
 					me.stop_bubble(e);
 				});
+				
+				// Hide first Update Template / Save As
+				me.$el.find('.upfront-page-template-description').hide();
+				me.$el.find('.upfront-page-template-action a.update-post-template').hide();
+				me.$el.find('.upfront-page-template-action a.save-post-template').hide();
 				
 				// set default value
 				if ( typeof _upfront_post_data.template_slug !== 'undefined' ) me.templateSelect.set_value(_upfront_post_data.template_slug);
@@ -944,6 +941,7 @@ var PageTemplateEditor = PostSectionView.extend({
 	
 	cancel_save: function() {
 		this.$el.find('.upfront-page-template-action').html(_.template($(editionBox_tpl).find('#upfront-page-action').html()));
+		this.$el.find('.upfront-page-template-action a.delete-post-template').hide();
 		this.remove_overlay();
 	},
 
@@ -969,29 +967,29 @@ var PageTemplateEditor = PostSectionView.extend({
 	},
 	
 	on_layout_loaded: function() {
-		this.layout_loaded = true;
+		Upfront.Events.off('entity:module:update', this.on_layout_change, this);
+		Upfront.Events.on('entity:module:update', this.on_layout_change, this);
 	},
 	
-	on_layout_change: function(module) {
+	on_layout_change: function() {
+		// show dot icon
+		var $dot = this.$el.find('.chosen-container .changes-dot');
+		if($dot.length) return;
 		
-		if ( this.layout_loaded ) {
-			// show dot icon
-			var $dot = this.$el.find('.chosen-container .changes-dot');
-			if($dot.length) return;
-			
-			this.$el.find('.upfront-page-template-description').show();
-			this.$el.find('.chosen-container').append('<div class="changes-dot"></div>');
-			
-			// show update / save as
-			var $temp_description = this.$el.find('.upfront-page-template-description'),
-				template_name = this.$el.find('select.upfront-chosen-select option[value="'+ _upfront_post_data.template_slug +'"]').text();
-			;
-			$temp_description.find('span.template_name').text(template_name);
-			$temp_description.show();
-			this.$el.find('.upfront-page-template-action a.update-post-template').show();
-			this.$el.find('.upfront-page-template-action a.save-post-template').show();
-			this.$el.find('.upfront-page-template-action a.delete-post-template').hide();
-		}
+		this.$el.find('.chosen-container').append('<div class="changes-dot"></div>');
+		
+		this.$el.find('.upfront-page-template-description').show();
+		this.$el.find('.chosen-container').append('<div class="changes-dot"></div>');
+		
+		// show update / save as
+		var $temp_description = this.$el.find('.upfront-page-template-description'),
+			template_name = this.$el.find('select.upfront-chosen-select option[value="'+ _upfront_post_data.template_slug +'"]').text();
+		;
+		$temp_description.find('span.template_name').text(template_name);
+		$temp_description.show();
+		this.$el.find('.upfront-page-template-action a.update-post-template').show();
+		this.$el.find('.upfront-page-template-action a.save-post-template').show();
+		this.$el.find('.upfront-page-template-action a.delete-post-template').hide();
 	},
 	
 	get_options: function () {

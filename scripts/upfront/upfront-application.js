@@ -115,6 +115,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 				
 				// refresh current page
 				if ( save_as === 1 ) {
+					_upfront_post_data.save_as = 0;
 					var self_link = Backbone.history.fragment;
 					Backbone.history.fragment = null;
 					Upfront.Application.navigate(self_link, {trigger: true});
@@ -122,6 +123,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 				
 				// for updating page template
 				if ( typeof _upfront_post_data.update_template !== 'undefined' && _upfront_post_data.update_template === 1 ) {
+					_upfront_post_data.update_template = 0;
 					Upfront.Events.trigger("page:layout:updated");
 				}
 				
