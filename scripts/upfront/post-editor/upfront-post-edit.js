@@ -103,7 +103,7 @@ var Box = Backbone.View.extend({
 
 		extraData.rootUrl = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
 		postData.permalink = this.permalink = extraData.rootUrl + this.post.get("post_name");
-		postData.previewLink = this.post.get("guid") + "&preview=true";
+		postData.previewLink = this.post.get("permalink") + "?preview=true";
 
 		postData.buttonText = this.getButtonText();
 		postData.draftButton = ['publish', 'future'].indexOf(this.initialStatus) == -1;
@@ -1209,13 +1209,17 @@ var PostUrlEditor = PostSectionView.extend({
             rootUrl: base,
             slug: self.post.get('post_name'),
             url_label : "post" === self.post.get("post_type") ? l10n.global.content.post_url : l10n.global.content.page_url
-    }));
+		}));
     },
     update: function(e){
         e.preventDefault();
         var val = this.$(".ueditor-post-url-text").val();
         if( val.length > 1 ){
-            this.post.set( "post_name", val );
+			var slug = val.toLowerCase().replace(/ /g, '-'),
+			rootUrl = this.post.get("permalink")
+			;
+
+            this.post.set( "post_name", slug );
             this.hasDefinedSlug = true;
             this.render();
         }
