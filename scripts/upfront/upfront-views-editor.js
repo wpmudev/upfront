@@ -756,7 +756,6 @@
 				this.toggle();
 			},
 			toggle: function (postId) {
-				console.log(postId);
 				if(typeof postId !== "undefined") {
 					if(postId === false) {
 						this.$el.hide();
