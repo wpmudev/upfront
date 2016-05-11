@@ -861,6 +861,9 @@ var PageTemplateEditor = PostSectionView.extend({
 		
 		update_template: function (e) {	
 			e.preventDefault();
+			
+			if ( this.disable_update_template ) return;
+			
 			_upfront_post_data.update_template = 1;
 			
 			this.stopListening(Upfront.Events, 'page:layout:updated');
@@ -1045,9 +1048,13 @@ var PageTemplateEditor = PostSectionView.extend({
 				if ( typeof _upfront_post_data.template_slug !== 'undefined' && this.get_value() == _upfront_post_data.template_slug ) {
 					template_editor.disable_apply_template = true;
 					template_editor.$el.find('a.apply-post-template').css({cursor: 'default', opacity: .6});
+					template_editor.disable_update_template = false;
+					template_editor.$el.find('a.update-post-template').css({cursor: '', opacity: 1});
 				} else {
 					template_editor.disable_apply_template = false;
 					template_editor.$el.find('a.apply-post-template').css({cursor: '', opacity: 1});
+					template_editor.disable_update_template = true;
+					template_editor.$el.find('a.update-post-template').css({cursor: 'default', opacity: .6});
 				}
 			},
 			get_value_html: function (value, index) {
