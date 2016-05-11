@@ -758,6 +758,8 @@ var PageTemplateEditor = PostSectionView.extend({
 				me.prev_template_name = me.$el.find('select.upfront-chosen-select option[value="'+ _upfront_post_data.template_slug +'"]').first().text(),
 				
 				me.spawn_template_modal();
+				me.disable_apply_template = true;
+				me.$el.find('a.apply-post-template').css({cursor: 'default', opacity: 0.6});
 				
 			}, 500);
     },
@@ -829,6 +831,9 @@ var PageTemplateEditor = PostSectionView.extend({
 		
 		show_apply_template_modal: function(e) {	
 			e.preventDefault();
+			
+			if ( this.disable_apply_template ) return;
+			
 			var me = this,
 				$content = this.template_modal.$el.find('.upfront-inline-modal-content'),
 				new_template_name = this.$el.find('select.upfront-chosen-select option:selected').text()
@@ -1036,6 +1041,14 @@ var PageTemplateEditor = PostSectionView.extend({
 				this.allowMouseWheel();
 				this.$el.find('.chosen-drop').css('display', 'none');
 				this.trigger('changed');
+				
+				if ( typeof _upfront_post_data.template_slug !== 'undefined' && this.get_value() == _upfront_post_data.template_slug ) {
+					template_editor.disable_apply_template = true;
+					template_editor.$el.find('a.apply-post-template').css({cursor: 'default', opacity: .6});
+				} else {
+					template_editor.disable_apply_template = false;
+					template_editor.$el.find('a.apply-post-template').css({cursor: '', opacity: 1});
+				}
 			},
 			get_value_html: function (value, index) {
 				var selected = '',
