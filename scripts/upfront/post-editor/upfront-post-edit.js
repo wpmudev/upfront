@@ -910,7 +910,7 @@ var PageTemplateEditor = PostSectionView.extend({
 		_upfront_post_data.template_slug = value;
 		_upfront_post_data.save_as = 1;
 		
-		Upfront.Events.trigger("command:layout:save");
+		Upfront.Events.trigger("command:layout:save_only");
 		
 		// hide overlay
 		this.cancel_save();
