@@ -751,7 +751,25 @@
 		var Command_Trash = Command.extend({
 			className: "command-trash upfront-icon upfront-icon-trash",
 			render: function () {
+				this.listenTo(Upfront.Events, 'click:edit:navigate', this.toggle);
 				this.$el.html(l10n.trash);
+				this.toggle();
+			},
+			toggle: function (postId) {
+				console.log(postId);
+				if(typeof postId !== "undefined") {
+					if(postId === false) {
+						this.$el.hide();
+					} else {
+						this.$el.show();
+					}
+				} else {
+					if (typeof _upfront_post_data === "undefined" || _upfront_post_data.post_id === false) {
+						this.$el.hide();
+					} else {
+						this.$el.show();
+					}
+				}
 			},
 			on_click: function () {
 				Upfront.Events.trigger("command:layout:trash");
@@ -3427,10 +3445,8 @@
 					this.commands.push(new Command_ExportLayout({"model": this.model}));
 				}
 
-				if (typeof _upfront_post_data !== "undefined" && _upfront_post_data.layout.type === "single") {
-					this.commands.push(new Command_Trash({"model": this.model}));
-				}
-				
+				this.commands.push(new Command_Trash({"model": this.model}));
+
 				if (!Upfront.Settings.Application.NO_SAVE && current_app !== MODE.THEME && Upfront.Application.user_can_modify_layout()) {
 					this.commands.push(new Command_SaveLayout({"model": this.model}));
 				} else if (current_app !== MODE.THEME && Upfront.Settings.Application.PERMS.REVISIONS) {
