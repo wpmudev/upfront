@@ -1371,7 +1371,7 @@ input.upfront-field-text:hover,
   width: 14px;
   padding: 0;
   margin: 0;
-  height: 28px;
+  height: 100%;
   background-color: #D8EDFF;
   display: inline-block;
   position: relative;
@@ -1385,7 +1385,7 @@ input.upfront-field-text:hover,
   width: 14px;
   padding: 0;
   margin: 0;
-  height: 24px;
+  height: 100%;
   background-color: #D8EDFF;
   display: inline-block;
   position: relative;
@@ -2193,6 +2193,10 @@ a.ueditor-action-pickercancel {
 .upfront-wp-inserted_image-wrapper .wp-caption .upfront-inline-panel {
   top: 15px !important; }
 
+/*.upfront-inserted_image-wrapper .wp-caption-text,
+.uinsert-image-wrapper{
+	padding: 15px;
+}*/
 .uinsert-image-wrapper img {
   width: 100%;
   height: 100%; }
@@ -2207,6 +2211,11 @@ i.upfront-icon.upfront-icon-region-style:before {
 
 i.upfront-icon.upfront-icon-region-style:hover:before {
   background-position: -808px -906px; }
+
+i.upfront-icon.upfront-icon-region-remove:before {
+  /* //  background-position:-807px -900px;
+  content:"x";
+  color:red;*/ }
 
 .upfront-icon-region-caption {
   height: 38px; }
@@ -2240,12 +2249,10 @@ i.upfront-icon.upfront-icon-region-style:hover:before {
   background-position: -808px -425px; }
 
 .upfront-inline-panel-item i.upfront-icon.upfront-icon-region-change_image:before {
-  background-position: -290px -341px;
-  opacity: 0.7; }
+  background-position: -699px -745px; }
 
 .upfront-inline-panel-item i.upfront-icon.upfront-icon-region-change_image:hover:before {
-  background-position: -290px -341px;
-  opacity: 1; }
+  background-position: -807px -745px; }
 
 .ueditor-insert .upfront-icon-region-embed {
   background-position: -552px -164px;
@@ -2297,15 +2304,15 @@ div.uinsert-selector a:hover {
 .upfront-postpart-featured_image {
   overflow: hidden; }
 
-/*
+.uimage-control-panel-content label {
+  color: #fff; }
+
 .uimage-control-panel-content .upfront-field-radio {
-  border-color: #97aec6;
-}
+  border-color: #97aec6; }
 
 .uimage-control-panel-content .upfront-field-radio:checked {
-  border-color: #fff;
-} 
-*/
+  border-color: #fff; }
+
 .ueditor-insert:hover .upfront-resize-handle-e,
 .ueditor-insert:hover .upfront-resize-handle-w {
   display: block !important; }
@@ -2691,8 +2698,7 @@ div#page.upfront-layout-view.upfront-layout-view .upfront-editable_entity.upfron
 .upfront-region-lightbox-editing .upfront-region-side-lightbox .upfront-region-finish-edit-lightbox {
   display: block; }
 
-.upfront-module-group-nav-open.upfront-module-group-on-edit .upfront-module-group-finish-edit,
-.upfront-module-group-element-editing .upfront-module-group-finish-edit {
+.upfront-module-group-nav-open.upfront-module-group-on-edit .upfront-module-group-finish-edit {
   display: none; }
 
 .upfront-region-title {
@@ -4320,7 +4326,7 @@ a.upfront-region-name-edit-trigger:before {
   /*padding-bottom:15px;*/ }
 
 .uimage-upfront-module-view .upfront-editable_entity.ui-resizable-resizing {
-  overflow: hidden; }
+  overflow: visible; }
 
 .upfront-wrapper {
   float: left;
@@ -4362,9 +4368,7 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-module-group-bg {
   z-index: -2; }
 
-.upfront-module-group-on-edit:after,
-.upfront-module-group-element-editing:after,
-.upfront-module-group-no-edit:after {
+.upfront-module-group-on-edit:after {
   display: none; }
 
 .upfront-module-group-hidden {
@@ -4659,10 +4663,6 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-module-group.upfront-module-group-on-edit > .upfront-selected-border {
   display: block; }
 
-.upfront-module-group.upfront-module-group-element-editing > .upfront-selected-border,
-.upfront-module-group.upfront-module-group-no-edit > .upfront-selected-border {
-  display: none; }
-
 .upfront-module-group .upfront-editable_entities_container .ui-resizable-handle,
 .upfront-object-group .upfront-editable_entities_container .ui-resizable-handle {
   visibility: hidden;
@@ -4889,10 +4889,6 @@ a.upfront-region-name-edit-trigger:before {
 
 .upfront-module-group-on-edit > .upfront-entity-size-hint,
 .upfront-module-group-on-edit:hover > .upfront-entity-size-hint,
-.upfront-module-group.upfront-module-group-element-editing > .upfront-entity-size-hint,
-.upfront-module-group.upfront-module-group-element-editing:hover > .upfront-entity-size-hint,
-.upfront-module-group.upfront-module-group-no-edit > .upfront-entity-size-hint,
-.upfront-module-group.upfront-module-group-no-edit:hover > .upfront-entity-size-hint,
 .upfront-module:hover .upfront-object-group .upfront-object-view .upfront-entity-size-hint {
   display: none; }
 
@@ -4973,8 +4969,7 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-module-group.controls-visible > .open-item-controls {
   display: block; }
 
-.upfront-module-group.upfront-module-group-on-edit > .open-item-controls,
-.upfront-module-group.upfront-module-group-element-editing > .open-item-controls {
+.upfront-module-group.upfront-module-group-on-edit > .open-item-controls {
   display: none; }
 
 .upfront-module-group > .upfront-module-group-controls .inline-panel-control-dialog {
@@ -5619,6 +5614,16 @@ a.upfront-region-name-edit-trigger:before {
   overflow: hidden;
   white-space: nowrap;
   height: 10px; }
+
+#element-settings-sidebar .upfront-settings-item.upfront-thumbnail-size {
+  padding-bottom: 15px; }
+
+.upfront-field-wrap-radios.upfront-thumbnail-size-choices {
+  margin-top: 0; }
+
+.upfront-field-wrap-radios.upfront-thumbnail-size-choices em {
+  font-style: italic;
+  font-size: 10px; }
 
 #element-settings-sidebar {
   position: fixed;
@@ -6316,24 +6321,6 @@ a.upfront-region-name-edit-trigger:before {
 
 .upfront-icon-element-code:before {
   background-position: -39px -755px; }
-
-.upfront-icon-element-post_data:before {
-  background-position: -287px -549px; }
-
-.upfront-icon-element-author:before {
-  background-position: -258px -549px; }
-
-.upfront-icon-element-taxonomy:before {
-  background-position: -288px -579px; }
-
-.upfront-icon-element-featured_image:before {
-  background-position: -259px -581px; }
-
-.upfront-icon-element-comments:before {
-  background-position: -259px -607px; }
-
-.upfront-icon-element-meta:before {
-  background-position: -289px -607px; }
 
 .upfront-tabs-container .tabs-tab i {
   z-index: 2; }
@@ -9910,7 +9897,6 @@ div.sp-replacer:before {
   opacity: 0.70; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-control-dialog-open .upfront-icon,
-.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-icon,
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon:hover {
   opacity: 1; }
 
@@ -9920,34 +9906,10 @@ div.sp-replacer:before {
   height: 18px;
   opacity: 0.75; }
 
-.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-settings:hover:before {
-  background-position: -231px -371px;
-  width: 18px;
-  height: 18px;
-  opacity: 0.75; }
-
-.upfront-element-controls .upfront-inline-panel .upfront-control-dialog-open .upfront-icon-region-settings:before {
-  background-position: -231px -371px;
-  width: 18px;
-  height: 18px;
-  opacity: 1; }
-
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-padding:before {
   background-position: -261px -341px;
   width: 18px;
   height: 18px; }
-
-.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-padding:hover:before {
-  background-position: -231px -341px;
-  width: 18px;
-  height: 18px;
-  opacity: 0.75; }
-
-.upfront-element-controls .upfront-inline-panel .upfront-control-dialog-open.upfront-inline-panel-item .upfront-icon-region-padding:before {
-  background-position: -231px -341px !important;
-  width: 18px;
-  height: 18px;
-  opacity: 1; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-reorder:before {
   background-position: -261px -521px;
@@ -9969,25 +9931,15 @@ div.sp-replacer:before {
   height: 24px;
   opacity: 0.75; }
 
-.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-more:hover:before {
-  background-position: -291px -490px;
-  width: 24px;
-  height: 24px;
-  opacity: 0.75; }
-
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-icon-region-more:before {
-  background-position: -291px -490px;
+  background-position: -291px -521px;
   width: 24px;
   height: 24px;
-  opacity: 1 !important; }
+  opacity: 1; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-inline-panel-item,
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open {
   background: #E6ECF2; }
-
-.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .slider-caption-second-level .upfront-inline-panel-item,
-.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .slider-caption-second-level {
-  background: #DAE0E6; }
 
 .upfront-element-controls .control-panel-overlay {
   width: 100%;
@@ -12772,10 +12724,8 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-e
   left: 38px;
   top: 7px; }
 
-#element-settings-sidebar .padding-lock input[type=checkbox] {
-  display: none; }
-
-#element-settings-sidebar .padding-lock label {
+#element-settings-sidebar .padding-lock input[type=checkbox]:after {
+  content: '';
   display: block;
   height: 15px;
   width: 15px;
@@ -12783,12 +12733,11 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-e
   background-image: url("../img/uf-core-el-sprite.svg"), none;
   background-position: -661px -172px;
   background-color: #f7fbff;
-  left: 30px;
-  top: 3px;
-  position: relative;
-  cursor: pointer; }
+  left: -3px;
+  top: -3px;
+  position: relative; }
 
-#element-settings-sidebar .padding-lock .upfront-field-multiple-selected label {
+#element-settings-sidebar .padding-lock input[type=checkbox]:checked:after {
   background-position: -661px -140px; }
 
 #element-settings-sidebar .padding-lock {

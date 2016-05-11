@@ -9,6 +9,7 @@ class Upfront_MediaServer extends Upfront_Server {
 
 	private function _add_hooks () {
 		$this->augment_attachments();
+		$this->serve_custom_size();
 
 		// Fix WP srcset creation
 		add_filter('wp_calculate_image_srcset', array($this, 'fix_srcset'));
@@ -163,6 +164,23 @@ class Upfront_MediaServer extends Upfront_Server {
 				'public' => true,
 			)
 		);
+	}
+	
+	/**
+	 * Serve thumbnail custom sizes if was set on Uposts element
+	 */
+	public function serve_custom_size () {
+		$custom_size = get_option('upfront_custom_thumbnail_size', array());
+		
+		if ( !empty($custom_size) ) {
+			$thumbnail_size = json_decode($custom_size);
+			
+			add_image_size(
+				$thumbnail_size->name,
+				intval($thumbnail_size->thumbnail_width), 
+				intval($thumbnail_size->thumbnail_height)
+			);
+		}
 	}
 
 	public function list_labels () {
