@@ -32,3 +32,10 @@ em{
 .upfront-edit-layout .upfront-module-editing .uf-click-to-edit-text, .redactor-box .uf-click-to-edit-text {
 	cursor: text;
 }
+
+/* --- Handling links when print --- */
+@media print {
+  a[href]:after {
+    content: none;
+  }
+}
