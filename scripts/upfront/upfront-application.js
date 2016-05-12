@@ -113,12 +113,10 @@ var LayoutEditorSubapplication = Subapplication.extend({
 				Upfront.Util.log("layout saved");
 				Upfront.Events.trigger("command:layout:save_success");
 				
-				// refresh current page
+				// refresh page templates list
 				if ( save_as === 1 ) {
 					_upfront_post_data.save_as = 0;
-					var self_link = Backbone.history.fragment;
-					Backbone.history.fragment = null;
-					Upfront.Application.navigate(self_link, {trigger: true});
+					Upfront.Events.trigger("update:page:layout:list");
 				}
 				
 				// for updating page template
@@ -268,7 +266,6 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		// Layout manipulation
 		this.listenTo(Upfront.Events, "command:exit", this.destroy_editor);
 		this.listenTo(Upfront.Events, "command:layout:save", this.save_layout);
-		this.listenTo(Upfront.Events, "command:layout:save_only", this.save_layout);
 		this.listenTo(Upfront.Events, "command:layout:save_meta", this.save_layout_meta);
 		this.listenTo(Upfront.Events, "command:layout:delete_layout", this.delete_layout);
 		this.listenTo(Upfront.Events, "command:layout:save_as", this.save_layout_as);

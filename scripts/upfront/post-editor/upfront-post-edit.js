@@ -271,6 +271,12 @@ var Box = Backbone.View.extend({
         $(".ueditor-display-block").removeClass("ueditor-display-block");
     },
     publish: function(){
+			
+				if ( typeof _upfront_post_data.skip_publish !== 'undefined' && _upfront_post_data.skip_publish === 1 ) {
+					_upfront_post_data.skip_publish = 0;
+					return;
+				}
+		
         this.post.trigger('editor:publish');
         this.trigger('publish');
         Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
@@ -883,7 +889,8 @@ var PageTemplateEditor = PostSectionView.extend({
 			this.listenTo(Upfront.Events, 'page:layout:updated', this.on_page_layout_updated);
 			
 			// save selected layout but not published
-			Upfront.Events.trigger("command:layout:save_only");
+			_upfront_post_data.skip_publish = 1;
+			Upfront.Events.trigger("command:layout:save");
 		},
 		
 		on_page_layout_updated: function () {
@@ -958,7 +965,8 @@ var PageTemplateEditor = PostSectionView.extend({
 		_upfront_post_data.template_slug = value;
 		_upfront_post_data.save_as = 1;
 		
-		// Upfront.Events.trigger("command:layout:save_only");
+		// save selected layout but not published
+		_upfront_post_data.skip_publish = 1;
 		Upfront.Events.trigger("command:layout:save");
 		
 		// hide overlay
