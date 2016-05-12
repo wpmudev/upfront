@@ -418,7 +418,10 @@ class Upfront_Ajax extends Upfront_Server {
 		// post meta for layout_type if this is for Page or Layout template
 		if ( $saved_template_post_id && !empty($template_type) ) update_post_meta((int)$saved_template_post_id, 'template_type', $template_type);
 		
-		$this->_out(new Upfront_JsonResponse_Success($saved_template_post_id));
+		$this->_out(new Upfront_JsonResponse_Success((object) array(
+			'saved_template_post_id' => $saved_template_post_id,
+			'template_slug' => $template_slug
+		)));
 	}
 	
 	private function _check_template_slug ($template_slug) {
