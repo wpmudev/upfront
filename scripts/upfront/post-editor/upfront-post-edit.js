@@ -407,7 +407,7 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
                 labels: this.collection.taxonomyObject.labels
             }))
         );
-		
+
 		// Get chosen select
 		var selectAddTaxonomy = this.chosen_field();
 		var termsChosen = this.normalize_tax_object(this.allTerms);
@@ -498,12 +498,11 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
         term.save().done(function(response){
             me.allTerms.add(term);
             me.collection.add(term);
+			me.$("#upfront-taxonomy-list").scrollTop(0);
+			$term_name.val("");
+			me.render();
         });
-
-        var new_term_html = this.termSingleTpl( {term: term, termTemplate: me.termSingleTpl, termId: term.get('term_id'), postTerms: me.collection, selected: true} );
-        this.$("#upfront-taxonomy-list").prepend(new_term_html);
-        this.$("#upfront-taxonomy-list").scrollTop(0);
-        $term_name.val("");
+        
     },
 
     handle_terms_update: function(e){
