@@ -109,13 +109,14 @@ var LayoutEditorSubapplication = Subapplication.extend({
 				"template_type": template_type,
 				"template_slug": template_slug
 			})
-			.success(function () {
+			.success(function (resp) {
 				Upfront.Util.log("layout saved");
 				Upfront.Events.trigger("command:layout:save_success");
 				
 				// refresh page templates list
 				if ( save_as === 1 ) {
 					_upfront_post_data.save_as = 0;
+					_upfront_post_data.template_slug = resp.data.template_slug;
 					Upfront.Events.trigger("update:page:layout:list");
 				}
 				
