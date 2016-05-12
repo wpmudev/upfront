@@ -291,21 +291,15 @@ var Box = Backbone.View.extend({
 
     saveDraft: function(e){
         e.preventDefault();
-
-        this.destroy();
-
         this.post.trigger('editor:draft');
         this.trigger('draft');
         Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post, true);// last true means 'saving draft'
-        this.remove();
     },
 
     trash: function(){
         if(confirm( l10n.global.content.delete_confirm.replace(/%s/, this.post.get('post_type')))){
-            this.destroy();
             this.trigger('trash');
             Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
-            this.remove();
         }
     },
 
