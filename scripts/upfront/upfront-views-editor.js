@@ -1974,7 +1974,7 @@
 			},
 			on_render: function () {
 				var me = this;
-				
+
 				if(!this.options.call) {
 					this.$el.append('<div class="upfront-categories-wrapper"></div>');
 					this.$el.append('<div class="upfront-tags-wrapper"></div>');
@@ -2026,7 +2026,9 @@
 
 				if ( !Upfront.Views.PostDataEditor ) {
 					require(['content'], function() {
-						setTimeout(self.prepare_editor(self));
+						if(self.getPostId() !== false) {
+							setTimeout(self.prepare_editor(self));
+						}
 					});	
 				}
 

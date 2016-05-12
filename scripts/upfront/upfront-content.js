@@ -29,6 +29,7 @@ define("content", deps, function(postTpl, ContentTools) {
 
 		//this.postView = opts.view;
 		this.contentEditor = false;
+
 		this.getPost().done(function(){
 			me.contentEditor = new ContentTools.PostContentEditor({
 				post: me.post,
@@ -113,6 +114,7 @@ define("content", deps, function(postTpl, ContentTools) {
 			var me = this,
 				deferred = $.Deferred()
 			;
+
 			this.post = new Upfront.Models.Post({ID: this.postId});
 
 			//this.bindPostEvents();
