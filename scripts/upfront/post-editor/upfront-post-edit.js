@@ -526,6 +526,7 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
             me.collection.add(term);
 			me.$("#upfront-taxonomy-list").scrollTop(0);
 			$term_name.val("");
+			me.update();
 			me.render();
         });
         
