@@ -965,12 +965,19 @@ var PageTemplateEditor = PostSectionView.extend({
 		_upfront_post_data.template_slug = value;
 		_upfront_post_data.save_as = 1;
 		
+		this.stopListening(Upfront.Events, 'update:page:layout:list');
+		this.listenTo(Upfront.Events, 'update:page:layout:list', this.update_template_list);
+		
 		// save selected layout but not published
 		_upfront_post_data.skip_publish = 1;
 		Upfront.Events.trigger("command:layout:save");
 		
 		// hide overlay
 		this.cancel_save();
+	},
+	
+	update_template_list: function() {
+		console.log('updating template list');
 	},
 	
 	add_overlay: function() {
