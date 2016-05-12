@@ -25,10 +25,9 @@ define([
 		init: function () {
 			var me = this;
 
-			var debouncedBeforeApply = _.debounce(this.before_apply_height_from_wrapper, 1000);
 			var debouncedApply = _.debounce(this.apply_height_from_wrapper, 1000);
 
-			this.listenTo(Upfront.Events, 'upfront:wrappers:before_fix_height', debouncedBeforeApply);
+			this.listenTo(Upfront.Events, 'upfront:wrappers:before_fix_height', this.before_apply_height_from_wrapper);
 			this.listenTo(Upfront.Events, 'upfront:wrappers:after_fix_height', debouncedApply);
 
 			this.dontRunVisible = true;
