@@ -584,6 +584,19 @@ div#ui-datepicker-div td a{
 	padding-bottom: 8px;
 }
 
+.ueditor-taxonomy-wrapper .upfront-taxonomy_item input {
+	margin-right: 2px;
+}
+
+.ueditor-taxonomy-wrapper .upfront-taxonomy_item label {
+	position: relative;
+	top: -2px;
+}
+
+.ueditor-taxonomy-wrapper .upfront-taxonomy_item .upfront-field-checkbox:checked {
+	margin-right: 6px;
+}
+
 .screen-reader-text {
   position: absolute;
   margin: -1px;
