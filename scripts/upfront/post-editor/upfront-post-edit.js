@@ -372,7 +372,9 @@ var PostSectionView = Backbone.View.extend({
 
 var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
     termListingTpl : _.template($(editionBox_tpl).find('#upfront-term-list-tpl').html()),
+	termTopListingTpl : _.template($(editionBox_tpl).find('#upfront-term-mostused-tpl').html()),
     termSingleTpl : _.template($(editionBox_tpl).find('#upfront-term-single-tpl').html()),
+	termTopSingleTpl : _.template($(editionBox_tpl).find('#upfront-term-mostused-single-tpl').html()),
     defaults: {
         title: "Categories"
     },
@@ -383,6 +385,7 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
         "keydown #upfront-add_term": "handle_enter_new_term",
         "change .upfront-taxonomy_item": "handle_terms_update",
         'keydown #upfront-new_term': 'handle_enter_new_term',
+		"click .upfront-taxonomy-tab": "on_click",
     }),
     updateTimer: false,
     allTerms: false,
@@ -394,9 +397,12 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
     render: function() {
         var self = this,
             selected_term_ids = self.collection.pluck("term_id"),
-            all_terms =  this.allTerms.sortBy(function(term, indx) {
+            all_terms = this.allTerms.sortBy(function(term, indx) {
                 return selected_term_ids.indexOf( term.get("term_id") ) !== -1;
-            })
+            }),
+			mostUsed = this.allTerms.sortBy(function(term){
+				return term.get("count");
+			});
             ;
 
         this.$el.html(
@@ -407,6 +413,16 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
                 labels: this.collection.taxonomyObject.labels
             }))
         );
+		
+		this.$el.find('.most-used-categories').html(
+			this.termTopListingTpl(_.extend({}, this.defaults, {
+                mostUsed: mostUsed.reverse(),
+				termTemplate: this.termTopSingleTpl,
+				postTerms: this.collection,
+            }))
+		);
+
+		this.$el.find(".taxonomy-panel-content").hide().first().show();
 
 		// Get chosen select
 		var selectAddTaxonomy = this.chosen_field();
@@ -431,6 +447,16 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
 		this.$el.find('.upfront-taxonomy-chosen').html(this.taxonomySelect.$el);
 
     },
+	
+	on_click: function (e) {
+		var tab = "#" + $(e.target).data("target");
+		// Set current tab active
+		this.$el.find(".upfront-taxonomy-tab").removeClass("active");
+		$(e.target).addClass("active");
+		//Show current tab's content
+		this.$el.find(".taxonomy-panel-content").hide();
+		this.$el.find(tab).show();
+	},
 	
 	normalize_tax_object: function(otherTerms) {
 		var termsChosen = {};

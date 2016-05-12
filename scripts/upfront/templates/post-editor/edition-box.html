@@ -62,11 +62,19 @@
 		-->
         <div class="ueditor-taxonomy-wrapper">
 			<div class="upfront-taxonomy-tab-wrapper">
-				<div class="upfront-taxonomy-tab">{{Upfront.Settings.l10n.global.content.all_categories}}</div>
-				<div id="upfront-taxonomy-list" class="upfront-scroll-panel">
-					{[ _.each( allTerms, function(term, idx){ ]}
-					{{ termTemplate({term: term, termTemplate: termTemplate, termId: term.get('term_id'), postTerms: postTerms}) }}
-					{[ }); ]}
+				<ul class="taxonomy-panel-tabspane" style="">
+					<li data-target="allcategories" class="upfront-taxonomy-tab active">{{Upfront.Settings.l10n.global.content.all_categories}}</li>
+					<li data-target="topcategories" class="upfront-taxonomy-tab">{{Upfront.Settings.l10n.global.content.top_categories}}</li>
+				</ul>
+				<div class="taxonomy-panel-content" id="allcategories">
+					<div id="upfront-taxonomy-list" class="upfront-scroll-panel">
+						{[ _.each( allTerms, function(term, idx){ ]}
+						{{ termTemplate({term: term, termTemplate: termTemplate, termId: term.get('term_id'), postTerms: postTerms}) }}
+						{[ }); ]}
+					</div>
+				</div>
+				<div class="taxonomy-panel-content most-used-categories" id="topcategories">
+				
 				</div>
 			</div>
             <a href="#" class="add-new-taxonomies-btn ueditor-ok-button">{{Upfront.Settings.l10n.global.content.add_new.replace("%s", labels.singular_name)}}</a>
@@ -95,6 +103,25 @@
             {{ termTemplate({term: child, termTemplate: termTemplate, termId: child.get('term_id'), postTerms: postTerms}) }}
             {[ }) ]}
             {[ } ]}
+        </div>
+    </script>
+	
+	<script type="text/template" id="upfront-term-mostused-tpl">
+		<div id="upfront-taxonomy-list" class="upfront-scroll-panel">
+			{[ _.each( mostUsed, function(term, idx){ ]}
+			{[ if( term.get('count') > 0 ) { ]}
+			{{ termTemplate({term: term, termTemplate: termTemplate, termId: term.get('term_id'), postTerms: postTerms}) }}
+			{[ } ]}
+			{[ }); ]}
+		</div>
+    </script>
+	
+	<script type="text/template" id="upfront-term-mostused-single-tpl">
+        <div class="upfront-taxonomy_item" id="upfront-term_item-{{ termId }}">
+            <input type="checkbox" id="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}" class="upfront-field-checkbox" value="{{ termId }}" {{ postTerms.get(termId) || typeof selected !== "undefined" ? 'checked="checked"' : '' }} />
+            <label for="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}">
+				 {{ term.get('name') }}
+			</label>
         </div>
     </script>
 

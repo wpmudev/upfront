@@ -178,6 +178,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'add_new' => __('Add New %s', 'upfront'),
 				'add' => __('Add', 'upfront'),
 				'all_categories' => __('All Categories', 'upfront'),
+				'top_categories' => __('Most Used', 'upfront'),
 				'insert_font' => __('Insert Font', 'upfront'),
 				'insert_theme_image' => __('Link theme image', 'upfront'),
 				'insert_image' => __('Link image', 'upfront'),

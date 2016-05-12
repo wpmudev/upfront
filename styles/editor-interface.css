@@ -11240,7 +11240,18 @@ a.ueditor-action-trash:before {
   padding: 7px; }
 
 .upfront-taxonomy-tab {
-  width: 90px;
+  padding: 2px 15px;
+  text-align: center;
+  background: none;
+  font-weight: normal;
+  font-family: Tahoma;
+  font-size: 11px;
+  color: #374456;
+  display: inline-block;
+  cursor: pointer; }
+
+.upfront-taxonomy-tab.active {
+  padding: 2px 15px;
   text-align: center;
   background: #e5ecf2;
   font-weight: normal;
