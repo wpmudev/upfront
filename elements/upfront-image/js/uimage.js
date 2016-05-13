@@ -1373,25 +1373,27 @@ define([
 
 		},
 		applyElementSize: function (width, height) {
-			var me = this,
-				parent = this.parent_module_view.$('.upfront-editable_entity:first'),
-				resizer = parent,
-				captionHeight = this.get_preset_property("caption-position") === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
-				// padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
-				borderWidth = parseInt(this.$el.find('.upfront-image-caption-container').css('borderWidth') || 0, 10), // || 0 part is needed because parseInt empty sting returns NaN and breaks element height
-				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
-				hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
-				vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
-				// elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight}
-				elementSize = {width: ( width && !isNaN(width) ? width : resizer.width() ) - hPadding, height: ( height && !isNaN(height) ? height : resizer.height() ) - vPadding - captionHeight - (2 * borderWidth)}
-			;
-			this.model.set_breakpoint_property('element_size', elementSize);
-			this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
-					width: elementSize.width,
-					height: elementSize.height,
-					l10n: l10n.template
-				})
-			);
+			if ( this.parent_module_view ) {
+				var me = this,
+					parent = this.parent_module_view.$el.find('.upfront-editable_entity:first'),
+					resizer = parent,
+					captionHeight = this.get_preset_property("caption-position") === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
+					// padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
+					borderWidth = parseInt(this.$el.find('.upfront-image-caption-container').css('borderWidth') || 0, 10), // || 0 part is needed because parseInt empty sting returns NaN and breaks element height
+					column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
+					hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
+					vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
+					// elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight}
+					elementSize = {width: ( width && !isNaN(width) ? width : resizer.width() ) - hPadding, height: ( height && !isNaN(height) ? height : resizer.height() ) - vPadding - captionHeight - (2 * borderWidth)}
+				;
+				this.model.set_breakpoint_property('element_size', elementSize);
+				this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
+						width: elementSize.width,
+						height: elementSize.height,
+						l10n: l10n.template
+					})
+				);
+			}
 		},
 
 		openImageSelector: function(e){
