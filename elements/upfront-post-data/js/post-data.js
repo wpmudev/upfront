@@ -197,8 +197,23 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 	getControlItems: function(){
 		var objects = this.get_child_objects(false),
+			type = this.model.get_property_value_by_name('data_type'),
 			controls = []
 		;
+
+		if(typeof type !== "undefined" && type === "featured_image") {
+			var moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl();
+
+			moreOptions.icon = 'more';
+			moreOptions.tooltip = l10n.image_options;
+
+			moreOptions.sub_items = {}
+			moreOptions.sub_items['swap'] = this.createControl('swap', l10n.swap_image, 'openImageSelector');
+			moreOptions.sub_items['crop'] = this.createControl('crop', l10n.edit_image, 'editImage');
+
+			controls.push(moreOptions);
+		}
+
 		if ( objects.length > 1 ) {
 			controls.push(this.createControl('reorder', l10n.settings, 'on_edit_click'));
 			this._multiple = true;
@@ -209,6 +224,14 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		controls.push(this.createPaddingControl());
 		controls.push(this.createControl('settings', l10n.settings, 'on_settings_click'));
 		return _(controls);
+	},
+	
+	openImageSelector: function() {
+		this.editor.contentEditor.trigger('swap:image', this.postId);
+	},
+	
+	editImage: function() {
+		this.editor.contentEditor.trigger('edit:image');
 	},
 
 	get_preset_properties: function() {
