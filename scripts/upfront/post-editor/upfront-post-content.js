@@ -64,7 +64,7 @@ var PostContentEditor = function (opts) {
 		content: this.post.get('post_content'),
 		excerpt: this.post.get('post_excerpt'),
 		author: this.post.get('post_author'),
-		date: this.post.get('post_date'),
+		date: this.post.get('post_date')
 	};
 	this.inserts = this.post.meta.getValue('_inserts_data') || {};
 	_.extend(this, Backbone.Events);
@@ -128,10 +128,12 @@ PostContentEditor.prototype = {
 			type: 'title',
 			canTriggerEdit: true,
 			init: function () {
+				var self = this;
 				this.listenTo(this.parent, 'change:title', this.titleChanged);
 			},
 			editContent: function () {
 				_partView.prototype.editContent.call(this);
+				if( this.$el.find("[contenteditable='true']").length || this.$el.is("[contenteditable='true']") ) return;
 				var $part = this.$('.upostdata-part');
 				if ( $part.length ){
 					var $node = this._findDeep($part);
@@ -154,16 +156,32 @@ PostContentEditor.prototype = {
 							.on('keyup', _.bind(this.keyup, this))
 							.off('keypress')
 							.on('keypress', _.bind(this.keypress, this));
+
+					$("html").on('mousedown', {$title: this.$title }, _.bind(this.stopEditContent, this) );
 				}
 				this.$title.closest(".upfront-editable_entity.upfront-module").draggable("disable");
 			},
-			stopEditContent: function () {
+			stopEditContent: function (e) {
+				if( !!e && ( 'false' === this.$title.prop("contenteditable")
+						|| e.data.$title[0] === e.target
+						|| $(e.target).is( ".upostdata-part.title" )
+						|| $(e.target).is( ".part-title" )
+						|| $(e.target).is( ".upfront-output-post-data-part" )
+						)) {
+					this.$title.closest(".upfront-editable_entity.upfront-module").draggable("disable");
+					return;
+				}
 				if ( this.$title.length ) {
+					this.$title.trigger("blur");
 					this.$title
 							.attr('contenteditable', false)
 							.off('blur')
 							.off('keyup')
-							.off('keypress');
+							.off('keypress')
+							.off('dblclick')
+							.on('dblclick', _.bind(this.editContent, this))
+					;
+					$("html").off('mousedown', _.bind(this.stopEditContent, this) );
 					this.$title.closest(".upfront-editable_entity.upfront-module").draggable("enable");
 				}
 			},
@@ -175,6 +193,8 @@ PostContentEditor.prototype = {
 			keyup: function (e) {
 				//this.$title.text( this.$title.text().replace(/(\r\n|\r|\n)/gm, "") );
 				this.parent.currentData.title = this.$title.text();
+				if( e.keyCode === 27 ) // escape
+					this.stopEditContent();
 			},
 			keypress: function (e) {
 				if ( e.which == 13 ) { // Prevent new line on title
@@ -213,6 +233,7 @@ PostContentEditor.prototype = {
 				this.on('publish draft auto-draft', this.updateContent);
 			},
 			editContent: function () {
+
 				_partView.prototype.editContent.call(this);
 				this.$content = this.$('.upostdata-part');
 
@@ -227,24 +248,46 @@ PostContentEditor.prototype = {
 						editorOptions = isExcerpt ? this.parent.getExcerptEditorOptions() : this.parent.getContentEditorOptions()
 					;
 
-					this.$content.html(content).ueditor(editorOptions);
-					this.editor = this.$content.data('ueditor');
+					//if( this.editor ){
+					//	this.editor.start();
+					//}else{
+						this.$content.html(content).ueditor(editorOptions);
+						this.editor = this.$content.data('ueditor');
+					//}
+
+
+
 
 					this.$content
 							.off('blur')
 							.on('blur', _.bind(this.blur, this))
+							.off('keyup')
+							.on('keyup', _.bind(this.keyup, this))
+							.off('dblclick')
+							.on("stop", _.bind(this.stopEditContent, this))
 					;
+					this.$content.closest(".upfront-editable_entity.upfront-module").draggable("disable");
 				}
-				this.$content.closest(".upfront-editable_entity.upfront-module").draggable("disable");
+
 
 			},
+			keyup: function (e) {
+				//if( e.keyCode === 27 ) // escape
+					//this.stopEditContent();
+			},
 			stopEditContent: function () {
-				this.editor.stop();
+				//this.editor.stop();
 				if ( this.$content.length ){
-					this.$content.off('blur');
-				}
-				this.$content.closest(".upfront-editable_entity.upfront-module").draggable("enable");
+					this.$content
+							.off('blur')
+							.off('keyup')
+							.off('dblclick')
+							.on('dblclick', _.bind(this.editContent, this))
 
+					;
+					this.editor = false;
+					this.$content.closest(".upfront-editable_entity.upfront-module").draggable("enable");
+				}
 			},
 			blur: function () {
 				var html = this.$content.html();
@@ -288,9 +331,9 @@ PostContentEditor.prototype = {
 				}
 			},
 			contentChanged: function (content, callFrom) {
-				if ( callFrom == this ) return;
+				if ( callFrom == this || !this.$content.redactor || !this.$content.redactor.code ) return;
 				this.$content.redactor('code.set', content);
-			},
+			}
 		}),
 		/**
 		 * Author part editing view
@@ -867,6 +910,7 @@ PostContentEditor.prototype = {
 		return {
 			linebreaks: false,
 			autostart: true,
+			autoexit: true,
 			focus: false,
 			pastePlainText: true,
 			inserts: [],
@@ -880,6 +924,7 @@ PostContentEditor.prototype = {
 			linebreaks: false,
 			replaceDivs: false,
 			autostart: true,
+			autoexit: true,
 			focus: false,
 			inserts: ["postImage", "embed"],
 			insertsData: this.inserts,

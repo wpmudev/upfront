@@ -1202,6 +1202,8 @@ Ueditor.prototype = {
 			    this.redactor.core.destroy();
             this.$air.remove();
             this.$el.removeClass('ueditable');
+            this.redactor.events.trigger('cleanUpListeners');
+            this.$el.data("ueditor", false);
             this.redactor = false;
 		}
 		if ("undefined" !== typeof Upfront.data.Ueditor) delete Upfront.data.Ueditor.instances[this.id];
@@ -1209,6 +1211,7 @@ Ueditor.prototype = {
 		$("html").off('mousedown', this.stopOnOutsideClick);
 		$(document).off('keyup', this.stopOnEscape);
         this.active = false;
+
 	},
 
 	bindStartEvents: function() {
