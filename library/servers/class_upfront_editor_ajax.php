@@ -430,10 +430,12 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			// append layouts saved on options table (from old implementation)
 			$db_option_layouts = Upfront_Layout::get_db_layouts();
 			foreach ( $db_option_layouts as $key => $db_layout ) {
-				array_push($templates, (object) array(
-					'slug' => $db_layout,
-					'name' => Upfront_Server_PageTemplate::get_instance()->db_layout_to_name($db_layout),
-				));
+				if ( preg_match('/single-page/i', $db_layout) ) {
+					array_push($templates, (object) array(
+						'slug' => $db_layout,
+						'name' => Upfront_Server_PageTemplate::get_instance()->db_layout_to_name($db_layout),
+					));
+				}
 			}
 		}
 		
