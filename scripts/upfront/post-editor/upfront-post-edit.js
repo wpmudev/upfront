@@ -1275,8 +1275,11 @@ var PostUrlEditor = PostSectionView.extend({
         var val = this.$(".ueditor-post-url-text").val();
         if( val.length > 1 ){
 			var slug = val.toLowerCase().replace(/ /g, '-'),
-			rootUrl = this.post.get("permalink")
+			rootUrl = this.post.get("guid")
 			;
+			
+			// Update Preview button href
+			$('.ueditor-action-preview').attr("href", rootUrl + "?preview=true");
 
             this.post.set( "post_name", slug );
             this.hasDefinedSlug = true;
