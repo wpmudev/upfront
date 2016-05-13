@@ -74,7 +74,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 		$post = Upfront_PostModel::create($data['post_type'], $data['title']);
 		if (!empty($data['permalink'])) $post->post_name = $data['permalink'];
-		if (!empty($data['template'])) update_post_meta($post->ID, '_wp_page_template', $data['template']);
+		// if (!empty($data['template'])) update_post_meta($post->ID, '_wp_page_template', $data['template']);
 
 		$post->post_status = 'draft';
 		Upfront_PostModel::save($post);

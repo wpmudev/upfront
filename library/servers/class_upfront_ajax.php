@@ -168,8 +168,11 @@ class Upfront_Ajax extends Upfront_Server {
 			}
 			// if no template yet from custom post type for this page 
 			// try to check/get if same layout already saved 
-			if ( empty($template_post_id) && $template_slug ) {
+			if ( !$template_post_id && $template_slug ) {
 				// use the slug to get template post id
+				$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($template_slug, $load_dev);
+			} elseif ( !$template_post_id && !$template_slug ) {
+				$template_slug = $store_key . '-default';
 				$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($template_slug, $load_dev);
 			}
 			
