@@ -901,10 +901,16 @@ var PageTemplateEditor = PostSectionView.extend({
 		
 		apply_template: function (e) {
 			e.preventDefault();
+			var $select = this.$el.find('.upfront-chosen-select'),
+				optgroup = $select.find('option:selected').closest('optgroup').attr('label')
+			;
+			var template_type = ( optgroup == 'templates' )
+				? 'page'
+				: 'layout'
+			;
+			_upfront_post_data.template_slug = $select.val();
+			_upfront_post_data.template_type = template_type;
 			
-			// apply selected layout
-			var selected = this.$el.find('.upfront-chosen-select').val();
-			_upfront_post_data.template_slug = selected;
 			Upfront.Events.trigger("command:layout:save_meta");
 		},
 		

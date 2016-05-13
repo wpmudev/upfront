@@ -168,8 +168,11 @@ class Upfront_Ajax extends Upfront_Server {
 			}
 			// if no template yet from custom post type for this page 
 			// try to check/get if same layout already saved 
-			if ( empty($template_post_id) && $template_slug ) {
+			if ( !$template_post_id && $template_slug ) {
 				// use the slug to get template post id
+				$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($template_slug, $load_dev);
+			} elseif ( !$template_post_id && !$template_slug ) {
+				$template_slug = $store_key . '-default';
 				$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($template_slug, $load_dev);
 			}
 			
@@ -230,7 +233,8 @@ class Upfront_Ajax extends Upfront_Server {
 						break;
 					}
 				}
-				
+				// if still empty template slug then it is the default template
+				if ( !$template_slug ) $template_slug = $store_key . '-default';
 			}
 		}
 		
@@ -533,13 +537,14 @@ class Upfront_Ajax extends Upfront_Server {
 		$layout = !empty($data['layout']) && $data['layout'] !== "0" ? $data['layout'] : array();
 		$stylesheet = isset( $data['stylesheet'] ) ? $data['stylesheet'] : get_stylesheet();
 		$stylesheet_dev = false;
-		$is_dev = ( !empty($data['dev']) )
-			? (bool) $data['dev']
+		$is_dev = ( !empty($data['is_dev']) )
+			? (bool) $data['is_dev']
 			: false
 		;
 		
 		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
 		
+		// if resetting from UF editor via Delete Template button and template_slug contains the full slug
 		if ( isset($data['template_slug']) && !empty($data['template_slug']) ) {
 			$to_clear = $store_key . '-';
 			$layout = str_replace($to_clear, '', $data['template_slug']);

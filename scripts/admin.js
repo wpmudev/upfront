@@ -55,7 +55,7 @@
 		Upfront.post(  {
 			action: "upfront_reset_layout",
 			layout: layout,
-			dev: is_dev
+			is_dev: is_dev
 		}).done(function(res){
 			$this.removeClass("loading");
 			if( $dropdown.find("option").length >= 2 ){
