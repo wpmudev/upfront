@@ -486,13 +486,7 @@ PostContentEditor.prototype = {
 		 */
 		featured_image: _partView.extend({
 			type: 'featured_image',
-			events: function () {
-				return _.extend({}, _partView.prototype.events, {
-					'click .upost_thumbnail_changer': 'editThumb'
-				})
-			},
-			editContent: function () {
-				_partView.prototype.editContent.call(this);
+			init: function () {
 				this.$featured = this.$el;
 				if ( this.$featured.length ){
 					var thumbId = this.parent.post.meta.getValue('_thumbnail_id'),
@@ -505,13 +499,26 @@ PostContentEditor.prototype = {
 						.find('img').css({'z-index': '2', position: 'relative'})
 					;
 				}
+				
+				this.listenTo(this.parent, 'swap:image', this.openImageSelector);
+				this.listenTo(this.parent, 'edit:image', this.editThumb);
+			},
+			events: function () {
+				return _.extend({}, _partView.prototype.events, {
+					'click .upost_thumbnail_changer': 'editThumb'
+				})
+			},
+			editContent: function () {
+				_partView.prototype.editContent.call(this);
 			},
 			stopEditContent: function () {
 
 			},
 			editThumb: function(e){
 				if ( ! this.$featured || ! this.$featured.length ) return;
-				e.preventDefault();
+				if(typeof e !== "undefined") {
+					e.preventDefault();
+				}
 				var me = this,
 					img = this.$featured.find('img'),
 					loading = new Upfront.Views.Editor.Loading({
