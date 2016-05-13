@@ -138,19 +138,17 @@ var LayoutEditorSubapplication = Subapplication.extend({
 	_delete_layout: function () {
 		var me = this,
 			template_slug = ( typeof _upfront_post_data.template_slug !== 'undefined' ) ? _upfront_post_data.template_slug : '',
-			dev = ( _upfront_storage_key != _upfront_save_storage_key ) ? 1 : 0
+			is_dev = ( _upfront_storage_key != _upfront_save_storage_key ) ? 1 : 0
 		;
-
+		Upfront.Events.trigger("command:layout:save_start");
 		Upfront.Util.post({
 				"action": Upfront.Application.actions.delete_layout, 
 				"template_slug": template_slug,
-				"dev": dev
+				"is_dev": is_dev
 			})
 			.done(function () {
-				// reload the layout
-				var self_link = Backbone.history.fragment;
-				Backbone.history.fragment = null;
-				Upfront.Application.navigate(self_link, {trigger: true});
+				Upfront.Events.trigger("command:layout:save_success");
+				Upfront.Application.load_layout(_upfront_post_data.layout);
 			})
 		;
 	},
