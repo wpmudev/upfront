@@ -413,7 +413,8 @@ class Upfront_Ajax extends Upfront_Server {
 			}
 		} else {
 			// if special archive pages like homepage, use slug to get template post id
-			$slug = $store_key . '-' . $layout->get('layout')['item'];
+			$tmp = $layout->get('layout');
+			$slug = $store_key . '-' . $tmp['item'];
 			$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($slug, $save_dev);
 			// save the page template
 			$saved_template_post_id = Upfront_Server_PageTemplate::get_instance()->save_template($template_post_id, $layout, $save_dev);
