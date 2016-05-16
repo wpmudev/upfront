@@ -562,7 +562,6 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
         this.collection.save();
         Upfront.Events.trigger("editor:post:tax:updated", this.collection, this.tax);
         this.render();
-
     },
     toggle_add_new: function(e){
 		e.preventDefault();

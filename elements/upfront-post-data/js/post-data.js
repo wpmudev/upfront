@@ -177,6 +177,8 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		this.listenTo(this.model.get('objects'), 'add', this.on_render);
 		this.listenTo(this.model.get('objects'), 'remove', this.on_render);
 		// this.listenTo(Upfront.Events, 'editor:post_details:ready', this.render_view_type);
+		
+		this.listenTo(Upfront.Events, 'editor:post:tax:updated', this.update_categories);
 
 		/*_.extend(this.events, {
 			'click .upfront-post-part-trigger': 'on_edit_click'
@@ -261,6 +263,17 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			e.preventDefault();
 		}
 		this.enable_object_edit();
+	},
+	
+	update_categories: function () {
+		var me = this, 
+		type = this.model.get_property_value_by_name("data_type");
+		
+		if(type === "taxonomy") {
+			setTimeout( function () {
+				me.render_view(type);
+			}, 200);
+		}
 	},
 	
 	render_view_type: function () {
