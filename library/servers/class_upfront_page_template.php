@@ -135,7 +135,7 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 	 * @return Upfront_Layout
 	 */
 	public function intercept_page_style_loading ($layout) {
-		$load_dev = $_GET['load_dev'] == 1 ? true : false;
+		$load_dev = !empty($_GET['load_dev']) && is_numeric($_GET['load_dev']) && $_GET['load_dev'] == 1 ? true : false;
 		$is_revision = !empty($_GET['layout']['layout_revision'])
 			? $_GET['layout']['layout_revision']
 			: false
@@ -150,7 +150,8 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 				if ( !empty($_GET['layout']['specificity']) ) {
 					$slug = $store_key . '-' . $_GET['layout']['specificity'];
 				} else {
-					$slug = $store_key . '-' . $_GET['layout']['item'];
+					$_layout_item = !empty($_GET['layout']['item']) ? $_GET['layout']['item'] : false;
+					$slug = $store_key . '-' . $_layout_item;
 				}
 				$template_post_id = $this->get_template_id_by_slug($slug, $load_dev);
 			}

@@ -245,9 +245,11 @@ class Upfront_Ajax extends Upfront_Server {
 			'template_post_id' => $template_post_id,
 			'template_type' => $template_type,
 			'template_slug' => $template_slug,
-			'template_file' => $template_file,
 			'query' => $upfront_ajax_query
 		);
+		if (isset($template_file)) {
+			$response['template_file'] = $template_file;
+		}
 
 		$this->_out(new Upfront_JsonResponse_Success($response));
 	}
