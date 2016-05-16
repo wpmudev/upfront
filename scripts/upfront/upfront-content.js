@@ -171,9 +171,9 @@ define("content", deps, function(postTpl, ContentTools) {
 				me.trigger('post:trash');
 
 				// navigate to home
-				Upfront.Application.sidebar.toggleSidebar();
 				if(_upfront_post_data) _upfront_post_data.post_id = false;
-				Upfront.Application.navigate( "/" , true);
+				Upfront.Application.navigate( "/" , {trigger: true});
+				Upfront.Events.trigger('click:edit:navigate', false);
 			});
 		},
 
