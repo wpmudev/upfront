@@ -1279,5 +1279,11 @@ jQuery(document).ready(function($){
 		Upfront.Events.once("application:mode:before_switch", reset_responsive_class);
 		Upfront.Events.once("layout:render", remove_responsive_class);
 	});
+	
+	// remove inline panels on Image Insert redactor-box FE
+	var $image_insert_inline_panels = $('.upfront-output-wrapper .upfront-inserted_image-basic-wrapper').find('.upfront-inline-panel-item');
+	if ( $image_insert_inline_panels.length > 0 ) {
+		$image_insert_inline_panels.remove();
+	}
 
 });
