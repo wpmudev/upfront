@@ -283,6 +283,8 @@
 
 		var Upfront_Scroll_Mixin = {
 			stop_scroll_propagation: function ($el) {
+				if($el.parent().hasClass('sidebar-panel-post-editor')) return;
+
 				$el.on('DOMMouseScroll mousewheel', function(ev) {
 					var $this = $(this),
 						scrollTop = this.scrollTop,
@@ -435,7 +437,6 @@
 					this.$el.html('<a class="upfront-logo upfront-logo-small" href="' + url + '"></a>');
 			},
 			on_click: function () {
-				if(_upfront_post_data) _upfront_post_data.post_id = false;
 				Upfront.Events.trigger('click:edit:navigate', false);
 				/*var root = Upfront.Settings.site_url;
 				 root = root[root.length - 1] == '/' ? root : root + '/';
@@ -1531,6 +1532,7 @@
 				else
 					this.$el.removeClass('active');
 				this.$el.html('<h3 class="sidebar-panel-title">' + this.get_title() + '</h3><div class="sidebar-panel-content" />');
+
 				this.stop_scroll_propagation(this.$el.find('.sidebar-panel-content'));
 
 				if( this.sections){
@@ -2042,8 +2044,8 @@
 					this.render();
 				});
 				
-				this.listenTo(Upfront.Events, 'click:edit:navigate', function (postId) {
-					if ( typeof postId !== 'undefined' && postId ) setTimeout(self.prepare_editor(self));
+				this.listenTo(Upfront.Events, 'click:edit:navigate', function () {
+					setTimeout(self.prepare_editor(self));
 				});
 				
 				if (typeof Upfront.Views.PostDataEditor !== "undefined" && Upfront.Views.PostDataEditor.contentEditor !== false) {
@@ -3316,17 +3318,21 @@
 			},
 			init_modules: function (postId) {
 				this.panels = {
+					'post_editor': new SidebarPanel_PostEditor({"model": this.model}),
+					'posts': new SidebarPanel_Posts({"model": this.model}),
 					'elements': new SidebarPanel_DraggableElements({"model": this.model}),
 					'settings': new SidebarPanel_Settings({"model": this.model})
 				};
 				
-				if ( _upfront_post_data && _upfront_post_data.post_id && typeof postId !== 'undefined' && postId ) {
-					this.panels = _.extend({
-						'post_editor' : new SidebarPanel_PostEditor({"model": this.model}),
-						'posts' : new SidebarPanel_Posts({"model": this.model})
-					}, this.panels);
+				if(typeof postId !== "undefined") {
+					if(postId === false) {
+						this.panels = _.omit(this.panels, 'post_editor');
+					}
+				} else {
+					if(typeof _upfront_post_data.post_id === "undefined" || _upfront_post_data.post_id === false) {
+						this.panels = _.omit(this.panels, 'post_editor');
+					}
 				}
-				
 			},
 			render: function () {
 				var me = this;
