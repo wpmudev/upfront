@@ -513,7 +513,7 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
             return false;
 
         if ($("#upfront-taxonomy-parents").length)
-            parentId = $("#upfront-taxonomy-parents").val();
+            parentId = parseInt($("#upfront-taxonomy-parents").val());
 
         term = new Upfront.Models.Term({
             taxonomy: this.collection.taxonomy,
@@ -524,12 +524,17 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
         term.save().done(function(response){
             me.allTerms.add(term);
             me.collection.add(term);
-			me.$("#upfront-taxonomy-list").scrollTop(0);
-			$term_name.val("");
-			me.update();
-			me.render();
+			setTimeout( function () {
+				me.update();
+				me.render();
+			}, 100 );
         });
-        
+		
+		// Hide new category after added
+		$term_name.val("");
+		this.$el.find(".add-new-taxonomies-btn").removeClass('upfront-add-active');
+		this.$el.find(".ueditor-togglable-child").toggle();
+        this.$("#upfront-taxonomy-list").scrollTop(0);
     },
 
     handle_terms_update: function(e){
