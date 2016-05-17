@@ -111,7 +111,7 @@ var Box = Backbone.View.extend({
 
 		postData.cid = this.cid;
 
-		Upfront.Events.trigger('upfront:box:rendered', this.getButtonText());
+		Upfront.Events.trigger('upfront:save:label', this.getButtonText());
 
 		extraData.post_type_conditional_box_title = this._post_type_has_taxonomy('post_tag') && this._post_type_has_taxonomy('category')
 			? l10n.global.content.tags_cats_url
@@ -1454,6 +1454,7 @@ var PostScheduleView = PostSectionView.extend({
         date.currentHour = this.initialDate.getHours();
         date.currentMinute = this.initialDate.getMinutes();
         this.schedule = this.getSchedule();
+		Upfront.Events.trigger('upfront:save:label', this.getButtonText());
         this.$el.html( this.tpl(_.extend( {}, this.post, date, {schedule: this.schedule }) ) );
 		
 		this.$('#upfront-schedule-datepicker').datepicker({
@@ -1478,11 +1479,37 @@ var PostScheduleView = PostSectionView.extend({
 			}
 		}); 
 	},
+	getButtonText: function(){
+        var initial = this.initialStatus,
+            date = this.post.get('post_date'),
+            now = new Date()
+            ;
+
+        date = date ? date.getTime() : 0;
+        now = now.getTime();
+
+        // Check the initial status value and deal with it appropriately
+        if (!initial && this.post && this.post.get) {
+            initial = this.post.get("post_status")
+        }
+
+        if(now < date) {
+            if(initial == 'future')
+                return l10n.global.content.update;
+            return l10n.global.content.schedule;
+        }
+        else {
+            if(initial == 'publish')
+                return l10n.global.content.update;
+            return l10n.global.content.publish;
+        }
+    },
     getSchedule: function(){
         var now = new Date(),
             date = this.initialDate,
             formatDate = Upfront.Util.format_date
             ;
+
         if(!date && !this.initialDate)
             return {
                 key: l10n.global.content.publish,

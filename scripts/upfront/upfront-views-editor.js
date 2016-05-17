@@ -650,7 +650,7 @@
 		var Command_SaveLayout = Command.extend({
 			"className": "command-save",
 			render: function () {
-				Upfront.Events.on("upfront:box:rendered", this.update_label, this);
+				Upfront.Events.on("upfront:save:label", this.update_label, this);
 				// this.$el.addClass('upfront-icon upfront-icon-save');
 				this.$el.html(l10n.save);
 				this.$el.prop("title", l10n.save);
