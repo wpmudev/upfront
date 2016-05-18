@@ -1311,6 +1311,7 @@ var PostStatusView = PostSectionView.extend({
     },
     render: function(){
         this.initialStatus = this.currentStatus = this.post.get("post_status");
+		this.currentTime = this.post.get("server_time");
         this.status = this.getStatus();
         this.options = this.getStatusOptions();
         this.$el.html( this.tpl(_.extend({}, this.post, {status: this.status}, {options: this.options} )) );
@@ -1443,7 +1444,7 @@ var PostScheduleView = PostSectionView.extend({
     },
     render: function(){
 		this.initialDate = this.post.get("post_date");
-		 
+
         var date = new Object(),
 			objDate = new Date(this.initialDate),
 			locale = "en-us",
@@ -1507,10 +1508,12 @@ var PostScheduleView = PostSectionView.extend({
     getSchedule: function(){
         var now = new Date(),
             date = this.initialDate,
+			current = this.post.get('server_time'),
+			status = this.post.get('post_status'),
             formatDate = Upfront.Util.format_date
             ;
-
-        if(!date && !this.initialDate)
+			
+        if((!date && !this.initialDate) || (formatDate(date, true) === formatDate(current, true) && status !== "publish"))
             return {
                 key: l10n.global.content.publish,
                 text: l10n.global.content.immediately
@@ -1529,16 +1532,24 @@ var PostScheduleView = PostSectionView.extend({
                 };
         }
 
-        if(date.getTime() < now.getTime())
-            return {
-                key: l10n.global.content.publish_on,
-                text: formatDate(date, true)
-            };
-        else
+        if(date.getTime() < now.getTime()) {
+            if(status !== "publish") {
+				return {
+					key: l10n.global.content.publish_on,
+					text: formatDate(date, true)
+				};
+			} else {
+				return {
+					key: l10n.global.content.published_on,
+					text: formatDate(date, true)
+				};
+			}
+		} else {
             return {
                 key: l10n.global.content.scheduled_for,
                 text: formatDate(date, true)
             };
+		}
     },
     update: function(){
 		
