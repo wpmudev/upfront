@@ -761,7 +761,7 @@ em {
   margin: 0; }
 
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content {
-  height: 300px;
+  height: auto;
   padding: 0;
   border-top: 1px solid #accae6;
   /* border-bottom: 1px solid #accae6; */
