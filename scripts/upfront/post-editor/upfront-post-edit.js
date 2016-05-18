@@ -335,7 +335,7 @@ var PostSectionView = Backbone.View.extend({
 		} else {
 			$this_togglable = $button.siblings(".ueditor-togglable");
 		}
-		
+
 		if(!$button.hasClass('ueditor-edit-post-url')) {
 			$(".ueditor-box-content-wrap .ueditor-togglable").parent().removeClass('upfront-settings-toggled');
         }
@@ -1350,7 +1350,9 @@ var PostStatusView = PostSectionView.extend({
 		$button.closest(".ueditor-togglable").slideUp(100, function(){
             $button.closest(".ueditor-togglable").siblings(".ueditor-btn-edit").show();
         });
-		
+
+		$(".ueditor-box-content-wrap .ueditor-togglable").parent().removeClass('upfront-settings-toggled');
+
 		$button.closest(".ueditor-togglable").parent().removeClass('upfront-settings-toggled');
 
         var status = this.$("select").val();
@@ -1430,6 +1432,8 @@ var PostVisibilityView = PostSectionView.extend({
                 this.trigger("visibility:change", this.postVisibility, "");
                 break;
         }
+		
+		$(".ueditor-box-content-wrap .ueditor-togglable").parent().removeClass('upfront-settings-toggled');
 
         this.render();
     }
@@ -1566,6 +1570,9 @@ var PostScheduleView = PostSectionView.extend({
         date.setDate(day);
         date.setHours(hour);
         date.setMinutes(minute);
+		
+		$(".ueditor-box-content-wrap .ueditor-togglable").parent().removeClass('upfront-settings-toggled');
+
         this.post.set("post_date", date);
         this.trigger('date:updated', date);
         this.render();
