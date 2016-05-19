@@ -950,8 +950,9 @@ var Application = new (Backbone.Router.extend({
 			this.loadingLayout.abort();
 
 		this.loadingLayout = Upfront.Util.post(request_data)
-			.success(function (response) {
+			.success(function (response) {				
 				app.set_layout_up(response);
+				
 				if(app.saveCache){
 					app.urlCache[app.currentUrl] = $.extend(true, {}, response);
 					app.saveCache = false;
@@ -1041,6 +1042,12 @@ var Application = new (Backbone.Router.extend({
 		this.layout = new Upfront.Models.Layout(data);
 		this.current_subapplication.layout = this.layout;
 		this.sidebar.model.set(this.layout.toJSON());
+		
+		if(typeof layoutData.data.post !== "undefined" && layoutData.data.post != null) {
+			if(layoutData.data.post.ID !== "undefined") {
+				Upfront.Events.trigger('click:edit:navigate', layoutData.data.post.ID);
+			}
+		}
 
 		var shadow = this.layout.get('regions').get_by_name("shadow");
 		if(shadow)

@@ -2048,7 +2048,7 @@
 				this.listenTo(Upfront.Events, 'click:edit:navigate', function (postId) {
 					if ( typeof postId !== 'undefined' && postId ) setTimeout(self.prepare_editor(self));
 				});
-				
+
 				if (typeof Upfront.Views.PostDataEditor !== "undefined" && Upfront.Views.PostDataEditor.contentEditor !== false) {
 					Upfront.Views.PostBox = Upfront.Views.PostDataEditor.contentEditor.prepareBox();
 				}
@@ -3324,7 +3324,7 @@
 					'elements': new SidebarPanel_DraggableElements({"model": this.model}),
 					'settings': new SidebarPanel_Settings({"model": this.model})
 				};
-				
+
 				if(typeof postId !== "undefined") {
 					if(postId === false) {
 						this.panels = _.omit(this.panels, 'post_editor');
