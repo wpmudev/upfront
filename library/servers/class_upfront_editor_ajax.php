@@ -320,6 +320,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			$post->permalink = get_permalink($post->ID);
 			$post->sticky = is_sticky($post->ID);
 			$post->is_new = false;
+			$post->server_time = date('m/d/Y h:i:s a', time());
 
 			$this->_out(new Upfront_JsonResponse_Success($post));
 		}
@@ -333,6 +334,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 			$post->is_new = true;
 			$post->sticky = false;
+			$post->server_time = date('m/d/Y h:i:s a', time());
 
 			$this->_out(new Upfront_JsonResponse_Success($post));
 		}

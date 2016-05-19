@@ -551,7 +551,8 @@
 }
 
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content {
-	height: 257px;
+	height: auto;
+	max-height: 360px;
 	padding: 0;
 	border-top: 1px solid #accae6;
 	/* border-bottom: 1px solid #accae6; */
@@ -1155,13 +1156,52 @@ span.draggable-post-element.element-dragging
 
 @media screen and ( max-height: 650px ){
 	#sidebar-ui .sidebar-panel.expanded .sidebar-panel-content {
-		height: 129px;
+		height: 149px;
 	}
 	#sidebar-ui .sidebar-panel-settings.expanded .sidebar-panel-content {
-		height: 110px;
+		height: 130px;
 	}
 	#sidebar-ui .sidebar-commands-control .command-save,
 	#sidebar-ui .sidebar-commands-control .command-start-responsive {
-		top: 434px;
+		top: 454px;
+	}
+}
+
+@media screen and (min-height: 650px) and ( max-height: 750px ){
+	#sidebar-ui .sidebar-panel.expanded .sidebar-panel-content {
+		height: 209px;
+	}
+	#sidebar-ui .sidebar-panel-settings.expanded .sidebar-panel-content {
+		height: 190px;
+	}
+	#sidebar-ui .sidebar-commands-control .command-save,
+	#sidebar-ui .sidebar-commands-control .command-start-responsive {
+		top: 514px;
+	}
+}
+
+@media screen and (min-height: 750px) and ( max-height: 850px ){
+	#sidebar-ui .sidebar-panel.expanded .sidebar-panel-content {
+		height: 249px;
+	}
+	#sidebar-ui .sidebar-panel-settings.expanded .sidebar-panel-content {
+		height: 230px;
+	}
+	#sidebar-ui .sidebar-commands-control .command-save,
+	#sidebar-ui .sidebar-commands-control .command-start-responsive {
+		top: 554px;
+	}
+}
+
+@media screen and (min-height: 850px) and ( max-height: 100px ){
+	#sidebar-ui .sidebar-panel.expanded .sidebar-panel-content {
+		height: 329px;
+	}
+	#sidebar-ui .sidebar-panel-settings.expanded .sidebar-panel-content {
+		height: 310px;
+	}
+	#sidebar-ui .sidebar-commands-control .command-save,
+	#sidebar-ui .sidebar-commands-control .command-start-responsive {
+		top: 634px;
 	}
 }

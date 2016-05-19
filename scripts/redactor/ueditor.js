@@ -1204,7 +1204,7 @@ Ueditor.prototype = {
             this.$el.removeClass('ueditable');
             this.redactor.events.trigger('cleanUpListeners');
             this.$el.data("ueditor", false);
-            this.redactor = false;
+            //this.redactor = false;
 		}
 		if ("undefined" !== typeof Upfront.data.Ueditor) delete Upfront.data.Ueditor.instances[this.id];
 		this.startPlaceholder();

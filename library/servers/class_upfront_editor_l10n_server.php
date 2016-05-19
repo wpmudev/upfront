@@ -139,6 +139,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'publish' => __('Publish', 'upfront'),
 				'immediately' => __('Immediately', 'upfront'),
 				'publish_on' => __('Publish on', 'upfront'),
+				'published_on' => __('Published on', 'upfront'),
 				'scheduled_for' => __('Scheduled for', 'upfront'),
 				'schedule' => __('Schedule', 'upfront'),
 				'edit_pwd' => __('Edit password...', 'upfront'),

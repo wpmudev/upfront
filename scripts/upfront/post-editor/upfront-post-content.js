@@ -285,7 +285,7 @@ PostContentEditor.prototype = {
 							.on('dblclick', _.bind(this.editContent, this))
 
 					;
-					this.editor = false;
+
 					this.$content.closest(".upfront-editable_entity.upfront-module").draggable("enable");
 				}
 			},
@@ -298,7 +298,7 @@ PostContentEditor.prototype = {
 					content
 				;
 
-				if(typeof this.editor !== "undefined") {
+				if( _.isObject( this.editor ) ) {
 					// Clean inserts markup
 					this.$content.find(".upfront-inline-panel").remove();
 					this.$content.find(".ueditor-insert-remove").remove();

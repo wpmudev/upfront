@@ -111,7 +111,7 @@ var Box = Backbone.View.extend({
 
 		postData.cid = this.cid;
 
-		Upfront.Events.trigger('upfront:box:rendered', this.getButtonText());
+		Upfront.Events.trigger('upfront:save:label', this.getButtonText());
 
 		extraData.post_type_conditional_box_title = this._post_type_has_taxonomy('post_tag') && this._post_type_has_taxonomy('category')
 			? l10n.global.content.tags_cats_url
@@ -335,7 +335,7 @@ var PostSectionView = Backbone.View.extend({
 		} else {
 			$this_togglable = $button.siblings(".ueditor-togglable");
 		}
-		
+
 		if(!$button.hasClass('ueditor-edit-post-url')) {
 			$(".ueditor-box-content-wrap .ueditor-togglable").parent().removeClass('upfront-settings-toggled');
         }
@@ -1324,6 +1324,7 @@ var PostStatusView = PostSectionView.extend({
     },
     render: function(){
         this.initialStatus = this.currentStatus = this.post.get("post_status");
+		this.currentTime = this.post.get("server_time");
         this.status = this.getStatus();
         this.options = this.getStatusOptions();
         this.$el.html( this.tpl(_.extend({}, this.post, {status: this.status}, {options: this.options} )) );
@@ -1362,7 +1363,9 @@ var PostStatusView = PostSectionView.extend({
 		$button.closest(".ueditor-togglable").slideUp(100, function(){
             $button.closest(".ueditor-togglable").siblings(".ueditor-btn-edit").show();
         });
-		
+
+		$(".ueditor-box-content-wrap .ueditor-togglable").parent().removeClass('upfront-settings-toggled');
+
 		$button.closest(".ueditor-togglable").parent().removeClass('upfront-settings-toggled');
 
         var status = this.$("select").val();
@@ -1442,6 +1445,8 @@ var PostVisibilityView = PostSectionView.extend({
                 this.trigger("visibility:change", this.postVisibility, "");
                 break;
         }
+		
+		$(".ueditor-box-content-wrap .ueditor-togglable").parent().removeClass('upfront-settings-toggled');
 
         this.render();
     }
@@ -1456,7 +1461,7 @@ var PostScheduleView = PostSectionView.extend({
     },
     render: function(){
 		this.initialDate = this.post.get("post_date");
-		 
+
         var date = new Object(),
 			objDate = new Date(this.initialDate),
 			locale = "en-us",
@@ -1467,6 +1472,7 @@ var PostScheduleView = PostSectionView.extend({
         date.currentHour = this.initialDate.getHours();
         date.currentMinute = this.initialDate.getMinutes();
         this.schedule = this.getSchedule();
+		Upfront.Events.trigger('upfront:save:label', this.getButtonText());
         this.$el.html( this.tpl(_.extend( {}, this.post, date, {schedule: this.schedule }) ) );
 		
 		this.$('#upfront-schedule-datepicker').datepicker({
@@ -1491,12 +1497,40 @@ var PostScheduleView = PostSectionView.extend({
 			}
 		}); 
 	},
+	getButtonText: function(){
+        var initial = this.initialStatus,
+            date = this.post.get('post_date'),
+            now = new Date()
+            ;
+
+        date = date ? date.getTime() : 0;
+        now = now.getTime();
+
+        // Check the initial status value and deal with it appropriately
+        if (!initial && this.post && this.post.get) {
+            initial = this.post.get("post_status")
+        }
+
+        if(now < date) {
+            if(initial == 'future')
+                return l10n.global.content.update;
+            return l10n.global.content.schedule;
+        }
+        else {
+            if(initial == 'publish')
+                return l10n.global.content.update;
+            return l10n.global.content.publish;
+        }
+    },
     getSchedule: function(){
         var now = new Date(),
             date = this.initialDate,
+			current = this.post.get('server_time'),
+			status = this.post.get('post_status'),
             formatDate = Upfront.Util.format_date
             ;
-        if(!date && !this.initialDate)
+			
+        if((!date && !this.initialDate) || (formatDate(date, true) === formatDate(current, true) && status !== "publish"))
             return {
                 key: l10n.global.content.publish,
                 text: l10n.global.content.immediately
@@ -1515,16 +1549,24 @@ var PostScheduleView = PostSectionView.extend({
                 };
         }
 
-        if(date.getTime() < now.getTime())
-            return {
-                key: l10n.global.content.publish_on,
-                text: formatDate(date, true)
-            };
-        else
+        if(date.getTime() < now.getTime()) {
+            if(status !== "publish") {
+				return {
+					key: l10n.global.content.publish_on,
+					text: formatDate(date, true)
+				};
+			} else {
+				return {
+					key: l10n.global.content.published_on,
+					text: formatDate(date, true)
+				};
+			}
+		} else {
             return {
                 key: l10n.global.content.scheduled_for,
                 text: formatDate(date, true)
             };
+		}
     },
     update: function(){
 		
@@ -1541,6 +1583,9 @@ var PostScheduleView = PostSectionView.extend({
         date.setDate(day);
         date.setHours(hour);
         date.setMinutes(minute);
+		
+		$(".ueditor-box-content-wrap .ueditor-togglable").parent().removeClass('upfront-settings-toggled');
+
         this.post.set("post_date", date);
         this.trigger('date:updated', date);
         this.render();

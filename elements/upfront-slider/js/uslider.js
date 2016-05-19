@@ -154,14 +154,16 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 	preset_updated: function(preset) {
 		this.updateSlideDefaults();
-		this.render();
+		//this.render();
 		Upfront.Events.trigger('preset:slider:updated', preset);
 	},
 	
 	caption_updated: function(preset) {
 		var currentPreset = this.model.get_property_value_by_name("preset");
 		//If element use updated preset re-render
-		if(currentPreset === preset) this.render();
+		if(currentPreset === preset && this.lastStyle != this.get_preset_property('primaryStyle')) {
+			this.render();
+		}
 	},
 
 	update_colors: function () {
@@ -182,11 +184,11 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		var me = this,
 			props,
 			rendered = {};
-		
+
 		this.checkStyles();
 
 		props = this.extract_properties();
-		
+
 		if (Upfront.Application.user_can_modify_layout()) {
 			if(!this.model.slideCollection.length){
 				this.startingHeight = this.startingHeight || 225;
