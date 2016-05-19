@@ -99,12 +99,12 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 						</p>
 						<p class="left">
 							<?php
-							$db_layouts = Upfront_Server_PageTemplate::get_instance()->parse_theme_templates(Upfront_Debug::get_debugger()->is_dev());
+							$db_layouts = Upfront_Server_PageLayout::get_instance()->parse_theme_layouts(Upfront_Debug::get_debugger()->is_dev());
 							if( $db_layouts ): ?>
 								<select class="upfront-layouts-list">
 									<option value="0"><?php esc_html_e("Please select layout to reset", Upfront::TextDomain); ?></option>
 									<?php ; foreach( $db_layouts as $key => $item ): ?>
-										<option value="<?php echo (is_array($item)) ? esc_attr($item['name']) : esc_attr($item); ?>"><?php echo esc_html(Upfront_Server_PageTemplate::get_instance()->db_layout_to_name($item)); ?></option>
+										<option value="<?php echo (is_array($item)) ? esc_attr($item['name']) : esc_attr($item); ?>"><?php echo esc_html(Upfront_Server_PageLayout::get_instance()->db_layout_to_name($item)); ?></option>
 									<?php endforeach; ?>
 								</select>
 							<?php else: ?>

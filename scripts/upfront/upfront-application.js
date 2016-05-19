@@ -46,6 +46,10 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this._delete_layout();
 	},
 	
+	reset_changes: function () {
+		this._reset_changes();
+	},
+	
 	_save_layout_meta: function (preferred_layout, publish) {
 		var me = this,
 			post_id = ( typeof _upfront_post_data.post_id !== 'undefined' ) ? _upfront_post_data.post_id : '',
@@ -68,10 +72,10 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			})
 			.success(function () {
 				Upfront.Util.log("layout applied");
-				Upfront.Events.trigger("command:layout:save_success");
 				setTimeout(function(){
 					Upfront.Application.load_layout(_upfront_post_data.layout);
-				},300);
+					Upfront.Events.trigger("command:layout:save_success");
+				},100);
 				
 			})
 			.error(function () {
@@ -87,7 +91,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			post_id = ( typeof _upfront_post_data.post_id !== 'undefined' ) ? _upfront_post_data.post_id : '',
 			template_type = ( typeof _upfront_post_data.template_type !== 'undefined' ) ? _upfront_post_data.template_type : 'layout',
 			template_slug = ( typeof _upfront_post_data.template_slug !== 'undefined' ) ? _upfront_post_data.template_slug : '',
-			save_as = ( typeof _upfront_post_data.save_as !== 'undefined' ) ? _upfront_post_data.save_as : 0,
+			layout_action = ( typeof _upfront_post_data.layout_action !== 'undefined' ) ? _upfront_post_data.layout_action : '',
 			save_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 );
 		data.layout = _upfront_post_data.layout;
 		data.preferred_layout = preferred_layout;
@@ -105,7 +109,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 				"data": data, 
 				"storage_key": storage_key, 
 				"post_id": post_id,
-				"save_as": save_as,
+				"layout_action": layout_action,
 				"save_dev": save_dev,
 				"template_type": template_type,
 				"template_slug": template_slug
@@ -114,16 +118,14 @@ var LayoutEditorSubapplication = Subapplication.extend({
 				Upfront.Util.log("layout saved");
 				Upfront.Events.trigger("command:layout:save_success");
 				
-				// refresh page templates list
-				if ( save_as === 1 ) {
-					_upfront_post_data.save_as = 0;
+				if ( layout_action == 'save_as' ) {
+					// refresh page templates list
+					_upfront_post_data.layout_action = '';
 					_upfront_post_data.template_slug = resp.data.template_slug;
 					Upfront.Events.trigger("update:page:layout:list");
-				}
-				
-				// for updating page template
-				if ( typeof _upfront_post_data.update_template !== 'undefined' && _upfront_post_data.update_template === 1 ) {
-					_upfront_post_data.update_template = 0;
+				} else if ( layout_action == 'update' ) {
+					// for updating page template
+					_upfront_post_data.layout_action = '';
 					Upfront.Events.trigger("page:layout:updated");
 				}
 				
@@ -144,6 +146,22 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		Upfront.Util.post({
 				"action": Upfront.Application.actions.delete_layout, 
 				"template_slug": template_slug,
+				"is_dev": is_dev
+			})
+			.done(function () {
+				Upfront.Events.trigger("command:layout:save_success");
+				Upfront.Application.load_layout(_upfront_post_data.layout);
+			})
+		;
+	},
+	
+	_reset_changes: function () {
+		var me = this,
+			is_dev = ( _upfront_storage_key != _upfront_save_storage_key ) ? 1 : 0
+		;
+		Upfront.Events.trigger("command:layout:save_start");
+		Upfront.Util.post({
+				"action": Upfront.Application.actions.reset_changes, 
 				"is_dev": is_dev
 			})
 			.done(function () {
@@ -269,6 +287,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this.listenTo(Upfront.Events, "command:layout:save", this.save_layout);
 		this.listenTo(Upfront.Events, "command:layout:save_meta", this.save_layout_meta);
 		this.listenTo(Upfront.Events, "command:layout:delete_layout", this.delete_layout);
+		this.listenTo(Upfront.Events, "command:layout:reset_changes", this.reset_changes);
 		this.listenTo(Upfront.Events, "command:layout:save_as", this.save_layout_as);
 		this.listenTo(Upfront.Events, "command:layout:preview", this.preview_layout);
 		this.listenTo(Upfront.Events, "command:layout:publish", this.publish_layout);
@@ -687,7 +706,8 @@ var Application = new (Backbone.Router.extend({
 	actions: {
 		"save": "upfront_save_layout",
 		"save_meta": "upfront_save_layout_meta",
-		"delete_layout": "upfront_reset_layout",
+		"delete_layout": "upfront_delete_page_template",
+		"reset_changes": "upfront_reset_layout",
 		"load": "upfront_load_layout"
 	},
 
@@ -999,16 +1019,8 @@ var Application = new (Backbone.Router.extend({
 			data = $.extend(true, {}, layoutData.data.layout) || {} //Deep cloning
 		;
 		
-		if ( layoutData.data.post === null ) {
-			_upfront_post_data.template_type = ( layoutData.data.template_post_id )
-				? layoutData.data.template_type
-				: 'page'
-			;
-		} else if ( layoutData.data.post.post_type === 'page' ) {
-			_upfront_post_data.template_type = layoutData.data.template_type;
-		}
-		
-		if ( layoutData.data.template_slug ) _upfront_post_data.template_slug = layoutData.data.template_slug;
+		if ( typeof layoutData.data.template_type !== 'undefined' ) _upfront_post_data.template_type = layoutData.data.template_type;
+		if ( typeof layoutData.data.template_slug !== 'undefined' ) _upfront_post_data.template_slug = layoutData.data.template_slug;
 		
 		if (layoutData.data.post) {
 			this.post_set_up(layoutData.data.post);

@@ -33,6 +33,7 @@ class Upfront_Ajax extends Upfront_Server {
 		if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) {
 			upfront_add_ajax('upfront_save_layout', array($this, "save_layout"));
 			upfront_add_ajax('upfront_save_layout_meta', array($this, "save_page_layout_meta"));
+			upfront_add_ajax('upfront_delete_page_template', array($this, "delete_page_template"));
 			upfront_add_ajax('upfront_reset_layout', array($this, "reset_layout"));
 			upfront_add_ajax('upfront_reset_cache', array($this, "reset_cache"));
 			upfront_add_ajax('upfront_reset_all_from_db', array($this, "reset_all_from_db"));
@@ -120,12 +121,15 @@ class Upfront_Ajax extends Upfront_Server {
 		$storage_key = $_POST['storage_key'];
 		$stylesheet = $_POST['stylesheet'];
 		$layout_slug = !empty($_POST['layout_slug']) ? $_POST['layout_slug'] : false;
-		$load_dev = $_POST['load_dev'] == 1 ? true : false;
-		$post_type = isset($_POST['new_post']) ? $_POST['new_post'] : false;
-		$parsed = false;
-		$load_from_options = true;
+		$load_dev = ( isset($_POST['load_dev']) && is_numeric($_POST['load_dev']) && $_POST['load_dev'] == 1 ) ? true : false;
 		$post_id = (isset($_POST['post_id'])) ? (int)$_POST['post_id'] : false;
+		$template_type = 'page';
 		$template_slug = false;
+		$layout_cpt_slug = false;
+		$layout = false;
+		
+		global $post, $upfront_ajax_query;
+		if ( $post_id ) $post = get_post($post_id);
 		
 		if (empty($layout_ids))
 			$this->_out(new Upfront_JsonResponse_Error("No such layout"));
@@ -134,124 +138,78 @@ class Upfront_Ajax extends Upfront_Server {
 
 		if(is_string($layout_ids)){
 			$layout_ids = Upfront_EntityResolver::ids_from_url($layout_ids);
-			$parsed = true;
 		}
 		
-		global $post, $upfront_ajax_query;
-		
-		if(!$upfront_ajax_query)
-			$upfront_ajax_query = false;
+		if( !$upfront_ajax_query ) $upfront_ajax_query = false;
 		
 		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
-		$template_meta_name = ( $load_dev ) 
-			? $store_key . '-template_dev_post_id'
-			: $store_key . '-template_post_id'
+		
+		// loading from Page Layout CPT
+		$layout_cpt_slug = ( isset($layout_ids['specificity']) )
+			? strtolower($store_key . '-' . $layout_ids['specificity'])
+			: strtolower($store_key . '-' . $layout_ids['item'])
 		;
-		
-		if ( $post_id ) {
-			$post = get_post($post_id);
-			$template_post_id = get_post_meta($post_id, $template_meta_name, true);
-			$template_file = get_post_meta($post_id, '_wp_page_template', true);
-			
-			if ( $template_file ) {
-				// save post meta backup for template file, we need this later when resetting layouts
-				update_post_meta($post_id, 'orig_wp_page_template', $template_file);
-				
-				// taking care $template_slug
-				$page_templates = get_page_templates();
-				foreach ( $page_templates as $template_name => $template_filename ) {
-					if ( $template_filename == $template_file ) {
-						$template_slug = $store_key . '-' . str_replace(' ','-',strtolower($template_name));
-						break;
-					}
-				}
-			}
-			// if no template yet from custom post type for this page 
-			// try to check/get if same layout already saved 
-			if ( !$template_post_id && $template_slug ) {
-				// use the slug to get template post id
-				$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($template_slug, $load_dev);
-			} elseif ( !$template_post_id && !$template_slug ) {
-				$template_slug = $store_key . '-default';
-				$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($template_slug, $load_dev);
-			}
-			
-			if ( $template_post_id ) {
-				// update post meta for template from custom post type
-				update_post_meta($post_id, $template_meta_name, $template_post_id);
-				// remove _wp_page_template since we have already using existing template from custom post type
-				delete_post_meta($post_id, '_wp_page_template');
-				// needs to provide $template_slug for saving layout
-				if ( !$template_slug ) {
-					$template_post = get_post($template_post_id);
-					$template_slug = $template_post->post_name;
-				}
-			}
-		} else {
-			// if special archive pages like homepage, use slug to get template post id
-			$store_key = $store_key . '-' . $layout_ids['item'];
-			$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($store_key, $load_dev);
-			// if no template slug then it is the default template
-			if ( !$template_slug ) $template_slug = $store_key . '-default';
-		}		
-		
-		if ( $template_post_id ) {
-			$page_template = Upfront_Server_PageTemplate::get_instance()->get_template($template_post_id, $load_dev);
-			if ( $page_template ) {
-				$layout = Upfront_Layout::from_php($page_template, $storage_key);
-				$load_from_options = false;
-			}
+		$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_cpt_slug, $load_dev);
+		if ( $layout_post_id ) {
+			$page_layout = Upfront_Server_PageLayout::get_instance()->get_layout($layout_post_id, $load_dev);
+			if ( $page_layout ) $layout = Upfront_Layout::from_php($page_layout, $storage_key);
 		}
-		
-		// load previous page templates not yet saved using CPT
-		if ( $load_from_options ) {
+		// dealing with Page Templates
+		$page_template_obj = $this->_load_page_template($_POST);
+		if ( $page_template_obj ) {
+			$template_slug = $page_template_obj->post_name;
+			$template_type = get_post_meta($page_template_obj->ID, 'template_type', true);
+		}
+		// loading from Page Template CPT
+		if ( ( !$layout_post_id || !$layout || $layout->is_empty() ) && $page_template_obj ) {
+			$page_template = Upfront_Server_PageTemplate::get_instance()->get_template($page_template_obj->ID, $load_dev);
+			$layout = Upfront_Layout::from_php($page_template, $storage_key);
+		}
+		// if still empty then load it from `options` table or from tpl file
+		if ( !$layout || $layout->is_empty() ) {
 			$layout = Upfront_Layout::from_entity_ids($layout_ids, $storage_key, $load_dev);
-
 			if ($layout->is_empty()){
 				// Instead of whining, create a stub layout and load that
 				$layout = Upfront_Layout::create_layout($layout_ids, $layout_slug);
 			}
 		}
 		
-		if ( $template_post_id ) {
-			$template_type = get_post_meta($template_post_id, 'template_type', true);
-			if ( !$template_type ) $template_type =  $layout->get('template_type');
-		} else {
-			$template_type =  $layout->get('template_type');
-		}
-		
-		// if layout loaded from a file then it belongs to Page Template type
-		if ( $template_type == 'file' ) {
-			$template_type =  'page';
-			
-			if ( !$template_slug && $post_id ) {
-				$page_templates = get_page_templates();
-				foreach ( $page_templates as $template_name => $template_filename ) {
-					$filename = preg_replace('/page_tpl-(.*)\.php$/', '\1', $template_filename);
-					if ( $filename == $post->post_name ) {
-						$template_slug = $store_key . '-' . str_replace(' ','-',strtolower($template_name));
-						break;
-					}
-				}
-				// if still empty template slug then it is the default template
-				if ( !$template_slug ) $template_slug = $store_key . '-default';
-			}
+		if ( !$template_slug && $post_id ) {
+			$uf_tpl_meta = strtolower($store_key . '-uf_wp_page_template');
+			$template_slug = get_post_meta($post_id, $uf_tpl_meta, true);
+			if ( !$template_slug || empty($template_slug) ) $template_slug = strtolower($store_key . '-default');
 		}
 		
 		$response = array(
 			'post' => $post,
 			'layout' => $layout->to_php(),
 			'cascade' => $layout_ids,
-			'template_post_id' => $template_post_id,
 			'template_type' => $template_type,
 			'template_slug' => $template_slug,
+			'layout_cpt_slug' => $layout_cpt_slug,
 			'query' => $upfront_ajax_query
 		);
-		if (isset($template_file)) {
-			$response['template_file'] = $template_file;
-		}
 
 		$this->_out(new Upfront_JsonResponse_Success($response));
+	}
+	
+	private function _load_page_template ($data) {
+		$post_id = (isset($data['post_id'])) ? (int)$data['post_id'] : false;
+		$load_dev = ( isset($data['load_dev']) && is_numeric($data['load_dev']) && $data['load_dev'] == 1 ) ? true : false;
+		$template_post_id = false;
+		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
+		$template_meta_name = ( $load_dev ) 
+			? strtolower($store_key . '-template_dev_post_id')
+			: strtolower($store_key . '-template_post_id')
+		;
+		
+		if ( $post_id ) $template_post_id = get_post_meta($post_id, $template_meta_name, true);
+		
+		return ( $template_post_id )
+			? get_post($template_post_id)
+			: false
+		;
+		
 	}
 
 	function create_layout () {
@@ -368,31 +326,66 @@ class Upfront_Ajax extends Upfront_Server {
 	function save_page_layout () {
 		$data = !empty($_POST['data']) ? json_decode(stripslashes_deep($_POST['data']), true) : false;
 		if (!$data) $this->_out(new Upfront_JsonResponse_Error("Unknown layout"));
-		$template_type = $_POST['template_type'];
-		$storage_key = $_POST['storage_key'];
 		$stylesheet = ($_POST['stylesheet']) ? $_POST['stylesheet'] : get_stylesheet();
-		$template_post_id = false;
-		$save_as = $_POST['save_as'] == 1 ? true : false;
-		$save_dev = $_POST['save_dev'] == 1 ? true : false;
-		$template_slug = (!empty($_POST['template_slug'])) ? $_POST['template_slug'] : false;
+		$save_dev = ( isset($_POST['save_dev']) && is_numeric($_POST['save_dev']) && $_POST['save_dev'] == 1 ) ? true : false;
+		$layout_ids = $_POST['layout'];
 		
 		upfront_switch_stylesheet($stylesheet);
 		
 		$raw_data = stripslashes_deep($_POST);
 		$json_data = !empty($raw_data['data']) ? $raw_data['data'] : '';
-		$post_id = (isset($_POST['post_id'])) ? (int)$_POST['post_id'] : false;
 		
 		$layout = Upfront_Layout::from_json($json_data);
 		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
+		$layout_slug = ( isset($layout_ids['specificity']) )
+			? strtolower($store_key . '-' . $layout_ids['specificity'])
+			: strtolower($store_key . '-' . $layout_ids['item'])
+		;
 		
-		if ( $post_id ) {
+		$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $save_dev);
+		$layout_post_id = Upfront_Server_PageLayout::get_instance()->save_layout($layout_post_id, $layout, $save_dev);
 		
-			$template_meta_name = ( $save_dev ) 
-				? $store_key . '-template_dev_post_id'
-				: $store_key . '-template_post_id'
-			;
-			// get corresponding template post id only if not "save as"
-			if ( $save_as ) {
+		// taking care of Page Template
+		$template_slug = $this->_save_page_template($_POST);
+		
+		$this->_out(new Upfront_JsonResponse_Success((object) array(
+			'layout_post_id' => $layout_post_id,
+			'template_slug' => $template_slug
+		)));
+	}
+	
+	private function _save_page_template ($data) {
+		$post_id = (isset($data['post_id'])) ? (int)$data['post_id'] : false;
+		$template_type = $data['template_type'];
+		$template_slug = (!empty($data['template_slug'])) ? $data['template_slug'] : false;
+		$save_dev = ( isset($data['save_dev']) && is_numeric($data['save_dev']) && $data['save_dev'] == 1 ) ? true : false;
+		$layout_action = (!empty($data['layout_action'])) ? $data['layout_action'] : false;
+		$template_post_id = false;
+		
+		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
+		$template_meta_name = ( $save_dev ) 
+			? strtolower($store_key . '-template_dev_post_id')
+			: strtolower($store_key . '-template_post_id')
+		;
+		
+		if ( !$post_id ) return false;
+		
+		$uf_tpl_meta = strtolower($store_key . '-uf_wp_page_template');
+		
+		// remove any remnants of WP template
+		delete_post_meta($post_id, '_wp_page_template');
+		
+		// only take cares tpl files generated from Builder
+		if ( $template_type == 'page' ) {
+			update_post_meta($post_id, $uf_tpl_meta, $template_slug);
+			return $template_slug;
+		}
+		
+		// if using Layouts created on UF Editor
+		if ( $template_type == 'layout' && $layout_action ) {
+			delete_post_meta($post_id, $uf_tpl_meta);
+			
+			if ( $layout_action == 'save_as' ) {
 				$template_slug = $store_key . '-' . str_replace(' ','-',strtolower($template_slug));
 				// check if already existing
 				$original_slug = $template_slug;
@@ -402,33 +395,23 @@ class Upfront_Ajax extends Upfront_Server {
 					$slug_num_padded = sprintf("%02s", $slug_num);
 					$template_slug = $original_slug . $slug_num_padded;
 				}
-			} else {
-				$template_post_id = get_post_meta((int)$post_id, $template_meta_name, true);
+			} elseif ( $layout_action == 'update' ) {
+				$template_post_id = get_post_meta($post_id, $template_meta_name, true);
 			}
+			
+			// preparing the layout data to save
+			$raw_data = stripslashes_deep($data);
+			$json_data = !empty($raw_data['data']) ? $raw_data['data'] : '';
+			$layout = Upfront_Layout::from_json($json_data);
 			// create or update page template
 			$saved_template_post_id = Upfront_Server_PageTemplate::get_instance()->save_template($template_post_id, $layout, $save_dev, $template_slug);
-			// add/update the template post id
 			if ( $saved_template_post_id ) {
-				update_post_meta((int)$post_id, $template_meta_name, $saved_template_post_id);
-				// remove _wp_page_template since we have already saved it on custom post type
-				delete_post_meta($post_id, '_wp_page_template');
+				update_post_meta($post_id, $template_meta_name, $saved_template_post_id);
+				update_post_meta((int)$saved_template_post_id, 'template_type', $template_type);
 			}
-		} else {
-			// if special archive pages like homepage, use slug to get template post id
-			$tmp = $layout->get('layout');
-			$slug = $store_key . '-' . $tmp['item'];
-			$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($slug, $save_dev);
-			// save the page template
-			$saved_template_post_id = Upfront_Server_PageTemplate::get_instance()->save_template($template_post_id, $layout, $save_dev);
 		}
 		
-		// post meta for layout_type if this is for Page or Layout template
-		if ( $saved_template_post_id && !empty($template_type) ) update_post_meta((int)$saved_template_post_id, 'template_type', $template_type);
-		
-		$this->_out(new Upfront_JsonResponse_Success((object) array(
-			'saved_template_post_id' => $saved_template_post_id,
-			'template_slug' => $template_slug
-		)));
+		return $template_slug;
 	}
 	
 	private function _check_template_slug ($template_slug) {
@@ -470,9 +453,9 @@ class Upfront_Ajax extends Upfront_Server {
 		$template_type = $_POST['template_type'];
 		$template_post_id = false;
 		$saved_template_post_id = false;
-		$layout = false;
 		$stylesheet_dev = false;
 		$storage_key = $_POST['storage_key'];
+		$layout_ids = $_POST['layout'];
 		$stylesheet = isset( $_POST['stylesheet'] ) ? $_POST['stylesheet'] : get_stylesheet();
 		$save_dev = $_POST['save_dev'] == 1 ? true : false;
 		$template_slug = (!empty($_POST['template_slug'])) ? $_POST['template_slug'] : false;
@@ -481,20 +464,30 @@ class Upfront_Ajax extends Upfront_Server {
 		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
 		
 		if ( $post_id ) {
-		
 			$template_meta_name = ( $save_dev ) 
 				? $store_key . '-template_dev_post_id'
 				: $store_key . '-template_post_id'
 			;
+			$uf_tpl_meta = strtolower($store_key . '-uf_wp_page_template');
+			
+			// clearing post meta first
+			delete_post_meta($post_id, '_wp_page_template');
+			delete_post_meta($post_id, $uf_tpl_meta);
+			delete_post_meta($post_id, $template_meta_name);
+			
+			// delete current layout as we are going to use another one
+			$layout_slug = ( isset($layout_ids['specificity']) )
+				? strtolower($store_key . '-' . $layout_ids['specificity'])
+				: strtolower($store_key . '-' . $layout_ids['item'])
+			;
+			$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $save_dev);
+			Upfront_Server_PageLayout::get_instance()->delete_layout((int)$layout_post_id, $save_dev);
 			
 			// get the template_post_id of selected template slug
 			$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($template_slug, $save_dev);
-			
-			// add/update the template post id
+			// dealing with template post meta
 			if ( $template_post_id ) {
-				update_post_meta((int)$post_id, $template_meta_name, $template_post_id);
-				// remove _wp_page_template since we are already using custom post type template
-				delete_post_meta($post_id, '_wp_page_template');
+				update_post_meta($post_id, $template_meta_name, $template_post_id);
 			} elseif ( $template_slug ) {
 				// try using template files
 				$is_template_file_ok = false;
@@ -504,24 +497,19 @@ class Upfront_Ajax extends Upfront_Server {
 					if ( $slug == $template_slug ) {
 						$is_template_file_ok = true;
 						update_post_meta($post_id, '_wp_page_template', $template_filename);
-						update_post_meta($post_id, 'orig_wp_page_template', $template_filename);
+						update_post_meta($post_id, $uf_tpl_meta, $template_slug);
 						break;
 					}
 				}
-				if ( $is_template_file_ok ) {
-					// since we are now using a template file, remove any existing post meta for custom post type template
-					delete_post_meta($post_id, $template_meta_name);
-				} else {
-					// selected page template was coming from options table
+				// selected page template was coming from options table
+				if ( !$is_template_file_ok ) {
 					$layout = Upfront_Layout::from_entity_ids(array('specificity' => $template_slug), $storage_key);
 					// save it on layout template cpt
 					$slug = $store_key . '-' . $template_slug;
 					$saved_template_post_id = Upfront_Server_PageTemplate::get_instance()->save_template($template_post_id, $layout, $save_dev, $slug);
 					// add/update the template post id
 					if ( $saved_template_post_id ) {
-						update_post_meta((int)$post_id, $template_meta_name, $saved_template_post_id);
-						// remove _wp_page_template since we have already saved it on custom post type
-						delete_post_meta($post_id, '_wp_page_template');
+						update_post_meta($post_id, $template_meta_name, $saved_template_post_id);
 						// delete the layout from options table since we have already moved it into layout template cpt
 						if ($save_dev) {
 							$stylesheet_dev = "{$stylesheet}_dev"; // Handle dev-mode names
@@ -545,7 +533,7 @@ class Upfront_Ajax extends Upfront_Server {
 		// post meta for layout_type if this is for Page or Layout template
 		if ( $saved_template_post_id && !empty($template_type) ) update_post_meta((int)$saved_template_post_id, 'template_type', $template_type);
 		
-		$this->_out(new Upfront_JsonResponse_Success($saved_template_post_id));
+		$this->_out(new Upfront_JsonResponse_Success('Layout applied'));
 	}
 
     function list_scoped_regions () {
@@ -571,33 +559,21 @@ class Upfront_Ajax extends Upfront_Server {
         $this->_out(new Upfront_JsonResponse_Success($regions));
     }
 	
-	function reset_layout () {
+	function delete_page_template () {
 		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
 		
 		$data = !empty($_POST) ? stripslashes_deep($_POST) : false;
 		$layout = !empty($data['layout']) && $data['layout'] !== "0" ? $data['layout'] : array();
 		$stylesheet = isset( $data['stylesheet'] ) ? $data['stylesheet'] : get_stylesheet();
+		$template_slug = $data['template_slug'];
 		$stylesheet_dev = false;
 		$is_dev = ( !empty($data['is_dev']) )
 			? (bool) $data['is_dev']
 			: false
 		;
 		
-		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
-		
-		// if resetting from UF editor via Delete Template button and template_slug contains the full slug
-		if ( isset($data['template_slug']) && !empty($data['template_slug']) ) {
-			$to_clear = $store_key . '-';
-			$layout = str_replace($to_clear, '', $data['template_slug']);
-		}
-		
-		if( $layout === array() )
-			$this->_out(new Upfront_JsonResponse_Error("Please specify layout to reset"));
-		
-		// delete first custom post type template
-		$key = $store_key . '-' . $layout;
-		$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($key, $is_dev);
-		
+		$store_key = strtolower(str_replace('_dev','',Upfront_Layout::get_storage_key()));
+		$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($template_slug, $is_dev);
 		if( $template_post_id ) {
 			Upfront_Server_PageTemplate::get_instance()->delete_template((int)$template_post_id, $is_dev);
 			
@@ -610,31 +586,61 @@ class Upfront_Ajax extends Upfront_Server {
 			foreach ( $pages as $page ) {
 				// delete reference to custom post type template
 				delete_post_meta($page->ID, $template_meta_name);
-				// revert back to template file
-				$template_file = get_post_meta($page->ID, 'orig_wp_page_template', true);
-				update_post_meta($page->ID, '_wp_page_template', $template_file);
 			}
 		}
-			
 		
-		// deletes what's in option table from previous implementation
-		if ($is_dev) {
-			$stylesheet_dev = "{$stylesheet}_dev"; // Handle dev-mode names
+		$this->_out(new Upfront_JsonResponse_Success("Template {$template_slug} deleted"));
+	}
+	
+	function reset_layout () {
+		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+		
+		$data = !empty($_POST) ? stripslashes_deep($_POST) : false;
+		$layout = !empty($data['layout']) && $data['layout'] !== "0" ? $data['layout'] : array();
+		$stylesheet = isset( $data['stylesheet'] ) ? $data['stylesheet'] : get_stylesheet();
+		$stylesheet_dev = false;
+		$is_dev = ( !empty($data['is_dev']) )
+			? (bool) $data['is_dev']
+			: false
+		;
+		$store_key = strtolower(str_replace('_dev','',Upfront_Layout::get_storage_key()));
+		
+		if ( empty($layout) ) $this->_out(new Upfront_JsonResponse_Error("Please specify layout to reset"));
+			
+		if ( is_array($layout) ) {
+			$layout_slug = ( isset($layout['specificity']) )
+				? $store_key . '-' . $layout['specificity']
+				: $store_key . '-' . $layout['item']
+			;
+			$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $is_dev);
+			Upfront_Server_PageLayout::get_instance()->delete_layout((int)$layout_post_id, $is_dev);
+			
+			$this->_out(new Upfront_JsonResponse_Success("Layout {$layout_slug} reset"));
+			
+		} else {
+			// delete layouts from CPT
+			$layout_slug = $store_key . '-' . $layout;
+			$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $is_dev);
+			Upfront_Server_PageLayout::get_instance()->delete_layout((int)$layout_post_id, $is_dev);
+			
+			// deletes what's in option table
+			if ($is_dev) {
+				$stylesheet_dev = "{$stylesheet}_dev"; // Handle dev-mode names
+			}
+			if( $stylesheet_dev ){
+				$layout_key = $stylesheet_dev . "-" . $layout;
+				$alternative_layout_key = wp_get_theme($stylesheet)->get("Name") . "_dev-" . $layout;
+				delete_option( $layout_key );
+				delete_option( $alternative_layout_key );
+			}else{
+				$layout_key = $store_key . "-" . $layout;
+				$alternative_layout_key = wp_get_theme($stylesheet)->get("Name") . "-" . $layout;
+				delete_option( $layout_key );
+				delete_option( $alternative_layout_key );
+			}
+			
+			$this->_out(new Upfront_JsonResponse_Success("Layout {$layout} reset"));
 		}
-
-		if( $stylesheet_dev ){
-			$layout_key = $stylesheet_dev . "-" . $layout;
-			$alternative_layout_key = wp_get_theme($stylesheet)->get("Name") . "_dev-" . $layout;
-			delete_option( $layout_key );
-			delete_option( $alternative_layout_key );
-		}else{
-			$layout_key = $store_key . "-" . $layout;
-			$alternative_layout_key = wp_get_theme($stylesheet)->get("Name") . "-" . $layout;
-			delete_option( $layout_key );
-			delete_option( $alternative_layout_key );
-		}
-
-		$this->_out(new Upfront_JsonResponse_Success("Layout {$layout} reset"));
 	}
 
 	function reset_cache () {
@@ -665,14 +671,16 @@ class Upfront_Ajax extends Upfront_Server {
 		
 		$data = !empty($_POST) ? stripslashes_deep($_POST) : false;
 		$stylesheet = isset( $data['stylesheet'] ) ? $data['stylesheet'] : get_stylesheet();
-		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
+		$store_key = strtolower(str_replace('_dev','',Upfront_Layout::get_storage_key()));
 		
 		// delete all layout from custom post type for this theme
 		Upfront_Server_PageTemplate::get_instance()->delete_all_theme_templates();
+		Upfront_Server_PageLayout::get_instance()->delete_all_theme_layouts();
 		
 		// delete all post meta for custom post type templates
 		delete_post_meta_by_key( $store_key . '-template_post_id' );
 		delete_post_meta_by_key( $store_key . '-template_dev_post_id' );
+		delete_post_meta_by_key( $store_key . '-uf_wp_page_template' );
 		
 		// delete from options table (previous implementation)
 		global $wpdb;

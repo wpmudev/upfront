@@ -2,7 +2,6 @@
 
 /**
  * Page template handling controller.
- * For actual data/storage mapping, @see Upfront_LayoutRevisions
  */
 class Upfront_Server_PageTemplate extends Upfront_Server {
 
@@ -23,8 +22,6 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 	
 	private function _add_hooks () {
 		$this->register_requirements();
-		
-		add_action('upfront-style-base_layout', array($this, 'intercept_page_style_loading'));
 	}
 	
 	/**
@@ -126,46 +123,6 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 	public function slug_layout_to_name ($slug) {
 		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
 		return ucwords(preg_replace(array('/'. $store_key .'/', '/[\-]/'), array('',' '), $slug));
-	}
-	
-	/**
-	 * This fires in style parsing AJAX request and overrides the used layout.
-	 *
-	 * @param Upfront_Layout $layout Style layout for parsing
-	 * @return Upfront_Layout
-	 */
-	public function intercept_page_style_loading ($layout) {
-		$load_dev = !empty($_GET['load_dev']) && is_numeric($_GET['load_dev']) && $_GET['load_dev'] == 1 ? true : false;
-		$is_revision = !empty($_GET['layout']['layout_revision'])
-			? $_GET['layout']['layout_revision']
-			: false
-		;
-		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
-		
-		if ( !$is_revision ) {
-			if ( isset($_GET['template_post_id']) ) {
-				$template_post_id = (int) $_GET['template_post_id'];
-				
-			} else {
-				if ( !empty($_GET['layout']['specificity']) ) {
-					$slug = $store_key . '-' . $_GET['layout']['specificity'];
-				} else {
-					$_layout_item = !empty($_GET['layout']['item']) ? $_GET['layout']['item'] : false;
-					$slug = $store_key . '-' . $_layout_item;
-				}
-				$template_post_id = $this->get_template_id_by_slug($slug, $load_dev);
-			}
-			
-			if ( $template_post_id ) {
-				$page_template = $this->get_template($template_post_id, $load_dev);
-				if ( $page_template ) {
-					$layout = Upfront_Layout::from_php($page_template, Upfront_Layout::STORAGE_KEY);
-				}
-			}
-			
-		} 
-		
-		return $layout;
 	}
 	
 }

@@ -389,7 +389,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 	}
 	
 	function fetch_page_templates($data){
-		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
+		$store_key = strtolower(str_replace('_dev','',Upfront_Layout::get_storage_key()));
 		$template_type = isset($data['template_type']) 
 			? $data['template_type']
 			: false 
