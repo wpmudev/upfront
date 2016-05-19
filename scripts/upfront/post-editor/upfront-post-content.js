@@ -244,7 +244,7 @@ PostContentEditor.prototype = {
 
 				if ( this.$content.length ){
 					var isExcerpt = ( this.model.get_property_value_by_name('content') == 'excerpt' ),
-						content = isExcerpt ? this.parent.post.get('post_excerpt'): this.parent.post.get('post_content'),
+						content = isExcerpt ? this.parent.post.get('post_excerpt') : this.$content.html(),
 						editorOptions = isExcerpt ? this.parent.getExcerptEditorOptions() : this.parent.getContentEditorOptions()
 					;
 
