@@ -126,6 +126,7 @@ class Upfront_Ajax extends Upfront_Server {
 		$template_type = 'page';
 		$template_slug = false;
 		$layout_cpt_slug = false;
+		$layout_post_id = false;
 		$layout = false;
 		
 		global $post, $upfront_ajax_query;
@@ -187,6 +188,7 @@ class Upfront_Ajax extends Upfront_Server {
 			'template_type' => $template_type,
 			'template_slug' => $template_slug,
 			'layout_cpt_slug' => $layout_cpt_slug,
+			'layout_post_id' => $layout_post_id,
 			'query' => $upfront_ajax_query
 		);
 
@@ -328,7 +330,7 @@ class Upfront_Ajax extends Upfront_Server {
 		if (!$data) $this->_out(new Upfront_JsonResponse_Error("Unknown layout"));
 		$stylesheet = ($_POST['stylesheet']) ? $_POST['stylesheet'] : get_stylesheet();
 		$save_dev = ( isset($_POST['save_dev']) && is_numeric($_POST['save_dev']) && $_POST['save_dev'] == 1 ) ? true : false;
-		$layout_ids = $_POST['layout'];
+		$post_id = (isset($data['post_id'])) ? (int)$data['post_id'] : false;
 		
 		upfront_switch_stylesheet($stylesheet);
 		
@@ -336,6 +338,8 @@ class Upfront_Ajax extends Upfront_Server {
 		$json_data = !empty($raw_data['data']) ? $raw_data['data'] : '';
 		
 		$layout = Upfront_Layout::from_json($json_data);
+		$layout_ids = $layout->get('layout');
+		
 		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
 		$layout_slug = ( isset($layout_ids['specificity']) )
 			? strtolower($store_key . '-' . $layout_ids['specificity'])
@@ -455,7 +459,6 @@ class Upfront_Ajax extends Upfront_Server {
 		$saved_template_post_id = false;
 		$stylesheet_dev = false;
 		$storage_key = $_POST['storage_key'];
-		$layout_ids = $_POST['layout'];
 		$stylesheet = isset( $_POST['stylesheet'] ) ? $_POST['stylesheet'] : get_stylesheet();
 		$save_dev = $_POST['save_dev'] == 1 ? true : false;
 		$template_slug = (!empty($_POST['template_slug'])) ? $_POST['template_slug'] : false;
@@ -476,10 +479,7 @@ class Upfront_Ajax extends Upfront_Server {
 			delete_post_meta($post_id, $template_meta_name);
 			
 			// delete current layout as we are going to use another one
-			$layout_slug = ( isset($layout_ids['specificity']) )
-				? strtolower($store_key . '-' . $layout_ids['specificity'])
-				: strtolower($store_key . '-' . $layout_ids['item'])
-			;
+			$layout_slug = strtolower($store_key . '-single-page-' . $post_id);
 			$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $save_dev);
 			Upfront_Server_PageLayout::get_instance()->delete_layout((int)$layout_post_id, $save_dev);
 			
@@ -598,6 +598,7 @@ class Upfront_Ajax extends Upfront_Server {
 		$data = !empty($_POST) ? stripslashes_deep($_POST) : false;
 		$layout = !empty($data['layout']) && $data['layout'] !== "0" ? $data['layout'] : array();
 		$stylesheet = isset( $data['stylesheet'] ) ? $data['stylesheet'] : get_stylesheet();
+		$post_id = (isset($data['post_id'])) ? (int)$data['post_id'] : false;
 		$stylesheet_dev = false;
 		$is_dev = ( !empty($data['is_dev']) )
 			? (bool) $data['is_dev']
@@ -607,11 +608,8 @@ class Upfront_Ajax extends Upfront_Server {
 		
 		if ( empty($layout) ) $this->_out(new Upfront_JsonResponse_Error("Please specify layout to reset"));
 			
-		if ( is_array($layout) ) {
-			$layout_slug = ( isset($layout['specificity']) )
-				? $store_key . '-' . $layout['specificity']
-				: $store_key . '-' . $layout['item']
-			;
+		if ( is_array($layout) && $post_id ) {
+			$layout_slug = $store_key . '-single-page-' . $post_id;
 			$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $is_dev);
 			Upfront_Server_PageLayout::get_instance()->delete_layout((int)$layout_post_id, $is_dev);
 			

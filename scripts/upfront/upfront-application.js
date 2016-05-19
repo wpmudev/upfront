@@ -157,11 +157,13 @@ var LayoutEditorSubapplication = Subapplication.extend({
 	
 	_reset_changes: function () {
 		var me = this,
+			post_id = ( typeof _upfront_post_data.post_id !== 'undefined' ) ? _upfront_post_data.post_id : '',
 			is_dev = ( _upfront_storage_key != _upfront_save_storage_key ) ? 1 : 0
 		;
 		Upfront.Events.trigger("command:layout:save_start");
 		Upfront.Util.post({
 				"action": Upfront.Application.actions.reset_changes, 
+				"post_id": post_id,
 				"is_dev": is_dev
 			})
 			.done(function () {
