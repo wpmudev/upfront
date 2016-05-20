@@ -88,6 +88,14 @@ define("content", deps, function(postTpl, ContentTools) {
 		setDefaults: function(){
 			this.mode = 'content'; // Also 'layout' to edit post layout.
 		},
+		
+		remove: function() {
+			if ( !this.contentEditor )
+				return;
+
+			this.contentEditor.box.remove();
+			this.contentEditor.box.undelegateEvents();
+		},
 
 		getPost: function(){
 			var deferred = $.Deferred();

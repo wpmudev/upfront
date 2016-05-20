@@ -2077,12 +2077,15 @@
 			},
 
 			prepare_editor: function (me) {
+				if(typeof Upfront.Views.PostDataEditor !== "undefined") {
+					Upfront.Views.PostDataEditor.remove();
+				}
+
 				Upfront.Views.PostDataEditor = new Upfront.Content.PostEditor({
 					editor_id: 'this_post_' + me.getPostId(),
 					post_id: me.getPostId(),
 					content_mode: 'post_content'
 				});
-
 				// Upfront.Events.trigger("editor:post_editor:created", Upfront.Views.PostDataEditor);
 			},
 			
