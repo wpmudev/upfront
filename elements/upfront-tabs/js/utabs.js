@@ -262,6 +262,8 @@ define([
 
 			this.$el.find('.tabs-tab').removeClass('tabs-tab-active');
 			this.$el.find('div.tabs-tab[data-content-id="' + this.$el.find('div.utab-content-active').attr('id')+'"]').addClass('tabs-tab-active');
+
+			Upfront.Events.trigger('entity:object:refresh', this);
 		},
 
 		startContentEditor: function(event) {
