@@ -129,6 +129,10 @@ var LayoutEditorSubapplication = Subapplication.extend({
 					Upfront.Events.trigger("page:layout:updated");
 				}
 				
+				// remove the old cache of layouts as cache will be updated upon loading layouts
+				var url_key = '/' + Backbone.history.getFragment();
+				Upfront.Application.urlCache[url_key] = false;
+				
 			})
 			.error(function () {
 				Upfront.Util.log("error saving layout");
