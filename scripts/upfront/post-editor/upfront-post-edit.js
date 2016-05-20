@@ -110,6 +110,7 @@ var Box = Backbone.View.extend({
 		postData.buttonText = this.getButtonText();
 		postData.draftButton = ['publish', 'future'].indexOf(this.initialStatus) == -1;
 		postData.cancelButton = !(this.post.is_new);
+		postData.postStatus = this.post.get("post_status");
 
 		postData.cid = this.cid;
 
@@ -121,6 +122,11 @@ var Box = Backbone.View.extend({
 			;
 		extraData.url_label = "post" === me.post.get("post_type") ? l10n.global.content.post_url : l10n.global.content.page_url;
 		this.$el.html(this.tpl(_.extend({}, postData, extraData) ));
+		
+		if(postData.postStatus === "publish") {
+			this.$el.find('.ueditor-action-draft, .ueditor-action-preview').hide();
+		}
+		
 		this.populateSections();
 		return this;
 	},

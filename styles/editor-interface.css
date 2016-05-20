@@ -11170,7 +11170,6 @@ div#ui-datepicker-div td a {
 .ueditor-bix-top-buttons {
   margin: 15px 15px 15px;
   border-top: 1px solid rgba(184, 207, 230, 0.3);
-  padding-top: 15px;
   margin-top: 10px; }
 
 a.ueditor-action-trash {
@@ -11346,6 +11345,10 @@ a.ueditor-action-trash:before {
 
 .ueditor-status-select {
   width: 170px;
+  display: inline-block; }
+
+#sidebar-ui .ueditor-bix-top-buttons a.ueditor-action {
+  margin-top: 15px !important;
   display: inline-block; }
 
 .upost_thumbnail_changer {
