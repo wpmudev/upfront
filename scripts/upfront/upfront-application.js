@@ -1042,11 +1042,15 @@ var Application = new (Backbone.Router.extend({
 		this.layout = new Upfront.Models.Layout(data);
 		this.current_subapplication.layout = this.layout;
 		this.sidebar.model.set(this.layout.toJSON());
-		
+
 		if(typeof layoutData.data.post !== "undefined" && layoutData.data.post != null) {
-			if(layoutData.data.post.ID !== "undefined") {
+			if((layoutData.data.post.ID !== "undefined" && layoutData.data.query.post_count) || layoutData.data.query.is_singular) {
 				Upfront.Events.trigger('click:edit:navigate', layoutData.data.post.ID);
+			} else {
+				Upfront.Events.trigger('click:edit:navigate', false);
 			}
+		} else {
+			Upfront.Events.trigger('click:edit:navigate', false);
 		}
 
 		var shadow = this.layout.get('regions').get_by_name("shadow");
