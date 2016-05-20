@@ -97,6 +97,10 @@ class Upfront_Post_Data extends Upfront_Server {
 		$post = Upfront_Post_Data_Model::spawn_post($data);
 		$view_class = Upfront_Post_Data_PartView::_get_view_class($data);
 		$view = new $view_class($data);
+		
+		if ( !empty($request['selected_featured_image']) && $data['data_type'] == 'featured_image' ) {
+			$view->set_pre_selected($request['selected_featured_image']);
+		}
 
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			'post_data' => $view->get_markup($post, true),

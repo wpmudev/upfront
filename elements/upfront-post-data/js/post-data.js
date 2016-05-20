@@ -338,6 +338,8 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		this.listenTo(Upfront.Views.PostDataEditor, 'editor:change:content', this.on_content_change);
 		this.listenTo(Upfront.Views.PostDataEditor, 'editor:change:author', this.on_author_change);
 		this.listenTo(Upfront.Views.PostDataEditor, 'editor:change:date', this.on_date_change);
+		this.stopListening(Upfront.Events, 'featured_image:updated');
+		this.listenTo(Upfront.Events, 'featured_image:updated', this.update_featured);
 		this.editor = Upfront.Views.PostDataEditor;
 	},
 
@@ -452,6 +454,14 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 				object.set_property('breakpoint', obj_breakpoint);
 			});
 		}
+	},
+	
+	/**
+	 * To keep selected featured image, even on re-rendering
+	 * @param {Object} img
+	 */
+	update_featured: function (img) {
+		if ( img && img.attr('src').length > 0 ) this.full_featured_image = img.attr('src');
 	}
 
 });

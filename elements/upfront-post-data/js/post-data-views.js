@@ -57,6 +57,10 @@ var Views = {
 			if ( this.element.postDate ) {
 				data.post_date = this.element.postDate;
 			}
+			if ( data_type == 'featured_image' && this.element.full_featured_image ) {
+				data.selected_featured_image = this.element.full_featured_image;
+			}
+			
 			this._post_data_load = Upfront.Util
 				.post({
 					action: "upfront_post-data-load",

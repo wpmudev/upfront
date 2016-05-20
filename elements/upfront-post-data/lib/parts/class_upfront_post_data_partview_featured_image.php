@@ -1,6 +1,9 @@
 <?php
 
 class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartView {
+	
+	public $pre_selected_featured_image = '';
+	
 	protected static $_parts = array(
 		0 => 'featured_image',
 	);
@@ -19,6 +22,7 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 	 * @return string
 	 */
 	public function expand_featured_image_template () {
+		
 		if (empty($this->_post->ID)) return '';
 
 		$resize_featured = isset($this->_data['resize_featured'])
@@ -26,7 +30,11 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 			: (int)Upfront_Posts_PostsData::get_default('resize_featured')
 		;
 
-		$thumbnail = $this->_get_thumbnail();		
+		$pre_selected = $this->get_pre_selected();
+		$thumbnail = ( !empty($pre_selected) )
+			? '<img src="'. $this->get_pre_selected() .'" />'
+			: $this->_get_thumbnail()
+		;
 
 		// Let's deal with the fallback options
 		$fallback = false;
@@ -72,6 +80,14 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 		$out = Upfront_Codec::get()->expand($out, "permalink", get_permalink($this->_post->ID));
 
 		return $out;
+	}
+	
+	public function set_pre_selected ($selected) {
+		$this->pre_selected_featured_image = $selected;
+	}
+	
+	public function get_pre_selected () {
+		return $this->pre_selected_featured_image;
 	}
 
 	/**

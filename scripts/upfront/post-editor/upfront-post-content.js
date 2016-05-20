@@ -727,6 +727,7 @@ PostContentEditor.prototype = {
 					$('#image-edit-button-align').show();
 
 					img.attr('src', imageData.src);
+					Upfront.Events.trigger('featured_image:updated', img);
 				}).fail(function(data){
 					if(data && data.reason === 'changeImage') {
 						me.openImageSelector();
