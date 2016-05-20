@@ -90,7 +90,7 @@ define("content", deps, function(postTpl, ContentTools) {
 		},
 		
 		remove: function() {
-			if ( !this.contentEditor )
+			if ( !this.contentEditor || !this.contentEditor.box )
 				return;
 
 			this.contentEditor.box.remove();
