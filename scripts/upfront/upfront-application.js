@@ -1590,4 +1590,4 @@ $(function () {
 });
 
 })(jQuery);
-//@ sourceURL=upfront-application.js
+//# sourceURL=upfront-application.js

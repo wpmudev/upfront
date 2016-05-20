@@ -1577,4 +1577,4 @@ var LayoutEditor = {
 define(LayoutEditor);
 	
 })(jQuery);
-//@ sourceURL=layout-editor.js
+//# sourceURL=layout-editor.js

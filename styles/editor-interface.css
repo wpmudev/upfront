@@ -5284,6 +5284,9 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-module-active:not(.upfront-module-editing) > .upfront-resize-handle-s:not(.active-menu-item) {
   display: block !important; }
 
+.upfront-module:not(.upfront-module-disabled-all) > .upfront-resize-handle-s {
+  z-index: 2999; }
+
 .upfront-module-spacer > .upfront-resize-handle-s {
   display: none !important; }
 

@@ -12574,4 +12574,4 @@
 	});
 })(jQuery);
 
-//@ sourceURL=upfront-views-editor.js
+//# sourceURL=upfront-views-editor.js

@@ -1773,4 +1773,4 @@ define([
 
 });
 })(jQuery);
-//@ sourceURL=uimage.js
+//# sourceURL=uimage.js

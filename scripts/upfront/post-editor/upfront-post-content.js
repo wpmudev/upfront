@@ -532,15 +532,13 @@ PostContentEditor.prototype = {
 			init: function () {
 				this.$featured = this.$el;
 				if ( this.$featured.length ){
-					var thumbId = this.parent.post.meta.getValue('_thumbnail_id'),
-						row = this.parentModel.get_breakpoint_property_value('row', true),
-						height = row * Upfront.Settings.LayoutEditor.Grid.baseline
-					;
+					var thumbId = this.parent.post.meta.getValue('_thumbnail_id');
 					this.$featured.addClass('ueditor_thumb ueditable')
-						.css({position:'relative', 'min-height': height + 'px', 'max-height': height + 'px', 'overflow-y': 'hidden', width: '100%'})
+						.css({position:'relative', 'overflow-y': 'hidden', width: '100%'})
 						.append('<div class="upost_thumbnail_changer" ><div>' + Upfront.Settings.l10n.global.content.trigger_edit_featured_image + '</div></div>')
 						.find('img').css({'z-index': '2', position: 'relative'})
 					;
+					this.updateImageSize();
 				}
 				
 				this.listenTo(this.parent, 'swap:image', this.openImageSelector);
@@ -556,6 +554,19 @@ PostContentEditor.prototype = {
 			},
 			stopEditContent: function () {
 
+			},
+			updateImageSize: function () {
+				var parent_row = this.parentModel.get_breakpoint_property_value('row', true),
+					grid = Upfront.Settings.LayoutEditor.Grid,
+					parent_padding_top = parseInt( this.parentModel.get_breakpoint_property_value("top_padding_use", true) ? this.parentModel.get_breakpoint_property_value('top_padding_num', true) : 0, 10 ),
+					parent_padding_bottom = parseInt( this.parentModel.get_breakpoint_property_value("bottom_padding_use", true) ? this.parentModel.get_breakpoint_property_value('bottom_padding_num', true) : 0, 10 ),
+					padding_top = parseInt( this.model.get_breakpoint_property_value("top_padding_use", true) ? this.model.get_breakpoint_property_value('top_padding_num', true) : grid.column_padding, 10 ),
+					padding_bottom = parseInt( this.model.get_breakpoint_property_value("bottom_padding_use", true) ? this.model.get_breakpoint_property_value('bottom_padding_num', true) : grid.column_padding, 10 ),
+					parent_height = parent_row * grid.baseline
+				;
+
+				parent_height -= parent_padding_top + parent_padding_bottom + padding_top + padding_bottom;
+				if ( this.$featured.length ) this.$featured.css({'min-height': parent_height + 'px', 'max-height': parent_height + 'px'});
 			},
 			editThumb: function(e){
 				if ( ! this.$featured || ! this.$featured.length ) return;
@@ -680,13 +691,11 @@ PostContentEditor.prototype = {
 			openImageEditor: function(newImage, imageInfo, postId){
 				var me = this,
 					mask = this.$el,
-					row = this.parentModel.get_breakpoint_property_value('row', true),
-					height = row * Upfront.Settings.LayoutEditor.Grid.baseline,
 					editorOptions = _.extend({}, imageInfo, {
 						element_id: this.model.get_element_id() +'_post_' + postId,
 						element_cols: Upfront.Util.grid.width_to_col(mask.width(), true),
 						maskOffset: mask.offset(),
-						maskSize: {width: mask.width(), height: height},
+						maskSize: {width: mask.width(), height: mask.height()},
 						setImageSize: newImage,
 						extraButtons: [
 						{
