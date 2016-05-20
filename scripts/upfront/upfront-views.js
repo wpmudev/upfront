@@ -7295,4 +7295,4 @@ define([
 });
 
 })(jQuery);
-//@ sourceURL=upfront-views.js
+//# sourceURL=upfront-views.js

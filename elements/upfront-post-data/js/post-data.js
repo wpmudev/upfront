@@ -133,6 +133,9 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			padding_bottom = parseInt($me.css('padding-bottom'), 10)
 		;
 		if ( type != 'featured_image' ) return;
+		if ( this._editor_prepared && this.editor_view ) {
+			this.editor_view.updateImageSize();
+		}
 		height -= padding_top + padding_bottom;
 		this.$el.find('.thumbnail').each(function(){
 			var width = $(this).width(),
@@ -435,13 +438,17 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 	on_element_resize: function (attr) {
 		var objects = this.get_child_objects(false),
-			breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON()
+			breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
+			grid = Upfront.Settings.LayoutEditor.Grid,
+			padding_top_row = parseInt( this.model.get_breakpoint_property_value("top_padding_use", true) ?  this.model.get_breakpoint_property_value('top_padding_num', true) / grid.baseline : 0, 10 ),
+			padding_bottom_row = parseInt( this.model.get_breakpoint_property_value("bottom_padding_use", true) ? this.model.get_breakpoint_property_value('bottom_padding_num', true) / grid.baseline : 0, 10 )
 		;
 		// Also resize child objects if it's only one object
 		if ( objects.length != 1 ) return;
 		if ( breakpoint.default ) {
 			_.each(objects, function(object){
-				object.set_property('row', attr.row);
+				var row = attr.row - padding_top_row - padding_bottom_row;
+				object.set_property('row', row);
 			});
 		}
 		else {
@@ -450,7 +457,8 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 				if ( !_.isObject(obj_breakpoint[breakpoint.id]) ){
 					obj_breakpoint[breakpoint.id] = {};
 				}
-				obj_breakpoint[breakpoint.id].row = attr.row;
+				var row = attr.row - padding_top_row - padding_bottom_row;
+				obj_breakpoint[breakpoint.id].row = row;
 				object.set_property('breakpoint', obj_breakpoint);
 			});
 		}
