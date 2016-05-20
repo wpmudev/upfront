@@ -1044,7 +1044,7 @@ var Application = new (Backbone.Router.extend({
 		this.sidebar.model.set(this.layout.toJSON());
 
 		if(typeof layoutData.data.post !== "undefined" && layoutData.data.post != null) {
-			if((layoutData.data.post.ID !== "undefined" && layoutData.data.query.post_count) || layoutData.data.query.is_singular) {
+			if((layoutData.data.post.ID !== "undefined" && layoutData.data.query.post_count) || (layoutData.data.post.ID !== "undefined" && layoutData.data.cascade.type === "single") || layoutData.data.query.is_singular) {
 				Upfront.Events.trigger('click:edit:navigate', layoutData.data.post.ID);
 			} else {
 				Upfront.Events.trigger('click:edit:navigate', false);
