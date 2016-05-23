@@ -30,6 +30,10 @@ define("content", deps, function(postTpl, ContentTools) {
 		//this.postView = opts.view;
 		this.contentEditor = false;
 
+		// Make the actual reboot call throttled with a fairly long interval
+		// and trailing re-execution to make up for it
+		this.reboot = _.throttle(this._reboot, 1000, {leading:false, trailing:true});
+
 		this.getPost().done(function(){
 			me.contentEditor = new ContentTools.PostContentEditor({
 				post: me.post,
@@ -38,9 +42,8 @@ define("content", deps, function(postTpl, ContentTools) {
 				/*authorTpl: this.getTemplate('author'),
 				partOptions: this.postView.partOptions,*/
 			});
-
-			me.trigger('loaded', me.contentEditor);
-			
+/*
+// All these event listeners are moved to `PostEditor.prototype.reboot` method, below!
 			me.listenTo(me.contentEditor, 'cancel', me.cancelChanges);
 			me.listenTo(me.contentEditor, 'publish', me.publish);
 			me.listenTo(me.contentEditor, 'draft', me.saveDraft);
@@ -55,12 +58,60 @@ define("content", deps, function(postTpl, ContentTools) {
 			me.listenTo(me.contentEditor, 'change:author', me.changeAuthor);
 			me.listenTo(me.contentEditor, 'change:date', me.changeDate);
 			me.listenTo(me.contentEditor, 'bar:date:updated', me.changeDate);
+*/
+			me.reboot();
 		});
 		//this.getPostLayout();
 	};
 
 	PostEditor.prototype = {
 		_partViews: [],
+
+		/**
+		 * This will actually be throttled to a
+		 * public method in constructor 
+		 */
+		_reboot: function () {
+			this.trigger('loaded', this.contentEditor);
+
+			this.stopListening(this.contentEditor, 'cancel');
+			this.listenTo(this.contentEditor, 'cancel', this.cancelChanges);
+
+			this.stopListening(this.contentEditor, 'publish');
+			this.listenTo(this.contentEditor, 'publish', this.publish);
+
+			this.stopListening(this.contentEditor, 'draft');
+			this.listenTo(this.contentEditor, 'draft', this.saveDraft);
+
+			this.stopListening(this.contentEditor, 'auto-draft');
+			this.listenTo(this.contentEditor, 'auto-draft', this.saveAutoDraft);
+
+			this.stopListening(this.contentEditor, 'trash');
+			this.listenTo(this.contentEditor, 'trash', this.trash);
+
+			// Listen to edit start/stop
+			this.stopListening(this.contentEditor, 'edit:start');
+			this.listenTo(this.contentEditor, 'edit:start', this.editStart);
+
+			this.stopListening(this.contentEditor, 'edit:stop');
+			this.listenTo(this.contentEditor, 'edit:stop', this.editStop);
+
+			// Specific change event handles
+			this.stopListening(this.contentEditor, 'change:title');
+			this.listenTo(this.contentEditor, 'change:title', this.changeTitle);
+
+			this.stopListening(this.contentEditor, 'change:content');
+			this.listenTo(this.contentEditor, 'change:content', this.changeContent);
+
+			this.stopListening(this.contentEditor, 'change:author');
+			this.listenTo(this.contentEditor, 'change:author', this.changeAuthor);
+
+			this.stopListening(this.contentEditor, 'change:date');
+			this.listenTo(this.contentEditor, 'change:date', this.changeDate);
+
+			this.stopListening(this.contentEditor, 'bar:date:updated');
+			this.listenTo(this.contentEditor, 'bar:date:updated', this.changeDate);
+		},
 
 		addPartView: function (type, el, model, parentModel) {
 			var deferred = new $.Deferred();
@@ -88,7 +139,7 @@ define("content", deps, function(postTpl, ContentTools) {
 		setDefaults: function(){
 			this.mode = 'content'; // Also 'layout' to edit post layout.
 		},
-		
+
 		remove: function() {
 			if ( !this.contentEditor || !this.contentEditor.box )
 				return;
@@ -238,11 +289,11 @@ define("content", deps, function(postTpl, ContentTools) {
 					this.post.set('post_password', results.pass);
 				}
 			}
-			
+
 			if ( results.date ) {
 				this.post.set('post_date', results.date);
 			}
-			
+
 			// If we set results.status instead of status we should manually change the status dropdown no matter we have Publish button
 			this.post.set('post_status', status);
 
