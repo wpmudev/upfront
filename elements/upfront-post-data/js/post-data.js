@@ -337,10 +337,12 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		this.listenTo(Upfront.Views.PostDataEditor, 'editor:edit:start', this.on_edit_start);
 		this.listenTo(Upfront.Views.PostDataEditor, 'editor:edit:stop', this.on_edit_stop);
 		// Listen to change event too
-		this.listenTo(Upfront.Views.PostDataEditor, 'editor:change:title', this.on_title_change);
-		this.listenTo(Upfront.Views.PostDataEditor, 'editor:change:content', this.on_content_change);
 		this.listenTo(Upfront.Views.PostDataEditor, 'editor:change:author', this.on_author_change);
 		this.listenTo(Upfront.Views.PostDataEditor, 'editor:change:date', this.on_date_change);
+		this.stopListening(Upfront.Views.PostDataEditor, 'editor:change:title');
+		this.listenTo(Upfront.Views.PostDataEditor, 'editor:change:title', this.on_title_change);
+		this.stopListening(Upfront.Views.PostDataEditor, 'editor:change:content');
+		this.listenTo(Upfront.Views.PostDataEditor, 'editor:change:content', this.on_content_change);
 		this.stopListening(Upfront.Events, 'featured_image:updated');
 		this.listenTo(Upfront.Events, 'featured_image:updated', this.update_featured);
 		this.editor = Upfront.Views.PostDataEditor;
@@ -375,7 +377,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	 * @param {String} title
 	 */
 	on_title_change: function (title) {
-
+		this.set_post_title = title;
 	},
 
 	/**
@@ -384,7 +386,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	 * @param {Bool} isExcerpt
 	 */
 	on_content_change: function (content, isExcerpt) {
-
+		this.set_post_content = content;
 	},
 
 	/**

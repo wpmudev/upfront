@@ -552,7 +552,7 @@
 			on_click: function(e){
 				e.preventDefault();
 				var me = this;
-				
+
 				Upfront.Util
 					.post({
 						action: "upfront-create-post_type",
@@ -646,7 +646,7 @@
 
 			}
 		});
-		
+
 		var Command_SaveLayout = Command.extend({
 			"className": "command-save",
 			render: function () {
@@ -752,7 +752,7 @@
 				Upfront.Events.trigger("command:layout:publish");
 			}
 		});
-		
+
 		var Command_Trash = Command.extend({
 			className: "command-trash upfront-icon upfront-icon-trash",
 			render: function () {
@@ -1830,7 +1830,7 @@
 				});
 			}
 		});
-		
+
 		var SidebarPanel_PostEditor = SidebarPanel.extend({
 			"className": "sidebar-panel sidebar-panel-post-editor",
 			initialize: function (opts) {
@@ -1908,11 +1908,11 @@
 				else if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.CONTENT_STYLE ){
 					postId = "fake_styled_post";
 				}
-				
+
 				return postId;
 			},
 		});
-		
+
 		var SidebarPanel_Settings_Section_PageTemplate = SidebarPanel_Settings_Section.extend({
 			initialize: function (opts) {
 				this.options = opts;
@@ -1931,12 +1931,12 @@
 			},
 			on_render: function () {
 				var me = this;
-				
+
 				if( !this.options.call ) {
 					// fetching layout templates data from custom post type
 					this.layoutList.fetch({load_dev: me.load_dev, template_type: 'layout'}).done(function(response){
 						me.layouts = new Upfront.Collections.PageTemplateList(response.data.results);
-						
+
 						// fetching page template files in sequence after layout templates
 						me.layoutList.fetch({load_dev: me.load_dev, template_type: 'page'}).done(function(response){
 							me.templates = new Upfront.Collections.PageTemplateList(response.data.results);
@@ -1944,14 +1944,14 @@
 							me.append_template_box();
 						});
 					});
-					
+
 					this.options.call = true;
 				}
 			},
 			append_template_box: function () {
 				var me = this;
 				var template_editor_view = new PostEditorBox.PageTemplateEditor({collection: me.layoutList, label: l10n.label_page_template});
-				
+
 				setTimeout(function () {
 					template_editor_view.allPageTemplates = me.templates;
 					template_editor_view.allPageLayouts = me.layouts;
@@ -1962,7 +1962,7 @@
 				}, 300);
 			}
 		});
-		
+
 		var SidebarPanel_Settings_Section_PostTagCategory = SidebarPanel_Settings_Section.extend({
 			initialize: function (opts) {
 				this.options = opts;
@@ -1986,7 +1986,7 @@
 						me.renderTaxonomyEditor(me.options.postId, 'category', post);
 						me.renderTaxonomyEditor(me.options.postId, 'post_tag', post);
 					});
-					
+
 					this.options.call = true;
 				}
 			},
@@ -2032,7 +2032,7 @@
 						if(self.getPostId() !== false) {
 							setTimeout(self.prepare_editor(self));
 						}
-					});	
+					});
 				}
 
 				this.listenTo(Upfront.Views.PostDataEditor, 'loaded', function(contentEditor) {
@@ -2044,7 +2044,7 @@
 				this.listenTo(Upfront.Views.PostDataEditor, 'post:saved', function() {
 					this.render();
 				});
-				
+
 				this.listenTo(Upfront.Events, 'click:edit:navigate', function (postId) {
 					if ( typeof postId !== 'undefined' && postId ) setTimeout(self.prepare_editor(self));
 				});
@@ -2069,7 +2069,7 @@
 					return l10n.page_settings;
 				}
 			},
-			
+
 			on_render: function () {
 				if( Upfront.Views.PostDataEditor && Upfront.Views.PostBox ) {
 					this.append_box(Upfront.Views.PostBox);
@@ -2077,6 +2077,16 @@
 			},
 
 			prepare_editor: function (me) {
+				// Post data editor sends out quite a few requests, so if it's already
+				// bootstrapped, let's just re-use this if possible
+				if(typeof Upfront.Views.PostDataEditor !== "undefined") {
+					if ((Upfront.Views.PostDataEditor || {}).postId === me.getPostId()) {
+						Upfront.Views.PostDataEditor.reboot();
+						return true;
+					}
+				}
+				// Done, carry on like we did before
+
 				if(typeof Upfront.Views.PostDataEditor !== "undefined") {
 					Upfront.Views.PostDataEditor.remove();
 				}
@@ -2088,7 +2098,7 @@
 				});
 				// Upfront.Events.trigger("editor:post_editor:created", Upfront.Views.PostDataEditor);
 			},
-			
+
 			getPostId: function() {
 				postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
 				if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.THEME ) {
@@ -2099,10 +2109,10 @@
 				else if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.CONTENT_STYLE ){
 					postId = "fake_styled_post";
 				}
-				
+
 				return postId;
 			},
-			
+
 			append_box: function () {
 				var me = this,
 				box = Upfront.Views.PostBox;
@@ -3314,7 +3324,7 @@
 			"className": "sidebar-panels",
 			initialize: function () {
 				this.init_modules();
-				
+
 				this.listenTo(Upfront.Events, 'click:edit:navigate', this.init_modules);
 				// Dev feature only
 				//if ( Upfront.Settings.Debug.dev )
@@ -3340,7 +3350,7 @@
 			},
 			render: function () {
 				var me = this;
-				
+
 				me.$el.empty();
 
 				_.each(this.panels, function(panel, index){
@@ -5668,7 +5678,7 @@
 				//Close dropdown on parent scroll
 				$('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, this.closeChosen);
 			},
-			
+
 			render: function () {
 				var me = this;
 
@@ -5694,14 +5704,14 @@
 				if (this.options.additional_classes) {
 					this.$el.addClass(this.options.additional_classes);
 				}
-				
+
 				this.$el.find('select').on('chosen:hiding_dropdown', function() {
 					me.allowMouseWheel();
 				});
 
 				this.trigger('rendered');
 			},
-			
+
 			get_field_html: function() {
 				var multiple = this.multiple ? 'multiple' : '';
 				return ['<select class="upfront-chosen-select"' , multiple, ' data-placeholder="', this.options.placeholder,  '">', this.get_values_html(), '</select>'].join('');
@@ -5723,12 +5733,12 @@
 				this.$el.find('select').val(value).trigger('chosen:updated');
 			},
 			openOptions: function(e) {
-				
+
 				//Disable scroll when chosen is opened
 				$('.sidebar-panel-content .sidebar-tab-content, #sidebar-scroll-wrapper').bind('mousewheel', function() {
 					return false
 				});
-				
+
 				var me = this;
 				_.delay(function() { // Delay because opening animation causes wrong outerHeight results
 					var in_sidebar = me.$el.parents('#sidebar-ui').length,

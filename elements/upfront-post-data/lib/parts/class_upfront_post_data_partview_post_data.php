@@ -1,6 +1,11 @@
 <?php
 
 class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
+	
+	public $pre_set_title = '',
+		$pre_set_content = ''
+	;
+	
 	protected static $_parts = array(
 		0 => 'date_posted',
 		1 => 'title',
@@ -63,6 +68,41 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 
 		return $out;
 	}
+	
+	/**
+	 * Converts the title part of the main post data part into markup.
+	 *
+	 * For real-time title changes even not yet saved.
+	 *
+	 * @return string
+	 */
+	public function expand_title_template () {
+		
+		$set_title = $this->get_pre_post_title();
+		$title = ( empty($set_title) )
+			? $this->_post->post_title
+			: $this->get_pre_post_title()
+		;
+	
+		$out = $this->_get_template('title');
+		$out = Upfront_Codec::get()->expand($out, "title", $title);
+
+		return $out;
+	}
+	
+	/**
+	 * Sets post title for real-time change.
+	 */
+	public function set_pre_post_title ($title) {
+		$this->pre_set_title = $title;
+	}
+	
+	/**
+	 * Gets real-time value for title.
+	 */
+	public function get_pre_post_title () {
+		return $this->pre_set_title;
+	}
 
 	/**
 	 * Converts the content part of the main post data part into markup.
@@ -90,7 +130,13 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
         // @NOTE: also see the JS part in js/modules-post_data.js
         
 		$this->_data['content'] = !empty($length) ? 'excerpt' : 'content';
-		$content = $this->_get_content_value($length);
+		
+		$set_content = $this->get_pre_content();
+		
+		$content = ( $set_content )
+			? $set_content
+			: $this->_get_content_value($length)
+		;
 
 		$allow_splitting = !empty($this->_data['allow_splitting'])
 			? (int)$this->_data['allow_splitting']
@@ -151,6 +197,20 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 		$out = Upfront_Codec::get()->expand($out, "content", $content);
 
 		return $out;
+	}
+	
+	/**
+	 * Sets post content for real-time change.
+	 */
+	public function set_pre_content ($content) {
+		$this->pre_set_content = $content;
+	}
+	
+	/**
+	 * Gets real-time value for content.
+	 */
+	public function get_pre_content () {
+		return $this->pre_set_content;
 	}
 
 	/**
