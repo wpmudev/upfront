@@ -72,6 +72,11 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			})
 			.success(function () {
 				Upfront.Util.log("layout applied");
+				
+				// remove the old cache of layouts as cache will be updated upon loading layouts
+				var url_key = '/' + Backbone.history.getFragment();
+				Upfront.Application.urlCache[url_key] = false;
+				
 				setTimeout(function(){
 					Upfront.Application.load_layout(_upfront_post_data.layout);
 					Upfront.Events.trigger("command:layout:save_success");

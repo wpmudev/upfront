@@ -538,7 +538,9 @@ class Upfront_Ajax extends Upfront_Server {
 		}
 		// post meta for layout_type if this is for Page or Layout template
 		if ( $saved_template_post_id && !empty($template_type) ) update_post_meta((int)$saved_template_post_id, 'template_type', $template_type);
-		$this->_out(new Upfront_JsonResponse_Success('Layout applied'));
+		$this->_out(new Upfront_JsonResponse_Success((object) array(
+			'template_post_id' => $template_post_id
+		)));
 	}
 
     function list_scoped_regions () {

@@ -29,8 +29,8 @@ class Upfront_PageLayout {
 		$cascade = $layout->get_cascade();
 		$store = $layout->to_php();
 		$layout_id = ( $slug )
-			? $slug
-			: $layout->get_id()
+			? strtolower($slug)
+			: strtolower($layout->get_id())
 		;
 		
 		$post_type = ( $dev )
@@ -108,7 +108,7 @@ class Upfront_PageLayout {
 		;
 		
 		$query = new WP_Query(array(
-			'name' => $slug,
+			'name' => strtolower($slug),
 			'post_type' => $post_type,
 			'suppress_filters' => true,
 			'posts_per_page' => 1,
