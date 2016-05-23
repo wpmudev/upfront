@@ -587,13 +587,17 @@ class Upfront_Ajax extends Upfront_Server {
 			
 			// get all pages that were using this custom post type template
 			$template_meta_name = ( $is_dev ) 
-				? strtolower($store_key . '-template_dev_post_id')
-				: strtolower($store_key . '-template_post_id')
+				? $store_key . '-template_dev_post_id'
+				: $store_key . '-template_post_id'
 			;
 			$pages = Upfront_Server_PageTemplate::get_instance()->get_pages_by_template((int)$template_post_id, $template_meta_name);
 			foreach ( $pages as $page ) {
 				// delete reference to custom post type template
 				delete_post_meta($page->ID, $template_meta_name);
+				// delete current page layout as we are going to revert back to Default template
+				$layout_slug = $store_key . '-single-page-' . $page->ID;
+				$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $is_dev);
+				Upfront_Server_PageLayout::get_instance()->delete_layout((int)$layout_post_id, $is_dev);
 			}
 		}
 		
