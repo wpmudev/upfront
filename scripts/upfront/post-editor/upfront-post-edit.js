@@ -771,60 +771,60 @@ var PageTemplateEditor = PostSectionView.extend({
 		"click .delete-post-template": "show_delete_template_modal",
     }),
     initialize: function(options){
-		var me = this;
-		this.label = options.label;
-		
-		this.off('initiate:no:layout:change', this.initiate_no_layout_change);
-		this.on('initiate:no:layout:change', this.initiate_no_layout_change);
+			var me = this;
+			this.label = options.label;
+			
+			this.off('initiate:no:layout:change', this.initiate_no_layout_change);
+			this.on('initiate:no:layout:change', this.initiate_no_layout_change);
     },
     render: function () {
-        var me = this;
+      var me = this;
 	
-		this.$el.html(this.pageTemplateListTpl({
-				label: me.label
-		}));
-		
-		this.$el.find('.upfront-page-template-action').html(_.template($(editionBox_tpl).find('#upfront-page-action').html()));
-		
-		// Get chosen select and type checkbox
-		var selectTemplate = this.chosen_field();
-		var templateOptions = this.get_options();
+			this.$el.html(this.pageTemplateListTpl({
+					label: me.label
+			}));
+			
+			this.$el.find('.upfront-page-template-action').html(_.template($(editionBox_tpl).find('#upfront-page-action').html()));
+			
+			// Get chosen select and type checkbox
+			var selectTemplate = this.chosen_field();
+			var templateOptions = this.get_options();
 
-		// Init chosen select
-		this.templateSelect = new selectTemplate({
-			model: me.model,
-			label: '',
-			values: templateOptions
-		});
-		
-		this.templateSelect.render();
-
-		// Attach chosen select and type checkbox to template
-		this.$el.find('.upfront-page-template-chosen').html(this.templateSelect.$el);
-		
-		setTimeout( function () {
-			// overwriting click event on chosen.jquery.min.js
-			me.$el.find('.upfront-field-multiple input').bind('click.chosen', function(e){
-				me.stop_bubble(e);
-			});
-			me.$el.find('.upfront-field-multiple span.upfront-field-label-text').bind('click.chosen', function(e){
-				me.stop_bubble(e);
+			// Init chosen select
+			this.templateSelect = new selectTemplate({
+				model: me.model,
+				label: '',
+				values: templateOptions
 			});
 			
-			// Hide first Update Template / Save As
-			me.trigger('initiate:no:layout:change');
+			this.templateSelect.render();
+
+			// Attach chosen select and type checkbox to template
+			this.$el.find('.upfront-page-template-chosen').html(this.templateSelect.$el);
 			
-			// set default value
-			if ( typeof _upfront_post_data.template_slug !== 'undefined' ) me.templateSelect.set_value(_upfront_post_data.template_slug);
-			me.prev_template_name = me.$el.find('select.upfront-chosen-select option[value="'+ _upfront_post_data.template_slug +'"]').first().text(),
+			setTimeout( function () {
+				// overwriting click event on chosen.jquery.min.js
+				me.$el.find('.upfront-field-multiple input').bind('click.chosen', function(e){
+					me.stop_bubble(e);
+				});
+				me.$el.find('.upfront-field-multiple span.upfront-field-label-text').bind('click.chosen', function(e){
+					me.stop_bubble(e);
+				});
+				
+				// Hide first Update Template / Save As
+				me.trigger('initiate:no:layout:change');
+				
+				// set default value
+				if ( typeof _upfront_post_data.template_slug !== 'undefined' ) me.templateSelect.set_value(_upfront_post_data.template_slug);
+				me.prev_template_name = me.$el.find('select.upfront-chosen-select option[value="'+ _upfront_post_data.template_slug +'"]').first().text(),
+				
+				me.spawn_template_modal();
+				me.disable_apply_template = true;
+				me.$el.find('a.apply-post-template').css({cursor: 'default', opacity: 0.6});
+				
+			}, 300);
 			
-			me.spawn_template_modal();
-			me.disable_apply_template = true;
-			me.$el.find('a.apply-post-template').css({cursor: 'default', opacity: 0.6});
-			
-		}, 100);
-		
-		this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
+			this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
     },
 		
 	initiate_no_layout_change: function() {
