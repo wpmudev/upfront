@@ -276,6 +276,7 @@ PostContentEditor.prototype = {
 					;
 
 					this.$content.closest(".upfront-editable_entity.upfront-module").draggable("enable");
+					Upfront.Events.trigger('editor:change:content', this.$content.html());
 				}
 			},
 			blur: function () {

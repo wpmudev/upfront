@@ -343,6 +343,8 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		this.listenTo(Upfront.Views.PostDataEditor, 'editor:change:title', this.on_title_change);
 		this.stopListening(Upfront.Views.PostDataEditor, 'editor:change:content');
 		this.listenTo(Upfront.Views.PostDataEditor, 'editor:change:content', this.on_content_change);
+		this.stopListening(Upfront.Events, 'editor:change:content');
+		this.listenTo(Upfront.Events, 'editor:change:content', this.on_content_change);
 		this.stopListening(Upfront.Events, 'featured_image:updated');
 		this.listenTo(Upfront.Events, 'featured_image:updated', this.update_featured);
 		this.editor = Upfront.Views.PostDataEditor;
