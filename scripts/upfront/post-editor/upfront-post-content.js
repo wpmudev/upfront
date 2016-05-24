@@ -156,45 +156,33 @@ PostContentEditor.prototype = {
 							.on('keyup', _.bind(this.keyup, this))
 							.off('keypress')
 							.on('keypress', _.bind(this.keypress, this));
-
-					$("html").on('mousedown', {$title: this.$title }, _.bind(this.stopEditContent, this) );
 				}
 				this.$title.closest(".upfront-editable_entity.upfront-module").draggable("disable");
 			},
-			stopEditContent: function (e) {
-				if( !!e && ( 'false' === this.$title.prop("contenteditable")
-						|| e.data.$title[0] === e.target
-						|| $(e.target).is( ".upostdata-part.title" )
-						|| $(e.target).is( ".part-title" )
-						|| $(e.target).is( ".upfront-output-post-data-part" )
-						)) {
-					this.$title.closest(".upfront-editable_entity.upfront-module").draggable("disable");
-					return;
-				}
-				if ( this.$title.length ) {
-					this.$title.trigger("blur");
-					this.$title
-							.attr('contenteditable', false)
-							.off('blur')
-							.off('keyup')
-							.off('keypress')
-							.off('dblclick')
-							.on('dblclick', _.bind(this.editContent, this))
-					;
-					$("html").off('mousedown', _.bind(this.stopEditContent, this) );
-					this.$title.closest(".upfront-editable_entity.upfront-module").draggable("enable");
-				}
+			disable_edit_title: function () {
+				this.$title
+						.attr('contenteditable', false)
+						.off('blur')
+						.off('keyup')
+						.off('keypress')
+						.off('dblclick')
+						.on('dblclick', _.bind(this.editContent, this))
+				;
+				this.$title.closest(".upfront-editable_entity.upfront-module").draggable("enable");
 			},
 			blur: function () {
 				this.parent.titleBlurred();
 				this.parent.currentData.title = this.$title.text();
 				this.parent.trigger('change:title', this.parent.currentData.title, this);
+				this.disable_edit_title();
 			},
 			keyup: function (e) {
 				//this.$title.text( this.$title.text().replace(/(\r\n|\r|\n)/gm, "") );
 				this.parent.currentData.title = this.$title.text();
-				if( e.keyCode === 27 ) // escape
-					this.stopEditContent();
+				// escape
+				if( e.keyCode === 27 ) {
+					this.disable_edit_title();
+				}
 			},
 			keypress: function (e) {
 				if ( e.which == 13 ) { // Prevent new line on title
@@ -267,13 +255,14 @@ PostContentEditor.prototype = {
 							.on("stop", _.bind(this.stopEditContent, this))
 					;
 					this.$content.closest(".upfront-editable_entity.upfront-module").draggable("disable");
+					this.focus();
 				}
 
 
 			},
 			keyup: function (e) {
-				//if( e.keyCode === 27 ) // escape
-					//this.stopEditContent();
+				if( e.keyCode === 27 ) // escape
+					this.stopEditContent();
 			},
 			stopEditContent: function () {
 				//this.editor.stop();

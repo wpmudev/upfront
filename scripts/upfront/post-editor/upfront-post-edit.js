@@ -28,7 +28,7 @@ var Box = Backbone.View.extend({
     initialize: function(options){
         var me = this;
         this.post = options.post;
-		this.layout_modified = false;
+        this.layout_modified = false;
 
         this.statusSection = new PostStatusView({post: this.post});
         this.visibilitySection = new PostVisibilityView({post: this.post});
@@ -39,16 +39,16 @@ var Box = Backbone.View.extend({
         this.datepickerTpl = _.template($(Upfront.data.tpls.popup).find('#datepicker-tpl').html());
         //Upfront.Events.trigger('upfront:element:edit:start', 'write', this.post);
 
-        Upfront.Events.on("upfront:element:edit:stop", this.element_stop_prop, this);
-		this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
-		
-		Upfront.Events.off("command:layout:trash", this.trash);
-		Upfront.Events.off("command:layout:save", this.publish);
-		Upfront.Events.off("command:layout:save_as", this.publish);
+        // this.listenTo(Upfront.Events, 'upfront:element:edit:stop', this.element_stop_prop);
+        this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
+				
+        Upfront.Events.off("command:layout:trash", this.trash);
+        Upfront.Events.off("command:layout:save", this.publish);
+        Upfront.Events.off("command:layout:save_as", this.publish);
 
-		Upfront.Events.on("command:layout:trash", this.trash, this);
-		Upfront.Events.on("command:layout:save", this.publish, this);
-		Upfront.Events.on("command:layout:save_as", this.save_as_publish, this);
+        Upfront.Events.on("command:layout:trash", this.trash, this);
+        Upfront.Events.on("command:layout:save", this.publish, this);
+        Upfront.Events.on("command:layout:save_as", this.save_as_publish, this);
 
     },
 	
@@ -74,18 +74,19 @@ var Box = Backbone.View.extend({
         this.urlEditor.delegateEvents();
 	},
 
-    element_stop_prop: function () {
-        if (
-            Upfront.Application.mode.current === Upfront.Application.MODE.POSTCONTENT
-            &&
-            Upfront.Application.current_subapplication.contentEditor
-        ) $('.upfront-module').each(function(){
-        	if ( $(this).is('.ui-draggable') )
-				$(this).draggable('disable');
-			if ( $(this).is('.ui-resizable') )
-				$(this).resizable('disable');
-        });
-    },
+	// element_stop_prop: function () {
+		// if ( Upfront.Application.mode.current === Upfront.Application.MODE.POSTCONTENT
+				// &&
+				// Upfront.Application.current_subapplication.contentEditor
+		// ) {
+			// $('.upfront-module').each(function(){
+				// if ( $(this).is('.ui-draggable') )
+					// $(this).draggable('disable');
+				// if ( $(this).is('.ui-resizable') )
+					// $(this).resizable('disable');
+			// });
+		// }
+	// },
 
 	render: function(){
 		this.destroy();
@@ -258,7 +259,7 @@ var Box = Backbone.View.extend({
     },
 
     destroy: function(){
-    	Upfront.Events.off("upfront:element:edit:stop", this.element_stop_prop);
+    	// Upfront.Events.off("upfront:element:edit:stop", this.element_stop_prop);
     },
 
     _stop_overlay: function () {
