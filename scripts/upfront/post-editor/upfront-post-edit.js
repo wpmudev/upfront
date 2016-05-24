@@ -1037,7 +1037,6 @@ var PageTemplateEditor = PostSectionView.extend({
 		_upfront_post_data.template_slug = value;
 		_upfront_post_data.layout_action = 'save_as';
 		
-		this.added_template_name = value;
 		this.stopListening(Upfront.Events, 'update:page:layout:list');
 		this.listenTo(Upfront.Events, 'update:page:layout:list', this.update_template_list);
 		
@@ -1053,6 +1052,10 @@ var PageTemplateEditor = PostSectionView.extend({
 		// rehiding options related to layout change
 		this.trigger('initiate:no:layout:change');
 		// adding entry to Templates List
+		this.added_template_name = ( typeof _upfront_post_data.added_template_name !== 'undefined' )
+			? _upfront_post_data.added_template_name
+			: ''
+		;
 		var option = '<option value="'+ _upfront_post_data.template_slug +'">'+ this.added_template_name +'</option>';
 		this.$el.find('.upfront-chosen-select optgroup[label="layouts"]').append(option);
 		this.$el.find('.upfront-chosen-select').val(_upfront_post_data.template_slug).trigger("chosen:updated");
