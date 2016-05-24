@@ -8453,7 +8453,7 @@
 				var me = this,
 					rules = contents.split('}'),
 					processed = ''
-					;
+				;
 
 				_.each(rules, function (rl) {
 					var src = $.trim(rl).split('{');
@@ -8480,6 +8480,13 @@
 						src[1] + // Actual rule
 						'\n}\n';
 				});
+
+				// Handle closing comments being omitted from the processed string
+				// Only apply if the original contents has closing CSS comment, and the processed one does not
+				if (contents.match(/\*\/\s*$/) && !processed.match(/\*\/\s*$/)) {
+					processed += '\n*/';
+				}
+
 				return processed;
 			},
 
