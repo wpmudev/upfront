@@ -2038,7 +2038,6 @@
 				this.listenTo(Upfront.Views.PostDataEditor, 'loaded', function(contentEditor) {
 					Upfront.Views.PostBox = contentEditor.prepareBox();
 					self.append_box();
-					Upfront.Views.PostBox.appended = true;
 				});
 
 				this.listenTo(Upfront.Views.PostDataEditor, 'post:saved', function() {

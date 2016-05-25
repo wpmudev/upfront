@@ -69,15 +69,9 @@ define("content", deps, function(postTpl, ContentTools) {
 
 		/**
 		 * This will actually be throttled to a
-		 * public method in constructor
+		 * public method in constructor 
 		 */
 		_reboot: function () {
-			// Let's first check if we're ready for this
-			if (!(this.contentEditor || {}).prepareBox) {
-				//Upfront.Util.log("Rebooting the editor too soon, bailing out");
-				return false;
-			}
-
 			this.trigger('loaded', this.contentEditor);
 
 			this.stopListening(this.contentEditor, 'cancel');
@@ -206,7 +200,12 @@ define("content", deps, function(postTpl, ContentTools) {
 		},
 
 		publish: function(results){
-			this.save(results, 'publish', Upfront.Settings.l10n.global.content.publishing.replace(/%s/, this.post.get('post_type')), Upfront.Settings.l10n.global.content.published.replace(/%s/, this.capitalize(this.post.get('post_type'))));
+			var postStatus = 'publish';
+			if(typeof results.status !== "undefined" && results.status !== "publish") {
+				postStatus = results.status;
+			}
+
+			this.save(results, postStatus, Upfront.Settings.l10n.global.content.publishing.replace(/%s/, this.post.get('post_type')), Upfront.Settings.l10n.global.content.published.replace(/%s/, this.capitalize(this.post.get('post_type'))));
 		},
 
 		saveDraft:function(results){
