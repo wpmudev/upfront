@@ -127,6 +127,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 					// refresh page templates list
 					_upfront_post_data.layout_action = '';
 					_upfront_post_data.template_slug = resp.data.template_slug;
+					_upfront_post_data.added_template_name = resp.data.template_name;
 					Upfront.Events.trigger("update:page:layout:list");
 				} else if ( layout_action == 'update' ) {
 					// for updating page template

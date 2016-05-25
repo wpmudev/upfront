@@ -355,14 +355,15 @@ class Upfront_Ajax extends Upfront_Server {
 		
 		$this->_out(new Upfront_JsonResponse_Success((object) array(
 			'layout_post_id' => $layout_post_id,
-			'template_slug' => $template_slug
+			'template_slug' => $template_slug,
+			'template_name' => Upfront_Server_PageTemplate::get_instance()->slug_layout_to_name($template_slug)
 		)));
 	}
 	
 	private function _save_page_template ($data) {
 		$post_id = (isset($data['post_id'])) ? (int)$data['post_id'] : false;
 		$template_type = $data['template_type'];
-		$template_slug = (!empty($data['template_slug'])) ? $data['template_slug'] : false;
+		$template_slug = (!empty($data['template_slug'])) ? sanitize_title($data['template_slug']) : false;
 		$save_dev = ( isset($data['save_dev']) && is_numeric($data['save_dev']) && $data['save_dev'] == 1 ) ? true : false;
 		$layout_action = (!empty($data['layout_action'])) ? $data['layout_action'] : false;
 		$template_post_id = false;
@@ -391,7 +392,7 @@ class Upfront_Ajax extends Upfront_Server {
 			delete_post_meta($post_id, $uf_tpl_meta);
 			
 			if ( $layout_action == 'save_as' ) {
-				$template_slug = $store_key . '-' . str_replace(' ','-',strtolower($template_slug));
+				$template_slug = sanitize_title($store_key . '-' . str_replace(' ','-',strtolower($template_slug)));
 				// check if already existing
 				$original_slug = $template_slug;
 				$slug_num = (int) $template_slug;
@@ -416,7 +417,7 @@ class Upfront_Ajax extends Upfront_Server {
 			}
 		}
 		
-		return $template_slug;
+		return sanitize_title($template_slug);
 	}
 	
 	private function _check_template_slug ($template_slug) {

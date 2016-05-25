@@ -28,7 +28,7 @@ var Box = Backbone.View.extend({
     initialize: function(options){
         var me = this;
         this.post = options.post;
-		this.layout_modified = false;
+        this.layout_modified = false;
 
         this.statusSection = new PostStatusView({post: this.post});
         this.visibilitySection = new PostVisibilityView({post: this.post});
@@ -39,16 +39,16 @@ var Box = Backbone.View.extend({
         this.datepickerTpl = _.template($(Upfront.data.tpls.popup).find('#datepicker-tpl').html());
         //Upfront.Events.trigger('upfront:element:edit:start', 'write', this.post);
 
-        Upfront.Events.on("upfront:element:edit:stop", this.element_stop_prop, this);
-		this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
-		
-		Upfront.Events.off("command:layout:trash", this.trash);
-		Upfront.Events.off("command:layout:save", this.publish);
-		Upfront.Events.off("command:layout:save_as", this.publish);
+        // this.listenTo(Upfront.Events, 'upfront:element:edit:stop', this.element_stop_prop);
+        this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
+				
+        Upfront.Events.off("command:layout:trash", this.trash);
+        Upfront.Events.off("command:layout:save", this.publish);
+        Upfront.Events.off("command:layout:save_as", this.publish);
 
-		Upfront.Events.on("command:layout:trash", this.trash, this);
-		Upfront.Events.on("command:layout:save", this.publish, this);
-		Upfront.Events.on("command:layout:save_as", this.save_as_publish, this);
+        Upfront.Events.on("command:layout:trash", this.trash, this);
+        Upfront.Events.on("command:layout:save", this.publish, this);
+        Upfront.Events.on("command:layout:save_as", this.save_as_publish, this);
 
     },
 	
@@ -74,18 +74,19 @@ var Box = Backbone.View.extend({
         this.urlEditor.delegateEvents();
 	},
 
-    element_stop_prop: function () {
-        if (
-            Upfront.Application.mode.current === Upfront.Application.MODE.POSTCONTENT
-            &&
-            Upfront.Application.current_subapplication.contentEditor
-        ) $('.upfront-module').each(function(){
-        	if ( $(this).is('.ui-draggable') )
-				$(this).draggable('disable');
-			if ( $(this).is('.ui-resizable') )
-				$(this).resizable('disable');
-        });
-    },
+	// element_stop_prop: function () {
+		// if ( Upfront.Application.mode.current === Upfront.Application.MODE.POSTCONTENT
+				// &&
+				// Upfront.Application.current_subapplication.contentEditor
+		// ) {
+			// $('.upfront-module').each(function(){
+				// if ( $(this).is('.ui-draggable') )
+					// $(this).draggable('disable');
+				// if ( $(this).is('.ui-resizable') )
+					// $(this).resizable('disable');
+			// });
+		// }
+	// },
 
 	render: function(){
 		this.destroy();
@@ -258,7 +259,7 @@ var Box = Backbone.View.extend({
     },
 
     destroy: function(){
-    	Upfront.Events.off("upfront:element:edit:stop", this.element_stop_prop);
+    	// Upfront.Events.off("upfront:element:edit:stop", this.element_stop_prop);
     },
 
     _stop_overlay: function () {
@@ -771,60 +772,60 @@ var PageTemplateEditor = PostSectionView.extend({
 		"click .delete-post-template": "show_delete_template_modal",
     }),
     initialize: function(options){
-		var me = this;
-		this.label = options.label;
-		
-		this.off('initiate:no:layout:change', this.initiate_no_layout_change);
-		this.on('initiate:no:layout:change', this.initiate_no_layout_change);
+			var me = this;
+			this.label = options.label;
+			
+			this.off('initiate:no:layout:change', this.initiate_no_layout_change);
+			this.on('initiate:no:layout:change', this.initiate_no_layout_change);
     },
     render: function () {
-        var me = this;
+      var me = this;
 	
-		this.$el.html(this.pageTemplateListTpl({
-				label: me.label
-		}));
-		
-		this.$el.find('.upfront-page-template-action').html(_.template($(editionBox_tpl).find('#upfront-page-action').html()));
-		
-		// Get chosen select and type checkbox
-		var selectTemplate = this.chosen_field();
-		var templateOptions = this.get_options();
+			this.$el.html(this.pageTemplateListTpl({
+					label: me.label
+			}));
+			
+			this.$el.find('.upfront-page-template-action').html(_.template($(editionBox_tpl).find('#upfront-page-action').html()));
+			
+			// Get chosen select and type checkbox
+			var selectTemplate = this.chosen_field();
+			var templateOptions = this.get_options();
 
-		// Init chosen select
-		this.templateSelect = new selectTemplate({
-			model: me.model,
-			label: '',
-			values: templateOptions
-		});
-		
-		this.templateSelect.render();
-
-		// Attach chosen select and type checkbox to template
-		this.$el.find('.upfront-page-template-chosen').html(this.templateSelect.$el);
-		
-		setTimeout( function () {
-			// overwriting click event on chosen.jquery.min.js
-			me.$el.find('.upfront-field-multiple input').bind('click.chosen', function(e){
-				me.stop_bubble(e);
-			});
-			me.$el.find('.upfront-field-multiple span.upfront-field-label-text').bind('click.chosen', function(e){
-				me.stop_bubble(e);
+			// Init chosen select
+			this.templateSelect = new selectTemplate({
+				model: me.model,
+				label: '',
+				values: templateOptions
 			});
 			
-			// Hide first Update Template / Save As
-			me.trigger('initiate:no:layout:change');
+			this.templateSelect.render();
+
+			// Attach chosen select and type checkbox to template
+			this.$el.find('.upfront-page-template-chosen').html(this.templateSelect.$el);
 			
-			// set default value
-			if ( typeof _upfront_post_data.template_slug !== 'undefined' ) me.templateSelect.set_value(_upfront_post_data.template_slug);
-			me.prev_template_name = me.$el.find('select.upfront-chosen-select option[value="'+ _upfront_post_data.template_slug +'"]').first().text(),
+			setTimeout( function () {
+				// overwriting click event on chosen.jquery.min.js
+				me.$el.find('.upfront-field-multiple input').bind('click.chosen', function(e){
+					me.stop_bubble(e);
+				});
+				me.$el.find('.upfront-field-multiple span.upfront-field-label-text').bind('click.chosen', function(e){
+					me.stop_bubble(e);
+				});
+				
+				// Hide first Update Template / Save As
+				me.trigger('initiate:no:layout:change');
+				
+				// set default value
+				if ( typeof _upfront_post_data.template_slug !== 'undefined' ) me.templateSelect.set_value(_upfront_post_data.template_slug);
+				me.prev_template_name = me.$el.find('select.upfront-chosen-select option[value="'+ _upfront_post_data.template_slug +'"]').first().text(),
+				
+				me.spawn_template_modal();
+				me.disable_apply_template = true;
+				me.$el.find('a.apply-post-template').css({cursor: 'default', opacity: 0.6});
+				
+			}, 300);
 			
-			me.spawn_template_modal();
-			me.disable_apply_template = true;
-			me.$el.find('a.apply-post-template').css({cursor: 'default', opacity: 0.6});
-			
-		}, 100);
-		
-		this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
+			this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
     },
 		
 	initiate_no_layout_change: function() {
@@ -1037,7 +1038,6 @@ var PageTemplateEditor = PostSectionView.extend({
 		_upfront_post_data.template_slug = value;
 		_upfront_post_data.layout_action = 'save_as';
 		
-		this.added_template_name = value;
 		this.stopListening(Upfront.Events, 'update:page:layout:list');
 		this.listenTo(Upfront.Events, 'update:page:layout:list', this.update_template_list);
 		
@@ -1053,6 +1053,10 @@ var PageTemplateEditor = PostSectionView.extend({
 		// rehiding options related to layout change
 		this.trigger('initiate:no:layout:change');
 		// adding entry to Templates List
+		this.added_template_name = ( typeof _upfront_post_data.added_template_name !== 'undefined' )
+			? _upfront_post_data.added_template_name
+			: ''
+		;
 		var option = '<option value="'+ _upfront_post_data.template_slug +'">'+ this.added_template_name +'</option>';
 		this.$el.find('.upfront-chosen-select optgroup[label="layouts"]').append(option);
 		this.$el.find('.upfront-chosen-select').val(_upfront_post_data.template_slug).trigger("chosen:updated");

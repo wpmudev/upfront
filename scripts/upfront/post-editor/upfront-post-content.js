@@ -125,6 +125,9 @@ PostContentEditor.prototype = {
 		 * Title part editing view
 		 */
 		title: _partView.extend({
+			events: {
+				'dblclick': 'editContent'
+			},
 			type: 'title',
 			canTriggerEdit: true,
 			init: function () {
@@ -132,6 +135,8 @@ PostContentEditor.prototype = {
 				this.listenTo(this.parent, 'change:title', this.titleChanged);
 			},
 			editContent: function () {
+				if ( this.parent._editing ) return;
+				this.parent._editing = true;
 				_partView.prototype.editContent.call(this);
 				if( this.$el.find("[contenteditable='true']").length || this.$el.is("[contenteditable='true']") ) return;
 				var $part = this.$('.upostdata-part');
@@ -156,52 +161,38 @@ PostContentEditor.prototype = {
 							.on('keyup', _.bind(this.keyup, this))
 							.off('keypress')
 							.on('keypress', _.bind(this.keypress, this));
-
-					$("html").on('mousedown', {$title: this.$title }, _.bind(this.stopEditContent, this) );
 				}
 				this.$title.closest(".upfront-editable_entity.upfront-module").draggable("disable");
 			},
-			stopEditContent: function (e) {
-				if( !!e && ( 'false' === this.$title.prop("contenteditable")
-						|| e.data.$title[0] === e.target
-						|| $(e.target).is( ".upostdata-part.title" )
-						|| $(e.target).is( ".part-title" )
-						|| $(e.target).is( ".upfront-output-post-data-part" )
-						)) {
-					this.$title.closest(".upfront-editable_entity.upfront-module").draggable("disable");
-					return;
-				}
-				if ( this.$title.length ) {
-					this.$title.trigger("blur");
-					this.$title
-							.attr('contenteditable', false)
-							.off('blur')
-							.off('keyup')
-							.off('keypress')
-							.off('dblclick')
-							.on('dblclick', _.bind(this.editContent, this))
-					;
-					$("html").off('mousedown', _.bind(this.stopEditContent, this) );
-					this.$title.closest(".upfront-editable_entity.upfront-module").draggable("enable");
-				}
+			disable_edit_title: function () {
+				this.$title
+						.attr('contenteditable', false)
+						.off('blur')
+						.off('keyup')
+						.off('keypress')
+						.off('dblclick')
+						.on('dblclick', _.bind(this.editContent, this))
+				;
+				this.$title.closest(".upfront-editable_entity.upfront-module").draggable("enable");
+				this.parent._editing = false;
 			},
 			blur: function () {
 				this.parent.titleBlurred();
 				this.parent.currentData.title = this.$title.text();
 				this.parent.trigger('change:title', this.parent.currentData.title, this);
+				this.disable_edit_title();
 			},
 			keyup: function (e) {
-				//this.$title.text( this.$title.text().replace(/(\r\n|\r|\n)/gm, "") );
 				this.parent.currentData.title = this.$title.text();
-				if( e.keyCode === 27 ) // escape
-					this.stopEditContent();
+				// escape
+				if( e.keyCode === 27 ) {
+					this.disable_edit_title();
+				}
 			},
 			keypress: function (e) {
 				if ( e.which == 13 ) { // Prevent new line on title
 					e.preventDefault();
 				}
-				//else if ( e.which == 7 ) { // Navigate to next
-				//}
 			},
 			focus: function () {
 				var node = this.$title.get(0);
@@ -226,6 +217,9 @@ PostContentEditor.prototype = {
 		 * Content part editing view
 		 */
 		content: _partView.extend({
+			events: {
+				'dblclick': 'editContent'
+			},
 			type: 'content',
 			canTriggerEdit: true,
 			init: function () {
@@ -233,7 +227,10 @@ PostContentEditor.prototype = {
 				this.on('publish draft auto-draft', this.updateContent);
 			},
 			editContent: function () {
-
+				if ( this.parent._editing ) return;
+				this.parent._editing = true;
+				
+				var me = this;
 				_partView.prototype.editContent.call(this);
 				this.$content = this.$('.upostdata-part');
 
@@ -248,50 +245,47 @@ PostContentEditor.prototype = {
 						editorOptions = isExcerpt ? this.parent.getExcerptEditorOptions() : this.parent.getContentEditorOptions()
 					;
 
-					//if( this.editor ){
-					//	this.editor.start();
-					//}else{
-						this.$content.html(content).ueditor(editorOptions);
-						this.editor = this.$content.data('ueditor');
-					//}
-
-
-
-
+					this.$content.html(content).ueditor(editorOptions);
+					this.editor = this.$content.data('ueditor');
+					
 					this.$content
-							.off('blur')
-							.on('blur', _.bind(this.blur, this))
-							.off('keyup')
-							.on('keyup', _.bind(this.keyup, this))
-							.off('dblclick')
-							.on("stop", _.bind(this.stopEditContent, this))
+						.off('blur')
+						.on('blur', _.bind(this.blur, this))
+						.off('keyup')
+						.on('keyup', _.bind(this.keyup, this))
+						.on("stop", _.bind(this.stopEditContent, this))
 					;
 					this.$content.closest(".upfront-editable_entity.upfront-module").draggable("disable");
+					
+					// to make Ctrl+A work on contents
+					setTimeout(function(){
+						me.$content.find('[contenteditable="false"]').each(function(){
+							$(this).attr('contenteditable', 'true');
+						});
+					},300);
 				}
-
-
 			},
 			keyup: function (e) {
-				//if( e.keyCode === 27 ) // escape
-					//this.stopEditContent();
+				if( e.keyCode === 27 ){
+					// escape
+					this.stopEditContent();
+				}
 			},
 			stopEditContent: function () {
-				//this.editor.stop();
 				if ( this.$content.length ){
 					this.$content
-							.off('blur')
-							.off('keyup')
-							.off('dblclick')
-							.on('dblclick', _.bind(this.editContent, this))
-
+						.off('blur')
+						.off('keyup')
 					;
-
 					this.$content.closest(".upfront-editable_entity.upfront-module").draggable("enable");
+					Upfront.Events.trigger('editor:change:content', this.$content.html());
 				}
+				this.parent._editing = false;
 			},
 			blur: function () {
 				var html = this.$content.html();
 				this.parent.trigger('change:content', html, this);
+				Upfront.Events.trigger('editor:change:content', html);
 			},
 			updateContent: function () {
 				var isExcerpt = ( this.model.get_property_value_by_name('content') == 'excerpt' ),
@@ -324,9 +318,9 @@ PostContentEditor.prototype = {
 				}
 			},
 			focus: function () {
-				var node = this.$content.get(0);
-				node.focus();
 				if ( this.parent.post.is_new ) {
+					var node = this.$content.get(0);
+					node.focus();
 					this.parent.setSelection(node, true);
 				}
 			},
