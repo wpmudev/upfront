@@ -221,7 +221,7 @@ PostContentEditor.prototype = {
 				this.on('publish draft auto-draft', this.updateContent);
 			},
 			editContent: function () {
-
+				var me = this;
 				_partView.prototype.editContent.call(this);
 				this.$content = this.$('.upostdata-part');
 
@@ -236,43 +236,40 @@ PostContentEditor.prototype = {
 						editorOptions = isExcerpt ? this.parent.getExcerptEditorOptions() : this.parent.getContentEditorOptions()
 					;
 
-					//if( this.editor ){
-					//	this.editor.start();
-					//}else{
-						this.$content.html(content).ueditor(editorOptions);
-						this.editor = this.$content.data('ueditor');
-					//}
-
-
-
-
+					this.$content.html(content).ueditor(editorOptions);
+					this.editor = this.$content.data('ueditor');
+					
 					this.$content
-							.off('blur')
-							.on('blur', _.bind(this.blur, this))
-							.off('keyup')
-							.on('keyup', _.bind(this.keyup, this))
-							.off('dblclick')
-							.on("stop", _.bind(this.stopEditContent, this))
+						.off('blur')
+						.on('blur', _.bind(this.blur, this))
+						.off('keyup')
+						.on('keyup', _.bind(this.keyup, this))
+						.off('dblclick')
+						.on("stop", _.bind(this.stopEditContent, this))
 					;
 					this.$content.closest(".upfront-editable_entity.upfront-module").draggable("disable");
-					this.focus();
+					
+					// to make Ctrl+A work on contents
+					setTimeout(function(){
+						me.$content.find('[contenteditable="false"]').each(function(){
+							$(this).attr('contenteditable', 'true');
+						});
+					},300);
 				}
-
-
 			},
 			keyup: function (e) {
-				if( e.keyCode === 27 ) // escape
+				if( e.keyCode === 27 ){
+					// escape
 					this.stopEditContent();
+				}
 			},
 			stopEditContent: function () {
-				//this.editor.stop();
 				if ( this.$content.length ){
 					this.$content
-							.off('blur')
-							.off('keyup')
-							.off('dblclick')
-							.on('dblclick', _.bind(this.editContent, this))
-
+						.off('blur')
+						.off('keyup')
+						.off('dblclick')
+						.on('dblclick', _.bind(this.editContent, this))
 					;
 
 					this.$content.closest(".upfront-editable_entity.upfront-module").draggable("enable");
@@ -282,6 +279,7 @@ PostContentEditor.prototype = {
 			blur: function () {
 				var html = this.$content.html();
 				this.parent.trigger('change:content', html, this);
+				Upfront.Events.trigger('editor:change:content', html);
 			},
 			updateContent: function () {
 				var isExcerpt = ( this.model.get_property_value_by_name('content') == 'excerpt' ),
@@ -314,9 +312,9 @@ PostContentEditor.prototype = {
 				}
 			},
 			focus: function () {
-				var node = this.$content.get(0);
-				node.focus();
 				if ( this.parent.post.is_new ) {
+					var node = this.$content.get(0);
+					node.focus();
 					this.parent.setSelection(node, true);
 				}
 			},
