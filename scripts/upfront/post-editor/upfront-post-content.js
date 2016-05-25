@@ -259,10 +259,10 @@ PostContentEditor.prototype = {
 					
 					// to make Ctrl+A work on contents
 					setTimeout(function(){
-						me.$content.find('[contenteditable="false"]').each(function(){
+						me.$content.find('.upfront-inserted_image-wrapper').each(function(){
 							$(this).attr('contenteditable', 'true');
 						});
-					},300);
+					},100);
 				}
 			},
 			keyup: function (e) {
@@ -272,6 +272,7 @@ PostContentEditor.prototype = {
 				}
 			},
 			stopEditContent: function () {
+				var me = this;
 				if ( this.$content.length ){
 					this.$content
 						.off('blur')
@@ -281,6 +282,9 @@ PostContentEditor.prototype = {
 					Upfront.Events.trigger('editor:change:content', this.$content.html());
 				}
 				this.parent._editing = false;
+				setTimeout(function(){
+					me.updateContent();
+				},100);
 			},
 			blur: function () {
 				var html = this.$content.html();
@@ -325,7 +329,7 @@ PostContentEditor.prototype = {
 				}
 			},
 			contentChanged: function (content, callFrom) {
-				if ( callFrom == this || !this.$content.redactor || !this.$content.redactor.code ) return;
+				if ( this.$content && ( callFrom == this || !this.$content.redactor || !this.$content.redactor.code ) ) return;
 				this.$content.redactor('code.set', content);
 			}
 		}),
