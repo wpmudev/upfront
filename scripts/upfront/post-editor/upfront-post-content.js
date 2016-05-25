@@ -125,6 +125,9 @@ PostContentEditor.prototype = {
 		 * Title part editing view
 		 */
 		title: _partView.extend({
+			events: {
+				'dblclick': 'editContent'
+			},
 			type: 'title',
 			canTriggerEdit: true,
 			init: function () {
@@ -132,6 +135,8 @@ PostContentEditor.prototype = {
 				this.listenTo(this.parent, 'change:title', this.titleChanged);
 			},
 			editContent: function () {
+				if ( this.parent._editing ) return;
+				this.parent._editing = true;
 				_partView.prototype.editContent.call(this);
 				if( this.$el.find("[contenteditable='true']").length || this.$el.is("[contenteditable='true']") ) return;
 				var $part = this.$('.upostdata-part');
@@ -169,6 +174,7 @@ PostContentEditor.prototype = {
 						.on('dblclick', _.bind(this.editContent, this))
 				;
 				this.$title.closest(".upfront-editable_entity.upfront-module").draggable("enable");
+				this.parent._editing = false;
 			},
 			blur: function () {
 				this.parent.titleBlurred();
@@ -177,7 +183,6 @@ PostContentEditor.prototype = {
 				this.disable_edit_title();
 			},
 			keyup: function (e) {
-				//this.$title.text( this.$title.text().replace(/(\r\n|\r|\n)/gm, "") );
 				this.parent.currentData.title = this.$title.text();
 				// escape
 				if( e.keyCode === 27 ) {
@@ -188,8 +193,6 @@ PostContentEditor.prototype = {
 				if ( e.which == 13 ) { // Prevent new line on title
 					e.preventDefault();
 				}
-				//else if ( e.which == 7 ) { // Navigate to next
-				//}
 			},
 			focus: function () {
 				var node = this.$title.get(0);
@@ -214,6 +217,9 @@ PostContentEditor.prototype = {
 		 * Content part editing view
 		 */
 		content: _partView.extend({
+			events: {
+				'dblclick': 'editContent'
+			},
 			type: 'content',
 			canTriggerEdit: true,
 			init: function () {
@@ -221,6 +227,9 @@ PostContentEditor.prototype = {
 				this.on('publish draft auto-draft', this.updateContent);
 			},
 			editContent: function () {
+				if ( this.parent._editing ) return;
+				this.parent._editing = true;
+				
 				var me = this;
 				_partView.prototype.editContent.call(this);
 				this.$content = this.$('.upostdata-part');
@@ -244,7 +253,6 @@ PostContentEditor.prototype = {
 						.on('blur', _.bind(this.blur, this))
 						.off('keyup')
 						.on('keyup', _.bind(this.keyup, this))
-						.off('dblclick')
 						.on("stop", _.bind(this.stopEditContent, this))
 					;
 					this.$content.closest(".upfront-editable_entity.upfront-module").draggable("disable");
@@ -268,13 +276,11 @@ PostContentEditor.prototype = {
 					this.$content
 						.off('blur')
 						.off('keyup')
-						.off('dblclick')
-						.on('dblclick', _.bind(this.editContent, this))
 					;
-
 					this.$content.closest(".upfront-editable_entity.upfront-module").draggable("enable");
 					Upfront.Events.trigger('editor:change:content', this.$content.html());
 				}
+				this.parent._editing = false;
 			},
 			blur: function () {
 				var html = this.$content.html();
