@@ -24,6 +24,8 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 	public function expand_featured_image_template () {
 		
 		if (empty($this->_post->ID)) return '';
+		
+		$data = get_post_meta($this->_post->ID, '_thumbnail_data', true);
 
 		$resize_featured = isset($this->_data['resize_featured'])
 			? (int)$this->_data['resize_featured']
@@ -103,7 +105,7 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 
 		return $full_featured == 1
 			? get_the_post_thumbnail($this->_post->ID)
-			: upfront_get_edited_post_thumbnail($this->_post->ID)
+			: upfront_get_edited_post_thumbnail($this->_post->ID, false, 'uf_post_featured_image')
 		;
 	}
 
