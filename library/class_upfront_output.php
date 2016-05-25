@@ -10,6 +10,8 @@ class Upfront_Output {
 	public static $current_object;
 	public static $current_module;
 	public static $grid;
+	public static $layout_post_id;
+	public static $template_post_id;
 
 	public function __construct ($layout, $post) {
 		$this->_layout = $layout;
@@ -23,16 +25,46 @@ class Upfront_Output {
 	}
 
 	public static function get_layout ($layout_ids, $apply = false) {
-		$layout = Upfront_Layout::from_entity_ids($layout_ids);
-
-		if ($layout->is_empty()) {
-			$layout = Upfront_Layout::create_layout($layout_ids);
+		$post_id = self::get_post_id();
+		$is_dev = Upfront_Debug::get_debugger()->is_dev();
+		$load_from_options = true;
+		
+		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
+		
+		$layout_slug = ( isset($layout_ids['specificity']) )
+			? strtolower($store_key . '-' . $layout_ids['specificity'])
+			: strtolower($store_key . '-' . $layout_ids['item'])
+		;
+		$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $is_dev);
+		
+		if ( $layout_post_id ) {
+			self::$layout_post_id = $layout_post_id;
+			$page_layout = Upfront_Server_PageLayout::get_instance()->get_layout($layout_post_id, $is_dev);
+			if ( $page_layout ) {
+				$layout = Upfront_Layout::from_php($page_layout, Upfront_Layout::STORAGE_KEY);
+				$load_from_options = false;
+			}
+		} else {
+			// load from page template
+			self::$layout_post_id = false;
+			$page_template  = self::get_page_template($layout_ids);
+			if ( $page_template ) {
+				$layout = Upfront_Layout::from_php($page_template, Upfront_Layout::STORAGE_KEY);
+				$load_from_options = false;
+			}
 		}
-
-		$post_id = is_singular() ? get_the_ID() : '';
+		
+		// load layouts not yet saved on custom post type
+		if ( $load_from_options ) {
+			$layout = Upfront_Layout::from_entity_ids($layout_ids);
+			if ($layout->is_empty()) {
+				$layout = Upfront_Layout::create_layout($layout_ids);
+			}
+		}
+		
 		$post = get_post($post_id);
 		self::$_instance = new self($layout, $post);
-
+		
 		// Add actions
 		add_action('wp_enqueue_scripts', array(self::$_instance, 'add_styles'));
 		add_action('wp_enqueue_scripts', array(self::$_instance, 'add_scripts'), 2);
@@ -41,6 +73,39 @@ class Upfront_Output {
 		if ( $apply )
 			return self::$_instance->apply_layout();
 		return self::$_instance;
+	}
+	
+	public static function get_page_template ($layout_ids) {
+		$post_id = self::get_post_id();
+		$is_dev = Upfront_Debug::get_debugger()->is_dev();
+		$page_template = false;
+		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
+		
+		if ( $post_id ) {
+			$template_meta_name = ( $is_dev ) 
+				? strtolower($store_key . '-template_dev_post_id')
+				: strtolower($store_key . '-template_post_id')
+			;
+			$template_post_id = get_post_meta($post_id, $template_meta_name, true);
+			
+		} else {
+			// if special archive pages like homepage, use slug to get template post id
+			$layout_id = '';
+			if ( isset($layout_ids['specificity']) ) {
+				$layout_id = $layout_ids['specificity'];
+			} else if ( isset($layout_ids['item']) ) {
+				$layout_id = $layout_ids['item'];
+			}
+			$key = $store_key . '-' . $layout_id;
+			$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($key, $is_dev);
+		}
+		
+		if ( $template_post_id ) {
+			self::$template_post_id = $template_post_id;
+			$page_template = Upfront_Server_PageTemplate::get_instance()->get_template($template_post_id, $is_dev);
+		}
+		
+		return $page_template;
 	}
 
 	public static function get_layout_data () {
@@ -118,10 +183,16 @@ class Upfront_Output {
 				$region_markups_after[$container] .= $markup;
 			}
 			else if ( $region_sub == 'left' ){
-				$region_markups[$container] = $markup . $region_markups[$container];
+				if( is_rtl() )
+					$region_markups[$container] .= $markup;
+				else
+					$region_markups[$container] =  $markup . $region_markups[$container];
 			}
 			else{
-				$region_markups[$container] .= $markup;
+				if( is_rtl() )
+					$region_markups[$container] =  $markup . $region_markups[$container];
+				else
+					$region_markups[$container] .= $markup;
 			}
 		}
 		foreach ($container_views as $container => $container_view) {
@@ -139,7 +210,9 @@ class Upfront_Output {
 	}
 
 	function add_styles () {
-		wp_enqueue_style('upfront-main', upfront_ajax_url('upfront_load_styles'), array(), Upfront_ChildTheme::get_version(), 'all');
+		$load_style_url = upfront_ajax_url('upfront_load_styles') . '&layout_post_id=' . self::$layout_post_id . '&template_post_id=' . self::$template_post_id;
+		wp_enqueue_style('upfront-main', $load_style_url, array(), Upfront_ChildTheme::get_version(), 'all');
+		// wp_enqueue_style('upfront-main', upfront_ajax_url('upfront_load_styles'), array(), Upfront_ChildTheme::get_version(), 'all');
 
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
 

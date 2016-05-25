@@ -5,6 +5,7 @@ if (!class_exists('Upfront_Presets_Server')) {
 }
 
 class Upfront_Post_Presets_Server extends Upfront_Presets_Server {
+	protected $isThisPostServer = true;
 	private static $instance;
 
 	public function get_element_name() {

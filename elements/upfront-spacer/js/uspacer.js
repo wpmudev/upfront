@@ -23,8 +23,20 @@ define([
 			return "";
 		},
 		init: function () {
+			var me = this;
+
+			var debouncedApply = _.debounce(this.apply_height_from_wrapper, 1000);
+
 			this.listenTo(Upfront.Events, 'upfront:wrappers:before_fix_height', this.before_apply_height_from_wrapper);
-			this.listenTo(Upfront.Events, 'upfront:wrappers:after_fix_height', this.apply_height_from_wrapper);
+			this.listenTo(Upfront.Events, 'upfront:wrappers:after_fix_height', debouncedApply);
+
+			this.dontRunVisible = true;
+			Upfront.Events.on('upfront:renderingqueue:start', function() {
+				me.dontRunVisible = true;
+			});
+			Upfront.Events.on('upfront:renderingqueue:done', function() {
+				me.dontRunVisible = false;
+			});
 		},
 		render: function () {
 			var grid = Upfront.Settings.LayoutEditor.Grid,
@@ -100,6 +112,8 @@ define([
 		_is_applying: function (from_view) {
 			if (this.parent_view && this.parent_view == from_view) return true;
 			if (this.parent_module_view && this.parent_module_view.parent_view && this.parent_module_view.parent_view == from_view) return true;
+
+			if (this.dontRunVisible === true) return;
 			if (this.$el.is(':visible')) return true;
 			return false;
 		},
@@ -123,7 +137,20 @@ define([
 		},
 		deactivate: function () {
 			return false;
-		}
+		},
+
+		on_element_edit_start: function (edit, post) {
+			return;
+		},
+		on_element_edit_stop: function (edit, post, saving_draft) {
+			return;
+		},
+		on_content_style_edit_start: function () {
+			return;
+		},
+		on_content_style_edit_stop: function () {
+			return;
+		},
 	});
 
 	Upfront.Models.UspacerModel = UspacerModel;

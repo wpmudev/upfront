@@ -15,13 +15,14 @@ define([
 				"click .create": "create_code"
 			},
 			render: function () {
-				this.$el.empty()
-					.append(
-						'<p class="code-element-choose"><button type="button" class="embed">' + l10n.intro.embed + '</button>' +
-						'&nbsp;or&nbsp;' +
-						'<button type="button" class="create">' + l10n.intro.code + '</button></p>'
-					)
-				;
+				this.$el.empty();
+				this.$el.append('<p class="code-element-choose"></p>');
+				if (Upfront.Application.user_can_modify_layout()) {
+					if ( Upfront.Settings.Application.PERMS.EMBED ) {
+						this.$el.find('p.code-element-choose').append('<button type="button" class="embed">' + l10n.intro.embed + '</button>' + '&nbsp;or&nbsp;');
+					}
+					this.$el.find('p.code-element-choose').append('<button type="button" class="create">' + l10n.intro.code + '</button>');
+				}
 			},
 			embed_code: function () {
 				this.model.set_property("code_selection_type", "Embed", true);
@@ -99,7 +100,7 @@ define([
 
 					// Compensate for dead element double-click event
 					this.$el.off("dblclick").on("dblclick", function () {
-						me.on_edit();
+						me.on_edit_content();
 					});
 				}
 			},
@@ -119,8 +120,26 @@ define([
 
 			},
 
-			on_edit: function(){
+			/**
+			 * Propagated edit event - implicit settings click
+			 * 
+			 * This is what happens on settings click.
+			 * Could have some custom logic but let's go with the default
+			 * The default being: double-click content for content edit, settings click for code edit
+			 */
+			on_edit: function () {
+				return this.on_edit_settings();
+			},
+
+			/**
+			 * Explicit content double-click
+			 * 
+			 * We want to edit *contents*, not the code in this scenario
+			 */
+			on_edit_content: function (){
 				if (this.is_editing) return false;
+				
+				if (!Upfront.Application.user_can_modify_layout()) return false;
 
 				// Since we're doing double duty here, let's first check if content editing mode is to boot
 				var $contenteditables = this.$el.find('.upfront_code-element ' + this.content_editable_selector);
@@ -128,7 +147,17 @@ define([
 					// Yes? go for it
 					return this.bootContentEditors($contenteditables);
 				}
-				// Oh well, let's just go ahead and boot code editing mode.
+			},
+
+			/**
+			 * Explicit settings click
+			 *
+			 * We want to be editing the *code*, not the contents in this scenario
+			 */
+			on_edit_settings: function () {
+				if (this.is_editing) return false;
+
+				// Let's just go ahead and boot code editing mode.
 				this.is_editing = true;
 				var $editor = $('#upfront_code-editor');
 
@@ -556,6 +585,8 @@ define([
 			on_edit: function () {
 				if (this.is_editing)
 					return false;
+				
+				if (!Upfront.Application.user_can_modify_layout()) return false;
 
 				this.is_editing = true;
 
@@ -597,7 +628,7 @@ define([
 			getControlItems: function(){
 				return _([
 					this.createPaddingControl(),
-					this.createControl('edit', l10n.edit, 'on_edit')
+					this.createControl('edit', l10n.edit, 'on_edit_settings')
 				]);
 			}
 		})

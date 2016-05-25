@@ -95,6 +95,21 @@ class Upfront_PostData_Presets_Server extends Upfront_DataElement_Preset_Server 
 	private static $_instance;
 
 	public function get_data_type () { return 'post_data';	}
+	
+	public static function get_typography_parts() {
+		$parts = array(
+			0 => array(
+				'tag' =>'p',
+				'part' => 'date_posted'
+			),
+			1 => array(
+				'tag' =>'h1',
+				'part' => 'title'
+			)
+		);
+		
+		return $parts;
+	}
 
 	public static function serve () {
 		self::$_instance = new self;
@@ -104,6 +119,69 @@ class Upfront_PostData_Presets_Server extends Upfront_DataElement_Preset_Server 
 
 	public static function get_instance () {
 		return self::$_instance;
+	}
+
+	protected function _add_hooks () {
+		parent::_add_hooks();
+		add_filter('upfront_get_' . $this->elementName . '_presets', array($this, 'get_augmented_presets'), 99);
+	}
+
+	/**
+	 * Filters our presets and augments with the calculated column data
+	 *
+	 * @param mixed $presets Presets, god only knows in what format.
+	 *
+	 * @return array Augmented presets
+	 */
+	public function get_augmented_presets ($presets) {
+		if (empty($presets)) return $presets;
+
+		if (!is_array($presets)) {
+			$presets = json_decode($presets, true);
+		}
+
+		$grid = Upfront_Grid::get_grid();
+		$breakpoint = $grid->get_default_breakpoint();
+		$col_size = (int)$breakpoint->get_column_width();
+
+		$full = $breakpoint->get_columns();
+		$half = (int)(($full - 1) / 2);
+
+		if (is_array($presets)) foreach ($presets as $idx => $preset) {
+			if (empty($preset['id'])) continue;
+
+			$left_indent = !empty($preset['left_indent']) && is_numeric($preset['left_indent'])
+				? (int)$preset['left_indent']
+				: 0
+			;
+			if ($left_indent < 0 && $left_indent > $half) $left_indent = 0;
+
+			$right_indent = !empty($preset['right_indent']) && is_numeric($preset['right_indent'])
+				? (int)$preset['right_indent']
+				: 0
+			;
+			if ($right_indent < 0 && $right_indent > $half) $right_indent = 0;
+
+			$presets[$idx]['calculated_left_indent'] = $left_indent * $col_size;
+			$presets[$idx]['calculated_right_indent'] = $right_indent * $col_size;
+		}
+
+		return $presets;
+	}
+	
+	public static function get_preset_defaults() {
+		$parts = self::get_typography_parts();
+		$typography = array();
+		
+		foreach($parts as $part) {
+			$typography_defaults = self::$_instance->get_typography_values_by_tag($part['tag']);
+			$settings_array = self::$_instance->get_typography_defaults_array($typography_defaults, $part['part']);
+
+			$typography = array_merge($typography, $settings_array);
+		}
+
+		$defaults = $typography;
+		return $defaults;
 	}
 
 }
@@ -113,6 +191,29 @@ class Upfront_Author_Presets_Server extends Upfront_DataElement_Preset_Server {
 	private static $_instance;
 
 	public function get_data_type () { return 'author';	}
+	
+	public static function get_typography_parts() {
+		$parts = array(
+			0 => array(
+				'tag' =>'p',
+				'part' => 'author'
+			),
+			1 => array(
+				'tag' =>'a',
+				'part' => 'author_email'
+			),
+			2 => array(
+				'tag' =>'a',
+				'part' => 'author_url'
+			),
+			3 => array(
+				'tag' =>'p',
+				'part' => 'author_bio'
+			)
+		);
+		
+		return $parts;
+	}
 
 	public static function serve () {
 		self::$_instance = new self;
@@ -122,6 +223,28 @@ class Upfront_Author_Presets_Server extends Upfront_DataElement_Preset_Server {
 
 	public static function get_instance () {
 		return self::$_instance;
+	}
+	
+	public static function get_preset_defaults() {
+		$parts = self::get_typography_parts();
+		$typography = array();
+		
+		foreach($parts as $part) {
+			$typography_defaults = self::$_instance->get_typography_values_by_tag($part['tag']);
+			$settings_array = self::$_instance->get_typography_defaults_array($typography_defaults, $part['part']);
+
+			$typography = array_merge($typography, $settings_array);
+		}
+
+		$defaults = array(
+			'static-gravatar-use-border' => '',
+			'static-gravatar-border-width' => 1,
+			'static-gravatar-border-type' => 'solid',
+			'static-gravatar-border-color' => 'rgb(0, 0, 0)',
+		);
+		
+		$defaults = array_merge($defaults, $typography);
+		return $defaults;
 	}
 
 }
@@ -141,6 +264,15 @@ class Upfront_FeaturedImage_Presets_Server extends Upfront_DataElement_Preset_Se
 	public static function get_instance () {
 		return self::$_instance;
 	}
+	
+	public static function get_preset_defaults() {
+		return array(
+			'static-featured_image-use-border' => '',
+			'static-featured_image-border-width' => 1,
+			'static-featured_image-border-type' => 'solid',
+			'static-featured_image-border-color' => 'rgb(0, 0, 0)',
+		);
+	}
 
 }
 
@@ -149,6 +281,21 @@ class Upfront_Taxonomy_Presets_Server extends Upfront_DataElement_Preset_Server 
 	private static $_instance;
 
 	public function get_data_type () { return 'taxonomy';	}
+	
+	public static function get_typography_parts() {
+		$parts = array(
+			0 => array(
+				'tag' =>'a',
+				'part' => 'tags'
+			),
+			1 => array(
+				'tag' =>'a',
+				'part' => 'categories'
+			)
+		);
+		
+		return $parts;
+	}
 
 	public static function serve () {
 		self::$_instance = new self;
@@ -158,6 +305,21 @@ class Upfront_Taxonomy_Presets_Server extends Upfront_DataElement_Preset_Server 
 
 	public static function get_instance () {
 		return self::$_instance;
+	}
+	
+	public static function get_preset_defaults() {
+		$parts = self::get_typography_parts();
+		$typography = array();
+		
+		foreach($parts as $part) {
+			$typography_defaults = self::$_instance->get_typography_values_by_tag($part['tag']);
+			$settings_array = self::$_instance->get_typography_defaults_array($typography_defaults, $part['part']);
+
+			$typography = array_merge($typography, $settings_array);
+		}
+
+		$defaults = $typography;
+		return $defaults;
 	}
 
 }
@@ -167,6 +329,29 @@ class Upfront_Comments_Presets_Server extends Upfront_DataElement_Preset_Server 
 	private static $_instance;
 
 	public function get_data_type () { return 'comments';	}
+	
+	public static function get_typography_parts() {
+		$parts = array(
+			0 => array(
+				'tag' =>'p',
+				'part' => 'comment_count'
+			),
+			1 => array(
+				'tag' =>'p',
+				'part' => 'comments'
+			),
+			2 => array(
+				'tag' =>'a',
+				'part' => 'comments_pagination'
+			),
+			3 => array(
+				'tag' =>'p',
+				'part' => 'comment_form'
+			)
+		);
+		
+		return $parts;
+	}
 
 	public static function serve () {
 		self::$_instance = new self;
@@ -176,6 +361,21 @@ class Upfront_Comments_Presets_Server extends Upfront_DataElement_Preset_Server 
 
 	public static function get_instance () {
 		return self::$_instance;
+	}
+	
+	public static function get_preset_defaults() {
+		$parts = self::get_typography_parts();
+		$typography = array();
+		
+		foreach($parts as $part) {
+			$typography_defaults = self::$_instance->get_typography_values_by_tag($part['tag']);
+			$settings_array = self::$_instance->get_typography_defaults_array($typography_defaults, $part['part']);
+
+			$typography = array_merge($typography, $settings_array);
+		}
+
+		$defaults = $typography;
+		return $defaults;
 	}
 
 }

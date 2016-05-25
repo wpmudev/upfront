@@ -77,7 +77,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			'click .upfront-quick-swap': 'openImageSelector',
 			'click': 'preventNavigation',
 			'dblclick .ugallery-thumb-title': 'startCaptionEditor',
-      'click .ugallery_item_lightbox': 'openLightbox'
+			'click .ugallery_item_lightbox': 'openLightbox'
 		});
 
 		images = this.property('images');
@@ -213,6 +213,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		});
 		this. debouncedRender = _.debounce(this.render, 300);
 		this.debouncedRebindShuffle = _.debounce(this.rebindShuffleForDebouncing, 500);
+		this.delegateEvents();
 	},
 	onThumbChangeProportions: function(e) {
 		var factor = this.property('thumbProportions'),
@@ -354,32 +355,40 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	createControlsEach: function(image) {
 		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel();
 
-		panel.items = _([
-			this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask'),
-			this.createLinkControl(image)
-		]);
+		if (Upfront.Application.user_can_modify_layout()) {
+			panel.items = _([
+				this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask', 30, 30),
+				this.createLinkControl(image)
+			]);
+		} else {
+			panel.items = _([
+				this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask')
+			]);
+		}
 
+		if (Upfront.Application.user_can_modify_layout()) {
 		if (this.property('labelFilters') === 'true') {
 			panel.items.push(this.createLabelControl(image));
 		}
 
 		if (image.get('imageLink').type === 'image' || image.get('imageLink').type === 'lightbox' || -1 !== ['image', 'lightbox'].indexOf( this.property( "linkTo" ) ) ) {
-			panel.items.push(this.createControl('fullscreen', l10n.ctrl.show_image, 'openImageLightbox'));
+			panel.items.push(this.createControl('fullscreen', l10n.ctrl.show_image, 'openImageLightbox', 30, 30));
+		}
 		}
 
 		return panel;
 	},
 
-	createControl: function(icon, tooltip, click_callback) {
+	createControl: function(icon, tooltip, click_callback, width, height) {
 		var me = this,
 			item = new Upfront.Views.Editor.InlinePanels.Control();
 
 		item.icon = icon;
 		item.tooltip = tooltip;
-		
+
 		//Set icon width & height
-		item.width = 30;
-		item.height = 30;
+		item.width = width;
+		item.height = height;
 
 		if(click_callback) {
 			this.listenTo(item, 'click', function(e){
@@ -408,6 +417,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		}
 		control.tooltip = l10n.ctrl.edit_labels;
 		control.id = 'edit_labels';
+
+		//Set icon width & height
+		control.width = 30;
+		control.height = 30;
 
 		me.listenTo(control, 'panel:open', function(){
 			me.lastOpenedControl = control;
@@ -819,6 +832,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 		props.imagesLength = props.images.length;
 		props.editing = true;
+		props.cap = Upfront.Application.user_can_modify_layout();
 
 		props.labels = this.labels;
 		props.labels_length = this.labels.length;
@@ -854,6 +868,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	on_render: function() {
 		var me = this,
 			resizingFunction;
+
+		// Hide delete icon
+		if (!Upfront.Application.user_can_modify_layout()) {		
+			this.$el.find('.remove-image').remove();
+		}
 
 		//Bind resizing events
 		if ( me.parent_module_view && !me.parent_module_view.$el.data('resizeHandling') ) {
@@ -915,8 +934,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				}
 				image.controls = controls;
 			});
-
-
 		}, 300);
 
 		if (this.isSortingActive === true) {
@@ -969,7 +986,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		// this.render(); <-- this is redundant and creates misscalculation of padding
 	},
 	
-	on_element_resize: function (attr) {
+	on_module_update: function (attr) {
 		this.render();
 	},
 
@@ -1103,6 +1120,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	},
 
 	showSelectType: function() {
+		if (!Upfront.Application.user_can_modify_layout()) return false;
+
 		var me = this,
 			selector = $('<div class="upfront-ui ugallery-onclick"><div class="ugallery-onclick-dialog"><span>' + l10n.thumbnail_clicked +
 				'</span><div class="ugallery-onclick-options"><a href="#" class="ugallery-lager_image" rel="image">' + l10n.show_larger +
@@ -1382,7 +1401,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			src: image.get('src'),
 			srcOriginal: full[0],
 			rotation: image.get('rotation'),
-			element_id: this.model.get_property_value_by_name('element_id')
+			element_id: this.model.get_property_value_by_name('element_id'),
+			element_cols: Upfront.Util.grid.width_to_col($img.width(), true)
 		};
 	},
 
@@ -1559,8 +1579,11 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	},
 
 	removeImage: function(e){
+		if (!Upfront.Application.user_can_modify_layout()) return false;
+
 		var me = this,
 			item = this.getItemElement(e);
+
 		e.preventDefault();
 		item.fadeOut('fast', function() {
 			var imageId = item.attr('rel');
@@ -1711,11 +1734,21 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	},
 
 	getControlItems: function(){
+		var me = this;
+		
+		moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl()
+		
+		moreOptions.icon = 'more';
+		moreOptions.tooltip = l10n.ctrl.caption_position;
+
+		moreOptions.sub_items = {}
+		moreOptions.sub_items['add'] = this.createControl('add', l10n.template.add_img, 'openImageSelector', 38, 38);
+		moreOptions.sub_items['toggle-sorting'] = this.createControl('toggle-sorting', l10n.toggle_dnd, 'toggleSorting', 38, 38);
+
 		return _([
-			this.createControl('add', l10n.template.add_img, 'openImageSelector'),
-			this.createControl('toggle-sorting', l10n.toggle_dnd, 'toggleSorting'),
+			moreOptions,
 			this.createPaddingControl(),
-			this.createControl('settings', l10n.settings, 'on_settings_click')
+			this.createControl('settings', l10n.settings, 'on_settings_click', 38, 38)
 		]);
 	},
 	/**

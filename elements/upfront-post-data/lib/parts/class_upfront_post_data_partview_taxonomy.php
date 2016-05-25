@@ -19,7 +19,10 @@ class Upfront_Post_Data_PartView_Taxonomy extends Upfront_Post_Data_PartView {
 	public function expand_categories_template () {
 		if (empty($this->_post->ID)) return '';
 
-		$categories = get_the_category_list(', ', '', $this->_post->ID);
+		$categories = is_numeric($this->_post->ID)
+			? get_the_category_list(', ', '', $this->_post->ID)
+			: $this->_stub_category_list_for_builder()
+		;
 		if (empty($categories)) return '';
 
 		$length = isset($this->_data['categories_limit'])
@@ -32,16 +35,45 @@ class Upfront_Post_Data_PartView_Taxonomy extends Upfront_Post_Data_PartView {
         	: ' | '
         ;
 
-        if ($length) {
-			$list = array_map('trim', explode(',', $categories));
-			$categories = join($separator, array_slice($list, 0, $length));
-		}
+		$list = array_map('trim', explode(',', $categories));
+        $length = (int)$length > 0
+        	? (int)$length
+        	: count($list)
+        ;
+		$categories = join($separator, array_slice($list, 0, $length));
 
 		$out = $this->_get_template('categories');
 
 		$out = Upfront_Codec::get()->expand($out, "categories", $categories);
 
 		return $out;
+	}
+
+	/**
+	 * Spawns a stub categories output for builder
+	 *
+	 * @return string
+	 */
+	private function _stub_category_list_for_builder () {
+		$cat_ids = get_categories(array(
+			'hide_empty' => true,
+			'fields' => 'ids',
+		));
+		if (empty($cat_ids)) return false;
+
+		$query = new WP_Query(array(
+			'category__in' => array_filter(array_values($cat_ids)),
+			'posts_per_page' => 1,
+			'fields' => "ids",
+		));
+		$post_id = !empty($query->posts[0])
+			? $query->posts[0]
+			: false
+		;
+		return $post_id
+			? get_the_category_list(', ', '', $post_id)
+			: false
+		;
 	}
 
 	/**
@@ -57,7 +89,10 @@ class Upfront_Post_Data_PartView_Taxonomy extends Upfront_Post_Data_PartView {
 	public function expand_tags_template () {
 		if (empty($this->_post->ID)) return '';
 
-		$tags = get_the_tag_list('', ', ', '', $this->_post->ID);
+		$tags = is_numeric($this->_post->ID)
+			? get_the_tag_list('', ', ', '', $this->_post->ID)
+			: $this->_stub_tag_list_for_builder()
+		;
 		if (empty($tags)) return '';
 
 		$length = isset($this->_data['tags_limit'])
@@ -70,10 +105,12 @@ class Upfront_Post_Data_PartView_Taxonomy extends Upfront_Post_Data_PartView {
         	: ', '
         ;
 
-        if ($length) {
-			$list = array_map('trim', explode(',', $tags));
-			$tags = join($separator, array_slice($list, 0, $length));
-		}
+		$list = array_map('trim', explode(',', $tags));
+        $length = (int)$length > 0
+        	? (int)$length
+        	: count($list)
+        ;
+		$tags = join($separator, array_slice($list, 0, $length));
 
 
 		$out = $this->_get_template('tags');
@@ -81,6 +118,33 @@ class Upfront_Post_Data_PartView_Taxonomy extends Upfront_Post_Data_PartView {
 		$out = Upfront_Codec::get()->expand($out, "tags", $tags);
 
 		return $out;
+	}
+
+	/**
+	 * Spawns a stub tags output for builder
+	 *
+	 * @return string
+	 */
+	private function _stub_tag_list_for_builder () {
+		$tag_ids = get_tags(array(
+			'hide_empty' => true,
+			'fields' => 'ids',
+		));
+		if (empty($tag_ids)) return false;
+
+		$query = new WP_Query(array(
+			'tag__in' => array_filter(array_values($tag_ids)),
+			'posts_per_page' => 1,
+			'fields' => "ids",
+		));
+		$post_id = !empty($query->posts[0])
+			? $query->posts[0]
+			: false
+		;
+		return $post_id
+			? get_the_tag_list('', ', ', '', $post_id)
+			: false
+		;
 	}
 
 }

@@ -63,6 +63,8 @@ define([
 			this.clicked(e);
 
 			this.$el.siblings('.upfront-control-dialog-open').removeClass('upfront-control-dialog-open');
+			
+			this.listenTo(Upfront.Events, "upfront:hide:paddingPanel", this.close);
 
 			if (this.isOpen) {
 				this.close();
@@ -75,6 +77,7 @@ define([
 			this.isOpen = true;
 			this.refresh();
 			this.$el.addClass('upfront-control-dialog-open');
+			Upfront.Events.trigger('upfront:hide:subControl');
 		},
 
 		close: function() {
@@ -167,8 +170,8 @@ define([
 			me.paddingBottom.render();
 			$paddingBottomContainer.append(me.paddingBottom.$el);
 			$paddingControl.append($paddingBottomContainer);
-
-			if ( me.model.attributes.modules === undefined ) {
+			
+			if ( me.model.attributes.modules === undefined && !me.model.get_property_value_by_name("code_selection_type") ) {
 			
 				me.advancedPadding = new Upfront.Views.Editor.Field.Button({
 					className: 'upfront-field-wrap upfront-field-wrap-button upfront-field-advanced-padding',

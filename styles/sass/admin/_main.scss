@@ -1,0 +1,44 @@
+.upfront_logo {
+    background-image: url("../../img/uf-admin-sprite.svg");
+    background-repeat: no-repeat;
+    float: right;
+    background-position: -10px -10px;
+    width: 122px;
+    height: 25px;
+    overflow: hidden;
+    display: block;
+}
+.upfront_admin h1 {
+    text-transform: uppercase;
+    color: #777;
+    font-family: 'Roboto Condensed';
+    font-size: 30px;
+    letter-spacing: -0.2px;
+    padding: 20px 10px 0;
+}
+.upfront_admin .float_left {
+    float: left;
+}
+.upfront_admin .float_right {
+    float: right;
+}
+.upfront_admin .clear_before:before {
+    clear: both;
+    display: table;
+    content: " ";
+}
+.upfront_admin .clear_after:after {
+    clear: both;
+    display: table;
+    content: " ";
+}
+
+#toplevel_page_upfront .wp-menu-image:before {
+    content: "";
+    background-image: url("../../img/uf-admin-sprite.svg");
+    background-repeat: no-repeat;
+    background-position: -10px -85px;
+    width: 18px;
+    height: 18px;
+    margin-top: 7px;
+}

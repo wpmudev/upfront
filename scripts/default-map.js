@@ -7,7 +7,7 @@
 		var data = JSON.parse($el.attr('data-bg-map')),
 			options = {
 				center: new google.maps.LatLng(data.center[0], data.center[1]),
-				zoom: parseInt(data.zoom),
+				zoom: parseInt(data.zoom, 10) || 0,
 				mapTypeId: google.maps.MapTypeId[data.style],
 				panControl: (data.controls && data.controls.indexOf("pan") >= 0),
 				zoomControl: (data.controls && data.controls.indexOf("zoom") >= 0),
@@ -18,7 +18,8 @@
 				scrollwheel: false,
 				styles: (data.use_custom_map_code ? JSON.parse(data.styles) || false : false)
 			},
-			map = new google.maps.Map($el.get(0), options);
+			map = new google.maps.Map($el.get(0), options)
+		;
 		$el.data('map', map);
 		if (!!data.show_markers) {
 			var mrk = new google.maps.Marker({

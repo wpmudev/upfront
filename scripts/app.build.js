@@ -2,6 +2,7 @@
     baseUrl: ".",
     appDir: ".",
     dir: "../build",
+    optimizeCss: "standard",
     paths: {
         "scripts": '.',// needed to tell optimizer that this directory is scripts
         "elements": "../elements",

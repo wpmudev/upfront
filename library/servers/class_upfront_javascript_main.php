@@ -229,17 +229,35 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		if (empty($post_image_variants)) $post_image_variants = json_encode(array());
 
+		$prev_post_image_variants = apply_filters(
+			'upfront_get_prev_post_image_variants',
+			array(
+				'json' => true
+			)
+		);
+		if (empty($prev_post_image_variants)) $prev_post_image_variants = json_encode(array());
+		if (is_array($prev_post_image_variants)) $prev_post_image_variants = json_encode($prev_post_image_variants);
+		
+		$other_post_image_variants = apply_filters(
+			'upfront_get_other_post_image_variants',
+			array(
+				'json' => true
+			)
+		);
+		if (empty($other_post_image_variants)) $other_post_image_variants = json_encode(array());
+		if (is_array($other_post_image_variants)) $other_post_image_variants = json_encode($other_post_image_variants);
+
 		$registry = Upfront_PresetServer_Registry::get_instance();
 		$preset_servers = $registry->get_all();
-			
+
 		$preset_defaults = array();
 		$presets = '';
 		foreach ($preset_servers as $key => $server) {
 			$src = is_object($server) ? get_class($server) : $server;
-			
+
 			//$element_server = $server::get_instance(); // not PHP 5.2 safe
 			$callable = array($src, 'get_instance');
-			if (!is_callable($callable)) continue; // We have no business continuing			
+			if (!is_callable($callable)) continue; // We have no business continuing
 			$element_server = call_user_func($callable);
 
 			$element_presets = $element_server->get_presets_javascript_server();
@@ -248,7 +266,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			//Get preset defaults
 			$preset_defaults[$key] = $element_server->get_preset_defaults();
 		}
-		
+
 		$preset_defaults = json_encode($preset_defaults);
 
 		$debug = array(
@@ -294,8 +312,10 @@ class Upfront_JavascriptMain extends Upfront_Server {
      		"RESPONSIVE" => "responsive",
 			"POSTCONTENT_STYLE" => false,
 			//"DEFAULT" => (current_user_can("manage_options") ? "layout" : "content"),
-		// These need some finer control over
-			"DEFAULT" => (Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE) ? "layout" : "content"),
+		    // These need some finer control over
+			// We have to set DEFAULT to layout, because user should be able to load the editor
+			//"DEFAULT" => (Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE) ? "layout" : "content"),
+			"DEFAULT" => "layout",
 			"ALLOW" => (Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE) ? join(',', $allowed_modes) : "content")
 		));
 
@@ -307,6 +327,19 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			'OPTIONS' => (bool)Upfront_Permissions::current(Upfront_Permissions::OPTIONS),
 			'EMBED' => (bool)Upfront_Permissions::current(Upfront_Permissions::EMBED),
 			'UPLOAD' => (bool)Upfront_Permissions::current(Upfront_Permissions::UPLOAD),
+			'DEBUG' => (bool)Upfront_Permissions::current(Upfront_Permissions::SEE_USE_DEBUG),
+			'SWITCH_PRESET' => (bool)Upfront_Permissions::current(Upfront_Permissions::SWITCH_ELEMENT_PRESETS),
+			'MODIFY_PRESET' => (bool)Upfront_Permissions::current(Upfront_Permissions::MODIFY_ELEMENT_PRESETS),
+			'DELETE_PRESET' => (bool)Upfront_Permissions::current(Upfront_Permissions::DELETE_ELEMENT_PRESETS),
+			'CREATE_POST_PAGE' => (bool)Upfront_Permissions::current(Upfront_Permissions::CREATE_POST_PAGE),
+			'EDIT' => (bool)Upfront_Permissions::current(Upfront_Permissions::EDIT),
+			'EDIT_OWN' => (bool)Upfront_Permissions::current(Upfront_Permissions::EDIT_OWN),
+			'LAYOUT_MODE' => (bool)Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE),
+			'SINGLEPOST_LAYOUT_MODE' => (bool)Upfront_Permissions::current(Upfront_Permissions::SINGLEPOST_LAYOUT_MODE),
+			'SINGLEPAGE_LAYOUT_MODE' => (bool)Upfront_Permissions::current(Upfront_Permissions::SINGLEPAGE_LAYOUT_MODE),
+			'HOME_LAYOUT_MODE' => (bool)Upfront_Permissions::current(Upfront_Permissions::HOME_LAYOUT_MODE),
+			'ARCHIVE_LAYOUT_MODE' => (bool)Upfront_Permissions::current(Upfront_Permissions::ARCHIVE_LAYOUT_MODE),
+			'RESPONSIVE_MODE' => (bool)Upfront_Permissions::current(Upfront_Permissions::RESPONSIVE_MODE),
 		));
 
 		$l10n = json_encode($this->_get_l10n_strings());
@@ -345,7 +378,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
 
 		$menus = json_encode(wp_get_nav_menus());
-
+		$is_rtl = (int) is_rtl();
 		$main = <<<EOMainJs
 // Set up the global namespace
 var Upfront = window.Upfront || {};
@@ -375,11 +408,14 @@ Upfront.mainData = {
 	presetDefaults: {$preset_defaults},
 	themeColors: {$theme_colors},
 	postImageVariants: {$post_image_variants},
+	prevPostImageVariants: {$prev_post_image_variants},
+	otherPostImageVariants: {$other_post_image_variants},
 	content: {$content},
 	content_settings: {$content_settings},
 	l10n: {$l10n},
 	font_icons: {$redactor_font_icons},
-	menus: {$menus}
+	menus: {$menus},
+	isRTL: {$is_rtl}
 };
 EOMainJs;
 		$this->_out(new Upfront_JavascriptResponse_Success($main));

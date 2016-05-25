@@ -62,5 +62,10 @@
 
 <?php } ?>
 
+.upost-data-object-post_data.<?php echo $properties['id'] ?> .upfront-indented_content {
+	padding-left: <?php echo !empty($properties['calculated_left_indent']) ? $properties['calculated_left_indent'] : 0 ?>px;
+	padding-right: <?php echo !empty($properties['calculated_right_indent']) ? $properties['calculated_right_indent'] : 0 ?>px;
+}
+
 
 <?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>

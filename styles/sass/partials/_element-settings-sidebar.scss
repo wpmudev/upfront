@@ -142,6 +142,10 @@
 	display: none;
 }
 
+.menu_structure_module, .menu-structure-body {
+	overflow: auto;
+}
+
 .menu-structure-module-item {
 	font-size: 12px;
 	margin-right: 15px;

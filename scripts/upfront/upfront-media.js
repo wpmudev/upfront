@@ -17,6 +17,13 @@ define([
 
 // ----- Models -----
 
+	var MediaItem_Model = Backbone.Model.extend({
+		defaults: {
+			thumbnail: "<span class='upfront-image-upload-placeholder'></span>",
+            insert_option: "image_insert"
+		}
+	});
+	
 	var MediaCollection_Model = Backbone.Collection.extend({
 		defaults:{
 			thumbnail: '',
@@ -135,17 +142,12 @@ define([
 			this.trigger("change");
 		}
 	});
-	var MediaItem_Model = Backbone.Model.extend({
-		defaults: {
-			thumbnail: "<span class='upfront-image-upload-placeholder'></span>",
-            insert_option: "image_insert"
-		}
+
+	var MediaFilter_Item = Backbone.Model.extend({
 	});
 
 	var MediaFilter_Collection = Backbone.Collection.extend({
-		model: Media_FilterItem
-	});
-	var MediaFilter_Item = Backbone.Model.extend({
+		model: MediaFilter_Item
 	});
 
 	var ActiveMediaFilter_Collection = Backbone.Model.extend({
@@ -297,8 +299,12 @@ define([
 			return data;
 		},
 		has_upload: function () {
-			if (!this.themeImages) return true; // Allow when not looking into theme images
-			return Upfront.Application.is_builder(); // Otherwise, allow if in builder
+			if ( Upfront.Settings.Application.PERMS.UPLOAD ) {
+				if (!this.themeImages) return true; // Allow when not looking into theme images
+				return Upfront.Application.is_builder(); // Otherwise, allow if in builder
+			} else {
+				return false; // disabling upload when user role has no permission
+			}
 		}
 	});
 
@@ -507,6 +513,7 @@ define([
                 var self = this,
                     sections = _([
                         'change_title',
+						'size_hints',
                         'add_labels',
                         'existing_labels',
                         'insert_options',
@@ -514,6 +521,7 @@ define([
                     ]),
                     renderers = _([
                         'render_title',
+						'render_size_hint',
                         'render_labels_adding',
                         'render_shared_labels',
                         'render_additional_sizes',
@@ -547,12 +555,30 @@ define([
                 });
 
 			},
+			render_size_hint: function() {
+				var me = this,
+					$hub = this.$el.find('.size_hints'),
+					sizeWidth,
+					sizeHeight;
+					
+				$hub.empty();
+				
+				if(this.model.length === 1) {
+					var image = this.model.at(0).get('image'),
+						$container = $('<div class="upfront-size-hints upfront-field-wrap upfront-field-wrap-text"><label class="upfront-field-label upfront-field-label-block">'+ l10n.natural_size +'</label></div>');
+					if ( image !== undefined ) {
+						$container.append('<span class="upfront-size-hint-width">'+ l10n.width_label +': <span>'+ image.width + l10n.px_label +'</span></span>');
+						$container.append('<span class="upfront-size-hint-height">'+ l10n.height_label +': <span>'+ image.height + l10n.px_label +'</span></span>');
+
+						$hub.append($container);
+					}
+				}
+			},
 			render_title: function () {
 				var	me = this,
 					$hub = this.$el.find(".change_title");
 				$hub.empty();
 				if (this.model.length > 1) {
-
 					$hub.append('<span class="selected_length">' + l10n.files_selected.replace(/%d/, this.model.length) + '</span>');
 				} else {
 					this.title_field = new Upfront.Views.Editor.Field.Text({
@@ -809,7 +835,7 @@ define([
 			render: function () {
 				var search = ActiveFilters.get("search").first(),
 					obj = search.toJSON();
-				obj.total = ActiveFilters.get("search").length;
+				obj.total = ActiveFilters.max_items;
 				this.$el.empty().append(
 					_.template(l10n.showing_total_results + ' <b class="search-text">{{value}}</b> <a href="#clear" class="clear_search">' + l10n.clear_search + '</a>', obj)
 				);
@@ -1890,7 +1916,7 @@ define([
 		},
 		initialize: function (collection, opts) {
 			var data = data || {};
-			if(collection.models)
+			if((collection || {}).models)
 				collection = new MediaCollection_Model(collection);
 			else
 				collection = new MediaCollection_Model();
@@ -1992,10 +2018,11 @@ define([
 		start_loading: function () {
 			this.loading = new Upfront.Views.Editor.Loading({
 				loading: l10n.loading_media_files,
+				timeout: 500,
 				done: 'Loaded'
 			});
 			this.loading.render();
-			this.$el.append(this.loading.$el);
+			this.loading.$el.insertAfter(this.$el);
 		},
 		end_loading: function (callback) {
 			if (this.loading && this.loading.done) this.loading.done(callback);

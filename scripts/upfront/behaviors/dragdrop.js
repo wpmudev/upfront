@@ -119,6 +119,16 @@ DragDrop.prototype = {
 			}
 			return false;
 		}
+		//Disable drag when LAYOUT_MODE permission disabled
+		if (!Upfront.Application.user_can_modify_layout()) {
+			if ( this.$me.data('ui-draggable') ){
+				if ( this.is_group || !this.is_disabled ) {
+					this.$me.draggable('option', 'disabled', false);
+				}
+			}
+
+			return false;
+		}
 		
 		this.$me.draggable({
 			revert: true,
@@ -738,7 +748,9 @@ DragDrop.prototype = {
 			$drop.css({
 				position: 'absolute',
 				top: pos.top,
-				left: pos.left + ( drop.type == 'side-after' ? $insert_rel.width() : 0 )
+				left: !Upfront.Util.isRTL()
+					? pos.left + ( drop.type == 'side-after' ? $insert_rel.width() : 0 )
+					: pos.left + ( drop.type == 'side-after' ? 0 : $insert_rel.width() )
 			});
 		}
 		else if ( drop_move ) {
@@ -862,11 +874,11 @@ DragDrop.prototype = {
 			width = $helper.outerWidth(),
 
 			current_offset = $helper.offset(),
-			current_left = current_offset.left,
+			current_left = !Upfront.Util.isRTL() ? current_offset.left : current_offset.left+width,
 			current_top = current_offset.top,
 			current_bottom = current_top+height,
-			current_right = current_left+width,
-			current_x = current_left+(width/2),
+			current_right = !Upfront.Util.isRTL() ? current_left+width : current_left-width,
+			current_x = !Upfront.Util.isRTL() ? current_left+(width/2) : current_left-(width/2),
 			current_y = current_top+(height/2),
 
 			current_grid = ed.get_grid(current_left, current_top),
@@ -1624,4 +1636,4 @@ return DragDrop;
 });
 	
 })(jQuery);
-//@ sourceURL=dragdrop.js
+//# sourceURL=dragdrop.js

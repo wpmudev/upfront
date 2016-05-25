@@ -2,6 +2,72 @@ Change Log
 ============
 
 
+1.2.2 - 2016-04-29
+-------------------------------------------------------------------------------
+- Fix: store image element_size property per breakpoint.
+
+1.2.1 - 2016-04-28
+-------------------------------------------------------------------------------
+- Fix: featured image swap button issue.
+- Fix: admin area shared abstraction checks.
+- Fix: make the posts and comments dialog link context-aware.
+- Fix: same ID being used with multiple calendar widgets.
+- Fix: include new strings for l10n.
+- Fix: refactor deprecated jQuery calls.
+- Fix: allow responsive per-preset post data element indents.
+
+1.2 - 2016-04-14
+-------------------------------------------------------------------------------
+- Add: admin interface.
+- Add: general and debug settings in admin interface.
+- Add: user roles restrictions in admin interface.
+- Add: experimental performance optimization in admin interface.
+- Add: image element redesign.
+- Add: ready-made CSS selectors for post data elements.
+- Add: keyboard shortcut for grid toggle (Alt+G)
+
+- Fix: text element with image in content options issue.
+- Fix: responsive breakpoint toggling image sizes in editor.
+- Fix: code element resizing/height issue.
+- Fix: post part inputs editing issue.
+- Fix: gallery element caption text options.
+- Fix: responsive bottom padding clearing issue.
+- Fix: responsive performance issue.
+- Fix: background map region controls edit issue.
+- Fix: optimize refresh in rearranging menu element items.
+
+1.1.1 - 2016-03-31
+-------------------------------------------------------------------------------
+- Fix: double enter on list editing should end list behavior.
+- Fix: native WP aligned images style conflict.
+- Fix: code element with pre-existing content editables action.
+- Fix: breakpoints check for IE8.
+- Fix: media queries support for IE8.
+- Fix: featured image wrapper takes space with hide fallback.
+- Fix: element with user set padding resize calculus.
+
+1.1 - 2016-03-23
+-------------------------------------------------------------------------------
+- Add: new single post layout editing experience.
+- Add: right-to-left compatibility.
+- Add: media manager page size.
+- Add: new responsive region editing trigger location.
+- Add: posts dialog sorting.
+- Add: ability to select items across pages in media manager.
+- Fix: gallery element linking issue.
+- Fix: button element default preset.
+- Fix: list creation alignment issue in content editing.
+- Fix: slider preset captions issue.
+- Fix: disallow spaces in uploaded images.
+- Fix: slider initial image size issue.
+- Fix: map element and region address refresh issue.
+- Fix: content editing link insertion in certain scenarios issue.
+- Fix: button element resizing and padding issue.
+- Fix: IE11 page/post layout edit link issue.
+- Fix: better asset optimization.
+- Fix: global background with parallax issue.
+- Fix: map element code editor resize issue.
+
 1.0.5 - 2016-02-19
 -------------------------------------------------------------------------------
 - Fix: remove text element edit content overlay

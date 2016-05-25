@@ -204,7 +204,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
     editPostContent: function(){
         this.editor.editContents();
-        Upfront.Events.trigger('upfront:element:edit:start', 'write', this);
+        //Upfront.Events.trigger('upfront:element:edit:start', 'write', this);
     },
 
 	refreshMarkup: function () {
@@ -264,8 +264,9 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	redirectPostEdit: function (post) {
 		//window.location = Upfront.Settings.Content.edit.post + post.id;
 		var path = '/edit/' + post.get('post_type') + '/' + post.id;
+		if(_upfront_post_data) _upfront_post_data.post_id = post.id;
 		Upfront.Application.navigate(path, {trigger: true});
-		if ( Upfront.Settings.Application.MODE.ALLOW.indexOf(Upfront.Settings.Application.MODE.LAYOUT) != -1 )
+		if (Upfront.Application.user_can("EDIT"))
 			Upfront.Application.set_current(Upfront.Settings.Application.MODE.LAYOUT);
 	},
 
@@ -452,13 +453,13 @@ var Settings = ElementSettings.extend({
 			styleTpl: styleTpl,
 		},
 	},
-	
+
 	initialize: function (opts) {
 		//If editor show only general preset
 		if (location.pathname.indexOf('create_new') === -1) {// you are in exporter
 			this.panels = { General: Settings_PostPanel };
 		}
-		
+
 		// Call the super constructor here, so that the appearance panel is instantiated
 		this.constructor.__super__.initialize.call(this, opts);
 	},

@@ -2,12 +2,13 @@ define([
 	'elements/upfront-post-data/js/panel-abstractions',
 	'text!elements/upfront-post-data/tpl/preset-styles/featured_image.html'
 ], function (Panel, template) {
+	var l10n = Upfront.Settings.l10n.post_data_element;
 
 	var Modules = {};
 	Modules.template = template;
 
 	Modules.part_featured_image = Panel.Toggleable.extend({
-		title: "Feature Image", 
+		title: l10n.thumb.fimg_part_title, 
 		data_part: 'featured_image',
 		get_fields: function () {
 			var me = this;
@@ -17,36 +18,36 @@ define([
 					property: "resize_featured",
 					multiple: false,
 					default_value: 0,
-					values: [{ label: 'Re-size to fit Container', value: '1' }]
+					values: [{ label: l10n.thumb.resize_to_fit, value: '1' }]
 				},
 				{
 					type: "Select",
-					label: "If Post Has No Feat. Image",
+					label: l10n.thumb.fallback,
 					property: "fallback_option",
 					default_value: '',
 					values: [
-						{ label: 'Hide', value: 'hide' },
-						{ label: 'Use color', value: 'color' },
-						{ label: 'Use default image', value: 'image' }
+						{ label: l10n.thumb.hide, value: 'hide' },
+						{ label: l10n.thumb.use_color, value: 'color' },
+						{ label: l10n.thumb.use_default_img, value: 'image' }
 					]
 				},
 				{
 					type: "Color",
 					property: "fallback_color",
-					label: "Fallback Color"
+					label: l10n.thumb.fallback_color
 				},
 				{
 					type: "Button",
 					compact: true,
 					property: "fallback_image",
-					label: "Choose",
+					label: l10n.thumb.fallback_image,
 					on_click: function () {
 						console.log(this.model.get("fallback_image"));
 						Upfront.Media.Manager.open({
 							multiple_selection: false,
 							media_type:['images']
 						}).done(function(popup, result) {
-							if (!result.length) return false;
+							if (!result || !result.length) return false;
 							var imageModel = result.models[0],
 								img = imageModel.get('image') ? imageModel.get('image') : result.models[0],
 								url = 'src' in img ? img.src : ('get' in img ? img.get('original_url') : false)

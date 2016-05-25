@@ -4,7 +4,7 @@ define([
 	'scripts/upfront/behaviors/dragdrop',
 	'scripts/upfront/behaviors/resize'
 ], function (DragDrop, Resize) {
-	
+
 var GridEditor = {
 	lightbox_cols: false,
 	main: {$el: null, top: 0, left: 0, right: 0},
@@ -52,7 +52,7 @@ var GridEditor = {
 	object_selector_direct: '> .upfront-object-view > .upfront-object',
 
 	_id: 0,
-	
+
 	drag_instances: {},
 	resize_instances: {},
 	wrapper_resize_instances: {},
@@ -78,7 +78,9 @@ var GridEditor = {
 	 */
 	get_grid: function(x, y){
 		var	ed = Upfront.Behaviors.GridEditor,
-			grid_x = Math.round((x-ed.grid_layout.left)/ed.col_size)+1,
+			grid_x = !Upfront.Util.isRTL()
+				? Math.round((x-ed.grid_layout.left)/ed.col_size)+1
+				: Math.round((ed.grid_layout.right-x)/ed.col_size)+1,
 			grid_y = Math.ceil((y-ed.grid_layout.top)/ed.baseline)+1;
 		return {x: grid_x, y: grid_y};
 	},
@@ -95,7 +97,9 @@ var GridEditor = {
 			height = parseFloat($el.css('height')),
 			offset = $el.offset(),
 			top = offset.top,
-			left = offset.left,
+			bottom = top + height,
+			left = !Upfront.Util.isRTL() ? offset.left : offset.left + width,
+			right = !Upfront.Util.isRTL() ? left + width : left - width,
 			grid = ed.get_grid(left, top),
 			col = ($el.data('current_col') ? $el.data('current_col') : Math.round(width/ed.col_size)),
 			row = Math.floor(height/ed.baseline),
@@ -106,8 +110,8 @@ var GridEditor = {
 			position = {
 				top: Math.round(top),
 				left: Math.round(left),
-				bottom: Math.round(top+height),
-				right: Math.round(left+width)
+				bottom: Math.round(bottom),
+				right: Math.round(right)
 			},
 			pos_grid = {
 				top: grid.y,
@@ -125,7 +129,7 @@ var GridEditor = {
 			height: height,
 			center: {
 				y: Math.round(top+(height/2)),
-				x: Math.round(left+(width/2))
+				x: !Upfront.Util.isRTL() ? Math.round(left+(width/2)) : Math.round(left-(width/2))
 			},
 			col: col,
 			row: row,
@@ -280,7 +284,7 @@ var GridEditor = {
 		});
 		return move_limit;
 	},
-	
+
 	get_resize_limit: function (aff_els, containment) {
 		var resize_limit = [containment.grid.left, containment.grid.right];
 		_.each(aff_els.left, function(each){
@@ -664,7 +668,7 @@ var GridEditor = {
 				wrap_left = false,
 				insert_index = false
 			;
-				
+
 			// Reset the column size if it's bigger than it allowed to
 			$wrap_els.each(function(index){
 				if ( this.offsetWidth <= 0 ) return; // Element is not visible
@@ -675,7 +679,7 @@ var GridEditor = {
 					ed.update_model_margin_classes(wrap_el.$el, [ed.grid.class + wrap_el.col]);
 				}
 			});
-			
+
 			// Clear the wrapper when wrapper is rendered side-by-side, but the elements is not conflicting each other
 			$wrap_els.each(function(index){
 				var wrap_el = ed.get_el($(this)),
@@ -983,7 +987,7 @@ var GridEditor = {
 		this.time_end('fn update_position_data');
 	},
 
-	
+
 
 	/**
 	 * Update wrappers
@@ -1060,11 +1064,16 @@ var GridEditor = {
 				right: ''
 			});*/
 		});
+		var wrapsToRemove = [];
 		wraps.each(function(wrap){
 			if ( $('#'+wrap.get_wrapper_id()).size() == 0 ) {
-				wraps.remove(wrap);
+				wrapsToRemove.push(wrap);
 			}
 		});
+		_.each(wrapsToRemove, function(wrap) {
+			wraps.remove(wrap);
+		});
+
 		Upfront.Events.trigger("entity:wrappers:update", parent_model);
 		this.time_end('fn update_wrappers');
 	},
@@ -1100,6 +1109,14 @@ var GridEditor = {
 		}
 		if ( $me.data('ui-resizable') ){
 			$me.resizable('option', 'disabled', false);
+			return false;
+		}
+		//Prevent object resize if RESIZE is disabled
+		if (!Upfront.Application.user_can_modify_layout()) {
+			if ( $me.data('ui-resizable') ){
+				$me.resizable('option', 'disabled', false);
+			}
+
 			return false;
 		}
 		//$me.append('<span class="upfront-icon-control upfront-icon-control-resize-nw upfront-resize-handle-nw ui-resizable-handle ui-resizable-nw"></span>');
@@ -1183,8 +1200,8 @@ var GridEditor = {
 					top: rsz_pos.top
 				});
 				$resize_placeholder.insertBefore($me);
-				
-				view.trigger('entity:resize_start', {row: me.row, col: me.col, height: me.height, width: me.width}, view, view.model);
+
+				view.trigger('entity:resize_start', {row: me.row, col: me.col, height: me.height, width: me.width, axis: axis}, view, view.model);
 				Upfront.Events.trigger("entity:resize_start", view, view.model);
 			},
 			resize: function(e, ui){
@@ -1236,8 +1253,8 @@ var GridEditor = {
 				if ( !expand_lock && axis != 'nw' )
 					$resize_placeholder.css('height', rsz_row*ed.baseline);
 				view.update_size_hint(rsz_col*ed.col_size, rsz_row*ed.baseline);
-				
-				view.trigger('entity:resizing', {row: rsz_row, col: rsz_col, height: rsz_row*ed.baseline, width: rsz_col*ed.col_size}, view, view.model);
+
+				view.trigger('entity:resizing', {row: rsz_row, col: rsz_col, height: rsz_row*ed.baseline, width: rsz_col*ed.col_size, axis: axis}, view, view.model);
 			},
 			stop: function(e, ui){
 				Upfront.Events.trigger("entity:pre_resize_stop", view, view.model, ui);
@@ -1252,34 +1269,22 @@ var GridEditor = {
 					move_limit = ed.get_move_limit(aff_els, ed.containment),
 					prev_col = Math.ceil(ui.originalSize.width/ed.col_size),
 					prev_row = Math.ceil(ui.originalSize.height/ed.baseline),
+					$post_data_object =  $me.find(".upost-data-object").length ? $me.find(".upost-data-object") : false,
 					rsz_col = $me.data('resize-col'),
-					rsz_row = $me.data('resize-row'),
+					rsz_row = parseFloat( $me.data('resize-row') ),
 
 					regions = app.layout.get('regions'),
 					region = regions.get_by_name($region.data('name')),
 					$container = is_object ? ed.containment.$el : ( is_parent_group ? view.group_view.$el.find('.upfront-editable_entities_container:first') : $region.find('.upfront-modules_container > .upfront-editable_entities_container:first') ),
 					module_selector = is_object ? ".upfront-wrapper > .upfront-object-view > .upfront-object" : ".upfront-wrapper > .upfront-module-view > .upfront-module, .upfront-wrapper > .upfront-module-group",
-					model_breakpoint, breakpoint_data
+					model_breakpoint, breakpoint_data, padding_top_row, padding_bottom_row
 				;
-
+				
 				// Prevents quick scroll when resizing
 				ed.resizing = false;
 
 				$resize_placeholder.remove();
 				$resize.remove();
-
-				/*ed.update_class($me, ed.grid.class, rsz_col);
-				if ( axis == 'nw' ){
-					margin.current.left = margin.original.left - (rsz_col-prev_col);
-					margin.current.top = margin.original.top - (rsz_row-prev_row);
-					$me.data('margin', margin);
-					ed.update_margin_classes($me);
-				}
-				else if ( axis == 'se' && wrap ){
-					ed.adjust_affected_right(wrap, aff_els.right, [me], me.grid.left+rsz_col-1, true);
-					if ( expand_lock )
-						ed.adjust_affected_bottom(wrap, aff_els.bottom, [me], me.grid.top+rsz_row-1, true);
-				}*/
 
 				// Make sure CSS is reset, to fix bug when it keeps all resize CSS for some reason
 				$me.css({
@@ -1300,22 +1305,9 @@ var GridEditor = {
 					var objects = model.get('objects');
 					if ( objects && objects.length == 1 ){
 						objects.each(function(object){
-							object.set_property('row', rsz_row);
+							object.set_property('row', rsz_row );
 						});
 					}
-
-					// Update model value
-					/*if ( axis == 'nw' ){
-						model.replace_class([
-							ed.grid.class+rsz_col,
-							ed.grid.left_margin_class+margin.current.left,
-							ed.grid.top_margin_class+margin.current.top,
-						].join(' '));
-					}
-					else{
-						model.replace_class(ed.grid.class+rsz_col);
-						ed.update_model_margin_classes($container.find(module_selector).not($me));
-					}*/
 				}
 				else {
 					model_breakpoint = Upfront.Util.clone(model.get_property_value_by_name('breakpoint') || {});
@@ -1324,14 +1316,7 @@ var GridEditor = {
 					breakpoint_data = model_breakpoint[breakpoint.id];
 					breakpoint_data.edited = true;
 					breakpoint_data.row = rsz_row;
-					//breakpoint_data.col = rsz_col;
-					/*if ( axis == 'nw' ){
-						breakpoint_data.left = margin.current.left;
-						breakpoint_data.top = margin.current.top;
-					}
-					else {
-						ed.update_model_margin_classes($container.find(module_selector).not($me));
-					}*/
+
 					model.set_property('breakpoint', model_breakpoint);
 					// Also resize containing object if it's only one object
 					var objects = model.get('objects');
@@ -1360,7 +1345,7 @@ var GridEditor = {
 				$me.removeData('resize-col');
 				$me.removeData('resize-row');
 
-				view.trigger('entity:resize_stop', {row: rsz_row, col: rsz_col, height: rsz_row*ed.baseline, width: rsz_col*ed.col_size}, view, view.model);
+				view.trigger('entity:resize_stop', {row: rsz_row, col: rsz_col, height: rsz_row*ed.baseline, width: rsz_col*ed.col_size, axis: axis}, view, view.model);
 				Upfront.Events.trigger("entity:resize_stop", view, view.model, ui);
 				Upfront.Events.trigger("entity:resized", view, view.model);
 			}
@@ -1460,8 +1445,8 @@ var GridEditor = {
 		Upfront.Events.trigger("entity:resized", view, view.model);
 		return true;
 	},
-	
-	
+
+
 
 
 	/**
@@ -1506,6 +1491,18 @@ var GridEditor = {
 			return false;
 		if ( $me.data('ui-resizable') ){
 			$me.resizable('option', 'disabled', false);
+			return false;
+		}
+
+		//Prevent object resize if RESIZE is disabled
+		if (!Upfront.Application.user_can_modify_layout()) {
+			if ( $me.data('ui-resizable') ){
+				$me.resizable('option', 'disabled', false);
+			}
+
+			//Remove the handlers
+			$me.find('.upfront-resize-handle-wrapper').remove();
+
 			return false;
 		}
 		//$me.append('<span class="upfront-resize-handle-wrapper upfront-resize-handle-w ui-resizable-handle ui-resizable-w">');
@@ -1602,7 +1599,7 @@ var GridEditor = {
 						min_col = child_min_col > min_col ? child_min_col : min_col;
 					});
 				}
-				
+
 				$resize = $('<div class="upfront-resize" style="height:'+me.height+'px;"></div>');
 				$resize.css({
 					height: me.height,
@@ -1659,7 +1656,7 @@ var GridEditor = {
 						also_min_col = 0;
 					}
 				}
-				
+
 				$resize_placeholder = $('<div class="upfront-resize-placeholder"></div>');
 				$resize_placeholder.css({
 					width: (((also_resize ? also_resize.col + me.col : me.col)/container.col)*100) + '%',
@@ -1717,19 +1714,19 @@ var GridEditor = {
 					top: me_pos.top
 				});
 				$resize_placeholder.insertBefore($me);
-				
+
 				// Trigger child events
 				_.each(child_els, function (child) {
-					child.view.trigger('entity:resize_start', {row: child.el.row, col: child.el.col, height: child.el.height, width: child.el.width}, child.view, child.view.model);
+					child.view.trigger('entity:resize_start', {row: child.el.row, col: child.el.col, height: child.el.height, width: child.el.width, axis: axis}, child.view, child.view.model);
 				});
 				_.each(also_child_els, function (child) {
-					child.view.trigger('entity:resize_start', {row: child.el.row, col: child.el.col, height: child.el.height, width: child.el.width}, child.view, child.view.model);
+					child.view.trigger('entity:resize_start', {row: child.el.row, col: child.el.col, height: child.el.height, width: child.el.width, axis: ( axis == 'w' ? 'e' : 'w' )}, child.view, child.view.model);
 				});
-				
+
 				// Trigger main event
-				view.trigger('entity:wrapper:resize_start', {row: me.row, col: me.col, height: me.height, width: me.width}, view, view.model);
+				view.trigger('entity:wrapper:resize_start', {row: me.row, col: me.col, height: me.height, width: me.width, axis: axis}, view, view.model);
 				if ( also_view ) {
-					also_view.trigger('entity:wrapper:resize_start', {row: also_resize.row, col: also_resize.col, height: also_resize.height, width: also_resize.width}, also_view, also_view.model);
+					also_view.trigger('entity:wrapper:resize_start', {row: also_resize.row, col: also_resize.col, height: also_resize.height, width: also_resize.width, axis: ( axis == 'w' ? 'e' : 'w' )}, also_view, also_view.model);
 				}
 				Upfront.Events.trigger("entity:wrapper:resize_start", view, view.model, also_view, also_view.model);
 
@@ -1792,19 +1789,19 @@ var GridEditor = {
 					minWidth: rsz_col*ed.col_size,
 					maxWidth: rsz_col*ed.col_size,
 				});
-				
+
 				// Trigger child events
 				_.each(child_els, function (child) {
-					child.view.trigger('entity:resizing', {row: child.el.row, col: rsz_col, height: child.el.height, width: rsz_col*ed.col_size}, child.view, child.view.model);
+					child.view.trigger('entity:resizing', {row: child.el.row, col: rsz_col, height: child.el.height, width: rsz_col*ed.col_size, axis: axis}, child.view, child.view.model);
 				});
 				_.each(also_child_els, function (child) {
-					child.view.trigger('entity:resizing', {row: child.el.row, col: also_col, height: child.el.height, width: also_col*ed.col_size}, child.view, child.view.model);
+					child.view.trigger('entity:resizing', {row: child.el.row, col: also_col, height: child.el.height, width: also_col*ed.col_size, axis: ( axis == 'w' ? 'e' : 'w' )}, child.view, child.view.model);
 				});
-				
+
 				// Trigger main event
-				view.trigger('entity:wrapper:resizing', {row: me.row, col: rsz_col, height: me.height, width: rsz_col*ed.col_size}, view, view.model);
+				view.trigger('entity:wrapper:resizing', {row: me.row, col: rsz_col, height: me.height, width: rsz_col*ed.col_size, axis: axis}, view, view.model);
 				if ( also_view ) {
-					also_view.trigger('entity:wrapper:resizing', {row: also_resize.row, col: also_col, height: also_resize.height, width: also_col*ed.col_size}, also_view, also_view.model);
+					also_view.trigger('entity:wrapper:resizing', {row: also_resize.row, col: also_col, height: also_resize.height, width: also_col*ed.col_size, axis: ( axis == 'w' ? 'e' : 'w' )}, also_view, also_view.model);
 				}
 				ed.time_end('fn wrapper_resize_resizing');
 			},
@@ -1935,17 +1932,17 @@ var GridEditor = {
 
 				// Trigger child events
 				_.each(child_els, function (child) {
-					child.view.trigger('entity:resize_stop', {row: child.el.row, col: rsz_col, height: child.el.height, width: rsz_col*ed.col_size}, child.view, child.view.model);
+					child.view.trigger('entity:resize_stop', {row: child.el.row, col: rsz_col, height: child.el.height, width: rsz_col*ed.col_size, axis: axis}, child.view, child.view.model);
 				});
 				_.each(also_child_els, function (child) {
-					child.view.trigger('entity:resize_stop', {row: child.el.row, col: also_col, height: child.el.height, width: also_col*ed.col_size}, child.view, child.view.model);
+					child.view.trigger('entity:resize_stop', {row: child.el.row, col: also_col, height: child.el.height, width: also_col*ed.col_size, axis: ( axis == 'w' ? 'e' : 'w' )}, child.view, child.view.model);
 				});
-				
+
 				// Trigger main event
-				view.trigger('entity:wrapper:resize_stop', {row: me.row, col: rsz_col, height: me.height, width: rsz_col*ed.col_size}, view, view.model);
+				view.trigger('entity:wrapper:resize_stop', {row: me.row, col: rsz_col, height: me.height, width: rsz_col*ed.col_size, axis: axis}, view, view.model);
 				view.trigger('entity:wrapper:resize', {col: rsz_col}, view, view.model);
 				if ( also_view ) {
-					also_view.trigger('entity:wrapper:resize_stop', {row: also_resize.row, col: also_col, height: also_resize.height, width: rsz_col*ed.col_size}, also_view, also_view.model);
+					also_view.trigger('entity:wrapper:resize_stop', {row: also_resize.row, col: also_col, height: also_resize.height, width: rsz_col*ed.col_size, axis: ( axis == 'w' ? 'e' : 'w' )}, also_view, also_view.model);
 					also_view.trigger('entity:wrapper:resize', {col: also_col}, also_view, also_view.model);
 				}
 				Upfront.Events.trigger("entity:wrapper:resize_stop", view, view.model, also_view, also_view.model, ui);
@@ -2316,9 +2313,9 @@ var GridEditor = {
 			});
 		});
 		_.each(lines, function(line_modules){
-			var line_col = _.map(line_modules, function(data){ 
+			var line_col = _.map(line_modules, function(data){
 					return data.col; // Elements in a line have to fit the whole region now
-				}).reduce(function(sum, col){ 
+				}).reduce(function(sum, col){
 					return sum + col;
 				}),
 				spacer_col = _.map(line_modules, function(data){
@@ -2342,7 +2339,7 @@ var GridEditor = {
 					if ( data.wrapper_breakpoint[breakpoint_id].edited && _.isNumber(data.wrapper_breakpoint[breakpoint_id].col) ) {
 						new_col = new_col > data.wrapper_breakpoint[breakpoint_id].col ? data.wrapper_breakpoint[breakpoint_id].col : new_col;
 					}
-					data.breakpoint[breakpoint_id].left = 0; 
+					data.breakpoint[breakpoint_id].left = 0;
 					data.breakpoint[breakpoint_id].col = new_col;
 					data.breakpoint[breakpoint_id].order = index;
 					data.module.set_property('breakpoint', data.breakpoint, silent);
@@ -2389,7 +2386,7 @@ var GridEditor = {
 				data[breakpoint_id] = { edited: false };
 			}
 			if ( !data[breakpoint_id].edited ){
-				if ( region.is_main() || ( !sub || sub.match(/^(left|right)$/) )  ){ 
+				if ( region.is_main() || ( !sub || sub.match(/^(left|right)$/) )  ){
 					// Sidebar/main region, let's make the column to full width on responsive
 					data[breakpoint_id].col = default_breakpoint.columns;
 				}
@@ -3383,6 +3380,6 @@ var GridEditor = {
 
 	return GridEditor;
 });
-	
+
 })(jQuery);
-//@ sourceURL=grid-editor.js
+//# sourceURL=grid-editor.js

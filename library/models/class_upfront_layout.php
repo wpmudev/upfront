@@ -46,7 +46,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 			// Always try to load from theme files if layout is empty
 			if ($layout === false || $layout->is_empty()) {
 				$layout = self::from_specific_files(array(), $cascade, $storage_key); // Load from *specific* files only, no fallback
-
+				if ($layout && !$layout->is_empty()) $layout->set("template_type", "file");
 			}
 
 			if ($layout && !$layout->is_empty()) {
@@ -64,6 +64,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 			if (!$layout->is_empty()) {
 				$layout->set("current_layout", self::id_to_type($id));
+				$layout->set("template_type", "file");
 				return apply_filters('upfront_layout_from_id', $layout, self::id_to_type($id), self::$cascade);
 			}
 		}
@@ -358,9 +359,10 @@ class Upfront_Layout extends Upfront_JsonModel {
 		global $wpdb;
 		self::set_storage_key($storage_key);
 		$storage_key = self::get_storage_key();
+		$sql_storage_key = $wpdb->esc_like($storage_key);
 
 		$results = array();
-		$list = $wpdb->get_row("SELECT option_name FROM $wpdb->options WHERE ( `option_name` LIKE '{$storage_key}-single%' OR `option_name` LIKE '{$storage_key}-archive%' )");
+		$list = $wpdb->get_col("SELECT option_name FROM $wpdb->options WHERE ( `option_name` LIKE '{$storage_key}-single%' OR `option_name` LIKE '{$storage_key}-archive%' )");
 		if (empty($list)) return $results;
 
 		foreach ($list as $item) {
@@ -719,4 +721,5 @@ class Upfront_Layout extends Upfront_JsonModel {
 		}
 		
 	}
+
 }

@@ -828,7 +828,7 @@ var Ueditor = function($el, options) {
 			observeLinks: false,
 			observeImages: false,
 			formattingTags: ['h1', 'h2', 'h3', 'h4', 'p', 'pre'],
-            inserts: ["image", "embed"],
+            inserts: Upfront.Settings.Application.PERMS.EMBED ? ["image", "embed"] : ["image"],
             linkTooltip: false,
             cleanOnPaste: true, // font icons copy and paste wont work without this set to true - BUT, with it set to true, paste won't work AT ALL!!!
             replaceDivs: false,
@@ -839,7 +839,8 @@ var Ueditor = function($el, options) {
             //removeDataAttr: false,
             removeEmpty: false,
             imageResizable: false,
-            lang: 'upfront' // <-- This is IMPORTANT. See the l10n proxying bit in `hackRedactor`
+            lang: 'upfront', // <-- This is IMPORTANT. See the l10n proxying bit in `hackRedactor`,
+            direction: Upfront.Util.isRTL() ? 'rtl' : 'ltr'
 		}, options)
 	;
 	/* --- Redactor allows for single callbacks - let's dispatch events instead --- */
@@ -963,11 +964,28 @@ var Ueditor = function($el, options) {
             else {
                 UeditorEvents.trigger("ueditor:enter", this, e);
             }
+
+
+            /**
+             * Allow user to exit lists on double enter
+             */
+            if( this.utils.isEmpty( this.keydown.block.innerText ) ){
+                $(this.selection.getBlock()).remove();
+                var node;
+                if( $list.next().is("p") && this.utils.isEmpty( $list.next().text() ) ){
+                    node = $list.next("p");
+                }else{
+                    node = $(this.opts.emptyHtml);
+                    $list.after(node);
+                }
+                this.caret.setStart(node);
+            }
         }
         // Default
         else {        
             UeditorEvents.trigger("ueditor:enter", this, e);
         }
+
     };
 
 };
@@ -1133,7 +1151,7 @@ Ueditor.prototype = {
 
             var $node = $(node),
                 rx = new RegExp('^' + src.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1") + ' ?'),
-                text = $node.text().replace(rx, '')
+                text = $node.html().replace(rx, '')
             ;
 
             // Let's not do nested lists
@@ -1184,13 +1202,16 @@ Ueditor.prototype = {
 			    this.redactor.core.destroy();
             this.$air.remove();
             this.$el.removeClass('ueditable');
-            this.redactor = false;
+            this.redactor.events.trigger('cleanUpListeners');
+            this.$el.data("ueditor", false);
+            //this.redactor = false;
 		}
 		if ("undefined" !== typeof Upfront.data.Ueditor) delete Upfront.data.Ueditor.instances[this.id];
 		this.startPlaceholder();
 		$("html").off('mousedown', this.stopOnOutsideClick);
 		$(document).off('keyup', this.stopOnEscape);
         this.active = false;
+
 	},
 
 	bindStartEvents: function() {
@@ -1593,6 +1614,11 @@ var InsertManagerInserts = Backbone.View.extend({
     className: "ueditor-post-insert-manager",
     $block: false,
     initialize: function(options){
+		
+        if ( options.inserts && options.inserts.constructor === Array && !Upfront.Settings.Application.PERMS.EMBED ) {
+					options.inserts = _.without(options.inserts, "embed");
+        }
+		
         this.insertsData = options.insertsData || {};
         this.inserts = options.inserts || {};
         this.redactor = options.redactor;
@@ -1941,9 +1967,10 @@ var InsertManager = Backbone.View.extend({
 			});
 	},
 	show_tooltip_in_this_location: function(redactor){
-		var $block = $( redactor.selection.getCurrent());
+		var current = redactor.selection.getCurrent(),
+            $block = $( current );
 
-		if(_.isEmpty( $block ) ) return false;
+		if( !current || _.isEmpty( $block ) ) return false;
 
 		var $image_embed_insert_wrappers = $(".upfront-inserted_image-wrapper, .upfront-inserted_embed-wrapper"),
 			block_top = $block.offset().top,

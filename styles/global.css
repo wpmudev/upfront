@@ -182,6 +182,9 @@ h2, h3 { page-break-after: avoid; }
 .upfront-output-bg-overlay {
 	overflow: hidden;
 }
+.upfront-region-container-full .upfront-output-bg-overlay {
+	will-change: top;
+}
 .upfront-output-bg-overlay > .upfront-bg-image {
 	display: block;
 }
@@ -372,24 +375,32 @@ h2, h3 { page-break-after: avoid; }
 .flexbox-support .upfront-output-wrapper,
 .flexbox-support .upfront-output-region-container > .upfront-region-container-bg > .upfront-grid-layout {
 	display: -webkit-flex;
+	display: -ms-flexbox;
 	display: flex;
 	-webkit-flex-direction: row;
+	-ms-flex-direction: row;
 	flex-direction: row;
 	-webkit-flex-wrap: wrap;
+	-ms-flex-wrap: wrap;
 	flex-wrap: wrap;
 	-webkit-align-items: flex-start;
+	-ms-flex-align: start;
 	align-items: flex-start;
 	-webkit-align-content: flex-start;
+	-ms-flex-line-pack: start;
 	align-content: flex-start;
 }
 .flexbox-support .upfront-output-region-container > .upfront-region-container-bg > .upfront-grid-layout {
 	-webkit-align-items: stretch;
+	-ms-flex-align: stretch;
 	align-items: stretch;
 }
 .flexbox-support .upfront-output-region {
 	-webkit-flex-wrap: nowrap;
+	-ms-flex-wrap: none;
 	flex-wrap: nowrap;
 	-webkit-align-items: stretch;
+	-ms-flex-align: stretch;
 	align-items: stretch;
 }
 .flexbox-support .upfront-output-region:before,
@@ -403,6 +414,7 @@ h2, h3 { page-break-after: avoid; }
 .flexbox-support .upfront-output-wrapper > .upfront-output-module-group,
 .flexbox-support .upfront-output-wrapper > .upfront-output-object {
 	-webkit-order: 0; 
+	-ms-flex-order: 0; 
 	order: 0;
 }
 /* End flexbox */
@@ -553,6 +565,9 @@ body .upfront-edit_layout a {
   line-height: inherit;
 }
 
+.upfront-bumped-z-index{
+    z-index: 2;
+}
 /* Firefox checkboxes and radios are styled to match the rest of the browsers */
 @-moz-document url-prefix() { 
   input[type=checkbox] {

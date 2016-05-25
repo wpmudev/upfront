@@ -155,6 +155,7 @@ class Upfront_UimageView extends Upfront_Object {
 			'stretch' => false,
 			'vstretch' => false,
 			'quick_swap' => false,
+			'is_locked' => true,
 			'gifImage' => 0,
 			'placeholder_class' => '',
 			'preset' => 'default',
@@ -232,6 +233,8 @@ class Upfront_UimageView extends Upfront_Object {
 				'edit_caption' => __('Edit Caption', 'upfront'),
 				'add_caption' => __('Add Caption', 'upfront'),
 				'replace_for_edit' => __('Replace image', 'upfront'),
+				'lock_image' => __('Lock Image', 'upfront'),
+				''
 			),
 			'drop_image' => __('Drop the image here', 'upfront'),
 			'external_nag' => __('Image editing it is only suitable for images uploaded to WordPress', 'upfront'),
@@ -265,6 +268,11 @@ class Upfront_UimageView extends Upfront_Object {
 				'fit_element' => __('Fit to Element', 'upfront'),
 				'restore_label' => __('Restore image size', 'upfront'),
 				'restore_info' => __('Reset image size', 'upfront'),
+				'swap_image' => __('Swap Image', 'upfront'),
+				'natural_size' => __('Natural Size', 'upfront'),
+				'fit' => __('Fit', 'upfront'),
+				'fill' => __('Fill', 'upfront'),
+				'image_tooltip' => __('Image Controls', 'upfront'),
 			),
 			'image_expanded' => __('The image is completely expanded', 'upfront'),
 			'cant_expand' => __('Can\'t expand the image', 'upfront'),
@@ -309,7 +317,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 			upfront_add_ajax('upfront-media-image-create-size', array($this, "create_image_size"));
 			upfront_add_ajax('upfront-media-image-import', array($this, "import_image"));
 		}
-		if (Upfront_Permissions::current(Upfront_Permissions::SAVE)) {
+		if (Upfront_Permissions::current(Upfront_Permissions::SAVE) && Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE)) {
 			upfront_add_ajax('upfront-media-save-images', array($this, "save_resizing"));
 		}
 	}
@@ -403,11 +411,11 @@ class Upfront_Uimage_Server extends Upfront_Server {
 				//return $this->_out(new Upfront_JsonResponse_Error("Invalid image ID"));
 
 			//if(!current_user_can('edit_post', $imageData['id']) ){
-			if (!Upfront_Permissions::current(Upfront_Permissions::RESIZE, $imageData['id'])) {
-				$images[$imageData['id']] = array('error' => true, 'msg' => Upfront_UimageView::_get_l10n('not_allowed'));
-				continue;
+			//if (!Upfront_Permissions::current(Upfront_Permissions::RESIZE, $imageData['id'])) {
+			//	$images[$imageData['id']] = array('error' => true, 'msg' => Upfront_UimageView::_get_l10n('not_allowed'));
+			//	continue;
 				//wp_die( -1 );
-			}
+			//}
 
 			$image = get_post($imageData['id']);
 			if( $image instanceof WP_Post && $image->post_mime_type == 'image/gif'){ //Gif are not really resized/croped to preserve animations

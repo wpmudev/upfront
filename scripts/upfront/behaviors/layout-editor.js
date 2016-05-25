@@ -103,6 +103,10 @@ var LayoutEditor = {
 	parse_selections: function () {
 		if ( !$(".upfront-ui-selected").length )
 			return false;
+		
+		// Disable Grouping
+		if (!Upfront.Application.user_can_modify_layout()) return false;
+
 		var ed = this,
 			regions = Upfront.Application.layout.get('regions'),
 			$region = $(".upfront-ui-selected:first").closest('.upfront-region'),
@@ -681,17 +685,13 @@ var LayoutEditor = {
 		Upfront.Application.layout_view.render();
 	},
 
-	save_dialog: function (on_complete, context) {
+	save_dialog: function (on_complete, context, layout_changed) {
 		$("body").append("<div id='upfront-save-dialog-background' />");
 		$("body").append("<div id='upfront-save-dialog' />");
 		var $dialog = $("#upfront-save-dialog"),
 			$bg = $("#upfront-save-dialog-background"),
 			current = Upfront.Application.layout.get("current_layout"),
 			html = ''
-		;
-		$bg
-			.width($(window).width())
-			.height($(document).height())
 		;
 
 		html += '<p>' + Upfront.Settings.l10n.global.behaviors.this_post_only + '</p>';
@@ -706,7 +706,11 @@ var LayoutEditor = {
 		//html += '<button type="button" id="upfront-save_as">Save</button>';
 		//html += '<button type="button" id="upfront-cancel_save">Cancel</button>';
 
-		if(location.pathname.indexOf('create_new') > -1) {
+		//$bg.remove(); $dialog.remove();
+		//on_complete.apply(context, [_upfront_post_data.layout.specificity]);
+		//return false;
+
+		if(location.pathname.indexOf('create_new') > -1 || layout_changed !== true) {
 			$bg.remove(); $dialog.remove();
 			//We are in builder do not show popup
 			on_complete.apply(context, ['single-post']);
@@ -1573,4 +1577,4 @@ var LayoutEditor = {
 define(LayoutEditor);
 	
 })(jQuery);
-//@ sourceURL=layout-editor.js
+//# sourceURL=layout-editor.js

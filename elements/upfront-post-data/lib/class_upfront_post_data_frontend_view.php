@@ -7,7 +7,7 @@ class Upfront_PostDataView extends Upfront_Object_Group {
 
 
 	private $_post;
-	private $_child_instances = array();
+	protected $_child_instances = array();
 
 	public function get_css_class () {
 		$classes = parent::get_css_class();
@@ -15,6 +15,11 @@ class Upfront_PostDataView extends Upfront_Object_Group {
 		$this->get_post();
 
 		$classes .= !empty($this->_post->ID) && is_sticky( $this->_post->ID ) ? " uf-post-data uf-post-data-sticky" : " uf-post-data";
+
+		// if the post does not have a theme image, assign a class to denote that
+		if(!empty($this->_post->ID) && !has_post_thumbnail($this->_post->ID)) {
+			$classes .= ' no-feature-image';
+		}
 
 		return $classes;
 	}
@@ -32,7 +37,14 @@ class Upfront_PostDataView extends Upfront_Object_Group {
 		$key = md5(serialize($child_data));
 		if (!empty($this->_child_instances[$key])) return $this->_child_instances[$key];
 
-		$this->_child_instances[$key] = new Upfront_PostDataPartView($child_data, $this->_data, $this);
+		$view_class = upfront_get_property_value("view_class", $child_data);
+		$view = $view_class
+			? "Upfront_{$view_class}"
+			: $this->_child_view_class
+		;
+		if (!class_exists($view)) $view = $this->_child_view_class;
+
+		$this->_child_instances[$key] = new $view($child_data, $this->_data, $this);
 		return $this->_child_instances[$key];
 	}
 
@@ -51,15 +63,17 @@ class Upfront_PostDataView extends Upfront_Object_Group {
 	public function get_propagated_classes () {
 		$classes = array();
 		foreach ($this->_child_instances as $part_view) {
+			if (!is_callable(array($part_view, 'get_propagated_classes'))) continue;
 			$classes = array_merge($classes, $part_view->get_propagated_classes());
 		}
-		return $classes;
+		return array_unique($classes);
 	}
 
 	public function get_attr () {
 		$attr = parent::get_attr();
 		$propagated = array($attr);
 		foreach ($this->_child_instances as $part_view) {
+			if (!is_callable(array($part_view, 'get_propagated_attr'))) continue;
 			$propagated[] = $part_view->get_propagated_attr();
 		}
 		$propagated = array_values(array_unique(array_filter($propagated)));
@@ -144,7 +158,8 @@ class Upfront_PostDataPartView extends Upfront_Object {
 			// Meta and featured image have single class that matches type
 			$cls[] = 'upost-data-object-' . $part_type;
 		}
-		if (!empty($this->_preset_id)) $cls[] = esc_attr($this->_preset_id);
+		// We apply preset class on ObjectGroup, commented this so we are not adding double class
+		//if (!empty($this->_preset_id)) $cls[] = esc_attr($this->_preset_id);
 
 		return $cls;
 	}

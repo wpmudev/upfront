@@ -17,14 +17,18 @@ define(function() {
 
 			this.$el.find('.upfront-chosen-select').chosen({
 				search_contains: true,
-				width: selectWidth
+				width: selectWidth,
+				disable_search: !Upfront.Application.user_can("MODIFY_PRESET")
 			});
 
-			var html = ['<a href="#" title="'+ l10n.add_preset_label +'" class="upfront-preset-add">'+ l10n.add_label +'</a>'];
-			this.$el.find('.chosen-search').append(html.join(''));
+			if (Upfront.Application.user_can("MODIFY_PRESET")) {
+				var html = ['<a href="#" title="'+ l10n.add_preset_label +'" class="upfront-preset-add">'+ l10n.add_label +'</a>'];
+				this.$el.find('.chosen-search').append(html.join(''));
+			}
 
 			this.$el.on('click', '.upfront-preset-add', function(event) {
 				event.preventDefault();
+				if (!Upfront.Application.user_can("MODIFY_PRESET")) return false;
 
 				var preset_name = me.$el.find('.chosen-search input').val();
 

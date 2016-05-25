@@ -121,6 +121,10 @@ class Upfront_Post_Data_Data {
 		}
 
 		$defaults = self::apply_preset($defaults);
+		if ('comments' === $data_type) {
+			// Preset has nothing to do with this
+			$defaults['paginated'] = (int)get_option('page_comments');
+		}
 
 		return $defaults;
 	}
@@ -199,94 +203,4 @@ class Upfront_Post_Data_Data {
 		return self::$data_types;
 	}
 
-	public static function add_l10n_strings ($strings) {
-		if (!empty($strings['post_data_element'])) return $strings;
-		$strings['post_data_element'] = self::_get_l10n();
-		return $strings;
-	}
-
-	private static function _get_l10n ($key=false) {
-		$l10n = array(
-			'loading' => __('Loading', 'upfront'),
-			'error' => __('Oops, something went wrong', 'upfront'),
-			'post_parts' => __('Post Parts', 'upfront'),
-			'post_parts_picker' => __('Pick Post Parts to Display', 'upfront'),
-			'post_parts_sorter' => __('Drag to re-order Post Parts', 'upfront'),
-			'resize_featured' => __('Re-size featured image to fit container', 'upfront'),
-			'edit_post_parts' => __('Edit post parts', 'upfront'),
-
-			'css' => array(
-				'container_label' => __('Element container', 'upfront'),
-				'container_info' => __('The container for all posts', 'upfront'),
-				'post_label' => __('Individual post', 'upfront'),
-				'post_info' => __('The container for each individual post', 'upfront'),
-				'post_part_label' => __('Post part', 'upfront'),
-				'post_part_info' => __('General post part selector', 'upfront'),
-				'date_label' => __('Date posted', 'upfront'),
-				'date_info' => __('Date posted part', 'upfront'),
-				'author_label' => __('Author', 'upfront'),
-				'author_info' => __('Author part', 'upfront'),
-				'categories_label' => __('Categories', 'upfront'),
-				'categories_info' => __('Post categories list part', 'upfront'),
-				'comment_count_label' => __('Comment count', 'upfront'),
-				'comment_count_info' => __('Comments count part', 'upfront'),
-				'content_label' => __('Content', 'upfront'),
-				'content_info' => __('Main content part', 'upfront'),
-				'gravatar_label' => __('Gravatar', 'upfront'),
-				'gravatar_info' => __('Author gravatar part', 'upfront'),
-				'read_more_label' => __('Read more', 'upfront'),
-				'read_more_info' => __('Read more button part', 'upfront'),
-				'post_tags_label' => __('Tags', 'upfront'),
-				'post_tags_info' => __('Post tags part', 'upfront'),
-				'thumbnail_label' => __('Thumbnail', 'upfront'),
-				'thumbnail_info' => __('Featured image part', 'upfront'),
-				'title_label' => __('Title', 'upfront'),
-				'title_info' => __('Post title part', 'upfront'),
-			),
-
-			'elements' => array(
-				'post_data' => __('Post Data', 'upfront'),
-				'author' => __('Author', 'upfront'),
-				'taxonomy' => __('Categories &amp; Tags', 'upfront'),
-				'featured_image' => __('Featured Image', 'upfront'),
-				'comments' => __('Comments', 'upfront'),
-			),
-
-			'part_date_posted' => __('Date posted', 'upfront'),
-			'part_author' => __('Name', 'upfront'),
-			'part_gravatar' => __('Gravatar', 'upfront'),
-			'part_author_email' => __('Email', 'upfront'),
-			'part_author_url' => __('Website', 'upfront'),
-			'part_author_bio' => __('Biography', 'upfront'),
-			'part_comment_count' => __('Comment count', 'upfront'),
-			'part_comment_form' => __('Comment form', 'upfront'),
-			'part_comments' => __('Comments', 'upfront'),
-			'part_comments_pagination' => __('Comments pagination', 'upfront'),
-			'part_featured_image' => __('Featured Image', 'upfront'),
-			'part_title' => __('Title', 'upfront'),
-			'part_content' => __('Content', 'upfront'),
-			'part_read_more' => __('Read More', 'upfront'),
-			'part_tags' => __('Tags', 'upfront'),
-			'part_categories' => __('Categories', 'upfront'),
-			'part_meta' => __('Meta', 'upfront'),
-
-			'edit' => __('Edit', 'upfront'),
-			'edit_html' => __('Edit HTML', 'upfront'),
-			'format' => __('Format', 'upfront'),
-			'max_categories' => __('max. categories', 'upfront'),
-			'max_tags' => __('max. tags', 'upfront'),
-			'hide_comments' => __('Hide if no comments', 'upfront'),
-			'limit_words' => __('Limit words', 'upfront'),
-			'resize_to_fit' => __('Re-size to fit container', 'upfront'),
-			'size_px' => __('Size in px', 'upfront'),
-
-			'meta_insert' => __('Insert meta field', 'upfront'),
-			'meta_toggle' => __('Hide hidden fields', 'upfront'),
-			'meta_fields' => __('Available meta fields', 'upfront'),
-		);
-		return !empty($key)
-			? (!empty($l10n[$key]) ? $l10n[$key] : $key)
-			: $l10n
-		;
-	}
 }
