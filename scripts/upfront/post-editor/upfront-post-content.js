@@ -161,8 +161,16 @@ PostContentEditor.prototype = {
 							.on('keyup', _.bind(this.keyup, this))
 							.off('keypress')
 							.on('keypress', _.bind(this.keypress, this));
+					
+					$("html").on('mousedown', {$title: this.$title, $partView: this }, this.mousedown );
 				}
 				this.$title.closest(".upfront-editable_entity.upfront-module").draggable("disable");
+			},
+			mousedown: function (e) {
+				if( !!e && ( false === (e.target === e.data.$title[0]) ) ) {
+					e.data.$partView.disable_edit_title();
+					$("html").off('mousedown', e.data.$partView.mousedown );
+				}
 			},
 			disable_edit_title: function () {
 				this.$title
