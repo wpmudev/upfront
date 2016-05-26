@@ -899,7 +899,8 @@ PostContentEditor.prototype = {
 		this
 			.listenTo(me.box.scheduleSection, 'date:updated', me.updateDateFromBar)
 			// //.listenTo(me.box.scheduleSection, 'date:cancel', me.editDateCancel)
-		    .listenTo(me.box.statusSection, 'status:change', me.updateStatus)
+			.listenTo(me.box.statusSection, 'status:change', me.updateStatus)
+			.listenTo(Upfront.Events, 'global:status:change', me.updateStatus)
 			.listenTo(me.box.visibilitySection , 'visibility:change', me.updateVisibility)
 		;
 

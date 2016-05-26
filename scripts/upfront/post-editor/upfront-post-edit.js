@@ -292,28 +292,37 @@ var Box = Backbone.View.extend({
 		this.publish();
 	},
     publish: function(){
-			
-		if ( typeof _upfront_post_data.skip_publish !== 'undefined' && _upfront_post_data.skip_publish === 1 ) {
-			_upfront_post_data.skip_publish = 0;
-			return;
-		}
-		
-        this.post.trigger('editor:publish');
-        this.trigger('publish');
-		
-		
-        Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
-        Upfront.Events.trigger('upfront:post:edit:stop', 'write', this.post.toJSON());
-        this.fadein_other_elements();
-        this._stop_overlay();
-        //$(".editing-overlay").remove();
-
-        //this.toggleRegionClass(false);
-        //this.remove();
+        var me = this;
+        if ( typeof _upfront_post_data.skip_publish !== 'undefined' && _upfront_post_data.skip_publish === 1 ) {
+            _upfront_post_data.skip_publish = 0;
+            return;
+        }
+				
+        // resetting up post_status upon publishing as this function does not only publish 
+        // but it saves post status according to selected status on sidebar 
+        if ( typeof _upfront_post_data.post_status !== 'undefined' && _upfront_post_data.post_status.length > 0 ) {
+            this.post.set("post_status", _upfront_post_data.post_status);
+            _upfront_post_data.post_status = '';
+            if ( this.post.get("post_status") == 'draft' ) {
+                this.saveDraft();
+                return;
+            }
+        } else {
+            // assume to publish if no selected status on sidebar
+            this.post.set("post_status", 'publish');
+            Upfront.Events.trigger("global:status:change", 'publish');
+        }
+				
+        me.post.trigger('editor:publish');
+        me.trigger('publish');
+        Upfront.Events.trigger('upfront:element:edit:stop', 'write', me.post);
+        Upfront.Events.trigger('upfront:post:edit:stop', 'write', me.post.toJSON());
+        me.fadein_other_elements();
+        me._stop_overlay();
     },
 
     saveDraft: function(e){
-        e.preventDefault();
+        if ( typeof e !== 'undefined' ) e.preventDefault();
         this.post.trigger('editor:draft');
         this.trigger('draft');
         Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post, true);// last true means 'saving draft'
@@ -1396,6 +1405,7 @@ var PostStatusView = PostSectionView.extend({
 
         var status = this.$("select").val();
         if(!_.isEmpty( status ) && status !== this.initialStatus ){
+            _upfront_post_data.post_status = status;
             this.post.set("post_status", status);
             this.trigger("status:change", status);
             this.render();
