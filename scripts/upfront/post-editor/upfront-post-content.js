@@ -273,6 +273,7 @@ PostContentEditor.prototype = {
 						me.$content.find('.upfront-inserted_image-wrapper').each(function(){
 							$(this).attr('contenteditable', 'true');
 						});
+						me.focus();
 					},100);
 				}
 			},
@@ -333,11 +334,9 @@ PostContentEditor.prototype = {
 				}
 			},
 			focus: function () {
-				if ( this.parent.post.is_new ) {
-					var node = this.$content.get(0);
-					node.focus();
-					this.parent.setSelection(node, true);
-				}
+				var node = this.$content.get(0);
+				node.focus();
+				this.parent.setSelection(node, true);
 			},
 			contentChanged: function (content, callFrom) {
 				if ( this.$content && ( callFrom == this || !this.$content.redactor || !this.$content.redactor.code ) ) return;
