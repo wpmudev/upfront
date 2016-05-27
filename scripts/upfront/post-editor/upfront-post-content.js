@@ -162,13 +162,14 @@ PostContentEditor.prototype = {
 							.off('keypress')
 							.on('keypress', _.bind(this.keypress, this));
 					
+					this.focus();
 					$("html").on('mousedown', {$title: this.$title, $partView: this }, this.mousedown );
 				}
 				this.$title.closest(".upfront-editable_entity.upfront-module").draggable("disable");
 			},
 			mousedown: function (e) {
 				if( !!e && ( false === (e.target === e.data.$title[0]) ) ) {
-					e.data.$partView.disable_edit_title();
+					e.data.$title.trigger('blur');
 					$("html").off('mousedown', e.data.$partView.mousedown );
 				}
 			},
@@ -185,6 +186,8 @@ PostContentEditor.prototype = {
 				this.parent._editing = false;
 			},
 			blur: function () {
+				var node = this.$title.get(0);
+				this.parent.setSelection(node, false);
 				this.parent.titleBlurred();
 				this.parent.currentData.title = this.$title.text();
 				this.parent.trigger('change:title', this.parent.currentData.title, this);
