@@ -73,7 +73,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		);
 
 		$post = Upfront_PostModel::create($data['post_type'], $data['title']);
-		if (!empty($data['permalink'])) $post->post_name = $data['permalink'];
+		if (!empty($data['permalink'])) $post->post_name = sanitize_title($data['permalink']);
 		// if (!empty($data['template'])) update_post_meta($post->ID, '_wp_page_template', $data['template']);
 
 		$post->post_status = 'draft';
@@ -126,7 +126,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 		$post = (array)Upfront_PostModel::get($post_id);
 		if (empty($post)) $this->_out(new Upfront_JsonResponse_Error("Invalid post"));
-		$post['post_name'] = $slug;
+		$post['post_name'] = sanitize_title($slug);
 
 		$updated = Upfront_PostModel::save($post);
 		$updated->permalink = get_permalink($updated->ID);
@@ -468,6 +468,8 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			if($data['post_type'] == 'post' && !current_user_can('publish_posts') || $data['post_type'] == 'page' && !current_user_can('publish_pages'))
 			$this->_out(new Upfront_JsonResponse_Error("You can't do this."));
 		}
+		// making sure post names/slugs are sanitized
+		if ( isset($data['post_name']) ) $data['post_name'] = sanitize_title($data['post_name']);
 
 		unset($data['post_modified']);
 		unset($data['post_modified_gmt']);
