@@ -212,7 +212,7 @@ PostContentEditor.prototype = {
 			},
 			titleChanged: function (title, callFrom) {
 				if ( callFrom == this ) return;
-				this.$title.text(title);
+				if ( typeof this.$title !== 'undefined' ) this.$title.text(title);
 			},
 			_findDeep: function ($el) {
 				var $child = $el.children(':not(script, style, object, iframe, embed)');
