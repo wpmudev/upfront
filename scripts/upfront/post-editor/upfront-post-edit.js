@@ -838,7 +838,7 @@ var PageTemplateEditor = PostSectionView.extend({
     },
 		
 	initiate_no_layout_change: function() {
-		this.$el.find('.chosen-container .changes-dot').remove();
+		this.$el.find('.chosen-container .chosen-single span').removeClass('dot');
 		this.$el.find('.upfront-page-template-description').hide();
 		this.$el.find('.upfront-page-template-action a.update-post-template').hide();
 		this.$el.find('.upfront-page-template-action a.reset-post-template').hide();
@@ -1083,10 +1083,10 @@ var PageTemplateEditor = PostSectionView.extend({
 	on_layout_change: function() {
 		if ( Upfront.Application.layout_ready ) {
 			// show dot icon
-			var $dot = this.$el.find('.chosen-container .changes-dot');
+			var $dot = this.$el.find('.chosen-container .chosen-single span.dot');
 			if($dot.length) return;
 			
-			this.$el.find('.chosen-container').append('<div class="changes-dot"></div>');
+			this.$el.find('.chosen-container .chosen-single span').addClass('dot');
 			
 			// show update / save as
 			var $temp_description = this.$el.find('.upfront-page-template-description'),
