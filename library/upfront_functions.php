@@ -208,7 +208,15 @@ function upfront_ajax_init () {
 function upfront_ajax_url ($action, $args = '') {
 	$args = wp_parse_args($args);
 	$args['action'] = $action;
-	$args['layout'] = Upfront_EntityResolver::get_entity_ids();
+	$entity_ids = Upfront_EntityResolver::get_entity_ids();
+	
+	// if page was still draft and viewed on FE, we should show 404 layout 
+	if ( !Upfront_Output::get_post_id() && isset($entity_ids['specificity']) && preg_match('/single-page/i', $entity_ids['specificity']) ) {
+		unset($entity_ids['specificity']);
+		$entity_ids['item'] = 'single-404_page';
+	}
+	$args['layout'] = $entity_ids;
+	
 	if ( current_user_can('switch_themes') && Upfront_Behavior::debug()->is_dev() )
 		$args['load_dev'] = 1;
 	return admin_url( 'admin-ajax.php?' . http_build_query($args) );

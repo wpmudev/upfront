@@ -98,6 +98,9 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 	 * @return string Thumbnail markup, can also be an empty string
 	 */
 	private function _get_thumbnail () {
+		
+		if (empty($this->_post->ID)) return '';
+		
 		$full_featured = isset($this->_data['full_featured_image'])
 			? (int)$this->_data['full_featured_image']
 			: (int)Upfront_Posts_PostsData::get_default('full_featured_image')

@@ -161,8 +161,17 @@ PostContentEditor.prototype = {
 							.on('keyup', _.bind(this.keyup, this))
 							.off('keypress')
 							.on('keypress', _.bind(this.keypress, this));
+					
+					this.focus();
+					$("html").on('mousedown', {$title: this.$title, $partView: this }, this.mousedown );
 				}
 				this.$title.closest(".upfront-editable_entity.upfront-module").draggable("disable");
+			},
+			mousedown: function (e) {
+				if( !!e && ( false === (e.target === e.data.$title[0]) ) ) {
+					e.data.$title.trigger('blur');
+					$("html").off('mousedown', e.data.$partView.mousedown );
+				}
 			},
 			disable_edit_title: function () {
 				this.$title
@@ -177,6 +186,8 @@ PostContentEditor.prototype = {
 				this.parent._editing = false;
 			},
 			blur: function () {
+				var node = this.$title.get(0);
+				this.parent.setSelection(node, false);
 				this.parent.titleBlurred();
 				this.parent.currentData.title = this.$title.text();
 				this.parent.trigger('change:title', this.parent.currentData.title, this);
@@ -201,7 +212,7 @@ PostContentEditor.prototype = {
 			},
 			titleChanged: function (title, callFrom) {
 				if ( callFrom == this ) return;
-				this.$title.text(title);
+				if ( typeof this.$title !== 'undefined' ) this.$title.text(title);
 			},
 			_findDeep: function ($el) {
 				var $child = $el.children(':not(script, style, object, iframe, embed)');
@@ -262,6 +273,7 @@ PostContentEditor.prototype = {
 						me.$content.find('.upfront-inserted_image-wrapper').each(function(){
 							$(this).attr('contenteditable', 'true');
 						});
+						me.focus();
 					},100);
 				}
 			},
@@ -322,11 +334,9 @@ PostContentEditor.prototype = {
 				}
 			},
 			focus: function () {
-				if ( this.parent.post.is_new ) {
-					var node = this.$content.get(0);
-					node.focus();
-					this.parent.setSelection(node, true);
-				}
+				var node = this.$content.get(0);
+				node.focus();
+				this.parent.setSelection(node, true);
 			},
 			contentChanged: function (content, callFrom) {
 				if ( this.$content && ( callFrom == this || !this.$content.redactor || !this.$content.redactor.code ) ) return;
@@ -899,7 +909,8 @@ PostContentEditor.prototype = {
 		this
 			.listenTo(me.box.scheduleSection, 'date:updated', me.updateDateFromBar)
 			// //.listenTo(me.box.scheduleSection, 'date:cancel', me.editDateCancel)
-		    .listenTo(me.box.statusSection, 'status:change', me.updateStatus)
+			.listenTo(me.box.statusSection, 'status:change', me.updateStatus)
+			.listenTo(Upfront.Events, 'global:status:change', me.updateStatus)
 			.listenTo(me.box.visibilitySection , 'visibility:change', me.updateVisibility)
 		;
 

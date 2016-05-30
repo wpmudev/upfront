@@ -24,6 +24,18 @@
 	min-height: 27px;
 	line-height: 25px;
 }
+#sidebar-ui .upfront-page-template-dropdown .chosen-container-single .chosen-single span.dot:before {
+	content: ' ';
+	width: 6px;
+	height: 6px;
+	background-color: #1fcd8f;
+	border: 1px solid #19a674;
+	border-radius: 50%;
+	display: inline-block;
+	vertical-align: top;
+	margin-top: 6px;
+	margin-right: 5px;
+}
 #insert-font-widget .chosen-container-single .chosen-single:hover,
 #sidebar-ui .chosen-container-single .chosen-single:hover,
 #upfront-popup .chosen-container-single .chosen-single:hover,
