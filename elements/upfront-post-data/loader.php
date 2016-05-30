@@ -42,9 +42,11 @@ class Upfront_Post_Data extends Upfront_Server {
 		require_once (dirname(__FILE__) . '/lib/class_upfront_post_data_data.php');
 		require_once (dirname(__FILE__) . '/lib/class_upfront_post_data_part_view.php');
 		require_once (dirname(__FILE__) . '/lib/class_upfront_post_data_presets_server.php');
+		require_once (dirname(__FILE__) . '/lib/class_upfront_post_data_l10n_server.php');
 		require_once (dirname(__FILE__) . '/lib/class_upfront_post_data_frontend_view.php');
 
 		Upfront_PostData_Elements_Server::serve();
+		Upfront_PostData_L10n_Server::serve();
 
 		upfront_add_layout_editor_entity('upostdata', upfront_relative_element_url('js/post-data', __FILE__));
 		upfront_add_element_style('upfront-post-data', array('css/public.css', __FILE__));
@@ -53,7 +55,6 @@ class Upfront_Post_Data extends Upfront_Server {
 		}
 
 		add_filter('upfront_data', array('Upfront_Post_Data_Data', 'add_js_defaults'));
-		add_filter('upfront_l10n', array('Upfront_Post_Data_Data', 'add_l10n_strings'));
 
 		upfront_add_ajax('upfront_post-data-load', array($this, "load_post"));
 
@@ -96,6 +97,21 @@ class Upfront_Post_Data extends Upfront_Server {
 		$post = Upfront_Post_Data_Model::spawn_post($data);
 		$view_class = Upfront_Post_Data_PartView::_get_view_class($data);
 		$view = new $view_class($data);
+		
+		// for setting real-time value of featured_image
+		if ( !empty($request['selected_featured_image']) && $data['data_type'] == 'featured_image' ) {
+			$view->set_pre_selected($request['selected_featured_image']);
+		}
+		
+		// for setting real-time value of post title
+		if ( !empty($request['set_post_title']) && $data['data_type'] == 'post_data' ) {
+			$view->set_pre_post_title($request['set_post_title']);
+		}
+		
+		// for setting real-time value of post content
+		if ( !empty($request['set_post_content']) && $data['data_type'] == 'post_data' ) {
+			$view->set_pre_content($request['set_post_content']);
+		}
 
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			'post_data' => $view->get_markup($post, true),

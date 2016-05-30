@@ -1,9 +1,10 @@
 <?php
-
+require_once 'class_upfront_widget_wp_defaults.php';
 class Upfront_UwidgetAjax extends Upfront_Server {
 	public static function serve () {
 		$me = new self;
 		$me->_add_hooks();
+		new Upfront_Uwidget_WP_Defaults();
 	}
 
 	private function _add_hooks () {

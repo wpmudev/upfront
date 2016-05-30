@@ -685,7 +685,7 @@ var LayoutEditor = {
 		Upfront.Application.layout_view.render();
 	},
 
-	save_dialog: function (on_complete, context) {
+	save_dialog: function (on_complete, context, layout_changed) {
 		$("body").append("<div id='upfront-save-dialog-background' />");
 		$("body").append("<div id='upfront-save-dialog' />");
 		var $dialog = $("#upfront-save-dialog"),
@@ -706,7 +706,11 @@ var LayoutEditor = {
 		//html += '<button type="button" id="upfront-save_as">Save</button>';
 		//html += '<button type="button" id="upfront-cancel_save">Cancel</button>';
 
-		if(location.pathname.indexOf('create_new') > -1) {
+		//$bg.remove(); $dialog.remove();
+		//on_complete.apply(context, [_upfront_post_data.layout.specificity]);
+		//return false;
+
+		if(location.pathname.indexOf('create_new') > -1 || layout_changed !== true) {
 			$bg.remove(); $dialog.remove();
 			//We are in builder do not show popup
 			on_complete.apply(context, ['single-post']);
@@ -1573,4 +1577,4 @@ var LayoutEditor = {
 define(LayoutEditor);
 	
 })(jQuery);
-//@ sourceURL=layout-editor.js
+//# sourceURL=layout-editor.js

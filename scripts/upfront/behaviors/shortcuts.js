@@ -108,4 +108,4 @@
 define(Shortcuts);
 	
 })(jQuery);
-//@ sourceURL=resize.js
+//# sourceURL=shortcuts.js

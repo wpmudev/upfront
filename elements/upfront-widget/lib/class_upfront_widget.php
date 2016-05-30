@@ -4,6 +4,7 @@ class Upfront_Uwidget {
 
 	private $_widget_name;
 
+
 	public function __construct ($widget) {
 		$this->_widget_name = $widget;
 	}
@@ -69,6 +70,10 @@ class Upfront_Uwidget {
 		$instance = wp_parse_args($instance, array(
 			'title' => '',
 		));
+
+		if( defined( "DOING_AJAX" ) && DOING_AJAX && is_a($callback[0], "WP_Widget_Calendar")  ){
+			Upfront_Uwidget_WP_Defaults::increment_calendar_widget_instance( $callback[0] );
+		}
 
 		ob_start();
 		call_user_func_array($callback, array($args, $instance));

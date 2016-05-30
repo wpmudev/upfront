@@ -35,9 +35,6 @@ var PostDataModel = Upfront.Models.ObjectGroup.extend({
 	}
 });
 
-
-var PostDataEditor = null; // Store editor instance
-
 var PostDataPartView = Upfront.Views.ObjectView.extend({
 	init: function () {
 	},
@@ -73,8 +70,8 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			this.editor_view.setElement(node);
 			this.trigger_edit();
 		}
-		else if ( !this._editor_prepared && PostDataEditor ) {
-			PostDataEditor.addPartView(type, node.get(0), this.model, this.object_group_view.model).done(function(view){
+		else if ( !this._editor_prepared && Upfront.Views.PostDataEditor ) {
+			Upfront.Views.PostDataEditor.addPartView(type, node.get(0), this.model, this.object_group_view.model).done(function(view){
 				me.editor_view = view;
 				me.trigger_edit();
 			});
@@ -94,14 +91,14 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	 */
 	trigger_edit: function () {
 		if (Upfront.Application.user_can("EDIT") === false) {
-			if (parseInt(PostDataEditor.post.get('post_author'), 10) === Upfront.data.currentUser.id && Upfront.Application.user_can("EDIT_OWN") === true) {
+			if (parseInt(Upfront.Views.PostDataEditor.post.get('post_author'), 10) === Upfront.data.currentUser.id && Upfront.Application.user_can("EDIT_OWN") === true) {
 				// Pass through
 			} else {
 				return;
 			}
 		}
 
-		if ( !PostDataEditor.contentEditor || !PostDataEditor.contentEditor._editing ) return;
+		if ( !Upfront.Views.PostDataEditor.contentEditor || !Upfront.Views.PostDataEditor.contentEditor._editing ) return;
 		this.editor_view.editContent();
 	},
 
@@ -136,6 +133,9 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			padding_bottom = parseInt($me.css('padding-bottom'), 10)
 		;
 		if ( type != 'featured_image' ) return;
+		if ( this._editor_prepared && this.editor_view ) {
+			this.editor_view.updateImageSize();
+		}
 		height -= padding_top + padding_bottom;
 		this.$el.find('.thumbnail').each(function(){
 			var width = $(this).width(),
@@ -145,7 +145,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			;
 			$(this).css('height', height);
 			// Make sure image is loaded first
-			$('<img>').attr('src', $img.attr('src')).load(function(){
+			$('<img>').attr('src', $img.attr('src')).on('load', function(){
 				if ( $(this).attr('data-resize') == "1" ) {
 					img.src = $img.attr('src');
 					img_h = img.height;
@@ -170,7 +170,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	cleanup: function () {
 		var type = this.model.get_property_value_by_name('part_type');
 		this.remove_region_class('upfront-region-container-has-' + type, true);
-	}
+	},
 
 });
 
@@ -179,15 +179,20 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		this.listenTo(this.model.get('objects'), 'change', this.on_render);
 		this.listenTo(this.model.get('objects'), 'add', this.on_render);
 		this.listenTo(this.model.get('objects'), 'remove', this.on_render);
+		// this.listenTo(Upfront.Events, 'editor:post_details:ready', this.render_view_type);
+		
+		this.listenTo(Upfront.Events, 'editor:post:tax:updated', this.update_categories);
 
 		/*_.extend(this.events, {
 			'click .upfront-post-part-trigger': 'on_edit_click'
 		});*/
-		this.delegateEvents();
+		
 
 		this.prepare_editor();
 
 		this._multiple = false;
+		
+		this.delegateEvents();
 	},
 
 	get_extra_buttons: function(){
@@ -196,9 +201,33 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	},
 
 	getControlItems: function(){
-		var objects = this.get_child_objects(false),
+		var me = this,
+			objects = this.get_child_objects(false),
+			type = this.model.get_property_value_by_name('data_type'),
+			is_locked = this.model.get_property_value_by_name('is_locked')
 			controls = []
 		;
+
+		if(typeof type !== "undefined" && type === "featured_image") {
+			if(typeof is_locked !== "undefined" && is_locked === true) {
+				var lock_icon = 'lock-locked';
+			} else {
+				var lock_icon = 'lock-unlocked';
+			}
+			
+			var moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl();
+
+			moreOptions.icon = 'more';
+			moreOptions.tooltip = l10n.image_options;
+
+			moreOptions.sub_items = {}
+			moreOptions.sub_items['swap'] = this.createControl('swap', l10n.swap_image, 'openImageSelector');
+			moreOptions.sub_items['crop'] = this.createControl('crop', l10n.edit_image, 'editImage');
+			moreOptions.sub_items['lock'] = this.createControl(lock_icon, l10n.lock_image, 'lockImage');
+
+			controls.push(moreOptions);
+		}
+
 		if ( objects.length > 1 ) {
 			controls.push(this.createControl('reorder', l10n.settings, 'on_edit_click'));
 			this._multiple = true;
@@ -209,6 +238,53 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		controls.push(this.createPaddingControl());
 		controls.push(this.createControl('settings', l10n.settings, 'on_settings_click'));
 		return _(controls);
+	},
+	
+	lockImage: function () {
+		var me = this,
+			is_locked = this.property('is_locked')
+			//sizeCheck = this.checkSize()
+		;
+
+		if(typeof is_locked !== "undefined" && is_locked === true) {
+			//Update icon
+			this.controls.$el.find('.upfront-icon-region-lock-locked')
+				.addClass('upfront-icon-region-lock-unlocked')
+				.removeClass('upfront-icon-region-lock-locked');
+
+			this.property('is_locked', false);
+			
+			/*
+			if(sizeCheck === "small") {
+				this.$('.upfront-image-caption-container, .upfront-image-container').css({
+					width: '100%',
+					height: '100%',
+					marginTop: 0
+				});
+
+				this.fitImage();
+
+				this.cropTimer = setTimeout(function(){
+					me.saveTemporaryResizing();
+				}, this.cropTimeAfterResize);
+			}
+			*/
+		} else {
+			//Update icon
+			this.controls.$el.find('.upfront-icon-region-lock-unlocked')
+				.addClass('upfront-icon-region-lock-locked')
+				.removeClass('upfront-icon-region-lock-unlocked');
+
+			this.property('is_locked', true);
+		}
+	},
+	
+	openImageSelector: function() {
+		this.editor.contentEditor.trigger('swap:image', this.postId);
+	},
+	
+	editImage: function() {
+		this.editor.contentEditor.trigger('edit:image');
 	},
 
 	get_preset_properties: function() {
@@ -239,13 +315,31 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		}
 		this.enable_object_edit();
 	},
+	
+	update_categories: function () {
+		var me = this, 
+		type = this.model.get_property_value_by_name("data_type");
+		
+		if(type === "taxonomy") {
+			setTimeout( function () {
+				me.render_view(type);
+			}, 200);
+		}
+	},
+	
+	render_view_type: function () {
+		var type = this.model.get_property_value_by_name("data_type");
+		this.render_view(type);
+		
+	},
 
 	on_render: function () {
 		var type = this.model.get_property_value_by_name("data_type"),
 			objects = this.get_child_objects(false)
 		;
-		this.render_view(type);
-
+		
+		this.render_view_type();
+		
 		if ( this.parent_module_view ) {
 			this.$control_el = this.$el;
 			if ( this.controls && ( ( objects.length > 1 && !this._multiple ) || ( objects.length == 1 && this._multiple ) ) ) {
@@ -276,6 +370,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			: new Views[Views.DEFAULT]({model: this.model})
 		;
 		view.element = this;
+		view.element.postId = this.editor.postId;
 		view.render();
 
 		this.child_view = view;
@@ -285,32 +380,22 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	},
 
 	prepare_editor: function () {
-		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
-		if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.THEME ) {
-			// We're dealing with a theme exporter request
-			// Okay, so let's fake a post
-			this.postId = "fake_post";
-		}
-		else if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.CONTENT_STYLE ){
-			this.postId = "fake_styled_post";
-		}
-		if ( !PostDataEditor || PostDataEditor.postId != this.postId ){
-			PostDataEditor = new Upfront.Content.PostEditor({
-				editor_id: 'this_post_' + this.postId,
-				post_id: this.postId,
-				content_mode: 'post_content'
-			});
-		}
-		this.listenTo(PostDataEditor, 'post:saved post:trash', this.on_render);
-		this.listenTo(PostDataEditor, 'post:cancel', this.on_cancel);
-		this.listenTo(PostDataEditor, 'editor:edit:start', this.on_edit_start);
-		this.listenTo(PostDataEditor, 'editor:edit:stop', this.on_edit_stop);
+		this.listenTo(Upfront.Views.PostDataEditor, 'post:saved post:trash', this.on_render);
+		this.listenTo(Upfront.Views.PostDataEditor, 'post:cancel', this.on_cancel);
+		this.listenTo(Upfront.Views.PostDataEditor, 'editor:edit:start', this.on_edit_start);
+		this.listenTo(Upfront.Views.PostDataEditor, 'editor:edit:stop', this.on_edit_stop);
 		// Listen to change event too
-		this.listenTo(PostDataEditor, 'editor:change:title', this.on_title_change);
-		this.listenTo(PostDataEditor, 'editor:change:content', this.on_content_change);
-		this.listenTo(PostDataEditor, 'editor:change:author', this.on_author_change);
-		this.listenTo(PostDataEditor, 'editor:change:date', this.on_date_change);
-		this.editor = PostDataEditor;
+		this.listenTo(Upfront.Views.PostDataEditor, 'editor:change:author', this.on_author_change);
+		this.listenTo(Upfront.Views.PostDataEditor, 'editor:change:date', this.on_date_change);
+		this.stopListening(Upfront.Views.PostDataEditor, 'editor:change:title');
+		this.listenTo(Upfront.Views.PostDataEditor, 'editor:change:title', this.on_title_change);
+		this.stopListening(Upfront.Views.PostDataEditor, 'editor:change:content');
+		this.listenTo(Upfront.Views.PostDataEditor, 'editor:change:content', this.on_content_change);
+		this.stopListening(Upfront.Events, 'editor:change:content');
+		this.listenTo(Upfront.Events, 'editor:change:content', this.on_content_change);
+		this.stopListening(Upfront.Events, 'featured_image:updated');
+		this.listenTo(Upfront.Events, 'featured_image:updated', this.update_featured);
+		this.editor = Upfront.Views.PostDataEditor;
 	},
 
 	/**
@@ -342,7 +427,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	 * @param {String} title
 	 */
 	on_title_change: function (title) {
-
+		this.set_post_title = title;
 	},
 
 	/**
@@ -351,7 +436,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	 * @param {Bool} isExcerpt
 	 */
 	on_content_change: function (content, isExcerpt) {
-
+		this.set_post_content = content;
 	},
 
 	/**
@@ -405,13 +490,17 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 	on_element_resize: function (attr) {
 		var objects = this.get_child_objects(false),
-			breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON()
+			breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
+			grid = Upfront.Settings.LayoutEditor.Grid,
+			padding_top_row = parseInt( this.model.get_breakpoint_property_value("top_padding_use", true) ?  this.model.get_breakpoint_property_value('top_padding_num', true) / grid.baseline : 0, 10 ),
+			padding_bottom_row = parseInt( this.model.get_breakpoint_property_value("bottom_padding_use", true) ? this.model.get_breakpoint_property_value('bottom_padding_num', true) / grid.baseline : 0, 10 )
 		;
 		// Also resize child objects if it's only one object
 		if ( objects.length != 1 ) return;
 		if ( breakpoint.default ) {
 			_.each(objects, function(object){
-				object.set_property('row', attr.row);
+				var row = attr.row - padding_top_row - padding_bottom_row;
+				object.set_property('row', row);
 			});
 		}
 		else {
@@ -420,11 +509,30 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 				if ( !_.isObject(obj_breakpoint[breakpoint.id]) ){
 					obj_breakpoint[breakpoint.id] = {};
 				}
-				obj_breakpoint[breakpoint.id].row = attr.row;
+				var row = attr.row - padding_top_row - padding_bottom_row;
+				obj_breakpoint[breakpoint.id].row = row;
 				object.set_property('breakpoint', obj_breakpoint);
 			});
 		}
-	}
+	},
+	
+	/**
+	 * To keep selected featured image, even on re-rendering
+	 * @param {Object} img
+	 */
+	update_featured: function (img) {
+		if ( img && img.attr('src').length > 0 ) this.full_featured_image = img.attr('src');
+	},
+	
+	property: function(name, value, silent) {
+		if(typeof value !== 'undefined'){
+			if(typeof silent === 'undefined') {
+				silent = true;
+			}
+			return this.model.set_property(name, value, silent);
+		}
+		return this.model.get_property_value_by_name(name);
+	},
 
 });
 

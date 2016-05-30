@@ -52,6 +52,8 @@ define([
 					me.markup = response.data;
 
 					Upfront.Views.ObjectView.prototype.render.call(me);
+
+					Upfront.Events.trigger('entity:object:refresh', me);
 				});
 			}
 			Upfront.Views.ObjectView.prototype.render.call(this);

@@ -157,6 +157,8 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 				Upfront.Events.trigger("upfront:element:edit:stop");
 			}
 		});
+
+		Upfront.Events.trigger('entity:object:refresh', this);
 	},
 
 	property: function(name, value, silent) {

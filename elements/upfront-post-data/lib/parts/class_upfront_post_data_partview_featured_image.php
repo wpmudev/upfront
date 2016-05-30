@@ -1,6 +1,9 @@
 <?php
 
 class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartView {
+	
+	public $pre_selected_featured_image = '';
+	
 	protected static $_parts = array(
 		0 => 'featured_image',
 	);
@@ -19,14 +22,21 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 	 * @return string
 	 */
 	public function expand_featured_image_template () {
+		
 		if (empty($this->_post->ID)) return '';
+		
+		$data = get_post_meta($this->_post->ID, '_thumbnail_data', true);
 
 		$resize_featured = isset($this->_data['resize_featured'])
 			? (int)$this->_data['resize_featured']
 			: (int)Upfront_Posts_PostsData::get_default('resize_featured')
 		;
 
-		$thumbnail = $this->_get_thumbnail();		
+		$pre_selected = $this->get_pre_selected();
+		$thumbnail = ( !empty($pre_selected) )
+			? '<img src="'. $this->get_pre_selected() .'" />'
+			: $this->_get_thumbnail()
+		;
 
 		// Let's deal with the fallback options
 		$fallback = false;
@@ -73,6 +83,14 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 
 		return $out;
 	}
+	
+	public function set_pre_selected ($selected) {
+		$this->pre_selected_featured_image = $selected;
+	}
+	
+	public function get_pre_selected () {
+		return $this->pre_selected_featured_image;
+	}
 
 	/**
 	 * Gets the thumbnail in proper size for the current given post
@@ -80,6 +98,9 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 	 * @return string Thumbnail markup, can also be an empty string
 	 */
 	private function _get_thumbnail () {
+		
+		if (empty($this->_post->ID)) return '';
+		
 		$full_featured = isset($this->_data['full_featured_image'])
 			? (int)$this->_data['full_featured_image']
 			: (int)Upfront_Posts_PostsData::get_default('full_featured_image')
@@ -87,7 +108,7 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 
 		return $full_featured == 1
 			? get_the_post_thumbnail($this->_post->ID)
-			: upfront_get_edited_post_thumbnail($this->_post->ID)
+			: upfront_get_edited_post_thumbnail($this->_post->ID, false, 'uf_post_featured_image')
 		;
 	}
 

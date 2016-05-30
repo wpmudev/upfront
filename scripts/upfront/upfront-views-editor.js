@@ -236,6 +236,7 @@
 		"scripts/upfront/inline-panels/inline-panels",
 		"scripts/upfront/element-settings/sidebar",
 		"scripts/upfront/link-panel", // If adding more arguments adjust _.rest in line 72
+		"upfront/post-editor/upfront-post-edit",
 		"text!upfront/templates/property.html",
 		"text!upfront/templates/properties.html",
 		"text!upfront/templates/property_edit.html",
@@ -249,7 +250,7 @@
 		"text!upfront/templates/sidebar_settings_theme_colors.html",
 		"text!upfront/templates/color_picker.html",
 		'spectrum'
-	], function (chosen, globalEventHandlers, InlinePanelsLoader, ElementSettingsSidebar, LinkPanel) {
+	], function (chosen, globalEventHandlers, InlinePanelsLoader, ElementSettingsSidebar, LinkPanel, PostEditorBox) {
 		var _template_files = [
 			"text!upfront/templates/property.html",
 			"text!upfront/templates/properties.html",
@@ -266,7 +267,7 @@
 		];
 
 		// Auto-assign the template contents to internal variable
-		var _template_args = _.rest(arguments, 5),
+		var _template_args = _.rest(arguments, 6),
 			_Upfront_Templates = {}
 			;
 		_(_template_files).each(function (file, idx) {
@@ -282,6 +283,8 @@
 
 		var Upfront_Scroll_Mixin = {
 			stop_scroll_propagation: function ($el) {
+				if($el.parent().hasClass('sidebar-panel-post-editor')) return;
+
 				$el.on('DOMMouseScroll mousewheel', function(ev) {
 					var $this = $(this),
 						scrollTop = this.scrollTop,
@@ -434,6 +437,8 @@
 					this.$el.html('<a class="upfront-logo upfront-logo-small" href="' + url + '"></a>');
 			},
 			on_click: function () {
+				if(_upfront_post_data) _upfront_post_data.post_id = false;
+				Upfront.Events.trigger('click:edit:navigate', false);
 				/*var root = Upfront.Settings.site_url;
 				 root = root[root.length - 1] == '/' ? root : root + '/';
 
@@ -445,6 +450,8 @@
 		var Command_Exit = Command.extend({
 			className: "command-exit upfront-icon upfront-icon-exit",
 			render: function () {
+				this.stopListening(Upfront.Events, 'stay:upfront:editor');
+				this.listenTo(Upfront.Events, 'stay:upfront:editor', this.stayed);
 			},
 			on_click: function () {
 				// Upfront.Events.trigger("command:exit");
@@ -458,6 +465,11 @@
 
 				loading.render();
 				$('body').append(loading.$el);
+				
+				// will be cleared when User chooses to stay
+				this.tmout = setTimeout(function () {
+					loading.cancel();
+				}, 1000);
 
 				if (url.indexOf('/create_new/') !== -1) {
 					return (window.location.href = Upfront.Settings.site_url);
@@ -470,9 +482,10 @@
 				}
 
 				window.location.reload(true);
-				var tmout = setTimeout(function () {
-					loading.cancel();
-				}, 1000);
+				
+			},
+			stayed: function () {
+				clearTimeout(this.tmout);
 			}
 		});
 
@@ -504,8 +517,10 @@
 						data: _.extend({post_type: this.postType}, {})
 					}).done(function (resp) {
 					//Upfront.Util.log(resp.data);
-					Upfront.Application.navigate('/edit/post/' + resp.data.post_id, {trigger: true});
-				})
+					if(_upfront_post_data) _upfront_post_data.post_id = resp.data.post_id;
+						Upfront.Application.navigate('/edit/post/' + resp.data.post_id, {trigger: true});
+						Upfront.Events.trigger("click:edit:navigate", resp.data.post_id);
+					})
 				;
 			},
 			on_post_loaded: function(view) {
@@ -546,25 +561,16 @@
 				e.preventDefault();
 				var me = this;
 
-				this.spawn_modal();
-				this.modal.render();
-				$('body').append(this.modal.el);
-
-				this.modal.open(function () {
-					me.render_modal();
-					me.trigger("new_page:modal:open");
-				}).done(function () {
-					me.trigger("new_page:modal:close");
-					Upfront.Util.post({
+				Upfront.Util
+					.post({
 						action: "upfront-create-post_type",
-						data: _.extend({post_type: me.postType}, me.modal._data)
+						data: _.extend({post_type: me.postType, title: me._default_label}, {})
 					}).done(function (resp) {
-						//Upfront.Util.log(resp.data);
+					if(_upfront_post_data) _upfront_post_data.post_id = resp.data.post_id;
 						Upfront.Application.navigate('/edit/page/' + resp.data.post_id, {trigger: true});
-
-					});
-					//Upfront.Application.navigate('/create_new/page', {trigger: true});
-				})
+						Upfront.Events.trigger("click:edit:navigate", resp.data.post_id);
+					})
+				;
 			},
 			render_modal: function () {
 				var me = this,
@@ -652,14 +658,22 @@
 		var Command_SaveLayout = Command.extend({
 			"className": "command-save",
 			render: function () {
+				Upfront.Events.on("upfront:save:label", this.update_label, this);
 				// this.$el.addClass('upfront-icon upfront-icon-save');
 				this.$el.html(l10n.save);
 				this.$el.prop("title", l10n.save);
 			},
+			update_label: function (label) {
+				var self = this;
+				setTimeout( function () {
+					self.$el.html(label);
+					self.$el.prop("title", label);
+				}, 200);
+			},
 			on_click: function () {
-				if ( _upfront_post_data.layout.specificity && _upfront_post_data.layout.item && !_upfront_post_data.layout.item.match(/-page/) )
+				if ( _upfront_post_data.layout.specificity && _upfront_post_data.layout.item && !_upfront_post_data.layout.item.match(/-page/) ) {
 					Upfront.Events.trigger("command:layout:save_as");
-				else {
+				} else {
 					Upfront.Events.trigger("command:layout:save");
 				}
 			}
@@ -747,6 +761,33 @@
 			}
 		});
 
+		var Command_Trash = Command.extend({
+			className: "command-trash upfront-icon upfront-icon-trash",
+			render: function () {
+				this.listenTo(Upfront.Events, 'click:edit:navigate', this.toggle);
+				this.$el.html(l10n.trash);
+				this.toggle();
+			},
+			toggle: function (postId) {
+				if(typeof postId !== "undefined") {
+					if(postId === false) {
+						this.$el.hide();
+					} else {
+						this.$el.show();
+					}
+				} else {
+					if (typeof _upfront_post_data === "undefined" || _upfront_post_data.post_id === false) {
+						this.$el.hide();
+					} else {
+						this.$el.show();
+					}
+				}
+			},
+			on_click: function () {
+				Upfront.Events.trigger("command:layout:trash");
+			}
+		});
+
 		var Command_Undo = Command.extend({
 			"className": "command-undo",
 			initialize: function () {
@@ -762,7 +803,8 @@
 			},
 			render: function () {
 				this.$el.addClass('upfront-icon upfront-icon-undo');
-				this.$el.html(l10n.undo);
+				// We do not need label anymore
+				// this.$el.html(l10n.undo);
 				this.$el.prop("title", l10n.undo);
 				if (this.model.has_undo_states()) this.activate();
 				else this.deactivate();
@@ -810,7 +852,8 @@
 			},
 			render: function () {
 				this.$el.addClass('upfront-icon upfront-icon-redo');
-				this.$el.html(l10n.redo);
+				// We do not need label anymore
+				// this.$el.html(l10n.redo);
 				this.$el.prop("title", l10n.redo);
 				if (this.model.has_redo_states()) this.activate();
 				else this.deactivate();
@@ -1497,8 +1540,8 @@
 					this.$el.addClass('active');
 				else
 					this.$el.removeClass('active');
-				this.$el.html('<h3 class="sidebar-panel-title">' + this.get_title() + '</h3>');
-				this.$el.append('<div class="sidebar-panel-content" />');
+				this.$el.html('<h3 class="sidebar-panel-title">' + this.get_title() + '</h3><div class="sidebar-panel-content" />');
+
 				this.stop_scroll_propagation(this.$el.find('.sidebar-panel-content'));
 
 				if( this.sections){
@@ -1629,9 +1672,13 @@
 				Upfront.Events.on("command:redo", this.reset_modules, this);
 			},
 			on_render: function () {
+				var me = this;
 				this.reset_modules();
-				if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME )
-					this.$el.find('.sidebar-panel-title').trigger('click');
+				if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME ) {
+					setTimeout( function() {
+						me.$el.find('.sidebar-panel-title').trigger('click');
+					}, 100);
+				}
 			},
 			on_save_after: function () {
 				var regions = this.model.get('regions');
@@ -1790,6 +1837,368 @@
 						});
 				});
 			}
+		});
+
+		var SidebarPanel_PostEditor = SidebarPanel.extend({
+			"className": "sidebar-panel sidebar-panel-post-editor",
+			initialize: function (opts) {
+				var me = this;
+				this.active = true;
+				this.postId = this.getPostId();
+				this.sections = _([
+					new SidebarPanel_Settings_Section_PostDetails({"model": this.model, "postId": this.postId}),
+				]);
+
+				if ( Upfront.Application.is_single( "post" ) ) {
+					me.sections.push(new SidebarPanel_Settings_Section_PostTagCategory({"model": me.model, "postId": this.postId}));
+				} else if ( Upfront.Application.is_single( "page" ) ) {
+					me.sections.push(new SidebarPanel_Settings_Section_PageTemplate({"model": me.model, "postId": this.postId}));
+				}
+
+				Upfront.Events.off("command:layout:save", this.on_save, this);
+				Upfront.Events.on("command:layout:save", this.on_save, this);
+
+				Upfront.Events.off("command:layout:save_as", this.on_save, this);
+				Upfront.Events.on("command:layout:save_as", this.on_save, this);
+
+				Upfront.Events.off("command:layout:publish", this.on_save, this);
+				Upfront.Events.on("command:layout:publish", this.on_save, this);
+
+				//Upfront.Events.on("command:layout:preview", this.on_preview, this); // Do NOT drop shadow region from layout on preview build
+				Upfront.Events.off("command:layout:save_success", this.on_save_after, this);
+				Upfront.Events.on("command:layout:save_success", this.on_save_after, this);
+
+				Upfront.Events.off("command:layout:save_error", this.on_save_after, this);
+				Upfront.Events.on("command:layout:save_error", this.on_save_after, this);
+
+				Upfront.Events.off("entity:drag_stop", this.reset_modules, this);
+				Upfront.Events.on("entity:drag_stop", this.reset_modules, this);
+
+				Upfront.Events.off("layout:render", this.apply_state_binding, this);
+				Upfront.Events.on("layout:render", this.apply_state_binding, this);
+			},
+			get_title: function () {
+				if ( Upfront.Application.is_single( "post" ) ) {
+					return l10n.post_settings;
+				} else if ( Upfront.Application.is_single( "page" ) ) {
+					return l10n.page_settings;
+				}
+			},
+			on_save: function () {
+				var regions = this.model.get('regions');
+				this._shadow_region = regions.get_by_name('shadow');
+				regions.remove(this._shadow_region, {silent: true});
+			},
+			on_preview: function () { return this.on_save(); },
+			apply_state_binding: function () {
+				Upfront.Events.on("command:undo", this.reset_modules, this);
+				Upfront.Events.on("command:redo", this.reset_modules, this);
+			},
+			on_render: function () {
+				var me = this;
+				// Delay to make it active after all other are rendered
+				setTimeout( function() {
+					me.$el.find('.sidebar-panel-title').trigger('click');
+				}, 200);
+			},
+			_post_type_has_taxonomy: function (tax, post) {
+				if (!tax) return true;
+				var type = post.get("post_type") || 'post';
+				return "page" !== type;
+			},
+			getPostId: function() {
+				postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
+				if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.THEME ) {
+					// We're dealing with a theme exporter request
+					// Okay, so let's fake a post
+					postId = "fake_post";
+				}
+				else if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.CONTENT_STYLE ){
+					postId = "fake_styled_post";
+				}
+
+				return postId;
+			},
+		});
+
+		var SidebarPanel_Settings_Section_PageTemplate = SidebarPanel_Settings_Section.extend({
+			initialize: function (opts) {
+				this.options = opts;
+				this.settings = _([]);
+				this.templates = _([]);
+				this.layouts = _([]);
+				this.options.call = false;
+				this.layoutList = new Upfront.Collections.PageTemplateList([], {postId: this.options.postId});
+				this.load_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 );
+			},
+			get_name: function () {
+				return 'templates';
+			},
+			get_title: function () {
+				return l10n.label_page_template;
+			},
+			on_render: function () {
+				var me = this;
+
+				if( !this.options.call ) {
+					// fetching layout templates data from custom post type
+					this.layoutList.fetch({load_dev: me.load_dev, template_type: 'layout'}).done(function(response){
+						me.layouts = new Upfront.Collections.PageTemplateList(response.data.results);
+
+						// fetching page template files in sequence after layout templates
+						me.layoutList.fetch({load_dev: me.load_dev, template_type: 'page'}).done(function(response){
+							me.templates = new Upfront.Collections.PageTemplateList(response.data.results);
+							// append the Template UI
+							me.append_template_box();
+						});
+					});
+
+					this.options.call = true;
+				}
+			},
+			append_template_box: function () {
+				var me = this;
+				var template_editor_view = new PostEditorBox.PageTemplateEditor({collection: me.layoutList, label: l10n.label_page_template});
+
+				setTimeout(function () {
+					template_editor_view.allPageTemplates = me.templates;
+					template_editor_view.allPageLayouts = me.layouts;
+					template_editor_view.render();
+					template_editor_view.delegateEvents();
+					me.$el.empty();
+					me.$el.append(template_editor_view.$el);
+				}, 300);
+			}
+		});
+
+		var SidebarPanel_Settings_Section_PostTagCategory = SidebarPanel_Settings_Section.extend({
+			initialize: function (opts) {
+				this.options = opts;
+				this.options.call = false;
+				this.settings = _([]);
+			},
+			get_name: function () {
+				return 'tag_category';
+			},
+			get_title: function () {
+				return "Cats / Tags";
+			},
+			on_render: function () {
+				var me = this;
+
+				if(!this.options.call) {
+					this.$el.append('<div class="upfront-categories-wrapper"></div>');
+					this.$el.append('<div class="upfront-tags-wrapper"></div>');
+					post = new Upfront.Models.Post({ID: this.options.postId});
+					post.fetch().done(function(response){
+						me.renderTaxonomyEditor(me.options.postId, 'category', post);
+						me.renderTaxonomyEditor(me.options.postId, 'post_tag', post);
+					});
+
+					this.options.call = true;
+				}
+			},
+			renderTaxonomyEditor: function(postId, tax, post){
+				var self = this,
+					tax = typeof tax === "undefined" ? "category" : tax,
+					termsList = new Upfront.Collections.TermList([], {postId: postId, taxonomy: tax})
+				;
+
+				if (!this._post_type_has_taxonomy(tax, post)) {
+					return false;
+				}
+
+				termsList.fetch({allTerms: true}).done(function(response){
+					var tax_view_constructor = response.data.taxonomy.hierarchical ? PostEditorBox.ContentEditorTaxonomy_Hierarchical : PostEditorBox.ContentEditorTaxonomy_Flat;
+					var tax_view = new tax_view_constructor({collection: termsList, tax: tax});
+
+					tax_view.allTerms = new Upfront.Collections.TermList(response.data.allTerms);
+					tax_view.render();
+					if(response.data.taxonomy.hierarchical) {
+						self.$el.find('.upfront-categories-wrapper').append(tax_view.$el);
+					} else {
+						self.$el.find('.upfront-tags-wrapper').append(tax_view.$el);
+					}
+				});
+
+			},
+			_post_type_has_taxonomy: function (tax, post) {
+				if (!tax) return true;
+				var type = post.get("post_type") || 'post';
+				return "page" !== type;
+			}
+		});
+
+		var SidebarPanel_Settings_Section_PostDetails = SidebarPanel_Settings_Section.extend({
+			initialize: function (opts) {
+				this.options = opts;
+				this.settings = _([]);
+				var self = this;
+
+				if ( !Upfront.Views.PostDataEditor ) {
+					require(['content'], function() {
+						if(self.getPostId() !== false) {
+							setTimeout(self.prepare_editor(self));
+						}
+					});
+				}
+
+				this.listenTo(Upfront.Views.PostDataEditor, 'loaded', function(contentEditor) {
+					Upfront.Views.PostBox = contentEditor.prepareBox();
+					self.append_box();
+				});
+
+				this.listenTo(Upfront.Views.PostDataEditor, 'post:saved', function() {
+					this.render();
+				});
+
+				this.listenTo(Upfront.Events, 'click:edit:navigate', function (postId) {
+					if ( typeof postId !== 'undefined' && postId ) setTimeout(self.prepare_editor(self));
+				});
+
+				if (typeof Upfront.Views.PostDataEditor !== "undefined" && Upfront.Views.PostDataEditor.contentEditor !== false) {
+					Upfront.Views.PostBox = Upfront.Views.PostDataEditor.contentEditor.prepareBox();
+				}
+
+				if( Upfront.Views.PostDataEditor && Upfront.Views.PostBox ) {
+					self.append_box(Upfront.Views.PostBox);
+				}
+
+				this.editor = Upfront.Views.PostDataEditor;
+			},
+			get_name: function () {
+				return 'post_details';
+			},
+			get_title: function () {
+				if ( Upfront.Application.is_single( "post" ) ) {
+					return l10n.post_settings;
+				} else if ( Upfront.Application.is_single( "page" ) ) {
+					return l10n.page_settings;
+				}
+			},
+
+			on_render: function () {
+				if( Upfront.Views.PostDataEditor && Upfront.Views.PostBox ) {
+					this.append_box(Upfront.Views.PostBox);
+				}
+			},
+
+			prepare_editor: function (me) {
+				// Post data editor sends out quite a few requests, so if it's already
+				// bootstrapped, let's just re-use this if possible
+				if(typeof Upfront.Views.PostDataEditor !== "undefined") {
+					if ((Upfront.Views.PostDataEditor || {}).postId === me.getPostId()) {
+						Upfront.Views.PostDataEditor.reboot();
+						return true;
+					}
+				}
+				// Done, carry on like we did before
+
+				if(typeof Upfront.Views.PostDataEditor !== "undefined") {
+					Upfront.Views.PostDataEditor.remove();
+				}
+
+				Upfront.Views.PostDataEditor = new Upfront.Content.PostEditor({
+					editor_id: 'this_post_' + me.getPostId(),
+					post_id: me.getPostId(),
+					content_mode: 'post_content'
+				});
+				// Upfront.Events.trigger("editor:post_editor:created", Upfront.Views.PostDataEditor);
+			},
+
+			getPostId: function() {
+				postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
+				if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.THEME ) {
+					// We're dealing with a theme exporter request
+					// Okay, so let's fake a post
+					postId = "fake_post";
+				}
+				else if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.CONTENT_STYLE ){
+					postId = "fake_styled_post";
+				}
+
+				return postId;
+			},
+
+			append_box: function () {
+				var me = this,
+				box = Upfront.Views.PostBox;
+
+				setTimeout(function () {
+					me.$el.empty();
+					me.$el.append(box.$el);
+					box.rebindEvents();
+				}, 50);
+			},
+
+			/**
+			 * On cancel handler, do rerender with cached data
+			 */
+			on_cancel: function () {
+				if ( ! this.child_view ) return;
+				this.child_view.rerender();
+			},
+
+			/**
+			 * On edit start handler, don't cache data on requested rendering
+			 */
+			on_edit_start: function () {
+				if ( ! this.child_view ) return;
+				this.child_view._do_cache = false;
+			},
+
+			/**
+			 * On edit stop handler, do enable caching back
+			 */
+			on_edit_stop: function () {
+				if ( ! this.child_view ) return;
+				this.child_view._do_cache = true;
+			},
+
+			/**
+			 * On title change handler, do nothing for now, just for handy reference in case we need it
+			 * @param {String} title
+			 */
+			on_title_change: function (title) {
+
+			},
+
+			/**
+			 * On content change handler, do nothing for now, just for handy reference in case we need it
+			 * @param {String} content
+			 * @param {Bool} isExcerpt
+			 */
+			on_content_change: function (content, isExcerpt) {
+
+			},
+
+			/**
+			 * On author change handler, rerender if this is author element
+			 * @param {Object} authorId
+			 */
+			on_author_change: function (authorId) {
+				if ( ! this.child_view ) return;
+				var type = this.model.get_property_value_by_name("data_type");
+				this.authorId = authorId;
+				// Render again if it's author element
+				if ( 'author' == type ) {
+					this.child_view.render();
+				}
+			},
+
+			/**
+			 * On date change handler, rerender if this is post data element
+			 * @param {Object} date
+			 */
+			on_date_change: function (date) {
+				if ( ! this.child_view ) return;
+				var type = this.model.get_property_value_by_name("data_type");
+				this.postDate = Upfront.Util.format_date(date, true, true).replace(/\//g, '-');
+				// Render again if it's post data element
+				if ( 'post_data' == type ) {
+					this.child_view.render(['date_posted']); // Only render the date_posted part
+				}
+			},
 		});
 
 
@@ -2921,19 +3330,44 @@
 			"tagName": "ul",
 			"className": "sidebar-panels",
 			initialize: function () {
-				this.panels = {
-					posts: new SidebarPanel_Posts({"model": this.model}),
-					elements: new SidebarPanel_DraggableElements({"model": this.model}),
-					settings: new SidebarPanel_Settings({"model": this.model})
-				};
+				this.init_modules();
 
+				this.listenTo(Upfront.Events, 'click:edit:navigate', this.init_modules);
 				// Dev feature only
 				//if ( Upfront.Settings.Debug.dev )
 				//	this.panels.settings = new SidebarPanel_Settings({"model": this.model});
 			},
+			init_modules: function (postId) {
+				this.panels = {
+					'post_editor': new SidebarPanel_PostEditor({"model": this.model}),
+					'posts': new SidebarPanel_Posts({"model": this.model}),
+					'elements': new SidebarPanel_DraggableElements({"model": this.model}),
+					'settings': new SidebarPanel_Settings({"model": this.model})
+				};
+
+				if(typeof postId !== "undefined") {
+					if(postId === false) {
+						this.panels = _.omit(this.panels, 'post_editor');
+					}
+				} else {
+					if(typeof _upfront_post_data.post_id === "undefined" || _upfront_post_data.post_id === false) {
+						this.panels = _.omit(this.panels, 'post_editor');
+					}
+				}
+			},
 			render: function () {
 				var me = this;
-				_.each(this.panels, function(panel){
+
+				me.$el.empty();
+
+				_.each(this.panels, function(panel, index){
+					panel.remove();
+					panel = me.panels[ index ];
+					if(index === "post_editor") {
+						// Make sure we re-initialize panels
+						panel.initialize();
+					}
+
 					panel.render();
 
 					//Render panels to init styles, but do not append to $el
@@ -3012,8 +3446,13 @@
 						this.commands = _([
 							new Command_Undo({"model": this.model}),
 							new Command_Redo({"model": this.model}),
-							new Command_ToggleGrid({"model": this.model}),
 						]);
+						if (Upfront.Application.user_can("RESPONSIVE_MODE") && current_app !== MODE.THEME) {
+							this.commands.push(
+								new Command_StartResponsiveMode({model: this.model})
+							);
+						}
+						this.commands.push(new Command_ToggleGrid({"model": this.model}));
 					} else {
 						this.commands = _([
 							new Command_ToggleGrid({"model": this.model}),
@@ -3031,15 +3470,13 @@
 				if ( current_app == MODE.THEME ) {
 					this.commands.push(new Command_ExportLayout({"model": this.model}));
 				}
+
+				this.commands.push(new Command_Trash({"model": this.model}));
+
 				if (!Upfront.Settings.Application.NO_SAVE && current_app !== MODE.THEME && Upfront.Application.user_can_modify_layout()) {
 					this.commands.push(new Command_SaveLayout({"model": this.model}));
 				} else if (current_app !== MODE.THEME && Upfront.Settings.Application.PERMS.REVISIONS) {
 					this.commands.push(new Command_PreviewLayout({"model": this.model}));
-				}
-				if (Upfront.Application.user_can("RESPONSIVE_MODE") && current_app !== MODE.THEME) {
-					this.commands.push(
-						new Command_StartResponsiveMode({model: this.model})
-					);
 				}
 				// Dev feature only
 				if ( Upfront.Settings.Debug.dev ) {
@@ -3477,7 +3914,7 @@
 			currentPanel: false,
 			render: function () {
 				this.$el.addClass("upfront-entity_list upfront-icon upfront-icon-browse");
-				if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.LAYOUT )
+				if ( Upfront.Application.is_single( "post" ) )
 					this.$el.html('<a title="'+ l10n.posts_pages_comments +'">' + l10n.posts_pages_comments + '</a>');
 				else
 					this.$el.html('<a title="'+ l10n.posts_pages +'">' + l10n.posts_pages + '</a>');
@@ -3823,7 +4260,9 @@
 			handle_post_edit: function (e) {
 				e.preventDefault();
 				var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
+				if(_upfront_post_data) _upfront_post_data.post_id = postId;
 				Upfront.Application.navigate('/edit/post/' + postId, {trigger: true});
+				Upfront.Events.trigger('click:edit:navigate', postId);
 			},
 			handle_post_view: function (e) {
 				e.preventDefault();
@@ -3867,6 +4306,7 @@
 					// Respect dev=true
 					if (window.location.search.indexOf('dev=true') > -1) path += '?dev=true';
 					Upfront.Popup.close();
+					if(_upfront_post_data) _upfront_post_data.post_id = post.id;
 					Upfront.Application.navigate(path, {trigger: true});
 				});
 
@@ -3896,7 +4336,7 @@
 				"click .upfront-page-path-item": "handle_page_activate",
 				"change #upfront-page_template-select": "template_change",
 				"click .editaction.trash": "trash_page",
-			"click .editaction.edit": "handle_post_edit",
+				"click .editaction.edit": "handle_post_edit",
 				"click .editaction.view": "handle_post_view",
 			},
 			currentPage: false,
@@ -3933,24 +4373,27 @@
 					// Respect dev=true
 					if (window.location.search.indexOf('dev=true') > -1) path += '?dev=true';
 					Upfront.Popup.close();
+					if(_upfront_post_data) _upfront_post_data.post_id = page.get('ID');
 					Upfront.Application.navigate(path, {trigger: true});
 				});
 			},
-		handle_sort_request: function (e) {
-			var $option = $(e.target).closest('.upfront-list_item-component'),
-				sortby = $option.attr('data-sortby'),
-				order = this.collection.order;
-			if(sortby){
-				if(sortby == this.collection.orderby)
-					order = order == 'desc' ? 'asc' : 'desc';
-				this.collection.reSort(sortby, order);
-			}
-		},
-		handle_post_edit: function (e) {
-			e.preventDefault();
-			var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
-			Upfront.Application.navigate('/edit/page/' + postId, {trigger: true});
-		},
+			handle_sort_request: function (e) {
+				var $option = $(e.target).closest('.upfront-list_item-component'),
+					sortby = $option.attr('data-sortby'),
+					order = this.collection.order;
+				if(sortby){
+					if(sortby == this.collection.orderby)
+						order = order == 'desc' ? 'asc' : 'desc';
+					this.collection.reSort(sortby, order);
+				}
+			},
+			handle_post_edit: function (e) {
+				e.preventDefault();
+				var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
+				if(_upfront_post_data) _upfront_post_data.post_id = postId;
+				Upfront.Application.navigate('/edit/page/' + postId, {trigger: true});
+				Upfront.Events.trigger('click:edit:navigate', postId);
+			},
 			handle_post_view: function (e) {
 				e.preventDefault();
 				var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
@@ -4527,7 +4970,7 @@
 		var Field_Button = Field.extend({
 			className: 'upfront-field-wrap upfront-field-wrap-button',
 			events: {
-				'click': 'on_click'
+				'click' : 'on_click'
 			},
 			render: function () {
 				this.$el.html('');
@@ -4542,6 +4985,7 @@
 				if (this.options.classname) this.$el.addClass(this.options.classname);
 
 				this.trigger('rendered');
+				this.delegateEvents();
 			},
 			get_info_html: function() {
 				return '<span class="button-info">' + this.options.info + '</span>';
@@ -5164,7 +5608,7 @@
 				var select_label = ( this.options.select_label ) ? this.options.select_label : ( this.options.placeholder ? this.options.placeholder : '' );
 				var $select_value = this.$el.find('.upfront-field-select-value');
 				var $checked = this.$el.find('.upfront-field-select-option input:checked');
-				if ( $checked.size() == 1 && !this.multiple ) {
+				if ( $checked.length == 1 && !this.multiple ) {
 					var $option = $checked.closest('.upfront-field-select-option'),
 						select_text = $option.text(),
 						$select_icon = $option.find('.upfront-field-icon').clone();
@@ -5177,10 +5621,10 @@
 					$checked.each(function(){
 						select_texts.push( $(this).closest('.upfront-field-select-option').text() );
 					});
-					$select_value.text( $checked.size() == 0 ? select_label : select_texts.join(', ') );
+					$select_value.text( $checked.length == 0 ? select_label : select_texts.join(', ') );
 				}
 				this.$el.find('.upfront-field-select-option').each(function(){
-					if ( $(this).find('input:checked').size() > 0 )
+					if ( $(this).find('input:checked').length > 0 )
 						$(this).addClass('upfront-field-select-option-selected');
 					else
 						$(this).removeClass('upfront-field-select-option-selected');
@@ -5236,14 +5680,43 @@
 			multiple: false,
 
 			initialize: function(options) {
+				this.options = options;
 				Field.prototype.initialize.call(this, options);
 				//Close dropdown on parent scroll
 				$('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, this.closeChosen);
+			},
 
-				//Disable scroll when chosen is opened
-				$('.sidebar-panel-content .sidebar-tab-content').bind('mousewheel', function() {
-					return false
+			render: function () {
+				var me = this;
+
+				this.$el.html('');
+
+				if ( this.label ) {
+					this.$el.append(this.get_label_html());
+				}
+				this.$el.append(this.get_field_html());
+
+				this.stop_scroll_propagation(this.$el.find('.upfront-field-select-options'));
+
+				if ( ! this.multiple && ! this.get_saved_value() ) {
+					this.$el.find('.upfront-field-select-option:eq(0) input').prop('checked', true);
+				}
+
+				this.update_select_display_value();
+
+				if ( this.options.width ) {
+					this.$el.find('.upfront-field-select').css('width', this.options.width);
+				}
+
+				if (this.options.additional_classes) {
+					this.$el.addClass(this.options.additional_classes);
+				}
+
+				this.$el.find('select').on('chosen:hiding_dropdown', function() {
+					me.allowMouseWheel();
 				});
+
+				this.trigger('rendered');
 			},
 
 			get_field_html: function() {
@@ -5256,6 +5729,7 @@
 				return ['<option value="', value.value, '"', selected, '>', value.label, '</option>'].join('');
 			},
 			on_change: function(e) {
+				this.allowMouseWheel();
 				this.$el.find('.chosen-drop').css('display', 'none');
 				this.trigger('changed');
 			},
@@ -5266,6 +5740,12 @@
 				this.$el.find('select').val(value).trigger('chosen:updated');
 			},
 			openOptions: function(e) {
+
+				//Disable scroll when chosen is opened
+				$('.sidebar-panel-content .sidebar-tab-content, #sidebar-scroll-wrapper').bind('mousewheel', function() {
+					return false
+				});
+
 				var me = this;
 				_.delay(function() { // Delay because opening animation causes wrong outerHeight results
 					var in_sidebar = me.$el.parents('#sidebar-ui').length,
@@ -5298,8 +5778,11 @@
 				}
 				me.$el.find('select').trigger("chosen:close");
 
+				me.allowMouseWheel();
+			},
+			allowMouseWheel: function() {
 				//Enable scroll when chosen is closed
-				$('.sidebar-panel-content .sidebar-tab-content').unbind('mousewheel');
+				$('.sidebar-panel-content .sidebar-tab-content, #sidebar-scroll-wrapper').unbind('mousewheel');
 			}
 		});
 
@@ -6766,7 +7249,7 @@
 				var request = Upfront.Util.post({action: "upfront_list_google_fonts"});
 
 				// We're gonna pipe response since we need to convert it to fonts collection first.
-				request = request.pipe(
+				request = request.then(
 					function(response) {
 						fonts = new Fonts_Collection(response.data);
 						// Return collection instead original response
@@ -7977,7 +8460,7 @@
 				var me = this,
 					rules = contents.split('}'),
 					processed = ''
-					;
+				;
 
 				_.each(rules, function (rl) {
 					var src = $.trim(rl).split('{');
@@ -8004,6 +8487,13 @@
 						src[1] + // Actual rule
 						'\n}\n';
 				});
+
+				// Handle closing comments being omitted from the processed string
+				// Only apply if the original contents has closing CSS comment, and the processed one does not
+				if (contents.match(/\*\/\s*$/) && !processed.match(/\*\/\s*$/)) {
+					processed += '\n*/';
+				}
+
 				return processed;
 			},
 
@@ -9944,7 +10434,7 @@
 					$region_name.find('.upfront-region-name-edit-value').text(this.model.get('title'));
 					if ( this.model.get('scope') == 'global' ) {
 						$region_name.find('.upfront-region-bg-setting-is-global').show();
-						make_global.$el.hide()
+						make_global.$el.hide();
 						if ( !this.model.is_main() && sub ) {
 							var main_region = this.model.collection.get_by_name(this.model.get('container'));
 							if ( main_region && main_region.get('scope') == 'global' ){
@@ -12012,6 +12502,7 @@
 			}
 		});
 
+
 		return {
 			"Editor": {
 				"Property": Property,
@@ -12041,7 +12532,7 @@
 					"AnchorSetting": _Settings_AnchorSetting
 				},
 				"Button": {
-					"Presets": button_presets_collection,
+					"Presets": button_presets_collection
 				},
 				"Fonts": {
 					"System": system_fonts_storage,
@@ -12107,4 +12598,4 @@
 	});
 })(jQuery);
 
-//@ sourceURL=upfront-views-editor.js
+//# sourceURL=upfront-views-editor.js
