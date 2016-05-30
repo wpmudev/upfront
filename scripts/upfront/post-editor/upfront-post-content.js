@@ -133,6 +133,7 @@ PostContentEditor.prototype = {
 			init: function () {
 				var self = this;
 				this.listenTo(this.parent, 'change:title', this.titleChanged);
+				this.listenTo(Upfront.Events, 'change:title', this.sidebarTitleChanged);
 			},
 			editContent: function () {
 				if ( this.parent._editing ) return;
@@ -191,10 +192,12 @@ PostContentEditor.prototype = {
 				this.parent.titleBlurred();
 				this.parent.currentData.title = this.$title.text();
 				this.parent.trigger('change:title', this.parent.currentData.title, this);
+				Upfront.Events.trigger('content:change:title', this.parent.currentData.title);
 				this.disable_edit_title();
 			},
 			keyup: function (e) {
 				this.parent.currentData.title = this.$title.text();
+				Upfront.Events.trigger('content:change:title', this.parent.currentData.title);
 				// escape
 				if( e.keyCode === 27 ) {
 					this.disable_edit_title();
@@ -213,6 +216,23 @@ PostContentEditor.prototype = {
 			titleChanged: function (title, callFrom) {
 				if ( callFrom == this ) return;
 				if ( typeof this.$title !== 'undefined' ) this.$title.text(title);
+			},
+			sidebarTitleChanged: function(title) {
+				var $part = this.$('.upostdata-part');
+				if(typeof this.title === "undefined") {
+					if ( $part.length ){
+						var $node = this._findDeep($part);
+						// Verify node
+						if ( $.trim($node.text()) == $.trim($part.text()) ) {
+							this.$title = $node;
+						}
+						else {
+							this.$title = $part;
+						}
+					}
+				}
+				this.$title.text(title);
+				this.parent.currentData.title = title;
 			},
 			_findDeep: function ($el) {
 				var $child = $el.children(':not(script, style, object, iframe, embed)');

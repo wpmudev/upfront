@@ -40,15 +40,29 @@
     <script id="post-url-editor" type="text/template">
         <label id="post-url-display-label">{{url_label}}:</label>
         
-        <p id="post-url-display">{{rootUrl}}</p>
-		<p id="post-url-slug" class="ueditor-previous-data ueditor-previous-data-toggle"><span>{{slug}}</span> <a href="#" class="ueditor-edit-post-url ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a></p>
+		<div class="ueditor-post-page-title">
+			<p id="post-title" class="ueditor-previous-data ueditor-previous-data-toggle"><span>{{postTitle}}</span> <a href="#" class="ueditor-edit-post-title ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a></p>
 
-        <div class="ueditor-togglable ueditor-togglable-post-url">
-            <div class="ueditor-row">
-                <input type="text" class="upfront-field-text ueditor-post-url-text" value="{{slug}}">
-				<a href="#" class="ueditor-save-post-data  ueditor-button-save ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
-            </div>
-        </div>
+
+			<div class="ueditor-togglable ueditor-togglable-post-title">
+				<div class="ueditor-row">
+					<input type="text" class="upfront-field-text ueditor-post-title-text" value="{{postTitle}}">
+					<a href="#" class="ueditor-save-post-data  ueditor-button-save ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="ueditor-post-page-url">
+			<p id="post-url-display">{{rootUrl}}</p>
+			<p id="post-url-slug" class="ueditor-previous-data ueditor-previous-data-toggle"><span>{{slug}}</span> <a href="#" class="ueditor-edit-post-url ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a></p>
+
+			<div class="ueditor-togglable ueditor-togglable-post-url">
+				<div class="ueditor-row">
+					<input type="text" class="upfront-field-text ueditor-post-url-text" value="{{slug}}">
+					<a href="#" class="ueditor-save-post-data  ueditor-button-save ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
+				</div>
+			</div>
+		</div>
     </script>
 
 	<script type="text/template" id="upfront-term-list-tpl">

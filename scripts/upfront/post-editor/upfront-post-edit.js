@@ -359,16 +359,16 @@ var PostSectionView = Backbone.View.extend({
         e.preventDefault();
         var $button = $(e.target),
 			$this_togglable,
-            $this_prev_data_toggle = $button.closest(".misc-pub-section").find(".ueditor-previous-data-toggle")
+            $this_prev_data_toggle = $button.parent().parent().find(".ueditor-previous-data-toggle")
             ;
-		
-		if($button.hasClass('ueditor-edit-post-url')) {
+
+		if($button.hasClass('ueditor-edit-post-url') || $button.hasClass('ueditor-edit-post-title')) {
 			$this_togglable = $button.parent().siblings(".ueditor-togglable");
 		} else {
 			$this_togglable = $button.siblings(".ueditor-togglable");
 		}
 
-		if(!$button.hasClass('ueditor-edit-post-url')) {
+		if(!$button.hasClass('ueditor-edit-post-url') || !$button.hasClass('ueditor-edit-post-title')) {
 			$(".ueditor-box-content-wrap .ueditor-togglable").parent().removeClass('upfront-settings-toggled');
         }
 		$(".ueditor-box-content-wrap .ueditor-togglable").not($this_togglable).slideUp();
@@ -1308,23 +1308,31 @@ var PostUrlEditor = PostSectionView.extend({
     tpl : _.template($(editionBox_tpl).find("#post-url-editor").html()),
     initialize: function(opts){
         this.post = opts.post;
+		this.listenTo(Upfront.Events, 'content:change:title', this.changeTitle);
         this.hasDefinedSlug = _.isEmpty( this.post.get("post_name") ) ? false : true;
         this.render();
-
     },
     render: function(){
         var self = this,
-            base = this.post.get("guid");
+            base = this.post.get("guid"),
+			postTitle = this.post.get("post_title");
+
         base = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
         this.$el.html(this.tpl({
             rootUrl: base,
+			postTitle: postTitle,
             slug: self.post.get('post_name'),
             url_label : "post" === self.post.get("post_type") ? l10n.global.content.post_url : l10n.global.content.page_url
 		}));
     },
+	changeTitle: function(title) {
+		this.post.set( "post_title", title );
+		this.render();
+	},
     update: function(e){
         e.preventDefault();
         var val = this.$(".ueditor-post-url-text").val();
+		var title = this.$(".ueditor-post-title-text").val();
         if( val.length > 1 ){
 			var slug = val.toLowerCase().replace(/ /g, '-'),
 			rootUrl = this.post.get("guid")
@@ -1335,8 +1343,16 @@ var PostUrlEditor = PostSectionView.extend({
 
             this.post.set( "post_name", slug );
             this.hasDefinedSlug = true;
-            this.render();
         }
+		
+		if( title.length > 1 ){
+			this.post.set( "post_title", title );
+			Upfront.Events.trigger('change:title', title);
+		}
+		
+		if( val.length > 1 || title.length > 1 ){
+			this.render();
+		}
     }
 });
 

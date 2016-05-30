@@ -99,6 +99,9 @@ define("content", deps, function(postTpl, ContentTools) {
 			// Specific change event handles
 			this.stopListening(this.contentEditor, 'change:title');
 			this.listenTo(this.contentEditor, 'change:title', this.changeTitle);
+			
+			this.stopListening(Upfront.Events, 'change:title');
+			this.listenTo(Upfront.Events, 'change:title', this.changeTitle);
 
 			this.stopListening(this.contentEditor, 'change:content');
 			this.listenTo(this.contentEditor, 'change:content', this.changeContent);
@@ -264,8 +267,6 @@ define("content", deps, function(postTpl, ContentTools) {
 			} else {
 				status = "draft";
 			}
-
-
 
 			if ( results.title ) {
 				this.post.set('post_title', results.title);
