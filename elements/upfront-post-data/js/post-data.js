@@ -170,7 +170,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	cleanup: function () {
 		var type = this.model.get_property_value_by_name('part_type');
 		this.remove_region_class('upfront-region-container-has-' + type, true);
-	}
+	},
 
 });
 
@@ -201,12 +201,20 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	},
 
 	getControlItems: function(){
-		var objects = this.get_child_objects(false),
+		var me = this,
+			objects = this.get_child_objects(false),
 			type = this.model.get_property_value_by_name('data_type'),
+			is_locked = this.model.get_property_value_by_name('is_locked')
 			controls = []
 		;
 
 		if(typeof type !== "undefined" && type === "featured_image") {
+			if(typeof is_locked !== "undefined" && is_locked === true) {
+				var lock_icon = 'lock-locked';
+			} else {
+				var lock_icon = 'lock-unlocked';
+			}
+			
 			var moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl();
 
 			moreOptions.icon = 'more';
@@ -215,6 +223,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			moreOptions.sub_items = {}
 			moreOptions.sub_items['swap'] = this.createControl('swap', l10n.swap_image, 'openImageSelector');
 			moreOptions.sub_items['crop'] = this.createControl('crop', l10n.edit_image, 'editImage');
+			moreOptions.sub_items['lock'] = this.createControl(lock_icon, l10n.lock_image, 'lockImage');
 
 			controls.push(moreOptions);
 		}
@@ -229,6 +238,45 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		controls.push(this.createPaddingControl());
 		controls.push(this.createControl('settings', l10n.settings, 'on_settings_click'));
 		return _(controls);
+	},
+	
+	lockImage: function () {
+		var me = this,
+			is_locked = this.property('is_locked')
+			//sizeCheck = this.checkSize()
+		;
+
+		if(typeof is_locked !== "undefined" && is_locked === true) {
+			//Update icon
+			this.controls.$el.find('.upfront-icon-region-lock-locked')
+				.addClass('upfront-icon-region-lock-unlocked')
+				.removeClass('upfront-icon-region-lock-locked');
+
+			this.property('is_locked', false);
+			
+			/*
+			if(sizeCheck === "small") {
+				this.$('.upfront-image-caption-container, .upfront-image-container').css({
+					width: '100%',
+					height: '100%',
+					marginTop: 0
+				});
+
+				this.fitImage();
+
+				this.cropTimer = setTimeout(function(){
+					me.saveTemporaryResizing();
+				}, this.cropTimeAfterResize);
+			}
+			*/
+		} else {
+			//Update icon
+			this.controls.$el.find('.upfront-icon-region-lock-unlocked')
+				.addClass('upfront-icon-region-lock-locked')
+				.removeClass('upfront-icon-region-lock-unlocked');
+
+			this.property('is_locked', true);
+		}
 	},
 	
 	openImageSelector: function() {
@@ -474,7 +522,17 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	 */
 	update_featured: function (img) {
 		if ( img && img.attr('src').length > 0 ) this.full_featured_image = img.attr('src');
-	}
+	},
+	
+	property: function(name, value, silent) {
+		if(typeof value !== 'undefined'){
+			if(typeof silent === 'undefined') {
+				silent = true;
+			}
+			return this.model.set_property(name, value, silent);
+		}
+		return this.model.get_property_value_by_name(name);
+	},
 
 });
 
