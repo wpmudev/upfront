@@ -282,8 +282,9 @@ class Upfront_UcontactView extends Upfront_Object {
 	}
 
 	public function kick_in_smtp($phpmailer){
-
-		if( !is_email($this->_get_property_t('smtp_from_email')) || empty($this->_get_property_t('smtp_host')) ){
+		$smtp_from_email = $this->_get_property_t('smtp_from_email');
+		$smtp_host = $this->_get_property_t('smtp_host');
+		if( !is_email($smtp_from_email) || empty($smtp_host) ){
 			return;
 		}
 
