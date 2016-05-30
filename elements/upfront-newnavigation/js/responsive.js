@@ -139,8 +139,7 @@ jQuery(document).ready(function($) {
 		});
 	}
 
-	$win
-		.load(floatInit);
+	$win.on('load', floatInit);
 
 	//Work around for having the region container have a higher z-index if it contains the nav, so that the dropdowns, if overlapping to the following regions should not loose "hover" when the mouse travels down to the next region.
 	$('div.upfront-navigation').each(function() {

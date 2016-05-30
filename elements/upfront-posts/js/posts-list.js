@@ -32,9 +32,11 @@ var PostsView = Upfront.Views.ObjectView.extend({
 		var type = this.model.get_property_value_by_name("display_type");
 		this.render_type_view(type);
 		// Let's not render min-height (remove it)
-		this.$el.find('> .upfront-object').css('min-height', '');
-		this.parent_module_view.$el.find('> .upfront-module').css('min-height', '');
-		this.add_region_class('upfront-region-container-has-posts', true);
+		if ( type && Views.DEFAULT != type ) {
+			this.$el.find('> .upfront-object').css('min-height', '');
+			this.parent_module_view.$el.find('> .upfront-module').css('min-height', '');
+			this.add_region_class('upfront-region-container-has-posts', true);
+		}
 	},
 
 	render_type_view: function (type) {
@@ -50,6 +52,7 @@ var PostsView = Upfront.Views.ObjectView.extend({
 		if ( view._posts_load ){
 			view._posts_load.success(function(){
 				me.adjust_featured_images();
+				Upfront.Events.trigger('entity:object:refresh', me);
 			});
 		}
 	},

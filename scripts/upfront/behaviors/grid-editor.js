@@ -1201,7 +1201,7 @@ var GridEditor = {
 				});
 				$resize_placeholder.insertBefore($me);
 
-				view.trigger('entity:resize_start', {row: me.row, col: me.col, height: me.height, width: me.width}, view, view.model);
+				view.trigger('entity:resize_start', {row: me.row, col: me.col, height: me.height, width: me.width, axis: axis}, view, view.model);
 				Upfront.Events.trigger("entity:resize_start", view, view.model);
 			},
 			resize: function(e, ui){
@@ -1254,7 +1254,7 @@ var GridEditor = {
 					$resize_placeholder.css('height', rsz_row*ed.baseline);
 				view.update_size_hint(rsz_col*ed.col_size, rsz_row*ed.baseline);
 
-				view.trigger('entity:resizing', {row: rsz_row, col: rsz_col, height: rsz_row*ed.baseline, width: rsz_col*ed.col_size}, view, view.model);
+				view.trigger('entity:resizing', {row: rsz_row, col: rsz_col, height: rsz_row*ed.baseline, width: rsz_col*ed.col_size, axis: axis}, view, view.model);
 			},
 			stop: function(e, ui){
 				Upfront.Events.trigger("entity:pre_resize_stop", view, view.model, ui);
@@ -1270,8 +1270,6 @@ var GridEditor = {
 					prev_col = Math.ceil(ui.originalSize.width/ed.col_size),
 					prev_row = Math.ceil(ui.originalSize.height/ed.baseline),
 					$post_data_object =  $me.find(".upost-data-object").length ? $me.find(".upost-data-object") : false,
-					//padding_top_row = $post_data_object ?  parseFloat( $post_data_object.css("padding-top") ) / ed.baseline : 0,
-					//padding_bottom_row = $post_data_object ? parseFloat( $post_data_object.css("padding-bottom") ) / ed.baseline : 0,
 					rsz_col = $me.data('resize-col'),
 					rsz_row = parseFloat( $me.data('resize-row') ),
 
@@ -1281,40 +1279,12 @@ var GridEditor = {
 					module_selector = is_object ? ".upfront-wrapper > .upfront-object-view > .upfront-object" : ".upfront-wrapper > .upfront-module-view > .upfront-module, .upfront-wrapper > .upfront-module-group",
 					model_breakpoint, breakpoint_data, padding_top_row, padding_bottom_row
 				;
-
-				/**
-				 * Calculate paddings in different cases
-				 */
-				if( !is_object && !is_group  ){
-					var objects = model.get('objects'),
-						obj_model = objects.first();
-
-					padding_top_row = obj_model.get_breakpoint_property_value('top_padding_use') ?  obj_model.get_breakpoint_property_value('top_padding_num') / ed.baseline : 0;
-					padding_bottom_row = obj_model.get_breakpoint_property_value('bottom_padding_use') ? obj_model.get_breakpoint_property_value('bottom_padding_num') / ed.baseline : 0;
-				}else{
-					padding_top_row = model.get_breakpoint_property_value("top_padding_use") ?  model.get_breakpoint_property_value('top_padding_num') / ed.baseline : 0 ;
-					padding_bottom_row = model.get_breakpoint_property_value("bottom_padding_use") ? model.get_breakpoint_property_value('bottom_padding_num') / ed.baseline : 0;
-				}
-
-				rsz_row = rsz_row - padding_top_row - padding_bottom_row;
+				
 				// Prevents quick scroll when resizing
 				ed.resizing = false;
 
 				$resize_placeholder.remove();
 				$resize.remove();
-
-				/*ed.update_class($me, ed.grid.class, rsz_col);
-				if ( axis == 'nw' ){
-					margin.current.left = margin.original.left - (rsz_col-prev_col);
-					margin.current.top = margin.original.top - (rsz_row-prev_row);
-					$me.data('margin', margin);
-					ed.update_margin_classes($me);
-				}
-				else if ( axis == 'se' && wrap ){
-					ed.adjust_affected_right(wrap, aff_els.right, [me], me.grid.left+rsz_col-1, true);
-					if ( expand_lock )
-						ed.adjust_affected_bottom(wrap, aff_els.bottom, [me], me.grid.top+rsz_row-1, true);
-				}*/
 
 				// Make sure CSS is reset, to fix bug when it keeps all resize CSS for some reason
 				$me.css({
@@ -1338,19 +1308,6 @@ var GridEditor = {
 							object.set_property('row', rsz_row );
 						});
 					}
-
-					// Update model value
-					/*if ( axis == 'nw' ){
-						model.replace_class([
-							ed.grid.class+rsz_col,
-							ed.grid.left_margin_class+margin.current.left,
-							ed.grid.top_margin_class+margin.current.top,
-						].join(' '));
-					}
-					else{
-						model.replace_class(ed.grid.class+rsz_col);
-						ed.update_model_margin_classes($container.find(module_selector).not($me));
-					}*/
 				}
 				else {
 					model_breakpoint = Upfront.Util.clone(model.get_property_value_by_name('breakpoint') || {});
@@ -1359,14 +1316,7 @@ var GridEditor = {
 					breakpoint_data = model_breakpoint[breakpoint.id];
 					breakpoint_data.edited = true;
 					breakpoint_data.row = rsz_row;
-					//breakpoint_data.col = rsz_col;
-					/*if ( axis == 'nw' ){
-						breakpoint_data.left = margin.current.left;
-						breakpoint_data.top = margin.current.top;
-					}
-					else {
-						ed.update_model_margin_classes($container.find(module_selector).not($me));
-					}*/
+
 					model.set_property('breakpoint', model_breakpoint);
 					// Also resize containing object if it's only one object
 					var objects = model.get('objects');
@@ -1395,7 +1345,7 @@ var GridEditor = {
 				$me.removeData('resize-col');
 				$me.removeData('resize-row');
 
-				view.trigger('entity:resize_stop', {row: rsz_row, col: rsz_col, height: rsz_row*ed.baseline, width: rsz_col*ed.col_size}, view, view.model);
+				view.trigger('entity:resize_stop', {row: rsz_row, col: rsz_col, height: rsz_row*ed.baseline, width: rsz_col*ed.col_size, axis: axis}, view, view.model);
 				Upfront.Events.trigger("entity:resize_stop", view, view.model, ui);
 				Upfront.Events.trigger("entity:resized", view, view.model);
 			}
@@ -1767,16 +1717,16 @@ var GridEditor = {
 
 				// Trigger child events
 				_.each(child_els, function (child) {
-					child.view.trigger('entity:resize_start', {row: child.el.row, col: child.el.col, height: child.el.height, width: child.el.width}, child.view, child.view.model);
+					child.view.trigger('entity:resize_start', {row: child.el.row, col: child.el.col, height: child.el.height, width: child.el.width, axis: axis}, child.view, child.view.model);
 				});
 				_.each(also_child_els, function (child) {
-					child.view.trigger('entity:resize_start', {row: child.el.row, col: child.el.col, height: child.el.height, width: child.el.width}, child.view, child.view.model);
+					child.view.trigger('entity:resize_start', {row: child.el.row, col: child.el.col, height: child.el.height, width: child.el.width, axis: ( axis == 'w' ? 'e' : 'w' )}, child.view, child.view.model);
 				});
 
 				// Trigger main event
-				view.trigger('entity:wrapper:resize_start', {row: me.row, col: me.col, height: me.height, width: me.width}, view, view.model);
+				view.trigger('entity:wrapper:resize_start', {row: me.row, col: me.col, height: me.height, width: me.width, axis: axis}, view, view.model);
 				if ( also_view ) {
-					also_view.trigger('entity:wrapper:resize_start', {row: also_resize.row, col: also_resize.col, height: also_resize.height, width: also_resize.width}, also_view, also_view.model);
+					also_view.trigger('entity:wrapper:resize_start', {row: also_resize.row, col: also_resize.col, height: also_resize.height, width: also_resize.width, axis: ( axis == 'w' ? 'e' : 'w' )}, also_view, also_view.model);
 				}
 				Upfront.Events.trigger("entity:wrapper:resize_start", view, view.model, also_view, also_view.model);
 
@@ -1842,16 +1792,16 @@ var GridEditor = {
 
 				// Trigger child events
 				_.each(child_els, function (child) {
-					child.view.trigger('entity:resizing', {row: child.el.row, col: rsz_col, height: child.el.height, width: rsz_col*ed.col_size}, child.view, child.view.model);
+					child.view.trigger('entity:resizing', {row: child.el.row, col: rsz_col, height: child.el.height, width: rsz_col*ed.col_size, axis: axis}, child.view, child.view.model);
 				});
 				_.each(also_child_els, function (child) {
-					child.view.trigger('entity:resizing', {row: child.el.row, col: also_col, height: child.el.height, width: also_col*ed.col_size}, child.view, child.view.model);
+					child.view.trigger('entity:resizing', {row: child.el.row, col: also_col, height: child.el.height, width: also_col*ed.col_size, axis: ( axis == 'w' ? 'e' : 'w' )}, child.view, child.view.model);
 				});
 
 				// Trigger main event
-				view.trigger('entity:wrapper:resizing', {row: me.row, col: rsz_col, height: me.height, width: rsz_col*ed.col_size}, view, view.model);
+				view.trigger('entity:wrapper:resizing', {row: me.row, col: rsz_col, height: me.height, width: rsz_col*ed.col_size, axis: axis}, view, view.model);
 				if ( also_view ) {
-					also_view.trigger('entity:wrapper:resizing', {row: also_resize.row, col: also_col, height: also_resize.height, width: also_col*ed.col_size}, also_view, also_view.model);
+					also_view.trigger('entity:wrapper:resizing', {row: also_resize.row, col: also_col, height: also_resize.height, width: also_col*ed.col_size, axis: ( axis == 'w' ? 'e' : 'w' )}, also_view, also_view.model);
 				}
 				ed.time_end('fn wrapper_resize_resizing');
 			},
@@ -1982,17 +1932,17 @@ var GridEditor = {
 
 				// Trigger child events
 				_.each(child_els, function (child) {
-					child.view.trigger('entity:resize_stop', {row: child.el.row, col: rsz_col, height: child.el.height, width: rsz_col*ed.col_size}, child.view, child.view.model);
+					child.view.trigger('entity:resize_stop', {row: child.el.row, col: rsz_col, height: child.el.height, width: rsz_col*ed.col_size, axis: axis}, child.view, child.view.model);
 				});
 				_.each(also_child_els, function (child) {
-					child.view.trigger('entity:resize_stop', {row: child.el.row, col: also_col, height: child.el.height, width: also_col*ed.col_size}, child.view, child.view.model);
+					child.view.trigger('entity:resize_stop', {row: child.el.row, col: also_col, height: child.el.height, width: also_col*ed.col_size, axis: ( axis == 'w' ? 'e' : 'w' )}, child.view, child.view.model);
 				});
 
 				// Trigger main event
-				view.trigger('entity:wrapper:resize_stop', {row: me.row, col: rsz_col, height: me.height, width: rsz_col*ed.col_size}, view, view.model);
+				view.trigger('entity:wrapper:resize_stop', {row: me.row, col: rsz_col, height: me.height, width: rsz_col*ed.col_size, axis: axis}, view, view.model);
 				view.trigger('entity:wrapper:resize', {col: rsz_col}, view, view.model);
 				if ( also_view ) {
-					also_view.trigger('entity:wrapper:resize_stop', {row: also_resize.row, col: also_col, height: also_resize.height, width: rsz_col*ed.col_size}, also_view, also_view.model);
+					also_view.trigger('entity:wrapper:resize_stop', {row: also_resize.row, col: also_col, height: also_resize.height, width: rsz_col*ed.col_size, axis: ( axis == 'w' ? 'e' : 'w' )}, also_view, also_view.model);
 					also_view.trigger('entity:wrapper:resize', {col: also_col}, also_view, also_view.model);
 				}
 				Upfront.Events.trigger("entity:wrapper:resize_stop", view, view.model, also_view, also_view.model, ui);
@@ -3432,4 +3382,4 @@ var GridEditor = {
 });
 
 })(jQuery);
-//@ sourceURL=grid-editor.js
+//# sourceURL=grid-editor.js

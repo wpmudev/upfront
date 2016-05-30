@@ -45,6 +45,7 @@
 			$dropdown = $(".upfront-layouts-list"),
 			layout = $dropdown.val(),
 			label = $(".upfront-layouts-list option[value='"+  layout +"']").html(),
+			is_dev = $(this).data('dev'),
 			confirm = window.confirm( Upfront_Data.l10n.sure_to_reset_layout.replace("{layout}", label) );
 
 		if( confirm !== true ) return;
@@ -53,10 +54,11 @@
 
 		Upfront.post(  {
 			action: "upfront_reset_layout",
-			layout: layout
+			layout: layout,
+			is_dev: is_dev
 		}).done(function(res){
 			$this.removeClass("loading");
-			if( $dropdown.find("option").length === 2 ){
+			if( $dropdown.find("option").length >= 2 ){
 				$dropdown.find("option[value="+ layout + "]").remove();
 				$dropdown.val( 0 );
 				$this.attr("disabled", true);
@@ -324,6 +326,7 @@
 		} else {
 			$del.find(".upfront_toggle").addClass("hide");
 		}
+		process_toggles_state();
 	}
 	
 	function handle_edit_content_change () {

@@ -3,6 +3,7 @@
 <div class="uslider-slides-setting">
 {[ slides.each(function(slide){ ]}
 <div class="uslider_content_imgslide uslider_content_slide" rel="{{slide.id}}">
+		<div class="uslider_content_img" style="background-image:url({{slide.get('src')}});"></div>
 		<img src="{{slide.get('src')}}" />
 		<span class="remove-slide"></span>
 	</div>
@@ -17,6 +18,43 @@
 		<div class="uslider-starting-centered upfront-initial-overlay-wrapper" style="height: 100px">
 			<div class="uslider-starting-title">{{l10n.choose_type}}</div>
 			<div class="uslider-starting-info">{{l10n.can_change}}</div>
+			<div class="uslider-starting-options">
+				<span class="upfront-field-multiple upfront-field-multiple-horizontal-inline">
+					<input type="radio" class="upfront-field-radio" checked="checked" id="uslider-starting-default" value="default" name="upfront-starting-style">
+					<label for="uslider-starting-default">
+						<i class="upfront-field-icon upfront-field-icon-nocaption"></i>
+						<span class="upfront-field-label-text">{{l10n.default}}</span>
+					</label>
+				</span>
+				<span class="upfront-field-multiple upfront-field-multiple-horizontal-inline">
+					<input type="radio" class="upfront-field-radio" id="uslider-starting-notext" value="notext" name="upfront-starting-style">
+					<label for="uslider-starting-notext">
+						<i class="upfront-field-icon upfront-field-icon-nocaption"></i>
+						<span class="upfront-field-label-text">{{l10n.img_only}}</span>
+					</label>
+				</span>
+				<span class="upfront-field-multiple upfront-field-multiple-horizontal-inline">
+					<input type="radio" class="upfront-field-radio" id="uslider-starting-over" value="over" name="upfront-starting-style">
+					<label for="uslider-starting-over">
+						<i class="upfront-field-icon upfront-field-icon-bottomOver"></i>
+						<span class="upfront-field-label-text">{{l10n.txt_over_img}}</span>
+					</label>
+				</span>
+				<span class="upfront-field-multiple upfront-field-multiple-horizontal-inline">
+					<input type="radio" class="upfront-field-radio" id="uslider-starting-below" value="below" name="upfront-starting-style">
+					<label for="uslider-starting-below">
+						<i class="upfront-field-icon upfront-field-icon-below"></i>
+						<span class="upfront-field-label-text">{{l10n.txt_below_img}}</span>
+					</label>
+				</span>
+				<span class="upfront-field-multiple upfront-field-multiple-horizontal-inline">
+					<input type="radio" class="upfront-field-radio" id="uslider-starting-side" value="side" name="upfront-starting-style">
+					<label for="uslider-starting-side">
+						<i class="upfront-field-icon upfront-field-icon-right"></i>
+						<span class="upfront-field-label-text">{{l10n.txt_on_side}}</span>
+					</label>
+				</span>
+			</div>
 			<a href="#" class="button upfront-image-select">{{l10n.choose_img}}</a>
 		</div>
 	</div>

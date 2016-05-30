@@ -5,4 +5,4 @@
  * Released under the MIT license
  */
 
-define([],function(){function n(e){var t,n;t=document.createElement("script"),t.type="text/javascript",t.async=!0,t.src=e,n=document.getElementsByTagName("script")[0],n.parentNode.insertBefore(t,n)}function r(t,n){var r=/!(.+)/,i=t.replace(r,""),s=r.test(t)?t.replace(/.+!/,""):e;return i+=i.indexOf("?")<0?"?":"&",i+s+"="+n}function i(){return t+=1,"__async_req_"+t+"__"}var e="callback",t=0;return{load:function(e,t,s,o){if(o.isBuild)s(null);else{var u=i();window[u]=s,n(r(e,u))}}}});
+define([],function(){function e(e){var n,t;n=document.createElement("script"),n.type="text/javascript",n.async=!0,n.src=e,t=document.getElementsByTagName("script")[0],t.parentNode.insertBefore(n,t)}function n(e,n){var t=/!(.+)/,c=e.replace(t,""),a=t.test(e)?e.replace(/.+!/,""):r;return c+=c.indexOf("?")<0?"?":"&",c+a+"="+n}function t(){return c+=1,"__async_req_"+c+"__"}var r="callback",c=0;return{load:function(r,c,a,i){if(i.isBuild)a(null);else{var u=t();window[u]=a,e(n(r,u))}}}});

@@ -108,6 +108,7 @@ define([
 					else {
 						me.render();
 					}
+					Upfront.Events.trigger('entity:object:refresh', me);
 				})
 				.error(function (ret) {
 					Upfront.Util.log("Error loading widget");

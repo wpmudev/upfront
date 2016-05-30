@@ -273,6 +273,7 @@ define([
 			}
 			this.$el.find('.accordion-panel:not(.accordion-panel-active) .accordion-panel-content').hide();
 
+			Upfront.Events.trigger('entity:object:refresh', this);
 		},
 
 		editContent: function() {

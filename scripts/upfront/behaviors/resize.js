@@ -12,4 +12,4 @@ Resize.prototype = {
 define(Resize);
 	
 })(jQuery);
-//@ sourceURL=resize.js
+//# sourceURL=resize.js

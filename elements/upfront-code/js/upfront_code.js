@@ -43,14 +43,15 @@ var CodeView = Upfront.Views.ObjectView.extend({
 		view.parent_module_view = this.parent_module_view;
 
 		view.on("code:selection:selected", this.render_code_view, this);
-		this.$el.empty().append( view.$el.html() );
-		this.create_size_hint( this.$el.find(".upfront_code-element") );
+		this.$el.empty().append( view.$el );
+
 		return view;
 	},
 
 	render_code_view: function () {
-		var type = this.model.get_property_value_by_name("code_selection_type");
-		this.create_size_hint( this.$el.find(".upfront_code-element") );
+		var self = this,
+			type = this.model.get_property_value_by_name("code_selection_type");
+		this.create_size_hint( this.$el.closest(".upfront-editable_entities_container") );
 		if (!type) {
 			Upfront.Util.log("Missing type");
 			return this.render_initial_view();
@@ -64,7 +65,8 @@ var CodeView = Upfront.Views.ObjectView.extend({
 		view.render();
 
 		view.on("code:model:updated", this.propagate_model_update, this);
-		this.$el.empty().append( view.$el.html() );
+		// we have double upfront-view-object classes one for the this.$el and another for view.$el so let's remove one!
+		this.$el.empty().append( view.$el.removeClass("upfront-view-object") );
 		this.updateControls();
 
 		// Dynamically bind settings click to view editing action
@@ -74,6 +76,7 @@ var CodeView = Upfront.Views.ObjectView.extend({
 			}
 		}
 
+		setTimeout(function(){ self.update_size_hint( self.$el.closest(".upfront-editable_entity").width(), self.$el.closest(".upfront-editable_entity").height() ) }, 510);
 
 		return view;
 	},

@@ -46,7 +46,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 			// Always try to load from theme files if layout is empty
 			if ($layout === false || $layout->is_empty()) {
 				$layout = self::from_specific_files(array(), $cascade, $storage_key); // Load from *specific* files only, no fallback
-
+				if ($layout && !$layout->is_empty()) $layout->set("template_type", "file");
 			}
 
 			if ($layout && !$layout->is_empty()) {
@@ -64,6 +64,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 			if (!$layout->is_empty()) {
 				$layout->set("current_layout", self::id_to_type($id));
+				$layout->set("template_type", "file");
 				return apply_filters('upfront_layout_from_id', $layout, self::id_to_type($id), self::$cascade);
 			}
 		}

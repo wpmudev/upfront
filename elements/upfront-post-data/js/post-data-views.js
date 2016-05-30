@@ -57,6 +57,16 @@ var Views = {
 			if ( this.element.postDate ) {
 				data.post_date = this.element.postDate;
 			}
+			if ( data_type == 'featured_image' && this.element.full_featured_image ) {
+				data.selected_featured_image = this.element.full_featured_image;
+			}
+			if ( data_type == 'post_data' && this.element.set_post_title ) {
+				data.set_post_title = this.element.set_post_title;
+			}
+			if ( data_type == 'post_data' && this.element.set_post_content ) {
+				data.set_post_content = this.element.set_post_content;
+			}
+			
 			this._post_data_load = Upfront.Util
 				.post({
 					action: "upfront_post-data-load",

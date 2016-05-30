@@ -1202,13 +1202,16 @@ Ueditor.prototype = {
 			    this.redactor.core.destroy();
             this.$air.remove();
             this.$el.removeClass('ueditable');
-            this.redactor = false;
+            this.redactor.events.trigger('cleanUpListeners');
+            this.$el.data("ueditor", false);
+            //this.redactor = false;
 		}
 		if ("undefined" !== typeof Upfront.data.Ueditor) delete Upfront.data.Ueditor.instances[this.id];
 		this.startPlaceholder();
 		$("html").off('mousedown', this.stopOnOutsideClick);
 		$(document).off('keyup', this.stopOnEscape);
         this.active = false;
+
 	},
 
 	bindStartEvents: function() {
@@ -1964,9 +1967,10 @@ var InsertManager = Backbone.View.extend({
 			});
 	},
 	show_tooltip_in_this_location: function(redactor){
-		var $block = $( redactor.selection.getCurrent());
+		var current = redactor.selection.getCurrent(),
+            $block = $( current );
 
-		if(_.isEmpty( $block ) ) return false;
+		if( !current || _.isEmpty( $block ) ) return false;
 
 		var $image_embed_insert_wrappers = $(".upfront-inserted_image-wrapper, .upfront-inserted_embed-wrapper"),
 			block_top = $block.offset().top,
