@@ -450,6 +450,8 @@
 		var Command_Exit = Command.extend({
 			className: "command-exit upfront-icon upfront-icon-exit",
 			render: function () {
+				this.stopListening(Upfront.Events, 'stay:upfront:editor');
+				this.listenTo(Upfront.Events, 'stay:upfront:editor', this.stayed);
 			},
 			on_click: function () {
 				// Upfront.Events.trigger("command:exit");
@@ -463,6 +465,11 @@
 
 				loading.render();
 				$('body').append(loading.$el);
+				
+				// will be cleared when User chooses to stay
+				this.tmout = setTimeout(function () {
+					loading.cancel();
+				}, 1000);
 
 				if (url.indexOf('/create_new/') !== -1) {
 					return (window.location.href = Upfront.Settings.site_url);
@@ -475,9 +482,10 @@
 				}
 
 				window.location.reload(true);
-				var tmout = setTimeout(function () {
-					loading.cancel();
-				}, 1000);
+				
+			},
+			stayed: function () {
+				clearTimeout(this.tmout);
 			}
 		});
 

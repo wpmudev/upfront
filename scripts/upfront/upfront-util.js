@@ -952,6 +952,8 @@ define(function() {
 				}
 				// Bind beforeunload event listener
 				window.onbeforeunload = warn;
+				// Bind unload event listener
+				window.unload = stay;
 			},
 			/**
 			 * Exporter events don't send out the preview saves, just manipulate flag directly.
@@ -1069,6 +1071,10 @@ define(function() {
 				if (!_saving_flag && !_is_dirty) return; // No changes
 				if (e) e.returnValue = going;
 				return going;
+			},
+			stay = function () {
+				// throw global events to close the loading screen
+				Upfront.Events.trigger('stay:upfront:editor');
 			},
 			get_preview_url = function () {
 				return _preview_url;
