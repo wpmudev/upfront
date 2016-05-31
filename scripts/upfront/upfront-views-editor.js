@@ -354,7 +354,7 @@
 		var Properties = Backbone.View.extend({
 			events: {
 				"click #add-property": "show_new_property_partial",
-				"click #done-adding-property": "add_new_property",
+				"click #done-adding-property": "add_new_property"
 			},
 			initialize: function () {
 				/*
@@ -1037,7 +1037,7 @@
 				$('.upfront-overlay-grid').remove();
 				$('.upfront-grid-layout, .upfront-region-side-fixed .upfront-modules_container, .upfront-region-side-lightbox .upfront-modules_container').each(function(){
 					var columns = grid.size,
-						template = _.template(_Upfront_Templates.overlay_grid, {columns: columns, size_class: grid.class, style: 'simple'});
+						template = _.template(_Upfront_Templates.overlay_grid, {columns: columns, size_class: grid['class'], style: 'simple'});
 					$(this).prepend(template);
 
 					//Adjust grid rulers position
@@ -1496,7 +1496,7 @@
 					new Command_Delete({"model": this.model}),
 					new Command_Select({"model": this.model}),
 					new Command_ToggleGrid({"model": this.model}),
-					new Command_ResetEverything({"model": this.model}),
+					new Command_ResetEverything({"model": this.model})
 				]);
 				if (Upfront.Settings.Debug.transients) this.commands.push(new Command_ExportHistory({model: this.model}));
 			},
@@ -1847,7 +1847,7 @@
 				this.active = true;
 				this.postId = this.getPostId();
 				this.sections = _([
-					new SidebarPanel_Settings_Section_PostDetails({"model": this.model, "postId": this.postId}),
+					new SidebarPanel_Settings_Section_PostDetails({"model": this.model, "postId": this.postId})
 				]);
 
 				if ( Upfront.Application.is_single( "post" ) ) {
@@ -1919,7 +1919,7 @@
 				}
 
 				return postId;
-			},
+			}
 		});
 
 		var SidebarPanel_Settings_Section_PageTemplate = SidebarPanel_Settings_Section.extend({
@@ -2000,8 +2000,8 @@
 				}
 			},
 			renderTaxonomyEditor: function(postId, tax, post){
+				tax = typeof tax === "undefined" ? "category" : tax;
 				var self = this,
-					tax = typeof tax === "undefined" ? "category" : tax,
 					termsList = new Upfront.Collections.TermList([], {postId: postId, taxonomy: tax})
 				;
 
@@ -2199,7 +2199,7 @@
 				if ( 'post_data' == type ) {
 					this.child_view.render(['date_posted']); // Only render the date_posted part
 				}
-			},
+			}
 		});
 
 
@@ -2466,7 +2466,7 @@
 								{ label: l10n.ul, value: "ul" },
 								{ label: l10n.ol, value: "ol" },
 								{ label: l10n.bq, value: "blockquote" },
-								{ label: l10n.bqalt, value: "blockquote.upfront-quote-alternative" },
+								{ label: l10n.bqalt, value: "blockquote.upfront-quote-alternative" }
 							],
 							change: function () {
 								var value = this.get_value(),
@@ -2920,9 +2920,9 @@
 				color = color.replace(/\s+/g, '');
 				var digits = /(.*?)rgb\((\d+),(\d+),(\d+)\)/.exec(color);
 				digits = _.isEmpty(digits) ?  /(.*?)rgba\((\d+),(\d+),(\d+),([0-9.]+)\)/.exec(color) : digits;
-				var red = parseInt(digits[2]);
-				var green = parseInt(digits[3]);
-				var blue = parseInt(digits[4]);
+				var red = parseInt(digits[2], 10);
+				var green = parseInt(digits[3], 10);
+				var blue = parseInt(digits[4], 10);
 
 				var rgb = blue | (green << 8) | (red << 16);
 				return digits[1] + '#' + rgb.toString(16);
@@ -3410,7 +3410,7 @@
 			"className": "sidebar-commands sidebar-commands-primary clearfix",
 			initialize: function () {
 				this.commands = _([
-					new Command_ThemesDropdown({"model": this.model}),
+					new Command_ThemesDropdown({"model": this.model})
 				]);
 				if ( Upfront.themeExporter.currentTheme !== 'upfront') {
 					this.commands.push(new Command_NewLayout({"model": this.model}));
@@ -3446,7 +3446,7 @@
 					if ( current_app !== MODE.THEME ) {
 						this.commands = _([
 							new Command_Undo({"model": this.model}),
-							new Command_Redo({"model": this.model}),
+							new Command_Redo({"model": this.model})
 						]);
 						if (Upfront.Application.user_can("RESPONSIVE_MODE") && current_app !== MODE.THEME) {
 							this.commands.push(
@@ -3456,7 +3456,7 @@
 						this.commands.push(new Command_ToggleGrid({"model": this.model}));
 					} else {
 						this.commands = _([
-							new Command_ToggleGrid({"model": this.model}),
+							new Command_ToggleGrid({"model": this.model})
 						]);
 					}
 				} else {
@@ -3496,7 +3496,7 @@
 			className: "sidebar-commands sidebar-commands-header",
 			initialize: function () {
 				this.commands = _([
-					new Command_Logo({"model": this.model}),
+					new Command_Logo({"model": this.model})
 				]);
 				//if ( !Upfront.Settings.Application.NO_SAVE ) this.commands.push(new Command_Exit({"model": this.model}));
 				this.commands.push(new Command_Exit({"model": this.model})); // *Always* show exit
@@ -4143,7 +4143,7 @@
 				"click .upfront-pagination_item-next": "handle_next",
 				"click .upfront-pagination_item-prev": "handle_prev",
 				"click .upfront-pagination_page-item": "set_page",
-				"keypress .upfront-pagination_page-current": "set_page_keypress",
+				"keypress .upfront-pagination_page-current": "set_page_keypress"
 			},
 			initialize: function(opts){
 				this.options = opts;
@@ -4219,7 +4219,7 @@
 				"click .editaction.edit": "handle_post_edit",
 				"click .editaction.view": "handle_post_view",
 				"click #upfront-list-page-path a.upfront-path-back": "handle_return_to_posts",
-				"click .editaction.trash": "trash_post",
+				"click .editaction.trash": "trash_post"
 			},
 			initialize: function(options){
 				this.collection.on('change reset', this.render, this);
@@ -4338,7 +4338,7 @@
 				"change #upfront-page_template-select": "template_change",
 				"click .editaction.trash": "trash_page",
 				"click .editaction.edit": "handle_post_edit",
-				"click .editaction.view": "handle_post_view",
+				"click .editaction.view": "handle_post_view"
 			},
 			currentPage: false,
 			pageListTpl: _.template($(_Upfront_Templates.popup).find('#upfront-page-list-tpl').html()),
@@ -4708,7 +4708,7 @@
 				$comment.find('.upfront-comment_edit').hide();
 
 				this._currently_working = true;
-			},
+			}
 		});
 
 
@@ -4956,7 +4956,7 @@
 					'name': this.get_field_name(),
 					'value': this.get_value() || this.get_saved_value()
 				};
-				if ('inline' === this.options.label_style) attr.class += ' upfront-has_inline_label';
+				if ('inline' === this.options.label_style) attr['class'] += ' upfront-has_inline_label';
 				if ( this.options.compact ) {
 					attr.placeholder = this.label;
 					this.$el.attr('title', this.label);
@@ -5636,11 +5636,11 @@
 					'class': 'upfront-field-select upfront-no-select',
 					'id': this.get_field_id()
 				};
-				attr.class += ' upfront-field-select-' + ( this.options.multiple ? 'multiple' : 'single' );
+				attr['class'] += ' upfront-field-select-' + ( this.options.multiple ? 'multiple' : 'single' );
 				if ( this.options.disabled )
-					attr.class += ' upfront-field-select-disabled';
+					attr['class'] += ' upfront-field-select-disabled';
 				if ( this.options.style == 'zebra' )
-					attr.class += ' upfront-field-select-zebra';
+					attr['class'] += ' upfront-field-select-zebra';
 				//return '<select ' + this.get_field_attr_html(attr) + '>' + this.get_values_html() + '</select>';
 				return '<div ' + this.get_field_attr_html(attr) + '><div class="upfront-field-select-value"></div><ul class="upfront-field-select-options">' + this.get_values_html() + '</ul></div>';
 			},
@@ -5934,7 +5934,7 @@
 
 				var me = this;
 				$('.upfront-chosen-select-multiple', this.$el).chosen({
-					width: this.options.select_width,
+					width: this.options.select_width
 				});
 
 			},
@@ -7040,7 +7040,7 @@
 		var _Settings_CSS = SettingsItem.extend({
 			className: 'upfront-settings-css',
 			events: {
-				'click .upfront-css-edit': 'openEditor',
+				'click .upfront-css-edit': 'openEditor'
 			},
 			initialize: function(options) {
 				SettingsItem.prototype.initialize.call(this, options);
@@ -7061,7 +7061,7 @@
 						model: this.model,
 						className: 'edit-preset-css-label',
 						compact: true,
-						label: l10n.edit_css_label,
+						label: l10n.edit_css_label
 					}),
 
 					new Upfront.Views.Editor.Field.Button({
@@ -7069,7 +7069,7 @@
 						className: 'upfront-css-edit',
 						compact: true,
 						name: 'preset_css',
-						label: l10n.edit_css,
+						label: l10n.edit_css
 					})
 				]);
 			},
@@ -7087,7 +7087,7 @@
 				Upfront.Events.trigger("entity:settings:deactivate");
 
 				//$('#settings').find('.upfront-save_settings').click();
-			},
+			}
 		});
 
 		var ButtonPresetModel = Backbone.Model.extend({
@@ -7294,10 +7294,10 @@
 
 			this.get_fonts = function() {
 				return system_fonts;
-			}
+			};
 
 			initialize();
-		}
+		};
 
 		var system_fonts_storage = new System_Fonts_Storage();
 
@@ -8718,7 +8718,7 @@
 
 						//Remove the delete link
 						me.deleteToggle.detach();
-					});
+					})
 				;
 			},
 
@@ -8858,7 +8858,7 @@
 					this.$style = $('<style id="' + style_selector + '"></style>');
 					$('body').append(this.$style);
 				} else {
-					this.$style = $style
+					this.$style = $style;
 				}
 
 				if (options.cssSelectors) {
@@ -9179,7 +9179,7 @@
 				return {
 					anchor: this.fields._wrapped[0].get_value(),
 					label: this.fields._wrapped[1].get_value()
-				}
+				};
 			}
 		});
 
@@ -9237,7 +9237,7 @@
 				return {
 					anchor: this.fields._wrapped[0].get_value(),
 					label: this.fields._wrapped[1].get_value()
-				}
+				};
 			}
 		});
 
@@ -9289,7 +9289,7 @@
 			render: function() {
 				var properties = this.model.toJSON();
 				// "default" is reserved word can't use it in template rendering. //todo fix this in model
-				properties.is_default = properties.default;
+				properties.is_default = properties['default'];
 				this.$el.append(_.template(this.template, properties));
 				return this;
 			}
@@ -9407,7 +9407,7 @@
 				;
 				this.timer = setTimeout(function(){
 					me.notices.remove(notice);
-				}, notice.get('duration') || this.timeoutTime)
+				}, notice.get('duration') || this.timeoutTime);
 			},
 			replace: function(notice) {
 				var me = this;
@@ -9456,7 +9456,7 @@
 					page = page ? page : parseInt($(e.target).attr("data-page_idx"), 10) || 0
 					;
 				this.options.pageSelection(page);
-			},
+			}
 		});
 
 		var PostSelector = Backbone.View.extend({
@@ -9490,7 +9490,7 @@
 				}
 			},
 			open: function(options){
-				var me = this
+				var me = this,
 				bindEvents = false
 				;
 
@@ -10075,7 +10075,7 @@
 						],
 						types = index_container > 0 ? types : _.union( [
 							{ label: l10n.full_screen, value: 'full' }
-						], types)
+						], types),
 					region_global = new Field_Checkboxes({
 						model: this.model,
 						name: 'scope',
@@ -10643,7 +10643,7 @@
 				if ( model.is_main() ){
 					_.each(sub_regions, function(sub){
 						if ( _.isArray(sub) )
-							_.each(sub, function(each){ set_sub(each); })
+							_.each(sub, function(each){ set_sub(each); });
 						else if ( sub )
 							set_sub(sub);
 					});
@@ -10713,7 +10713,7 @@
 								case 'right':
 									this.model.remove_property('left', true); break;
 							}
-							this.property.set({'value': parseInt(value)});
+							this.property.set({'value': parseInt(value, 10)});
 						}
 					},
 					fields = {
@@ -10835,8 +10835,8 @@
 								{ label: l10n.show_close_icon, value: 'yes', checked: this.model.get_property_value_by_name('show_close') == 'yes' ? 'checked' : false }
 							],
 							change: set_value
-						}),
-						/*add_close_text: new Upfront.Views.Editor.Field.Checkboxes({
+						})/*,
+						add_close_text: new Upfront.Views.Editor.Field.Checkboxes({
 						 model: this.model,
 						 property: 'add_close_text',
 						 label: "",
@@ -10865,13 +10865,13 @@
 						move: function(color) {
 							var rgb = color.toRgb(),
 								rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
-							fields.overlay_color.get_field().val(rgba_string)
+							fields.overlay_color.get_field().val(rgba_string);
 							set_value(fields.overlay_color);
 						},
 						change: function(color) {
 							var rgb = color.toRgb(),
 								rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
-							fields.overlay_color.get_field().val(rgba_string)
+							fields.overlay_color.get_field().val(rgba_string);
 							set_value(fields.overlay_color);
 						}
 					}
@@ -10887,15 +10887,15 @@
 						move: function(color) {
 							var rgb = color.toRgb(),
 								rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
-							fields.lightbox_color.get_field().val(rgba_string)
+							fields.lightbox_color.get_field().val(rgba_string);
 							set_value(fields.lightbox_color);
 						},
 						change: function(color) {
 							var rgb = color.toRgb(),
 								rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
-							fields.lightbox_color.get_field().val(rgba_string)
+							fields.lightbox_color.get_field().val(rgba_string);
 							set_value(fields.lightbox_color);
-						},
+						}
 					}
 				});
 
@@ -11101,7 +11101,7 @@
 				this._active = true;
 				this.render_icon();
 				this.open_modal(this.render_modal, true).always($.proxy(this.on_close_modal, this)).fail($.proxy(this.notify, this));
-			},
+			}
 		});
 
 		var RegionPanelItem_ExpandLock = RegionPanelItem.extend({
@@ -11250,7 +11250,7 @@
 						var values = [],
 							is_main = ( to == 'top' || to == 'bottom' ),
 							is_side = ( to == 'left' || to == 'right' );
-						values.push( { label: l10n.select_global_region, value: '', disabled: true } )
+						values.push( { label: l10n.select_global_region, value: '', disabled: true } );
 						_.each(Upfront.data.global_regions, function(region){
 							if ( is_main && region.container && region.name != region.container ) // exclude sub-region if main
 								return;
@@ -11293,7 +11293,7 @@
 							field.render();
 							field.delegateEvents();
 						});
-						$modal.addClass('upfront-add-region-modal')
+						$modal.addClass('upfront-add-region-modal');
 						$content.append(template);
 						$content.find('.upfront-add-region-choice').append(fields.from.$el);
 						$content.find('.upfront-add-region-new').append(fields.region_title.$el);
@@ -11448,7 +11448,7 @@
 						to_add_run = function(){
 							_.each(to_add, function(add){
 								add.model.add_to(collection, add.index, add.options);
-							})
+							});
 						};
 					_.each(regions, function(region, i){
 						var region_model = new Upfront.Models.Region(region),
@@ -11473,7 +11473,7 @@
 								model: region_model,
 								index: (is_before ? index : index+1),
 								options: options
-							}
+							};
 						}
 					});
 					if ( main_add !== false ){
@@ -11626,8 +11626,9 @@
 				this.options = opts;
 				if ( ! this.options.to )
 					this.options.to = 'bottom';
-				var to = this.options.to
-				args = {model: this.model, to: to};
+				var to = this.options.to,
+					args = {model: this.model, to: to}
+				;
 				if ( this.options.width )
 					args.width = this.options.width;
 				if ( this.options.height )
@@ -11822,8 +11823,8 @@
 				});
 
 				setTimeout(
-					function () { me.update_padding() }
-					, 300
+					function () { me.update_padding(); },
+					300
 				);
 			},
 			update_padding: function () {
@@ -12195,7 +12196,7 @@
 			},
 			sorted_by_width: function() {
 				return _.sortBy(this.models, function(model) {
-					return model.get('width')
+					return model.get('width');
 				});
 			},
 			get_active: function() {
@@ -12225,11 +12226,11 @@
 				return default_breakpoint;
 			},
 			get_unique_id: function() {
-				var id = 'custom-' + +(new Date());
+				var id = 'custom-' + (new Date());
 
 				// Ensure id is unique
 				while (!_.isUndefined(this.findWhere({ 'id': id }))) {
-					id = 'custom-' + +(new Date());
+					id = 'custom-' + (new Date());
 				}
 
 				return id;
