@@ -103,7 +103,7 @@ var LayoutEditor = {
 	parse_selections: function () {
 		if ( !$(".upfront-ui-selected").length )
 			return false;
-		
+
 		// Disable Grouping
 		if (!Upfront.Application.user_can_modify_layout()) return false;
 
@@ -124,7 +124,7 @@ var LayoutEditor = {
 			});
 			$('#upfront-group-selection').remove();
 			return false;
-		};
+		}
 		$('.upfront-module-group-group').remove();
 		var $group = $('<div class="upfront-module-group-toggle upfront-module-group-group">' + Upfront.Settings.l10n.global.behaviors.group + '</div>'),
 			sel_top = sel_left = sel_right = sel_bottom = false,
@@ -348,7 +348,7 @@ var LayoutEditor = {
 				;
 				new_wrapper.set_property('wrapper_id', new_wrapper_id);
 				new_wrapper.set_property('class', w.model.get_property_value_by_name('class'));
-				new_wrapper.replace_class(grid_ed.grid.class + w.col);
+				new_wrapper.replace_class(grid_ed.grid['class'] + w.col);
 				if ( wi == 0 ) {
 					new_wrapper.add_class('clr');
 					if ( li == 0 ) {
@@ -429,13 +429,13 @@ var LayoutEditor = {
 			region_wrappers.add(group_wrapper);
 		}
 		group_wrapper.set_property('wrapper_id', group_wrapper_id);
-		group_wrapper.replace_class(grid_ed.grid.class + group_col);
+		group_wrapper.replace_class(grid_ed.grid['class'] + group_col);
 		if ( group_wrapper_clear ){
 			group_wrapper.add_class('clr');
 		}
 		group.set_property('wrapper_id', group_wrapper_id);
 		group.set_property('element_id', group_id);
-		group.replace_class(grid_ed.grid.class + group_col);
+		group.replace_class(grid_ed.grid['class'] + group_col);
 		group.set_property('original_col', group_col);
 		group.add_to(region_modules, add_index);
 		Upfront.Events.trigger("entity:module_group:group", group, region);
@@ -591,7 +591,7 @@ var LayoutEditor = {
 			if ( pos.top < bottom && pos.bottom > top && pos.left < right && pos.right > left ) {
 				$affected = $affected !== false ? $affected.add($(this)) : $(this);
 			}
-		})
+		});
 		return $affected;
 	},
 
@@ -830,7 +830,7 @@ var LayoutEditor = {
 				}),
 				page_name: new Upfront.Views.Editor.Field.Text({
 					name: 'page_name',
-					label: Upfront.Settings.l10n.global.behaviors.page_layout_name,
+					label: Upfront.Settings.l10n.global.behaviors.page_layout_name
 				}),
 				inherit: new Upfront.Views.Editor.Field.Radios({
 					name: 'inherit',
@@ -1046,7 +1046,7 @@ var LayoutEditor = {
 					change: function(){
 						var value = this.get_value(),
 							$fields = $([fields.name.el, fields.directory.el, fields.author.el, fields.author_uri.el]);
-						if ( value != '' )
+						if ( value !== '' )
 							$fields.hide();
 						else
 							$fields.show();
@@ -1054,31 +1054,31 @@ var LayoutEditor = {
 				}),
 				name: new Upfront.Views.Editor.Field.Text({
 					name: 'name',
-					label: Upfront.Settings.l10n.global.behaviors.theme_name,
+					label: Upfront.Settings.l10n.global.behaviors.theme_name
 				}),
 				directory: new Upfront.Views.Editor.Field.Text({
 					name: 'directory',
-					label: Upfront.Settings.l10n.global.behaviors.directory,
+					label: Upfront.Settings.l10n.global.behaviors.directory
 				}),
 				author: new Upfront.Views.Editor.Field.Text({
 					name: 'author',
-					label: Upfront.Settings.l10n.global.behaviors.author,
+					label: Upfront.Settings.l10n.global.behaviors.author
 				}),
 				author_uri: new Upfront.Views.Editor.Field.Text({
 					name: 'author_uri',
-					label: Upfront.Settings.l10n.global.behaviors.author_uri,
+					label: Upfront.Settings.l10n.global.behaviors.author_uri
 				}),
 				activate: new Upfront.Views.Editor.Field.Checkboxes({
 					name: 'activate',
 					default_value: true,
 					multiple: false,
-					values: [{ label: Upfront.Settings.l10n.global.behaviors.activate_upon_creation, value: 1 }],
+					values: [{ label: Upfront.Settings.l10n.global.behaviors.activate_upon_creation, value: 1 }]
 				}),
 				with_images: new Upfront.Views.Editor.Field.Checkboxes({
 					name: 'with_images',
 					default_value: true,
 					multiple: false,
-					values: [{ label: Upfront.Settings.l10n.global.behaviors.export_theme_images, value: 1 }],
+					values: [{ label: Upfront.Settings.l10n.global.behaviors.export_theme_images, value: 1 }]
 				})
 			};
 
@@ -1199,7 +1199,7 @@ var LayoutEditor = {
 		var me = this,
 			deferred = new $.Deferred()
 		;
-		
+
 		// The request should only ever be sent in builder mode
 		if (Upfront.Application.is_builder()) {
 			Upfront.Util.post({
@@ -1378,7 +1378,7 @@ var LayoutEditor = {
 						action: 'upfront_delete_styles',
 						styleName: styleName,
 						elementType: elementType
-					}
+					};
 				}
 				Upfront.Util.post(data)
 					.done(function(){
@@ -1393,7 +1393,7 @@ var LayoutEditor = {
 
 						//Continue deleting
 						deleteFunc(index+1);
-					});
+					})
 				;
 			},
 			deferred = new $.Deferred()
@@ -1430,7 +1430,7 @@ var LayoutEditor = {
 				});
 			});
 			if ( deleteDatas.length > 0 ) {
-				Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.behaviors.cleaning_region_css)
+				Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.behaviors.cleaning_region_css);
 				deleteFunc(0); // Start deleting
 			}
 		});
@@ -1441,22 +1441,22 @@ var LayoutEditor = {
 	_build_query: function (data) {
 		return _.map(data, function(value, key){ return key + '=' + value; }).join('&');
 	},
-	
+
 	clean_global_regions: function () {
 		Upfront.data.global_regions = false;
 	},
-	
+
 	open_global_region_manager: function () {
 		var ed = Upfront.Behaviors.LayoutEditor;
 		Upfront.Popup.open(
 			function (data, $top, $bottom) {
 				var $me = $(this);
 				$me.html('<p class="upfront-popup-placeholder">' + Upfront.Settings.l10n.global.behaviors.loading_content + '</p>');
-				
+
 				if ( !Upfront.data.global_regions ){
 					ed._refresh_global_regions().done(function(){
 						ed._render_global_region_manager($me);
-					})
+					});
 				}
 				else {
 					ed._render_global_region_manager($me);
@@ -1468,7 +1468,7 @@ var LayoutEditor = {
 			'global-region-manager'
 		);
 	},
-	
+
 	_refresh_global_regions: function () {
 		return Upfront.Util.post({
 			action: 'upfront_list_scoped_regions',
@@ -1478,7 +1478,7 @@ var LayoutEditor = {
 			Upfront.data.global_regions = data.data;
 		});
 	},
-	
+
 	_render_global_region_manager: function ($el) {
 		var ed = Upfront.Behaviors.LayoutEditor,
 			collection = Upfront.Application.layout.get("regions"),
@@ -1531,10 +1531,10 @@ var LayoutEditor = {
 							_.each(data.data, function(region_name){
 								var model = collection.get_by_name(region_name);
 								collection.remove(model);
-							})
+							});
 							ed._refresh_global_regions().done(function(){
 								ed._render_global_region_manager($el);
-							})
+							});
 						}
 					});
 				}
@@ -1542,9 +1542,9 @@ var LayoutEditor = {
 			else {
 				// lightbox
 			}
-		})
+		});
 	},
-	
+
 	_render_regions: function (regions, $el) {
 		var $lists = $('<ul class="global-region-manager-lists"></ul>');
 		_.each(regions, function(region){
@@ -1564,8 +1564,8 @@ var LayoutEditor = {
 				'<li class="' + classes.join(' ') + '">' +
 					'<span class="region-list-name">' + region.title + '</span>' +
 					'<span class="region-list-control">' +
-						//'<a href="#" class="region-list-edit" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.edit + '</a>' + 
-						( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME ? '<a href="#" class="region-list-trash" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.trash + '</a>' : '' ) + 
+						//'<a href="#" class="region-list-edit" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.edit + '</a>' +
+						( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME ? '<a href="#" class="region-list-trash" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.trash + '</a>' : '' ) +
 					'</span>' +
 				'</li>'
 			);
@@ -1575,6 +1575,6 @@ var LayoutEditor = {
 };
 
 define(LayoutEditor);
-	
+
 })(jQuery);
 //# sourceURL=layout-editor.js
