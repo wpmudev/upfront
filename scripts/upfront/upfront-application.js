@@ -33,30 +33,30 @@ var LayoutEditorSubapplication = Subapplication.extend({
 	save_layout: function () {
 		this._save_layout(this.layout.get("current_layout"));
 	},
-	
+
 	save_layout_meta: function () {
 		this._save_layout_meta(this.layout.get("current_layout"));
 	},
-	
+
 	publish_layout: function () {
 		this._save_layout(this.layout.get("current_layout"), true);
 	},
-	
+
 	delete_layout: function () {
 		this._delete_layout();
 	},
-	
+
 	reset_changes: function () {
 		this._reset_changes();
 	},
-	
+
 	_save_layout_meta: function (preferred_layout, publish) {
 		var me = this,
 			post_id = ( typeof _upfront_post_data.post_id !== 'undefined' ) ? _upfront_post_data.post_id : '',
 			template_type = ( typeof _upfront_post_data.template_type !== 'undefined' ) ? _upfront_post_data.template_type : 'layout',
 			template_slug = ( typeof _upfront_post_data.template_slug !== 'undefined' ) ? _upfront_post_data.template_slug : '',
 			save_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 );
-		
+
 		Upfront.Events.trigger("command:layout:save_start");
 
 		if (Upfront.Settings.Application.NO_SAVE) {
@@ -72,16 +72,16 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			})
 			.success(function () {
 				Upfront.Util.log("layout applied");
-				
+
 				// remove the old cache of layouts as cache will be updated upon loading layouts
 				var url_key = '/' + Backbone.history.getFragment();
 				Upfront.Application.urlCache[url_key] = false;
-				
+
 				setTimeout(function(){
 					Upfront.Application.load_layout(_upfront_post_data.layout);
 					Upfront.Events.trigger("command:layout:save_success");
 				},100);
-				
+
 			})
 			.error(function () {
 				Upfront.Util.log("error saving layout");
@@ -108,11 +108,11 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			Upfront.Events.trigger("command:layout:save_success");
 			return false;
 		}
-		data = Upfront.Util.colors.update_colors_to_match_ufc(data);		
+		data = Upfront.Util.colors.update_colors_to_match_ufc(data);
 		Upfront.Util.post({
-				"action": Upfront.Application.actions.save, 
-				"data": data, 
-				"storage_key": storage_key, 
+				"action": Upfront.Application.actions.save,
+				"data": data,
+				"storage_key": storage_key,
 				"post_id": post_id,
 				"layout_action": layout_action,
 				"save_dev": save_dev,
@@ -122,7 +122,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			.success(function (resp) {
 				Upfront.Util.log("layout saved");
 				Upfront.Events.trigger("command:layout:save_success");
-				
+
 				if ( layout_action == 'save_as' ) {
 					// refresh page templates list
 					_upfront_post_data.layout_action = '';
@@ -134,11 +134,11 @@ var LayoutEditorSubapplication = Subapplication.extend({
 					_upfront_post_data.layout_action = '';
 					Upfront.Events.trigger("page:layout:updated");
 				}
-				
+
 				// remove the old cache of layouts as cache will be updated upon loading layouts
 				var url_key = '/' + Backbone.history.getFragment();
 				Upfront.Application.urlCache[url_key] = false;
-				
+
 			})
 			.error(function () {
 				Upfront.Util.log("error saving layout");
@@ -146,7 +146,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			})
 		;
 	},
-	
+
 	_delete_layout: function () {
 		var me = this,
 			template_slug = ( typeof _upfront_post_data.template_slug !== 'undefined' ) ? _upfront_post_data.template_slug : '',
@@ -154,7 +154,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		;
 		Upfront.Events.trigger("command:layout:save_start");
 		Upfront.Util.post({
-				"action": Upfront.Application.actions.delete_layout, 
+				"action": Upfront.Application.actions.delete_layout,
 				"template_slug": template_slug,
 				"is_dev": is_dev
 			})
@@ -164,7 +164,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			})
 		;
 	},
-	
+
 	_reset_changes: function () {
 		var me = this,
 			post_id = ( typeof _upfront_post_data.post_id !== 'undefined' ) ? _upfront_post_data.post_id : '',
@@ -172,7 +172,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		;
 		Upfront.Events.trigger("command:layout:save_start");
 		Upfront.Util.post({
-				"action": Upfront.Application.actions.reset_changes, 
+				"action": Upfront.Application.actions.reset_changes,
 				"post_id": post_id,
 				"is_dev": is_dev
 			})
@@ -385,12 +385,13 @@ var LayoutEditorSubapplication = Subapplication.extend({
 
 		var current_object = _(this.Objects).reduce(function (obj, current) {
 				return (view instanceof current.View) ? current : obj;
-			}, false),
-			current_object = (current_object && current_object.ContextMenu ? current_object : Upfront.Views.ContextMenu);
-			if(current_object.ContextMenu === false)
-				return false;
-			else if (typeof current_object.ContextMenu == 'undefined')
-				current_object.ContextMenu = Upfront.Views.ContextMenu;
+			}, false)
+		;
+		current_object = (current_object && current_object.ContextMenu ? current_object : Upfront.Views.ContextMenu);
+		if(current_object.ContextMenu === false)
+			return false;
+		else if (typeof current_object.ContextMenu == 'undefined')
+			current_object.ContextMenu = Upfront.Views.ContextMenu;
 
         var context_menu_view = new current_object.ContextMenu({
             model: view.model,
@@ -622,13 +623,13 @@ var PostContentEditor = new (Subapplication.extend({
 			action: 'upfront_update_insertcount'
 		});
 	}
-}));
+}))();
 
 
 
 var ContentEditor = new (Subapplication.extend({
 	boot: function () {
-		Upfront.Util.log("Preparing content mode for execution")
+		Upfront.Util.log("Preparing content mode for execution");
 	},
 
 	start: function () {
@@ -960,9 +961,9 @@ var Application = new (Backbone.Router.extend({
 			this.loadingLayout.abort();
 
 		this.loadingLayout = Upfront.Util.post(request_data)
-			.success(function (response) {				
+			.success(function (response) {
 				app.set_layout_up(response);
-				
+
 				if(app.saveCache){
 					app.urlCache[app.currentUrl] = $.extend(true, {}, response);
 					app.saveCache = false;
@@ -1031,10 +1032,10 @@ var Application = new (Backbone.Router.extend({
 		var me = this,
 			data = $.extend(true, {}, layoutData.data.layout) || {} //Deep cloning
 		;
-		
+
 		if ( typeof layoutData.data.template_type !== 'undefined' ) _upfront_post_data.template_type = layoutData.data.template_type;
 		if ( typeof layoutData.data.template_slug !== 'undefined' ) _upfront_post_data.template_slug = layoutData.data.template_slug;
-		
+
 		if (layoutData.data.post) {
 			this.post_set_up(layoutData.data.post);
 		}
@@ -1053,7 +1054,7 @@ var Application = new (Backbone.Router.extend({
 		this.current_subapplication.layout = this.layout;
 		this.sidebar.model.set(this.layout.toJSON());
 
-		if(typeof layoutData.data.post !== "undefined" && layoutData.data.post != null) {
+		if(typeof layoutData.data.post !== "undefined" && layoutData.data.post !== null) {
 			if((layoutData.data.post.ID !== "undefined" && layoutData.data.query.post_count) || (layoutData.data.post.ID !== "undefined" && layoutData.data.cascade.type === "single") || layoutData.data.query.is_singular) {
 				Upfront.Events.trigger('click:edit:navigate', layoutData.data.post.ID);
 			} else {
@@ -1448,9 +1449,10 @@ var Application = new (Backbone.Router.extend({
 
 	adjust_grid_padding_settings: function(region) {
 		//Handle region top/bottom padding and move grid rulers
-		$region = $(region).parent(),
-			padding_top = parseInt($region.css('padding-top')),
-			padding_bottom = parseInt($region.css('padding-bottom'));
+		var $region = $(region).parent(),
+			padding_top = parseInt($region.css('padding-top'), 10),
+			padding_bottom = parseInt($region.css('padding-bottom'), 10)
+		;
 
 		if(padding_top > 0) {
 			$region.find('.upfront-overlay-grid').css("top", padding_top * -1);

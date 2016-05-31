@@ -38,8 +38,8 @@ define("content", deps, function(postTpl, ContentTools) {
 			me.contentEditor = new ContentTools.PostContentEditor({
 				post: me.post,
 				//postView: me.postView,
-				content_mode: me.content_mode,
-				/*authorTpl: this.getTemplate('author'),
+				content_mode: me.content_mode/*,
+				authorTpl: this.getTemplate('author'),
 				partOptions: this.postView.partOptions,*/
 			});
 /*
@@ -69,7 +69,7 @@ define("content", deps, function(postTpl, ContentTools) {
 
 		/**
 		 * This will actually be throttled to a
-		 * public method in constructor 
+		 * public method in constructor
 		 */
 		_reboot: function () {
 			this.trigger('loaded', this.contentEditor);
@@ -99,7 +99,7 @@ define("content", deps, function(postTpl, ContentTools) {
 			// Specific change event handles
 			this.stopListening(this.contentEditor, 'change:title');
 			this.listenTo(this.contentEditor, 'change:title', this.changeTitle);
-			
+
 			this.stopListening(Upfront.Events, 'change:title');
 			this.listenTo(Upfront.Events, 'change:title', this.changeTitle);
 

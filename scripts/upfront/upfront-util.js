@@ -20,7 +20,7 @@ _.template = function (tpl, data) {
 	if (typeof undefined === typeof data) return _tpl(tpl);
 	var tmp = _tpl(tpl);
 	return tmp(data);
-}
+};
 
 //requestFrameAnimation polyfill
 var rAFPollyfill = function(callback){
@@ -36,14 +36,14 @@ var rAFPollyfill = function(callback){
 
 define(function() {
 	var guessLinkType = function(url) {
-		if(!$.trim(url) || $.trim(url) == '#' || $.trim(url) == '') {
+		if(!$.trim(url) || $.trim(url) == '#' || $.trim(url) === '') {
 			return 'unlink';
 		}
 
 		if(url.length && url[0] == '#') {
 			return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
 		}
-		
+
 		if(typeof window.location.origin !== "undefined") {
 			if(url.substring(0, window.location.origin.length) == window.location.origin) {
 				if(
@@ -87,7 +87,7 @@ define(function() {
 		get_unique_id: function (pfx) {
 			return _.template("{{prefix}}-{{stamp}}-{{numeric}}", {
 				prefix: pfx || "entity",
-				stamp: (new Date).getTime(),
+				stamp: (new Date()).getTime(),
 				numeric: Math.floor((Math.random()*999)+1000)
 			});
 		},
@@ -107,7 +107,7 @@ define(function() {
 		clone: function (obj) {
 			return jQuery.extend(true, {}, obj);
 		},
-		
+
 		/**
 		 * Escape RegEx string
 		 * https://github.com/sindresorhus/escape-string-regexp/blob/master/index.js
@@ -129,7 +129,7 @@ define(function() {
 			var div = document.createElement('div'),
 				reg = new RegExp("(khtml|moz|ms|webkit|)"+property, "i")
 			;
-			for ( s in div.style ) {
+			for ( var s in div.style ) {
 				if ( s.match(reg) ) return true;
 			}
 			return false;
@@ -152,7 +152,7 @@ define(function() {
 
 			// Was request made from dev mode
 			request.dev = location.search.indexOf('dev=true') > -1;
-			
+
 			// Was request made from the builder
 			request.isbuilder = Upfront.Application.is_builder();
 
@@ -252,10 +252,11 @@ define(function() {
              * @param string|int|null class_size either a string of the class size like 12 or '12'
              */
             update_class :  function ($el, class_prefix, class_size) {
-                if(  _.isUndefined( class_size ) ){
-                    var class_size = class_prefix.replace( /[^\d.]/g, ''),
-                        class_name = class_prefix.replace(class_size, "");
-                }else{
+				class_size = (class_prefix || '').replace( /[^\d.]/g, '');
+				var class_name;
+                if (_.isUndefined(class_size)) {
+                    class_name = class_prefix.replace(class_size, "");
+                } else {
                     class_name = class_prefix;
                 }
                 var rx = new RegExp('\\b' + class_name + '\\d+');
@@ -270,7 +271,8 @@ define(function() {
             	if(!col_cls) return 0;
 
                  var column_width = Upfront.Settings.LayoutEditor.Grid.column_width,
-                	col_class = Upfront.Settings.LayoutEditor.Grid.class;
+                	col_class = Upfront.Settings.LayoutEditor.Grid['class']
+				;
                 return parseInt(col_cls.replace(col_class, ""), 10) * column_width;
             },
             width_to_col: function (width, ceil) {
@@ -329,9 +331,9 @@ define(function() {
 
 			Upfront.data.region_views[region.cid].show();
 		},
-		
+
 		/**
-		 * Sorted find 
+		 * Sorted find
 		 */
 		find_sorted: function ($el, selector) {
 			return $el.find(selector)
@@ -528,8 +530,8 @@ define(function() {
 				escaping = false;
 				for( var i = 0; i < php_format.length; i++)
 				{
-					char = php_format[i];
-					if(char === '\\') // PHP date format escaping character
+					var chr = php_format[i];
+					if(chr === '\\') // PHP date format escaping character
 					{
 						i++;
 						if(escaping) jqueryui_format += php_format[i];
@@ -539,10 +541,10 @@ define(function() {
 					else
 					{
 						if(escaping) { jqueryui_format += "'"; escaping = false; }
-						if( _.isUndefined(SYMBOLS_MATCHING[char])){
-								jqueryui_format += char;
+						if( _.isUndefined(SYMBOLS_MATCHING[chr])){
+								jqueryui_format += chr;
 						}else{
-								jqueryui_format += SYMBOLS_MATCHING[char];
+								jqueryui_format += SYMBOLS_MATCHING[chr];
 						}
 
 					}
@@ -591,8 +593,8 @@ define(function() {
 				escaping = false;
 				for( var i = 0; i < php_format.length; i++)
 				{
-					char = php_format[i];
-					if(char === '\\') // PHP date format escaping character
+					var chr = php_format[i];
+					if(chr === '\\') // PHP date format escaping character
 					{
 						i++;
 						if(escaping) jqueryui_format += php_format[i];
@@ -602,10 +604,10 @@ define(function() {
 					else
 					{
 						if(escaping) { jqueryui_format += "'"; escaping = false; }
-						if( _.isUndefined(SYMBOLS_MATCHING[char])){
-								jqueryui_format += char;
+						if( _.isUndefined(SYMBOLS_MATCHING[chr])){
+								jqueryui_format += chr;
 						}else{
-								jqueryui_format += SYMBOLS_MATCHING[char];
+								jqueryui_format += SYMBOLS_MATCHING[chr];
 						}
 
 					}
@@ -660,7 +662,7 @@ define(function() {
 				// lets clean up any existing commented out ufcs with their color specs
 				var pattern_existing = new RegExp('/\\*[^,;\\n]*#ufc(\\d*)\\*/[^,;\\n]*([\\*/]*((#[A-Fa-f0-9]+)+|(rgb[a]?[^\\)]*\\))))+', 'g');
 				string = string.replace(pattern_existing, "#ufc"+'$1');
-				
+
 				for(var _i in theme_colors){
 
 					var theme_color = theme_colors[_i] === '#000000' && theme_alphas[_i] === 0 ? 'inherit' : theme_colors[_i];
@@ -841,7 +843,7 @@ define(function() {
 							return false;
 						}
 				;
-				
+
 				$('body').bind( 'keyup', function( event ) {
 					if ( event.keyCode === 27 )
 						me.close();
@@ -926,7 +928,7 @@ define(function() {
 			}
 
 			Upfront.Events.trigger('popup:closed');
-			
+
 			this._deferred.resolve(this.$popup, result);
 		}
 
@@ -980,7 +982,7 @@ define(function() {
 			},
 			exporter_set_dirty = function () {
 				_is_dirty = true;
-			}
+			},
 			rebind_events = function(){
 				var me = this;
 				Upfront.PreviewUpdate.__deferred_save_callback = Upfront.PreviewUpdate.__deferred_save_callback || _.debounce(save, 200);
@@ -1011,7 +1013,7 @@ define(function() {
 
 				Upfront.Events.off("entity:region:deactivated", Upfront.PreviewUpdate.__deferred_save_callback, this);
 				Upfront.Events.on("entity:region:deactivated", Upfront.PreviewUpdate.__deferred_save_callback, this);
-				
+
 				//Upfront.Events.off("model:property:remove", save);
 				//Upfront.Events.on("model:property:remove", save, this);
 
@@ -1065,9 +1067,8 @@ define(function() {
 				_is_dirty = false; // Clear dirty flag, we just saved changes
 			},
 			warn = function (e) {
-				var e = e || window.event,
-					going = Upfront.Settings.l10n.global.views.unsaved_changes_nag
-				;
+				e = e || window.event;
+				var going = Upfront.Settings.l10n.global.views.unsaved_changes_nag;
 				if (!_saving_flag && !_is_dirty) return; // No changes
 				if (e) e.returnValue = going;
 				return going;
@@ -1088,7 +1089,7 @@ define(function() {
 			preview_url: get_preview_url,
 			get_revision: get_revision,
 			rebind_events: rebind_events
-		}
+		};
 
 	};
 
