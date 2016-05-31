@@ -2043,10 +2043,12 @@
 						}
 					});
 				}
-
+				
 				this.listenTo(Upfront.Views.PostDataEditor, 'loaded', function(contentEditor) {
-					Upfront.Views.PostBox = contentEditor.prepareBox();
-					self.append_box();
+					if ( contentEditor ) {
+						Upfront.Views.PostBox = contentEditor.prepareBox();
+						self.append_box();
+					}
 				});
 
 				this.listenTo(Upfront.Views.PostDataEditor, 'post:saved', function() {
