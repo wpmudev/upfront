@@ -198,7 +198,7 @@
 			}
 		});
 	}
-	$.cssHooks[ "backgroundColor" ] = {
+	$.cssHooks.backgroundColor = {
 
 		set: function( elem, value ) {
 			if( value.indexOf("ufc") === -1 ) {
@@ -212,7 +212,7 @@
 		}
 	};
 
-	$.cssHooks[ "color" ] = {
+	$.cssHooks.color = {
 
 		set: function( elem, value ) {
 			if( value.indexOf("ufc") === -1 ) {
@@ -375,7 +375,7 @@
 				this.model.get("properties").each(function (obj) {
 					var local_view = new Property({"model": obj});
 					local_view.render();
-					properties.$el.find("dl").append(local_view.el)
+					properties.$el.find("dl").append(local_view.el);
 				});
 			},
 
@@ -466,7 +466,7 @@
 
 				loading.render();
 				$('body').append(loading.$el);
-				
+
 				// will be cleared when User chooses to stay
 				this.tmout = setTimeout(function () {
 					loading.cancel();
@@ -479,11 +479,11 @@
 					return (window.location.href = Upfront.Settings.site_url + '/?p=' + _upfront_post_data.post_id);
 				}
 				if (window.location.search.match(/(\?|\&)editmode/)) {
-					return window.location.search = window.location.search.replace(/(\?|\&)editmode(=[^?&]+)?/, '');
+					return (window.location.search = window.location.search.replace(/(\?|\&)editmode(=[^?&]+)?/, ''));
 				}
 
 				window.location.reload(true);
-				
+
 			},
 			stayed: function () {
 				clearTimeout(this.tmout);
@@ -747,7 +747,7 @@
 				this.$el.prop("title", l10n.alternate_layout);
 			},
 			on_click: function () {
-				Upfront.Events.trigger("command:layout:load", 2)
+				Upfront.Events.trigger("command:layout:load", 2);
 			}
 
 		});
@@ -1121,7 +1121,7 @@
 				Upfront.Events.on("command:newpost:start", this.switchOff, this);
 			},
 			render: function () {
-				var template = _.template(_Upfront_Templates.edit_background_area, {})
+				var template = _.template(_Upfront_Templates.edit_background_area, {});
 				this.$el.html(template);
 			},
 			on_switch: function () {
@@ -1401,7 +1401,7 @@
 						label_text: l10n.activate_breakpoints,
 						collection: breakpoints
 					})
-				]
+				];
 			},
 			render: function () {
 				this.fields[0].render();
@@ -1763,7 +1763,7 @@
 				return "Layout";
 			},
 			on_render: function () {
-				this.elements.each(this.render_element, this)
+				this.elements.each(this.render_element, this);
 			},
 			render_element: function (element) {
 				if(! element.draggable)
@@ -2538,7 +2538,7 @@
 							label: l10n.line_height,
 							min: 0,
 							max: 10,
-							step: .1,
+							step: 0.1,
 							default_value: me.line_heights['h1'],
 							change: function () {
 								var value = this.get_value(),
@@ -2893,7 +2893,7 @@
 						return prefix + index;
 					}
 				}
-				return false
+				return false;
 			},
 			get_all_classes : function( bg ){
 				var prefix = _.isUndefined( bg ) || bg === false ? "upfront_theme_color_" : "upfront_theme_bg_color_";
@@ -3030,7 +3030,7 @@
 							},
 							change: function (color) {
 								if (!_.isObject(color)) return false;
-								empty_picker.update_input_val(color.toHexString())
+								empty_picker.update_input_val(color.toHexString());
 							}
 						}
 					});
@@ -3056,7 +3056,7 @@
 							},
 							change: function (color) {
 								if (!_.isObject(color)) return false;
-								empty_picker.update_input_val(color.toHexString())
+								empty_picker.update_input_val(color.toHexString());
 							}
 						}
 					});
@@ -3111,7 +3111,7 @@
 						picker.$(".sp-preview").removeClass( 'uf-unset-color' );
 					}
 					$this.html( picker.$el );
-					$this.prepend('<span class="theme-colors-color-name">ufc' + index + '</span>')
+					$this.prepend('<span class="theme-colors-color-name">ufc' + index + '</span>');
 				});
 			},
 			add_new_color : function( color, index ){
@@ -3993,12 +3993,12 @@
 				if(panel == 'posts'){
 					collection = new Upfront.Collections.PostList([], {postType: 'post'});
 					collection.orderby = 'post_date';
-					fetchOptions = {filterContent: true, withAuthor: true, limit: 15}
+					fetchOptions = {filterContent: true, withAuthor: true, limit: 15};
 				}
 				else if(panel == 'pages'){
 					collection = new Upfront.Collections.PostList([], {postType: 'page'});
 				collection.orderby = 'post_date';
-					fetchOptions = {limit: 15}
+					fetchOptions = {limit: 15};
 				}
 				else{
 					var post_id = Upfront.data.currentPost && Upfront.data.currentPost.id
@@ -4030,7 +4030,7 @@
 								view: new ContentEditorPosts({collection: collection, $popup: me.$popup}),
 								search: new ContentEditorSearch({collection: collection}),
 								pagination: new ContentEditorPagination({collection: collection})
-							}
+							};
 							me.views.posts = views;
 							break;
 						case "pages":
@@ -4052,7 +4052,7 @@
 								view: new ContentEditorPages({collection: collection, $popup: me.$popup}),
 								search: new ContentEditorSearch({collection: collection}),
 								pagination: new ContentEditorPagination({collection: collection})
-							}
+							};
 							me.views.pages = views;
 							break;
 						case "comments":
@@ -4061,7 +4061,7 @@
 								view: new ContentEditorComments({collection: collection, $popup: me.$popup}),
 								search: new ContentEditorSearch({collection: collection}),
 								pagination: new ContentEditorPagination({collection: collection})
-							}
+							};
 							me.views.comments = views;
 							break;
 					}
@@ -4439,12 +4439,12 @@
 
 				_.each(fragments, function(p){
 					if(output)
-						output += '&nbsp;Â»&nbsp;'
+						output += '&nbsp;Â»&nbsp;';
 					if(p.id == page.id)
 						output += '<span class="upfront-page-path-current last">' + p.title + '</span>';
 					else
 						output += '<a href="#" class="upfront-page-path-item" data-post_id="' + p.id + '">' + p.title + '</a>';
-				})
+				});
 				$root.html(output);
 			},
 
@@ -4613,7 +4613,7 @@
 				this.$('#upfront-list_item-comment-' + comment.id + ' i.upfront-comments-approve')
 					.animate({'font-size': '1px', opacity:0}, 400, 'swing', function(){
 						comment.approve(true).save();
-					})
+					});
 			},
 
 			handle_action_bar_request: function (e) {
@@ -4723,7 +4723,7 @@
 						'src': src,
 						'alt': '',
 						'class': 'upfront-field-icon-img'
-					}
+					};
 					return '<img ' + this.get_field_attr_html(attr) + ' />';
 				}
 				else {
@@ -5109,7 +5109,7 @@
 
 					if(me.options.callbacks && me.options.callbacks.slide)
 						me.options.callbacks.slide(e, ui);
-				}
+				};
 
 				this.on('rendered', function(){
 					var $field = me.$('#' + me.get_field_id());
@@ -5125,7 +5125,7 @@
 					;
 
 				if(this.options.info)
-					output += '<div class="upfront-field-info">' + this.options.info + '</div>'
+					output += '<div class="upfront-field-info">' + this.options.info + '</div>';
 
 				output += '<div class="upfront-field upfront-field-slider" id="' + this.get_field_id() + '"></div>';
 
@@ -5295,7 +5295,7 @@
 							.find(".sp-palette-container").attr("data-label", l10n.theme_colors).end()
 							.find(".sp-palette-row:last").attr("data-label", l10n.recent_colors)
 						;
-					})
+					});
 				});
 
 
@@ -5366,7 +5366,7 @@
 
 				spPreview.css({
 					backgroundColor: rgb
-				})
+				});
 
 				if( rgb !== 'rgba(0, 0, 0, 0)' ) {
 					spPreview.removeClass('uf-unset-color');
@@ -5744,7 +5744,7 @@
 
 				//Disable scroll when chosen is opened
 				$('.sidebar-panel-content .sidebar-tab-content, #sidebar-scroll-wrapper').bind('mousewheel', function() {
-					return false
+					return false;
 				});
 
 				var me = this;
@@ -5880,7 +5880,7 @@
 					'700': l10n.label_bold,
 					'800':  l10n.label_extra_bold,
 					'900': l10n.label_ultra_bold
-				}
+				};
 
 				//Check if weight is number or string
 				if (!_.isUndefined( weight ) && weight.match(/^(\d+)/)) {
@@ -6070,7 +6070,7 @@
 				this.$el.html('');
 				if ( this.label ) this.$el.append(this.get_label_html());
 				this.$el.append('<div class="upfront-suggest-wrap" />');
-				var $wrap = this.$el.find('.upfront-suggest-wrap')
+				var $wrap = this.$el.find('.upfront-suggest-wrap');
 				$wrap.append(this.get_field_html());
 				$wrap.append('<div class="upfront-suggest-list-wrap upfront-no-select" />');
 				this.checked_list = this.get_saved_value();
@@ -6104,7 +6104,7 @@
 				var value = this.get_field_input_value();
 				this.$el.find('.upfront-suggest-lists').html(this.get_suggest_list_html());
 				if ( value ){
-					this.$el.find('.upfront-suggest-add-wrap').show()
+					this.$el.find('.upfront-suggest-add-wrap').show();
 					this.$el.find('.upfront-suggest-add-value').text(value);
 					this.$el.find('.upfront-suggest-add').toggle( !(_.contains(this.suggest_list, value)) );
 				}
@@ -6318,7 +6318,7 @@
 						if ( this.is_default ) this.model.init_property(this.get_property(), this.get_value());
 					}
 					var id = this.cid + '-' + this.get_property();
-					var $label = $('<label for="' + id + '" />')
+					var $label = $('<label for="' + id + '" />');
 					var checked = ( this.get_property_value() == this.get_value() );
 					$label.append(this.get_icon_html(this.get_icon()));
 					$label.append('<span class="upfront-settings-item-tab-radio-text">' + this.get_title() + '</span>');
@@ -6431,7 +6431,7 @@
 						setting.panel = me;
 					}
 					setting.render();
-					$panel_scroll.append(setting.el)
+					$panel_scroll.append(setting.el);
 				});
 				if ( this.options.min_height ) {
 					$panel_scroll.css('min-height', this.options.min_height);
