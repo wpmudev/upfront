@@ -335,10 +335,13 @@ PostContentEditor.prototype = {
 					// replace image inserts with their shortcodes
 					this.$content.find(".upfront-inserted_image-wrapper").each(function () {
 						var $this = $(this),
-							$shortcode = $this.find(".post-images-shortcode").length ? $this.find(".post-images-shortcode") : $this.find(".post-images-shortcode-wp"),
-							shortcode = $.trim( $shortcode.html().replace(/(\r\n|\n|\r)/gm,"") )
+							$shortcode = $this.find(".post-images-shortcode").length ? $this.find(".post-images-shortcode") : $this.find(".post-images-shortcode-wp")
 						;
-						$this.replaceWith( shortcode );
+						if ( $shortcode.length > 0 ) {
+							var shortcode = $.trim( $shortcode.html().replace(/(\r\n|\n|\r)/gm,"") );
+							$this.replaceWith( shortcode );
+						}
+						
 					});
 
 					content = $.trim( this.editor.getValue() );
