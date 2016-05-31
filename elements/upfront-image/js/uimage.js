@@ -118,9 +118,6 @@ define([
 
 			this.listenTo(Upfront.Events, 'entity:module:update', this.on_uimage_update);
 			this.listenTo(this.model, "preset:updated", this.preset_updated);
-
-			this.on_element_resizing_debounced = _.debounce(this.on_element_resizing_private, 3000, {leading: false});
-			this.apply_element_size_debounced = _.debounce(this.applyElementSize, 3000, {leading: false});
 		},
 
 		get_preset_properties: function() {
@@ -620,9 +617,8 @@ define([
 			} else {
 				var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint' + onTop);
 				this.$el.append(resizeHint);
-				// this.applyElementSize(elementSize.width, elementSize.height)
 				setTimeout( function () {
-					me.apply_element_size_debounced();
+					me.applyElementSize(false, false, false); // don't update property here
 				}, 300 );
 			}
 
@@ -870,10 +866,6 @@ define([
 		},
 
 		on_element_resizing: function(attr) {
-			this.on_element_resizing_debounced(attr);
-		},
-
-		on_element_resizing_private: function(attr) {
 			if(this.mobileMode) {
 				return;
 			}
@@ -903,14 +895,14 @@ define([
 				data.elementSize = newSize;
 			}
 
-			this.applyElementSize();
+			this.applyElementSize(data.elementSize.width, data.elementSize.height, false); // This won't update element_size property
 
 			if(starting.length){
 				return starting.outerHeight(data.elementSize.height);
 			}
 
 			//Wonderful stuff from here down
-			this.$('.uimage').css('height', data.elementSize.height);
+			this.$('.uimage').css('height', data.elementSize.height - vPadding);
 
 			var is_locked = this.property('is_locked');
 
@@ -958,13 +950,13 @@ define([
 
 				if(typeof imageView.width !== "undefined") {
 					if(data.elementSize.width > imageView.width) {
-						img.css({left: imgPosition.left + (maskSize.width - imageView.width)});
+						img.css({left: imgPosition.left + (data.elementSize.width - imageView.width)});
 					}
 				}
 
 				if(typeof imageView.height !== "undefined") {
 					if(data.elementSize.height > imageView.height) {
-						img.css({top: imgPosition.top + (maskSize.height - imageView.height)});
+						img.css({top: imgPosition.top + (data.elementSize.height - imageView.height)});
 					}
 				}
 
@@ -1045,7 +1037,10 @@ define([
 				position: imgPosition
 			};
 
-			this.model.set_breakpoint_property('element_size', this.resizingData.data.elementSize);
+			var elementSize = this.resizingData.data.elementSize;
+
+			//this.model.set_breakpoint_property('element_size', this.resizingData.data.elementSize);
+			this.applyElementSize(elementSize.width, ('default_height' in elementSize ? elementSize.default_height : elementSize.height), true);
 
 			this.cropTimer = setTimeout(function(){
 				me.saveTemporaryResizing();
@@ -1093,6 +1088,8 @@ define([
 
 		on_uimage_update: function (view) {
 			if ( !this.parent_module_view || this.parent_module_view != view ) return;
+			// Don't apply element size if on resizing
+			if ( !_.isUndefined(this.resizingData) && 'starting' in this.resizingData && this.resizingData.starting ) return;
 
 			this.applyElementSize();
 		},
@@ -1282,7 +1279,7 @@ define([
 
 			var me = this,
 				post_id = ( typeof _upfront_post_data.post_id !== 'undefined' ) ? _upfront_post_data.post_id : false,
-				$layout_ids = ( typeof _upfront_post_data.layout !== 'undefined' ) ? _upfront_post_data.layout : '',
+				layout_ids = ( typeof _upfront_post_data.layout !== 'undefined' ) ? _upfront_post_data.layout : '',
 				load_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 )
 			;
 
@@ -1379,7 +1376,7 @@ define([
 			}
 
 		},
-		applyElementSize: function (width, height) {
+		applyElementSize: function (width, height, set_property) {
 			if ( this.parent_module_view ) {
 				var me = this,
 					parent = this.parent_module_view.$el.find('.upfront-editable_entity:first'),
@@ -1391,15 +1388,28 @@ define([
 					hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
 					vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
 					// elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight}
-					elementSize = {width: ( width && !isNaN(width) ? width : resizer.width() ) - hPadding, height: ( height && !isNaN(height) ? height : resizer.height() ) - vPadding - captionHeight - (2 * borderWidth)}
+					elementSize = {width: ( width && !isNaN(width) ? width : resizer.width() ) - hPadding, height: ( height && !isNaN(height) ? height : resizer.height() ) - vPadding - captionHeight - (2 * borderWidth)},
+					newSize = this.getElementShapeSize(elementSize)
 				;
-				this.model.set_breakpoint_property('element_size', elementSize);
+				if ( false !== newSize ) {
+					elementSize = newSize;
+				}
+				if ( _.isUndefined(set_property) || set_property ) {
+					this.model.set_breakpoint_property('row', Upfront.Util.height_to_row(elementSize.height + vPadding), true);
+					if ( this.parent_module_view ) {
+						this.parent_module_view.model.set_breakpoint_property('row', Upfront.Util.height_to_row(elementSize.height + vPadding), true);
+					}
+					this.model.set_breakpoint_property('element_size', elementSize);
+				}
 				this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
 						width: elementSize.width,
 						height: elementSize.height,
 						l10n: l10n.template
 					})
 				);
+				// Let's override the min-height set to element
+				this.$el.find('> .upfront-object').css('min-height', (elementSize.height + vPadding) + 'px');
+				this.$el.closest('.upfront-module').css('min-height', (elementSize.height + vPadding) + 'px');
 			}
 		},
 
