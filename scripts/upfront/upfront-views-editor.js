@@ -2635,7 +2635,7 @@
 					styles = [],
 					variants;
 
-				if (typography == false) typography = {};
+				if (false === typography) typography = {};
 
 				if (_.isUndefined(typography[element]) || _.isUndefined(typography[element].font_face)) typography[element] = { font_face: 'Arial' };
 
@@ -4142,7 +4142,6 @@
 				"click .upfront-pagination_page-item": "handle_pagination_request",
 				"click .upfront-pagination_item-next": "handle_next",
 				"click .upfront-pagination_item-prev": "handle_prev",
-				"click .upfront-pagination_page-item": "set_page",
 				"keypress .upfront-pagination_page-current": "set_page_keypress"
 			},
 			initialize: function(opts){
@@ -4153,10 +4152,10 @@
 				this.$el.html(this.paginationTpl(this.collection.pagination));
 			},
 			handle_pagination_request: function (e, page) {
+				page = page ? page : parseInt($(e.target).attr("data-page_idx"), 10) || 0;
 				var me = this,
-					pagination = this.collection.pagination,
-					page = page ? page : parseInt($(e.target).attr("data-page_idx"), 10) || 0
-					;
+					pagination = this.collection.pagination
+				;
 				this.collection.fetchPage(page).
 				done(function(response){
 					me.collection.trigger('reset');
@@ -4175,19 +4174,6 @@
 
 				if(prevPage !== false)
 					this.handle_pagination_request(e, prevPage);
-			},
-			set_page: function (e) {
-				e.preventDefault();
-				e.stopPropagation();
-				/*
-				 var me = this;
-				 this.collection.fetchPage($(e.target).data("idx")-1).
-				 done(function(response){
-				 me.collection.trigger('reset');
-				 });
-				 */
-				var page = this.collection.pagination.pages - 1;
-				this.handle_pagination_request(e, page);
 			},
 			set_page_keypress: function (e) {
 				//var me = this;
