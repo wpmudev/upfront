@@ -338,6 +338,15 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			objects = this.get_child_objects(false)
 		;
 		
+		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
+		
+		//Prepare post!
+		if(Upfront.data.posts[this.postId]){
+			this.post = Upfront.data.posts[this.postId];
+			if(!this.post.meta.length)
+				this.post.meta.fetch();
+		}
+		
 		this.render_view_type();
 		
 		if ( this.parent_module_view ) {
@@ -487,8 +496,321 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			this.constructor.__super__.on_element_edit_stop.call(this, edit, post, saving_draft);
 		}
 	},
+	
+	checkSize: function() {
+		var maskSize = this.model.get_breakpoint_property_value('element_size', true),
+			size = this.property('size');
+
+		if(size.width >= maskSize.width && size.height >= maskSize.height) {
+			return 'big';
+		}
+
+		return 'small';
+	},
+	
+	get_thumb_data: function() {
+		// Retrieve image data from post meta
+		var imageData = this.post.meta.getValue('_thumbnail_data');
+
+		// Store variables used in resize event handlers
+		this.resizingData = {
+			data: {
+				position: imageData.imageOffset,
+				size: imageData.imageSize,
+				checkSize: this.checkSize(),
+				stretch: imageData.stretch,
+				vstretch: imageData.stretch
+			},
+			img: this.$('.thumbnail').find('img'),
+		};
+	},
+	
+	on_element_resize_start: function(attr) {
+		// Check if featured image element
+		var type = this.model.get_property_value_by_name("data_type");
+		if(type !== "featured_image") return;
+		
+		if(typeof this.resizingData === "undefined") {
+			this.get_thumb_data();
+		}	
+
+		this.$('.thumbnail').find('img').css('min-height', 'auto');
+	},
+	
+	on_element_resizing: function(attr) {
+		// Check if featured image element
+		var type = this.model.get_property_value_by_name("data_type");
+		if(type !== "featured_image") return;
+
+		if(typeof this.resizingData === "undefined") {
+			this.get_thumb_data();
+		}	
+
+		var data = this.resizingData.data,
+			img = this.resizingData.img,
+			// padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
+			column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
+			elementWidth = parseInt(attr.width),
+			elementHeight = parseInt(attr.height),
+			hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
+			vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
+			ratio,
+			newSize;
+
+		data.elementSize = {width: elementWidth < 0 ? 10 : elementWidth, height: elementHeight < 0 ? 10 : elementHeight};
+
+		if(attr.axis === "e" || attr.axis === "w") {
+			data.elementSize.height = data.elementSize.height - vPadding;
+		}
+
+		newSize = this.getElementShapeSize(data.elementSize);
+		if ( false !== newSize ) {
+			data.elementSize = newSize;
+		}
+
+		this.applyElementSize(data.elementSize.width, data.elementSize.height, false); // This won't update element_size property
+
+		//if(starting.length){
+		//	return starting.outerHeight(data.elementSize.height);
+		//}
+
+		//Wonderful stuff from here down
+		this.$('.thumbnail').css('height', data.elementSize.height - vPadding);
+
+		var is_locked = this.property('is_locked');
+
+		if(is_locked === false) {
+			//Resizing the stretching dimension has priority, the other dimension just alter position
+			if(data.stretch && !data.vstretch){
+				this.resizingH(img, data, true);
+				this.resizingV(img, data);
+			} else if(!data.stretch && data.vstretch){
+				this.resizingV(img, data, true);
+				this.resizingH(img, data);
+			} else {
+				//Both stretching or not stretching, calculate ratio difference
+				ratio = data.size.width / data.size.height - data.elementSize.width / data.elementSize.height;
+
+				//Depending on the difference of ratio, the resizing is made horizontally or vertically
+				if(ratio > 0 && data.stretch || ratio < 0 && ! data.stretch){
+					this.resizingV(img, data, true);
+					this.resizingH(img, data);
+				}
+				else {
+					this.resizingH(img, data, true);
+					this.resizingV(img, data);
+				}
+			}
+		} else {
+			var vertical_align = this.property('valign'),
+				current_position = this.property('position'),
+				isDotAlign = this.property('isDotAlign'),
+				containerHeight = this.$('.upfront-image-container').height(),
+				sizeCheck = this.checkSize(),
+				imgPosition = img.position(),
+				maskSize = this.getMaskSize(),
+				imageView = this.getImageViewport(),
+				margin;
+
+			if(typeof imageView.width !== "undefined") {
+				if(data.elementSize.width > imageView.width) {
+					img.css({left: imgPosition.left + (data.elementSize.width - imageView.width)});
+				}
+			}
+
+			if(typeof imageView.height !== "undefined") {
+				if(data.elementSize.height > imageView.height) {
+					img.css({top: imgPosition.top + (data.elementSize.height - imageView.height)});
+				}
+			}
+
+			if(sizeCheck === "small" && isDotAlign === true) {
+				if(vertical_align === "center") {
+					if(data.size.height < data.elementSize.height) {
+						margin = (data.size.height - data.elementSize.height) / 2;
+					} else {
+						margin = -(data.elementSize.height - containerHeight) / 2;
+					}
+				}
+
+				if(vertical_align === "bottom") {
+					if(data.size.height < data.elementSize.height) {
+						margin = (data.size.height - data.elementSize.height);
+					} else {
+						margin = -(data.elementSize.height - containerHeight)
+					}
+				}
+
+				this.$('.upfront-image-caption-container').css({
+					'marginTop': -margin,
+				});
+
+				this.property('marginTop', -margin);
+				this.property('position', {top: margin, left: current_position.left});
+
+			}
+		}
+	},
+	
+	resizingH: function(img, data, size) {
+		var elWidth = data.elementSize.width,
+			width = size ? data.size.width : img.width(), // The width has been modified if we don't need to set the size
+			left = data.position.left,
+			css = {},
+			align;
+
+		if(data.stretch) {
+			if(elWidth < width - left) {
+				css.left = -left;
+				if(size) {
+					css.width = width;
+				}
+			} else if(width > elWidth && elWidth >= width - left) {
+				css.left = elWidth - width;
+				if(size) {
+					css.width = width;
+				}
+			} else {
+				css.left = 0;
+				if(size) {
+					css.width = elWidth;
+				}
+			}
+			if(size) {
+				css.height = 'auto';
+			}
+			img.css(css);
+			return;
+		}
+
+		if(elWidth > width) {
+			align = this.property('align');
+			if(align === 'left') {
+				css.left = 0;
+			} else if(align === 'center') {
+				css.left = (elWidth - width) / 2;
+			} else {
+				css.left = 'auto';
+				css.right = 0;
+			}
+			if(size) {
+				css.width = width;
+				css.height = 'auto';
+			}
+			img.css(css);
+			return;
+		}
+
+		css.left = 0;
+		if(size) {
+			css.width = elWidth;
+			css.height = 'auto';
+		}
+		img.css(css);
+	},
+
+	resizingV: function(img, data, size) {
+		var elHeight = data.elementSize.height,
+			height = size ? data.size.height : img.height(),
+			top = data.position.top,
+			css = {};
+
+		if(data.vstretch) {
+			if(elHeight < height - top) {
+				css.top = -top;
+				if(size) {
+					css.height = height;
+				}
+			} else if(height > elHeight && elHeight >= height - top){
+				css.top = elHeight - height;
+				if(size) {
+					css.height = height;
+				}
+			} else{
+				css.top = 0;
+				if(size) {
+					css.height = elHeight;
+				}
+			}
+			if(size) {
+				css.width = 'auto';
+			}
+			img.css(css);
+			return;
+		}
+
+		if(elHeight > height - top) {
+			css.top = -top;
+			if(size) {
+				css.height = height;
+			}
+		} else if(height - top >= elHeight && elHeight > height){
+			css.top = elHeight - height;
+			if(size) {
+				css.height = height;
+			}
+		} else {
+			css.top = 0;
+			if(size) {
+				css.height = elHeight;
+			}
+		}
+
+		if(size) {
+			css.width = 'auto';
+		}
+		img.css(css);
+	},
+	
+	getElementShapeSize: function (elementSize) {
+		return false;
+	},
+	
+	applyElementSize: function (width, height, set_property) {
+		if ( this.parent_module_view ) {
+			var me = this,
+				parent = this.parent_module_view.$el.find('.upfront-editable_entity:first'),
+				resizer = parent,
+				captionHeight = this.get_preset_property("caption-position") === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
+				// padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
+				borderWidth = parseInt(this.$el.find('.upfront-image-caption-container').css('borderWidth') || 0, 10), // || 0 part is needed because parseInt empty sting returns NaN and breaks element height
+				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
+				hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
+				vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
+				// elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight}
+				elementSize = {width: ( width && !isNaN(width) ? width : resizer.width() ) - hPadding, height: ( height && !isNaN(height) ? height : resizer.height() ) - vPadding - captionHeight - (2 * borderWidth)},
+				newSize = this.getElementShapeSize(elementSize)
+			;
+			if ( false !== newSize ) {
+				elementSize = newSize;
+			}
+			if ( _.isUndefined(set_property) || set_property ) {
+				this.model.set_breakpoint_property('row', Upfront.Util.height_to_row(elementSize.height + vPadding), true);
+				if ( this.parent_module_view ) {
+					this.parent_module_view.model.set_breakpoint_property('row', Upfront.Util.height_to_row(elementSize.height + vPadding), true);
+				}
+				this.model.set_breakpoint_property('element_size', elementSize);
+			}
+			//this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
+			//		width: elementSize.width,
+			//		height: elementSize.height,
+			//		l10n: l10n.template
+			//	})
+			//);
+			// Let's override the min-height set to element
+			this.$el.find('> .upfront-object').css('min-height', (elementSize.height + vPadding) + 'px');
+			this.$el.closest('.upfront-module').css('min-height', (elementSize.height + vPadding) + 'px');
+		}
+	},
 
 	on_element_resize: function (attr) {
+		
+		// Check if featured image element
+		var type = this.model.get_property_value_by_name("data_type");
+		if(type === "featured_image") {
+			//Save image
+		}
+		
 		var objects = this.get_child_objects(false),
 			breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 			grid = Upfront.Settings.LayoutEditor.Grid,
