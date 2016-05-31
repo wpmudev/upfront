@@ -71,6 +71,7 @@
 								return;
 							}
 							newVal = this._trimAlignValue(curVal - step );
+							break;
 						case $.ui.keyCode.LEFT:
 							if (curVal === this._valueMin()) {
 								return;
