@@ -12,6 +12,12 @@
     "mocha": "^2.3.3",
     "underscore": "^1.8.3"
   },
+  "jshintConfig": {
+	  "esversion": 3,
+	  "maxerr": 200,
+	  "laxbreak": true,
+	  "sub": true
+  },
   "scripts": {
     "test-php": "phpunit -c test/php/lib/phpunit.xml",
     "test-js": "node_modules/.bin/mocha test/js",
