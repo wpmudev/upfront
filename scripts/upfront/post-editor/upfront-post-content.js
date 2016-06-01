@@ -766,7 +766,13 @@ PostContentEditor.prototype = {
 
 					$('#image-edit-button-align').show();
 
-					img.attr('src', imageData.src);
+					img.attr('src', imageData.srcFull);
+					
+					if(imageData.imageSize) {
+						img.css('width', imageData.imageSize.width);
+						img.css('top', -imageData.imageOffset.top);
+						img.css('left', -imageData.imageOffset.left);
+					}
 					Upfront.Events.trigger('featured_image:updated', img);
 				}).fail(function(data){
 					if(data && data.reason === 'changeImage') {
@@ -1453,7 +1459,7 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 
 			$('#image-edit-button-align').show();
 
-			img.attr('src', imageData.src);
+			img.attr('src', imageData.srcFull);
 		}).fail(function(data){
 			if(data && data.reason === 'changeImage') {
 				me.openImageSelector();

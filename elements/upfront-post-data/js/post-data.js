@@ -40,6 +40,15 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	},
 
 	on_render: function () {
+		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
+		
+		//Prepare post!
+		if(Upfront.data.posts[this.postId]){
+			this.post = Upfront.data.posts[this.postId];
+			if(!this.post.meta.length)
+				this.post.meta.fetch();
+		}
+
 		this.update_height();
 	},
 
@@ -138,6 +147,9 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		if ( this._editor_prepared && this.editor_view ) {
 			this.editor_view.updateImageSize();
 		}
+		
+		var imageData = this.post.meta.getValue('_thumbnail_data');
+		
 		height -= padding_top + padding_bottom;
 		this.$el.find('.thumbnail').each(function(){
 			var width = $(this).width(),
@@ -160,9 +172,11 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 					}
 				}
 				else {
-					img_h = $img.height();
-					if ( height != img_h ) {
-						$img.css('margin-top', (height-img_h)/2);
+					if(imageData.imageSize) {
+						$img.parent().css({ height: 'auto' });
+						$img.css('width', imageData.imageSize.width);
+						$img.css('top', -imageData.imageOffset.top);
+						$img.css('left', -imageData.imageOffset.left);
 					}
 				}
 			});
@@ -643,15 +657,52 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 					}
 				}
 
-				this.$('.upfront-image-caption-container').css({
-					'marginTop': -margin,
-				});
-
-				this.property('marginTop', -margin);
+				
 				this.property('position', {top: margin, left: current_position.left});
 
 			}
 		}
+	},
+	
+	getImageViewport: function() {
+		if(typeof this.resizingData === "undefined") {
+			this.get_thumb_data();
+		}
+		
+		var me = this,
+			img = this.resizingData.img,
+			imgPosition = img.position(),
+			viewPort,
+			viewWidth,
+			viewHeight;
+
+		if(imgPosition.left < 0) {
+			viewWidth = img.width() - Math.abs(imgPosition.left);
+		}
+
+		if(imgPosition.top < 0) {
+			viewHeight = img.height() - Math.abs(imgPosition.top);
+		}
+
+		viewPort = {width: viewWidth, height: viewHeight};
+
+		return viewPort;
+
+	},
+	
+	getMaskSize: function() {
+		var me = this,
+			imageData = this.post.meta.getValue('_thumbnail_data');
+			size = imageData.imageSize,
+			checkSize = this.checkSize(),
+			elementSize = this.model.get_breakpoint_property_value('element_size', true),
+			minWidth = Math.min(size.width, elementSize.width),
+			minHeight = Math.min(size.height, elementSize.height)
+		;
+
+		var newSize = { width: minWidth, height: minHeight};
+
+		return newSize;
 	},
 	
 	resizingH: function(img, data, size) {
@@ -811,19 +862,31 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		var type = this.model.get_property_value_by_name("data_type");
 		if(type === "featured_image") {
 			//Save image
+			var objects = this.get_child_objects(false),
+				breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
+				grid = Upfront.Settings.LayoutEditor.Grid,
+				padding_top_row = parseInt( this.model.get_breakpoint_property_value("top_padding_use", true) ?  this.model.get_breakpoint_property_value('top_padding_num', true) / grid.baseline : 0, 10 ),
+				padding_bottom_row = parseInt( this.model.get_breakpoint_property_value("bottom_padding_use", true) ? this.model.get_breakpoint_property_value('bottom_padding_num', true) / grid.baseline : 0, 10 )
+				vPadding = padding_top_row + padding_bottom_row;
+			;
+			
+			var row = Upfront.Util.height_to_row(elementSize.height + vPadding);
+		} else {
+			var objects = this.get_child_objects(false),
+				breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
+				grid = Upfront.Settings.LayoutEditor.Grid,
+				padding_top_row = parseInt( this.model.get_breakpoint_property_value("top_padding_use", true) ?  this.model.get_breakpoint_property_value('top_padding_num', true) / grid.baseline : 0, 10 ),
+				padding_bottom_row = parseInt( this.model.get_breakpoint_property_value("bottom_padding_use", true) ? this.model.get_breakpoint_property_value('bottom_padding_num', true) / grid.baseline : 0, 10 )
+				vPadding = padding_top_row + padding_bottom_row;
+			;
+			
+			var row = Upfront.Util.height_to_row(elementSize.height + vPadding);
 		}
 		
-		var objects = this.get_child_objects(false),
-			breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
-			grid = Upfront.Settings.LayoutEditor.Grid,
-			padding_top_row = parseInt( this.model.get_breakpoint_property_value("top_padding_use", true) ?  this.model.get_breakpoint_property_value('top_padding_num', true) / grid.baseline : 0, 10 ),
-			padding_bottom_row = parseInt( this.model.get_breakpoint_property_value("bottom_padding_use", true) ? this.model.get_breakpoint_property_value('bottom_padding_num', true) / grid.baseline : 0, 10 )
-		;
 		// Also resize child objects if it's only one object
 		if ( objects.length != 1 ) return;
 		if ( breakpoint.default ) {
 			_.each(objects, function(object){
-				var row = attr.row - padding_top_row - padding_bottom_row;
 				object.set_property('row', row);
 			});
 		}
@@ -833,7 +896,6 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 				if ( !_.isObject(obj_breakpoint[breakpoint.id]) ){
 					obj_breakpoint[breakpoint.id] = {};
 				}
-				var row = attr.row - padding_top_row - padding_bottom_row;
 				obj_breakpoint[breakpoint.id].row = row;
 				object.set_property('breakpoint', obj_breakpoint);
 			});
