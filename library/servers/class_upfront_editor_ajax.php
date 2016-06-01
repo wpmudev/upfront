@@ -321,7 +321,9 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			$post->sticky = is_sticky($post->ID);
 			$post->is_new = false;
 			$post->server_time = date('m/d/Y h:i:s a', time());
-
+			
+			if ( empty($post->post_name) ) $post->post_name = sanitize_title($post->post_title);
+			
 			$this->_out(new Upfront_JsonResponse_Success($post));
 		}
 		else if( $data['id'] === '0') { //New post
@@ -526,11 +528,15 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		}
 
 		$post = get_post($id);
+		$slug = empty( $post->post_name )
+			? sanitize_title($post->post_title)
+			: $post->post_name
+		;
 
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			'id' => $id,
-			'post_name' => $post->post_name,
-            'permalink' => get_permalink($id)
+			'post_name' => $slug,
+			'permalink' => get_permalink($id)
 		)));
 	}
 

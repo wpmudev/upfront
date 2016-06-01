@@ -1340,7 +1340,10 @@ var PostUrlEditor = PostSectionView.extend({
 			
 			// Update Preview button href
 			$('.ueditor-action-preview').attr("href", rootUrl + "?preview=true");
-
+            
+            // added flag to be used on upfront-content.js
+            _upfront_post_data.post_name_updated = true;
+            
             this.post.set( "post_name", slug );
             this.hasDefinedSlug = true;
         }

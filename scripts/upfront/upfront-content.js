@@ -304,8 +304,13 @@ define("content", deps, function(postTpl, ContentTools) {
 			this.post.set('post_status', status);
 
 			/* If this is a new post, take out the default post_name so that the system assigns a new one based on the edited title */
-			if($('body').hasClass('is_new'))
+			// additional condition if post name/slug not yet edited on sidebar
+			if( $('body').hasClass('is_new') && ( typeof _upfront_post_data.post_name_updated === 'undefined' || !_upfront_post_data.post_name_updated ) ) {
 				this.post.set('post_name', '');
+			}
+			
+			// we can now clear flag for edited post name from sidebar
+			_upfront_post_data.post_name_updated = false;
 
 			this.post.save().done(function(result){
 				if ( me.post.is_new && post_name.length ) {
