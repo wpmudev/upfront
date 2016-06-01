@@ -4211,6 +4211,7 @@
 			},
 			initialize: function(options){
 				this.collection.on('change reset', this.render, this);
+				this.listenTo(Upfront.Events, 'post:saved', this.post_saved);
 			},
 			render: function () {
 				this.$el.empty().append(
@@ -4306,6 +4307,11 @@
 						me.handle_return_to_posts();
 					})
 				);
+			},
+			
+			post_saved: function () {
+				// We should fetch colletion after post / page update to retrieve any title changes
+				this.collection.fetch();
 			},
 
 			handle_return_to_posts: function () {

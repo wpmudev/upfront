@@ -321,6 +321,7 @@ define("content", deps, function(postTpl, ContentTools) {
 						me.trigger('post:saved');
 					}
 				}
+				Upfront.Events.trigger('post:saved');
 				postUpdated = true;
 			});
 
