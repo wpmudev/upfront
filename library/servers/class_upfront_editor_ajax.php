@@ -403,7 +403,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$templates = ( $template_type == 'page' )
 			? array((object) array(
 					'name' => 'Default Template',
-					'slug' => $store_key . '-default',
+					'slug' => sanitize_title($store_key . '-default'),
 					'file' => '',
 					'template_type' => $template_type
 				))
@@ -415,7 +415,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			foreach ( $page_templates as $template_name => $template_filename ) {
 				array_push($templates, (object) array(
 						'name' => $template_name,
-						'slug' => $store_key . '-' . str_replace(' ','-',strtolower($template_name)),
+						'slug' => sanitize_title($store_key . '-' . str_replace(' ','-',$template_name)),
 						'file' => $template_filename,
 						'template_type' => $template_type
 					)
@@ -425,7 +425,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			$custom_post_type_templates = Upfront_Server_PageTemplate::get_instance()->get_all_theme_templates($dev_type, $template_type);
 			foreach ( $custom_post_type_templates as $custom_template ) {
 				array_push($templates, (object) array(
-					'slug' => $custom_template->post_name,
+					'slug' => sanitize_title($custom_template->post_name),
 					'name' => Upfront_Server_PageTemplate::get_instance()->slug_layout_to_name($custom_template->post_name),
 				));
 			}
@@ -434,7 +434,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			foreach ( $db_option_layouts as $key => $db_layout ) {
 				if ( preg_match('/single-page/i', $db_layout) ) {
 					array_push($templates, (object) array(
-						'slug' => $db_layout,
+						'slug' => sanitize_title($db_layout),
 						'name' => Upfront_Server_PageTemplate::get_instance()->db_layout_to_name($db_layout),
 					));
 				}
