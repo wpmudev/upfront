@@ -4339,6 +4339,10 @@
 			pageListItemTpl: _.template($(_Upfront_Templates.popup).find('#upfront-page-list-item-tpl').html()),
 			pagePreviewTpl: _.template($(_Upfront_Templates.popup).find('#upfront-page-preview-tpl').html()),
 			allTemplates: [],
+			initialize: function(options){
+				this.collection.on('change reset', this.render, this);
+				this.listenTo(Upfront.Events, 'post:saved', this.post_saved);
+			},
 			render: function () {
 				var pages = this.collection.getPage(this.collection.pagination.currentPage);//this.collection.where({'post_parent': 0});
 				// Render
@@ -4418,6 +4422,10 @@
 						postelement.remove();
 					});
 				}
+			},
+			post_saved: function () {
+				// We should fetch colletion after post / page update to retrieve any title changes
+				this.collection.fetch();
 			},
 			update_path: function (page) {
 				var current = page,
