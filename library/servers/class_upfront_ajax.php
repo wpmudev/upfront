@@ -501,7 +501,7 @@ class Upfront_Ajax extends Upfront_Server {
 					$is_template_file_ok = false;
 					$page_templates = get_page_templates();
 					foreach ( $page_templates as $template_name => $template_filename ) {
-						$slug = $store_key . '-' . str_replace(' ','-',strtolower($template_name));
+						$slug = sanitize_title($store_key . '-' . str_replace(' ','-',$template_name));
 						if ( $slug == $template_slug ) {
 							$is_template_file_ok = true;
 							update_post_meta($post_id, '_wp_page_template', $template_filename);
