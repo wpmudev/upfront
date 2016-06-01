@@ -99,7 +99,9 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		}
 
 		if ( !Upfront.Views.PostDataEditor.contentEditor || !Upfront.Views.PostDataEditor.contentEditor._editing ) return;
-		this.editor_view.editContent();
+
+		if( this.editor_view )
+			this.editor_view.editContent();
 	},
 
 	on_element_edit_start: function () {
