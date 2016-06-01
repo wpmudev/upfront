@@ -101,14 +101,20 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 		
 		if (empty($this->_post->ID)) return '';
 		
+		$image_size = '';
+		
 		$full_featured = isset($this->_data['full_featured_image'])
 			? (int)$this->_data['full_featured_image']
 			: (int)Upfront_Posts_PostsData::get_default('full_featured_image')
 		;
-
+		
+		if(empty($_POST)) {
+			$image_size = 'uf_post_featured_image';
+		}
+	
 		return $full_featured == 1
 			? get_the_post_thumbnail($this->_post->ID)
-			: upfront_get_edited_post_thumbnail($this->_post->ID, false, 'uf_post_featured_image')
+			: upfront_get_edited_post_thumbnail($this->_post->ID, false, $image_size)
 		;
 	}
 
