@@ -531,8 +531,10 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		// Store variables used in resize event handlers
 		this.resizingData = {
 			data: {
+				imageId: imageData.imageId,
 				position: imageData.imageOffset,
 				size: imageData.imageSize,
+				rotation: imageData.rotation,
 				checkSize: this.checkSize(),
 				stretch: imageData.stretch,
 				vstretch: imageData.stretch
@@ -665,6 +667,75 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		}
 	},
 	
+	on_element_resize: function (attr) {
+		if(typeof this.resizingData === "undefined") {
+			this.get_thumb_data();
+		}
+		
+		// Check if featured image element
+		var type = this.model.get_property_value_by_name("data_type"),
+			elementSize = this.model.get_breakpoint_property_value('element_size', true);
+
+		if(type === "featured_image") {
+			//Save image
+			var objects = this.get_child_objects(false),
+				breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
+				grid = Upfront.Settings.LayoutEditor.Grid,
+				padding_top_row = parseInt( this.model.get_breakpoint_property_value("top_padding_use", true) ?  this.model.get_breakpoint_property_value('top_padding_num', true) / grid.baseline : 0, 10 ),
+				padding_bottom_row = parseInt( this.model.get_breakpoint_property_value("bottom_padding_use", true) ? this.model.get_breakpoint_property_value('bottom_padding_num', true) / grid.baseline : 0, 10 )
+				vPadding = padding_top_row + padding_bottom_row,
+				img = this.resizingData.img,
+				imgSize = {width: img.width(), height: img.height()},
+				imgPosition = img.position()
+			;
+			
+			// Change the sign
+			imgPosition.top = -imgPosition.top;
+			imgPosition.left = -imgPosition.left;
+
+			this.temporaryProps = {
+				size: imgSize,
+				position: imgPosition
+			};
+			
+			// Save image crop from resize
+			this.saveTemporaryResizing();
+			
+			var row = Upfront.Util.height_to_row(elementSize.height + vPadding);
+			
+		} else {
+			var objects = this.get_child_objects(false),
+				breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
+				grid = Upfront.Settings.LayoutEditor.Grid,
+				padding_top_row = parseInt( this.model.get_breakpoint_property_value("top_padding_use", true) ?  this.model.get_breakpoint_property_value('top_padding_num', true) / grid.baseline : 0, 10 ),
+				padding_bottom_row = parseInt( this.model.get_breakpoint_property_value("bottom_padding_use", true) ? this.model.get_breakpoint_property_value('bottom_padding_num', true) / grid.baseline : 0, 10 )
+				vPadding = padding_top_row + padding_bottom_row;
+			;
+			
+			var row = Upfront.Util.height_to_row(elementSize.height + vPadding);
+		}
+		
+		// Also resize child objects if it's only one object
+		if ( objects.length != 1 ) return;
+		if ( breakpoint.default ) {
+			_.each(objects, function(object){
+				object.set_property('row', row);
+			});
+		}
+		else {
+			_.each(objects, function(object){
+				var obj_breakpoint = Upfront.Util.clone(object.get_property_value_by_name('breakpoint') || {});
+				if ( !_.isObject(obj_breakpoint[breakpoint.id]) ){
+					obj_breakpoint[breakpoint.id] = {};
+				}
+				obj_breakpoint[breakpoint.id].row = row;
+				object.set_property('breakpoint', obj_breakpoint);
+			});
+		}
+		
+		Upfront.Events.trigger('entity:object:refresh', this);
+	},
+	
 	getImageViewport: function() {
 		if(typeof this.resizingData === "undefined") {
 			this.get_thumb_data();
@@ -694,7 +765,8 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	getMaskSize: function() {
 		var me = this,
 			imageData = this.post.meta.getValue('_thumbnail_data');
-			size = imageData.imageSize,
+
+		var	size = imageData.imageSize,
 			checkSize = this.checkSize(),
 			elementSize = this.model.get_breakpoint_property_value('element_size', true),
 			minWidth = Math.min(size.width, elementSize.width),
@@ -856,52 +928,76 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			this.$el.closest('.upfront-module').css('min-height', (elementSize.height + vPadding) + 'px');
 		}
 	},
-
-	on_element_resize: function (attr) {
-		
-		// Check if featured image element
-		var type = this.model.get_property_value_by_name("data_type");
-		if(type === "featured_image") {
-			//Save image
-			var objects = this.get_child_objects(false),
-				breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
-				grid = Upfront.Settings.LayoutEditor.Grid,
-				padding_top_row = parseInt( this.model.get_breakpoint_property_value("top_padding_use", true) ?  this.model.get_breakpoint_property_value('top_padding_num', true) / grid.baseline : 0, 10 ),
-				padding_bottom_row = parseInt( this.model.get_breakpoint_property_value("bottom_padding_use", true) ? this.model.get_breakpoint_property_value('bottom_padding_num', true) / grid.baseline : 0, 10 )
-				vPadding = padding_top_row + padding_bottom_row;
-			;
-			
-			var row = Upfront.Util.height_to_row(elementSize.height + vPadding);
-			
-		} else {
-			var objects = this.get_child_objects(false),
-				breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
-				grid = Upfront.Settings.LayoutEditor.Grid,
-				padding_top_row = parseInt( this.model.get_breakpoint_property_value("top_padding_use", true) ?  this.model.get_breakpoint_property_value('top_padding_num', true) / grid.baseline : 0, 10 ),
-				padding_bottom_row = parseInt( this.model.get_breakpoint_property_value("bottom_padding_use", true) ? this.model.get_breakpoint_property_value('bottom_padding_num', true) / grid.baseline : 0, 10 )
-				vPadding = padding_top_row + padding_bottom_row;
-			;
-			
-			var row = Upfront.Util.height_to_row(elementSize.height + vPadding);
+	
+	saveTemporaryResizing: function() {
+		if(typeof this.resizingData === "undefined") {
+			this.get_thumb_data();
 		}
-		
-		// Also resize child objects if it's only one object
-		if ( objects.length != 1 ) return;
-		if ( breakpoint.default ) {
-			_.each(objects, function(object){
-				object.set_property('row', row);
+
+		var me = this,
+			elementSize = me.model.get_breakpoint_property_value('element_size', true),
+			crop = {},
+			imageId = this.resizingData.data.imageId,
+			resize = this.temporaryProps.size,
+			position = this.temporaryProps.position,
+			deferred = $.Deferred(),
+			import_deferred = $.Deferred(),
+			import_promise = import_deferred.promise(),
+			originalImageData = this.post.meta.getValue('_thumbnail_data');
+		;
+
+		crop.top = position.top;
+		crop.left = position.left;
+
+		crop.width = Math.min(elementSize.width, resize.width);
+		crop.height = Math.min(elementSize.height, resize.height);
+
+		import_promise.done(function(){
+			imageId = me.resizingData.data.imageId,
+			Upfront.Views.Editor.ImageEditor.saveImageEdition(
+				imageId,
+				me.resizingData.data.rotation,
+				resize,
+				crop
+			).done(function(results){
+				var imageData = results.data.images[imageId];
+
+				if(imageData.error && !me.isThemeImage){
+					Upfront.Views.Editor.notify(l10n.process_error, 'error');
+					return;
+				}
+
+				newImageData = _.extend({
+					'imageSize': resize,
+					'position': position,
+					'src': imageData.url,
+					'srcFull': imageData.urlOriginal,
+					'stretch': resize.width >= elementSize.width,
+					'vsctrech': resize.height >= elementSize.height,
+					'gifImage': imageData.gif
+				}, originalImageData);
+
+				me.post.meta.add([
+					{meta_key: '_thumbnail_id', meta_value: imageData.imageId},
+					{meta_key: '_thumbnail_data', meta_value: newImageData}
+				], {merge: true});
+				
+				clearTimeout(me.cropTimer);
+				me.cropTimer = false;
+				deferred.resolve();
+			});
+		});
+
+		if ( this.isThemeImage && 'themeExporter' in Upfront ) {
+			this.importImage().always(function(){
+				import_deferred.resolve();
 			});
 		}
 		else {
-			_.each(objects, function(object){
-				var obj_breakpoint = Upfront.Util.clone(object.get_property_value_by_name('breakpoint') || {});
-				if ( !_.isObject(obj_breakpoint[breakpoint.id]) ){
-					obj_breakpoint[breakpoint.id] = {};
-				}
-				obj_breakpoint[breakpoint.id].row = row;
-				object.set_property('breakpoint', obj_breakpoint);
-			});
+			import_deferred.resolve();
 		}
+
+		return deferred.promise();
 	},
 	
 	/**
