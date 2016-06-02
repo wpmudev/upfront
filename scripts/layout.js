@@ -528,7 +528,7 @@ jQuery(document).ready(function($){
 				}
 			}
 		});
-		$('.upfront-output-object .uf-post .thumbnail, .uf-post-data .upostdata-part.thumbnail').each(function(){
+		$('.upfront-output-object .uf-post .thumbnail').each(function(){
 			var is_upostdata = $(this).hasClass('upostdata-part'),
 				$object = $(this).closest('.upfront-output-object'),
 				height = is_upostdata ? parseInt($object.css('min-height'), 10) : $(this).height(),
