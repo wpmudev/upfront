@@ -73,7 +73,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		);
 
 		$post = Upfront_PostModel::create($data['post_type'], $data['title']);
-		if (!empty($data['permalink'])) $post->post_name = sanitize_title($data['permalink']);
+		if (!empty($data['permalink'])) $post->post_name = $this->_remove_unicodes_url($data['permalink']);
 		// if (!empty($data['template'])) update_post_meta($post->ID, '_wp_page_template', $data['template']);
 
 		$post->post_status = 'draft';
@@ -126,7 +126,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 		$post = (array)Upfront_PostModel::get($post_id);
 		if (empty($post)) $this->_out(new Upfront_JsonResponse_Error("Invalid post"));
-		$post['post_name'] = sanitize_title($slug);
+		$post['post_name'] = $this->_remove_unicodes_url($slug);
 
 		$updated = Upfront_PostModel::save($post);
 		$updated->permalink = get_permalink($updated->ID);
@@ -322,7 +322,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			$post->is_new = false;
 			$post->server_time = date('m/d/Y h:i:s a', time());
 			
-			if ( empty($post->post_name) ) $post->post_name = sanitize_title($post->post_title);
+			if ( empty($post->post_name) ) $post->post_name = $this->_remove_unicodes_url($post->post_title);
 			
 			$this->_out(new Upfront_JsonResponse_Success($post));
 		}
@@ -471,13 +471,8 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			$this->_out(new Upfront_JsonResponse_Error("You can't do this."));
 		}
 		// making sure post names/slugs are sanitized
-		if ( isset($data['post_name']) ) $data['post_name'] = sanitize_title($data['post_name']);
-
-		unset($data['post_modified']);
-		unset($data['post_modified_gmt']);
-
-
-
+		if ( isset($data['post_name']) ) $data['post_name'] = $this->_remove_unicodes_url($data['post_name']);
+		
 		if(!$data['ID']){
 			unset($data['ID']);
 			$id = wp_insert_post($data);
@@ -529,7 +524,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 		$post = get_post($id);
 		$slug = empty( $post->post_name )
-			? sanitize_title($post->post_title)
+			? $this->_remove_unicodes_url($post->post_title)
 			: $post->post_name
 		;
 
@@ -748,6 +743,22 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$post->hierarchy = $this->_get_post_hierarchy($post);
 		$post->featured_image = $this->_get_post_featured_image($post);
 		return $post;
+	}
+	
+	private function _remove_unicodes_url ($url) {
+		// just in case not yet sanitize_title
+		$url = sanitize_title($url);
+		
+		// removing unicodes
+		$unicode_pattern = array(
+			'/%e2%80%8b/', // zero width space
+			'/%e2%80%8c/', // zero width non-joiner
+			'/%e2%80%8d/', // zero width joiner
+			'/%e2%80%8e/', // left to right mark
+			'/%e2%80%8f/' // right to left mark
+		);
+		
+		return preg_replace($unicode_pattern,'',$url);
 	}
 }
 add_action('init', array('Upfront_Editor_Ajax', 'serve'));
