@@ -578,7 +578,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		data.elementSize = {width: elementWidth < 0 ? 10 : elementWidth, height: elementHeight < 0 ? 10 : elementHeight};
 
 		if(attr.axis === "e" || attr.axis === "w") {
-			data.elementSize.height = data.elementSize.height - vPadding;
+			data.elementSize.height = data.elementSize.height;
 		}
 
 		newSize = this.getElementShapeSize(data.elementSize);
@@ -593,8 +593,8 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		//}
 
 		//Wonderful stuff from here down
-		this.$('.thumbnail').css('height', data.elementSize.height - vPadding);
-		this.$('.thumbnail').parent().css({'height': data.elementSize.height - vPadding, 'max-height': data.elementSize.height - vPadding, 'min-height': data.elementSize.height - vPadding});
+		this.$('.thumbnail').css('height', data.elementSize.height);
+		this.$('.thumbnail').parent().css({'height': data.elementSize.height, 'max-height': data.elementSize.height, 'min-height': data.elementSize.height });
 
 		var is_locked = this.property('is_locked');
 
@@ -627,7 +627,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 				containerHeight = this.$('.upfront-image-container').height(),
 				sizeCheck = this.checkSize(),
 				imgPosition = img.position(),
-				maskSize = this.getMaskSize(),
+				maskSize = this.getMaskSize(attr),
 				imageView = this.getImageViewport(),
 				margin;
 
@@ -673,8 +673,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		}
 		
 		// Check if featured image element
-		var type = this.model.get_property_value_by_name("data_type"),
-			elementSize = this.model.get_breakpoint_property_value('element_size', true);
+		var type = this.model.get_property_value_by_name("data_type");
 
 		if(type === "featured_image") {
 			//Save image
@@ -688,7 +687,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 				imgSize = {width: img.width(), height: img.height()},
 				imgPosition = img.position()
 			;
-			
+
 			// Change the sign
 			imgPosition.top = -imgPosition.top;
 			imgPosition.left = -imgPosition.left;
@@ -699,9 +698,9 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			};
 			
 			// Save image crop from resize
-			this.saveTemporaryResizing();
+			this.saveTemporaryResizing(attr);
 			
-			var row = Upfront.Util.height_to_row(elementSize.height + vPadding);
+			var row = Upfront.Util.height_to_row(parseInt(attr.height));
 			
 		} else {
 			var objects = this.get_child_objects(false),
@@ -712,7 +711,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 				vPadding = padding_top_row + padding_bottom_row;
 			;
 			
-			var row = Upfront.Util.height_to_row(elementSize.height + vPadding);
+			var row = Upfront.Util.height_to_row(parseInt(attr.height));
 		}
 		
 		// Also resize child objects if it's only one object
@@ -762,13 +761,16 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 	},
 	
-	getMaskSize: function() {
+	getThumbnailData: function () {
+		
+	},
+	
+	getMaskSize: function(elementSize) {
 		var me = this,
 			imageData = this.post.meta.getValue('_thumbnail_data');
 
 		var	size = imageData.imageSize,
 			checkSize = this.checkSize(),
-			elementSize = this.model.get_breakpoint_property_value('element_size', true),
 			minWidth = Math.min(size.width, elementSize.width),
 			minHeight = Math.min(size.height, elementSize.height)
 		;
@@ -929,13 +931,12 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		}
 	},
 	
-	saveTemporaryResizing: function() {
+	saveTemporaryResizing: function(elementSize) {
 		if(typeof this.resizingData === "undefined") {
 			this.get_thumb_data();
 		}
 
 		var me = this,
-			elementSize = me.model.get_breakpoint_property_value('element_size', true),
 			crop = {},
 			imageId = this.resizingData.data.imageId,
 			resize = this.temporaryProps.size,
@@ -951,6 +952,8 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 		crop.width = Math.min(elementSize.width, resize.width);
 		crop.height = Math.min(elementSize.height, resize.height);
+		
+		console.log(crop);
 
 		import_promise.done(function(){
 			imageId = me.resizingData.data.imageId,
