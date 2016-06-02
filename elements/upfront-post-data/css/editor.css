@@ -263,6 +263,11 @@ div.preset-manager-panel .comments-pagination_warning input {
 
 /* Post Data - Featured Image */
 
+.upostdata-part.thumbnail {
+	overflow: hidden;
+	height: auto;
+}
+
 .upostdata-part.thumbnail img {
 	height: 100%;
 	position: relative;

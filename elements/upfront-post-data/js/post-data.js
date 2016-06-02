@@ -592,6 +592,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 		//Wonderful stuff from here down
 		this.$('.thumbnail').css('height', data.elementSize.height - vPadding);
+		this.$('.thumbnail').parent().css({'height': data.elementSize.height - vPadding, 'max-height': data.elementSize.height - vPadding, 'min-height': data.elementSize.height - vPadding});
 
 		var is_locked = this.property('is_locked');
 
@@ -871,6 +872,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			;
 			
 			var row = Upfront.Util.height_to_row(elementSize.height + vPadding);
+			
 		} else {
 			var objects = this.get_child_objects(false),
 				breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
