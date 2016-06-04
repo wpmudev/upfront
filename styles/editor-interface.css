@@ -4665,6 +4665,11 @@ a.upfront-region-name-edit-trigger:before {
   max-width: 100%;
   max-height: 100%; }
 
+.upfront-editable_entity.part-featured_image img {
+  max-width: none;
+  max-height: none;
+  overflow: hidden; }
+
 .ui-draggable {
   cursor: move; }
 
