@@ -952,8 +952,6 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 		crop.width = Math.min(elementSize.width, resize.width);
 		crop.height = Math.min(elementSize.height, resize.height);
-		
-		console.log(crop);
 
 		import_promise.done(function(){
 			imageId = me.resizingData.data.imageId,
@@ -970,7 +968,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 					return;
 				}
 
-				newImageData = _.extend({
+				newImageData = _.extend(originalImageData, {
 					'imageSize': resize,
 					'position': position,
 					'src': imageData.url,
@@ -978,13 +976,13 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 					'stretch': resize.width >= elementSize.width,
 					'vsctrech': resize.height >= elementSize.height,
 					'gifImage': imageData.gif
-				}, originalImageData);
+				});
 
-				me.post.meta.add([
+				Upfront.Views.PostDataEditor.post.meta.add([
 					{meta_key: '_thumbnail_id', meta_value: imageData.imageId},
 					{meta_key: '_thumbnail_data', meta_value: newImageData}
 				], {merge: true});
-				
+
 				clearTimeout(me.cropTimer);
 				me.cropTimer = false;
 				deferred.resolve();
