@@ -702,6 +702,9 @@ PostContentEditor.prototype = {
 						if ( full_image == '1' ){
 							var img = me.$featured.find('img'),
 								newimg = $('<img style="z-index:2;position:relative">');
+								
+							me.handleEditorResult(imageData);	
+								
 							me.parent.post.meta.add([
 								{meta_key: '_thumbnail_id', meta_value: imageId},
 								{meta_key: '_thumbnail_data', meta_value: ''}
@@ -751,6 +754,8 @@ PostContentEditor.prototype = {
 					img = mask.find('img'),
 					newimg = $('<img style="z-index:2;position:relative">')
 					;
+					
+					me.handleEditorResult(imageData);
 
 					me.parent.post.meta.add([
 						{meta_key: '_thumbnail_id', meta_value: imageData.imageId},
@@ -779,7 +784,41 @@ PostContentEditor.prototype = {
 						me.openImageSelector();
 					}
 				});
-			}
+			},
+			
+			handleEditorResult: function(result){
+				this.property('src', result.src, true);
+				this.property('srcFull', result.srcFull, true);
+				this.property('srcOriginal', result.srcOriginal, true);
+				this.property('size', result.imageSize, true);
+				this.property('position', result.imageOffset, true);
+				var marginTop = result.mode === 'horizontal' || result.mode === 'small' ? result.imageOffset.top * -1 : 0;
+				this.property('marginTop', marginTop, true);
+				this.property('rotation', result.rotation, true);
+				this.property('fullSize', result.fullSize, true);
+				this.property('element_size', result.maskSize, true);
+				this.property('align', result.align, true);
+				this.property('valign', result.valign, true);
+				this.property('isDotAlign', result.isDotAlign, true)
+				this.property('stretch', result.stretch, true);
+				this.property('vstretch', result.vstretch, true);
+				this.property('quick_swap', false, true);
+				if(result.imageId) {
+					this.property('image_id', result.imageId, true);
+				}
+
+				this.property('gifImage', result.gif);
+			},
+			
+			property: function(name, value, silent) {
+				if(typeof value !== 'undefined'){
+					if(typeof silent === 'undefined') {
+						silent = true;
+					}
+					return this.model.set_property(name, value, silent);
+				}
+				return this.model.get_property_value_by_name(name);
+			},
 		}),
 
 		tags: _partView.extend({
