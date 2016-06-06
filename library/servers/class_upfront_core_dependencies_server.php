@@ -5,7 +5,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 		$me = new self;
 		$me->_add_hooks();
 	}
-	
+
 	private function _add_hooks () {
 		add_action('upfront-core-inject_dependencies', array($this, 'dispatch_dependencies_output'));
 		add_action('wp_head', array($this, 'dispatch_fonts_loading'));
@@ -53,7 +53,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 		if (Upfront_Behavior::compression()->has_experiments()) {
 			$fonts = $deps->get_fonts();
 			if (!empty($fonts)) $this->_output_experimental_fonts($fonts);
-			
+
 			$this->_output_experimental($deps);
 		} else {
 			$this->_output_normal($deps);
@@ -100,7 +100,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 		$scripts = $deps->get_scripts();
 		$script_tpl = '<script type="text/javascript" src="%url%"></script>';
 		foreach ($scripts as $script) {
-			echo preg_replace('/%url%/', $script, $script_tpl);	
+			echo preg_replace('/%url%/', $script, $script_tpl);
 		}
 	}
 
@@ -141,7 +141,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 			$callback_wrap_end = '}, 500);});';
 			$injection_root = 'body';
 		}
-		
+
 		$injection_root = esc_js($injection_root);
 		echo "<script type='text/javascript'>
 			(function ($) {
@@ -158,6 +158,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 				$.each(script_urls, function (idx, url) {
 					head.append(script_tpl.replace(/%url%/, url));
 				});
+				$(window).on('load', function () { $(window).trigger('resize'); });
 			{$callback_wrap_end}
 			})(jQuery);
 		</script>";
@@ -170,11 +171,11 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	 */
 	private function _output_normal_fonts ($fonts=array()) {
 		if (empty($fonts)) return false;
-		
+
 		$request = $this->_to_font_request_array($fonts);
 		if (empty($request)) return false;
-		
-		
+
+
 		echo '<link rel="stylesheet" type="text/css" media="all" href="//fonts.googleapis.com/css?family=' . esc_attr(join('|', $request)) . '" />';
 	}
 
@@ -185,7 +186,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	 */
 	private function _output_experimental_fonts ($fonts=array()) {
 		if (empty($fonts)) return false;
-		
+
 		$request = $this->_to_font_request_array($fonts, false);
 		if (empty($request)) return false;
 
@@ -223,7 +224,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 
 			if (!empty($variants)) $variants = ':' . join(',', array_filter(array_unique(array_map('trim', $variants))));
 			else $variants = '';
-			
+
 			$request[] = $family . $variants;
 		}
 		$request = array_filter(array_unique(array_map('trim', $request)));
@@ -235,4 +236,3 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 
 }
 Upfront_CoreDependencies_Server::serve();
-
