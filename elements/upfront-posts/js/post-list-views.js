@@ -95,6 +95,25 @@ var Views = {
 								return false;
 							})
 						;
+						// Unbind title clicks
+						me.$el.find(".uposts-part.title a")
+							.off("click")
+							.on("click", function (e) {
+
+								var $me = $(this),
+									href = $me.attr("href")
+								;
+								// Only if it's an absolute URL
+								if (href.match(/^https?\:/)) {
+									e.preventDefault();
+									e.stopPropagation();
+
+									window.location = href;
+
+									return false;
+								}
+							})
+						;
 					}
 					else me.$el.empty().append(me.tpl.error({l10n: l10n}));
 				})
