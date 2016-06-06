@@ -173,7 +173,6 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 				}
 				else {
 					if(_.isObject(imageData) && imageData.imageSize) {
-						$img.parent().css({ height: 'auto' });
 						$img.css('width', imageData.imageSize.width);
 						$img.css('top', -imageData.imageOffset.top);
 						$img.css('left', -imageData.imageOffset.left);
