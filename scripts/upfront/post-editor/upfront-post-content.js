@@ -706,7 +706,7 @@ PostContentEditor.prototype = {
 							me.updatePost(imageData);
 							
 							if (!img.length)
-								img = newimg.appendTo(me.$('.ueditor_thumb'));
+								img = newimg.appendTo(me.$('.thumbnail'));
 							else{
 								img.replaceWith(newimg);
 								img = newimg;
@@ -720,7 +720,7 @@ PostContentEditor.prototype = {
 			},
 			openImageEditor: function(newImage, imageInfo, postId){
 				var me = this,
-					mask = this.$el,
+					mask = this.$el.find('.thumbnail'),
 					editorOptions = _.extend({}, imageInfo, {
 						element_id: this.model.get_element_id() +'_post_' + postId,
 						element_cols: Upfront.Util.grid.width_to_col(mask.width(), true),
