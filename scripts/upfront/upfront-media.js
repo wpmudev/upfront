@@ -2425,7 +2425,6 @@ define([
 			ActiveFilters.allowed_media_types = [];
 			ActiveFilters.current_keys = [];
 			ActiveFilters.current_models = [];
-			ActiveFilters.media_limit = 20;
 			this.cleanup_manager_view();
 		},
 		cleanup_manager_view: function () {
