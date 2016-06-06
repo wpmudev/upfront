@@ -571,9 +571,10 @@ PostContentEditor.prototype = {
 					;
 					this.updateImageSize();
 				}
-				
+
 				this.listenTo(this.parent, 'swap:image', this.openImageSelector);
 				this.listenTo(this.parent, 'edit:image', this.editThumb);
+				this.listenTo(Upfront.Events, 'featured:image:resized', this.updateResized);
 			},
 			events: function () {
 				return _.extend({}, _partView.prototype.events, {
@@ -703,12 +704,12 @@ PostContentEditor.prototype = {
 							var img = me.$featured.find('img'),
 								newimg = $('<img style="z-index:2;position:relative">');
 								
-							me.handleEditorResult(imageData);	
+							// Store featured image data into model
+							me.handleEditorResult(imageData);
 								
-							me.parent.post.meta.add([
-								{meta_key: '_thumbnail_id', meta_value: imageId},
-								{meta_key: '_thumbnail_data', meta_value: ''}
-								], {merge: true});
+							// Update post meta
+							me.updatePost(imageData);
+							
 							if (!img.length)
 								img = newimg.appendTo(me.$('.ueditor_thumb'));
 							else{
@@ -755,12 +756,12 @@ PostContentEditor.prototype = {
 					newimg = $('<img style="z-index:2;position:relative">')
 					;
 					
+					// Store featured image data into model
 					me.handleEditorResult(imageData);
-
-					me.parent.post.meta.add([
-						{meta_key: '_thumbnail_id', meta_value: imageData.imageId},
-						{meta_key: '_thumbnail_data', meta_value: imageData}
-						], {merge: true});
+					
+					// Update post meta
+					me.updatePost(imageData)
+					
 					//post.meta.save();
 					if(!img.length)
 						img = newimg.appendTo(mask);
@@ -785,7 +786,22 @@ PostContentEditor.prototype = {
 					}
 				});
 			},
+
+			updatePost: function(imageData) {
+				this.parent.post.meta.add([
+					{meta_key: '_thumbnail_id', meta_value: imageData.imageId},
+					{meta_key: '_thumbnail_data', meta_value: imageData}
+				], {merge: true});
+			},
 			
+			updateResized: function(imageData) {
+				// Store featured image data into model
+				this.handleEditorResult(imageData);
+				
+				// Update post meta
+				this.updatePost(imageData);
+			},
+
 			handleEditorResult: function(result){
 				this.property('src', result.src, true);
 				this.property('srcFull', result.srcFull, true);

@@ -977,11 +977,8 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 					'vstretch': resize.height >= elementSize.height,
 					'gifImage': imageData.gif
 				});
-
-				Upfront.Views.PostDataEditor.post.meta.add([
-					{meta_key: '_thumbnail_id', meta_value: imageData.imageId},
-					{meta_key: '_thumbnail_data', meta_value: newImageData}
-				], {merge: true});
+				
+				Upfront.Events.trigger("featured:image:resized", newImageData);
 
 				clearTimeout(me.cropTimer);
 				me.cropTimer = false;
