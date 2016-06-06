@@ -638,16 +638,20 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			}
 		} else {
 			var vertical_align = imageData.valign,
+				horizontal_align = imageData.align,
 				current_position = imageData.imageOffset,
 				isDotAlign = imageData.isDotAlign,
 				containerHeight = this.$('.upfront-image-container').height(),
+				containerWidth = this.$('.upfront-image-container').width(),
 				sizeCheck = this.checkSize(),
 				imgPosition = img.position(),
 				maskSize = this.getMaskSize(attr),
 				imageView = this.getImageViewport(),
 				originalImageData = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data'),
-				margin;
-
+				containerHeight = this.$('.upfront-image-container').height(),
+				marginLeft = current_position.left,
+				marginTop;
+	
 			if(typeof imageView.width !== "undefined") {
 				if(data.elementSize.width > imageView.width) {
 					img.css({left: imgPosition.left + (data.elementSize.width - imageView.width)});
@@ -661,40 +665,54 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			}
 
 			if(sizeCheck === "small" && isDotAlign === true) {
+				if(horizontal_align === "center") {
+					if(data.size.width < attr.width) {
+						marginLeft = (data.size.width - attr.width) / 2;
+					} else {
+						marginLeft = -(attr.width - containerWidth) / 2;
+					}
+				}
+				
+				if(horizontal_align === "right") {
+					if(data.size.width < attr.width) {
+						marginLeft = (data.size.width - attr.width);
+					} else {
+						marginLeft = -(attr.width - containerWidth)
+					}
+				}
+
 				if(vertical_align === "center") {
 					if(data.size.height < data.elementSize.height) {
-						margin = (data.size.height - data.elementSize.height) / 2;
+						marginTop = (data.size.height - data.elementSize.height) / 2;
 					} else {
-						margin = -(data.elementSize.height - containerHeight) / 2;
+						marginTop = -(data.elementSize.height - containerHeight) / 2;
 					}
 				}
 
 				if(vertical_align === "bottom") {
 					if(data.size.height < data.elementSize.height) {
-						margin = (data.size.height - data.elementSize.height);
+						marginTop = (data.size.height - data.elementSize.height);
 					} else {
-						margin = -(data.elementSize.height - containerHeight)
+						marginTop = -(data.elementSize.height - containerHeight)
 					}
 				}
 
-				var offset = { top: margin, left: current_position.left },
+				var offset = { top: marginTop, left: marginLeft },
 					img = this.$el.find('.thumbnail img')
 				;
+				
+				this.property('position', {top: marginTop, left: marginLeft});
 
 				// Update position and resize
 				newImageData = _.extend(originalImageData, {
-					'imageOffset': {top: margin, left: current_position.left},
-					'position': {top: margin, left: current_position.left}
+					'imageOffset': {top: marginTop, left: marginLeft},
+					'position': {top: marginTop, left: marginLeft}
 				});
 				
 				Upfront.Events.trigger("featured:image:resized", newImageData);
 				
 				img.css('top', -offset.top);
 				img.css('left', -offset.left);
-				
-				this.resizingData.data.cropBig = true;
-			} else {
-				this.resizingData.data.cropBig = false;
 			}
 		}
 	},
@@ -990,7 +1008,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		newImageData = _.extend(originalImageData, {
 			'imageSize': resize,
 			'imageOffset': position,
-			'position': position
+			'position': position,
 		});
 		
 		Upfront.Events.trigger("featured:image:resized", newImageData);
@@ -1018,7 +1036,8 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 					'srcFull': imageData.urlOriginal,
 					'stretch': resize.width >= elementSize.width,
 					'vstretch': resize.height >= elementSize.height,
-					'gifImage': imageData.gif
+					'gifImage': imageData.gif,
+					'cropBig': me.resizingData.data.cropBig
 				});
 				
 				Upfront.Events.trigger("featured:image:resized", newImageData);
