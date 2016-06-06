@@ -675,9 +675,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 					}
 				}
 
-				
 				this.property('position', {top: margin, left: current_position.left});
-
 			}
 		}
 	},
@@ -968,6 +966,15 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		crop.width = Math.min(elementSize.width, resize.width);
 		crop.height = Math.min(elementSize.height, resize.height);
 
+		// Update position and resize
+		newImageData = _.extend(originalImageData, {
+			'imageSize': resize,
+			'imageOffset': position,
+			'position': position
+		});
+		
+		Upfront.Events.trigger("featured:image:resized", newImageData);
+
 		import_promise.done(function(){
 			imageId = me.resizingData.data.imageId,
 			Upfront.Views.Editor.ImageEditor.saveImageEdition(
@@ -985,6 +992,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 				newImageData = _.extend(originalImageData, {
 					'imageSize': resize,
+					'imageOffset': position,
 					'position': position,
 					'src': imageData.url,
 					'srcFull': imageData.urlOriginal,
