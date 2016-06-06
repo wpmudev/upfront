@@ -580,7 +580,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		}	
 
 		var data = this.resizingData.data,
-			img = this.resizingData.img,
+			img = this.$el.find('.thumbnail img'),
 			// padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
 			column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
 			elementWidth = parseInt(attr.width),
@@ -624,7 +624,6 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			} else {
 				//Both stretching or not stretching, calculate ratio difference
 				ratio = data.size.width / data.size.height - data.elementSize.width / data.elementSize.height;
-
 				//Depending on the difference of ratio, the resizing is made horizontally or vertically
 				if(ratio > 0 && data.stretch || ratio < 0 && ! data.stretch){
 					this.resizingV(img, data, true);
@@ -754,7 +753,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		}
 		
 		var me = this,
-			img = this.resizingData.img,
+			img = this.$el.find('.thumbnail img'),
 			imgPosition = img.position(),
 			viewPort,
 			viewWidth,
