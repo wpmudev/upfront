@@ -528,7 +528,7 @@ jQuery(document).ready(function($){
 				}
 			}
 		});
-		$('.upfront-featured-image-smaller').each(function() {
+		$('.upfront-output-object .upfront-featured-image-smaller').each(function() {
 			var data = $(this).data('featured-image');
 			
 			$(this).css({ 'top': data.offsetTop, 'left': data.offsetLeft});
