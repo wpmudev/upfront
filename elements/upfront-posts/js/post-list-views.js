@@ -15,7 +15,7 @@ var Views = {
 		className: 'upfront_posts-initial upfront-initial-overlay-wrapper',
 		tpl: _.template($template.filter("#initial").html()),
 		events: {
-			'click [href="#continue"]': "dispatch",
+			'click [href="#continue"]': "dispatch"
 		},
 		render: function () {
 			var opts = new Upfront.Views.Editor.Field.Radios({
@@ -35,7 +35,7 @@ var Views = {
 				this.model.set_property(this.options.property, value, true);
 			}, opts);
 			opts.render();
-			
+
 			if (Upfront.Application.user_can_modify_layout()) {
 				this.$el.empty().append(this.tpl({l10n: l10n}));
 				this.$el.css('min-height', ( height > 150 ? height : 150 ));
@@ -53,7 +53,7 @@ var Views = {
 			if (!has_type) return false;
 
 			this.model.trigger("change", this.model, {});
-		},
+		}
 	}),
 
 
@@ -123,7 +123,7 @@ var Views = {
 			;
 			this.$el.empty().append(this.tpl.load({l10n: l10n}));
 		}
-	}),
+	})
 
 };
 
@@ -133,7 +133,7 @@ Views.list = Views._view.extend({
 		main: _.template($template.filter("#list").html()),
 		error: _.template($template.filter("#error").html()),
 		load: _.template($template.filter("#loading").html())
-	},
+	}
 });
 
 Views.single = Views._view.extend({
@@ -142,7 +142,7 @@ Views.single = Views._view.extend({
 		main: _.template($template.filter("#single").html()),
 		error: _.template($template.filter("#error").html()),
 		load: _.template($template.filter("#loading").html())
-	},
+	}
 });
 
 return Views;
