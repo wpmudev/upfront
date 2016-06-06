@@ -181,7 +181,7 @@ define("content", deps, function(postTpl, ContentTools) {
 
 			//this.bindPostEvents();
 			me.loadingPost = deferred.promise();
-			this.post.fetch({withMeta: true, filterContent: true}).done(function(response){
+			this.post.fetch({withMeta: true/*, filterContent: true*/}).done(function(response){
 				if(!Upfront.data.posts)
 					Upfront.data.posts = {};
 				Upfront.data.posts[me.postId] = me.post;

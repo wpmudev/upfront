@@ -113,13 +113,13 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			this.editor_view.editContent();
 	},
 
-	on_element_edit_start: function () {
+	/*on_element_edit_start: function () {
 		return;
 	},
 
 	on_element_edit_stop: function () {
 		return;
-	},
+	},*/
 
 	update_height: function () {
 		var type = this.model.get_property_value_by_name('part_type');
@@ -172,7 +172,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 					}
 				}
 				else {
-					if(imageData.imageSize) {
+					if(_.isObject(imageData) && imageData.imageSize) {
 						$img.parent().css({ height: 'auto' });
 						$img.css('width', imageData.imageSize.width);
 						$img.css('top', -imageData.imageOffset.top);
@@ -403,6 +403,18 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		this.$el.find(".upfront-object-group-default").append(view.$el);
 
 	},
+	
+	toggle_child_objects_loading: function (loading) {
+		var objects = this.get_child_objects(false),
+			loading = _.isUndefined(loading) ? false : loading;
+		;
+
+		_.each(objects, function (object) {
+			var view = Upfront.data.object_views[object.cid];
+			if ( !view || !view._editor_prepared || !view.editor_view ) return;
+			view.editor_view.loading = loading;
+		});
+	},
 
 	prepare_editor: function () {
 		this.listenTo(Upfront.Views.PostDataEditor, 'post:saved post:trash', this.on_render);
@@ -437,6 +449,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	on_edit_start: function () {
 		if ( ! this.child_view ) return;
 		this.child_view._do_cache = false;
+		Upfront.Events.trigger('upfront:element:edit:start', 'text');
 	},
 
 	/**
@@ -445,6 +458,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	on_edit_stop: function () {
 		if ( ! this.child_view ) return;
 		this.child_view._do_cache = true;
+		Upfront.Events.trigger('upfront:element:edit:stop', 'text');
 	},
 
 	/**

@@ -65,6 +65,12 @@ var PostImageInsert = base.ImageInsertBase.extend({
         this.updateControlsPosition();
         $tools_el.append('<a href="#" contenteditable="false" class="upfront-icon-button upfront-icon-button-delete ueditor-insert-remove"></a>');
 
+        // After rendering, let's sync the redactor if exists
+        var ueditor;
+        if ( this.$editor && this.$editor.data('ueditor') ) {
+            ueditor = this.$editor.data('ueditor');
+            ueditor.redactor.code.sync();
+        }
     },
     prepare_data: function(){
         var data = _.extend( {}, this.defaultData, this.data.toJSON() ),

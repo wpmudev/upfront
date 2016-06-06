@@ -109,6 +109,7 @@ define([
 			return this;
 		},
 		close: function() {
+			if ( !this.isopen ) return this; // Not opened, don't need to trigger close
 			this.isopen = false;
 			this.$el.removeClass('upfront-control-dialog-open');
 			this.trigger('panel:close');
