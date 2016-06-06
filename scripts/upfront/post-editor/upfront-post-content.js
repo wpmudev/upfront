@@ -663,8 +663,8 @@ PostContentEditor.prototype = {
 						srcFull: data.srcFull,
 						srcOriginal: data.srcOriginal,
 						fullSize: data.fullSize,
-						data.imageSize, //size: {width: data.imageSize.width * factor, height: data.imageSize.height * factor},
-						data.imageOffset, //position: {top: data.imageOffset.top * factor, left: data.imageOffset.left * factor},
+						size: data.imageSize, // {width: data.imageSize.width * factor, height: data.imageSize.height * factor},
+						position: data.imageOffset, // {top: data.imageOffset.top * factor, left: data.imageOffset.left * factor},
 						rotation: data.rotation,
 						id: data.imageId
 					});
