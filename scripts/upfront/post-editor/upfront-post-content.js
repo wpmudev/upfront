@@ -787,13 +787,19 @@ PostContentEditor.prototype = {
 				});
 			},
 
-			updatePost: function(imageData) {
-				this.parent.post.meta.add([
-					{meta_key: '_thumbnail_id', meta_value: imageData.imageId},
-					{meta_key: '_thumbnail_data', meta_value: imageData}
-				], {merge: true});
+			updatePost: function(imageData) {				
+				var existing = this.parent.post.meta.findWhere({meta_key: '_thumbnail_data'});
+				
+				if(!existing) {
+					this.parent.post.meta.add([
+						{meta_key: '_thumbnail_id', meta_value: imageData.imageId},
+						{meta_key: '_thumbnail_data', meta_value: imageData}
+					], {merge: true});
+				} else {
+					this.parent.post.meta.setValue('_thumbnail_data', imageData);
+				}
 			},
-			
+
 			updateResized: function(imageData) {
 				// Store featured image data into model
 				this.handleEditorResult(imageData);
