@@ -322,7 +322,8 @@ h2, h3 { page-break-after: avoid; }
 }
 .upfront-postpart-featured_image img, .upostdata-part.thumbnail img {
   max-width: 100%;
-  min-width: 100%;
+  /* min-width: 100%; */
+  margin: 0px;
   height: auto;
 }
 
