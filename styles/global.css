@@ -320,6 +320,15 @@ h2, h3 { page-break-after: avoid; }
 .upfront-postpart-featured_image, .upostdata-part.thumbnail {
   overflow: hidden;
 }
+
+.upfront-output-object.part-featured_image {
+	position: relative;
+}
+
+.upfront-output-object.part-featured_image .upostdata-part.thumbnail {
+	height: inherit;
+}
+
 .upfront-postpart-featured_image img, .upostdata-part.thumbnail img {
   max-width: 100%;
   /* min-width: 100%; */

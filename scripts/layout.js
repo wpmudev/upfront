@@ -528,6 +528,12 @@ jQuery(document).ready(function($){
 				}
 			}
 		});
+		$('.upfront-featured-image-smaller').each(function() {
+			var data = $(this).data('featured-image');
+			
+			$(this).css({ 'top': data.offsetTop, 'left': data.offsetLeft});
+			$(this).parent().css({ 'width': data.offsetWidth, 'height': data.offsetHeight});
+		});
 		$('.upfront-output-object .uf-post .thumbnail').each(function(){
 			var is_upostdata = $(this).hasClass('upostdata-part'),
 				$object = $(this).closest('.upfront-output-object'),

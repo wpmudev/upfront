@@ -25,17 +25,24 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 		
 		if (empty($this->_post->ID)) return '';
 		
+		$featured_data = $featured_class = '';
+		
 		$data = get_post_meta($this->_post->ID, '_thumbnail_data', true);
 
 		$resize_featured = isset($this->_data['resize_featured'])
 			? (int)$this->_data['resize_featured']
 			: (int)Upfront_Posts_PostsData::get_default('resize_featured')
 		;
+		
+		if($data['imageSize']['width'] < $data['maskSize']['width'] || $data['imageSize']['height'] < $data['maskSize']['height']) {
+			$featured_data = "data-featured-image='{ \"offsetTop\": ". -$data['imageOffset']['top'] .", \"offsetLeft\": ". -$data['imageOffset']['left'] .", \"offsetWidth\": ". $data['maskSize']['width'] .", \"offsetHeight\": ". $data['maskSize']['height'] ." }'";
+			$featured_class = 'class="upfront-featured-image-smaller"';
+		}
 
 		$pre_selected = $this->get_pre_selected();
 		$thumbnail = ( !empty($pre_selected) )
-			? '<img src="'. $this->get_pre_selected() .'" />'
-			: $this->_get_thumbnail()
+			? '<img src="'. $this->get_pre_selected() .'" '.$featured_class.' '.$featured_data.' />'
+			: '<img src="'. $this->_get_thumbnail(true) .'" '.$featured_class.' '.$featured_data.' />'
 		;
 
 		// Let's deal with the fallback options
@@ -97,7 +104,7 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 	 *
 	 * @return string Thumbnail markup, can also be an empty string
 	 */
-	private function _get_thumbnail () {
+	private function _get_thumbnail ($src = false) {
 		
 		if (empty($this->_post->ID)) return '';
 		
@@ -108,14 +115,11 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 			: (int)Upfront_Posts_PostsData::get_default('full_featured_image')
 		;
 		
-		if(empty($_POST)) {
+		if(empty($_POST) && !$full_featured) {
 			$image_size = 'uf_post_featured_image';
 		}
 	
-		return $full_featured == 1
-			? get_the_post_thumbnail($this->_post->ID)
-			: upfront_get_edited_post_thumbnail($this->_post->ID, false, $image_size)
-		;
+		return upfront_get_edited_post_thumbnail($this->_post->ID, $src, $image_size);
 	}
 
 	/**
