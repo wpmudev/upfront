@@ -663,11 +663,12 @@ PostContentEditor.prototype = {
 						srcFull: data.srcFull,
 						srcOriginal: data.srcOriginal,
 						fullSize: data.fullSize,
-						size: {width: data.imageSize.width * factor, height: data.imageSize.height * factor},//data.imageSize,
-						position: {top: data.imageOffset.top * factor, left: data.imageOffset.left * factor},//data.imageOffset,
+						data.imageSize, //size: {width: data.imageSize.width * factor, height: data.imageSize.height * factor},
+						data.imageOffset, //position: {top: data.imageOffset.top * factor, left: data.imageOffset.left * factor},
 						rotation: data.rotation,
 						id: data.imageId
 					});
+
 				}
 				return deferred.promise();
 			},
