@@ -772,6 +772,7 @@ PostContentEditor.prototype = {
 					
 					if(imageData.imageSize) {
 						img.css('width', imageData.imageSize.width);
+						img.css('height', imageData.imageSize.height);
 						img.css('top', -imageData.imageOffset.top);
 						img.css('left', -imageData.imageOffset.left);
 					}
