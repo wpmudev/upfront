@@ -149,7 +149,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		}
 		
 		var imageData = this.post.meta.getValue('_thumbnail_data');
-		
+
 		height -= padding_top + padding_bottom;
 		this.$el.find('.thumbnail').each(function(){
 			var width = $(this).width(),
@@ -974,7 +974,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 					'src': imageData.url,
 					'srcFull': imageData.urlOriginal,
 					'stretch': resize.width >= elementSize.width,
-					'vsctrech': resize.height >= elementSize.height,
+					'vstretch': resize.height >= elementSize.height,
 					'gifImage': imageData.gif
 				});
 
