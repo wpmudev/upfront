@@ -80,6 +80,7 @@ var _partView = Backbone.View.extend({
 	initialize: function (opts) {
 		this.parent = opts.parent;
 		this.parentModel = opts.parentModel;
+		this.loading = false;
 		// prevent link navigation
 		this.$('a').data('bypass', true);
 		if ( this.init ) {
@@ -136,8 +137,7 @@ PostContentEditor.prototype = {
 				this.listenTo(Upfront.Events, 'change:title', this.sidebarTitleChanged);
 			},
 			editContent: function () {
-				if ( this.parent._editing ) return;
-				this.parent._editing = true;
+				if ( this.parent._editing || this.parent.isViewLoading() ) return;
 				_partView.prototype.editContent.call(this);
 				if( this.$el.find("[contenteditable='true']").length || this.$el.is("[contenteditable='true']") ) return;
 				var $part = this.$('.upostdata-part');
@@ -166,7 +166,7 @@ PostContentEditor.prototype = {
 					this.focus();
 					$("html").on('mousedown', {$title: this.$title, $partView: this }, this.mousedown );
 				}
-				this.$title.closest(".upfront-editable_entity.upfront-module").draggable("disable");
+				this.parent.editorStart(); // Set necessary classes, trigger events, etc
 			},
 			mousedown: function (e) {
 				if( !!e && ( false === (e.target === e.data.$title[0]) ) ) {
@@ -183,8 +183,7 @@ PostContentEditor.prototype = {
 						.off('dblclick')
 						.on('dblclick', _.bind(this.editContent, this))
 				;
-				this.$title.closest(".upfront-editable_entity.upfront-module").draggable("enable");
-				this.parent._editing = false;
+				this.parent.editorStop();
 			},
 			blur: function () {
 				var node = this.$title.get(0);
@@ -255,11 +254,10 @@ PostContentEditor.prototype = {
 			canTriggerEdit: true,
 			init: function () {
 				this.listenTo(this.parent, 'change:content', this.contentChanged);
-				this.on('publish draft auto-draft', this.updateContent);
+				//this.on('publish draft auto-draft', this.updateContent);
 			},
 			editContent: function () {
-				if ( this.parent._editing ) return;
-				this.parent._editing = true;
+				if ( this.parent._editing || this.parent.isViewLoading() ) return;
 				
 				var me = this;
 				_partView.prototype.editContent.call(this);
@@ -272,7 +270,7 @@ PostContentEditor.prototype = {
 
 				if ( this.$content.length ){
 					var isExcerpt = ( this.model.get_property_value_by_name('content') == 'excerpt' ),
-						content = isExcerpt ? this.parent.post.get('post_excerpt') : this.$content.html(),
+						content = isExcerpt ? this.parent.currentData.excerpt : this.parent.currentData.content,
 						editorOptions = isExcerpt ? this.parent.getExcerptEditorOptions() : this.parent.getContentEditorOptions()
 					;
 
@@ -284,9 +282,10 @@ PostContentEditor.prototype = {
 						.on('blur', _.bind(this.blur, this))
 						.off('keyup')
 						.on('keyup', _.bind(this.keyup, this))
+						.off('stop')
 						.on("stop", _.bind(this.stopEditContent, this))
 					;
-					this.$content.closest(".upfront-editable_entity.upfront-module").draggable("disable");
+					this.parent.editorStart(); // Set necessary classes, trigger events, etc
 					
 					// to make Ctrl+A work on contents
 					setTimeout(function(){
@@ -304,19 +303,15 @@ PostContentEditor.prototype = {
 				}
 			},
 			stopEditContent: function () {
-				var me = this;
 				if ( this.$content.length ){
 					this.$content
 						.off('blur')
 						.off('keyup')
 					;
-					this.$content.closest(".upfront-editable_entity.upfront-module").draggable("enable");
 					Upfront.Events.trigger('editor:change:content', this.$content.html());
 				}
-				this.parent._editing = false;
-				setTimeout(function(){
-					me.updateContent();
-				},100);
+				this.updateContent();
+				this.parent.editorStop();
 			},
 			blur: function () {
 				var html = this.$content.html();
@@ -894,9 +889,7 @@ PostContentEditor.prototype = {
 		_.each(this._viewInstances, function (view) {
 			view.editContent();
 		});
-		this._editing = true;
-		$main.addClass('upfront-editing-post-content');
-		this.trigger('edit:start');
+		this.editorStart();
 		Upfront.Events.trigger('post:content:edit:start', this);
 	},
 
@@ -916,11 +909,27 @@ PostContentEditor.prototype = {
 			view.stopEditContent();
 		});
 
+		this.editorStop();
+		Upfront.Events.trigger('post:content:edit:stop', this);
+	},
+
+
+	editorStart: function () {
+		var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
+		if ( this._editing ) return;
+		this._editing = true;
+		$main.addClass('upfront-editing-post-content');
+		this.trigger('edit:start');
+	},
+
+	editorStop: function () {
+		$main = $(Upfront.Settings.LayoutEditor.Selectors.main);
+		if ( !this._editing ) return;
 		this._editing = false;
 		$main.removeClass('upfront-editing-post-content');
 		this.trigger('edit:stop');
-		Upfront.Events.trigger('post:content:edit:stop', this);
 	},
+
 
 	/**
 	 * Set the editor view to the part view
@@ -936,6 +945,14 @@ PostContentEditor.prototype = {
 		});
 		this._viewInstances.push(view);
 		return view;
+	},
+
+	isViewLoading: function () {
+		var loading = false;
+		_.each(this._viewInstances, function (partView) {
+			if ( partView.loading ) loading = true;
+		});
+		return loading;
 	},
 
 	prepareBox: function(){
