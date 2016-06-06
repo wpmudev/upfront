@@ -666,6 +666,9 @@ PostContentEditor.prototype = {
 						size: data.imageSize, // {width: data.imageSize.width * factor, height: data.imageSize.height * factor},
 						position: data.imageOffset, // {top: data.imageOffset.top * factor, left: data.imageOffset.left * factor},
 						rotation: data.rotation,
+						align: data.align,
+						valign: data.valign,
+						isDotAlign: data.isDotAlign,
 						id: data.imageId
 					});
 
@@ -763,7 +766,7 @@ PostContentEditor.prototype = {
 					$('#image-edit-button-align').show();
 
 					img.attr('src', imageData.srcFull);
-					
+
 					if(imageData.imageSize) {
 						img.css('width', imageData.imageSize.width);
 						img.css('height', imageData.imageSize.height);

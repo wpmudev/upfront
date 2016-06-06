@@ -528,8 +528,10 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	},
 	
 	checkSize: function() {
+		var imageData = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data');
+
 		var maskSize = this.model.get_breakpoint_property_value('element_size', true),
-			size = this.property('size');
+			size = imageData.imageSize;
 
 		if(size.width >= maskSize.width && size.height >= maskSize.height) {
 			return 'big';
@@ -586,6 +588,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			elementHeight = parseInt(attr.height),
 			hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
 			vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
+			imageData = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data'),
 			ratio,
 			newSize;
 
@@ -634,14 +637,15 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 				}
 			}
 		} else {
-			var vertical_align = this.property('valign'),
-				current_position = this.property('position'),
-				isDotAlign = this.property('isDotAlign'),
+			var vertical_align = imageData.valign,
+				current_position = imageData.imageOffset,
+				isDotAlign = imageData.isDotAlign,
 				containerHeight = this.$('.upfront-image-container').height(),
 				sizeCheck = this.checkSize(),
 				imgPosition = img.position(),
 				maskSize = this.getMaskSize(attr),
 				imageView = this.getImageViewport(),
+				originalImageData = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data'),
 				margin;
 
 			if(typeof imageView.width !== "undefined") {
@@ -673,7 +677,24 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 					}
 				}
 
-				this.property('position', {top: margin, left: current_position.left});
+				var offset = { top: margin, left: current_position.left },
+					img = this.$el.find('.thumbnail img')
+				;
+
+				// Update position and resize
+				newImageData = _.extend(originalImageData, {
+					'imageOffset': {top: margin, left: current_position.left},
+					'position': {top: margin, left: current_position.left}
+				});
+				
+				Upfront.Events.trigger("featured:image:resized", newImageData);
+				
+				img.css('top', -offset.top);
+				img.css('left', -offset.left);
+				
+				this.resizingData.data.cropBig = true;
+			} else {
+				this.resizingData.data.cropBig = false;
 			}
 		}
 	},
@@ -794,6 +815,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	resizingH: function(img, data, size) {
 		var elWidth = data.elementSize.width,
 			width = size ? data.size.width : img.width(), // The width has been modified if we don't need to set the size
+			imageData = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data'),
 			left = data.position.left,
 			css = {},
 			align;
@@ -823,7 +845,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		}
 
 		if(elWidth > width) {
-			align = this.property('align');
+			align = imageData.align;
 			if(align === 'left') {
 				css.left = 0;
 			} else if(align === 'center') {
