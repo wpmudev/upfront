@@ -147,8 +147,8 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		if ( this._editor_prepared && this.editor_view ) {
 			this.editor_view.updateImageSize();
 		}
-		
-		var imageData = this.post.meta.getValue('_thumbnail_data');
+
+		var imageData = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data');
 
 		height -= padding_top + padding_bottom;
 		this.$el.find('.thumbnail').each(function(){
@@ -350,10 +350,11 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	},
 
 	on_render: function () {
-		var type = this.model.get_property_value_by_name("data_type"),
+		var me = this,
+			type = this.model.get_property_value_by_name("data_type"),
 			objects = this.get_child_objects(false)
 		;
-		
+
 		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
 		
 		//Prepare post!
@@ -540,7 +541,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	
 	get_thumb_data: function() {
 		// Retrieve image data from post meta
-		var imageData = this.post.meta.getValue('_thumbnail_data');
+		var imageData = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data');
 
 		// Store variables used in resize event handlers
 		this.resizingData = {
@@ -697,7 +698,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 				padding_top_row = parseInt( this.model.get_breakpoint_property_value("top_padding_use", true) ?  this.model.get_breakpoint_property_value('top_padding_num', true) / grid.baseline : 0, 10 ),
 				padding_bottom_row = parseInt( this.model.get_breakpoint_property_value("bottom_padding_use", true) ? this.model.get_breakpoint_property_value('bottom_padding_num', true) / grid.baseline : 0, 10 )
 				vPadding = padding_top_row + padding_bottom_row,
-				img = this.resizingData.img,
+				img = this.$el.find('img'),
 				imgSize = {width: img.width(), height: img.height()},
 				imgPosition = img.position()
 			;
@@ -710,7 +711,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 				size: imgSize,
 				position: imgPosition
 			};
-			
+
 			// Save image crop from resize
 			this.saveTemporaryResizing(attr);
 			
@@ -781,7 +782,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	
 	getMaskSize: function(elementSize) {
 		var me = this,
-			imageData = this.post.meta.getValue('_thumbnail_data');
+			imageData = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data');
 
 		var	size = imageData.imageSize,
 			checkSize = this.checkSize(),
@@ -958,7 +959,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			deferred = $.Deferred(),
 			import_deferred = $.Deferred(),
 			import_promise = import_deferred.promise(),
-			originalImageData = this.post.meta.getValue('_thumbnail_data');
+			originalImageData = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data');
 		;
 
 		crop.top = position.top;
