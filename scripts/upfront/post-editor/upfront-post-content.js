@@ -796,6 +796,7 @@ PostContentEditor.prototype = {
 						{meta_key: '_thumbnail_data', meta_value: imageData}
 					], {merge: true});
 				} else {
+					this.parent.post.meta.setValue('_thumbnail_id', imageData.imageId);
 					this.parent.post.meta.setValue('_thumbnail_data', imageData);
 				}
 			},
