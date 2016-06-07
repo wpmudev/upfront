@@ -173,9 +173,12 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 				}
 				else {
 					if(_.isObject(imageData) && imageData.imageSize) {
-						$img.css('width', imageData.imageSize.width);
-						$img.css('top', -imageData.imageOffset.top);
-						$img.css('left', -imageData.imageOffset.left);
+						$img.css({
+							width: imageData.imageSize.width,
+							height: imageData.imageSize.height,
+							top: -imageData.imageOffset.top,
+							left: -imageData.imageOffset.left
+						});
 					}
 				}
 			});
@@ -417,7 +420,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	},
 
 	prepare_editor: function () {
-		this.listenTo(Upfront.Views.PostDataEditor, 'post:saved post:trash', this.on_render);
+		//this.listenTo(Upfront.Views.PostDataEditor, 'post:saved post:trash', this.on_render); // No need anymore with current post experience
 		this.listenTo(Upfront.Views.PostDataEditor, 'post:cancel', this.on_cancel);
 		this.listenTo(Upfront.Views.PostDataEditor, 'editor:edit:start', this.on_edit_start);
 		this.listenTo(Upfront.Views.PostDataEditor, 'editor:edit:stop', this.on_edit_stop);
@@ -539,8 +542,14 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 		return 'small';
 	},
+
+	is_featured_image_set: function () {
+		var imageId = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_id');
+		return imageId ? true : false;
+	},
 	
 	get_thumb_data: function() {
+		if ( !this.is_featured_image_set() ) return;
 		// Retrieve image data from post meta
 		var imageData = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data');
 
@@ -562,11 +571,9 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	on_element_resize_start: function(attr) {
 		// Check if featured image element
 		var type = this.model.get_property_value_by_name("data_type");
-		if(type !== "featured_image") return;
-		
-		if(typeof this.resizingData === "undefined") {
-			this.get_thumb_data();
-		}	
+		if(type !== "featured_image" || !this.is_featured_image_set()) return;
+
+		this.get_thumb_data(); // Always get thumb data so this.resizingData is fresh on each resize start
 
 		this.$('.thumbnail').find('img').css('min-height', 'auto');
 	},
@@ -574,7 +581,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	on_element_resizing: function(attr) {
 		// Check if featured image element
 		var type = this.model.get_property_value_by_name("data_type");
-		if(type !== "featured_image") return;
+		if(type !== "featured_image" || !this.is_featured_image_set()) return;
 
 		if(typeof this.resizingData === "undefined") {
 			this.get_thumb_data();
@@ -583,16 +590,25 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		var data = this.resizingData.data,
 			img = this.$el.find('.thumbnail img'),
 			// padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
-			column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
-			elementWidth = parseInt(attr.width),
-			elementHeight = parseInt(attr.height),
-			hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
-			vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
+			elementWidth = parseInt(attr.width, 10),
+			elementHeight = parseInt(attr.height, 10),
+			padding_left = parseInt( this.model.get_breakpoint_property_value("left_padding_use", true) ?  this.model.get_breakpoint_property_value('left_padding_num', true) : 0, 10 ),
+			padding_right = parseInt( this.model.get_breakpoint_property_value("right_padding_use", true) ? this.model.get_breakpoint_property_value('right_padding_num', true) : 0, 10 ),
+			padding_top = parseInt( this.model.get_breakpoint_property_value("top_padding_use", true) ?  this.model.get_breakpoint_property_value('top_padding_num', true) : 0, 10 ),
+			padding_bottom = parseInt( this.model.get_breakpoint_property_value("bottom_padding_use", true) ? this.model.get_breakpoint_property_value('bottom_padding_num', true) : 0, 10 ),
+			hPadding = padding_left + padding_right,
+			vPadding = padding_top + padding_bottom,
+			child_padding = this.get_child_padding(),
+			childHPadding = child_padding.left + child_padding.right,
+			childVPadding = child_padding.top + child_padding.bottom,
 			imageData = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data'),
 			ratio,
-			newSize;
+			newSize
+		;
 
 		data.elementSize = {width: elementWidth < 0 ? 10 : elementWidth, height: elementHeight < 0 ? 10 : elementHeight};
+		data.elementSize.width -= hPadding + childHPadding;
+		data.elementSize.height -= vPadding + childVPadding;
 
 		if(attr.axis === "e" || attr.axis === "w") {
 			data.elementSize.height = data.elementSize.height;
@@ -602,8 +618,6 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		if ( false !== newSize ) {
 			data.elementSize = newSize;
 		}
-
-		this.applyElementSize(data.elementSize.width, data.elementSize.height, false); // This won't update element_size property
 
 		//if(starting.length){
 		//	return starting.outerHeight(data.elementSize.height);
@@ -723,24 +737,37 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		}
 		
 		// Check if featured image element
-		var type = this.model.get_property_value_by_name("data_type");
-
-		if(type === "featured_image") {
+		var type = this.model.get_property_value_by_name("data_type"),
+			objects = this.get_child_objects(false),
+			breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
+			grid = Upfront.Settings.LayoutEditor.Grid,
+			padding_left = parseInt( this.model.get_breakpoint_property_value("left_padding_use", true) ?  this.model.get_breakpoint_property_value('left_padding_num', true) : 0, 10 ),
+			padding_right = parseInt( this.model.get_breakpoint_property_value("right_padding_use", true) ? this.model.get_breakpoint_property_value('right_padding_num', true) : 0, 10 ),
+			padding_top = parseInt( this.model.get_breakpoint_property_value("top_padding_use", true) ?  this.model.get_breakpoint_property_value('top_padding_num', true) : 0, 10 ),
+			padding_bottom = parseInt( this.model.get_breakpoint_property_value("bottom_padding_use", true) ? this.model.get_breakpoint_property_value('bottom_padding_num', true) : 0, 10 ),
+			row = attr.row - parseInt(padding_top/grid.baseline) - parseInt(padding_bottom/grid.baseline)
+		;
+		if(type === "featured_image" && this.is_featured_image_set()) {
 			//Save image
-			var objects = this.get_child_objects(false),
-				breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
-				grid = Upfront.Settings.LayoutEditor.Grid,
-				padding_top_row = parseInt( this.model.get_breakpoint_property_value("top_padding_use", true) ?  this.model.get_breakpoint_property_value('top_padding_num', true) / grid.baseline : 0, 10 ),
-				padding_bottom_row = parseInt( this.model.get_breakpoint_property_value("bottom_padding_use", true) ? this.model.get_breakpoint_property_value('bottom_padding_num', true) / grid.baseline : 0, 10 )
-				vPadding = padding_top_row + padding_bottom_row,
-				img = this.$el.find('img'),
+			var img = this.$el.find('img'),
 				imgSize = {width: img.width(), height: img.height()},
-				imgPosition = img.position()
+				imgPosition = img.position(),
+				hPadding = padding_left + padding_right,
+				vPadding = padding_top + padding_bottom,
+				child_padding = this.get_child_padding(),
+				childHPadding = child_padding.left + child_padding.right,
+				childVPadding = child_padding.top + child_padding.bottom,
+				elementWidth = parseInt(attr.width, 10),
+				elementHeight = parseInt(attr.height, 10),
+				elementSize = {width: elementWidth < 0 ? 10 : elementWidth, height: elementHeight < 0 ? 10 : elementHeight}
 			;
 
 			// Change the sign
 			imgPosition.top = -imgPosition.top;
 			imgPosition.left = -imgPosition.left;
+
+			elementSize.width -= hPadding + childHPadding;
+			elementSize.height -= vPadding + childVPadding;
 
 			this.temporaryProps = {
 				size: imgSize,
@@ -748,20 +775,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			};
 
 			// Save image crop from resize
-			this.saveTemporaryResizing(attr);
-			
-			var row = Upfront.Util.height_to_row(parseInt(attr.height));
-			
-		} else {
-			var objects = this.get_child_objects(false),
-				breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
-				grid = Upfront.Settings.LayoutEditor.Grid,
-				padding_top_row = parseInt( this.model.get_breakpoint_property_value("top_padding_use", true) ?  this.model.get_breakpoint_property_value('top_padding_num', true) / grid.baseline : 0, 10 ),
-				padding_bottom_row = parseInt( this.model.get_breakpoint_property_value("bottom_padding_use", true) ? this.model.get_breakpoint_property_value('bottom_padding_num', true) / grid.baseline : 0, 10 )
-				vPadding = padding_top_row + padding_bottom_row;
-			;
-			
-			var row = Upfront.Util.height_to_row(parseInt(attr.height));
+			this.saveTemporaryResizing(elementSize);
 		}
 		
 		// Also resize child objects if it's only one object
@@ -783,6 +797,23 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		}
 		
 		Upfront.Events.trigger('entity:object:refresh', this);
+	},
+
+	get_child_padding: function () {
+		var column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
+			child_objects = this.get_child_objects(false),
+			child = child_objects.length == 1 ? child_objects[0] : false,
+			padding_left = child ? parseInt( child.get_breakpoint_property_value("left_padding_use", true) ? child.get_breakpoint_property_value('left_padding_num', true) : column_padding, 10 ) : column_padding,
+			padding_right = child ? parseInt( child.get_breakpoint_property_value("right_padding_use", true) ? child.get_breakpoint_property_value('right_padding_num', true) : column_padding, 10 ) : column_padding,
+			padding_top = child ? parseInt( child.get_breakpoint_property_value("top_padding_use", true) ? child.get_breakpoint_property_value('top_padding_num', true) : column_padding, 10 ) : column_padding,
+			padding_bottom = child ? parseInt( child.get_breakpoint_property_value("bottom_padding_use", true) ? child.get_breakpoint_property_value('bottom_padding_num', true) : column_padding, 10 ) : column_padding
+		;
+		return {
+			left: padding_left,
+			right: padding_right,
+			top: padding_top,
+			bottom: padding_bottom
+		}
 	},
 	
 	getImageViewport: function() {
@@ -943,43 +974,6 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	
 	getElementShapeSize: function (elementSize) {
 		return false;
-	},
-	
-	applyElementSize: function (width, height, set_property) {
-		if ( this.parent_module_view ) {
-			var me = this,
-				parent = this.parent_module_view.$el.find('.upfront-editable_entity:first'),
-				resizer = parent,
-				captionHeight = this.get_preset_property("caption-position") === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
-				// padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
-				borderWidth = parseInt(this.$el.find('.upfront-image-caption-container').css('borderWidth') || 0, 10), // || 0 part is needed because parseInt empty sting returns NaN and breaks element height
-				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
-				hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
-				vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
-				// elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight}
-				elementSize = {width: ( width && !isNaN(width) ? width : resizer.width() ) - hPadding, height: ( height && !isNaN(height) ? height : resizer.height() ) - vPadding - captionHeight - (2 * borderWidth)},
-				newSize = this.getElementShapeSize(elementSize)
-			;
-			if ( false !== newSize ) {
-				elementSize = newSize;
-			}
-			if ( _.isUndefined(set_property) || set_property ) {
-				this.model.set_breakpoint_property('row', Upfront.Util.height_to_row(elementSize.height + vPadding), true);
-				if ( this.parent_module_view ) {
-					this.parent_module_view.model.set_breakpoint_property('row', Upfront.Util.height_to_row(elementSize.height + vPadding), true);
-				}
-				this.model.set_breakpoint_property('element_size', elementSize);
-			}
-			//this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
-			//		width: elementSize.width,
-			//		height: elementSize.height,
-			//		l10n: l10n.template
-			//	})
-			//);
-			// Let's override the min-height set to element
-			this.$el.find('> .upfront-object').css('min-height', (elementSize.height + vPadding) + 'px');
-			this.$el.closest('.upfront-module').css('min-height', (elementSize.height + vPadding) + 'px');
-		}
 	},
 	
 	saveTemporaryResizing: function(elementSize) {
