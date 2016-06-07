@@ -43,7 +43,7 @@ class Upfront_Posts_PostsData {
 			// list_type===custom settings
 			'posts_list' => '', // JSON map of id/permalink pairs
 			
-			'thumbnail_size' => 'medium', // thumbnail, medium, large, uf_post_featured_image, uf_custom_thumbnail_size
+			'thumbnail_size' => 'large', // thumbnail, medium, large, uf_post_featured_image, uf_custom_thumbnail_size
 			'custom_thumbnail_width' => 200, 
 			'custom_thumbnail_height' => 200, 
 
