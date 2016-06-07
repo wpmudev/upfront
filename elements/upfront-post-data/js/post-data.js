@@ -655,17 +655,19 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 				horizontal_align = imageData.align,
 				current_position = imageData.imageOffset,
 				isDotAlign = imageData.isDotAlign,
-				containerHeight = this.$('.upfront-image-container').height(),
-				containerWidth = this.$('.upfront-image-container').width(),
+				containerHeight = this.$('.upostdata-part.thumbnail').height(),
+				containerWidth = this.$('.upostdata-part.thumbnail').width(),
+				leftPadding = parseInt(this.$el.find('.upfront-post-data-part').css('padding-left')),
+				rightPadding = parseInt(this.$el.find('.upfront-post-data-part').css('padding-right')),
+				padding = leftPadding + rightPadding,
 				sizeCheck = this.checkSize(),
 				imgPosition = img.position(),
 				maskSize = this.getMaskSize(attr),
 				imageView = this.getImageViewport(),
 				originalImageData = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data'),
-				containerHeight = this.$('.upfront-image-container').height(),
 				marginLeft = current_position.left,
 				marginTop;
-	
+
 			if(typeof imageView.width !== "undefined") {
 				if(data.elementSize.width > imageView.width) {
 					img.css({left: imgPosition.left + (data.elementSize.width - imageView.width)});
@@ -678,7 +680,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 				}
 			}
 
-			if(sizeCheck === "small" && isDotAlign === true) {
+			if(sizeCheck === "small" && isDotAlign === 'true') {
 				if(horizontal_align === "center") {
 					if(data.size.width < attr.width) {
 						marginLeft = (data.size.width - attr.width) / 2;
@@ -711,18 +713,18 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 					}
 				}
 
-				var offset = { top: marginTop, left: marginLeft },
+				var offset = { top: marginTop, left: marginLeft + padding },
 					img = this.$el.find('.thumbnail img')
 				;
 				
-				this.property('position', {top: marginTop, left: marginLeft});
+				this.property('position', { top: marginTop, left: marginLeft + padding });
 
 				// Update position and resize
 				newImageData = _.extend(originalImageData, {
-					'imageOffset': {top: marginTop, left: marginLeft},
-					'position': {top: marginTop, left: marginLeft}
+					'imageOffset': { top: marginTop, left: marginLeft + padding },
+					'position': { top: marginTop, left: marginLeft + padding }
 				});
-				
+
 				Upfront.Events.trigger("featured:image:resized", newImageData);
 				
 				img.css('top', -offset.top);
