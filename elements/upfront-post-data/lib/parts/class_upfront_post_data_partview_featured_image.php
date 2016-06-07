@@ -34,7 +34,7 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 			: (int)Upfront_Posts_PostsData::get_default('resize_featured')
 		;
 		
-		if($data['imageSize']['width'] < $data['maskSize']['width'] || $data['imageSize']['height'] < $data['maskSize']['height']) {
+		if (!empty($data) && ($data['imageSize']['width'] < $data['maskSize']['width'] || $data['imageSize']['height'] < $data['maskSize']['height'])) {
 			$featured_data = "data-featured-image='{ \"offsetTop\": ". -$data['imageOffset']['top'] .", \"offsetLeft\": ". -$data['imageOffset']['left'] .", \"offsetWidth\": ". $data['maskSize']['width'] .", \"offsetHeight\": ". $data['maskSize']['height'] ." }'";
 			$featured_class = 'class="upfront-featured-image-smaller"';
 		}
