@@ -33,11 +33,6 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 			? (int)$this->_data['resize_featured']
 			: (int)Upfront_Posts_PostsData::get_default('resize_featured')
 		;
-		
-		if (!empty($data) && ($data['imageSize']['width'] < $data['maskSize']['width'] || $data['imageSize']['height'] < $data['maskSize']['height'])) {
-			$featured_data = "data-featured-image='{ \"offsetTop\": ". -$data['imageOffset']['top'] .", \"offsetLeft\": ". -$data['imageOffset']['left'] .", \"offsetWidth\": ". $data['maskSize']['width'] .", \"offsetHeight\": ". $data['maskSize']['height'] ." }'";
-			$featured_class = 'class="upfront-featured-image-smaller"';
-		}
 
 		$img_src = $this->get_pre_selected();
 		if ( empty($img_src) ) {
@@ -46,6 +41,12 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 			}
 			else {
 				$img_src = $this->_get_thumbnail(true);
+				
+				// We need this only for front-end
+				if (!empty($data) && ($data['imageSize']['width'] < $data['maskSize']['width'] || $data['imageSize']['height'] < $data['maskSize']['height'])) {
+					$featured_data = "data-featured-image='{ \"offsetTop\": ". -$data['imageOffset']['top'] .", \"offsetLeft\": ". -$data['imageOffset']['left'] .", \"offsetWidth\": ". $data['maskSize']['width'] .", \"offsetHeight\": ". $data['maskSize']['height'] ." }'";
+					$featured_class = 'class="upfront-featured-image-smaller"';
+				}
 			}
 		}
 		$thumbnail = ( !empty($img_src) )
