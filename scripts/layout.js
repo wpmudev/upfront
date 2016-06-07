@@ -534,14 +534,14 @@ jQuery(document).ready(function($){
 			$(this).css({ 'top': data.offsetTop, 'left': data.offsetLeft});
 			$(this).parent().css({ 'width': data.offsetWidth, 'height': data.offsetHeight});
 		});
-		$('.upfront-output-object .uf-post .thumbnail').each(function(){
-			var is_upostdata = $(this).hasClass('upostdata-part'),
+		$('.upfront-output-object .uf-post .thumbnail .upfront-featured-image-fit-wrapper').each(function(){
+			var is_upostdata = $(this).parent().hasClass('upostdata-part'),
 				$object = $(this).closest('.upfront-output-object'),
 				height = is_upostdata ? parseInt($object.css('min-height'), 10) : $(this).height(),
-				width = $(this).width(),
+				width = $(this).parent().width(),
 				padding_top = parseInt($object.css('padding-top'), 10),
 				padding_bottom = parseInt($object.css('padding-bottom'), 10),
-				$img = $(this).find('img'),
+				$img = $(this),
 				img = new Image,
 				img_h, img_w
 			;

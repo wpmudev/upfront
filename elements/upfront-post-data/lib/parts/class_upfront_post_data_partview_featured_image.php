@@ -47,6 +47,10 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 					$featured_data = "data-featured-image='{ \"offsetTop\": ". -$data['imageOffset']['top'] .", \"offsetLeft\": ". -$data['imageOffset']['left'] .", \"offsetWidth\": ". $data['maskSize']['width'] .", \"offsetHeight\": ". $data['maskSize']['height'] ." }'";
 					$featured_class = 'class="upfront-featured-image-smaller"';
 				}
+				
+				if(empty($data)) {
+					$featured_class = 'class="upfront-featured-image-fit-wrapper"';
+				}
 			}
 		}
 		$thumbnail = ( !empty($img_src) )
