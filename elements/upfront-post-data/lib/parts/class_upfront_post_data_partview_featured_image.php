@@ -39,10 +39,18 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 			$featured_class = 'class="upfront-featured-image-smaller"';
 		}
 
-		$pre_selected = $this->get_pre_selected();
-		$thumbnail = ( !empty($pre_selected) )
-			? '<img src="'. $this->get_pre_selected() .'" '.$featured_class.' '.$featured_data.' />'
-			: '<img src="'. $this->_get_thumbnail(true) .'" '.$featured_class.' '.$featured_data.' />'
+		$img_src = $this->get_pre_selected();
+		if ( empty($img_src) ) {
+			if ( $this->_editor ) { // Always use full size image for editor rendering
+				$img_src = $this->_get_full_image();
+			}
+			else {
+				$img_src = $this->_get_thumbnail(true);
+			}
+		}
+		$thumbnail = ( !empty($img_src) )
+			? '<img src="'. $img_src .'" '.$featured_class.' '.$featured_data.' />'
+			: ''
 		;
 
 		// Let's deal with the fallback options
@@ -120,6 +128,20 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 		}
 	
 		return upfront_get_edited_post_thumbnail($this->_post->ID, $src, $image_size);
+	}
+
+	/**
+	 * Get full featured image for the current given post
+	 *
+	 * @return string Image src
+	 */
+	private function _get_full_image () {
+		$post_thumbnail_id = get_post_thumbnail_id($this->_post);
+		if ( $post_thumbnail_id ) {
+			$attachment = wp_get_attachment_image_src($post_thumbnail_id, 'full');
+			if ( is_array($attachment) ) return $attachment[0];
+		}
+		return '';
 	}
 
 	/**

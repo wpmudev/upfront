@@ -340,10 +340,13 @@ function upfront_get_edited_post_thumbnail ($post_id = null, $return_src = false
 	$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
 	$image_id = get_post_thumbnail_id($post_id);
 	$data = get_post_meta($post_id, '_thumbnail_data', true);
-	if ( $return_src != true && (empty($data) || empty( $data['imageId'] ) || $data['imageId'] != $image_id || empty($data['src']) || $size != 'uf_post_featured_image') ) // no edited thumbnail or don't use edited thumbnail
+	if ( $return_src != true && (empty($data) || empty( $data['imageId'] ) || $data['imageId'] != $image_id || empty($data['src']) || $size != 'uf_post_featured_image') ) { // no edited thumbnail or don't use edited thumbnail
 		return get_the_post_thumbnail($post_id, $size);
-	if ( $return_src)
-		return $data['src'];
+	}
+	if ( $return_src ) {
+		if ( !empty($data) && !empty($data['imageId']) && $data['imageId'] == $image_id ) return $data['src'];
+		else return '';
+	}
 	$image = get_post($image_id);
 	$attr = array(
 		'src' => $data['src'],
