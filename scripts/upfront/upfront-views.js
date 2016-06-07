@@ -2553,7 +2553,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.lazy_apply_wrapper_height);
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.apply_adapt_to_breakpoints);
 				//this.listenTo(Upfront.Events, "entity:resized", this.apply_flexbox_clear);
-				this.listenTo(Upfront.Events, "entity:resized", this.lazy_apply_wrapper_height);
+				this.listenTo(Upfront.Events, "entity:resized", this.apply_wrapper_height);
 				this.listenTo(Upfront.Events, "entity:resized", this.apply_adapt_to_breakpoints);
 				this.listenTo(Upfront.Events, "entity:wrapper:resized", this.on_wrapper_resize);
 				this.listenTo(Upfront.Events, "entity:wrappers:update", this.on_wrappers_update);
