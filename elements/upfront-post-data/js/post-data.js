@@ -64,9 +64,23 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	},
 
 	render_view: function (markup) {
+		var me = this,
+			type = this.model.get_property_value_by_name('part_type');
+
 		this.$el.find('.upfront-object-content').empty().append(markup);
 		this.adjust_featured_image();
 		this.prepare_editor();
+		
+		// Show full image if we are in mobile mode
+		if(type === "featured_image") {
+			if (this.object_group_view.mobileMode) {
+				this.$el.find('img').addClass('uimage-mobile-mode');
+				setTimeout( function () {
+					me.setMobileMode();
+				}, 100);
+			}
+		}
+		
 		Upfront.Events.trigger('post-data:part:rendered', this, markup);
 	},
 
@@ -120,6 +134,23 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	on_element_edit_stop: function () {
 		return;
 	},*/
+	
+	setMobileMode: function(){
+		var props = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data');
+
+		this.$el.find('.upfront-entity-size-hint').hide();
+		this.$el.find('.thumbnail img').css('min-height', 'none');
+		this.$el.find('.upostdata-part.thumbnail').css('width', '100%').css('height', 'auto');
+		this.$el.find('.thumbnail img')
+				.css({
+					position: 'static',
+					maxWidth: '100%',
+					width: ( props.stretch ? '100%' : props.imageSize.width ),
+					height: 'auto'
+				})
+				.attr('src', props.src)
+		;
+	},
 
 	update_height: function () {
 		var type = this.model.get_property_value_by_name('part_type');
@@ -205,6 +236,14 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		// this.listenTo(Upfront.Events, 'editor:post_details:ready', this.render_view_type);
 		
 		this.listenTo(Upfront.Events, 'editor:post:tax:updated', this.update_categories);
+		
+		this.listenTo(Upfront.Events, 'upfront:layout_size:change_breakpoint', function(newMode){
+			if(newMode.id !== 'desktop') {
+				this.mobileMode = true;
+			} else {
+				this.unsetMobileMode();
+			}
+		});
 
 		/*_.extend(this.events, {
 			'click .upfront-post-part-trigger': 'on_edit_click'
@@ -409,7 +448,6 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		this.child_view = view;
 
 		this.$el.find(".upfront-object-group-default").append(view.$el);
-
 	},
 	
 	toggle_child_objects_loading: function (loading) {
@@ -573,7 +611,16 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		};
 	},
 	
+	unsetMobileMode: function(){
+		this.mobileMode = false;
+	},
+	
 	on_element_resize_start: function(attr) {
+		// Check if mobileMode
+		if(this.mobileMode) {
+			return;
+		}
+			
 		// Check if featured image element
 		var type = this.model.get_property_value_by_name("data_type");
 		if(type !== "featured_image" || !this.is_featured_image_set()) return;
@@ -584,6 +631,11 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	},
 	
 	on_element_resizing: function(attr) {
+		// Check if mobileMode
+		if(this.mobileMode) {
+			return;
+		}
+
 		// Check if featured image element
 		var type = this.model.get_property_value_by_name("data_type");
 		if(type !== "featured_image" || !this.is_featured_image_set()) return;
@@ -739,6 +791,11 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	},
 	
 	on_element_resize: function (attr) {
+		// Check if mobileMode
+		if(this.mobileMode) {
+			return;
+		}
+			
 		if(typeof this.resizingData === "undefined") {
 			this.get_thumb_data();
 		}
@@ -805,6 +862,12 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		}
 		
 		Upfront.Events.trigger('entity:object:refresh', this);
+	},
+	
+	after_breakpoint_change: function(){
+		if(this.mobileMode) {
+			this.render();
+		}
 	},
 
 	get_child_padding: function () {
