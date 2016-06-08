@@ -19,6 +19,9 @@
     max-height: none;
     height: auto;
 }
+.upostdata-part.thumbnail .upfront-featured-image-smaller {
+	position: relative;
+}
 .upostdata-part.thumbnail[data-resize="1"] img {
     max-width: none;
 }
