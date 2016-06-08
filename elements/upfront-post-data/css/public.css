@@ -18,7 +18,6 @@
     max-width: 100%;
     max-height: none;
     height: auto;
-    margin: 0 auto;
 }
 .upostdata-part.thumbnail[data-resize="1"] img {
     max-width: none;
