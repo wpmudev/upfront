@@ -505,7 +505,7 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
 			render: function() {
 				Upfront.Views.Editor.Field.Chosen_Select.prototype.render.call(this);
 				var me = this;
-				var selectWidth = '230px';
+				var selectWidth = '100%';
 
 				this.$el.find('.upfront-chosen-select').chosen({
 					search_contains: true,
@@ -684,7 +684,7 @@ var ContentEditorTaxonomy_Flat = PostSectionView.extend({
 			render: function() {
 				Upfront.Views.Editor.Field.Chosen_Select.prototype.render.call(this);
 				var me = this;
-				var selectWidth = '230px';
+				var selectWidth = '100%';
 
 				this.$el.find('.upfront-chosen-select').chosen({
 					search_contains: true,

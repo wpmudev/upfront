@@ -7671,6 +7671,12 @@ i.upfront-field-icon-burger-trigger {
   clear: right;
   margin-bottom: 10px; }
 
+/* For Firefox fallback */
+#upfront-taxonomy-list label:before {
+  vertical-align: middle;
+  right: initial;
+  margin-right: 3px; }
+
 #upfront-taxonomy-add input#upfront-new_term,
 .upfront-tax-new_term {
   width: 100%;
@@ -7678,6 +7684,13 @@ i.upfront-field-icon-burger-trigger {
 
 #upfront-taxonomy-add select {
   width: 100%; }
+
+/* have to overwrite what's set on #sidebar-ui .upfront-tax-new_term (_editor-box.scss:80) */
+#upfront-taxonomy-add input.upfront-tax-new_term {
+  width: 77% !important; }
+
+#upfront-taxonomy-add button.ueditor-button-small {
+  vertical-align: top; }
 
 .upfront-taxonomy-hierarchical .upfront-taxonomy_item {
   float: left;
