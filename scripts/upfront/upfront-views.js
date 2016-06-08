@@ -5447,13 +5447,14 @@ define([
 					container_view = this.parent_view.get_container_view(this.model),
 					$container = this.$el.find('> .upfront-region-wrapper > .upfront-modules_container'),
 					$toggle = this.$el.find('.upfront-region-hidden-toggle'),
-					$regions = container_view.$el.find('.upfront-region-center, .upfront-region-side-left, .upfront-region-side-right'),
 					$hide_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-hide_trigger'),
 					height = 0,
 					width = 0,
 					top_padding = 0,
 					bottom_padding = 0
 				;
+				if ( typeof container_view === 'undefined' ) return;
+				var $regions = container_view.$el.find('.upfront-region-center, .upfront-region-side-left, .upfront-region-side-right');
 				if ( ! breakpoint_data || ! breakpoint_data.hide ){
 					$container.show();
 					$toggle.hide();
