@@ -59,6 +59,12 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		this.adjust_featured_image();
 	},
 
+	update_position: function () {
+		this.constructor.__super__.update_position.call(this);
+		this.update_height();
+		this.adjust_featured_image();
+	},
+
 	on_element_drop: function () {
 		this.update_height();
 	},
