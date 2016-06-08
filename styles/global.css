@@ -330,7 +330,7 @@ h2, h3 { page-break-after: avoid; }
 	height: inherit;
 }
 
-.upfront-postpart-featured_image img, .upostdata-part.thumbnail img {
+.upfront-postpart-featured_image img, .upostdata-part.thumbnail img, .upfront-editable_entity .upostdata-part.thumbnail img {
   max-width: 100%;
   /* min-width: 100%; */
   margin: 0px;

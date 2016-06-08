@@ -153,6 +153,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		height -= padding_top + padding_bottom;
 		this.$el.find('.thumbnail').each(function(){
 			var width = $(this).width(),
+				is_resize = $(this).attr('data-resize'),
 				$img = $(this).find('img'),
 				img = new Image,
 				img_h, img_w
@@ -160,7 +161,15 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			$(this).css('height', height);
 			// Make sure image is loaded first
 			$('<img>').attr('src', $img.attr('src')).on('load', function(){
-				if ( $(this).attr('data-resize') == "1" ) {
+				if(_.isObject(imageData) && imageData.imageSize) {
+					$img.css({
+						width: imageData.imageSize.width,
+						height: imageData.imageSize.height,
+						top: -imageData.imageOffset.top,
+						left: -imageData.imageOffset.left
+					});
+				}
+				else if ( is_resize == "1" ) {
 					img.src = $img.attr('src');
 					img_h = img.height;
 					img_w = img.width;
@@ -172,13 +181,9 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 					}
 				}
 				else {
-					if(_.isObject(imageData) && imageData.imageSize) {
-						$img.css({
-							width: imageData.imageSize.width,
-							height: imageData.imageSize.height,
-							top: -imageData.imageOffset.top,
-							left: -imageData.imageOffset.left
-						});
+					img_h = $img.height();
+					if (height != img_h) {
+						$img.css('margin-top', (height - img_h) / 2);
 					}
 				}
 			});

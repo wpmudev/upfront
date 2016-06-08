@@ -534,18 +534,19 @@ jQuery(document).ready(function($){
 			$(this).css({ 'top': data.offsetTop, 'left': data.offsetLeft});
 			$(this).parent().css({ 'width': data.offsetWidth, 'height': data.offsetHeight});
 		});
-		$('.upfront-output-object .uf-post .thumbnail .upfront-featured-image-fit-wrapper').each(function(){
-			var is_upostdata = $(this).parent().hasClass('upostdata-part'),
+		$('.upfront-output-object .uf-post .thumbnail, .uf-post-data .upostdata-part.thumbnail').each(function(){
+			var is_upostdata = $(this).hasClass('upostdata-part'),
 				$object = $(this).closest('.upfront-output-object'),
 				height = is_upostdata ? parseInt($object.css('min-height'), 10) : $(this).height(),
-				width = $(this).parent().width(),
+				width = $(this).width(),
 				padding_top = parseInt($object.css('padding-top'), 10),
 				padding_bottom = parseInt($object.css('padding-bottom'), 10),
-				$img = $(this),
+				$img = $(this).find('img'),
 				img = new Image,
 				img_h, img_w
 			;
 			if ( is_upostdata ) {
+				if ( !$img.hasClass('upfront-featured-image-fit-wrapper') ) return; // No fit for this
 				height -= padding_top + padding_bottom;
 				$(this).css('height', height);
 			}

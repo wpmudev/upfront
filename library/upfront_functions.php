@@ -344,8 +344,16 @@ function upfront_get_edited_post_thumbnail ($post_id = null, $return_src = false
 		return get_the_post_thumbnail($post_id, $size);
 	}
 	if ( $return_src ) {
-		if ( !empty($data) && !empty($data['imageId']) && $data['imageId'] == $image_id ) return $data['src'];
-		else return '';
+		if ( !empty($data) && !empty($data['imageId']) && $data['imageId'] == $image_id ) {
+			return $data['src'];
+		}
+		else if ( empty($data) ) {
+			$src = wp_get_attachment_image_src($image_id, $size);
+			return is_array($src) ? $src[0] : '';
+		}
+		else {
+			return '';
+		}
 	}
 	$image = get_post($image_id);
 	$attr = array(

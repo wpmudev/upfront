@@ -13,7 +13,8 @@
 .upostdata-part.thumbnail {
     overflow: hidden;
 }
-.upostdata-part.thumbnail img {
+.upostdata-part.thumbnail img,
+.upfront-editable_entity .upostdata-part.thumbnail img{
     display: block;
     max-width: 100%;
     max-height: none;
@@ -22,7 +23,8 @@
 .upostdata-part.thumbnail .upfront-featured-image-smaller {
 	position: relative;
 }
-.upostdata-part.thumbnail[data-resize="1"] img {
+.upostdata-part.thumbnail[data-resize="1"] img,
+.upfront-editable_entity .upostdata-part.thumbnail[data-resize="1"] img{
     max-width: none;
 }
 
