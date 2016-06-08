@@ -269,7 +269,6 @@ div.preset-manager-panel .comments-pagination_warning input {
 }
 
 .upostdata-part.thumbnail img {
-	height: 100%;
 	position: relative;
 	z-index: 2;
 }
