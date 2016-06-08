@@ -27,6 +27,9 @@
 .upfront-editable_entity .upostdata-part.thumbnail[data-resize="1"] img{
     max-width: none;
 }
+.uf-responsive .upostdata-part.thumbnail img {
+    max-width: 100%;
+}
 
 /* Hide the fallback image */
 .upfront-output-object-group.no-featured_image.fallback_hide {
