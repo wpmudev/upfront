@@ -141,34 +141,40 @@ define([
 			this.options = opts;
 			var appearance = new LoginSettings_Field_DisplayAppearance({model: this.model}),
 				behavior = new LoginSettings_Field_DisplayBehavior({model: this.model}),
-				trigger = new LoginSettings_Field_DisplayTrigger({model: this.model}),
-				me = this
+				// trigger = new LoginSettings_Field_DisplayTrigger({model: this.model}),
+				me = this,
+				preview_check = this.preview_field()
 			;
+			
+			this.preview_check_field = new preview_check({
+				model: this.model,
+				className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes float-right',
+				property: 'logged_in_preview',
+				label: "",
+				multiple: false,
+				values: [
+					{ label: l10n.preview, value: 'yes' }
+				],
+				change: function() {
+					this.property.set({'value': this.get_value()}, {'silent': false});
+				}
+			});
+			
 			this.settings = _([
 				appearance,
 				behavior,
-				trigger,
+				// trigger,
 				new Upfront.Views.Editor.Settings.Item({
 					model: this.model,
 					title: l10n.logged_in_preview,
+					className: 'upfront-settings-item relative',
 					fields: [
-						new Upfront.Views.Editor.Field.Checkboxes({
-							//className: "upfront_login-logout_style upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios",
-							model: this.model,
-							property: 'logged_in_preview',
-							label: "",
-							values: [
-								{ label: l10n.preview, value: 'yes' }
-							],
-							change: function() {
-								this.property.set({'value': this.get_value()}, {'silent': false});
-							}
-						}),
+						this.preview_check_field,
 						new Upfront.Views.Editor.Field.Radios({
-							className: "upfront_login-logout_style upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios",
+							className: "upfront_login-logout_style upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios clear-after",
 							model: this.model,
 							property: "logout_style",
-
+							layout: 'horizontal-inline',
 							values: [
 								{label: l10n.nothing, value: "nothing"},
 								{label: l10n.log_out_link, value: "link"}
@@ -176,24 +182,14 @@ define([
 							change: function() {
 								this.property.set({'value': this.get_value()}, {'silent': false});
 							}
-						}),
-						new Upfront.Views.Editor.Field.Text({
-							className: "upfront_login-logout_text upfront-field-wrap upfront-field-wrap-text",
-							model: this.model,
-							property: 'logout_link',
-							label: l10n.log_out_label,
-							change: function() {
-								this.property.set({'value': this.get_value()}, {'silent': false});
-							}
 						})
-
 					]
 
 				})/*,
 				new Upfront.Views.Editor.Settings.Settings_CSS({model: this.model })*/ // We no longer use custom element CSS
 			]);
 			appearance.on("login:appearance:changed", behavior.update, behavior);
-			appearance.on("login:appearance:changed", trigger.update, trigger);
+			// appearance.on("login:appearance:changed", trigger.update, trigger);
 			appearance.on("login:appearance:changed", function () {
 				me.trigger("upfront:settings:panel:refresh", me);
 			});
@@ -210,6 +206,39 @@ define([
 		},
 		get_title: function () {
 			return l10n.display;
+		},
+		preview_field: function () {
+			var previewField = Upfront.Views.Editor.Field.Checkboxes.extend({
+				get_value_html: function (value, index) {
+					var id = this.get_field_id() + '-' + index;
+					var classes = "upfront-field-multiple";
+					var attr = {
+						'type': this.type,
+						'id': id,
+						'name': this.get_field_name(),
+						'value': value.value,
+						'class': 'upfront_toggle_checkbox upfront-field-' + this.type
+					};
+					var saved_value = this.get_saved_value();
+					var icon_class = this.options.icon_class ? this.options.icon_class : null;
+					if ( this.options.layout ) classes += ' upfront-field-multiple-'+this.options.layout;
+					if ( value.disabled ) {
+						attr.disabled = 'disabled';
+						classes += ' upfront-field-multiple-disabled';
+					}
+					if ( this.multiple && _.contains(saved_value, value.value) ) {
+						attr.checked = 'checked';
+					} else if ( ! this.multiple && saved_value == value.value ) {
+						attr.checked = 'checked';
+					}
+					if (value.checked) attr.checked = 'checked';
+					if ( attr.checked ) {
+						classes += ' upfront-field-multiple-selected';
+					}
+					return '<div class="' + classes + ' upfront_toggle"><span class="upfront-field-label-text">' + value.label + '</span><input ' + this.get_field_attr_html(attr) + ' />' + '<label for="' + id + '" class="upfront_toggle_label"><span class="upfront_toggle_switch"></span></label></div>';
+				}
+			});
+			return previewField;
 		}
 	});
 
@@ -252,7 +281,22 @@ define([
 				new Upfront.Views.Editor.Field.Radios({
 					model: this.model,
 					property: "behavior",
-					values: behaviors
+					values: behaviors,
+					layout: 'horizontal-inline'
+				}),
+				new Upfront.Views.Editor.Field.Number({
+					model: this.model,
+					property: "top_offset",
+					className: 'upfront-field-wrap upfront-field-wrap-number offset',
+					label: l10n.top_offset,
+					default_value: 0
+				}),
+				new Upfront.Views.Editor.Field.Number({
+					model: this.model,
+					property: "left_offset",
+					className: 'upfront-field-wrap upfront-field-wrap-number offset',
+					label: l10n.left_offset,
+					default_value: 0
 				})
 			]);
 		},
@@ -263,10 +307,13 @@ define([
 				.find(".upfront-settings-item-content").addClass("clearfix").end()
 				.hide()
 			;
-
+			// appending px
+			this.$el.find('.upfront-field-wrap.offset').each(function(){
+				$(this).append('<span>'+ l10n.px +'</span>');
+			});
 		},
 		get_title: function () {
-			return "Show Drop-Down Form on:";
+			return l10n.show_form_label;
 		},
 		register_change: function () {
 			this.fields.each(function (field) {
@@ -284,38 +331,33 @@ define([
 	});
 
 	var LoginSettings_Field_DisplayAppearance = Login_SettingsItem_ComplexItem.extend({
-		/*events: function () {
-			return _.extend({},
-				Upfront.Views.Editor.Settings.Item.prototype.events,
-				{"change": "register_change"}
-			);
-		}*/
 		initialize: function () {
 			var me = this;
 			var styles = [
 				{label: l10n.on_page, value: "form"},
 				{label: l10n.dropdown, value: "dropdown"}
-				/*{label: l10n.in_lightbox, value: "popup"},*/
 			];
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Radios({
 					model: this.model,
 					property: "style",
-
+					layout: 'horizontal-inline',
 					values: styles,
 					change: function() { me.register_change(me); }
-				}),
-				new Upfront.Views.Editor.Field.Text({
-					model: this.model,
-					property: 'label_text',
-					label: l10n.log_in_button,
-					change: function() { me.register_change(me); }
 				})
+				// new Upfront.Views.Editor.Field.Text({
+					// model: this.model,
+					// property: 'label_text',
+					// label: l10n.log_in_button,
+					// change: function() { me.register_change(me); }
+				// })
 			]);
 		},
 		render: function () {
 			Upfront.Views.Editor.Settings.Item.prototype.render.call(this);
 			this.$el.find(".upfront-settings-item-content").addClass("clearfix");
+			// append description
+			this.$el.find(".upfront-settings-item").prepend('<div class="login-general-settings-description clear-after">'+ l10n.general_settings_description +'</div>');
 		},
 		get_title: function () {
 			return l10n.appearance;
