@@ -871,8 +871,9 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	},
 	
 	after_breakpoint_change: function(){
-		if(this.mobileMode) {
-			this.render();
+		var type = this.model.get_property_value_by_name("data_type");
+		if(this.mobileMode && type === "featured_image") {
+			this.on_render();
 		}
 	},
 
