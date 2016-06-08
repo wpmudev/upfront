@@ -45,9 +45,9 @@
 .upfront_login.upfront_login-click .upfront_login-form-wrapper { 
 	position: absolute;
 	z-index: 1;
-	top:15px;
 	width:210px;
-	left:-50px;
+	top: 0;
+	left: 0;
 }
 
 .upfront_login.upfront_login-hover:hover .upfront_login-form-wrapper,

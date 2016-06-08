@@ -42,17 +42,18 @@ define([
 		},
 
 		render: function () {
+			console.log('render was called');
 			if (!this.markup) {
 				var me = this,
 					options = Upfront.Util.model_to_json(this.model)
 				;
-
+				console.log(options);
 				Upfront.Util.post({
 					"action": "upfront-login_element-get_markup",
 					properties: options.properties
 				}).done(function (response) {
 					me.markup = response.data;
-
+					console.log(response);
 					Upfront.Views.ObjectView.prototype.render.call(me);
 
 					Upfront.Events.trigger('entity:object:refresh', me);

@@ -18,6 +18,8 @@ class Upfront_LoginView extends Upfront_Object {
 			'has_settings' => 1,
 			'id_slug' => 'upfront-login_element',
 			'logout_style' => 'link',
+			'top_offset' => 0,
+			'left_offset' => 0,
 		);
 	}
 
@@ -87,6 +89,13 @@ class Upfront_LoginView extends Upfront_Object {
 			'click_here' => self::_get_l10n('click_here'),
 			'register' => self::_get_l10n('register'),
 		);
+		
+		// top offset for hover and click behavior
+		$data['top_offset'] = ( !empty($properties['top_offset']) && ((int)$properties['top_offset']) > 0 )
+			? 'top: ' . $properties['top_offset'] . 'px'
+			: ''
+		;
+		
 		$tpl = 'block'; // default
 		if (!$block && !empty($properties['behavior'])) {
 			$tpl = preg_replace('/[^a-z0-9]/', '', $properties['behavior']);
@@ -100,7 +109,7 @@ class Upfront_LoginView extends Upfront_Object {
 	}
 
 	private static function _normalize_properties ($raw_properties) {
-		$to_map = array('style', 'behavior', 'appearance', 'label_text', 'trigger_text', 'logged_in_preview', 'logout_style', 'logout_link', 'label_image');
+		$to_map = array('style', 'behavior', 'appearance', 'label_text', 'trigger_text', 'logged_in_preview', 'logout_style', 'logout_link', 'label_image', 'top_offset', 'left_offset');
 		$properties = upfront_properties_to_array($raw_properties, $to_map);
 		return $properties;
 	}
