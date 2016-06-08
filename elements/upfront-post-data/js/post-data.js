@@ -619,6 +619,26 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	
 	unsetMobileMode: function(){
 		this.mobileMode = false;
+		
+		var type = this.model.get_property_value_by_name('data_type'),
+			props = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data');
+		
+		if(type === "featured_image") {
+			this.$el.find('.upfront-entity-size-hint').hide();
+			this.$el.find('.thumbnail img').css('min-height', 'none').removeClass('uimage-mobile-mode');
+			this.$el.find('.upostdata-part.thumbnail').css('width', props.maskSize.width).css('height', props.maskSize.height);
+			this.$el.find('.thumbnail img')
+					.css({
+						position: 'relative',
+						maxWidth: '100%',
+						width: props.imageSize.width,
+						height: props.imageSize.height,
+						top: -props.imageOffset.top,
+						left: -props.imageOffset.left
+					})
+					.attr('src', props.srcFull)
+			;
+		}
 	},
 	
 	on_element_resize_start: function(attr) {
