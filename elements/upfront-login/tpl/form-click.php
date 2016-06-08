@@ -1,6 +1,6 @@
 <div class="upfront_login upfront_login-click">
 	<?php echo $trigger; ?>
-	<div class="upfront_login-form-wrapper">
+	<div class="upfront_login-form-wrapper" style="<?php echo esc_attr($offset); ?>">
 		<div class="upfront_login-form">
 			<?php 
 				wp_login_form(array(

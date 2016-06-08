@@ -90,11 +90,16 @@ class Upfront_LoginView extends Upfront_Object {
 			'register' => self::_get_l10n('register'),
 		);
 		
-		// top offset for hover and click behavior
-		$data['top_offset'] = ( !empty($properties['top_offset']) && ((int)$properties['top_offset']) > 0 )
-			? 'top: ' . $properties['top_offset'] . 'px'
+		// top and left offset for hover and click behavior
+		$top_offset = ( !empty($properties['top_offset']) )
+			? 'top:' . $properties['top_offset'] . 'px;'
 			: ''
 		;
+		$left_offset = ( !empty($properties['left_offset']) )
+			? 'left:' . $properties['left_offset'] . 'px;'
+			: ''
+		;
+		$data['offset'] = $top_offset . $left_offset;
 		
 		$tpl = 'block'; // default
 		if (!$block && !empty($properties['behavior'])) {
