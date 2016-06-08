@@ -655,8 +655,8 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 				horizontal_align = imageData.align,
 				current_position = imageData.imageOffset,
 				isDotAlign = imageData.isDotAlign,
-				containerHeight = this.$('.upostdata-part.thumbnail').outerHeight(),
-				containerWidth = this.$('.upostdata-part.thumbnail').outerWidth(),
+				containerHeight = this.$('.upostdata-part.thumbnail').height(),
+				containerWidth = this.$('.upostdata-part.thumbnail').width(),
 				leftPadding = parseInt(this.$el.find('.upfront-post-data-part').css('padding-left')),
 				rightPadding = parseInt(this.$el.find('.upfront-post-data-part').css('padding-right')),
 				padding = leftPadding + rightPadding,
@@ -749,6 +749,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			padding_bottom = parseInt( this.model.get_breakpoint_property_value("bottom_padding_use", true) ? this.model.get_breakpoint_property_value('bottom_padding_num', true) : 0, 10 ),
 			row = attr.row - parseInt(padding_top/grid.baseline) - parseInt(padding_bottom/grid.baseline)
 		;
+
 		if(type === "featured_image" && this.is_featured_image_set()) {
 			//Save image
 			var img = this.$el.find('img'),
