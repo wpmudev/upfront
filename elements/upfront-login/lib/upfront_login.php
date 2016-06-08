@@ -184,6 +184,9 @@ class Upfront_LoginView extends Upfront_Object {
 			'top_offset' => __("Top Offset", 'upfront'),
 			'left_offset' => __("Left Offset", 'upfront'),
 			'px' => __("px", 'upfront'),
+			'preset' => array(
+				'part_to_style' => __("Part to Style:", 'upfront'),
+			)
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

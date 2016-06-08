@@ -249,7 +249,28 @@ define([
 				ajaxActionSlug: 'login',
 				panelTitle: l10n.settings,
 				presetDefaults: Upfront.mainData.presetDefaults.login,
-				styleTpl: styleTpl
+				styleTpl: styleTpl,
+				stateModules: {
+					Global: [
+						{
+							moduleType: 'Selectbox',
+							options: {
+								state: 'global',
+								default_value: 'default',
+								title: '',
+								custom_class: 'image_style',
+								label: l10n.preset.part_to_style,
+								fields: {
+									name: 'imagestyle'
+								},
+								values: [
+									{ label: "Default", value: 'default' },
+									{ label: "Square", value: 'square' },
+								]
+							}
+						},
+					]
+				}
 			}
 		},
 
