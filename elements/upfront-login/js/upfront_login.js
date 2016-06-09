@@ -256,16 +256,20 @@ define([
 							moduleType: 'Selectbox',
 							options: {
 								state: 'global',
-								default_value: 'default',
+								default_value: 'element_wrapper',
 								title: '',
 								custom_class: 'image_style',
 								label: l10n.preset.part_to_style,
 								fields: {
-									name: 'imagestyle'
+									name: 'partstyle'
 								},
 								values: [
-									{ label: "Default", value: 'default' },
-									{ label: "Square", value: 'square' },
+									{ label: "Element Wrapper", value: 'element_wrapper' },
+									{ label: "Field Labels", value: 'field_labels' },
+									{ label: "Input Fields", value: 'input_fields' },
+									{ label: "Button", value: 'button' },
+									{ label: "Lost Password Text", value: 'lost_password_text' },
+									{ label: "Log in Trigger", value: 'login_trigger' },
 								]
 							}
 						},
