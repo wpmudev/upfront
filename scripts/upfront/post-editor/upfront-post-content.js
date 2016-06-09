@@ -793,6 +793,11 @@ PostContentEditor.prototype = {
 					this.parent.post.meta.setValue('_thumbnail_id', imageData.imageId);
 					this.parent.post.meta.setValue('_thumbnail_data', imageData);
 				}
+
+				var $thumbnail = this.$featured.find('.thumbnail');
+				if ( $thumbnail.attr('data-fallback') ) {
+					$thumbnail.removeAttr('data-fallback');
+				}
 			},
 
 			updateResized: function(imageData) {
