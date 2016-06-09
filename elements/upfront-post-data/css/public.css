@@ -12,6 +12,7 @@
 }
 .upostdata-part.thumbnail {
     overflow: hidden;
+    margin-bottom: 0;
 }
 .upostdata-part.thumbnail img,
 .upfront-editable_entity .upostdata-part.thumbnail img{
