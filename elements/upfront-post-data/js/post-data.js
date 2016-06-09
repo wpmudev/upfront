@@ -97,10 +97,6 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		}
 		
 		Upfront.Events.trigger('post-data:part:rendered', this, markup);
-		
-		// making sure all loading flags are set to false
-		if ( Upfront.Views.PostDataEditor && Upfront.Views.PostDataEditor.contentEditor ) 
-			Upfront.Views.PostDataEditor.contentEditor.doneLoading();
 	},
 
 	prepare_editor: function () {

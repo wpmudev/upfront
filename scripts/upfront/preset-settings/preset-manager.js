@@ -441,6 +441,10 @@ define([
 			Upfront.Views.Editor.notify(l10n.preset_created.replace(/%s/, presetName));
 
 			this.render();
+			
+			// We have to clear the list of post part views
+			if ( Upfront.Views.PostDataEditor && Upfront.Views.PostDataEditor.contentEditor )
+				Upfront.Views.PostDataEditor.contentEditor._viewInstances = [];
 		},
 
 		createPreset: function(presetName) {
@@ -550,6 +554,10 @@ define([
 
 			//Display notification
 			Upfront.Views.Editor.notify(l10n.preset_changed.replace(/%s/, preset));
+			
+			// We have to clear the list of post part views
+			if ( Upfront.Views.PostDataEditor && Upfront.Views.PostDataEditor.contentEditor )
+				Upfront.Views.PostDataEditor.contentEditor._viewInstances = [];
 		},
 
 		previewPreset: function(preset) {

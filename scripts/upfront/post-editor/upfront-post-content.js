@@ -931,17 +931,6 @@ PostContentEditor.prototype = {
 		});
 		return loading;
 	},
-	
-	// for some reason loading flag does not revert back to false after loading
-	// so have to catch it here and set to false
-	doneLoading: function () {
-		var _tempoViewInstances = [];
-		_.each(this._viewInstances, function (partView) {
-			partView.loading = false;
-			_tempoViewInstances.push(partView);
-		});
-		this._viewInstances = _tempoViewInstances;
-	},
 
 	prepareBox: function(){
 		var self = this,
