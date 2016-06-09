@@ -160,7 +160,35 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		this.$el.find('.upfront-entity-size-hint').hide();
 		this.$el.find('.upostdata-part.thumbnail').css('width', '100%').css('height', 'auto');
 		this.$el.find('.upost_thumbnail_changer').hide();
-		this.$el.find('.thumbnail img')
+
+		if(props.mode === "small" && props.isDotAlign) {
+			this.$el.find('.upostdata-part.thumbnail').css('text-align', props.align);
+			this.$el.find('.thumbnail img')
+				.addClass('uimage-mobile-mode')
+				.css({
+					position: 'static',
+					maxWidth: '100%',
+					width: props.imageSize.width,
+					height: 'auto',
+					minHeight: 'none',
+					display: 'inline-block',
+				});
+				
+			if(props.valign === "center") {
+				this.$el.find('.thumbnail img')
+					.css({
+						marginTop: (props.maskSize.height / 2) - (props.imageSize.height / 2)
+					});
+			}	
+			
+			if(props.valign === "bottom") {
+				this.$el.find('.thumbnail img')
+					.css({
+						marginTop: (props.maskSize.height - props.imageSize.height)
+					});
+			}	
+		} else {
+			this.$el.find('.thumbnail img')
 				.addClass('uimage-mobile-mode')
 				.css({
 					position: 'static',
@@ -168,15 +196,19 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 					width: ( !is_featured_image_set || !props || props.stretch ? '100%' : props.imageSize.width ),
 					height: 'auto',
 					minHeight: 'none'
-				})
-		;
+				});
+			;
+		}
+
 		if ( is_featured_image_set && props ) {
 			this.$el.find('.thumbnail img').attr('src', props.src);
 		}
+
 		this.$el.find('.upfront-object-content').css({
 			minHeight: '',
 			maxHeight: ''
 		});
+
 	},
 
 	unsetMobileMode: function () {
@@ -198,7 +230,9 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 				width: props ? props.imageSize.width : '',
 				height: props ? props.imageSize.height : '',
 				top: props ? -props.imageOffset.top : '',
-				left: props ? -props.imageOffset.left : ''
+				left: props ? -props.imageOffset.left : '',
+				display: 'block',
+				marginTop: 0
 			})
 		;
 		if ( is_featured_image_set && props ) {
@@ -813,7 +847,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 				}
 			}
 
-			if(sizeCheck === "small" && isDotAlign === 'true') {
+			if(sizeCheck === "small" && !!isDotAlign === true) {
 				if(horizontal_align === "center") {
 					if(data.size.width < attr.width) {
 						marginLeft = (data.size.width - attr.width) / 2;
