@@ -537,13 +537,14 @@ jQuery(document).ready(function($){
 				dotalign = $img.data('featured-dotalign'),
 				mode = $img.data('featured-mode'),
 				imgHeight = $img.height(),
+				imgWidth = $img.width(),
 				breakpoint = get_breakpoint()
 			;
-			
+
 			// If table or mobile breakpoint, image is smaller than container and dotAlign is true make it inline
-			if(breakpoint === "tablet" || breakpoint === "mobile" && 
+			if((breakpoint === "tablet" || breakpoint === "mobile") && 
 					(mode === "small" && dotalign === true)) {
-				
+
 				// Set text-align for parent container
 				$container.css({
 					'textAlign': align,
@@ -567,16 +568,29 @@ jQuery(document).ready(function($){
 					});
 				}
 			} else {
-				// Null above and position image into parent container
-				$img.css({ 
-					'top': data.offsetTop, 
-					'left': data.offsetLeft,
-					'position': 'relative',
-					'display': 'block',
-					'marginTop': 0
-				});
-				
-				$container.css({ 'width': data.offsetWidth, 'height': data.offsetHeight});
+				if((breakpoint === "tablet" || breakpoint === "mobile") && (imgWidth < data.offsetWidth)) {
+					// Null above
+					$container.css({
+						'textAlign': 'center',
+						'maxWidth': '100%'
+					});
+					
+					$img.css({
+						'position': 'static',
+						'display': 'inline-block'
+					});
+				} else {
+					// Null above and position image into parent container
+					$img.css({ 
+						'top': data.offsetTop, 
+						'left': data.offsetLeft,
+						'position': 'relative',
+						'display': 'block',
+						'marginTop': 0
+					});
+					
+					$container.css({ 'width': data.offsetWidth, 'height': data.offsetHeight});
+				}
 			}
 		});
 		$('.upfront-output-object .uf-post .thumbnail, .uf-post-data .upostdata-part.thumbnail').each(function(){
