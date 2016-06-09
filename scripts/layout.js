@@ -529,12 +529,14 @@ jQuery(document).ready(function($){
 			}
 		});
 		$('.upfront-output-object .upfront-featured-image-smaller').each(function() {
-			var data = $(this).data('featured-image'),
-				align = $(this).data('featured-align'),
-				valign = $(this).data('featured-valign'),
-				dotalign = $(this).data('featured-dotalign'),
-				mode = $(this).data('featured-mode'),
-				imgHeight = $(this).height(),
+			var $img = $(this),
+				$container = $img.parent(),
+				data = $img.data('featured-image'),
+				align = $img.data('featured-align'),
+				valign = $img.data('featured-valign'),
+				dotalign = $img.data('featured-dotalign'),
+				mode = $img.data('featured-mode'),
+				imgHeight = $img.height(),
 				breakpoint = get_breakpoint()
 			;
 			
@@ -543,30 +545,30 @@ jQuery(document).ready(function($){
 					(mode === "small" && dotalign === true)) {
 				
 				// Set text-align for parent container
-				$(this).parent().css({
+				$container.css({
 					'textAlign': align,
 					'maxWidth': '100%'
 				});
 				
 				// Make image inline
-				$(this).css({
+				$img.css({
 					'position': 'static',
 					'display': 'inline-block'
 				});
 				
 				// Update margin to position image top or bottom
 				if(valign === "center") {
-					$(this).css({
+					$img.css({
 						'marginTop': (data.offsetHeight / 2) - (imgHeight / 2),
 					});
 				} else if (valign === "bottom") {
-					$(this).css({
+					$img.css({
 						'marginTop': (data.offsetHeight - imgHeight),
 					});
 				}
 			} else {
 				// Null above and position image into parent container
-				$(this).css({ 
+				$img.css({ 
 					'top': data.offsetTop, 
 					'left': data.offsetLeft,
 					'position': 'relative',
@@ -574,7 +576,7 @@ jQuery(document).ready(function($){
 					'marginTop': 0
 				});
 				
-				$(this).parent().css({ 'width': data.offsetWidth, 'height': data.offsetHeight});
+				$container.css({ 'width': data.offsetWidth, 'height': data.offsetHeight});
 			}
 		});
 		$('.upfront-output-object .uf-post .thumbnail, .uf-post-data .upostdata-part.thumbnail').each(function(){
