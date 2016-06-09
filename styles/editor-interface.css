@@ -14039,10 +14039,10 @@ li#new-custom-breakpoint {
   display: none;
   z-index: 30; }
 
-.upfront-region-container-feat-image:hover .feature_image_selector {
+.upfront-region-container:hover .feature_image_selector {
   display: block; }
 
-.upfront-region-editing .upfront-region-container-feat-image .feature_image_selector {
+.upfront-region-editing .upfront-region-container .feature_image_selector {
   display: none; }
 
 /* Flexbox */
