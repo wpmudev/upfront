@@ -279,6 +279,14 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	cleanup: function () {
 		var type = this.model.get_property_value_by_name('part_type');
 		this.remove_region_class('upfront-region-container-has-' + type, true);
+		
+		// We have to remove this view from _viewInstances
+		if ( Upfront.Views.PostDataEditor && Upfront.Views.PostDataEditor.contentEditor && this.editor_view ) {
+			Upfront.Views.PostDataEditor.contentEditor._viewInstances = _.without(
+				Upfront.Views.PostDataEditor.contentEditor._viewInstances,
+				this.editor_view
+			);
+		}
 	},
 
 });
