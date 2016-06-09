@@ -41,11 +41,11 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 			}
 			else {
 				$img_src = $this->_get_thumbnail(true);
-				
+
 				// We need this only for front-end
 				if (!empty($data) && ($data['imageSize']['width'] < $data['maskSize']['width'] || $data['imageSize']['height'] < $data['maskSize']['height'])) {
-					$featured_data = "data-featured-image='{ \"offsetTop\": ". -$data['imageOffset']['top'] .", \"offsetLeft\": ". -$data['imageOffset']['left'] .", \"offsetWidth\": ". $data['maskSize']['width'] .", \"offsetHeight\": ". $data['maskSize']['height'] ." }'";
-					$featured_class = 'class="upfront-featured-image-smaller"';
+						$featured_data = "data-featured-image='{ \"offsetTop\": ". -$data['imageOffset']['top'] .", \"offsetLeft\": ". -$data['imageOffset']['left'] .", \"offsetWidth\": ". $data['maskSize']['width'] .", \"offsetHeight\": ". $data['maskSize']['height'] ." }' data-featured-align='".$data['align']."' data-featured-valign='".$data['valign']."' data-featured-dotalign='".$data['isDotAlign']."' data-featured-mode='".$data['mode']."'";
+						$featured_class = 'class="upfront-featured-image-smaller"';
 				}
 				
 				if(empty($data)) {

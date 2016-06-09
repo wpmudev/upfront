@@ -529,10 +529,53 @@ jQuery(document).ready(function($){
 			}
 		});
 		$('.upfront-output-object .upfront-featured-image-smaller').each(function() {
-			var data = $(this).data('featured-image');
+			var data = $(this).data('featured-image'),
+				align = $(this).data('featured-align'),
+				valign = $(this).data('featured-valign'),
+				dotalign = $(this).data('featured-dotalign'),
+				mode = $(this).data('featured-mode'),
+				imgHeight = $(this).height(),
+				breakpoint = get_breakpoint()
+			;
 			
-			$(this).css({ 'top': data.offsetTop, 'left': data.offsetLeft});
-			$(this).parent().css({ 'width': data.offsetWidth, 'height': data.offsetHeight});
+			// If table or mobile breakpoint, image is smaller than container and dotAlign is true make it inline
+			if(breakpoint === "tablet" || breakpoint === "mobile" && 
+					(mode === "small" && dotalign === true)) {
+				
+				// Set text-align for parent container
+				$(this).parent().css({
+					'textAlign': align,
+					'maxWidth': '100%'
+				});
+				
+				// Make image inline
+				$(this).css({
+					'position': 'static',
+					'display': 'inline-block'
+				});
+				
+				// Update margin to position image top or bottom
+				if(valign === "center") {
+					$(this).css({
+						'marginTop': (data.offsetHeight / 2) - (imgHeight / 2),
+					});
+				} else if (valign === "bottom") {
+					$(this).css({
+						'marginTop': (data.offsetHeight - imgHeight),
+					});
+				}
+			} else {
+				// Null above and position image into parent container
+				$(this).css({ 
+					'top': data.offsetTop, 
+					'left': data.offsetLeft,
+					'position': 'relative',
+					'display': 'block',
+					'marginTop': 0
+				});
+				
+				$(this).parent().css({ 'width': data.offsetWidth, 'height': data.offsetHeight});
+			}
 		});
 		$('.upfront-output-object .uf-post .thumbnail, .uf-post-data .upostdata-part.thumbnail').each(function(){
 			var is_upostdata = $(this).hasClass('upostdata-part'),
