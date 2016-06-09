@@ -2884,7 +2884,7 @@ define([
 
 				this.on('on_layout', this.render_new_object, this);
 				//this.on('entity:resize_stop', this.on_resize, this);
-				//this.on('entity:drop', this.on_drop, this);
+				this.on('entity:drop', this.on_drop, this);
 				this.on('region:updated', this.on_region_update, this);
 
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
@@ -3104,7 +3104,11 @@ define([
 				// on resize
 			},
 			on_drop: function (attr) {
-				// on drop
+				// Listen to wrapper update position
+				if ( this.wrapper_view ) {
+					this.stopListening(this.wrapper_view, 'update_position');
+					this.listenTo(this.wrapper_view, 'update_position', this.on_wrapper_update);
+				}
 			},
 			on_region_update: function(){
 				if ( this._objects_view ) {

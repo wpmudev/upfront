@@ -689,21 +689,23 @@ define([
 
 			if(this.paddingControl && typeof this.paddingControl.isOpen !== 'undefined' && this.paddingControl.isOpen)	return;
 
-			// if (!this.controls) {
-				this.controls = this.createControls(); // It seems to be needed for image only so caption item shows up when it should
-			// }
+			if (!this.$control_el || this.$control_el.length === 0) {
+				this.$control_el = this.$el;
+			}
+			if ( this.controls ) {
+				this.controls.remove();
+				this.controls = false;
+				this.$control_el.find('>.upfront-element-controls').remove();
+			}
+			this.controls = this.createControls();
 
 			if (this.controls === false) return;
 
 			this.controls.render();
-			if (!this.$control_el || this.$control_el.length === 0) {
-				this.$control_el = this.$el;
-			}
 			if (this.$control_el.find('>.upfront-element-controls').length === 0) {
 				this.$control_el.append(elementControlsTpl);
-				// this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el);
+				this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el);
 			}
-			this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el); // we need to refresh controls because caption item has to be activated or deactivate depending on the `show caption`
 			this.updateAdvancedPadding();
 			this.controls.delegateEvents();
 		},
@@ -1734,31 +1736,32 @@ define([
 			var me = this,
 				panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
 				moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl(),
-				is_locked = this.property('is_locked')
+				is_locked = this.property('is_locked'),
+				controls = []
 			;
+			if ( !this.mobileMode ) {
+				if(typeof is_locked !== "undefined" && is_locked === true) {
+					var lock_icon = 'lock-locked';
+				} else {
+					var lock_icon = 'lock-unlocked';
+				}
 
-			if(typeof is_locked !== "undefined" && is_locked === true) {
-				var lock_icon = 'lock-locked';
-			} else {
-				var lock_icon = 'lock-unlocked';
+				moreOptions.icon = 'more';
+				moreOptions.tooltip = l10n.ctrl.caption_position;
+
+				moreOptions.sub_items = {}
+				moreOptions.sub_items['swap'] = this.createControl('swap', l10n.btn.swap_image, 'openImageSelector');
+				moreOptions.sub_items['crop'] = this.createControl('crop', l10n.ctrl.edit_image, 'editRequest');
+				moreOptions.sub_items['link'] = this.createLinkControl();
+				moreOptions.sub_items['lock'] = this.createControl(lock_icon, l10n.ctrl.lock_image, 'lockImage');
+
+				controls.push(moreOptions);
 			}
 
-			moreOptions.icon = 'more';
-			moreOptions.tooltip = l10n.ctrl.caption_position;
+			controls.push(this.createPaddingControl());
+			controls.push(this.createControl('settings', Upfront.Settings.l10n.global.views.settings, 'on_settings_click'));
 
-			moreOptions.sub_items = {}
-			moreOptions.sub_items['swap'] = this.createControl('swap', l10n.btn.swap_image, 'openImageSelector');
-			moreOptions.sub_items['crop'] = this.createControl('crop', l10n.ctrl.edit_image, 'editRequest');
-			moreOptions.sub_items['link'] = this.createLinkControl();
-			moreOptions.sub_items['lock'] = this.createControl(lock_icon, l10n.ctrl.lock_image, 'lockImage');
-
-			var controlls =  _([
-				moreOptions,
-				this.createPaddingControl(),
-				this.createControl('settings', Upfront.Settings.l10n.global.views.settings, 'on_settings_click')
-			]);
-
-		return controlls;
+			return _(controls);
 		}
 	});
 

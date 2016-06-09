@@ -157,43 +157,58 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	setMobileMode: function(){
 		var type = this.model.get_property_value_by_name('part_type');
 		if ( type !== 'featured_image' ) return;
-		var props = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data');
+		var props = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data'),
+			is_featured_image_set = this.object_group_view.is_featured_image_set()
+		;
 
 		this.$el.find('.upfront-entity-size-hint').hide();
-		this.$el.find('.thumbnail img').css('min-height', 'none').addClass('uimage-mobile-mode');
 		this.$el.find('.upostdata-part.thumbnail').css('width', '100%').css('height', 'auto');
 		this.$el.find('.upost_thumbnail_changer').hide();
 		this.$el.find('.thumbnail img')
+				.addClass('uimage-mobile-mode')
 				.css({
 					position: 'static',
 					maxWidth: '100%',
-					width: ( props.stretch ? '100%' : props.imageSize.width ),
-					height: 'auto'
+					width: ( !is_featured_image_set || !props || props.stretch ? '100%' : props.imageSize.width ),
+					height: 'auto',
+					minHeight: 'none'
 				})
-				.attr('src', props.src)
 		;
+		if ( is_featured_image_set && props ) {
+			this.$el.find('.thumbnail img').attr('src', props.src);
+		}
+		this.$el.find('.upfront-object-content').css({
+			minHeight: '',
+			maxHeight: ''
+		});
 	},
 
 	unsetMobileMode: function () {
 		var type = this.model.get_property_value_by_name('part_type');
 		if ( type !== 'featured_image' ) return;
-		var props = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data');
+		var props = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data'),
+			is_featured_image_set = this.object_group_view.is_featured_image_set()
+		;
 
 		this.$el.find('.upfront-entity-size-hint').hide();
-		this.$el.find('.thumbnail img').css('min-height', 'none').removeClass('uimage-mobile-mode');
-		this.$el.find('.upostdata-part.thumbnail').css('width', props.maskSize.width).css('height', props.maskSize.height);
+		this.$el.find('.upostdata-part.thumbnail').css('width', props ? props.maskSize.width : '').css('height', props ? props.maskSize.height : '');
 		this.$el.find('.upost_thumbnail_changer').show();
 		this.$el.find('.thumbnail img')
+			.removeClass('uimage-mobile-mode')
 			.css({
 				position: 'relative',
 				maxWidth: '',
-				width: props.imageSize.width,
-				height: props.imageSize.height,
-				top: -props.imageOffset.top,
-				left: -props.imageOffset.left
+				minHeight: 'none',
+				width: props ? props.imageSize.width : '',
+				height: props ? props.imageSize.height : '',
+				top: props ? -props.imageOffset.top : '',
+				left: props ? -props.imageOffset.left : ''
 			})
-			.attr('src', props.srcFull)
 		;
+		if ( is_featured_image_set && props ) {
+			this.$el.find('.thumbnail img').attr('src', props.srcFull)
+		}
+		this.adjust_featured_image();
 	},
 
 	update_height: function () {
@@ -218,15 +233,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			padding_top = parseInt($me.css('padding-top'), 10),
 			padding_bottom = parseInt($me.css('padding-bottom'), 10)
 		;
-		if ( type != 'featured_image' ) return;
-		if ( this.object_group_view.mobileMode ) {
-			var $container = this.$el.find('.upfront-object-content');
-			$container.css({
-				minHeight: '',
-				maxHeight: ''
-			})
-			return;
-		}
+		if ( type != 'featured_image' || this.object_group_view.mobileMode ) return;
 		if ( this._editor_prepared && this.editor_view ) {
 			this.editor_view.updateImageSize();
 		}
