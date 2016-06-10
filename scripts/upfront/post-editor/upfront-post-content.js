@@ -357,6 +357,7 @@ PostContentEditor.prototype = {
 				this.parent.setSelection(node, true);
 			},
 			contentChanged: function (content, callFrom) {
+				if ( typeof this.$content === 'undefined' ) return;
 				if ( this.$content && ( callFrom == this || !this.$content.redactor || !this.$content.redactor.code ) ) return;
 				this.$content.redactor('code.set', content);
 			}
