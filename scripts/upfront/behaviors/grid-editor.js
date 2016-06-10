@@ -993,6 +993,7 @@ var GridEditor = {
 	 * Update wrappers
 	 */
 	update_wrappers: function (parent_model, $parent) {
+		if ( !parent_model ) return;
 		this.time_start('fn update_wrappers');
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,

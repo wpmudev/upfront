@@ -268,8 +268,12 @@ DragDrop.prototype = {
 				region_name = $region.data('name'),
 				region = is_region ? area : ed.get_region($region),
 				region_model = regions.get_by_name(region_name),
-				area_model = is_region ? region_model : ( area.view ? area.view.model : region_model.get('modules').get_by_element_id(area.$el.attr('id')) ),
-				modules = area_model.get('modules') || area_model.get('objects'),
+				area_model = is_region ? region_model : ( area.view ? area.view.model : region_model.get('modules').get_by_element_id(area.$el.attr('id')) )
+			;
+				
+			if ( !area_model ) return;
+				
+			var modules = area_model.get('modules') || area_model.get('objects'),
 				wrappers = area_model.get('wrappers'),
 				lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint.id, area.col),
 				/*$wraps = Upfront.Util.find_sorted($area, '> .upfront-wrapper:visible').filter(function(){
@@ -1111,11 +1115,17 @@ DragDrop.prototype = {
 			this.current_region.$el.addClass('upfront-region-drag-active');
 		}
 		this.current_region_model = regions.get_by_name(this.current_region.region);
+		
+		var current_region_model_wrapper = ( this.current_region_model )
+			? this.current_region_model.get('wrappers')
+			: false
+		;
+		
 		this.current_wrappers = this.is_parent_group
 			? this.view.group_view.model.get('wrappers')
 			: ( this.is_object
 				? this.view.object_group_view.model.get('wrappers')
-				: this.current_region_model.get('wrappers')
+				: current_region_model_wrapper
 			)
 		;
 		this.$current_container = this.is_parent_group
