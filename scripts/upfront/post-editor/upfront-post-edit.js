@@ -558,7 +558,7 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
             me.collection.add(term);
 			setTimeout( function () {
 				me.update();
-				me.render();
+				// me.render(); // avoid double render, update() already call render()
 			}, 100 );
         });
 		
@@ -574,14 +574,13 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
             $target = $(e.target),
             termId = $target.val()
             ;
-
         if(!$target.is(':checked')){
             this.collection.remove(this.allTerms.get(termId));
-        }
-        else
+        } else {
             this.collection.add(this.allTerms.get(termId));
-		
-		this.update();
+        }
+        this.collection.save();
+        Upfront.Events.trigger("editor:post:tax:updated", this.collection, this.tax);
 
     },
 
