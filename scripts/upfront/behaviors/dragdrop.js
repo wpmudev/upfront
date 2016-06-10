@@ -995,6 +995,9 @@ DragDrop.prototype = {
 			var drop = _.find(this.drops, function(each){
 				return each.is_me;
 			});
+			if ( this.region._id != this.current_region._id ) {
+				this.set_current_region();
+			}
 		}
 		this.select_drop_point(drop);
 		this.update_drop_position();
@@ -1210,8 +1213,14 @@ DragDrop.prototype = {
 			}
 			else {
 				var $drop_wrap = $drop.closest('.upfront-wrapper'),
-					wrapper_id = $drop_wrap.attr('id');
+					wrapper_id = $drop_wrap.attr('id'),
+					wrap_model = this.current_wrappers.get_by_wrapper_id(wrapper_id),
+					wrap_view = Upfront.data.wrapper_views[wrap_model.cid]
+				;
 				$drop.before(this.view.$el);
+				if ( wrap_view ) {
+					this.view.wrapper_view = wrap_view;
+				}
 			}
 			this.wrapper_id = wrapper_id;
 			this.model.set_property('wrapper_id', this.wrapper_id, true);

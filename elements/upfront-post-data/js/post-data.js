@@ -161,7 +161,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		this.$el.find('.upostdata-part.thumbnail').css('width', '100%').css('height', 'auto');
 		this.$el.find('.upost_thumbnail_changer').hide();
 
-		if(props.mode === "small" && props.isDotAlign) {
+		if(is_featured_image_set && props.mode === "small" && props.isDotAlign) {
 			this.$el.find('.upostdata-part.thumbnail').css('text-align', props.align);
 			this.$el.find('.thumbnail img')
 				.addClass('uimage-mobile-mode')
