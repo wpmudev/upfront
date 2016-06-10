@@ -188,7 +188,7 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 		$markup = upfront_get_template(
 			'post-image-insert',
 			array(
-				"style" => $style_variant,
+				"style" => '',
 				"data" => $data,
 			),
 			dirname(dirname(__FILE__)) . '/tpl/post-image-insert.php'
