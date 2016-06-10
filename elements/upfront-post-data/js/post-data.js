@@ -154,17 +154,17 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		var type = this.model.get_property_value_by_name('part_type');
 		if ( type !== 'featured_image' ) return;
 		var props = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data'),
-			is_featured_image_set = this.object_group_view.is_featured_image_set()
+			is_featured_image_set = this.object_group_view.is_featured_image_set(),
+			$image = this.$el.find('.thumbnail img'),
+			$image_container = $image.parent()
 		;
 
 		this.$el.find('.upfront-entity-size-hint').hide();
-		this.$el.find('.upostdata-part.thumbnail').css('width', '100%').css('height', 'auto');
 		this.$el.find('.upost_thumbnail_changer').hide();
 
 		if(is_featured_image_set && props.mode === "small" && props.isDotAlign) {
-			this.$el.find('.upostdata-part.thumbnail').css('text-align', props.align);
-			this.$el.find('.thumbnail img')
-				.addClass('uimage-mobile-mode')
+			$image_container.css('text-align', props.align);
+			$image.addClass('uimage-mobile-mode')
 				.css({
 					position: 'static',
 					maxWidth: '100%',
@@ -175,21 +175,18 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 				});
 				
 			if(props.valign === "center") {
-				this.$el.find('.thumbnail img')
-					.css({
-						marginTop: (props.maskSize.height / 2) - (props.imageSize.height / 2)
-					});
+				$image.css({
+					marginTop: (props.maskSize.height / 2) - (props.imageSize.height / 2)
+				});
 			}	
 			
 			if(props.valign === "bottom") {
-				this.$el.find('.thumbnail img')
-					.css({
-						marginTop: (props.maskSize.height - props.imageSize.height)
-					});
+				$image.css({
+					marginTop: (props.maskSize.height - props.imageSize.height)
+				});
 			}	
 		} else {
-			this.$el.find('.thumbnail img')
-				.addClass('uimage-mobile-mode')
+			$image.addClass('uimage-mobile-mode')
 				.css({
 					position: 'static',
 					maxWidth: '100%',
@@ -199,9 +196,20 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 				});
 			;
 		}
+		
+		// Set height auto to add possibility to remove the spacing
+		$image_container.parent().css({
+			width: '100%',
+			height: 'auto'
+		});
+		
+		$image_container.css({
+			width: '100%',
+			height: 'auto'
+		});
 
 		if ( is_featured_image_set && props ) {
-			this.$el.find('.thumbnail img').attr('src', props.src);
+			$image.attr('src', props.src);
 		}
 
 		this.$el.find('.upfront-object-content').css({
@@ -215,13 +223,17 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		var type = this.model.get_property_value_by_name('part_type');
 		if ( type !== 'featured_image' ) return;
 		var props = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data'),
-			is_featured_image_set = this.object_group_view.is_featured_image_set()
+			is_featured_image_set = this.object_group_view.is_featured_image_set(),
+			$image = this.$el.find('.thumbnail img'),
+			$image_container = $image.parent()
 		;
 
 		this.$el.find('.upfront-entity-size-hint').hide();
-		this.$el.find('.upostdata-part.thumbnail').css('width', props ? props.maskSize.width : '').css('height', props ? props.maskSize.height : '');
 		this.$el.find('.upost_thumbnail_changer').show();
-		this.$el.find('.thumbnail img')
+		
+		$image_container.css('width', props ? props.maskSize.width : '').css('height', props ? props.maskSize.height : '');
+		
+		$image
 			.removeClass('uimage-mobile-mode')
 			.css({
 				position: 'relative',
@@ -236,7 +248,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			})
 		;
 		if ( is_featured_image_set && props ) {
-			this.$el.find('.thumbnail img').attr('src', props.srcFull)
+			$image.attr('src', props.srcFull)
 		}
 		this.adjust_featured_image();
 	},
