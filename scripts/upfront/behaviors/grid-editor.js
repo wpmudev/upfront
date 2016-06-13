@@ -791,14 +791,16 @@ var GridEditor = {
 									{"name": "class", "value": ed.grid['class']+(wrap_el.grid.left+wrap_el.col-parent_el.grid.left)}
 								]
 							}),
-							wrap_view = new Upfront.Views.Wrapper({model: wrap_model});
+							wrap_view = new Upfront.Views.Wrapper({model: wrap_model})
+						;
 						wrappers.add(wrap_model);
 						wrap_model.add_class('clr');
 						wrap_view.parent_view = wrap_el_view.parent_view;
+						wrap_el_view.wrapper_view = wrap_view;
 						wrap_view.render();
 						wrap_el.$el.closest('.upfront-wrapper').before(wrap_view.$el);
 						wrap_view.$el.append(wrap_el_view.$el);
-						wrap_el_model.set_property('wrapper_id', wrapper_id, true);
+						wrap_el_model.set_property('wrapper_id', wrapper_id);
 						Upfront.data.wrapper_views[wrap_model.cid] = wrap_view;
 						ed.init_margin(wrap_el);
 						if ( is_parent_group ) {
@@ -2245,11 +2247,12 @@ var GridEditor = {
 						;
 						wrappers.add(wrap_model);
 						wrap_view.parent_view = each_module_view.parent_view;
+						each_module_view.wrapper_view = wrap_view;
 						wrap_view.render();
 						wrap_view.$el.append(each_module_view.$el);
 						current_wrapper_view.$el.after(wrap_view.$el);
 						Upfront.data.wrapper_views[wrap_model.cid] = wrap_view;
-						each_module.model.set_property('wrapper_id', wrapper_id, true);
+						each_module.model.set_property('wrapper_id', wrapper_id);
 						current_wrapper = wrap_model;
 					}
 				});

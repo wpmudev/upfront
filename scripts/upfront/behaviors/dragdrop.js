@@ -1233,7 +1233,7 @@ DragDrop.prototype = {
 				}
 			}
 			this.wrapper_id = wrapper_id;
-			this.model.set_property('wrapper_id', this.wrapper_id, true);
+			this.model.set_property('wrapper_id', this.wrapper_id);
 
 			if ( this.$wrap.find(this.el_selector).length == 0 ){
 				if ( this.wrap && this.wrap.grid.left == this.current_region.grid.left ) {
@@ -1252,7 +1252,8 @@ DragDrop.prototype = {
 			wrappers = this.current_wrappers,
 			$me = this.$me,
 			$wrap = this.$wrap,
-			region_view = Upfront.data.region_views[this.current_region_model.cid]
+			region_view = Upfront.data.region_views[this.current_region_model.cid],
+			breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled()
 		;
 		// normalize clear
 		_.each(ed.wraps, function(each){
@@ -1272,13 +1273,37 @@ DragDrop.prototype = {
 
 		ed.update_model_margin_classes( $me, [ed.grid['class'] + this.drop_col] );
 
-		// Remove breakpoint value if dropped to inside/move to other region
-		if ( this.drop.type == 'inside' || this.move_region ) {
-			var wrap_model = this.current_wrappers.get_by_wrapper_id($wrap.attr('id'));
+		// Remove breakpoint value if dropped to other region
+		if ( this.move_region ) {
+			var wrap_model = wrappers.get_by_wrapper_id($wrap.attr('id'));
 			if ( wrap_model ) {
 				wrap_model.remove_property('breakpoint', true);
 			}
 			this.model.remove_property('breakpoint', true);
+		}
+		// Update breakpoint value if dropped to inside
+		if ( this.drop.type == 'inside' ) {
+			var wrap_model = wrappers.get_by_wrapper_id(this.wrapper_id);
+			if ( wrap_model ) {
+				var wrap_breakpoint = wrap_model.get_property_value_by_name('breakpoint') || {},
+					this_breakpoint = this.model.get_property_value_by_name('breakpoint') || {}
+				;
+				_.each(breakpoints, function(each){
+					var breakpoint = each.toJSON();
+					if ( breakpoint['default'] ) return;
+					if ( wrap_breakpoint && wrap_breakpoint[breakpoint.id] && wrap_breakpoint[breakpoint.id].edited ) {
+						if ( ! _.isObject(this_breakpoint[breakpoint.id]) ) {
+							this_breakpoint[breakpoint.id] = { edited: false };
+						}
+						// Wrapper is edited in this breakpoint, let's apply columns from wrapper for this breakpoint
+						if ( !this_breakpoint[breakpoint.id].edited && _.isNumber(wrap_breakpoint[breakpoint.id].col) ) {
+							this_breakpoint[breakpoint.id].col = wrap_breakpoint[breakpoint.id].col;
+							this_breakpoint[breakpoint.id].edited = true;
+							this.model.set_property('breakpoint', Upfront.Util.clone(this_breakpoint));
+						}
+					}
+				});
+			}
 		}
 
 		// If the drop is to side, also update the elements on the same row
