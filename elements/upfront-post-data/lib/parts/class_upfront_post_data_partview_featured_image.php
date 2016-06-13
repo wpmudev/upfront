@@ -44,8 +44,20 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 
 				// We need this only for front-end
 				if (!empty($data) && ($data['imageSize']['width'] < $data['maskSize']['width'] || $data['imageSize']['height'] < $data['maskSize']['height'])) {
-						$featured_data = "data-featured-image='{ \"offsetTop\": ". -$data['imageOffset']['top'] .", \"offsetLeft\": ". -$data['imageOffset']['left'] .", \"offsetWidth\": ". $data['maskSize']['width'] .", \"offsetHeight\": ". $data['maskSize']['height'] ." }' data-featured-align='".$data['align']."' data-featured-valign='".$data['valign']."' data-featured-dotalign='".$data['isDotAlign']."' data-featured-mode='".$data['mode']."'";
-						$featured_class = 'class="upfront-featured-image-smaller"';
+					$offsetTop = -$data['imageOffset']['top'];
+					$offsetLeft = -$data['imageOffset']['left'];
+					
+					// If image croppped we dont need the negative left & top
+					if($data['imageSize']['height'] > $data['maskSize']['height']) {
+						$offsetTop = 0;
+					}
+					
+					if($data['imageSize']['width'] > $data['maskSize']['width']) {
+						$offsetLeft = 0;
+					}
+					
+					$featured_data = "data-featured-image='{ \"offsetTop\": ". $offsetTop .", \"offsetLeft\": ". $offsetLeft .", \"offsetWidth\": ". $data['maskSize']['width'] .", \"offsetHeight\": ". $data['maskSize']['height'] ." }' data-featured-align='".$data['align']."' data-featured-valign='".$data['valign']."' data-featured-dotalign='".$data['isDotAlign']."' data-featured-mode='".$data['mode']."'";
+					$featured_class = 'class="upfront-featured-image-smaller"';
 				}
 				
 				if(empty($data)) {
