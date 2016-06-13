@@ -7118,9 +7118,10 @@ define([
 				if (
 					typeof currentEntity === 'undefined' ||
 					!currentEntity ||
-					!currentEntity instanceof ObjectView ||
+					!(currentEntity instanceof ObjectView) ||
 					currentEntity.$el.find( '.redactor-box' ).length > 0 ||
-					!currentEntity.paddingControl
+					!currentEntity.paddingControl ||
+					currentEntity.$el.find("[contenteditable]:focus").length // This is for cases where single-line editable is active (e.g. post title)
 				) {
 					return;
 				}
