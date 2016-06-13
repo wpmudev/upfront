@@ -33,6 +33,10 @@ var LayoutEditorSubapplication = Subapplication.extend({
 	save_layout: function () {
 		this._save_layout(this.layout.get("current_layout"));
 	},
+	
+	save_post_layout: function ($post_layout_key) {
+		this._save_layout($post_layout_key);
+	},
 
 	save_layout_meta: function () {
 		this._save_layout_meta(this.layout.get("current_layout"));
@@ -297,7 +301,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		// Layout manipulation
 		this.listenTo(Upfront.Events, "command:exit", this.destroy_editor);
 		this.listenTo(Upfront.Events, "command:layout:save", this.save_layout);
-		this.listenTo(Upfront.Events, "command:layout:save_post_layout", this.save_layout);
+		this.listenTo(Upfront.Events, "command:layout:save_post_layout", this.save_post_layout);
 		this.listenTo(Upfront.Events, "command:layout:save_meta", this.save_layout_meta);
 		this.listenTo(Upfront.Events, "command:layout:delete_layout", this.delete_layout);
 		this.listenTo(Upfront.Events, "command:layout:reset_changes", this.reset_changes);
