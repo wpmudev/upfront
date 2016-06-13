@@ -297,6 +297,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		// Layout manipulation
 		this.listenTo(Upfront.Events, "command:exit", this.destroy_editor);
 		this.listenTo(Upfront.Events, "command:layout:save", this.save_layout);
+		this.listenTo(Upfront.Events, "command:layout:save_post_layout", this.save_layout);
 		this.listenTo(Upfront.Events, "command:layout:save_meta", this.save_layout_meta);
 		this.listenTo(Upfront.Events, "command:layout:delete_layout", this.delete_layout);
 		this.listenTo(Upfront.Events, "command:layout:reset_changes", this.reset_changes);
@@ -343,6 +344,9 @@ var LayoutEditorSubapplication = Subapplication.extend({
 					fixed: true
 				});
 				loading.render();
+				// if there are any active loading overlay, remove it first
+				if ( $('.upfront-loading').length ) $('.upfront-loading').remove();
+				// append loading overlay
 				$('body').append(loading.$el);
 			},
 			stop = function (success) {

@@ -290,11 +290,15 @@ var Box = Backbone.View.extend({
 	save_as_publish: function() {
 		// instead of publishing here directly, wait for User's action on Save As Dialog via "command:proceed:save:post" Upfront Events
 		this.stopListening(Upfront.Events, 'command:proceed:save:post');
-		this.listenTo(Upfront.Events, 'command:proceed:save:post', this.publish);
+		this.listenTo(Upfront.Events, 'command:proceed:save:post', this.save_post);
 		Upfront.Events.trigger('command:layout:layout_changes', this.layout_modified);
 		
 		// if no layout changes, then just publish directly
-		if ( !this.layout_modified ) this.publish();
+		if ( !this.layout_modified ) this.save_post();
+	},
+	save_post: function () {
+		this.publish();
+		Upfront.Events.trigger('command:layout:save_post_layout');
 	},
     publish: function(){
         var me = this;
@@ -331,6 +335,8 @@ var Box = Backbone.View.extend({
         this.post.trigger('editor:draft');
         this.trigger('draft');
         Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post, true);// last true means 'saving draft'
+				
+        if ( this.post.get("post_type") == 'post' ) Upfront.Events.trigger('command:layout:save_post_layout');
     },
 
     trash: function(){
