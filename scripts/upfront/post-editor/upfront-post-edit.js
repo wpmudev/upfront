@@ -19,7 +19,7 @@ var Box = Backbone.View.extend({
         'click .ueditor-action-preview': 'navigate_to_preview',
         'click .ueditor-button-cancel-edit': 'cancel',
         'click .ueditor-action-publish': 'publish',
-        'click .ueditor-action-draft': 'saveDraft',
+        'click .ueditor-action-draft': 'saveAsDraft',
         'click .ueditor-action-trash': 'trash',
         'click .ueditor-box-title': 'toggle_section',
         'click .ueditor-save-post-data': 'save_post_data'
@@ -329,14 +329,17 @@ var Box = Backbone.View.extend({
         me.fadein_other_elements();
         me._stop_overlay();
     },
-
-    saveDraft: function(e){
-        if ( typeof e !== 'undefined' ) e.preventDefault();
+    saveAsDraft: function (e) {
+        e.preventDefault();
+        this.saveDraft();
+        // saveAsDraft() was triggered from Save Draft button which does not include saving layout
+        // so needs to fire global event to save it
+        Upfront.Events.trigger('command:layout:save_post_layout');
+    },
+    saveDraft: function(){
         this.post.trigger('editor:draft');
         this.trigger('draft');
         Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post, true);// last true means 'saving draft'
-				
-        if ( this.post.get("post_type") == 'post' ) Upfront.Events.trigger('command:layout:save_post_layout');
     },
 
     trash: function(){
