@@ -891,7 +891,7 @@ var PageTemplateEditor = PostSectionView.extend({
 		$content.find('.upfront-apply-page-modal').append(cancel_button.$el);
 
 		var continue_button = new Upfront.Views.Editor.Field.Button({
-			label: l10n.global.conten['continue'],
+			label: l10n.global.content['continue'],
 			classname: 'upfront-continue-apply-template',
 			compact: true,
 			on_click: function(e) {
