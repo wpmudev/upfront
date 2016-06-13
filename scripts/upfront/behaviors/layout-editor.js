@@ -725,6 +725,10 @@ var LayoutEditor = {
 				var selected = $(this).attr('data-save-as');
 				$bg.remove(); $dialog.remove();
 				on_complete.apply(context, [selected]);
+				
+				// call the listener on upfront-post-edit.js to continue saving post object
+				Upfront.Events.trigger('command:proceed:save:post');
+				
 				return false;
 			});
 			$("#upfront-save-dialog-background").on("click", function () {
