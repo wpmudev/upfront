@@ -313,11 +313,16 @@ var Box = Backbone.View.extend({
                 return;
             }
         } else {
-            // assume to publish if no selected status on sidebar
-            this.post.set("post_status", 'publish');
-            Upfront.Events.trigger("global:status:change", 'publish');
+			// assume to publish if no selected status on sidebar
+			// but also account for private
+			var visibility = (this.post || {}).getVisibility && 'private' === this.post.getVisibility()
+				? 'private'
+				: 'publish'
+			;
+            this.post.set("post_status", visibility);
+            Upfront.Events.trigger("global:status:change", visibility);
         }
-				
+
         me.post.trigger('editor:publish');
         me.trigger('publish');
         Upfront.Events.trigger('upfront:element:edit:stop', 'write', me.post);
