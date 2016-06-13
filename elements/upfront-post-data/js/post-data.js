@@ -744,12 +744,25 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		}
 			
 		// Check if featured image element
-		var type = this.model.get_property_value_by_name("data_type");
+		var type = this.model.get_property_value_by_name("data_type"),
+			is_locked = this.property('is_locked');
 		if(type !== "featured_image" || !this.is_featured_image_set()) return;
 
 		this.get_thumb_data(); // Always get thumb data so this.resizingData is fresh on each resize start
 
 		this.$('.thumbnail').find('img').css('min-height', 'auto');
+
+		if(this.resizingData.data.checkSize === "small" && is_locked === false) {
+			// Update data 
+			this.resizingData.data.position = { left: 0, top: 0 }
+			
+			// Let's position image to top left corner
+			this.$el.find('.thumbnail img').css({
+				left: '0px',
+				top: '0px',
+				marginTop: 0
+			});
+		}
 	},
 	
 	on_element_resizing: function(attr) {
