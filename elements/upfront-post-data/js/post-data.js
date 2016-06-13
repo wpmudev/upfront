@@ -943,6 +943,9 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 				elementHeight = parseInt(attr.height, 10),
 				elementSize = {width: elementWidth < 0 ? 10 : elementWidth, height: elementHeight < 0 ? 10 : elementHeight}
 			;
+			
+			// Update maskSize
+			maskSize = { width: attr.width, height: attr.height }
 
 			// Change the sign
 			imgPosition.top = -imgPosition.top;
@@ -953,6 +956,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 			this.temporaryProps = {
 				size: imgSize,
+				maskSize: maskSize,
 				position: imgPosition
 			};
 
@@ -1197,6 +1201,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			'imageSize': resize,
 			'imageOffset': position,
 			'position': position,
+			'maskSize': this.temporaryProps.maskSize
 		});
 		
 		Upfront.Events.trigger("featured:image:resized", newImageData);
@@ -1225,6 +1230,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 					'stretch': resize.width >= elementSize.width,
 					'vstretch': resize.height >= elementSize.height,
 					'gifImage': imageData.gif,
+					'maskSize': me.temporaryProps.maskSize,
 					'cropBig': me.resizingData.data.cropBig
 				});
 				
