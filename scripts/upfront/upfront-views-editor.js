@@ -12204,7 +12204,10 @@
 					model.set({ 'active': false }, { 'silent': true });
 				});
 
+				// Trigger multiple events so we can have some sort of priority order
 				Upfront.Events.trigger("upfront:layout_size:change_breakpoint", changed_model.toJSON(), prev_active_json);
+				Upfront.Events.trigger("upfront:layout_size:change_breakpoint:secondary", changed_model.toJSON(), prev_active_json);
+				Upfront.Events.trigger("upfront:layout_size:change_breakpoint:tertiary", changed_model.toJSON(), prev_active_json);
 
 				//todo This should go somewhere else
 				if (this.prev_active) {

@@ -335,7 +335,8 @@ var LayoutEditor = {
 			group_wrapper_id = false,
 			group_col = 0,
 			add_index = false,
-			top_add_index = false
+			top_add_index = false,
+			breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled()
 		;
 		_.each(lines, function (l, li) {
 			group_col = l.col > group_col ? l.col : group_col;
@@ -437,6 +438,25 @@ var LayoutEditor = {
 		group.set_property('element_id', group_id);
 		group.replace_class(grid_ed.grid['class'] + group_col);
 		group.set_property('original_col', group_col);
+		// Let's try to update breakpoint data as needed too
+		var wrapper_data = group_wrapper && group_wrapper.get_property_value_by_name('breakpoint') || {},
+			data = group.get_property_value_by_name('breakpoint') || {}
+		;
+		_.each(breakpoints, function(each){
+			var breakpoint = each.toJSON();
+			if ( breakpoint['default'] ) return;
+			if ( wrapper_data && wrapper_data[breakpoint.id] && wrapper_data[breakpoint.id].edited ) {
+				if ( ! _.isObject(data[breakpoint.id]) ) {
+					data[breakpoint.id] = { edited: false };
+				}
+				// Wrapper is edited in this breakpoint, let's apply columns from wrapper for this breakpoint
+				if ( !data[breakpoint.id].edited && _.isNumber(wrapper_data[breakpoint.id].col) ) {
+					data[breakpoint.id].col = wrapper_data[breakpoint.id].col;
+					data[breakpoint.id].edited = true;
+					group.set_property('breakpoint', Upfront.Util.clone(data));
+				}
+			}
+		});
 		group.add_to(region_modules, add_index);
 		Upfront.Events.trigger("entity:module_group:group", group, region);
 	},

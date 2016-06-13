@@ -1889,6 +1889,13 @@ define([
 					this.render();
 					this.handle_visual_padding_hint(prop);
 				}
+				else if ( prop.id == 'wrapper_id' ) {
+					// Updated wrapper, re-listen to wrapper update position
+					if ( this.wrapper_view ) {
+						this.stopListening(this.wrapper_view, 'update_position');
+						this.listenTo(this.wrapper_view, 'update_position', this.on_wrapper_update);
+					}
+				}
 				else {
 					this.render();
 				}
@@ -2884,7 +2891,7 @@ define([
 
 				this.on('on_layout', this.render_new_object, this);
 				//this.on('entity:resize_stop', this.on_resize, this);
-				this.on('entity:drop', this.on_drop, this);
+				//this.on('entity:drop', this.on_drop, this);
 				this.on('region:updated', this.on_region_update, this);
 
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
@@ -2968,6 +2975,12 @@ define([
 					});
 				} else if ( prop.id == 'breakpoint' ) {
 					this.update_position();
+				} else if ( prop.id == 'wrapper_id' ) {
+					// Updated wrapper, re-listen to wrapper update position
+					if ( this.wrapper_view ) {
+						this.stopListening(this.wrapper_view, 'update_position');
+						this.listenTo(this.wrapper_view, 'update_position', this.on_wrapper_update);
+					}
 				}
 				Upfront.Events.trigger('entity:module:update', this, this.model);
 			},
@@ -3104,11 +3117,7 @@ define([
 				// on resize
 			},
 			on_drop: function (attr) {
-				// Listen to wrapper update position
-				if ( this.wrapper_view ) {
-					this.stopListening(this.wrapper_view, 'update_position');
-					this.listenTo(this.wrapper_view, 'update_position', this.on_wrapper_update);
-				}
+				// on drop
 			},
 			on_region_update: function(){
 				if ( this._objects_view ) {
@@ -3460,6 +3469,14 @@ define([
 					default_col = ed.get_class_num(prop_class, grid['class']),
 					prev_col, col
 				;
+				if ( prop && "id" in prop && prop.id == 'wrapper_id' ) {
+					// Updated wrapper, re-listen to wrapper update position
+					if ( this.wrapper_view ) {
+						this.stopListening(this.wrapper_view, 'update_position');
+						this.listenTo(this.wrapper_view, 'update_position', this.on_wrapper_update);
+					}
+					return;
+				}
 				if ( Upfront.Application.layout_ready ) {
 					prev_col = ( !breakpoint || breakpoint['default'] ) ? ed.get_class_num(this._prev_class, grid['class']) : this.$el.data('breakpoint_col');
 					col = ( !breakpoint || breakpoint['default'] ) ? ed.get_class_num(prop_class, grid['class']) : this.model.get_breakpoint_property_value('col');
@@ -6685,7 +6702,6 @@ define([
 				// this.model.bind("remove", this.on_remove, this);
 				this.listenTo(this.model, 'remove', this.on_remove);
 
-				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, 'entity:module:update_position', this.on_module_update);
 				this.listenTo(Upfront.Events, 'entity:modules:render_module', this.on_module_update);
 				this.listenTo(Upfront.Events, 'entity:object:update_position', this.on_object_update);
@@ -6703,6 +6719,23 @@ define([
 					col = Upfront.Behaviors.GridEditor.get_class_num(model_cls, grid['class'])
 				;
 				Upfront.Events.trigger('entity:wrapper:before_render', this, this.model);
+
+				this.stopListening(Upfront.Events, "upfront:layout_size:change_breakpoint");
+				this.stopListening(Upfront.Events, "upfront:layout_size:change_breakpoint:secondary");
+				this.stopListening(Upfront.Events, "upfront:layout_size:change_breakpoint:tertiary");
+				if ( this.parent_view && 'group_view' in this.parent_view && this.parent_view.group_view ) {
+					// This is inside group, attach to secondary event
+					this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint:secondary", this.on_change_breakpoint);
+				}
+				else if ( this.parent_view && 'object_group_view' in this.parent_view && this.parent_view.object_group_view ) {
+					// This is inside object group, attach to tertiary event
+					this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint:tertiary", this.on_change_breakpoint);
+				}
+				else {
+					// This is normal, run first
+					this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+				}
+
 				this.$el.html(template);
 				this.$el.data('default_col', col);
 				this.$el.data('current_col', col);
@@ -7085,9 +7118,10 @@ define([
 				if (
 					typeof currentEntity === 'undefined' ||
 					!currentEntity ||
-					!currentEntity instanceof ObjectView ||
+					!(currentEntity instanceof ObjectView) ||
 					currentEntity.$el.find( '.redactor-box' ).length > 0 ||
-					!currentEntity.paddingControl
+					!currentEntity.paddingControl ||
+					currentEntity.$el.find("[contenteditable]:focus").length // This is for cases where single-line editable is active (e.g. post title)
 				) {
 					return;
 				}
