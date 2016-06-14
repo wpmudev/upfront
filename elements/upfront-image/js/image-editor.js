@@ -812,6 +812,9 @@ define([
 			limitLeft = limits[2],
 			limitTop = limits[3];
 			
+			// If image cant be dragged return
+			if(limitRight === limitLeft && limitBottom === limitTop) return;
+
 			// Image is top left
 			if(limitLeft === left && limitTop === top) {
 				this.setDotAlignPosition('top', 'left');
