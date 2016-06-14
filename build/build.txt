@@ -196,6 +196,7 @@ C:/Users/diobethray/Documents/diobeth/vagrantthree/www/upfrontthree/wp-content/t
 text!elements/upfront-login/css/edit.css
 text!elements/upfront-login/css/public.css
 text!elements/upfront-login/tpl/preset-style.html
+C:/Users/diobethray/Documents/diobeth/vagrantthree/www/upfrontthree/wp-content/themes/upfront/elements/upfront-login/js/preset-settings.js
 C:/Users/diobethray/Documents/diobeth/vagrantthree/www/upfrontthree/wp-content/themes/upfront/elements/upfront-login/js/upfront_login.js
 text!elements/upfront-maps/css/edit.css
 C:/Users/diobethray/Documents/diobeth/vagrantthree/www/upfrontthree/wp-content/themes/upfront/elements/upfront-maps/js/upfront_maps.js

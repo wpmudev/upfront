@@ -2,12 +2,13 @@
 define([
 	'text!elements/upfront-login/css/edit.css',
 	'text!elements/upfront-login/css/public.css',
+	'elements/upfront-login/js/preset-settings',
 	'scripts/upfront/element-settings/settings',
 	'scripts/upfront/element-settings/root-settings-panel',
 	'scripts/upfront/element-settings/advanced-settings',
 	'scripts/upfront/preset-settings/util',
 	'text!elements/upfront-login/tpl/preset-style.html'
-], function (editor_style, public_style, ElementSettings, RootSettingsPanel, AdvancedSettings, Util, styleTpl) {
+], function (editor_style, public_style, LoginPresetSettings, ElementSettings, RootSettingsPanel, AdvancedSettings, Util, styleTpl) {
 
 	$("head").append("<style>" + editor_style + "</style>");
 	$("head").append("<style>" + public_style + "</style>");
@@ -239,162 +240,68 @@ define([
 			return previewField;
 		}
 	});
-
+	
 	var LoginSettings = ElementSettings.extend({
+		className: 'login-element-settings',
+		events: _.extend({},ElementSettings.prototype.events, this.events, {
+			'change input[name="partStyle"]': 'toggle_part_style',
+    }),
 		panels: {
 			General: LoginSettings_Panel,
-			Appearance: {
-				mainDataCollection: 'loginPresets',
-				styleElementPrefix: 'login-preset',
-				ajaxActionSlug: 'login',
-				panelTitle: l10n.settings,
-				presetDefaults: Upfront.mainData.presetDefaults.login,
-				styleTpl: styleTpl,
-				stateModules: {
-					Global: [
-						{
-							moduleType: 'Selectbox',
-							options: {
-								state: 'global',
-								default_value: 'element_wrapper',
-								title: '',
-								custom_class: 'image_style',
-								label: l10n.preset.part_to_style,
-								fields: {
-									name: 'partstyle'
-								},
-								values: [
-									{ label: "Element Wrapper", value: 'element_wrapper' },
-									{ label: "Field Labels", value: 'field_labels' },
-									{ label: "Input Fields", value: 'input_fields' },
-									{ label: "Button", value: 'button' },
-									{ label: "Lost Password Text", value: 'lost_password_text' },
-									{ label: "Log in Trigger", value: 'login_trigger' },
-								]
-							}
-						},
-						{
-							moduleType: 'Colors',
-							options: {
-								title: '',
-								multiple: false,
-								single: true,
-								state: 'element-wrapper-settings',
-								abccolors: [
-									{
-										name: 'wrapper_background',
-										label: 'Wrapper Background'
-									}
-								]
-							}
-						},
-						{
-							moduleType: 'Border',
-							options: {
-								state: 'element-wrapper-settings',
-								title: '',
-								fields: {
-									use: 'useborder',
-									width: 'borderwidth',
-									type: 'bordertype',
-									color: 'bordercolor',
-								}
-							}
-						},
-						{
-							moduleType: 'Radius',
-							options: {
-								state: 'element-wrapper-settings',
-								max_value: 100,
-								fields: {
-									use: 'useradius',
-									lock: 'borderradiuslock',
-									radius: 'radius',
-									radius_number: 'radius_number',
-									radius1: 'borderradius1',
-									radius2: 'borderradius2',
-									radius3: 'borderradius3',
-									radius4: 'borderradius4'
-								}
-							}
-						},
-						
-					],
-					Static: [
-						{
-							state: 'field-labels-settings'
-						},
-						{
-							moduleType: 'Typography',
-							options: {
-								state: 'field-labels-settings',
-								title: Upfront.Settings.l10n.global.views.typography,
-								toggle: true,
-								global_typography: false,
-								fields: {
-									typeface: 'fontface',
-									fontstyle: 'fontstyle',
-									weight: 'weight',
-									style: 'style',
-									size: 'fontsize',
-									line_height: 'lineheight',
-									color: 'color',
-									use: 'usetypography'
-								}
-							}
-						},
-					],
-					Hover: [
-						{
-							moduleType: 'Typography',
-							options: {
-								state: 'field-labels-settings',
-								title: Upfront.Settings.l10n.global.views.typography,
-								toggle: true,
-								global_typography: false,
-								fields: {
-									typeface: 'fontface',
-									fontstyle: 'fontstyle',
-									weight: 'weight',
-									style: 'style',
-									size: 'fontsize',
-									line_height: 'lineheight',
-									color: 'color',
-									use: 'usetypography'
-								}
-							}
-						},
-					],
-					Focus: [
-						{
-							moduleType: 'Typography',
-							options: {
-								state: 'field-labels-settings',
-								title: Upfront.Settings.l10n.global.views.typography,
-								toggle: true,
-								global_typography: false,
-								fields: {
-									typeface: 'fontface',
-									fontstyle: 'fontstyle',
-									weight: 'weight',
-									style: 'style',
-									size: 'fontsize',
-									line_height: 'lineheight',
-									color: 'color',
-									use: 'usetypography'
-								}
-							}
-						},
-					]
-				}
-			}
+			Appearance: LoginPresetSettings
 		},
 
 		title: l10n.settings,
 
 		get_title: function () {
 			return l10n.settings;
-		}
+		},
+		render: function () {
+			ElementSettings.prototype.render.call(this);
+			
+			var me = this,
+				part_style = me.get_preset_property("partStyle")
+			;
+			setTimeout(function(){
+				if ( part_style === 'element_wrapper' ) {
+					me.default_view();
+				} else {
+					me.toggle_view(part_style);
+				}
+			},100);
+		},
+		toggle_part_style: function (e) {
+			var selected = $(e.target).val();
+			if ( selected === 'element_wrapper' ) {
+				this.default_view();
+			} else {
+				this.toggle_view(selected);
+			}
+		},
+		default_view: function () {
+			this.$el.find('.state_settings_button_wrapper').hide();
+			this.$el.find('.state_modules.state_settings').hide();
+			this.$el.find('[class^="element_wrapper_settings"]').closest('.settings_module').show();
+		},
+		toggle_view: function (selected) {
+			var me = this;
+			this.$el.find('.settings_module').not(':first').hide();
+			this.$el.find('.state_settings_button_wrapper').show();
+			this.$el.find('[class^="'+ selected +'_settings"]').closest('.settings_module').show();
+			setTimeout(function(){
+				me.$el.find('.state_settings_button.state_settings_button_static').click();
+			}, 100);
+			
+		},
+		get_preset_property: function(prop_name) {
+			var preset = this.model.get_property_value_by_name("preset"),
+				props = Util.getPresetProperties('login', preset) || {};
+
+			return ( typeof props[prop_name] !== 'undefined' )
+				? props[prop_name]
+				: false
+			;
+		},
 	});
 
 	var LoginSettings_Field_DisplayBehavior = Upfront.Views.Editor.Settings.Item.extend({
@@ -571,12 +478,10 @@ define([
 			this.add_module(module);
 		}
 	});
-
-
-
+	
 	// Generate presets styles to page
 	Util.generatePresetsToPage('login', styleTpl);
-
+	
 	Upfront.Application.LayoutEditor.add_object("Login", {
 		"Model": LoginModel,
 		"View": LoginView,
