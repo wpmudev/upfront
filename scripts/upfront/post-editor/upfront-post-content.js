@@ -354,7 +354,11 @@ PostContentEditor.prototype = {
 			focus: function () {
 				var node = this.$content.get(0);
 				node.focus();
-				this.parent.setSelection(node, true);
+				// only select all if still using the default layout
+				if ( typeof this.$content !== 'undefined' && this.$content ) {
+					if ( this.$content.text() === Upfront.Settings.l10n.global.ueditor.default_post_content ) 
+						this.parent.setSelection(node, true);
+				}
 			},
 			contentChanged: function (content, callFrom) {
 				if ( typeof this.$content === 'undefined' ) return;

@@ -281,6 +281,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'update_template_notification' => __('Template has been Updated. All new pages created with this template will use the Updated design.', 'upfront'),
 			),
 			'ueditor' => array(
+				'default_post_content' => __('Please type your content here...', 'upfront'),
 				'text_align' => __('Text alignment', 'upfront'),
 				'list_style' => __('List style', 'upfront'),
 				'more_tools' => __('More tools', 'upfront'),
