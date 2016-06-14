@@ -571,9 +571,11 @@ PostContentEditor.prototype = {
 					;
 					this.updateImageSize();
 				}
-
-				this.listenTo(this.parent, 'swap:image', this.openImageSelector);
-				this.listenTo(this.parent, 'edit:image', this.editThumb);
+				
+				this.parent.off('swap:image', this.openImageSelector);
+				this.parent.off('edit:image', this.editThumb);
+				this.parent.on('swap:image', this.openImageSelector, this);
+				this.parent.on('edit:image', this.editThumb, this);
 				this.listenTo(Upfront.Events, 'featured:image:resized', this.updateResized);
 			},
 			events: function () {
