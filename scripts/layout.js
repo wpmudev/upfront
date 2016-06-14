@@ -612,10 +612,26 @@ jQuery(document).ready(function($){
 				padding_top = parseInt($object.css('padding-top'), 10),
 				padding_bottom = parseInt($object.css('padding-bottom'), 10),
 				$img = $(this).find('img'),
+				$container = $(this),
+				imgHeight = $img.height(),
+				imgWidth = $img.width(),
+				breakpoint = get_breakpoint(),
 				img = new Image,
 				img_h, img_w
 			;
 			if ( is_upostdata ) {
+				if(breakpoint === "tablet" || breakpoint === "mobile") {
+					// Set image 100% width
+					$container.css({
+						'width': '100%',
+						'height': 'auto'
+					});
+					$img.css({
+						'width': '100%',
+						'height': 'auto'
+					});
+				}
+				
 				if ( !$img.hasClass('upfront-featured-image-fit-wrapper') ) return; // No fit for this
 				height -= padding_top + padding_bottom;
 				$(this).css('height', height);
