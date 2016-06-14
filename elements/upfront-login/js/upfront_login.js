@@ -273,6 +273,118 @@ define([
 								]
 							}
 						},
+						{
+							moduleType: 'Colors',
+							options: {
+								title: '',
+								multiple: false,
+								single: true,
+								state: 'element-wrapper-settings',
+								abccolors: [
+									{
+										name: 'wrapper_background',
+										label: 'Wrapper Background'
+									}
+								]
+							}
+						},
+						{
+							moduleType: 'Border',
+							options: {
+								state: 'element-wrapper-settings',
+								title: '',
+								fields: {
+									use: 'useborder',
+									width: 'borderwidth',
+									type: 'bordertype',
+									color: 'bordercolor',
+								}
+							}
+						},
+						{
+							moduleType: 'Radius',
+							options: {
+								state: 'element-wrapper-settings',
+								max_value: 100,
+								fields: {
+									use: 'useradius',
+									lock: 'borderradiuslock',
+									radius: 'radius',
+									radius_number: 'radius_number',
+									radius1: 'borderradius1',
+									radius2: 'borderradius2',
+									radius3: 'borderradius3',
+									radius4: 'borderradius4'
+								}
+							}
+						},
+						
+					],
+					Static: [
+						{
+							state: 'field-labels-settings'
+						},
+						{
+							moduleType: 'Typography',
+							options: {
+								state: 'field-labels-settings',
+								title: Upfront.Settings.l10n.global.views.typography,
+								toggle: true,
+								global_typography: false,
+								fields: {
+									typeface: 'fontface',
+									fontstyle: 'fontstyle',
+									weight: 'weight',
+									style: 'style',
+									size: 'fontsize',
+									line_height: 'lineheight',
+									color: 'color',
+									use: 'usetypography'
+								}
+							}
+						},
+					],
+					Hover: [
+						{
+							moduleType: 'Typography',
+							options: {
+								state: 'field-labels-settings',
+								title: Upfront.Settings.l10n.global.views.typography,
+								toggle: true,
+								global_typography: false,
+								fields: {
+									typeface: 'fontface',
+									fontstyle: 'fontstyle',
+									weight: 'weight',
+									style: 'style',
+									size: 'fontsize',
+									line_height: 'lineheight',
+									color: 'color',
+									use: 'usetypography'
+								}
+							}
+						},
+					],
+					Focus: [
+						{
+							moduleType: 'Typography',
+							options: {
+								state: 'field-labels-settings',
+								title: Upfront.Settings.l10n.global.views.typography,
+								toggle: true,
+								global_typography: false,
+								fields: {
+									typeface: 'fontface',
+									fontstyle: 'fontstyle',
+									weight: 'weight',
+									style: 'style',
+									size: 'fontsize',
+									line_height: 'lineheight',
+									color: 'color',
+									use: 'usetypography'
+								}
+							}
+						},
 					]
 				}
 			}
