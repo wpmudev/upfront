@@ -1299,7 +1299,7 @@ DragDrop.prototype = {
 						if ( !this_breakpoint[breakpoint.id].edited && _.isNumber(wrap_breakpoint[breakpoint.id].col) ) {
 							this_breakpoint[breakpoint.id].col = wrap_breakpoint[breakpoint.id].col;
 							this_breakpoint[breakpoint.id].edited = true;
-							this.model.set_property('breakpoint', Upfront.Util.clone(this_breakpoint));
+							that.model.set_property('breakpoint', Upfront.Util.clone(this_breakpoint));
 						}
 					}
 				});
