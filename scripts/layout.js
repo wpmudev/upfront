@@ -543,7 +543,7 @@ jQuery(document).ready(function($){
 
 			// If table or mobile breakpoint, image is smaller than container and dotAlign is true make it inline
 			if((breakpoint === "tablet" || breakpoint === "mobile") && 
-					(mode === "small" && dotalign === true)) {
+					((mode === "small" || mode === "vertical" ) && dotalign === true)) {
 
 				// Set text-align for parent container
 				$container.css({
@@ -588,7 +588,8 @@ jQuery(document).ready(function($){
 					});
 					$img.css({
 						'width': '100%',
-						'height': 'auto'
+						'height': 'auto',
+						'left': 0
 					});
 				} else {
 					// Null above and position image into parent container
@@ -597,7 +598,8 @@ jQuery(document).ready(function($){
 						'left': data.offsetLeft,
 						'position': 'relative',
 						'display': 'block',
-						'marginTop': 0
+						'marginTop': 0,
+						'width': 'initial'
 					});
 					
 					$container.css({ 'width': data.offsetWidth, 'height': data.offsetHeight});
