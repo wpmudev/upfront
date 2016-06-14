@@ -579,6 +579,14 @@ jQuery(document).ready(function($){
 						'position': 'static',
 						'display': 'inline-block'
 					});
+				} else if ((breakpoint === "tablet" || breakpoint === "mobile") && (imgWidth >= data.offsetWidth)) {
+					// Set image 100% width
+					$container.css({
+						'width': '100%'
+					});
+					$img.css({
+						'width': '100%'
+					});
 				} else {
 					// Null above and position image into parent container
 					$img.css({ 
