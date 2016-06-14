@@ -818,9 +818,18 @@ define([
 						$el.data('current_col', breakpoint_data.col);
 					}
 					else {
-						$el.css('width', '');
-						$el.removeData('breakpoint_col');
-						$el.data('current_col', $el.data('default_col'));
+						if ( breakpoint.default ) {
+							$el.css('width', '');
+							$el.removeData('breakpoint_col');
+							$el.data('current_col', $el.data('default_col'));
+						}
+						else {
+							// No breakpoint data set and on responsive, let's set to 100%
+							width_col = Upfront.Util.width_to_col($wrapper.width());
+							$el.css('width', '100%');
+							$el.data('breakpoint_col', width_col);
+							$el.data('current_col', width_col);
+						}
 					}
 				}
 				if ( !_.contains(exceptions, 'left') ) {
