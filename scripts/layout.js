@@ -568,24 +568,27 @@ jQuery(document).ready(function($){
 					});
 				}
 			} else {
-				if((breakpoint === "tablet" || breakpoint === "mobile") && (imgWidth < data.offsetWidth)) {
+				if((breakpoint === "tablet" || breakpoint === "mobile") && mode === "small") {
 					// Null above
 					$container.css({
 						'textAlign': 'center',
-						'maxWidth': '100%'
+						'maxWidth': '100%',
+						'width': '100%'
 					});
 					
 					$img.css({
 						'position': 'static',
 						'display': 'inline-block'
 					});
-				} else if ((breakpoint === "tablet" || breakpoint === "mobile") && (imgWidth >= data.offsetWidth)) {
+				} else if ((breakpoint === "tablet" || breakpoint === "mobile") && mode !== "small") {
 					// Set image 100% width
 					$container.css({
-						'width': '100%'
+						'width': '100%',
+						'height': 'auto'
 					});
 					$img.css({
-						'width': '100%'
+						'width': '100%',
+						'height': 'auto'
 					});
 				} else {
 					// Null above and position image into parent container
