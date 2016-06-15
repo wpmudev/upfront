@@ -363,8 +363,8 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			}
 			variant_max_col = variant_max_col > pos.col ? pos.col : variant_max_col;
 			$(this).css({
-				marginLeft: group_margin_left,
-				marginRight: group_margin_right,
+				marginLeft: group_margin_left > 0 ? group_margin_left : '',
+				marginRight: group_margin_right > 0 ? group_margin_right : '',
 				maxWidth: ((variant_max_col/pos.col)*100) + '%'
 			});
 		});
