@@ -1150,7 +1150,8 @@ Ueditor.prototype = {
 
             var $node = $(node),
                 rx = new RegExp('^' + src.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1") + ' ?'),
-                text = $node.html().replace(rx, '')
+                text = $node.html().replace(rx, ''),
+				new_caret
             ;
 
 			if ('>' === src) text = text.replace(/&gt;/, '');
@@ -1167,27 +1168,30 @@ Ueditor.prototype = {
                         text +
                     '</' + target.nest + '></' + target.tag + '>'
                 );
+
+				new_caret = $node.find(target.nest).last().get();
             } else {
                 var _node = document.createElement(target.tag);
                 _node.innerHTML = text;
-                $node.replaceWith( _node );
+                $node.replaceWith(_node);
+
+				new_caret = _node;
             }
 
-            // Set caret position to end of the target
-            redactor.caret.setEnd(
-                "nest" in target && target.nest
-                    ? $node.find(target.nest).last().get()
-                    : _node
-            );
-
+			// Set caret position to end of the target and sync
+			redactor.caret.setEnd(new_caret);
             redactor.code.sync();
+
             /**
              * Make sure the created node doesn't contain the space created by the spacebar!
              */
             _.delay( function(){
                $(redactor.selection.getBlock()).html(text);
-            }, 3 );
 
+			   // Re-set caret position to end of the target and re-sync
+			   redactor.caret.setEnd(new_caret);
+               redactor.code.sync();
+            }, 3 );
 
             return false;
         });
