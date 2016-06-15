@@ -558,7 +558,7 @@ jQuery(document).ready(function($){
 				});
 				
 				// Update margin to position image top or bottom
-				if(valign === "center") {
+				/*if(valign === "center") {
 					$img.css({
 						'marginTop': (data.offsetHeight / 2) - (imgHeight / 2),
 					});
@@ -566,7 +566,7 @@ jQuery(document).ready(function($){
 					$img.css({
 						'marginTop': (data.offsetHeight - imgHeight),
 					});
-				}
+				}*/
 			} else {
 				if((breakpoint === "tablet" || breakpoint === "mobile") && mode === "small") {
 					// Null above
@@ -632,6 +632,14 @@ jQuery(document).ready(function($){
 						'width': '100%',
 						'height': 'auto'
 					});
+					// Set height to image
+					height = imgHeight;
+					$object.css('min-height', height);
+					$object.closest('.upfront-output-object-group').css('min-height', height);
+				}
+				else {
+					$object.css('min-height', '');
+					$object.closest('.upfront-output-object-group').css('min-height', '');
 				}
 				
 				if ( !$img.hasClass('upfront-featured-image-fit-wrapper') ) return; // No fit for this

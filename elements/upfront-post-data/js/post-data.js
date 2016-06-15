@@ -220,6 +220,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			minHeight: '',
 			maxHeight: ''
 		});
+		this.update_height();
 
 	},
 
@@ -254,17 +255,21 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		if ( is_featured_image_set && props ) {
 			$image.attr('src', props.srcFull)
 		}
+		this.update_position();
 		this.adjust_featured_image();
 	},
 
 	update_height: function () {
 		var type = this.model.get_property_value_by_name('part_type');
-		if ( type == 'content' || type == 'comments' ) {
+		if ( type == 'content' || type == 'comments' || ( type == 'featured_image' && this.object_group_view.mobileMode ) ) {
 			// If type is content or comments, disable min-height to prevent excessive spaces
 			this.$el.find('> .upfront-object').css('min-height', '');
 			this.object_group_view.$el.find('> .upfront-object-group').css('min-height', '');
 			this.object_group_view.parent_module_view.$el.find('> .upfront-module').css('min-height', '');
 			this.add_region_class('upfront-region-container-has-' + type, true);
+		}
+		if ( type == 'featured_image' && !this.object_group_view.mobileMode ) {
+			this.remove_region_class('upfront-region-container-has-' + type, true);
 		}
 	},
 
