@@ -573,6 +573,17 @@ class Upfront_Layout extends Upfront_JsonModel {
 			update_option(self::_get_layout_properties_id(), json_encode($this->_data['properties']));
 		}
 
+		// Delete custom post layout for current post when Save for all posts clicked
+		if(!empty($this->_data['layout']) && $this->_data['preferred_layout'] == "single-post") {
+			if(!empty($this->_data['layout']['specificity'])) {
+				$stylesheet = get_stylesheet();
+				$specific_layout = $stylesheet . "-". $this->_data['layout']['specificity'];
+				
+				// Delete option
+				delete_option( $specific_layout );
+			}
+		}
+
 		update_option($key, $this->to_json());
 
 		return $key;
