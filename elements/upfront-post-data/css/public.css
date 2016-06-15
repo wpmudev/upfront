@@ -17,7 +17,7 @@
 .upostdata-part.thumbnail img,
 .upfront-editable_entity .upostdata-part.thumbnail img{
     display: block;
-    max-width: 100%;
+    /* max-width: 100%; */
     max-height: none;
     height: auto;
 }
