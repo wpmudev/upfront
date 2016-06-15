@@ -1154,6 +1154,8 @@ Ueditor.prototype = {
                 text = $node.html().replace(rx, '')
             ;
 
+			if ('>' === src) text = text.replace(/&gt;/, '');
+
             // Let's not do nested lists
             // or expansion within lists in general
             // or in PRE tags
