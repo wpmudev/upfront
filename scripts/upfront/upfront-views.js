@@ -554,10 +554,20 @@ define([
 				}, $type, $overlay);
 			},
 			refresh_background_featured: function ($type, $overlay) {
-				var ratio = $type.data('bg-featured-image-ratio');
-				this._refresh_background_image_from_data({
-					ratio: ratio
-				}, $type, $overlay);
+				var $bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
+					bg_default = this.model.get_breakpoint_property_value('background_default', true),
+					ratio = $type.data('bg-featured-image-ratio')
+				;
+				if ( $bg.hasClass('no-featured_image') ) {
+					if ( bg_default == 'image' ) {
+						this.refresh_background_image($type, $overlay);
+					}
+				}
+				else {
+					this._refresh_background_image_from_data({
+						ratio: ratio
+					}, $type, $overlay);
+				}
 			},
 			refresh_background_map: function ($type, $overlay) {
 				if ( !this.bg_map ) return;
