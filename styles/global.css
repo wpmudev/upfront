@@ -368,6 +368,10 @@ h2, h3 { page-break-after: avoid; }
     width: auto;
     text-align: center;
 }
+.uf-responsive .ueditor-insert-variant-group.ueditor-image-style-center {
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
 .uf-responsive .upfront-inserted_image-wrapper .wp-caption-text, 
 .uf-responsive .upfront-inserted_image-wrapper .uinsert-image-wrapper {
     min-height: 0 !important;

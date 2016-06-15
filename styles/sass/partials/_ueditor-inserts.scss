@@ -299,6 +299,10 @@ div.uinsert-selector a:hover {
     width: auto;
     text-align: center;
 }
+#page.responsive-breakpoint .ueditor-insert-variant-group.ueditor-image-style-center {
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
 #page.responsive-breakpoint .upfront-inserted_image-wrapper .wp-caption-text,
 #page.responsive-breakpoint .upfront-inserted_image-wrapper .uinsert-image-wrapper {
     min-height: 0 !important;
