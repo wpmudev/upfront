@@ -3,8 +3,9 @@ define([
 	'text!elements/upfront-post-data/tpl/views.html',
 	'elements/upfront-post-data/js/post-data-views',
 	'elements/upfront-post-data/js/post-data-settings',
-	'scripts/upfront/preset-settings/util'
-], function(tpl, Views, PostDataSettings, PresetUtil) {
+	'scripts/upfront/preset-settings/util',
+	'scripts/redactor/ueditor-inserts',
+], function(tpl, Views, PostDataSettings, PresetUtil, Inserts) {
 
 var l10n = Upfront.Settings.l10n.post_data_element;
 var $template = $(tpl);
@@ -66,12 +67,14 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		if ( prop && prop.id == 'preset' ) return;
 		this.constructor.__super__.update.call(this, prop, options);
 		this.adjust_featured_image();
+		this.adjust_inserted_image();
 	},
 
 	update_position: function () {
 		this.constructor.__super__.update_position.call(this);
 		this.update_height();
 		this.adjust_featured_image();
+		this.adjust_inserted_image();
 	},
 
 	on_element_drop: function () {
@@ -85,6 +88,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 
 		this.$el.find('.upfront-object-content').empty().append(markup);
 		this.adjust_featured_image();
+		this.adjust_inserted_image();
 		this.prepare_editor();
 		
 		// Show full image if we are in mobile mode
@@ -318,6 +322,50 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 						$img.css('margin-top', (height - img_h) / 2);
 					}
 				}
+			});
+		});
+	},
+
+	adjust_inserted_image: function () {
+		var type = this.model.get_property_value_by_name('part_type');
+		if ( type != 'content' ) return;
+		var me = this,
+			ed = Upfront.Behaviors.GridEditor,
+			pos = ed.get_position(this.$el.find('> .upfront-object')),
+			left_indent = parseInt(this.object_group_view.get_preset_property('left_indent'), 10),
+			right_indent = parseInt(this.object_group_view.get_preset_property('right_indent'), 10),
+			max_col = pos.col - left_indent - right_indent;
+		;
+		this.$el.find('.ueditor-insert-variant-group').each(function(){
+			var vid = $(this).attr('data-variant'),
+				insert = new Inserts.inserts[Inserts.TYPES.POSTIMAGE],
+				variant = insert._findVariant(vid).toJSON(),
+				left = variant ? parseInt(variant.group.left, 10) : 0,
+				margin_left = variant ? parseInt(variant.group.margin_left, 10) : 0,
+				margin_right = variant ? parseInt(variant.group.margin_right, 10) : 0,
+				variant_max_col = max_col - margin_left - margin_right,
+				group_margin_left = 0,
+				group_margin_right = 0
+			;
+			if ( variant.group.float ) {
+				if ( 'left' == variant.group.float && left_indent > 0 ) {
+					group_margin_left = ( left_indent - Math.abs(margin_left) ) * ed.col_size;
+				}
+				else if ( 'right' == variant.group.float && right_indent > 0 ) {
+					group_margin_right = ( right_indent - Math.abs(margin_right) ) * ed.col_size;
+				}
+				else if ( 'none' == variant.group.float ) {
+					if ( left_indent > 0 ) {
+						group_margin_left = ( left_indent - Math.abs(margin_left) + Math.abs(left) ) * ed.col_size;
+					}
+					variant_max_col -= left;	
+				}
+			}
+			variant_max_col = variant_max_col > pos.col ? pos.col : variant_max_col;
+			$(this).css({
+				marginLeft: group_margin_left,
+				marginRight: group_margin_right,
+				maxWidth: ((variant_max_col/pos.col)*100) + '%'
 			});
 		});
 	},
