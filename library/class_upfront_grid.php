@@ -209,7 +209,7 @@ class Upfront_Grid {
 		return $css;
 	}
 
-	protected function _apply_modules ($modules, $wrappers, $col, $breakpoint = false) {
+	protected function _apply_modules ($modules, $wrappers, $col, $breakpoint = false, $parent_view = false) {
 		$breakpoint = $breakpoint !== false ? $breakpoint : $this->_current_breakpoint;
 		$point_css = '';
 		if ( !$breakpoint->is_default() ) {
@@ -222,6 +222,8 @@ class Upfront_Grid {
 			}
 			usort($wrappers, array($this, '_sort_cb'));
 		}
+
+		$is_object = $parent_view !== false ? ( $parent_view instanceof Upfront_Object_Group ) : false;
 
 		$line_col = $col; // keep track of how many column has been applied for each line
 		$rendered_wrappers = array(); // keep track of rendered wrappers to avoid render more than once
@@ -290,11 +292,15 @@ class Upfront_Grid {
 							$is_spacer = true;
 						}
 						if ( !$is_spacer ) {
+							$object_view = $this->_get_object_view($object, $breakpoint);
+
 							if ( isset($object['objects']) && is_array($object['objects']) ){ // rendering object group
-								$point_css .= $this->_apply_modules($object['objects'], $object['wrappers'], $module_col, false);
+								$point_css .= $this->_apply_modules($object['objects'], $object['wrappers'], $module_col, false, $object_view);
 							}
 							$point_css .= $breakpoint->apply($object, $this->get_grid_scope(), 'element_id', $module_col, false, ($is_post_object ? $this->_exceptions : array()));
 							$point_css .= $breakpoint->apply_paddings($object, $this->get_grid_scope(), 'element_id', '#' . $module_id);
+
+							$point_css .= $object_view->get_style_for($module_col, $breakpoint, $this->get_grid_scope());
 						}
 					}
 				}
@@ -469,8 +475,26 @@ class Upfront_Grid {
 					$point_css .= $breakpoint->apply($module, $this->get_grid_scope(), 'element_id', $col, false, array());
 				}
 			}
+
+			if ( false !== $parent_view && $is_object ) {
+				$object_view = $parent_view->instantiate_child($module, $m);
+				$point_css .= $object_view->get_style_for($breakpoint, $this->get_grid_scope(), $module_col);
+			}
 		}
 		return $point_css;
+	}
+
+	protected function _get_object_view ($object, $breakpoint) {
+		$breakpoint = $breakpoint !== false ? $breakpoint : $this->_current_breakpoint;
+		$object_default_view = !empty($object['objects']) && is_array($object['objects']) ? "Upfront_Object_Group" : "Upfront_Object";
+		$object_view_class_prop = upfront_get_property_value("view_class", $object);
+		$object_view_class = $object_view_class_prop
+			? "Upfront_{$object_view_class_prop}"
+			: $object_default_view
+		;
+		if (!class_exists($object_view_class)) $object_view_class = $object_default_view;
+		$object_view = new $object_view_class($object, $breakpoint);
+		return $object_view;
 	}
 
 	protected function _find_wrapper ($wrapper_id, $wrappers) {
