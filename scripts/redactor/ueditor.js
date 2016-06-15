@@ -1154,7 +1154,9 @@ Ueditor.prototype = {
 				new_caret
             ;
 
-			if ('>' === src) text = text.replace(/&gt;/, '');
+			// Since we're using `.html()`, we want to make sure
+			// the converted entities are properly replaced
+			if ('>' === src) text = text.replace(/&gt;/, ''); // No "g" modifier, so we replace the first instance
 
             // Let's not do nested lists
             // or expansion within lists in general
