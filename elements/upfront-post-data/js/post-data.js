@@ -348,16 +348,14 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 				group_margin_right = 0
 			;
 			if ( variant.group.float ) {
-				if ( 'left' == variant.group.float && left_indent > 0 ) {
+				if ( 'left' == variant.group.float ) {
 					group_margin_left = ( left_indent - Math.abs(margin_left) ) * ed.col_size;
 				}
-				else if ( 'right' == variant.group.float && right_indent > 0 ) {
+				else if ( 'right' == variant.group.float ) {
 					group_margin_right = ( right_indent - Math.abs(margin_right) ) * ed.col_size;
 				}
 				else if ( 'none' == variant.group.float ) {
-					if ( left_indent > 0 ) {
-						group_margin_left = ( left_indent - Math.abs(margin_left) + Math.abs(left) ) * ed.col_size;
-					}
+					group_margin_left = ( left_indent - Math.abs(margin_left) + Math.abs(left) ) * ed.col_size;
 					variant_max_col -= left;	
 				}
 			}

@@ -124,19 +124,17 @@ var PostImageInsert = base.ImageInsertBase.extend({
             group_margin_right = parseInt(style_variant.group.margin_right, 10);
             group_max_col = max_col - group_margin_left - group_margin_right;
 
-            if ( style_variant.group.float == 'left' && padding_left > 0 ){
+            if ( style_variant.group.float == 'left' ){
                 data.style.group.marginLeft = ( padding_left - Math.abs(style_variant.group.margin_left) ) * col_size;
                 data.style.group.marginRight = 0;
             }
-            else if ( style_variant.group.float == 'right' && padding_right > 0 ){
+            else if ( style_variant.group.float == 'right' ){
                 data.style.group.marginRight = ( padding_right - Math.abs(style_variant.group.margin_right) ) * col_size;
                 data.style.group.marginLeft = 0;
             }
             else if ( style_variant.group.float == 'none' ){
-                if ( padding_left ) {
-                    data.style.group.marginLeft = ( padding_left - Math.abs(style_variant.group.margin_left) + Math.abs(style_variant.group.left) ) * col_size;
-                    data.style.group.marginRight = 0;
-                }
+                data.style.group.marginLeft = ( padding_left - Math.abs(style_variant.group.margin_left) + Math.abs(style_variant.group.left) ) * col_size;
+                data.style.group.marginRight = 0;
                 group_max_col -= group_left;
             }
 
