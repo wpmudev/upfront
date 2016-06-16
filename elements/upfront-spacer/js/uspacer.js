@@ -39,7 +39,8 @@ define([
 			});
 		},
 		render: function () {
-			var grid = Upfront.Settings.LayoutEditor.Grid,
+			var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				grid = Upfront.Settings.LayoutEditor.Grid,
 				props = {},
 				me = this,
 				column_padding = grid.column_padding,
@@ -85,7 +86,11 @@ define([
 				// Make sure module class is added
 				this.parent_module_view.$el.find('> .upfront-module').addClass('upfront-module-spacer');
 				this.parent_module_view.model.add_class('upfront-module-spacer');
-
+			}
+			// Listen to wrapper update position
+			if ( this.wrapper_view ) {
+				this.stopListening(this.wrapper_view, 'update_position');
+				this.listenTo(this.wrapper_view, 'update_position', this.on_wrapper_update);
 			}
 
 			this.$el.html(template);
@@ -98,6 +103,10 @@ define([
 			$object.data('current_col', col);
 
 			Upfront.Events.trigger("entity:object:after_render", this, this.model);
+
+			if ( breakpoint && !breakpoint['default'] ) {
+				this.update_position();
+			}
 		},
 		// Don't have any controls
 		getControlItems: function () {

@@ -6909,6 +6909,7 @@ define([
 				});
 				if ( is_clr && position == 'left' ) {
 					if ( breakpoint && !breakpoint['default'] ) {
+						this.model.set_breakpoint_property('edited', true, true);
 						this.model.set_breakpoint_property('clear', false);
 					}
 					else {
