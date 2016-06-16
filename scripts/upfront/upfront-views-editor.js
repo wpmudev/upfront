@@ -2507,7 +2507,7 @@
 						color: new Upfront.Views.Editor.Field.Color({
 							label: l10n.color,
 							default_value: me.colors['h1'],
-							autoHide: true,
+							autoHide: false,
 							spectrum: {
 								choose: function (color) {
 									var rgb = color.toRgb(),
