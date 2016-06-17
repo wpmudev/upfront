@@ -307,7 +307,7 @@ class Upfront_Ajax extends Upfront_Server {
 		$storage_key = $_POST['storage_key'];
 		$stylesheet = $_POST['stylesheet'] ? $_POST['stylesheet'] : get_stylesheet();
 		$post_id = (isset($_POST['post_id'])) ? (int)$_POST['post_id'] : false;
-		
+
 		if ( $post_id ) {
 			$post = get_post($post_id);
 			// if page then skip to save_page_layout()
@@ -332,29 +332,37 @@ class Upfront_Ajax extends Upfront_Server {
 		$stylesheet = ($_POST['stylesheet']) ? $_POST['stylesheet'] : get_stylesheet();
 		$save_dev = ( isset($_POST['save_dev']) && is_numeric($_POST['save_dev']) && $_POST['save_dev'] == 1 ) ? true : false;
 		$post_id = (isset($_POST['post_id'])) ? $_POST['post_id'] : false;
-		
+
 		upfront_switch_stylesheet($stylesheet);
-		
+
 		$raw_data = stripslashes_deep($_POST);
 		$json_data = !empty($raw_data['data']) ? $raw_data['data'] : '';
-		
+
 		$layout = Upfront_Layout::from_json($json_data);
 		// get layout keys from layout data passed
 		$layout_ids = $layout->get('layout');
-		
+
 		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
 		// for all non-virtual page use post_id passed not the one from layout data
-		$layout_slug = ( $post_id )
-			? strtolower($store_key . '-single-page-' . $post_id)
-			: strtolower($store_key . '-' . $layout_ids['item'])
-		;
-		
+
+		if( is_page() ){
+			$layout_slug = ( $post_id )
+					? strtolower($store_key . '-single-page-' . $post_id)
+					: strtolower($store_key . '-' . $layout_ids['item'])
+			;
+		}else{
+			$layout_slug = ( isset($layout_ids['specificity']) )
+					? strtolower($store_key . '-' . $layout_ids['specificity'])
+					: strtolower($store_key . '-' . $layout_ids['item'])
+			;
+		}
+
 		$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $save_dev);
 		$layout_post_id = Upfront_Server_PageLayout::get_instance()->save_layout($layout_post_id, $layout, $save_dev, $layout_slug);
-		
+
 		// taking care of Page Template
 		$template_slug = $this->_save_page_template($_POST);
-		
+
 		$this->_out(new Upfront_JsonResponse_Success((object) array(
 			'post_id' => $post_id,
 			'layout_slug' => $layout_slug,
