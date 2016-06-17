@@ -288,13 +288,15 @@ var Box = Backbone.View.extend({
         $(".ueditor-display-block").removeClass("ueditor-display-block");
     },
 	save_as_publish: function() {
-		// instead of publishing here directly, wait for User's action on Save As Dialog via "command:proceed:save:post" Upfront Events
-		this.stopListening(Upfront.Events, 'command:proceed:save:post');
-		this.listenTo(Upfront.Events, 'command:proceed:save:post', this.publish);
-		Upfront.Events.trigger('command:layout:layout_changes', this.layout_modified);
-
-		// if no layout changes, then just publish directly
-		if ( !this.layout_modified ) this.save_post();
+		if ( !this.layout_modified ) {
+			// if no layout changes, then just publish directly
+			this.save_post();
+		} else {
+			// instead of publishing here directly, wait for User's action on Save As Dialog via "command:proceed:save:post" Upfront Events
+			this.stopListening(Upfront.Events, 'command:proceed:save:post');
+			this.listenTo(Upfront.Events, 'command:proceed:save:post', this.publish);
+			Upfront.Events.trigger('command:layout:layout_changes', this.layout_modified);
+		}
 	},
 	save_post: function () {
 		this.publish();
