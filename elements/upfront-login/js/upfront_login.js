@@ -244,7 +244,7 @@ define([
 	var LoginSettings = ElementSettings.extend({
 		className: 'login-element-settings',
 		events: _.extend({},ElementSettings.prototype.events, this.events, {
-			'change input[name="partStyle"]': 'toggle_part_style',
+			'change input[name="part_style"]': 'toggle_part_style',
     }),
 		panels: {
 			General: LoginSettings_Panel,
@@ -259,11 +259,18 @@ define([
 		render: function () {
 			ElementSettings.prototype.render.call(this);
 			
-			var me = this,
-				part_style = me.get_preset_property("partStyle")
-			;
-			setTimeout(function(){
-				if ( part_style === 'element_wrapper' ) {
+			var me = this;
+			setTimeout(function (){
+				var part_style = me.get_preset_property("part_style");
+				console.log(part_style);
+				
+				
+				var preset = me.model.get_property_value_by_name("preset"),
+				props = Util.getPresetProperties('login', preset) || {};
+				console.log(preset);
+				console.log(props);
+				
+				if ( !part_style || part_style === 'element_wrapper' ) {
 					me.default_view();
 				} else {
 					me.toggle_view(part_style);
