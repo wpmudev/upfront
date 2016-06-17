@@ -2,6 +2,22 @@ Change Log
 ============
 
 
+1.3 - 2016-06-17
+-------------------------------------------------------------------------------
+- Add: reusable custom layout templates.
+- Add: new posts/pages editing experience.
+- Add: dedicated posts and pages settings area.
+
+- Fix: performance improvements.
+- Fix: show region button position in responsive.
+- Fix: multiple lightboxes conflict.
+- Fix: editor mode navigation in posts element.
+- Fix: padding keyboard controls in inline panels.
+- Fix: top padding change updates element height.
+- Fix: trailing closing comment being stripped from custom CSS.
+- Fix: issue with Pro Sites upload quotas.
+
+
 1.2.2 - 2016-04-29
 -------------------------------------------------------------------------------
 - Fix: store image element_size property per breakpoint.
@@ -291,7 +307,7 @@ Change Log
 - Fix: accordion panel adding.
 - Fix: gallery elements warnings and plugin conflicts.
 - Fix: discussion settings update.
-- Fix: adding playable video element 
+- Fix: adding playable video element
 - Fix: keyframe animations and media queries allowed in global CSS.
 - Add: multiple global regions.
 
