@@ -256,20 +256,17 @@ define([
 		get_title: function () {
 			return l10n.settings;
 		},
+		initialize: function () {
+			ElementSettings.prototype.initialize.call(this);
+			// this listener only handles changes on Preset Selection
+			this.model.get('properties').bind('change', this.model_changed, this);
+		},
 		render: function () {
 			ElementSettings.prototype.render.call(this);
 			
 			var me = this;
 			setTimeout(function (){
 				var part_style = me.get_preset_property("part_style");
-				console.log(part_style);
-				
-				
-				var preset = me.model.get_property_value_by_name("preset"),
-				props = Util.getPresetProperties('login', preset) || {};
-				console.log(preset);
-				console.log(props);
-				
 				if ( !part_style || part_style === 'element_wrapper' ) {
 					me.default_view();
 				} else {
@@ -299,6 +296,17 @@ define([
 				me.$el.find('.state_settings_button.state_settings_button_static').click();
 			}, 100);
 			
+		},
+		model_changed: function (prop) {
+			if (typeof prop === 'undefined') return;
+			var me = this, 
+				name = prop.get('name')
+			;
+			if ( name === 'preset' ) {
+				setTimeout(function() {
+					me.default_view();
+				}, 500);
+			}
 		},
 		get_preset_property: function(prop_name) {
 			var preset = this.model.get_property_value_by_name("preset"),
