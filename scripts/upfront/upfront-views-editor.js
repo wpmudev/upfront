@@ -672,7 +672,7 @@
 				}, 200);
 			},
 			on_click: function () {
-				if ( _upfront_post_data.layout.specificity && _upfront_post_data.layout.item && !_upfront_post_data.layout.item.match(/-page/) ) {
+				if (_upfront_post_data.post_id && _upfront_post_data.layout.specificity && _upfront_post_data.layout.item && !_upfront_post_data.layout.item.match(/-page/) ) {
 					Upfront.Events.trigger("command:layout:save_as");
 				} else {
 					Upfront.Events.trigger("command:layout:save");
@@ -2043,7 +2043,7 @@
 						}
 					});
 				}
-				
+
 				this.listenTo(Upfront.Views.PostDataEditor, 'loaded', function(contentEditor) {
 					if ( contentEditor ) {
 						Upfront.Views.PostBox = contentEditor.prepareBox();
@@ -4308,7 +4308,7 @@
 					})
 				);
 			},
-			
+
 			post_saved: function () {
 				// We should fetch colletion after post / page update to retrieve any title changes
 				this.collection.fetch();
