@@ -313,19 +313,19 @@ class Upfront_Ajax extends Upfront_Server {
 			// if page then skip to save_page_layout()
 			if ( $post->post_type === 'page' ) return $this->save_page_layout();
 		}
-		
+
 		// if post_id is false, still use save_page_layout()
-		if ( !$post_id ) return $this->save_page_layout();
+		//if ( !$post_id ) return $this->save_page_layout();// NO! DO NOT DO THAT!
 
 		upfront_switch_stylesheet($stylesheet);
-	
+
 		// for post still save on options
 		$layout = Upfront_Layout::from_php($data, $storage_key);
 		$key = $layout->save();
 
 		$this->_out(new Upfront_JsonResponse_Success($key));
 	}
-	
+
 	function save_page_layout () {
 		$data = !empty($_POST['data']) ? json_decode(stripslashes_deep($_POST['data']), true) : false;
 		if (!$data) $this->_out(new Upfront_JsonResponse_Error("Unknown layout"));
