@@ -331,7 +331,7 @@ class Upfront_Ajax extends Upfront_Server {
 		if (!$data) $this->_out(new Upfront_JsonResponse_Error("Unknown layout"));
 		$stylesheet = ($_POST['stylesheet']) ? $_POST['stylesheet'] : get_stylesheet();
 		$save_dev = ( isset($_POST['save_dev']) && is_numeric($_POST['save_dev']) && $_POST['save_dev'] == 1 ) ? true : false;
-		$post_id = (isset($_POST['post_id'])) ? $_POST['post_id'] : false;
+		$post_id = ( isset($_POST['post_id']) && is_numeric($_POST['post_id']) && ((int)$_POST['post_id'] > 0) ) ? $_POST['post_id'] : false;
 
 		upfront_switch_stylesheet($stylesheet);
 
@@ -344,18 +344,10 @@ class Upfront_Ajax extends Upfront_Server {
 
 		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
 		// for all non-virtual page use post_id passed not the one from layout data
-
-		if( is_page() ){
-			$layout_slug = ( $post_id )
-					? strtolower($store_key . '-single-page-' . $post_id)
-					: strtolower($store_key . '-' . $layout_ids['item'])
-			;
-		}else{
-			$layout_slug = ( isset($layout_ids['specificity']) )
-					? strtolower($store_key . '-' . $layout_ids['specificity'])
-					: strtolower($store_key . '-' . $layout_ids['item'])
-			;
-		}
+		$layout_slug = ( $post_id )
+			? strtolower($store_key . '-single-page-' . $post_id)
+			: strtolower($store_key . '-' . $layout_ids['item'])
+		;
 
 		$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $save_dev);
 		$layout_post_id = Upfront_Server_PageLayout::get_instance()->save_layout($layout_post_id, $layout, $save_dev, $layout_slug);
