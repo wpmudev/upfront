@@ -65,8 +65,8 @@ class Upfront_Ajax extends Upfront_Server {
 		// Initialize the value
 		$post = false;
 
-		if (empty($layout_ids))
-			$this->_out(new Upfront_JsonResponse_Error("No such layout"));
+
+		if (empty($layout_ids)) $this->_out(new Upfront_JsonResponse_Error("No such layout"));
 
 		upfront_switch_stylesheet($stylesheet);
 
@@ -93,10 +93,9 @@ class Upfront_Ajax extends Upfront_Server {
 
 		global $upfront_ajax_query;
 
-		if(!$upfront_ajax_query)
-			$upfront_ajax_query = false;
+		if (!$upfront_ajax_query) $upfront_ajax_query = false;
 
-		if($post_type){
+		if ($post_type) {
 			$post = Upfront_PostModel::create($post_type);
 			// set new layout IDS based on the created post ID
 			$cascade = array(
