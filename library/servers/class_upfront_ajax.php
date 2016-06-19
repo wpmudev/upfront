@@ -62,6 +62,8 @@ class Upfront_Ajax extends Upfront_Server {
 		$parsed = false;
 		$post_id = (isset($_POST['post_id'])) ? (int)$_POST['post_id'] : false;
 
+		// Initialize the value
+		$post = false;
 
 		if (empty($layout_ids))
 			$this->_out(new Upfront_JsonResponse_Error("No such layout"));
