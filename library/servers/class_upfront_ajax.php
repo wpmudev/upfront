@@ -80,7 +80,7 @@ class Upfront_Ajax extends Upfront_Server {
 		}
 
 		// if post_id is false, still load_page_layout()
-		if ( !$post_id ) return $this->load_page_layout();
+		// if ( !$post_id ) return $this->load_page_layout(); // avoiding this for virtual pages (still use options table)
 
 		$layout = Upfront_Layout::from_entity_ids($layout_ids, $storage_key, $load_dev);
 
@@ -319,7 +319,7 @@ class Upfront_Ajax extends Upfront_Server {
 
 		upfront_switch_stylesheet($stylesheet);
 
-		// for post still save on options
+		// for post and virtual pages still save on options
 		$layout = Upfront_Layout::from_php($data, $storage_key);
 		$key = $layout->save();
 
@@ -748,7 +748,7 @@ class Upfront_Ajax extends Upfront_Server {
 		}
 
 		// if post_id is false, still use update_page_layout_element()
-		if ( !$post_id ) return $this->update_page_layout_element();
+		// if ( !$post_id ) return $this->update_page_layout_element(); // avoiding this as keep on saving to options for virtual pages
 
 		$layout = Upfront_Layout::from_entity_ids($data['layout'], $data['storage_key']);
 		if(empty($layout))

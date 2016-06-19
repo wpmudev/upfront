@@ -28,7 +28,6 @@ class Upfront_Output {
 		$post_id = self::get_post_id();
 		$is_dev = Upfront_Debug::get_debugger()->is_dev();
 		$load_from_options = true;
-		
 		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
 		
 		// if page was still draft and viewed on FE, we should show 404 layout 
@@ -37,26 +36,29 @@ class Upfront_Output {
 			$layout_ids['item'] = 'single-404_page';
 		}
 		
-		$layout_slug = ( isset($layout_ids['specificity']) )
-			? strtolower($store_key . '-' . $layout_ids['specificity'])
-			: strtolower($store_key . '-' . $layout_ids['item'])
-		;
-		$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $is_dev);
-		
-		if ( $layout_post_id ) {
-			self::$layout_post_id = $layout_post_id;
-			$page_layout = Upfront_Server_PageLayout::get_instance()->get_layout($layout_post_id, $is_dev);
-			if ( $page_layout ) {
-				$layout = Upfront_Layout::from_php($page_layout, Upfront_Layout::STORAGE_KEY);
-				$load_from_options = false;
-			}
-		} else {
-			// load from page template
-			self::$layout_post_id = false;
-			$page_template  = self::get_page_template($layout_ids);
-			if ( $page_template ) {
-				$layout = Upfront_Layout::from_php($page_template, Upfront_Layout::STORAGE_KEY);
-				$load_from_options = false;
+		// only for actual Pages
+		if ( $post_id && is_page() ) {
+			$layout_slug = ( isset($layout_ids['specificity']) )
+				? strtolower($store_key . '-' . $layout_ids['specificity'])
+				: strtolower($store_key . '-' . $layout_ids['item'])
+			;
+			$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $is_dev);
+			
+			if ( $layout_post_id ) {
+				self::$layout_post_id = $layout_post_id;
+				$page_layout = Upfront_Server_PageLayout::get_instance()->get_layout($layout_post_id, $is_dev);
+				if ( $page_layout ) {
+					$layout = Upfront_Layout::from_php($page_layout, Upfront_Layout::STORAGE_KEY);
+					$load_from_options = false;
+				}
+			} else {
+				// load from page template
+				self::$layout_post_id = false;
+				$page_template  = self::get_page_template($layout_ids);
+				if ( $page_template ) {
+					$layout = Upfront_Layout::from_php($page_template, Upfront_Layout::STORAGE_KEY);
+					$load_from_options = false;
+				}
 			}
 		}
 		
@@ -96,6 +98,7 @@ class Upfront_Output {
 			
 		} else {
 			// if special archive pages like homepage, use slug to get template post id
+			// below will not be called anymore as already trapped above on get_layout()
 			$layout_id = '';
 			if ( isset($layout_ids['specificity']) ) {
 				$layout_id = $layout_ids['specificity'];
