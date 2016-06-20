@@ -289,7 +289,12 @@ var Box = Backbone.View.extend({
         $(".ueditor-display-block").removeClass("ueditor-display-block");
     },
 	save_as_publish: function() {
-		if ( !this.layout_modified ) {
+		// so we have decided to always show the dialog and later improve this
+		this.stopListening(Upfront.Events, 'command:proceed:save:post');
+		this.listenTo(Upfront.Events, 'command:proceed:save:post', this.publish);
+		Upfront.Events.trigger('command:layout:layout_changes', true);
+	
+		/* if ( !this.layout_modified ) {
 			// if no layout changes, then just publish directly
 			this.save_post();
 		} else {
@@ -297,7 +302,7 @@ var Box = Backbone.View.extend({
 			this.stopListening(Upfront.Events, 'command:proceed:save:post');
 			this.listenTo(Upfront.Events, 'command:proceed:save:post', this.publish);
 			Upfront.Events.trigger('command:layout:layout_changes', this.layout_modified);
-		}
+		} */
 	},
 	save_post: function () {
 		this.publish();
