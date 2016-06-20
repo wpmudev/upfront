@@ -92,8 +92,8 @@ var CustomSelectorField =  Upfront.Views.Editor.Field.Hidden.extend({
 	events: function () {
 		return _.extend({},
 			Upfront.Views.Editor.Field.Hidden.prototype.events,
-			{"click a[href=#add]": "select_posts"},
-			{"click ol li a[href=#rmv]": "remove_post"}
+			{'click a[href="#add"]': "select_posts"},
+			{'click ol li a[href="#rmv"]': "remove_post"}
 		);
 	},
 	get_field_html: function () {
