@@ -49,6 +49,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 			'behaviors' => array(
 				'group' => __('Group', 'upfront'),
 				'this_post_only' => __('This Post has some Layout Changes. Would you like to apply those changes to All Posts or just This Post?', 'upfront'),
+				'this_archive_only' => __('This Archive has some Layout Changes. Would you like to apply those changes to All Archives of this type or just This Archive?', 'upfront'),
 				'loading_content' => __('Loading content...', 'upfront'),
 				'theme_text_fonts' => __('Theme Text Fonts', 'upfront'),
 				'theme_icon_fonts' => __('Theme Icon Fonts', 'upfront'),

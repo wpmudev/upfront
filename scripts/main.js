@@ -51,6 +51,7 @@ require(['backbone'], function (Backbone) {
 					"main": "#page"
 				},
 				"Specificity": Upfront.mainData.specificity,
+				"ArchiveSpecificity": Upfront.mainData.archiveSpecificity,
 				"Grid": Upfront.mainData.gridInfo,
 				'Theme': Upfront.mainData.themeInfo
 			},
