@@ -35,13 +35,10 @@ class Upfront_Output {
 			unset($layout_ids['specificity']);
 			$layout_ids['item'] = 'single-404_page';
 		}
-		
 		// only for actual Pages
 		if ( $post_id && is_page() ) {
-			$layout_slug = ( isset($layout_ids['specificity']) )
-				? strtolower($store_key . '-' . $layout_ids['specificity'])
-				: strtolower($store_key . '-' . $layout_ids['item'])
-			;
+			// since this is only for page then safe to use layout slug like below
+			$layout_slug = strtolower($store_key . '-single-page-' . $post_id);
 			$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $is_dev);
 			
 			if ( $layout_post_id ) {
