@@ -723,7 +723,7 @@ define([
 					}
 				}
 				// run layout change event
-				Upfront.Events.trigger('entity:module:update');
+				Upfront.Events.trigger('entity:layout:change');
 				return false; // Stop propagation in order not to cause error with missing sortables etc
 			},
 			on_context_menu: function(e) {
@@ -5766,7 +5766,7 @@ define([
 					// }
 				}
 				// run layout change event
-				Upfront.Events.trigger('entity:module:update');
+				Upfront.Events.trigger('entity:layout:change');
 			},
 			on_settings_click: function (e) {
 

@@ -41,6 +41,7 @@ var Box = Backbone.View.extend({
 
         // this.listenTo(Upfront.Events, 'upfront:element:edit:stop', this.element_stop_prop);
         this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
+        this.listenTo(Upfront.Events, 'entity:layout:change', this.on_layout_change);
 
         Upfront.Events.off("command:layout:trash", this.trash);
         Upfront.Events.off("command:layout:save", this.publish);
@@ -857,6 +858,7 @@ var PageTemplateEditor = PostSectionView.extend({
 			}, 300);
 
 			this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
+			this.listenTo(Upfront.Events, 'entity:layout:change', this.on_layout_change);
     },
 
 	initiate_no_layout_change: function() {
