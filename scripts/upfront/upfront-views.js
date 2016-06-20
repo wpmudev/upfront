@@ -722,6 +722,8 @@ define([
 						this.group_view.on_ungroup();
 					}
 				}
+				// run layout change event
+				Upfront.Events.trigger('entity:module:update');
 				return false; // Stop propagation in order not to cause error with missing sortables etc
 			},
 			on_context_menu: function(e) {
@@ -5763,6 +5765,8 @@ define([
 						// main_view.trigger('activate_region', main_view);
 					// }
 				}
+				// run layout change event
+				Upfront.Events.trigger('entity:module:update');
 			},
 			on_settings_click: function (e) {
 
