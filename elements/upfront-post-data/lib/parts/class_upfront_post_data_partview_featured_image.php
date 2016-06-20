@@ -43,7 +43,7 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 				$img_src = $this->_get_thumbnail(true);
 
 				// We need this only for front-end
-				if (!empty($data) && ($data['imageSize']['width'] < $data['maskSize']['width'] || $data['imageSize']['height'] < $data['maskSize']['height'])) {
+				if (!empty($data) && isset($data['imageSize']) && ($data['imageSize']['width'] < $data['maskSize']['width'] || $data['imageSize']['height'] < $data['maskSize']['height'])) {
 					$offsetTop = -$data['imageOffset']['top'];
 					$offsetLeft = -$data['imageOffset']['left'];
 					
