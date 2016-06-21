@@ -284,6 +284,12 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			'type' => __('All posts'),
 		));
 
+		$archive_specificity = json_encode(array(
+			'specificity' => __('This archive only'),
+			'item' => __('All archives of this type'),
+			'type' => __('All archives'),
+		));
+
 		$content = json_encode(array(
 			'create' => array (
 				'page' => Upfront_VirtualPage::get_url('create/page'),
@@ -398,6 +404,7 @@ Upfront.mainData = {
 	PERMS: {$permissions},
 
 	specificity: {$specificity},
+	archiveSpecificity: {$archive_specificity},
 	gridInfo: {$grid_info},
 	themeInfo: {$theme_info},
 	themeFonts: {$theme_fonts},

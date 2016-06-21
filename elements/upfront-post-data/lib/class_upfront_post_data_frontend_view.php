@@ -207,6 +207,7 @@ class Upfront_PostDataPartView extends Upfront_Object {
 					$variant_max_col -= $left;
 				}
 				$variant_max_col = $variant_max_col > $col ? $col : $variant_max_col;
+				if (0 === $col) $col = 1;
 				$max_width = sprintf('%.3f%%', floor(($variant_max_col/$col*100)*1000)/1000);
 				$css .= sprintf('%s #%s %s {%s}',
 						'.' . ltrim($scope, '. '),

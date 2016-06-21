@@ -705,23 +705,33 @@ var LayoutEditor = {
 		Upfront.Application.layout_view.render();
 	},
 
-	save_dialog: function (on_complete, context, layout_changed) {
+	save_dialog: function (on_complete, context, layout_changed, is_archive) {
 		$("body").append("<div id='upfront-save-dialog-background' />");
 		$("body").append("<div id='upfront-save-dialog' />");
 		var $dialog = $("#upfront-save-dialog"),
 			$bg = $("#upfront-save-dialog-background"),
 			current = Upfront.Application.layout.get("current_layout"),
-			html = ''
+			html = '',
+			is_archive = ( true === is_archive )
 		;
 
-		html += '<p>' + Upfront.Settings.l10n.global.behaviors.this_post_only + '</p>';
+		if ( is_archive ) {
+			html += '<p>' + Upfront.Settings.l10n.global.behaviors.this_archive_only + '</p>';
+		}
+		else {
+			html += '<p>' + Upfront.Settings.l10n.global.behaviors.this_post_only + '</p>';
+		}
 		$.each(_upfront_post_data.layout, function (idx, el) {
 			//var checked = el == current ? "checked='checked'" : '';
 			//html += '<input type="radio" name="upfront_save_as" id="' + el + '" value="' + el + '" ' + checked + ' />';
 			//html += '&nbsp;<label for="' + el + '">' + Upfront.Settings.LayoutEditor.Specificity[idx] + '</label><br />';
-			if ( idx == 'type' )
-				return;
-			html += '<span class="upfront-save-button" data-save-as="' + el + '">' + Upfront.Settings.LayoutEditor.Specificity[idx] + '</span>';
+			if ( idx == 'type' ) return;
+			if ( is_archive ) {
+				html += '<span class="upfront-save-button" data-save-as="' + el + '">' + Upfront.Settings.LayoutEditor.ArchiveSpecificity[idx] + '</span>';
+			}
+			else {
+				html += '<span class="upfront-save-button" data-save-as="' + el + '">' + Upfront.Settings.LayoutEditor.Specificity[idx] + '</span>';
+			}
 		});
 		//html += '<button type="button" id="upfront-save_as">Save</button>';
 		//html += '<button type="button" id="upfront-cancel_save">Cancel</button>';

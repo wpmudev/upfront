@@ -2,6 +2,13 @@ Change Log
 ============
 
 
+1.3.1 - 2016-06-20
+-------------------------------------------------------------------------------
+- Fix: archive layouts saving issues.
+- Fix: posts element specific post settings issue.
+- Fix: featured image data element edge cases handling.
+
+
 1.3 - 2016-06-17
 -------------------------------------------------------------------------------
 - Add: reusable custom layout templates.

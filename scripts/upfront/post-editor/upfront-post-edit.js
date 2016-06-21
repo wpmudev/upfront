@@ -41,6 +41,7 @@ var Box = Backbone.View.extend({
 
         // this.listenTo(Upfront.Events, 'upfront:element:edit:stop', this.element_stop_prop);
         this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
+        this.listenTo(Upfront.Events, 'entity:layout:change', this.on_layout_change);
 
         Upfront.Events.off("command:layout:trash", this.trash);
         Upfront.Events.off("command:layout:save", this.publish);
@@ -288,7 +289,12 @@ var Box = Backbone.View.extend({
         $(".ueditor-display-block").removeClass("ueditor-display-block");
     },
 	save_as_publish: function() {
-		if ( !this.layout_modified ) {
+		// so we have decided to always show the dialog and later improve this
+		this.stopListening(Upfront.Events, 'command:proceed:save:post');
+		this.listenTo(Upfront.Events, 'command:proceed:save:post', this.publish);
+		Upfront.Events.trigger('command:layout:layout_changes', true);
+	
+		/* if ( !this.layout_modified ) {
 			// if no layout changes, then just publish directly
 			this.save_post();
 		} else {
@@ -296,7 +302,7 @@ var Box = Backbone.View.extend({
 			this.stopListening(Upfront.Events, 'command:proceed:save:post');
 			this.listenTo(Upfront.Events, 'command:proceed:save:post', this.publish);
 			Upfront.Events.trigger('command:layout:layout_changes', this.layout_modified);
-		}
+		} */
 	},
 	save_post: function () {
 		this.publish();
@@ -857,6 +863,7 @@ var PageTemplateEditor = PostSectionView.extend({
 			}, 300);
 
 			this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
+			this.listenTo(Upfront.Events, 'entity:layout:change', this.on_layout_change);
     },
 
 	initiate_no_layout_change: function() {

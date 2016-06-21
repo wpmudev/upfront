@@ -26,8 +26,14 @@ var Subapplication = Backbone.Router.extend({
 });
 
 var LayoutEditorSubapplication = Subapplication.extend({
-	save_layout_as: function (layout_changed) {
-		Upfront.Behaviors.LayoutEditor.save_dialog(this._save_layout, this, layout_changed);
+	save_layout_changes: function (layout_changed) {
+		Upfront.Behaviors.LayoutEditor.save_dialog(this._save_layout, this, layout_changed, false);
+	},
+
+	save_layout_as: function () {
+		if ( _upfront_post_data.layout.type == 'archive' ) {
+			Upfront.Behaviors.LayoutEditor.save_dialog(this._save_layout, this, true, true);
+		}
 	},
 
 	save_layout: function () {
@@ -305,7 +311,8 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this.listenTo(Upfront.Events, "command:layout:save_meta", this.save_layout_meta);
 		this.listenTo(Upfront.Events, "command:layout:delete_layout", this.delete_layout);
 		this.listenTo(Upfront.Events, "command:layout:reset_changes", this.reset_changes);
-		this.listenTo(Upfront.Events, "command:layout:layout_changes", this.save_layout_as);
+		this.listenTo(Upfront.Events, "command:layout:layout_changes", this.save_layout_changes);
+		this.listenTo(Upfront.Events, "command:layout:save_as", this.save_layout_as);
 		this.listenTo(Upfront.Events, "command:layout:preview", this.preview_layout);
 		this.listenTo(Upfront.Events, "command:layout:publish", this.publish_layout);
 
