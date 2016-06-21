@@ -295,6 +295,9 @@
 				this.cache.img = img;
 				img.src = src;
 				this.$element.css('display', 'none');
+				this.$parent.css({
+					background: 'none'
+				});
 			}
 		},
 		renderImage: function () {
@@ -363,9 +366,6 @@
 				});
 			}
 			else if ('canvas' == this.opts.renderer) {
-				this.$parent.css({
-					background: 'none'
-				});
 				this.updateCanvas();
 				this.renderImage();
 			}

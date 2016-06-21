@@ -9,6 +9,7 @@ class Upfront_MediaServer extends Upfront_Server {
 
 	private function _add_hooks () {
 		$this->augment_attachments();
+		$this->serve_custom_size();
 
 		// Fix WP srcset creation
 		add_filter('wp_calculate_image_srcset', array($this, 'fix_srcset'));
@@ -163,6 +164,23 @@ class Upfront_MediaServer extends Upfront_Server {
 				'public' => true,
 			)
 		);
+	}
+	
+	/**
+	 * Serve thumbnail custom sizes if was set on Uposts element
+	 */
+	public function serve_custom_size () {
+		$custom_size = get_option('upfront_custom_thumbnail_size', array());
+		
+		if ( !empty($custom_size) ) {
+			$thumbnail_size = json_decode($custom_size);
+			
+			add_image_size(
+				$thumbnail_size->name,
+				intval($thumbnail_size->thumbnail_width), 
+				intval($thumbnail_size->thumbnail_height)
+			);
+		}
 	}
 
 	public function list_labels () {
@@ -552,44 +570,71 @@ class Upfront_MediaServer extends Upfront_Server {
 		if (!$this->_check_valid_request_level(Upfront_Permissions::UPLOAD)) $this->_out(new Upfront_JsonResponse_Error("You can't do this."));
 		$upload = new Upfront_UploadHandler;
 		$result = $upload->handle();
-		if (empty($result['media'])) $this->_out(new Upfront_JsonResponse_Error("Error uploading the media item"));
+		if (empty($result['media'])) $this->_out(new Upfront_JsonResponse_Error(__("Error uploading the media item", 'upfront')));
 
 		if (!function_exists('wp_generate_attachment_metadata')) require_once(ABSPATH . 'wp-admin/includes/image.php');
 		$wp_upload_dir = wp_upload_dir();
 		$pfx = !empty($wp_upload_dir['path']) ? trailingslashit($wp_upload_dir['path']) : '';
 		$new_ids = array();
+
+		$mb = 1024 * 1024;
+		$space_used = function_exists('get_space_used')
+			? (int)get_space_used() * $mb
+			: 0
+		;
+		$space_allowed = function_exists('get_space_allowed')
+			? (int)get_space_allowed() * $mb
+			: 0
+		;
+
 		foreach ($result['media'] as $media) {
-				if (!empty($media->error)) {
-						// We have an error happening!
-						@unlink("{$pfx}{$filename}");
-						$this->_out(new Upfront_JsonResponse_Error("Error uploading the media item: {$media->error}"));
-				}
-				
-				$filename = $media->name;
-				
-				if(!preg_match('/\.(jpg|jpeg|gif|svg|png)$/i', $filename)) {
-					// We have an error happening!
-					@unlink("{$pfx}{$filename}");
-					$this->_out(new Upfront_JsonResponse_Error("Sorry, this file type is not permitted for security reasons."));
-				}
+			if (!empty($media->error)) {
+				// We have an error happening!
+				@unlink("{$pfx}{$filename}");
+				$this->_out(new Upfront_JsonResponse_Error(sprintf(__("Error uploading the media item: %s", 'upfront'), $media->error)));
+			}
+			
+			$filename = $media->name;
+			
+			$file_size = !empty($media->size)
+				? (int)$media->size
+				: 0
+			;
+			if ($space_allowed && $file_size && $file_size + $space_used > $space_allowed) {
+				// Upload quota exceeded
+				@unlink("{$pfx}{$filename}");
+				$this->_out(new Upfront_JsonResponse_Error(__("Error uploading the media item: allocated space quota exceeded", 'upfront')));
+			}
+			
+			if(!preg_match('/\.(jpg|jpeg|gif|svg|png)$/i', $filename)) {
+				// We have an error happening!
+				@unlink("{$pfx}{$filename}");
+				$this->_out(new Upfront_JsonResponse_Error(__("Sorry, this file type is not permitted for security reasons.", 'upfront')));
+			}
 
-				// Clean up the file name
-				$raw_filename = $filename;
-				$filename = Upfront_UploadHandler::to_clean_file_name($filename);
+			// Clean up the file name
+			$raw_filename = $filename;
+			$filename = Upfront_UploadHandler::to_clean_file_name($filename);
 
-				$wp_filetype = wp_check_filetype(basename($filename), null);
-				$attachment = array(
-						'guid' => $wp_upload_dir['url'] . '/' . basename($filename),
-						'post_mime_type' => $wp_filetype['type'],
-						'post_title' => preg_replace('/\.[^.]+$/', '', basename($raw_filename)),
-						'post_content' => '',
-						'post_status' => 'inherit'
-				);
-				$attach_id = wp_insert_attachment($attachment, "{$pfx}{$filename}");
-				$attach_data = wp_generate_attachment_metadata( $attach_id, "{$pfx}{$filename}" );
-				wp_update_attachment_metadata( $attach_id, $attach_data );
-				$new_ids[] = $attach_id;
+			$wp_filetype = wp_check_filetype(basename($filename), null);
+			$attachment = array(
+					'guid' => $wp_upload_dir['url'] . '/' . basename($filename),
+					'post_mime_type' => $wp_filetype['type'],
+					'post_title' => preg_replace('/\.[^.]+$/', '', basename($raw_filename)),
+					'post_content' => '',
+					'post_status' => 'inherit'
+			);
+			$attach_id = wp_insert_attachment($attachment, "{$pfx}{$filename}");
+			$attach_data = wp_generate_attachment_metadata( $attach_id, "{$pfx}{$filename}" );
+			wp_update_attachment_metadata( $attach_id, $attach_data );
+			$new_ids[] = $attach_id;
 		}
+
+		// Drop transients for quotas et al
+		if (is_multisite()) {
+			delete_transient('dirsize_cache');
+		}
+
 		$this->_out(new Upfront_JsonResponse_Success($new_ids));
 	}
 

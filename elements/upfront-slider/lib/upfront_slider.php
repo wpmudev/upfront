@@ -9,8 +9,10 @@ class Upfront_UsliderView extends Upfront_Object {
 	public function get_markup () {
 		$data = $this->properties_to_array();
 		$slides = array();
-		foreach($data['slides'] as $slide){
-			$slides[] = array_merge(self::slide_defaults(), $slide);
+		if ( isset($data['slides']) && $data['slides'] ) {
+			foreach($data['slides'] as $slide){
+				$slides[] = array_merge(self::slide_defaults(), $slide);
+			}
 		}
 
 		if (isset($data['usingNewAppearance']) === false) {

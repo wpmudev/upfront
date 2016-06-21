@@ -71,6 +71,7 @@
 								return;
 							}
 							newVal = this._trimAlignValue(curVal - step );
+							break;
 						case $.ui.keyCode.LEFT:
 							if (curVal === this._valueMin()) {
 								return;
@@ -197,7 +198,7 @@
 			}
 		});
 	}
-	$.cssHooks[ "backgroundColor" ] = {
+	$.cssHooks.backgroundColor = {
 
 		set: function( elem, value ) {
 			if( value.indexOf("ufc") === -1 ) {
@@ -211,7 +212,7 @@
 		}
 	};
 
-	$.cssHooks[ "color" ] = {
+	$.cssHooks.color = {
 
 		set: function( elem, value ) {
 			if( value.indexOf("ufc") === -1 ) {
@@ -236,6 +237,7 @@
 		"scripts/upfront/inline-panels/inline-panels",
 		"scripts/upfront/element-settings/sidebar",
 		"scripts/upfront/link-panel", // If adding more arguments adjust _.rest in line 72
+		"upfront/post-editor/upfront-post-edit",
 		"text!upfront/templates/property.html",
 		"text!upfront/templates/properties.html",
 		"text!upfront/templates/property_edit.html",
@@ -249,7 +251,7 @@
 		"text!upfront/templates/sidebar_settings_theme_colors.html",
 		"text!upfront/templates/color_picker.html",
 		'spectrum'
-	], function (chosen, globalEventHandlers, InlinePanelsLoader, ElementSettingsSidebar, LinkPanel) {
+	], function (chosen, globalEventHandlers, InlinePanelsLoader, ElementSettingsSidebar, LinkPanel, PostEditorBox) {
 		var _template_files = [
 			"text!upfront/templates/property.html",
 			"text!upfront/templates/properties.html",
@@ -266,7 +268,7 @@
 		];
 
 		// Auto-assign the template contents to internal variable
-		var _template_args = _.rest(arguments, 5),
+		var _template_args = _.rest(arguments, 6),
 			_Upfront_Templates = {}
 			;
 		_(_template_files).each(function (file, idx) {
@@ -282,6 +284,8 @@
 
 		var Upfront_Scroll_Mixin = {
 			stop_scroll_propagation: function ($el) {
+				if($el.parent().hasClass('sidebar-panel-post-editor')) return;
+
 				$el.on('DOMMouseScroll mousewheel', function(ev) {
 					var $this = $(this),
 						scrollTop = this.scrollTop,
@@ -350,7 +354,7 @@
 		var Properties = Backbone.View.extend({
 			events: {
 				"click #add-property": "show_new_property_partial",
-				"click #done-adding-property": "add_new_property",
+				"click #done-adding-property": "add_new_property"
 			},
 			initialize: function () {
 				/*
@@ -371,7 +375,7 @@
 				this.model.get("properties").each(function (obj) {
 					var local_view = new Property({"model": obj});
 					local_view.render();
-					properties.$el.find("dl").append(local_view.el)
+					properties.$el.find("dl").append(local_view.el);
 				});
 			},
 
@@ -434,6 +438,8 @@
 					this.$el.html('<a class="upfront-logo upfront-logo-small" href="' + url + '"></a>');
 			},
 			on_click: function () {
+				if(_upfront_post_data) _upfront_post_data.post_id = false;
+				Upfront.Events.trigger('click:edit:navigate', false);
 				/*var root = Upfront.Settings.site_url;
 				 root = root[root.length - 1] == '/' ? root : root + '/';
 
@@ -445,6 +451,8 @@
 		var Command_Exit = Command.extend({
 			className: "command-exit upfront-icon upfront-icon-exit",
 			render: function () {
+				this.stopListening(Upfront.Events, 'stay:upfront:editor');
+				this.listenTo(Upfront.Events, 'stay:upfront:editor', this.stayed);
 			},
 			on_click: function () {
 				// Upfront.Events.trigger("command:exit");
@@ -459,6 +467,11 @@
 				loading.render();
 				$('body').append(loading.$el);
 
+				// will be cleared when User chooses to stay
+				this.tmout = setTimeout(function () {
+					loading.cancel();
+				}, 1000);
+
 				if (url.indexOf('/create_new/') !== -1) {
 					return (window.location.href = Upfront.Settings.site_url);
 				}
@@ -466,13 +479,14 @@
 					return (window.location.href = Upfront.Settings.site_url + '/?p=' + _upfront_post_data.post_id);
 				}
 				if (window.location.search.match(/(\?|\&)editmode/)) {
-					return window.location.search = window.location.search.replace(/(\?|\&)editmode(=[^?&]+)?/, '');
+					return (window.location.search = window.location.search.replace(/(\?|\&)editmode(=[^?&]+)?/, ''));
 				}
 
 				window.location.reload(true);
-				var tmout = setTimeout(function () {
-					loading.cancel();
-				}, 1000);
+
+			},
+			stayed: function () {
+				clearTimeout(this.tmout);
 			}
 		});
 
@@ -504,8 +518,10 @@
 						data: _.extend({post_type: this.postType}, {})
 					}).done(function (resp) {
 					//Upfront.Util.log(resp.data);
-					Upfront.Application.navigate('/edit/post/' + resp.data.post_id, {trigger: true});
-				})
+					if(_upfront_post_data) _upfront_post_data.post_id = resp.data.post_id;
+						Upfront.Application.navigate('/edit/post/' + resp.data.post_id, {trigger: true});
+						Upfront.Events.trigger("click:edit:navigate", resp.data.post_id);
+					})
 				;
 			},
 			on_post_loaded: function(view) {
@@ -546,25 +562,16 @@
 				e.preventDefault();
 				var me = this;
 
-				this.spawn_modal();
-				this.modal.render();
-				$('body').append(this.modal.el);
-
-				this.modal.open(function () {
-					me.render_modal();
-					me.trigger("new_page:modal:open");
-				}).done(function () {
-					me.trigger("new_page:modal:close");
-					Upfront.Util.post({
+				Upfront.Util
+					.post({
 						action: "upfront-create-post_type",
-						data: _.extend({post_type: me.postType}, me.modal._data)
+						data: _.extend({post_type: me.postType, title: me._default_label}, {})
 					}).done(function (resp) {
-						//Upfront.Util.log(resp.data);
+					if(_upfront_post_data) _upfront_post_data.post_id = resp.data.post_id;
 						Upfront.Application.navigate('/edit/page/' + resp.data.post_id, {trigger: true});
-
-					});
-					//Upfront.Application.navigate('/create_new/page', {trigger: true});
-				})
+						Upfront.Events.trigger("click:edit:navigate", resp.data.post_id);
+					})
+				;
 			},
 			render_modal: function () {
 				var me = this,
@@ -652,14 +659,22 @@
 		var Command_SaveLayout = Command.extend({
 			"className": "command-save",
 			render: function () {
+				Upfront.Events.on("upfront:save:label", this.update_label, this);
 				// this.$el.addClass('upfront-icon upfront-icon-save');
 				this.$el.html(l10n.save);
 				this.$el.prop("title", l10n.save);
 			},
+			update_label: function (label) {
+				var self = this;
+				setTimeout( function () {
+					self.$el.html(label);
+					self.$el.prop("title", label);
+				}, 200);
+			},
 			on_click: function () {
-				if ( _upfront_post_data.layout.specificity && _upfront_post_data.layout.item && !_upfront_post_data.layout.item.match(/-page/) )
+				if (_upfront_post_data.layout.specificity && _upfront_post_data.layout.item && !_upfront_post_data.layout.item.match(/-page/) ) {
 					Upfront.Events.trigger("command:layout:save_as");
-				else {
+				} else {
 					Upfront.Events.trigger("command:layout:save");
 				}
 			}
@@ -732,7 +747,7 @@
 				this.$el.prop("title", l10n.alternate_layout);
 			},
 			on_click: function () {
-				Upfront.Events.trigger("command:layout:load", 2)
+				Upfront.Events.trigger("command:layout:load", 2);
 			}
 
 		});
@@ -744,6 +759,33 @@
 			},
 			on_click: function () {
 				Upfront.Events.trigger("command:layout:publish");
+			}
+		});
+
+		var Command_Trash = Command.extend({
+			className: "command-trash upfront-icon upfront-icon-trash",
+			render: function () {
+				this.listenTo(Upfront.Events, 'click:edit:navigate', this.toggle);
+				this.$el.html(l10n.trash);
+				this.toggle();
+			},
+			toggle: function (postId) {
+				if(typeof postId !== "undefined") {
+					if(postId === false) {
+						this.$el.hide();
+					} else {
+						this.$el.show();
+					}
+				} else {
+					if (typeof _upfront_post_data === "undefined" || _upfront_post_data.post_id === false) {
+						this.$el.hide();
+					} else {
+						this.$el.show();
+					}
+				}
+			},
+			on_click: function () {
+				Upfront.Events.trigger("command:layout:trash");
 			}
 		});
 
@@ -762,7 +804,8 @@
 			},
 			render: function () {
 				this.$el.addClass('upfront-icon upfront-icon-undo');
-				this.$el.html(l10n.undo);
+				// We do not need label anymore
+				// this.$el.html(l10n.undo);
 				this.$el.prop("title", l10n.undo);
 				if (this.model.has_undo_states()) this.activate();
 				else this.deactivate();
@@ -810,7 +853,8 @@
 			},
 			render: function () {
 				this.$el.addClass('upfront-icon upfront-icon-redo');
-				this.$el.html(l10n.redo);
+				// We do not need label anymore
+				// this.$el.html(l10n.redo);
 				this.$el.prop("title", l10n.redo);
 				if (this.model.has_redo_states()) this.activate();
 				else this.deactivate();
@@ -993,7 +1037,7 @@
 				$('.upfront-overlay-grid').remove();
 				$('.upfront-grid-layout, .upfront-region-side-fixed .upfront-modules_container, .upfront-region-side-lightbox .upfront-modules_container').each(function(){
 					var columns = grid.size,
-						template = _.template(_Upfront_Templates.overlay_grid, {columns: columns, size_class: grid.class, style: 'simple'});
+						template = _.template(_Upfront_Templates.overlay_grid, {columns: columns, size_class: grid['class'], style: 'simple'});
 					$(this).prepend(template);
 
 					//Adjust grid rulers position
@@ -1077,7 +1121,7 @@
 				Upfront.Events.on("command:newpost:start", this.switchOff, this);
 			},
 			render: function () {
-				var template = _.template(_Upfront_Templates.edit_background_area, {})
+				var template = _.template(_Upfront_Templates.edit_background_area, {});
 				this.$el.html(template);
 			},
 			on_switch: function () {
@@ -1357,7 +1401,7 @@
 						label_text: l10n.activate_breakpoints,
 						collection: breakpoints
 					})
-				]
+				];
 			},
 			render: function () {
 				this.fields[0].render();
@@ -1452,7 +1496,7 @@
 					new Command_Delete({"model": this.model}),
 					new Command_Select({"model": this.model}),
 					new Command_ToggleGrid({"model": this.model}),
-					new Command_ResetEverything({"model": this.model}),
+					new Command_ResetEverything({"model": this.model})
 				]);
 				if (Upfront.Settings.Debug.transients) this.commands.push(new Command_ExportHistory({model: this.model}));
 			},
@@ -1497,8 +1541,8 @@
 					this.$el.addClass('active');
 				else
 					this.$el.removeClass('active');
-				this.$el.html('<h3 class="sidebar-panel-title">' + this.get_title() + '</h3>');
-				this.$el.append('<div class="sidebar-panel-content" />');
+				this.$el.html('<h3 class="sidebar-panel-title">' + this.get_title() + '</h3><div class="sidebar-panel-content" />');
+
 				this.stop_scroll_propagation(this.$el.find('.sidebar-panel-content'));
 
 				if( this.sections){
@@ -1629,9 +1673,13 @@
 				Upfront.Events.on("command:redo", this.reset_modules, this);
 			},
 			on_render: function () {
+				var me = this;
 				this.reset_modules();
-				if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME )
-					this.$el.find('.sidebar-panel-title').trigger('click');
+				if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME ) {
+					setTimeout( function() {
+						me.$el.find('.sidebar-panel-title').trigger('click');
+					}, 100);
+				}
 			},
 			on_save_after: function () {
 				var regions = this.model.get('regions');
@@ -1715,7 +1763,7 @@
 				return "Layout";
 			},
 			on_render: function () {
-				this.elements.each(this.render_element, this)
+				this.elements.each(this.render_element, this);
 			},
 			render_element: function (element) {
 				if(! element.draggable)
@@ -1789,6 +1837,370 @@
 							$element_drag_wrapper.remove();
 						});
 				});
+			}
+		});
+
+		var SidebarPanel_PostEditor = SidebarPanel.extend({
+			"className": "sidebar-panel sidebar-panel-post-editor",
+			initialize: function (opts) {
+				var me = this;
+				this.active = true;
+				this.postId = this.getPostId();
+				this.sections = _([
+					new SidebarPanel_Settings_Section_PostDetails({"model": this.model, "postId": this.postId})
+				]);
+
+				if ( Upfront.Application.is_single( "post" ) ) {
+					me.sections.push(new SidebarPanel_Settings_Section_PostTagCategory({"model": me.model, "postId": this.postId}));
+				} else if ( Upfront.Application.is_single( "page" ) ) {
+					me.sections.push(new SidebarPanel_Settings_Section_PageTemplate({"model": me.model, "postId": this.postId}));
+				}
+
+				Upfront.Events.off("command:layout:save", this.on_save, this);
+				Upfront.Events.on("command:layout:save", this.on_save, this);
+
+				Upfront.Events.off("command:layout:save_as", this.on_save, this);
+				Upfront.Events.on("command:layout:save_as", this.on_save, this);
+
+				Upfront.Events.off("command:layout:publish", this.on_save, this);
+				Upfront.Events.on("command:layout:publish", this.on_save, this);
+
+				//Upfront.Events.on("command:layout:preview", this.on_preview, this); // Do NOT drop shadow region from layout on preview build
+				Upfront.Events.off("command:layout:save_success", this.on_save_after, this);
+				Upfront.Events.on("command:layout:save_success", this.on_save_after, this);
+
+				Upfront.Events.off("command:layout:save_error", this.on_save_after, this);
+				Upfront.Events.on("command:layout:save_error", this.on_save_after, this);
+
+				Upfront.Events.off("entity:drag_stop", this.reset_modules, this);
+				Upfront.Events.on("entity:drag_stop", this.reset_modules, this);
+
+				Upfront.Events.off("layout:render", this.apply_state_binding, this);
+				Upfront.Events.on("layout:render", this.apply_state_binding, this);
+			},
+			get_title: function () {
+				if ( Upfront.Application.is_single( "post" ) ) {
+					return l10n.post_settings;
+				} else if ( Upfront.Application.is_single( "page" ) ) {
+					return l10n.page_settings;
+				}
+			},
+			on_save: function () {
+				var regions = this.model.get('regions');
+				this._shadow_region = regions.get_by_name('shadow');
+				regions.remove(this._shadow_region, {silent: true});
+			},
+			on_preview: function () { return this.on_save(); },
+			apply_state_binding: function () {
+				Upfront.Events.on("command:undo", this.reset_modules, this);
+				Upfront.Events.on("command:redo", this.reset_modules, this);
+			},
+			on_render: function () {
+				var me = this;
+				// Delay to make it active after all other are rendered
+				setTimeout( function() {
+					me.$el.find('.sidebar-panel-title').trigger('click');
+				}, 200);
+			},
+			_post_type_has_taxonomy: function (tax, post) {
+				if (!tax) return true;
+				var type = post.get("post_type") || 'post';
+				return "page" !== type;
+			},
+			getPostId: function() {
+				postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
+				if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.THEME ) {
+					// We're dealing with a theme exporter request
+					// Okay, so let's fake a post
+					postId = "fake_post";
+				}
+				else if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.CONTENT_STYLE ){
+					postId = "fake_styled_post";
+				}
+
+				return postId;
+			}
+		});
+
+		var SidebarPanel_Settings_Section_PageTemplate = SidebarPanel_Settings_Section.extend({
+			initialize: function (opts) {
+				this.options = opts;
+				this.settings = _([]);
+				this.templates = _([]);
+				this.layouts = _([]);
+				this.options.call = false;
+				this.layoutList = new Upfront.Collections.PageTemplateList([], {postId: this.options.postId});
+				this.load_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 );
+			},
+			get_name: function () {
+				return 'templates';
+			},
+			get_title: function () {
+				return l10n.label_page_template;
+			},
+			on_render: function () {
+				var me = this;
+
+				if( !this.options.call ) {
+					// fetching layout templates data from custom post type
+					this.layoutList.fetch({load_dev: me.load_dev, template_type: 'layout'}).done(function(response){
+						me.layouts = new Upfront.Collections.PageTemplateList(response.data.results);
+
+						// fetching page template files in sequence after layout templates
+						me.layoutList.fetch({load_dev: me.load_dev, template_type: 'page'}).done(function(response){
+							me.templates = new Upfront.Collections.PageTemplateList(response.data.results);
+							// append the Template UI
+							me.append_template_box();
+						});
+					});
+
+					this.options.call = true;
+				}
+			},
+			append_template_box: function () {
+				var me = this;
+				var template_editor_view = new PostEditorBox.PageTemplateEditor({collection: me.layoutList, label: l10n.label_page_template});
+
+				setTimeout(function () {
+					template_editor_view.allPageTemplates = me.templates;
+					template_editor_view.allPageLayouts = me.layouts;
+					template_editor_view.render();
+					template_editor_view.delegateEvents();
+					me.$el.empty();
+					me.$el.append(template_editor_view.$el);
+				}, 300);
+			}
+		});
+
+		var SidebarPanel_Settings_Section_PostTagCategory = SidebarPanel_Settings_Section.extend({
+			initialize: function (opts) {
+				this.options = opts;
+				this.options.call = false;
+				this.settings = _([]);
+			},
+			get_name: function () {
+				return 'tag_category';
+			},
+			get_title: function () {
+				return "Cats / Tags";
+			},
+			on_render: function () {
+				var me = this;
+
+				if(!this.options.call) {
+					this.$el.append('<div class="upfront-categories-wrapper"></div>');
+					this.$el.append('<div class="upfront-tags-wrapper"></div>');
+					post = new Upfront.Models.Post({ID: this.options.postId});
+					post.fetch().done(function(response){
+						me.renderTaxonomyEditor(me.options.postId, 'category', post);
+						me.renderTaxonomyEditor(me.options.postId, 'post_tag', post);
+					});
+
+					this.options.call = true;
+				}
+			},
+			renderTaxonomyEditor: function(postId, tax, post){
+				tax = typeof tax === "undefined" ? "category" : tax;
+				var self = this,
+					termsList = new Upfront.Collections.TermList([], {postId: postId, taxonomy: tax})
+				;
+
+				if (!this._post_type_has_taxonomy(tax, post)) {
+					return false;
+				}
+
+				termsList.fetch({allTerms: true}).done(function(response){
+					var tax_view_constructor = response.data.taxonomy.hierarchical ? PostEditorBox.ContentEditorTaxonomy_Hierarchical : PostEditorBox.ContentEditorTaxonomy_Flat;
+					var tax_view = new tax_view_constructor({collection: termsList, tax: tax});
+
+					tax_view.allTerms = new Upfront.Collections.TermList(response.data.allTerms);
+					tax_view.render();
+					if(response.data.taxonomy.hierarchical) {
+						self.$el.find('.upfront-categories-wrapper').append(tax_view.$el);
+					} else {
+						self.$el.find('.upfront-tags-wrapper').append(tax_view.$el);
+					}
+				});
+
+			},
+			_post_type_has_taxonomy: function (tax, post) {
+				if (!tax) return true;
+				var type = post.get("post_type") || 'post';
+				return "page" !== type;
+			}
+		});
+
+		var SidebarPanel_Settings_Section_PostDetails = SidebarPanel_Settings_Section.extend({
+			initialize: function (opts) {
+				this.options = opts;
+				this.settings = _([]);
+				var self = this;
+
+				if ( !Upfront.Views.PostDataEditor ) {
+					require(['content'], function() {
+						if(self.getPostId() !== false) {
+							setTimeout(self.prepare_editor(self));
+						}
+					});
+				}
+
+				this.listenTo(Upfront.Views.PostDataEditor, 'loaded', function(contentEditor) {
+					if ( contentEditor ) {
+						Upfront.Views.PostBox = contentEditor.prepareBox();
+						self.append_box();
+					}
+				});
+
+				this.listenTo(Upfront.Views.PostDataEditor, 'post:saved', function() {
+					this.render();
+				});
+
+				this.listenTo(Upfront.Events, 'click:edit:navigate', function (postId) {
+					if ( typeof postId !== 'undefined' && postId ) setTimeout(self.prepare_editor(self));
+				});
+
+				if (typeof Upfront.Views.PostDataEditor !== "undefined" && Upfront.Views.PostDataEditor.contentEditor !== false) {
+					Upfront.Views.PostBox = Upfront.Views.PostDataEditor.contentEditor.prepareBox();
+				}
+
+				if( Upfront.Views.PostDataEditor && Upfront.Views.PostBox ) {
+					self.append_box(Upfront.Views.PostBox);
+				}
+
+				this.editor = Upfront.Views.PostDataEditor;
+			},
+			get_name: function () {
+				return 'post_details';
+			},
+			get_title: function () {
+				if ( Upfront.Application.is_single( "post" ) ) {
+					return l10n.post_settings;
+				} else if ( Upfront.Application.is_single( "page" ) ) {
+					return l10n.page_settings;
+				}
+			},
+
+			on_render: function () {
+				if( Upfront.Views.PostDataEditor && Upfront.Views.PostBox ) {
+					this.append_box(Upfront.Views.PostBox);
+				}
+			},
+
+			prepare_editor: function (me) {
+				// Post data editor sends out quite a few requests, so if it's already
+				// bootstrapped, let's just re-use this if possible
+				if(typeof Upfront.Views.PostDataEditor !== "undefined") {
+					if ((Upfront.Views.PostDataEditor || {}).postId === me.getPostId()) {
+						Upfront.Views.PostDataEditor.reboot();
+						return true;
+					}
+				}
+				// Done, carry on like we did before
+
+				if(typeof Upfront.Views.PostDataEditor !== "undefined") {
+					Upfront.Views.PostDataEditor.remove();
+				}
+
+				Upfront.Views.PostDataEditor = new Upfront.Content.PostEditor({
+					editor_id: 'this_post_' + me.getPostId(),
+					post_id: me.getPostId(),
+					content_mode: 'post_content'
+				});
+				// Upfront.Events.trigger("editor:post_editor:created", Upfront.Views.PostDataEditor);
+			},
+
+			getPostId: function() {
+				postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
+				if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.THEME ) {
+					// We're dealing with a theme exporter request
+					// Okay, so let's fake a post
+					postId = "fake_post";
+				}
+				else if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.CONTENT_STYLE ){
+					postId = "fake_styled_post";
+				}
+
+				return postId;
+			},
+
+			append_box: function () {
+				var me = this,
+				box = Upfront.Views.PostBox;
+
+				setTimeout(function () {
+					me.$el.empty();
+					me.$el.append(box.$el);
+					box.rebindEvents();
+				}, 50);
+			},
+
+			/**
+			 * On cancel handler, do rerender with cached data
+			 */
+			on_cancel: function () {
+				if ( ! this.child_view ) return;
+				this.child_view.rerender();
+			},
+
+			/**
+			 * On edit start handler, don't cache data on requested rendering
+			 */
+			on_edit_start: function () {
+				if ( ! this.child_view ) return;
+				this.child_view._do_cache = false;
+			},
+
+			/**
+			 * On edit stop handler, do enable caching back
+			 */
+			on_edit_stop: function () {
+				if ( ! this.child_view ) return;
+				this.child_view._do_cache = true;
+			},
+
+			/**
+			 * On title change handler, do nothing for now, just for handy reference in case we need it
+			 * @param {String} title
+			 */
+			on_title_change: function (title) {
+
+			},
+
+			/**
+			 * On content change handler, do nothing for now, just for handy reference in case we need it
+			 * @param {String} content
+			 * @param {Bool} isExcerpt
+			 */
+			on_content_change: function (content, isExcerpt) {
+
+			},
+
+			/**
+			 * On author change handler, rerender if this is author element
+			 * @param {Object} authorId
+			 */
+			on_author_change: function (authorId) {
+				if ( ! this.child_view ) return;
+				var type = this.model.get_property_value_by_name("data_type");
+				this.authorId = authorId;
+				// Render again if it's author element
+				if ( 'author' == type ) {
+					this.child_view.render();
+				}
+			},
+
+			/**
+			 * On date change handler, rerender if this is post data element
+			 * @param {Object} date
+			 */
+			on_date_change: function (date) {
+				if ( ! this.child_view ) return;
+				var type = this.model.get_property_value_by_name("data_type");
+				this.postDate = Upfront.Util.format_date(date, true, true).replace(/\//g, '-');
+				// Render again if it's post data element
+				if ( 'post_data' == type ) {
+					this.child_view.render(['date_posted']); // Only render the date_posted part
+				}
 			}
 		});
 
@@ -2056,7 +2468,7 @@
 								{ label: l10n.ul, value: "ul" },
 								{ label: l10n.ol, value: "ol" },
 								{ label: l10n.bq, value: "blockquote" },
-								{ label: l10n.bqalt, value: "blockquote.upfront-quote-alternative" },
+								{ label: l10n.bqalt, value: "blockquote.upfront-quote-alternative" }
 							],
 							change: function () {
 								var value = this.get_value(),
@@ -2095,7 +2507,7 @@
 						color: new Upfront.Views.Editor.Field.Color({
 							label: l10n.color,
 							default_value: me.colors['h1'],
-							autoHide: true,
+							autoHide: false,
 							spectrum: {
 								choose: function (color) {
 									var rgb = color.toRgb(),
@@ -2128,7 +2540,7 @@
 							label: l10n.line_height,
 							min: 0,
 							max: 10,
-							step: .1,
+							step: 0.1,
 							default_value: me.line_heights['h1'],
 							change: function () {
 								var value = this.get_value(),
@@ -2225,7 +2637,7 @@
 					styles = [],
 					variants;
 
-				if (typography == false) typography = {};
+				if (false === typography) typography = {};
 
 				if (_.isUndefined(typography[element]) || _.isUndefined(typography[element].font_face)) typography[element] = { font_face: 'Arial' };
 
@@ -2483,7 +2895,7 @@
 						return prefix + index;
 					}
 				}
-				return false
+				return false;
 			},
 			get_all_classes : function( bg ){
 				var prefix = _.isUndefined( bg ) || bg === false ? "upfront_theme_color_" : "upfront_theme_bg_color_";
@@ -2510,9 +2922,9 @@
 				color = color.replace(/\s+/g, '');
 				var digits = /(.*?)rgb\((\d+),(\d+),(\d+)\)/.exec(color);
 				digits = _.isEmpty(digits) ?  /(.*?)rgba\((\d+),(\d+),(\d+),([0-9.]+)\)/.exec(color) : digits;
-				var red = parseInt(digits[2]);
-				var green = parseInt(digits[3]);
-				var blue = parseInt(digits[4]);
+				var red = parseInt(digits[2], 10);
+				var green = parseInt(digits[3], 10);
+				var blue = parseInt(digits[4], 10);
 
 				var rgb = blue | (green << 8) | (red << 16);
 				return digits[1] + '#' + rgb.toString(16);
@@ -2620,7 +3032,7 @@
 							},
 							change: function (color) {
 								if (!_.isObject(color)) return false;
-								empty_picker.update_input_val(color.toHexString())
+								empty_picker.update_input_val(color.toHexString());
 							}
 						}
 					});
@@ -2646,7 +3058,7 @@
 							},
 							change: function (color) {
 								if (!_.isObject(color)) return false;
-								empty_picker.update_input_val(color.toHexString())
+								empty_picker.update_input_val(color.toHexString());
 							}
 						}
 					});
@@ -2701,7 +3113,7 @@
 						picker.$(".sp-preview").removeClass( 'uf-unset-color' );
 					}
 					$this.html( picker.$el );
-					$this.prepend('<span class="theme-colors-color-name">ufc' + index + '</span>')
+					$this.prepend('<span class="theme-colors-color-name">ufc' + index + '</span>');
 				});
 			},
 			add_new_color : function( color, index ){
@@ -2921,19 +3333,44 @@
 			"tagName": "ul",
 			"className": "sidebar-panels",
 			initialize: function () {
-				this.panels = {
-					posts: new SidebarPanel_Posts({"model": this.model}),
-					elements: new SidebarPanel_DraggableElements({"model": this.model}),
-					settings: new SidebarPanel_Settings({"model": this.model})
-				};
+				this.init_modules();
 
+				this.listenTo(Upfront.Events, 'click:edit:navigate', this.init_modules);
 				// Dev feature only
 				//if ( Upfront.Settings.Debug.dev )
 				//	this.panels.settings = new SidebarPanel_Settings({"model": this.model});
 			},
+			init_modules: function (postId) {
+				this.panels = {
+					'post_editor': new SidebarPanel_PostEditor({"model": this.model}),
+					'posts': new SidebarPanel_Posts({"model": this.model}),
+					'elements': new SidebarPanel_DraggableElements({"model": this.model}),
+					'settings': new SidebarPanel_Settings({"model": this.model})
+				};
+
+				if(typeof postId !== "undefined") {
+					if(postId === false) {
+						this.panels = _.omit(this.panels, 'post_editor');
+					}
+				} else {
+					if(typeof _upfront_post_data.post_id === "undefined" || _upfront_post_data.post_id === false) {
+						this.panels = _.omit(this.panels, 'post_editor');
+					}
+				}
+			},
 			render: function () {
 				var me = this;
-				_.each(this.panels, function(panel){
+
+				me.$el.empty();
+
+				_.each(this.panels, function(panel, index){
+					panel.remove();
+					panel = me.panels[ index ];
+					if(index === "post_editor") {
+						// Make sure we re-initialize panels
+						panel.initialize();
+					}
+
 					panel.render();
 
 					//Render panels to init styles, but do not append to $el
@@ -2975,7 +3412,7 @@
 			"className": "sidebar-commands sidebar-commands-primary clearfix",
 			initialize: function () {
 				this.commands = _([
-					new Command_ThemesDropdown({"model": this.model}),
+					new Command_ThemesDropdown({"model": this.model})
 				]);
 				if ( Upfront.themeExporter.currentTheme !== 'upfront') {
 					this.commands.push(new Command_NewLayout({"model": this.model}));
@@ -3011,12 +3448,17 @@
 					if ( current_app !== MODE.THEME ) {
 						this.commands = _([
 							new Command_Undo({"model": this.model}),
-							new Command_Redo({"model": this.model}),
-							new Command_ToggleGrid({"model": this.model}),
+							new Command_Redo({"model": this.model})
 						]);
+						if (Upfront.Application.user_can("RESPONSIVE_MODE") && current_app !== MODE.THEME) {
+							this.commands.push(
+								new Command_StartResponsiveMode({model: this.model})
+							);
+						}
+						this.commands.push(new Command_ToggleGrid({"model": this.model}));
 					} else {
 						this.commands = _([
-							new Command_ToggleGrid({"model": this.model}),
+							new Command_ToggleGrid({"model": this.model})
 						]);
 					}
 				} else {
@@ -3031,15 +3473,13 @@
 				if ( current_app == MODE.THEME ) {
 					this.commands.push(new Command_ExportLayout({"model": this.model}));
 				}
+
+				this.commands.push(new Command_Trash({"model": this.model}));
+
 				if (!Upfront.Settings.Application.NO_SAVE && current_app !== MODE.THEME && Upfront.Application.user_can_modify_layout()) {
 					this.commands.push(new Command_SaveLayout({"model": this.model}));
 				} else if (current_app !== MODE.THEME && Upfront.Settings.Application.PERMS.REVISIONS) {
 					this.commands.push(new Command_PreviewLayout({"model": this.model}));
-				}
-				if (Upfront.Application.user_can("RESPONSIVE_MODE") && current_app !== MODE.THEME) {
-					this.commands.push(
-						new Command_StartResponsiveMode({model: this.model})
-					);
 				}
 				// Dev feature only
 				if ( Upfront.Settings.Debug.dev ) {
@@ -3058,7 +3498,7 @@
 			className: "sidebar-commands sidebar-commands-header",
 			initialize: function () {
 				this.commands = _([
-					new Command_Logo({"model": this.model}),
+					new Command_Logo({"model": this.model})
 				]);
 				//if ( !Upfront.Settings.Application.NO_SAVE ) this.commands.push(new Command_Exit({"model": this.model}));
 				this.commands.push(new Command_Exit({"model": this.model})); // *Always* show exit
@@ -3555,12 +3995,12 @@
 				if(panel == 'posts'){
 					collection = new Upfront.Collections.PostList([], {postType: 'post'});
 					collection.orderby = 'post_date';
-					fetchOptions = {filterContent: true, withAuthor: true, limit: 15}
+					fetchOptions = {filterContent: true, withAuthor: true, limit: 15};
 				}
 				else if(panel == 'pages'){
 					collection = new Upfront.Collections.PostList([], {postType: 'page'});
 				collection.orderby = 'post_date';
-					fetchOptions = {limit: 15}
+					fetchOptions = {limit: 15};
 				}
 				else{
 					var post_id = Upfront.data.currentPost && Upfront.data.currentPost.id
@@ -3592,7 +4032,7 @@
 								view: new ContentEditorPosts({collection: collection, $popup: me.$popup}),
 								search: new ContentEditorSearch({collection: collection}),
 								pagination: new ContentEditorPagination({collection: collection})
-							}
+							};
 							me.views.posts = views;
 							break;
 						case "pages":
@@ -3614,7 +4054,7 @@
 								view: new ContentEditorPages({collection: collection, $popup: me.$popup}),
 								search: new ContentEditorSearch({collection: collection}),
 								pagination: new ContentEditorPagination({collection: collection})
-							}
+							};
 							me.views.pages = views;
 							break;
 						case "comments":
@@ -3623,7 +4063,7 @@
 								view: new ContentEditorComments({collection: collection, $popup: me.$popup}),
 								search: new ContentEditorSearch({collection: collection}),
 								pagination: new ContentEditorPagination({collection: collection})
-							}
+							};
 							me.views.comments = views;
 							break;
 					}
@@ -3704,8 +4144,7 @@
 				"click .upfront-pagination_page-item": "handle_pagination_request",
 				"click .upfront-pagination_item-next": "handle_next",
 				"click .upfront-pagination_item-prev": "handle_prev",
-				"click .upfront-pagination_page-item": "set_page",
-				"keypress .upfront-pagination_page-current": "set_page_keypress",
+				"keypress .upfront-pagination_page-current": "set_page_keypress"
 			},
 			initialize: function(opts){
 				this.options = opts;
@@ -3715,10 +4154,10 @@
 				this.$el.html(this.paginationTpl(this.collection.pagination));
 			},
 			handle_pagination_request: function (e, page) {
+				page = page ? page : parseInt($(e.target).attr("data-page_idx"), 10) || 0;
 				var me = this,
-					pagination = this.collection.pagination,
-					page = page ? page : parseInt($(e.target).attr("data-page_idx"), 10) || 0
-					;
+					pagination = this.collection.pagination
+				;
 				this.collection.fetchPage(page).
 				done(function(response){
 					me.collection.trigger('reset');
@@ -3737,19 +4176,6 @@
 
 				if(prevPage !== false)
 					this.handle_pagination_request(e, prevPage);
-			},
-			set_page: function (e) {
-				e.preventDefault();
-				e.stopPropagation();
-				/*
-				 var me = this;
-				 this.collection.fetchPage($(e.target).data("idx")-1).
-				 done(function(response){
-				 me.collection.trigger('reset');
-				 });
-				 */
-				var page = this.collection.pagination.pages - 1;
-				this.handle_pagination_request(e, page);
 			},
 			set_page_keypress: function (e) {
 				//var me = this;
@@ -3781,10 +4207,11 @@
 				"click .editaction.edit": "handle_post_edit",
 				"click .editaction.view": "handle_post_view",
 				"click #upfront-list-page-path a.upfront-path-back": "handle_return_to_posts",
-				"click .editaction.trash": "trash_post",
+				"click .editaction.trash": "trash_post"
 			},
 			initialize: function(options){
 				this.collection.on('change reset', this.render, this);
+				this.listenTo(Upfront.Events, 'post:saved', this.post_saved);
 			},
 			render: function () {
 				this.$el.empty().append(
@@ -3823,7 +4250,9 @@
 			handle_post_edit: function (e) {
 				e.preventDefault();
 				var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
+				if(_upfront_post_data) _upfront_post_data.post_id = postId;
 				Upfront.Application.navigate('/edit/post/' + postId, {trigger: true});
+				Upfront.Events.trigger('click:edit:navigate', postId);
 			},
 			handle_post_view: function (e) {
 				e.preventDefault();
@@ -3867,6 +4296,7 @@
 					// Respect dev=true
 					if (window.location.search.indexOf('dev=true') > -1) path += '?dev=true';
 					Upfront.Popup.close();
+					if(_upfront_post_data) _upfront_post_data.post_id = post.id;
 					Upfront.Application.navigate(path, {trigger: true});
 				});
 
@@ -3877,6 +4307,11 @@
 						me.handle_return_to_posts();
 					})
 				);
+			},
+
+			post_saved: function () {
+				// We should fetch colletion after post / page update to retrieve any title changes
+				this.collection.fetch();
 			},
 
 			handle_return_to_posts: function () {
@@ -3896,14 +4331,18 @@
 				"click .upfront-page-path-item": "handle_page_activate",
 				"change #upfront-page_template-select": "template_change",
 				"click .editaction.trash": "trash_page",
-			"click .editaction.edit": "handle_post_edit",
-				"click .editaction.view": "handle_post_view",
+				"click .editaction.edit": "handle_post_edit",
+				"click .editaction.view": "handle_post_view"
 			},
 			currentPage: false,
 			pageListTpl: _.template($(_Upfront_Templates.popup).find('#upfront-page-list-tpl').html()),
 			pageListItemTpl: _.template($(_Upfront_Templates.popup).find('#upfront-page-list-item-tpl').html()),
 			pagePreviewTpl: _.template($(_Upfront_Templates.popup).find('#upfront-page-preview-tpl').html()),
 			allTemplates: [],
+			initialize: function(options){
+				this.collection.on('change reset', this.render, this);
+				this.listenTo(Upfront.Events, 'post:saved', this.post_saved);
+			},
 			render: function () {
 				var pages = this.collection.getPage(this.collection.pagination.currentPage);//this.collection.where({'post_parent': 0});
 				// Render
@@ -3933,24 +4372,27 @@
 					// Respect dev=true
 					if (window.location.search.indexOf('dev=true') > -1) path += '?dev=true';
 					Upfront.Popup.close();
+					if(_upfront_post_data) _upfront_post_data.post_id = page.get('ID');
 					Upfront.Application.navigate(path, {trigger: true});
 				});
 			},
-		handle_sort_request: function (e) {
-			var $option = $(e.target).closest('.upfront-list_item-component'),
-				sortby = $option.attr('data-sortby'),
-				order = this.collection.order;
-			if(sortby){
-				if(sortby == this.collection.orderby)
-					order = order == 'desc' ? 'asc' : 'desc';
-				this.collection.reSort(sortby, order);
-			}
-		},
-		handle_post_edit: function (e) {
-			e.preventDefault();
-			var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
-			Upfront.Application.navigate('/edit/page/' + postId, {trigger: true});
-		},
+			handle_sort_request: function (e) {
+				var $option = $(e.target).closest('.upfront-list_item-component'),
+					sortby = $option.attr('data-sortby'),
+					order = this.collection.order;
+				if(sortby){
+					if(sortby == this.collection.orderby)
+						order = order == 'desc' ? 'asc' : 'desc';
+					this.collection.reSort(sortby, order);
+				}
+			},
+			handle_post_edit: function (e) {
+				e.preventDefault();
+				var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
+				if(_upfront_post_data) _upfront_post_data.post_id = postId;
+				Upfront.Application.navigate('/edit/page/' + postId, {trigger: true});
+				Upfront.Events.trigger('click:edit:navigate', postId);
+			},
 			handle_post_view: function (e) {
 				e.preventDefault();
 				var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
@@ -3981,6 +4423,10 @@
 					});
 				}
 			},
+			post_saved: function () {
+				// We should fetch colletion after post / page update to retrieve any title changes
+				this.collection.fetch();
+			},
 			update_path: function (page) {
 				var current = page,
 					fragments = [{id: page.get('ID'), title: page.get('post_title')}],
@@ -3995,12 +4441,12 @@
 
 				_.each(fragments, function(p){
 					if(output)
-						output += '&nbsp;Â»&nbsp;'
+						output += '&nbsp;Â»&nbsp;';
 					if(p.id == page.id)
 						output += '<span class="upfront-page-path-current last">' + p.title + '</span>';
 					else
 						output += '<a href="#" class="upfront-page-path-item" data-post_id="' + p.id + '">' + p.title + '</a>';
-				})
+				});
 				$root.html(output);
 			},
 
@@ -4169,7 +4615,7 @@
 				this.$('#upfront-list_item-comment-' + comment.id + ' i.upfront-comments-approve')
 					.animate({'font-size': '1px', opacity:0}, 400, 'swing', function(){
 						comment.approve(true).save();
-					})
+					});
 			},
 
 			handle_action_bar_request: function (e) {
@@ -4264,7 +4710,7 @@
 				$comment.find('.upfront-comment_edit').hide();
 
 				this._currently_working = true;
-			},
+			}
 		});
 
 
@@ -4279,7 +4725,7 @@
 						'src': src,
 						'alt': '',
 						'class': 'upfront-field-icon-img'
-					}
+					};
 					return '<img ' + this.get_field_attr_html(attr) + ' />';
 				}
 				else {
@@ -4512,7 +4958,7 @@
 					'name': this.get_field_name(),
 					'value': this.get_value() || this.get_saved_value()
 				};
-				if ('inline' === this.options.label_style) attr.class += ' upfront-has_inline_label';
+				if ('inline' === this.options.label_style) attr['class'] += ' upfront-has_inline_label';
 				if ( this.options.compact ) {
 					attr.placeholder = this.label;
 					this.$el.attr('title', this.label);
@@ -4527,7 +4973,7 @@
 		var Field_Button = Field.extend({
 			className: 'upfront-field-wrap upfront-field-wrap-button',
 			events: {
-				'click': 'on_click'
+				'click' : 'on_click'
 			},
 			render: function () {
 				this.$el.html('');
@@ -4542,6 +4988,7 @@
 				if (this.options.classname) this.$el.addClass(this.options.classname);
 
 				this.trigger('rendered');
+				this.delegateEvents();
 			},
 			get_info_html: function() {
 				return '<span class="button-info">' + this.options.info + '</span>';
@@ -4664,7 +5111,7 @@
 
 					if(me.options.callbacks && me.options.callbacks.slide)
 						me.options.callbacks.slide(e, ui);
-				}
+				};
 
 				this.on('rendered', function(){
 					var $field = me.$('#' + me.get_field_id());
@@ -4680,7 +5127,7 @@
 					;
 
 				if(this.options.info)
-					output += '<div class="upfront-field-info">' + this.options.info + '</div>'
+					output += '<div class="upfront-field-info">' + this.options.info + '</div>';
 
 				output += '<div class="upfront-field upfront-field-slider" id="' + this.get_field_id() + '"></div>';
 
@@ -4714,7 +5161,8 @@
 			className: 'upfront-field-wrap upfront-field-wrap-color sp-cf',
 			defaults : {
 				blank_alpha : 1,
-				autoHide: true
+				autoHide: true,
+				hideOnOuterClick: true
 			},
 			spectrumDefaults: {
 				clickoutFiresChange: false,
@@ -4737,6 +5185,8 @@
 			},
 			initialize: function(opts){
 				this.options = _.extend({}, this.defaults, opts);
+				this.field_options = _.extend({}, this.defaults, opts);
+
 				this.options.blank_alpha = _.isUndefined( this.options.blank_alpha ) ? 1 : this.options.blank_alpha;
 				this.sidebar_template = _.template(_Upfront_Templates.color_picker);
 				var me = this,
@@ -4750,77 +5200,12 @@
 				};
 				this.spectrumOptions = spectrumOptions;
 
-				spectrumOptions.move = function(color, e){
-					if( !_.isEmpty( color ) ){
-						me.color = color;
-						var rgb = color.toHexString();
-						$('.sp-dragger').css({
-							'border-top-color': rgb,
-							'border-right-color': rgb
-						});
-						me.update_input_border_color( color.toRgbString() );
-						me.update_input_val( rgb );
-						me.rgba = _.extend(me.rgba, color.toRgb());
-						me.render_sidebar_rgba(me.rgba);
-					}
 
-					if(me.options.spectrum && me.options.spectrum.move)
-						me.options.spectrum.move(color);
+				spectrumOptions.move = _.bind( this.on_spectrum_move, this ) ;
 
-					me.toggle_alpha_selector(color, e);
-				};
+				spectrumOptions.show = _.bind( this.on_spectrum_show, this );
 
-				spectrumOptions.show = function(color){
-					var $input = $(".sp-input"),
-						input_val = $input.val();
-
-					if( !_.isEmpty( color ) ){
-						this.color = color;
-						var rgb = color.toHexString();
-						me.rgba = _.extend(me.rgba, color.toRgb());
-						me.update_input_border_color( color.toRgbString() );
-						me.render_sidebar_rgba(me.rgba);
-						me.update_input_val( rgb );
-					}
-					if( !_.isEmpty( input_val) && !me.is_hex( input_val )){
-						var t_color = tinycolor( input_val );
-						$input.val(t_color.toHexString());
-					}
-					me.spectrumOptions = spectrumOptions;
-
-					if(me.options.spectrum && me.options.spectrum.show)
-						me.options.spectrum.show(color);
-
-					/**
-					 * Dont allow more than one top be open
-					 */
-					$(".sp-container").not( me.$(".sp-container")).each(function(){
-						var $this = $(this),
-							options = $this.data("sp-options");
-						if( !options || !options.flat  ){
-							$this.addClass("sp-hidden");
-						}
-
-					});
-
-					if( !_.isEmpty( input_val ) ){
-						var input_val_color = tinycolor( input_val );
-						me.toggle_alpha_selector( input_val_color );
-					}
-
-				};
-
-				spectrumOptions.beforeShow = function(color){
-					if( color instanceof Object ){
-						$.extend(color, tinycolor.prototype);
-					}
-					me.color = color;
-					me.update_palette(); // Make sure we're up to date
-					me.$('input[name=' + me.get_field_name() + ']').spectrum("option", "palette", me.options.palette);
-					if(me.options.spectrum && me.options.spectrum.beforeShow) me.options.spectrum.beforeShow(color);
-
-					me.$(".sp-container").data("sp-options", me.options.spectrum );
-				};
+				spectrumOptions.beforeShow = _.bind( this.on_spectrum_beforeShow, this );
 
 				/**
 				 * Wrap the hide callback so we can re-use it.
@@ -4842,7 +5227,7 @@
 					};
 				}
 
-				var l10n_update = _.debounce(function () {
+				this.l10n_update = _.debounce(function () {
 					// Let's fix the strings
 					$(".sp-container").each(function () {
 						$(this)
@@ -4850,42 +5235,123 @@
 							.find(".sp-palette-container").attr("data-label", l10n.theme_colors).end()
 							.find(".sp-palette-row:last").attr("data-label", l10n.recent_colors)
 						;
-					})
+					});
 				});
-
 
 				Field_Color.__super__.initialize.apply(this, arguments);
+				this.on('rendered', this._rendered );
 
-				this.on('rendered', function(){
-					me.$('input[name=' + me.get_field_name() + ']').spectrum(spectrumOptions);
-					me.$spectrum = me.$('input[name=' + me.get_field_name() + ']');
+			},
+			_rendered: function(){
+				var me = this;
+				this.$('input[name=' + this.get_field_name() + ']').spectrum(this.spectrumOptions);
+				this.$spectrum = this.$('input[name=' + this.get_field_name() + ']');
 
-					// Listen to spectrum events and fire off l10n labels update
-					me.$spectrum.on("reflow.spectrum move.spectrum change", l10n_update);
+				// Listen to spectrum events and fire off l10n labels update
+				this.$spectrum.on("reflow.spectrum move.spectrum change", this.l10n_update);
 
-					me.$(".sp-container").append("<div class='color_picker_rgb_container'></div>");
-					me.update_input_border_color(me.get_saved_value());
-					me.$(".sp-container").data("field_color", me);
-					me.$(".sp-container").data("$spectrum", me.$spectrum );
-					me.$(".sp-container").find(".sp-choose").on("click.spectrum", function(e){
-						if(me.options.spectrum && me.options.spectrum.choose && me.color)
-							me.options.spectrum.choose(me.color);
+				this.$(".sp-container").append("<div class='color_picker_rgb_container'></div>");
+				this.update_input_border_color(this.get_saved_value());
+				this.$(".sp-container").data("field_color", this);
+				this.$(".sp-container").data("$spectrum", this.$spectrum );
+				this.$(".sp-container").find(".sp-choose").on("click.spectrum", function(e){
+					if(me.options.spectrum && me.options.spectrum.choose && me.color)
+						me.options.spectrum.choose(me.color);
 
-						if( me.autoHide !== true ){
-							me.$(".sp-replacer").removeClass("sp-active");
-							me.$(".sp-container").addClass("sp-hidden");
-						}
+					if( me.options.autoHide !== true ){
+						me.$(".sp-replacer").removeClass("sp-active");
+						me.$(".sp-container").addClass("sp-hidden");
+					}
+				});
+
+				/**
+				 * Translate the ok button
+				 */
+				this.$(".sp-container").find(".sp-choose").text( Upfront.Settings.l10n.global.content.ok );
+
+			},
+			/**
+			 * Listens to spectrum move event
+			 *
+			 * @param color
+             * @param e
+             */
+			on_spectrum_move: function(color, e){
+				if( !_.isEmpty( color ) ){
+					this.color = color;
+					var rgb = color.toHexString();
+					$('.sp-dragger').css({
+						'border-top-color': rgb,
+						'border-right-color': rgb
 					});
+					this.update_input_border_color( color.toRgbString() );
+					this.update_input_val( rgb );
+					this.rgba = _.extend(this.rgba, color.toRgb());
+					this.render_sidebar_rgba(this.rgba);
+				}
 
-					/**
-					 * Translate the ok button
-					 */
-					me.$(".sp-container").find(".sp-choose").text( Upfront.Settings.l10n.global.content.ok );
+				if(this.options.spectrum && this.options.spectrum.move)
+					this.options.spectrum.move(color);
+
+				this.toggle_alpha_selector(color, e);
+			},
+			/**
+			 * Listens to spectrum show event
+			 *
+			 * @param color
+             */
+			on_spectrum_show: function(color){
+				var $input = $(".sp-input"),
+						input_val = $input.val();
+
+				if( !_.isEmpty( color ) ){
+					this.color = color;
+					var rgb = color.toHexString();
+					this.rgba = _.extend(this.rgba, color.toRgb());
+					this.update_input_border_color( color.toRgbString() );
+					this.render_sidebar_rgba(this.rgba);
+					this.update_input_val( rgb );
+				}
+				if( !_.isEmpty( input_val) && !this.is_hex( input_val )){
+					var t_color = tinycolor( input_val );
+					$input.val(t_color.toHexString());
+				}
+				//this.spectrumOptions = spectrumOptions;
+
+				if(this.options.spectrum && this.options.spectrum.show)
+					this.options.spectrum.show(color);
+
+				/**
+				 * Dont allow more than one top be open
+				 */
+				$(".sp-container").not( this.$(".sp-container")).each(function(){
+					var $this = $(this),
+							options = $this.data("sp-options");
+					if( !options || !options.flat  ){
+						$this.addClass("sp-hidden");
+					}
 
 				});
 
-			},
+				if( !_.isEmpty( input_val ) ){
+					var input_val_color = tinycolor( input_val );
+					this.toggle_alpha_selector( input_val_color );
+				}
 
+				if( ( !this.field_options || !this.field_options.flat ) && this.field_options.hideOnOuterClick )
+					$("html").on('mousedown', _.bind( this.hide_on_outer_click, this ) );
+			},
+			on_spectrum_beforeShow: function(color){
+				if( color instanceof Object ){
+					$.extend(color, tinycolor.prototype);
+				}
+				this.color = color;
+				this.update_palette(); // Make sure we're up to date
+				this.$('input[name=' + this.get_field_name() + ']').spectrum("option", "palette", this.options.palette);
+				if(this.options.spectrum && this.options.spectrum.beforeShow) this.options.spectrum.beforeShow(color);
+
+				this.$(".sp-container").data("sp-options", this.options.spectrum );
+			},
 			render: function () {
 				Field_Color.__super__.render.apply(this, arguments);
 				// Re-bind debounced listeners for theme color updates
@@ -4893,7 +5359,21 @@
 				var cback = _.debounce(this.update_palette, 200);
 				this.listenTo(Upfront.Events, "theme_colors:update", cback, this);
 			},
+			/**
+			 * Hides picker on outer click
+			 *
+			 * @param e event
+             */
+			hide_on_outer_click: function(e){
+				if( this.$(".sp-container").hasClass("sp-hidden") ) return;
 
+				var $target = $(e.target);
+				if( $target.is(".sp-container") || $target.parents(".sp-container").length ) return;
+
+				this.$spectrum.trigger("click.spectrum"); // trigger cancel
+				this.$(".sp-container").addClass("sp-hidden"); //  hide
+				$("html").off('mousedown', _.bind( this.hide_on_outer_click, this ) );
+			},
 			update_palette: function () {
 				if (this.$spectrum && this.$spectrum.spectrum) {
 					this.$spectrum.spectrum("option", "palette", Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : []);
@@ -4921,7 +5401,7 @@
 
 				spPreview.css({
 					backgroundColor: rgb
-				})
+				});
 
 				if( rgb !== 'rgba(0, 0, 0, 0)' ) {
 					spPreview.removeClass('uf-unset-color');
@@ -5191,11 +5671,11 @@
 					'class': 'upfront-field-select upfront-no-select',
 					'id': this.get_field_id()
 				};
-				attr.class += ' upfront-field-select-' + ( this.options.multiple ? 'multiple' : 'single' );
+				attr['class'] += ' upfront-field-select-' + ( this.options.multiple ? 'multiple' : 'single' );
 				if ( this.options.disabled )
-					attr.class += ' upfront-field-select-disabled';
+					attr['class'] += ' upfront-field-select-disabled';
 				if ( this.options.style == 'zebra' )
-					attr.class += ' upfront-field-select-zebra';
+					attr['class'] += ' upfront-field-select-zebra';
 				//return '<select ' + this.get_field_attr_html(attr) + '>' + this.get_values_html() + '</select>';
 				return '<div ' + this.get_field_attr_html(attr) + '><div class="upfront-field-select-value"></div><ul class="upfront-field-select-options">' + this.get_values_html() + '</ul></div>';
 			},
@@ -5236,14 +5716,43 @@
 			multiple: false,
 
 			initialize: function(options) {
+				this.options = options;
 				Field.prototype.initialize.call(this, options);
 				//Close dropdown on parent scroll
 				$('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, this.closeChosen);
+			},
 
-				//Disable scroll when chosen is opened
-				$('.sidebar-panel-content .sidebar-tab-content').bind('mousewheel', function() {
-					return false
+			render: function () {
+				var me = this;
+
+				this.$el.html('');
+
+				if ( this.label ) {
+					this.$el.append(this.get_label_html());
+				}
+				this.$el.append(this.get_field_html());
+
+				this.stop_scroll_propagation(this.$el.find('.upfront-field-select-options'));
+
+				if ( ! this.multiple && ! this.get_saved_value() ) {
+					this.$el.find('.upfront-field-select-option:eq(0) input').prop('checked', true);
+				}
+
+				this.update_select_display_value();
+
+				if ( this.options.width ) {
+					this.$el.find('.upfront-field-select').css('width', this.options.width);
+				}
+
+				if (this.options.additional_classes) {
+					this.$el.addClass(this.options.additional_classes);
+				}
+
+				this.$el.find('select').on('chosen:hiding_dropdown', function() {
+					me.allowMouseWheel();
 				});
+
+				this.trigger('rendered');
 			},
 
 			get_field_html: function() {
@@ -5256,6 +5765,7 @@
 				return ['<option value="', value.value, '"', selected, '>', value.label, '</option>'].join('');
 			},
 			on_change: function(e) {
+				this.allowMouseWheel();
 				this.$el.find('.chosen-drop').css('display', 'none');
 				this.trigger('changed');
 			},
@@ -5266,6 +5776,12 @@
 				this.$el.find('select').val(value).trigger('chosen:updated');
 			},
 			openOptions: function(e) {
+
+				//Disable scroll when chosen is opened
+				$('.sidebar-panel-content .sidebar-tab-content, #sidebar-scroll-wrapper').bind('mousewheel', function() {
+					return false;
+				});
+
 				var me = this;
 				_.delay(function() { // Delay because opening animation causes wrong outerHeight results
 					var in_sidebar = me.$el.parents('#sidebar-ui').length,
@@ -5298,8 +5814,11 @@
 				}
 				me.$el.find('select').trigger("chosen:close");
 
+				me.allowMouseWheel();
+			},
+			allowMouseWheel: function() {
 				//Enable scroll when chosen is closed
-				$('.sidebar-panel-content .sidebar-tab-content').unbind('mousewheel');
+				$('.sidebar-panel-content .sidebar-tab-content, #sidebar-scroll-wrapper').unbind('mousewheel');
 			}
 		});
 
@@ -5396,7 +5915,7 @@
 					'700': l10n.label_bold,
 					'800':  l10n.label_extra_bold,
 					'900': l10n.label_ultra_bold
-				}
+				};
 
 				//Check if weight is number or string
 				if (!_.isUndefined( weight ) && weight.match(/^(\d+)/)) {
@@ -5450,7 +5969,7 @@
 
 				var me = this;
 				$('.upfront-chosen-select-multiple', this.$el).chosen({
-					width: this.options.select_width,
+					width: this.options.select_width
 				});
 
 			},
@@ -5586,7 +6105,7 @@
 				this.$el.html('');
 				if ( this.label ) this.$el.append(this.get_label_html());
 				this.$el.append('<div class="upfront-suggest-wrap" />');
-				var $wrap = this.$el.find('.upfront-suggest-wrap')
+				var $wrap = this.$el.find('.upfront-suggest-wrap');
 				$wrap.append(this.get_field_html());
 				$wrap.append('<div class="upfront-suggest-list-wrap upfront-no-select" />');
 				this.checked_list = this.get_saved_value();
@@ -5620,7 +6139,7 @@
 				var value = this.get_field_input_value();
 				this.$el.find('.upfront-suggest-lists').html(this.get_suggest_list_html());
 				if ( value ){
-					this.$el.find('.upfront-suggest-add-wrap').show()
+					this.$el.find('.upfront-suggest-add-wrap').show();
 					this.$el.find('.upfront-suggest-add-value').text(value);
 					this.$el.find('.upfront-suggest-add').toggle( !(_.contains(this.suggest_list, value)) );
 				}
@@ -5734,7 +6253,7 @@
 				this.fields.each(function(field){
 					field.render();
 					field.delegateEvents();
-					$content.append(field.el);
+					$content.append(field.$el);
 				});
 
 				this.trigger('rendered');
@@ -5834,7 +6353,7 @@
 						if ( this.is_default ) this.model.init_property(this.get_property(), this.get_value());
 					}
 					var id = this.cid + '-' + this.get_property();
-					var $label = $('<label for="' + id + '" />')
+					var $label = $('<label for="' + id + '" />');
 					var checked = ( this.get_property_value() == this.get_value() );
 					$label.append(this.get_icon_html(this.get_icon()));
 					$label.append('<span class="upfront-settings-item-tab-radio-text">' + this.get_title() + '</span>');
@@ -5947,7 +6466,7 @@
 						setting.panel = me;
 					}
 					setting.render();
-					$panel_scroll.append(setting.el)
+					$panel_scroll.append(setting.el);
 				});
 				if ( this.options.min_height ) {
 					$panel_scroll.css('min-height', this.options.min_height);
@@ -6556,7 +7075,7 @@
 		var _Settings_CSS = SettingsItem.extend({
 			className: 'upfront-settings-css',
 			events: {
-				'click .upfront-css-edit': 'openEditor',
+				'click .upfront-css-edit': 'openEditor'
 			},
 			initialize: function(options) {
 				SettingsItem.prototype.initialize.call(this, options);
@@ -6577,7 +7096,7 @@
 						model: this.model,
 						className: 'edit-preset-css-label',
 						compact: true,
-						label: l10n.edit_css_label,
+						label: l10n.edit_css_label
 					}),
 
 					new Upfront.Views.Editor.Field.Button({
@@ -6585,7 +7104,7 @@
 						className: 'upfront-css-edit',
 						compact: true,
 						name: 'preset_css',
-						label: l10n.edit_css,
+						label: l10n.edit_css
 					})
 				]);
 			},
@@ -6603,7 +7122,7 @@
 				Upfront.Events.trigger("entity:settings:deactivate");
 
 				//$('#settings').find('.upfront-save_settings').click();
-			},
+			}
 		});
 
 		var ButtonPresetModel = Backbone.Model.extend({
@@ -6810,10 +7329,10 @@
 
 			this.get_fonts = function() {
 				return system_fonts;
-			}
+			};
 
 			initialize();
-		}
+		};
 
 		var system_fonts_storage = new System_Fonts_Storage();
 
@@ -7977,7 +8496,7 @@
 				var me = this,
 					rules = contents.split('}'),
 					processed = ''
-					;
+				;
 
 				_.each(rules, function (rl) {
 					var src = $.trim(rl).split('{');
@@ -8004,6 +8523,13 @@
 						src[1] + // Actual rule
 						'\n}\n';
 				});
+
+				// Handle closing comments being omitted from the processed string
+				// Only apply if the original contents has closing CSS comment, and the processed one does not
+				if (contents.match(/\*\/\s*$/) && !processed.match(/\*\/\s*$/)) {
+					processed += '\n*/';
+				}
+
 				return processed;
 			},
 
@@ -8227,7 +8753,7 @@
 
 						//Remove the delete link
 						me.deleteToggle.detach();
-					});
+					})
 				;
 			},
 
@@ -8367,7 +8893,7 @@
 					this.$style = $('<style id="' + style_selector + '"></style>');
 					$('body').append(this.$style);
 				} else {
-					this.$style = $style
+					this.$style = $style;
 				}
 
 				if (options.cssSelectors) {
@@ -8688,7 +9214,7 @@
 				return {
 					anchor: this.fields._wrapped[0].get_value(),
 					label: this.fields._wrapped[1].get_value()
-				}
+				};
 			}
 		});
 
@@ -8746,7 +9272,7 @@
 				return {
 					anchor: this.fields._wrapped[0].get_value(),
 					label: this.fields._wrapped[1].get_value()
-				}
+				};
 			}
 		});
 
@@ -8798,7 +9324,7 @@
 			render: function() {
 				var properties = this.model.toJSON();
 				// "default" is reserved word can't use it in template rendering. //todo fix this in model
-				properties.is_default = properties.default;
+				properties.is_default = properties['default'];
 				this.$el.append(_.template(this.template, properties));
 				return this;
 			}
@@ -8916,7 +9442,7 @@
 				;
 				this.timer = setTimeout(function(){
 					me.notices.remove(notice);
-				}, notice.get('duration') || this.timeoutTime)
+				}, notice.get('duration') || this.timeoutTime);
 			},
 			replace: function(notice) {
 				var me = this;
@@ -8965,7 +9491,7 @@
 					page = page ? page : parseInt($(e.target).attr("data-page_idx"), 10) || 0
 					;
 				this.options.pageSelection(page);
-			},
+			}
 		});
 
 		var PostSelector = Backbone.View.extend({
@@ -8999,7 +9525,7 @@
 				}
 			},
 			open: function(options){
-				var me = this
+				var me = this,
 				bindEvents = false
 				;
 
@@ -9584,7 +10110,7 @@
 						],
 						types = index_container > 0 ? types : _.union( [
 							{ label: l10n.full_screen, value: 'full' }
-						], types)
+						], types),
 					region_global = new Field_Checkboxes({
 						model: this.model,
 						name: 'scope',
@@ -9944,7 +10470,7 @@
 					$region_name.find('.upfront-region-name-edit-value').text(this.model.get('title'));
 					if ( this.model.get('scope') == 'global' ) {
 						$region_name.find('.upfront-region-bg-setting-is-global').show();
-						make_global.$el.hide()
+						make_global.$el.hide();
 						if ( !this.model.is_main() && sub ) {
 							var main_region = this.model.collection.get_by_name(this.model.get('container'));
 							if ( main_region && main_region.get('scope') == 'global' ){
@@ -10152,7 +10678,7 @@
 				if ( model.is_main() ){
 					_.each(sub_regions, function(sub){
 						if ( _.isArray(sub) )
-							_.each(sub, function(each){ set_sub(each); })
+							_.each(sub, function(each){ set_sub(each); });
 						else if ( sub )
 							set_sub(sub);
 					});
@@ -10222,7 +10748,7 @@
 								case 'right':
 									this.model.remove_property('left', true); break;
 							}
-							this.property.set({'value': parseInt(value)});
+							this.property.set({'value': parseInt(value, 10)});
 						}
 					},
 					fields = {
@@ -10344,8 +10870,8 @@
 								{ label: l10n.show_close_icon, value: 'yes', checked: this.model.get_property_value_by_name('show_close') == 'yes' ? 'checked' : false }
 							],
 							change: set_value
-						}),
-						/*add_close_text: new Upfront.Views.Editor.Field.Checkboxes({
+						})/*,
+						add_close_text: new Upfront.Views.Editor.Field.Checkboxes({
 						 model: this.model,
 						 property: 'add_close_text',
 						 label: "",
@@ -10374,13 +10900,13 @@
 						move: function(color) {
 							var rgb = color.toRgb(),
 								rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
-							fields.overlay_color.get_field().val(rgba_string)
+							fields.overlay_color.get_field().val(rgba_string);
 							set_value(fields.overlay_color);
 						},
 						change: function(color) {
 							var rgb = color.toRgb(),
 								rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
-							fields.overlay_color.get_field().val(rgba_string)
+							fields.overlay_color.get_field().val(rgba_string);
 							set_value(fields.overlay_color);
 						}
 					}
@@ -10396,15 +10922,15 @@
 						move: function(color) {
 							var rgb = color.toRgb(),
 								rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
-							fields.lightbox_color.get_field().val(rgba_string)
+							fields.lightbox_color.get_field().val(rgba_string);
 							set_value(fields.lightbox_color);
 						},
 						change: function(color) {
 							var rgb = color.toRgb(),
 								rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
-							fields.lightbox_color.get_field().val(rgba_string)
+							fields.lightbox_color.get_field().val(rgba_string);
 							set_value(fields.lightbox_color);
-						},
+						}
 					}
 				});
 
@@ -10610,7 +11136,7 @@
 				this._active = true;
 				this.render_icon();
 				this.open_modal(this.render_modal, true).always($.proxy(this.on_close_modal, this)).fail($.proxy(this.notify, this));
-			},
+			}
 		});
 
 		var RegionPanelItem_ExpandLock = RegionPanelItem.extend({
@@ -10759,7 +11285,7 @@
 						var values = [],
 							is_main = ( to == 'top' || to == 'bottom' ),
 							is_side = ( to == 'left' || to == 'right' );
-						values.push( { label: l10n.select_global_region, value: '', disabled: true } )
+						values.push( { label: l10n.select_global_region, value: '', disabled: true } );
 						_.each(Upfront.data.global_regions, function(region){
 							if ( is_main && region.container && region.name != region.container ) // exclude sub-region if main
 								return;
@@ -10802,7 +11328,7 @@
 							field.render();
 							field.delegateEvents();
 						});
-						$modal.addClass('upfront-add-region-modal')
+						$modal.addClass('upfront-add-region-modal');
 						$content.append(template);
 						$content.find('.upfront-add-region-choice').append(fields.from.$el);
 						$content.find('.upfront-add-region-new').append(fields.region_title.$el);
@@ -10957,7 +11483,7 @@
 						to_add_run = function(){
 							_.each(to_add, function(add){
 								add.model.add_to(collection, add.index, add.options);
-							})
+							});
 						};
 					_.each(regions, function(region, i){
 						var region_model = new Upfront.Models.Region(region),
@@ -10982,7 +11508,7 @@
 								model: region_model,
 								index: (is_before ? index : index+1),
 								options: options
-							}
+							};
 						}
 					});
 					if ( main_add !== false ){
@@ -11135,8 +11661,9 @@
 				this.options = opts;
 				if ( ! this.options.to )
 					this.options.to = 'bottom';
-				var to = this.options.to
-				args = {model: this.model, to: to};
+				var to = this.options.to,
+					args = {model: this.model, to: to}
+				;
 				if ( this.options.width )
 					args.width = this.options.width;
 				if ( this.options.height )
@@ -11331,8 +11858,8 @@
 				});
 
 				setTimeout(
-					function () { me.update_padding() }
-					, 300
+					function () { me.update_padding(); },
+					300
 				);
 			},
 			update_padding: function () {
@@ -11677,7 +12204,10 @@
 					model.set({ 'active': false }, { 'silent': true });
 				});
 
+				// Trigger multiple events so we can have some sort of priority order
 				Upfront.Events.trigger("upfront:layout_size:change_breakpoint", changed_model.toJSON(), prev_active_json);
+				Upfront.Events.trigger("upfront:layout_size:change_breakpoint:secondary", changed_model.toJSON(), prev_active_json);
+				Upfront.Events.trigger("upfront:layout_size:change_breakpoint:tertiary", changed_model.toJSON(), prev_active_json);
 
 				//todo This should go somewhere else
 				if (this.prev_active) {
@@ -11704,7 +12234,7 @@
 			},
 			sorted_by_width: function() {
 				return _.sortBy(this.models, function(model) {
-					return model.get('width')
+					return model.get('width');
 				});
 			},
 			get_active: function() {
@@ -11734,11 +12264,11 @@
 				return default_breakpoint;
 			},
 			get_unique_id: function() {
-				var id = 'custom-' + +(new Date());
+				var id = 'custom-' + (new Date());
 
 				// Ensure id is unique
 				while (!_.isUndefined(this.findWhere({ 'id': id }))) {
-					id = 'custom-' + +(new Date());
+					id = 'custom-' + (new Date());
 				}
 
 				return id;
@@ -12012,6 +12542,7 @@
 			}
 		});
 
+
 		return {
 			"Editor": {
 				"Property": Property,
@@ -12041,7 +12572,7 @@
 					"AnchorSetting": _Settings_AnchorSetting
 				},
 				"Button": {
-					"Presets": button_presets_collection,
+					"Presets": button_presets_collection
 				},
 				"Fonts": {
 					"System": system_fonts_storage,
@@ -12107,4 +12638,4 @@
 	});
 })(jQuery);
 
-//@ sourceURL=upfront-views-editor.js
+//# sourceURL=upfront-views-editor.js

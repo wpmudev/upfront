@@ -73,8 +73,8 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		);
 
 		$post = Upfront_PostModel::create($data['post_type'], $data['title']);
-		if (!empty($data['permalink'])) $post->post_name = $data['permalink'];
-		if (!empty($data['template'])) update_post_meta($post->ID, '_wp_page_template', $data['template']);
+		if (!empty($data['permalink'])) $post->post_name = $this->_remove_unicodes_url($data['permalink']);
+		// if (!empty($data['template'])) update_post_meta($post->ID, '_wp_page_template', $data['template']);
 
 		$post->post_status = 'draft';
 		Upfront_PostModel::save($post);
@@ -126,7 +126,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 		$post = (array)Upfront_PostModel::get($post_id);
 		if (empty($post)) $this->_out(new Upfront_JsonResponse_Error("Invalid post"));
-		$post['post_name'] = $slug;
+		$post['post_name'] = $this->_remove_unicodes_url($slug);
 
 		$updated = Upfront_PostModel::save($post);
 		$updated->permalink = get_permalink($updated->ID);
@@ -320,7 +320,10 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			$post->permalink = get_permalink($post->ID);
 			$post->sticky = is_sticky($post->ID);
 			$post->is_new = false;
-
+			$post->server_time = date('m/d/Y h:i:s a', time());
+			
+			if ( empty($post->post_name) ) $post->post_name = $this->_remove_unicodes_url($post->post_title);
+			
 			$this->_out(new Upfront_JsonResponse_Success($post));
 		}
 		else if( $data['id'] === '0') { //New post
@@ -333,6 +336,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 			$post->is_new = true;
 			$post->sticky = false;
+			$post->server_time = date('m/d/Y h:i:s a', time());
 
 			$this->_out(new Upfront_JsonResponse_Success($post));
 		}
@@ -387,6 +391,62 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		)));
 
 	}
+	
+	function fetch_page_templates($data){
+		$store_key = strtolower(str_replace('_dev','',Upfront_Layout::get_storage_key()));
+		$template_type = isset($data['template_type']) 
+			? $data['template_type']
+			: false 
+		;
+		$dev_type = ( $data['load_dev'] == 1 ) 
+			? Upfront_PageTemplate::LAYOUT_TEMPLATE_DEV_TYPE
+			: Upfront_PageTemplate::LAYOUT_TEMPLATE_TYPE
+		;
+		$templates = ( $template_type == 'page' )
+			? array((object) array(
+					'name' => 'Default Template',
+					'slug' => sanitize_title($store_key . '-default'),
+					'file' => '',
+					'template_type' => $template_type
+				))
+			: array()
+		;
+		
+		if ( $template_type == 'page' ) {
+			$page_templates = get_page_templates();
+			foreach ( $page_templates as $template_name => $template_filename ) {
+				array_push($templates, (object) array(
+						'name' => $template_name,
+						'slug' => sanitize_title($store_key . '-' . str_replace(' ','-',$template_name)),
+						'file' => $template_filename,
+						'template_type' => $template_type
+					)
+				);
+			}
+		} else {
+			$custom_post_type_templates = Upfront_Server_PageTemplate::get_instance()->get_all_theme_templates($dev_type, $template_type);
+			foreach ( $custom_post_type_templates as $custom_template ) {
+				array_push($templates, (object) array(
+					'slug' => sanitize_title($custom_template->post_name),
+					'name' => Upfront_Server_PageTemplate::get_instance()->slug_layout_to_name($custom_template->post_name),
+				));
+			}
+			// append layouts saved on options table (from old implementation)
+			$db_option_layouts = Upfront_Layout::get_db_layouts();
+			foreach ( $db_option_layouts as $key => $db_layout ) {
+				if ( preg_match('/single-page/i', $db_layout) ) {
+					array_push($templates, (object) array(
+						'slug' => sanitize_title($db_layout),
+						'name' => Upfront_Server_PageTemplate::get_instance()->db_layout_to_name($db_layout),
+					));
+				}
+			}
+		}
+		
+		$this->_out(new Upfront_JsonResponse_Success(array(
+			"results" => $templates
+		)));
+	}
 
 	function parse_single_meta($metadata){
 		$parsed = array();
@@ -410,12 +470,9 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			if($data['post_type'] == 'post' && !current_user_can('publish_posts') || $data['post_type'] == 'page' && !current_user_can('publish_pages'))
 			$this->_out(new Upfront_JsonResponse_Error("You can't do this."));
 		}
-
-		unset($data['post_modified']);
-		unset($data['post_modified_gmt']);
-
-
-
+		// making sure post names/slugs are sanitized
+		if ( isset($data['post_name']) ) $data['post_name'] = $this->_remove_unicodes_url($data['post_name']);
+		
 		if(!$data['ID']){
 			unset($data['ID']);
 			$id = wp_insert_post($data);
@@ -466,11 +523,15 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		}
 
 		$post = get_post($id);
+		$slug = empty( $post->post_name )
+			? $this->_remove_unicodes_url($post->post_title)
+			: $post->post_name
+		;
 
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			'id' => $id,
-			'post_name' => $post->post_name,
-            'permalink' => get_permalink($id)
+			'post_name' => $slug,
+			'permalink' => get_permalink($id)
 		)));
 	}
 
@@ -682,6 +743,22 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$post->hierarchy = $this->_get_post_hierarchy($post);
 		$post->featured_image = $this->_get_post_featured_image($post);
 		return $post;
+	}
+	
+	private function _remove_unicodes_url ($url) {
+		// just in case not yet sanitize_title
+		$url = sanitize_title($url);
+		
+		// removing unicodes
+		$unicode_pattern = array(
+			'/%e2%80%8b/', // zero width space
+			'/%e2%80%8c/', // zero width non-joiner
+			'/%e2%80%8d/', // zero width joiner
+			'/%e2%80%8e/', // left to right mark
+			'/%e2%80%8f/' // right to left mark
+		);
+		
+		return preg_replace($unicode_pattern,'',$url);
 	}
 }
 add_action('init', array('Upfront_Editor_Ajax', 'serve'));

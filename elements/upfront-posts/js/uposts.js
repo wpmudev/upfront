@@ -307,7 +307,7 @@ define(function() {
 				Fields = Upfront.Views.Editor.Field
 			;
 			this.settings = _([
-				new QuerySettings({model: this.model}),
+				new QuerySettings({model: this.model})
 			 /* new SettingsItem({
 					title: 'Post Data',
 					fields: [
@@ -514,7 +514,7 @@ define(function() {
 					layout: "vertical",
 					values: [
 						{label: l10n.yes, value: "1"},
-						{label: l10n.no, value: "0"},
+						{label: l10n.no, value: "0"}
 					]
 				})
 			]);

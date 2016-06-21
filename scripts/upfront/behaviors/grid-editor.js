@@ -34,7 +34,7 @@ var GridEditor = {
 		clip: 1,
 		full: 1,
 		fixed: 2,
-		lightbox: 2,
+		lightbox: 2
 	},
 
 	els: [],
@@ -138,7 +138,7 @@ var GridEditor = {
 			grid_center: {
 				y: grid.y+(row/2)-1,
 				x: grid.x+(col/2)-1
-			},
+			}
 			//region: region,
 			//group: group
 		};
@@ -310,7 +310,7 @@ var GridEditor = {
 	 */
 	get_max_size: function ( el, els, region, axis ) {
 		var ed = Upfront.Behaviors.GridEditor,
-			col = ed.get_class_num(el.$el, ed.grid.class),
+			col = ed.get_class_num(el.$el, ed.grid['class']),
 			axis = /all|nw|se/.test(axis) ? axis : 'all',
 			margin = el.$el.data('margin'),
 			aff_els = ed.get_affected_els(el, els, [], true),
@@ -408,7 +408,7 @@ var GridEditor = {
 		var text = _.isString(from) ? from : from.attr('class'),
 			rx = new RegExp('\\b' + class_name + '(\\d+)'),
 			val = text.match(rx);
-		return ( val && val[1] ) ? parseInt(val[1]) : 0;
+		return ( val && val[1] ) ? parseInt(val[1], 10) : 0;
 	},
 
 	/**
@@ -474,7 +474,7 @@ var GridEditor = {
 		var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 			rx = new RegExp('\\b' + class_name + '\\d+'),
 			$parent, parent_col;
-		if ( !breakpoint || breakpoint.default ){ // apply class if default
+		if ( !breakpoint || breakpoint['default'] ){ // apply class if default
 			if ( ! $el.hasClass(class_name+class_size) ){
 				if ( $el.attr('class').match(rx) )
 					$el.attr('class', $el.attr('class').replace(rx, class_name+class_size));
@@ -514,7 +514,7 @@ var GridEditor = {
 		this.time_start('fn update_model_classes');
 		var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 			model = this.get_el_model($el);
-		if ( model && ( !breakpoint || breakpoint.default ) ){
+		if ( model && ( !breakpoint || breakpoint['default'] ) ){
 			model.replace_class(classes.join(' '));
 		}
 		this.time_end('fn update_model_classes');
@@ -524,7 +524,7 @@ var GridEditor = {
 		var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 			model = this.get_el_model($el),
 			model_breakpoint;
-		if ( model && breakpoint && !breakpoint.default ){
+		if ( model && breakpoint && !breakpoint['default'] ){
 			model_breakpoint = Upfront.Util.clone(model.get_property_value_by_name('breakpoint') || {});
 			if ( !_.isObject(model_breakpoint[breakpoint.id]) )
 				model_breakpoint[breakpoint.id] = {};
@@ -547,7 +547,7 @@ var GridEditor = {
 			){
 				margin_top = margin ? margin.current.top : 0;
 				margin_left = margin ? margin.current.left : 0;
-				if ( !breakpoint || breakpoint.default ){
+				if ( !breakpoint || breakpoint['default'] ){
 					classes = [
 						ed.grid.left_margin_class+margin_left,
 						ed.grid.top_margin_class+margin_top
@@ -565,7 +565,7 @@ var GridEditor = {
 					if ( more_classes )
 						_.each(more_classes, function(classname){
 							var parse = classname.match(/^([A-Za-z])(\d+)$/);
-							if ( parse && parse[1] == ed.grid.class ) {
+							if ( parse && parse[1] == ed.grid['class'] ) {
 								data.col = parseInt(parse[2]);
 							}
 						});
@@ -647,7 +647,7 @@ var GridEditor = {
 			groups_need_update = [],
 			object_groups_need_update = [],
 			models_need_move = [],
-			is_responsive = ( breakpoint && !breakpoint.default );
+			is_responsive = ( breakpoint && !breakpoint['default'] );
 		// Remove unneeded wraps from processing
 		wraps = _.filter(wraps, function(wrap){
 			return ( wrap.$el.is(':visible') || wrap.height > 0 );
@@ -673,10 +673,10 @@ var GridEditor = {
 			$wrap_els.each(function(index){
 				if ( this.offsetWidth <= 0 ) return; // Element is not visible
 				var wrap_el = ed.get_el($(this)),
-					col = ( !breakpoint || breakpoint.default ) ? ed.get_class_num(wrap_el.$el, ed.grid.class) : wrap_el.$el.data('breakpoint_col')
+					col = ( !breakpoint || breakpoint['default'] ) ? ed.get_class_num(wrap_el.$el, ed.grid['class']) : wrap_el.$el.data('breakpoint_col')
 				;
 				if ( wrap_el.col < col && wrap_el.col > 0 ) {
-					ed.update_model_margin_classes(wrap_el.$el, [ed.grid.class + wrap_el.col]);
+					ed.update_model_margin_classes(wrap_el.$el, [ed.grid['class'] + wrap_el.col]);
 				}
 			});
 
@@ -714,7 +714,7 @@ var GridEditor = {
 									$wraps = wrap.$el.parent().find('> .upfront-wrapper').each(Upfront.Util.normalize_sort_elements_cb).sort(Upfront.Util.sort_elements_cb),
 									shift = false;
 								$wraps.each(function(i){
-									var wrap_model = wrappers.get_by_wrapper_id($(this).attr('id'))
+									var wrap_model = wrappers.get_by_wrapper_id($(this).attr('id'));
 									if ( this == wrap.$el.get(0) ) {
 										shift = true;
 										wrap_model.set_breakpoint_property('order', last_wrap_index);
@@ -788,17 +788,19 @@ var GridEditor = {
 								"name": "",
 								"properties": [
 									{"name": "wrapper_id", "value": wrapper_id},
-									{"name": "class", "value": ed.grid.class+(wrap_el.grid.left+wrap_el.col-parent_el.grid.left)}
+									{"name": "class", "value": ed.grid['class']+(wrap_el.grid.left+wrap_el.col-parent_el.grid.left)}
 								]
 							}),
-							wrap_view = new Upfront.Views.Wrapper({model: wrap_model});
+							wrap_view = new Upfront.Views.Wrapper({model: wrap_model})
+						;
 						wrappers.add(wrap_model);
 						wrap_model.add_class('clr');
 						wrap_view.parent_view = wrap_el_view.parent_view;
+						wrap_el_view.wrapper_view = wrap_view;
 						wrap_view.render();
 						wrap_el.$el.closest('.upfront-wrapper').before(wrap_view.$el);
 						wrap_view.$el.append(wrap_el_view.$el);
-						wrap_el_model.set_property('wrapper_id', wrapper_id, true);
+						wrap_el_model.set_property('wrapper_id', wrapper_id);
 						Upfront.data.wrapper_views[wrap_model.cid] = wrap_view;
 						ed.init_margin(wrap_el);
 						if ( is_parent_group ) {
@@ -862,7 +864,7 @@ var GridEditor = {
 		ed.grid = Upfront.Settings.LayoutEditor.Grid;
 		ed.col_size = ed.grid.column_width;
 
-		ed.max_row = Math.floor(($(window).height()*.5)/ed.baseline);
+		ed.max_row = Math.floor(($(window).height()*0.5)/ed.baseline);
 		ed.main = {
 			$el: $main,
 			top: main_pos.top,
@@ -993,6 +995,7 @@ var GridEditor = {
 	 * Update wrappers
 	 */
 	update_wrappers: function (parent_model, $parent) {
+		if ( !parent_model ) return;
 		this.time_start('fn update_wrappers');
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
@@ -1013,7 +1016,7 @@ var GridEditor = {
 					return $el;
 				}).filter(function (each) {
 					return each !== false;
-				});
+				})
 			;
 			if ( children.length == 0 ){
 				if ( wrap_model ) wraps.remove(wrap_model);
@@ -1022,11 +1025,11 @@ var GridEditor = {
 			if ( $wrap.hasClass('upfront-wrapper-preview') ) return;
 			if ( $wrap.height() <= 0 ) return;
 			if ( ! wrap_model ) return;
-			var current_col = ( !breakpoint || breakpoint.default ) ? ed.get_class_num($wrap, ed.grid.class) : $wrap.data('breakpoint_col'),
+			var current_col = ( !breakpoint || breakpoint['default'] ) ? ed.get_class_num($wrap, ed.grid['class']) : $wrap.data('breakpoint_col'),
 				child_els = _.map(children, function($el){
 					return {
 						$el: $el,
-						col: ( !breakpoint || breakpoint.default ) ? ed.get_class_num($el, ed.grid.class) : $el.data('breakpoint_col')
+						col: ( !breakpoint || breakpoint['default'] ) ? ed.get_class_num($el, ed.grid['class']) : $el.data('breakpoint_col')
 					};
 				}),
 				max = _.max(child_els, function(each){
@@ -1035,10 +1038,10 @@ var GridEditor = {
 				}),
 				wrap_col = max.col,
 				wrap_breakpoint, breakpoint_data;
-			ed.update_class($wrap, ed.grid.class, wrap_col);
-			if ( !breakpoint || breakpoint.default ){
+			ed.update_class($wrap, ed.grid['class'], wrap_col);
+			if ( !breakpoint || breakpoint['default'] ){
 				if ( current_col != wrap_col ) {
-					wrap_model.replace_class(ed.grid.class+wrap_col);
+					wrap_model.replace_class(ed.grid['class']+wrap_col);
 				}
 				if ( (clear && clear == 'clear') || (!clear && $wrap.hasClass('clr')) ) {
 					wrap_model.add_class('clr');
@@ -1155,7 +1158,7 @@ var GridEditor = {
 					minWidth: me.width,
 					maxWidth: me.width,
 					position: 'absolute'
-				})
+				});
 				if ( axis == 'nw' ) {
 					$resize.css({
 						top: me.position.top,
@@ -1242,7 +1245,7 @@ var GridEditor = {
 					height: rsz_row*ed.baseline,
 					width: rsz_col*ed.col_size,
 					minWidth: rsz_col*ed.col_size,
-					maxWidth: rsz_col*ed.col_size,
+					maxWidth: rsz_col*ed.col_size
 				});
 				if(axis == 'nw') {
 					$resize.css({
@@ -1270,8 +1273,6 @@ var GridEditor = {
 					prev_col = Math.ceil(ui.originalSize.width/ed.col_size),
 					prev_row = Math.ceil(ui.originalSize.height/ed.baseline),
 					$post_data_object =  $me.find(".upost-data-object").length ? $me.find(".upost-data-object") : false,
-					//padding_top_row = $post_data_object ?  parseFloat( $post_data_object.css("padding-top") ) / ed.baseline : 0,
-					//padding_bottom_row = $post_data_object ? parseFloat( $post_data_object.css("padding-bottom") ) / ed.baseline : 0,
 					rsz_col = $me.data('resize-col'),
 					rsz_row = parseFloat( $me.data('resize-row') ),
 
@@ -1282,39 +1283,11 @@ var GridEditor = {
 					model_breakpoint, breakpoint_data, padding_top_row, padding_bottom_row
 				;
 
-				/**
-				 * Calculate paddings in different cases
-				 */
-				if( !is_object && !is_group  ){
-					var objects = model.get('objects'),
-						obj_model = objects.first();
-
-					padding_top_row = obj_model.get_breakpoint_property_value('top_padding_use') ?  obj_model.get_breakpoint_property_value('top_padding_num') / ed.baseline : 0;
-					padding_bottom_row = obj_model.get_breakpoint_property_value('bottom_padding_use') ? obj_model.get_breakpoint_property_value('bottom_padding_num') / ed.baseline : 0;
-				}else{
-					padding_top_row = model.get_breakpoint_property_value("top_padding_use") ?  model.get_breakpoint_property_value('top_padding_num') / ed.baseline : 0 ;
-					padding_bottom_row = model.get_breakpoint_property_value("bottom_padding_use") ? model.get_breakpoint_property_value('bottom_padding_num') / ed.baseline : 0;
-				}
-
-				rsz_row = rsz_row - padding_top_row - padding_bottom_row;
 				// Prevents quick scroll when resizing
 				ed.resizing = false;
 
 				$resize_placeholder.remove();
 				$resize.remove();
-
-				/*ed.update_class($me, ed.grid.class, rsz_col);
-				if ( axis == 'nw' ){
-					margin.current.left = margin.original.left - (rsz_col-prev_col);
-					margin.current.top = margin.original.top - (rsz_row-prev_row);
-					$me.data('margin', margin);
-					ed.update_margin_classes($me);
-				}
-				else if ( axis == 'se' && wrap ){
-					ed.adjust_affected_right(wrap, aff_els.right, [me], me.grid.left+rsz_col-1, true);
-					if ( expand_lock )
-						ed.adjust_affected_bottom(wrap, aff_els.bottom, [me], me.grid.top+rsz_row-1, true);
-				}*/
 
 				// Make sure CSS is reset, to fix bug when it keeps all resize CSS for some reason
 				$me.css({
@@ -1329,7 +1302,7 @@ var GridEditor = {
 					marginTop: ''
 				});
 
-				if ( !breakpoint || breakpoint.default ){
+				if ( !breakpoint || breakpoint['default'] ){
 					model.set_property('row', rsz_row);
 					// Also resize containing object if it's only one object
 					var objects = model.get('objects');
@@ -1338,19 +1311,6 @@ var GridEditor = {
 							object.set_property('row', rsz_row );
 						});
 					}
-
-					// Update model value
-					/*if ( axis == 'nw' ){
-						model.replace_class([
-							ed.grid.class+rsz_col,
-							ed.grid.left_margin_class+margin.current.left,
-							ed.grid.top_margin_class+margin.current.top,
-						].join(' '));
-					}
-					else{
-						model.replace_class(ed.grid.class+rsz_col);
-						ed.update_model_margin_classes($container.find(module_selector).not($me));
-					}*/
 				}
 				else {
 					model_breakpoint = Upfront.Util.clone(model.get_property_value_by_name('breakpoint') || {});
@@ -1359,14 +1319,7 @@ var GridEditor = {
 					breakpoint_data = model_breakpoint[breakpoint.id];
 					breakpoint_data.edited = true;
 					breakpoint_data.row = rsz_row;
-					//breakpoint_data.col = rsz_col;
-					/*if ( axis == 'nw' ){
-						breakpoint_data.left = margin.current.left;
-						breakpoint_data.top = margin.current.top;
-					}
-					else {
-						ed.update_model_margin_classes($container.find(module_selector).not($me));
-					}*/
+
 					model.set_property('breakpoint', model_breakpoint);
 					// Also resize containing object if it's only one object
 					var objects = model.get('objects');
@@ -1463,7 +1416,7 @@ var GridEditor = {
 
 		ed.normalize(ed.els, ed.wraps);
 		ed.update_position_data(ed.containment.$el);
-		ed.update_class($me, ed.grid.class, col);
+		ed.update_class($me, ed.grid['class'], col);
 		model.set_property('row', row);
 		// Also resize containing object if it's only one object
 		var objects = model.get('objects');
@@ -1475,13 +1428,13 @@ var GridEditor = {
 		// Update model value
 		if ( axis != 'se' ){
 			model.replace_class([
-				ed.grid.class+col,
+				ed.grid['class']+col
 				//ed.grid.left_margin_class+margin.current.left,
 				//ed.grid.top_margin_class+margin.current.top
 			].join(' '));
 		}
 		else{
-			model.replace_class(ed.grid.class+col);
+			model.replace_class(ed.grid['class']+col);
 			//ed.update_model_margin_classes($layout.find('.upfront-module, .upfront-module-group').not($me));
 		}
 		if ( typeof view.group_view != 'undefined' ) {
@@ -1673,7 +1626,7 @@ var GridEditor = {
 				$('body').append($resize);
 				also_child_els = [];
 				if ( $also_resize && $also_resize.length ) {
-					also_has_group = ( $also_resize.find('> .upfront-module-group').length > 0 ),
+					also_has_group = ( $also_resize.find('> .upfront-module-group').length > 0 );
 
 					$also_resize.find(ed.el_selector_direct).each(function () {
 						var child_model = ed.get_el_model($(this)),
@@ -1713,7 +1666,7 @@ var GridEditor = {
 					height: ui.originalSize.height,
 					position: 'relative'
 				});
-				if ( breakpoint && !breakpoint.default ) {
+				if ( breakpoint && !breakpoint['default'] ) {
 					$resize_placeholder.css('order', $me.css('order'));
 				}
 				if ( is_spacer || also_is_spacer ) {
@@ -1837,7 +1790,7 @@ var GridEditor = {
 					height: h,
 					width: rsz_col*ed.col_size,
 					minWidth: rsz_col*ed.col_size,
-					maxWidth: rsz_col*ed.col_size,
+					maxWidth: rsz_col*ed.col_size
 				});
 
 				// Trigger child events
@@ -1908,7 +1861,7 @@ var GridEditor = {
 				else {
 					// Else if rsz_col is 0, remove model, otherwise update model
 					if ( rsz_col > 0 ) {
-						if ( breakpoint && !breakpoint.default ) {
+						if ( breakpoint && !breakpoint['default'] ) {
 							model.set_breakpoint_property('edited', true, true);
 							model.set_breakpoint_property('col', rsz_col);
 							_.each(child_els, function (child) {
@@ -1917,9 +1870,9 @@ var GridEditor = {
 							});
 						}
 						else {
-							model.replace_class(ed.grid.class+rsz_col);
+							model.replace_class(ed.grid['class']+rsz_col);
 							_.each(child_els, function (child) {
-								child.view.model.replace_class(ed.grid.class+rsz_col);
+								child.view.model.replace_class(ed.grid['class']+rsz_col);
 							});
 						}
 					}
@@ -1932,7 +1885,7 @@ var GridEditor = {
 					if ( also_model ) {
 						// Do the same if also_col is 0, remove model, otherwise update model
 						if ( also_col > 0 ) {
-							if ( breakpoint && !breakpoint.default ) {
+							if ( breakpoint && !breakpoint['default'] ) {
 								also_model.set_breakpoint_property('edited', true, true);
 								also_model.set_breakpoint_property('col', also_col);
 								_.each(also_child_els, function (child) {
@@ -1941,9 +1894,9 @@ var GridEditor = {
 								});
 							}
 							else {
-								also_model.replace_class(ed.grid.class+also_col);
+								also_model.replace_class(ed.grid['class']+also_col);
 								_.each(also_child_els, function (child) {
-									child.view.model.replace_class(ed.grid.class+also_col);
+									child.view.model.replace_class(ed.grid['class']+also_col);
 								});
 							}
 						}
@@ -2008,7 +1961,7 @@ var GridEditor = {
 			ed = Upfront.Behaviors.GridEditor,
 			modules = group_view.model.get('modules'),
 			wrappers = group_view.model.get('wrappers'),
-			col = ( !breakpoint || breakpoint.default ) ? ed.get_class_num(group_view.$el, ed.grid.class) : group_view.$el.data('breakpoint_col'),
+			col = ( !breakpoint || breakpoint['default'] ) ? ed.get_class_num(group_view.$el, ed.grid['class']) : group_view.$el.data('breakpoint_col'),
 			lines = ed.parse_modules_to_lines(modules, wrappers, ( breakpoint ? breakpoint.id : 'desktop' ), col),
 			min_col = ed.min_col
 		;
@@ -2065,14 +2018,14 @@ var GridEditor = {
 				wrapper_breakpoint = wrapper ? wrapper.get_property_value_by_name('breakpoint') : false,
 				wrapper_breakpoint_data = ( wrapper_breakpoint && breakpoint_id in wrapper_breakpoint ) ? wrapper_breakpoint[breakpoint_id] : {},
 				wrapper_class = wrapper ? wrapper.get_property_value_by_name('class') : '',
-				wrapper_col = ed.get_class_num(wrapper_class, ed.grid.class),
+				wrapper_col = ed.get_class_num(wrapper_class, ed.grid['class']),
 				is_clear = !!wrapper_class.match(/clr/),
 				breakpoint = module.get_property_value_by_name('breakpoint'),
 				breakpoint_data = ( breakpoint && breakpoint_id in breakpoint ) ? breakpoint[breakpoint_id] : {},
 				default_hide = module.get_property_value_by_name('default_hide'),
 				hide = module.get_property_value_by_name('hide'),
 				module_class = module.get_property_value_by_name('class'),
-				module_col = ed.get_class_num(module_class, ed.grid.class),
+				module_col = ed.get_class_num(module_class, ed.grid['class']),
 				is_spacer = !!module_class.match(/(upfront-module-spacer|upfront-object-spacer)/),
 				order = i,
 				wrapper_order = i,
@@ -2144,8 +2097,8 @@ var GridEditor = {
 			$container = is_object
 				? view.object_group_view.parent_module_view.$el.find('> .upfront-module')
 				: ( is_group ? view.group_view : view.region_view ).$el,
-			container_col = breakpoint.default
-				? ed.get_class_num($container, ed.grid.class)
+			container_col = breakpoint['default']
+				? ed.get_class_num($container, ed.grid['class'])
 				: ( _.isNumber(container_breakpoint_data.col) ? container_breakpoint_data.col : breakpoint.columns )
 		;
 		return container_col > breakpoint.columns ? breakpoint.columns : container_col;
@@ -2244,13 +2197,13 @@ var GridEditor = {
 							apply_col += 1;
 							remaining_col -= 1;
 						}
-						if ( breakpoint.default ) {
+						if ( breakpoint['default'] ) {
 							each_wrapper.model.replace_class(
-								ed.grid.class + apply_col +
+								ed.grid['class'] + apply_col +
 								( id == 0 && !each_wrapper_class.match(/clr/g) ? ' clr' : '' )
 							);
 							_.each(each_wrapper.modules, function (each_module) {
-								each_module.model.replace_class(ed.grid.class + apply_col);
+								each_module.model.replace_class(ed.grid['class'] + apply_col);
 							});
 						}
 						else {
@@ -2270,35 +2223,36 @@ var GridEditor = {
 					});
 				}
 			}
-			if ( !breakpoint.default ) return;
+			if ( !breakpoint['default'] ) return;
 			if ( split_prev || split_next ){
 				var current_wrapper = false;
 				_.each(( split_prev ? prev_wrapper.modules : next_wrapper.modules ), function (each_module, id) {
 					var each_module_class = each_module.model.get_property_value_by_name('class'),
-						each_module_col = ed.get_class_num(each_module_class, ed.grid.class),
+						each_module_col = ed.get_class_num(each_module_class, ed.grid['class']),
 						each_module_view = Upfront.data.module_views[each_module.model.cid],
 						each_wrapper = split_prev ? prev_wrapper : next_wrapper,
 						each_wrapper_view = Upfront.data.wrapper_views[each_wrapper.model.cid],
 						current_wrapper_view = current_wrapper ? Upfront.data.wrapper_views[current_wrapper.cid] : each_wrapper_view
 					;
 					if ( id > 0 ){
-						var wrapper_id = Upfront.Util.get_unique_id("wrapper");
+						var wrapper_id = Upfront.Util.get_unique_id("wrapper"),
 							wrap_model = new Upfront.Models.Wrapper({
 								"name": "",
 								"properties": [
 									{"name": "wrapper_id", "value": wrapper_id},
-									{"name": "class", "value": ed.grid.class+(each_module_col) + ' clr'}
+									{"name": "class", "value": ed.grid['class']+(each_module_col) + ' clr'}
 								]
 							}),
 							wrap_view = new Upfront.Views.Wrapper({model: wrap_model})
 						;
 						wrappers.add(wrap_model);
 						wrap_view.parent_view = each_module_view.parent_view;
+						each_module_view.wrapper_view = wrap_view;
 						wrap_view.render();
 						wrap_view.$el.append(each_module_view.$el);
 						current_wrapper_view.$el.after(wrap_view.$el);
 						Upfront.data.wrapper_views[wrap_model.cid] = wrap_view;
-						each_module.model.set_property('wrapper_id', wrapper_id, true);
+						each_module.model.set_property('wrapper_id', wrapper_id);
 						current_wrapper = wrap_model;
 					}
 				});
@@ -2326,7 +2280,7 @@ var GridEditor = {
 				module_class = module.get_property_value_by_name('class'),
 				module_default_hide = module.get_property_value_by_name('default_hide'),
 				module_hide = ( data[breakpoint_id] && "hide" in data[breakpoint_id] ) ? data[breakpoint_id].hide : module_default_hide,
-				module_col = ed.get_class_num(module_class, ed.grid.class),
+				module_col = ed.get_class_num(module_class, ed.grid['class']),
 				wrapper = wrappers.get_by_wrapper_id(module.get_wrapper_id()),
 				wrapper_data = wrapper && wrapper.get_property_value_by_name('breakpoint') || {},
 				wrapper_class = wrapper && wrapper.get_property_value_by_name('class'),
@@ -2423,7 +2377,7 @@ var GridEditor = {
 	adapt_region_to_breakpoint: function (regions, breakpoint_id, col, silent) {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
-			default_breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_default().toJSON();
+			default_breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_default().toJSON(),
 			line_col = 0,
 			silent = ( silent === true ) ? true : false
 		;
@@ -2526,7 +2480,7 @@ var GridEditor = {
 			disabled: true,
 			zIndex: 9999999,
 			start: function(e, ui){
-				var col = ed.get_class_num($me, ed.grid.class),
+				var col = ed.get_class_num($me, ed.grid['class']),
 					data = $(this).data('ui-resizable'),
 					$helper = ui.helper;
 				axis = data.axis ? data.axis : 'se';
@@ -2579,11 +2533,11 @@ var GridEditor = {
 						$me.data('resize-row', current_row);
 					}
 					else {
-						var col = ed.get_class_num($me, ed.grid.class),
+						var col = ed.get_class_num($me, ed.grid['class']),
 							$prev = $me.prevAll('.upfront-region:first'),
 							$next = $me.nextAll('.upfront-region:first'),
-							prev_col = $prev.size() > 0 ? ed.get_class_num($prev, ed.grid.class) : 0,
-							next_col = $next.size() > 0 ? ed.get_class_num($next, ed.grid.class) : 0,
+							prev_col = $prev.size() > 0 ? ed.get_class_num($prev, ed.grid['class']) : 0,
+							next_col = $next.size() > 0 ? ed.get_class_num($next, ed.grid['class']) : 0,
 							max_col = col + ( next_col > prev_col ? next_col : prev_col ),
 							current_col = Math.abs(Math.ceil(ui.size.width/ed.col_size)),
 							rsz_col = ( current_col > max_col ? max_col : current_col ),
@@ -2647,7 +2601,7 @@ var GridEditor = {
 				if ( sub != 'fixed' ){
 					var rsz_col = $me.data('resize-col'),
 						rsz_row = $me.data('resize-row');
-					if ( !breakpoint || breakpoint.default ){
+					if ( !breakpoint || breakpoint['default'] ){
 						if ( rsz_col )
 							model.set_property('col', rsz_col);
 						if ( rsz_row )
@@ -2907,7 +2861,7 @@ var GridEditor = {
 				// Make sure auto scrolling is cleared
 				ed._clear_resize_auto_scroll();
 
-				if ( !breakpoint || breakpoint.default ){
+				if ( !breakpoint || breakpoint['default'] ){
 					model.set_property('row', rsz_row);
 				}
 				else {
@@ -3088,7 +3042,7 @@ var GridEditor = {
 						{label: "", value: "clip-right-sidebar", icon: "clip-right-sidebar"},
 						{label: "", value: "clip-left-sidebar", icon: "clip-left-sidebar"},
 						{label: "", value: "full", icon: "full"},
-						{label: "", value: "full-extended", icon: "full-extended"},
+						{label: "", value: "full-extended", icon: "full-extended"}
 					],
 					change: function(){
 						if ( Upfront.themeExporter.currentTheme === 'upfront' ) {
@@ -3377,7 +3331,7 @@ var GridEditor = {
 				step: 1,
 				default_value: me.timeout,
 				change: function () {
-					me.timeout = parseInt(this.get_value());
+					me.timeout = parseInt(this.get_value(), 10);
 				}
 			}),
 			field_debug = new Upfront.Views.Editor.Field.Checkboxes({
@@ -3432,4 +3386,4 @@ var GridEditor = {
 });
 
 })(jQuery);
-//@ sourceURL=grid-editor.js
+//# sourceURL=grid-editor.js

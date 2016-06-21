@@ -99,12 +99,12 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 						</p>
 						<p class="left">
 							<?php
-							$db_layouts = Upfront_Layout::get_db_layouts();
+							$db_layouts = Upfront_Server_PageLayout::get_instance()->parse_theme_layouts(Upfront_Debug::get_debugger()->is_dev());
 							if( $db_layouts ): ?>
 								<select class="upfront-layouts-list">
 									<option value="0"><?php esc_html_e("Please select layout to reset", Upfront::TextDomain); ?></option>
 									<?php ; foreach( $db_layouts as $key => $item ): ?>
-										<option value="<?php echo esc_attr($item); ?>"><?php echo esc_html(Upfront_EntityResolver::db_layout_to_name( $item )); ?></option>
+										<option value="<?php echo (is_array($item)) ? esc_attr($item['name']) : esc_attr($item); ?>"><?php echo esc_html(Upfront_Server_PageLayout::get_instance()->db_layout_to_name($item)); ?></option>
 									<?php endforeach; ?>
 								</select>
 							<?php else: ?>
@@ -112,7 +112,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 							<?php endif; ?>
 
 						</p>
-						<button id="upfront_reset_layout" disabled="disabled" ><?php esc_html_e("Reset Layout", Upfront::TextDomain) ?></button>
+						<button id="upfront_reset_layout" disabled="disabled" data-dev="<?php echo (int)Upfront_Debug::get_debugger()->is_dev();?>"><?php esc_html_e("Reset Layout", Upfront::TextDomain) ?></button>
 					</div>
 					<div class="upfront-debug-block">
 						<p class="left"><?php esc_html_e("Reset Theme to Default State", Upfront::TextDomain) ?></p>

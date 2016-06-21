@@ -97,6 +97,21 @@ class Upfront_Post_Data extends Upfront_Server {
 		$post = Upfront_Post_Data_Model::spawn_post($data);
 		$view_class = Upfront_Post_Data_PartView::_get_view_class($data);
 		$view = new $view_class($data);
+		
+		// for setting real-time value of featured_image
+		if ( !empty($request['selected_featured_image']) && $data['data_type'] == 'featured_image' ) {
+			$view->set_pre_selected($request['selected_featured_image']);
+		}
+		
+		// for setting real-time value of post title
+		if ( !empty($request['set_post_title']) && $data['data_type'] == 'post_data' ) {
+			$view->set_pre_post_title($request['set_post_title']);
+		}
+		
+		// for setting real-time value of post content
+		if ( !empty($request['set_post_content']) && $data['data_type'] == 'post_data' ) {
+			$view->set_pre_content($request['set_post_content']);
+		}
 
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			'post_data' => $view->get_markup($post, true),

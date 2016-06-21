@@ -32,9 +32,11 @@ var PostsView = Upfront.Views.ObjectView.extend({
 		var type = this.model.get_property_value_by_name("display_type");
 		this.render_type_view(type);
 		// Let's not render min-height (remove it)
-		this.$el.find('> .upfront-object').css('min-height', '');
-		this.parent_module_view.$el.find('> .upfront-module').css('min-height', '');
-		this.add_region_class('upfront-region-container-has-posts', true);
+		if ( type && Views.DEFAULT != type ) {
+			this.$el.find('> .upfront-object').css('min-height', '');
+			this.parent_module_view.$el.find('> .upfront-module').css('min-height', '');
+			this.add_region_class('upfront-region-container-has-posts', true);
+		}
 	},
 
 	render_type_view: function (type) {
@@ -50,6 +52,7 @@ var PostsView = Upfront.Views.ObjectView.extend({
 		if ( view._posts_load ){
 			view._posts_load.success(function(){
 				me.adjust_featured_images();
+				Upfront.Events.trigger('entity:object:refresh', me);
 			});
 		}
 	},
@@ -86,7 +89,7 @@ var PostsView = Upfront.Views.ObjectView.extend({
 			}
 		});
 	},
-	
+
 	cleanup: function () {
 		this.remove_region_class('upfront-region-container-has-posts', true);
 	}
@@ -136,7 +139,7 @@ Upfront.Application.LayoutEditor.add_object("Uposts", {
 		'.uposts-object li .read_more': {label: l10n.css.read_more_label, info: l10n.css.read_more_info},
 		'.uposts-object li .post_tags': {label: l10n.css.post_tags_label, info: l10n.css.post_tags_info},
 		'.uposts-object li .thumbnail': {label: l10n.css.thumbnail_label, info: l10n.css.thumbnail_info},
-		'.uposts-object li .title': {label: l10n.css.title_label, info: l10n.css.title_info},
+		'.uposts-object li .title': {label: l10n.css.title_label, info: l10n.css.title_info}
 	},
 	cssSelectorsId: Upfront.data.upfront_posts.type
 });

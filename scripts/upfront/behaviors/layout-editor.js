@@ -103,7 +103,7 @@ var LayoutEditor = {
 	parse_selections: function () {
 		if ( !$(".upfront-ui-selected").length )
 			return false;
-		
+
 		// Disable Grouping
 		if (!Upfront.Application.user_can_modify_layout()) return false;
 
@@ -124,7 +124,7 @@ var LayoutEditor = {
 			});
 			$('#upfront-group-selection').remove();
 			return false;
-		};
+		}
 		$('.upfront-module-group-group').remove();
 		var $group = $('<div class="upfront-module-group-toggle upfront-module-group-group">' + Upfront.Settings.l10n.global.behaviors.group + '</div>'),
 			sel_top = sel_left = sel_right = sel_bottom = false,
@@ -335,7 +335,8 @@ var LayoutEditor = {
 			group_wrapper_id = false,
 			group_col = 0,
 			add_index = false,
-			top_add_index = false
+			top_add_index = false,
+			breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled()
 		;
 		_.each(lines, function (l, li) {
 			group_col = l.col > group_col ? l.col : group_col;
@@ -348,7 +349,7 @@ var LayoutEditor = {
 				;
 				new_wrapper.set_property('wrapper_id', new_wrapper_id);
 				new_wrapper.set_property('class', w.model.get_property_value_by_name('class'));
-				new_wrapper.replace_class(grid_ed.grid.class + w.col);
+				new_wrapper.replace_class(grid_ed.grid['class'] + w.col);
 				if ( wi == 0 ) {
 					new_wrapper.add_class('clr');
 					if ( li == 0 ) {
@@ -429,14 +430,33 @@ var LayoutEditor = {
 			region_wrappers.add(group_wrapper);
 		}
 		group_wrapper.set_property('wrapper_id', group_wrapper_id);
-		group_wrapper.replace_class(grid_ed.grid.class + group_col);
+		group_wrapper.replace_class(grid_ed.grid['class'] + group_col);
 		if ( group_wrapper_clear ){
 			group_wrapper.add_class('clr');
 		}
 		group.set_property('wrapper_id', group_wrapper_id);
 		group.set_property('element_id', group_id);
-		group.replace_class(grid_ed.grid.class + group_col);
+		group.replace_class(grid_ed.grid['class'] + group_col);
 		group.set_property('original_col', group_col);
+		// Let's try to update breakpoint data as needed too
+		var wrapper_data = group_wrapper && group_wrapper.get_property_value_by_name('breakpoint') || {},
+			data = group.get_property_value_by_name('breakpoint') || {}
+		;
+		_.each(breakpoints, function(each){
+			var breakpoint = each.toJSON();
+			if ( breakpoint['default'] ) return;
+			if ( wrapper_data && wrapper_data[breakpoint.id] && wrapper_data[breakpoint.id].edited ) {
+				if ( ! _.isObject(data[breakpoint.id]) ) {
+					data[breakpoint.id] = { edited: false };
+				}
+				// Wrapper is edited in this breakpoint, let's apply columns from wrapper for this breakpoint
+				if ( !data[breakpoint.id].edited && _.isNumber(wrapper_data[breakpoint.id].col) ) {
+					data[breakpoint.id].col = wrapper_data[breakpoint.id].col;
+					data[breakpoint.id].edited = true;
+					group.set_property('breakpoint', Upfront.Util.clone(data));
+				}
+			}
+		});
 		group.add_to(region_modules, add_index);
 		Upfront.Events.trigger("entity:module_group:group", group, region);
 	},
@@ -591,7 +611,7 @@ var LayoutEditor = {
 			if ( pos.top < bottom && pos.bottom > top && pos.left < right && pos.right > left ) {
 				$affected = $affected !== false ? $affected.add($(this)) : $(this);
 			}
-		})
+		});
 		return $affected;
 	},
 
@@ -685,28 +705,42 @@ var LayoutEditor = {
 		Upfront.Application.layout_view.render();
 	},
 
-	save_dialog: function (on_complete, context) {
+	save_dialog: function (on_complete, context, layout_changed, is_archive) {
 		$("body").append("<div id='upfront-save-dialog-background' />");
 		$("body").append("<div id='upfront-save-dialog' />");
 		var $dialog = $("#upfront-save-dialog"),
 			$bg = $("#upfront-save-dialog-background"),
 			current = Upfront.Application.layout.get("current_layout"),
-			html = ''
+			html = '',
+			is_archive = ( true === is_archive )
 		;
 
-		html += '<p>' + Upfront.Settings.l10n.global.behaviors.this_post_only + '</p>';
+		if ( is_archive ) {
+			html += '<p>' + Upfront.Settings.l10n.global.behaviors.this_archive_only + '</p>';
+		}
+		else {
+			html += '<p>' + Upfront.Settings.l10n.global.behaviors.this_post_only + '</p>';
+		}
 		$.each(_upfront_post_data.layout, function (idx, el) {
 			//var checked = el == current ? "checked='checked'" : '';
 			//html += '<input type="radio" name="upfront_save_as" id="' + el + '" value="' + el + '" ' + checked + ' />';
 			//html += '&nbsp;<label for="' + el + '">' + Upfront.Settings.LayoutEditor.Specificity[idx] + '</label><br />';
-			if ( idx == 'type' )
-				return;
-			html += '<span class="upfront-save-button" data-save-as="' + el + '">' + Upfront.Settings.LayoutEditor.Specificity[idx] + '</span>';
+			if ( idx == 'type' ) return;
+			if ( is_archive ) {
+				html += '<span class="upfront-save-button" data-save-as="' + el + '">' + Upfront.Settings.LayoutEditor.ArchiveSpecificity[idx] + '</span>';
+			}
+			else {
+				html += '<span class="upfront-save-button" data-save-as="' + el + '">' + Upfront.Settings.LayoutEditor.Specificity[idx] + '</span>';
+			}
 		});
 		//html += '<button type="button" id="upfront-save_as">Save</button>';
 		//html += '<button type="button" id="upfront-cancel_save">Cancel</button>';
 
-		if(location.pathname.indexOf('create_new') > -1) {
+		//$bg.remove(); $dialog.remove();
+		//on_complete.apply(context, [_upfront_post_data.layout.specificity]);
+		//return false;
+
+		if(location.pathname.indexOf('create_new') > -1 || layout_changed !== true) {
 			$bg.remove(); $dialog.remove();
 			//We are in builder do not show popup
 			on_complete.apply(context, ['single-post']);
@@ -721,6 +755,10 @@ var LayoutEditor = {
 				var selected = $(this).attr('data-save-as');
 				$bg.remove(); $dialog.remove();
 				on_complete.apply(context, [selected]);
+				
+				// call the listener on upfront-post-edit.js to continue saving post object
+				Upfront.Events.trigger('command:proceed:save:post');
+				
 				return false;
 			});
 			$("#upfront-save-dialog-background").on("click", function () {
@@ -826,7 +864,7 @@ var LayoutEditor = {
 				}),
 				page_name: new Upfront.Views.Editor.Field.Text({
 					name: 'page_name',
-					label: Upfront.Settings.l10n.global.behaviors.page_layout_name,
+					label: Upfront.Settings.l10n.global.behaviors.page_layout_name
 				}),
 				inherit: new Upfront.Views.Editor.Field.Radios({
 					name: 'inherit',
@@ -1042,7 +1080,7 @@ var LayoutEditor = {
 					change: function(){
 						var value = this.get_value(),
 							$fields = $([fields.name.el, fields.directory.el, fields.author.el, fields.author_uri.el]);
-						if ( value != '' )
+						if ( value !== '' )
 							$fields.hide();
 						else
 							$fields.show();
@@ -1050,31 +1088,31 @@ var LayoutEditor = {
 				}),
 				name: new Upfront.Views.Editor.Field.Text({
 					name: 'name',
-					label: Upfront.Settings.l10n.global.behaviors.theme_name,
+					label: Upfront.Settings.l10n.global.behaviors.theme_name
 				}),
 				directory: new Upfront.Views.Editor.Field.Text({
 					name: 'directory',
-					label: Upfront.Settings.l10n.global.behaviors.directory,
+					label: Upfront.Settings.l10n.global.behaviors.directory
 				}),
 				author: new Upfront.Views.Editor.Field.Text({
 					name: 'author',
-					label: Upfront.Settings.l10n.global.behaviors.author,
+					label: Upfront.Settings.l10n.global.behaviors.author
 				}),
 				author_uri: new Upfront.Views.Editor.Field.Text({
 					name: 'author_uri',
-					label: Upfront.Settings.l10n.global.behaviors.author_uri,
+					label: Upfront.Settings.l10n.global.behaviors.author_uri
 				}),
 				activate: new Upfront.Views.Editor.Field.Checkboxes({
 					name: 'activate',
 					default_value: true,
 					multiple: false,
-					values: [{ label: Upfront.Settings.l10n.global.behaviors.activate_upon_creation, value: 1 }],
+					values: [{ label: Upfront.Settings.l10n.global.behaviors.activate_upon_creation, value: 1 }]
 				}),
 				with_images: new Upfront.Views.Editor.Field.Checkboxes({
 					name: 'with_images',
 					default_value: true,
 					multiple: false,
-					values: [{ label: Upfront.Settings.l10n.global.behaviors.export_theme_images, value: 1 }],
+					values: [{ label: Upfront.Settings.l10n.global.behaviors.export_theme_images, value: 1 }]
 				})
 			};
 
@@ -1195,7 +1233,7 @@ var LayoutEditor = {
 		var me = this,
 			deferred = new $.Deferred()
 		;
-		
+
 		// The request should only ever be sent in builder mode
 		if (Upfront.Application.is_builder()) {
 			Upfront.Util.post({
@@ -1374,7 +1412,7 @@ var LayoutEditor = {
 						action: 'upfront_delete_styles',
 						styleName: styleName,
 						elementType: elementType
-					}
+					};
 				}
 				Upfront.Util.post(data)
 					.done(function(){
@@ -1389,7 +1427,7 @@ var LayoutEditor = {
 
 						//Continue deleting
 						deleteFunc(index+1);
-					});
+					})
 				;
 			},
 			deferred = new $.Deferred()
@@ -1426,7 +1464,7 @@ var LayoutEditor = {
 				});
 			});
 			if ( deleteDatas.length > 0 ) {
-				Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.behaviors.cleaning_region_css)
+				Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.behaviors.cleaning_region_css);
 				deleteFunc(0); // Start deleting
 			}
 		});
@@ -1437,22 +1475,22 @@ var LayoutEditor = {
 	_build_query: function (data) {
 		return _.map(data, function(value, key){ return key + '=' + value; }).join('&');
 	},
-	
+
 	clean_global_regions: function () {
 		Upfront.data.global_regions = false;
 	},
-	
+
 	open_global_region_manager: function () {
 		var ed = Upfront.Behaviors.LayoutEditor;
 		Upfront.Popup.open(
 			function (data, $top, $bottom) {
 				var $me = $(this);
 				$me.html('<p class="upfront-popup-placeholder">' + Upfront.Settings.l10n.global.behaviors.loading_content + '</p>');
-				
+
 				if ( !Upfront.data.global_regions ){
 					ed._refresh_global_regions().done(function(){
 						ed._render_global_region_manager($me);
-					})
+					});
 				}
 				else {
 					ed._render_global_region_manager($me);
@@ -1464,7 +1502,7 @@ var LayoutEditor = {
 			'global-region-manager'
 		);
 	},
-	
+
 	_refresh_global_regions: function () {
 		return Upfront.Util.post({
 			action: 'upfront_list_scoped_regions',
@@ -1474,7 +1512,7 @@ var LayoutEditor = {
 			Upfront.data.global_regions = data.data;
 		});
 	},
-	
+
 	_render_global_region_manager: function ($el) {
 		var ed = Upfront.Behaviors.LayoutEditor,
 			collection = Upfront.Application.layout.get("regions"),
@@ -1527,10 +1565,10 @@ var LayoutEditor = {
 							_.each(data.data, function(region_name){
 								var model = collection.get_by_name(region_name);
 								collection.remove(model);
-							})
+							});
 							ed._refresh_global_regions().done(function(){
 								ed._render_global_region_manager($el);
-							})
+							});
 						}
 					});
 				}
@@ -1538,9 +1576,9 @@ var LayoutEditor = {
 			else {
 				// lightbox
 			}
-		})
+		});
 	},
-	
+
 	_render_regions: function (regions, $el) {
 		var $lists = $('<ul class="global-region-manager-lists"></ul>');
 		_.each(regions, function(region){
@@ -1560,8 +1598,8 @@ var LayoutEditor = {
 				'<li class="' + classes.join(' ') + '">' +
 					'<span class="region-list-name">' + region.title + '</span>' +
 					'<span class="region-list-control">' +
-						//'<a href="#" class="region-list-edit" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.edit + '</a>' + 
-						( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME ? '<a href="#" class="region-list-trash" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.trash + '</a>' : '' ) + 
+						//'<a href="#" class="region-list-edit" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.edit + '</a>' +
+						( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME ? '<a href="#" class="region-list-trash" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.trash + '</a>' : '' ) +
 					'</span>' +
 				'</li>'
 			);
@@ -1571,6 +1609,6 @@ var LayoutEditor = {
 };
 
 define(LayoutEditor);
-	
+
 })(jQuery);
-//@ sourceURL=layout-editor.js
+//# sourceURL=layout-editor.js

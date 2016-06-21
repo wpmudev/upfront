@@ -4,8 +4,10 @@ define([
 	'text!elements/upfront-login/css/public.css',
 	'scripts/upfront/element-settings/settings',
 	'scripts/upfront/element-settings/root-settings-panel',
-	'scripts/upfront/element-settings/advanced-settings'
-], function (editor_style, public_style, ElementSettings, RootSettingsPanel, AdvancedSettings) {
+	'scripts/upfront/element-settings/advanced-settings',
+	'scripts/upfront/preset-settings/util',
+	'text!elements/upfront-login/tpl/preset-style.html'
+], function (editor_style, public_style, ElementSettings, RootSettingsPanel, AdvancedSettings, Util, styleTpl) {
 
 	$("head").append("<style>" + editor_style + "</style>");
 	$("head").append("<style>" + public_style + "</style>");
@@ -52,6 +54,8 @@ define([
 					me.markup = response.data;
 
 					Upfront.Views.ObjectView.prototype.render.call(me);
+
+					Upfront.Events.trigger('entity:object:refresh', me);
 				});
 			}
 			Upfront.Views.ObjectView.prototype.render.call(this);
@@ -131,25 +135,6 @@ define([
 		}
 	});
 
-
-	var LoginSettings = ElementSettings.extend({
-		title: l10n.settings,
-		
-		initialize: function (opts) {
-			this.has_tabs = false;
-			this.options = opts;
-			var panel = new LoginSettings_Panel({model: this.model});
-			this.panels = [
-				panel,
-				new AdvancedSettings({model: this.model})
-			];
-		},
-		
-		get_title: function () {
-			return l10n.settings;
-		}
-	});
-	
 	var LoginSettings_Panel = RootSettingsPanel.extend({
 		title: l10n.general_settings,
 		initialize: function (opts) {
@@ -200,18 +185,18 @@ define([
 							change: function() {
 								this.property.set({'value': this.get_value()}, {'silent': false});
 							}
-						}),
+						})
 
 					]
 
-				}),
-				new Upfront.Views.Editor.Settings.Settings_CSS({model: this.model }),
+				})/*,
+				new Upfront.Views.Editor.Settings.Settings_CSS({model: this.model })*/ // We no longer use custom element CSS
 			]);
 			appearance.on("login:appearance:changed", behavior.update, behavior);
 			appearance.on("login:appearance:changed", trigger.update, trigger);
 			appearance.on("login:appearance:changed", function () {
 				me.trigger("upfront:settings:panel:refresh", me);
-			})
+			});
 		},
 		render: function () {
 			RootSettingsPanel.prototype.render.call(this);
@@ -227,7 +212,27 @@ define([
 			return l10n.display;
 		}
 	});
-	
+
+	var LoginSettings = ElementSettings.extend({
+		panels: {
+			General: LoginSettings_Panel,
+			Appearance: {
+				mainDataCollection: 'loginPresets',
+				styleElementPrefix: 'login-preset',
+				ajaxActionSlug: 'login',
+				panelTitle: l10n.settings,
+				presetDefaults: Upfront.mainData.presetDefaults.login,
+				styleTpl: styleTpl
+			}
+		},
+
+		title: l10n.settings,
+
+		get_title: function () {
+			return l10n.settings;
+		}
+	});
+
 	var LoginSettings_Field_DisplayBehavior = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'display_behavior',
 		events: function () {
@@ -241,14 +246,14 @@ define([
 			var hover_disabled = !style || "popup" == style;
 			var behaviors = [
 				{label: l10n.show_on_hover, value: "hover", disabled: hover_disabled},
-				{label: l10n.show_on_click, value: "click"},
+				{label: l10n.show_on_click, value: "click"}
 			];
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Radios({
 					model: this.model,
 					property: "behavior",
 					values: behaviors
-				}),
+				})
 			]);
 		},
 		render: function () {
@@ -277,7 +282,7 @@ define([
 			if ("form" != style) this.$el.show();
 		}
 	});
-	
+
 	var LoginSettings_Field_DisplayAppearance = Login_SettingsItem_ComplexItem.extend({
 		/*events: function () {
 			return _.extend({},
@@ -289,7 +294,7 @@ define([
 			var me = this;
 			var styles = [
 				{label: l10n.on_page, value: "form"},
-				{label: l10n.dropdown, value: "dropdown"},
+				{label: l10n.dropdown, value: "dropdown"}
 				/*{label: l10n.in_lightbox, value: "popup"},*/
 			];
 			this.fields = _([
@@ -298,14 +303,14 @@ define([
 					property: "style",
 
 					values: styles,
-					change: function() { me.register_change(me) }
+					change: function() { me.register_change(me); }
 				}),
 				new Upfront.Views.Editor.Field.Text({
 					model: this.model,
 					property: 'label_text',
 					label: l10n.log_in_button,
-					change: function() { me.register_change(me) }
-				}),
+					change: function() { me.register_change(me); }
+				})
 			]);
 		},
 		render: function () {
@@ -323,7 +328,7 @@ define([
 			this.trigger("login:appearance:changed");
 		}
 	});
-	
+
 	var LoginSettings_Field_DisplayTrigger = Login_SettingsItem_ComplexItem.extend({
 		className: 'upfront_login-item-display_trigger',
 		initialize: function () {
@@ -333,8 +338,8 @@ define([
 					model: this.model,
 					property: 'trigger_text',
 					label: l10n.log_in_trigger,
-					change: function() { me.register_change(me) }
-				}),
+					change: function() { me.register_change(me); }
+				})
 			]);
 		},
 		register_change: function () {
@@ -389,6 +394,12 @@ define([
 			this.add_module(module);
 		}
 	});
+
+
+
+	// Generate presets styles to page
+	Util.generatePresetsToPage('login', styleTpl);
+
 	Upfront.Application.LayoutEditor.add_object("Login", {
 		"Model": LoginModel,
 		"View": LoginView,

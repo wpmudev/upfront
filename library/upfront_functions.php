@@ -208,7 +208,15 @@ function upfront_ajax_init () {
 function upfront_ajax_url ($action, $args = '') {
 	$args = wp_parse_args($args);
 	$args['action'] = $action;
-	$args['layout'] = Upfront_EntityResolver::get_entity_ids();
+	$entity_ids = Upfront_EntityResolver::get_entity_ids();
+	
+	// if page was still draft and viewed on FE, we should show 404 layout 
+	if ( !Upfront_Output::get_post_id() && isset($entity_ids['specificity']) && preg_match('/single-page/i', $entity_ids['specificity']) ) {
+		unset($entity_ids['specificity']);
+		$entity_ids['item'] = 'single-404_page';
+	}
+	$args['layout'] = $entity_ids;
+	
 	if ( current_user_can('switch_themes') && Upfront_Behavior::debug()->is_dev() )
 		$args['load_dev'] = 1;
 	return admin_url( 'admin-ajax.php?' . http_build_query($args) );
@@ -332,10 +340,21 @@ function upfront_get_edited_post_thumbnail ($post_id = null, $return_src = false
 	$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
 	$image_id = get_post_thumbnail_id($post_id);
 	$data = get_post_meta($post_id, '_thumbnail_data', true);
-	if ( empty($data) || empty( $data['imageId'] ) || $data['imageId'] != $image_id || empty($data['src']) ) // no edited thumbnail
+	if ( $return_src != true && (empty($data) || empty( $data['imageId'] ) || $data['imageId'] != $image_id || empty($data['src']) || $size != 'uf_post_featured_image') ) { // no edited thumbnail or don't use edited thumbnail
 		return get_the_post_thumbnail($post_id, $size);
-	if ( $return_src)
-		return $data['src'];
+	}
+	if ( $return_src ) {
+		if ( !empty($data) && !empty($data['imageId']) && $data['imageId'] == $image_id ) {
+			return $data['src'];
+		}
+		else if ( empty($data) ) {
+			$src = wp_get_attachment_image_src($image_id, $size);
+			return is_array($src) ? $src[0] : '';
+		}
+		else {
+			return '';
+		}
+	}
 	$image = get_post($image_id);
 	$attr = array(
 		'src' => $data['src'],

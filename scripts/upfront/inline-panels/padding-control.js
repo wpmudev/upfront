@@ -134,6 +134,14 @@ define([
 					this.model.set_breakpoint_property('top_padding_num', value);
 					Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
 					Upfront.Events.trigger("upfront:paddings:top:updated", this.model, Upfront.data.currentEntity);
+				},
+				callbacks: {
+					stop: function (e) {
+						var uislider = $(this).data('uiSlider');
+						if ( !uislider || !_.isObject(uislider) || !('handle' in uislider) ) return;
+						// Call blur on stop to prevent key event handled by jQuery UI Slider
+						uislider.handle.blur();
+					}
 				}
 			});
 
@@ -160,6 +168,14 @@ define([
 					this.model.set_breakpoint_property('bottom_padding_num', value);
 					Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
 					Upfront.Events.trigger("upfront:paddings:bottom:updated", this.model, Upfront.data.currentEntity);
+				},
+				callbacks: {
+					stop: function (e) {
+						var uislider = $(this).data('uiSlider');
+						if ( !uislider || !_.isObject(uislider) || !('handle' in uislider) ) return;
+						// Call blur on stop to prevent key event handled by jQuery UI Slider
+						uislider.handle.blur();
+					}
 				}
 			});
 

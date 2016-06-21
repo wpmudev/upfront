@@ -58,7 +58,7 @@ td,th{padding:0}
 @media print {
 * { background: transparent !important; color: black !important; text-shadow: none !important; filter:none !important; -ms-filter: none !important; }
 a, a:visited { text-decoration: underline; }
-a[href]:after { content: " (" attr(href) ")"; }
+a[href]:after { content: none; }
 abbr[title]:after { content: " (" attr(title) ")"; }
 .ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after { content: ""; }
 pre, blockquote { border: 1px solid #999; page-break-inside: avoid; }
@@ -182,6 +182,9 @@ h2, h3 { page-break-after: avoid; }
 .upfront-output-bg-overlay {
 	overflow: hidden;
 }
+.upfront-region-container-full .upfront-output-bg-overlay {
+	will-change: top;
+}
 .upfront-output-bg-overlay > .upfront-bg-image {
 	display: block;
 }
@@ -242,6 +245,10 @@ h2, h3 { page-break-after: avoid; }
 .ueditor-insert-variant-group.ueditor-insert-float-right {
   float: right;
   margin-left: 15px;
+}
+.ueditor-insert-variant-group.ueditor-image-style-center {
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 .uinsert-image-wrapper img {
   width: 100%;
@@ -315,11 +322,22 @@ h2, h3 { page-break-after: avoid; }
 }
 
 .upfront-postpart-featured_image, .upostdata-part.thumbnail {
-  overflow: hidden;
+	overflow: hidden;
+	position: relative;
 }
-.upfront-postpart-featured_image img, .upostdata-part.thumbnail img {
+
+.upfront-output-object.part-featured_image {
+	position: relative;
+}
+
+.upfront-output-object.part-featured_image .upostdata-part.thumbnail {
+	height: inherit;
+}
+
+.upfront-postpart-featured_image img, .upostdata-part.thumbnail img, .upfront-editable_entity .upostdata-part.thumbnail img {
   max-width: 100%;
-  min-width: 100%;
+  /* min-width: 100%; */
+  margin: 0px;
   height: auto;
 }
 
@@ -349,6 +367,10 @@ h2, h3 { page-break-after: avoid; }
     display: inline-block;
     width: auto;
     text-align: center;
+}
+.uf-responsive .ueditor-insert-variant-group.ueditor-image-style-center {
+	margin-left: auto !important;
+	margin-right: auto !important;
 }
 .uf-responsive .upfront-inserted_image-wrapper .wp-caption-text, 
 .uf-responsive .upfront-inserted_image-wrapper .uinsert-image-wrapper {

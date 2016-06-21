@@ -45,6 +45,7 @@
 			$dropdown = $(".upfront-layouts-list"),
 			layout = $dropdown.val(),
 			label = $(".upfront-layouts-list option[value='"+  layout +"']").html(),
+			is_dev = $(this).data('dev'),
 			confirm = window.confirm( Upfront_Data.l10n.sure_to_reset_layout.replace("{layout}", label) );
 
 		if( confirm !== true ) return;
@@ -53,7 +54,8 @@
 
 		Upfront.post(  {
 			action: "upfront_reset_layout",
-			layout: layout
+			layout: layout,
+			is_dev: is_dev
 		}).done(function(res){
 			$this.removeClass("loading");
 			if( $dropdown.find("option").length >= 2 ){

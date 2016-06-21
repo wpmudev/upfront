@@ -15,7 +15,8 @@ module.exports = function(grunt) {
 			},
 			dist: {
 				files: {
-					'styles/editor-interface.css': 'styles/editor-interface.scss'
+					'styles/editor-interface.css': 'styles/editor-interface.scss',
+                    'styles/build/admin.css': 'styles/sass/admin/admin.scss'
 				}
 			}
 		},

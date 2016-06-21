@@ -19,7 +19,7 @@ define([
 					model: me.model,
 					className: 'edit_preset_label',
 					compact: true,
-					label: l10n.edit_preset_label,
+					label: l10n.edit_preset_label
 				}),
 
 				new Upfront.Views.Editor.Field.Button({
@@ -27,7 +27,7 @@ define([
 					className: 'edit_preset_css',
 					compact: true,
 					name: 'preset_css',
-					label: l10n.edit_preset_css,
+					label: l10n.edit_preset_css
 				})
 			]);
 		},
@@ -70,4 +70,3 @@ define([
 
 	return PresetCssModule;
 });
-

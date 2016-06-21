@@ -95,7 +95,10 @@ define(function() {
 							}
 		
 					e.preventDefault();
-		
+
+					if( a.origin === window.location.origin ) // Make should we don't have double pathnames if we are redirecting to our own app
+						pathname = pathname.replace( window.location.pathname, '');
+
 					if(!Upfront.PreviewUpdate._is_dirty || confirm(Upfront.Settings.l10n.global.application.navigation_confirm))
 						Upfront.Application.navigate(pathname + search, {trigger: true});
 				})

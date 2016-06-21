@@ -8,9 +8,16 @@
     "grunt-contrib-watch": "~0.6.1",
     "grunt-sass": "~1.1.0",
     "grunt-wp-i18n": "^0.4.9",
+    "jshint": "^2.9.2",
     "load-grunt-tasks": "~1.0.0",
     "mocha": "^2.3.3",
     "underscore": "^1.8.3"
+  },
+  "jshintConfig": {
+    "esversion": 3,
+    "maxerr": 200,
+    "laxbreak": true,
+    "sub": true
   },
   "scripts": {
     "test-php": "phpunit -c test/php/lib/phpunit.xml",

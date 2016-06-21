@@ -14,6 +14,7 @@ define(function(){
 			// changes are auto saved, no need to invoke this, so blank it out
 		},
 		preview_color: function (color) {
+			if( !_.isObject( color ) ) return;
 			var rgb = color.toRgb(),
 				rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
 

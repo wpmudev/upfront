@@ -23,11 +23,24 @@ define([
 			return "";
 		},
 		init: function () {
+			var me = this;
+
+			var debouncedApply = _.debounce(this.apply_height_from_wrapper, 1000);
+
 			this.listenTo(Upfront.Events, 'upfront:wrappers:before_fix_height', this.before_apply_height_from_wrapper);
-			this.listenTo(Upfront.Events, 'upfront:wrappers:after_fix_height', this.apply_height_from_wrapper);
+			this.listenTo(Upfront.Events, 'upfront:wrappers:after_fix_height', debouncedApply);
+
+			this.dontRunVisible = true;
+			Upfront.Events.on('upfront:renderingqueue:start', function() {
+				me.dontRunVisible = true;
+			});
+			Upfront.Events.on('upfront:renderingqueue:done', function() {
+				me.dontRunVisible = false;
+			});
 		},
 		render: function () {
-			var grid = Upfront.Settings.LayoutEditor.Grid,
+			var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				grid = Upfront.Settings.LayoutEditor.Grid,
 				props = {},
 				me = this,
 				column_padding = grid.column_padding,
@@ -73,7 +86,11 @@ define([
 				// Make sure module class is added
 				this.parent_module_view.$el.find('> .upfront-module').addClass('upfront-module-spacer');
 				this.parent_module_view.model.add_class('upfront-module-spacer');
-
+			}
+			// Listen to wrapper update position
+			if ( this.wrapper_view ) {
+				this.stopListening(this.wrapper_view, 'update_position');
+				this.listenTo(this.wrapper_view, 'update_position', this.on_wrapper_update);
 			}
 
 			this.$el.html(template);
@@ -86,6 +103,10 @@ define([
 			$object.data('current_col', col);
 
 			Upfront.Events.trigger("entity:object:after_render", this, this.model);
+
+			if ( breakpoint && !breakpoint['default'] ) {
+				this.update_position();
+			}
 		},
 		// Don't have any controls
 		getControlItems: function () {
@@ -100,6 +121,8 @@ define([
 		_is_applying: function (from_view) {
 			if (this.parent_view && this.parent_view == from_view) return true;
 			if (this.parent_module_view && this.parent_module_view.parent_view && this.parent_module_view.parent_view == from_view) return true;
+
+			if (this.dontRunVisible === true) return;
 			if (this.$el.is(':visible')) return true;
 			return false;
 		},

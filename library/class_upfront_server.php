@@ -78,6 +78,8 @@ require_once('servers/class_upfront_stylesheet_editor.php');
 require_once('servers/class_upfront_core_dependencies_server.php');
 require_once('servers/class_upfront_element_styles.php');
 require_once('servers/class_upfront_layout_revisions.php');
+require_once('servers/class_upfront_page_template.php');
+require_once('servers/class_upfront_page_layout.php');
 require_once('servers/class_upfront_server_schedule.php');
 require_once('servers/class_upfront_server_media_cleanup.php');
 require_once('servers/class_upfront_google_fonts_server.php');
