@@ -5405,7 +5405,8 @@ a.upfront-region-name-edit-trigger:before {
     opacity: 1;
     transform: scale(1, 1); } }
 
-.ui-draggable-dragging {
+.ui-draggable-dragging,
+.upfront-wrapper-moving {
   opacity: .6;
   min-height: 0 !important;
   /*-webkit-transition: max-width .3s, max-height .3s;*/ }
@@ -14061,7 +14062,8 @@ li#new-custom-breakpoint {
 .flexbox-support .upfront-module,
 .flexbox-support .upfront-modules_container,
 .flexbox-support .upfront-objects_container,
-.flexbox-support .ueditor-insert-variant-wrap {
+.flexbox-support .ueditor-insert-variant-wrap,
+.flexbox-support .upfront-wrapper-moving {
   display: -webkit-flex;
   display: flex;
   -webkit-flex-direction: row;
@@ -14101,7 +14103,9 @@ li#new-custom-breakpoint {
 .flexbox-support .upfront-modules_container > .upfront-editable_entities_container > .upfront-wrapper,
 .flexbox-support .upfront-objects_container > .upfront-editable_entities_container > .upfront-wrapper,
 .flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-module-view,
-.flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-object-view {
+.flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-object-view,
+.flexbox-support .upfront-wrapper-moving > .upfront-module-view,
+.flexbox-support .upfront-wrapper-moving > .upfront-object-view {
   -webkit-order: 0;
   order: 0;
   float: none; }
@@ -14111,7 +14115,9 @@ li#new-custom-breakpoint {
 .flexbox-support .upfront-editable_entities_container > .upfront-module-view,
 .flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-object-view,
 .flexbox-support .upfront-editable_entities_container > .upfront-object-view,
-.flexbox-support .upfront-editable_entities_container > .upfront-object-group-view {
+.flexbox-support .upfront-editable_entities_container > .upfront-object-group-view,
+.flexbox-support .upfront-wrapper-moving > .upfront-module-view,
+.flexbox-support .upfront-wrapper-moving > .upfront-object-view {
   width: 100%; }
 
 /*.flexbox-support .upfront-wrapper {
