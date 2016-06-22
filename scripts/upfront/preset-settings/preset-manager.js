@@ -313,6 +313,7 @@ define([
 			this.debouncedSavePreset(properties);
 
 			this.updateMainDataCollectionPreset(properties);
+			Upfront.Events.trigger('element:preset:updated');
 		},
 
 		updatePreset: function(properties) {
@@ -340,6 +341,7 @@ define([
 			this.debouncedSavePreset(properties);
 
 			this.updateMainDataCollectionPreset(properties);
+			Upfront.Events.trigger('element:preset:updated');
 		},
 
 		migratePreset: function(presetName) {
@@ -441,6 +443,7 @@ define([
 			Upfront.Views.Editor.notify(l10n.preset_created.replace(/%s/, presetName));
 
 			this.render();
+			Upfront.Events.trigger('element:preset:updated');
 		},
 
 		createPreset: function(presetName) {
@@ -460,11 +463,12 @@ define([
 
 			// Make sure we don't lose our current preset
 			this.model.encode_preset(preset.id);
-
+			
 			//Notify preset is created
 			Upfront.Views.Editor.notify(l10n.preset_created.replace(/%s/, presetName));
 
 			this.render();
+			Upfront.Events.trigger('element:preset:updated');
 		},
 
 		deletePreset: function(preset) {
@@ -488,7 +492,7 @@ define([
 			this.presets.remove(preset);
 
 			this.render();
-
+			Upfront.Events.trigger('element:preset:updated');
 			this.defaultOverlay();
 		},
 
@@ -517,6 +521,7 @@ define([
 
 				me.$el.empty();
 				me.render();
+				Upfront.Events.trigger('element:preset:updated');
 			}).error(function (ret) {
 				//Notify error
 				Upfront.Views.Editor.notify(ret);
@@ -547,7 +552,7 @@ define([
 			this.render();
 
 			this.defaultOverlay();
-
+			Upfront.Events.trigger('element:preset:updated');
 			//Display notification
 			Upfront.Views.Editor.notify(l10n.preset_changed.replace(/%s/, preset));
 		},

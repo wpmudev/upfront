@@ -258,8 +258,8 @@ define([
 		},
 		initialize: function () {
 			ElementSettings.prototype.initialize.call(this);
-			// this listener only handles changes on Preset Selection
-			this.model.get('properties').bind('change', this.model_changed, this);
+			this.stopListening(Upfront.Events, 'element:preset:updated');
+			this.listenTo(Upfront.Events, 'element:preset:updated', this.preset_changed);
 		},
 		render: function () {
 			ElementSettings.prototype.render.call(this);
@@ -297,16 +297,11 @@ define([
 			}, 100);
 			
 		},
-		model_changed: function (prop) {
-			if (typeof prop === 'undefined') return;
-			var me = this, 
-				name = prop.get('name')
-			;
-			if ( name === 'preset' ) {
-				setTimeout(function() {
-					me.default_view();
-				}, 500);
-			}
+		preset_changed: function () {
+			var me = this;
+			setTimeout(function() {
+				me.default_view();
+			}, 500);
 		},
 		get_preset_property: function(prop_name) {
 			var preset = this.model.get_property_value_by_name("preset"),
