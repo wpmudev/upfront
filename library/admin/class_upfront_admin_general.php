@@ -137,10 +137,12 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 			<div class='postbox'>
 				<h2 class="title"><?php esc_html_e("Changelog", Upfront::TextDomain) ?></h2>
 				<div class="inside changelog">
-				<?php foreach ($changelog as $version => $changeset) { ?>
-					<dt><?php echo esc_html($version); ?></dt>
-					<dd><?php echo esc_html(trim($changeset)); ?></dd>
-				<?php } ?>
+					<dl>
+					<?php foreach ($changelog as $version => $changeset) { ?>
+						<dt><?php echo $version; ?></dt>
+						<dd><?php echo $changeset; ?></dd>
+					<?php } ?>
+					</dl>
 				</div>
 			</div>
 		<?php
