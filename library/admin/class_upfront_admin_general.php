@@ -131,12 +131,16 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 	 */
 	private function _render_changelog_box () {
 		$changelog = $this->_get_changelog();
+		if (empty($changelog)) return false;
 		?>
 		<div class="postbox-container">
 			<div class='postbox'>
 				<h2 class="title"><?php esc_html_e("Changelog", Upfront::TextDomain) ?></h2>
 				<div class="inside changelog">
-					<pre><code><?php echo var_export($changelog); ?></code></pre>
+				<?php foreach ($changelog as $version => $changeset) { ?>
+					<dt><?php echo esc_html($version); ?></dt>
+					<dd><?php echo esc_html(trim($changeset)); ?></dd>
+				<?php } ?>
 				</div>
 			</div>
 		<?php
