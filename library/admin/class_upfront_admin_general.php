@@ -152,12 +152,13 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 		$entries = array();
 		if (!file_exists($path) || !is_readable($path)) return $entries;
 
-		$rawstr = file_get_contents($path);
-		$raw = preg_split('/-{4,}/', $rawstr);
+		$fp = fopen($path, 'r');
+		$idx = 0;
+		while (false !== ($line = fgets($fp, 4096))) {
 
-		if (empty($raw)) return $entries;
-
-		return $raw;
+			if (preg_match('/^\d\.\d.*?-\s\d{4}/', $line)) $idx++;
+			$entries[$idx] .= "\n{$line}";
+		}
 
 		return $entries;
 	}
