@@ -153,7 +153,11 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 		if (!file_exists($path) || !is_readable($path)) return $entries;
 
 		$rawstr = file_get_contents($path);
-		
+		$raw = preg_split('/-{4,}/', $rawstr);
+
+		if (empty($raw)) return $entries;
+
+		return $raw;
 
 		return $entries;
 	}
