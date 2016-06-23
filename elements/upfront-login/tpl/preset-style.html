@@ -1,1 +1,18 @@
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element {
+	<?php if(!empty($properties['element_wrapper_background'])) { ?>
+	background: <?php echo $properties['element_wrapper_background'] ?>;
+	<?php } ?>
+	<?php if(!empty($properties['element_wrapper_use_border'])) { ?>
+			<?php if(!empty($properties['element_wrapper_border_width']) && !empty($properties['element_wrapper_border_type']) && !empty($properties['element_wrapper_border_color'])) { ?>border: <?php echo $properties['element_wrapper_border_width'] ?>px <?php echo $properties['element_wrapper_border_type'] ?> <?php echo $properties['element_wrapper_border_color'] ?>;<?php } ?>
+	<?php } else { ?>
+			border: none;
+	<?php } ?>
+	<?php if(!empty($properties['element_wrapper_use_radius'])) { ?>
+			border-radius: <?php echo $properties['element_wrapper_border_radius1'] ? $properties['element_wrapper_border_radius1'] : 0 ?>px <?php echo $properties['element_wrapper_border_radius2'] ? $properties['element_wrapper_border_radius2'] : 0 ?>px <?php echo $properties['element_wrapper_border_radius4'] ? $properties['element_wrapper_border_radius4'] : 0 ?>px <?php echo $properties['element_wrapper_border_radius3'] ? $properties['element_wrapper_border_radius3'] : 0 ?>px;
+	<?php } else { ?>
+			border-radius: 0px;
+	<?php } ?>
+}
+
+/* Custom CSS */
 <?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>

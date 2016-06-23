@@ -275,7 +275,11 @@ define([
 			},100);
 		},
 		toggle_part_style: function (e) {
+			this.stopListening(Upfront.Events, 'element:preset:updated');
+			
 			var selected = $(e.target).val();
+			console.log('toggle_part_style');
+			console.log(selected);
 			if ( selected === 'element_wrapper' ) {
 				this.default_view();
 			} else {
@@ -283,6 +287,7 @@ define([
 			}
 		},
 		default_view: function () {
+			console.log('default view triggered');
 			this.$el.find('.state_settings_button_wrapper').hide();
 			this.$el.find('.state_modules.state_settings').hide();
 			this.$el.find('[class^="element_wrapper_settings"]').closest('.settings_module').show();
@@ -294,10 +299,12 @@ define([
 			this.$el.find('[class^="'+ selected +'_settings"]').closest('.settings_module').show();
 			setTimeout(function(){
 				me.$el.find('.state_settings_button.state_settings_button_static').click();
+				// me.listenTo(Upfront.Events, 'element:preset:updated', me.preset_changed);
 			}, 100);
 			
 		},
 		preset_changed: function () {
+			console.log('preset changed');
 			var me = this;
 			setTimeout(function() {
 				me.default_view();
