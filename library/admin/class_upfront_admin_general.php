@@ -153,16 +153,18 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 		if (!file_exists($path) || !is_readable($path)) return $entries;
 
 		$fp = fopen($path, 'r');
-		$idx = 0;
+		$idx = '';
 		while (false !== ($line = fgets($fp, 4096))) {
-			if (preg_match('/^\d\.\d.*?-\s\d{4}/', $line)) $idx++;
+			if (preg_match('/-{3,}/', $line)) continue; // drop line junk
+			if (preg_match('/^\d\.\d.*?-\s\d{4}/', $line)) {
+				$idx = $line;
+				continue;
+			}
+			if (empty($idx)) continue; // Sanity check, header junk
 			$entries[$idx] .= "\n{$line}";
 		}
 		fclose($fp);
 
-		// Drop the junk
-		if (!empty($entries) && $idx > 1) unset($entries[0]);
-
-		return array_filter(array_map('trim', $entries));
+		return $entries;
 	}
 }
