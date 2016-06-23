@@ -59,6 +59,12 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			this.listenTo(this.object_group_view, 'unset:mobile_mode', this.unsetMobileMode);
 		}
 
+		// Listen to module view position update
+		if ( this.parent_module_view ) {
+			this.stopListening(this.parent_module_view, 'update_postion');
+			this.listenTo(this.parent_module_view, 'update_position', this.update_position);
+		}
+
 		this.update_height();
 	},
 
