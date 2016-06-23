@@ -169,6 +169,26 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 		}
 		fclose($fp);
 
-		return $entries;
+		if (empty($entries)) return $entries;
+
+		$changelog = array();
+		$df = get_option('date_format');
+		foreach ($entries as $version => $entry) {
+			$tmp = explode('-', $version, 2);
+
+			if (empty($tmp[1])) continue;
+			$date = strtotime($tmp[1]);
+			if (empty($date)) continue;
+
+			$key = "" .
+				"<b>{$tmp['0']}</b>" .
+				'&nbsp;' .
+				'(' .
+					date_i18n($df, $date) .
+				')' .
+			"";
+			$changelog[$key] = '';
+		}
+		return $changelog;
 	}
 }
