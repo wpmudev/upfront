@@ -198,7 +198,11 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 			$separated = false;
 			foreach ($entry as $idx => $line) {
 				$line = trim(ltrim($line, '- '));
-				if (empty($line) && $separated) continue;
+				if (empty($line)) {
+					if ($separated) continue;
+					$line = '</li></ul><p>---</p><ul><li>';
+					$separated = true;
+				}
 
 				$changeset[] = $line;
 			}
