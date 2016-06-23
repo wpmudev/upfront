@@ -155,11 +155,14 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 		$fp = fopen($path, 'r');
 		$idx = 0;
 		while (false !== ($line = fgets($fp, 4096))) {
-
 			if (preg_match('/^\d\.\d.*?-\s\d{4}/', $line)) $idx++;
 			$entries[$idx] .= "\n{$line}";
 		}
+		fclose($fp);
 
-		return $entries;
+		// Drop the junk
+		if (!empty($entries) && $idx > 1) unset($entries[0]);
+
+		return array_filter(array_map('trim', $entries));
 	}
 }
