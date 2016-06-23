@@ -165,7 +165,9 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 				continue;
 			}
 			if (empty($idx)) continue; // Sanity check, header junk
-			$entries[$idx] .= "\n{$line}";
+
+			if (empty($entries[$idx])) $entries[$idx] = array();
+			$entries[$idx][] = $line;
 		}
 		fclose($fp);
 
@@ -174,9 +176,11 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 		$changelog = array();
 		$df = get_option('date_format');
 		foreach ($entries as $version => $entry) {
-			$tmp = explode('-', $version, 2);
+			if (empty($entry)) continue;
 
+			$tmp = explode('-', $version, 2);
 			if (empty($tmp[1])) continue;
+
 			$date = strtotime($tmp[1]);
 			if (empty($date)) continue;
 
@@ -187,7 +191,17 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 					date_i18n($df, $date) .
 				')' .
 			"";
-			$changelog[$key] = '';
+
+			$changeset = array();
+			$separated = false;
+			foreach ($entry as $idx => $line) {
+				$line = trim(ltrim($line, '- '));
+				if (empty($line) && $separated) continue;
+
+				$changeset[] = $line;
+			}
+
+			$changelog[$key] = '<ul><li>' . join('</li><li>', $changeset) . '</li></ul>';
 		}
 		return $changelog;
 	}
