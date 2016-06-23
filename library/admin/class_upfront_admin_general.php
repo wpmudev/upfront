@@ -1,7 +1,7 @@
 <?php
 
 class Upfront_Admin_General extends Upfront_Admin_Page {
-	
+
     function __construct(){
 		if ($this->_can_access( Upfront_Permissions::SEE_USE_DEBUG )) {
 			add_submenu_page( Upfront_Admin::$menu_slugs['main'], __("General Settings", Upfront::TextDomain),  __("General", Upfront::TextDomain), 'manage_options', Upfront_Admin::$menu_slugs['main'], array($this, "render_page") );
@@ -54,7 +54,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 							<div class="upfront-debug-block">
 								<h4><?php esc_html_e("Online Articles", Upfront::TextDomain) ?></h4>
 								<ul>
-								
+
 									<li><a href='https://premium.wpmudev.org/blog/upfront-1-0/' target="_blank"><?php esc_html_e("Upfront 1.0", Upfront::TextDomain) ?></a></li>
 									<li><a href='https://premium.wpmudev.org/blog/upfront-basics/' target="_blank"><?php esc_html_e("Upfront Part 1: The Basics, Theme Colors and Typography", Upfront::TextDomain) ?></a></li>
 									<li><a href='https://premium.wpmudev.org/blog/upfront-regions/' target="_blank"><?php esc_html_e("Upfront Part 2: Structuring Your Site with Regions", Upfront::TextDomain) ?></a></li>
@@ -72,10 +72,11 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 						</div>
 					</div>
 				</div>
+				<?php $this->_render_changelog_box(); ?>
 			</div>
 		</div>
 		<?php
-		
+
 	}
 
 	private function _render_debug_options(){
@@ -122,6 +123,21 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 				</div>
 			</div>
 		</div>
+		<?php
+	}
+
+	/**
+	 * Renders the changelog box
+	 */
+	private function _render_changelog_box () {
+		//$changelog = $this->_get_changelog();
+		?>
+		<div class="postbox-container">
+			<div class='postbox'>
+				<h2 class="title"><?php esc_html_e("Changelog", Upfront::TextDomain) ?></h2>
+				<div class="inside changelog">
+				</div>
+			</div>
 		<?php
 	}
 }
