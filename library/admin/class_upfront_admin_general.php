@@ -207,6 +207,8 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 				$changeset[] = $line;
 			}
 
+			if (empty($changeset)) continue;
+
 			$changelog[$key] = '<ul><li>' . join('</li><li>', $changeset) . '</li></ul>';
 		}
 		return $changelog;
