@@ -152,6 +152,27 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 
 			return false;
 		});
+		$('.changelog a[href="#toggle"]').on('click', function (e) {
+			if (e && e.preventDefault) e.preventDefault();
+			if (e && e.stopPropagation) e.stopPropagation();
+
+			var $me = $(this),
+				$target = $me.parent().next('ul.extra'),
+				text
+			;
+			if (!$target.length) return false;
+
+			if ($target.is(":visible")) {
+				text = $me.attr("data-contracted");
+				$target.hide();
+			} else {
+				text = $me.attr("data-expanded");
+				$target.show();
+			}
+			$me.text(text);
+
+			return false;
+		});
 	});
 })(jQuery);
 </script>
