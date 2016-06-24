@@ -135,12 +135,26 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 		?>
 <style>
 .postbox .inside.changelog .previous {
-	//display: none;
+	display: none;
 }
 .postbox .inside.changelog .extra {
 	display: none;
 }
 </style>
+<script>
+;(function ($) {
+	$(function () {
+		$('.changelog .navigation a[href="#more"]').on('click', function (e) {
+			if (e && e.preventDefault) e.preventDefault();
+			if (e && e.stopPropagation) e.stopPropagation();
+
+			$('.changelog .previous').toggle();
+
+			return false;
+		});
+	});
+})(jQuery);
+</script>
 		<div class="postbox-container">
 			<div class='postbox'>
 				<h2 class="title"><?php esc_html_e("Changelog", Upfront::TextDomain) ?></h2>
