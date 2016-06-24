@@ -155,6 +155,11 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 							<dd><?php echo $current['value']; ?></dd>
 						</dl>
 					</div>
+
+					<div class="changelog navigation">
+						<a href="#more"><?php esc_html_e('Previous entries', 'upfront'); ?></a>
+					</div>
+
 					<div class="previous">
 						<dl>
 						<?php while (false !== ($changeset = each($changelog))) { ?>
@@ -234,7 +239,9 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 					$next_line = trim(ltrim($entry[$i+1], '- '));
 					if (empty($next_line)) continue;
 
-					$line = '</li></ul><p>---</p><ul class="extra"><li>';
+					$line = '</li></ul><div class="extra-toggle">' .
+						'<a href="#toggle" data-expanded="' . esc_attr(__('Show less', 'upfront')) . '" data-contracted="' . esc_attr(__('Show more', 'upfront')) . '">' . esc_html(__('Show more', 'upfront')) . '</a>' .
+					'</div><ul class="extra"><li>';
 					$separated = true;
 				}
 
