@@ -137,12 +137,25 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 			<div class='postbox'>
 				<h2 class="title"><?php esc_html_e("Changelog", Upfront::TextDomain) ?></h2>
 				<div class="inside changelog">
-					<dl>
-					<?php foreach ($changelog as $version => $changeset) { ?>
-						<dt><?php echo $version; ?></dt>
-						<dd><?php echo $changeset; ?></dd>
-					<?php } ?>
-					</dl>
+				<?php
+					reset($changelog);
+				 	$current_version = current(array_keys($changelog));
+				 	$current_changeset = current($changelog);
+				?>
+					<div class="current">
+						<dl>
+							<dt><?php echo $current_version; ?></dt>
+							<dd><?php echo $current_changeset; ?></dd>
+						</dl>
+					</div>
+					<div class="previous">
+						<dl>
+						<?php foreach ($changelog as $version => $changeset) { ?>
+							<dt><?php echo $version; ?></dt>
+							<dd><?php echo $changeset; ?></dd>
+						<?php } ?>
+						</dl>
+					</div>
 				</div>
 			</div>
 		<?php
@@ -210,11 +223,11 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 				$line = trim(ltrim($entry[$i], '- '));
 				if (empty($line)) {
 					if ($separated) continue;
-					
+
 					$next_line = trim(ltrim($entry[$i+1], '- '));
 					if (empty($next_line)) continue;
 
-					$line = '</li></ul><p>---</p><ul><li>';
+					$line = '</li></ul><p>---</p><ul class="extra"><li>';
 					$separated = true;
 				}
 
