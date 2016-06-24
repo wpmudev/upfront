@@ -133,26 +133,33 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 		$changelog = $this->_get_changelog();
 		if (empty($changelog)) return false;
 		?>
+<style>
+.postbox .inside.changelog .previous {
+	//display: none;
+}
+.postbox .inside.changelog .extra {
+	display: none;
+}
+</style>
 		<div class="postbox-container">
 			<div class='postbox'>
 				<h2 class="title"><?php esc_html_e("Changelog", Upfront::TextDomain) ?></h2>
 				<div class="inside changelog">
 				<?php
 					reset($changelog);
-				 	$current_version = current(array_keys($changelog));
-				 	$current_changeset = current($changelog);
+				 	$current = each($changelog);
 				?>
 					<div class="current">
 						<dl>
-							<dt><?php echo $current_version; ?></dt>
-							<dd><?php echo $current_changeset; ?></dd>
+							<dt><?php echo $current['key']; ?></dt>
+							<dd><?php echo $current['value']; ?></dd>
 						</dl>
 					</div>
 					<div class="previous">
 						<dl>
-						<?php foreach ($changelog as $version => $changeset) { ?>
-							<dt><?php echo $version; ?></dt>
-							<dd><?php echo $changeset; ?></dd>
+						<?php while (false !== ($changeset = each($changelog))) { ?>
+							<dt><?php echo $changeset['key']; ?></dt>
+							<dd><?php echo $changeset['value']; ?></dd>
 						<?php } ?>
 						</dl>
 					</div>
