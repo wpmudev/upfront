@@ -205,10 +205,15 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 
 			$changeset = array();
 			$separated = false;
-			foreach ($entry as $idx => $line) {
-				$line = trim(ltrim($line, '- '));
+			$total_lines = count($entry);
+			for ($i=0; $i<$total_lines; $i++) {
+				$line = trim(ltrim($entry[$i], '- '));
 				if (empty($line)) {
 					if ($separated) continue;
+					
+					$next_line = trim(ltrim($entry[$i+1], '- '));
+					if (empty($next_line)) continue;
+
 					$line = '</li></ul><p>---</p><ul><li>';
 					$separated = true;
 				}
