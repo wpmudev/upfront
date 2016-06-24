@@ -149,11 +149,12 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 	}
 
 	/**
-	 * Gets the changelog entries array
+	 * Gets the raw changelog entries from the file
 	 *
 	 * @return array
 	 */
-	private function _get_changelog () {
+	private function _get_raw_changelog_entries () {
+
 		$path = trailingslashit(wp_normalize_path(Upfront::get_root_dir())) . 'CHANGELOG.md';
 		$entries = array();
 		if (!file_exists($path) || !is_readable($path)) return $entries;
@@ -173,8 +174,16 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 		}
 		fclose($fp);
 
-		if (empty($entries)) return $entries;
+		return $entries;
+	}
 
+	/**
+	 * Gets the changelog entries array
+	 *
+	 * @return array
+	 */
+	private function _get_changelog () {
+		$entries = $this->_get_raw_changelog_entries();
 		$changelog = array();
 		$df = get_option('date_format');
 		foreach ($entries as $version => $entry) {
