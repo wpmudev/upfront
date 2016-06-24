@@ -812,9 +812,9 @@ define([
 
 			this.originalDesktopElementSize = this.property('element_size');
 
-			if(this.mobileMode) {
-				this.render();
-			}
+			//if(this.mobileMode) {
+				this.render(); // @TODO prefer not to re-render on breakpoint change
+			//}
 		},
 
 		/***************************************************************************/

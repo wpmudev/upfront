@@ -1952,6 +1952,7 @@ define([
 				if ( this.display_size_hint ) {
 					this.update_size_hint();
 				}
+				this.trigger('update_position', this, this.model);
 				Upfront.Events.trigger('entity:object:update_position', this, this.model);
 			},
 			ensure_breakpoint_change_is_listened: function() {
@@ -3013,6 +3014,7 @@ define([
 					$toggle = this.$el.find('> .upfront-module-hidden-toggle')
 				;
 				this.apply_breakpoint_position($module, $toggle);
+				this.trigger('update_position', this, this.model);
 				Upfront.Events.trigger('entity:module:update_position', this, this.model);
 			},
 			render_object: function () {
@@ -3564,6 +3566,7 @@ define([
 					this._theme_style = theme_style;
 				}
 				this.update_size_hint();
+				this.trigger('update_position', this, this.model);
 				Upfront.Events.trigger('entity:module_group:update_position', this, this.model);
 			},
 			normalize_child_modules: function (prev_col) {

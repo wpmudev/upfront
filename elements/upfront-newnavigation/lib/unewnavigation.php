@@ -74,7 +74,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		$breakpoint_data['preset']['desktop']['is_floating'] = $is_floating ? $is_floating : '';
 
 		if ($this->_get_property('usingNewAppearance') == true) {
-			$menu_style = isset($desktopPreset['menu_style']) && is_array($desktopPreset['menu_style']) ? $desktopPreset['menu_style'] :  $menu_style;
+			$menu_style = isset($desktopPreset['menu_style']) && !empty($desktopPreset['menu_style']) ? $desktopPreset['menu_style'] :  $menu_style;
 			$menu_alignment = isset($desktopPreset['menu_alignment']) ? $desktopPreset['menu_alignment'] : $menu_alignment;
 			$breakpoint_data['preset']['desktop']['menu_style'] = ( empty($menu_style) ) ? 'horizontal' : $menu_style ;
 		} else {
