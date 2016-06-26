@@ -8,6 +8,13 @@
 		lastTime = currTime + timeToCall;
 		return id;
 	};
+
+	var rgba_to_rba = function(color){
+		if( Upfront && Upfront.Util  ) // If we are in editor then delegate to Upfront.Util.colors.rgba_to_rgb
+			return Upfront.Util.colors.rgba_to_rgb( color );
+
+		return color.replace(/ /g,'').replace(/^rgba\((\d+)\,(\d+)\,(\d+)\,(\d+\.?\d+?)\)$/, "rgb($1, $2, $3)");
+	};
 	var requestAnimationFrame =
 			$.proxy(window.requestAnimationFrame, window) ||
 			$.proxy(window.webkitRequestAnimationFrame, window) ||
@@ -39,6 +46,7 @@
 				}
 				else {
 					// Initialize object
+					args.bgColor = rgba_to_rba( $el.parent().css("background-color") );
 					$el.data('uparallax', new Upfront_Parallax($el, args));
 				}
 			}
@@ -63,6 +71,7 @@
 				renderer: this.getDefaultRenderer(), // Available: canvas, absolute, fixed,
 				overflowTop: 100, // px, render more than the background height to prevent artifact on late refresh
 				overflowBottom: 100, // px, render more than the background height to prevent artifact on late refresh
+				bgColor: "#fff"
 			}, args)
 		;
 		this.opts = data;
@@ -293,6 +302,7 @@
 			;
 			if (src != 'none') {
 				this.cache.img = img;
+				this.cache.background_color = this.$parent.css("background-color") || "#fff";
 				img.src = src;
 				this.$element.css('display', 'none');
 				this.$parent.css({
@@ -307,7 +317,7 @@
 				$(this.imgCanvas).css({
 					display: 'block'
 				});
-				this.imgContext = this.imgCanvas.getContext('2d');
+				this.imgContext = this.imgCanvas.getContext('2d', {alphae: false});
 			}
 			var width = this.cache.width,
 				height = this.cache.height,
@@ -336,7 +346,10 @@
 			drawHeight = Math.floor(parallaxHeight/imgHeight * this.cache.img.height);
 			drawX = (this.cache.img.width - drawWidth) / 2;
 			drawY = (this.cache.img.height - drawHeight) / 2;
+
+
 			this.imgContext.drawImage(this.cache.img, drawX, drawY, drawWidth, drawHeight, 0, 0, width, parallaxHeight);
+
 		},
 		refresh: function () {
 			this.refreshCache();
@@ -500,6 +513,7 @@
 				drawRelY = scrollTop - offsetTop;
 				drawY += drawRelY;
 			}
+
 			drawY += translate * -1;
 			if (closest.top && closest.top.cache.offsetBottom < offsetTop) {
 				clearTop -= Math.min(this.opts.overflowTop, Math.ceil((offsetTop - closest.top.cache.offsetBottom) / 2));
@@ -513,13 +527,27 @@
 			else if (!closest.bottom) {
 				clearBottom += this.opts.overflowBottom;
 			}
+
+			if( this.cache.img.src && this.cache.img.src.toLowerCase().match(/.png/) )
+				this.fillCanvas(width, parallaxHeight);
+
 			this.context.drawImage(this.imgCanvas, 0, 0, width, parallaxHeight, offsetLeft, offsetTop-this.movementOffset-scrollTop+translate, width, parallaxHeight);
+
 			if (clearTop > scrollTop) {
 				this.context.clearRect(offsetLeft, 0, width, clearTop-scrollTop);
 			}
 			if (winHeight > clearBottom-scrollTop) {
 				this.context.clearRect(offsetLeft, clearBottom-scrollTop, width, winHeight-(clearBottom-scrollTop));
 			}
+		},
+		fillCanvas: function(width, parallaxHeight){
+			this.context.fillStyle = this.opts.bgColor;
+			var fill_x = !Upfront.mainData.isRTL && Upfront && Upfront.Application && ( Upfront.Application.mode.current || Upfront.Application.mode.last )
+					? $("#sidebar-ui").width()
+					: 0; // If we are in editor and it's not rtl the rectangular should have x offset
+
+			this.context.rect(fill_x, 0, width, parallaxHeight);
+			this.context.fill();
 		},
 		clearCanvas: function () {
 			this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
