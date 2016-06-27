@@ -483,7 +483,6 @@
 		},
 		drawCanvas: function (translate, maxTranslate) {
 			if (!this.cache.img || !this.imgCanvas) return;
-			console.time('draw')
 			var offsetTop = this.cache.offsetTop,
 				offsetBottom = this.cache.offsetBottom,
 				offsetLeft = this.cache.offsetLeft,
@@ -535,9 +534,6 @@
 				clearBottom += this.opts.overflowBottom;
 			}
 
-			//if( this.is_image_png() )
-			//	this.fillCanvas(width, parallaxHeight);
-
 			this.context.drawImage(this.imgCanvas, 0, 0, width, parallaxHeight, offsetLeft, offsetTop-this.movementOffset-scrollTop+translate, width, parallaxHeight);
 
 			if (clearTop > scrollTop) {
@@ -546,7 +542,6 @@
 			if (winHeight > clearBottom-scrollTop) {
 				this.context.clearRect(offsetLeft, clearBottom-scrollTop, width, winHeight-(clearBottom-scrollTop));
 			}
-			console.timeEnd('draw')
 		},
 		/**
 		 * Checks if image src image in png
