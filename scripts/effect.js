@@ -279,7 +279,7 @@
 				$('.upfront-output-layout, .upfront-layout').append(this.canvas);
 			}
 			this.context = this.canvas.getContext('2d');
-			if( this.is_image_png )
+			if( this.is_image_png() )
 				this.context.fillStyle = this.opts.bgColor;
 			this.updateCanvas();
 		},
