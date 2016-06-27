@@ -483,7 +483,6 @@
 		},
 		drawCanvas: function (translate, maxTranslate) {
 			if (!this.cache.img || !this.imgCanvas) return;
-			console.time('draw')
 			var offsetTop = this.cache.offsetTop,
 				offsetBottom = this.cache.offsetBottom,
 				offsetLeft = this.cache.offsetLeft,
@@ -546,7 +545,6 @@
 			if (winHeight > clearBottom-scrollTop) {
 				this.context.clearRect(offsetLeft, clearBottom-scrollTop, width, winHeight-(clearBottom-scrollTop));
 			}
-			console.timeEnd('draw')
 		},
 		/**
 		 * Checks if image src image in png
