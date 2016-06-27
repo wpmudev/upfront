@@ -279,6 +279,8 @@
 				$('.upfront-output-layout, .upfront-layout').append(this.canvas);
 			}
 			this.context = this.canvas.getContext('2d');
+			if( this.is_image_png )
+				this.context.fillStyle = this.opts.bgColor;
 			this.updateCanvas();
 		},
 		updateCanvas: function () {
@@ -317,7 +319,8 @@
 				$(this.imgCanvas).css({
 					display: 'block'
 				});
-				this.imgContext = this.imgCanvas.getContext('2d', {alphae: false});
+
+				this.imgContext = this.imgCanvas.getContext('2d', {alpha: false});
 			}
 			var width = this.cache.width,
 				height = this.cache.height,
@@ -528,7 +531,7 @@
 				clearBottom += this.opts.overflowBottom;
 			}
 
-			if( this.cache.img.src && this.cache.img.src.toLowerCase().match(/.png/) )
+			if( this.is_image_png() )
 				this.fillCanvas(width, parallaxHeight);
 
 			this.context.drawImage(this.imgCanvas, 0, 0, width, parallaxHeight, offsetLeft, offsetTop-this.movementOffset-scrollTop+translate, width, parallaxHeight);
@@ -540,13 +543,16 @@
 				this.context.clearRect(offsetLeft, clearBottom-scrollTop, width, winHeight-(clearBottom-scrollTop));
 			}
 		},
+		/**
+		 * Checks if image src image in png
+		 * @returns {boolean|*|Array|{index: number, input: string}}
+         */
+		is_image_png: function(){
+			return this.cache.img && this.cache.img.src && this.cache.img.src.toLowerCase().match(/.png/);
+		},
 		fillCanvas: function(width, parallaxHeight){
 			this.context.fillStyle = this.opts.bgColor;
-			var fill_x = !Upfront.mainData.isRTL && Upfront && Upfront.Application && ( Upfront.Application.mode.current || Upfront.Application.mode.last )
-					? $("#sidebar-ui").width()
-					: 0; // If we are in editor and it's not rtl the rectangular should have x offset
-
-			this.context.rect(fill_x, 0, width, parallaxHeight);
+			this.context.rect(this.cache.offsetLeft, 0, width, parallaxHeight);
 			this.context.fill();
 		},
 		clearCanvas: function () {
