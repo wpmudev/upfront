@@ -534,9 +534,6 @@
 				clearBottom += this.opts.overflowBottom;
 			}
 
-			//if( this.is_image_png() )
-			//	this.fillCanvas(width, parallaxHeight);
-
 			this.context.drawImage(this.imgCanvas, 0, 0, width, parallaxHeight, offsetLeft, offsetTop-this.movementOffset-scrollTop+translate, width, parallaxHeight);
 
 			if (clearTop > scrollTop) {
