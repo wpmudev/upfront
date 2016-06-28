@@ -278,8 +278,6 @@ define([
 			this.stopListening(Upfront.Events, 'element:preset:updated');
 			
 			var selected = $(e.target).val();
-			console.log('toggle_part_style');
-			console.log(selected);
 			if ( selected === 'element_wrapper' ) {
 				this.default_view();
 			} else {
@@ -287,7 +285,6 @@ define([
 			}
 		},
 		default_view: function () {
-			console.log('default view triggered');
 			this.$el.find('.state_settings_button_wrapper').hide();
 			this.$el.find('.state_modules.state_settings').hide();
 			this.$el.find('[class^="element_wrapper_settings"]').closest('.settings_module').show();
@@ -304,7 +301,6 @@ define([
 			
 		},
 		preset_changed: function () {
-			console.log('preset changed');
 			var me = this;
 			setTimeout(function() {
 				me.default_view();
