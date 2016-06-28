@@ -350,6 +350,9 @@
 			drawX = (this.cache.img.width - drawWidth) / 2;
 			drawY = (this.cache.img.height - drawHeight) / 2;
 
+			if( this.is_image_png() ) {
+				this.fillCanvas(width, parallaxHeight);
+			}
 
 			this.imgContext.drawImage(this.cache.img, drawX, drawY, drawWidth, drawHeight, 0, 0, width, parallaxHeight);
 
@@ -531,9 +534,6 @@
 				clearBottom += this.opts.overflowBottom;
 			}
 
-			if( this.is_image_png() )
-				this.fillCanvas(width, parallaxHeight);
-
 			this.context.drawImage(this.imgCanvas, 0, 0, width, parallaxHeight, offsetLeft, offsetTop-this.movementOffset-scrollTop+translate, width, parallaxHeight);
 
 			if (clearTop > scrollTop) {
@@ -551,9 +551,9 @@
 			return this.cache.img && this.cache.img.src && this.cache.img.src.toLowerCase().match(/.png/);
 		},
 		fillCanvas: function(width, parallaxHeight){
-			this.context.fillStyle = this.opts.bgColor;
-			this.context.rect(this.cache.offsetLeft, 0, width, parallaxHeight);
-			this.context.fill();
+			this.imgContext.fillStyle = this.opts.bgColor;
+			this.imgContext.rect(0, 0, width, parallaxHeight);
+			this.imgContext.fill();
 		},
 		clearCanvas: function () {
 			this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
