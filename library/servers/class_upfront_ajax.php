@@ -157,7 +157,7 @@ class Upfront_Ajax extends Upfront_Server {
 			$layout_change_meta_name = strtolower($store_key . '-layout-change-flag');
 			$layout_change = get_post_meta($layout_post_id, $layout_change_meta_name, true);
 			$page_layout = Upfront_Server_PageLayout::get_instance()->get_layout($layout_post_id, $load_dev);
-			if ( $page_layout ) $layout = Upfront_Layout::from_php($page_layout, $storage_key);
+			if ( $page_layout ) $layout = Upfront_Layout::from_cpt($page_layout, $storage_key);
 		}
 		// dealing with Page Templates
 		$page_template_obj = $this->_load_page_template($_POST);
@@ -168,7 +168,7 @@ class Upfront_Ajax extends Upfront_Server {
 		// loading from Page Template CPT
 		if ( ( !$layout_post_id || !$layout || $layout->is_empty() ) && $page_template_obj ) {
 			$page_template = Upfront_Server_PageTemplate::get_instance()->get_template($page_template_obj->ID, $load_dev);
-			$layout = Upfront_Layout::from_php($page_template, $storage_key);
+			if ( $page_template ) $layout = Upfront_Layout::from_cpt($page_template, $storage_key);
 		}
 		// if still empty then load it from `options` table or from tpl file
 		if ( !$layout || $layout->is_empty() ) {
@@ -200,7 +200,7 @@ class Upfront_Ajax extends Upfront_Server {
 
 		$this->_out(new Upfront_JsonResponse_Success($response));
 	}
-
+	
 	private function _load_page_template ($data) {
 		$post_id = (isset($data['post_id'])) ? (int)$data['post_id'] : false;
 		$load_dev = ( isset($data['load_dev']) && is_numeric($data['load_dev']) && $data['load_dev'] == 1 ) ? true : false;
@@ -357,6 +357,8 @@ class Upfront_Ajax extends Upfront_Server {
 
 		$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $save_dev);
 		$layout_post_id = Upfront_Server_PageLayout::get_instance()->save_layout($layout_post_id, $layout, $save_dev, $layout_slug);
+		// we need to save global regions to DB, so can be reused to other page
+		$layout->save_global_region();
 		
 		// if there is a layout change
 		$layout_change_meta_name = strtolower($store_key . '-layout-change-flag');
@@ -797,7 +799,7 @@ class Upfront_Ajax extends Upfront_Server {
 		if ( $layout_post_id ) {
 			$page_layout = Upfront_Server_PageLayout::get_instance()->get_layout($layout_post_id, $load_dev);
 			if ( $page_layout ) {
-				$layout = Upfront_Layout::from_php($page_layout, $data['storage_key']);
+				$layout = Upfront_Layout::from_cpt($page_layout, $data['storage_key']);
 
 				$updated = $layout->set_element_data($element);
 				if(!$updated)
