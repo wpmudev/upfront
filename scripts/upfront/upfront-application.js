@@ -134,9 +134,6 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			.success(function (resp) {
 				Upfront.Util.log("layout saved");
 				Upfront.Events.trigger("command:layout:save_success");
-				
-				// clear layout change flag
-				if ( typeof _upfront_post_data.layout_change !== 'undefined' ) _upfront_post_data.layout_change = 0;
 
 				if ( layout_action == 'save_as' ) {
 					// refresh page templates list
@@ -158,9 +155,6 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			.error(function () {
 				Upfront.Util.log("error saving layout");
 				Upfront.Events.trigger("command:layout:save_error");
-				
-				// clear layout change flag
-				if ( typeof _upfront_post_data.layout_change !== 'undefined' ) _upfront_post_data.layout_change = 0;
 			})
 		;
 	},
