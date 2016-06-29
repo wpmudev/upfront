@@ -263,26 +263,15 @@ define([
 		},
 		render: function () {
 			ElementSettings.prototype.render.call(this);
-			
 			var me = this;
 			setTimeout(function (){
 				var part_style = me.get_preset_property("part_style");
-				if ( !part_style || part_style === 'element_wrapper' ) {
-					me.default_view();
-				} else {
-					me.toggle_view(part_style);
-				}
+				me.change_view(part_style);
 			},100);
 		},
 		toggle_part_style: function (e) {
-			this.stopListening(Upfront.Events, 'element:preset:updated');
-			
 			var selected = $(e.target).val();
-			if ( selected === 'element_wrapper' ) {
-				this.default_view();
-			} else {
-				this.toggle_view(selected);
-			}
+			this.change_view(selected);
 		},
 		default_view: function () {
 			this.$el.find('.state_settings_button_wrapper').hide();
@@ -296,14 +285,20 @@ define([
 			this.$el.find('[class^="'+ selected +'_settings"]').closest('.settings_module').show();
 			setTimeout(function(){
 				me.$el.find('.state_settings_button.state_settings_button_static').click();
-				// me.listenTo(Upfront.Events, 'element:preset:updated', me.preset_changed);
 			}, 100);
-			
+		},
+		change_view: function (part_style) {
+			if ( !part_style || part_style === 'element_wrapper' ) {
+				this.default_view();
+			} else {
+				this.toggle_view(part_style);
+			}
 		},
 		preset_changed: function () {
 			var me = this;
 			setTimeout(function() {
-				me.default_view();
+				var part_style = me.get_preset_property("part_style");
+				me.change_view(part_style);
 			}, 500);
 		},
 		get_preset_property: function(prop_name) {

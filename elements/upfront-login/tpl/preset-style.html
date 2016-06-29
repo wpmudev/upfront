@@ -1,5 +1,6 @@
 /* Element Wrapper */
-#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element {
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element {
 	<?php if(!empty($properties['element_wrapper_background'])) { ?>
 	background: <?php echo $properties['element_wrapper_background'] ?>;
 	<?php } ?>
@@ -16,7 +17,8 @@
 }
 
 /* Field Labels */
-#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form label {
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form label,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form label {
 	<?php if(!empty($properties['field_labels_use_typography'])) { ?>
 		<?php if(!empty($properties['field_labels_color'])) { ?>color: <?php echo $properties['field_labels_color']  ?>; <?php } ?>
 		<?php if(!empty($properties['field_labels_font_face'])) { ?>font-family: <?php echo $properties['field_labels_font_face']  ?>; <?php } ?>
@@ -26,7 +28,8 @@
 		<?php if(!empty($properties['field_labels_line_height'])) { ?>line-height: <?php echo $properties['field_labels_line_height']  ?>;<?php } ?>
 	<?php } ?>
 }
-#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form label:hover {
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form label:hover,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form label:hover {
 	<?php if(!empty($properties['field_labels_use_typography_hover'])) { ?>
 		<?php if(!empty($properties['field_labels_color_hover'])) { ?>color: <?php echo $properties['field_labels_color_hover']  ?>; <?php } ?>
 		<?php if(!empty($properties['field_labels_font_face_hover'])) { ?>font-family: <?php echo $properties['field_labels_font_face_hover']  ?>; <?php } ?>
@@ -36,7 +39,8 @@
 		<?php if(!empty($properties['field_labels_line_height_hover'])) { ?>line-height: <?php echo $properties['field_labels_line_height_hover']  ?>;<?php } ?>
 	<?php } ?>
 }
-#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form label:focus {
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form label:focus,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form label:focus {
 	<?php if(!empty($properties['field_labels_use_typography_focus'])) { ?>
 		<?php if(!empty($properties['field_labels_color_focus'])) { ?>color: <?php echo $properties['field_labels_color_focus']  ?>; <?php } ?>
 		<?php if(!empty($properties['field_labels_font_face_focus'])) { ?>font-family: <?php echo $properties['field_labels_font_face_focus']  ?>; <?php } ?>
@@ -49,7 +53,9 @@
 
 /* Input Fields */
 #page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="text"],
-#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="password"] {
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="password"],
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form input[type="text"],
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form input[type="password"] {
 	<?php if(!empty($properties['input_fields_background'])) { ?>
 	background: <?php echo $properties['input_fields_background'] ?>;
 	-webkit-box-shadow: 0 0 0px 1000px <?php echo $properties['input_fields_background'] ?> inset;
@@ -75,7 +81,9 @@
 	<?php } ?>
 }
 #page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="text"]:hover,
-#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="password"]:hover {
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="password"]:hover,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form input[type="text"]:hover,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form input[type="password"]:hover {
 	<?php if(!empty($properties['input_fields_background_hover'])) { ?>
 	background: <?php echo $properties['input_fields_background_hover'] ?>;
 	-webkit-box-shadow: 0 0 0px 1000px <?php echo $properties['input_fields_background_hover'] ?> inset;
@@ -101,7 +109,9 @@
 	<?php } ?>
 }
 #page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="text"]:focus,
-#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="password"]:focus {
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="password"]:focus,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form input[type="text"]:focus,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form input[type="password"]:focus {
 	<?php if(!empty($properties['input_fields_background_focus'])) { ?>
 	background: <?php echo $properties['input_fields_background_focus'] ?>;
 	-webkit-box-shadow: 0 0 0px 1000px <?php echo $properties['input_fields_background_focus'] ?> inset;
@@ -128,7 +138,8 @@
 }
 
 /* Button */
-#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="submit"] {
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form#loginform input[type="submit"],
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form#loginform input[type="submit"] {
 	<?php if(!empty($properties['button_background'])) { ?>
 	background: <?php echo $properties['button_background'] ?>;
 	<?php } ?>
@@ -151,7 +162,8 @@
 			border-radius: 0px;
 	<?php } ?>
 }
-#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="submit"]:hover {
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="submit"]:hover,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form input[type="submit"]:hover {
 	<?php if(!empty($properties['button_background_hover'])) { ?>
 	background: <?php echo $properties['button_background_hover'] ?>;
 	<?php } ?>
@@ -174,7 +186,8 @@
 			border-radius: 0px;
 	<?php } ?>
 }
-#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="submit"]:focus {
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="submit"]:focus,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form input[type="submit"]:focus {
 	<?php if(!empty($properties['button_background_focus'])) { ?>
 	background: <?php echo $properties['button_background_focus'] ?>;
 	<?php } ?>
@@ -199,10 +212,12 @@
 }
 
 /* Lost Password */
-#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword a {
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword a,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .login-lostpassword a {
 	<?php if(!empty($properties['lost_password_text_link_color'])) { ?>color: <?php echo $properties['lost_password_text_link_color']  ?>; <?php } ?>
 }
-#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword {
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .login-lostpassword {
 	<?php if(!empty($properties['lost_password_text_use_typography'])) { ?>
 		<?php if(!empty($properties['lost_password_text_color'])) { ?>color: <?php echo $properties['lost_password_text_color']  ?>; <?php } ?>
 		<?php if(!empty($properties['lost_password_text_font_face'])) { ?>font-family: <?php echo $properties['lost_password_text_font_face']  ?>; <?php } ?>
@@ -212,10 +227,12 @@
 		<?php if(!empty($properties['lost_password_text_line_height'])) { ?>line-height: <?php echo $properties['lost_password_text_line_height']  ?>;<?php } ?>
 	<?php } ?>
 }
-#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword a:hover {
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword a:hover,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .login-lostpassword a:hover {
 	<?php if(!empty($properties['lost_password_text_link_color_hover'])) { ?>color: <?php echo $properties['lost_password_text_link_color_hover']  ?>; <?php } ?>
 }
-#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword:hover {
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword:hover,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .login-lostpassword:hover {
 	<?php if(!empty($properties['lost_password_text_use_typography_hover'])) { ?>
 		<?php if(!empty($properties['lost_password_text_color_hover'])) { ?>color: <?php echo $properties['lost_password_text_color_hover']  ?>; <?php } ?>
 		<?php if(!empty($properties['lost_password_text_font_face_hover'])) { ?>font-family: <?php echo $properties['lost_password_text_font_face_hover']  ?>; <?php } ?>
@@ -225,10 +242,12 @@
 		<?php if(!empty($properties['lost_password_text_line_height_hover'])) { ?>line-height: <?php echo $properties['lost_password_text_line_height_hover']  ?>;<?php } ?>
 	<?php } ?>
 }
-#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword a:focus {
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword a:focus,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .login-lostpassword a:focus {
 	<?php if(!empty($properties['lost_password_text_link_color_focus'])) { ?>color: <?php echo $properties['lost_password_text_link_color_focus']  ?>; <?php } ?>
 }
-#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword:focus {
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword:focus,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .login-lostpassword:focus {
 	<?php if(!empty($properties['lost_password_text_use_typography_focus'])) { ?>
 		<?php if(!empty($properties['lost_password_text_color_focus'])) { ?>color: <?php echo $properties['lost_password_text_color_focus']  ?>; <?php } ?>
 		<?php if(!empty($properties['lost_password_text_font_face_focus'])) { ?>font-family: <?php echo $properties['lost_password_text_font_face_focus']  ?>; <?php } ?>
@@ -240,7 +259,8 @@
 }
 
 /* Login Trigger */
-#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .upfront_login-trigger span {
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .upfront_login-trigger span,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .upfront_login-trigger span {
 	<?php if(!empty($properties['login_trigger_button_background'])) { ?>
 	background: <?php echo $properties['login_trigger_button_background'] ?>;
 	<?php } ?>
@@ -263,7 +283,8 @@
 			border-radius: 0px;
 	<?php } ?>
 }
-#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .upfront_login-trigger span:hover {
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .upfront_login-trigger span:hover,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .upfront_login-trigger span:hover {
 	<?php if(!empty($properties['login_trigger_button_background_hover'])) { ?>
 	background: <?php echo $properties['login_trigger_button_background_hover'] ?>;
 	<?php } ?>
@@ -286,7 +307,8 @@
 			border-radius: 0px;
 	<?php } ?>
 }
-#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .upfront_login-trigger span:focus {
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .upfront_login-trigger span:focus,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .upfront_login-trigger span:focus {
 	<?php if(!empty($properties['login_trigger_button_background_focus'])) { ?>
 	background: <?php echo $properties['login_trigger_button_background_focus'] ?>;
 	<?php } ?>

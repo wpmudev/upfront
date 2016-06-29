@@ -313,7 +313,6 @@ define([
 			this.debouncedSavePreset(properties);
 
 			this.updateMainDataCollectionPreset(properties);
-			Upfront.Events.trigger('element:preset:updated');
 		},
 
 		updatePreset: function(properties) {
@@ -341,7 +340,6 @@ define([
 			this.debouncedSavePreset(properties);
 
 			this.updateMainDataCollectionPreset(properties);
-			Upfront.Events.trigger('element:preset:updated');
 		},
 
 		migratePreset: function(presetName) {
