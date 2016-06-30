@@ -271,7 +271,10 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 				if (empty($line)) {
 					if ($separated) continue;
 
-					$next_line = trim(ltrim($entry[$i+1], '- '));
+					$next_line = isset($entry[$i+1])
+						? trim(ltrim($entry[$i+1], '- '))
+						: false
+					;
 					if (empty($next_line)) continue;
 
 					$line = '</li></ul><div class="extra-toggle">' .
