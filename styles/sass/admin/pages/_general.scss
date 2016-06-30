@@ -156,3 +156,13 @@ div.upfront-general-settings .upfront-debug-block button.loading {
     display: inline-block;
     cursor: pointer;
 }
+
+/**
+ * Changelog
+ */
+ .postbox .inside.changelog .previous {
+ 	display: none;
+ }
+ .postbox .inside.changelog .extra {
+ 	display: none;
+ }

@@ -1,7 +1,7 @@
 <?php
 
 class Upfront_Admin_General extends Upfront_Admin_Page {
-	
+
     function __construct(){
 		if ($this->_can_access( Upfront_Permissions::SEE_USE_DEBUG )) {
 			add_submenu_page( Upfront_Admin::$menu_slugs['main'], __("General Settings", Upfront::TextDomain),  __("General", Upfront::TextDomain), 'manage_options', Upfront_Admin::$menu_slugs['main'], array($this, "render_page") );
@@ -54,7 +54,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 							<div class="upfront-debug-block">
 								<h4><?php esc_html_e("Online Articles", Upfront::TextDomain) ?></h4>
 								<ul>
-								
+
 									<li><a href='https://premium.wpmudev.org/blog/upfront-1-0/' target="_blank"><?php esc_html_e("Upfront 1.0", Upfront::TextDomain) ?></a></li>
 									<li><a href='https://premium.wpmudev.org/blog/upfront-basics/' target="_blank"><?php esc_html_e("Upfront Part 1: The Basics, Theme Colors and Typography", Upfront::TextDomain) ?></a></li>
 									<li><a href='https://premium.wpmudev.org/blog/upfront-regions/' target="_blank"><?php esc_html_e("Upfront Part 2: Structuring Your Site with Regions", Upfront::TextDomain) ?></a></li>
@@ -72,10 +72,11 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 						</div>
 					</div>
 				</div>
+				<?php $this->_render_changelog_box(); ?>
 			</div>
 		</div>
 		<?php
-		
+
 	}
 
 	private function _render_debug_options(){
@@ -123,5 +124,129 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 			</div>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Renders the changelog box
+	 */
+	private function _render_changelog_box () {
+		$changelog = $this->_get_changelog();
+		if (empty($changelog)) return false;
+		?>
+		<div class="postbox-container">
+			<div class='postbox'>
+				<h2 class="title"><?php esc_html_e("Changelog", Upfront::TextDomain) ?></h2>
+				<div class="inside changelog">
+				<?php
+					reset($changelog);
+				 	$current = each($changelog);
+				?>
+					<div class="current">
+						<dl>
+							<dt><?php echo $current['key']; ?></dt>
+							<dd><?php echo $current['value']; ?></dd>
+						</dl>
+					</div>
+
+					<div class="changelog navigation">
+						<a href="#more"><?php esc_html_e('Previous entries', 'upfront'); ?></a>
+					</div>
+
+					<div class="previous">
+						<dl>
+						<?php while (false !== ($changeset = each($changelog))) { ?>
+							<dt><?php echo $changeset['key']; ?></dt>
+							<dd><?php echo $changeset['value']; ?></dd>
+						<?php } ?>
+						</dl>
+					</div>
+				</div>
+			</div>
+		<?php
+	}
+
+	/**
+	 * Gets the raw changelog entries from the file
+	 *
+	 * @return array
+	 */
+	private function _get_raw_changelog_entries () {
+
+		$path = trailingslashit(wp_normalize_path(Upfront::get_root_dir())) . 'CHANGELOG.md';
+		$entries = array();
+		if (!file_exists($path) || !is_readable($path)) return $entries;
+
+		$fp = fopen($path, 'r');
+		$idx = '';
+		while (false !== ($line = fgets($fp, 4096))) {
+			if (preg_match('/-{3,}/', $line)) continue; // drop line junk
+			if (preg_match('/^\d\.\d.*?-\s\d{4}/', $line)) {
+				$idx = $line;
+				continue;
+			}
+			if (empty($idx)) continue; // Sanity check, header junk
+
+			if (empty($entries[$idx])) $entries[$idx] = array();
+			$entries[$idx][] = $line;
+		}
+		fclose($fp);
+
+		return $entries;
+	}
+
+	/**
+	 * Gets the changelog entries array
+	 *
+	 * @return array
+	 */
+	private function _get_changelog () {
+		$entries = $this->_get_raw_changelog_entries();
+		$changelog = array();
+		$df = get_option('date_format');
+		foreach ($entries as $version => $entry) {
+			if (empty($entry)) continue;
+
+			$tmp = explode('-', $version, 2);
+			if (empty($tmp[1])) continue;
+
+			$date = strtotime($tmp[1]);
+			if (empty($date)) continue;
+
+			$key = "" .
+				"<b>{$tmp['0']}</b>" .
+				'&nbsp;' .
+				'(' .
+					date_i18n($df, $date) .
+				')' .
+			"";
+
+			$changeset = array();
+			$separated = false;
+			$total_lines = count($entry);
+			for ($i=0; $i<$total_lines; $i++) {
+				$line = trim(ltrim($entry[$i], '- '));
+				if (empty($line)) {
+					if ($separated) continue;
+
+					$next_line = isset($entry[$i+1])
+						? trim(ltrim($entry[$i+1], '- '))
+						: false
+					;
+					if (empty($next_line)) continue;
+
+					$line = '</li></ul><div class="extra-toggle">' .
+						'<a href="#toggle" data-expanded="' . esc_attr(__('Show less', 'upfront')) . '" data-contracted="' . esc_attr(__('Show more', 'upfront')) . '">' . esc_html(__('Show more', 'upfront')) . '</a>' .
+					'</div><ul class="extra"><li>';
+					$separated = true;
+				}
+
+				$changeset[] = $line;
+			}
+
+			if (empty($changeset)) continue;
+
+			$changelog[$key] = '<ul><li>' . join('</li><li>', $changeset) . '</li></ul>';
+		}
+		return $changelog;
 	}
 }
