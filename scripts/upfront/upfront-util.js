@@ -760,7 +760,7 @@ define(function() {
 			rgba_to_rgb: function( color ){
 				if( !_.isString( color ) ) return color;
 
-				return color.replace(/ /g,'').replace(/^rgba\((\d+)\,(\d+)\,(\d+)\,(\d+\.?\d+?)\)$/, "rgb($1, $2, $3)");
+				return color.replace(/ /g,'').replace(/^rgba\((\d+)\,(\d+)\,(\d+)\,(\d+\.?\d{0,}?)\)$/, "rgb($1, $2, $3)");
 			}
 		},
 		guessLinkType: guessLinkType,
