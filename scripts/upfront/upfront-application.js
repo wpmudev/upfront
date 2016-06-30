@@ -107,6 +107,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			template_type = ( typeof _upfront_post_data.template_type !== 'undefined' ) ? _upfront_post_data.template_type : 'layout',
 			template_slug = ( typeof _upfront_post_data.template_slug !== 'undefined' ) ? _upfront_post_data.template_slug : '',
 			layout_action = ( typeof _upfront_post_data.layout_action !== 'undefined' ) ? _upfront_post_data.layout_action : '',
+			layout_change = ( typeof _upfront_post_data.layout_change !== 'undefined' ) ? _upfront_post_data.layout_change : 0,
 			save_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 );
 		data.layout = _upfront_post_data.layout;
 		data.preferred_layout = preferred_layout;
@@ -125,6 +126,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 				"storage_key": storage_key,
 				"post_id": post_id,
 				"layout_action": layout_action,
+				"layout_change": layout_change,
 				"save_dev": save_dev,
 				"template_type": template_type,
 				"template_slug": template_slug
@@ -1050,6 +1052,10 @@ var Application = new (Backbone.Router.extend({
 
 		if ( typeof layoutData.data.template_type !== 'undefined' ) _upfront_post_data.template_type = layoutData.data.template_type;
 		if ( typeof layoutData.data.template_slug !== 'undefined' ) _upfront_post_data.template_slug = layoutData.data.template_slug;
+		if ( typeof layoutData.data.layout_change !== 'undefined' ) {
+			_upfront_post_data.layout_change = parseInt(layoutData.data.layout_change, 10);
+			if ( _upfront_post_data.layout_change !== 1 ) _upfront_post_data.layout_change = 0; 
+		}
 
 		if (layoutData.data.post) {
 			this.post_set_up(layoutData.data.post);

@@ -129,6 +129,7 @@ class Upfront_Ajax extends Upfront_Server {
 		$layout_cpt_slug = false;
 		$layout_post_id = false;
 		$layout = false;
+		$layout_change = false;
 
 		global $post, $upfront_ajax_query;
 		if ( $post_id ) $post = get_post($post_id);
@@ -153,8 +154,10 @@ class Upfront_Ajax extends Upfront_Server {
 		;
 		$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_cpt_slug, $load_dev);
 		if ( $layout_post_id ) {
+			$layout_change_meta_name = strtolower($store_key . '-layout-change-flag');
+			$layout_change = get_post_meta($layout_post_id, $layout_change_meta_name, true);
 			$page_layout = Upfront_Server_PageLayout::get_instance()->get_layout($layout_post_id, $load_dev);
-			if ( $page_layout ) $layout = Upfront_Layout::from_php($page_layout, $storage_key);
+			if ( $page_layout ) $layout = Upfront_Layout::from_cpt($page_layout, $storage_key);
 		}
 		// dealing with Page Templates
 		$page_template_obj = $this->_load_page_template($_POST);
@@ -165,7 +168,7 @@ class Upfront_Ajax extends Upfront_Server {
 		// loading from Page Template CPT
 		if ( ( !$layout_post_id || !$layout || $layout->is_empty() ) && $page_template_obj ) {
 			$page_template = Upfront_Server_PageTemplate::get_instance()->get_template($page_template_obj->ID, $load_dev);
-			$layout = Upfront_Layout::from_php($page_template, $storage_key);
+			if ( $page_template ) $layout = Upfront_Layout::from_cpt($page_template, $storage_key);
 		}
 		// if still empty then load it from `options` table or from tpl file
 		if ( !$layout || $layout->is_empty() ) {
@@ -175,12 +178,12 @@ class Upfront_Ajax extends Upfront_Server {
 				$layout = Upfront_Layout::create_layout($layout_ids, $layout_slug);
 			}
 		}
-
 		if ( !$template_slug && $post_id ) {
 			$uf_tpl_meta = strtolower($store_key . '-uf_wp_page_template');
 			$template_slug = get_post_meta($post_id, $uf_tpl_meta, true);
 			if ( !$template_slug || empty($template_slug) ) $template_slug = strtolower($store_key . '-default');
 		}
+		if ( !$layout_change || empty($layout_change) ) $layout_change = 0; 
 
 		$response = array(
 			'post' => $post,
@@ -191,12 +194,13 @@ class Upfront_Ajax extends Upfront_Server {
 			'layout_cpt_slug' => $layout_cpt_slug,
 			'layout_post_id' => $layout_post_id,
 			'query' => $upfront_ajax_query,
-			'page_template_obj' => $page_template_obj
+			'page_template_obj' => $page_template_obj,
+			'layout_change' => $layout_change
 		);
 
 		$this->_out(new Upfront_JsonResponse_Success($response));
 	}
-
+	
 	private function _load_page_template ($data) {
 		$post_id = (isset($data['post_id'])) ? (int)$data['post_id'] : false;
 		$load_dev = ( isset($data['load_dev']) && is_numeric($data['load_dev']) && $data['load_dev'] == 1 ) ? true : false;
@@ -332,6 +336,7 @@ class Upfront_Ajax extends Upfront_Server {
 		if (!$data) $this->_out(new Upfront_JsonResponse_Error("Unknown layout"));
 		$stylesheet = ($_POST['stylesheet']) ? $_POST['stylesheet'] : get_stylesheet();
 		$save_dev = ( isset($_POST['save_dev']) && is_numeric($_POST['save_dev']) && $_POST['save_dev'] == 1 ) ? true : false;
+		$layout_change = ( isset($_POST['layout_change']) && is_numeric($_POST['layout_change']) && $_POST['layout_change'] == 1 ) ? true : false;
 		$post_id = ( isset($_POST['post_id']) && is_numeric($_POST['post_id']) && ((int)$_POST['post_id'] > 0) ) ? $_POST['post_id'] : false;
 
 		upfront_switch_stylesheet($stylesheet);
@@ -352,6 +357,16 @@ class Upfront_Ajax extends Upfront_Server {
 
 		$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $save_dev);
 		$layout_post_id = Upfront_Server_PageLayout::get_instance()->save_layout($layout_post_id, $layout, $save_dev, $layout_slug);
+		// we need to save global regions to DB, so can be reused to other page
+		$layout->save_global_region();
+		
+		// if there is a layout change
+		$layout_change_meta_name = strtolower($store_key . '-layout-change-flag');
+		if ( $layout_change ) {
+			update_post_meta($layout_post_id, $layout_change_meta_name, 1);
+		} else {
+			delete_post_meta($layout_post_id, $layout_change_meta_name);
+		}
 
 		// taking care of Page Template
 		$template_slug = $this->_save_page_template($_POST);
@@ -372,7 +387,6 @@ class Upfront_Ajax extends Upfront_Server {
 		$save_dev = ( isset($data['save_dev']) && is_numeric($data['save_dev']) && $data['save_dev'] == 1 ) ? true : false;
 		$layout_action = (!empty($data['layout_action'])) ? $data['layout_action'] : false;
 		$template_post_id = false;
-
 		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
 		$template_meta_name = ( $save_dev )
 			? strtolower($store_key . '-template_dev_post_id')
@@ -382,20 +396,16 @@ class Upfront_Ajax extends Upfront_Server {
 		if ( !$post_id ) return false;
 
 		$uf_tpl_meta = strtolower($store_key . '-uf_wp_page_template');
-
 		// remove any remnants of WP template
 		delete_post_meta($post_id, '_wp_page_template');
-
 		// only take cares tpl files generated from Builder
 		if ( $template_type == 'page' ) {
 			update_post_meta($post_id, $uf_tpl_meta, $template_slug);
 			return $template_slug;
 		}
-
 		// if using Layouts created on UF Editor
 		if ( $template_type == 'layout' && $layout_action ) {
 			delete_post_meta($post_id, $uf_tpl_meta);
-
 			if ( $layout_action == 'save_as' ) {
 				$template_slug = sanitize_title($store_key . '-' . str_replace(' ','-',strtolower($template_slug)));
 				// check if already existing
@@ -409,7 +419,6 @@ class Upfront_Ajax extends Upfront_Server {
 			} elseif ( $layout_action == 'update' ) {
 				$template_post_id = get_post_meta($post_id, $template_meta_name, true);
 			}
-
 			// preparing the layout data to save
 			$raw_data = stripslashes_deep($data);
 			$json_data = !empty($raw_data['data']) ? $raw_data['data'] : '';
@@ -421,7 +430,6 @@ class Upfront_Ajax extends Upfront_Server {
 				update_post_meta((int)$saved_template_post_id, 'template_type', $template_type);
 			}
 		}
-
 		return sanitize_title($template_slug);
 	}
 
@@ -479,15 +487,16 @@ class Upfront_Ajax extends Upfront_Server {
 				: strtolower($store_key . '-template_post_id')
 			;
 			$uf_tpl_meta = strtolower($store_key . '-uf_wp_page_template');
+			$layout_change_meta_name = strtolower($store_key . '-layout-change-flag');
 
 			// clearing post meta first
 			delete_post_meta($post_id, '_wp_page_template');
 			delete_post_meta($post_id, $uf_tpl_meta);
 			delete_post_meta($post_id, $template_meta_name);
-
 			// delete current layout as we are going to use another one
 			$layout_slug = strtolower($store_key . '-single-page-' . $post_id);
 			$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $save_dev);
+			delete_post_meta($layout_post_id, $layout_change_meta_name);
 			Upfront_Server_PageLayout::get_instance()->delete_layout((int)$layout_post_id, $save_dev);
 
 			// if reverting back to default then skip the rest
@@ -623,20 +632,27 @@ class Upfront_Ajax extends Upfront_Server {
 			: false
 		;
 		$store_key = strtolower(str_replace('_dev','',Upfront_Layout::get_storage_key()));
-
+		$layout_change_meta_name = strtolower($store_key . '-layout-change-flag');
+		
 		if ( empty($layout) ) $this->_out(new Upfront_JsonResponse_Error("Please specify layout to reset"));
 
 		if ( is_array($layout) && $post_id ) {
 			$layout_slug = $store_key . '-single-page-' . $post_id;
 			$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $is_dev);
+			// delete layout change flag
+			delete_post_meta($layout_post_id, $layout_change_meta_name);
+			// delete layout
 			Upfront_Server_PageLayout::get_instance()->delete_layout((int)$layout_post_id, $is_dev);
-
+			
 			$this->_out(new Upfront_JsonResponse_Success("Layout {$layout_slug} reset"));
 
 		} else {
 			// delete layouts from CPT
 			$layout_slug = $store_key . '-' . $layout;
 			$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $is_dev);
+			// delete layout change flag
+			delete_post_meta($layout_post_id, $layout_change_meta_name);
+			// delete layout
 			Upfront_Server_PageLayout::get_instance()->delete_layout((int)$layout_post_id, $is_dev);
 
 			// deletes what's in option table
@@ -697,6 +713,7 @@ class Upfront_Ajax extends Upfront_Server {
 		delete_post_meta_by_key( $store_key . '-template_post_id' );
 		delete_post_meta_by_key( $store_key . '-template_dev_post_id' );
 		delete_post_meta_by_key( $store_key . '-uf_wp_page_template' );
+		delete_post_meta_by_key( $store_key . '-layout-change-flag' );
 
 		// delete from options table (previous implementation)
 		global $wpdb;
@@ -782,7 +799,7 @@ class Upfront_Ajax extends Upfront_Server {
 		if ( $layout_post_id ) {
 			$page_layout = Upfront_Server_PageLayout::get_instance()->get_layout($layout_post_id, $load_dev);
 			if ( $page_layout ) {
-				$layout = Upfront_Layout::from_php($page_layout, $data['storage_key']);
+				$layout = Upfront_Layout::from_cpt($page_layout, $data['storage_key']);
 
 				$updated = $layout->set_element_data($element);
 				if(!$updated)

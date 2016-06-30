@@ -165,7 +165,7 @@ class Upfront_Server_PageLayout extends Upfront_Server {
 			if ( $layout_post_id ) {
 				$page_layout = $this->get_layout($layout_post_id, $load_dev);
 				if ( $page_layout ) {
-					$layout = Upfront_Layout::from_php($page_layout, Upfront_Layout::STORAGE_KEY);
+					$layout = Upfront_Layout::from_cpt($page_layout, Upfront_Layout::STORAGE_KEY);
 				}
 			} else {
 				// load from page template
@@ -196,7 +196,7 @@ class Upfront_Server_PageLayout extends Upfront_Server {
 		if ( $template_post_id ) {
 			$page_template = Upfront_Server_PageTemplate::get_instance()->get_template($template_post_id, $load_dev);
 			if ( $page_template ) {
-				$layout = Upfront_Layout::from_php($page_template, Upfront_Layout::STORAGE_KEY);
+				$layout = Upfront_Layout::from_cpt($page_template, Upfront_Layout::STORAGE_KEY);
 			}
 		}
 
