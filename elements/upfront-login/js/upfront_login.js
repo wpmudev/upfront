@@ -40,28 +40,54 @@ define([
 				}
 			});
 			this.model.get('properties').bind('change', this.handle_visual_padding_hint, this);
+			this.delegateEvents();
 		},
 
 		render: function () {
 			if (!this.markup) {
-				var me = this,
-					options = Upfront.Util.model_to_json(this.model)
-				;
-				Upfront.Util.post({
-					"action": "upfront-login_element-get_markup",
-					properties: options.properties
-				}).done(function (response) {
-					me.markup = response.data;
-					Upfront.Views.ObjectView.prototype.render.call(me);
-
-					Upfront.Events.trigger('entity:object:refresh', me);
-				});
+				this.fetch_content_markup();
 			}
 			Upfront.Views.ObjectView.prototype.render.call(this);
 		},
+		on_render: function () {
+			if (Upfront.Application.user_can_modify_layout()) {
+				var me = this;
+				
+				// 
+				
+				// Lost Password Text
+				$lost_password_text = this.$el.find('span.login-lostpassword-label');
+				$lost_password_text.ueditor({
+					linebreaks: true,
+					disableLineBreak: true,
+					airButtons: ['upfrontIcons'],
+					autostart: false
+				})
+				.on('stop', function(){
+					var ed = me.$el.find('span.login-lostpassword-label').data("ueditor"),
+						text = ed.getValue(true)
+					;
+					if (text) me.model.set_property('lost_password_text', text, true);
+					me.fetch_content_markup();
+				})
+				;
+			}
+		},
 		get_content_markup: function () {
-
 			return !!this.markup ? this.markup : l10n.hold_on;
+		},
+		fetch_content_markup: function () {
+			var me = this,
+				options = Upfront.Util.model_to_json(this.model)
+			;
+			Upfront.Util.post({
+				"action": "upfront-login_element-get_markup",
+				properties: options.properties
+			}).done(function (response) {
+				me.markup = response.data;
+				Upfront.Views.ObjectView.prototype.render.call(me);
+				Upfront.Events.trigger('entity:object:refresh', me);
+			});
 		}
 	});
 

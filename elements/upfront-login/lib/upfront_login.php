@@ -20,6 +20,7 @@ class Upfront_LoginView extends Upfront_Object {
 			'logout_style' => 'link',
 			'top_offset' => 0,
 			'left_offset' => 0,
+			'lost_password_text' => self::_get_l10n('lost_password'),
 		);
 	}
 
@@ -74,6 +75,11 @@ class Upfront_LoginView extends Upfront_Object {
 			? self::_get_trigger_markup($icon, $trigger_label)
 			: ''
 		;
+		
+		$lost_password_text = !empty($properties['lost_password_text'])
+			? $properties['lost_password_text']
+			: self::_get_l10n('lost_password')
+		;
 
 		$allow_registration = !is_user_logged_in() && get_option('users_can_register');
 		// Allow override for in-editor form previews
@@ -85,7 +91,7 @@ class Upfront_LoginView extends Upfront_Object {
 			'trigger' => $trigger,
 			'label' => $label,
 			'allow_registration' => $allow_registration,
-			'lost_password' => self::_get_l10n('lost_password'),
+			'lost_password' => $lost_password_text,
 			'click_here' => self::_get_l10n('click_here'),
 			'register' => self::_get_l10n('register'),
 		);
@@ -114,7 +120,7 @@ class Upfront_LoginView extends Upfront_Object {
 	}
 
 	private static function _normalize_properties ($raw_properties) {
-		$to_map = array('style', 'behavior', 'appearance', 'label_text', 'trigger_text', 'logged_in_preview', 'logout_style', 'logout_link', 'label_image', 'top_offset', 'left_offset');
+		$to_map = array('style', 'behavior', 'appearance', 'label_text', 'trigger_text', 'logged_in_preview', 'logout_style', 'logout_link', 'label_image', 'top_offset', 'left_offset', 'lost_password_text');
 		$properties = upfront_properties_to_array($raw_properties, $to_map);
 		return $properties;
 	}

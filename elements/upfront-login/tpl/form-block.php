@@ -9,7 +9,7 @@
 			?>
 			<p class="login-lostpassword">
 				<small>
-					<?php echo esc_html($lost_password); ?>
+					<span class="login-lostpassword-label"><?php echo esc_html($lost_password); ?></span>
 					<br />
 					<a class="login-lostpassword-link" href="<?php echo esc_url(wp_lostpassword_url()); ?>">
 						<?php echo esc_html($click_here); ?>
