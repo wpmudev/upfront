@@ -5376,7 +5376,8 @@
 			},
 			revert: function(){
 				this.$spectrum.trigger("click.spectrum"); // trigger cancel
-				this.options.spectrum.change(this.color);// Explicitly cancel
+				if(this.options.spectrum && typeof this.options.spectrum.change === "function")
+					this.options.spectrum.change(this.color);// Explicitly cancel
 				this.update_input_border_color(this.color.toRgbString); // Set input color
 			},
 			update_palette: function () {
