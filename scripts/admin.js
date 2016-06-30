@@ -90,7 +90,7 @@
 			$this.removeClass("loading");
 		} );
 
-	})
+	});
 }(jQuery));
 
 
@@ -177,10 +177,9 @@
 			if (!(role || {}).role) return true; // Unknown role, who knows what
 			if ((role || {}).able) return true; // Role can modify, we're good
 
-			var $roots = $('[data-capability_id="modify_element_presets"] [data-role_id="' + role.role + '"]')
+			var $checks = $roots.find(':checkbox'),
+				$roots = $('[data-capability_id="modify_element_presets"] [data-role_id="' + role.role + '"]')
 					.add('[data-capability_id="delete_element_presets"] [data-role_id="' + role.role + '"]')
-				,
-				$checks = $roots.find(':checkbox')
 			;
 			$checks.each(function () {
 				var $me = $(this);
@@ -236,7 +235,7 @@
 			});
 		});
 	}
-	
+
 	/**
 	 * Process the checkbox states based on the edit posts capability
 	 */
@@ -328,7 +327,7 @@
 		}
 		process_toggles_state();
 	}
-	
+
 	function handle_edit_content_change () {
 		var $check = $(this),
 			role = $check.closest('[data-role_id]').attr("data-role_id"),
@@ -358,6 +357,53 @@
 		process_toggles_state();
 		boot_event_listeners();
 	}
+	$(init);
+
+})(jQuery);
+
+
+
+/**
+ * Changelog toggles
+ */
+;(function ($) {
+
+	function init () {
+		if (!$("body").is(".wp-admin")) return false;
+		if (!($(".inside.changelog").length)) return false;
+
+		$('.changelog .navigation a[href="#more"]').on('click', function (e) {
+			if (e && e.preventDefault) e.preventDefault();
+			if (e && e.stopPropagation) e.stopPropagation();
+
+			$('.changelog .previous').toggle();
+
+			return false;
+		});
+
+		$('.changelog a[href="#toggle"]').on('click', function (e) {
+			if (e && e.preventDefault) e.preventDefault();
+			if (e && e.stopPropagation) e.stopPropagation();
+
+			var $me = $(this),
+				$target = $me.parent().next('ul.extra'),
+				text
+			;
+			if (!$target.length) return false;
+
+			if ($target.is(":visible")) {
+				text = $me.attr("data-contracted");
+				$target.hide();
+			} else {
+				text = $me.attr("data-expanded");
+				$target.show();
+			}
+			$me.text(text);
+
+			return false;
+		});
+	}
+
 	$(init);
 
 })(jQuery);
