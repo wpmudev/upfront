@@ -20,7 +20,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 		<div class="wrap upfront_admin upfront-general-settings">
             <h1><?php esc_html_e("General Settings", Upfront::TextDomain); ?><span class="upfront_logo"></span></h1>
 			<div class="upfront-col-left">
-				<div class="postbox-container">
+				<div class="postbox-container version-info">
 					<div class='postbox'>
 						<h2 class="title"><?php esc_html_e("Version Info", Upfront::TextDomain) ?></h2>
 						<div class="inside version-info">
@@ -41,7 +41,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 				<?php $this->_render_debug_options() ?>
 			</div>
 			<div class="upfront-col-right">
-				<div class="postbox-container">
+				<div class="postbox-container helpful-resources">
 					<div class='postbox'>
 						<h2 class="title"><?php esc_html_e("Helpful Resources", Upfront::TextDomain) ?></h2>
 						<div class="inside">
@@ -83,7 +83,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 		if( !Upfront_Permissions::current( Upfront_Permissions::SEE_USE_DEBUG ) ) return;
 		Upfront_Layout::get_db_layouts();
 		?>
-		<div class="postbox-container">
+		<div class="postbox-container debug-options">
 			<div class='postbox'>
 				<h2 class="title"><?php esc_html_e("Debug Options", Upfront::TextDomain) ?></h2>
 				<div class="inside debug-options">
@@ -133,7 +133,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 		$changelog = $this->_get_changelog();
 		if (empty($changelog)) return false;
 		?>
-		<div class="postbox-container">
+		<div class="postbox-container changelog">
 			<div class='postbox'>
 				<h2 class="title"><?php esc_html_e("Changelog", Upfront::TextDomain) ?></h2>
 				<div class="inside changelog">
