@@ -10,10 +10,10 @@
 	};
 
 	var rgba_to_rba = function(color){
-		if( Upfront && Upfront.Util  ) // If we are in editor then delegate to Upfront.Util.colors.rgba_to_rgb
+		if( typeof Upfront !== "undefined" && Upfront.Util  ) // If we are in editor then delegate to Upfront.Util.colors.rgba_to_rgb
 			return Upfront.Util.colors.rgba_to_rgb( color );
 
-		return color.replace(/ /g,'').replace(/^rgba\((\d+)\,(\d+)\,(\d+)\,(\d+\.?\d+?)\)$/, "rgb($1, $2, $3)");
+		return color.replace(/ /g,'').replace(/^rgba\((\d+)\,(\d+)\,(\d+)\,(\d+\.?\d{0,}?)\)$/, "rgb($1, $2, $3)");
 	};
 	var requestAnimationFrame =
 			$.proxy(window.requestAnimationFrame, window) ||
