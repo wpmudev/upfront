@@ -77,6 +77,31 @@ div.upfront-login_element-module.upfront-module-active .upfront_login.upfront_lo
   z-index: 15;
 }
 
+.upfront_login form#loginform .login-remember .redactor-box {
+	display: inline-block;
+}
+
+.upfront_login form#loginform .login-submit {
+	position: relative;
+}
+
+.upfront_login form#loginform .login-submit span.login-submit-label-container {
+	position: absolute;
+	width: 100%;
+	display: table;
+	text-align: center;
+}
+
+.upfront_login form#loginform .login-submit .redactor-box {
+	width: 100%;
+	display: table;
+}
+
+.upfront_login form#loginform .login-submit span.login-submit-label {
+	display: table-cell;
+	vertical-align: middle;
+}
+
 #element-settings-sidebar .upfront-settings-item.relative {
 	position: relative;
 }

@@ -5,15 +5,18 @@
 			<?php 
 				wp_login_form(array(
 					'remember' => true,
-					'label_log_in' => $label,
+					'label_log_in' => $login_button_label,
+					'label_username' => $username_label,
+					'label_password' => $password_label,
+					'label_remember' => $remember_label,
 				));
 			?>
 			<p class="login-lostpassword">
 				<small>
-					<?php echo esc_html($lost_password); ?>
+					<span class="login-lostpassword-label"><?php echo esc_html($lost_password); ?></span>
 					<br />
 					<a class="login-lostpassword-link" href="<?php echo esc_url(wp_lostpassword_url()); ?>">
-						<?php echo esc_html($click_here); ?>
+						<?php echo esc_html($lost_password_link); ?>
 					</a>
 				</small>
 			</p>

@@ -8,7 +8,7 @@ class Upfront_LoginView extends Upfront_Object {
 			'behavior' => 'click',
 			'appearance' => 'icon',
 			'label_image' => self::_get_l10n('login'),
-			'label_text' => self::_get_l10n('log_in'),
+			'login_button_label' => self::_get_l10n('log_in'),
 			'logout_link' => self::_get_l10n('log_out'),
 			'trigger_text' => self::_get_l10n('log_in'),
 			'logged_in_preview' => '',
@@ -20,7 +20,11 @@ class Upfront_LoginView extends Upfront_Object {
 			'logout_style' => 'link',
 			'top_offset' => 0,
 			'left_offset' => 0,
+			'username_label' => self::_get_l10n('username_label'),
+			'password_label' => self::_get_l10n('password_label'),
+			'remember_label' => self::_get_l10n('remember_label'),
 			'lost_password_text' => self::_get_l10n('lost_password'),
+			'lost_password_link' => self::_get_l10n('click_here'),
 		);
 	}
 
@@ -64,22 +68,39 @@ class Upfront_LoginView extends Upfront_Object {
 		$block = !empty($properties['style']) && 'form' == $properties['style'];
 		
 		$icon = !empty($properties['appearance']) && "icon" == $properties['appearance'];
-		$label = !empty($properties['label_text'])
-			? $properties['label_text']
+		$login_button_label = !empty($properties['login_button_label'])
+			? $properties['login_button_label']
 			: self::_get_l10n('log_in')
 		;
-		if ('icon' === $label) $label = '';
+		if ('icon' === $login_button_label) $login_button_label = '';
 
-		$trigger_label = !empty($properties['trigger_text']) ? $properties['trigger_text'] : $label;
+		$trigger_label = !empty($properties['trigger_text']) ? $properties['trigger_text'] : $login_button_label;
 		$trigger = empty($block)
 			? self::_get_trigger_markup($icon, $trigger_label)
 			: ''
 		;
 		
+		$username_label = !empty($properties['username_label'])
+			? $properties['username_label']
+			: self::_get_l10n('username_label')
+		;
+		$password_label = !empty($properties['password_label'])
+			? $properties['password_label']
+			: self::_get_l10n('password_label')
+		;
+		$remember_label = !empty($properties['remember_label'])
+			? $properties['remember_label']
+			: self::_get_l10n('remember_label')
+		;
 		$lost_password_text = !empty($properties['lost_password_text'])
 			? $properties['lost_password_text']
 			: self::_get_l10n('lost_password')
 		;
+		$lost_password_link = !empty($properties['lost_password_link'])
+			? $properties['lost_password_link']
+			: self::_get_l10n('click_here')
+		;
+		
 
 		$allow_registration = !is_user_logged_in() && get_option('users_can_register');
 		// Allow override for in-editor form previews
@@ -89,10 +110,13 @@ class Upfront_LoginView extends Upfront_Object {
 
 		$data = array(
 			'trigger' => $trigger,
-			'label' => $label,
+			'login_button_label' => $login_button_label,
 			'allow_registration' => $allow_registration,
+			'username_label' => $username_label,
+			'password_label' => $password_label,
+			'remember_label' => $remember_label,
 			'lost_password' => $lost_password_text,
-			'click_here' => self::_get_l10n('click_here'),
+			'lost_password_link' => $lost_password_link,
 			'register' => self::_get_l10n('register'),
 		);
 		
@@ -120,7 +144,7 @@ class Upfront_LoginView extends Upfront_Object {
 	}
 
 	private static function _normalize_properties ($raw_properties) {
-		$to_map = array('style', 'behavior', 'appearance', 'label_text', 'trigger_text', 'logged_in_preview', 'logout_style', 'logout_link', 'label_image', 'top_offset', 'left_offset', 'lost_password_text');
+		$to_map = array('style', 'behavior', 'appearance', 'login_button_label', 'trigger_text', 'logged_in_preview', 'logout_style', 'logout_link', 'label_image', 'top_offset', 'left_offset', 'username_label', 'password_label', 'remember_label', 'lost_password_text', 'lost_password_link');
 		$properties = upfront_properties_to_array($raw_properties, $to_map);
 		return $properties;
 	}
@@ -175,6 +199,9 @@ class Upfront_LoginView extends Upfront_Object {
 			'in_lightbox' => __("Form in lightbox", 'upfront'),
 			'appearance' => __("Display Login Form", 'upfront'),
 			'trigger' => __("Trigger", 'upfront'),
+			'username_label' => __("Username", 'upfront'),
+			'password_label' => __("Password", 'upfront'),
+			'remember_label' => __("Remember Me", 'upfront'),
 			'lost_password' => __("Lost Password?", 'upfront'),
 			'login' => __("Login", 'upfront'),
 			'log_in' => __("Log in", 'upfront'),

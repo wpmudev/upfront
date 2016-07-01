@@ -162,6 +162,16 @@
 			border-radius: 0px;
 	<?php } ?>
 }
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form#loginform .login-submit-label {
+	<?php if(!empty($properties['button_use_typography'])) { ?>
+		<?php if(!empty($properties['button_color'])) { ?>color: <?php echo $properties['button_color']  ?>; <?php } ?>
+		<?php if(!empty($properties['button_font_face'])) { ?>font-family: <?php echo $properties['button_font_face']  ?>; <?php } ?>
+		<?php if(!empty($properties['button_font_size'])) { ?>font-size: <?php echo $properties['button_font_size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['button_weight'])) { ?>font-weight: <?php echo $properties['button_weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['button_font_style'])) { ?>font-style: <?php echo $properties['button_font_style']  ?>;<?php } ?>
+		<?php if(!empty($properties['button_line_height'])) { ?>line-height: <?php echo $properties['button_line_height']  ?>;<?php } ?>
+	<?php } ?>
+}
 #page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="submit"]:hover,
 #page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form input[type="submit"]:hover {
 	<?php if(!empty($properties['button_background_hover'])) { ?>
@@ -186,6 +196,16 @@
 			border-radius: 0px;
 	<?php } ?>
 }
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form#loginform .login-submit-label:hover {
+	<?php if(!empty($properties['button_use_typography_hover'])) { ?>
+		<?php if(!empty($properties['button_color_hover'])) { ?>color: <?php echo $properties['button_color_hover']  ?>; <?php } ?>
+		<?php if(!empty($properties['button_font_face_hover'])) { ?>font-family: <?php echo $properties['button_font_face_hover']  ?>; <?php } ?>
+		<?php if(!empty($properties['button_font_size_hover'])) { ?>font-size: <?php echo $properties['button_font_size_hover']  ?>px; <?php } ?>
+		<?php if(!empty($properties['button_weight_hover'])) { ?>font-weight: <?php echo $properties['button_weight_hover']  ?>;<?php } ?>
+		<?php if(!empty($properties['button_font_style_hover'])) { ?>font-style: <?php echo $properties['button_font_style_hover']  ?>;<?php } ?>
+		<?php if(!empty($properties['button_line_height_hover'])) { ?>line-height: <?php echo $properties['button_line_height_hover']  ?>;<?php } ?>
+	<?php } ?>
+}
 #page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="submit"]:focus,
 #page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form input[type="submit"]:focus {
 	<?php if(!empty($properties['button_background_focus'])) { ?>
@@ -208,6 +228,16 @@
 			border-radius: <?php echo $properties['button_border_radius1_focus'] ? $properties['button_border_radius1_focus'] : 0 ?>px <?php echo $properties['button_border_radius2_focus'] ? $properties['button_border_radius2_focus'] : 0 ?>px <?php echo $properties['button_border_radius4_focus'] ? $properties['button_border_radius4_focus'] : 0 ?>px <?php echo $properties['button_border_radius3_focus'] ? $properties['button_border_radius3_focus'] : 0 ?>px;
 	<?php } else { ?>
 			border-radius: 0px;
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form#loginform .login-submit-label:focus {
+	<?php if(!empty($properties['button_use_typography_focus'])) { ?>
+		<?php if(!empty($properties['button_color_focus'])) { ?>color: <?php echo $properties['button_color_focus']  ?>; <?php } ?>
+		<?php if(!empty($properties['button_font_face_focus'])) { ?>font-family: <?php echo $properties['button_font_face_focus']  ?>; <?php } ?>
+		<?php if(!empty($properties['button_font_size_focus'])) { ?>font-size: <?php echo $properties['button_font_size_focus']  ?>px; <?php } ?>
+		<?php if(!empty($properties['button_weight_focus'])) { ?>font-weight: <?php echo $properties['button_weight_focus']  ?>;<?php } ?>
+		<?php if(!empty($properties['button_font_style_focus'])) { ?>font-style: <?php echo $properties['button_font_style_focus']  ?>;<?php } ?>
+		<?php if(!empty($properties['button_line_height_focus'])) { ?>line-height: <?php echo $properties['button_line_height_focus']  ?>;<?php } ?>
 	<?php } ?>
 }
 

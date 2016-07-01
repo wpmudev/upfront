@@ -209,6 +209,8 @@ div.upfront-output-upfront-login_element form#loginform label {
 	margin-bottom:0.3em;
 	display: inline-block;
 	font-weight: 100;
+}
+div.upfront-output-upfront-login_element form#loginform label:not(.uf-click-to-edit-text) {
 	cursor: pointer;
 }
 input#rememberme {
