@@ -38,6 +38,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 						</div>
 					</div>
 				</div>
+				<?php $this->_render_api_options() ?>
 				<?php $this->_render_debug_options() ?>
 			</div>
 			<div class="upfront-col-right">
@@ -77,6 +78,38 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 		</div>
 		<?php
 
+	}
+
+	private function _render_api_options () {
+		$admin_keys = new Upfront_Admin_ApiKeys;
+		if (!$admin_keys->can_access()) return false;
+
+		$services = $admin_keys->get_services();
+		if (empty($services)) return false;
+
+		$admin_keys->process_submissions();
+
+		?>
+<div class="postbox-container api_keys">
+	<div class='postbox'>
+		<h2 class="title"><?php esc_html_e("API Keys", Upfront::TextDomain) ?></h2>
+		<div class="inside api_keys">
+			<form method="POST">
+				<?php
+				foreach ($services as $service => $label) {
+					$admin_keys->render_key_box($service);
+				}
+				?>
+				<p>
+					<button class="upfront_button">
+						<?php esc_html_e('Save', 'upfront'); ?>
+					</button>
+				</p>
+			</form>
+		</div>
+	</div>
+</div>
+		<?php
 	}
 
 	private function _render_debug_options(){
