@@ -4,7 +4,7 @@ class Upfront_ApiKeys_Model {
 
 	const OPTION_KEY = 'upfront-api-keys';
 
-	const SERVICE_GMAPS = 'google';
+	const SERVICE_GMAPS = 'gmaps';
 
 	public function __construct () {
 		add_site_option(self::OPTION_KEY, array(), false);
