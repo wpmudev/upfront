@@ -362,5 +362,79 @@
 	<?php } ?>
 }
 
+/* Logout Link */
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element a.logout_link,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element a.logout_link {
+	<?php if(!empty($properties['logout_link_button_background'])) { ?>
+	background: <?php echo $properties['logout_link_button_background'] ?>;
+	<?php } ?>
+	<?php if(!empty($properties['logout_link_use_typography'])) { ?>
+		<?php if(!empty($properties['logout_link_color'])) { ?>color: <?php echo $properties['logout_link_color']  ?>; <?php } ?>
+		<?php if(!empty($properties['logout_link_font_face'])) { ?>font-family: <?php echo $properties['logout_link_font_face']  ?>; <?php } ?>
+		<?php if(!empty($properties['logout_link_font_size'])) { ?>font-size: <?php echo $properties['logout_link_font_size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['logout_link_weight'])) { ?>font-weight: <?php echo $properties['logout_link_weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['logout_link_font_style'])) { ?>font-style: <?php echo $properties['logout_link_font_style']  ?>;<?php } ?>
+		<?php if(!empty($properties['logout_link_line_height'])) { ?>line-height: <?php echo $properties['logout_link_line_height']  ?>;<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['logout_link_use_border'])) { ?>
+			<?php if(!empty($properties['logout_link_border_width']) && !empty($properties['logout_link_border_type']) && !empty($properties['logout_link_border_color'])) { ?>border: <?php echo $properties['logout_link_border_width'] ?>px <?php echo $properties['logout_link_border_type'] ?> <?php echo $properties['logout_link_border_color'] ?>;<?php } ?>
+	<?php } else { ?>
+			border: none;
+	<?php } ?>
+	<?php if(!empty($properties['logout_link_use_radius'])) { ?>
+			border-radius: <?php echo $properties['logout_link_border_radius1'] ? $properties['logout_link_border_radius1'] : 0 ?>px <?php echo $properties['logout_link_border_radius2'] ? $properties['logout_link_border_radius2'] : 0 ?>px <?php echo $properties['logout_link_border_radius4'] ? $properties['logout_link_border_radius4'] : 0 ?>px <?php echo $properties['logout_link_border_radius3'] ? $properties['logout_link_border_radius3'] : 0 ?>px;
+	<?php } else { ?>
+			border-radius: 0px;
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element a.logout_link:hover,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element a.logout_link:hover {
+	<?php if(!empty($properties['logout_link_button_background_hover'])) { ?>
+	background: <?php echo $properties['logout_link_button_background_hover'] ?>;
+	<?php } ?>
+	<?php if(!empty($properties['logout_link_use_typography_hover'])) { ?>
+		<?php if(!empty($properties['logout_link_color_hover'])) { ?>color: <?php echo $properties['logout_link_color_hover']  ?>; <?php } ?>
+		<?php if(!empty($properties['logout_link_font_face_hover'])) { ?>font-family: <?php echo $properties['logout_link_font_face_hover']  ?>; <?php } ?>
+		<?php if(!empty($properties['logout_link_font_size_hover'])) { ?>font-size: <?php echo $properties['logout_link_font_size_hover']  ?>px; <?php } ?>
+		<?php if(!empty($properties['logout_link_weight_hover'])) { ?>font-weight: <?php echo $properties['logout_link_weight_hover']  ?>;<?php } ?>
+		<?php if(!empty($properties['logout_link_font_style_hover'])) { ?>font-style: <?php echo $properties['logout_link_font_style_hover']  ?>;<?php } ?>
+		<?php if(!empty($properties['logout_link_line_height_hover'])) { ?>line-height: <?php echo $properties['logout_link_line_height_hover']  ?>;<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['logout_link_use_border_hover'])) { ?>
+			<?php if(!empty($properties['logout_link_border_width_hover']) && !empty($properties['logout_link_border_type_hover']) && !empty($properties['logout_link_border_color_hover'])) { ?>border: <?php echo $properties['logout_link_border_width_hover'] ?>px <?php echo $properties['logout_link_border_type_hover'] ?> <?php echo $properties['logout_link_border_color_hover'] ?>;<?php } ?>
+	<?php } else { ?>
+			border: none;
+	<?php } ?>
+	<?php if(!empty($properties['logout_link_use_radius_hover'])) { ?>
+			border-radius: <?php echo $properties['logout_link_border_radius1_hover'] ? $properties['logout_link_border_radius1_hover'] : 0 ?>px <?php echo $properties['logout_link_border_radius2_hover'] ? $properties['logout_link_border_radius2_hover'] : 0 ?>px <?php echo $properties['logout_link_border_radius4_hover'] ? $properties['logout_link_border_radius4_hover'] : 0 ?>px <?php echo $properties['logout_link_border_radius3_hover'] ? $properties['logout_link_border_radius3_hover'] : 0 ?>px;
+	<?php } else { ?>
+			border-radius: 0px;
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element a.logout_link:focus,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element a.logout_link:focus {
+	<?php if(!empty($properties['logout_link_button_background_focus'])) { ?>
+	background: <?php echo $properties['logout_link_button_background_focus'] ?>;
+	<?php } ?>
+	<?php if(!empty($properties['logout_link_use_typography_focus'])) { ?>
+		<?php if(!empty($properties['logout_link_color_focus'])) { ?>color: <?php echo $properties['logout_link_color_focus']  ?>; <?php } ?>
+		<?php if(!empty($properties['logout_link_font_face_focus'])) { ?>font-family: <?php echo $properties['logout_link_font_face_focus']  ?>; <?php } ?>
+		<?php if(!empty($properties['logout_link_font_size_focus'])) { ?>font-size: <?php echo $properties['logout_link_font_size_focus']  ?>px; <?php } ?>
+		<?php if(!empty($properties['logout_link_weight_focus'])) { ?>font-weight: <?php echo $properties['logout_link_weight_focus']  ?>;<?php } ?>
+		<?php if(!empty($properties['logout_link_font_style_focus'])) { ?>font-style: <?php echo $properties['logout_link_font_style_focus']  ?>;<?php } ?>
+		<?php if(!empty($properties['logout_link_line_height_focus'])) { ?>line-height: <?php echo $properties['logout_link_line_height_focus']  ?>;<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['logout_link_use_border_focus'])) { ?>
+			<?php if(!empty($properties['logout_link_border_width_focus']) && !empty($properties['logout_link_border_type_focus']) && !empty($properties['logout_link_border_color_focus'])) { ?>border: <?php echo $properties['logout_link_border_width_focus'] ?>px <?php echo $properties['logout_link_border_type_focus'] ?> <?php echo $properties['logout_link_border_color_focus'] ?>;<?php } ?>
+	<?php } else { ?>
+			border: none;
+	<?php } ?>
+	<?php if(!empty($properties['logout_link_use_radius_focus'])) { ?>
+			border-radius: <?php echo $properties['logout_link_border_radius1_focus'] ? $properties['logout_link_border_radius1_focus'] : 0 ?>px <?php echo $properties['logout_link_border_radius2_focus'] ? $properties['logout_link_border_radius2_focus'] : 0 ?>px <?php echo $properties['logout_link_border_radius4_focus'] ? $properties['logout_link_border_radius4_focus'] : 0 ?>px <?php echo $properties['logout_link_border_radius3_focus'] ? $properties['logout_link_border_radius3_focus'] : 0 ?>px;
+	<?php } else { ?>
+			border-radius: 0px;
+	<?php } ?>
+}
+
 /* Custom CSS */
 <?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>

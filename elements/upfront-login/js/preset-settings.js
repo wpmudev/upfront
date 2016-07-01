@@ -32,6 +32,7 @@ define([
 							{ label: "Button", value: 'button' },
 							{ label: "Lost Password Text", value: 'lost_password_text' },
 							{ label: "Log in Trigger", value: 'login_trigger' },
+							{ label: "Log out Link", value: 'logout_link' },
 						]
 					}
 				},
@@ -328,6 +329,70 @@ define([
 						}
 					}
 				},
+				{
+					moduleType: 'Colors',
+					options: {
+						title: '',
+						multiple: false,
+						single: true,
+						state: 'logout_link_settings',
+						abccolors: [
+							{
+								name: 'logout_link_button_background',
+								label: 'Button Background'
+							}
+						]
+					}
+				},
+				{
+					moduleType: 'Typography',
+					options: {
+						state: 'logout_link_settings',
+						title: Upfront.Settings.l10n.global.views.typography,
+						toggle: true,
+						global_typography: false,
+						fields: {
+							typeface: 'logout_link_font_face',
+							fontstyle: 'logout_link_font_style',
+							weight: 'logout_link_weight',
+							style: 'logout_link_style',
+							size: 'logout_link_font_size',
+							line_height: 'logout_link_line_height',
+							color: 'logout_link_color',
+							use: 'logout_link_use_typography'
+						}
+					}
+				},
+				{
+					moduleType: 'Border',
+					options: {
+						state: 'logout_link_settings',
+						title: '',
+						fields: {
+							use: 'logout_link_use_border',
+							width: 'logout_link_border_width',
+							type: 'logout_link_border_type',
+							color: 'logout_link_border_color',
+						}
+					}
+				},
+				{
+					moduleType: 'Radius',
+					options: {
+						state: 'logout_link_settings',
+						max_value: 100,
+						fields: {
+							use: 'logout_link_use_radius',
+							lock: 'logout_link_border_radius_lock',
+							radius: 'logout_link_radius',
+							radius_number: 'logout_link_radius_number',
+							radius1: 'logout_link_border_radius1',
+							radius2: 'logout_link_border_radius2',
+							radius3: 'logout_link_border_radius3',
+							radius4: 'logout_link_border_radius4'
+						}
+					}
+				},
 			],
 			Hover: [
 				{
@@ -575,6 +640,70 @@ define([
 						}
 					}
 				},
+				{
+					moduleType: 'Colors',
+					options: {
+						title: '',
+						multiple: false,
+						single: true,
+						state: 'logout_link_settings',
+						abccolors: [
+							{
+								name: 'logout_link_button_background_hover',
+								label: 'Button Background'
+							}
+						]
+					}
+				},
+				{
+					moduleType: 'Typography',
+					options: {
+						state: 'logout_link_settings',
+						title: Upfront.Settings.l10n.global.views.typography,
+						toggle: true,
+						global_typography: false,
+						fields: {
+							typeface: 'logout_link_font_face_hover',
+							fontstyle: 'logout_link_font_style_hover',
+							weight: 'logout_link_weight_hover',
+							style: 'logout_link_style_hover',
+							size: 'logout_link_font_size_hover',
+							line_height: 'logout_link_line_height_hover',
+							color: 'logout_link_color_hover',
+							use: 'logout_link_use_typography_hover'
+						}
+					}
+				},
+				{
+					moduleType: 'Border',
+					options: {
+						state: 'logout_link_settings',
+						title: '',
+						fields: {
+							use: 'logout_link_use_border_hover',
+							width: 'logout_link_border_width_hover',
+							type: 'logout_link_border_type_hover',
+							color: 'logout_link_border_color_hover',
+						}
+					}
+				},
+				{
+					moduleType: 'Radius',
+					options: {
+						state: 'logout_link_settings',
+						max_value: 100,
+						fields: {
+							use: 'logout_link_use_radius_hover',
+							lock: 'logout_link_border_radius_lock_hover',
+							radius: 'logout_link_radius_hover',
+							radius_number: 'logout_link_radius_number_hover',
+							radius1: 'logout_link_border_radius1_hover',
+							radius2: 'logout_link_border_radius2_hover',
+							radius3: 'logout_link_border_radius3_hover',
+							radius4: 'logout_link_border_radius4_hover'
+						}
+					}
+				},
 			],
 			Focus: [
 				{
@@ -819,6 +948,70 @@ define([
 							radius2: 'login_trigger_border_radius2_focus',
 							radius3: 'login_trigger_border_radius3_focus',
 							radius4: 'login_trigger_border_radius4_focus'
+						}
+					}
+				},
+				{
+					moduleType: 'Colors',
+					options: {
+						title: '',
+						multiple: false,
+						single: true,
+						state: 'logout_link_settings',
+						abccolors: [
+							{
+								name: 'logout_link_button_background_focus',
+								label: 'Button Background'
+							}
+						]
+					}
+				},
+				{
+					moduleType: 'Typography',
+					options: {
+						state: 'logout_link_settings',
+						title: Upfront.Settings.l10n.global.views.typography,
+						toggle: true,
+						global_typography: false,
+						fields: {
+							typeface: 'logout_link_font_face_focus',
+							fontstyle: 'logout_link_font_style_focus',
+							weight: 'logout_link_weight_focus',
+							style: 'logout_link_style_focus',
+							size: 'logout_link_font_size_focus',
+							line_height: 'logout_link_line_height_focus',
+							color: 'logout_link_color_focus',
+							use: 'logout_link_use_typography_focus'
+						}
+					}
+				},
+				{
+					moduleType: 'Border',
+					options: {
+						state: 'logout_link_settings',
+						title: '',
+						fields: {
+							use: 'logout_link_use_border_focus',
+							width: 'logout_link_border_width_focus',
+							type: 'logout_link_border_type_focus',
+							color: 'logout_link_border_color_focus',
+						}
+					}
+				},
+				{
+					moduleType: 'Radius',
+					options: {
+						state: 'logout_link_settings',
+						max_value: 100,
+						fields: {
+							use: 'logout_link_use_radius_focus',
+							lock: 'logout_link_border_radius_lock_focus',
+							radius: 'logout_link_radius_focus',
+							radius_number: 'logout_link_radius_number_focus',
+							radius1: 'logout_link_border_radius1_focus',
+							radius2: 'logout_link_border_radius2_focus',
+							radius3: 'logout_link_border_radius3_focus',
+							radius4: 'logout_link_border_radius4_focus'
 						}
 					}
 				},
