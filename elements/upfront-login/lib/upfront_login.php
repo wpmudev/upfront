@@ -4,6 +4,7 @@ class Upfront_LoginView extends Upfront_Object {
 
 	public static function default_properties () {
 		return array(
+			'preset' => 'default',
 			'style' => 'form',
 			'behavior' => 'click',
 			'appearance' => 'icon',
