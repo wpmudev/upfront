@@ -39,7 +39,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 	save_layout: function () {
 		this._save_layout(this.layout.get("current_layout"));
 	},
-	
+
 	save_post_layout: function ($post_layout_key) {
 		this._save_layout($post_layout_key);
 	},
@@ -664,41 +664,6 @@ var ContentEditor = new (Subapplication.extend({
 	}
 }))();
 
-var ThemeEditor = new (LayoutEditorSubapplication.extend({
-	boot: function () {
-
-	},
-
-	start: function () {
-		this.stop();
-		this.set_up_event_plumbing_before_render();
-		// @TODO hack to implement LayoutEditor objects
-		this.Objects = Upfront.Application.LayoutEditor.Objects;
-		this.set_up_editor_interface();
-
-		this.set_up_event_plumbing_after_render();
-		$("html").removeClass("upfront-edit-layout upfront-edit-content upfront-edit-postlayout upfront-edit-responsive").addClass("upfront-edit-theme");
-		if ( Upfront.themeExporter.currentTheme === 'upfront') {
-			this.listenToOnce(Upfront.Events, 'layout:render', function() {
-				Upfront.Events.trigger("command:layout:edit_structure");
-			});
-		}
-		this.listenToOnce(Upfront.Events, 'layout:render', Upfront.Behaviors.GridEditor.apply_grid);
-		this.listenToOnce(Upfront.Events, 'command:layout:save_done', Upfront.Behaviors.LayoutEditor.first_save_dialog);
-		this.listenTo(Upfront.Events, "command:layout:create", Upfront.Behaviors.LayoutEditor.create_layout_dialog); // DEPRECATED
-		this.listenTo(Upfront.Events, "command:themefontsmanager:open", Upfront.Behaviors.LayoutEditor.open_theme_fonts_manager);
-		this.listenTo(Upfront.Events, "command:layout:browse", Upfront.Behaviors.LayoutEditor.browse_layout_dialog); // DEPRECATED
-		this.listenTo(Upfront.Events, "command:layout:edit_structure", Upfront.Behaviors.GridEditor.edit_structure);
-		this.listenTo(Upfront.Events, "command:layout:export_theme", Upfront.Behaviors.LayoutEditor.export_dialog);
-		this.listenTo(Upfront.Events, "builder:load_theme", Upfront.Behaviors.LayoutEditor.load_theme);
-	},
-
-	stop: function () {
-		return this.stopListening(Upfront.Events);
-	}
-
-}))();
-
 var ResponsiveEditor = new (LayoutEditorSubapplication.extend({
 	Objects: {},
 
@@ -729,7 +694,6 @@ var ResponsiveEditor = new (LayoutEditorSubapplication.extend({
 var Application = new (Backbone.Router.extend({
 	LayoutEditor: LayoutEditor,
 	ContentEditor: ContentEditor,
-	ThemeEditor: ThemeEditor,
 	PostContentEditor: PostContentEditor,
 	ResponsiveEditor: ResponsiveEditor,
 
@@ -1054,7 +1018,7 @@ var Application = new (Backbone.Router.extend({
 		if ( typeof layoutData.data.template_slug !== 'undefined' ) _upfront_post_data.template_slug = layoutData.data.template_slug;
 		if ( typeof layoutData.data.layout_change !== 'undefined' ) {
 			_upfront_post_data.layout_change = parseInt(layoutData.data.layout_change, 10);
-			if ( _upfront_post_data.layout_change !== 1 ) _upfront_post_data.layout_change = 0; 
+			if ( _upfront_post_data.layout_change !== 1 ) _upfront_post_data.layout_change = 0;
 		}
 
 		if (layoutData.data.post) {
@@ -1611,7 +1575,8 @@ var Application = new (Backbone.Router.extend({
 }))();
 
 return {
-	"Application": Application
+	Application: Application,
+	Subapplication: LayoutEditorSubapplication
 };
 });
 
