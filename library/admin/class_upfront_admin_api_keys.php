@@ -83,14 +83,19 @@ class Upfront_Admin_ApiKeys extends Upfront_Admin_Page {
 
 		?>
 <div class="api key <?php echo sanitize_html_class($service); ?>">
-	<label for="api-key-<?php echo esc_attr($service); ?>">
-		<span class="label"><?php echo esc_html($services[$service]['label']); ?></span>
-		<input type="text" name="api-keys[<?php echo esc_attr($service); ?>]" id="api-key-<?php echo esc_attr($service); ?>" value="<?php echo esc_attr($value); ?>" />
-		<?php wp_nonce_field(self::FORM_NONCE_ACTION . $service, self::FORM_NONCE_KEY . $service); ?>
-	<?php if (!empty($services[$service]['help'])) { ?>
-		<span class="help"><?php echo $services[$service]['help']; ?></span>
-	<?php } ?>
-	</label>
+	<p>
+		<label for="api-key-<?php echo esc_attr($service); ?>">
+			<span class="label"><?php echo esc_html($services[$service]['label']); ?></span>
+			<input
+				type="text" name="api-keys[<?php echo esc_attr($service); ?>]" id="api-key-<?php echo esc_attr($service); ?>"
+				value="<?php echo esc_attr($value); ?>"
+			/>
+			<?php wp_nonce_field(self::FORM_NONCE_ACTION . $service, self::FORM_NONCE_KEY . $service); ?>
+		<?php if (!empty($services[$service]['help'])) { ?>
+			<span class="help"><?php echo $services[$service]['help']; ?></span>
+		<?php } ?>
+		</label>
+	</p>
 </div>
 		<?php
 	}
