@@ -308,7 +308,7 @@ define([
 				});
 			} else {
 				// No geolocation, no link
-				$current.remove();
+				if (($current || {}).remove) $current.remove();
 			}
 
 			this.$el.find(".upfront-entity_meta").hide();
