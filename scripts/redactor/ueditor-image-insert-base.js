@@ -145,7 +145,6 @@
                     //.attr('contenteditable', true)
                     $caption.off('keyup')
                         .on('keyup', function(e){
-							console.log('Yoo!');
                             self.data.set('caption', this.innerHTML, {silent: true});
                             //Update event makes InsertManager update its data without rendering.
                             self.data.trigger('update');
