@@ -668,7 +668,7 @@ a.image-edit-button.deactivated:hover {
 }
 
 .upfront-ui.uimage-control-panel .upfront-save_settings {
-	box-shadow: none;
+	box-shadow: 0px 3px 5px rgba(0,0,0,.3);
 	height: 36px;
 	padding:0 25px;
 }
