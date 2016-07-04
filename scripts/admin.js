@@ -177,9 +177,10 @@
 			if (!(role || {}).role) return true; // Unknown role, who knows what
 			if ((role || {}).able) return true; // Role can modify, we're good
 
-			var $checks = $roots.find(':checkbox'),
+			var
 				$roots = $('[data-capability_id="modify_element_presets"] [data-role_id="' + role.role + '"]')
-					.add('[data-capability_id="delete_element_presets"] [data-role_id="' + role.role + '"]')
+					.add('[data-capability_id="delete_element_presets"] [data-role_id="' + role.role + '"]'),
+				$checks = $roots.find(':checkbox')
 			;
 			$checks.each(function () {
 				var $me = $(this);
