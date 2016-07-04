@@ -5378,7 +5378,9 @@
 				this.$spectrum.trigger("click.spectrum"); // trigger cancel
 				if(this.options.spectrum && typeof this.options.spectrum.change === "function")
 					this.options.spectrum.change(this.color);// Explicitly cancel
-				this.update_input_border_color(this.color.toRgbString); // Set input color
+
+				if( this.color && this.color.toRgbString )
+					this.update_input_border_color(this.color.toRgbString); // Set input color
 			},
 			update_palette: function () {
 				if (this.$spectrum && this.$spectrum.spectrum) {
