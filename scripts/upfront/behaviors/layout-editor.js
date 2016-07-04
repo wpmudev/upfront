@@ -838,7 +838,7 @@ var LayoutEditor = {
 		if (!Upfront.Application.is_builder()) return deferred.promise();
 
 		// Otherwise, run with it
-        ed._get_saved_layout().done(function(saved){
+        Upfront.Application.ThemeEditor._get_saved_layout().done(function(saved){
 			_.each(elementTypes, function(elementType){
 				_.each(Upfront.data.styles[elementType.id], function(styleName){
 					var onOtherLayout = false;
