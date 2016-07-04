@@ -2266,108 +2266,261 @@ var GridEditor = {
 	adapt_to_breakpoint: function (modules, wrappers, breakpoint_id, parent_col, silent) {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
-			line_col = 0,
-			line = -1,
-			lines = [],
-			modules_data = [],
-			set_wrappers_col = {}, // keep track of set wrappers col
+			breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().findWhere({id: breakpoint_id}).toJSON(),
+			desktop_breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_default().toJSON(),
 			silent = ( silent === true ) ? true : false,
 			wrapper_index = 0,
-			wrapper_edited = 0
+			desktop_lines = ed.parse_modules_to_lines(modules, wrappers, desktop_breakpoint.id, desktop_breakpoint.columns),
+			lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint_id, parent_col),
+			filtered_lines = ed._filter_edited_lines(lines, breakpoint),
+			adapt_wrappers = [],
+			adapt_wrappers_top = [],
+			adapt_wrappers_bottom = [],
+			adapt_lines = [],
+			adapt_lines_insert = [],
+			adapt_lines_top = [],
+			adapt_lines_bottom = [],
+			adapt_col = 0
 		;
-		modules.each(function(module){
-			var data = module.get_property_value_by_name('breakpoint') || {},
-				module_class = module.get_property_value_by_name('class'),
-				module_default_hide = module.get_property_value_by_name('default_hide'),
-				module_hide = ( data[breakpoint_id] && "hide" in data[breakpoint_id] ) ? data[breakpoint_id].hide : module_default_hide,
-				module_col = ed.get_class_num(module_class, ed.grid['class']),
-				wrapper = wrappers.get_by_wrapper_id(module.get_wrapper_id()),
-				wrapper_data = wrapper && wrapper.get_property_value_by_name('breakpoint') || {},
-				wrapper_class = wrapper && wrapper.get_property_value_by_name('class'),
-				is_clear = wrapper && ( !!wrapper_class.match(/clr/) || line_col === 0 );
-			if ( !wrapper )	return;
-			if (
-				( wrapper_data && wrapper_data[breakpoint_id] && wrapper_data[breakpoint_id].edited )
-				||
-				( data && data[breakpoint_id] && data[breakpoint_id].edited )
-			) {
-				wrapper_edited++;
-				return;
-			}
-			if ( module_hide ) return;
-			line_col += module_col; // Elements in a line have to fit the whole region now
-			if ( line_col > parent_col ){
-				is_clear = true;
-			}
-			if ( is_clear ){
-				line_col = module_col; // Elements in a line have to fit the whole region now
-				line++;
-				lines[line] = [];
-			}
-			module_col = module_col > parent_col ? parent_col : module_col;
-			lines[line].push({
-				clear: is_clear,
-				spacer: !!module_class.match(/(upfront-module-spacer|upfront-object-spacer)/),
-				module: module,
-				col: module_col,
-				left: 0, // Elements in a line have to fit the whole region now
-				wrapper: wrapper,
-				breakpoint: Upfront.Util.clone(data),
-				wrapper_breakpoint: Upfront.Util.clone(wrapper_data)
+		// First let's find wrappers that we need to adapt from desktop layout
+		_.each(desktop_lines, function (line, l) {
+			_.each(line.wrappers, function (wrapper, w) {
+				if ( wrapper.spacer ) return; // Ignore spacers
+				var is_edited = wrapper.model.get_breakpoint_property_value('edited', false, false, breakpoint);
+				if ( is_edited ) {
+					wrapper_index++;
+					return;
+				}
+				wrapper_index++;
+				// Find prev and next wrapper for reference later when deciding the final order
+				adapt_wrappers.push({
+					prev: ed._find_prev_wrapper_from_lines(wrapper, w, line, l, desktop_lines),
+					next: ed._find_next_wrapper_from_lines(wrapper, w, line, l, desktop_lines),
+					current: wrapper,
+					order: wrapper_index
+				});
 			});
 		});
-		_.each(lines, function(line_modules){
-			var line_col = _.map(line_modules, function(data){
-					return data.col; // Elements in a line have to fit the whole region now
-				}).reduce(function(sum, col){
-					return sum + col;
-				}),
-				spacer_col = _.map(line_modules, function(data){
-					return data.spacer ? data.col : 0;
-				}).reduce(function(sum, col){
-					return sum + col;
-				})
+
+		if ( adapt_wrappers.length == 0 ) {
+			// Nothing to adapt, return
+			return;
+		}
+
+		// Let's split up to wrappers that inserted to top, bottom or in between
+		adapt_wrappers = _.filter(adapt_wrappers, function (adapt_wrapper, aw) {
+			if ( aw == adapt_wrapper.order-1 ) {
+				adapt_wrappers_top.push(adapt_wrapper);
+				return false;
+			}
+			else if ( wrapper_index == adapt_wrapper.order + (adapt_wrappers.length - aw - 1) ) {
+				adapt_wrappers_bottom.push(adapt_wrapper);
+				return false;
+			}
+			return true;
+		});
+
+		// Make them into lines
+		adapt_lines_top = ed._adapt_wrappers_to_line(adapt_wrappers_top, parent_col);
+		adapt_lines = ed._adapt_wrappers_to_line(adapt_wrappers, parent_col);
+		adapt_lines_insert = adapt_lines.slice(0);
+		adapt_lines_bottom = ed._adapt_wrappers_to_line(adapt_wrappers_bottom, parent_col);
+
+		wrapper_index = 0;
+		// Now that when we know which wrappers we need to adapt, we'll find where to add them
+		// Add the top wrappers
+		_.each(adapt_lines_top, function (adapt_line) {
+			var apply_col = Math.floor(parent_col/adapt_line.wrappers.length),
+				remaining_col = parent_col - (apply_col * adapt_line.wrappers.length)
 			;
-			_.each(line_modules, function(data, index){
-				var new_col = 0,
-					wrapper_col = 0;
-				if ( ! _.isObject(data.breakpoint[breakpoint_id]) ) {
-					data.breakpoint[breakpoint_id] = { edited: false };
+			_.each(adapt_line.wrappers, function (adapt_wrapper, aw) {
+				var this_col = apply_col;
+				if ( remaining_col > 0 ) {
+					this_col++;
+					remaining_col--;
 				}
-				if ( !_.isObject(data.wrapper_breakpoint[breakpoint_id]) ) {
-					data.wrapper_breakpoint[breakpoint_id] = { edited: false };
+				wrapper_index++;
+				adapt_wrapper.current.model.set_breakpoint_property('clear', ( aw == 0 ), silent, breakpoint);
+				adapt_wrapper.current.model.set_breakpoint_property('col', this_col, silent, breakpoint);
+				adapt_wrapper.current.model.set_breakpoint_property('order', wrapper_index, silent, breakpoint);
+			});
+		});
+
+		// Insert between elements
+		_.each(filtered_lines, function (line, l) {
+			var prev_line = ( l > 0 ) ? filtered_lines[l-1] : false,
+				next_line = ( l < filtered_lines.length-1 ) ? filtered_lines[l+1] : false
+			;
+			_.each(line.wrappers, function (wrapper, w) {
+				var inserted = [];
+				_.each(adapt_lines_insert, function (adapt_line, al) {
+					var prev_wrapper = adapt_line.prev_wrapper,
+						next_wrapper = adapt_line.next_wrapper,
+						is_adding = false,
+						apply_col = Math.floor(parent_col/adapt_line.wrappers.length),
+						remaining_col = parent_col - (apply_col * adapt_line.wrappers.length)
+					;
+					_.each(adapt_line.wrappers, function (adapt_wrapper) {
+						if ( ed._find_wrapper_in_line(prev_wrapper, prev_line) ) {
+							// Try use prev wrapper as reference first
+							is_adding = true;
+						}
+						else if ( ed._find_wrapper_in_line(next_wrapper, line) && !ed._find_wrapper_in_line(prev_wrapper, line) ) {
+							// Alternatively, just use next wrapper as reference
+							is_adding = true;
+						}
+					})
+
+					if ( !is_adding ) return;
+					// Finally, add this line in
+					_.each(adapt_line.wrappers, function (adapt_wrapper, aw) {
+						var this_col = apply_col;
+						if ( remaining_col > 0 ) {
+							this_col++;
+							remaining_col--;
+						}
+						wrapper_index++;
+						adapt_wrapper.current.model.set_breakpoint_property('clear', ( aw == 0 ), silent, breakpoint);
+						adapt_wrapper.current.model.set_breakpoint_property('col', this_col, silent, breakpoint);
+						adapt_wrapper.current.model.set_breakpoint_property('order', wrapper_index, silent, breakpoint);
+					});
+					inserted.push(al);
+				});
+				// Remove inserted lines
+				_.each(inserted, function (ins, i) {
+					adapt_lines_insert.splice(ins - i, 1);
+				});
+
+				// Set new order for existing wrappers
+				wrapper_index++;
+				wrapper.model.set_breakpoint_property('order', wrapper_index, silent, breakpoint);
+			});
+		});
+
+		// Add the bottom wrappers and the rest of uninserted wrappers
+		_.each(_.union(adapt_lines_insert, adapt_lines_bottom), function (adapt_line) {
+			var apply_col = Math.floor(parent_col/adapt_line.wrappers.length),
+				remaining_col = parent_col - (apply_col * adapt_line.wrappers.length)
+			;
+			_.each(adapt_line.wrappers, function (adapt_wrapper, aw) {
+				var this_col = apply_col;
+				if ( remaining_col > 0 ) {
+					this_col++;
+					remaining_col--;
 				}
-				if ( !data.breakpoint[breakpoint_id].edited ){
-					// Elements in a line have to fit evenly the whole region now
-					new_col = (line_col === parent_col) ? data.col : parent_col / line_modules.length;
-					if ( data.wrapper_breakpoint[breakpoint_id].edited && _.isNumber(data.wrapper_breakpoint[breakpoint_id].col) ) {
-						new_col = new_col > data.wrapper_breakpoint[breakpoint_id].col ? data.wrapper_breakpoint[breakpoint_id].col : new_col;
-					}
-					data.breakpoint[breakpoint_id].left = 0;
-					data.breakpoint[breakpoint_id].col = new_col;
-					data.breakpoint[breakpoint_id].order = index;
-					data.module.set_property('breakpoint', data.breakpoint, silent);
-				}
-				else {
-					new_col = typeof data.breakpoint[breakpoint_id].col == 'number' ? data.breakpoint[breakpoint_id].col : data.col;
-				}
-				if ( !_.isUndefined(set_wrappers_col[data.wrapper.get_wrapper_id()]) ) {
-					wrapper_col = set_wrappers_col[data.wrapper.get_wrapper_id()];
-				}
-				else {
-					wrapper_index++;
-				}
-				if ( wrapper_col < new_col ) {
-					wrapper_col = new_col;
-					data.wrapper_breakpoint[breakpoint_id].col = wrapper_col;
-					set_wrappers_col[data.wrapper.get_wrapper_id()] = wrapper_col;
-					if ( !data.wrapper_breakpoint[breakpoint_id].edited ) {
-						data.wrapper_breakpoint[breakpoint_id].order = wrapper_edited + wrapper_index;
-						data.wrapper_breakpoint[breakpoint_id].clear = ( index === 0 );
-					}
-					data.wrapper.set_property('breakpoint', data.wrapper_breakpoint, silent);
+				wrapper_index++;
+				adapt_wrapper.current.model.set_breakpoint_property('clear', ( aw == 0 ), silent, breakpoint);
+				adapt_wrapper.current.model.set_breakpoint_property('col', this_col, silent, breakpoint);
+				adapt_wrapper.current.model.set_breakpoint_property('order', wrapper_index, silent, breakpoint);
+			});
+		});
+	},
+
+	_filter_edited_lines: function (lines, breakpoint) {
+		return _.filter(lines, function (line) {
+			var ignore = false;
+			_.each(line.wrappers, function (wrapper) {
+				if ( wrapper.spacer || ignore ) return;
+				var is_edited = wrapper.model.get_breakpoint_property_value('edited', false, false, breakpoint);
+				if ( !is_edited ) {
+					ignore = true;
+					return;
 				}
 			});
+			return !ignore;
+		});
+	},
+
+	_adapt_wrappers_to_line: function (wrappers, col) {
+		var adapt_col = 0,
+			adapt_lines = [],
+			adapt_wrappers = [],
+			prev_wrapper = false,
+			ref_prev_wrapper = false,
+			ref_next_wrapper = false
+		;
+		_.each(wrappers, function (wrapper, w) {
+			var is_separate_line = (prev_wrapper && wrapper.order - prev_wrapper.order > 1);
+			if ( ( is_separate_line || adapt_col + wrapper.current.col > col ) && adapt_wrappers.length > 0 ) {
+				adapt_lines.push({
+					wrappers: adapt_wrappers,
+					col: adapt_col,
+					prev_wrapper: ref_prev_wrapper,
+					next_wrapper: ref_next_wrapper
+				});
+				adapt_wrappers = [];
+				adapt_col = 0;
+				if ( is_separate_line ) {
+					ref_prev_wrapper = false;
+					ref_next_wrapper = false;
+				}
+			}
+			if ( ref_prev_wrapper === false ) {
+				ref_prev_wrapper = wrapper.prev;
+			}
+			if ( ref_next_wrapper === false ) {
+				ref_next_wrapper = wrapper.next;
+				for ( var i = w+1; i < wrappers.length; i++ ) {
+					if ( wrappers[i].order - wrapper.order > 1 ) break;
+					ref_next_wrapper = wrappers[i].next;
+				}
+			}
+			adapt_col += wrapper.current.col;
+			adapt_wrappers.push(wrapper);
+			prev_wrapper = wrapper;
+		});
+		if ( adapt_wrappers.length > 0 ) {
+			adapt_lines.push({
+				wrappers: adapt_wrappers,
+				col: adapt_col,
+				prev_wrapper: ref_prev_wrapper,
+				next_wrapper: ref_next_wrapper
+			});
+		}
+		return adapt_lines;
+	},
+
+	_find_prev_wrapper_from_lines: function (wrapper, wrapper_index, line, line_index, lines) {
+		if ( wrapper_index > 0 ) {
+			if ( !line.wrappers[wrapper_index-1].spacer ) {
+				return line.wrappers[wrapper_index-1];
+			}
+			else if ( wrapper_index > 1 ) {
+				return line.wrappers[wrapper_index-2];
+			}
+		}
+		if ( line_index > 0 ) {
+			for ( var i = lines[line_index-1].wrappers.length-1; i >= 0; i-- ) {
+				if ( lines[line_index-1].wrappers[i].spacer ) continue;
+				return lines[line_index-1].wrappers[i];
+			}
+		}
+		return false;
+	},
+
+	_find_next_wrapper_from_lines: function (wrapper, wrapper_index, line, line_index, lines) {
+		if ( wrapper_index < line.wrappers.length-1 ) {
+			if ( !line.wrappers[wrapper_index+1].spacer ) {
+				return line.wrappers[wrapper_index+1];
+			}
+			else if ( wrapper_index < line.wrappers.length-2 ) {
+				return line.wrappers[wrapper_index+2];
+			}
+		}
+		if ( line_index < lines.length-1 ) {
+			for ( var i = 0; i < lines[line_index+1].wrappers.length; i++ ) {
+				if ( lines[line_index+1].wrappers[i].spacer ) continue;
+				return lines[line_index+1].wrappers[i];
+			}
+		}
+		return false;
+	},
+
+	_find_wrapper_in_line: function (find_wrapper, line) {
+		if ( !line || !line.wrappers || !find_wrapper ) return false;
+		if ( line.wrappers.length == 0 ) return false;
+		return _.find(line.wrappers, function (wrapper, w) {
+			return ( find_wrapper.model.cid == wrapper.model.cid );
 		});
 	},
 
