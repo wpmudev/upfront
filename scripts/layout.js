@@ -854,11 +854,11 @@ jQuery(document).ready(function($){
 	$("[data-group-link]").css({'cursor': 'pointer'});
 	$(document).on("click", "[data-group-link]", function () {
 		var url = $(this).data("groupLink");
-		var target = $(this).data("groupTarget");
+		var target = $(this).data("groupTarget") || '_self';
 
 		if(url.indexOf('#') === -1) {
 			// Not an anchor, follow link
-			window.open(url, $(this).data("groupTarget"));
+			window.open(url, target);
 			return;
 		}
 
