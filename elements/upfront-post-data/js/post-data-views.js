@@ -51,6 +51,10 @@ var Views = {
 				}
 			;
 
+			if (false === data.post_id && Upfront.Application.is_builder) {
+				data.post_id = 'fake_post';
+			}
+
 			if ( this.element.authorId ) {
 				data.author_id = this.element.authorId;
 			}
