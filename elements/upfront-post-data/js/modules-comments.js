@@ -1,15 +1,15 @@
 define([
 	'elements/upfront-post-data/js/panel-abstractions',
-	'text!elements/upfront-post-data/tpl/preset-styles/comments.html',
+	'text!elements/upfront-post-data/tpl/preset-styles/comments.html'
 ], function (Panel, template) {
 	var l10n = Upfront.Settings.l10n.post_data_element;
 
 	var Modules = {};
 	Modules.template = template;
-	
+
 	Modules.part_comment_count = Panel.Toggleable.extend({ title: l10n.comments.cc_part_title, data_part: 'comment_count' });
 	Modules.part_comment_form = Panel.Toggleable.extend({ title: l10n.comments.form_part_title, data_part: 'comment_form' });
-	
+
 	Modules.part_comments_pagination = Panel.Toggleable.extend({
 		title: l10n.comments.pagination_part_title,
 		data_part: 'comments_pagination',
@@ -22,13 +22,13 @@ define([
 				fields.push({
 					type: "Button",
 					className: 'comments-pagination_warning',
-					label: l10n.comments.warning_pagination,
+					label: l10n.comments.warning_pagination
 				});
 			}
 			return fields;
 		}
 	});
-	
+
 	Modules.part_comments = Panel.Toggleable.extend({
 		title: l10n.comments.comments_part_title,
 		data_part: 'comments',
@@ -74,16 +74,16 @@ define([
 				values: [
 					{label: l10n.comments.date, value: 'comment_date_gmt'},
 					{label: l10n.comments.karma, value: 'comment_karma'},
-					{label: l10n.comments.parent, value: 'comment_parent'},
+					{label: l10n.comments.parent, value: 'comment_parent'}
 				]
-			})
+			});
 			fields.push({
 				type: 'Radios',
 				property: "direction",
 				label: l10n.comments.direction,
 				values: [
 					{label: l10n.comments.asc, value: 'ASC'},
-					{label: l10n.comments.desc, value: 'DESC'},
+					{label: l10n.comments.desc, value: 'DESC'}
 				]
 			});
 			return fields;
@@ -102,13 +102,13 @@ define([
 
 
 			Panel.Toggleable.prototype.render.apply(this, arguments);
-			
+
 			// Let's start stuff up on first render if we're not already there
 			if (!this._disable_field || !this._pagination_field) {
 				var fields = this.fields.toArray();
 				this._disable_field = fields[0];
 				this._pagination_field = fields[2];
-				
+
 				if (this._disable_field) this.listenTo(this._disable_field, "changed", this.send_update_request);
 			}
 

@@ -7,7 +7,7 @@ define([
 	/**
 	 * @todo Refactor this to a different, shared location
 	 */
-	'elements/upfront-posts/js/post-list-meta-views',
+	'elements/upfront-posts/js/post-list-meta-views'
 ], function (BaseModule, FieldFactory, StateSettings, Inserts, Meta) {
 
 	var l10n = Upfront.Settings.l10n.post_data_element;
@@ -81,7 +81,7 @@ define([
 			this.state.render();
 
 			this.$el.append(this.state.$el);
-			
+
 			//Move Edit Preset to bottom
 			this.$el.find('.state_modules').append(this.$el.find('.edit_preset_css'));
 			this.$el.addClass("preset_specific");
@@ -103,7 +103,7 @@ define([
 						style: name('style'),
 						size: name('font-size'),
 						line_height: name('line-height'),
-						color: name('font-color'),
+						color: name('font-color')
 					}
 				}
 			}];
@@ -126,7 +126,7 @@ define([
 			;
 
 			jQuery(window).on('resize', resize_cbk);
-			
+
 			editor
 				.start()
 				.done(function (view, code) {
@@ -139,17 +139,17 @@ define([
 			this.listenTo(editor, 'manager:rendered', function (mgr, main) {
 				manager = mgr;
 				resize_cbk();
-			})
+			});
 		},
 		// These two just satisfy the interface
 		get_name: function () { return false; },
-		get_value: function () { return false; },
+		get_value: function () { return false; }
 	});
 
 	var ToggleableOptions = OptionsModule.extend({
 		events: function () {
 			return _.extend({}, OptionsModule.prototype.events, {
-				'click .upfront-settings-item-title .toggle': 'toggle_box',
+				'click .upfront-settings-item-title .toggle': 'toggle_box'
 			});
 		},
 		render: function () {
@@ -180,7 +180,7 @@ define([
 						hidden_parts.push(me.data_part);
 					}
 					me.model.set("hidden_parts", hidden_parts);
-					
+
 					// Set up appearances
 					if (value && value.length) {
 						me.$el.find(".upfront-settings-item-title").removeClass("inactive");
@@ -211,7 +211,7 @@ define([
 			}
 
 			// temporary style hack
-			this.$el.find(".upfront-settings-item-title .toggle").css('background-image', 'url(' + Upfront.Settings.root_url.replace(/\/$/, '') + '/img/uf-ui-sprite.svg)')
+			this.$el.find(".upfront-settings-item-title .toggle").css('background-image', 'url(' + Upfront.Settings.root_url.replace(/\/$/, '') + '/img/uf-ui-sprite.svg)');
 		},
 		toggle_box: function (e) {
 			if (e && e.preventDefault) e.preventDefault();

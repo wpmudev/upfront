@@ -115,7 +115,7 @@ var Parts = {
 				})
 			;
 		},
-		
+
 		_stored_object_index: false,
 		_stored_object: false,
 		_stored_wrapper: false,
@@ -139,9 +139,10 @@ var Parts = {
 			return wrappers.get_by_wrapper_id(wrapper_id);
 		},
 		update_object: function (enable) {
-			var enable = ( enable == 1 ),
-				objects = this.model.get('objects'),
-				wrappers = this.model.get('wrappers');
+			enable = 1 === enable;
+			var objects = this.model.get('objects'),
+				wrappers = this.model.get('wrappers')
+			;
 			if ( enable ) {
 				if ( this._stored_object !== false && this._stored_wrapper !== false ) {
 					wrappers.add(this._stored_wrapper, {silent: true});
@@ -262,7 +263,7 @@ Parts.Part_Content = Parts.Part.extend({
 		;
 		var allowed = this.model.get_property_value_by_name("allow_splitting");
 		if (allowed) Upfront.data.upfront_post_data.split_allowed = true;
-		
+
 		this.field = new Options.Content({model: this.model});
 	}
 });
@@ -366,7 +367,7 @@ var Options = {
 					model: this.model,
 					property: "fallback_image",
 					label: "Fallback Image"
-				}),
+				})
 			];
 		}
 	}),
@@ -380,7 +381,7 @@ var Options = {
 			;
 
 			this.model.set_property("disable", disabled);
-			
+
 			this._fld_disable = new Upfront.Views.Editor.Field.Checkboxes({
 				model: this.model,
 				property: "disable",
@@ -425,7 +426,7 @@ var Options = {
 					values: [
 						{label: 'Date', value: 'comment_date_gmt'},
 						{label: 'Karma', value: 'comment_karma'},
-						{label: 'Parent', value: 'comment_parent'},
+						{label: 'Parent', value: 'comment_parent'}
 					]
 				})
 			);
@@ -436,7 +437,7 @@ var Options = {
 					label: "Direction:",
 					values: [
 						{label: 'Oldest first', value: 'ASC'},
-						{label: 'Newest first', value: 'DESC'},
+						{label: 'Newest first', value: 'DESC'}
 					]
 				})
 			);
