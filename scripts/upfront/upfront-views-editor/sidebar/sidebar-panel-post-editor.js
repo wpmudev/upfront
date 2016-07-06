@@ -5,8 +5,10 @@
         ;
     define([
         'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel',
-        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-post-details'
-    ], function ( SidebarPanel, SidebarPanel_Settings_Section_PostDetails ) {
+        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-post-details',
+        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-post-tag-category',
+        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-page-template'
+    ], function ( SidebarPanel, SidebarPanel_Settings_Section_PostDetails, SidebarPanel_Settings_Section_PostTagCategory, SidebarPanel_Settings_Section_PageTemplate ) {
 
         return SidebarPanel.extend({
             "className": "sidebar-panel sidebar-panel-post-editor",

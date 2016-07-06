@@ -6,6 +6,7 @@
     define([
         'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-layout-elements'
     ], function ( SidebarPanel_Settings_Section_LayoutElements ) {
+
         return SidebarPanel_Settings_Section_LayoutElements.extend({
             get_name: function () {
                 return 'data';
