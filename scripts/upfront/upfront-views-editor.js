@@ -30,6 +30,8 @@
 		"scripts/upfront/upfront-views-editor/post-selector",
 		"scripts/upfront/upfront-views-editor/sidebar",
 		"scripts/upfront/upfront-views-editor/presets/button/collection",
+		"scripts/upfront/upfront-views-editor/property",
+		"scripts/upfront/upfront-views-editor/properties",
 		"text!upfront/templates/property.html",
 		"text!upfront/templates/properties.html",
 		"text!upfront/templates/property_edit.html",
@@ -68,9 +70,8 @@
 			PostSelector,
 			Sidebar,
 			button_presets_collection,
-			property_tpl,
-			properties_tpl,
-			property_edit_tpl
+			Property,
+			Properties
 	) {
 		var _template_files = [
 			"text!upfront/templates/property.html",
@@ -88,7 +89,7 @@
 		];
 
 		// Auto-assign the template contents to internal variable
-		var _template_args = _.rest(arguments, 24),
+		var _template_args = _.rest(arguments, 25),
 			_Upfront_Templates = {}
 			;
 		_(_template_files).each(function (file, idx) {
@@ -106,87 +107,6 @@
 
 
 
-		// Stubbing interface control
-
-		var Property = Backbone.View.extend({
-			events: {
-				"click .upfront-property-change": "show_edit_property_partial",
-				"click .upfront-property-save": "save_property",
-				"click .upfront-property-remove": "remove_property"
-			},
-			render: function () {
-				var template = _.template(property_tpl, this.model.toJSON());
-				this.$el.html(template);
-			},
-
-			remove_property: function () {
-				this.model.destroy();
-			},
-			save_property: function () {
-				var name = this.$("#upfront-new_property-name").val(),
-					value = this.$("#upfront-new_property-value").val()
-					;
-				this.model.set({
-					"name": name,
-					"value": value
-				});
-				this.render();
-			},
-			show_edit_property_partial: function () {
-				var template = _.template( property_edit_tpl, this.model.toJSON());
-				this.$el.html(template);
-			}
-		});
-
-		var Properties = Backbone.View.extend({
-			events: {
-				"click #add-property": "show_new_property_partial",
-				"click #done-adding-property": "add_new_property"
-			},
-			initialize: function () {
-				/*
-				 this.model.get("properties").bind("change", this.render, this);
-				 this.model.get("properties").bind("add", this.render, this);
-				 this.model.get("properties").bind("remove", this.render, this);
-				 */
-
-				this.listenTo(this.model.get("properties"), 'change', this.render);
-				this.listenTo(this.model.get("properties"), 'add', this.render);
-				this.listenTo(this.model.get("properties"), 'remove', this.render);
-			},
-			render: function () {
-				var template = _.template(properties_tpl, this.model.toJSON()),
-					properties = this
-					;
-				this.$el.html(template);
-				this.model.get("properties").each(function (obj) {
-					var local_view = new Property({"model": obj});
-					local_view.render();
-					properties.$el.find("dl").append(local_view.el);
-				});
-			},
-
-			show_new_property_partial: function () {
-				this.$("#add-property").hide();
-				this.$("#upfront-new_property").slideDown();
-			},
-			add_new_property: function () {
-				var name = this.$("#upfront-new_property-name").val(),
-					value = this.$("#upfront-new_property-value").val()
-					;
-				this.model.get("properties").add(new Upfront.Models.Property({
-					"name": name,
-					"value": value
-				}));
-				this.$("#upfront-new_property")
-					.slideUp()
-					.find("input").val('').end()
-				;
-				this.$("#add-property").show();
-			}
-		});
-
-
 		/**
 		 * DEPRECATED
 		 */
@@ -199,23 +119,6 @@
 				Upfront.Events.trigger("command:layout:browse");
 			}
 		});
-
-
-
-// ----- Done bringing things back
-
-
-
-
-
-
-
-
-		//var button_presets_storage = new Button_Presets_Storage();
-
-
-
-
 
 
 
