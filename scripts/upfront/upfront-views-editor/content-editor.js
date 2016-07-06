@@ -16,12 +16,12 @@
     ) {
 
         return {
-            ContentEditor_SidebarCommand: ContentEditorSidebarCommand,
-            ContentEditorSearch: ContentEditorSearch,
-            ContentEditorPagination: ContentEditorPagination,
-            ContentEditorPosts: ContentEditorPosts,
-            ContentEditorPages: ContentEditorPages,
-            ContentEditorComments: ContentEditorComments
+            SidebarCommand: ContentEditorSidebarCommand,
+            Search: ContentEditorSearch,
+            Pagination: ContentEditorPagination,
+            Posts: ContentEditorPosts,
+            Pages: ContentEditorPages,
+            Comments: ContentEditorComments
         };
 
     });

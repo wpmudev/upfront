@@ -8,7 +8,7 @@
         'scripts/upfront/upfront-views-editor/content-editor'
     ], function (Command, ContentEditor) {
 
-        return ContentEditor.ContentEditor_SidebarCommand.extend({
+        return ContentEditor.SidebarCommand.extend({
             tagName: 'li',
             className: 'command-popup-list',
             $popup: {},
@@ -128,9 +128,9 @@
 
                             collection.on('reset sort', me.render_panel, me);
                             views = {
-                                view: new ContentEditorPosts({collection: collection, $popup: me.$popup}),
-                                search: new ContentEditorSearch({collection: collection}),
-                                pagination: new ContentEditorPagination({collection: collection})
+                                view: new ContentEditor.Posts({collection: collection, $popup: me.$popup}),
+                                search: new ContentEditor.Search({collection: collection}),
+                                pagination: new ContentEditor.Pagination({collection: collection})
                             };
                             me.views.posts = views;
                             break;
@@ -150,18 +150,18 @@
 
                             collection.on('reset sort', me.render_panel, me);
                             views = {
-                                view: new ContentEditorPages({collection: collection, $popup: me.$popup}),
-                                search: new ContentEditorSearch({collection: collection}),
-                                pagination: new ContentEditorPagination({collection: collection})
+                                view: new ContentEditor.Pages({collection: collection, $popup: me.$popup}),
+                                search: new ContentEditor.Search({collection: collection}),
+                                pagination: new ContentEditor.Pagination({collection: collection})
                             };
                             me.views.pages = views;
                             break;
                         case "comments":
                             collection.on('reset sort', me.render_panel, me);
                             views = {
-                                view: new ContentEditorComments({collection: collection, $popup: me.$popup}),
-                                search: new ContentEditorSearch({collection: collection}),
-                                pagination: new ContentEditorPagination({collection: collection})
+                                view: new ContentEditor.Comments({collection: collection, $popup: me.$popup}),
+                                search: new ContentEditor.Search({collection: collection}),
+                                pagination: new ContentEditor.Pagination({collection: collection})
                             };
                             me.views.comments = views;
                             break;
