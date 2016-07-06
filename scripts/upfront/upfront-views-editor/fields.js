@@ -1660,7 +1660,8 @@
             "Optional": OptionalField,
             Field_Compact_Label_Select_Option: Field_Compact_Label_Select_Option,
             Field_Compact_Label_Select: Field_Compact_Label_Select,
-            Field_Complex_Toggleable_Text_Field: Field_Complex_Toggleable_Text_Field
+            Field_Complex_Toggleable_Text_Field: Field_Complex_Toggleable_Text_Field,
+            ToggleableText: Field_ToggleableText
         };
     });
 }(jQuery));

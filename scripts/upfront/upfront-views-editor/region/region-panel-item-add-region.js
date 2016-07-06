@@ -7,8 +7,9 @@
 
     define([
         "scripts/upfront/upfront-views-editor/region/region-panel-item",
-        "text!upfront/templates/region_add_panel.html",
-    ], function ( RegionPanelItem, region_add_panel_tpl ) {
+        'scripts/upfront/upfront-views-editor/fields',
+        "text!upfront/templates/region_add_panel.html"
+    ], function ( RegionPanelItem, Fields, region_add_panel_tpl ) {
         return RegionPanelItem.extend({
             width: 24,
             height: 24,
@@ -86,7 +87,7 @@
                 parentContainer.addClass('upfront-region-editing-modal');
                 parentContainer.next().find('.upfront-icon-control-region-resize').hide();
                 fields = {
-                    from: new Field_Radios({
+                    from: new Fields.Radios({
                         name: 'from',
                         default_value: 'new',
                         layout: 'horizontal-inline',
@@ -99,7 +100,7 @@
                             me.from = value;
                         }
                     }),
-                    region_title: new Field_Text({
+                    region_title: new Fields.Text({
                         name: 'name',
                         placeholder: l10n.region_name_placeholder,
                         focus: function () {
@@ -111,7 +112,7 @@
                             me.region_title = value;
                         }
                     }),
-                    make_global: new Field_Checkboxes({
+                    make_global: new Fields.Checkboxes({
                         name: 'make_global',
                         multiple: false,
                         values: [{label: l10n.make_this_region_global, value: 1}],
@@ -124,7 +125,7 @@
                             me.make_global = value == 1 ? true : false;
                         }
                     }),
-                    from_region: new Field_Select({
+                    from_region: new Fields.Select({
                         name: 'from_region',
                         values: [{label: Upfront.Settings.l10n.global.behaviors.loading, value: ""}],
                         disabled: disable_global,

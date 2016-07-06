@@ -4,15 +4,16 @@
             : Upfront.mainData.l10n.global.views
         ;
     define([
-        "scripts/upfront/upfront-views-editor/settings/settings-lightbox-trigger"
-    ], function (Settings_LightboxTrigger) {
+        "scripts/upfront/upfront-views-editor/settings/settings-lightbox-trigger",
+        'scripts/upfront/upfront-views-editor/fields'
+    ], function (Settings_LightboxTrigger, Fields) {
         return Settings_LightboxTrigger.extend({
             //className: "upfront-settings-item upfront-settings-item-anchor",
             initialize: function (opts) {
                 this.options = opts;
                 Settings_LightboxTrigger.prototype.initialize.call(this, this.options);
                 this.options.fields.push(
-                    new Field_Text({
+                    new Fields.Text({
                         model: this.model,
                         property: 'lightbox_label',
                         label: l10n.label

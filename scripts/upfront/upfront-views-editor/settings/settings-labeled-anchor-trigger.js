@@ -4,15 +4,16 @@
             : Upfront.mainData.l10n.global.views
         ;
     define([
-        "scripts/upfront/upfront-views-editor/settings/settings-anchor-trigger"
-    ], function (Settings_AnchorTrigger) {
+        "scripts/upfront/upfront-views-editor/settings/settings-anchor-trigger",
+        'scripts/upfront/upfront-views-editor/fields'
+    ], function (Settings_AnchorTrigger, Fields) {
         return Settings_AnchorTrigger.extend({
             //className: "upfront-settings-item upfront-settings-item-anchor",
             initialize: function (opts) {
                 this.options = opts;
                 Settings_AnchorTrigger.prototype.initialize.call(this, this.options);
                 this.options.fields.push(
-                    new Field_Text({
+                    new Fields.Text({
                         model: this.model,
                         property: 'anchor_label',
                         label: l10n.label

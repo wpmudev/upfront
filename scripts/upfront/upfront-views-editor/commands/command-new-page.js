@@ -4,8 +4,9 @@
             : Upfront.mainData.l10n.global.views
         ;
     define([
-        'scripts/upfront/upfront-views-editor/commands/command-new-post'
-    ], function ( Command_NewPost ) {
+        'scripts/upfront/upfront-views-editor/commands/command-new-post',
+        'scripts/upfront/upfront-views-editor/fields'
+    ], function ( Command_NewPost, Fields ) {
 
         return Command_NewPost.extend({
             "className": "command-new-page",
@@ -83,7 +84,7 @@
                         default_value: this._default_label,
                         change: update_modal_data
                     }),
-                    permalink: new Field_ToggleableText({
+                    permalink: new Fields.ToggleableText({
                         label: '<b>' + l10n.permalink + ':</b> ' + Upfront.Settings.site_url.replace(/\/$/, '') + '/',
                         label_style: "inline",
                         name: "permalink",

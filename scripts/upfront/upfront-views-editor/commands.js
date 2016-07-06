@@ -4,6 +4,7 @@
             : Upfront.mainData.l10n.global.views
         ;
     define([
+        'scripts/upfront/upfront-views-editor/fields',
         'scripts/upfront/upfront-views-editor/commands/command',
         'scripts/upfront/upfront-views-editor/commands/command-cancel-post-layout',
         'scripts/upfront/upfront-views-editor/commands/command-delete',
@@ -46,6 +47,7 @@
         'scripts/upfront/upfront-views-editor/commands/command-open-media-gallery',
         'scripts/upfront/upfront-views-editor/commands/command-popup-list'
     ], function (
+        Fields,
         Command,
         CommandCancelPostLayout,
         CommandDelete,
@@ -110,7 +112,7 @@
                     };
                 }));
                 this.fields = [
-                    new Field_Select({
+                    new Fields.Select({
                         values: themes,
                         default_value: Upfront.themeExporter.currentTheme === 'upfront' ?
                             '' : Upfront.themeExporter.currentTheme,
@@ -180,7 +182,7 @@
             "tagName": "ul",
 
             initialize: function () {
-                this.commands = _([
+                this.Commands = _([
                     new CommandNewPage({"model": this.model}),
                     new CommandNewPost({"model": this.model}),
                     new CommandSaveLayout({"model": this.model}),
@@ -262,7 +264,10 @@
             Command_AddCustomBreakpoint: CommandAddCustomBreakpoint,
             Command_BreakpointDropdown: CommandBreakpointDropdown,
             Command_OpenMediaGallery: CommandOpenMediaGallery,
-            Command_PopupList: CommandPopupList
+            Command_PopupList: CommandPopupList,
+            Command_ThemesDropdown: Command_ThemesDropdown,
+            Command_BrowseLayout: Command_BrowseLayout,
+            Command_NewLayout: Command_NewLayout
         };
 
 

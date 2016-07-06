@@ -67,7 +67,7 @@
             initialize: function(options) {
                 var column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
                     is_group = this.model instanceof Upfront.Models.ModuleGroup,
-                    top_padding_use = new Field_Checkboxes({
+                    top_padding_use = new Fields.Checkboxes({
                         model: this.model,
                         use_breakpoint_property: true,
                         property: 'top_padding_use',
@@ -91,7 +91,7 @@
                             }
                         }
                     }),
-                    top_padding_slider = new Field_Slider({
+                    top_padding_slider = new Fields.Slider({
                         model: this.model,
                         use_breakpoint_property: true,
                         property: 'top_padding_slider',
@@ -109,7 +109,7 @@
                             this.model.set_breakpoint_property('top_padding_num', value, true);
                         }
                     }),
-                    top_padding_num = new Field_Number({
+                    top_padding_num = new Fields.Number({
                         model: this.model,
                         use_breakpoint_property: true,
                         property: 'top_padding_num',
@@ -126,7 +126,7 @@
                             top_padding_slider.$el.find('#'+top_padding_slider.get_field_id()).slider('value', value);
                         }
                     }),
-                    bottom_padding_use = new Field_Checkboxes({
+                    bottom_padding_use = new Fields.Checkboxes({
                         model: this.model,
                         use_breakpoint_property: true,
                         property: 'bottom_padding_use',
@@ -150,7 +150,7 @@
                             }
                         }
                     }),
-                    bottom_padding_slider = new Field_Slider({
+                    bottom_padding_slider = new Fields.Slider({
                         model: this.model,
                         use_breakpoint_property: true,
                         property: 'bottom_padding_slider',
@@ -168,7 +168,7 @@
                             this.model.set_breakpoint_property('bottom_padding_num', value, true);
                         }
                     }),
-                    bottom_padding_num = new Field_Number({
+                    bottom_padding_num = new Fields.Number({
                         model: this.model,
                         use_breakpoint_property: true,
                         property: 'bottom_padding_num',
@@ -187,7 +187,7 @@
                     })
                     ;
                 if ( !is_group ) {
-                    var	left_padding_use = new Field_Checkboxes({
+                    var	left_padding_use = new Fields.Checkboxes({
                             model: this.model,
                             use_breakpoint_property: true,
                             property: 'left_padding_use',
@@ -211,7 +211,7 @@
                                 }
                             }
                         }),
-                        left_padding_slider = new Field_Slider({
+                        left_padding_slider = new Fields.Slider({
                             model: this.model,
                             use_breakpoint_property: true,
                             property: 'left_padding_slider',
@@ -229,7 +229,7 @@
                                 this.model.set_breakpoint_property('left_padding_num', value, true);
                             }
                         }),
-                        left_padding_num = new Field_Number({
+                        left_padding_num = new Fields.Number({
                             model: this.model,
                             use_breakpoint_property: true,
                             property: 'left_padding_num',
@@ -246,7 +246,7 @@
                                 left_padding_slider.$el.find('#'+left_padding_slider.get_field_id()).slider('value', value);
                             }
                         }),
-                        right_padding_use = new Field_Checkboxes({
+                        right_padding_use = new Fields.Checkboxes({
                             model: this.model,
                             use_breakpoint_property: true,
                             property: 'right_padding_use',
@@ -270,7 +270,7 @@
                                 }
                             }
                         }),
-                        right_padding_slider = new Field_Slider({
+                        right_padding_slider = new Fields.Slider({
                             model: this.model,
                             use_breakpoint_property: true,
                             property: 'right_padding_slider',
@@ -288,7 +288,7 @@
                                 this.model.set_breakpoint_property('right_padding_num', value, true);
                             }
                         }),
-                        right_padding_num = new Field_Number({
+                        right_padding_num = new Fields.Number({
                             model: this.model,
                             use_breakpoint_property: true,
                             property: 'right_padding_num',
