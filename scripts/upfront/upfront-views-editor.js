@@ -1,10 +1,5 @@
 (function ($) {
 
-	var l10n = Upfront.Settings && Upfront.Settings.l10n
-			? Upfront.Settings.l10n.global.views
-			: Upfront.mainData.l10n.global.views
-		;
-
 	define([
 		"chosen",
 		"scripts/upfront/global-event-handlers",
@@ -89,7 +84,7 @@
 		];
 
 		// Auto-assign the template contents to internal variable
-		var _template_args = _.rest(arguments, 25),
+		var _template_args = _.rest(arguments, 26),
 			_Upfront_Templates = {}
 			;
 		_(_template_files).each(function (file, idx) {
@@ -104,23 +99,6 @@
 		Upfront.Events.on('data:ready', function(){
 			Upfront.data.tpls = _Upfront_Templates;
 		});
-
-
-
-		/**
-		 * DEPRECATED
-		 */
-		var ResponsiveCommand_BrowseLayout = Commands.Command.extend({
-			className: "command-browse-layout command-browse-layout-responsive",
-			render: function () {
-				this.$el.html('<span title="'+ l10n.browse_layouts +'">' + l10n.browse_layouts + '</span>');
-			},
-			on_click: function () {
-				Upfront.Events.trigger("command:layout:browse");
-			}
-		});
-
-
 
 		return {
 			"Editor": {
