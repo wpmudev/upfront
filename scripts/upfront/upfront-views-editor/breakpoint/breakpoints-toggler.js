@@ -1,10 +1,19 @@
 (function($, Backbone){
-    define([], function () {
+
+    var l10n = Upfront.Settings && Upfront.Settings.l10n
+            ? Upfront.Settings.l10n.global.views
+            : Upfront.mainData.l10n.global.views
+        ;
+
+    define([
+        'scripts/upfront/upfront-views-editor/breakpoint/storage',
+        'scripts/upfront/upfront-views-editor/breakpoint/breakpoint-activate-button'
+    ], function ( storage, Breakpoint_Activate_Button ) {
         return Backbone.View.extend({
             tagName: 'ul',
             className: 'breakpoints-toggler',
             initialize: function() {
-                this.collection = breakpoints_storage.get_breakpoints();
+                this.collection = storage.get_breakpoints();
 
                 this.listenTo(this.collection, 'add remove change', this.render);
             },

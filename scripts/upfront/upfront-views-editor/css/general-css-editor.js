@@ -4,8 +4,9 @@
             : Upfront.mainData.l10n.global.views
         ;
     define([
-        "text!upfront/templates/popup.html"
-    ], function (popup_tpl) {
+        "text!upfront/templates/popup.html",
+        'scripts/upfront/upfront-views-editor/theme-colors'
+    ], function (popup_tpl, Theme_Colors) {
         /**
          * Like css editor but does not do saving and managing of styles.
          * Takes initial css from models "styles" property and fires change

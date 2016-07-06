@@ -4,47 +4,36 @@
             : Upfront.mainData.l10n.global.views
         ;
     define([
-
-    ], function () {
-
-
-        var SidebarPanel_Responsive_Settings_Section_Typography = SidebarPanel_Settings_Section.extend({
-            initialize: function () {
-                this.settings = _([
-                    new SidebarPanel_Settings_Item_Typography_Editor({"model": this.model})
-                ]);
-                this.edit_css = new Command_GeneralEditCustomCSS({"model": this.model});
-            },
-            get_title: function () {
-                return l10n.typography_and_colors;
-            },
-            on_render: function () {
-                this.edit_css.render();
-                this.edit_css.delegateEvents();
-                this.$el.find('.panel-section-content').append(this.edit_css.el);
-            }
-        });
-
-
+        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel',
+        'scripts/upfront/upfront-views-editor/sidebar/draggable-element',
+        'scripts/upfront/upfront-views-editor/commands',
+        'scripts/upfront/upfront-views-editor/sidebar/sidebar-profile',
+        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panels',
+        'scripts/upfront/upfront-views-editor/sidebar/commands/sidebar-commands-primary-post-type',
+        'scripts/upfront/upfront-views-editor/breakpoint',
+        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-responsive-section-typography',
+        'scripts/upfront/upfront-views-editor/sidebar/commands/sidebar-commands-primary-layout'
+    ], function (
+        SidebarPanel,
+        DraggableElement,
+        Commands,
+        SidebarProfile,
+        SidebarPanels,
+        SidebarCommands_PrimaryPostType,
+        Breakpoint,
+        SidebarPanel_Responsive_Settings_Section_Typography,
+        SidebarCommands_PrimaryLayout
+    ) {
 
 
 
 
-        /**
-         * DEPRECATED
-         */
-        var SidebarCommands_PrimaryLayout = Commands.Commands.extend({
-            "className": "sidebar-commands sidebar-commands-primary clearfix",
-            initialize: function () {
-                this.commands = _([
-                    new Command_ThemesDropdown({"model": this.model})
-                ]);
-                if ( Upfront.themeExporter.currentTheme !== 'upfront') {
-                    this.commands.push(new Command_NewLayout({"model": this.model}));
-                    this.commands.push(new Command_BrowseLayout({"model": this.model}));
-                }
-            }
-        });
+
+
+
+
+
+
 
         var SidebarCommands_AdditionalPostType = Commands.Commands.extend({
             "className": "sidebar-commands sidebar-commands-additional",
@@ -136,12 +125,12 @@
             className: 'sidebar-panel sidebar-panel-settings expanded',
             template: '<div class="sidebar-panel-content"></div>',
             initialize: function() {
-                this.collection = breakpoints_storage.get_breakpoints();
+                this.collection = Breakpoint.storage.get_breakpoints();
                 this.listenTo(this.collection, 'change:active', this.render);
                 this.global_option = true;
             },
             render: function() {
-                var breakpoint_model = breakpoints_storage.get_breakpoints().get_active();
+                var breakpoint_model = Breakpoint.storage.get_breakpoints().get_active();
 
                 if(breakpoint_model.get('default'))
                     this.model.attributes.id = 'default';
@@ -203,15 +192,15 @@
             initialize: function () {
                 if (Upfront.Application.user_can_modify_layout()) {
                     this.commands = _([
-                        new Commands.CommandResponsiveUndo({"model": this.model}),
-                        new Commands.CommandResponsiveRedo({"model": this.model}),
-                        new Commands.CommandToggleGrid({"model": this.model}),
-                        new Commands.CommandSaveLayout(),
-                        new Commands.CommandStopResponsiveMode()
+                        new Commands.Command_ResponsiveUndo({"model": this.model}),
+                        new Commands.Command_ResponsiveRedo({"model": this.model}),
+                        new Commands.Command_ToggleGrid({"model": this.model}),
+                        new Commands.Command_SaveLayout(),
+                        new Commands.Command_StopResponsiveMode()
                     ]);
                 } else {
                     this.commands = _([
-                        new Commands.CommandStopResponsiveMode()
+                        new Commands.Command_StopResponsiveMode()
                     ]);
                 }
             },
@@ -491,7 +480,9 @@
         });
 
         return {
-            Sidebar: Sidebar
+            "Sidebar": Sidebar,
+            "Panel": SidebarPanel,
+            "Element": DraggableElement
         };
     });
 }(jQuery, Backbone));

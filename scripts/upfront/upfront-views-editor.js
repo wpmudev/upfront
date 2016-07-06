@@ -27,6 +27,9 @@
 		"scripts/upfront/upfront-views-editor/topbar",
 		"scripts/upfront/upfront-views-editor/notifier",
 		"scripts/upfront/upfront-views-editor/loading",
+		"scripts/upfront/upfront-views-editor/post-selector",
+		"scripts/upfront/upfront-views-editor/sidebar",
+		"scripts/upfront/upfront-views-editor/presets/button/collection",
 		"text!upfront/templates/property.html",
 		"text!upfront/templates/properties.html",
 		"text!upfront/templates/property_edit.html",
@@ -61,7 +64,13 @@
 			Commands,
 			Topbar,
 			notifier,
-			Loading
+			Loading,
+			PostSelector,
+			Sidebar,
+			button_presets_collection,
+			property_tpl,
+			properties_tpl,
+			property_edit_tpl
 	) {
 		var _template_files = [
 			"text!upfront/templates/property.html",
@@ -79,7 +88,7 @@
 		];
 
 		// Auto-assign the template contents to internal variable
-		var _template_args = _.rest(arguments, 21),
+		var _template_args = _.rest(arguments, 24),
 			_Upfront_Templates = {}
 			;
 		_(_template_files).each(function (file, idx) {
@@ -89,26 +98,6 @@
 		var InlinePanels = InlinePanelsLoader;
 
 
-		var Field = Fields.Field,
-			Field_Text =  Fields.Text,
-			Field_Button = Fields.Button,
-			Field_Email = Fields.Email,
-			Field_Textarea = Fields.Textarea,
-			Field_Color = Fields.Color,
-			Field_Multiple_Suggest = Fields.Multiple_Suggest,
-			Field_Chosen_Select = Fields.Chosen_Select,
-			Field_Typeface_Chosen_Select = Fields.Typeface_Chosen_Select,
-			Field_Typeface_Style_Chosen_Select = Fields.Typeface_Style_Chosen_Select,
-			Field_Multiple_Chosen_Select = Fields.Multiple_Chosen_Select,
-			Field_Number = Fields.Number,
-			Field_Slider = Fields.Slider,
-			Field_Select = Fields.Select,
-			Field_Radios = Fields.Radios,
-			Field_Checkboxes = Fields.Checkboxes,
-			Field_Hidden = Fields.Hidden,
-			Field_Anchor = Fields.Anchor,
-			OptionalField = Fields.Optional
-		;
 
 
 		Upfront.Events.on('data:ready', function(){
@@ -126,7 +115,7 @@
 				"click .upfront-property-remove": "remove_property"
 			},
 			render: function () {
-				var template = _.template(_Upfront_Templates.property, this.model.toJSON());
+				var template = _.template(property_tpl, this.model.toJSON());
 				this.$el.html(template);
 			},
 
@@ -144,7 +133,7 @@
 				this.render();
 			},
 			show_edit_property_partial: function () {
-				var template = _.template(_Upfront_Templates.property_edit, this.model.toJSON());
+				var template = _.template( property_edit_tpl, this.model.toJSON());
 				this.$el.html(template);
 			}
 		});
@@ -166,7 +155,7 @@
 				this.listenTo(this.model.get("properties"), 'remove', this.render);
 			},
 			render: function () {
-				var template = _.template(_Upfront_Templates.properties, this.model.toJSON()),
+				var template = _.template(properties_tpl, this.model.toJSON()),
 					properties = this
 					;
 				this.$el.html(template);
@@ -216,214 +205,18 @@
 // ----- Done bringing things back
 
 
-		var ButtonPresetModel = Backbone.Model.extend({
-			initialize: function(attributes) {
-				this.set({ presets: attributes });
-			}
-		});
-		var ButtonPresetsCollection = Backbone.Collection.extend({
-			model: ButtonPresetModel
-		});
-
-		var button_presets_collection = new ButtonPresetsCollection(Upfront.mainData.buttonPresets);
-
-		var Button_Presets_Storage = function(stored_presets) {
-			var button_presets;
-
-			var initialize = function() {
-				// When more than one weights are added at once don't send bunch of server calls
-				var save_button_presets_debounced = _.debounce(save_button_presets, 100);
-				button_presets_collection.on('add remove edit', save_button_presets_debounced);
-			};
-
-			var save_button_presets = function() {
-				var postData = {
-					action: 'upfront_update_button_presets',
-					button_presets: button_presets_collection.toJSON()
-				};
-
-				Upfront.Util.post(postData)
-					.error(function(){
-						return notifier.addMessage(l10n.button_presets_save_fail);
-					});
-			};
-
-			initialize();
-		};
-		var button_presets_storage = new Button_Presets_Storage();
-
-		var ButtonPresetModel = Backbone.Model.extend();
-		var ButtonPresetsCollection = Backbone.Collection.extend({
-			model: ButtonPresetModel
-		});
-
-		var button_presets_collection = new ButtonPresetsCollection(Upfront.mainData.buttonPresets);
 
 
-		var PostSelectorNavigation = ContentEditorPagination.extend({
-			className: 'upfront-selector-navigation',
-			handle_pagination_request: function (e, page) {
-				var me = this,
-					pagination = this.collection.pagination,
-					page = page ? page : parseInt($(e.target).attr("data-page_idx"), 10) || 0
-					;
-				this.options.pageSelection(page);
-			}
-		});
 
-		var PostSelector = Backbone.View.extend({
-			postTypeTpl: _.template($(_Upfront_Templates.popup).find('#selector-post_type-tpl').html()),
-			postListTpl: _.template($(_Upfront_Templates.popup).find('#selector-post-tpl').html()),
-			postType: 'post',
-			posts: [],
-			pagination: false,
-			selected: false,
-			deferred: false,
-			popup: false,
-			defaultOptions: {
-				// Title for the top
-				title: l10n.select_content_to_link,
-				postTypes: [
-					{name: 'post', label: l10n.posts},
-					{name: 'page', label: l10n.pages}
-				]
-			},
-			events: {
-				'click .upfront-field-select-value': 'openTypesSelector',
-				'click .upfront-field-select-option': 'selectType',
-				'click .upfront-selector-post': 'selectPost',
-				'click .use': 'postOk',
-				'click #upfront-search_action': 'search',
-				'keyup .search_container>input': 'inputSearch'
-			},
-			initialize: function () {
-				if (("post_types" in Upfront.mainData.content_settings ? Upfront.mainData.content_settings : {post_types: []}).post_types.length) {
-					this.defaultOptions.postTypes = Upfront.mainData.content_settings.post_types;
-				}
-			},
-			open: function(options){
-				var me = this,
-				bindEvents = false
-				;
 
-				options = _.extend({}, this.defaultOptions, options);
 
-				if(!$("#upfront-popup").length && this.$el.attr('id') != 'upfront-popup')
-					bindEvents = true;
 
-				this.popup = Upfront.Popup.open(function(){});
+		//var button_presets_storage = new Button_Presets_Storage();
 
-				this.deferred = $.Deferred();
 
-				this.posts = new Upfront.Collections.PostList([], {postType: 'page'});
 
-				this.posts.pagination.pageSize = 20;
-				this.pagination = new PostSelectorNavigation({
-					collection: this.posts,
-					pageSelection: function(page){
-						me.fetch({page: page});
-					}
-				});
 
-				this.setElement($('#upfront-popup'));
 
-				this.$('#upfront-popup-top').html('<h3 class="upfront-selector-title">' + options.title +'</h3>');
-				this.$('#upfront-popup-content').html(this.postTypeTpl(options));
-
-				this.fetch({});
-
-				this.$('#upfront-popup-bottom')
-					.html('<div class="use_selection_container inactive"><a href="#use" class="use">'+ Upfront.Settings.l10n.global.content.ok +'</a></div><div class="search_container clearfix"><input type="text" placeholder="' + l10n.search + '" value=""><div class="search upfront-icon upfront-icon-popup-search" id="upfront-search_action"></div></div>')
-					.append(this.pagination.$el)
-				;
-				$('#upfront-popup').addClass('upfront-postselector-popup');
-
-				this.$('.upfront-field-select-value').text(l10n.pages);
-				return this.deferred.promise();
-			},
-
-			openTypesSelector: function(){
-				var selector = this.$('.upfront-field-select');
-				if(!selector.hasClass('open')) {
-					selector.addClass('open');
-				}
-				else {
-					selector.removeClass('open');
-				}
-			},
-
-			selectType: function(e){
-				var type = $(e.target).attr('rel');
-				if(type != this.posts.postType){
-					this.$('.upfront-field-select-value').text($(e.target).text());
-					this.$('.upfront-field-select').removeClass('open');
-					this.fetch({postType: type});
-				}
-			},
-
-			selectPost: function(e){
-				var post = $(e.currentTarget);
-				this.$('.upfront-selector-post.selected').removeClass('selected');
-
-				this.selected = $(e.currentTarget).addClass('selected').attr('rel');
-				this.$('.use_selection_container').removeClass('inactive');
-			},
-
-			postOk: function(e){
-				e.preventDefault();
-				if(!this.selected)
-					return;
-
-				Upfront.Popup.close();
-				return this.deferred.resolve(this.posts.get(this.selected));
-			},
-
-			fetch: function(options){
-				var me = this,
-					loading = new Loading({
-						loading: l10n.loading,
-						done: l10n.thank_you_for_waiting,
-						fixed: false
-					})
-					;
-
-				this.$('.use_selection_container').addClass('inactive');
-				this.selected = false;
-
-				loading.render();
-				this.$('#upfront-selector-posts').append(loading.$el);
-
-				if(options.postType && options.postType != this.posts.postType){
-					options.flush = true;
-					this.posts.postType = options.postType;
-				}
-
-				var page = options.page;
-				if(!page)
-					page = 0;
-
-				this.posts.fetchPage(page, options).done(function(pages){
-					loading.done();
-					me.$('#upfront-selector-posts').find('table').remove();
-					me.$('#upfront-selector-posts').append(me.postListTpl({posts: me.posts.getPage(page)}));
-					me.pagination.render();
-				});
-			},
-
-			search: function(e){
-				e.preventDefault();
-				var s = this.$('.search_container input').val();
-				if(s){
-					this.fetch({search: s, flush: true});
-				}
-				else
-					this.$('.search_container input').focus();
-			},
-			inputSearch: function(e){
-				if(e.which == 13)
-					this.search(e);
-			}
-		});
 
 
 		return {
@@ -444,11 +237,7 @@
 				},
 				"Fonts": Fonts,
 				"Field": Fields,
-				"Sidebar": {
-					"Sidebar": Sidebar,
-					"Panel": SidebarPanel,
-					"Element": DraggableElement
-				},
+				"Sidebar": Sidebar,
 				"Topbar": {
 					"Topbar": Topbar
 				},

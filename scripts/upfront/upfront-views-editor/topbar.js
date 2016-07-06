@@ -1,5 +1,7 @@
 (function($, Backbone){
-    define([], function () {
+    define([
+        'scripts/upfront/upfront-views-editor/breakpoint'
+    ], function ( Breakpoint ) {
         return Backbone.View.extend({
             id: 'upfront-ui-topbar',
             content_views: [],
@@ -17,8 +19,8 @@
             start: function() {
                 this.content_views = [];
                 if ( Upfront.Application.get_current() === Upfront.Settings.Application.MODE.RESPONSIVE ) {
-                    this.content_views.push(new BreakpointEditButton());
-                    this.content_views.push(new BreakpointsToggler());
+                    this.content_views.push(new Breakpoint.EditButton());
+                    this.content_views.push(new Breakpoint.Toggler());
                 }
                 $('body').prepend(this.render().el);
             },

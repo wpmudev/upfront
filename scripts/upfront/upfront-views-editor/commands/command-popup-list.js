@@ -4,10 +4,11 @@
             : Upfront.mainData.l10n.global.views
         ;
     define([
-        'scripts/upfront/upfront-views-editor/commands/command'
-    ], function (Command) {
+        'scripts/upfront/upfront-views-editor/commands/command',
+        'scripts/upfront/upfront-views-editor/content-editor'
+    ], function (Command, ContentEditor) {
 
-        return ContentEditor_SidebarCommand.extend({
+        return ContentEditor.ContentEditor_SidebarCommand.extend({
             tagName: 'li',
             className: 'command-popup-list',
             $popup: {},
