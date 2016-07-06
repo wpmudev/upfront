@@ -7,8 +7,9 @@
 
     define([
         'scripts/upfront/upfront-views-editor/post-selector/post-selector-navigation',
+        'scripts/upfront/upfront-views-editor/loading',
         "text!upfront/templates/popup.html"
-    ], function( PostSelectorNavigation, popup_tpl ) {
+    ], function( PostSelectorNavigation, Loading, popup_tpl ) {
 
        return Backbone.View.extend({
             postTypeTpl: _.template($( popup_tpl ).find('#selector-post_type-tpl').html()),
