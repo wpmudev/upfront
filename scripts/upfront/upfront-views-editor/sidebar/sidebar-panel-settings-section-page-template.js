@@ -4,8 +4,9 @@
             : Upfront.mainData.l10n.global.views
         ;
     define([
-            'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section'
-    ], function (SidebarPanel_Settings_Section) {
+        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section',
+        'upfront/post-editor/upfront-post-edit'
+    ], function (SidebarPanel_Settings_Section, PostEditorBox) {
 
         return SidebarPanel_Settings_Section.extend({
             initialize: function (opts) {
