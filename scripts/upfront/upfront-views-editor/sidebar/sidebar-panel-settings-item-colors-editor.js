@@ -14,7 +14,6 @@
             initialize : function(){
                 var self = this;
                 this.template = _.template(sidebar_settings_theme_colors_tpl);
-                //this.bottomTemplate = _.template( $(_Upfront_Templates.sidebar_settings_theme_colors).find(".panel-setting-theme-colors-bottom").html() );
                 Upfront.Events.on("command:layout:save", this.on_save, this);
                 Upfront.Events.on("command:layout:save_as", this.on_save, this);
                 if (Upfront.Settings.Application.NO_SAVE) Upfront.Events.on("preview:build:start", this.on_save, this); // Also build colors on preview, only in anonymous mode
