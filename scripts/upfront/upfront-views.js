@@ -5828,6 +5828,7 @@ define([
 				}
 
 				container_view.$el.addClass('upfront-region-bg-setting-open');
+				this.render_bg_setting();
 				this.bg_setting.open().always(function(){
 					container_view.$el.removeClass('upfront-region-bg-setting-open');
 				});
@@ -5870,6 +5871,7 @@ define([
 			on_modal_close: function () {
 				var container_view = this.parent_view.get_container_view(this.model);
 				container_view.$el.find('.upfront-region-finish-edit').css('display', ''); // reset hide finish edit button
+				this.bg_setting.remove(); // removing it here, i'll be re-rendered before opening
 			},
 			on_change_breakpoint: function (breakpoint) {
 				var $delete = this.$el.find('> .upfront-entity_meta > a.upfront-entity-delete_trigger'),
