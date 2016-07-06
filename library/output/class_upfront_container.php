@@ -10,7 +10,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 
 	/**
 	 * Array of child views, it's only filled in self::get_markup foreach loop
-	 * 
+	 *
 	 * @var array
 	 */
 	protected $_child_views = array();
@@ -89,8 +89,9 @@ abstract class Upfront_Container extends Upfront_Entity {
 				$theme_styles_attr = " data-theme-styles='" . json_encode($theme_styles) . "'";
 			}
 			$slug = upfront_get_property_value('id_slug', $data);
-			if ($slug === 'ucomment' && is_single() && !comments_open())
-				return '';
+			if ($slug === 'ucomment' && is_single()) {
+				if (!(function_exists('upfront_exporter_is_running') && upfront_exporter_is_running()) && !comments_open()) return '';
+			}
 
 			$classes = $this->_get_property('class');
 			$column = upfront_get_class_num('c', $classes);

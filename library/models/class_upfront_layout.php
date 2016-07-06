@@ -78,7 +78,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$regions_added = array();
 		if ( isset($data['regions']) ) {
 			foreach ( $data['regions'] as $region ) {
-				if ( $region['scope'] != 'local' ){
+				if ( isset( $region['scope'] ) && $region['scope'] != 'local' ){
 					$applied_scope = self::_apply_scoped_region($region);
 					foreach ( $applied_scope as $applied_data ) {
 						if ( !in_array($applied_data['name'], $regions_added) ){
