@@ -4,8 +4,9 @@
             : Upfront.mainData.l10n.global.views
         ;
     define([
-        'scripts/upfront/upfront-views-editor/commands/command'
-    ], function ( Command ) {
+        'scripts/upfront/upfront-views-editor/commands/command',
+        'scripts/upfront/upfront-views-editor/css'
+    ], function ( Command, CSS ) {
 
         return Command.extend({
             tagName: 'div',

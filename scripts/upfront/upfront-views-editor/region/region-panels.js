@@ -1,8 +1,14 @@
 (function($){
 
+    var l10n = Upfront.Settings && Upfront.Settings.l10n
+            ? Upfront.Settings.l10n.global.views
+            : Upfront.mainData.l10n.global.views
+        ;
+
     define([
-        "scripts/upfront/inline-panels/inline-panels"
-    ], function ( InlinePanels ) {
+        "scripts/upfront/inline-panels/inline-panels",
+        'scripts/upfront/upfront-views-editor/region/region-panel-add'
+    ], function ( InlinePanels, RegionPanel_Add ) {
         return InlinePanels.Panels.extend({
             className: 'upfront-inline-panels upfront-region-panels upfront-ui',
             initialize: function () {

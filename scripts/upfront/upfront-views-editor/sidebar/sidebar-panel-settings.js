@@ -4,8 +4,10 @@
             : Upfront.mainData.l10n.global.views
         ;
     define([
-        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel'
-    ], function (SidebarPanel) {
+        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel',
+        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-typography',
+        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-colors'
+    ], function ( SidebarPanel, SidebarPanel_Settings_Section_Typography, SidebarPanel_Settings_Section_Colors ) {
 
         return SidebarPanel.extend({
             "className": "sidebar-panel sidebar-panel-settings",

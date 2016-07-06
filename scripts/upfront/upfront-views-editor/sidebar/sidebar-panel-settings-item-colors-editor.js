@@ -6,8 +6,9 @@
     define([
         "scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-item",
         "scripts/upfront/upfront-views-editor/theme-colors",
+        'scripts/upfront/upfront-views-editor/fields',
         "text!upfront/templates/sidebar_settings_theme_colors.html"
-    ], function ( SidebarPanel_Settings_Item, Theme_Colors, sidebar_settings_theme_colors_tpl ) {
+    ], function ( SidebarPanel_Settings_Item, Theme_Colors, Fields, sidebar_settings_theme_colors_tpl ) {
 
         return SidebarPanel_Settings_Item.extend({
             initialize : function(){
@@ -91,7 +92,7 @@
             },
             add_empty_picker : function(index){
                 var self = this,
-                    empty_picker = new Field_Color({
+                    empty_picker = new Fields.Color({
                         className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch theme_color_swatch_empty',
                         hide_label : true,
                         default_value: '#ffffff',
@@ -117,7 +118,7 @@
             },
             add_unset_color : function(index){
                 var self = this,
-                    empty_picker = new Field_Color({
+                    empty_picker = new Fields.Color({
                         className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch',
                         hide_label : true,
                         default_value: 'rgba(0, 0, 0, 0)',
@@ -153,7 +154,7 @@
                         $this = $(this),
                         color = $this.data("color"),
                         model = self.theme_colors.colors.at(index),
-                        picker = new Field_Color({
+                        picker = new Fields.Color({
                             className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch',
                             hide_label : true,
                             default_value: color,
@@ -215,7 +216,7 @@
                         shade : self.color_luminance( color.toHex(), (percentage * -1) ),
                         alpha: color.alpha
                     }),
-                    new_color_picker = new Field_Color({
+                    new_color_picker = new Fields.Color({
                         className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch theme-colors-color-picker',
                         hide_label : true,
                         default_value: color.toRgbString(),

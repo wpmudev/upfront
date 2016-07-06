@@ -4,8 +4,9 @@
             : Upfront.mainData.l10n.global.views
         ;
     define([
-        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel'
-    ], function (SidebarPanel) {
+        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel',
+        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-post-details'
+    ], function ( SidebarPanel, SidebarPanel_Settings_Section_PostDetails ) {
 
         return SidebarPanel.extend({
             "className": "sidebar-panel sidebar-panel-post-editor",

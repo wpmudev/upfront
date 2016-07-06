@@ -4,8 +4,12 @@
             : Upfront.mainData.l10n.global.views
         ;
     define([
+        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel',
+        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-layout-elements',
+        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-data-elements',
+        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-plugins-elements'
 
-    ], function () {
+    ], function ( SidebarPanel, SidebarPanel_Settings_Section_LayoutElements, SidebarPanel_Settings_Section_DataElements, SidebarPanel_Settings_Section_PluginsElements ) {
         return SidebarPanel.extend({
             "className": "sidebar-panel sidebar-panel-elements",
             initialize: function () {

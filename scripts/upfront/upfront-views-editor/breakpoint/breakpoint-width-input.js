@@ -1,7 +1,14 @@
 (function($, Backbone){
+
+    var l10n = Upfront.Settings && Upfront.Settings.l10n
+            ? Upfront.Settings.l10n.global.views
+            : Upfront.mainData.l10n.global.views
+        ;
+
     define([
-        'scripts/upfront/upfront-views-editor/breakpoint/storage'
-    ], function (storage) {
+        'scripts/upfront/upfront-views-editor/breakpoint/storage',
+        'scripts/upfront/upfront-views-editor/fields'
+    ], function ( storage, Fields) {
         return Backbone.View.extend({
             className: 'breakpoint-width-input',
             initialize: function (options) {
@@ -18,7 +25,7 @@
 
                 if (this.active_breakpoint.get('fixed')) return this;
 
-                this.input = new Upfront.Views.Editor.Field.Number({
+                this.input = new Fields.Number({
                     className: 'inline-number plaintext-settings',
                     min: 1,
                     label: l10n.viewport_width,

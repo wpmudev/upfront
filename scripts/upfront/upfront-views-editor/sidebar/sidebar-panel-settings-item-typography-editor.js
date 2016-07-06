@@ -4,8 +4,11 @@
             : Upfront.mainData.l10n.global.views
         ;
     define([
-        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-item'
-    ], function (SidebarPanel_Settings_Item) {
+        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-item',
+        'scripts/upfront/upfront-views-editor/fonts',
+        'scripts/upfront/upfront-views-editor/commands/command-open-font-manager',
+        'scripts/upfront/upfront-views-editor/fields'
+    ], function ( SidebarPanel_Settings_Item, Fonts, Command_OpenFontManager, Fields ) {
         return SidebarPanel_Settings_Item.extend({
             fields: {},
             current_element: 'h1',
@@ -170,7 +173,7 @@
                                 me.fields.color.update_input_border_color(me.colors[value]);
                             }
                         }),
-                        typeface: new Field_Typeface_Chosen_Select({
+                        typeface: new Fields.Typeface_Chosen_Select({
                             label: l10n.typeface,
                             values: Fonts.theme_fonts_collection.get_fonts_for_select(),
                             default_value: me.typefaces['h1'],
@@ -265,7 +268,7 @@
             },
             get_styles_field: function(typeface) {
                 var me = this;
-                return new Field_Typeface_Style_Chosen_Select({
+                return new Fields.Typeface_Style_Chosen_Select({
                     label: l10n.weight_style,
                     values: this.get_styles(),
                     default_value: me.get_styles_field_default_value(),

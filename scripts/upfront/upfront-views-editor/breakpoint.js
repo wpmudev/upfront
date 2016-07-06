@@ -1,7 +1,14 @@
 (function($, Backbone){
     define([
-        'scripts/upfront/upfront-views-editor/breakpoint/storage'
-    ], function (storage) {
+        'scripts/upfront/upfront-views-editor/breakpoint/model',
+        'scripts/upfront/upfront-views-editor/breakpoint/collection',
+        'scripts/upfront/upfront-views-editor/breakpoint/storage',
+        'scripts/upfront/upfront-views-editor/breakpoint/breakpoint-edit-button',
+        'scripts/upfront/upfront-views-editor/breakpoint/breakpoint-edit-panel',
+        'scripts/upfront/upfront-views-editor/breakpoint/breakpoint-width-input',
+        'scripts/upfront/upfront-views-editor/breakpoint/breakpoints-toggler'
+
+    ], function (Model, Collection, storage, EditButton, EditPanel, WidthInput, Toggler) {
 
 
 
@@ -16,7 +23,13 @@
 
 
         return {
-            storage: storage
+            Model: Model,
+            Collection: Collection,
+            storage: storage,
+            EditButton: EditButton,
+            EditPanel: EditPanel,
+            WidthInput: WidthInput,
+            Toggler: Toggler
         };
 
     });

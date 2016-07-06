@@ -1,4 +1,4 @@
-(function($, Backbone){
+(function(Backbone){
     var l10n = Upfront.Settings && Upfront.Settings.l10n
             ? Upfront.Settings.l10n.global.views
             : Upfront.mainData.l10n.global.views
@@ -222,7 +222,7 @@
 
         return {
             Command: Command,
-            Command: Command,
+            Commands: Commands,
             Command_CancelPostLayout: CommandCancelPostLayout,
             Command_Delete: CommandDelete,
             Command_EditBackgroundArea: CommandEditBackgroundArea,
@@ -265,8 +265,6 @@
             Command_PopupList: CommandPopupList
         };
 
+
     });
-
-
-
-}(jQuery, Backbone));
+})(Backbone);
