@@ -102,7 +102,7 @@
 
                 var chooseButton;
                 if (showChooseFontsButton) {
-                    chooseButton = new Field_Button({
+                    chooseButton = new Fields.Button({
                         label: l10n.select_fonts_to_use,
                         compact: true,
                         classname: 'open-theme-fonts-manager',
@@ -138,7 +138,7 @@
                 if ( !this.fields.length ) {
                     this.fields = {
                         start_font_manager: chooseButton,
-                        element: new Upfront.Views.Editor.Field.Select({
+                        element: new Fields.Select({
                             label: l10n.type_element,
                             default_value: 'h1',
                             values: [
@@ -207,7 +207,7 @@
                                 }
                             }
                         }),
-                        size: new Upfront.Views.Editor.Field.Number({
+                        size: new Fields.Number({
                             label: l10n.size,
                             min: 0,
                             max: 100,
@@ -222,7 +222,7 @@
                                 }
                             }
                         }),
-                        line_height: new Upfront.Views.Editor.Field.Number({
+                        line_height: new Fields.Number({
                             label: l10n.line_height,
                             min: 0,
                             max: 10,
