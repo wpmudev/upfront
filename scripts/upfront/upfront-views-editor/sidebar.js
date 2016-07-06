@@ -154,11 +154,6 @@
                     new Commands.Command_BreakpointDropdown(),
                     new Commands.Command_AddCustomBreakpoint()
                 ];
-                /*
-                 if ("themeExporter" in Upfront) {
-                 this.views.push(new ResponsiveCommand_BrowseLayout());
-                 }
-                 */
 
                 this.views.push(new SidebarPanel_ResponsiveSettings({"model": this.model}));
 
