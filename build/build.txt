@@ -58,6 +58,8 @@ upfront/post-editor/upfront-post-edit.js
 /private/var/www/upfront.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/mixins/upfront-icon-mixin.js
 /private/var/www/upfront.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/mixins/upfront-scroll-mixin.js
 /private/var/www/upfront.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/mixins.js
+/private/var/www/upfront.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/theme-colors/model.js
+/private/var/www/upfront.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/theme-colors/collection.js
 /private/var/www/upfront.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/theme-colors.js
 text!upfront/templates/color_picker.html
 /private/var/www/upfront.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/fields.js

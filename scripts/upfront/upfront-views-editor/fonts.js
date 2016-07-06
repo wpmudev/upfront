@@ -1,4 +1,4 @@
-(function($, Backbone) {
+(function($) {
 
     var l10n = Upfront.Settings && Upfront.Settings.l10n
             ? Upfront.Settings.l10n.global.views
@@ -873,4 +873,4 @@
             Model: Font_Model
         };
     });
-})(jQuery, Backbone);
+})(jQuery);

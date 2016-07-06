@@ -1,4 +1,4 @@
-(function(Backbone) {
+(function() {
 
     define([
         'scripts/upfront/upfront-views-editor/presets/button/collection'
@@ -31,4 +31,4 @@
         };
 
     });
-})(Backbone);
+})();

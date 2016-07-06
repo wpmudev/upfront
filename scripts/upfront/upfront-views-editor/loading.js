@@ -1,4 +1,4 @@
-(function($, Backbone){
+(function($){
 
     define([], function(){
 
@@ -80,4 +80,4 @@
 
     });
 
-}(jQuery, Backbone));
+}(jQuery));

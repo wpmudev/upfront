@@ -1,4 +1,4 @@
-(function($, Backbone){
+(function($){
 
     define([
         'scripts/upfront/upfront-views-editor/breakpoint/model'
@@ -96,4 +96,4 @@
         });
 
     });
-}(jQuery, Backbone));
+}(jQuery));

@@ -1,1 +1,1 @@
-!function(t){define(["scripts/upfront/upfront-views-editor/presets/button/model"],function(e){var n=t.Collection.extend({model:e});return new n(Upfront.mainData.buttonPresets)})}(Backbone);
+!function(){define(["scripts/upfront/upfront-views-editor/presets/button/model"],function(t){var e=Backbone.Collection.extend({model:t});return new e(Upfront.mainData.buttonPresets)})}();

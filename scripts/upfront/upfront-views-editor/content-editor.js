@@ -1,4 +1,4 @@
-(function($, Backbone){
+(function($){
     define([
         'scripts/upfront/upfront-views-editor/content-editor/content-editor-sidebar-command',
         'scripts/upfront/upfront-views-editor/content-editor/content-editor-search',
@@ -25,4 +25,4 @@
         };
 
     });
-}(jQuery, Backbone));
+}(jQuery));

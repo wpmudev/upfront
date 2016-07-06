@@ -1,4 +1,4 @@
-(function(Backbone) {
+(function() {
 
     define([
         'scripts/upfront/upfront-views-editor/presets/button/model'
@@ -11,4 +11,4 @@
         return new ButtonPresetsCollection(Upfront.mainData.buttonPresets);
 
     });
-})(Backbone);
+})();

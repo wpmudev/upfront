@@ -1,4 +1,4 @@
-(function($, Backbone){
+(function($){
 
     define([
         "text!upfront/templates/property.html",
@@ -35,4 +35,4 @@
         });
 
     });
-}(jQuery, Backbone));
+}(jQuery));

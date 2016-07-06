@@ -1,4 +1,4 @@
-(function(Backbone) {
+(function() {
 
     define([], function() {
 
@@ -9,4 +9,4 @@
         });
 
     });
-})(Backbone);
+})();

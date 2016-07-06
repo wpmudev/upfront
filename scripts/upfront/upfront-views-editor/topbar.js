@@ -1,4 +1,4 @@
-(function($, Backbone){
+(function($){
     define([
         'scripts/upfront/upfront-views-editor/breakpoint'
     ], function ( Breakpoint ) {
@@ -36,4 +36,4 @@
         });
 
     });
-}(jQuery, Backbone));
+}(jQuery));

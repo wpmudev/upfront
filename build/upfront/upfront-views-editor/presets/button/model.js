@@ -1,1 +1,1 @@
-!function(e){define([],function(){return e.Model.extend({initialize:function(e){this.set({presets:e})}})})}(Backbone);
+!function(){define([],function(){return Backbone.Model.extend({initialize:function(e){this.set({presets:e})}})})}();

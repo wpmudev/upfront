@@ -1,4 +1,4 @@
-(function($, Backbone){
+(function($){
 
     define([
         "text!upfront/templates/popup.html"
@@ -85,4 +85,4 @@
 
     });
 
-}(jQuery, Backbone));
+}(jQuery));

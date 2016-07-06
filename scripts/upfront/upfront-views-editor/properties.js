@@ -1,4 +1,4 @@
-(function($, Backbone){
+(function($){
 
     define([
         "scripts/upfront/upfront-views-editor/property",
@@ -56,4 +56,4 @@
 
 
     });
-}(jQuery, Backbone));
+}(jQuery));

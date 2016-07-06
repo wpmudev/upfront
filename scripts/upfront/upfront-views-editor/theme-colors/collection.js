@@ -1,4 +1,4 @@
-(function(Backbone){
+(function(){
 
     define([
         'scripts/upfront/upfront-views-editor/theme-colors/model'
@@ -62,4 +62,4 @@
         });
 
     });
-}(Backbone));
+}());
