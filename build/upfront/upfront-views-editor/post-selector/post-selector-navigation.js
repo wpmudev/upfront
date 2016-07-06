@@ -1,0 +1,1 @@
+!function(t){define(["scripts/upfront/upfront-views-editor/content-editor/content-editor-pagination"],function(n){return n.extend({className:"upfront-selector-navigation",handle_pagination_request:function(n,e){var e=(this.collection.pagination,e?e:parseInt(t(n.target).attr("data-page_idx"),10)||0);this.options.pageSelection(e)}})})}(jQuery);

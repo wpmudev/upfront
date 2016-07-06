@@ -1,0 +1,1 @@
+!function(t){define(["scripts/upfront/upfront-views-editor/presets/button/model"],function(e){var n=t.Collection.extend({model:e});return new n(Upfront.mainData.buttonPresets)})}(Backbone);
