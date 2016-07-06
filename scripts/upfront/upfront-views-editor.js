@@ -43,7 +43,7 @@
 	], function (
 			chosen,
 			globalEventHandlers,
-			InlinePanelsLoader,
+			InlinePanels,
 			ElementSettingsSidebar,
 			LinkPanel,
 			PostEditorBox,
@@ -90,10 +90,6 @@
 		_(_template_files).each(function (file, idx) {
 			if (file.match(/text!/)) _Upfront_Templates[file.replace(/text!upfront\/templates\//, '').replace(/\.html/, '')] = _template_args[idx];
 		});
-
-		var InlinePanels = InlinePanelsLoader;
-
-
 
 
 		Upfront.Events.on('data:ready', function(){
