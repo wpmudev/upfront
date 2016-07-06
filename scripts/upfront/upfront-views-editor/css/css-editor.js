@@ -4,8 +4,11 @@
             : Upfront.mainData.l10n.global.views
         ;
     define([
-        "text!upfront/templates/popup.html"
-    ], function (popup_tpl) {
+        "text!upfront/templates/popup.html",
+        'scripts/upfront/upfront-views-editor/fields',
+        'scripts/upfront/upfront-views-editor/fonts',
+        'scripts/upfront/upfront-views-editor/notifier'
+    ], function (popup_tpl, Fields, Fonts, notifier) {
         return Backbone.View.extend({
             className: 'upfront-ui',
             id: 'upfront-csseditor',
@@ -321,7 +324,7 @@
             },
             prepareSpectrum: function(){
                 var me = this,
-                    color_picker = new Field_Color({
+                    color_picker = new Fields.Color({
                         default_value: '#ffffff',
                         showAlpha: true,
                         showPalette: true,

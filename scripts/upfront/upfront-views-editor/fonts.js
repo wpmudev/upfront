@@ -1,4 +1,4 @@
-(function($) {
+(function($, Backbone) {
 
     var l10n = Upfront.Settings && Upfront.Settings.l10n
             ? Upfront.Settings.l10n.global.views
@@ -6,8 +6,9 @@
         ;
 
     define([
-        "text!upfront/templates/popup.html"
-    ], function(popup_tpl) {
+        "text!upfront/templates/popup.html",
+        'scripts/upfront/upfront-views-editor/fields'
+    ], function(popup_tpl, Fields) {
 
 
         var Variant_View = Backbone.View.extend({
@@ -652,7 +653,7 @@
                 });
                 add_font_panel.find('.loading-fonts').remove();
                 // Select font
-                this.font_family_select = new Field_Chosen_Select({
+                this.font_family_select = new Fields.Chosen_Select({
                     label: l10n.typeface,
                     values: typefaces_list,
                     placeholder: l10n.choose_font,
@@ -715,21 +716,21 @@
             initialize: function() {
                 var me = this;
                 this.fields = [
-                    new Field_Typeface_Chosen_Select({
+                    new Fields.Typeface_Chosen_Select({
                         label: '',
                         compact: true,
                         values: theme_fonts_collection.get_fonts_for_select(),
                         additional_classes: 'choose-typeface',
                         select_width: '230px'
                     }),
-                    new Field_Typeface_Style_Chosen_Select({
+                    new Fields.Typeface_Style_Chosen_Select({
                         label: '',
                         compact: true,
                         values: [],
                         additional_classes: 'choose-variant',
                         select_width: '120px'
                     }),
-                    new Field_Button({
+                    new Fields.Button({
                         label: l10n.insert_font,
                         compact: true,
                         on_click: function(){
@@ -872,4 +873,4 @@
             Model: Font_Model
         };
     });
-})(jQuery);
+})(jQuery, Backbone);
