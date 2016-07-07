@@ -2,6 +2,10 @@
 
 abstract class Upfront_Presets_Server extends Upfront_Server {
 
+	protected $isPostPartServer = false;
+	protected $isThisPostServer = false;
+	protected $isCommentServer = false;
+
 	protected function __construct() {
 		parent::__construct();
 
@@ -36,6 +40,10 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			return;
 		}
 
+		if (!Upfront_Permissions::current(Upfront_Permissions::DELETE_ELEMENT_PRESETS)) {
+			$this->_reject();
+		}
+
 		$properties = stripslashes_deep($_POST['data']);
 		do_action('upfront_delete_' . $this->elementName . '_preset', $properties, $this->elementName);
 
@@ -60,6 +68,10 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	public function reset() {
 		if (!isset($_POST['data'])) {
 			return;
+		}
+
+		if (!Upfront_Permissions::current(Upfront_Permissions::DELETE_ELEMENT_PRESETS)) {
+			$this->_reject();
 		}
 
 		$properties = stripslashes_deep($_POST['data']);
@@ -150,12 +162,17 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		if (is_array($presets) === false) {
 			$presets = array();
 		}
-		
+
 		return $presets;
 	}
 
 	protected function update_presets($presets = array()) {
-		update_option($this->db_key, json_encode($presets));
+		// Do not need to update this in the db, if it is coming from exporter
+		$isbuilder = isset($_POST['isbuilder']) ? stripslashes($_POST['isbuilder']) : false;
+
+		if($isbuilder != 'true') {
+			update_option($this->db_key, json_encode($presets));
+		}
 	}
 
 	public function save() {
@@ -163,19 +180,24 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			return;
 		}
 
+		if (!Upfront_Permissions::current(Upfront_Permissions::MODIFY_ELEMENT_PRESETS)) {
+			$this->_reject();
+		}
+
 		$properties = $_POST['data'];
 
-		/* Here any ufc(s) commented and converted to colors in the front end are cleaned up in order to store them as simply a ufc */
-		$pattern = '/\/\*#ufc([^\*]*)\*\/([^\s;]*)/i';
-		$properties['preset_style'] = preg_replace($pattern, '#ufc$1 ', $properties['preset_style']);
-		
+		//Check if preset_style is defined
+		if(isset($properties['preset_style'])) {
+			$properties['preset_style'] = Upfront_UFC::utils()->replace_commented_style_with_variable( $properties['preset_style'] );
+		}
+
 		do_action('upfront_save_' . $this->elementName . '_preset', $properties, $this->elementName);
 
 		if (!has_action('upfront_save_' . $this->elementName . '_preset')) {
 			$presets = $this->get_presets();
 
 			$result = array();
-			
+
 			foreach ($presets as $preset) {
 				if ($preset['id'] === $properties['id']) {
 					continue;
@@ -184,7 +206,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				$result[] = $preset;
 			}
 
-			
+
 			$result[] = $properties;
 
 
@@ -205,6 +227,8 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		$styles = '';
 		foreach ($presets as $preset) {
+			if (!file_exists($this->get_style_template_path())) continue; // Don't bother if we don't have the styles
+
 			if (isset($preset['breakpoint']) && isset($preset['breakpoint']['tablet'])) {
 				$preset['tablet'] = array();
 				foreach($preset['breakpoint']['tablet'] as $name=>$property) {
@@ -230,7 +254,19 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				$preset['preset_style'] = str_replace("\'", "'", $preset['preset_style']);
 				$preset['preset_style'] = str_replace("\'", "'", $preset['preset_style']);
 
-				$preset['preset_style'] = str_replace('#page', 'div#page .upfront-output-region-container .upfront-output-module', $preset['preset_style']);
+				if ($this->isPostPartServer) {
+					$preset['preset_style'] = str_replace('#page', 'div#page .upfront-output-region-container', $preset['preset_style']);
+				} else {
+					$preset['preset_style'] = str_replace('#page', 'div#page .upfront-output-region-container .upfront-output-module', $preset['preset_style']);
+				}
+				
+				if($this->isThisPostServer) {
+					$preset['preset_style'] = str_replace('.default', '.default.upfront-this_post', $preset['preset_style']);
+				}
+				
+				if($this->isCommentServer) {
+					$preset['preset_style'] = str_replace('.default', '.default.upfront-comment', $preset['preset_style']);
+				}
 			}
 
 			$args = array('properties' => $preset);
@@ -245,6 +281,13 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		return $styles;
 	}
 
+	/**
+	 * Get all theme presets presets data
+	 *
+	 * Theme presets are distributed with the theme
+	 *
+	 * @return mixed Array of preset hashes, or (bool)false on failure
+	 */
 	public function get_theme_presets() {
 		$settings = Upfront_ChildTheme::get_settings();
 		//Get presets distributed with the theme
@@ -256,6 +299,11 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		return $theme_presets;
 	}
 
+	/**
+	 * Gets a list of theme preset IDs
+	 *
+	 * @return mixed Array of preset IDs or (bool)false on failure
+	 */
 	public function get_theme_presets_names() {
 
 		//Get presets distributed with the theme
@@ -272,10 +320,17 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		return $theme_preset_names;
 	}
 
+	/**
+	 * Gets individual theme preset data by its ID
+	 *
+	 * @param string $preset Preset ID to use
+	 *
+	 * @return mixed A preset data map, or (bool)false on failure
+	 */
 	public function get_theme_preset_by_id($preset) {
 		$theme_presets = $this->get_theme_presets();
 
-		if(empty($theme_preset)) {
+		if(empty($theme_presets)) {
 			return false;
 		}
 
@@ -288,6 +343,13 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		return false;
 	}
 
+	/**
+	 * Returns individual preset data by its ID
+	 *
+	 * @param string $preset Preset ID to use
+	 *
+	 * @return mixed A preset data map, or (bool)false on failure
+	 */
 	public function get_preset_by_id($preset_id) {
 		$presets = $this->get_presets();
 
@@ -305,6 +367,16 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		return $presets;
 	}
 
+	public function properties_columns($array, $column) {
+        $result = array();
+        foreach ($array as $item) {
+            if (array_key_exists($column, $item)) {
+                $result[] = $item[$column];
+			}
+		}
+        return $result;
+	}
+
 	public function get_presets_javascript_server() {
 		$presets = get_option('upfront_' . get_stylesheet() . '_' . $this->elementName . '_presets');
 		$presets = apply_filters(
@@ -314,7 +386,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				'json' => false,
 				'as_array' => true
 			)
-    );
+		);
 
 		if(!is_array($presets)) {
 			$presets = json_decode($presets, true);
@@ -350,6 +422,87 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		if(empty($updatedPresets)) $updatedPresets = json_encode(array());
 
 		return $updatedPresets;
+	}
+	
+	public function get_typography_values_by_tag($tag) {
+		$tag_typography = array();
+		
+		//Get breakpoints typography
+		$grid = Upfront_Grid::get_grid();
+		$breakpoint = $grid->get_default_breakpoint();
+		$typography = $breakpoint->get_typography();
+		
+		$theme_typography_array = array();
+		
+		if(!is_null(Upfront_ChildTheme::get_instance())) {
+			//We load this in case typography is empty or specific tag is empty
+			$layout_properties = Upfront_ChildTheme::get_instance()->getLayoutProperties();
+			$theme_typography = upfront_get_property_value('typography', array('properties'=>$layout_properties));
+
+			//Make sure we use array not an object recursively
+			foreach($theme_typography as $key => $object) {
+				$theme_typography_array[$key] = get_object_vars($object);
+			}
+		}
+
+		//Set child theme typography if breakpoint typography is empty
+		if(empty($typography)) {
+			$typography = $theme_typography_array;
+		}
+		
+		if(isset($typography[$tag]) && !empty($typography[$tag])) {
+			//Breakpoint typography exist
+			$tag_typography = $typography[$tag];
+			
+			//If tag is A we should inherit size and line-height from P
+			if($tag == "a") {
+				if(isset($typography['p']['size'])) {
+					$tag_typography['size'] = $typography['p']['size'];
+				}
+				if(isset($typography['p']['line_height'])) {
+					$tag_typography['line_height'] = $typography['p']['line_height'];
+				}
+			}
+		} else {
+			//Child theme typography
+			if(isset($theme_typography_array[$tag]) && !empty($theme_typography_array[$tag])) {
+				$tag_typography = $theme_typography_array[$tag];
+			} else {
+				$tag_typography = !empty($tag_typography['p']) ? $tag_typography['p'] : false;
+			}
+		}
+
+		return $tag_typography;
+	}
+	
+	public function get_typography_defaults_array($defaults, $part) {
+		//Make sure we use array
+		if (is_object($defaults)) {
+			$defaults = get_object_vars($defaults);
+		}
+		
+		if (!is_array($defaults)) $defaults = array();
+		$defaults = wp_parse_args($defaults, array(
+			'font_face' => '',
+			'weight' => '',
+			'style' => '',
+			'size' => '',
+			'line_height' => '',
+			'color' => '',
+		));
+
+		$typography = array(
+			'static-'.$part.'-use-typography' => '',
+			'static-'.$part.'-font-family' => $defaults['font_face'],
+			'static-'.$part.'-weight' => $defaults['weight'],
+			'static-'.$part.'-fontstyle' => $defaults['weight'].' '.$defaults['style'],
+			'static-'.$part.'-style' => $defaults['style'],
+			'static-'.$part.'-font-size' => $defaults['size'],
+			'static-'.$part.'-line-height' => $defaults['line_height'],
+ 			'static-'.$part.'-font-color' => $defaults['color'],
+		);
+
+		return $typography;
 	}
 
 	public static function add_l10n_strings ($strings) {

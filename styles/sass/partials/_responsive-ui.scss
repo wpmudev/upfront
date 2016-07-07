@@ -301,3 +301,30 @@ li#new-custom-breakpoint {
   background-position: -1441px -411px;
   margin-right: 5px;
 }
+/* Edit region responsive */
+.upfront-region-edit-trigger-small {
+  background: #2D3D4D;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 2px;
+  line-height: 14px;
+  font-size:12px;
+  height: 25px;
+}
+.upfront-region-edit-trigger-small .upfront-icon-region-edit:before {
+    background-position: -346px -351px;
+    width: 13px;
+    height: 13px;
+    margin-right: 5px;
+}
+.upfront-region-edit-trigger-small.visible {
+  right: -120px !important;
+  visibility: visible;
+  opacity: .85;
+}
+.upfront-region-edit-trigger-small.visible:hover {
+  opacity: 1;
+}
+.mobile-breakpoint .upfront-region-edit-trigger-small.visible {
+  right: -105px !important;
+}

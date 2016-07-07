@@ -51,11 +51,11 @@ abstract class Upfront_Debug {
 	}
 
 	public function is_dev () {
-		return !empty($_GET['dev']);
+		return !empty($_GET['dev']) && $this->is_allowed_to_debug();
 	}
 
 	public function is_debug () {
-		return !empty($_GET['debug']);
+		return !empty($_GET['debug']) && $this->is_allowed_to_debug();
 	}
 
 	public function is_normal () {
@@ -80,6 +80,10 @@ abstract class Upfront_Debug {
 		if (defined('UPFRONT_DEBUG_LEVELS')) return true; // Already set up
 		$levels = $this->is_dev() ? self::ALL : 'none';
 		define('UPFRONT_DEBUG_LEVELS', $levels, true);
+	}
+
+	public function is_allowed_to_debug(){
+		return (bool) Upfront_Permissions::current(Upfront_Permissions::SEE_USE_DEBUG);
 	}
 }
 

@@ -15,7 +15,7 @@ describe('Elements', function () {
 			global.jQuery = function () {
 				return {
 					append: function () {}
-				}
+				};
 			};
 
 			global.window = {};
@@ -44,7 +44,7 @@ describe('Elements', function () {
 			 */
 			global.Upfront = {
 				Settings: {
-					l10n: { 
+					l10n: {
 						maps_element: {
 							css: {label: '', info: ''},
 							connectivity_warning: 'test warning',
@@ -81,7 +81,8 @@ describe('Elements', function () {
 						add_object: function (type, hash) {
 							Testable = hash;
 						}
-					}
+					},
+					user_can_modify_layout: function () { return false; }
 				},
 				Util: {
 					get_unique_id: function (a) { return a; }
@@ -97,16 +98,16 @@ describe('Elements', function () {
 				}
 			};
 
-			Upfront.Models.ObjectModel.extend = 
-				Upfront.Views.ObjectView.extend = 
-				Upfront.Views.Editor.Sidebar.Element.extend = 
+			Upfront.Models.ObjectModel.extend =
+				Upfront.Views.ObjectView.extend =
+				Upfront.Views.Editor.Sidebar.Element.extend =
 			extend;
 
 			/**
 			 * Mock define implementation.
 			 */
 			global.define = function () {
-				var args = Array.prototype.slice.call(arguments)
+				var args = Array.prototype.slice.call(arguments);
 					cback = args.pop()
 				;
 				cback.apply(this, [{}, {}, {extend: extend}, {extend: extend}, {}]);
@@ -120,7 +121,7 @@ describe('Elements', function () {
 		describe('Element', function () {
 
 			it('should define an element', function (done) {
-				assert(Testable.Element)
+				assert(Testable.Element);
 				done();
 			});
 
@@ -128,13 +129,13 @@ describe('Elements', function () {
 				var element = new Testable.Element();
 				assert.deepEqual(50, element.priority);
 				done();
-			})
+			});
 		});
 
 		describe('Model', function () {
 
 			it('should define a model', function (done) {
-				assert(Testable.Model)
+				assert(Testable.Model);
 				done();
 			});
 
@@ -142,21 +143,21 @@ describe('Elements', function () {
 				var properties = {},
 					model = new Testable.Model()
 				;
-				model.init_properties = function (props) { properties = props; }
+				model.init_properties = function (props) { properties = props; };
 				model.init();
-				
+
 				assert.deepEqual('MapModel', properties.type);
 				assert.deepEqual('test', properties.id_slug);
 				assert.deepEqual('test-object', properties.element_id);
 				done();
-			})
+			});
 
 		});
 
 		describe('View', function () {
 
 			it('should define a view', function (done) {
-				assert(Testable.View)
+				assert(Testable.View);
 				done();
 			});
 
@@ -167,7 +168,7 @@ describe('Elements', function () {
 
 				view.listenTo = function () {};
 				view.init();
-				
+
 				view.update_properties = function () {};
 				view.model = {
 					get_breakpoint_property_value: function () {},
@@ -181,6 +182,7 @@ describe('Elements', function () {
 					off: function (handler, cback) { return this; },
 					html: function (html) { values.html = html; },
 					append: function () {},
+					empty: function () {},
 					end: function () { return this; },
 					hide: function () {}
 				};
@@ -222,7 +224,7 @@ describe('Elements', function () {
 		describe('Settings', function () {
 
 			it('should define settings', function (done) {
-				assert(Testable.Settings)
+				assert(Testable.Settings);
 				done();
 			});
 

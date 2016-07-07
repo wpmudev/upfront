@@ -121,7 +121,10 @@ define([
 			if (this._geocoding_in_progress) return false;
 			this._geocoding_in_progress = true;
 			geocoder.geocode({address: location}, function (results, status) {
-				if (status != google.maps.GeocoderStatus.OK) return false;
+				if (status != google.maps.GeocoderStatus.OK) {
+					me._geocoding_in_progress = false;
+					return false;
+				}
 				var pos = results[0].geometry.location;
 				var markers = me.model.get_property_value_by_name("markers") || [];
 				markers.push({lat:pos.lat(), lng:pos.lng()});
@@ -228,7 +231,7 @@ define([
 			var me = this,
 				$location = this.$el.find("#upfront_map-location_overlay-wrapper")
 			;
-			if (!$location.length) {
+			if (!$location.length && Upfront.Application.user_can_modify_layout()) {
 				this.$el.append(
 					'<div id="upfront_map-location_overlay-wrapper" class="upfront-initial-overlay-wrapper">' +
 						'<div id="upfront_map-location_overlay" class="uf_el_map_initial-overlay upfront-initial-overlay-wrapper">' +
@@ -241,7 +244,10 @@ define([
 					'</div>'
 				);
 				$location = this.$el.find("#upfront_map-location_overlay-wrapper");
+			} else if (!Upfront.Application.user_can_modify_layout()) {
+				this.$el.empty();
 			}
+
 			$location
 				.find("#upfront_map-location_overlay-use_location").off("click").on("click", function () {
 					var $address = me.$el.find("#upfront_map-location_overlay-wrapper #upfront_map-location_overlay-location"),
@@ -302,7 +308,7 @@ define([
 				});
 			} else {
 				// No geolocation, no link
-				$current.remove();
+				if (($current || {}).remove) $current.remove();
 			}
 
 			this.$el.find(".upfront-entity_meta").hide();

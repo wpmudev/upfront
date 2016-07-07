@@ -10,6 +10,8 @@ class Upfront_Output {
 	public static $current_object;
 	public static $current_module;
 	public static $grid;
+	public static $layout_post_id;
+	public static $template_post_id;
 
 	public function __construct ($layout, $post) {
 		$this->_layout = $layout;
@@ -23,16 +25,51 @@ class Upfront_Output {
 	}
 
 	public static function get_layout ($layout_ids, $apply = false) {
-		$layout = Upfront_Layout::from_entity_ids($layout_ids);
-
-		if ($layout->is_empty()) {
-			$layout = Upfront_Layout::create_layout($layout_ids);
+		$post_id = self::get_post_id();
+		$is_dev = Upfront_Debug::get_debugger()->is_dev();
+		$load_from_options = true;
+		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
+		
+		// if page was still draft and viewed on FE, we should show 404 layout 
+		if ( !$post_id && isset($layout_ids['specificity']) && preg_match('/single-page/i', $layout_ids['specificity']) ) {
+			unset($layout_ids['specificity']);
+			$layout_ids['item'] = 'single-404_page';
 		}
-
-		$post_id = is_singular() ? get_the_ID() : '';
+		// only for actual Pages
+		if ( $post_id && is_page() ) {
+			// since this is only for page then safe to use layout slug like below
+			$layout_slug = strtolower($store_key . '-single-page-' . $post_id);
+			$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $is_dev);
+			
+			if ( $layout_post_id ) {
+				self::$layout_post_id = $layout_post_id;
+				$page_layout = Upfront_Server_PageLayout::get_instance()->get_layout($layout_post_id, $is_dev);
+				if ( $page_layout ) {
+					$layout = Upfront_Layout::from_cpt($page_layout, Upfront_Layout::STORAGE_KEY);
+					$load_from_options = false;
+				}
+			} else {
+				// load from page template
+				self::$layout_post_id = false;
+				$page_template  = self::get_page_template($layout_ids);
+				if ( $page_template ) {
+					$layout = Upfront_Layout::from_cpt($page_template, Upfront_Layout::STORAGE_KEY);
+					$load_from_options = false;
+				}
+			}
+		}
+		
+		// load layouts not yet saved on custom post type
+		if ( $load_from_options ) {
+			$layout = Upfront_Layout::from_entity_ids($layout_ids);
+			if ($layout->is_empty()) {
+				$layout = Upfront_Layout::create_layout($layout_ids);
+			}
+		}
+		
 		$post = get_post($post_id);
 		self::$_instance = new self($layout, $post);
-
+		
 		// Add actions
 		add_action('wp_enqueue_scripts', array(self::$_instance, 'add_styles'));
 		add_action('wp_enqueue_scripts', array(self::$_instance, 'add_scripts'), 2);
@@ -41,6 +78,40 @@ class Upfront_Output {
 		if ( $apply )
 			return self::$_instance->apply_layout();
 		return self::$_instance;
+	}
+	
+	public static function get_page_template ($layout_ids) {
+		$post_id = self::get_post_id();
+		$is_dev = Upfront_Debug::get_debugger()->is_dev();
+		$page_template = false;
+		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
+		
+		if ( $post_id ) {
+			$template_meta_name = ( $is_dev ) 
+				? strtolower($store_key . '-template_dev_post_id')
+				: strtolower($store_key . '-template_post_id')
+			;
+			$template_post_id = get_post_meta($post_id, $template_meta_name, true);
+			
+		} else {
+			// if special archive pages like homepage, use slug to get template post id
+			// below will not be called anymore as already trapped above on get_layout()
+			$layout_id = '';
+			if ( isset($layout_ids['specificity']) ) {
+				$layout_id = $layout_ids['specificity'];
+			} else if ( isset($layout_ids['item']) ) {
+				$layout_id = $layout_ids['item'];
+			}
+			$key = $store_key . '-' . $layout_id;
+			$template_post_id = Upfront_Server_PageTemplate::get_instance()->get_template_id_by_slug($key, $is_dev);
+		}
+		
+		if ( $template_post_id ) {
+			self::$template_post_id = $template_post_id;
+			$page_template = Upfront_Server_PageTemplate::get_instance()->get_template($template_post_id, $is_dev);
+		}
+		
+		return $page_template;
 	}
 
 	public static function get_layout_data () {
@@ -118,10 +189,16 @@ class Upfront_Output {
 				$region_markups_after[$container] .= $markup;
 			}
 			else if ( $region_sub == 'left' ){
-				$region_markups[$container] = $markup . $region_markups[$container];
+				if( is_rtl() )
+					$region_markups[$container] .= $markup;
+				else
+					$region_markups[$container] =  $markup . $region_markups[$container];
 			}
 			else{
-				$region_markups[$container] .= $markup;
+				if( is_rtl() )
+					$region_markups[$container] =  $markup . $region_markups[$container];
+				else
+					$region_markups[$container] .= $markup;
 			}
 		}
 		foreach ($container_views as $container => $container_view) {
@@ -139,7 +216,9 @@ class Upfront_Output {
 	}
 
 	function add_styles () {
-		wp_enqueue_style('upfront-main', upfront_ajax_url('upfront_load_styles'), array(), Upfront_ChildTheme::get_version(), 'all');
+		$load_style_url = upfront_ajax_url('upfront_load_styles') . '&layout_post_id=' . self::$layout_post_id . '&template_post_id=' . self::$template_post_id;
+		wp_enqueue_style('upfront-main', $load_style_url, array(), Upfront_ChildTheme::get_version(), 'all');
+		// wp_enqueue_style('upfront-main', upfront_ajax_url('upfront_load_styles'), array(), Upfront_ChildTheme::get_version(), 'all');
 
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
 
@@ -174,1113 +253,18 @@ class Upfront_Output {
 
 
 
-abstract class Upfront_Entity {
+require_once('output/class_upfront_entity.php');
+require_once('output/class_upfront_container.php');
+require_once('output/class_upfront_layout_view.php');
+require_once('output/class_upfront_region_container.php');
+require_once('output/class_upfront_region_subcontainer.php');
+require_once('output/class_upfront_region.php');
+require_once('output/class_upfront_wrapper.php');
+require_once('output/class_upfront_module_group.php');
+require_once('output/class_upfront_module.php');
+require_once('output/class_upfront_object_group.php');
+require_once('output/class_upfront_object.php');
 
-    protected static $_video_index = 0;
-
-	protected $_data;
-	protected $_tag = 'div';
-	protected $_debugger;
-
-	public function __construct ($data) {
-		$this->_data = $data;
-		$this->_debugger = Upfront_Debug::get_debugger();
-	}
-
-	abstract public function get_markup ();
-
-
-	public function get_style_for ($breakpoint, $context) {
-
-		return '';
-
-		$post = $pre = '';
-		$post = $this->_debugger->is_active(Upfront_Debug::STYLE)
-			? "/* General styles for {$this->get_name()} */"
-			: ""
-		;
-		return trim("{$pre} .{$context} .{$this->get_css_class()} {" .
-			'width: 100%;' .
-		"} {$post}") . "\n";
-	}
-
-	public function get_css_class () {
-		$type = strtolower(str_replace("_", "-", $this->_type));
-		$classes = array(
-			"upfront-output-" . $type
-		);
-		$name = $this->get_name();
-		if ( $name != 'anonymous' )
-			$classes[] = "upfront-" . $type . "-" . strtolower(str_replace(" ", "-", $name));
-		$entity_type = $this->get_entity_type();
-		if ( $entity_type )
-			$classes[] = "upfront-" . $type . "-" . $entity_type;
-
-		return join(' ', $classes);
-	}
-
-	public function get_css_inline () {
-		return '';
-	}
-
-	public function get_attr () {
-		return '';
-	}
-
-	public function get_id () {
-		return $this->_get_property('element_id');
-	}
-
-	protected function _get_property ($prop) {
-		return upfront_get_property_value($prop, $this->_data);
-	}
-
-	/**
-	 * Retrieves translated property
-	 *
-	 * @param $prop
-	 * @return string|void
-	 */
-	protected function _get_property_t($prop) {
-		return __($this->_get_property( $prop ), "upfront");
-	}
-
-	protected function _get_breakpoint_property ($prop, $id) {
-		$breakpoint = $this->_get_property('breakpoint');
-		if ( !empty($breakpoint[$id]) && isset($breakpoint[$id][$prop]) )
-			return $breakpoint[$id][$prop];
-		return $this->_get_property($prop);
-	}
-
-	public function get_name () {
-		if (!empty($this->_data['name'])) return $this->_data['name'];
-		return 'anonymous';
-	}
-
-	public function get_entity_type () {
-		if (!empty($this->_data['type'])) return $this->_data['type'];
-		return '';
-	}
-
-	public function get_container () {
-		if (!empty($this->_data['container'])) return $this->_data['container'];
-		return $this->get_name();
-	}
-
-	public function get_class_num ($classname) {
-		$classes = $this->_get_property('class');
-		return upfront_get_class_num($classname, $classes);
-	}
-
-	public function get_background_type ($breakpoint_id = '') {
-		$type = $this->_get_breakpoint_property('background_type', $breakpoint_id);
-		if ( ! $type ){
-			$background_color = $this->_get_breakpoint_property('background_color', $breakpoint_id);
-			$background_image = $this->_get_breakpoint_property('background_image', $breakpoint_id);
-			if ( $background_image ) $type = 'image';
-			else if ( $background_color ) $type = 'color';
-		}
-		return $type;
-	}
-
-	protected function _is_background_overlay ($breakpoint_id = '') {
-		$type = $this->get_background_type($breakpoint_id);
-		$background_style = $this->_get_breakpoint_property('background_style', $breakpoint_id);
-		if ( !$type || 'color' == $type ) return false;
-		if ( 'parallax' != $background_style && ( 'image' == $type || 'featured' == $type ) ) return false;
-		return true;
-	}
-
-	protected function _get_background_image_css ($background_image, $lazy_loading = false, $breakpoint_id = '') {
-		$css = array();
-		$background_repeat = $this->_get_breakpoint_property('background_repeat', $breakpoint_id);
-		$background_fill = $this->_get_breakpoint_property('background_fill', $breakpoint_id);
-		$background_position = $this->_get_breakpoint_property('background_position', $breakpoint_id);
-		$background_style = $this->_get_breakpoint_property('background_style', $breakpoint_id);
-		$background_image = preg_replace('/^https?:/', '', $background_image);
-		if (!$lazy_loading) {
-			$css[] = 'background-image: url("' . $background_image . '")';
-		}
-		if ($background_style == 'full') {
-			$css[] = 'background-size: 100% auto';
-			$css[] = 'background-repeat: no-repeat';
-			$css[] = 'background-position: 50% 50%';
-		} else {
-			$css[] = 'background-size: auto auto';
-			$css[] = 'background-repeat: ' . $background_repeat;
-			$css[] = 'background-position: ' . $background_position;
-		}
-		return !empty($css) ? implode('; ', $css) : '';
-	}
-
-	protected function _get_background_css ($is_layout = false, $lazy_loading = false, $breakpoint_id = '') {
-		$type = $this->get_background_type($breakpoint_id);
-		$default_type = $this->get_background_type();
-		$css = array();
-		$background_color = $this->_get_breakpoint_property('background_color', $breakpoint_id);
-		if ( !$type || in_array($type, array('image', 'color', 'featured')) ){
-			if ($background_color) {
-				$css[] = 'background-color: ' . $background_color;
-			}
-			if (!$this->_is_background_overlay($breakpoint_id)) {
-				if ('featured' == $type && has_post_thumbnail(Upfront_Output::get_post_id())) {
-					$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'single-post-thumbnail' );
-					$background_image = $featured_image[0];
-				} else {
-					$background_image = $this->_get_breakpoint_property('background_image', $breakpoint_id);
-				}
-				if ('image' == $type || 'featured' == $type && $background_image) {
-					$css[] = $this->_get_background_image_css($background_image, $lazy_loading, $breakpoint_id);
-				}
-			}
-		} else if ('video' == $type) {
-			$background_video_style = $this->_get_breakpoint_property('background_video_style', $breakpoint_id);
-			if ($background_video_style == 'inside' && $background_color) {
-				$css[] = 'background-color: ' . $background_color;
-			}
-		}
-		if (!empty($breakpoint_id) && ($default_type == 'image' || $default_type == 'featured')) {
-			$css[] = 'background-image: none';
-		}
-
-		return !empty($css) ? implode('; ', $css) . '; ' : '';
-	}
-
-	protected function _get_background_image_attr ($background_image, $background_image_ratio, $lazy_loading = false, $breakpoint_id = '') {
-		$attr = '';
-		$breakpoint = empty($breakpoint_id) ? 'desktop' : $breakpoint_id;
-		$background_style = $this->_get_breakpoint_property('background_style', $breakpoint_id);
-		$background_image = preg_replace('/^https?:/', '', $background_image);
-		if ($lazy_loading) {
-			$attr .= " data-src-{$breakpoint}='{$background_image}'";
-		}
-		if ('full' == $background_style || 'parallax' == $background_style) {
-			$attr .= " data-bg-image-ratio-{$breakpoint}='{$background_image_ratio}'";
-		}
-		return $attr;
-	}
-
-	protected function _get_background_attr ($is_layout = false, $lazy_loading = false, $breakpoint_id = '') {
-		$type = $this->get_background_type($breakpoint_id);
-		$attr = '';
-		$breakpoint = empty($breakpoint_id) ? 'desktop' : $breakpoint_id;
-		$is_overlay = $this->_is_background_overlay($breakpoint_id);
-		if (!$type || $type == 'image' || $type == 'featured') {
-			if ($type == 'featured' && has_post_thumbnail(Upfront_Output::get_post_id())) {
-				$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( Upfront_Output::get_post_id() ), 'single-post-thumbnail' );
-				$background_image = $featured_image[0];
-				$background_image_ratio = round($featured_image[2]/$featured_image[1], 2);
-			} else {
-				$background_image = $this->_get_breakpoint_property('background_image', $breakpoint_id);
-				$background_image_ratio = $this->_get_breakpoint_property('background_image_ratio', $breakpoint_id);
-			}
-			if ($background_image) {
-				if (!$is_overlay) {
-					$attr .= $this->_get_background_image_attr($background_image, $background_image_ratio, $lazy_loading, $breakpoint_id);
-				}
-				if (!$type) {
-					$type = 'image';
-				}
-			}
-		}
-		if (!$type) $type = 'color';
-		$attr .= " data-bg-type-{$breakpoint}='{$type}'";
-		if ($is_overlay){
-			$attr .= " data-bg-overlay-{$breakpoint}='1'";
-		}
-
-		return $attr;
-	}
-
-	protected function _get_background_overlay ($breakpoint_id = '') {
-		if (!$this->_is_background_overlay($breakpoint_id)) return '';
-		$type = $this->get_background_type($breakpoint_id);
-		$attr = '';
-		$markup = '';
-		$classes = "upfront-output-bg-overlay upfront-output-bg-{$type}";
-		$classes .= ( $breakpoint_id ) ? " upfront-output-bg-{$breakpoint_id}" : "upfront-output-bg-desktop";
-		if ('image' == $type || 'featured' == $type) {
-			if ($type == 'featured' && has_post_thumbnail(Upfront_Output::get_post_id())) {
-				$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( Upfront_Output::get_post_id() ), 'single-post-thumbnail' );
-				$background_image = $featured_image[0];
-				$background_image_ratio = round($featured_image[2]/$featured_image[1], 2);
-			} else {
-				$background_image = $this->_get_breakpoint_property('background_image', $breakpoint_id);
-				$background_image_ratio = $this->_get_breakpoint_property('background_image_ratio', $breakpoint_id);
-			}
-			$background_style = $this->_get_breakpoint_property('background_style', $breakpoint_id);
-			$image_css = $this->_get_background_image_css($background_image, true, $breakpoint_id);
-			$image_attr = $this->_get_background_image_attr($background_image, $background_image_ratio, true, $breakpoint_id);
-			if ('parallax' == $background_style) {
-				$attr .= 'data-bg-parallax=".upfront-bg-image"';
-			}
-			$markup = "<div class='upfront-bg-image upfront-image-lazy upfront-image-lazy-bg' style='{$image_css}' {$image_attr}></div>";
-		}
-		else if ('map' == $type) {
-			$data = array(
-				'center' => $this->_get_breakpoint_property('background_map_center', $breakpoint_id),
-				'zoom' => $this->_get_breakpoint_property('background_map_zoom', $breakpoint_id),
-				'style' => $this->_get_breakpoint_property('background_map_style', $breakpoint_id),
-        		'controls' => $this->_get_breakpoint_property('background_map_controls', $breakpoint_id),
-        		'styles' => $this->_get_breakpoint_property('map_styles', $breakpoint_id),
-        		'use_custom_map_code' => $this->_get_breakpoint_property('background_use_custom_map_code', $breakpoint_id),
-        		'show_markers' => $this->_get_breakpoint_property('background_show_markers', $breakpoint_id),
-			);
-			$attr .= 'data-bg-map="' . esc_attr( json_encode($data) ) . '"';
-		}
-		else if ('slider' == $type){
-			$slides = array();
-			$images = $this->_get_breakpoint_property('background_slider_images', $breakpoint_id);
-			$auto = $this->_get_breakpoint_property('background_slider_rotate', $breakpoint_id);
-			$interval = $this->_get_breakpoint_property('background_slider_rotate_time', $breakpoint_id) * 1000;
-			$show_control = $this->_get_breakpoint_property('background_slider_control', $breakpoint_id);
-			$effect = $this->_get_breakpoint_property('background_slider_transition', $breakpoint_id);
-			$slide_attr = "data-slider-show-control='{$show_control}' data-slider-effect='{$effect}'";
-			if ( $auto )
-				$slide_attr .= " data-slider-auto='1' data-slider-interval='{$interval}'";
-			else
-				$slide_attr .= " data-slider-auto='0'";
-	    	foreach ( $images as $image ){
-	    		//$src = wp_get_attachment_image($image, 'full');
-	    		$src = upfront_get_attachment_image_lazy($image, 'full');
-				$slides[] = "<div class='upfront-default-slider-item'>{$src}</div>";
-	    	}
-			$slides_markup = join('', $slides);
-			$markup = "<div class='upfront-bg-slider' {$slide_attr}>{$slides_markup}</div>";
-		}
-		else if ('video' == $type){
-			$video = $this->_get_breakpoint_property('background_video', $breakpoint_id);
-			$embed = $this->_get_breakpoint_property('background_video_embed', $breakpoint_id);
-			$width = $this->_get_breakpoint_property('background_video_width', $breakpoint_id);
-			$height = $this->_get_breakpoint_property('background_video_height', $breakpoint_id);
-			$style = $this->_get_breakpoint_property('background_video_style', $breakpoint_id);
-			$mute = $this->_get_breakpoint_property('background_video_mute', $breakpoint_id);
-            $autoplay = $this->_get_breakpoint_property('background_video_autoplay', $breakpoint_id);
-			if ( $video && $embed ){
-			    self::$_video_index++;
-                $video_id = 'bg_video_' . self::$_video_index;
-			    $mute = $mute === false ? 1 : intval($mute);
-                $autoplay = $autoplay === false ? 1 : intval($autoplay);
-				$attr = 'data-bg-video-ratio="' . round($height/$width, 2) . '" ';
-				$attr .= 'data-bg-video-style="' . $style . '" ';
-				$attr .= 'data-bg-video-mute="' . $mute . '"';
-				$autoplay_attr = '&amp;autoplay=' . $autoplay;
-				// hack additional attributes
-				$vid_attrs = array(
-					'.*?vimeo\.' => 'loop=1' . $autoplay_attr . ( $mute == 1 ? '&amp;api=1&amp;player_id=' . $video_id : '' ),
-					'.*?youtube\.com\/(v|embed)\/(.+?)(\/|\?).*?$' =>  '&amp;controls=0&amp;showinfo=0&amp;rel=0&amp;wmode=transparent&amp;html5=1&amp;loop=1&amp;modestbranding=1&amp;' . $autoplay_attr . ( $mute == 1 ? '&amp;enablejsapi=1' /*. '&amp;origin=' . site_url()*/ : '' ),
-					'.*?wistia\.' => 'endVideoBehavior=loop' . ( $autoplay == 1 ? '&amp;autoPlay=true' : '' ) . ( $mute == 1 ? '&amp;volume=0' : '' )
-				);
-				$vid_attr = '';
-				$embed_attr = ' id="' . $video_id . '"';
-				if ( preg_match('/(^.*?<iframe.*?src=[\'"])(.*?)([\'"])(.*$)/is', $embed, $match) ){
-					foreach ( $vid_attrs as $vid => $a ){
-						if ( preg_match( '/^(https?:|)\/\/' . $vid . '/i', $match[2], $vid_match ) ){
-							foreach ( $vid_match as $i => $m ){
-								if ( $i == 0 )
-									continue;
-								$a = str_replace('$'.$i, $m, $a);
-							}
-							$vid_attr = $a;
-							break;
-						}
-					}
-					$embed = $match[1] . $match[2] . ( strpos($match[2], '?') > 0  ? '&amp;' : '?' ) . $vid_attr . $match[3] . $embed_attr . $match[4];
-				}
-				$markup = "<script class='video-embed-code' type='text/html'>{$embed}</script>";
-			}
-		}
-		return "<div class='{$classes}' {$attr}>{$markup}</div>" . "\n";
-	}
-}
-
-
-abstract class Upfront_Container extends Upfront_Entity {
-
-	protected $_type;
-	protected $_children;
-	protected $_child_view_class;
-	protected $_wrapper;
-	protected $_wrapper_is_spacer;
-
-	public function get_markup () {
-		$html='';
-		$wrap='';
-
-		if (!empty($this->_data[$this->_children])) {
-			foreach ($this->_data[$this->_children] as $idx => $child) {
-				$child_view = $this->instantiate_child($child, $idx);
-				if ($child_view instanceof Upfront_Container) {
-					// Have wrapper? If so, then add wrappers
-					$wrapper = $child_view->get_wrapper();
-					$wrapper_is_spacer = ($child_view instanceof Upfront_Module && $child_view->is_spacer());
-
-					if ($wrapper && !$this->_wrapper) {
-						$this->_wrapper = $wrapper;
-						$this->_wrapper_is_spacer = $wrapper_is_spacer;
-					}
-					if ($wrapper && $this->_wrapper->get_wrapper_id() == $wrapper->get_wrapper_id()) {
-						$wrap .= $child_view->get_markup();
-					} else if ($wrapper) {
-						// Check spacer and don't render wrapper if it is
-						if ($this->_wrapper_is_spacer) {
-							$html .= $wrap;
-						} else {
-							$html .= $this->_wrapper->wrap($wrap);
-						}
-						$this->_wrapper = $wrapper;
-						$this->_wrapper_is_spacer = $wrapper_is_spacer;
-						$wrap = $child_view->get_markup();
-					}
-				}
-				// No wrapper, just appending html
-				if (!isset($wrapper) || !$wrapper) {
-					if ($this->_child_view_class == 'Upfront_Object') {
-						$theme_style = upfront_get_property_value('theme_style', $child);
-						if ($theme_style) {
-							$theme_style = strtolower($theme_style);
-						}
-
-						// So let's map out the breakpoints/presets map
-						$preset_map = array();
-						$raw_preset_map = upfront_get_property_value('breakpoint_presets', $child);
-						if (!empty($raw_preset_map)) foreach ($raw_preset_map as $bp => $pst) {
-							if (empty($pst['preset'])) continue;
-							$preset_map[$bp] = esc_js($pst['preset']);
-						}
-						// Now we have a map of breakpoint/presets we can encode as the attribute
-						// This will be used for the breakpoint preset toggling
-						
-						// We also preserve the current preset class, so it all
-						// just works without JS requirement on client
-						$preset = upfront_get_property_value('preset', $child);
-
-						// Also, if we have a preset map and a default grid breakpoint
-						// mapped, let's try to use this as default preset
-						if (!empty($preset_map)) {
-							$default_bp = Upfront_Output::$grid->get_default_breakpoint();
-							if ($default_bp && is_callable(array($default_bp, 'get_id'))) {
-								$bp = $default_bp->get_id();
-								if (!empty($preset_map[$bp])) $preset = $preset_map[$bp];
-							}
-						}
-
-						$breakpoint = upfront_get_property_value('breakpoint', $child);
-						$theme_styles = array('default' => $theme_style);
-						$theme_styles_attr = '';
-						if ($breakpoint) {
-							foreach ($breakpoint as $id => $props) {
-								if (!empty($props['theme_style']))
-									$theme_styles[$id] = strtolower($props['theme_style']);
-							}
-							$theme_styles_attr = " data-theme-styles='" . json_encode($theme_styles) . "'";
-						}
-						$slug = upfront_get_property_value('id_slug', $child);
-						if ($slug === 'ucomment' && is_single() && !comments_open())
-							return $html;
-
-						$classes = $this->_get_property('class');
-						$column = upfront_get_class_num('c', $classes);
-						$class = $slug === "uposts" ? "c" . $column . " uposts-object" : upfront_get_property_value('class', $child);
-						$usingNew = upfront_get_property_value('usingNewAppearance', $child);
-						if(!empty( $usingNew )) {
-						// Augment the output with preset map, in addition to other stuff going on in there
-							$html .= '<div data-preset_map="' . esc_attr(!empty($preset_map) ? json_encode($preset_map) : '') . '" class="upfront-output-object ' . $theme_style . ' ' . $preset . ' upfront-output-' . $slug . ' ' . $class . '" id="' . upfront_get_property_value('element_id', $child) . '"' . $theme_styles_attr . '>' . $child_view->get_markup() . '</div>';
-						} else {
-							$html .= '<div data-preset_map="' . esc_attr(!empty($preset_map) ? json_encode($preset_map) : '') . '" class="upfront-output-object ' . $theme_style . ' upfront-output-' . $slug . ' ' . $class . '" id="' . upfront_get_property_value('element_id', $child) . '"' . $theme_styles_attr . '>' . $child_view->get_markup() . '</div>';
-						}
-					} else {
-						$html .= $child_view->get_markup();
-					}
-				}
-			}
-		}
-
-		// Have wrapper, append the last one
-		if ( isset($wrapper) && $wrapper && $this->_wrapper ) {
-			$html .= $this->_wrapper->wrap($wrap);
-		}
-		return $this->wrap($html);
-	}
-
-	// Overriden from Upfront_Entity
-	public function get_style_for ($breakpoint, $context) {
-		$style = parent::get_style_for($breakpoint, $context);
-		if (!empty($this->_data[$this->_children])) foreach ($this->_data[$this->_children] as $idx => $child) {
-			$child_view = $this->instantiate_child($child, $idx);
-			$style .= $child_view->get_style_for($breakpoint, $context);
-		}
-		return $style;
-	}
-
-	public function instantiate_child ($child_data, $idx) {
-		$view_class = upfront_get_property_value("view_class", $child_data);
-		$view = $view_class
-			? "Upfront_{$view_class}"
-			: $this->_child_view_class
-		;
-		if (!class_exists($view)) $view = $this->_child_view_class;
-		return new $view($child_data);
-	}
-
-	public function wrap ($out) {
-		$class = $this->get_css_class();
-		$style = $this->get_css_inline();
-		$attr = $this->get_attr();
-		$element_id = $this->get_id();
-
-		if ($this->_debugger->is_active(Upfront_Debug::MARKUP)) {
-			$name = $this->get_name();
-			$pre = "\n\t<!-- Upfront {$this->_type} [{$name} - #{$element_id}] -->\n";
-			$post = "\n<!-- End {$this->_type} [{$name} - #{$element_id}] --> \n";
-		}
-		else {
-			$pre = "";
-			$post = "";
-		}
-
-		$style = $style ? "style='{$style}'" : '';
-		$element_id = $element_id ? "id='{$element_id}'" : '';
-		return "{$pre}<{$this->_tag} class='{$class}' {$style} {$element_id} {$attr}>{$out}</{$this->_tag}>{$post}";
-	}
-
-	public function get_wrapper () {
-		$wrapper_id = $this->_get_property('wrapper_id');
-		return Upfront_Wrapper::get_instance($wrapper_id);
-	}
-
-
-}
-
-class Upfront_Layout_View extends Upfront_Container {
-	protected $_type = 'Layout';
-
-	public function wrap ($out, $before = '', $after = '') {
-		$overlay = "";
-		foreach ( Upfront_Output::$grid->get_breakpoints(true) as $breakpoint ) {
-			$overlay .= $this->_get_background_overlay($breakpoint->get_id());
-		}
-		return parent::wrap("{$before}{$out}{$after}\n{$overlay}");
-	}
-
-	public function get_css_inline () {
-		$css = '';
-		return $css;
-	}
-
-    public function get_css_class () {
-        $classes = parent::get_css_class();
-        $classes .= ' upfront-image-lazy upfront-image-lazy-bg';
-        return $classes;
-    }
-
-	public function get_attr () {
-		$attr = '';
-		foreach ( Upfront_Output::$grid->get_breakpoints(true) as $breakpoint ) {
-			$attr .= $this->_get_background_attr(true, true, $breakpoint->get_id());
-		}
-		return $attr;
-	}
-
-	public function get_style_for ($point, $scope) {
-		$css = '';
-		$is_overlay = $this->_is_background_overlay($point->get_id());
-		$is_default_overlay = $this->_is_background_overlay();
-		$bg_css = $this->_get_background_css(true, true, $point->get_id());
-		if ( !empty($bg_css) ) {
-			$css .= sprintf('%s %s {%s}',
-						'.' . ltrim($scope, '. '),
-						'.upfront-output-layout',
-						$bg_css
-					) . "\n";
-		}
-		if ( !$point->is_default() && $is_default_overlay ) {
-			$css .= sprintf('%s %s > %s {%s}',
-						'.' . ltrim($scope, '. '),
-						'.upfront-output-layout',
-						'.upfront-output-bg-overlay',
-						'display: none;'
-					) . "\n";
-		}
-		if ( $is_overlay ) {
-			$css .= sprintf('%s %s > %s {%s}',
-						'.' . ltrim($scope, '. '),
-						'.upfront-output-layout',
-						'.upfront-output-bg-' . $point->get_id(),
-						'display: block;'
-					) . "\n";
-		}
-		return $css;
-	}
-
-	protected function _is_background_overlay ($breakpoint_id = '') {
-		$type = $this->get_background_type($breakpoint_id);
-		if ( !$type || 'color' == $type ) return false;
-		return true;
-	}
-
-}
-
-
-class Upfront_Region_Container extends Upfront_Container {
-	protected $_type = 'Region_Container';
-
-	public function wrap ($out, $before = '', $after = '') {
-		$overlay = '';
-		$bg_attr = '';
-		foreach ( Upfront_Output::$grid->get_breakpoints(true) as $breakpoint ) {
-			$overlay .= $this->_get_background_overlay($breakpoint->get_id());
-			$bg_attr .= $this->_get_background_attr(false, true, $breakpoint->get_id());
-		}
-
-		$additional_classes = array();
-        // Additional test for background type - only if we're dealing with the featured image regions
-		if ('featured' === $this->get_background_type() && !has_post_thumbnail(Upfront_Output::get_post_id())) {
-			$additional_classes[] = 'no-featured_image'; // We don't seem to have a featured image here
-		}
-
-		// Build the class attribute
-		$extras = '';
-		if (!empty($additional_classes) && is_array($additional_classes)) {
-			$additional_classes = array_values(array_filter(array_map('sanitize_html_class', $additional_classes)));
-			$extras = join(' ', $additional_classes);
-		}
-
-		$bg_node_start = "<div class='upfront-region-container-bg upfront-image-lazy upfront-image-lazy-bg {$extras}' {$bg_attr}>";
-		$bg_node_end = "</div>";
-		return parent::wrap("{$bg_node_start}{$before}<div class='upfront-grid-layout'>{$out}</div>\n{$overlay}{$after}{$bg_node_end}");
-	}
-
-	public function get_css_inline () {
-		$css = '';
-		return $css;
-	}
-
-	public function get_attr () {
-		$attr = '';
-		if ( !empty($this->_data['type']) && $this->_data['type'] == 'full' ) {
-			$attr .= ' data-behavior="' . ( !empty($this->_data['behavior']) ? $this->_data['behavior'] : 'keep-position' ) . '"';
-			$attr .= ' data-original-height="' . $this->_get_property('original_height') . '"';
-		}
-		if ( !empty($this->_data['sticky']) ) {
-			$attr .= ' data-sticky="1"';
-		}
-		return $attr;
-	}
-
-	public function get_id () {
-		return 'upfront-region-container-' . strtolower(str_replace(" ", "-", $this->get_name()));
-	}
-
-	public function get_style_for ($point, $scope) {
-		$css = '';
-		$is_overlay = $this->_is_background_overlay($point->get_id());
-		$is_default_overlay = $this->_is_background_overlay();
-		$bg_css = $this->_get_background_css(false, true, $point->get_id());
-		if ( !empty($bg_css) ) {
-			$css .= sprintf('%s #%s > %s {%s}',
-						'.' . ltrim($scope, '. '),
-						$this->get_id(),
-						'.upfront-region-container-bg',
-						$bg_css
-					) . "\n";
-		}
-		if ( !$point->is_default() && $is_default_overlay ) {
-			$css .= sprintf('%s #%s > %s {%s}',
-						'.' . ltrim($scope, '. '),
-						$this->get_id(),
-						'.upfront-region-container-bg > .upfront-output-bg-overlay',
-						'display: none;'
-					) . "\n";
-		}
-		if ( $is_overlay ) {
-			$css .= sprintf('%s #%s > %s {%s}',
-						'.' . ltrim($scope, '. '),
-						$this->get_id(),
-						'.upfront-region-container-bg > .upfront-output-bg-' . $point->get_id(),
-						'display: block;'
-					) . "\n";
-		}
-		return $css;
-	}
-}
-
-class Upfront_Region_Sub_Container extends Upfront_Region_Container {
-	protected $_type = 'Region_Sub_Container';
-
-	public function get_sub () {
-		return !empty($this->_data['sub']) ? $this->_data['sub'] : false;
-	}
-
-	public function get_css_class () {
-		$classes = parent::get_css_class();
-		$more_classes = array();
-		$more_classes[] = 'upfront-region-sub-container-' . $this->get_sub();
-		return $classes . ' ' . join(' ', $more_classes);
-	}
-
-	public function wrap ($out, $before = '', $after = '') {
-		return parent::wrap($out, '', '');
-	}
-}
-
-class Upfront_Region extends Upfront_Container {
-	protected $_type = 'Region';
-	protected $_children = 'modules';
-	protected $_child_view_class = 'Upfront_Module';
-
-	protected function _is_background () {
-		return ( $this->get_container() != $this->get_name() && ( empty($this->_data['sub']) || ( $this->_data['sub'] != 'top' && $this->_data['sub'] != 'bottom' ) ) );
-	}
-
-	public function wrap ($out) {
-		$overlay = '';
-		if ( $this->_is_background() ) {
-			foreach ( Upfront_Output::$grid->get_breakpoints() as $breakpoint ) {
-				$overlay .= $this->_get_background_overlay($breakpoint->get_id());
-			}
-		}
-		return parent::wrap( "<div class='upfront-region-wrapper'>{$out}</div>\n{$overlay}" );
-	}
-
-	public function instantiate_child ($child_data, $idx) {
-		$view = !empty($child_data['modules']) && is_array($child_data['modules']) ? "Upfront_Module_Group" : $this->_child_view_class;
-		if (!class_exists($view)) $view = $this->_child_view_class;
-		return new $view($child_data, $this->_data);
-	}
-
-	public function get_css_class () {
-		$classes = parent::get_css_class();
-		$more_classes = array();
-		$container = $this->get_container();
-		$is_main = ( empty($container) || $container == $this->get_name() );
-		if ( $is_main ) {
-			$more_classes[] = 'upfront-region-center';
-		}
-		else {
-			$more_classes[] = 'upfront-region-side';
-			$more_classes[] = 'upfront-region-side-' . $this->get_sub();
-		}
-        if ( $this->_is_background() ) {
-            $more_classes[] = 'upfront-image-lazy upfront-image-lazy-bg';
-        }
-		return $classes . ' ' . join(' ', $more_classes);
-	}
-
-	public function get_css_inline () {
-		$css = '';
-		if ( !empty($this->_data['type']) &&  'fixed' === $this->_data['type'] )
-			$css .=  $this->_get_position_css();
-		elseif ( !empty($this->_data['type']) && 'lightbox' === $this->_data['type'] )
-			$css = 'background-color:'. $this->_get_property('lightbox_color').'; '.$this->_get_position_css();
-		return $css;
-	}
-
-	public function get_attr () {
-		$attr = '';
-		if ( $this->_is_background() ) {
-			foreach ( Upfront_Output::$grid->get_breakpoints() as $breakpoint ) {
-				$attr .= $this->_get_background_attr(false, true, $breakpoint->get_id());
-			}
-		}
-
-		if ( !empty($this->_data['type']) && 'fixed' === $this->_data['type'] ) {
-			$restrict = !empty($this->_data['restrict_to_container']) ? $this->_data['restrict_to_container'] : false;
-			$top = $this->_get_property('top');
-			$bottom = $this->_get_property('bottom');
-			$left = $this->_get_property('left');
-			$right = $this->_get_property('right');
-			if ( !empty($restrict) )
-				$attr .= ' data-restrict-to-container="' . $restrict . '"';
-			if ( $top )
-				$attr .= ' data-top="' . $top . '"';
-			else
-				$attr .= ' data-bottom="' . $bottom . '"';
-			if ( $left )
-				$attr .= ' data-left="' . $left . '"';
-			else
-				$attr .= ' data-right="' . $right . '"';
-		}
-		if(	!empty($this->_data['type']) && 'lightbox' === $this->_data['type'] ) {
-			$attr .= ' data-overlay = "'.$this->_get_property('overlay_color').'"';
-			$attr .= ' data-col = "'.$this->_get_property('col').'"';
-			$show_close = $this->_get_property('show_close');
-			$attr .= ' data-closeicon = "'.(is_array($show_close)?array_pop($show_close):$show_close).'"';
-			$click_out_close = $this->_get_property('click_out_close');
-			$attr .= ' data-clickout = "'.(is_array($click_out_close)?array_pop($click_out_close):$click_out_close).'"';
-			/*$addclosetext = is_array($this->_get_property('add_close_text'))?array_pop($this->_get_property('add_close_text')):$this->_get_property('add_close_text');
-			$attr .= ' data-addclosetext = "'.$addclosetext.'"';
-			if($addclosetext == 'yes') {
-				$attr .= ' data-closetext = "'.$this->_get_property('close_text').'"';
-			}*/
-		}
-		return $attr;
-	}
-
-	public function get_id () {
-		return 'upfront-region-' . strtolower(str_replace(" ", "-", $this->get_name()));
-	}
-
-	public function get_sub () {
-		return !empty($this->_data['sub']) ? $this->_data['sub'] : false;
-	}
-
-	public function get_style_for ($point, $scope) {
-		if ( ! $this->_is_background() )
-			return '';
-		$css = '';
-		$is_overlay = $this->_is_background_overlay($point->get_id());
-		$is_default_overlay = $this->_is_background_overlay();
-		$bg_css = $this->_get_background_css(false, true, $point->get_id());
-		if ( ! empty($bg_css) ) {
-			$css .= sprintf('%s #%s {%s}',
-						'.' . ltrim($scope, '. '),
-						$this->get_id(),
-						$bg_css
-					) . "\n";
-		}
-		if ( !$point->is_default() && $is_default_overlay ){
-			$css .= sprintf('%s #%s > %s {%s}',
-						'.' . ltrim($scope, '. '),
-						$this->get_id(),
-						'.upfront-output-bg-overlay',
-						'display: none;'
-					) . "\n";
-		}
-		if ( $is_overlay ) {
-			$css .= sprintf('%s #%s > %s {%s}',
-						'.' . ltrim($scope, '. '),
-						$this->get_id(),
-						'.upfront-output-bg-' . $point->get_id(),
-						'display: block;'
-					) . "\n";
-		}
-		return $css;
-	}
-
-	public function _get_position_css () {
-		$css = array();
-
-		$height = $this->_get_property('height');
-
-		if ( $this->_data['type'] != 'lightbox') {
-			$width = $this->_get_property('width');
-			$top = $this->_get_property('top');
-			$left = $this->_get_property('left');
-			$bottom = $this->_get_property('bottom');
-			$right = $this->_get_property('right');
-			if ( $top !== false || $bottom === false )
-				$css[] = 'top: ' . ( $top !== false ? $top : 30 ) . 'px';
-			else
-				$css[] = 'bottom: ' . $bottom . 'px';
-			if ( $left !== false || $right === false )
-				$css[] = 'left: ' . ( $left !== false ? $left : 30 ) . 'px';
-			else
-				$css[] = 'right: ' . $right . 'px';
-
-			$css[] = 'width: ' . $width . 'px';
-		}
-
-		$css[] = 'min-height: ' . $height . 'px';
-		return implode('; ', $css) . '; ';
-	}
-}
-
-class Upfront_Wrapper extends Upfront_Entity {
-	static protected $_instances = array();
-	protected $_type = 'Wrapper';
-	protected $_wrapper_id = '';
-
-	static public function get_instance ($wrapper_id, $data = '') {
-		foreach ( self::$_instances as $instance ){
-			if ( $instance->_wrapper_id == $wrapper_id )
-				return $instance;
-		}
-		$wrapper_data = false;
-		if ( empty($data) ){
-			$layout = Upfront_Output::get_layout_data();
-			if ( !$layout )
-				return false;
-			foreach ( $layout['regions'] as $region ){
-				if (!empty($region['wrappers'])) foreach ( $region['wrappers'] as $wrapper ){
-					if ( $wrapper_id == upfront_get_property_value('wrapper_id', $wrapper) ){
-						$wrapper_data = $wrapper;
-						break 2;
-					}
-				}
-			}
-		}
-		else {
-			if (!empty($data['wrappers'])) foreach ( $data['wrappers'] as $wrapper ){
-				if ( $wrapper_id == upfront_get_property_value('wrapper_id', $wrapper) ){
-					$wrapper_data = $wrapper;
-					break;
-				}
-			}
-		}
-		if ( !$wrapper_data )
-			return false;
-		self::$_instances[] = new self($wrapper_data);
-		return end(self::$_instances);
-	}
-
-	public function __construct ($data) {
-		parent::__construct($data);
-		$this->_wrapper_id = $this->_get_property('wrapper_id');
-	}
-
-	public function get_markup () {
-		return '';
-	}
-
-	public function get_wrapper_id () {
-		return $this->_wrapper_id;
-	}
-
-	public function wrap ($out) {
-		$class = $this->get_css_class();
-
-		if ($this->_debugger->is_active(Upfront_Debug::MARKUP)) {
-			$name = $this->get_name();
-			$pre = "\n\t<!-- Upfront {$this->_type} [{$name} - #{$this->_wrapper_id}] -->\n";
-			$post = "\n<!-- End {$this->_type} [{$name} - #{$this->_wrapper_id}] --> \n";
-		}
-		else {
-			$pre = "";
-			$post = "";
-		}
-
-		$wrapper_id = $this->_wrapper_id ? "id='{$this->_wrapper_id}'" : '';
-		return "{$pre}<{$this->_tag} class='{$class}' {$wrapper_id}>{$out}</{$this->_tag}>{$post}";
-	}
-}
-
-
-class Upfront_Module_Group extends Upfront_Container {
-	protected $_type = 'Module_Group';
-	protected $_children = 'modules';
-	protected $_child_view_class = 'Upfront_Module';
-
-	public function __construct ($data) {
-		parent::__construct($data);
-	}
-
-	public function get_markup () {
-		$pre = '';
-		$anchor = upfront_get_property_value('anchor', $this->_data);
-		if (!empty($anchor)) $pre .= '<a id="' . esc_attr($anchor) . '" data-is-anchor="1"></a>';
-		return $pre . parent::get_markup();
-	}
-
-	public function wrap ($out) {
-		$overlay = '';
-		$bg_attr = '';
-		foreach ( Upfront_Output::$grid->get_breakpoints(true) as $breakpoint ) {
-			$overlay .= $this->_get_background_overlay($breakpoint->get_id());
-			$bg_attr .= $this->_get_background_attr(false, true, $breakpoint->get_id());
-		}
-		$bg_node_start = "<div class='upfront-module-group-bg upfront-image-lazy upfront-image-lazy-bg' {$bg_attr}>";
-		$bg_node_end = "</div>";
-		return parent::wrap( "{$out}\n{$bg_node_start}{$overlay}{$bg_node_end}" );
-	}
-
-	public function get_css_class () {
-		$classes = parent::get_css_class();
-		$classes .= ' upfront-module-group';
-		$theme_style = $this->_get_property('theme_style');
-		if ($theme_style) {
-			$classes .= ' ' . strtolower($theme_style);
-		}
-		$prop_class = $this->_get_property('class');
-		$column = upfront_get_class_num('c', $prop_class);
-		$classes .= ' c' . $column;
-		return $classes;
-	}
-
-	public function get_attr () {
-		$theme_style = $this->_get_property('theme_style');
-		$link = $this->_get_property('href');
-		$linkTarget = $this->_get_property('linkTarget');
-		if($theme_style)
-			$theme_style = strtolower($theme_style);
-		$theme_styles = array( 'default' => $theme_style );
-		foreach ( Upfront_Output::$grid->get_breakpoints(true) as $breakpoint ) {
-		$theme_styles[$breakpoint->get_id()] = $this->_get_breakpoint_property('theme_style', $breakpoint->get_id());
-		}
-
-		$link_attributes = '';
-		if(!empty($link)) {
-			$link_attributes = "data-group-link='".$link."'";
-			if(!empty($linkTarget)) {
-				$link_attributes .= "data-group-target='".$linkTarget."'";
-			}
-		}
-
-		return " data-theme-styles='" . json_encode($theme_styles) . "' ".$link_attributes;
-	}
-
-	public function get_style_for ($point, $scope) {
-		$css = '';
-		$is_overlay = $this->_is_background_overlay($point->get_id());
-		$is_default_overlay = $this->_is_background_overlay();
-		$bg_css = $this->_get_background_css(false, true, $point->get_id());
-		$use_padding = $this->_get_breakpoint_property('use_padding', $point->get_id());
-		$column_padding = $point->get_column_padding();
-		if ( !empty($bg_css) ) {
-			if ( $use_padding )
-				$bg_css .= " margin: {$column_padding}px;";
-			$css .= sprintf('%s #%s > %s {%s}',
-						'.' . ltrim($scope, '. '),
-						$this->get_id(),
-						'.upfront-module-group-bg',
-						$bg_css
-					) . "\n";
-		}
-		if ( !$point->is_default() && $is_default_overlay ) {
-			$css .= sprintf('%s #%s > %s {%s}',
-						'.' . ltrim($scope, '. '),
-						$this->get_id(),
-						'.upfront-module-group-bg > .upfront-output-bg-overlay',
-						'display: none;'
-					) . "\n";
-		}
-		if ( $is_overlay ) {
-			$css .= sprintf('%s #%s > %s {%s}',
-						'.' . ltrim($scope, '. '),
-						$this->get_id(),
-						'.upfront-module-group-bg > .upfront-output-bg-' . $point->get_id(),
-						'display: block;'
-					) . "\n";
-		}
-		return $css;
-	}
-
-	public function instantiate_child ($child_data, $idx) {
-		$view_class = upfront_get_property_value("view_class", $child_data);
-		$view = $view_class
-			? "Upfront_{$view_class}"
-			: $this->_child_view_class
-		;
-		if (!class_exists($view)) $view = $this->_child_view_class;
-		return new $view($child_data, $this->_data);
-	}
-}
-
-class Upfront_Module extends Upfront_Container {
-	protected $_type = 'Module';
-	protected $_children = 'objects';
-	protected $_child_view_class = 'Upfront_Object';
-
-	public function __construct ($data, $parent_data = "") {
-		parent::__construct($data);
-		$this->_parent_data = $parent_data;
-		Upfront_Output::$current_module = $this;
-	}
-
-	public function get_markup () {
-		if ($this->is_spacer()) {
-			return '<!-- Spacer data '. "\n" .
-				'class: ' . upfront_get_property_value('class', $this->_data) . "\n" .
-				'default: ' . upfront_get_property_value('hide', $this->_data) . "\n" .
-				'breakpoint: ' . json_encode(upfront_get_property_value('breakpoint', $this->_data)) . "\n" .
-			' -->';
-		}
-		$children = !empty($this->_data[$this->_children]) ? $this->_data[$this->_children] : array();
-		$pre = '';
-		if (!empty($children)) foreach ($children as $child) {
-			$anchor = upfront_get_property_value('anchor', $child);
-			if (!empty($anchor)) $pre .= '<a id="' . esc_attr($anchor) . '" data-is-anchor="1"></a>';
-		}
-		return $pre . parent::get_markup();
-	}
-
-	public function get_wrapper () {
-		$wrapper_id = $this->_get_property('wrapper_id');
-		return Upfront_Wrapper::get_instance($wrapper_id, $this->_parent_data);
-	}
-
-    public function get_css_class () {
-        $classes = parent::get_css_class();
-        $more_classes = array();
-        $prop_class = $this->_get_property('class');
-        $column = upfront_get_class_num('c', $prop_class);
-        $more_classes[] = 'c' . $column;
-        return $classes . ' ' . join(' ', $more_classes);
-    }
-
-	public function is_spacer () {
-		$spacer_props = Upfront_UspacerView::default_properties();
-		$children = !empty($this->_data[$this->_children]) ? $this->_data[$this->_children] : array();
-		if (!empty($children)) {
-			$type = upfront_get_property_value('type', $children[0]);
-		}
-		return ($type == $spacer_props['type']);
-	}
-}
-
-class Upfront_Object extends Upfront_Entity {
-	protected $_type = 'Object';
-
-	public function __construct ($data) {
-		//Make sure all the properties are initialized
-		$data['properties'] = $this->merge_default_properties($data);
-
-		// Take care of old preset API
-		$currentpreset = upfront_get_property_value('currentpreset', $data);
-		if ($currentpreset) {
-			// Unset currentpreset property and set preset to correct value
-			$data = upfront_set_property_value('preset', $currentpreset, $data);
-			$data = upfront_set_property_value('currentpreset', false, $data);
-		}
-
-		parent::__construct($data);
-		Upfront_Output::$current_object = $this;
-	}
-
-	protected function merge_default_properties($data){
-
-		if(! method_exists(get_class($this), 'default_properties')){
-			if(isset($data['properties']))
-				return $data['properties'];
-			return array();
-		}
-
-		$flat = array();
-		$defaults = call_user_func(array(get_class($this), 'default_properties'));
-
-		if(isset($data['properties']))
-			foreach($data['properties'] as $prop)
-				$flat[$prop['name']] = !empty($prop['value']) ? $prop['value'] : false;
-
-		$flat = array_merge($defaults, $flat);
-
-		if(!empty($flat['theme_style'])){
-			$flat['class'] .= ' ' . $flat['theme_style'];
-		}
-
-		$properties = array();
-		foreach($flat as $name => $value)
-			$properties[] = array('name' => $name, 'value' => $value);
-
-		return $properties;
-	}
-
-	public function get_markup () {
-		$view_class = 'Upfront_' . $this->_get_property("view_class");
-		if(!class_exists($view_class))
-			return apply_filters('upfront-output-get_markup-fallback', "{$view_class} class not found", $view_class);
-
-		$view = new $view_class($this->_data);
-
-		if ($this->_debugger->is_active(Upfront_Debug::MARKUP)) {
-			$name = $view->get_name();
-			$pre = "\n\t<!-- Upfront {$view_class} [{$name}] -->\n";
-			$post = "\n<!-- End {$view_class} [{$name}] --> \n";
-		}
-
-		return $pre . $view->get_markup() . $post;
-	}
-}
 /*
 class Upfront_PlainTxtView extends Upfront_Object {
 
@@ -1319,7 +303,6 @@ class Upfront_ImageView extends Upfront_Object {
 		return "<div class='upfront-output-object upfront-output-image' {$element_id}><img src='" . esc_attr($this->_get_property('content')) . "' /></div>";
 	}
 }
-*/
 class Upfront_SettingExampleView extends Upfront_Object {
 
 	public function get_markup () {
@@ -1335,3 +318,4 @@ class Upfront_TestResizeView extends Upfront_Object {
 		return "";
 	}
 }
+*/

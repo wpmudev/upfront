@@ -105,11 +105,11 @@ var _alpha = "alpha",
 		 *
 		 * The packed values will be decoded later on using the `decode_preset` method.
 		 * As a side-effect, we also update the model `breakpoint_presets` property.
-		 * As a side-effect #2, we also set whatever the current preset is (or default) as 
+		 * As a side-effect #2, we also set whatever the current preset is (or default) as
 		 * default breakpoint preset, if it's not already set.
 		 *
 		 * @param {String} preset_id Preset ID to pack
-		 * @param {String} breakpoint_id Breakpoint ID used to resolve the preset in storage 
+		 * @param {String} breakpoint_id Breakpoint ID used to resolve the preset in storage
 		 *                               - will default to current one
 		 *
 		 * @return {Object} Packed breakpoint presets
@@ -120,7 +120,7 @@ var _alpha = "alpha",
 				current = (this.get_property_by_name('preset').previousAttributes() || {value: 'default'}).value,
 				default_bp_id = (Upfront.Views.breakpoints_storage.get_breakpoints().findWhere({'default': true}) || {}).id
 			;
-			
+
 			data[breakpoint_id] = {preset: preset_id};
 			if (!data[default_bp_id]) data[default_bp_id] = {preset: current};
 
@@ -164,8 +164,8 @@ var _alpha = "alpha",
 			return this.get_property_value_by_name("content");
 		},
 		set_content: function (content, options) {
+			options = typeof options != 'undefined' ? options: {};
 			var prop = this.get_property_by_name("content");
-			var options = typeof options != 'undefined' ? options: {};
 			if (prop) return prop.set("value", content, options);
 			return this.get("properties").add(new Upfront.Models.Property({"name": "content", "value": content}));
 		},
@@ -214,11 +214,11 @@ var _alpha = "alpha",
 		is_visible: function () {
 			return this.get_property_value_by_name("visibility");
 		},
-		get_breakpoint_property_value: function (property, return_default, default_value) {
-			var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+		get_breakpoint_property_value: function (property, return_default, default_value, breakpoint) {
+			breakpoint = breakpoint ? breakpoint : Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
 			default_value = typeof default_value === "undefined" ? false : default_value;
 
-			if ( !breakpoint || breakpoint.default )
+			if ( !breakpoint || breakpoint['default'] )
 				return this.get_property_value_by_name(property);
 			var data = this.get_property_value_by_name('breakpoint');
 			if ( _.isObject(data) && _.isObject(data[breakpoint.id]) && property in data[breakpoint.id] )
@@ -227,9 +227,9 @@ var _alpha = "alpha",
 				return this.get_property_value_by_name(property);
 			return default_value;
 		},
-		set_breakpoint_property: function (property, value, silent) {
-			var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
-			if ( !breakpoint || breakpoint.default ) {
+		set_breakpoint_property: function (property, value, silent, breakpoint) {
+			breakpoint = breakpoint ? breakpoint : Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
+			if ( !breakpoint || breakpoint['default'] ) {
 				this.set_property(property, value, silent);
 			}
 			else {
@@ -242,10 +242,11 @@ var _alpha = "alpha",
 			}
 		},
 		add_to: function (collection, index, options) {
+			options = _.isObject(options) ? options : {};
 			var me = this,
 				models = [],
-				added = false,
-				options = _.isObject(options) ? options : {};
+				added = false
+			;
 			collection.each(function(each, i){
 				if ( i == index ){
 					models.push(me);
@@ -263,6 +264,43 @@ var _alpha = "alpha",
 		}
 	}),
 
+	ObjectGroup = ObjectModel.extend({
+		"defaults": function(){
+			return {
+				"name": "",
+				"objects": new Objects(),
+				"wrappers": new Wrappers(),
+				"properties": new Properties()
+			};
+		},
+		initialize: function () {
+			var args = arguments;
+			if (args && args[0] && args[0]["objects"]) {
+				args[0]["objects"] = args[0]["objects"] instanceof Objects
+					? args[0]["objects"]
+					: new Objects(args[0]["objects"])
+				;
+				this.set("objects", args[0]["objects"]);
+			} else this.set("objects", new Objects([]));
+			if (args && args[0] && args[0]["wrappers"]) {
+				args[0]["wrappers"] = args[0]["wrappers"] instanceof Wrappers
+					? args[0]["wrappers"]
+					: new Wrappers(args[0]["wrappers"])
+				;
+				this.set("wrappers", args[0].wrappers);
+			} else this.set("wrappers", new Wrappers([]));
+			if (args && args[0] && args[0]["properties"]) {
+				args[0]["properties"] = args[0]["properties"] instanceof Properties
+					? args[0]["properties"]
+					: new Properties(args[0]["properties"])
+				;
+				this.set("properties", args[0]["properties"]);
+			} else this.set("properties", new Properties([]));
+
+			if (this.init) this.init();
+		}
+	}),
+
 		// Basic interface dataset
 	Objects = Backbone.Collection.extend({
 		/*"model": ObjectModel,
@@ -271,7 +309,8 @@ var _alpha = "alpha",
 			if (!raw_models || !raw_models.length) return false;
 			_(raw_models).each(function (model) {
 				var type_prop = model["properties"] ? _(model["properties"]).where({"name": "type"}) : model.get("properties").where({"name": "type"}),
-					type = type_prop.length ? type_prop[0].value : "ObjectModel",
+					default_type = model["objects"] ? "ObjectGroup" : "ObjectModel",
+					type = type_prop.length ? type_prop[0].value : default_type,
 					instance = Upfront.Models[type] ? new Upfront.Models[type](model) : false
 				;
 				if (Upfront.Models[type] && instance) models.push(instance);
@@ -343,7 +382,7 @@ var _alpha = "alpha",
 					? args[0]["wrappers"]
 					: new Wrappers(args[0]["wrappers"])
 				;
-				this.set("wrappers", args[0].wrappers)
+				this.set("wrappers", args[0].wrappers);
 			} else this.set("wrappers", new Wrappers([]));
 			if (args && args[0] && args[0]["properties"]) {
 				args[0]["properties"] = args[0]["properties"] instanceof Properties
@@ -413,14 +452,14 @@ var _alpha = "alpha",
 					? args[0]["modules"]
 					: new Modules(args[0]["modules"])
 				;
-				this.set("modules", args[0].modules)
+				this.set("modules", args[0].modules);
 			} else this.set("modules", new Modules([]));
 			if (args && args[0] && args[0]["wrappers"]) {
 				args[0]["wrappers"] = args[0]["wrappers"] instanceof Wrappers
 					? args[0]["wrappers"]
 					: new Wrappers(args[0]["wrappers"])
 				;
-				this.set("wrappers", args[0].wrappers)
+				this.set("wrappers", args[0].wrappers);
 			} else this.set("wrappers", new Wrappers([]));
 			if (args && args[0] && args[0]["properties"]) {
 				args[0]["properties"] = args[0]["properties"] instanceof Properties
@@ -495,8 +534,8 @@ var _alpha = "alpha",
 		"model": Region,
 
 		get_by_name: function (name) {
-			var found = false,
-				name = name.toLowerCase();
+			name = name.toLowerCase();
+			var found = false;
 			this.each(function (model) {
 				if (model.get("name").toLowerCase() == name) found = model;
 			});
@@ -517,8 +556,8 @@ var _alpha = "alpha",
 		},
 
 		index_container: function (model, excludes) {
-			var excludes = _.isArray(excludes) ? excludes : [excludes],
-				collection = this.filter(function(m){
+			excludes = _.isArray(excludes) ? excludes : [excludes];
+			var collection = this.filter(function(m){
 					return m.is_main() && ! _.contains(excludes, m.get('name'));
 				}),
 				index = collection.indexOf(model);
@@ -526,8 +565,8 @@ var _alpha = "alpha",
 		},
 
 		total_container: function (excludes) {
-			var excludes = _.isArray(excludes) ? excludes : [excludes],
-				collection = this.filter(function(m){
+			excludes = _.isArray(excludes) ? excludes : [excludes];
+			var collection = this.filter(function(m){
 					return m.is_main() && ! _.contains(excludes, m.get('name'));
 				});
 			return collection.length;
@@ -557,9 +596,9 @@ var _alpha = "alpha",
 					? args[0]["properties"]
 					: new Properties(args[0]["properties"])
 				;
-				this.set("properties", args[0].properties)
+				this.set("properties", args[0].properties);
 			} else this.set("properties", new Properties([]));
-		},
+		}
 	}),
 
 	Wrappers = Backbone.Collection.extend({
@@ -590,21 +629,21 @@ var _alpha = "alpha",
 					? args[0]["regions"]
 					: new Regions(args[0]["regions"])
 				;
-				this.set("regions", args[0].regions)
+				this.set("regions", args[0].regions);
 			}
 			if (args && args[0] && args[0]["properties"]) {
 				args[0]["properties"] = args[0]["properties"] instanceof Properties
 					? args[0]["properties"]
 					: new Properties(args[0]["properties"])
 				;
-				this.set("properties", args[0].properties)
+				this.set("properties", args[0].properties);
 			}
 			if (args && args[0] && args[0]["wrappers"]) {
 				args[0]["wrappers"] = args[0]["wrappers"] instanceof Wrappers
 					? args[0]["wrappers"]
 					: new Wrappers(args[0]["wrappers"])
 				;
-				this.set("wrappers", args[0].wrappers)
+				this.set("wrappers", args[0].wrappers);
 			}
 		},
 		get_current_state: function () {
@@ -765,7 +804,7 @@ var _alpha = "alpha",
 
             if( _.indexOf(dates, attr) !== -1 ){
                 //return new Date( value  ); // <-- Breaks in FF
-                var raw_offset = (new Date()).getTimezoneOffset(), 
+                var raw_offset = (new Date()).getTimezoneOffset(),
                 	tz_offset = raw_offset / 60,
                 	offset = tz_offset > 0 ? '-' : '+', // Reversed because Date.getTimezoneOffset() returns reversed values...
                 	hours = parseInt(Math.abs(tz_offset), 10),
@@ -776,16 +815,16 @@ var _alpha = "alpha",
                 mins = mins >= 10 ? '' + mins : '0' + mins;
                 if (timestamp && hours.length && mins.length) timestamp += offset + hours + mins;
 
-				
+
 				//return new Date(Date.parse(timestamp)); // <-- We need this to instantiate Date object in Firefox. @See "batman bug" in Asana.
-				
+
 				/** Have to do this in order to satisfy safari as well.
 				 * This works with Firefox and chrome too.
 				*/
 
 				var a = timestamp.split(/[^0-9]/);
-				return new Date (a[0],a[1]-1,a[2],a[3],a[4],a[5]); 
-                
+				return new Date (a[0],a[1]-1,a[2],a[3],a[4],a[5]);
+
             }
 			return this.attributes[attr];
 		},
@@ -917,7 +956,7 @@ var _alpha = "alpha",
 								pages: Math.ceil(pagination.total / pagination.page_size),
 								currentPage: pagination.page,
 								loaded: postdata.flush ? {} : me.pagination.loaded
-							}
+							};
 							me.pagination.loaded[pagination.page] = true;
 							_.each(response.data.results, function(modelData){
 								var model = new me.model(modelData);
@@ -1404,6 +1443,18 @@ var _alpha = "alpha",
 		}
 	}),
 
+	PageTemplate = WPModel.extend({
+		modelName: 'template',
+		defaults: {
+
+		},
+
+		initialize: function(model, options){
+			var me = this;
+		}
+
+	}),
+
 	PostList = WPCollection.extend({
 		collectionName: 'post_list',
 		model: Post,
@@ -1426,6 +1477,29 @@ var _alpha = "alpha",
 					this.withAuthor = options.withAuthor;
 			}
 		}
+	});
+
+	PageTemplateList = WPCollection.extend({
+		collectionName: 'page_templates',
+		model: PageTemplate,
+		postId: false,
+		templateObject: false,
+		fetchAttributes: ['postId'],
+		initialize: function(models, options){
+			if(options){
+				if(options.postId)
+					this.postId = options.postId;
+			}
+		},
+		fetch: function(options){
+			var me = this;
+			 return WPCollection.prototype.fetch.call(this, options)
+				.done(function(response){
+					me.templateObject = response.results;
+				})
+			;
+		}
+
 	});
 
 	var Comment = WPModel.extend({
@@ -1647,78 +1721,79 @@ var _alpha = "alpha",
 		}
 	}),
 
-		ImageVariant = Backbone.Model.extend({
-			defaults : function () {
-				return {
-					vid   : "",
-					label : "Variant Label",
-					group : {
-						margin_left: 0,
-						margin_right: 0,
-						col: 24,
-						row: 50,
-						left: 0,
-						float: "none"
-					},
-					image : {
-						order: 0,
-						col: 24,
-						top: 0,
-						left: 0,
-						row: 40,
-						clear: true
-					},
-					caption : {
-						show: 1,
-						order: 1,
-						col: 24,
-						top: 0,
-						left: 0,
-						row: 10,
-						clear: true
-					}
-				};
-			}
-		}),
-		ImageVariants = Backbone.Collection.extend({
-			model : ImageVariant
-		}),
-	_omega = 'omega';
+    ImageVariant = Backbone.Model.extend({
+        defaults : function () {
+        	return {
+	            vid   : "",
+	            label : "Variant Label",
+	            group : {
+					margin_left: 0,
+					margin_right: 0,
+	                col: 24,
+	                row: 50,
+	                left: 0,
+	                "float": "none"
+	            },
+	            image : {
+	            	order: 0,
+	            	col: 24,
+	            	top: 0,
+	            	left: 0,
+	            	row: 40,
+	            	clear: true
+	            },
+	            caption : {
+	                show: 1,
+	                order: 1,
+	                col: 24,
+	                top: 0,
+	                left: 0,
+	                row: 10,
+	                clear: true
+	            }
+        	};
+        }
+    }),
+    ImageVariants = Backbone.Collection.extend({
+        model : ImageVariant
+    }),
+_omega = 'omega';
 
-	return {
-		"Models": {
-			"Property": Property,
-			"ObjectModel": ObjectModel,
-			"Module": Module,
-			"ModuleGroup": ModuleGroup,
-			"Region": Region,
-			"Wrapper": Wrapper,
-			"Layout": Layout,
-			"Taxonomy": Taxonomy,
-			"Post": Post,
-			"Posts": Posts,
-			"Pages": Pages,
-			"Comment": Comment,
-			"Comments": Comments,
-			"Meta": Meta,
-			"Term": Term,
-			"User": User,
-			"ImageVariant" : ImageVariant
-		},
-		"Collections": {
-			"Properties": Properties,
-			"Objects": Objects,
-			"Modules": Modules,
-			"Regions": Regions,
-			"Wrappers": Wrappers,
-			"CommentList": CommentList,
-			"MetaList": MetaList,
-			"PostList": PostList,
-			"TermList": TermList,
-			"ImageVariants" : ImageVariants
-		}
-	};
+return {
+    "Models": {
+      "Property": Property,
+      "ObjectModel": ObjectModel,
+      "ObjectGroup": ObjectGroup,
+      "Module": Module,
+      "ModuleGroup": ModuleGroup,
+      "Region": Region,
+      "Wrapper": Wrapper,
+      "Layout": Layout,
+      "Taxonomy": Taxonomy,
+      "Post": Post,
+      "Posts": Posts,
+      "Pages": Pages,
+      "Comment": Comment,
+      "Comments": Comments,
+      "Meta": Meta,
+      "Term": Term,
+      "User": User,
+      "ImageVariant" : ImageVariant
+    },
+    "Collections": {
+      "Properties": Properties,
+      "Objects": Objects,
+      "Modules": Modules,
+      "Regions": Regions,
+      "Wrappers": Wrappers,
+      "CommentList": CommentList,
+      "MetaList": MetaList,
+      "PostList": PostList,
+      "TermList": TermList,
+      "ImageVariants" : ImageVariants,
+      "PageTemplateList" : PageTemplateList
+    }
+  };
 });
 
 })(jQuery);
-

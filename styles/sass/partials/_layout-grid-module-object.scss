@@ -44,7 +44,7 @@
 	left: 0;
 	right: 0;
 	bottom: 0;
-	z-index: 1;
+	z-index: -1;
 	visibility: hidden;
 	opacity: 0;
 	background: -webkit-linear-gradient(bottom, rgba(100,255,255,.3) 1px, transparent 1px, transparent);
@@ -140,7 +140,7 @@
 	/*padding-bottom:15px;*/
 }
 .uimage-upfront-module-view .upfront-editable_entity.ui-resizable-resizing {
-	overflow: visible;
+	overflow: hidden;
 }
 
 .upfront-wrapper {
@@ -151,7 +151,7 @@
 	z-index: 30;
 }
 .upfront-wrapper.upfront-inline-panel-item-open {
-	z-index: 70;
+  z-index: 2999999;
 }
 
 .upfront-wrapper-content {
@@ -185,7 +185,9 @@
 .upfront-module-group-bg {
   z-index: -2;
 }
-.upfront-module-group-on-edit:after {
+.upfront-module-group-on-edit:after,
+.upfront-module-group-element-editing:after,
+.upfront-module-group-no-edit:after {
 	display: none;
 }
 .upfront-module-group:hover {
@@ -265,6 +267,9 @@
 #page.upfront-layout-view .upfront-module.upfront-module-disabled-all {
 	opacity: 0.5;
 }
+#page.upfront-layout-view .upfront-module-object-group-on-edit .upfront-module.upfront-module-disabled-all {
+  opacity: 1;
+}
 .upfront-module-disabled-edit .upfront-object:after {
 	content: " ";
 	position: absolute;
@@ -282,7 +287,8 @@
 	/*border: 1px solid #b3da11;*/
 	background: rgba(44, 62, 80, 0.3)
 }
-.upfront-module:hover {
+.upfront-module:hover,
+.upfront-object-group-on-edit .upfront-object:hover {
   background-color: rgba(255,255,255,0.3);
   box-shadow: inset 0px 0px 3px 0px rgba(60,82,103,0.15);
 	/*z-index: 40;*/
@@ -295,20 +301,27 @@
 }
 .upfront-module-has-nav:hover,
 .upfront-module-active.upfront-module-has-nav {
-	z-index: 50;
+	z-index: 80;
 }
 .upfront-module-has-nav.upfront-module-nav-open {
 	z-index: 90;
 }
 .upfront-module-disabled-all:hover,
-.upfront-module-editing:hover {
+.upfront-module-editing,
+.upfront-module-editing:hover,
+.upfront-editing-post-content .upfront-module:hover {
+	box-shadow: none;
 	outline: none;
 }
 .upfront-module-disabled-all .upfront-entity_meta,
 .upfront-module-editing .upfront-entity_meta {
 	display: none;
 }
-.upfront-dragging .upfront-module {
+.upfront-object-group-on-edit .upfront-object-group .upfront-entity_meta {
+  display: block;
+}
+.upfront-dragging .upfront-module,
+.upfront-dragging .upfront-object-group-on-edit .upfront-object {
 	outline: 1px dotted #7f7f7f;
 	overflow: hidden;
 }
@@ -316,11 +329,16 @@
 	outline: 1px dotted #7f7f7f;
 	/*z-index: 40;*/
 }
+.upfront-module-object-group-on-edit .upfront-module.upfront-module-disabled-edit {
+  outline: 1px dotted #7f7f7f;
+  z-index: 10;
+}
 .upfront-objects_container {
 	width: 100%;
 	position: relative;
 }
 
+.upfront-object-hidden-toggle,
 .upfront-module-hidden-toggle,
 .upfront-region-hidden-toggle {
 	text-align: center;
@@ -334,7 +352,7 @@
 	padding: 0;
 	margin: 0 -160px 2px 0;
 	position: relative;
-	top: -9px;
+	top: 5px;
 	left: 0;
 }
 .upfront-region-hidden-toggle:before {
@@ -348,6 +366,7 @@
 	display: block;
 	margin-top: 0;
 }
+.upfront-object-hidden-toggle .upfront-entity-hide_trigger,
 .upfront-module-hidden-toggle .upfront-entity-hide_trigger,
 .upfront-region-hidden-toggle .upfront-entity-hide_trigger {
 	display: inline-block;
@@ -372,6 +391,10 @@
 	width: 100px;
 }
 
+.upfront-object-group {
+  position: relative;
+  float: left;
+}
 
 .upfront-object {
 	position: relative;
@@ -418,6 +441,12 @@
 .upfront-editable_entity img {
   max-width: 100%;
   max-height: 100%;
+}
+
+.upfront-editable_entity.upfront-post-data-part.part-featured_image img {
+  max-width: none;
+  max-height: none;
+  overflow: hidden;
 }
 
 .ui-draggable {
@@ -468,20 +497,31 @@
 .upfront-module-group.upfront-module-group-on-edit > .upfront-selected-border {
 	display: block;
 }
-.upfront-module-group .upfront-editable_entities_container .ui-resizable-handle {
+.upfront-module-group.upfront-module-group-element-editing > .upfront-selected-border,
+.upfront-module-group.upfront-module-group-no-edit > .upfront-selected-border {
+	display: none;
+}
+.upfront-module-group .upfront-editable_entities_container .ui-resizable-handle,
+.upfront-object-group .upfront-editable_entities_container .ui-resizable-handle {
   visibility: hidden;
+  z-index: 2999;
 }
 .upfront-module-group .upfront-editable_entities_container .uslider .ui-resizable-handle {
   visibility: visible;
 }
 .upfront-module-group-on-edit > .ui-resizable-handle,
 .upfront-module-group-on-edit > .upfront-entity_meta > .upfront-icon-button,
-.upfront-module-group.controls-visible > .upfront-entity_meta > .upfront-icon-button {
+.upfront-module-group.controls-visible > .upfront-entity_meta > .upfront-icon-button,
+.upfront-object-group-on-edit > .upfront-object-group > .ui-resizable-handle,
+.upfront-object-group-on-edit > .upfront-object-group > .upfront-entity_meta > .upfront-icon-button {
   visibility: hidden !important;
 }
-.upfront-module-group-on-edit .upfront-editable_entities_container .upfront-wrapper > .ui-resizable-handle,
-.upfront-module-group-on-edit .upfront-editable_entities_container .upfront-editable_entity:hover > .ui-resizable-handle {
+.upfront-module-group-on-edit .upfront-modules_container > .upfront-editable_entities_container > .upfront-wrapper > .ui-resizable-handle,
+.upfront-module-group-on-edit .upfront-modules_container > .upfront-editable_entities_container > .upfront-wrapper > .upfront-module-view > .upfront-editable_entity:hover > .ui-resizable-handle,
+.upfront-object-group-on-edit .upfront-objects_container > .upfront-editable_entities_container > .upfront-wrapper > .ui-resizable-handle,
+.upfront-object-group-on-edit .upfront-objects_container > .upfront-editable_entities_container > .upfront-wrapper > .upfront-object-view > .upfront-editable_entity:hover > .ui-resizable-handle {
   visibility: visible;
+  z-index: 2999;
 }
 .upfront-module-group-on-edit > .upfront-editable_entities_container {
   z-index: 2999999;
@@ -510,15 +550,22 @@
 .upfront-force-module-delete .upfront-module > .upfront-entity_meta > .upfront-entity-delete_trigger{
 	display: block !important;
 }
-.upfront-object > .upfront-entity_meta {
+.upfront-object > .upfront-entity_meta,
+.upfront-object-group > .upfront-entity_meta {
 	top: 28px;
 	right: 5px;
 }
+.upfront-object-group-on-edit .upfront-object-group .upfront-object > .upfront-entity_meta {
+  top: 5px;
+}
 .offset-ui-from-right-top .upfront-module > .upfront-entity_meta,
-.offset-ui-from-right-top .upfront-object > .upfront-entity_meta {
+.offset-ui-from-right-top .upfront-module-group > .upfront-entity_meta,
+.offset-ui-from-right-top .upfront-object > .upfront-entity_meta,
+.offset-ui-from-right-top .upfront-object-group > .upfront-entity_meta {
 	right: 50px;
 }
-.upfront-object > .upfront-entity_meta_extra {
+.upfront-object > .upfront-entity_meta_extra,
+.upfront-object-group > .upfront-entity_meta_extra {
 	top: 50px;
 	right:5px;
 }
@@ -532,7 +579,7 @@
 .upfront-region-lightbox-editing .upfront-region-side-lightbox > .upfront-entity_meta {
 	display: block;
 }
-.upfront-region-side-fixed > .upfront-entity_meta {
+.upfront-region-fixed-editing .upfront-region-side-fixed > .upfront-entity_meta {
 	top: 10px;
 	right: 15px;
 	z-index: 999999;
@@ -610,7 +657,7 @@
   right: 5px;
   background: #fff;
   border-radius:3px;
-  box-shadow: 0px 0px 3px 0px rgba(36,57,77,0.2);
+  box-shadow: 0 0 5px 0 rgba(36,57,77,.5);
   z-index: -1;
 }
 .upfront-wrapper:not(.upfront-inline-panel-item-open):hover > .upfront-wrapper-meta,
@@ -618,11 +665,16 @@
 .upfront-wrapper.ui-resizable-resizing > .upfront-wrapper-meta {
   display: block !important;
 }
+.upfront-editing-post-content .upfront-wrapper:hover > .upfront-wrapper-meta,
+.upfront-editing-content-style .upfront-wrapper:hover > .upfront-wrapper-meta,
 .upfront-module-group-editing .upfront-wrapper.upfront-wrapper-module-group-on-edit > .upfront-wrapper-meta,
-.upfront-module-group-editing .upfront-wrapper:hover > .upfront-wrapper-meta {
+.upfront-module-group-editing .upfront-wrapper:hover > .upfront-wrapper-meta,
+.upfront-object-group-editing .upfront-wrapper.upfront-wrapper-object-group-on-edit > .upfront-wrapper-meta,
+.upfront-object-group-editing .upfront-wrapper:hover > .upfront-wrapper-meta {
   display: none !important;
 }
-.upfront-module-group-editing .upfront-module-group-on-edit .upfront-wrapper:hover > .upfront-wrapper-meta {
+.upfront-module-group-editing .upfront-module-group-on-edit .upfront-wrapper:hover > .upfront-wrapper-meta,
+.upfront-object-group-editing .upfront-object-group-on-edit .upfront-wrapper:hover > .upfront-wrapper-meta {
   display: block !important;
 }
 .upfront-wrapper-meta-left {
@@ -682,8 +734,18 @@
   display: block;
 }
 .upfront-module-group-on-edit > .upfront-entity-size-hint,
-.upfront-module-group-on-edit:hover > .upfront-entity-size-hint {
+.upfront-module-group-on-edit:hover > .upfront-entity-size-hint,
+.upfront-module-group.upfront-module-group-element-editing > .upfront-entity-size-hint,
+.upfront-module-group.upfront-module-group-element-editing:hover > .upfront-entity-size-hint,
+.upfront-module-group.upfront-module-group-no-edit > .upfront-entity-size-hint,
+.upfront-module-group.upfront-module-group-no-edit:hover > .upfront-entity-size-hint,
+.upfront-module:hover .upfront-object-group .upfront-object-view .upfront-entity-size-hint {
   display: none;
+}
+.upfront-object-group-on-edit .upfront-object-group .upfront-object-view:hover > .upfront-entity-size-hint,
+.upfront-object-group-on-edit .upfront-object-group .upfront-object.ui-resizable-resizing ~ .upfront-entity-size-hint,
+.upfront-object-group-on-edit .upfront-object-group .upfront-wrapper.ui-resizable-resizing > .upfront-object-view > .upfront-entity-size-hint{
+	display: block;
 }
 
 
@@ -758,7 +820,8 @@
 .upfront-module-group.controls-visible > .open-item-controls {
   display: block;
 }
-.upfront-module-group.upfront-module-group-on-edit > .open-item-controls {
+.upfront-module-group.upfront-module-group-on-edit > .open-item-controls,
+.upfront-module-group.upfront-module-group-element-editing > .open-item-controls {
   display: none;
 }
 .upfront-module-group > .upfront-module-group-controls .inline-panel-control-dialog {

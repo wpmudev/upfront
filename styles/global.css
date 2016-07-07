@@ -58,7 +58,7 @@ td,th{padding:0}
 @media print {
 * { background: transparent !important; color: black !important; text-shadow: none !important; filter:none !important; -ms-filter: none !important; }
 a, a:visited { text-decoration: underline; }
-a[href]:after { content: " (" attr(href) ")"; }
+a[href]:after { content: none; }
 abbr[title]:after { content: " (" attr(title) ")"; }
 .ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after { content: ""; }
 pre, blockquote { border: 1px solid #999; page-break-inside: avoid; }
@@ -182,6 +182,9 @@ h2, h3 { page-break-after: avoid; }
 .upfront-output-bg-overlay {
 	overflow: hidden;
 }
+.upfront-region-container-full .upfront-output-bg-overlay {
+	will-change: top;
+}
 .upfront-output-bg-overlay > .upfront-bg-image {
 	display: block;
 }
@@ -192,7 +195,8 @@ h2, h3 { page-break-after: avoid; }
 
 /* Object */
 .upfront-object,
-.upfront-output-object {
+.upfront-output-object,
+.upfront-output-object-group {
   float:left;
   width:100%;
   -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
@@ -241,6 +245,10 @@ h2, h3 { page-break-after: avoid; }
 .ueditor-insert-variant-group.ueditor-insert-float-right {
   float: right;
   margin-left: 15px;
+}
+.ueditor-insert-variant-group.ueditor-image-style-center {
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 .uinsert-image-wrapper img {
   width: 100%;
@@ -313,12 +321,23 @@ h2, h3 { page-break-after: avoid; }
   max-height: none !important;
 }
 
-.upfront-postpart-featured_image {
-  overflow: hidden;
+.upfront-postpart-featured_image, .upostdata-part.thumbnail {
+	overflow: hidden;
+	position: relative;
 }
-.upfront-postpart-featured_image img {
+
+.upfront-output-object.part-featured_image {
+	position: relative;
+}
+
+.upfront-output-object.part-featured_image .upostdata-part.thumbnail {
+	height: inherit;
+}
+
+.upfront-postpart-featured_image img, .upostdata-part.thumbnail img, .upfront-editable_entity .upostdata-part.thumbnail img {
   max-width: 100%;
-  min-width: 100%;
+  /* min-width: 100%; */
+  margin: 0px;
   height: auto;
 }
 
@@ -349,6 +368,10 @@ h2, h3 { page-break-after: avoid; }
     width: auto;
     text-align: center;
 }
+.uf-responsive .ueditor-insert-variant-group.ueditor-image-style-center {
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
 .uf-responsive .upfront-inserted_image-wrapper .wp-caption-text, 
 .uf-responsive .upfront-inserted_image-wrapper .uinsert-image-wrapper {
     min-height: 0 !important;
@@ -367,27 +390,36 @@ h2, h3 { page-break-after: avoid; }
 .flexbox-support .upfront-output-region,
 .flexbox-support .upfront-output-region > .upfront-region-wrapper,
 .flexbox-support .upfront-output-module-group,
+.flexbox-support .upfront-output-object-group,
 .flexbox-support .upfront-output-wrapper,
 .flexbox-support .upfront-output-region-container > .upfront-region-container-bg > .upfront-grid-layout {
 	display: -webkit-flex;
+	display: -ms-flexbox;
 	display: flex;
 	-webkit-flex-direction: row;
+	-ms-flex-direction: row;
 	flex-direction: row;
 	-webkit-flex-wrap: wrap;
+	-ms-flex-wrap: wrap;
 	flex-wrap: wrap;
 	-webkit-align-items: flex-start;
+	-ms-flex-align: start;
 	align-items: flex-start;
 	-webkit-align-content: flex-start;
+	-ms-flex-line-pack: start;
 	align-content: flex-start;
 }
 .flexbox-support .upfront-output-region-container > .upfront-region-container-bg > .upfront-grid-layout {
 	-webkit-align-items: stretch;
+	-ms-flex-align: stretch;
 	align-items: stretch;
 }
 .flexbox-support .upfront-output-region {
 	-webkit-flex-wrap: nowrap;
+	-ms-flex-wrap: none;
 	flex-wrap: nowrap;
 	-webkit-align-items: stretch;
+	-ms-flex-align: stretch;
 	align-items: stretch;
 }
 .flexbox-support .upfront-output-region:before,
@@ -396,8 +428,12 @@ h2, h3 { page-break-after: avoid; }
 }
 .flexbox-support .upfront-output-region > .upfront-region-wrapper > .upfront-output-wrapper,
 .flexbox-support .upfront-output-module-group > .upfront-output-wrapper,
-.flexbox-support .upfront-output-wrapper > .upfront-output-module {
+.flexbox-support .upfront-output-object-group > .upfront-output-wrapper,
+.flexbox-support .upfront-output-wrapper > .upfront-output-module,
+.flexbox-support .upfront-output-wrapper > .upfront-output-module-group,
+.flexbox-support .upfront-output-wrapper > .upfront-output-object {
 	-webkit-order: 0; 
+	-ms-flex-order: 0; 
 	order: 0;
 }
 /* End flexbox */
@@ -548,6 +584,9 @@ body .upfront-edit_layout a {
   line-height: inherit;
 }
 
+.upfront-bumped-z-index{
+    z-index: 2;
+}
 /* Firefox checkboxes and radios are styled to match the rest of the browsers */
 @-moz-document url-prefix() { 
   input[type=checkbox] {

@@ -1,0 +1,47 @@
+.upfront-output-post-data * {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+.upostdata-part {
+    margin: 0 0 15px;
+}
+.upostdata-part.gravatar img {
+    max-width: 100%;
+}
+.upostdata-part.thumbnail {
+    overflow: hidden;
+    margin-bottom: 0;
+}
+.upostdata-part.thumbnail img,
+.upfront-editable_entity .upostdata-part.thumbnail img{
+    display: block;
+    /* max-width: 100%; */
+    max-height: none;
+    height: auto;
+}
+.upostdata-part.thumbnail .upfront-featured-image-smaller {
+	position: relative;
+}
+.upostdata-part.thumbnail[data-resize="1"] img,
+.upfront-editable_entity .upostdata-part.thumbnail[data-resize="1"] img{
+    max-width: none;
+}
+.uf-responsive .upostdata-part.thumbnail img {
+    max-width: 100%;
+}
+
+/* Hide the fallback image */
+.upfront-output-object-group.no-featured_image.fallback_hide {
+    display: none;
+}
+.upfront-output-object-group.no-featured_image.fallback_color .upfront-output-object * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    height: auto !important;
+}

@@ -61,7 +61,7 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 
 		rendered = this.youtubeTpl(this.extract_properties());
 
-		if(this.property('youtube_status') === 'starting' && !props.multiple_videos){
+		if(this.property('youtube_status') === 'starting' && !props.multiple_videos && Upfront.Application.user_can_modify_layout()){
 		rendered += '<div class="upfront-youtube-starting-select upfront-initial-overlay-wrapper">' +
 			'<div class="upfront-youtube-starting-wrapper upfront-initial-overlay-wrapper" style="height: 110px;">' +
 			'<div class="upfront-youtube-starting-text">'+ l10n.enter_url +'</div>'+
@@ -157,6 +157,8 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 				Upfront.Events.trigger("upfront:element:edit:stop");
 			}
 		});
+
+		Upfront.Events.trigger('entity:object:refresh', this);
 	},
 
 	property: function(name, value, silent) {

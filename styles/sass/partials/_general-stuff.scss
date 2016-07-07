@@ -1,5 +1,6 @@
 [contenteditable="true"] {
 	outline: none;
+	cursor: text;
 }
 
 .upfront-no-select {
@@ -30,4 +31,11 @@ em{
 /* --- Turns Cursor to Text when Editing mode is ON --- */
 .upfront-edit-layout .upfront-module-editing .uf-click-to-edit-text, .redactor-box .uf-click-to-edit-text {
 	cursor: text;
+}
+
+/* --- Handling links when print --- */
+@media print {
+  a[href]:after {
+    content: none;
+  }
 }

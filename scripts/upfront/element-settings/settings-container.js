@@ -25,7 +25,7 @@ define([], function () {
 		cleanUp: function() {
 			if(this.settings) {
 				this.settings.each(function(setting){
-					setting.remove();
+					if ((setting || {}).remove) setting.remove();
 				});
 			}
 

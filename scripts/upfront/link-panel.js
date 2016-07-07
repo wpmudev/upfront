@@ -1,7 +1,7 @@
 (function ($) {
 define([
 	"scripts/upfront/link-model",
-	"text!scripts/upfront/templates/link-panel.html",
+	"text!scripts/upfront/templates/link-panel.html"
 ], function(LinkModel, linkPanelTpl) {
 
 	var getAnchors = function() {
@@ -73,6 +73,7 @@ define([
 			image: false,
 			lightbox: true,
 			email: true,
+			phone: true,
 			homepage: true
 		},
 
@@ -91,7 +92,7 @@ define([
 		visit_lightbox: function(e) {
 			e.preventDefault();
 			var url = $(e.target).attr('href');
-			
+
 			// if there is no url defined, no point going forward
 			if(!url || url==='')
 				return;
@@ -107,10 +108,10 @@ define([
 				var regionview = Upfront.data.region_views[region.cid];
 				regionview.show();
 			}
-			
+
 		},
 		getUrlanchor: function(url) {
-			if(typeof(url) == 'undefined') var url = $(location).attr('href');
+			if(typeof(url) == 'undefined') url = $(location).attr('href');
 
 			if(url.indexOf('#') >=0) {
 				var tempurl = url.split('#');
@@ -151,7 +152,7 @@ define([
 				this.createLightBox();
 			} else {
 				this.close();
-				this.model.trigger("change")
+				this.model.trigger("change");
 			}
 			//this.trigger('change', this.model);
 		},
@@ -213,6 +214,8 @@ define([
 					return { value: 'external', label: contentL10n.url };
 				case 'email':
 					return { value: 'email', label: contentL10n.email };
+				case 'phone':
+					return { value: 'phone', label: contentL10n.phone };
 				case 'entry':
 					return { value: 'entry', label: contentL10n.post_or_page };
 				case 'anchor':
@@ -267,25 +270,28 @@ define([
 			});
 
 			Upfront.Application.LayoutEditor.createLightboxRegion(name);
-			// this is required to send a 'dontflag' to the editor, 
+			// this is required to send a 'dontflag' to the editor,
 			// because the lightbox is created
 			// after the link is saved in the text.
-			// triggering the change again will refresh the editor's state 
+			// triggering the change again will refresh the editor's state
 			// and get rid of missing link flag
-			this.model.trigger("change", true); 
+			this.model.trigger("change", true);
 			this.render();
 		},
 
 		/* Handle manually entered urls: external and email */
 		onUrlInputBlur: function(event) {
 			var userInput = $(event.currentTarget).val().trim();
-			if (this.model.get('type') === 'external' && !userInput.match(/https?:\/\//)) {
+			if (this.model.get('type') === 'external' && !userInput.match(/https?:\/\//) && !_.isEmpty( userInput ) ) {
 				userInput = 'http://' + userInput;
 			}
 			if (this.model.get('type') === 'email' && !userInput.match(/^mailto:/)) {
 				userInput = 'mailto:' + userInput;
 			}
-
+			if (this.model.get('type') === 'phone' && !userInput.match(/^tel:/)) {
+				userInput = 'tel:' + userInput;
+				this.model.set({'target': "_self"});
+			}
 			this.model.set({'url': userInput});
 			this.render();
 		},
@@ -355,12 +361,12 @@ define([
 			var me = this;
 
 			this.targetRadio = new Upfront.Views.Editor.Field.Radios({
-				label: 'Target:',
+				label: Upfront.Settings.l10n.global.content.target,
 				default_value: this.model.get('target') || '_self',
 				layout: 'horizontal-inline',
 				values: [
-					{ label: 'blank', value: '_blank' },
-					{ label: 'self', value: '_self' }
+					{ label: Upfront.Settings.l10n.global.content.blank, value: '_blank' },
+					{ label: Upfront.Settings.l10n.global.content.self, value: '_self' }
 				],
 				change: function () {
 					me.model.set({'target': this.get_value()});

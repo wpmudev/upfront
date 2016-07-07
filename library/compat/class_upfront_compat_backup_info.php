@@ -5,6 +5,18 @@ class Upfront_Compat_Backup_Info {
 	public function __construct () {}
 
 	/**
+	 * Check to see if we're even capable of doing something like this
+	 *
+	 * @return bool
+	 */
+	public function is_actionable () {
+		return is_multisite()
+			? current_user_can('manage_network_options')
+			: current_user_can('manage_options')
+		;
+	}
+
+	/**
 	 * Check if we have our plugin ready, or at least present
 	 *
 	 * @return bool

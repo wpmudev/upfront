@@ -7,7 +7,7 @@
 		var data = JSON.parse($el.attr('data-bg-map')),
 			options = {
 				center: new google.maps.LatLng(data.center[0], data.center[1]),
-				zoom: parseInt(data.zoom),
+				zoom: parseInt(data.zoom, 10) || 0,
 				mapTypeId: google.maps.MapTypeId[data.style],
 				panControl: (data.controls && data.controls.indexOf("pan") >= 0),
 				zoomControl: (data.controls && data.controls.indexOf("zoom") >= 0),
@@ -18,7 +18,8 @@
 				scrollwheel: false,
 				styles: (data.use_custom_map_code ? JSON.parse(data.styles) || false : false)
 			},
-			map = new google.maps.Map($el.get(0), options);
+			map = new google.maps.Map($el.get(0), options)
+		;
 		$el.data('map', map);
 		if (!!data.show_markers) {
 			var mrk = new google.maps.Marker({
@@ -34,11 +35,13 @@
 		$(document).data("upfront-google_maps-loading", true);
 		if (typeof google === 'object' && typeof google.maps === 'object' && typeof google.maps.Map === 'object') return upfront_bg_map_init();
 		var protocol = '',
+			key = (window._upfront_api_keys || {})['gmaps'] || false,
 			script = document.createElement("script")
 		;
 		try { protocol = document.location.protocol; } catch (e) { protocol = 'http:'; }
+		key = key ? '&key=' + key : '';
 		script.type = "text/javascript";
-		script.src = protocol + "//maps.google.com/maps/api/js?v=3&libraries=places&sensor=false&callback=upfront_maps_loaded";
+		script.src = protocol + "//maps.google.com/maps/api/js?v=3" + key + "&libraries=places&sensor=false&callback=upfront_maps_loaded";
 		document.body.appendChild(script);
 	}
 

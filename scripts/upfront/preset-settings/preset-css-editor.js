@@ -22,7 +22,7 @@ define([
 			'click .upfront-css-selector': 'addSelector',
 			'click .upfront-css-type' : 'scrollToElement',
 			'mouseenter .upfront-css-selector': 'hiliteElement',
-			'mouseleave .upfront-css-selector': 'unhiliteElement',
+			'mouseleave .upfront-css-selector': 'unhiliteElement'
 		},
 		//elemenTypes' element id matches model's 'id_slug' attribute
 		elementTypes: {
@@ -46,12 +46,19 @@ define([
 			ThisPostModel: {label: l10n.post, id: 'this_post'},
 			UwidgetModel: {label: l10n.widget, id: 'widget'},
 			UyoutubeModel: {label: l10n.youtube, id: 'youtube'},
-			PlainTxtModel: {label: l10n.text, id:'text', preset_container: 'inline'},
+			PlainTxtModel: {label: l10n.text, id:'text', preset_container: 'inline'}
+		},
+		postElementTypes: {
+			post_data: {label: l10n.post_data, id: 'post_data'},
+			author: {label: l10n.author, id: 'author'},
+			featured_image: {label: l10n.featured_image, id: 'featured_image'},
+			taxonomy: {label: l10n.taxonomy, id: 'taxonomy'},
+			comments: {label: l10n.comments, id: 'comments'},
+			meta: {label: l10n.meta, id: 'meta'}
 		},
 		initialize: function(options) {
 			var me = this,
-				deferred = $.Deferred(),
-				style_selector;
+				deferred = $.Deferred();
 
 			this.options = options || {};
 			this.model = options.model;
@@ -73,11 +80,11 @@ define([
 
 			$(window).on('resize', this.resizeHandler);
 
+			this.dataPartType = this.model.get_property_value_by_name('data_type');
 			this.modelType = this.options.model.get_property_value_by_name('type');
 			this.elementType = this.elementTypes[this.modelType] || {label: 'Unknown', id: 'unknown'};
 
-			style_selector = this.options.preset.get('id');
-			// DO NOT DO THIS!!! DELEGATE STYLE RENDERING TO PRESET (look at preset-css module
+			// DO NOT DO THIS!!! DELEGATE STYLE RENDERING TO PRESET (look at preset-css module scripts/upfront/settings/modules/preset-css.js
 			// $style = $('#' + style_selector);
 			// if ($style.length === 0) {
 				// this.$style = $('<style id="' + style_selector + '"></style>');
@@ -89,6 +96,11 @@ define([
 			this.createSelectors(Upfront.Application.LayoutEditor.Objects);
 
 			this.selectors = this.elementSelectors[this.modelType] || {};
+
+			if(this.modelType === "PostDataModel") {
+				this.elementType = this.postElementTypes[this.dataPartType] || {label: l10n.post_data, id: 'post_data'};
+				this.selectors = this.elementSelectors['post_' + this.dataPartType] || {};
+			}
 
 			this.element_id = options.element_id ? options.element_id : this.model.get_property_value_by_name('element_id');
 
@@ -147,14 +159,17 @@ define([
 			var preset_class = this.get_css_selector();
 			styles_with_selector = this.stylesAddSelector($.trim(rawCss), '#page ' + preset_class);
 			// Solve case of button loosing its styles
-			styles_with_selector = Upfront.Util.colors.convert_string_ufc_to_color(styles_with_selector.replace(new RegExp(this.get_css_selector() + ' .upfront-button', 'g'), this.get_css_selector() + '.upfront-button'));
+			styles_with_selector = Upfront.Util.colors.convert_string_ufc_to_color(styles_with_selector.replace(new RegExp(Upfront.Util.preg_quote(this.get_css_selector()) + ' .upfront-button', 'g'), this.get_css_selector() + '.upfront-button'));
 
 			return styles_with_selector;
 		},
 		cleanUpStyles: function(styles) {
-			var scope = new RegExp(this.get_css_selector() + '\\s*', 'g');
-			styles = styles.replace(new RegExp('#page ' + this.get_css_selector() + '\\s*', 'g'), '');
+			if(!this.get_css_selector()) return '';
+
+			var scope = new RegExp(Upfront.Util.preg_quote(this.get_css_selector()) + '\\s*', 'g');
+			styles = styles.replace(new RegExp('#page ' + Upfront.Util.preg_quote(this.get_css_selector()) + '\\s*', 'g'), '');
 			styles = styles.replace(scope, '');
+
 			// Unescape quotes a few times
 			styles = styles.replace(/\\'/g, "'");
 			styles = styles.replace(/\\'/g, "'");
@@ -220,7 +235,14 @@ define([
 							//spectrum = $('.sp-container:visible');
 						},
 						choose: function(color) {
-							var colorString = color.alpha < 1 ? color.toRgbString() : color.toHexString();
+							var colorString;
+
+							if( color.get_is_theme_color() !== false ){
+								colorString = color.theme_color;
+							}else{
+								colorString = color.alpha < 1 ? color.toRgbString() : color.toHexString();
+							}
+
 							me.editor.insert(colorString);
 							me.editor.focus();
 						}
@@ -313,6 +335,7 @@ define([
 			Upfront.Media.Manager.open(options).done(function(popup, result){
 				Upfront.Events.trigger('upfront:element:edit:stop');
 				if (!result) return;
+				if ( 0 === result.length ) return;
 
 				var imageModel = result.models[0],
 					img = imageModel.get('image') ? imageModel.get('image') : result.models[0],
@@ -343,7 +366,7 @@ define([
 		},
 		hiliteElement: function(e){
 			var preset_selector = this.get_css_selector();
-			
+
 			//Do not add empty space for posts element
 			if(this.elementType.id !== "posts") {
 				preset_selector = preset_selector + ' ';
@@ -365,7 +388,7 @@ define([
 			if(this.elementType.id !== "posts") {
 				preset_selector = preset_selector + ' ';
 			}
-			
+
 			var selector = preset_selector + $(e.target).data('selector');
 
 			if(!selector.length)
@@ -381,7 +404,14 @@ define([
 		get_css_selector: function() {
 			if (this.is_global_stylesheet) return '';
 
+			//Make sure preset id is defined and not empty
+			if (typeof this.options.preset.get('id') === "undefined" || !this.options.preset.get('id')) return '';
+
 			var preset_class = '.' + this.options.preset.get('id');
+
+			if (this.dataPartType) {
+				preset_class = preset_class + '.upost-data-object-' + this.dataPartType;
+			}
 
 			if(typeof this.elementType.preset_container === "undefined") {
 				preset_class = preset_class + ' ';
@@ -430,18 +460,14 @@ define([
 					src[1] + // Actual rule
 				'\n}\n';
 			});
+
+			// Handle closing comments being omitted from the processed string
+			// Only apply if the original contents has closing CSS comment, and the processed one does not
+			if (contents.match(/\*\/\s*$/) && !processed.match(/\*\/\s*$/)) {
+				processed += '\n*/';
+			}
+
 			return processed;
-		/*
-			var rules = contents.split('}'),
-				separator = '\n\n' + selector + ' ';
-
-
-			rules = _.map(rules, function(rule){return $.trim(rule);});
-
-			rules.pop();
-
-			return separator + rules.join('\n}' + separator) + '\n}';
-		*/
 		},
 		recursiveExistence: function(selector, clean_selector) {
 			var splitted = clean_selector.split(' ');
@@ -469,7 +495,7 @@ define([
 				return Upfront.Views.Editor.notify(l10n.style_name_nag, 'error');
 
 			return Upfront.Views.Editor.notify(l10n.preset_style_saved.replace(/%s/,  this.elementType.id));
-		},
+		}
 	});
 
 	var Preset_Insert_Font_Widget = Backbone.View.extend({

@@ -63,6 +63,8 @@ define([
 			this.clicked(e);
 
 			this.$el.siblings('.upfront-control-dialog-open').removeClass('upfront-control-dialog-open');
+			
+			this.listenTo(Upfront.Events, "upfront:hide:paddingPanel", this.close);
 
 			if (this.isOpen) {
 				this.close();
@@ -75,6 +77,7 @@ define([
 			this.isOpen = true;
 			this.refresh();
 			this.$el.addClass('upfront-control-dialog-open');
+			Upfront.Events.trigger('upfront:hide:subControl');
 		},
 
 		close: function() {
@@ -88,6 +91,7 @@ define([
 				$paddingControl = me.$('.upfront-padding-control'),
 				$paddingTopContainer = $('<div class="upfront-padding-container">' + l10n.top_padding_short + '<span class="upfront-padding-value"></span></div>'),
 				$paddingBottomContainer = $('<div class="upfront-padding-container">' + l10n.bottom_padding_short + '<span class="upfront-padding-value"></span></div>'),
+				$advancedPaddingContainer = $('<div class="upfront-padding-container"></div>'),
 				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding
 			;
 
@@ -130,6 +134,14 @@ define([
 					this.model.set_breakpoint_property('top_padding_num', value);
 					Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
 					Upfront.Events.trigger("upfront:paddings:top:updated", this.model, Upfront.data.currentEntity);
+				},
+				callbacks: {
+					stop: function (e) {
+						var uislider = $(this).data('uiSlider');
+						if ( !uislider || !_.isObject(uislider) || !('handle' in uislider) ) return;
+						// Call blur on stop to prevent key event handled by jQuery UI Slider
+						uislider.handle.blur();
+					}
 				}
 			});
 
@@ -156,6 +168,14 @@ define([
 					this.model.set_breakpoint_property('bottom_padding_num', value);
 					Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
 					Upfront.Events.trigger("upfront:paddings:bottom:updated", this.model, Upfront.data.currentEntity);
+				},
+				callbacks: {
+					stop: function (e) {
+						var uislider = $(this).data('uiSlider');
+						if ( !uislider || !_.isObject(uislider) || !('handle' in uislider) ) return;
+						// Call blur on stop to prevent key event handled by jQuery UI Slider
+						uislider.handle.blur();
+					}
 				}
 			});
 
@@ -166,6 +186,21 @@ define([
 			me.paddingBottom.render();
 			$paddingBottomContainer.append(me.paddingBottom.$el);
 			$paddingControl.append($paddingBottomContainer);
+			
+			if ( me.model.attributes.modules === undefined && !me.model.get_property_value_by_name("code_selection_type") ) {
+			
+				me.advancedPadding = new Upfront.Views.Editor.Field.Button({
+					className: 'upfront-field-wrap upfront-field-wrap-button upfront-field-advanced-padding',
+					compact: true,
+					label: l10n.advanced_padding,
+					name: 'advanced-padding'
+				});
+				
+				me.advancedPadding.render();
+				$advancedPaddingContainer.append(me.advancedPadding.$el);
+				$paddingControl.append($advancedPaddingContainer);
+				
+			} 
 
 			$paddingTopContainer.on('mousedown', function() {
 				Upfront.data.currentEntity.padding_hint_locked = true;
@@ -232,6 +267,9 @@ define([
 				this.model.set_breakpoint_property('top_padding_use', 'yes');
 				this.model.set_breakpoint_property('top_padding_num', padding_top_val);
 				this.model.set_breakpoint_property('top_padding_slider', padding_top_val);
+				
+				Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
+				Upfront.Events.trigger("upfront:paddings:top:updated", this.model, Upfront.data.currentEntity);
 
 				this.refresh();
 			}
@@ -243,6 +281,9 @@ define([
 				this.model.set_breakpoint_property('top_padding_use', 'yes');
 				this.model.set_breakpoint_property('top_padding_num', padding_top_val);
 				this.model.set_breakpoint_property('top_padding_slider', padding_top_val);
+				
+				Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
+				Upfront.Events.trigger("upfront:paddings:top:updated", this.model, Upfront.data.currentEntity);
 
 				this.refresh();
 			}

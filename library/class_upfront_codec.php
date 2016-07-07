@@ -162,7 +162,8 @@ abstract class Upfront_MacroCodec {
 		if (!empty($matches[1])) $tags = $matches[1];
 
 		if (!empty($tags)) foreach ($tags as $idx => $tag) {
-			$clean = reset(explode($this->fallback(), $tag));
+			$tmp = explode($this->fallback(), $tag);
+			$clean = reset($tmp);
 			if ($clean === $tag) continue;
 			$tags[$idx] = $clean;
 		}

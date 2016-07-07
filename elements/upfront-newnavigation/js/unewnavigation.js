@@ -73,6 +73,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		});
 
 		this.listenTo(Upfront.Events, 'entity:drag_stop', this.onElementReposition);
+		this.delegateEvents();
 	},
 
 	on_element_resize: function (attr) {
@@ -156,6 +157,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 	},
 	editMenuItem: function(e) {
+
+		if (!Upfront.Application.user_can_modify_layout()) return false;
 
 		this.editModeOn(e);
 		var me = this;
@@ -370,8 +373,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			clubbedvalues = menuItemsValues.concat(menuList);
 		}
 
-
 		me.$el.find('div.upfront-object-content').html('');
+
+		if (!Upfront.Application.user_can_modify_layout()) return false;
 
 		var menuItems = new Upfront.Views.Editor.Field.Select({
 			model: me.model,
@@ -628,7 +632,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			});
 
 			for(var i = 0; i < higherBPs.length; i++) {
-				breakpoint = breakpoints[higherBPs[i].id];
+				if(typeof breakpoints !== "undefined") {
+					breakpoint = breakpoints[higherBPs[i].id];
+				}
 
 				if(breakpoint) {
 					break;
@@ -994,10 +1000,10 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		else {
 			region_container.removeClass('upfront-region-container-has-nav');
 		}
-		
+
 		var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 			usingNewAppearance = this.property('usingNewAppearance');
-	
+
 		presetProperties.breakpoint = usingNewAppearance ? this.get_preset_properties().breakpoint : this.fallbackBreakpointData();
 
 		if (!breakpoint || breakpoint.default) {
@@ -1013,7 +1019,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				me.hideMenu(this.$el.find('ul.menu'));
 			}
 		} else {
-			breakpoint_data = presetProperties.breakpoint[breakpoint.id] || {};
+			breakpoint_data = (presetProperties.breakpoint || {})[breakpoint.id] || {};
 
 			var menu_style = typeof breakpoint_data.menu_style === 'undefined' ? (this.model.get_breakpoint_property_value('burger_menu') === 'yes' ? 'burger' : '') : breakpoint_data.menu_style;
 			var burger_over = typeof breakpoint_data.burger_over === 'undefined' ? this.model.get_breakpoint_property_value('burger_over') : breakpoint_data.burger_over;
@@ -1042,6 +1048,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		$el.addClass(this.elementClasses);
 	},
 	makeSortable: function() {
+		if (!Upfront.Application.user_can_modify_layout()) return false;
+
 		var me = this;
 		this.$el.find('.upfront-object-content ul').each(function() {
 			if ($(this).hasClass('redactor-toolbar') || $(this).hasClass('upfront-field-select-options')) {
@@ -1215,8 +1223,8 @@ Upfront.Application.LayoutEditor.add_object("Unewnavigation", {
 	"Settings": NavigationSettings,
 	cssSelectors: {
 		"[data-style='horizontal'] ul.menu, div[data-style='vertical'] ul.menu": {label: l10n.css.bar_label, info: l10n.css.bar_info},
-		"[data-style='horizontal'] ul.menu > li.menu-item > a, div[data-style='vertical'] ul.menu > li.menu-item > a": {label: l10n.css.item_label, info: l10n.css.item_info},
-		"[data-style='horizontal'] ul.menu > li.menu-item:hover > a, div[data-style='vertical'] ul.menu > li.menu-item:hover > a": {label: l10n.css.hover_label, info: l10n.css.hover_info},
+		"[data-style='horizontal'] ul.menu > li.menu-item a, div[data-style='vertical'] ul.menu > li.menu-item a": {label: l10n.css.item_label, info: l10n.css.item_info},
+		"[data-style='horizontal'] ul.menu > li.menu-item:hover a, div[data-style='vertical'] ul.menu > li.menu-item:hover a": {label: l10n.css.hover_label, info: l10n.css.hover_info},
 		"[data-style='horizontal'] ul.sub-menu > li.menu-item > a, div[data-style='vertical'] ul.sub-menu > li.menu-item > a": {label: l10n.css.subitem_label, info: l10n.css.subitem_info},
 		"[data-style='horizontal'] ul.sub-menu > li.menu-item:hover > a, div[data-style='vertical'] ul.sub-menu > li.menu-item:hover > a": {label: l10n.css.subitem_hover_label, info: l10n.css.subitem_hover_info},
 
@@ -1225,8 +1233,8 @@ Upfront.Application.LayoutEditor.add_object("Unewnavigation", {
 		"[data-style='burger'] .responsive_nav_toggler": {label: l10n.css.responsive_trigger, info: l10n.css.hover_info},
 		"[data-style='burger'] div.responsive_nav_toggler > div": {label: l10n.css.responsive_trigger_bars, info: l10n.css.hover_info},
 		"[data-style='burger'] i.burger_nav_close": {label: l10n.css.responsive_nav_close, info: l10n.css.close_info},
-		"[data-style='burger'] ul.menu > li.menu-item > a": {label: l10n.css.responsive_item_label, info: l10n.css.item_info},
-		"[data-style='burger'] ul.menu > li.menu-item:hover > a": {label: l10n.css.responsive_hover_label, info: l10n.css.hover_info},
+		"[data-style='burger'] ul.menu > li.menu-item a": {label: l10n.css.responsive_item_label, info: l10n.css.item_info},
+		"[data-style='burger'] ul.menu > li.menu-item:hover a": {label: l10n.css.responsive_hover_label, info: l10n.css.hover_info},
 		"[data-style='burger'] ul.sub-menu > li.menu-item > a": {label: l10n.css.responsive_subitem_label, info: l10n.css.subitem_info},
 		"[data-style='burger'] ul.sub-menu > li.menu-item:hover > a": {label: l10n.css.responsive_subitem_hover_label, info: l10n.css.subitem_hover_info}
 	},

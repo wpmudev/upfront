@@ -80,14 +80,14 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			});
 
 
-            if( Upfront.Application.is_builder() ){
+            /*if( Upfront.Application.is_builder() ){
                 me.editor.loadingLayout.done(function() {
                     setTimeout(function() {
                         Upfront.Events.trigger('post:layout:edit', me, 'single');
                     }, 200);
 
                 });
-            }
+            }*/
 
 		});
 
@@ -136,7 +136,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 			node = [$('<div>')];
 
 		if(!this.editor){
-			this.editor = new Upfront.Content.PostEditor({
+			this.editor = new Upfront.Content.PostEditorLegacy({
 				editor_id: 'this_post_' + this.postId,
 				post_id: this.postId,
 				preload: true,
@@ -158,6 +158,14 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 		var me = this,
 			contents = this.$('.upfront-object-content').children()
 		;
+
+		// Always allow this_post to be deleted
+		// Since we have new single post data element already
+		if ( this.parent_module_view.model.get_property_value_by_name('sticky') ) {
+			this.parent_module_view.model.set_property('sticky', false);
+			// Add the button manually
+			this.parent_module_view.$el.find('> .upfront-module > .upfront-entity_meta').prepend('<a href="#" class="upfront-icon-button upfront-icon-button-delete upfront-entity-delete_trigger"></a>');
+		}
 
 		// Make sure we have an element to swap with, first up
 		if(contents[0] && contents[0] != this.editor.el){
@@ -196,7 +204,7 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 
     editPostContent: function(){
         this.editor.editContents();
-        Upfront.Events.trigger('upfront:element:edit:start', 'write', this);
+        //Upfront.Events.trigger('upfront:element:edit:start', 'write', this);
     },
 
 	refreshMarkup: function () {
@@ -256,8 +264,9 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 	redirectPostEdit: function (post) {
 		//window.location = Upfront.Settings.Content.edit.post + post.id;
 		var path = '/edit/' + post.get('post_type') + '/' + post.id;
+		if(_upfront_post_data) _upfront_post_data.post_id = post.id;
 		Upfront.Application.navigate(path, {trigger: true});
-		if ( Upfront.Settings.Application.MODE.ALLOW.indexOf(Upfront.Settings.Application.MODE.LAYOUT) != -1 )
+		if (Upfront.Application.user_can("EDIT"))
 			Upfront.Application.set_current(Upfront.Settings.Application.MODE.LAYOUT);
 	},
 
@@ -444,13 +453,13 @@ var Settings = ElementSettings.extend({
 			styleTpl: styleTpl,
 		},
 	},
-	
+
 	initialize: function (opts) {
 		//If editor show only general preset
 		if (location.pathname.indexOf('create_new') === -1) {// you are in exporter
 			this.panels = { General: Settings_PostPanel };
 		}
-		
+
 		// Call the super constructor here, so that the appearance panel is instantiated
 		this.constructor.__super__.initialize.call(this, opts);
 	},

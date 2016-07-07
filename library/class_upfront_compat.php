@@ -49,6 +49,30 @@ class Upfront_Compat implements IUpfront_Server {
 		}
 
 		add_action('wp_ajax_upfront-notices-dismiss', array($this, 'json_dismiss_notices'));
+
+		// Hummingbird compat layer
+		add_filter('wphb_minification_display_enqueued_file', array($this, 'is_upfront_resource_skippable_with_hummingbird'), 10, 3);
+		add_filter('wphb_combine_resource', array($this, 'is_upfront_resource_skippable_with_hummingbird'), 10, 3);
+		add_filter('wphb_minify_resource', array($this, 'is_upfront_resource_skippable_with_hummingbird'), 10, 3);
+	}
+
+	/**
+	 * Hooks up to Hummingbird's native filters
+	 *
+	 * Fixes the necessary resources needed for Upfront to boot properly
+	 *
+	 * @param bool $action Context-dependent action to take (false means "skip")
+	 * @param mixed $item Content-dependent item to process - array for display, string for combine/minify actions
+	 * @param string $type Item type
+	 *
+	 * @return bool
+	 */
+	public function is_upfront_resource_skippable_with_hummingbird ($action, $item, $type) {
+		$handle = is_string($item) ? $item : (!empty($item['handle']) ? $item['handle'] : 'unknown');
+		return in_array($handle, array('upfront-main', 'upfront-element-styles', 'upfront-element-scripts'))
+			? false
+			: $action
+		;
 	}
 
 	/**
@@ -75,6 +99,10 @@ class Upfront_Compat implements IUpfront_Server {
 		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false; // We don't care, not editable
 		if (function_exists('upfront_exporter_is_running') && upfront_exporter_is_running()) return false; // Not in exporter
 		if ($this->_is_update_notice_dismissed_for('1.0')) return false; // We have notices dismissed for v1.0 version and below
+
+		if (!class_exists('Upfront_Compat_Backup_Info')) require_once('compat/class_upfront_compat_backup_info.php');
+		$info = new Upfront_Compat_Backup_Info;
+		if (!$info->is_actionable()) return false;
 
 		// This check is potentially costly, so don't do it unless we have to
 		if (!(defined('DOING_AJAX') && DOING_AJAX)) {

@@ -88,8 +88,8 @@ var PostImageInsert_Manager = base.ImageInsertBase.extend({
      */
     importFromShortcode_UF: function( shortcode_data ){
         var imageData = _.extend({}, this.defaultData ),
-            realSize = this.calculateRealSize( imageData.imageThumb.src )
-            ;
+            realSize = this.calculateRealSize( imageData.imageThumb.src)
+        ;
 
         imageData.imageThumb.src = this.get_shortcode_image_src( shortcode_data.content );
         imageData.caption = this.get_shortcode_caption_text( shortcode_data.parse_content );
@@ -102,9 +102,10 @@ var PostImageInsert_Manager = base.ImageInsertBase.extend({
             src: imageData.imageThumb.src
         };
 
-        imageData.style = Upfront.Content.ImageVariants.findWhere({ 'vid': shortcode_data.get("uf_variant") }).toJSON();
+        imageData.style = this._findVariant(shortcode_data.get("uf_variant")).toJSON();
 
-        imageData.style.caption.show =  shortcode_data.get("uf_show_caption");
+        imageData.show_caption = parseInt(shortcode_data.get("uf_show_caption"), 10);
+        imageData.style.caption.show =  parseInt(shortcode_data.get("uf_show_caption"), 10);
 
 
         imageData.variant_id = imageData.style.vid;
@@ -113,6 +114,78 @@ var PostImageInsert_Manager = base.ImageInsertBase.extend({
         insert.render();
         return insert;
 
+    },
+
+    /**
+     * Find variant by id
+     */
+    _findVariant: function (id) {
+        var variant = Upfront.Content.ImageVariants.findWhere({ 'vid': id }),
+            prev_variant, other_variant
+        ;
+        if ( variant ) return variant;
+        // Fallback logic ported from class_upfront_child_theme.php, see Upfront_ChildTheme::get_image_variant_by_id()
+
+        // Variant not found, search based on previous theme variant
+        prev_variant = Upfront.Content.PrevImageVariants.findWhere({ 'vid': id });
+        if ( prev_variant ) {
+            prev_variant = prev_variant.toJSON();
+            // Find matching label on current variant
+            variant = Upfront.Content.ImageVariants.findWhere({ 'label': prev_variant.label });
+            if ( variant ) return variant;
+            // Find matching group float
+            variant = Upfront.Content.ImageVariants.find(function(each){
+                return ( each.get('group').float == prev_variant.group.float );
+            });
+            if ( variant ) return variant;
+        }
+
+        // Previous theme not found, search based on other theme variant
+        other_variant = Upfront.Content.OtherImageVariants.findWhere({ 'vid': id });
+        if ( other_variant ) {
+            other_variant = other_variant.toJSON();
+            // Find matching label on current variant
+            variant = Upfront.Content.ImageVariants.findWhere({ 'label': other_variant.label });
+            if ( variant ) return variant;
+            // Find matching group float
+            variant = Upfront.Content.ImageVariants.find(function(each){
+                return ( each.get('group').float == other_variant.group.float );
+            });
+            if ( variant ) return variant;
+        }
+
+        // Not so desireable matching from previous theme variant
+        if ( prev_variant ) {
+            // Find matching image top and left
+           /* variant = Upfront.Content.ImageVariants.find(function(each){
+               return ( each.get('image').left == prev_variant.image.left && each.get('image').top == prev_variant.image.top );
+            });
+            if ( variant ) return variant;*/
+            // Find matching image order
+            variant = Upfront.Content.ImageVariants.find(function(each){
+                return ( each.get('image').order == prev_variant.image.order );
+            });
+            if ( variant ) return variant;
+        }
+
+        // Not so desireable matching from other theme variant
+        if ( other_variant ) {
+            // Find matching image top and left
+            /*variant = Upfront.Content.ImageVariants.find(function(each){
+                return ( each.get('image').left == other_variant.image.left && each.get('image').top == other_variant.image.top );
+            });
+            if ( variant ) return variant;*/
+            // Find matching image order
+            variant = Upfront.Content.ImageVariants.find(function(each){
+                return ( each.get('image').order == other_variant.image.order );
+            });
+            if ( variant ) return variant;
+        }
+
+        // Still not found, default to first
+        variant = Upfront.Content.ImageVariants.first();
+
+        return variant;
     },
 
     /**

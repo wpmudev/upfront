@@ -31,10 +31,11 @@ define([
 			if (_upfront_post_data.post_id) {
 				types.push({ label: l10n.featured_image, value: 'featured', icon: 'feat' });
 			}
-			if ( _.isArray(options.enable_types) )
+			if ( _.isArray(options.enable_types) ) {
 				types = _.filter(types, function(type){
 					return _.contains(options.enable_types, type.value);
 				});
+			}
 			
 			options.fields = [
 				new Upfront.Views.Editor.Field.Checkboxes({
@@ -84,15 +85,16 @@ define([
 					slider: SliderItem, 
 					video: VideoItem, 
 					map: MapItem
-				};
-			if ( !_.isUndefined(options.enable_types) )
+				}
+			;
+			if ( !_.isUndefined(options.enable_types) ) {
 				this.enable_types = options.enable_types;
+			}
 			
 			this.settings = {};
 			
 			_.each(types, function(view, type){
-				if ( !_.contains(me.enable_types, type) )
-					return;
+				if ( !_.contains(me.enable_types, type) ) return;
 				me.settings[type] = new view({
 					model: me.model
 				});
@@ -105,10 +107,12 @@ define([
 					model: this.model,
 					enable_types: this.enable_types
 				};
-			if ( this.bg_title )
+			if ( this.bg_title ) {
 				bg_item_options.title = this.bg_title;
-			else
+			}
+			else {
 				bg_item_options.group = false;
+			}
 			var	bg_item = new BgItem(bg_item_options);
 			
 			this.panels = _([
@@ -124,19 +128,23 @@ define([
 	 		this.once('open', function(){
 	 			var bg_type = me.model.get_breakpoint_property_value('background_type', true),
 	 				bg_image = me.model.get_breakpoint_property_value('background_image', true);
-	 			if ( bg_type )
+	 			if ( bg_type ) {
 	 				me.toggle_setting(bg_type);
-	 			else
+				}
+	 			else {
 	 				me.toggle_setting( bg_image ? 'image' : 'color' );
+				}
 	 		});
 		},
 		
 		toggle_setting: function (active) {
 			_.each(this.settings, function(setting, type){
-				if ( type == active )
+				if ( type == active ) {
 					setting.trigger('show');
-				else
+				}
+				else {
 					setting.trigger('hide');
+				}
 			});
 		}
 		

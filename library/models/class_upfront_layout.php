@@ -46,7 +46,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 			// Always try to load from theme files if layout is empty
 			if ($layout === false || $layout->is_empty()) {
 				$layout = self::from_specific_files(array(), $cascade, $storage_key); // Load from *specific* files only, no fallback
-
+				if ($layout && !$layout->is_empty()) $layout->set("template_type", "file");
 			}
 
 			if ($layout && !$layout->is_empty()) {
@@ -64,11 +64,35 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 			if (!$layout->is_empty()) {
 				$layout->set("current_layout", self::id_to_type($id));
+				$layout->set("template_type", "file");
 				return apply_filters('upfront_layout_from_id', $layout, self::id_to_type($id), self::$cascade);
 			}
 		}
 
 		return $layout;
+	}
+	
+	public static function from_cpt ($data, $storage_key = '') {
+		// We need to apply global regions that saved in db
+		$regions = array();
+		$regions_added = array();
+		if ( isset($data['regions']) ) {
+			foreach ( $data['regions'] as $region ) {
+				if ( isset( $region['scope'] ) && $region['scope'] != 'local' ){
+					$applied_scope = self::_apply_scoped_region($region);
+					foreach ( $applied_scope as $applied_data ) {
+						if ( !in_array($applied_data['name'], $regions_added) ){
+							$regions[] = $applied_data;
+							$regions_added[] = $applied_data['name'];
+						}
+					}
+					continue;
+				}
+				$regions[] = $region;
+			}
+		}
+		$data['regions'] = $regions;
+		return self::from_php($data, $storage_key);
 	}
 
 	public static function from_php ($data, $storage_key = '') {
@@ -358,9 +382,10 @@ class Upfront_Layout extends Upfront_JsonModel {
 		global $wpdb;
 		self::set_storage_key($storage_key);
 		$storage_key = self::get_storage_key();
+		$sql_storage_key = $wpdb->esc_like($storage_key);
 
 		$results = array();
-		$list = $wpdb->get_row("SELECT option_name FROM $wpdb->options WHERE ( `option_name` LIKE '{$storage_key}-single%' OR `option_name` LIKE '{$storage_key}-archive%' )");
+		$list = $wpdb->get_col("SELECT option_name FROM $wpdb->options WHERE ( `option_name` LIKE '{$storage_key}-single%' OR `option_name` LIKE '{$storage_key}-archive%' )");
 		if (empty($list)) return $results;
 
 		foreach ($list as $item) {
@@ -531,7 +556,28 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 	public function save () {
 		$key = $this->get_id();
+		$this->save_global_region();
+		if ( $this->_data['properties'] ) {
+			update_option(self::_get_layout_properties_id(), json_encode($this->_data['properties']));
+		}
 
+		// Delete custom post layout for current post when Save for all posts clicked
+		if(!empty($this->_data['layout']) && $this->_data['preferred_layout'] == "single-post") {
+			if(!empty($this->_data['layout']['specificity'])) {
+				$stylesheet = get_stylesheet();
+				$specific_layout = $stylesheet . "-". $this->_data['layout']['specificity'];
+				
+				// Delete option
+				delete_option( $specific_layout );
+			}
+		}
+
+		update_option($key, $this->to_json());
+
+		return $key;
+	}
+	
+	public function save_global_region () {
 		$scopes = array();
 		foreach ( $this->_data['regions'] as $region ){
 			$region['scope'] = !empty($region['scope']) ? $region['scope'] : '';
@@ -567,13 +613,6 @@ class Upfront_Layout extends Upfront_JsonModel {
 			}
 			update_option(self::_get_scope_id($scope), json_encode($scope_data));
 		}
-		if ( $this->_data['properties'] ) {
-			update_option(self::_get_layout_properties_id(), json_encode($this->_data['properties']));
-		}
-
-		update_option($key, $this->to_json());
-
-		return $key;
 	}
 
 	public function delete ($all = false) {
@@ -719,4 +758,5 @@ class Upfront_Layout extends Upfront_JsonModel {
 		}
 		
 	}
+
 }

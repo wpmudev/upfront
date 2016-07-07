@@ -50,16 +50,18 @@ $.fn.ueditor = function(options){
 };
 
 var hackRedactor = function(){
-    
-    // These lines override the Redactor's prefFormatting
+
+    /*
+    // Deprecated, moved to override methods
     var clean = $.Redactor.prototype.clean();
-    
+
     clean.savePreFormatting = function(html) {
         return html;
     };
 
-    $.Redactor.prototype.clean = function () { return clean };
-    
+   $.Redactor.prototype.clean = function () { return clean };
+   */
+
 	// Make click consistent
 	$.Redactor.prototype.airBindHide = function () {
 		if (!this.opts.air || !this.$toolbar) return;
@@ -166,7 +168,7 @@ var hackRedactor = function(){
             this.$air.width(width);
         }
         if(bounds.right < bounds.left || bounds.right > winRight){
-            var parent = this.$editor.find('#selection-marker-' + bounds.i).parent();
+            parent = this.$editor.find('#selection-marker-' + bounds.i).parent();
             bounds.right =  Math.min(winRight, parent.offset().left + parent.width());
         }
 
@@ -222,11 +224,227 @@ var hackRedactor = function(){
      * @type {{inline: {format: Overriden_Methods.inline.format}}}
      */
     var Overriden_Methods = {
+        selection: function() // porting from Redactor 10.2.5
+        {
+            return {
+                getPrev: function()
+                {
+                    return  window.getSelection().anchorNode.previousSibling;
+                },
+                getNext: function()
+                {
+                    return window.getSelection().anchorNode.nextSibling;
+                },
+                getBlocks: function(nodes)
+                {
+                    this.selection.get();
+
+                    if (this.range && this.range.collapsed)
+                    {
+                        return [this.selection.getBlock()];
+                    }
+
+                    var blocks = [];
+                    nodes = (typeof nodes == 'undefined') ? this.selection.getNodes() : nodes;
+
+                    $.each(nodes, $.proxy(function(i,node)
+                    {
+                        if (this.utils.isBlock(node))
+                        {
+                            blocks.push(node);
+                        }
+
+                    }, this));
+
+                    return (blocks.length === 0) ? [this.selection.getBlock()] : blocks;
+                },
+                getNodes: function()
+                {
+                    this.selection.get();
+
+                    var startNode = this.selection.getNodesMarker(1);
+                    var endNode = this.selection.getNodesMarker(2);
+
+                    if (this.range.collapsed === false)
+                    {
+                        if (window.getSelection) {
+                            var sel = window.getSelection();
+                            if (sel.rangeCount > 0) {
+
+                                var range = sel.getRangeAt(0);
+                                var startPointNode = range.startContainer, startOffset = range.startOffset;
+
+                                var boundaryRange = range.cloneRange();
+                                boundaryRange.collapse(false);
+                                boundaryRange.insertNode(endNode);
+                                boundaryRange.setStart(startPointNode, startOffset);
+                                boundaryRange.collapse(true);
+                                boundaryRange.insertNode(startNode);
+
+                                // Reselect the original text
+                                range.setStartAfter(startNode);
+                                range.setEndBefore(endNode);
+                                sel.removeAllRanges();
+                                sel.addRange(range);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        this.selection.setNodesMarker(this.range, startNode, true);
+                        endNode = startNode;
+                    }
+
+                    var nodes = [];
+                    var counter = 0;
+
+                    var self = this;
+                    this.$editor.find('*').each(function()
+                    {
+                        if (this == startNode)
+                        {
+                            var parent = $(this).parent();
+                            if (parent.length !== 0 && parent[0].tagName != 'BODY' && self.utils.isRedactorParent(parent[0]))
+                            {
+                                nodes.push(parent[0]);
+                            }
+
+                            nodes.push(this);
+                            counter = 1;
+                        }
+                        else
+                        {
+                            if (counter > 0)
+                            {
+                                nodes.push(this);
+                                counter = counter + 1;
+                            }
+                        }
+
+                        if (this == endNode)
+                        {
+                            return false;
+                        }
+
+                    });
+
+                    var finalNodes = [];
+                    var len = nodes.length;
+                    for (var i = 0; i < len; i++)
+                    {
+                        if (nodes[i].id != 'nodes-marker-1' && nodes[i].id != 'nodes-marker-2')
+                        {
+                            finalNodes.push(nodes[i]);
+                        }
+                    }
+
+                    this.selection.removeNodesMarkers();
+
+                    return finalNodes;
+
+                },
+                setNodesMarker: function(range, node, type)
+                {
+                    range = range.cloneRange();
+
+                    try {
+                        range.collapse(type);
+                        range.insertNode(node);
+                    }
+                    catch (e) {}
+                },
+                fromPoint: function(start, end)
+                {
+                    this.caret.setOffset(start, end);
+                },
+                selectElement: function(node)
+                {
+                    if (this.utils.browser('mozilla'))
+                    {
+                        node = node[0] || node;
+
+                        var range = document.createRange();
+                        range.selectNodeContents(node);
+                    }
+                    else
+                    {
+                        this.caret.set(node, 0, node, 1);
+                    }
+                },
+                restore: function()
+                {
+                    var node1 = this.$editor.find('span#selection-marker-1');
+                    var node2 = this.$editor.find('span#selection-marker-2');
+
+                    if (this.utils.browser('mozilla'))
+                    {
+                        this.$editor.focus();
+                    }
+
+                    if (node1.length !== 0 && node2.length !== 0)
+                    {
+                        this.caret.set(node1, 0, node2, 0);
+                    }
+                    else if (node1.length !== 0)
+                    {
+                        this.caret.set(node1, 0, node1, 0);
+                    }
+                    else
+                    {
+                        this.$editor.focus();
+                    }
+
+                    this.selection.removeMarkers();
+                    this.savedSel = false;
+
+                },
+                removeMarkers: function()
+                {
+                    this.$editor.find('span.redactor-selection-marker').each(function(i,s)
+                    {
+                        var text = $(s).text().replace(/\u200B/g, '');
+                        if (text === '') $(s).remove();
+                        else $(s).replaceWith(function() { return $(this).contents(); });
+                    });
+                },
+                replaceSelection: function(html)
+                {
+                    this.selection.get();
+                    this.range.deleteContents();
+                    var div = document.createElement("div");
+                    div.innerHTML = html;
+                    var frag = document.createDocumentFragment(), child;
+                    while ((child = div.firstChild)) {
+                        frag.appendChild(child);
+                    }
+
+                    this.range.insertNode(frag);
+                },
+                replaceWithHtml: function(html)
+                {
+                    html = this.selection.getMarkerAsHtml(1) + html + this.selection.getMarkerAsHtml(2);
+
+                    this.selection.get();
+
+                    if (window.getSelection && window.getSelection().getRangeAt)
+                    {
+                        this.selection.replaceSelection(html);
+                    }
+                    else if (document.selection && document.selection.createRange)
+                    {
+                        this.range.pasteHTML(html);
+                    }
+
+                    this.selection.restore();
+                    this.code.sync();
+                }
+            };
+        },
         utils: {
             isEndOfElement: function(element){
                 if (typeof element == 'undefined')
                 {
-                    var element = this.$element;
+                    element = this.$element;
                     if (!element) return false;
                 }
 
@@ -306,6 +524,12 @@ var hackRedactor = function(){
 
                     return false;
                 }
+            }
+        },
+        clean: {
+            // These lines override the Redactor's prefFormatting
+            savePreFormatting: function(html) {
+                return html;
             }
         }
     };
@@ -555,7 +779,7 @@ var hackRedactor = function(){
     var l10n = Upfront.Settings && Upfront.Settings.l10n
         ? Upfront.Settings.l10n.global.ueditor
         : Upfront.mainData.l10n.global.ueditor
-    ; 
+    ;
 
     /**
      * Proxy the Redactor l10n
@@ -604,18 +828,18 @@ var Ueditor = function($el, options) {
 			observeLinks: false,
 			observeImages: false,
 			formattingTags: ['h1', 'h2', 'h3', 'h4', 'p', 'pre'],
-            inserts: ["image", "embed"],
+            inserts: Upfront.Settings.Application.PERMS.EMBED ? ["image", "embed"] : ["image"],
             linkTooltip: false,
             cleanOnPaste: true, // font icons copy and paste wont work without this set to true - BUT, with it set to true, paste won't work AT ALL!!!
             replaceDivs: false,
             pastePlainText: false,
 			imageEditable: false,
-            replaceDivs: false,
             //cleanStyleOnEnter: false,
             //removeDataAttr: false,
             removeEmpty: false,
             imageResizable: false,
-            lang: 'upfront' // <-- This is IMPORTANT. See the l10n proxying bit in `hackRedactor`
+            lang: 'upfront', // <-- This is IMPORTANT. See the l10n proxying bit in `hackRedactor`,
+            direction: Upfront.Util.isRTL() ? 'rtl' : 'ltr'
 		}, options)
 	;
 	/* --- Redactor allows for single callbacks - let's dispatch events instead --- */
@@ -697,25 +921,26 @@ var Ueditor = function($el, options) {
 
 
 
-    // Enter callback inside lists 
-    this.options.enterCallback = function (e) { 
+    // Enter callback inside lists
+    this.options.enterCallback = function (e) {
         // Current Block is a list item
         if(this.keydown.block.tagName === 'LI') {
             var current = this.selection.getCurrent(),
                 $parent = $(current).closest('li'),
                 $list = $parent.parent('ul,ol'),
                 $listlist = $list.parent('li').parent('ul,ol'),
-                emptyList = '<li>&#x200b;</li>'
+                emptyList = '<li>&#x200b;</li>',
+				node
             ;
 
             // Sublist to list
             if (
-                $parent.length !== 0 && 
+                $parent.length !== 0 &&
                 $listlist.length !== 0 &&
-                this.utils.isEmpty($parent.html()) && 
+                this.utils.isEmpty($parent.html()) &&
                 $list.next().length === 0
             ) {
-                var node = $(emptyList);
+                node = $(emptyList);
                 $listlist.append(node);
                 this.caret.setStart(node);
                 $parent.remove();
@@ -724,26 +949,42 @@ var Ueditor = function($el, options) {
             }
             // List to paragraph
             else if (
-                $parent.length !== 0 && 
-                this.utils.isEmpty($parent.html()) && 
+                $parent.length !== 0 &&
+                this.utils.isEmpty($parent.html()) &&
                 $list.next().length === 0
             ) {
-                var node = $(this.opts.emptyHtml);
+                node = $(this.opts.emptyHtml);
                 $list.after(node);
                 this.caret.setStart(node);
                 $parent.remove();
 
                 return false;
             }
-            // List 
+            // List
             else {
                 UeditorEvents.trigger("ueditor:enter", this, e);
             }
+
+
+            /**
+             * Allow user to exit lists on double enter
+             */
+            if( this.utils.isEmpty( this.keydown.block.innerText ) ){
+                $(this.selection.getBlock()).remove();
+                if( $list.next().is("p") && this.utils.isEmpty( $list.next().text() ) ){
+                    node = $list.next("p");
+                }else{
+                    node = $(this.opts.emptyHtml);
+                    $list.after(node);
+                }
+                this.caret.setStart(node);
+            }
         }
         // Default
-        else {        
+        else {
             UeditorEvents.trigger("ueditor:enter", this, e);
         }
+
     };
 
 };
@@ -856,9 +1097,9 @@ Ueditor.prototype = {
             /**
              * Make sure return doesn't delete the last charactor
              */
-            if (13 === e.keyCode && !e.shiftKey && (self || {}).redactor) {
+            if (13 === e.keyCode && !e.shiftKey && (self || {}).redactor && !self.redactor.keydown.pre && !self.redactor.$air.is(":visible") ) {
                 self.redactor.utils.removeEmpty();
-                $(self.redactor.selection.getCurrent()).append("&nbsp;")
+                $(self.redactor.selection.getCurrent()).append("&#x200b;");
             }
         });
 
@@ -898,7 +1139,7 @@ Ueditor.prototype = {
 
         caret = redactor.caret.getOffsetOfElement(node);
         if (!caret) return;
-        
+
         $el = $(node).clone();
         check = $el.text().substr(0, caret);
 
@@ -909,8 +1150,13 @@ Ueditor.prototype = {
 
             var $node = $(node),
                 rx = new RegExp('^' + src.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1") + ' ?'),
-                text = $node.text().replace(rx, '')
+                text = $node.html().replace(rx, ''),
+				new_caret
             ;
+
+			// Since we're using `.html()`, we want to make sure
+			// the converted entities are properly replaced
+			if ('>' === src) text = text.replace(/&gt;/, ''); // No "g" modifier, so we replace the first instance
 
             // Let's not do nested lists
             // or expansion within lists in general
@@ -921,31 +1167,33 @@ Ueditor.prototype = {
             if ("nest" in target && target.nest) {
                 $node.html(
                     '<' + target.tag + '><' + target.nest + '>' +
-                        text + 
+                        text +
                     '</' + target.nest + '></' + target.tag + '>'
                 );
+
+				new_caret = $node.find(target.nest).last().get();
             } else {
                 var _node = document.createElement(target.tag);
                 _node.innerHTML = text;
-                $node.replaceWith( _node );
+                $node.replaceWith(_node);
 
+				new_caret = _node;
             }
 
-            // Set caret position to end of the target
-            redactor.caret.setEnd(
-                "nest" in target && target.nest
-                    ? $node.find(target.nest).last().get()
-                    : _node
-            );
-
+			// Set caret position to end of the target and sync
+			redactor.caret.setEnd(new_caret);
             redactor.code.sync();
+
             /**
              * Make sure the created node doesn't contain the space created by the spacebar!
              */
             _.delay( function(){
                $(redactor.selection.getBlock()).html(text);
-            }, 3 );
 
+			   // Re-set caret position to end of the target and re-sync
+			   redactor.caret.setEnd(new_caret);
+               redactor.code.sync();
+            }, 3 );
 
             return false;
         });
@@ -960,13 +1208,16 @@ Ueditor.prototype = {
 			    this.redactor.core.destroy();
             this.$air.remove();
             this.$el.removeClass('ueditable');
-            this.redactor = false;
+            this.redactor.events.trigger('cleanUpListeners');
+            this.$el.data("ueditor", false);
+            //this.redactor = false;
 		}
 		if ("undefined" !== typeof Upfront.data.Ueditor) delete Upfront.data.Ueditor.instances[this.id];
 		this.startPlaceholder();
 		$("html").off('mousedown', this.stopOnOutsideClick);
 		$(document).off('keyup', this.stopOnEscape);
         this.active = false;
+
 	},
 
 	bindStartEvents: function() {
@@ -1084,7 +1335,7 @@ Ueditor.prototype = {
 	},
 	get_anchors: function () {
 		var regions = Upfront.Application.layout.get("regions"),
-			anchors = [];
+			anchors = []
 		;
 		regions.each(function (r) {
 			r.get("modules").each(function (module) {
@@ -1101,7 +1352,7 @@ Ueditor.prototype = {
 	getUrlanchor: function(url) {
 		// this does almost the opposite of the above function
 
-		if(typeof(url) == 'undefined') var url = $(location).attr('href');
+		if(typeof(url) == 'undefined') url = $(location).attr('href');
 
 		if(url.indexOf('#') >=0) {
 			var tempurl = url.split('#');
@@ -1185,7 +1436,7 @@ Ueditor.prototype = {
 				|| $(e.target).parents().hasClass("redactor-dropdown"))
 			&& $(e.target).parents("#upfront-popup.upfront-postselector-popup").length === 0)
 		{
-            if(e.data.ueditor.$el.closest('a.menu_item').length > 0) { // blur on the menu item, dont stop the editor yet 
+            if(e.data.ueditor.$el.closest('a.menu_item').length > 0) { // blur on the menu item, dont stop the editor yet
                 e.data.ueditor.$el.trigger('blur');
             }
             else {
@@ -1281,7 +1532,7 @@ Ueditor.prototype = {
 			me.clickcount = me.clickcount+1;
 			me.lastmousedown = {x: e.pageX, y: e.pageY};
 			if(me.clickcount > 0)
-				setTimeout(function() { me.clickcount = 0 }, 400);
+				setTimeout(function() { me.clickcount = 0; }, 400);
 		});
 
 		$(document).one('mouseup', function(e){
@@ -1309,9 +1560,10 @@ Ueditor.prototype = {
 	},
 	getValue: function(is_simple_element){
 		var html = this.redactor.$element.html();
-		if(this.insertManager)
-			html = this.insertManager.insertExport(html, is_simple_element),
+		if(this.insertManager) {
+			html = this.insertManager.insertExport(html, is_simple_element);
             $html =  $("<div>").html( html );
+		}
 
         $html.find(".redactor-selection-marker").remove();
         /**
@@ -1369,6 +1621,11 @@ var InsertManagerInserts = Backbone.View.extend({
     className: "ueditor-post-insert-manager",
     $block: false,
     initialize: function(options){
+
+        if ( options.inserts && options.inserts.constructor === Array && !Upfront.Settings.Application.PERMS.EMBED ) {
+					options.inserts = _.without(options.inserts, "embed");
+        }
+
         this.insertsData = options.insertsData || {};
         this.inserts = options.inserts || {};
         this.redactor = options.redactor;
@@ -1408,20 +1665,19 @@ var InsertManagerInserts = Backbone.View.extend({
         this.__insert = insert;
         insert.start( this.$el, this.redactor.$editor )
             .done(function(args, resolved_insert){
+				var popup, results, insert;
 
                 /**
                  * Allows to get resolved insert from inserts with insert managers
                  */
                 if(_.isArray(args) ){
-                    var popup = args[0],
-                        results = args[0],
-                        insert = resolved_insert;
+                    popup = args[0];
+                    results = args[0];
+                    insert = resolved_insert;
                 }else{
-                    var popup = args,
-                        results = resolved_insert,
-                        insert = insert || self.__insert
-                    ;
-
+                    popup = args;
+                    results = resolved_insert;
+                    insert = insert || self.__insert;
                 }
 
                 // if(!results) Let's allow promises without result for now!
@@ -1438,18 +1694,18 @@ var InsertManagerInserts = Backbone.View.extend({
 
                     if(self.redactor.$element.find(self.$block).length < 1) {
 /*                        if(self.redactor.$element.hasClass('redactor-placeholder')) {
-                    
+
                             var f = jQuery.Event("keydown");
                             f.which = 65;
                             f.keyCode = 65;// # Some key code value
-                              
-                            
-                            
+
+
+
                             self.redactor.$element.trigger(f);
 
                         }
 */
-                        self.redactor.$element.append(self.$block);  
+                        self.redactor.$element.append(self.$block);
                     }
 
                     self.$block.replaceWith(insert.$el);
@@ -1717,9 +1973,10 @@ var InsertManager = Backbone.View.extend({
 			});
 	},
 	show_tooltip_in_this_location: function(redactor){
-		var $block = $( redactor.selection.getCurrent());
+		var current = redactor.selection.getCurrent(),
+            $block = $( current );
 
-		if(_.isEmpty( $block ) ) return false;
+		if( !current || _.isEmpty( $block ) ) return false;
 
 		var $image_embed_insert_wrappers = $(".upfront-inserted_image-wrapper, .upfront-inserted_embed-wrapper"),
 			block_top = $block.offset().top,
@@ -1879,7 +2136,7 @@ var ImagesHelper = {
 		Align: {
 			_apply: function ($img, data) {
 				data = $.extend({
-					float: "",
+					"float": "",
 					"text-align": "",
 					"width": ""
 				}, data);
@@ -1888,7 +2145,7 @@ var ImagesHelper = {
 			left: function (e) {
 				var $wrap = e.data.get_target(e.target),
 					$img = $wrap.find('img');
-				e.data.Align._apply($wrap, {float: "left"});
+				e.data.Align._apply($wrap, {"float": "left"});
 				e.data.Align._apply($img, {});
 				e.data.show_dialog($wrap);
 				Upfront.Events.trigger("upfront:editor:image_align", $wrap.get(), 'left');
@@ -1910,7 +2167,7 @@ var ImagesHelper = {
 			right: function (e) {
 				var $wrap = e.data.get_target(e.target),
 					$img = $wrap.find('img');
-				e.data.Align._apply($wrap, {float: "right"});
+				e.data.Align._apply($wrap, {"float": "right"});
 				e.data.Align._apply($img, {});
 				e.data.show_dialog($wrap);
 				Upfront.Events.trigger("upfront:editor:image_align", $wrap.get(), 'right');
@@ -1976,7 +2233,7 @@ var ImagesHelper = {
 				});
 				$("body").append($details);
 				$details.css({
-					left: $button.offset().left + 46 - ($details.width()/2),
+					left: $button.offset().left + 46 - ($details.width()/2)
 				});
 				$button.addClass('upfront-image-action-details-active');
 

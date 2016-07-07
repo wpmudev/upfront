@@ -74,8 +74,9 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		$breakpoint_data['preset']['desktop']['is_floating'] = $is_floating ? $is_floating : '';
 
 		if ($this->_get_property('usingNewAppearance') == true) {
-			$menu_style = isset($desktopPreset['menu_style']) && is_array($desktopPreset['menu_style']) ? $desktopPreset['menu_style'] :  $menu_style;
+			$menu_style = isset($desktopPreset['menu_style']) && !empty($desktopPreset['menu_style']) ? $desktopPreset['menu_style'] :  $menu_style;
 			$menu_alignment = isset($desktopPreset['menu_alignment']) ? $desktopPreset['menu_alignment'] : $menu_alignment;
+			$breakpoint_data['preset']['desktop']['menu_style'] = ( empty($menu_style) ) ? 'horizontal' : $menu_style ;
 		} else {
 			$burgermenu_desktop =  $this->_get_property('burger_menu');
 			if(is_array( $burgermenu_desktop ) && isset( $burgermenu_desktop[0] )) {
@@ -165,7 +166,8 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 
 	public static  function add_styles_scripts() {
 		//upfront_add_element_style('upfront_navigation', array('css/unewnavigation-style.css', dirname(__FILE__)));
-		wp_enqueue_style('upfront_navigation', upfront_element_url('css/unewnavigation-style.css', dirname(__FILE__)));
+		wp_enqueue_style('upfront_navigation', upfront_element_url( Upfront_Debug::get_debugger()->is_dev() ? 'css/unewnavigation-style.css' : 'css/unewnavigation-style.min.css', dirname(__FILE__)));
+
 
 		if (is_user_logged_in()) {
 			upfront_add_element_style('upfront_navigation_editor', array('css/unewnavigation-editor.css', dirname(__FILE__)));
@@ -282,20 +284,25 @@ class Upfront_newMenuSetting extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
-		upfront_add_ajax('upfront_new_load_menu_list', array($this, "load_menu_list"));
-		upfront_add_ajax('upfront_new_load_menu_array', array($this, "load_menu_array"));
-		upfront_add_ajax('upfront_new_load_menu_items', array($this, "load_menu_items"));
-		upfront_add_ajax('upfront_new_menu_from_slug', array($this, "menu_from_slug"));
-		upfront_add_ajax('upfront_new_delete_menu_item', array($this, "delete_menu_item"));
-		upfront_add_ajax('upfront_new_update_menu_order', array($this, "update_menu_order"));
-		upfront_add_ajax('upfront_new_create_menu', array($this, "create_menu"));
-		upfront_add_ajax('upfront_new_rename_menu', array($this, "rename_menu"));
-		upfront_add_ajax('upfront_new_delete_menu', array($this, "delete_menu"));
+		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+			upfront_add_ajax('upfront_new_load_menu_list', array($this, "load_menu_list"));
+			upfront_add_ajax('upfront_new_load_menu_array', array($this, "load_menu_array"));
+			upfront_add_ajax('upfront_new_load_menu_items', array($this, "load_menu_items"));
+			upfront_add_ajax('upfront_new_menu_from_slug', array($this, "menu_from_slug"));
+		}
+		
+		if (Upfront_Permissions::current(Upfront_Permissions::SAVE) && Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE)) {
+			upfront_add_ajax('upfront_new_delete_menu_item', array($this, "delete_menu_item"));
+			upfront_add_ajax('upfront_new_update_menu_order', array($this, "update_menu_order"));
+			upfront_add_ajax('upfront_new_create_menu', array($this, "create_menu"));
+			upfront_add_ajax('upfront_new_rename_menu', array($this, "rename_menu"));
+			upfront_add_ajax('upfront_new_delete_menu', array($this, "delete_menu"));
 
-		upfront_add_ajax('upfront_new_update_menu_item', array($this, "update_menu_item"));
-		upfront_add_ajax('upfront_new_update_auto_add_pages', array($this, "update_auto_add_pages"));
-		upfront_add_ajax('upfront_update_menu_items', array($this, "update_menu_items"));
-		upfront_add_ajax('upfront_update_single_menu_item', array($this, "update_single_menu_item"));
+			upfront_add_ajax('upfront_new_update_menu_item', array($this, "update_menu_item"));
+			upfront_add_ajax('upfront_new_update_auto_add_pages', array($this, "update_auto_add_pages"));
+			upfront_add_ajax('upfront_update_menu_items', array($this, "update_menu_items"));
+			upfront_add_ajax('upfront_update_single_menu_item', array($this, "update_single_menu_item"));
+		}
 	}
 
 	public function load_menu_list () {
@@ -372,7 +379,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 			'menu-item-url' => $e->url,
 			'menu-item-object' => $e->object,
 			'menu-item-object-id' => $e->object_id,
-			'menu-item-target' => ($e->type === 'anchor' || $e->type === 'email') ? '_self' : $e->target,
+			'menu-item-target' => ($e->type === 'anchor' || $e->type === 'email' || $e->type === 'phone') ? '_self' : $e->target,
 			'menu-item-position' => $e->menu_order
 			);
 
