@@ -224,8 +224,17 @@ jQuery(function($){
 				magOptions.callbacks = {
 					resize: resizeWithText,
 					afterChange: resizeWithText,
-					open: function() {
-						setupLightbox(galleryId);
+					open: function(item) {
+						// Retrieve ID from current item
+						var newGalleryId = this.currItem.el.closest('.upfront-gallery').attr("id");
+
+						// If newGalleryId is undefined refer to galleryId
+						if(typeof newGalleryId === "undefined") {
+							newGalleryId = galleryId
+						}
+
+						// Open magnificPopup
+						setupLightbox(newGalleryId);
 						resizeMFP();
 					},
 					close: cleanUpMfpBg
