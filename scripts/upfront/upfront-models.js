@@ -92,11 +92,20 @@ var _alpha = "alpha",
 		decode_preset: function (breakpoint_id) {
 			breakpoint_id = breakpoint_id || (Upfront.Views.breakpoints_storage.get_breakpoints().get_active() || {}).id;
 			var current = this.get_property_value_by_name('preset') || 'default',
-				model = this.get_property_value_by_name("breakpoint_presets") || {},
-				breakpoint_preset = (model[breakpoint_id] || {}).preset,
-				actual = breakpoint_preset || current
+				model = this.get_property_value_by_name("breakpoint_presets") || {}
 			;
+			
+			// we need to provide proper fallback here, mobile -> tablet -> desktop
+			if ( breakpoint_id == 'mobile' ) {
+				var breakpoint_preset = (model[breakpoint_id] || model['tablet'] || model['desktop'] || {}).preset;
+			} else if ( breakpoint_id == 'tablet' ) {
+				var breakpoint_preset = (model[breakpoint_id] || model['desktop'] || {}).preset;
+			} else {
+				var breakpoint_preset = (model[breakpoint_id] || {}).preset;
+			}
+			var actual = breakpoint_preset || current;
 			this.set_property('preset', actual, false); // Do *not* be silent here, we do want repaint
+			
 			return actual;
 		},
 
@@ -125,7 +134,7 @@ var _alpha = "alpha",
 			if (!data[default_bp_id]) data[default_bp_id] = {preset: current};
 
 			this.set_property("breakpoint_presets", data, true);
-
+			
 			return data;
 		},
 
