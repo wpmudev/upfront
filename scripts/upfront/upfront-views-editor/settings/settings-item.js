@@ -70,7 +70,7 @@
                         var saved_value = field.get_saved_value();
                         if ( ! field.multiple && value != saved_value ) {
                             changed.push(field);
-                        } else if ( field.multiple && (value.length != saved_value.length || _.difference(value, saved_value).length != 0) ) {
+                        } else if ( field.multiple && (value.length != saved_value.length || _.difference(value, saved_value).length !== 0) ) {
                             changed.push(field);
                         }
                     }

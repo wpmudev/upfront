@@ -19,7 +19,6 @@
                 "click .comment-edit-ok": "edit_comment",
                 "click .comment-reply-ok": "reply_to_comment",
                 "click .comment-reply-cancel": "cancel_edit",
-                "click .comment-reply-cancel": "cancel_edit",
                 "click .comment-edit-box": "stop_propagation"
             },
             excerptLength: 60,
@@ -111,7 +110,7 @@
             },
 
             handle_approval_request: function (e, comment) {
-                var comment = comment ? comment : this.collection.get($(e.target).attr("data-comment_id"));
+                comment = comment ? comment : this.collection.get($(e.target).attr("data-comment_id"));
                 this.$('#upfront-list_item-comment-' + comment.id + ' i.upfront-comments-approve')
                     .animate({'font-size': '1px', opacity:0}, 400, 'swing', function(){
                         comment.approve(true).save();

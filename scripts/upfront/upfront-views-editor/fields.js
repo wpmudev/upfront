@@ -6,7 +6,7 @@
     define([
         "scripts/upfront/upfront-views-editor/mixins",
         "scripts/upfront/upfront-views-editor/theme-colors",
-        "text!upfront/templates/color_picker.html",
+        "text!upfront/templates/color_picker.html"
     ], function (Mixins, Theme_Colors, color_picker_tpl) {
         var Field = Backbone.View.extend({
             className: 'upfront-field-wrap',
@@ -124,7 +124,7 @@
                 this.$el.append(this.get_field_html());
                 var me = this;
                 this.get_field().keyup(function(){
-                    if ( $(this).val() == '' ){
+                    if ( '' === $(this).val() ){
                         $(this).addClass('upfront-field-empty');
                     }
                     else if ( $(this).hasClass('upfront-field-empty') ) {
@@ -930,7 +930,7 @@
                     $checked.each(function(){
                         select_texts.push( $(this).closest('.upfront-field-select-option').text() );
                     });
-                    $select_value.text( $checked.length == 0 ? select_label : select_texts.join(', ') );
+                    $select_value.text( 0 === $checked.length ? select_label : select_texts.join(', ') );
                 }
                 this.$el.find('.upfront-field-select-option').each(function(){
                     if ( $(this).find('input:checked').length > 0 )
@@ -974,7 +974,7 @@
                     attr.checked = 'checked';
                 if ( attr.checked )
                     classes += ' upfront-field-select-option-selected';
-                classes += ' upfront-field-select-option-' + ( index%2 == 0 ? 'odd' : 'even' );
+                classes += ' upfront-field-select-option-' + ( 0 === index%2 ? 'odd' : 'even' );
                 //return '<option ' + this.get_field_attr_html(attr) + '>' + value.label + '</option>';
                 var input = '<input ' + this.get_field_attr_html(attr) + ' />';
                 return '<li class="' + classes + '">' + '<label for="' + id + '">' + this.get_icon_html(value.icon, icon_class) + '<span class="upfront-field-label-text">' + value.label + '</span></label>' + input + '</li>';

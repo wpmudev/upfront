@@ -340,10 +340,11 @@
                                 //spectrum = $('.sp-container:visible');
                             },
                             choose: function(color) {
+								var colorString;
                                 if( color.get_is_theme_color() !== false ){
                                     colorString = color.theme_color;
                                 }else{
-                                    var colorString = color.alpha < 1 ? color.toRgbString() : color.toHexString();
+                                    colorString = color.alpha < 1 ? color.toRgbString() : color.toHexString();
                                 }
                                 me.editor.insert(colorString);
                                 me.editor.focus();
@@ -779,7 +780,7 @@
                 Upfront.Media.Manager.open(options).done(function(popup, result){
                     Upfront.Events.trigger('upfront:element:edit:stop');
                     if (!result) return;
-                    if ( result.length == 0 ) return;
+                    if ( 0 === result.length ) return;
 
                     var imageModel = result.models[0],
                         img = imageModel.get('image') ? imageModel.get('image') : result.models[0],

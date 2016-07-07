@@ -5,7 +5,7 @@
         ;
     define([
         'scripts/upfront/upfront-views-editor/commands/command',
-        "text!upfront/templates/edit_background_area.html",
+        "text!upfront/templates/edit_background_area.html"
     ], function ( Command, edit_background_area_tpl ) {
 
         return Command.extend({

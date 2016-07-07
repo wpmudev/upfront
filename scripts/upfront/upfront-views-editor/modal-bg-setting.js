@@ -18,7 +18,7 @@
                 var me = this,
                     grid = Upfront.Settings.LayoutEditor.Grid,
                     breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
-                    is_responsive = ( breakpoint && !breakpoint.default ),
+                    is_responsive = ( breakpoint && !breakpoint['default'] ),
                     is_layout = ( this.model instanceof Upfront.Models.Layout ),
                     is_region = ( this.model instanceof Upfront.Models.Region ),
                     sub = is_region && this.model.is_main() ? false : this.model.get('sub'),

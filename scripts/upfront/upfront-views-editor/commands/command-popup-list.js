@@ -111,15 +111,16 @@
                 }
 
                 collection.fetch(fetchOptions).done(function(response){
+					var cachedElements, collectionElements;
                     switch(panel){
                         case "posts":
                             //Check if we have rendered the panel once
-                            var cachedElements = null;
+                            cachedElements = null;
                             if(typeof me.views[panel] !== "undefined") {
                                 cachedElements = me.views[panel].view.collection.pagination.totalElements;
                             }
                             //Check collection total elements
-                            var collectionElements = collection.pagination.totalElements;
+                            collectionElements = collection.pagination.totalElements;
 
                             //Compare total items, if same return cached panel
                             if(cachedElements == collectionElements) {
@@ -136,12 +137,12 @@
                             break;
                         case "pages":
                             //Check if we have rendered the panel once
-                            var cachedElements = null;
+                            cachedElements = null;
                             if(typeof me.views[panel] !== "undefined") {
                                 cachedElements = me.views[panel].view.collection.pagination.totalElements;
                             }
                             //Check collection total elements
-                            var collectionElements = collection.pagination.totalElements;
+                            collectionElements = collection.pagination.totalElements;
 
                             //Compare total items, if same return cached panel
                             if(cachedElements == collectionElements) {

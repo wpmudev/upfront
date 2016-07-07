@@ -4,7 +4,7 @@
         return Backbone.View.extend({
             attributes: function () {
                 return {
-                    class: "upfront-inline-modal upfront-ui upfront-no-select",
+                    "class": "upfront-inline-modal upfront-ui upfront-no-select",
                     id: "upfront-inline-modal-"+this.cid
                 };
             },

@@ -137,9 +137,8 @@
 
                 var scope = new RegExp('\.' + this.options.page_class + '\s*', 'g'),
                     styles = this.model.get('styles') ? this.model.get('styles').replace(scope, '') : ''
-                    ;
-                var scope = new RegExp('\.' + this.options.page_class + '\s*', 'g');
-                var styles;
+                ;
+
                 if (this.options.type === 'GalleryLightbox') {
                     styles = this.model.get('properties').get('styles').get('value').replace(scope, '');
                 } else {

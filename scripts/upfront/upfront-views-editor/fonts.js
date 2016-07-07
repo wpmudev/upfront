@@ -133,7 +133,7 @@
              * Convert weight to number for comparison.
              */
             normalize_weight: function (weight) {
-                if ( weight == 'normal' || weight == '' ) return 400;
+                if ( weight == 'normal' || '' === weight ) return 400;
                 if ( weight == 'lighter' ) return 100; // either 100-300 depend to the available weight
                 if ( weight == 'bold' ) return 700;
                 if ( weight == 'bolder' ) return 900; // either 800-900 depend to the available weight

@@ -5,7 +5,7 @@
         ;
     define([
         'scripts/upfront/upfront-views-editor/commands/command',
-        "text!upfront/templates/overlay_grid.html",
+        "text!upfront/templates/overlay_grid.html"
     ], function ( Command, overlay_grid_tpl ) {
 
         return Command.extend({
