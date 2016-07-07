@@ -666,6 +666,19 @@
                 };
                 return ' <input ' + this.get_field_attr_html(attr) + ' /> ' + (this.options.suffix ? this.options.suffix : '');
             },
+            get_saved_value: function () {
+                if ( this.property ){
+                    if ( this.use_breakpoint_property )
+                        return Upfront.Util.colors.to_color_value(this.model.get_breakpoint_property_value(this.property_name, true));
+                    else
+                        return this.property.get('value');
+                }
+                else if ( this.model ){
+                    var value = this.model.get(this.name);
+                    return value ? value : this.default_value;
+                }
+                return this.default_value;
+            },
             update_input_border_color : function(rgb){
                 var spPreview = this.$el.find(".sp-preview");
                 $(".sp-input").css({
