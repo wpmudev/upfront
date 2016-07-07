@@ -11,7 +11,9 @@ class Upfront_UsliderView extends Upfront_Object {
 		$slides = array();
 		if ( isset($data['slides']) && $data['slides'] ) {
 			foreach($data['slides'] as $slide){
-				$slides[] = array_merge(self::slide_defaults(), $slide);
+				$slide = array_merge(self::slide_defaults(), $slide);
+				$slide['breakpoint_map'] = json_encode($slide['breakpoint']);
+				$slides[] = $slide;
 			}
 		}
 
@@ -121,8 +123,8 @@ class Upfront_UsliderView extends Upfront_Object {
 	public static function slide_defaults(){
 		return array(
 			'id' => 0,
-			'src' => 'http//imgsrc.hubblesite.org/hu/db/images/hs-2013-12-a-small_web.jpg',
-			'srcFull' => 'http//imgsrc.hubblesite.org/hu/db/images/hs-2013-12-a-small_web.jpg',
+			'src' => '',
+			'srcFull' => '',
 			'sizes' => array(),
 			'size' => array('width' => 0, 'height' => 0),
 			'cropSize' => array('width' => 0, 'height' => 0),
@@ -138,7 +140,9 @@ class Upfront_UsliderView extends Upfront_Object {
 
 			'style' => 'bottomOver', // nocaption, below, above, right, bottomOver, topOver, bottomCover, middleCover, topCover
 			'rightImageWidth' => 3,
-			'rightWidth' => 6
+			'rightWidth' => 6,
+
+			'breakpoint' => ''
 		);
 	}
 

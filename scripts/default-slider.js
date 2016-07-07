@@ -147,12 +147,12 @@
 					}
 					if(captionSelector) {
 						text.html($(captionSelector).html());
-          } else {
+					} else {
 						text.html(caption);
-          }
+					}
 				} else if(text.length) {
 					text.remove();
-        }
+				}
 			});
 
 			this.items.addClass(data.classname.item);

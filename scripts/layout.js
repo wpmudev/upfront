@@ -47,6 +47,7 @@ jQuery(document).ready(function($){
 			return breakpoint;
 		}
 	}
+	window.upfront_get_breakpoint = get_breakpoint; // Expose to global
 
 	/**
 	 * Get the previously used breakpoint
@@ -57,6 +58,7 @@ jQuery(document).ready(function($){
 		get_breakpoint();
 		return previous_breakpoint;
 	}
+	window.upfront_get_previous_breakpoint = get_previous_breakpoint; // Expose to global
 
 	/* Youtube API */
 	var youtube_api_loaded = false;
