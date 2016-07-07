@@ -183,7 +183,7 @@ define([
 			return wrappers.get_by_wrapper_id(wrapper_id);
 		},
 		update_object: function (type, enable, breakpoint) {
-			enable = 1 === enable;
+			enable = !!enable;
 			breakpoint = breakpoint ? breakpoint : Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
 			var objects = this.model.get('objects'),
 				wrappers = this.model.get('wrappers'),
