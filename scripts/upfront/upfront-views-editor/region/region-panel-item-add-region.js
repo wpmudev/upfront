@@ -1,4 +1,4 @@
-(function(){
+(function ($) {
 
     var l10n = Upfront.Settings && Upfront.Settings.l10n
             ? Upfront.Settings.l10n.global.views
@@ -8,8 +8,9 @@
     define([
         "scripts/upfront/upfront-views-editor/region/region-panel-item",
         'scripts/upfront/upfront-views-editor/fields',
+        'scripts/upfront/upfront-views-editor/modal',
         "text!upfront/templates/region_add_panel.html"
-    ], function ( RegionPanelItem, Fields, region_add_panel_tpl ) {
+    ], function ( RegionPanelItem, Fields, Modal, region_add_panel_tpl ) {
         return RegionPanelItem.extend({
             width: 24,
             height: 24,
@@ -24,47 +25,51 @@
                 return 'add ' + 'add-' + to;
             },
             tooltip: function () {
-                var to = this.options.to;
+                var to = this.options.to,
+					msg
+				;
                 switch (to) {
                     case 'bottom':
-                        var msg = l10n.new_region_below;
+                        msg = l10n.new_region_below;
                         break;
                     case 'left':
-                        var msg = l10n.new_sidebar_region;
+                        msg = l10n.new_sidebar_region;
                         break;
                     case 'right':
-                        var msg = l10n.new_sidebar_region;
+                        msg = l10n.new_sidebar_region;
                         break;
                     case 'top':
-                        var msg = l10n.new_region_above;
+                        msg = l10n.new_region_above;
                         break;
                     case 'top-left':
                     case 'top-right':
                     case 'bottom-left':
                     case 'bottom-right':
-                        var msg = l10n.add_floating_region;
+                        msg = l10n.add_floating_region;
                         break;
                 }
                 return msg;
             },
             tooltip_pos: function () {
-                var to = this.options.to;
+                var to = this.options.to,
+					pos
+				;
                 switch (to) {
                     case 'bottom':
-                        var pos = 'top';
+                        pos = 'top';
                         break;
                     case 'left':
                     case 'top-left':
                     case 'bottom-left':
-                        var pos = 'right';
+                        pos = 'right';
                         break;
                     case 'right':
                     case 'top-right':
                     case 'bottom-right':
-                        var pos = 'left';
+                        pos = 'left';
                         break;
                     case 'top':
-                        var pos = 'bottom';
+                        pos = 'bottom';
                         break;
                 }
                 return pos;
@@ -439,4 +444,4 @@
         });
 
     });
-}());
+})(jQuery);
