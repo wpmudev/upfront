@@ -9,12 +9,17 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
    }
 
 	public function render_page() {
-		$core_version = $child_version = '0';
+		$core_version = $child_version = '0.0.0';
 		$current = wp_get_theme();
 		// Deal with caches
 		if (class_exists('Upfront_Compat') && is_callable(array('Upfront_Compat', 'get_upfront_core_version')) && is_callable(array('Upfront_Compat', 'get_upfront_child_version'))) {
 			$core_version = Upfront_Compat::get_upfront_core_version();
 			$child_version = Upfront_Compat::get_upfront_child_version();
+
+			$child_version = !empty($child_version)
+				? $child_version
+				: '0.0.0'
+			;
 		}
 		?>
 		<div class="wrap upfront_admin upfront-general-settings">
