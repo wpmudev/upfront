@@ -840,7 +840,13 @@ var PageTemplateEditor = PostSectionView.extend({
 			// Attach chosen select and type checkbox to template
 			this.$el.find('.upfront-page-template-chosen').html(this.templateSelect.$el);
 
-			setTimeout( function () {
+			this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
+			this.listenTo(Upfront.Events, 'entity:layout:change', this.on_layout_change);
+    },
+		
+		after_append: function () {
+			var me = this;
+			setTimeout(function() {
 				// overwriting click event on chosen.jquery.min.js
 				me.$el.find('.upfront-field-multiple input').bind('click.chosen', function(e){
 					me.stop_bubble(e);
@@ -848,26 +854,22 @@ var PageTemplateEditor = PostSectionView.extend({
 				me.$el.find('.upfront-field-multiple span.upfront-field-label-text').bind('click.chosen', function(e){
 					me.stop_bubble(e);
 				});
-				// toggling layout change functions
-				if ( typeof _upfront_post_data.layout_change !== 'undefined' && _upfront_post_data.layout_change === 1 ) {
-					me.on_layout_change();
-				} else {
-					me.trigger('initiate:no:layout:change');
-				}
-
-				// set default value
-				if ( typeof _upfront_post_data.template_slug !== 'undefined' ) me.templateSelect.set_value(_upfront_post_data.template_slug);
-				me.prev_template_name = me.$el.find('select.upfront-chosen-select option[value="'+ _upfront_post_data.template_slug +'"]').first().text();
-
-				me.spawn_template_modal();
-				me.disable_apply_template = true;
-				me.$el.find('a.apply-post-template').css({cursor: 'default', opacity: 0.6});
-
 			}, 300);
+			
+			// toggling layout change functions
+			if ( typeof _upfront_post_data.layout_change !== 'undefined' && _upfront_post_data.layout_change === 1 ) {
+				this.on_layout_change();
+			} else {
+				this.trigger('initiate:no:layout:change');
+			}
+			// set default value
+			if ( typeof _upfront_post_data.template_slug !== 'undefined' ) this.templateSelect.set_value(_upfront_post_data.template_slug);
+			this.prev_template_name = this.$el.find('select.upfront-chosen-select option[value="'+ _upfront_post_data.template_slug +'"]').first().text();
 
-			this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
-			this.listenTo(Upfront.Events, 'entity:layout:change', this.on_layout_change);
-    },
+			this.spawn_template_modal();
+			this.disable_apply_template = true;
+			this.$el.find('a.apply-post-template').css({cursor: 'default', opacity: 0.6});
+		},
 
 	initiate_no_layout_change: function() {
 		// clear flag for layout change
