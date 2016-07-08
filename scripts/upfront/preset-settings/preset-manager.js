@@ -550,6 +550,10 @@ define([
 			this.render();
 
 			this.defaultOverlay();
+			
+			// run layout change event
+			Upfront.Events.trigger('entity:layout:change');
+			
 			Upfront.Events.trigger('element:preset:updated');
 			//Display notification
 			Upfront.Views.Editor.notify(l10n.preset_changed.replace(/%s/, preset));
