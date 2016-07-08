@@ -1968,6 +1968,7 @@
 					template_editor_view.delegateEvents();
 					me.$el.empty();
 					me.$el.append(template_editor_view.$el);
+					template_editor_view.after_append();
 				}, 300);
 			}
 		});
