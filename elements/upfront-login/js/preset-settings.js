@@ -26,13 +26,13 @@ define([
 							name: 'part_style'
 						},
 						values: [
-							{ label: "Element Wrapper", value: 'element_wrapper' },
-							{ label: "Field Labels", value: 'field_labels' },
-							{ label: "Input Fields", value: 'input_fields' },
-							{ label: "Button", value: 'button' },
-							{ label: "Lost Password Text", value: 'lost_password_text' },
-							{ label: "Log in Trigger", value: 'login_trigger' },
-							{ label: "Log out Link", value: 'logout_link' },
+							{ label: l10n.preset.element_wrapper, value: 'element_wrapper' },
+							{ label: l10n.preset.field_labels, value: 'field_labels' },
+							{ label: l10n.preset.input_fields, value: 'input_fields' },
+							{ label: l10n.preset.button, value: 'button' },
+							{ label: l10n.preset.lost_password, value: 'lost_password_text' },
+							{ label: l10n.preset.login_trigger, value: 'login_trigger' },
+							{ label: l10n.preset.logout_link, value: 'logout_link' },
 						]
 					}
 				},
@@ -46,7 +46,7 @@ define([
 						abccolors: [
 							{
 								name: 'element_wrapper_background',
-								label: 'Wrapper Background'
+								label: l10n.preset.wrapper_background
 							}
 						]
 					}
@@ -113,7 +113,7 @@ define([
 						abccolors: [
 							{
 								name: 'input_fields_background',
-								label: 'Field Background'
+								label: l10n.preset.field_background
 							}
 						]
 					}
@@ -177,7 +177,7 @@ define([
 						abccolors: [
 							{
 								name: 'button_background',
-								label: 'Button Background'
+								label: l10n.preset.button_background
 							}
 						]
 					}
@@ -241,7 +241,7 @@ define([
 						abccolors: [
 							{
 								name: 'lost_password_text_link_color',
-								label: 'Link Color'
+								label: l10n.preset.link_color
 							}
 						]
 					}
@@ -275,7 +275,7 @@ define([
 						abccolors: [
 							{
 								name: 'login_trigger_button_background',
-								label: 'Button Background'
+								label: l10n.preset.button_background
 							}
 						]
 					}
@@ -339,7 +339,7 @@ define([
 						abccolors: [
 							{
 								name: 'logout_link_button_background',
-								label: 'Button Background'
+								label: l10n.preset.button_background
 							}
 						]
 					}
@@ -424,7 +424,7 @@ define([
 						abccolors: [
 							{
 								name: 'input_fields_background_hover',
-								label: 'Field Background'
+								label: l10n.preset.field_background
 							}
 						]
 					}
@@ -488,7 +488,7 @@ define([
 						abccolors: [
 							{
 								name: 'button_background_hover',
-								label: 'Button Background'
+								label: l10n.preset.button_background
 							}
 						]
 					}
@@ -552,7 +552,7 @@ define([
 						abccolors: [
 							{
 								name: 'lost_password_text_link_color_hover',
-								label: 'Link Color'
+								label: l10n.preset.link_color
 							}
 						]
 					}
@@ -586,7 +586,7 @@ define([
 						abccolors: [
 							{
 								name: 'login_trigger_button_background_hover',
-								label: 'Button Background'
+								label: l10n.preset.button_background
 							}
 						]
 					}
@@ -650,7 +650,7 @@ define([
 						abccolors: [
 							{
 								name: 'logout_link_button_background_hover',
-								label: 'Button Background'
+								label: l10n.preset.button_background
 							}
 						]
 					}
@@ -735,7 +735,7 @@ define([
 						abccolors: [
 							{
 								name: 'input_fields_background_focus',
-								label: 'Field Background'
+								label: l10n.preset.field_background
 							}
 						]
 					}
@@ -799,7 +799,7 @@ define([
 						abccolors: [
 							{
 								name: 'button_background_focus',
-								label: 'Button Background'
+								label: l10n.preset.button_background
 							}
 						]
 					}
@@ -863,7 +863,7 @@ define([
 						abccolors: [
 							{
 								name: 'lost_password_text_link_color_focus',
-								label: 'Link Color'
+								label: l10n.preset.link_color
 							}
 						]
 					}
@@ -897,7 +897,7 @@ define([
 						abccolors: [
 							{
 								name: 'login_trigger_button_background_focus',
-								label: 'Button Background'
+								label: l10n.preset.button_background
 							}
 						]
 					}
@@ -961,7 +961,7 @@ define([
 						abccolors: [
 							{
 								name: 'logout_link_button_background_focus',
-								label: 'Button Background'
+								label: l10n.preset.button_background
 							}
 						]
 					}

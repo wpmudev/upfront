@@ -220,6 +220,17 @@ class Upfront_LoginView extends Upfront_Object {
 			'px' => __("px", 'upfront'),
 			'preset' => array(
 				'part_to_style' => __("Part to Style:", 'upfront'),
+				'element_wrapper' => __("Element Wrapper", 'upfront'),
+				'field_labels' => __("Field Labels", 'upfront'),
+				'input_fields' => __("Input Fields", 'upfront'),
+				'button' => __("Button", 'upfront'),
+				'lost_password' => __("Lost Password Text", 'upfront'),
+				'login_trigger' => __("Log in Trigger", 'upfront'),
+				'logout_link' => __("Log out Link", 'upfront'),
+				'wrapper_background' => __("Wrapper Background", 'upfront'),
+				'field_background' => __("Field Background", 'upfront'),
+				'button_background' => __("Button Background", 'upfront'),
+				'link_color' => __("Link Color", 'upfront'),
 			)
 		);
 		return !empty($key)
