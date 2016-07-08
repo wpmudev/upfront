@@ -66,7 +66,9 @@
                                 break;
                             case 'tablet':
                                 // We look to big-tablet typography, if it's undefined we take default typography
-                                big_tablet_breakpoint = breakpoints_storage.get_breakpoints().findWhere({name:'big-tablet'});
+                                if ( typeof breakpoints_storage !== 'undefined' ) {
+                                    var big_tablet_breakpoint = breakpoints_storage.get_breakpoints().findWhere({name:'big-tablet'});
+                                }
                                 if (_.isUndefined(big_tablet_breakpoint) || _.isUndefined(big_tablet_breakpoint.get('typography')) || _.isUndefined(big_tablet_breakpoint.get('typography').h2)) {
                                     typography = layout_typography;
                                 } else {
@@ -75,7 +77,9 @@
                                 break;
                             case 'mobile':
                                 // We look to tablet typography, if it's undefined we take default typography
-                                tablet_breakpoint = breakpoints_storage.get_breakpoints().findWhere({id:'tablet'});
+																if ( typeof breakpoints_storage !== 'undefined' ) {
+                                    var tablet_breakpoint = breakpoints_storage.get_breakpoints().findWhere({id:'tablet'});
+                                }
                                 if (_.isUndefined(tablet_breakpoint) || _.isUndefined(tablet_breakpoint.get('typography')) || _.isUndefined(tablet_breakpoint.get('typography').h2)) {
                                     typography = _.clone(layout_typography);
                                 } else {
