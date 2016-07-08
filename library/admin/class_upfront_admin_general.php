@@ -33,7 +33,8 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 								Upfront <span>V <?php echo esc_html($core_version); ?></span>
 							</div>
 							<div class="upfront-debug-block">
-								<?php echo $current->Name; ?> (Active Theme)<span>V <?php echo esc_html($child_version); ?></span>
+								<?php echo esc_html(sprintf(__('%s (Active Theme)', Upfront::TextDomain), $current->Name)); ?>
+									<span>V <?php echo esc_html($child_version); ?></span>
 							</div>
 							<?php if (class_exists('UpfrontThemeExporter') && is_callable(array('UpfrontThemeExporter', 'upfront_exporter_version'))) { ?>
 							<div class="upfront-debug-block">
