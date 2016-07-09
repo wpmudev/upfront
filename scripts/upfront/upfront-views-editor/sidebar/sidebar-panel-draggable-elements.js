@@ -63,7 +63,7 @@
                 var elements = [];
                 if ( this.sections ){
                     this.sections.each(function(section){
-                        if ( section.elements )
+                        if ( section.elements.size() )
                             elements.push(section.elements.value());
                     });
                 }

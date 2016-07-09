@@ -104,7 +104,7 @@ class Upfront_PostData_L10n_Server implements IUpfront_Server {
 				'content_part' => __('Content part', 'upfront'),
 			),
 			'tax' => array(
-				'cats_part_title' => __('Categories', 'upfront'),
+				'cats_part_title' => __('Cats & Tags', 'upfront'),
 				'tags_part_title' => __('Tags', 'upfront'),
 				
 				'max_limit' => __('Show max:', 'upfront'),
@@ -263,7 +263,7 @@ class Upfront_PostData_L10n_Server implements IUpfront_Server {
 			'part_content' => __('Content', 'upfront'),
 			'part_read_more' => __('Read More', 'upfront'),
 			'part_tags' => __('Tags', 'upfront'),
-			'part_categories' => __('Categories', 'upfront'),
+			'part_categories' => __('Cats & Tags', 'upfront'),
 			'part_meta' => __('Meta', 'upfront'),
 			'image_options' => __('Image Options'),
 			'lock_image' => __('Lock Image'),

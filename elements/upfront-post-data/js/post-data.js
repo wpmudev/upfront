@@ -1578,19 +1578,20 @@ function add_elements () {
 			cssSelectorsId: 'post_author'
 		});
 
-		Upfront.Application.LayoutEditor.add_object("Upostdata-taxonomy", {
-			"Model": PostDataModel,
-			"View": PostDataView,
-			"DataElement": PostDataElement_Taxonomy,
-			"Settings": PostDataSettings,
-			cssSelectors: {
-				'.post_tags': {label: l10n.css.taxonomy_tags_label, info: l10n.css.taxonomy_tags_info},
-				'.post_tags a': {label: l10n.css.taxonomy_tags_link_label, info: l10n.css.taxonomy_tags_link_info},
-				'.post_categories': {label: l10n.css.taxonomy_category_label, info: l10n.css.taxonomy_category_info},
-				'.post_categories a': {label: l10n.css.taxonomy_category_link_label, info: l10n.css.taxonomy_category_link_info}
-			},
-			cssSelectorsId: 'post_taxonomy'
-		});
+		if( !Upfront.Application.is_single("page") )
+			Upfront.Application.LayoutEditor.add_object("Upostdata-taxonomy", {
+				"Model": PostDataModel,
+				"View": PostDataView,
+				"DataElement": PostDataElement_Taxonomy,
+				"Settings": PostDataSettings,
+				cssSelectors: {
+					'.post_tags': {label: l10n.css.taxonomy_tags_label, info: l10n.css.taxonomy_tags_info},
+					'.post_tags a': {label: l10n.css.taxonomy_tags_link_label, info: l10n.css.taxonomy_tags_link_info},
+					'.post_categories': {label: l10n.css.taxonomy_category_label, info: l10n.css.taxonomy_category_info},
+					'.post_categories a': {label: l10n.css.taxonomy_category_link_label, info: l10n.css.taxonomy_category_link_info}
+				},
+				cssSelectorsId: 'post_taxonomy'
+			});
 
 		Upfront.Application.LayoutEditor.add_object("Upostdata-featured_image", {
 			"Model": PostDataModel,
