@@ -265,6 +265,8 @@ class Upfront_PostData_L10n_Server implements IUpfront_Server {
 			'part_tags' => __('Tags', 'upfront'),
 			'part_categories' => __('Cats & Tags', 'upfront'),
 			'part_meta' => __('Meta', 'upfront'),
+			'part_cats_and_tags' => __("Cats & Tags", 'upfront'),
+			'part_post_data' => __("Post Data", 'upfront'),
 			'image_options' => __('Image Options'),
 			'lock_image' => __('Lock Image'),
 			'swap_image' => __('Swap Image', 'upfront'),

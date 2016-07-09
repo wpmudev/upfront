@@ -1458,7 +1458,7 @@ var PostDataElement_PostData = PostDataElement.extend({
 		type: 'post_data',
 		columns: 18,
 		rows: Upfront.Util.height_to_row(200),
-		name: 'Post Data'
+		name: l10n.part_post_data
 	},
 	_post_parts: [
 		'date_posted',
@@ -1472,7 +1472,7 @@ var PostDataElement_Author = PostDataElement.extend({
 		type: 'author',
 		columns: 4,
 		rows: Upfront.Util.height_to_row(100),
-		name: 'Author'
+		name: l10n.part_author
 	},
 	_post_parts: [
 		'author',
@@ -1488,7 +1488,7 @@ var PostDataElement_Taxonomy = PostDataElement.extend({
 		type: 'taxonomy',
 		columns: 18,
 		rows: Upfront.Util.height_to_row(50),
-		name: 'Categories & Tags'
+		name: l10n.part_cats_and_tags
 	},
 	_post_parts: [
 		'tags',
@@ -1501,7 +1501,7 @@ var PostDataElement_FeaturedImage = PostDataElement.extend({
 		type: 'featured_image',
 		columns: 18,
 		rows: Upfront.Util.height_to_row(200),
-		name: 'Featured Image',
+		name: l10n.part_featured_image,
 		parts: {
 			featured_image: {
 				rows: Upfront.Util.height_to_row(200)
@@ -1518,7 +1518,7 @@ var PostDataElement_Comments = PostDataElement.extend({
 		type: 'comments',
 		columns: 18,
 		rows: Upfront.Util.height_to_row(200),
-		name: 'Comments'
+		name: l10n.part_comments
 	},
 	_post_parts: [
 		'comment_count',
@@ -1533,7 +1533,7 @@ var PostDataElement_Meta = PostDataElement.extend({
 		type: 'meta',
 		columns: 4,
 		rows: Upfront.Util.height_to_row(50),
-		name: 'Meta'
+		name: l10n.part_meta
 	},
 	_post_parts: [
 		'meta'

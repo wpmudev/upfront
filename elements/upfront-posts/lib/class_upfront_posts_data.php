@@ -217,7 +217,7 @@ class Upfront_Posts_PostsData {
 			'part_content' => __('Content', 'upfront'),
 			'part_read_more' => __('Read More', 'upfront'),
 			'part_tags' => __('Tags', 'upfront'),
-			'part_categories' => __('Cats & Tags', 'upfront'),
+			'part_categories' => __('Categories', 'upfront'),
 			'part_meta' => __('Meta', 'upfront'),
 
 			'edit' => __('Edit', 'upfront'),
