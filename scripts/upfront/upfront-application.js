@@ -766,8 +766,6 @@ var Application = new (Backbone.Router.extend({
 		var me = this;
 		$("body .upfront-edit_layout a").addClass('active');
 		$("body").off("click", ".upfront-edit_layout").on("click", ".upfront-edit_layout", function () {
-			//$(".upfront-editable_trigger").hide();
-			//app.go("layout");
 
 			me.start();
 			return false;

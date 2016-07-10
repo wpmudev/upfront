@@ -97,7 +97,7 @@ var _partView = Backbone.View.extend({
 		}
 
 		if ( this.parent._editing ) return;
-		if ( Upfront.Application.is_builder() ) return;
+		if (true === Upfront.plugins.isForbiddenByPlugin('trigger post editor')) return;
 		if ( !this.canTriggerEdit ) return;
 		this.parent.triggerEditors();
 		this.focus();
@@ -162,7 +162,7 @@ PostContentEditor.prototype = {
 							.on('keyup', _.bind(this.keyup, this))
 							.off('keypress')
 							.on('keypress', _.bind(this.keypress, this));
-					
+
 					this.focus();
 					$("html").on('mousedown', {$title: this.$title, $partView: this }, this.mousedown );
 				}
@@ -258,7 +258,7 @@ PostContentEditor.prototype = {
 			},
 			editContent: function () {
 				if ( this.parent._editing || this.parent.isViewLoading() ) return;
-				
+
 				var me = this;
 				_partView.prototype.editContent.call(this);
 				this.$content = this.$('.upostdata-part');
@@ -276,7 +276,7 @@ PostContentEditor.prototype = {
 
 					this.$content.html(content).ueditor(editorOptions);
 					this.editor = this.$content.data('ueditor');
-					
+
 					this.$content
 						.off('blur')
 						.on('blur', _.bind(this.blur, this))
@@ -286,7 +286,7 @@ PostContentEditor.prototype = {
 						.on("stop", _.bind(this.stopEditContent, this))
 					;
 					this.parent.editorStart(); // Set necessary classes, trigger events, etc
-					
+
 					// to make Ctrl+A work on contents
 					setTimeout(function(){
 						me.$content.find('.upfront-inserted_image-wrapper').each(function(){
@@ -336,11 +336,11 @@ PostContentEditor.prototype = {
 							var shortcode = $.trim( $shortcode.html().replace(/(\r\n|\n|\r)/gm,"") );
 							$this.replaceWith( shortcode );
 						}
-						
+
 					});
 
 					content = $.trim( this.editor.getValue() );
-	
+
 					content = content.replace(/(\n)*?<br\s*\/?>\n*/g, "<br/>");
 					if ( isExcerpt ) {
 						this.parent.currentData.excerpt = content;
@@ -356,7 +356,7 @@ PostContentEditor.prototype = {
 				node.focus();
 				// only select all if still using the default layout
 				if ( typeof this.$content !== 'undefined' && this.$content ) {
-					if ( this.$content.text() === Upfront.Settings.l10n.global.ueditor.default_post_content ) 
+					if ( this.$content.text() === Upfront.Settings.l10n.global.ueditor.default_post_content )
 						this.parent.setSelection(node, true);
 				}
 			},
@@ -571,7 +571,7 @@ PostContentEditor.prototype = {
 					;
 					this.updateImageSize();
 				}
-				
+
 				this.parent.off('swap:image', this.openImageSelector);
 				this.parent.off('edit:image', this.editThumb);
 				this.parent.on('swap:image', this.openImageSelector, this);
@@ -712,7 +712,7 @@ PostContentEditor.prototype = {
 
 							// Update post meta
 							me.updatePost(imageData);
-							
+
 							if (!img.length)
 								img = newimg.appendTo(me.$('.thumbnail'));
 							else{
@@ -761,7 +761,7 @@ PostContentEditor.prototype = {
 
 					// Update post meta
 					me.updatePost(imageData)
-					
+
 					//post.meta.save();
 					if(!img.length)
 						img = newimg.appendTo(mask);
@@ -788,9 +788,9 @@ PostContentEditor.prototype = {
 				});
 			},
 
-			updatePost: function(imageData) {				
+			updatePost: function(imageData) {
 				var existing = this.parent.post.meta.findWhere({meta_key: '_thumbnail_data'});
-				
+
 				if(!existing) {
 					this.parent.post.meta.add([
 						{meta_key: '_thumbnail_id', meta_value: imageData.imageId},
@@ -942,7 +942,7 @@ PostContentEditor.prototype = {
 	prepareBox: function(){
 		var self = this,
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main);
-		
+
 		if(typeof this.box !== "undefined") {
 			this.box.remove();
 		}
@@ -1012,7 +1012,7 @@ PostContentEditor.prototype = {
 	updateStatus: function(status){
 		this.postStatus = status;
 	},
-	
+
 	updateVisibility: function(visibility, password){
 		this.postVisibility = visibility;
 		this.postPassword = password;

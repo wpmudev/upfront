@@ -740,9 +740,11 @@ var LayoutEditor = {
 		//on_complete.apply(context, [_upfront_post_data.layout.specificity]);
 		//return false;
 
-		if(location.pathname.indexOf('create_new') > -1 || layout_changed !== true) {
+		if(
+				true === Upfront.plugins.isForbiddenByPlugin('show save as dialog') ||
+				layout_changed !== true
+		) {
 			$bg.remove(); $dialog.remove();
-			//We are in builder do not show popup
 			on_complete.apply(context, ['single-post']);
 		} else {
 			$dialog
@@ -786,17 +788,16 @@ var LayoutEditor = {
 					return;
 				}
 				var elementType = deleteDatas[index].elementType,
-					styleName = deleteDatas[index].styleName;
-				if ( Upfront.Application.get_current() === Upfront.Settings.Application.MODE.THEME ) {
-					data = {
-						action: 'upfront_thx-delete-element-styles',
-						data: {
-							stylename: styleName,
-							elementType: elementType
-						}
-					};
-				}
-				else {
+					styleName = deleteDatas[index].styleName,
+					data;
+
+				var pluginsCallResult = Upfront.plugins.call('prepare-delete-element-styles-data', {
+					styleName: styleName,
+					elementType: elementType
+				});
+				if (pluginsCallResult.status && pluginsCallResult.status === 'called' && pluginsCallResult.result) {
+					data = pluginsCallResult.result;
+				} else {
 					data = {
 						action: 'upfront_delete_styles',
 						styleName: styleName,
@@ -834,32 +835,12 @@ var LayoutEditor = {
 				styleExists.push(styleName);
 		});
 
-		// Bail out now if we're not in the exporter
-		if (!Upfront.Application.is_builder()) return deferred.promise();
-
-		// Otherwise, run with it
-        Upfront.Application.ThemeEditor._get_saved_layout().done(function(saved){
-			_.each(elementTypes, function(elementType){
-				_.each(Upfront.data.styles[elementType.id], function(styleName){
-					var onOtherLayout = false;
-					_.each(saved, function(obj, id){
-						if ( id == layout_id )
-							return;
-						var is_parent_layout = ( layout_id.match(new RegExp('^' + id + '-')) );
-						if ( styleName.match(new RegExp('^' + id)) && ( !is_parent_layout || ( is_parent_layout && !styleName.match(new RegExp('^' + layout_id)) ) ) )
-							onOtherLayout = true;
-					});
-					if ( ! _.contains(styleExists, styleName) && styleName.match(new RegExp('^' + layout_id)) && !onOtherLayout )
-						deleteDatas.push({
-							elementType: elementType.id,
-							styleName: styleName
-						});
-				});
-			});
-			if ( deleteDatas.length > 0 ) {
-				Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.behaviors.cleaning_region_css);
-				deleteFunc(0); // Start deleting
-			}
+		Upfront.plugins.call('clean-region-css', {
+			elementTypes: elementTypes,
+			layout_id: layout_id,
+			styleExists: styleExists,
+			deleteDatas: deleteDatas,
+			deleteFunc: deleteFunc
 		});
 
 		return deferred.promise();
@@ -992,7 +973,11 @@ var LayoutEditor = {
 					'<span class="region-list-name">' + region.title + '</span>' +
 					'<span class="region-list-control">' +
 						//'<a href="#" class="region-list-edit" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.edit + '</a>' +
-						( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME ? '<a href="#" class="region-list-trash" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.trash + '</a>' : '' ) +
+						(
+							false === Upfront.plugins.isForbiddenByPlugin('show region list trash') ?
+							'<a href="#" class="region-list-trash" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.trash + '</a>' :
+							''
+						) +
 					'</span>' +
 				'</li>'
 			);

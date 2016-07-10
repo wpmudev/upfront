@@ -259,7 +259,10 @@ define([
 				}
 
 				var post = Upfront.data.posts[_upfront_post_data.post_id];
-				if(me.$el.children('.feature_image_selector').length < 1 && !Upfront.Application.is_builder()) {
+				if (
+						me.$el.children('.feature_image_selector').length < 1 &&
+						false === Upfront.plugins.isForbiddenByPlugin('initialize featured image selector')
+				) {
 					var feature_selector = $('<a href="#" class="feature_image_selector">Add Feature Image</a>');
 					feature_selector.bind('click', function() {
 						Upfront.Views.Editor.ImageSelector.open().done(function(images){
@@ -413,26 +416,17 @@ define([
 					}
 					$type.attr('data-slider-show-control', control);
 					$type.attr('data-slider-effect', transition);
-					if (!_.isUndefined(Upfront.themeExporter)) {
-						// In builder always replace slide_images with server response
-						Upfront.Views.Editor.ImageEditor.getImageData(slide_images).done(function(response){
-							var images = response.data.images;
-							// Rewrite slide images because in builder mode they will be just paths of theme images
-							// and slider needs image objects to work.
-							//slide_images = images;
-							_.each(slide_images, function(id){
-								var image = _.isNumber(id) || id.match(/^\d+$/) ? images[id] : _.find(images, function(img){
-										return img.full[0].split(/[\\/]/).pop() == id.split(/[\\/]/).pop();
-									}),
-									$image = $('<div class="upfront-default-slider-item" />');
-								if (image && image.full) $image.append('<img src="' + image.full[0] + '" />');
-								$type.append($image);
-							});
-							me.slide_images = slide_images;
-							$type.trigger('refresh');
-						});
+
+					var pluginsCallResult = Upfront.plugins.call('update-background-slider', {
+						slide_images: slide_images,
+						typeEl: $type,
+						me: me
+					});
+
+					if (pluginsCallResult.status && pluginsCallResult.status === 'called') {
 						return;
 					}
+
 					if ( (this.slide_images != slide_images) && slide_images.length > 0 ) {
 						Upfront.Views.Editor.ImageEditor.getImageData(slide_images).done(function(response){
 							var images = response.data.images;

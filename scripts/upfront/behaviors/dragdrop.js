@@ -107,7 +107,10 @@ DragDrop.prototype = {
 		this.$layout = this.$main.find('.upfront-layout');
 		this.el_selector = this.is_object ? this.object_selector : this.module_selector;
 
-		if ( this.app.mode.current !== this.app.MODE.THEME && this.model.get_property_value_by_name('disable_drag') ) {
+		if (
+				false === Upfront.plugins.isRequiredByPlugin('setup drag and drop') &&
+				this.model.get_property_value_by_name('disable_drag')
+		) {
 			return false;
 		}
 		// No draggable for spacer
@@ -274,9 +277,9 @@ DragDrop.prototype = {
 				region_model = regions.get_by_name(region_name),
 				area_model = is_region ? region_model : ( area.view ? area.view.model : region_model.get('modules').get_by_element_id(area.$el.attr('id')) )
 			;
-				
+
 			if ( !area_model ) return;
-				
+
 			var modules = area_model.get('modules') || area_model.get('objects'),
 				wrappers = area_model.get('wrappers'),
 				lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint.id, area.col),
@@ -1177,12 +1180,12 @@ DragDrop.prototype = {
 			this.current_region.$el.addClass('upfront-region-drag-active');
 		}
 		this.current_region_model = regions.get_by_name(this.current_region.region);
-		
+
 		var current_region_model_wrapper = ( this.current_region_model )
 			? this.current_region_model.get('wrappers')
 			: false
 		;
-		
+
 		this.current_wrappers = this.is_parent_group
 			? this.view.group_view.model.get('wrappers')
 			: ( this.is_object

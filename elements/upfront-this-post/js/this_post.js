@@ -78,17 +78,6 @@ var ThisPostView = Upfront.Views.ObjectView.extend({
 				}, 200);
 
 			});
-
-
-            /*if( Upfront.Application.is_builder() ){
-                me.editor.loadingLayout.done(function() {
-                    setTimeout(function() {
-                        Upfront.Events.trigger('post:layout:edit', me, 'single');
-                    }, 200);
-
-                });
-            }*/
-
 		});
 
 		Upfront.Events.trigger('post:initialized', this);

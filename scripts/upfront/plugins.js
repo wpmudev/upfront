@@ -3,6 +3,29 @@ define([], function() {
 	var Plugins = function() {
 		var plugins = [];
 
+		/*
+		 * Adds plugin.
+		 *
+		 * Plugin is added in following form:
+		 *
+		 * Upfront.plugins.addPlugin({
+		 *   name: 'Plugin Name', // not required
+		 *   forbidden: [], // array of actions that is forbidden by plugin
+		 *   required: [], // array of actions that are required by plugin
+		 *   callbacks: {
+		 *    'callback-name': function(parameters) {
+		 *      // use parameters to do something
+		 *      // return value if needed
+		 *    }
+		 *   }
+		 * });
+		 *
+		 * forbidden and required actions and callback names are defined in various points
+		 * in Upfront execution, so it gives plugins ability to prevent or enforce some actions
+		 * or to provide custom functionality.
+		 *
+		 * @params plugin - Object - described above
+		 */
 		this.addPlugin = function(plugin) {
 			plugins.push(plugin);
 		};
@@ -29,7 +52,8 @@ define([], function() {
 
 		/**
 		 * Allows Upfront to call callbacks defined by plugins. Will call only
-		 * one callback for given callbackId.
+		 * one callback for given callbackId. It will provide in return value
+		 * information if any callback was called and result if any is available.
 		 *
 		 * @param callbackId - string
 		 * @param parameters - Object
@@ -55,4 +79,3 @@ define([], function() {
 
 	return Plugins;
 });
-
