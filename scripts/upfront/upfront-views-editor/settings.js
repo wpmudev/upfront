@@ -140,7 +140,7 @@
 
         return {
             "Settings": Settings,
-            "Panel": SettingsPanel,
+            "Panel": SettingsPanel.Panel,
             "Item": SettingsItem,
             "ItemTabbed": SettingsItemTabbed,
             "Lightbox": {
@@ -150,7 +150,9 @@
             "Anchor": {
                 "Trigger": Settings_AnchorTrigger,
                 "LabeledTrigger": Settings_LabeledAnchorTrigger
-            }
+            },
+			Settings_CSS: SettingsPanel.Settings_CSS,
+			AnchorSetting: SettingsPanel.AnchorSetting
         };
 
     });
