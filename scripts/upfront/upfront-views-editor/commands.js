@@ -16,7 +16,6 @@
         'scripts/upfront/upfront-views-editor/commands/command-edit-structure',
         'scripts/upfront/upfront-views-editor/commands/command-exit',
         'scripts/upfront/upfront-views-editor/commands/command-export-history',
-        'scripts/upfront/upfront-views-editor/commands/command-export-layout',
         'scripts/upfront/upfront-views-editor/commands/command-go-to-type-preview-page',
         'scripts/upfront/upfront-views-editor/commands/command-load-layout',
         'scripts/upfront/upfront-views-editor/commands/command-logo',
@@ -56,10 +55,8 @@
         CommandEditCustomCss,
         CommandEditGlobalRegions,
         CommandEditLayoutBackground,
-        CommandEditStructure,
         CommandExit,
         CommandExportHistory,
-        CommandExportLayout,
         CommandGoToTypePreviewPage,
         CommandLoadLayout,
         CommandLogo,
@@ -90,94 +87,6 @@
         CommandOpenMediaGallery,
         CommandPopupList
     ) {
-
-
-        /**
-         * DEPRECATED
-         */
-        var Command_ThemesDropdown = Command.extend({
-            className: 'themes-dropdown',
-            enabled: true,
-            events: {
-                'click .upfront-field-select-value': 'openOptions',
-                'mouseup .upfront-field-select': 'onMouseUp',
-                'change .upfront-field-select-option input': 'onChange',
-                'click .upfront-field-select-option label': 'onOptionClick'
-            },
-            initialize: function() {
-                var themes = _.union([{label: l10n.choose_theme, value: ''}], _.map(Upfront.themeExporter.themes, function(theme) {
-                    return {
-                        label: theme.name,
-                        value: theme.directory
-                    };
-                }));
-                this.fields = [
-                    new Fields.Select({
-                        values: themes,
-                        default_value: Upfront.themeExporter.currentTheme === 'upfront' ?
-                            '' : Upfront.themeExporter.currentTheme,
-                        change: function () {
-                            if (this.get_value() === ''
-                                || this.get_value() === Upfront.themeExporter.currentTheme) return;
-
-                            Upfront.Events.trigger("builder:load_theme", this.get_value());
-                        }
-                    })
-                ];
-            },
-            render: function () {
-                this.fields[0].render();
-                this.$el.append(this.fields[0].el);
-            },
-            // noop for preventing parent class rendering on click behaviour
-            openOptions: function(e) {
-                this.fields[0].openOptions(e);
-            },
-            onMouseUp: function(e) {
-                this.fields[0].onMouseUp(e);
-            },
-            onChange: function(e) {
-                this.fields[0].onChange(e);
-            },
-            onOptionClick: function(e) {
-                this.fields[0].onOptionClick(e);
-            }
-
-        });
-
-        /**
-         * DEPRECATED
-         */
-        var Command_NewLayout = Command.extend({
-            className: "command-new-layout",
-            render: function () {
-                this.$el.addClass('upfront-icon upfront-icon-layout');
-                this.$el.html(l10n.new_layout);
-                this.$el.prop("title", l10n.new_layout);
-            },
-            on_click: function () {
-                Upfront.Events.trigger("command:layout:create");
-            }
-        });
-
-        /**
-         * DEPRECATED
-         */
-        var Command_BrowseLayout = Command.extend({
-            className: "command-browse-layout upfront-icon upfront-icon-browse-layouts",
-            render: function () {
-                this.$el.html(l10n.layouts);
-                this.$el.prop("title", l10n.layouts);
-            },
-            on_click: function () {
-                Upfront.Events.trigger("command:layout:browse");
-            }
-        });
-
-
-
-        /* End responsive mode commands */
-
         var Commands = Backbone.View.extend({
             "tagName": "ul",
 
@@ -232,10 +141,8 @@
             Command_EditCustomCss: CommandEditCustomCss,
             Command_EditGlobalRegions: CommandEditGlobalRegions,
             Command_EditLayoutBackground: CommandEditLayoutBackground,
-            Command_EditStructure: CommandEditStructure,
             Command_Exit: CommandExit,
             Command_ExportHistory: CommandExportHistory,
-            Command_ExportLayout: CommandExportLayout,
             Command_GoToTypePreviewPage: CommandGoToTypePreviewPage,
             Command_LoadLayout: CommandLoadLayout,
             Command_Logo: CommandLogo,
@@ -264,10 +171,7 @@
             Command_AddCustomBreakpoint: CommandAddCustomBreakpoint,
             Command_BreakpointDropdown: CommandBreakpointDropdown,
             Command_OpenMediaGallery: CommandOpenMediaGallery,
-            Command_PopupList: CommandPopupList,
-            Command_ThemesDropdown: Command_ThemesDropdown,
-            Command_BrowseLayout: Command_BrowseLayout,
-            Command_NewLayout: Command_NewLayout
+            Command_PopupList: CommandPopupList
         };
 
 

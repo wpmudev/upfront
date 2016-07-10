@@ -15,9 +15,7 @@
             },
             on_click: function () {
                 Upfront.Events.trigger("post:layout:cancel");
-                if ( Upfront.Application.is_builder() ) {
-                    Upfront.Events.trigger("post:layout:post:style:cancel");
-                }
+								Upfront.plugins.call('cancel-post-layout');
             }
         });
 

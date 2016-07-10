@@ -46,7 +46,7 @@
             on_render: function () {
                 var me = this;
                 this.reset_modules();
-                if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME ) {
+								if (false === Upfront.plugins.isForbiddenByPlugin('toggle first sidebar panel')) {
                     setTimeout( function() {
                         me.$el.find('.sidebar-panel-title').trigger('click');
                     }, 100);

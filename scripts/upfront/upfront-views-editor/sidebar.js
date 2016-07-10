@@ -11,8 +11,7 @@
         'scripts/upfront/upfront-views-editor/sidebar/sidebar-panels',
         'scripts/upfront/upfront-views-editor/sidebar/commands/sidebar-commands-primary-post-type',
         'scripts/upfront/upfront-views-editor/breakpoint',
-        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-responsive-section-typography',
-        'scripts/upfront/upfront-views-editor/sidebar/commands/sidebar-commands-primary-layout'
+        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-responsive-section-typography'
     ], function (
         SidebarPanel,
         DraggableElement,
@@ -21,50 +20,25 @@
         SidebarPanels,
         SidebarCommands_PrimaryPostType,
         Breakpoint,
-        SidebarPanel_Responsive_Settings_Section_Typography,
-        SidebarCommands_PrimaryLayout
+        SidebarPanel_Responsive_Settings_Section_Typography
     ) {
-
-
-
-
-
-
-
-
-
-
-
-        var SidebarCommands_AdditionalPostType = Commands.Commands.extend({
-            "className": "sidebar-commands sidebar-commands-additional",
-            initialize: function () {
-                this.commands = _([]);
-            },
-            render: function () {
-
-            }
-
-        });
-
         var SidebarCommands_Control = Commands.Commands.extend({
             className: function() {
                 var className = "sidebar-commands sidebar-commands-control";
-                if (Upfront.Application.get_current() === Upfront.Settings.Application.MODE.THEME) {
-                    className += ' sidebar-commands-theme';
-                }
+								var pluginsCallResult = Upfront.plugins.call('add-sidebar-commands-class', {className: className});
+								if (pluginsCallResult.status && pluginsCallResult.status === 'called' && pluginsCallResult.result) {
+									className = pluginsCallResult.result;
+								}
                 return className;
             },
             initialize: function () {
-                var MODE = Upfront.Settings.Application.MODE;
-                var current_app = Upfront.Application.get_current();
-
                 if (Upfront.Application.user_can_modify_layout()) {
-                    if ( current_app !== MODE.THEME ) {
+										if ( false === Upfront.plugins.isForbiddenByPlugin('show undo redo and responsive commands') ) {
                         this.commands = _([
                             new Commands.Command_Undo({"model": this.model}),
                             new Commands.Command_Redo({"model": this.model})
                         ]);
-                        if (Upfront.Application.user_can("RESPONSIVE_MODE") && current_app !== MODE.THEME) {
+												if (Upfront.Application.user_can("RESPONSIVE_MODE")) {
                             this.commands.push(
                                 new Commands.Command_StartResponsiveMode({model: this.model})
                             );
@@ -79,29 +53,36 @@
                     this.commands = _([]);
                 }
 
-                if (Upfront.Application.user_can("RESPONSIVE_MODE") && current_app === MODE.THEME) {
-                    this.commands.push(
-                        new Commands.Command_CreateResponsiveLayouts({model: this.model})
-                    );
+                if (Upfront.Application.user_can("RESPONSIVE_MODE")) {
+									Upfront.plugins.call('insert-responsive-buttons', {commands: this.commands, model: this.model});
                 }
-                if ( current_app == MODE.THEME ) {
-                    this.commands.push(new Commands.Command_ExportLayout({"model": this.model}));
-                }
+
+								Upfront.plugins.call('insert-save-buttons', {commands: this.commands, model: this.model});
 
                 this.commands.push(new Commands.Command_Trash({"model": this.model}));
 
-                if (!Upfront.Settings.Application.NO_SAVE && current_app !== MODE.THEME && Upfront.Application.user_can_modify_layout()) {
+                if (!Upfront.Settings.Application.NO_SAVE &&
+										false === Upfront.plugins.isForbiddenByPlugin('show save layout command') &&
+										Upfront.Application.user_can_modify_layout()
+								) {
                     this.commands.push(new Commands.Command_SaveLayout({"model": this.model}));
-                } else if (current_app !== MODE.THEME && Upfront.Settings.Application.PERMS.REVISIONS) {
+                } else if (
+										false === Upfront.plugins.isForbiddenByPlugin('show preview layout command') &&
+										Upfront.Settings.Application.PERMS.REVISIONS
+								) {
                     this.commands.push(new Commands.Command_PreviewLayout({"model": this.model}));
                 }
                 // Dev feature only
                 if ( Upfront.Settings.Debug.dev ) {
-                    if (!Upfront.Settings.Application.NO_SAVE && current_app !== MODE.THEME) {
+                    if (!Upfront.Settings.Application.NO_SAVE &&
+												false === Upfront.plugins.isForbiddenByPlugin('show reset everything command')
+										) {
                         this.commands.push(new Commands.Command_ResetEverything({"model": this.model}));
                     }
-                    //if (current_app !== MODE.THEME) this.commands.push(new Commands.Command_ToggleMode({"model": this.model}));
-                    if (!Upfront.Settings.Application.DEBUG && current_app !== MODE.THEME && !Upfront.Settings.Application.NO_SAVE) {
+                    if (!Upfront.Settings.Application.DEBUG &&
+												false === Upfront.plugins.isForbiddenByPlugin('show publish layout command') &&
+												!Upfront.Settings.Application.NO_SAVE
+										) {
                         this.commands.push(new Commands.Command_PublishLayout({"model": this.model}));
                     }
                 }
@@ -244,13 +225,12 @@
                 'click #sidebar-ui-toggler-handle': 'toggleSidebar'
             },
             initialize: function () {
-                var is_theme = Upfront.Application.get_current() == Upfront.Settings.Application.MODE.THEME;
                 //this.editor_mode = new SidebarEditorMode({"model": this.model});
                 this.sidebar_profile = new SidebarProfile({"model": this.model});
                 this.sidebar_commands = {
                     header: new SidebarCommands_Header({"model": this.model}),
-                    primary: is_theme ? new SidebarCommands_PrimaryLayout({"model": this.model}) : new SidebarCommands_PrimaryPostType({"model": this.model}), // DEPRECATED
-                    additional: is_theme ? false : new SidebarCommands_AdditionalPostType({"model": this.model}), // DEPRECATED
+										primary: new SidebarCommands_PrimaryPostType({"model": this.model}), // DEPRECATED
+										additional: false,
                     control: new SidebarCommands_Control({"model": this.model}),
                     responsive: new SidebarCommands_Responsive({"model": this.model})
                 };
@@ -291,9 +271,8 @@
                 var current_app = Upfront.Application.get_current();
                 var is_responsive_app = current_app === Upfront.Settings.Application.MODE.RESPONSIVE;
                 var output = $('<div id="sidebar-ui-wrapper" class="upfront-ui"></div>');
-                if ( current_app == Upfront.Settings.Application.MODE.THEME ) {
-                    output.addClass('create-theme-sidebar');
-                }
+
+								Upfront.Events.trigger('sidebar:add_classes', output);
 
                 // Header
                 this.sidebar_commands.header.render();
@@ -303,7 +282,10 @@
                 //this.editor_mode.render();
                 //this.$el.append(this.editor_mode.el);
 
-                if ( current_app !== Upfront.Settings.Application.MODE.THEME && !is_responsive_app) {
+                if (
+										false === Upfront.plugins.isForbiddenByPlugin('show sidebar profile') &&
+										!is_responsive_app
+								) {
                     // Profile
                     this.sidebar_profile.render();
                     output.append(this.sidebar_profile.el);

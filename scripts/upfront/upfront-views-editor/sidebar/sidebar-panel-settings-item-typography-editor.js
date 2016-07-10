@@ -96,10 +96,10 @@
 
                 // Check for theme fonts if no theme fonts just return string
                 var currentMode = Upfront.Application.get_current();
-                var builderMode = Upfront.Settings.Application.MODE.THEME;
+								var chooseFontRequiredByPlugin = true === Upfront.plugins.isRequiredByPlugin('show choose fonts button');
                 var doneIntro = Upfront.mainData.userDoneFontsIntro;
-                var showChooseFontsButton = (currentMode === builderMode && !doneIntro) ||
-                    (currentMode !== builderMode && Fonts.theme_fonts_collection.length === 0 && !doneIntro);
+								var showChooseFontsButton = (chooseFontRequiredByPlugin && !doneIntro) ||
+									(!chooseFontRequiredByPlugin && theme_fonts_collection.length === 0 && !doneIntro);
 
                 var chooseButton;
                 if (showChooseFontsButton) {
