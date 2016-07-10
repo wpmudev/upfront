@@ -38,19 +38,6 @@ define([
 			}
 			
 			options.fields = [
-				new Upfront.Views.Editor.Field.Checkboxes({
-					model: this.model,
-					property: 'use_padding',
-					use_breakpoint_property: true,
-					default_value: 0,
-					layout: 'horizontal-inline',
-					multiple: false,
-					values: [ { label: l10n.use_theme_padding, value: 1 } ],
-					change: function () {
-						var value = this.get_value();
-						this.model.set_breakpoint_property(this.property_name, value ? 1 : 0);
-					}
-				}),
 				new Upfront.Views.Editor.Field.Select({
 					model: this.model,
 					className: 'upfront-field-wrap upfront-field-wrap-select background-type-field',
@@ -65,7 +52,21 @@ define([
 						me.panel.parent_view.panels[0].toggle_setting(value);
 						this.model.set_breakpoint_property(this.property_name, value);
 					}
-				})
+				}),
+				new Upfront.Views.Editor.Field.Checkboxes({
+					model: this.model,
+					property: 'use_padding',
+					className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-settings-item-content upfront-field-wrap-checkboxes padding-bg-checkbox-field',
+					use_breakpoint_property: true,
+					default_value: 0,
+					layout: 'horizontal-inline',
+					multiple: false,
+					values: [ { label: l10n.use_theme_padding, value: 1 } ],
+					change: function () {
+						var value = this.get_value();
+						this.model.set_breakpoint_property(this.property_name, value ? 1 : 0);
+					}
+				}),
 			];
 			this.$el.addClass('uf-bgsettings-item');
 			this.constructor.__super__.initialize.call(this, options);
@@ -179,6 +180,15 @@ define([
 				color: ColorSettings,
 				image: ImageSettings
 			});
+		},
+		
+		render: function(options) {
+			this.constructor.__super__.render.call(this, options);
+			
+			// Move padding checkbox to bottom
+
+			var parent = this.$el.find('.uf-settings-panel__body');
+			this.$el.find('.padding-bg-checkbox-field').appendTo(parent);
 		},
 		
 		settings_opened: function() {
