@@ -13,7 +13,6 @@
         'scripts/upfront/upfront-views-editor/commands/command-edit-custom-css',
         'scripts/upfront/upfront-views-editor/commands/command-edit-global-regions',
         'scripts/upfront/upfront-views-editor/commands/command-edit-layout-background',
-        'scripts/upfront/upfront-views-editor/commands/command-edit-structure',
         'scripts/upfront/upfront-views-editor/commands/command-exit',
         'scripts/upfront/upfront-views-editor/commands/command-export-history',
         'scripts/upfront/upfront-views-editor/commands/command-go-to-type-preview-page',
