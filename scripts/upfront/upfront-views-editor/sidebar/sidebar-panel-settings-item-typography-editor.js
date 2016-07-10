@@ -99,7 +99,7 @@
 								var chooseFontRequiredByPlugin = true === Upfront.plugins.isRequiredByPlugin('show choose fonts button');
                 var doneIntro = Upfront.mainData.userDoneFontsIntro;
 								var showChooseFontsButton = (chooseFontRequiredByPlugin && !doneIntro) ||
-									(!chooseFontRequiredByPlugin && theme_fonts_collection.length === 0 && !doneIntro);
+									(!chooseFontRequiredByPlugin && Fonts.theme_fonts_collection.length === 0 && !doneIntro);
 
                 var chooseButton;
                 if (showChooseFontsButton) {
