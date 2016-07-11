@@ -2781,7 +2781,7 @@ define([
 				_.each(breakpoints, function(each){
 					var breakpoint = each.toJSON();
 					if ( breakpoint['default'] ) return;
-					var col = ed.get_class_num(module_view.$el, ed.grid['class']),
+					var col = ed.get_class_num(module_view.$el.find('> .upfront-module'), ed.grid['class']),
 						breakpoint_data = module_view.model.get_property_value_by_name('breakpoint')
 					;
 					if ( _.isObject(breakpoint_data) && _.isObject(breakpoint_data[breakpoint.id]) && !_.isUndefined(breakpoint_data[breakpoint.id].col) ) {
