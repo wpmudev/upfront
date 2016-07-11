@@ -1344,7 +1344,17 @@ jQuery(document).ready(function($){
 
 			// Edge case, for when we don't have a preset for this
 			// breakpoint in an element - it should retain its classes
-			if (!map[breakpoint]) return true;
+			// if (!map[breakpoint]) return true;
+			
+			// we have to provide proper fallback here, mobile -> tablet -> desktop
+			if ( breakpoint == 'mobile' ) {
+				map[breakpoint] = map[breakpoint] || map['tablet'] || map['desktop'] || 'default';
+			} else if ( breakpoint == 'tablet' ) {
+				map[breakpoint] = map[breakpoint] || map['desktop'] || 'default';
+			} else {
+				map[breakpoint] = map[breakpoint] || 'default';
+			}
+			
 
 			$.each(map, function (bp, preset) {
 				$me.removeClass(preset);
@@ -1354,7 +1364,6 @@ jQuery(document).ready(function($){
 			if (final_preset_class) {
 				$me.addClass(final_preset_class);
 			}
-
 		});
 
 		/**
