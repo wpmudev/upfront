@@ -153,7 +153,7 @@ define([
 	
 	var GroupLayout = RootSettingsPanel.extend({
 		className: 'upfront-settings_panel_wrap ugroup-settings',
-		title: l10n.group_bg,
+		title: l10n.group_settings,
 		initialize: function (opts) {
 			this.options = opts;
 			this.has_tabs = false;
