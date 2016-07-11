@@ -41,7 +41,7 @@ define([
 				new Upfront.Views.Editor.Field.Select({
 					model: this.model,
 					className: 'upfront-field-wrap upfront-field-wrap-select background-type-field',
-					label: l10n.group_bg,
+					label: l10n.background_type,
 					property: 'background_type',
 					use_breakpoint_property: true,
 					default_value: !bg_image ? 'color' : 'image',
