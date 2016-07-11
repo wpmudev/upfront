@@ -9,12 +9,17 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
    }
 
 	public function render_page() {
-		$core_version = $child_version = '0';
+		$core_version = $child_version = '0.0.0';
 		$current = wp_get_theme();
 		// Deal with caches
 		if (class_exists('Upfront_Compat') && is_callable(array('Upfront_Compat', 'get_upfront_core_version')) && is_callable(array('Upfront_Compat', 'get_upfront_child_version'))) {
 			$core_version = Upfront_Compat::get_upfront_core_version();
 			$child_version = Upfront_Compat::get_upfront_child_version();
+
+			$child_version = !empty($child_version)
+				? $child_version
+				: '0.0.0'
+			;
 		}
 		?>
 		<div class="wrap upfront_admin upfront-general-settings">
@@ -28,13 +33,11 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 								Upfront <span>V <?php echo esc_html($core_version); ?></span>
 							</div>
 							<div class="upfront-debug-block">
-								<?php echo $current->Name; ?> (Active Theme)<span>V <?php echo esc_html($child_version); ?></span>
+								<?php echo esc_html(sprintf(__('%s (Active Theme)', Upfront::TextDomain), $current->Name)); ?>
+									<span>V <?php echo esc_html($child_version); ?></span>
 							</div>
-							<?php if (class_exists('UpfrontThemeExporter') && is_callable(array('UpfrontThemeExporter', 'upfront_exporter_version'))) { ?>
-							<div class="upfront-debug-block">
-								Builder<span>V <?php echo UpfrontThemeExporter::upfront_exporter_version(); ?></span>
-							</div>
-							<?php } ?>
+
+							<?php do_action('upfront-admin-general_settings-versions'); ?>
 						</div>
 					</div>
 				</div>

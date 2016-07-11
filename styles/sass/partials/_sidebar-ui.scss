@@ -57,7 +57,7 @@
 	border-right: 1px solid #1a2d40;
 	color: #adc3d8;
 	display: none;
-	font: 16px/24px 'Source Sans Pro', sans-serif;
+	font: 16px/24px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 	z-index:1;
 	/* Disable text selection */
 	-webkit-user-select: none;
@@ -382,7 +382,7 @@
 	height: 26px;
 }
 #sidebar-ui .sidebar-commands-control .command-redo {
-	margin-left: 8px;
+	margin-left: 4px;
 }
 #sidebar-ui .sidebar-commands-control .command-save {
 	background: #1fcd8f;
@@ -456,7 +456,7 @@
 	width: 26px;
 	height: 26px;
 	padding: 2px;
-	margin: 1px 12px 8px 20px;
+	margin: 0 0 8px 15px;
 }
 #sidebar-ui .sidebar-commands-control .command-trash {
 	float: left;
@@ -648,7 +648,7 @@
 	width: 65px;
 	height: 65px;
 	float: left;
-	font-family: verdana;
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 	font-weight: 200;
 	font-size: 11px;
 	line-height: 24px;
@@ -737,7 +737,7 @@ span.draggable-post-element.element-dragging
 }
 #sidebar-ui .panel-section-title {
 	color: #27394b;
-	font-family: "Source Sans Pro", sans-serif;
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 	font-size: 15px;
 	font-weight: bold;
 	line-height: 19px;

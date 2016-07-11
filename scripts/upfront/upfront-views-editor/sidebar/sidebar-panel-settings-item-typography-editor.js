@@ -7,8 +7,9 @@
         'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-item',
         'scripts/upfront/upfront-views-editor/fonts',
         'scripts/upfront/upfront-views-editor/commands/command-open-font-manager',
-        'scripts/upfront/upfront-views-editor/fields'
-    ], function ( SidebarPanel_Settings_Item, Fonts, Command_OpenFontManager, Fields ) {
+        'scripts/upfront/upfront-views-editor/fields',
+        'scripts/upfront/upfront-views-editor/breakpoint'
+    ], function ( SidebarPanel_Settings_Item, Fonts, Command_OpenFontManager, Fields, Breakpoint ) {
         return SidebarPanel_Settings_Item.extend({
             fields: {},
             current_element: 'h1',
@@ -66,7 +67,7 @@
                                 break;
                             case 'tablet':
                                 // We look to big-tablet typography, if it's undefined we take default typography
-                                big_tablet_breakpoint = breakpoints_storage.get_breakpoints().findWhere({name:'big-tablet'});
+                                var big_tablet_breakpoint = Breakpoint.storage.get_breakpoints().findWhere({name:'big-tablet'});
                                 if (_.isUndefined(big_tablet_breakpoint) || _.isUndefined(big_tablet_breakpoint.get('typography')) || _.isUndefined(big_tablet_breakpoint.get('typography').h2)) {
                                     typography = layout_typography;
                                 } else {
@@ -75,7 +76,7 @@
                                 break;
                             case 'mobile':
                                 // We look to tablet typography, if it's undefined we take default typography
-                                tablet_breakpoint = breakpoints_storage.get_breakpoints().findWhere({id:'tablet'});
+                                var tablet_breakpoint = Breakpoint.storage.get_breakpoints().findWhere({id:'tablet'});
                                 if (_.isUndefined(tablet_breakpoint) || _.isUndefined(tablet_breakpoint.get('typography')) || _.isUndefined(tablet_breakpoint.get('typography').h2)) {
                                     typography = _.clone(layout_typography);
                                 } else {
@@ -95,10 +96,10 @@
 
                 // Check for theme fonts if no theme fonts just return string
                 var currentMode = Upfront.Application.get_current();
-                var builderMode = Upfront.Settings.Application.MODE.THEME;
+								var chooseFontRequiredByPlugin = true === Upfront.plugins.isRequiredByPlugin('show choose fonts button');
                 var doneIntro = Upfront.mainData.userDoneFontsIntro;
-                var showChooseFontsButton = (currentMode === builderMode && !doneIntro) ||
-                    (currentMode !== builderMode && Fonts.theme_fonts_collection.length === 0 && !doneIntro);
+								var showChooseFontsButton = (chooseFontRequiredByPlugin && !doneIntro) ||
+									(!chooseFontRequiredByPlugin && Fonts.theme_fonts_collection.length === 0 && !doneIntro);
 
                 var chooseButton;
                 if (showChooseFontsButton) {

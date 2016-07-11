@@ -362,7 +362,7 @@
             }
         });
 
-        return Backbone.View.extend(_.extend({}, Mixins.Upfront_Scroll_Mixin, {
+        var _Panel = Backbone.View.extend(_.extend({}, Mixins.Upfront_Scroll_Mixin, {
             className: 'upfront-settings_panel_wrap',
             // For Anchor & Styles settings
             hide_common_anchors: false,
@@ -618,5 +618,11 @@
             }
 
         }));
+
+		return {
+			Settings_CSS: _Settings_CSS,
+			Panel: _Panel,
+			AnchorSetting: _Settings_AnchorSetting
+		};
     });
 })(jQuery);

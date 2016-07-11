@@ -4,11 +4,12 @@ class Upfront_LoginView extends Upfront_Object {
 
 	public static function default_properties () {
 		return array(
+			'preset' => 'default',
 			'style' => 'form',
 			'behavior' => 'click',
 			'appearance' => 'icon',
 			'label_image' => self::_get_l10n('login'),
-			'label_text' => self::_get_l10n('log_in'),
+			'login_button_label' => self::_get_l10n('log_in'),
 			'logout_link' => self::_get_l10n('log_out'),
 			'trigger_text' => self::_get_l10n('log_in'),
 			'logged_in_preview' => '',
@@ -18,6 +19,13 @@ class Upfront_LoginView extends Upfront_Object {
 			'has_settings' => 1,
 			'id_slug' => 'upfront-login_element',
 			'logout_style' => 'link',
+			'top_offset' => 0,
+			'left_offset' => 0,
+			'username_label' => self::_get_l10n('username_label'),
+			'password_label' => self::_get_l10n('password_label'),
+			'remember_label' => self::_get_l10n('remember_label'),
+			'lost_password_text' => self::_get_l10n('lost_password'),
+			'lost_password_link' => self::_get_l10n('click_here'),
 		);
 	}
 
@@ -61,17 +69,39 @@ class Upfront_LoginView extends Upfront_Object {
 		$block = !empty($properties['style']) && 'form' == $properties['style'];
 		
 		$icon = !empty($properties['appearance']) && "icon" == $properties['appearance'];
-		$label = !empty($properties['label_text'])
-			? $properties['label_text']
+		$login_button_label = !empty($properties['login_button_label'])
+			? $properties['login_button_label']
 			: self::_get_l10n('log_in')
 		;
-		if ('icon' === $label) $label = '';
+		if ('icon' === $login_button_label) $login_button_label = '';
 
-		$trigger_label = !empty($properties['trigger_text']) ? $properties['trigger_text'] : $label;
+		$trigger_label = !empty($properties['trigger_text']) ? $properties['trigger_text'] : $login_button_label;
 		$trigger = empty($block)
 			? self::_get_trigger_markup($icon, $trigger_label)
 			: ''
 		;
+		
+		$username_label = !empty($properties['username_label'])
+			? $properties['username_label']
+			: self::_get_l10n('username_label')
+		;
+		$password_label = !empty($properties['password_label'])
+			? $properties['password_label']
+			: self::_get_l10n('password_label')
+		;
+		$remember_label = !empty($properties['remember_label'])
+			? $properties['remember_label']
+			: self::_get_l10n('remember_label')
+		;
+		$lost_password_text = !empty($properties['lost_password_text'])
+			? $properties['lost_password_text']
+			: self::_get_l10n('lost_password')
+		;
+		$lost_password_link = !empty($properties['lost_password_link'])
+			? $properties['lost_password_link']
+			: self::_get_l10n('click_here')
+		;
+		
 
 		$allow_registration = !is_user_logged_in() && get_option('users_can_register');
 		// Allow override for in-editor form previews
@@ -81,12 +111,27 @@ class Upfront_LoginView extends Upfront_Object {
 
 		$data = array(
 			'trigger' => $trigger,
-			'label' => $label,
+			'login_button_label' => $login_button_label,
 			'allow_registration' => $allow_registration,
-			'lost_password' => self::_get_l10n('lost_password'),
-			'click_here' => self::_get_l10n('click_here'),
+			'username_label' => $username_label,
+			'password_label' => $password_label,
+			'remember_label' => $remember_label,
+			'lost_password' => $lost_password_text,
+			'lost_password_link' => $lost_password_link,
 			'register' => self::_get_l10n('register'),
 		);
+		
+		// top and left offset for hover and click behavior
+		$top_offset = ( !empty($properties['top_offset']) )
+			? 'top:' . $properties['top_offset'] . 'px;'
+			: ''
+		;
+		$left_offset = ( !empty($properties['left_offset']) )
+			? 'left:' . $properties['left_offset'] . 'px;'
+			: ''
+		;
+		$data['offset'] = $top_offset . $left_offset;
+		
 		$tpl = 'block'; // default
 		if (!$block && !empty($properties['behavior'])) {
 			$tpl = preg_replace('/[^a-z0-9]/', '', $properties['behavior']);
@@ -100,7 +145,7 @@ class Upfront_LoginView extends Upfront_Object {
 	}
 
 	private static function _normalize_properties ($raw_properties) {
-		$to_map = array('style', 'behavior', 'appearance', 'label_text', 'trigger_text', 'logged_in_preview', 'logout_style', 'logout_link', 'label_image');
+		$to_map = array('style', 'behavior', 'appearance', 'login_button_label', 'trigger_text', 'logged_in_preview', 'logout_style', 'logout_link', 'label_image', 'top_offset', 'left_offset', 'username_label', 'password_label', 'remember_label', 'lost_password_text', 'lost_password_link');
 		$properties = upfront_properties_to_array($raw_properties, $to_map);
 		return $properties;
 	}
@@ -142,22 +187,26 @@ class Upfront_LoginView extends Upfront_Object {
 				'close_info' => __('The link that allows to open the login when the dropdown or lightbox option is selected.', 'upfront'),
 			),
 			'hold_on' => __('Please, hold on', 'upfront'),
-			'settings' => __("Login settings", 'upfront'),
+			'settings' => __("Login Element", 'upfront'),
 			'general_settings' => __('General Settings', 'upfront'),
 			'display' => __("Display", 'upfront'),
-			'show_on_hover' => __("Show on hover", 'upfront'),
-			'show_on_click' => __("Show on click", 'upfront'),
+			'show_form_label' => __("Show Form", 'upfront'),
+			'show_on_hover' => __("On Hover", 'upfront'),
+			'show_on_click' => __("On Click", 'upfront'),
 			'behavior' => __("Display behavior", 'upfront'),
-			'on_page' => __("Form on page", 'upfront'),
-			'dropdown' => __("Drop down form", 'upfront'),
+			'general_settings_description' => __("To edit Labels, Button or Link text, double-click it like you would with Text Element", 'upfront'),
+			'on_page' => __("In a Layout", 'upfront'),
+			'dropdown' => __("In a Drop Down", 'upfront'),
 			'in_lightbox' => __("Form in lightbox", 'upfront'),
-			'appearance' => __("Display Appearance", 'upfront'),
+			'appearance' => __("Display Login Form", 'upfront'),
 			'trigger' => __("Trigger", 'upfront'),
+			'username_label' => __("Username", 'upfront'),
+			'password_label' => __("Password", 'upfront'),
+			'remember_label' => __("Remember Me", 'upfront'),
 			'lost_password' => __("Lost Password?", 'upfront'),
 			'login' => __("Login", 'upfront'),
 			'log_in' => __("Log in", 'upfront'),
 			'log_out' => __("Log out", 'upfront'),
-			
 			'logged_in_preview' => __("Logged in Users see", 'upfront'),
 			'preview' => __("Preview", 'upfront'),
 			'nothing' => __("Nothing", 'upfront'),
@@ -166,6 +215,23 @@ class Upfront_LoginView extends Upfront_Object {
 			'log_in_button' => __("Log In Button:", 'upfront'),
 			'log_in_trigger' => __("Log In Trigger:", 'upfront'),
 			'register' => __("Register", 'upfront'),
+			'top_offset' => __("Top Offset", 'upfront'),
+			'left_offset' => __("Left Offset", 'upfront'),
+			'px' => __("px", 'upfront'),
+			'preset' => array(
+				'part_to_style' => __("Part to Style:", 'upfront'),
+				'element_wrapper' => __("Element Wrapper", 'upfront'),
+				'field_labels' => __("Field Labels", 'upfront'),
+				'input_fields' => __("Input Fields", 'upfront'),
+				'button' => __("Button", 'upfront'),
+				'lost_password' => __("Lost Password Text", 'upfront'),
+				'login_trigger' => __("Log in Trigger", 'upfront'),
+				'logout_link' => __("Log out Link", 'upfront'),
+				'wrapper_background' => __("Wrapper Background", 'upfront'),
+				'field_background' => __("Field Background", 'upfront'),
+				'button_background' => __("Button Background", 'upfront'),
+				'link_color' => __("Link Color", 'upfront'),
+			)
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

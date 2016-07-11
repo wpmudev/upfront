@@ -8,15 +8,13 @@
         'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-item-typography-editor',
         'scripts/upfront/upfront-views-editor/commands/command-edit-custom-css',
         'scripts/upfront/upfront-views-editor/commands/command-edit-layout-background',
-        'scripts/upfront/upfront-views-editor/commands/command-edit-global-regions',
-        'scripts/upfront/upfront-views-editor/commands/command-edit-structure'
+        'scripts/upfront/upfront-views-editor/commands/command-edit-global-regions'
     ], function (
         SidebarPanel_Settings_Section,
         SidebarPanel_Settings_Item_Typography_Editor,
         Command_EditCustomCSS,
         Command_EditLayoutBackground,
-        Command_EditGlobalRegions,
-        Command_EditStructure
+        Command_EditGlobalRegions
     ) {
 
         return SidebarPanel_Settings_Section.extend({
@@ -30,9 +28,6 @@
                 this.edit_css = new Command_EditCustomCSS({"model": this.model});
                 this.edit_background = new Command_EditLayoutBackground({"model": this.model});
                 this.edit_global_regions = new Command_EditGlobalRegions({"model": this.model});
-                if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.THEME ) {
-                    this.edit_structure = new Command_EditStructure({"model": this.model});
-                }
             },
             get_title: function () {
                 return l10n.typography;
@@ -45,11 +40,12 @@
                 this.edit_css.render();
                 this.edit_css.delegateEvents();
                 this.$el.find('.panel-section-content').append(this.edit_css.el);
-                if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.THEME ) {
-                    this.edit_structure.render();
-                    this.edit_structure.delegateEvents();
-                    this.$el.find('.panel-section-content').append(this.edit_structure.el);
-                }
+
+								Upfront.plugins.call('insert-command-after-typography-commands', {
+									rootEl: this.$el,
+									model: this.model
+								});
+
                 this.edit_background.render();
                 this.edit_background.delegateEvents();
                 this.$el.find('.panel-section-content').append(this.edit_background.el);

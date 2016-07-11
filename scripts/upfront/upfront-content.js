@@ -308,7 +308,7 @@ define("content", deps, function(postTpl, ContentTools) {
 			if( $('body').hasClass('is_new') && ( typeof _upfront_post_data.post_name_updated === 'undefined' || !_upfront_post_data.post_name_updated ) ) {
 				this.post.set('post_name', '');
 			}
-			
+
 			// we can now clear flag for edited post name from sidebar
 			_upfront_post_data.post_name_updated = false;
 
@@ -570,8 +570,11 @@ define("content", deps, function(postTpl, ContentTools) {
 				}
 			;
 
-			//If we are already editing, don't do anything
-			if(this.contentEditor || Upfront.Application.is_builder())// || Upfront.Application.current_subapplication == Upfront.Application.PostContentEditor)
+			// If we are already editing, don't do anything
+			if (
+				this.contentEditor ||
+				true === Upfront.plugins.isForbiddenByPlugin('trigger post editor')
+			)
 				return;
 
 			//If we haven't fetched all the data, return too

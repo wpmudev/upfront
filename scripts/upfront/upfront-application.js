@@ -108,7 +108,10 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			template_slug = ( typeof _upfront_post_data.template_slug !== 'undefined' ) ? _upfront_post_data.template_slug : '',
 			layout_action = ( typeof _upfront_post_data.layout_action !== 'undefined' ) ? _upfront_post_data.layout_action : '',
 			layout_change = ( typeof _upfront_post_data.layout_change !== 'undefined' ) ? _upfront_post_data.layout_change : 0,
-			save_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 );
+			save_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 ),
+			breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+			is_responsive = breakpoint && !breakpoint['default']
+		;
 		data.layout = _upfront_post_data.layout;
 		data.preferred_layout = preferred_layout;
 		data = JSON.stringify(data, undefined, 2);
@@ -155,6 +158,10 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			.error(function () {
 				Upfront.Util.log("error saving layout");
 				Upfront.Events.trigger("command:layout:save_error");
+			})
+			.done(function () {
+				// taking care element presets
+				if( is_responsive ) Upfront.Events.trigger("element:retain:preset");
 			})
 		;
 	},
@@ -766,8 +773,6 @@ var Application = new (Backbone.Router.extend({
 		var me = this;
 		$("body .upfront-edit_layout a").addClass('active');
 		$("body").off("click", ".upfront-edit_layout").on("click", ".upfront-edit_layout", function () {
-			//$(".upfront-editable_trigger").hide();
-			//app.go("layout");
 
 			me.start();
 			return false;

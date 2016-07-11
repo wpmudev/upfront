@@ -108,10 +108,8 @@ C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command-edit-custom-css.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command-edit-global-regions.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command-edit-layout-background.js
-C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command-edit-structure.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command-exit.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command-export-history.js
-C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command-export-layout.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command-go-to-type-preview-page.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command-load-layout.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command-logo.js
@@ -178,7 +176,6 @@ C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panels.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/commands/sidebar-commands-primary-post-type.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-responsive-section-typography.js
-C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/commands/sidebar-commands-primary-layout.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/presets/button/model.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/presets/button/collection.js
@@ -318,6 +315,7 @@ C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-like-box/js/u
 text!elements/upfront-login/css/edit.css
 text!elements/upfront-login/css/public.css
 text!elements/upfront-login/tpl/preset-style.html
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-login/js/preset-settings.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-login/js/upfront_login.js
 text!elements/upfront-maps/css/edit.css
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-maps/js/upfront_maps.js
@@ -393,4 +391,5 @@ C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-code/js/upfro
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-spacer/js/uspacer.js
 upfront/upfront-application.js
 upfront/upfront-util.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/plugins.js
 main.js

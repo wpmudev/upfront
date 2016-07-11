@@ -113,7 +113,7 @@
   background-image: none; }
 
 .upfront-ui {
-  font: 16px/24px 'Source Sans Pro', sans-serif;
+  font: 16px/24px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   margin: 0;
   padding: 0;
   border: none;
@@ -132,7 +132,7 @@
 .upfront-object-content .ueditor-box-wrapper ol,
 .upfront-object-content .ueditor-box-wrapper blockquote, .upfront-object-content .ueditor-box-wrapper blockquote p,
 .upfront-object-content .ueditor-box-wrapper blockquote.upfront-quote-alternative {
-  font-family: 'Source Sans Pro';
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   text-decoration: none;
   font-style: normal;
   font-weight: normal;
@@ -164,7 +164,7 @@
 .upfront-ui h4,
 .upfront-ui h5,
 .upfront-ui h6 {
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   text-transform: none; }
 
 .upfront-ui ul {
@@ -270,7 +270,7 @@ em {
   border-right: 1px solid #1a2d40;
   color: #adc3d8;
   display: none;
-  font: 16px/24px 'Source Sans Pro', sans-serif;
+  font: 16px/24px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   z-index: 1;
   /* Disable text selection */
   -webkit-user-select: none;
@@ -595,7 +595,7 @@ em {
   height: 26px; }
 
 #sidebar-ui .sidebar-commands-control .command-redo {
-  margin-left: 8px; }
+  margin-left: 4px; }
 
 #sidebar-ui .sidebar-commands-control .command-save {
   background: #1fcd8f;
@@ -669,7 +669,7 @@ em {
   width: 26px;
   height: 26px;
   padding: 2px;
-  margin: 1px 12px 8px 20px; }
+  margin: 0 0 8px 15px; }
 
 #sidebar-ui .sidebar-commands-control .command-trash {
   float: left;
@@ -848,7 +848,7 @@ em {
   width: 65px;
   height: 65px;
   float: left;
-  font-family: verdana;
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   font-weight: 200;
   font-size: 11px;
   line-height: 24px;
@@ -935,7 +935,7 @@ span.draggable-post-element.element-dragging {
 
 #sidebar-ui .panel-section-title {
   color: #27394b;
-  font-family: "Source Sans Pro", sans-serif;
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   font-size: 15px;
   font-weight: bold;
   line-height: 19px;
@@ -1755,8 +1755,9 @@ input.upfront-field-text:hover,
   display: table;
   color: #30475e;
   font-size: 11px;
-  font-weight: normal;
-  font-family: verdana, sans-serif; }
+  font-weight: 700;
+  letter-spacing: 0.34px;
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif; }
 
 .upfront-field-multiple label .upfront-field-label-text {
   display: table-cell;
@@ -2067,7 +2068,7 @@ input.upfront-field-text:hover,
   color: #395269; }
 
 .upfront-date_picker select {
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   margin: 0 2px; }
 
 .upfront-date_picker .ui-datepicker-prev,
@@ -4534,7 +4535,7 @@ a.upfront-region-name-edit-trigger:before {
   box-shadow: 0 1px 0 #192d3f;
   color: #d8ecff;
   font-size: 16px;
-  font-family: "Source Sans Pro", sans-serif;
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   line-height: 24px;
   padding: 5px 10px;
   margin: 0 5px 10px;
@@ -5039,7 +5040,7 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-module-group > .upfront-module-group-controls .upfront-inline-panel .upfront-inline-panel-item-label {
   display: inline-block;
   width: auto !important;
-  font: 16px/24px 'Source Sans Pro', sans-serif; }
+  font: 16px/24px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif; }
 
 .upfront-module-group > .upfront-module-group-controls {
   display: block;
@@ -5135,7 +5136,7 @@ a.upfront-region-name-edit-trigger:before {
   z-index: 999999999; }
 
 .upfront-structure-modal .upfront-field-wrap .upfront-field-label-block {
-  font-family: "Source Sans Pro", sans-serif;
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   color: #27394b;
   font-size: 18px;
   font-weight: bold;
@@ -5182,7 +5183,7 @@ a.upfront-region-name-edit-trigger:before {
   float: none; }
 
 .upfront-message-modal {
-  font-family: "Source Sans Pro", sans-serif;
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   color: #3c5266; }
 
 .upfront-modal-title {
@@ -5691,9 +5692,10 @@ a.upfront-region-name-edit-trigger:before {
   text-transform: uppercase;
   line-height: 35px;
   color: #2f475f;
-  font-family: Verdana, sans-serif;
-  font-weight: bold;
-  position: relative; }
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  position: relative;
+  letter-spacing: 0.34px; }
 
 .upfront-settings-item-title span,
 .upfront-global-social-settings .upfront-settings-item-title span {
@@ -5755,21 +5757,18 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-save_settings {
   height: 36px;
   width: auto;
-  border: 1px solid #00db8f;
-  padding: 0 26px 0 20px;
+  padding: 0 20px;
   background: #1fcd8f;
   line-height: 34px;
-  font-size: 18px;
-  font-family: 'Source Sans Pro';
-  color: #f2f9ff;
+  font-size: 15px;
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+  color: #eff8ff;
   border-radius: 0;
-  box-shadow: 3px 3px 0 rgba(99, 134, 166, 0.25);
   max-width: 286px;
   overflow: hidden; }
 
 .upfront-ui .upfront-save_settings:hover {
-  background: #3ea;
-  border: 1px solid #3ea; }
+  background: #00bf80; }
 
 /* @TODO still using font awesome icon, need add it to sprite instead */
 .upfront-save_settings i {
@@ -5913,6 +5912,16 @@ a.upfront-region-name-edit-trigger:before {
 
 #element-settings-sidebar .upfront-settings-item-title:after {
   display: none; }
+
+#element-settings-sidebar .upfront-settings-item .login-general-settings-description:before {
+  content: ' ';
+  display: block;
+  background: url("../img/uf-core-el-sprite.svg") no-repeat -484px -141px;
+  width: 15px;
+  height: 14px;
+  margin-right: 5px;
+  margin-top: 2px;
+  float: left; }
 
 #element-settings-sidebar .upfront-settings-css .upfront-settings-item-title,
 #element-settings-sidebar .uslider-slides .upfront-settings-item-title {
@@ -7430,7 +7439,7 @@ i.upfront-field-icon-burger-trigger {
   right: 0;
   margin: auto;
   z-index: 10001004;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   font-size: 14px;
   box-sizing: border-box;
   -moz-box-sizing: border-box; }
@@ -7450,7 +7459,7 @@ i.upfront-field-icon-burger-trigger {
   border: 1px solid #A4BFD8;
   background: #E5F3FE;
   color: #A4BFD8;
-  font-family: 'Source Sans Pro';
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   border-radius: 3px;
   box-shadow: inset 0 2px 0 0 #fff;
   -webkit-box-shadow: inset 0 2px 0 0 #fff; }
@@ -7477,7 +7486,7 @@ i.upfront-field-icon-burger-trigger {
   border: 2px solid #A4B6C6;
   border-radius: 10px;
   width: 100%;
-  font-family: 'Source Sans Pro';
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   text-transform: uppercase;
   color: #6C92B1;
   background: none; }
@@ -7983,7 +7992,7 @@ i.upfront-field-icon-burger-trigger {
 .upfront-list_item-component.upfront-editactions a.editaction {
   display: inline-block;
   border-radius: 3px;
-  padding: 0 8px; }
+  padding: 0 5px; }
 
 a.editaction.edit, a.editaction.view {
   background-color: #3C5267;
@@ -8718,7 +8727,7 @@ a.upfront-post-layout-trigger:before {
   top: 0;
   left: 0;
   z-index: 9999;
-  font-family: "Source Sans Pro", sans-serif;
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   font-weight: normal; }
 
 .upfront-loading.upfront-boot {
@@ -9643,7 +9652,7 @@ License: MIT
   box-shadow: 0 2px 7px rgba(0, 0, 0, 0.3); }
 
 .sp-container, .sp-palette-container, .sp-picker-container, .sp-container button, .sp-container input, .sp-color, .sp-hue {
-  font: normal 14px 'Source Sans Pro', sans-serif;
+  font: normal 14px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   -ms-box-sizing: border-box;
@@ -11051,7 +11060,7 @@ a.ueditor-select-option:hover {
   color: #395269; }
 
 #ui-datepicker-div select {
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   margin: 0 2px; }
 
 #ui-datepicker-div .ui-datepicker-prev,
@@ -11455,7 +11464,7 @@ a.ueditor-action-trash:before {
 .upost_thumbnail_changer {
   color: #3f5870;
   background: rgba(255, 255, 255, 0.3);
-  font-family: 'Source Sans Pro';
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   text-align: center;
   font-size: 18px;
   width: 100%;
@@ -11614,7 +11623,7 @@ a.ueditor-action-trash:before {
 .upfront-quick-swap {
   color: #3f5870;
   background: rgba(255, 255, 255, 0.9);
-  font-family: 'Source Sans Pro';
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   text-align: center;
   font-size: 18px;
   width: 100%;
@@ -12639,7 +12648,7 @@ input[type=text].sp-input {
   background: #1fcd8f;
   line-height: 34px;
   font-size: 18px;
-  font-family: 'Source Sans Pro';
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   color: #f2f9ff;
   border-radius: 0;
   margin-right: -30px;
@@ -12888,7 +12897,7 @@ div.inline-number.plaintext-settings input {
   position: absolute;
   z-index: 9999;
   padding: 5px 0;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   font-size: 15px;
   color: #465f80;
   width: auto;
@@ -13948,12 +13957,12 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-e
   font-size: 18px; }
 
 .edit-breakpoint-popup-title {
-  font: 18px/18px 'Source Sans Pro', sans-serif;
+  font: 18px/18px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   color: #273a4c; }
 
 #edit-breakpoint, #new-custom-breakpoint {
   color: #1fcd8f;
-  font: 'Source Sans Pro', sans-serif;
+  font: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   font-size: 15px;
   line-height: 25px;
   cursor: pointer; }
@@ -14756,7 +14765,7 @@ li#new-custom-breakpoint {
 
 #icon-fonts-manager .fonts-manager-panel-title,
 #text-fonts-manager .panel-title {
-  font: 18px/15px 'Source Sans Pro', sans-serif;
+  font: 18px/15px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   color: #273a4c;
   margin: 16px 0 10px 0; }
 
@@ -15089,7 +15098,7 @@ li#new-custom-breakpoint {
 
 div.upfront-region.empty_in_theme_mode:not(.upfront-region-floating):not(.upfront-region-lightbox):before,
 div.upfront-regions a#no_region_add_one {
-  font: 300 16px/150% Source Sans, Helvetica Neue, Helvetica, sans-serif;
+  font: 300 16px/150% 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   position: absolute;
   left: 40%;
   top: 18%;
@@ -16034,7 +16043,7 @@ a.missing-lightbox-warning:before {
 .upfront-general-notice a:visited,
 .uslider-starting-centered a:link,
 #upfront-notifier {
-  font-family: "Source Sans Pro", sans-serif;
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   font-weight: normal; }
 
 .upfront-code_element-module button.create,

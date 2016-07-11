@@ -47,6 +47,7 @@ jQuery(document).ready(function($){
 			return breakpoint;
 		}
 	}
+	window.upfront_get_breakpoint = get_breakpoint; // Expose to global
 
 	/**
 	 * Get the previously used breakpoint
@@ -57,6 +58,7 @@ jQuery(document).ready(function($){
 		get_breakpoint();
 		return previous_breakpoint;
 	}
+	window.upfront_get_previous_breakpoint = get_previous_breakpoint; // Expose to global
 
 	/* Youtube API */
 	var youtube_api_loaded = false;
@@ -1342,7 +1344,16 @@ jQuery(document).ready(function($){
 
 			// Edge case, for when we don't have a preset for this
 			// breakpoint in an element - it should retain its classes
-			if (!map[breakpoint]) return true;
+			// if (!map[breakpoint]) return true;
+			
+			// we have to provide proper fallback here, mobile -> tablet -> desktop
+			if ( breakpoint == 'mobile' ) {
+				map[breakpoint] = map[breakpoint] || map['tablet'] || map['desktop'] || 'default';
+			} else if ( breakpoint == 'tablet' ) {
+				map[breakpoint] = map[breakpoint] || map['desktop'] || 'default';
+			} else {
+				map[breakpoint] = map[breakpoint] || 'default';
+			}
 
 			$.each(map, function (bp, preset) {
 				$me.removeClass(preset);

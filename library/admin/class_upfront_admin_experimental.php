@@ -56,7 +56,7 @@ class Upfront_Admin_Experimental extends Upfront_Admin_Page {
         <div class="wrap upfront_admin upfront_admin_experimental">
             <h1><?php _e("Experimental Features", Upfront::TextDomain); ?><span class="upfront_logo"></span></h1>
 						<div class="upfront_admin_experimental_contents">
-								<p class="disclaimer">
+								<p class="info">
 									<?php esc_html_e("These are various Experimental Features available to Upfront. Please be careful, some of those settings might interfere with plugins.", Upfront::TextDomain ); ?>
 								</p>
 								<form action="<?php echo esc_url( add_query_arg( array("page" => "upfront_experimental") ) ) ?>" method="post" id="upfront_experimental_form">

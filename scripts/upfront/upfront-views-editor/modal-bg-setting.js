@@ -37,13 +37,21 @@
                     region_types.push({ label: l10n.image_slider, value: 'slider', icon: 'slider' });
                     region_types.push({ label: l10n.map, value: 'map', icon: 'map' });
                 }
-                if (
-                    _upfront_post_data.post_id
-                    ||
-                    (Upfront.Application.is_builder() && 'type' in _upfront_post_data.layout && 'single' === _upfront_post_data.layout.type)
-                ) {
-                    if (!('item' in _upfront_post_data.layout && _upfront_post_data.layout.item.match(/single-404/))) region_types.push({ label: l10n.featured_image, value: 'featured', icon: 'feat' });
-                }
+								if (
+									_upfront_post_data.post_id ||
+									(
+										true === Upfront.plugins.isRequiredByPlugin('show feature image region type') &&
+										'type' in _upfront_post_data.layout &&
+										'single' === _upfront_post_data.layout.type
+									)
+								) {
+									if (
+											!(
+												'item' in _upfront_post_data.layout &&
+												_upfront_post_data.layout.item.match(/single-404/)
+											)
+									) region_types.push({ label: l10n.featured_image, value: 'featured', icon: 'feat' });
+								}
 
                 var	bg_type = new Fields.Select({
                         model: this.model,

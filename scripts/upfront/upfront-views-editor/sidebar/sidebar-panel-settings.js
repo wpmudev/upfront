@@ -23,8 +23,7 @@
                 return l10n.theme_settings;
             },
             on_render: function () {
-                if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.THEME )
-                    this.$el.find('.sidebar-panel-title').trigger('click');
+							Upfront.plugins.call('do-action-after-sidebar-settings-render', {settingsEl: this.$el});
             }
         });
 

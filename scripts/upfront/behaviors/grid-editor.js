@@ -1100,7 +1100,10 @@ var GridEditor = {
 			$resize, $resize_placeholder,
 			axis
 		;
-		if ( Upfront.Application.mode.current !== Upfront.Application.MODE.THEME && model.get_property_value_by_name('disable_resize') ) {
+		if (
+				false === Upfront.plugins.isRequiredByPlugin('setup resizeable') &&
+				model.get_property_value_by_name('disable_resize')
+		) {
 			return false;
 		}
 		if ( $me.hasClass('upfront-module-spacer') || $me.hasClass('upfront-object-spacer') ) {
@@ -1490,7 +1493,10 @@ var GridEditor = {
 			first_in_row,
 			last_in_row
 		;
-		if ( Upfront.Application.mode.current !== Upfront.Application.MODE.THEME && model.get_property_value_by_name('disable_resize') )
+		if (
+				false === Upfront.plugins.isRequiredByPlugin('setup resizeable') &&
+				model.get_property_value_by_name('disable_resize')
+		)
 			return false;
 		if ( $me.data('ui-resizable') ){
 			$me.resizable('option', 'disabled', false);
@@ -2269,7 +2275,6 @@ var GridEditor = {
 			breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().findWhere({id: breakpoint_id}).toJSON(),
 			desktop_breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_default().toJSON(),
 			silent = ( silent === true ) ? true : false,
-			wrapper_index = 0,
 			desktop_lines = ed.parse_modules_to_lines(modules, wrappers, desktop_breakpoint.id, desktop_breakpoint.columns),
 			lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint_id, parent_col),
 			filtered_lines = ed._filter_edited_lines(lines, breakpoint),
@@ -2282,22 +2287,23 @@ var GridEditor = {
 			adapt_lines_bottom = [],
 			adapt_col = 0
 		;
+		ed._wrapper_index = 0;
 		// First let's find wrappers that we need to adapt from desktop layout
 		_.each(desktop_lines, function (line, l) {
 			_.each(line.wrappers, function (wrapper, w) {
 				if ( wrapper.spacer ) return; // Ignore spacers
 				var is_edited = wrapper.model.get_breakpoint_property_value('edited', false, false, breakpoint);
 				if ( is_edited ) {
-					wrapper_index++;
+					ed._wrapper_index++;
 					return;
 				}
-				wrapper_index++;
+				ed._wrapper_index++;
 				// Find prev and next wrapper for reference later when deciding the final order
 				adapt_wrappers.push({
 					prev: ed._find_prev_wrapper_from_lines(wrapper, w, line, l, desktop_lines),
 					next: ed._find_next_wrapper_from_lines(wrapper, w, line, l, desktop_lines),
 					current: wrapper,
-					order: wrapper_index
+					order: ed._wrapper_index
 				});
 			});
 		});
@@ -2313,7 +2319,7 @@ var GridEditor = {
 				adapt_wrappers_top.push(adapt_wrapper);
 				return false;
 			}
-			else if ( wrapper_index == adapt_wrapper.order + (adapt_wrappers.length - aw - 1) ) {
+			else if ( ed._wrapper_index == adapt_wrapper.order + (adapt_wrappers.length - aw - 1) ) {
 				adapt_wrappers_bottom.push(adapt_wrapper);
 				return false;
 			}
@@ -2326,24 +2332,11 @@ var GridEditor = {
 		adapt_lines_insert = adapt_lines.slice(0);
 		adapt_lines_bottom = ed._adapt_wrappers_to_line(adapt_wrappers_bottom, parent_col);
 
-		wrapper_index = 0;
+		ed._wrapper_index = 0;
 		// Now that when we know which wrappers we need to adapt, we'll find where to add them
 		// Add the top wrappers
 		_.each(adapt_lines_top, function (adapt_line) {
-			var apply_col = Math.floor(parent_col/adapt_line.wrappers.length),
-				remaining_col = parent_col - (apply_col * adapt_line.wrappers.length)
-			;
-			_.each(adapt_line.wrappers, function (adapt_wrapper, aw) {
-				var this_col = apply_col;
-				if ( remaining_col > 0 ) {
-					this_col++;
-					remaining_col--;
-				}
-				wrapper_index++;
-				adapt_wrapper.current.model.set_breakpoint_property('clear', ( aw == 0 ), silent, breakpoint);
-				adapt_wrapper.current.model.set_breakpoint_property('col', this_col, silent, breakpoint);
-				adapt_wrapper.current.model.set_breakpoint_property('order', wrapper_index, silent, breakpoint);
-			});
+			ed._set_adapt_wrappers(adapt_line.wrappers, parent_col, silent, breakpoint);
 		});
 
 		// Insert between elements
@@ -2373,17 +2366,7 @@ var GridEditor = {
 
 					if ( !is_adding ) return;
 					// Finally, add this line in
-					_.each(adapt_line.wrappers, function (adapt_wrapper, aw) {
-						var this_col = apply_col;
-						if ( remaining_col > 0 ) {
-							this_col++;
-							remaining_col--;
-						}
-						wrapper_index++;
-						adapt_wrapper.current.model.set_breakpoint_property('clear', ( aw == 0 ), silent, breakpoint);
-						adapt_wrapper.current.model.set_breakpoint_property('col', this_col, silent, breakpoint);
-						adapt_wrapper.current.model.set_breakpoint_property('order', wrapper_index, silent, breakpoint);
-					});
+					ed._set_adapt_wrappers(adapt_line.wrappers, parent_col, silent, breakpoint)
 					inserted.push(al);
 				});
 				// Remove inserted lines
@@ -2392,26 +2375,34 @@ var GridEditor = {
 				});
 
 				// Set new order for existing wrappers
-				wrapper_index++;
-				wrapper.model.set_breakpoint_property('order', wrapper_index, silent, breakpoint);
+				ed._wrapper_index++;
+				wrapper.model.set_breakpoint_property('order', ed._wrapper_index, silent, breakpoint);
 			});
 		});
 
 		// Add the bottom wrappers and the rest of uninserted wrappers
 		_.each(_.union(adapt_lines_insert, adapt_lines_bottom), function (adapt_line) {
-			var apply_col = Math.floor(parent_col/adapt_line.wrappers.length),
-				remaining_col = parent_col - (apply_col * adapt_line.wrappers.length)
-			;
-			_.each(adapt_line.wrappers, function (adapt_wrapper, aw) {
-				var this_col = apply_col;
-				if ( remaining_col > 0 ) {
-					this_col++;
-					remaining_col--;
-				}
-				wrapper_index++;
-				adapt_wrapper.current.model.set_breakpoint_property('clear', ( aw == 0 ), silent, breakpoint);
-				adapt_wrapper.current.model.set_breakpoint_property('col', this_col, silent, breakpoint);
-				adapt_wrapper.current.model.set_breakpoint_property('order', wrapper_index, silent, breakpoint);
+			ed._set_adapt_wrappers(adapt_line.wrappers, parent_col, silent, breakpoint);
+		});
+	},
+
+	_set_adapt_wrappers: function (adapt_wrappers, parent_col, silent, breakpoint) {
+		var apply_col = Math.floor(parent_col/adapt_wrappers.length),
+			remaining_col = parent_col - (apply_col * adapt_wrappers.length),
+			ed = this
+		;
+		_.each(adapt_wrappers, function (adapt_wrapper, aw) {
+			var this_col = apply_col;
+			if ( remaining_col > 0 ) {
+				this_col++;
+				remaining_col--;
+			}
+			ed._wrapper_index++;
+			adapt_wrapper.current.model.set_breakpoint_property('clear', ( aw == 0 ), silent, breakpoint);
+			adapt_wrapper.current.model.set_breakpoint_property('col', this_col, silent, breakpoint);
+			adapt_wrapper.current.model.set_breakpoint_property('order', ed._wrapper_index, silent, breakpoint);
+			_.each(adapt_wrapper.current.modules, function (module, m) {
+				module.model.set_breakpoint_property('col', this_col, silent, breakpoint);
 			});
 		});
 	},
@@ -3153,194 +3144,6 @@ var GridEditor = {
 	},
 
 	/**
-	 * Edit structure/grid
-	 */
-	edit_structure: function () {
-		var ed = Upfront.Behaviors.GridEditor,
-			app = Upfront.Application,
-			grid = Upfront.Settings.LayoutEditor.Grid,
-			$grid_wrap = $('<div class="upfront-edit-grid-wrap clearfix" />'),
-			$recommended = $('<div class="upfront-edit-grid upfront-edit-grid-recommended" />'),
-			$custom = $('<div class="upfront-edit-grid upfront-edit-grid-custom" />'),
-			$color_wrap = $('<div class="upfront-edit-page-color" />'),
-			$grid_width = $('<div class="upfront-grid-width-preview">Grid width: <span class="upfront-grid-width" /></div>'),
-			$grid_width2 = $('<div class="upfront-grid-width-preview">( Grid width: <span class="upfront-grid-width" /> )</div>'),
-			is_grid_custom = ( grid.column_width != grid.column_widths[grid.size_name] || grid.type_padding != grid.type_paddings[grid.size_name] || grid.baseline != grid.baselines[grid.size_name] || !(/^(0|5|10|15)$/.test(grid.column_padding)) ),
-			update_grid_data = function() {
-				var custom = fields.grid.get_value() == 'custom',
-					new_grid = {
-						column_width: custom ? fields.custom_width.get_value() : grid.column_widths[grid.size_name],
-						column_padding: custom ? fields.custom_padding.get_value() : fields.recommended_padding.get_value(),
-						baseline: custom ? fields.custom_baseline.get_value() : grid.baselines[grid.size_name],
-						type_padding: custom ? fields.custom_type_padding.get_value() : grid.type_paddings[grid.size_name]
-					},
-					width = new_grid.column_width * grid.size;
-				$grid_width.find('.upfront-grid-width').text(width + 'px');
-				$grid_width2.find('.upfront-grid-width').text(width + 'px');
-				ed.update_grid(new_grid);
-			},
-			togglegrid = new Upfront.Views.Editor.Command_ToggleGrid(),
-			fields = {
-				structure: new Upfront.Views.Editor.Field.Radios({
-					label: Upfront.Settings.l10n.global.behaviors.structure,
-					layout: "vertical",
-					default_value: app.layout.get('layout_slug') || "blank",
-					icon_class: 'upfront-structure-field-icon',
-					values: [
-						{label: "", value: "blank", icon: "blank"},
-						{label: "", value: "wide", icon: "wide-no-sidebar"},
-						{label: "", value: "wide-right-sidebar", icon: "wide-right-sidebar"},
-						{label: "", value: "wide-left-sidebar", icon: "wide-left-sidebar"},
-						{label: "", value: "clip", icon: "clip-no-sidebar"},
-						{label: "", value: "clip-right-sidebar", icon: "clip-right-sidebar"},
-						{label: "", value: "clip-left-sidebar", icon: "clip-left-sidebar"},
-						{label: "", value: "full", icon: "full"},
-						{label: "", value: "full-extended", icon: "full-extended"}
-					],
-					change: function(){
-						if ( Upfront.themeExporter.currentTheme === 'upfront' ) {
-							var structure = fields.structure.get_value(),
-								layout_slug = app.layout.get('layout_slug');
-							if ( (layout_slug && layout_slug != structure) || ( !layout_slug && structure != 'blank' ) ){
-								app.layout.set('layout_slug', structure);
-								if ( Upfront.Application.get_gridstate() )
-									togglegrid.on_click();
-								app.create_layout(_upfront_post_data.layout, {layout_slug: structure});
-								Upfront.Events.once("layout:render", function() {
-									if ( !Upfront.Application.get_gridstate() )
-										togglegrid.on_click();
-								});
-							}
-						}
-					}
-				}),
-				grid: new Upfront.Views.Editor.Field.Radios({
-					label: Upfront.Settings.l10n.global.behaviors.grid_settings,
-					layout: "horizontal-inline",
-					default_value: is_grid_custom ? "custom" : "recommended",
-					values: [
-						{label: Upfront.Settings.l10n.global.behaviors.recommended_settings, value: "recommended"},
-						{label: Upfront.Settings.l10n.global.behaviors.custom_settings, value: "custom"}
-					],
-					change: function () {
-						var value = this.get_value();
-						if ( value == 'custom' ){
-							$custom.show();
-							$recommended.hide();
-						}
-						else {
-							$recommended.show();
-							$custom.hide();
-						}
-						update_grid_data();
-					}
-				}),
-				recommended_padding: new Upfront.Views.Editor.Field.Select({
-					default_value: grid.column_padding,
-					values: [
-						{label: Upfront.Settings.l10n.global.behaviors.padding_large, value: "15"},
-						{label: Upfront.Settings.l10n.global.behaviors.padding_medium, value: "10"},
-						{label: Upfront.Settings.l10n.global.behaviors.padding_small, value: "5"},
-						{label: Upfront.Settings.l10n.global.behaviors.no_padding, value: "0"}
-					],
-					change: update_grid_data
-				}),
-				bg_color: new Upfront.Views.Editor.Field.Color({
-					model: app.layout,
-					label: Upfront.Settings.l10n.global.behaviors.page_bg_color,
-					label_style: "inline",
-					property: 'background_color',
-					spectrum: {
-						move: function (color) {
-							var rgb = color.toRgb(),
-							rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
-							app.layout.set_property('background_color', rgba_string);
-						}
-					}
-				}),
-				custom_width: new Upfront.Views.Editor.Field.Number({
-					label: Upfront.Settings.l10n.global.behaviors.column_width,
-					label_style: "inline",
-					min: 40,
-					max: 100,
-					default_value: grid.column_width,
-					change: update_grid_data
-				}),
-				custom_padding: new Upfront.Views.Editor.Field.Number({
-					label: Upfront.Settings.l10n.global.behaviors.column_padding,
-					label_style: "inline",
-					min: 0,
-					max: 100,
-					default_value: grid.column_padding,
-					change: update_grid_data
-				}),
-				custom_baseline: new Upfront.Views.Editor.Field.Number({
-					label: Upfront.Settings.l10n.global.behaviors.baseline_grid,
-					label_style: "inline",
-					min: 5,
-					max: 100,
-					default_value: grid.baseline,
-					change: update_grid_data
-				}),
-				custom_type_padding: new Upfront.Views.Editor.Field.Number({
-					label: Upfront.Settings.l10n.global.behaviors.additional_type_padding,
-					label_style: "inline",
-					min: 0,
-					max: 100,
-					default_value: grid.type_padding,
-					change: update_grid_data
-				}),
-				floated: new Upfront.Views.Editor.Field.Checkboxes({
-					multiple: false,
-					default_value: true,
-					values: [
-						{label: Upfront.Settings.l10n.global.behaviors.allow_floats_outside_main_grid, value: true}
-					]
-				})
-			};
-
-		if ( !ed.structure_modal ){
-			ed.structure_modal = new Upfront.Views.Editor.Modal({to: $('body'), button: true, top: 120, width: 540});
-			ed.structure_modal.render();
-			$('body').append(ed.structure_modal.el);
-		}
-		// Toggle grid on
-		if ( !Upfront.Application.get_gridstate() )
-			togglegrid.on_click();
-
-		ed.structure_modal.open(function($content, $modal){
-			$modal.addClass('upfront-structure-modal');
-			_.each(fields, function(field){
-				field.render();
-				field.delegateEvents();
-			});
-			$content.html('');
-			if (Upfront.themeExporter.currentTheme === 'upfront') {
-				$content.append(fields.structure.el);
-			}
-			$content.append(fields.grid.el);
-			$recommended.append(fields.recommended_padding.el);
-			$recommended.append($grid_width);
-			$grid_wrap.append($recommended);
-			$custom.append(fields.custom_width.el);
-			$custom.append($grid_width2);
-			$custom.append(fields.custom_padding.el);
-			$custom.append(fields.custom_baseline.el);
-			$custom.append(fields.custom_type_padding.el);
-			$color_wrap.append(fields.bg_color.el);
-			$grid_wrap.append($custom);
-			$grid_wrap.append($color_wrap);
-			$content.append($grid_wrap);
-			$content.append(fields.floated.el);
-			fields.grid.trigger('changed');
-		}, ed)
-		.always(function(){
-			if ( Upfront.Application.get_gridstate() )
-				togglegrid.on_click();
-		});
-	},
-
-	/**
 	 * Update grid value and appearance
 	 */
 	update_grid: function (grid_data) {
@@ -3408,29 +3211,12 @@ var GridEditor = {
 		app.layout_view.update_grid_css();
 		this.init(); // re-init to update grid values
 
-		if (flag_update_breakpoint && Upfront.Application.get_current() == Upfront.Settings.Application.MODE.THEME) {
-			// Only do this in exporter, because that's where we're actually allowing structural changes.
+		if (
+				flag_update_breakpoint &&
+				true === Upfront.plugins.isRequiredByPlugin('update grid')
+		) {
 			breakpoint.trigger("change:enabled", breakpoint);
 		}
-	},
-
-
-	/**
-	 * Apply saved grid in layout
-	 */
-	apply_grid: function () {
-		var ed = Upfront.Behaviors.GridEditor,
-			app = Upfront.Application,
-			grid = Upfront.Settings.LayoutEditor.Grid,
-			options = app.layout.get_property_value_by_name('grid');
-		if ( !options || !options.column_widths || !options.column_widths[grid.size_name] )
-			return;
-		return ed.update_grid({
-			column_width: options.column_widths[grid.size_name],
-			column_padding: options.column_paddings[grid.size_name],
-			baseline: options.baselines[grid.size_name],
-			type_padding: options.type_paddings[grid.size_name]
-		});
 	},
 
 	/**

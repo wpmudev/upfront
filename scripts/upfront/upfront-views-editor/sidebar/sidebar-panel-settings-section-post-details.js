@@ -86,19 +86,24 @@
                 // Upfront.Events.trigger("editor:post_editor:created", Upfront.Views.PostDataEditor);
             },
 
-            getPostId: function() {
-                postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
-                if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.THEME ) {
-                    // We're dealing with a theme exporter request
-                    // Okay, so let's fake a post
-                    postId = "fake_post";
-                }
-                else if ( !this.postId && "themeExporter" in Upfront && Upfront.Application.mode.current === Upfront.Application.MODE.CONTENT_STYLE ){
-                    postId = "fake_styled_post";
-                }
+						getPostId: function() {
+							postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
+							if (
+									!this.postId &&
+									true === Upfront.plugins.isRequiredByPlugin('generate fake post id')
+							) {
+								postId = "fake_post";
+							}
+							else if (
+									!this.postId &&
+									true === Upfront.plugins.isRequiredByPlugin('generate fake post id') &&
+									Upfront.Application.mode.current === Upfront.Application.MODE.CONTENT_STYLE
+							){
+								postId = "fake_styled_post";
+							}
 
-                return postId;
-            },
+							return postId;
+						},
 
             append_box: function () {
                 var me = this,
