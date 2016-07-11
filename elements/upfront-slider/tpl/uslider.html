@@ -19,6 +19,8 @@
 			<?php if($primaryStyle != 'notext'){ ?>
 				data-caption-selector="#uslider-<?php echo $element_id ?> .caption-<?php echo $slides[$i]['id'] ?>"
 			<?php } ?>
+			data-style="<?php echo $slides[$i]['style'] ?>"
+			data-breakpoint='<?php echo $slides[$i]['breakpoint_map'] ?>'
 			rel="<?php echo $slides[$i]['id'] ?>">
 
 			<?php if($slides[$i]['url']){ ?>
