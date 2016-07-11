@@ -697,6 +697,17 @@ class Upfront_Ajax extends Upfront_Server {
 		$sql = "DELETE FROM {$wpdb->options} WHERE option_name REGEXP %s";
 		return $wpdb->query($wpdb->prepare($sql, $rx));
 	}
+	
+	private function _delete_user_options () {
+		$store_key = strtolower(str_replace('_dev','',Upfront_Layout::get_storage_key()));
+		
+		// removing user site option for Builder Getting Started exp
+		$store_key = (preg_match('/uf-/', $store_key))
+			? $store_key
+			: 'uf-' . $store_key
+		;
+		delete_user_option( get_current_user_id(), $store_key . '_show_builder_exp', true );
+	}
 
 	function reset_all_from_db () {
 		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
@@ -737,7 +748,8 @@ class Upfront_Ajax extends Upfront_Server {
 				}
 			}
 		}
-
+		
+		$this->_delete_user_options(); // removing user site options
 		$this->_reset_cache(); // When resetting all, also do cache.
 
 		$this->_out(new Upfront_JsonResponse_Success("All is well"));
