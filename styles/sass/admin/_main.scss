@@ -8,13 +8,23 @@
     overflow: hidden;
     display: block;
 }
+.upfront_admin {
+    padding:0 10px;
+}
 .upfront_admin h1 {
     text-transform: uppercase;
     color: #777;
     font-family: 'Roboto Condensed';
     font-size: 30px;
     letter-spacing: -0.2px;
-    padding: 20px 10px 0;
+    padding: 20px 0;
+}
+.upfront_admin p.info {
+    font-family: 'Roboto';
+    font-size: 15px;
+    color: #8e8e8e;
+    margin-top: 30px;
+    margin-bottom: 30px;
 }
 .upfront_admin .float_left {
     float: left;
@@ -41,4 +51,43 @@
     width: 18px;
     height: 18px;
     margin-top: 7px;
+}
+
+.upfront_admin h1,
+.upfront_admin h2,
+.upfront_admin h3,
+.upfront_admin h4 {
+    text-transform: uppercase;
+}
+
+/* META BOXES */
+.upfront_admin .postbox-container {
+    width: 100%;
+}
+.upfront_admin .postbox {
+    border: none;
+    border-radius: 6px;
+    border-bottom: 2px #E4E4E4 solid;
+    box-shadow: none;
+}
+
+
+.upfront_admin .postbox h2.title {
+    border-bottom: 1px solid #eee;
+    padding: 25px 30px 25px;
+    margin-bottom: 0;
+    color: #777;
+    font-weight: bold;
+    margin-top:0;
+    font-family: 'Roboto', Helvetica Neueu, Helvetica, Arial, sans-serif;
+}
+
+@media screen and (min-width: 920px) {
+    .upfront-col-left, .upfront-col-right {
+        width: 48%;
+        float: left;
+    }
+    .upfront-col-left {
+        margin-right: 2%;
+    }
 }
