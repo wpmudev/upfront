@@ -91,7 +91,7 @@ var _alpha = "alpha",
 		 */
 		decode_preset: function (breakpoint_id) {
 			breakpoint_id = breakpoint_id || (Upfront.Views.breakpoints_storage.get_breakpoints().get_active() || {}).id;
-			var current = this.get_property_value_by_name('preset') || 'default',
+			var current = this.get_property_value_by_name('current_preset') || this.get_property_value_by_name('preset') || 'default',
 				model = this.get_property_value_by_name("breakpoint_presets") || {}
 			;
 			
@@ -104,6 +104,11 @@ var _alpha = "alpha",
 				var breakpoint_preset = (model[breakpoint_id] || {}).preset;
 			}
 			var actual = breakpoint_preset || current;
+			
+			// we have to retain current preset coz will be lose below
+			this.set_property('current_preset', current, true);
+			
+			// this will repaint the element but will also lose our current preset			
 			this.set_property('preset', actual, false); // Do *not* be silent here, we do want repaint
 			
 			return actual;
