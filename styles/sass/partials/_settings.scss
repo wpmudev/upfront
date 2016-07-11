@@ -300,21 +300,18 @@
 .upfront-save_settings {
 	height: 36px;
 	width: auto;
-	border: 1px solid rgb(0, 219, 143);
-	padding: 0 26px 0 20px;
+	padding: 0 20px;
 	background: rgb(31, 205, 143);
 	line-height: 34px;
-	font-size: 18px;
+	font-size: 15px;
 	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
-	color: rgb(242, 249, 255);
+	color: rgb(239, 248, 255);
 	border-radius: 0;
-	box-shadow: 3px 3px 0 rgba(99, 134, 166, 0.25);
     max-width: 286px;
     overflow: hidden;
 }
 .upfront-ui .upfront-save_settings:hover {
-	background: #3ea;
-	border: 1px solid #3ea;
+	background: rgb(0, 191, 128);
 }
 /* @TODO still using font awesome icon, need add it to sprite instead */
 .upfront-save_settings i {

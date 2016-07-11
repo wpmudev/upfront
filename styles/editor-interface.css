@@ -5708,21 +5708,18 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-save_settings {
   height: 36px;
   width: auto;
-  border: 1px solid #00db8f;
-  padding: 0 26px 0 20px;
+  padding: 0 20px;
   background: #1fcd8f;
   line-height: 34px;
-  font-size: 18px;
+  font-size: 15px;
   font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
-  color: #f2f9ff;
+  color: #eff8ff;
   border-radius: 0;
-  box-shadow: 3px 3px 0 rgba(99, 134, 166, 0.25);
   max-width: 286px;
   overflow: hidden; }
 
 .upfront-ui .upfront-save_settings:hover {
-  background: #3ea;
-  border: 1px solid #3ea; }
+  background: #00bf80; }
 
 /* @TODO still using font awesome icon, need add it to sprite instead */
 .upfront-save_settings i {
