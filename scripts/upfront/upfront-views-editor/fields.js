@@ -608,7 +608,7 @@
 					}, 100);
                 }
 
-                if( ( !this.field_options || !this.field_options.flat ) && this.field_options.hideOnOuterClick )
+                if( !this.options.spectrum.flat && ( !this.field_options || !this.field_options.flat ) && this.field_options.hideOnOuterClick )
                     $("html").on('mousedown', _.bind( this.hide_on_outer_click, this ) );
             },
             on_spectrum_beforeShow: function(color){
