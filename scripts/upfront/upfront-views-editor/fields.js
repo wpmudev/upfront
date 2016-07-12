@@ -797,7 +797,7 @@
                 if( Upfront.Views.Theme_Colors.colors.is_theme_color( color ) ){
 
                     $alpha.addClass("sp-alpha-disabled sp-alpha-lower-opacity");
-                    $overlay = $("<span class='sp-alpha-overlay' title='"+ l10n.theme_colors_opacity_disabled +"'></span>")
+                    $overlay = $("<span class='sp-alpha-overlay' title='"+ l10n.theme_colors_opacity_disabled +"'>"+ l10n.theme_colors_opacity_disabled +"</span>")
                         .on("click", function(e){
                             e.stopPropagation();
                             e.preventDefault();

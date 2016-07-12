@@ -528,15 +528,27 @@ div.sp-replacer:before {
 {
     background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAadEVYdFNvZnR3YXJlAFBhaW50Lk5FVCB2My41LjEwMPRyoQAAAMdJREFUOE+tkgsNwzAMRMugEAahEAahEAZhEAqlEAZhEAohEAYh81X2dIm8fKpEspLGvudPOsUYpxE2BIJCroJmEW9qJ+MKaBFhEMNabSy9oIcIPwrB+afvAUFoK4H0tMaQ3XtlrggDhOVVMuT4E5MMG0FBbCEYzjYT7OxLEvIHQLY2zWwQ3D+9luyOQTfKDiFD3iUIfPk8VqrKjgAiSfGFPecrg6HN6m/iBcwiDAo7WiBeawa+Kwh7tZoSCGLMqwlSAzVDhoK+6vH4G0P5wdkAAAAASUVORK5CYII=);
 }
-.sp-alpha-overlay{
-  width: 82%;
-  height: 18%;
-  background: #2b3c4b;
-  display: block;
-  z-index: 5;
-  position: absolute;
-  top: 102%;
-  opacity:0;
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-  filter: alpha(opacity=0);
+.sp-alpha-overlay {
+	width: 100%;
+	height: 18%;
+	line-height: 24px;
+	background: #2b3c4b;
+	display: block;
+	z-index: 5;
+	position: absolute;
+	top: 102%;
+	color: #dae6f2 !important;
+	font-size: 11px;
+	font-family: verdana, sans-serif;
+}
+
+.sp-alpha-overlay:before {
+    display: inline-block;
+    content: "";
+    width: 15px;
+    height: 15px;
+    background-image: url("../img/uf-core-el-sprite.svg");
+    background-position: -483px -141px;
+    margin-right: 5px;
+    margin-bottom: -4px;
 }
