@@ -9,15 +9,9 @@ define(function() {
 			var selectWidth = '';
 			var preset = this.$el.find('.upfront-chosen-select').val();
 
-			if(preset == 'default') {
-				selectWidth = '230px';
-			} else {
-				selectWidth = '175px';
-			}
-
 			this.$el.find('.upfront-chosen-select').chosen({
 				search_contains: true,
-				width: selectWidth,
+				width: '175px',
 				disable_search: !Upfront.Application.user_can("MODIFY_PRESET")
 			});
 
