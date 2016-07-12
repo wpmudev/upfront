@@ -54,7 +54,9 @@ define(function() {
 			// If default preset change label to make more sense which element is edited
 			if(value.value === "default") {
 				var elementType = this.get_element_type(this.model.get_property_value_by_name('type'));
-				value.label = 'default ' + elementType.label.toLowerCase();
+				if(typeof elementType !== "undefined" && typeof elementType.label !== "undefined") {
+					value.label = 'default ' + elementType.label.toLowerCase();
+				}
 			}
 
 			return ['<option value="', value.value, '"', selected, '>', value.label, '</option>'].join('');
