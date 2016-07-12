@@ -440,6 +440,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'h5' => __('Sub Heading (H5)', 'upfront'),
 				'h6' => __('Sub Heading (H6)', 'upfront'),
 				'p' => __('Paragraph (P)', 'upfront'),
+				'pre' => __('Preformatted (PRE)', 'upfront'),
 				'a' => __('Anchor Link (A)', 'upfront'),
 				'ahover' => __('Anchor Link Hover (A:HOVER)', 'upfront'),
 				'ul' => __('Unordered List (UL)', 'upfront'),
