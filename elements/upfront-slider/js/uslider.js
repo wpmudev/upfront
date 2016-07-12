@@ -885,7 +885,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 
 	onSlidesCollectionChange: function(){
-		console.log(this.model.slideCollection.toJSON())
+		//console.log(this.model.slideCollection.toJSON())
 		this.property('slides', this.model.slideCollection.toJSON(), false);
 	},
 
