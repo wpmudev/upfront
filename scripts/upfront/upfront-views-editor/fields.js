@@ -598,9 +598,14 @@
 
                 });
 
-                if( !_.isEmpty( input_val ) ){
-                    var input_val_color = tinycolor( input_val );
-                    this.toggle_alpha_selector( input_val_color );
+                if( !_.isEmpty( color ) ){
+                    var me = this,
+						input_val_color = tinycolor( color );
+
+					// We need a delay to load if color is theme color
+				    setTimeout( function() {
+						me.toggle_alpha_selector( color );
+					}, 100);
                 }
 
                 if( ( !this.field_options || !this.field_options.flat ) && this.field_options.hideOnOuterClick )
