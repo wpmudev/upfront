@@ -65,6 +65,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			this.listenTo(this.parent_module_view, 'update_position', this.update_position);
 		}
 
+		this.listenTo(Upfront.Events, 'entity:drop:render', this.set_prev_region_container);
 		this.update_height();
 	},
 
@@ -277,6 +278,10 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		if ( type == 'featured_image' && !this.object_group_view.mobileMode ) {
 			this.remove_region_class('upfront-region-container-has-' + type, true);
 		}
+
+
+		if( this.prev_region_container )
+			this.prev_region_container.removeClass( 'upfront-region-container-has-' + type );
 	},
 
 	adjust_featured_image: function () {
@@ -390,6 +395,16 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 				this.editor_view
 			);
 		}
+	},
+	/**
+	 * Sets previous region container when element is moved to a new region
+	 *
+	 * @event Upfront.Events::entity:drop:render
+	 * @param dragdrop
+	 * @param region_container
+     */
+	set_prev_region_container: function( dragdrop, region_container){
+		this.prev_region_container = region_container;
 	}
 
 });
@@ -403,6 +418,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 		this.listenTo(Upfront.Events, 'editor:post:tax:updated', this.update_categories);
 
+
 		/*_.extend(this.events, {
 			'click .upfront-post-part-trigger': 'on_edit_click'
 		});*/
@@ -415,6 +431,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 		this.delegateEvents();
 	},
+
 
 	get_extra_buttons: function(){
 		//return '<a href="#" title="' + l10n.edit_post_parts + '" class="upfront-icon-button upfront-icon-button-nav upfront-post-part-trigger"></a>';

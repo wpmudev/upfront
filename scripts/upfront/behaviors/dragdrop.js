@@ -1252,6 +1252,7 @@ DragDrop.prototype = {
 			$drop = $('.upfront-drop-use')
 		;
 		this.wrap_only = false;
+		Upfront.Events.trigger("entity:drop:render", this, this.region.$el.closest(".upfront-region-container") );
 		if ( !breakpoint || breakpoint['default'] ) {
 			if ( this.drop.type != 'inside' ){
 				var wrapper_id = Upfront.Util.get_unique_id("wrapper"),
