@@ -12,7 +12,7 @@ class Upfront_UsliderView extends Upfront_Object {
 		if ( isset($data['slides']) && $data['slides'] ) {
 			foreach($data['slides'] as $slide){
 				$slide = array_merge(self::slide_defaults(), $slide);
-				$slide['breakpoint_map'] = json_encode($slide['breakpoint']);
+				$slide['breakpoint_map'] = !empty($slide['breakpoint']) ? json_encode($slide['breakpoint']) : "";
 				$slides[] = $slide;
 			}
 		}

@@ -110,6 +110,7 @@ jQuery(function($){
 		}
 
 		function onBreakpointChange(slider, breakpoint) {
+			breakpoint = !breakpoint ? 'desktop' : breakpoint;
 			slider.find('.uslide').each(function(){
 				var slide = $(this),
 					breakpoint_data = slide.attr('data-breakpoint'),
