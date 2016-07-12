@@ -65,7 +65,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			this.listenTo(this.parent_module_view, 'update_position', this.update_position);
 		}
 
-		this.listenTo(Upfront.Events, 'entity:drop:render', this.set_prev_region_container);
+		this.listenTo(Upfront.Events, 'entity:drop:before_render', this.set_prev_region_container);
 		this.update_height();
 	},
 
