@@ -410,9 +410,7 @@ em {
   padding: 15px 15px 0; }
 
 #sidebar-ui .sidebar-commands-primary .command-new-page,
-#sidebar-ui .sidebar-commands-primary .command-new-post,
-#sidebar-ui .sidebar-commands-primary .command-new-layout,
-#sidebar-ui .sidebar-commands-primary .command-browse-layout {
+#sidebar-ui .sidebar-commands-primary .command-new-post {
   line-height: 34px;
   padding: 0 20px;
   font-size: 15px;
@@ -442,9 +440,7 @@ em {
   max-width: 103px; }
 
 #sidebar-ui .sidebar-commands-primary .command-new-page:hover,
-#sidebar-ui .sidebar-commands-primary .command-new-post:hover,
-#sidebar-ui .sidebar-commands-primary .command-new-layout:hover,
-#sidebar-ui .sidebar-commands-primary .command-browse-layout:hover {
+#sidebar-ui .sidebar-commands-primary .command-new-post:hover {
   opacity: 1;
   color: #cbe5ff; }
 
@@ -487,15 +483,6 @@ em {
   margin-right: 4px;
   display: inline-block;
   opacity: .5; }
-
-#sidebar-ui .sidebar-commands-primary .command-browse-layout {
-  line-height: 34px;
-  padding: 0 10px;
-  border: 2px solid #25394d;
-  font-size: 15px;
-  height: 40px;
-  float: right;
-  max-width: 110px; }
 
 #sidebar-ui .upfront-icon-browse-layouts:before {
   background-position: -45px -80px;
@@ -634,34 +621,6 @@ em {
 
 #sidebar-ui .sidebar-commands-control .command-edit-background-area {
   margin-bottom: 15px; }
-
-#sidebar-ui .sidebar-commands-control .command-export {
-  border: 2px solid #263a4d;
-  padding: 6px 10px 0 10px;
-  position: relative;
-  /*top: 613px;*/
-  left: 10px;
-  margin: 0;
-  float: left;
-  max-width: 230px; }
-
-#sidebar-ui .upfront-icon-export:before {
-  background-position: -42px -384px;
-  width: 19px;
-  height: 19px;
-  margin-right: 7px;
-  margin-top: 3px; }
-
-#sidebar-ui .sidebar-commands-control .command-create-responsive-layouts {
-  border: 2px solid #263a4d;
-  padding: 0 10px 0 8px;
-  line-height: 34px;
-  white-space: nowrap;
-  max-width: 230px;
-  overflow: hidden; }
-
-#sidebar-ui .sidebar-commands-control .command-create-responsive-layouts:before {
-  margin-top: 6px; }
 
 #sidebar-ui .sidebar-commands-control .command-grid {
   border: 1px solid #6c8dac;
@@ -15045,9 +15004,6 @@ li#new-custom-breakpoint {
 /* builder */
 #sidebar-ui .sidebar-commands .upfront-field-select-option {
   display: block; }
-
-#sidebar-ui .sidebar-commands-theme .command-grid {
-  margin-left: 10px; }
 
 div.upfront-region.empty_in_theme_mode:not(.upfront-region-floating):not(.upfront-region-lightbox):before,
 div.upfront-regions a#no_region_add_one {

@@ -417,7 +417,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'icon_font_manager' => __('Icon Fonts Manager', 'upfront'),
 				'go_to_preview_page' => __('Go to Type Preview Page', 'upfront'),
 				'export_str' => __('Export', 'upfront'),
-				'create_responsive_layouts' => __('Create Responsive Layouts', 'upfront'),
+				'create_responsive_layouts' => __('Responsive', 'upfront'),
 				'responsive_mode' => __('Responsive', 'upfront'),
 				'exit_responsive' => __('Exit Responsive', 'upfront'),
 				'activate_breakpoints' => __('Activate Breakpoints', 'upfront'),
