@@ -53,9 +53,12 @@ define(function() {
 			
 			// If default preset change label to make more sense which element is edited
 			if(value.value === "default") {
+				// Use language string for preset Default
+				value.label = l10n.default_label;
+				
 				var elementType = this.get_element_type(this.model.get_property_value_by_name('type'));
 				if(typeof elementType !== "undefined" && typeof elementType.label !== "undefined") {
-					value.label = 'default ' + elementType.label.toLowerCase();
+					value.label = l10n.default_label + ' ' + elementType.label;
 				}
 			}
 

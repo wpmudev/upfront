@@ -581,6 +581,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			'youtube' => __('YouTube', 'upfront'),
 			'text' => __('Text', 'upfront'),
 			'code' => __('Code', 'upfront'),
+			'default_label' => __('Default', 'upfront'),
 			'edit_preset_css' => __('Edit Preset CSS', 'upfront'),
 			'edit_preset_label' => __('Custom CSS', 'upfront'),
 			'convert_style_to_preset' => __('Save as Preset', 'upfront'),
