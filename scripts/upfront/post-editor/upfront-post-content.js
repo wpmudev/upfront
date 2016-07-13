@@ -303,6 +303,9 @@ PostContentEditor.prototype = {
 				}
 			},
 			stopEditContent: function () {
+				if( this.editor.redactor && this.editor.redactor.code )
+					this.editor.redactor.code.startSync();
+
 				if ( this.$content.length ){
 					this.$content
 						.off('blur')
