@@ -4,7 +4,7 @@ define([
 	'elements/upfront-post-data/js/post-data-views',
 	'elements/upfront-post-data/js/post-data-settings',
 	'scripts/upfront/preset-settings/util',
-	'scripts/redactor/ueditor-inserts',
+	'scripts/redactor/ueditor-inserts'
 ], function(tpl, Views, PostDataSettings, PresetUtil, Inserts) {
 
 var l10n = Upfront.Settings.l10n.post_data_element;
@@ -43,7 +43,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 
 	on_render: function () {
 		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
-		
+
 		//Prepare post!
 		if(Upfront.data.posts[this.postId]){
 			this.post = Upfront.data.posts[this.postId];
@@ -59,6 +59,13 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			this.listenTo(this.object_group_view, 'unset:mobile_mode', this.unsetMobileMode);
 		}
 
+		// Listen to module view position update
+		if ( this.parent_module_view ) {
+			this.stopListening(this.parent_module_view, 'update_postion');
+			this.listenTo(this.parent_module_view, 'update_position', this.update_position);
+		}
+
+		this.listenTo(Upfront.Events, 'entity:drop:before_render', this.set_prev_region_container);
 		this.update_height();
 	},
 
@@ -90,7 +97,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		this.adjust_featured_image();
 		this.adjust_inserted_image();
 		this.prepare_editor();
-		
+
 		// Show full image if we are in mobile mode
 		if(type === "featured_image") {
 			if (this.object_group_view.mobileMode) {
@@ -99,7 +106,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 				}, 100);
 			}
 		}
-		
+
 		Upfront.Events.trigger('post-data:part:rendered', this, markup);
 	},
 
@@ -153,7 +160,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	on_element_edit_stop: function () {
 		return;
 	},*/
-	
+
 	setMobileMode: function(){
 		var type = this.model.get_property_value_by_name('part_type');
 		if ( type !== 'featured_image' ) return;
@@ -175,20 +182,20 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 					width: props.imageSize.width,
 					height: 'auto',
 					minHeight: 'none',
-					display: 'inline-block',
+					display: 'inline-block'
 				});
-				
+
 			if(props.valign === "center") {
 				$image.css({
 					marginTop: (props.maskSize.height / 2) - (props.imageSize.height / 2)
 				});
-			}	
-			
+			}
+
 			if(props.valign === "bottom") {
 				$image.css({
 					marginTop: (props.maskSize.height - props.imageSize.height)
 				});
-			}	
+			}
 		} else {
 			$image.addClass('uimage-mobile-mode')
 				.css({
@@ -197,16 +204,16 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 					width: ( !is_featured_image_set || !props || props.stretch ? '100%' : props.imageSize.width ),
 					height: 'auto',
 					minHeight: 'none'
-				});
+				})
 			;
 		}
-		
+
 		// Set height auto to add possibility to remove the spacing
 		$image_container.parent().css({
 			width: '100%',
 			height: 'auto'
 		});
-		
+
 		$image_container.css({
 			width: '100%',
 			height: 'auto'
@@ -235,9 +242,9 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 
 		this.$el.find('.upfront-entity-size-hint').hide();
 		this.$el.find('.upost_thumbnail_changer').show();
-		
+
 		$image_container.css('width', props ? props.maskSize.width : '').css('height', props ? props.maskSize.height : '');
-		
+
 		$image
 			.removeClass('uimage-mobile-mode')
 			.css({
@@ -253,7 +260,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			})
 		;
 		if ( is_featured_image_set && props ) {
-			$image.attr('src', props.srcFull)
+			$image.attr('src', props.srcFull);
 		}
 		this.update_position();
 		this.adjust_featured_image();
@@ -271,10 +278,14 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		if ( type == 'featured_image' && !this.object_group_view.mobileMode ) {
 			this.remove_region_class('upfront-region-container-has-' + type, true);
 		}
+
+
+		if( this.prev_region_container )
+			this.prev_region_container.removeClass( 'upfront-region-container-has-' + type );
 	},
 
 	adjust_featured_image: function () {
-		var $temp_img = this.$el.find('.thumbnail img').attr('src')
+		var $temp_img = this.$el.find('.thumbnail img').attr('src');
 		var me = this,
 			$me = this.$el.find('> .upfront-editable_entity'),
 			type = this.model.get_property_value_by_name('part_type'),
@@ -296,7 +307,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			var width = $(this).width(),
 				is_resize = $(this).attr('data-resize'),
 				$img = $(this).find('img'),
-				img = new Image,
+				img = new Image(),
 				img_h, img_w
 			;
 			$(this).css('height', height);
@@ -339,11 +350,11 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			pos = ed.get_position(this.$el.find('> .upfront-object')),
 			left_indent = parseInt(this.object_group_view.get_preset_property('left_indent'), 10),
 			right_indent = parseInt(this.object_group_view.get_preset_property('right_indent'), 10),
-			max_col = pos.col - left_indent - right_indent;
+			max_col = pos.col - left_indent - right_indent
 		;
 		this.$el.find('.ueditor-insert-variant-group').each(function(){
 			var vid = $(this).attr('data-variant'),
-				insert = new Inserts.inserts[Inserts.TYPES.POSTIMAGE],
+				insert = new Inserts.inserts[Inserts.TYPES.POSTIMAGE](),
 				variant = insert._findVariant(vid).toJSON(),
 				left = variant ? parseInt(variant.group.left, 10) : 0,
 				margin_left = variant ? parseInt(variant.group.margin_left, 10) : 0,
@@ -352,16 +363,16 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 				group_margin_left = 0,
 				group_margin_right = 0
 			;
-			if ( variant.group.float ) {
-				if ( 'left' == variant.group.float ) {
+			if ( variant.group['float'] ) {
+				if ( 'left' == variant.group['float'] ) {
 					group_margin_left = ( left_indent - Math.abs(margin_left) ) * ed.col_size;
 				}
-				else if ( 'right' == variant.group.float ) {
+				else if ( 'right' == variant.group['float'] ) {
 					group_margin_right = ( right_indent - Math.abs(margin_right) ) * ed.col_size;
 				}
-				else if ( 'none' == variant.group.float ) {
+				else if ( 'none' == variant.group['float'] ) {
 					group_margin_left = ( left_indent - Math.abs(margin_left) + Math.abs(left) ) * ed.col_size;
-					variant_max_col -= left;	
+					variant_max_col -= left;
 				}
 			}
 			variant_max_col = variant_max_col > pos.col ? pos.col : variant_max_col;
@@ -376,7 +387,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	cleanup: function () {
 		var type = this.model.get_property_value_by_name('part_type');
 		this.remove_region_class('upfront-region-container-has-' + type, true);
-		
+
 		// We have to remove this view from _viewInstances
 		if ( Upfront.Views.PostDataEditor && Upfront.Views.PostDataEditor.contentEditor && this.editor_view ) {
 			Upfront.Views.PostDataEditor.contentEditor._viewInstances = _.without(
@@ -385,6 +396,16 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			);
 		}
 	},
+	/**
+	 * Sets previous region container when element is moved to a new region
+	 *
+	 * @event Upfront.Events::entity:drop:render
+	 * @param dragdrop
+	 * @param region_container
+     */
+	set_prev_region_container: function( dragdrop, region_container){
+		this.prev_region_container = region_container;
+	}
 
 });
 
@@ -394,21 +415,23 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		this.listenTo(this.model.get('objects'), 'add', this.on_render);
 		this.listenTo(this.model.get('objects'), 'remove', this.on_render);
 		// this.listenTo(Upfront.Events, 'editor:post_details:ready', this.render_view_type);
-		
+
 		this.listenTo(Upfront.Events, 'editor:post:tax:updated', this.update_categories);
+
 
 		/*_.extend(this.events, {
 			'click .upfront-post-part-trigger': 'on_edit_click'
 		});*/
-		
+
 
 		this.prepare_editor();
 
 		this._multiple = false;
 		this.mobileMode = false;
-		
+
 		this.delegateEvents();
 	},
+
 
 	get_extra_buttons: function(){
 		//return '<a href="#" title="' + l10n.edit_post_parts + '" class="upfront-icon-button upfront-icon-button-nav upfront-post-part-trigger"></a>';
@@ -419,23 +442,24 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		var me = this,
 			objects = this.get_child_objects(false),
 			type = this.model.get_property_value_by_name('data_type'),
-			is_locked = this.model.get_property_value_by_name('is_locked')
-			controls = []
+			is_locked = this.model.get_property_value_by_name('is_locked'),
+			controls = [],
+			lock_icon = ''
 		;
 
 		if(typeof type !== "undefined" && type === "featured_image" && !this.mobileMode) {
 			if(typeof is_locked !== "undefined" && is_locked === true) {
-				var lock_icon = 'lock-locked';
+				lock_icon = 'lock-locked';
 			} else {
-				var lock_icon = 'lock-unlocked';
+				lock_icon = 'lock-unlocked';
 			}
-			
+
 			var moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl();
 
 			moreOptions.icon = 'more';
 			moreOptions.tooltip = l10n.image_options;
 
-			moreOptions.sub_items = {}
+			moreOptions.sub_items = {};
 			moreOptions.sub_items['swap'] = this.createControl('swap', l10n.swap_image, 'openImageSelector');
 			moreOptions.sub_items['crop'] = this.createControl('crop', l10n.edit_image, 'editImage');
 			moreOptions.sub_items['lock'] = this.createControl(lock_icon, l10n.lock_image, 'lockImage');
@@ -454,7 +478,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		controls.push(this.createControl('settings', l10n.settings, 'on_settings_click'));
 		return _(controls);
 	},
-	
+
 	lockImage: function () {
 		var me = this,
 			is_locked = this.property('is_locked')
@@ -468,7 +492,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 				.removeClass('upfront-icon-region-lock-locked');
 
 			this.property('is_locked', false);
-			
+
 			/*
 			if(sizeCheck === "small") {
 				this.$('.upfront-image-caption-container, .upfront-image-container').css({
@@ -493,11 +517,11 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			this.property('is_locked', true);
 		}
 	},
-	
+
 	openImageSelector: function() {
 		this.editor.contentEditor.trigger('swap:image', this.postId);
 	},
-	
+
 	editImage: function() {
 		this.editor.contentEditor.trigger('edit:image');
 	},
@@ -530,22 +554,22 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		}
 		this.enable_object_edit();
 	},
-	
+
 	update_categories: function () {
-		var me = this, 
+		var me = this,
 		type = this.model.get_property_value_by_name("data_type");
-		
+
 		if(type === "taxonomy") {
 			setTimeout( function () {
 				me.render_view(type);
 			}, 200);
 		}
 	},
-	
+
 	render_view_type: function () {
 		var type = this.model.get_property_value_by_name("data_type");
 		this.render_view(type);
-		
+
 	},
 
 	on_render: function () {
@@ -554,14 +578,14 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		;
 
 		this.postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
-		
+
 		//Prepare post!
 		if(Upfront.data.posts[this.postId]){
 			this.post = Upfront.data.posts[this.postId];
 			if(!this.post.meta.length)
 				this.post.meta.fetch();
 		}
-		
+
 		this.render_view_type();
 
 		this.render_controls();
@@ -592,7 +616,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 	render_controls: function () {
 		var me = this,
-			type = this.model.get_property_value_by_name("data_type")
+			type = this.model.get_property_value_by_name("data_type"),
 			objects = this.get_child_objects(false),
 			need_rerender = ( ( objects.length > 1 && !this._multiple ) || ( objects.length == 1 && this._multiple ) )
 		;
@@ -612,11 +636,10 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			}, 300);
 		}
 	},
-	
+
 	toggle_child_objects_loading: function (loading) {
-		var objects = this.get_child_objects(false),
-			loading = _.isUndefined(loading) ? false : loading;
-		;
+		loading = _.isUndefined(loading) ? false : loading;
+		var objects = this.get_child_objects(false);
 
 		_.each(objects, function (object) {
 			var view = Upfront.data.object_views[object.cid];
@@ -735,7 +758,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			this.constructor.__super__.on_element_edit_stop.call(this, edit, post, saving_draft);
 		}
 	},
-	
+
 	checkSize: function() {
 		var imageData = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data');
 
@@ -753,7 +776,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		var imageId = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_id');
 		return imageId ? true : false;
 	},
-	
+
 	get_thumb_data: function() {
 		if ( !this.is_featured_image_set() ) return;
 		// Retrieve image data from post meta
@@ -770,7 +793,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 				stretch: imageData.stretch,
 				vstretch: imageData.stretch
 			},
-			img: this.$('.thumbnail').find('img'),
+			img: this.$('.thumbnail').find('img')
 		};
 	},
 
@@ -780,20 +803,20 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		this.render_controls();
 		this.trigger('set:mobile_mode');
 	},
-	
+
 	unsetMobileMode: function(){
 		if ( !this.mobileMode ) return;
 		this.mobileMode = false;
 		this.render_controls();
 		this.trigger('unset:mobile_mode');
 	},
-	
+
 	on_element_resize_start: function(attr) {
 		// Check if mobileMode
 		if(this.mobileMode) {
 			return;
 		}
-			
+
 		// Check if featured image element
 		var type = this.model.get_property_value_by_name("data_type"),
 			is_locked = this.property('is_locked');
@@ -804,9 +827,9 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		this.$('.thumbnail').find('img').css('min-height', 'auto');
 
 		if(this.resizingData.data.checkSize === "small" && is_locked === false) {
-			// Update data 
-			this.resizingData.data.position = { left: 0, top: 0 }
-			
+			// Update data
+			this.resizingData.data.position = { left: 0, top: 0 };
+
 			// Let's position image to top left corner
 			this.$el.find('.thumbnail img').css({
 				left: '0px',
@@ -815,7 +838,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			});
 		}
 	},
-	
+
 	on_element_resizing: function(attr) {
 		// Check if mobileMode
 		if(this.mobileMode) {
@@ -828,7 +851,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 		if(typeof this.resizingData === "undefined") {
 			this.get_thumb_data();
-		}	
+		}
 
 		var data = this.resizingData.data,
 			img = this.$el.find('.thumbnail img'),
@@ -900,8 +923,8 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 				isDotAlign = imageData.isDotAlign,
 				containerHeight = this.$('.upostdata-part.thumbnail').height(),
 				containerWidth = this.$('.upostdata-part.thumbnail').width(),
-				leftPadding = parseInt(this.$el.find('.upfront-post-data-part').css('padding-left')),
-				rightPadding = parseInt(this.$el.find('.upfront-post-data-part').css('padding-right')),
+				leftPadding = parseInt(this.$el.find('.upfront-post-data-part').css('padding-left'), 10),
+				rightPadding = parseInt(this.$el.find('.upfront-post-data-part').css('padding-right'), 10),
 				padding = leftPadding + rightPadding,
 				sizeCheck = this.checkSize(),
 				imgPosition = img.position(),
@@ -923,7 +946,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 				}
 			}
 
-			if(sizeCheck === "small" && !!isDotAlign === true) {
+			if(sizeCheck === "small" && !!isDotAlign) {
 				if(horizontal_align === "center") {
 					if(data.size.width < attr.width) {
 						marginLeft = (data.size.width - attr.width) / 2;
@@ -931,12 +954,12 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 						marginLeft = -(attr.width - containerWidth) / 2;
 					}
 				}
-				
+
 				if(horizontal_align === "right") {
 					if(data.size.width < attr.width) {
 						marginLeft = (data.size.width - attr.width);
 					} else {
-						marginLeft = -(attr.width - containerWidth)
+						marginLeft = -(attr.width - containerWidth);
 					}
 				}
 
@@ -952,14 +975,14 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 					if(data.size.height < data.elementSize.height) {
 						marginTop = (data.size.height - data.elementSize.height);
 					} else {
-						marginTop = -(data.elementSize.height - containerHeight)
+						marginTop = -(data.elementSize.height - containerHeight);
 					}
 				}
 
 				var offset = { top: marginTop, left: marginLeft + padding },
 					img = this.$el.find('.thumbnail img')
 				;
-				
+
 				this.property('position', { top: marginTop, left: marginLeft + padding });
 
 				// Update position and resize
@@ -969,18 +992,18 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 				});
 
 				Upfront.Events.trigger("featured:image:resized", newImageData);
-				
+
 				img.css('top', -offset.top);
 				img.css('left', -offset.left);
 			}
 		}
 	},
-	
+
 	on_element_resize: function (attr) {
 		if(typeof this.resizingData === "undefined") {
 			this.get_thumb_data();
 		}
-		
+
 		// Check if featured image element
 		var type = this.model.get_property_value_by_name("data_type"),
 			objects = this.get_child_objects(false),
@@ -990,7 +1013,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			padding_right = parseInt( this.model.get_breakpoint_property_value("right_padding_use", true) ? this.model.get_breakpoint_property_value('right_padding_num', true) : 0, 10 ),
 			padding_top = parseInt( this.model.get_breakpoint_property_value("top_padding_use", true) ?  this.model.get_breakpoint_property_value('top_padding_num', true) : 0, 10 ),
 			padding_bottom = parseInt( this.model.get_breakpoint_property_value("bottom_padding_use", true) ? this.model.get_breakpoint_property_value('bottom_padding_num', true) : 0, 10 ),
-			row = attr.row - parseInt(padding_top/grid.baseline) - parseInt(padding_bottom/grid.baseline)
+			row = attr.row - parseInt(padding_top/grid.baseline, 10) - parseInt(padding_bottom/grid.baseline, 10)
 		;
 
 		if(type === "featured_image" && this.is_featured_image_set() && !this.mobileMode) {
@@ -1007,9 +1030,9 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 				elementHeight = parseInt(attr.height, 10),
 				elementSize = {width: elementWidth < 0 ? 10 : elementWidth, height: elementHeight < 0 ? 10 : elementHeight}
 			;
-			
+
 			// Update maskSize
-			maskSize = { width: attr.width, height: attr.height }
+			maskSize = { width: attr.width, height: attr.height };
 
 			// Change the sign
 			imgPosition.top = -imgPosition.top;
@@ -1027,10 +1050,10 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			// Save image crop from resize
 			this.saveTemporaryResizing(elementSize);
 		}
-		
+
 		// Also resize child objects if it's only one object
 		if ( objects.length != 1 ) return;
-		if ( breakpoint.default ) {
+		if ( breakpoint['default'] ) {
 			_.each(objects, function(object){
 				object.set_property('row', row);
 			});
@@ -1045,15 +1068,15 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 				object.set_property('breakpoint', obj_breakpoint);
 			});
 		}
-		
+
 		Upfront.Events.trigger('entity:object:refresh', this);
 	},
-	
+
 	after_breakpoint_change: function(){
 		var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 			type = this.model.get_property_value_by_name("data_type")
 		;
-		if ( breakpoint && !breakpoint.default ) {
+		if ( breakpoint && !breakpoint['default'] ) {
 			this.setMobileMode();
 		} else {
 			this.unsetMobileMode();
@@ -1075,14 +1098,14 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			right: padding_right,
 			top: padding_top,
 			bottom: padding_bottom
-		}
+		};
 	},
-	
+
 	getImageViewport: function() {
 		if(typeof this.resizingData === "undefined") {
 			this.get_thumb_data();
 		}
-		
+
 		var me = this,
 			img = this.$el.find('.thumbnail img'),
 			imgPosition = img.position(),
@@ -1103,11 +1126,11 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		return viewPort;
 
 	},
-	
+
 	getThumbnailData: function () {
-		
+
 	},
-	
+
 	getMaskSize: function(elementSize) {
 		var me = this,
 			imageData = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data');
@@ -1122,7 +1145,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 		return newSize;
 	},
-	
+
 	resizingH: function(img, data, size) {
 		var elWidth = data.elementSize.width,
 			width = size ? data.size.width : img.width(), // The width has been modified if we don't need to set the size
@@ -1233,11 +1256,11 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		}
 		img.css(css);
 	},
-	
+
 	getElementShapeSize: function (elementSize) {
 		return false;
 	},
-	
+
 	saveTemporaryResizing: function(elementSize) {
 		if(typeof this.resizingData === "undefined") {
 			this.get_thumb_data();
@@ -1251,7 +1274,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			deferred = $.Deferred(),
 			import_deferred = $.Deferred(),
 			import_promise = import_deferred.promise(),
-			originalImageData = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data');
+			originalImageData = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data')
 		;
 
 		crop.top = position.top;
@@ -1267,7 +1290,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			'position': position,
 			'maskSize': this.temporaryProps.maskSize
 		});
-		
+
 		Upfront.Events.trigger("featured:image:resized", newImageData);
 
 		import_promise.done(function(){
@@ -1297,7 +1320,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 					'maskSize': me.temporaryProps.maskSize,
 					'cropBig': me.resizingData.data.cropBig
 				});
-				
+
 				Upfront.Events.trigger("featured:image:resized", newImageData);
 
 				clearTimeout(me.cropTimer);
@@ -1317,7 +1340,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 		return deferred.promise();
 	},
-	
+
 	/**
 	 * To keep selected featured image, even on re-rendering
 	 * @param {Object} img
@@ -1325,7 +1348,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	update_featured: function (img) {
 		if ( img && img.attr('src').length > 0 ) this.full_featured_image = img.attr('src');
 	},
-	
+
 	property: function(name, value, silent) {
 		if(typeof value !== 'undefined'){
 			if(typeof silent === 'undefined') {
@@ -1334,7 +1357,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			return this.model.set_property(name, value, silent);
 		}
 		return this.model.get_property_value_by_name(name);
-	},
+	}
 
 });
 
@@ -1408,7 +1431,7 @@ var PostDataElement = Upfront.Views.Editor.Sidebar.Element.extend({
 					{ name: 'part_type', value: type },
 					{ name: 'has_settings', value: 0 },
 					{ name: 'class', value: 'c24 upfront-post-data-part part-'+type },
-					{ name: 'wrapper_id', value: wrapper_id },
+					{ name: 'wrapper_id', value: wrapper_id }
 				]
 			})
 		;
@@ -1452,7 +1475,7 @@ var PostDataElement_PostData = PostDataElement.extend({
 		type: 'post_data',
 		columns: 18,
 		rows: Upfront.Util.height_to_row(200),
-		name: 'Post Data'
+		name: l10n.part_post_data
 	},
 	_post_parts: [
 		'date_posted',
@@ -1466,7 +1489,7 @@ var PostDataElement_Author = PostDataElement.extend({
 		type: 'author',
 		columns: 4,
 		rows: Upfront.Util.height_to_row(100),
-		name: 'Author'
+		name: l10n.part_author
 	},
 	_post_parts: [
 		'author',
@@ -1482,7 +1505,7 @@ var PostDataElement_Taxonomy = PostDataElement.extend({
 		type: 'taxonomy',
 		columns: 18,
 		rows: Upfront.Util.height_to_row(50),
-		name: 'Categories & Tags'
+		name: l10n.part_cats_and_tags
 	},
 	_post_parts: [
 		'tags',
@@ -1495,7 +1518,7 @@ var PostDataElement_FeaturedImage = PostDataElement.extend({
 		type: 'featured_image',
 		columns: 18,
 		rows: Upfront.Util.height_to_row(200),
-		name: 'Featured Image',
+		name: l10n.part_featured_image,
 		parts: {
 			featured_image: {
 				rows: Upfront.Util.height_to_row(200)
@@ -1512,7 +1535,7 @@ var PostDataElement_Comments = PostDataElement.extend({
 		type: 'comments',
 		columns: 18,
 		rows: Upfront.Util.height_to_row(200),
-		name: 'Comments'
+		name: l10n.part_comments
 	},
 	_post_parts: [
 		'comment_count',
@@ -1527,7 +1550,7 @@ var PostDataElement_Meta = PostDataElement.extend({
 		type: 'meta',
 		columns: 4,
 		rows: Upfront.Util.height_to_row(50),
-		name: 'Meta'
+		name: l10n.part_meta
 	},
 	_post_parts: [
 		'meta'
@@ -1567,24 +1590,25 @@ function add_elements () {
 				'.author-email a': {label: l10n.css.author_email_link_label, info: l10n.css.author_email_link_info},
 				'.author-url': {label: l10n.css.author_url_label, info: l10n.css.author_url_info},
 				'.author-url a': {label: l10n.css.author_url_link_label, info: l10n.css.author_url_link_info},
-				'.author-bio': {label: l10n.css.author_bio_label, info: l10n.css.author_bio_info},
+				'.author-bio': {label: l10n.css.author_bio_label, info: l10n.css.author_bio_info}
 			},
 			cssSelectorsId: 'post_author'
 		});
 
-		Upfront.Application.LayoutEditor.add_object("Upostdata-taxonomy", {
-			"Model": PostDataModel,
-			"View": PostDataView,
-			"DataElement": PostDataElement_Taxonomy,
-			"Settings": PostDataSettings,
-			cssSelectors: {
-				'.post_tags': {label: l10n.css.taxonomy_tags_label, info: l10n.css.taxonomy_tags_info},
-				'.post_tags a': {label: l10n.css.taxonomy_tags_link_label, info: l10n.css.taxonomy_tags_link_info},
-				'.post_categories': {label: l10n.css.taxonomy_category_label, info: l10n.css.taxonomy_category_info},
-				'.post_categories a': {label: l10n.css.taxonomy_category_link_label, info: l10n.css.taxonomy_category_link_info},
-			},
-			cssSelectorsId: 'post_taxonomy'
-		});
+		if( !Upfront.Application.is_single("page") )
+			Upfront.Application.LayoutEditor.add_object("Upostdata-taxonomy", {
+				"Model": PostDataModel,
+				"View": PostDataView,
+				"DataElement": PostDataElement_Taxonomy,
+				"Settings": PostDataSettings,
+				cssSelectors: {
+					'.post_tags': {label: l10n.css.taxonomy_tags_label, info: l10n.css.taxonomy_tags_info},
+					'.post_tags a': {label: l10n.css.taxonomy_tags_link_label, info: l10n.css.taxonomy_tags_link_info},
+					'.post_categories': {label: l10n.css.taxonomy_category_label, info: l10n.css.taxonomy_category_info},
+					'.post_categories a': {label: l10n.css.taxonomy_category_link_label, info: l10n.css.taxonomy_category_link_info}
+				},
+				cssSelectorsId: 'post_taxonomy'
+			});
 
 		Upfront.Application.LayoutEditor.add_object("Upostdata-featured_image", {
 			"Model": PostDataModel,
@@ -1593,7 +1617,7 @@ function add_elements () {
 			"Settings": PostDataSettings,
 			cssSelectors: {
 				'.thumbnail': {label: l10n.css.featured_thumbnail_label, info: l10n.css.featured_thumbnail_info},
-				'.thumbnail img': {label: l10n.css.featured_thumbnail_img_label, info: l10n.css.featured_thumbnail_img_info},
+				'.thumbnail img': {label: l10n.css.featured_thumbnail_img_label, info: l10n.css.featured_thumbnail_img_info}
 			},
 			cssSelectorsId: 'post_featured_image'
 		});
@@ -1627,7 +1651,7 @@ function add_elements () {
 				'.comment-respond .comment-form-comment': {label: l10n.css.respond_label, info: l10n.css.respond_info},
 				'.comment-respond .comment-form-comment input[type="text"]': {label: l10n.css.comment_input_label, info: l10n.css.comment_input_info},
 				'.comment-respond .comment-form-comment textarea': {label: l10n.css.comment_textarea_label, info: l10n.css.comment_textarea_info},
-				'.comment-respond .form-submit .submit': {label: l10n.css.submit_button, info: l10n.css.submit_button},
+				'.comment-respond .form-submit .submit': {label: l10n.css.submit_button, info: l10n.css.submit_button}
 			},
 			cssSelectorsId: 'post_comments'
 		});
@@ -1638,7 +1662,7 @@ function add_elements () {
 			"DataElement": PostDataElement_Meta,
 			"Settings": PostDataSettings,
 			cssSelectors: {
-				'.meta': {label: l10n.css.post_meta_label, info: l10n.css.post_meta_info},
+				'.meta': {label: l10n.css.post_meta_label, info: l10n.css.post_meta_info}
 			},
 			cssSelectorsId: 'post_meta'
 		});

@@ -750,6 +750,17 @@ define(function() {
 					color_string = color_string.replace(pattern, theme_color );
 				}
 				return color_string;
+			},
+			/**
+			 * Removes alpha from rgba and returns rgb,
+			 * if given color is not rgba ( either hex or anything else) the exact color will be returned
+			 * @param color
+             * @returns {*}
+             */
+			rgba_to_rgb: function( color ){
+				if( !_.isString( color ) ) return color;
+
+				return color.replace(/ /g,'').replace(/^rgba\((\d+)\,(\d+)\,(\d+)\,(\d+\.?\d{0,}?)\)$/, "rgb($1, $2, $3)");
 			}
 		},
 		guessLinkType: guessLinkType,

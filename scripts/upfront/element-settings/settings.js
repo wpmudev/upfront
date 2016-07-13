@@ -102,10 +102,10 @@ define([
 			this.model.get("properties").trigger('change');
 			Upfront.Events.trigger("element:settings:saved");
 			Upfront.Events.trigger("element:settings:deactivate");
-			if(Upfront.Application.is_builder()) {
-				Upfront.Events.trigger("command:layout:export_theme");
-			} 
-			else {
+
+			var pluginsCallResult = Upfront.plugins.call('save-settings');
+
+			if (!pluginsCallResult.status || pluginsCallResult.status !== 'called') {
 				if ( _upfront_post_data.layout.specificity && _upfront_post_data.layout.item && !_upfront_post_data.layout.item.match(/-page/) )
 					Upfront.Events.trigger("command:layout:save_as");
 				else

@@ -279,6 +279,7 @@
 	color: #e75757;
 	margin-left: 0;
 	font-size: 14px;
+	display: none;
 }
 
 #sidebar-ui .upfront-delete-template-button:before {
@@ -294,6 +295,12 @@
 
 #sidebar-ui .update-post-template {
 	float: left;
+	display: none;
+}
+
+#sidebar-ui .save-post-template.upfront-select-template-button,
+#sidebar-ui .reset-post-template.upfront-select-template-button {
+	display: none;
 }
 
 #sidebar-ui .apply-post-template,
@@ -418,7 +425,7 @@
 }
 
 #ui-datepicker-div select{
-	font-family: 'Source Sans Pro', sans-serif;
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 	margin: 0 2px;
 }
 

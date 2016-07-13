@@ -267,6 +267,9 @@ define([
 				this.model.set_breakpoint_property('top_padding_use', 'yes');
 				this.model.set_breakpoint_property('top_padding_num', padding_top_val);
 				this.model.set_breakpoint_property('top_padding_slider', padding_top_val);
+				
+				Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
+				Upfront.Events.trigger("upfront:paddings:top:updated", this.model, Upfront.data.currentEntity);
 
 				this.refresh();
 			}
@@ -278,6 +281,9 @@ define([
 				this.model.set_breakpoint_property('top_padding_use', 'yes');
 				this.model.set_breakpoint_property('top_padding_num', padding_top_val);
 				this.model.set_breakpoint_property('top_padding_slider', padding_top_val);
+				
+				Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
+				Upfront.Events.trigger("upfront:paddings:top:updated", this.model, Upfront.data.currentEntity);
 
 				this.refresh();
 			}

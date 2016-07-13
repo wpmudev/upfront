@@ -8,6 +8,13 @@
 		lastTime = currTime + timeToCall;
 		return id;
 	};
+
+	var rgba_to_rba = function(color){
+		if( typeof Upfront !== "undefined" && Upfront.Util  ) // If we are in editor then delegate to Upfront.Util.colors.rgba_to_rgb
+			return Upfront.Util.colors.rgba_to_rgb( color );
+
+		return color.replace(/ /g,'').replace(/^rgba\((\d+)\,(\d+)\,(\d+)\,(\d+\.?\d{0,}?)\)$/, "rgb($1, $2, $3)");
+	};
 	var requestAnimationFrame =
 			$.proxy(window.requestAnimationFrame, window) ||
 			$.proxy(window.webkitRequestAnimationFrame, window) ||
@@ -39,6 +46,7 @@
 				}
 				else {
 					// Initialize object
+					args.bgColor = rgba_to_rba( $el.parent().css("background-color") );
 					$el.data('uparallax', new Upfront_Parallax($el, args));
 				}
 			}
@@ -63,6 +71,7 @@
 				renderer: this.getDefaultRenderer(), // Available: canvas, absolute, fixed,
 				overflowTop: 100, // px, render more than the background height to prevent artifact on late refresh
 				overflowBottom: 100, // px, render more than the background height to prevent artifact on late refresh
+				bgColor: "#fff"
 			}, args)
 		;
 		this.opts = data;
@@ -270,6 +279,8 @@
 				$('.upfront-output-layout, .upfront-layout').append(this.canvas);
 			}
 			this.context = this.canvas.getContext('2d');
+			if( this.is_image_png() )
+				this.context.fillStyle = this.opts.bgColor;
 			this.updateCanvas();
 		},
 		updateCanvas: function () {
@@ -293,6 +304,7 @@
 			;
 			if (src != 'none') {
 				this.cache.img = img;
+				this.cache.background_color = this.$parent.css("background-color") || "#fff";
 				img.src = src;
 				this.$element.css('display', 'none');
 				this.$parent.css({
@@ -307,7 +319,8 @@
 				$(this.imgCanvas).css({
 					display: 'block'
 				});
-				this.imgContext = this.imgCanvas.getContext('2d');
+
+				this.imgContext = this.imgCanvas.getContext('2d', {alpha: false});
 			}
 			var width = this.cache.width,
 				height = this.cache.height,
@@ -336,7 +349,13 @@
 			drawHeight = Math.floor(parallaxHeight/imgHeight * this.cache.img.height);
 			drawX = (this.cache.img.width - drawWidth) / 2;
 			drawY = (this.cache.img.height - drawHeight) / 2;
+
+			if( this.is_image_png() ) {
+				this.fillCanvas(width, parallaxHeight);
+			}
+
 			this.imgContext.drawImage(this.cache.img, drawX, drawY, drawWidth, drawHeight, 0, 0, width, parallaxHeight);
+
 		},
 		refresh: function () {
 			this.refreshCache();
@@ -500,6 +519,7 @@
 				drawRelY = scrollTop - offsetTop;
 				drawY += drawRelY;
 			}
+
 			drawY += translate * -1;
 			if (closest.top && closest.top.cache.offsetBottom < offsetTop) {
 				clearTop -= Math.min(this.opts.overflowTop, Math.ceil((offsetTop - closest.top.cache.offsetBottom) / 2));
@@ -513,13 +533,27 @@
 			else if (!closest.bottom) {
 				clearBottom += this.opts.overflowBottom;
 			}
+
 			this.context.drawImage(this.imgCanvas, 0, 0, width, parallaxHeight, offsetLeft, offsetTop-this.movementOffset-scrollTop+translate, width, parallaxHeight);
+
 			if (clearTop > scrollTop) {
 				this.context.clearRect(offsetLeft, 0, width, clearTop-scrollTop);
 			}
 			if (winHeight > clearBottom-scrollTop) {
 				this.context.clearRect(offsetLeft, clearBottom-scrollTop, width, winHeight-(clearBottom-scrollTop));
 			}
+		},
+		/**
+		 * Checks if image src image in png
+		 * @returns {boolean|*|Array|{index: number, input: string}}
+         */
+		is_image_png: function(){
+			return this.cache.img && this.cache.img.src && this.cache.img.src.toLowerCase().match(/.png/);
+		},
+		fillCanvas: function(width, parallaxHeight){
+			this.imgContext.fillStyle = this.opts.bgColor;
+			this.imgContext.rect(0, 0, width, parallaxHeight);
+			this.imgContext.fill();
 		},
 		clearCanvas: function () {
 			this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);

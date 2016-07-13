@@ -456,7 +456,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			else
 				$parsed[] = array('meta_key' => $key, 'meta_value' => maybe_unserialize($val));
 		}
-		return $parsed;
+		return $this->_remove_page_template_meta($parsed);
 	}
 
 	function save_post($data) {
@@ -669,19 +669,26 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$updated = array();
 
 		if(!empty($data['removed'])){
+			$data['removed'] = $this->_remove_page_template_meta($data['removed']);
 			foreach($data['removed'] as $meta)
 				delete_metadata($meta_type, $object_id, $meta['meta_key']);
 		}
 
 		if(!empty($data['added'])){
+			$data['added'] = $this->_remove_page_template_meta($data['added']);
 			foreach($data['added'] as $meta)
 				update_metadata($meta_type, $object_id, $meta['meta_key'], (!empty($meta['meta_value']) ? $meta['meta_value'] : false));
 		}
 
 		if(!empty($data['changed'])){
+			$data['changed'] = $this->_remove_page_template_meta($data['changed']);
 			foreach($data['changed'] as $meta)
 				update_metadata($meta_type, $object_id, $meta['meta_key'], (!empty($meta['meta_value']) ? $meta['meta_value'] : false));
 
+		}
+		
+		if(!empty($data['all'])){
+			$data['all'] = $this->_remove_page_template_meta($data['all']);
 		}
 
 		$meta = $this->parse_single_meta(get_metadata($meta_type, $object_id));
@@ -759,6 +766,26 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		);
 		
 		return preg_replace($unicode_pattern,'',$url);
+	}
+	
+	/**
+	* Removes any meta related to Page Templates,
+	* those meta will be handled on Page Layout at class_upfront_ajax.php
+	*/
+	private function _remove_page_template_meta ($meta_list) {
+		$store_key = strtolower(str_replace('_dev','',Upfront_Layout::get_storage_key()));
+		$page_template_meta = array(
+			$store_key . '-uf_wp_page_template',
+			$store_key . '-template_post_id',
+			$store_key . '-template_dev_post_id',
+			'_wp_page_template'
+		);
+		$new_meta_list = array();
+		foreach($meta_list as $index => $meta) {
+			if ( !in_array($meta['meta_key'], $page_template_meta) )
+				array_push($new_meta_list, $meta);
+		}
+		return $new_meta_list;
 	}
 }
 add_action('init', array('Upfront_Editor_Ajax', 'serve'));

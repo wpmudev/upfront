@@ -248,13 +248,13 @@ class Upfront {
 			foreach ($link_urls as $url) {
 				$deps->add_style($url);
 			}
-			$deps->add_font('Source Sans Pro', array(
+			$deps->add_font('Open Sans', array(
+				'300',
 				'400',
 				'600',
 				'700',
 				'400italic',
 				'600italic',
-				'700italic',
 			));
 
 

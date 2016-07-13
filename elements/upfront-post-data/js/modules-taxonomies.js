@@ -1,14 +1,14 @@
 define([
 	'elements/upfront-post-data/js/panel-abstractions',
-	'text!elements/upfront-post-data/tpl/preset-styles/taxonomy.html',
+	'text!elements/upfront-post-data/tpl/preset-styles/taxonomy.html'
 ], function (Panel, template) {
 	var l10n = Upfront.Settings.l10n.post_data_element;
 
 	var Modules = {};
 	Modules.template = template;
-	
+
 	Modules.part_categories = Panel.Toggleable.extend({
-		title: l10n.tax.cats_part_title, 
+		title: l10n.tax.cats_part_title,
 		data_part: 'categories',
 		get_fields: function () {
 			return [

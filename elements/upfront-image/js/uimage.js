@@ -812,9 +812,9 @@ define([
 
 			this.originalDesktopElementSize = this.property('element_size');
 
-			if(this.mobileMode) {
-				this.render();
-			}
+			//if(this.mobileMode) {
+				this.render(); // @TODO prefer not to re-render on breakpoint change
+			//}
 		},
 
 		/***************************************************************************/
@@ -887,10 +887,6 @@ define([
 
 			// data.elementSize = {width: attr.width - (2 * padding), height: attr.height - (2 * padding) - captionHeight};
 			data.elementSize = {width: elementWidth < 0 ? 10 : elementWidth, height: elementHeight < 0 ? 10 : elementHeight};
-
-			if(attr.axis === "e" || attr.axis === "w") {
-				data.elementSize.height = data.elementSize.height - vPadding;
-			}
 
 			newSize = this.getElementShapeSize(data.elementSize);
 			if ( false !== newSize ) {

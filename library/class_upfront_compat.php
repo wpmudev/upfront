@@ -37,6 +37,23 @@ class Upfront_Compat implements IUpfront_Server {
 		return $current->Version;
 	}
 
+	/**
+	 * Check if a child theme has been released
+	 *
+	 * Released children have WDP ID header set
+	 *
+	 * @param string $child (Optional)Child theme slug
+	 *
+	 * @return boolean
+	 */
+	public static function is_upfront_child_released ($child=false) {
+		$theme = wp_get_theme($child);
+		if (!is_object($theme)) return false;
+
+		$wdp_id = $theme->get('WDP ID');
+		return !empty($wdp_id);
+	}
+
 	public static function serve () {
 		$me = new self;
 		$me->_add_hooks();
@@ -83,6 +100,9 @@ class Upfront_Compat implements IUpfront_Server {
 		if (function_exists('upfront_exporter_is_running') && upfront_exporter_is_running()) return false; // Not in exporter
 		if (version_compare(self::get_upfront_child_version(), '1.0-alpha-1', 'ge')) return false; // Child is at or above v1 - good
 
+		// Child theme is not released
+		if (!self::is_upfront_child_released()) return false;
+
 		if (empty($this->_v1_script_added)) {
 			Upfront_CoreDependencies_Registry::get_instance()->add_script(
 				trailingslashit(Upfront::get_root_url()) . 'scripts/upfront/compat/v1.js'
@@ -128,7 +148,7 @@ class Upfront_Compat implements IUpfront_Server {
 	private function _is_updated_install () {
 		$cache = Upfront_Cache::get_instance(Upfront_Cache::TYPE_LONG_TERM);
 		$updated = $cache->get('upfront-updated', 'upfront-core');
-		
+
 		if ($updated === false) {
 			$updated_flag = get_option('upfront_is_updated_install');
 			if (empty($updated_flag)) {
@@ -229,5 +249,5 @@ class Upfront_Compat implements IUpfront_Server {
 
 
 
-} 
+}
 add_action('init', array('Upfront_Compat', 'serve'));

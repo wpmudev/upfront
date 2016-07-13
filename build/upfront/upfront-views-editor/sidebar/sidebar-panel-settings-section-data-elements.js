@@ -1,0 +1,1 @@
+!function(t){Upfront.Settings&&Upfront.Settings.l10n?Upfront.Settings.l10n.global.views:Upfront.mainData.l10n.global.views;define(["scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-layout-elements"],function(t){return t.extend({get_name:function(){return"data"},get_title:function(){return"Data"}})})}(jQuery);

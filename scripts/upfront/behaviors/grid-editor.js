@@ -1100,7 +1100,10 @@ var GridEditor = {
 			$resize, $resize_placeholder,
 			axis
 		;
-		if ( Upfront.Application.mode.current !== Upfront.Application.MODE.THEME && model.get_property_value_by_name('disable_resize') ) {
+		if (
+				false === Upfront.plugins.isRequiredByPlugin('setup resizeable') &&
+				model.get_property_value_by_name('disable_resize')
+		) {
 			return false;
 		}
 		if ( $me.hasClass('upfront-module-spacer') || $me.hasClass('upfront-object-spacer') ) {
@@ -1490,7 +1493,10 @@ var GridEditor = {
 			first_in_row,
 			last_in_row
 		;
-		if ( Upfront.Application.mode.current !== Upfront.Application.MODE.THEME && model.get_property_value_by_name('disable_resize') )
+		if (
+				false === Upfront.plugins.isRequiredByPlugin('setup resizeable') &&
+				model.get_property_value_by_name('disable_resize')
+		)
 			return false;
 		if ( $me.data('ui-resizable') ){
 			$me.resizable('option', 'disabled', false);
@@ -2266,108 +2272,246 @@ var GridEditor = {
 	adapt_to_breakpoint: function (modules, wrappers, breakpoint_id, parent_col, silent) {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
-			line_col = 0,
-			line = -1,
-			lines = [],
-			modules_data = [],
-			set_wrappers_col = {}, // keep track of set wrappers col
+			breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().findWhere({id: breakpoint_id}).toJSON(),
+			desktop_breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_default().toJSON(),
 			silent = ( silent === true ) ? true : false,
-			wrapper_index = 0,
-			wrapper_edited = 0
+			desktop_lines = ed.parse_modules_to_lines(modules, wrappers, desktop_breakpoint.id, desktop_breakpoint.columns),
+			lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint_id, parent_col),
+			filtered_lines = ed._filter_edited_lines(lines, breakpoint),
+			adapt_wrappers = [],
+			adapt_wrappers_top = [],
+			adapt_wrappers_bottom = [],
+			adapt_lines = [],
+			adapt_lines_insert = [],
+			adapt_lines_top = [],
+			adapt_lines_bottom = [],
+			adapt_col = 0
 		;
-		modules.each(function(module){
-			var data = module.get_property_value_by_name('breakpoint') || {},
-				module_class = module.get_property_value_by_name('class'),
-				module_default_hide = module.get_property_value_by_name('default_hide'),
-				module_hide = ( data[breakpoint_id] && "hide" in data[breakpoint_id] ) ? data[breakpoint_id].hide : module_default_hide,
-				module_col = ed.get_class_num(module_class, ed.grid['class']),
-				wrapper = wrappers.get_by_wrapper_id(module.get_wrapper_id()),
-				wrapper_data = wrapper && wrapper.get_property_value_by_name('breakpoint') || {},
-				wrapper_class = wrapper && wrapper.get_property_value_by_name('class'),
-				is_clear = wrapper && ( !!wrapper_class.match(/clr/) || line_col === 0 );
-			if ( !wrapper )	return;
-			if (
-				( wrapper_data && wrapper_data[breakpoint_id] && wrapper_data[breakpoint_id].edited )
-				||
-				( data && data[breakpoint_id] && data[breakpoint_id].edited )
-			) {
-				wrapper_edited++;
-				return;
-			}
-			if ( module_hide ) return;
-			line_col += module_col; // Elements in a line have to fit the whole region now
-			if ( line_col > parent_col ){
-				is_clear = true;
-			}
-			if ( is_clear ){
-				line_col = module_col; // Elements in a line have to fit the whole region now
-				line++;
-				lines[line] = [];
-			}
-			module_col = module_col > parent_col ? parent_col : module_col;
-			lines[line].push({
-				clear: is_clear,
-				spacer: !!module_class.match(/(upfront-module-spacer|upfront-object-spacer)/),
-				module: module,
-				col: module_col,
-				left: 0, // Elements in a line have to fit the whole region now
-				wrapper: wrapper,
-				breakpoint: Upfront.Util.clone(data),
-				wrapper_breakpoint: Upfront.Util.clone(wrapper_data)
+		ed._wrapper_index = 0;
+		// First let's find wrappers that we need to adapt from desktop layout
+		_.each(desktop_lines, function (line, l) {
+			_.each(line.wrappers, function (wrapper, w) {
+				if ( wrapper.spacer ) return; // Ignore spacers
+				var is_edited = wrapper.model.get_breakpoint_property_value('edited', false, false, breakpoint);
+				if ( is_edited ) {
+					ed._wrapper_index++;
+					return;
+				}
+				ed._wrapper_index++;
+				// Find prev and next wrapper for reference later when deciding the final order
+				adapt_wrappers.push({
+					prev: ed._find_prev_wrapper_from_lines(wrapper, w, line, l, desktop_lines),
+					next: ed._find_next_wrapper_from_lines(wrapper, w, line, l, desktop_lines),
+					current: wrapper,
+					order: ed._wrapper_index
+				});
 			});
 		});
-		_.each(lines, function(line_modules){
-			var line_col = _.map(line_modules, function(data){
-					return data.col; // Elements in a line have to fit the whole region now
-				}).reduce(function(sum, col){
-					return sum + col;
-				}),
-				spacer_col = _.map(line_modules, function(data){
-					return data.spacer ? data.col : 0;
-				}).reduce(function(sum, col){
-					return sum + col;
-				})
+
+		if ( adapt_wrappers.length == 0 ) {
+			// Nothing to adapt, return
+			return;
+		}
+
+		// Let's split up to wrappers that inserted to top, bottom or in between
+		adapt_wrappers = _.filter(adapt_wrappers, function (adapt_wrapper, aw) {
+			if ( aw == adapt_wrapper.order-1 ) {
+				adapt_wrappers_top.push(adapt_wrapper);
+				return false;
+			}
+			else if ( ed._wrapper_index == adapt_wrapper.order + (adapt_wrappers.length - aw - 1) ) {
+				adapt_wrappers_bottom.push(adapt_wrapper);
+				return false;
+			}
+			return true;
+		});
+
+		// Make them into lines
+		adapt_lines_top = ed._adapt_wrappers_to_line(adapt_wrappers_top, parent_col);
+		adapt_lines = ed._adapt_wrappers_to_line(adapt_wrappers, parent_col);
+		adapt_lines_insert = adapt_lines.slice(0);
+		adapt_lines_bottom = ed._adapt_wrappers_to_line(adapt_wrappers_bottom, parent_col);
+
+		ed._wrapper_index = 0;
+		// Now that when we know which wrappers we need to adapt, we'll find where to add them
+		// Add the top wrappers
+		_.each(adapt_lines_top, function (adapt_line) {
+			ed._set_adapt_wrappers(adapt_line.wrappers, parent_col, silent, breakpoint);
+		});
+
+		// Insert between elements
+		_.each(filtered_lines, function (line, l) {
+			var prev_line = ( l > 0 ) ? filtered_lines[l-1] : false,
+				next_line = ( l < filtered_lines.length-1 ) ? filtered_lines[l+1] : false
 			;
-			_.each(line_modules, function(data, index){
-				var new_col = 0,
-					wrapper_col = 0;
-				if ( ! _.isObject(data.breakpoint[breakpoint_id]) ) {
-					data.breakpoint[breakpoint_id] = { edited: false };
-				}
-				if ( !_.isObject(data.wrapper_breakpoint[breakpoint_id]) ) {
-					data.wrapper_breakpoint[breakpoint_id] = { edited: false };
-				}
-				if ( !data.breakpoint[breakpoint_id].edited ){
-					// Elements in a line have to fit evenly the whole region now
-					new_col = (line_col === parent_col) ? data.col : parent_col / line_modules.length;
-					if ( data.wrapper_breakpoint[breakpoint_id].edited && _.isNumber(data.wrapper_breakpoint[breakpoint_id].col) ) {
-						new_col = new_col > data.wrapper_breakpoint[breakpoint_id].col ? data.wrapper_breakpoint[breakpoint_id].col : new_col;
-					}
-					data.breakpoint[breakpoint_id].left = 0;
-					data.breakpoint[breakpoint_id].col = new_col;
-					data.breakpoint[breakpoint_id].order = index;
-					data.module.set_property('breakpoint', data.breakpoint, silent);
-				}
-				else {
-					new_col = typeof data.breakpoint[breakpoint_id].col == 'number' ? data.breakpoint[breakpoint_id].col : data.col;
-				}
-				if ( !_.isUndefined(set_wrappers_col[data.wrapper.get_wrapper_id()]) ) {
-					wrapper_col = set_wrappers_col[data.wrapper.get_wrapper_id()];
-				}
-				else {
-					wrapper_index++;
-				}
-				if ( wrapper_col < new_col ) {
-					wrapper_col = new_col;
-					data.wrapper_breakpoint[breakpoint_id].col = wrapper_col;
-					set_wrappers_col[data.wrapper.get_wrapper_id()] = wrapper_col;
-					if ( !data.wrapper_breakpoint[breakpoint_id].edited ) {
-						data.wrapper_breakpoint[breakpoint_id].order = wrapper_edited + wrapper_index;
-						data.wrapper_breakpoint[breakpoint_id].clear = ( index === 0 );
-					}
-					data.wrapper.set_property('breakpoint', data.wrapper_breakpoint, silent);
+			_.each(line.wrappers, function (wrapper, w) {
+				var inserted = [];
+				_.each(adapt_lines_insert, function (adapt_line, al) {
+					var prev_wrapper = adapt_line.prev_wrapper,
+						next_wrapper = adapt_line.next_wrapper,
+						is_adding = false,
+						apply_col = Math.floor(parent_col/adapt_line.wrappers.length),
+						remaining_col = parent_col - (apply_col * adapt_line.wrappers.length)
+					;
+					_.each(adapt_line.wrappers, function (adapt_wrapper) {
+						if ( ed._find_wrapper_in_line(prev_wrapper, prev_line) ) {
+							// Try use prev wrapper as reference first
+							is_adding = true;
+						}
+						else if ( ed._find_wrapper_in_line(next_wrapper, line) && !ed._find_wrapper_in_line(prev_wrapper, line) ) {
+							// Alternatively, just use next wrapper as reference
+							is_adding = true;
+						}
+					})
+
+					if ( !is_adding ) return;
+					// Finally, add this line in
+					ed._set_adapt_wrappers(adapt_line.wrappers, parent_col, silent, breakpoint)
+					inserted.push(al);
+				});
+				// Remove inserted lines
+				_.each(inserted, function (ins, i) {
+					adapt_lines_insert.splice(ins - i, 1);
+				});
+
+				// Set new order for existing wrappers
+				ed._wrapper_index++;
+				wrapper.model.set_breakpoint_property('order', ed._wrapper_index, silent, breakpoint);
+			});
+		});
+
+		// Add the bottom wrappers and the rest of uninserted wrappers
+		_.each(_.union(adapt_lines_insert, adapt_lines_bottom), function (adapt_line) {
+			ed._set_adapt_wrappers(adapt_line.wrappers, parent_col, silent, breakpoint);
+		});
+	},
+
+	_set_adapt_wrappers: function (adapt_wrappers, parent_col, silent, breakpoint) {
+		var apply_col = Math.floor(parent_col/adapt_wrappers.length),
+			remaining_col = parent_col - (apply_col * adapt_wrappers.length),
+			ed = this
+		;
+		_.each(adapt_wrappers, function (adapt_wrapper, aw) {
+			var this_col = apply_col;
+			if ( remaining_col > 0 ) {
+				this_col++;
+				remaining_col--;
+			}
+			ed._wrapper_index++;
+			adapt_wrapper.current.model.set_breakpoint_property('clear', ( aw == 0 ), silent, breakpoint);
+			adapt_wrapper.current.model.set_breakpoint_property('col', this_col, silent, breakpoint);
+			adapt_wrapper.current.model.set_breakpoint_property('order', ed._wrapper_index, silent, breakpoint);
+			_.each(adapt_wrapper.current.modules, function (module, m) {
+				module.model.set_breakpoint_property('col', this_col, silent, breakpoint);
+			});
+		});
+	},
+
+	_filter_edited_lines: function (lines, breakpoint) {
+		return _.filter(lines, function (line) {
+			var ignore = false;
+			_.each(line.wrappers, function (wrapper) {
+				if ( wrapper.spacer || ignore ) return;
+				var is_edited = wrapper.model.get_breakpoint_property_value('edited', false, false, breakpoint);
+				if ( !is_edited ) {
+					ignore = true;
+					return;
 				}
 			});
+			return !ignore;
+		});
+	},
+
+	_adapt_wrappers_to_line: function (wrappers, col) {
+		var adapt_col = 0,
+			adapt_lines = [],
+			adapt_wrappers = [],
+			prev_wrapper = false,
+			ref_prev_wrapper = false,
+			ref_next_wrapper = false
+		;
+		_.each(wrappers, function (wrapper, w) {
+			var is_separate_line = (prev_wrapper && wrapper.order - prev_wrapper.order > 1);
+			if ( ( is_separate_line || adapt_col + wrapper.current.col > col ) && adapt_wrappers.length > 0 ) {
+				adapt_lines.push({
+					wrappers: adapt_wrappers,
+					col: adapt_col,
+					prev_wrapper: ref_prev_wrapper,
+					next_wrapper: ref_next_wrapper
+				});
+				adapt_wrappers = [];
+				adapt_col = 0;
+				if ( is_separate_line ) {
+					ref_prev_wrapper = false;
+					ref_next_wrapper = false;
+				}
+			}
+			if ( ref_prev_wrapper === false ) {
+				ref_prev_wrapper = wrapper.prev;
+			}
+			if ( ref_next_wrapper === false ) {
+				ref_next_wrapper = wrapper.next;
+				for ( var i = w+1; i < wrappers.length; i++ ) {
+					if ( wrappers[i].order - wrapper.order > 1 ) break;
+					ref_next_wrapper = wrappers[i].next;
+				}
+			}
+			adapt_col += wrapper.current.col;
+			adapt_wrappers.push(wrapper);
+			prev_wrapper = wrapper;
+		});
+		if ( adapt_wrappers.length > 0 ) {
+			adapt_lines.push({
+				wrappers: adapt_wrappers,
+				col: adapt_col,
+				prev_wrapper: ref_prev_wrapper,
+				next_wrapper: ref_next_wrapper
+			});
+		}
+		return adapt_lines;
+	},
+
+	_find_prev_wrapper_from_lines: function (wrapper, wrapper_index, line, line_index, lines) {
+		if ( wrapper_index > 0 ) {
+			if ( !line.wrappers[wrapper_index-1].spacer ) {
+				return line.wrappers[wrapper_index-1];
+			}
+			else if ( wrapper_index > 1 ) {
+				return line.wrappers[wrapper_index-2];
+			}
+		}
+		if ( line_index > 0 ) {
+			for ( var i = lines[line_index-1].wrappers.length-1; i >= 0; i-- ) {
+				if ( lines[line_index-1].wrappers[i].spacer ) continue;
+				return lines[line_index-1].wrappers[i];
+			}
+		}
+		return false;
+	},
+
+	_find_next_wrapper_from_lines: function (wrapper, wrapper_index, line, line_index, lines) {
+		if ( wrapper_index < line.wrappers.length-1 ) {
+			if ( !line.wrappers[wrapper_index+1].spacer ) {
+				return line.wrappers[wrapper_index+1];
+			}
+			else if ( wrapper_index < line.wrappers.length-2 ) {
+				return line.wrappers[wrapper_index+2];
+			}
+		}
+		if ( line_index < lines.length-1 ) {
+			for ( var i = 0; i < lines[line_index+1].wrappers.length; i++ ) {
+				if ( lines[line_index+1].wrappers[i].spacer ) continue;
+				return lines[line_index+1].wrappers[i];
+			}
+		}
+		return false;
+	},
+
+	_find_wrapper_in_line: function (find_wrapper, line) {
+		if ( !line || !line.wrappers || !find_wrapper ) return false;
+		if ( line.wrappers.length == 0 ) return false;
+		return _.find(line.wrappers, function (wrapper, w) {
+			return ( find_wrapper.model.cid == wrapper.model.cid );
 		});
 	},
 
@@ -3000,194 +3144,6 @@ var GridEditor = {
 	},
 
 	/**
-	 * Edit structure/grid
-	 */
-	edit_structure: function () {
-		var ed = Upfront.Behaviors.GridEditor,
-			app = Upfront.Application,
-			grid = Upfront.Settings.LayoutEditor.Grid,
-			$grid_wrap = $('<div class="upfront-edit-grid-wrap clearfix" />'),
-			$recommended = $('<div class="upfront-edit-grid upfront-edit-grid-recommended" />'),
-			$custom = $('<div class="upfront-edit-grid upfront-edit-grid-custom" />'),
-			$color_wrap = $('<div class="upfront-edit-page-color" />'),
-			$grid_width = $('<div class="upfront-grid-width-preview">Grid width: <span class="upfront-grid-width" /></div>'),
-			$grid_width2 = $('<div class="upfront-grid-width-preview">( Grid width: <span class="upfront-grid-width" /> )</div>'),
-			is_grid_custom = ( grid.column_width != grid.column_widths[grid.size_name] || grid.type_padding != grid.type_paddings[grid.size_name] || grid.baseline != grid.baselines[grid.size_name] || !(/^(0|5|10|15)$/.test(grid.column_padding)) ),
-			update_grid_data = function() {
-				var custom = fields.grid.get_value() == 'custom',
-					new_grid = {
-						column_width: custom ? fields.custom_width.get_value() : grid.column_widths[grid.size_name],
-						column_padding: custom ? fields.custom_padding.get_value() : fields.recommended_padding.get_value(),
-						baseline: custom ? fields.custom_baseline.get_value() : grid.baselines[grid.size_name],
-						type_padding: custom ? fields.custom_type_padding.get_value() : grid.type_paddings[grid.size_name]
-					},
-					width = new_grid.column_width * grid.size;
-				$grid_width.find('.upfront-grid-width').text(width + 'px');
-				$grid_width2.find('.upfront-grid-width').text(width + 'px');
-				ed.update_grid(new_grid);
-			},
-			togglegrid = new Upfront.Views.Editor.Command_ToggleGrid(),
-			fields = {
-				structure: new Upfront.Views.Editor.Field.Radios({
-					label: Upfront.Settings.l10n.global.behaviors.structure,
-					layout: "vertical",
-					default_value: app.layout.get('layout_slug') || "blank",
-					icon_class: 'upfront-structure-field-icon',
-					values: [
-						{label: "", value: "blank", icon: "blank"},
-						{label: "", value: "wide", icon: "wide-no-sidebar"},
-						{label: "", value: "wide-right-sidebar", icon: "wide-right-sidebar"},
-						{label: "", value: "wide-left-sidebar", icon: "wide-left-sidebar"},
-						{label: "", value: "clip", icon: "clip-no-sidebar"},
-						{label: "", value: "clip-right-sidebar", icon: "clip-right-sidebar"},
-						{label: "", value: "clip-left-sidebar", icon: "clip-left-sidebar"},
-						{label: "", value: "full", icon: "full"},
-						{label: "", value: "full-extended", icon: "full-extended"}
-					],
-					change: function(){
-						if ( Upfront.themeExporter.currentTheme === 'upfront' ) {
-							var structure = fields.structure.get_value(),
-								layout_slug = app.layout.get('layout_slug');
-							if ( (layout_slug && layout_slug != structure) || ( !layout_slug && structure != 'blank' ) ){
-								app.layout.set('layout_slug', structure);
-								if ( Upfront.Application.get_gridstate() )
-									togglegrid.on_click();
-								app.create_layout(_upfront_post_data.layout, {layout_slug: structure});
-								Upfront.Events.once("layout:render", function() {
-									if ( !Upfront.Application.get_gridstate() )
-										togglegrid.on_click();
-								});
-							}
-						}
-					}
-				}),
-				grid: new Upfront.Views.Editor.Field.Radios({
-					label: Upfront.Settings.l10n.global.behaviors.grid_settings,
-					layout: "horizontal-inline",
-					default_value: is_grid_custom ? "custom" : "recommended",
-					values: [
-						{label: Upfront.Settings.l10n.global.behaviors.recommended_settings, value: "recommended"},
-						{label: Upfront.Settings.l10n.global.behaviors.custom_settings, value: "custom"}
-					],
-					change: function () {
-						var value = this.get_value();
-						if ( value == 'custom' ){
-							$custom.show();
-							$recommended.hide();
-						}
-						else {
-							$recommended.show();
-							$custom.hide();
-						}
-						update_grid_data();
-					}
-				}),
-				recommended_padding: new Upfront.Views.Editor.Field.Select({
-					default_value: grid.column_padding,
-					values: [
-						{label: Upfront.Settings.l10n.global.behaviors.padding_large, value: "15"},
-						{label: Upfront.Settings.l10n.global.behaviors.padding_medium, value: "10"},
-						{label: Upfront.Settings.l10n.global.behaviors.padding_small, value: "5"},
-						{label: Upfront.Settings.l10n.global.behaviors.no_padding, value: "0"}
-					],
-					change: update_grid_data
-				}),
-				bg_color: new Upfront.Views.Editor.Field.Color({
-					model: app.layout,
-					label: Upfront.Settings.l10n.global.behaviors.page_bg_color,
-					label_style: "inline",
-					property: 'background_color',
-					spectrum: {
-						move: function (color) {
-							var rgb = color.toRgb(),
-							rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
-							app.layout.set_property('background_color', rgba_string);
-						}
-					}
-				}),
-				custom_width: new Upfront.Views.Editor.Field.Number({
-					label: Upfront.Settings.l10n.global.behaviors.column_width,
-					label_style: "inline",
-					min: 40,
-					max: 100,
-					default_value: grid.column_width,
-					change: update_grid_data
-				}),
-				custom_padding: new Upfront.Views.Editor.Field.Number({
-					label: Upfront.Settings.l10n.global.behaviors.column_padding,
-					label_style: "inline",
-					min: 0,
-					max: 100,
-					default_value: grid.column_padding,
-					change: update_grid_data
-				}),
-				custom_baseline: new Upfront.Views.Editor.Field.Number({
-					label: Upfront.Settings.l10n.global.behaviors.baseline_grid,
-					label_style: "inline",
-					min: 5,
-					max: 100,
-					default_value: grid.baseline,
-					change: update_grid_data
-				}),
-				custom_type_padding: new Upfront.Views.Editor.Field.Number({
-					label: Upfront.Settings.l10n.global.behaviors.additional_type_padding,
-					label_style: "inline",
-					min: 0,
-					max: 100,
-					default_value: grid.type_padding,
-					change: update_grid_data
-				}),
-				floated: new Upfront.Views.Editor.Field.Checkboxes({
-					multiple: false,
-					default_value: true,
-					values: [
-						{label: Upfront.Settings.l10n.global.behaviors.allow_floats_outside_main_grid, value: true}
-					]
-				})
-			};
-
-		if ( !ed.structure_modal ){
-			ed.structure_modal = new Upfront.Views.Editor.Modal({to: $('body'), button: true, top: 120, width: 540});
-			ed.structure_modal.render();
-			$('body').append(ed.structure_modal.el);
-		}
-		// Toggle grid on
-		if ( !Upfront.Application.get_gridstate() )
-			togglegrid.on_click();
-
-		ed.structure_modal.open(function($content, $modal){
-			$modal.addClass('upfront-structure-modal');
-			_.each(fields, function(field){
-				field.render();
-				field.delegateEvents();
-			});
-			$content.html('');
-			if (Upfront.themeExporter.currentTheme === 'upfront') {
-				$content.append(fields.structure.el);
-			}
-			$content.append(fields.grid.el);
-			$recommended.append(fields.recommended_padding.el);
-			$recommended.append($grid_width);
-			$grid_wrap.append($recommended);
-			$custom.append(fields.custom_width.el);
-			$custom.append($grid_width2);
-			$custom.append(fields.custom_padding.el);
-			$custom.append(fields.custom_baseline.el);
-			$custom.append(fields.custom_type_padding.el);
-			$color_wrap.append(fields.bg_color.el);
-			$grid_wrap.append($custom);
-			$grid_wrap.append($color_wrap);
-			$content.append($grid_wrap);
-			$content.append(fields.floated.el);
-			fields.grid.trigger('changed');
-		}, ed)
-		.always(function(){
-			if ( Upfront.Application.get_gridstate() )
-				togglegrid.on_click();
-		});
-	},
-
-	/**
 	 * Update grid value and appearance
 	 */
 	update_grid: function (grid_data) {
@@ -3255,29 +3211,12 @@ var GridEditor = {
 		app.layout_view.update_grid_css();
 		this.init(); // re-init to update grid values
 
-		if (flag_update_breakpoint && Upfront.Application.get_current() == Upfront.Settings.Application.MODE.THEME) {
-			// Only do this in exporter, because that's where we're actually allowing structural changes.
+		if (
+				flag_update_breakpoint &&
+				true === Upfront.plugins.isRequiredByPlugin('update grid')
+		) {
 			breakpoint.trigger("change:enabled", breakpoint);
 		}
-	},
-
-
-	/**
-	 * Apply saved grid in layout
-	 */
-	apply_grid: function () {
-		var ed = Upfront.Behaviors.GridEditor,
-			app = Upfront.Application,
-			grid = Upfront.Settings.LayoutEditor.Grid,
-			options = app.layout.get_property_value_by_name('grid');
-		if ( !options || !options.column_widths || !options.column_widths[grid.size_name] )
-			return;
-		return ed.update_grid({
-			column_width: options.column_widths[grid.size_name],
-			column_padding: options.column_paddings[grid.size_name],
-			baseline: options.baselines[grid.size_name],
-			type_padding: options.type_paddings[grid.size_name]
-		});
 	},
 
 	/**

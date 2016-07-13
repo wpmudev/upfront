@@ -41,6 +41,7 @@ var Box = Backbone.View.extend({
 
         // this.listenTo(Upfront.Events, 'upfront:element:edit:stop', this.element_stop_prop);
         this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
+        this.listenTo(Upfront.Events, 'entity:layout:change', this.on_layout_change);
 
         Upfront.Events.off("command:layout:trash", this.trash);
         Upfront.Events.off("command:layout:save", this.publish);
@@ -288,7 +289,12 @@ var Box = Backbone.View.extend({
         $(".ueditor-display-block").removeClass("ueditor-display-block");
     },
 	save_as_publish: function() {
-		if ( !this.layout_modified ) {
+		// so we have decided to always show the dialog and later improve this
+		this.stopListening(Upfront.Events, 'command:proceed:save:post');
+		this.listenTo(Upfront.Events, 'command:proceed:save:post', this.publish);
+		Upfront.Events.trigger('command:layout:layout_changes', true);
+	
+		/* if ( !this.layout_modified ) {
 			// if no layout changes, then just publish directly
 			this.save_post();
 		} else {
@@ -296,7 +302,7 @@ var Box = Backbone.View.extend({
 			this.stopListening(Upfront.Events, 'command:proceed:save:post');
 			this.listenTo(Upfront.Events, 'command:proceed:save:post', this.publish);
 			Upfront.Events.trigger('command:layout:layout_changes', this.layout_modified);
-		}
+		} */
 	},
 	save_post: function () {
 		this.publish();
@@ -834,7 +840,13 @@ var PageTemplateEditor = PostSectionView.extend({
 			// Attach chosen select and type checkbox to template
 			this.$el.find('.upfront-page-template-chosen').html(this.templateSelect.$el);
 
-			setTimeout( function () {
+			this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
+			this.listenTo(Upfront.Events, 'entity:layout:change', this.on_layout_change);
+    },
+		
+		after_append: function () {
+			var me = this;
+			setTimeout(function() {
 				// overwriting click event on chosen.jquery.min.js
 				me.$el.find('.upfront-field-multiple input').bind('click.chosen', function(e){
 					me.stop_bubble(e);
@@ -842,24 +854,27 @@ var PageTemplateEditor = PostSectionView.extend({
 				me.$el.find('.upfront-field-multiple span.upfront-field-label-text').bind('click.chosen', function(e){
 					me.stop_bubble(e);
 				});
-
-				// Hide first Update Template / Save As
-				me.trigger('initiate:no:layout:change');
-
-				// set default value
-				if ( typeof _upfront_post_data.template_slug !== 'undefined' ) me.templateSelect.set_value(_upfront_post_data.template_slug);
-				me.prev_template_name = me.$el.find('select.upfront-chosen-select option[value="'+ _upfront_post_data.template_slug +'"]').first().text();
-
-				me.spawn_template_modal();
-				me.disable_apply_template = true;
-				me.$el.find('a.apply-post-template').css({cursor: 'default', opacity: 0.6});
-
 			}, 300);
+			
+			// toggling layout change functions
+			if ( typeof _upfront_post_data.layout_change !== 'undefined' && _upfront_post_data.layout_change === 1 ) {
+				this.on_layout_change();
+			} else {
+				this.trigger('initiate:no:layout:change');
+			}
+			// set default value
+			if ( typeof _upfront_post_data.template_slug !== 'undefined' ) this.templateSelect.set_value(_upfront_post_data.template_slug);
+			this.prev_template_name = this.$el.find('select.upfront-chosen-select option[value="'+ _upfront_post_data.template_slug +'"]').first().text();
 
-			this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
-    },
+			this.spawn_template_modal();
+			this.disable_apply_template = true;
+			this.$el.find('a.apply-post-template').css({cursor: 'default', opacity: 0.6});
+		},
 
 	initiate_no_layout_change: function() {
+		// clear flag for layout change
+		_upfront_post_data.layout_change = 0;
+		
 		this.$el.find('.chosen-container .chosen-single span').removeClass('dot');
 		this.$el.find('.upfront-page-template-description').hide();
 		this.$el.find('.upfront-page-template-action a.update-post-template').hide();
@@ -970,6 +985,8 @@ var PageTemplateEditor = PostSectionView.extend({
 		;
 		_upfront_post_data.template_slug = $select.val();
 		_upfront_post_data.template_type = template_type;
+		// clear flag for layout change
+		_upfront_post_data.layout_change = 0;
 
 		Upfront.Events.trigger("command:layout:save_meta");
 	},
@@ -980,6 +997,7 @@ var PageTemplateEditor = PostSectionView.extend({
 		if ( this.disable_update_template ) return;
 
 		_upfront_post_data.layout_action = 'update';
+		this.trigger('initiate:no:layout:change');
 
 		this.stopListening(Upfront.Events, 'page:layout:updated');
 		this.listenTo(Upfront.Events, 'page:layout:updated', this.on_page_layout_updated);
@@ -991,6 +1009,7 @@ var PageTemplateEditor = PostSectionView.extend({
 
 	reset_changes: function (e) {
 		e.preventDefault();
+		this.trigger('initiate:no:layout:change');
 		// delete current layout and load page template
 		Upfront.Events.trigger("command:layout:reset_changes");
 	},
@@ -1068,7 +1087,7 @@ var PageTemplateEditor = PostSectionView.extend({
 		_upfront_post_data.template_type = 'layout';
 		_upfront_post_data.template_slug = value;
 		_upfront_post_data.layout_action = 'save_as';
-
+		this.trigger('initiate:no:layout:change');
 		this.stopListening(Upfront.Events, 'update:page:layout:list');
 		this.listenTo(Upfront.Events, 'update:page:layout:list', this.update_template_list);
 
@@ -1109,12 +1128,14 @@ var PageTemplateEditor = PostSectionView.extend({
 			if($dot.length) return;
 
 			this.$el.find('.chosen-container .chosen-single span').addClass('dot');
+			this.$el.find('.upfront-page-template-action a.reset-post-template').hide();
+			this.$el.find('.upfront-page-template-action a.update-post-template').hide();
 
 			// show update / save as
 			var $temp_description = this.$el.find('.upfront-page-template-description'),
 				template_name = this.$el.find('select.upfront-chosen-select option[value="'+ _upfront_post_data.template_slug +'"]').text()
 			;
-
+			
 			if ( typeof _upfront_post_data.template_type !== 'undefined' && _upfront_post_data.template_type === 'page' ) {
 				this.$el.find('.upfront-page-template-action a.reset-post-template').show();
 				$temp_description.html(l10n.global.content.reset_changes_nag);
@@ -1127,6 +1148,9 @@ var PageTemplateEditor = PostSectionView.extend({
 			this.$el.find('.upfront-page-template-action a.delete-post-template').hide();
 			$temp_description.find('span.template_name').text(template_name);
 			$temp_description.show();
+			
+			// activate flag for layout change
+			_upfront_post_data.layout_change = 1;
 		}
 	},
 

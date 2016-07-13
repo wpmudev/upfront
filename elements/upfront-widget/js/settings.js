@@ -7,7 +7,7 @@ define([
 ], function (ElementSettings, RootSettingsPanel, Util, styleTpl) {
 	var l10n = Upfront.Settings.l10n.widget_element;
 
-	var current_widget = false, 
+	var current_widget = false,
 		selected_widget = false;
 
 	// Widget element's settings consist of a static settings block and a dynamic one
@@ -22,12 +22,12 @@ define([
 	var UwidgetSpecific_Settings = Upfront.Views.Editor.Settings.Item.extend({
 
 		get_title: function(){
-			for(i in Upfront.data.uwidget.widgets) {
-				
+			for(var i in Upfront.data.uwidget.widgets) {
+
 				if(Upfront.data.uwidget.widgets[i].key === selected_widget || Upfront.data.uwidget.widgets[i].key === this.model.get_property_value_by_name('current_widget'))
-					return Upfront.data.uwidget.widgets[i].name
+					return Upfront.data.uwidget.widgets[i].name;
 			}
-			
+
 			if(current_widget)
 				return current_widget;
 			else
@@ -40,18 +40,18 @@ define([
 			Upfront.Util.post(data)
 				.success(function (ret) {
 					self.model.set_property('current_widget_specific_fields', ret.data);
-								
+
 					self.$el.html('');
-				
+
 					selected_widget = widget;
 					current_widget = widget;
 
 					self.udpate_fields();
-					
+
 					self.render();
 
 					/** To enable for_view's re-rendering on widget selection from the drop down
-						This is set after the widget specific settings are available to provide their 
+						This is set after the widget specific settings are available to provide their
 						parameters to the rendering of the widget **/
 					parent.model.set_property('current_widget', widget);
 
@@ -70,7 +70,7 @@ define([
 			this.fields=_([]);
 			var specific_fields = this.model.get_property_value_by_name('current_widget_specific_fields') || this.model.get_property_value_by_name('widget_specific_fields');
 
-			for( key in specific_fields) {
+			for( var key in specific_fields) {
 				if(specific_fields[key]['type'] == 'select') {
 					this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Select({
 						model: this.model,
@@ -148,17 +148,17 @@ define([
 				panelTitle: l10n.settings,
 				presetDefaults: {
 					'id': 'default',
-					'name': l10n.default_preset,
+					'name': l10n.default_preset
 				},
 				styleTpl: styleTpl,
-				
+
 				migrateDefaultStyle: function(styles) {
 					//replace image wrapper class
 					styles = styles.replace(/(div)?\.upfront-widget\s/g, '');
 					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
 
 					return styles;
-				},
+				}
 			}
 		},
 
@@ -166,7 +166,7 @@ define([
 			selected_widget = current_widget = false;
 			// Call the super constructor here, so that the appearance panel is instantiated
 			this.constructor.__super__.initialize.call(this, opts);
-			
+
 			var widget_values = _(_.filter(Upfront.data.uwidget.widgets, function (each) {
 				return each.admin;
 			})).map(function (each) {
@@ -179,7 +179,7 @@ define([
 			var panel = new RootSettingsPanel({
 				model: this.model,
 				className: 'upfront-settings_panel_wrap widget-settings',
-				title: l10n.settings,
+				title: l10n.settings
 			});
 
 			var dynamic_settings = new UwidgetSpecific_Settings({model: this.model});
@@ -193,13 +193,13 @@ define([
 						property: 'widget',
 						values: widget_values,
 						change: function(value) {
-							
+
 							current_widget = value;
 
 							if( selected_widget !== value ) {
 								//To load widget specific settings
 								dynamic_settings.update_settings(value, this);
-								
+
 							}
 
 						}
@@ -208,15 +208,15 @@ define([
 			});
 
 			panel.settings = _([static_settings, dynamic_settings]);
-			
+
 			this.panels = _.extend({General: panel}, this.panels);
-			
+
 
 			// save widget specific fields when settings are saved, no one else will do that for you
 			// clear previous subscription to events, that could be left over when 'saved' was cliked instead of 'cancel'
 			var saveWidgetSpecificFields = function() {
 				this.model.set_property('widget_specific_fields', this.model.get_property_value_by_name('current_widget_specific_fields'));
-			}
+			};
 			// clear previous subscription to events, that could be left over when 'cancelled' was cliked instead of 'save'
 			Upfront.Events.off('element:settings:saved', saveWidgetSpecificFields);
 			// then subscribe
@@ -235,9 +235,9 @@ define([
 
 
 		},
-		
+
 		title: l10n.settings
-		
+
 	});
 
 	// Generate presets styles to page
