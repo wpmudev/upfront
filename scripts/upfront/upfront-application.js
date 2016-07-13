@@ -161,7 +161,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			})
 			.done(function () {
 				// taking care element presets
-				if( is_responsive ) Upfront.Events.trigger("element:retain:preset");
+				if( is_responsive && Upfront.Application.is_editor() ) Upfront.Events.trigger("element:retain:preset");
 			})
 		;
 	},
