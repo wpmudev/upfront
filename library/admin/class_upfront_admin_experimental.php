@@ -1,14 +1,13 @@
 <?php
 
-class Upfront_Admin_Experimental
-{
+class Upfront_Admin_Experimental extends Upfront_Admin_Page {
 
 	const FORM_NONCE_KEY = "upfront_experimental_wpnonce";
 
     const FORM_NONCE_ACTION = "upfront_experimental_save";
 
     public function __construct () {
-		if (Upfront_Permissions::current( Upfront_Permissions::SEE_USE_DEBUG )) {
+		if ($this->_can_access( Upfront_Permissions::SEE_USE_DEBUG )) {
 			add_submenu_page( "upfront", __("Experimental Features", Upfront::TextDomain),  __("Experimental", Upfront::TextDomain), 'manage_options', Upfront_Admin::$menu_slugs['experimental'], array($this, "render_page") );
 		}
 	}

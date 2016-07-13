@@ -2,43 +2,44 @@ define([
 	'elements/upfront-post-data/js/panel-abstractions',
 	'text!elements/upfront-post-data/tpl/preset-styles/author.html',
 ], function (Panel, template) {
+	var l10n = Upfront.Settings.l10n.post_data_element;
 
 	var Modules = {};
 	Modules.template = template;
 
 	Modules.part_author = Panel.Toggleable.extend({
-		title: "Author",
+		title: l10n.author.author_part_title,
 		data_part: 'author',
 		get_fields: function () {
 			return [
 				{
 					type: 'Select',
-					label: 'Display',
+					label: l10n.author.display,
 					label_style: 'inline',
 					property: 'display_name',
 					values: [
-						{label: 'Display Name', value: 'display_name'},
-						{label: 'First &amp; Last Name', value: 'first_last'},
-						{label: 'Last &amp; First Name', value: 'last_first'},
-						{label: 'Nickname', value: 'nickname'},
-						{label: 'Username', value: 'username'},
+						{label: l10n.author.display_name, value: 'display_name'},
+						{label: l10n.author.first_last, value: 'first_last'},
+						{label: l10n.author.last_first, value: 'last_first'},
+						{label: l10n.author.nickname, value: 'nickname'},
+						{label: l10n.author.username, value: 'username'},
 					]
 				},
 				{
 					type: 'Select',
-					label: 'Link To',
+					label: l10n.author.link_to,
 					label_style: 'inline',
 					property: 'link',
 					values: [
-						{label: 'Website', value: 'website'},
-						{label: 'Author page', value: 'author'}
+						{label: l10n.author.website, value: 'website'},
+						{label: l10n.author.author_page, value: 'author'}
 					]
 				},
 				{
 					type: 'Checkboxes',
 					property: 'target',
 					values: [
-						{label: 'New Tab', value: '_blank'}
+						{label: l10n.new_tab, value: '_blank'}
 					]
 				}
 			];
@@ -46,13 +47,13 @@ define([
 	});
 
 	Modules.part_author_email = Panel.Toggleable.extend({
-		title: "Email",
+		title: l10n.author.email_part_title,
 		data_part: 'author_email',
 		get_fields: function () {
 			return [
 				{
 					type: 'Text',
-					label: 'Email Text Label',
+					label: l10n.author.email_text_label,
 					label_style: 'inline',
 					default_value: 'Email',
 					property: 'email_link_text'
@@ -62,22 +63,22 @@ define([
 	});
 	
 	Modules.part_author_url = Panel.Toggleable.extend({
-		title: "URL", 
+		title: l10n.author.url_part_title, 
 		data_part: 'author_url',
 		get_fields: function () {
 			return [
 				{
 					type: 'Text',
-					label: 'Link Text',
+					label: l10n.author.link_text,
 					label_style: 'inline',
-					default_value: 'Website',
+					default_value: l10n.author.website,
 					property: 'link_text'
 				},
 				{
 					type: 'Checkboxes',
 					property: 'target',
 					values: [
-						{label: 'New Tab', value: '_blank'}
+						{label: l10n.new_tab, value: '_blank'}
 					]
 				}
 			];
@@ -85,14 +86,14 @@ define([
 	});
 
 
-	Modules.part_author_bio = Panel.Toggleable.extend({ title: "Biography", data_part: 'author_bio' });
+	Modules.part_author_bio = Panel.Toggleable.extend({ title: l10n.author.bio_part_title, data_part: 'author_bio' });
 	Modules.part_gravatar = Panel.Toggleable.extend({
-		title: "Gravatar",
+		title: l10n.author.gravatar_part_title,
 		data_part: 'gravatar',
 		get_fields: function () {
 			return [{
 				type: "Number",
-				label: "Size in px",
+				label: l10n.author.gravatar_size,
 				label_style: 'inline',
 				property: "gravatar_size"
 			}]

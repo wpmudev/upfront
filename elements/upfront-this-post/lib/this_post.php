@@ -774,25 +774,14 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
-		//add_action('wp_ajax_this_post-get_markup', array($this, "load_markup"));
 		upfront_add_ajax('this_post-get_markup', array($this, "load_markup"));
-
-		//add_action('wp_ajax_content_part_markup', array($this, "get_part_contents"));
 		upfront_add_ajax('content_part_markup', array($this, "get_part_contents"));
-
-		//add_action('wp_ajax_this_post-get_thumbnail', array($this, "get_thumbnail"));
 		upfront_add_ajax('this_post-get_thumbnail', array($this, "get_thumbnail"));
 
-		add_action('wp_ajax_upfront_save_postparttemplate', array($this, "save_part_template"));
-		add_action('wp_ajax_upfront_save_postlayout', array($this, "save_postlayout"));
+		//add_action('wp_ajax_upfront_save_postparttemplate', array($this, "save_part_template"));
+		//add_action('wp_ajax_upfront_save_postlayout', array($this, "save_postlayout"));
 
-		//add_action('wp_ajax_upfront_get_postlayout', array($this, "get_postlayout"));
 		upfront_add_ajax('upfront_get_postlayout', array($this, "get_postlayout"));
-
-		/**
-		 * No need to save image inserts separately anymore
-		 */
-//		add_action('update_postmeta', array($this, 'update_image_thumbs'), 10, 4);
 	}
 	public function get_thumbnail() {
 		$post_id = stripslashes($_POST['post_id']);
@@ -940,52 +929,6 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 		)));
 	}
 
-	public function save_part_template(){
-		$tpl = isset($_POST['tpl']) ? stripslashes($_POST['tpl']) : false;
-		$type = isset($_POST['type']) ? $_POST['type'] : false;
-		$part = isset($_POST['part']) ? $_POST['part'] : false;
-		$id = isset($_POST['id']) ? $_POST['id'] : false;
-
-		if(!$tpl || !$type || !$part || !$id)
-			$this->_out(new Upfront_JsonResponse_Error('Missing required data.'));
-
-		if($type == 'UpostsModel')
-			$type = 'archive';
-		else
-			$type = 'single';
-
-		$key = get_stylesheet() . '-parttemplates-' . $type . '-' . $id;
-
-		$templates = get_option($key);
-		if(!$templates)
-			$templates = array();
-
-		$templates[$part] = $tpl;
-
-		update_option($key, $templates);
-
-		$this->_out(new Upfront_JsonResponse_Success(array(
-			'stored' => true,
-			'key' => $key,
-			'tpl' => $tpl
-		)));
-	}
-
-	public function save_postlayout() {
-		$layoutData = isset($_POST['layoutData']) ? stripslashes_deep($_POST['layoutData']) : false;
-		$cascade = isset($_POST['cascade']) ? $_POST['cascade'] : false;
-		if(!$layoutData || !$cascade)
-			$this->_out(new Upfront_JsonResponse_Error('No layout data or cascade sent.'));
-
-		$key = get_stylesheet() . '-postlayout-' . $cascade;
-
-		update_option($key, $layoutData);
-
-		$this->_out(new Upfront_JsonResponse_Success(array(
-			"key" => $key,
-			"layoutData" => $layoutData
-		)));
-	}
 	/**
 	 * Loads all the data needed for a single post to be edited.
 	 * @return null

@@ -30,7 +30,7 @@ define([
 
 			this.setup();
 		},
-		
+
 		reloadItems: function() {
 			this.setup();
 			this.render();
@@ -117,8 +117,9 @@ define([
 						});
 					});
 					me.model.set_property('menu_items', response.data, true);
-					me.model.trigger('change'); // do not trigger change on this.model.get('properties') it will cause endless recursion
-																			// this is needed for menu element to re-render on item position change
+					if (me.model.id)
+						me.model.trigger('change'); // do not trigger change on this.model.get('properties') it will cause endless recursion
+																				// this is needed for menu element to re-render on item position change
 					me.render();
 					me._drop_promise(args); // And pop it off the stack once we're done
 				})
@@ -142,12 +143,12 @@ define([
 			_.each(this.menuItemViews, function(view) {
 				$body.append(view.render().el);
 			});
-			
+
 			/**
-			 * This will scroll the panel down to the position of the newly added menu item i.e., 
+			 * This will scroll the panel down to the position of the newly added menu item i.e.,
 			 * at the bottom of the list
 			 */
-			 
+
 			if(scrollDown) {
 
 				// Scroll down to where the new menu item has been added.
@@ -420,7 +421,7 @@ define([
 			}).done(
 
 					function(response) {
-						
+
 						newItem['menu-item-db-id'] = response.data.itemId;
 						newItem['menu-item-object-id'] = response.data.itemId + '';
 
@@ -434,8 +435,8 @@ define([
 							me.model.get('properties').trigger('change');
 
 							/**
-							 * This will flag the settings panel to scroll down 
-							 * to the position of the newly added menu item i.e., 
+							 * This will flag the settings panel to scroll down
+							 * to the position of the newly added menu item i.e.,
 							 * at the bottom of the list
 							 */
 							scrollDown = true;

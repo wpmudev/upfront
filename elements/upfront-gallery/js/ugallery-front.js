@@ -22,7 +22,7 @@ jQuery(function($){
 		thumbBottomPadding = gallery.data('thumb-bottom-padding') ? gallery.data('thumb-bottom-padding') : 0;
 		thumbPaddingData = gallery.data('thumb-padding');
 		lockPadding = gallery.data('thumb-lock-padding');
-		
+
 		if(typeof lockPadding === 'undefined' || lockPadding === "") {
 			sidePadding = thumbSidePadding;
 			bottomPadding = thumbBottomPadding;
@@ -37,10 +37,10 @@ jQuery(function($){
 		if (itemsTotalWidth > container) {// But check if got too much
 			columns--;
 		}
-		
+
 		items.each(function(item_index) {
 			var $this = $(this);
-			
+
 			if (absolute) {
 				// Set top margin for all thumbs that are not in first row
 				if (item_index + 1 > columns && bottomPadding) {
@@ -124,10 +124,10 @@ jQuery(function($){
 		Upfront.frontFunctions.galleryBindShuffle = bindShuffle;
 	});
 
-	/** 
-		The following is being done so that the gallery 
-		items inside a lightbox can shuffle after 
-		the lightbox shows up, in order to expand 
+	/**
+		The following is being done so that the gallery
+		items inside a lightbox can shuffle after
+		the lightbox shows up, in order to expand
 		around in the available space
 	**/
 	$(document).on('upfront-lightbox-open', function() {
@@ -199,6 +199,10 @@ jQuery(function($){
 		var markup, gallery, magOptions;
 		markup = '<div class="mfp-close">&times;</div><div class="glb-content-container"><figure class="glb-image-container"><div class="mfp-img"></div></figure><div class="glb-caption-container"><div class="mfp-title"></div><div class="mfp-counter"></div></div></div>';
 
+		var cleanUpMfpBg = function() {
+			$('.mfp-ready.mfp-bg').removeAttr('style');
+		};
+
 		for (var galleryId in ugalleries) {
 			var data = $('#' + galleryId).find('.ugallery').data(),
 				gallery = false,
@@ -223,12 +227,13 @@ jQuery(function($){
 					open: function() {
 						setupLightbox(galleryId);
 						resizeMFP();
-					}
+					},
+					close: cleanUpMfpBg
 				};
 				magOptions.closeOnBgClick = data.lightboxClickOutClose;
 				gallery.magnificPopup(magOptions);
 			} else {
-				var gallery = $('#' + galleryId).find('.ugallery_lightbox_link'),
+				gallery = $('#' + galleryId).find('.ugallery_lightbox_link'),
 				magOptions = {
 					closeOnBgClick: data.lightboxClickOutClose,
 					type: 'image',

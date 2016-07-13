@@ -57,6 +57,20 @@ var Views = {
 			if ( this.element.postDate ) {
 				data.post_date = this.element.postDate;
 			}
+			if ( data_type == 'featured_image' && this.element.full_featured_image ) {
+				data.selected_featured_image = this.element.full_featured_image;
+			}
+			if ( data_type == 'post_data' && this.element.set_post_title ) {
+				data.set_post_title = this.element.set_post_title;
+			}
+			if ( data_type == 'post_data' && this.element.set_post_content ) {
+				data.set_post_content = this.element.set_post_content;
+			}
+
+			// Let's notify all part views that we are currently loading
+			// This will disable editing until all part views is updated
+			this.element.toggle_child_objects_loading(true);
+			
 			this._post_data_load = Upfront.Util
 				.post({
 					action: "upfront_post-data-load",
@@ -78,12 +92,16 @@ var Views = {
 							.append(me.tpl.error({l10n: l10n}))
 							.removeClass('upfront_post-data-loading');
 					}
+					// Notify all part views that we have finished loading
+					me.element.toggle_child_objects_loading(false);
 				})
 				.error(function () {
 					me.$el
 						.empty()
 						.append(me.tpl.error({l10n: l10n}))
 						.removeClass('upfront_post-data-loading');
+					// Notify all part views that we have finished loading
+					me.element.toggle_child_objects_loading(false);
 				})
 			;
 			this.$el

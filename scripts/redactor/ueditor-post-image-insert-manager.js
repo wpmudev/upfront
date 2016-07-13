@@ -104,7 +104,8 @@ var PostImageInsert_Manager = base.ImageInsertBase.extend({
 
         imageData.style = this._findVariant(shortcode_data.get("uf_variant")).toJSON();
 
-        imageData.style.caption.show =  shortcode_data.get("uf_show_caption");
+        imageData.show_caption = parseInt(shortcode_data.get("uf_show_caption"), 10);
+        imageData.style.caption.show =  parseInt(shortcode_data.get("uf_show_caption"), 10);
 
 
         imageData.variant_id = imageData.style.vid;

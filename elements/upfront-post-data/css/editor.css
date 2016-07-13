@@ -124,7 +124,7 @@
 	background-position: -43px -145px;
 }
 
-[data-fallback="color"], [data-fallback="hide"] {
+.upostdata-part.thumbnail[data-fallback="color"], .upostdata-part.thumbnail[data-fallback="hide"] {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -230,33 +230,45 @@ div.preset-manager-panel .upfront-post_data-part.part-module-panel .edit_preset_
 
 /* Parts styles! */
 
-	/* Post Data - Date */
-	div.preset-manager-panel .upfront-post_data-part.part-module-panel .php_date_format {
-		float: left;
-		width: 50%;
-	}
-	div.preset-manager-panel .upfront-post_data-part.part-module-panel .php_date_reference {
-		float: left;
-		width: 50%;
-		padding-top: 30px;
-		padding-left: 10px;
-		text-decoration: underline;
-		color: rgb(0, 206, 141);
-		font-size: 13px;
-	}
+/* Post Data - Date */
+div.preset-manager-panel .upfront-post_data-part.part-module-panel .php_date_format {
+	float: left;
+	width: 50%;
+}
+div.preset-manager-panel .upfront-post_data-part.part-module-panel .php_date_reference {
+	float: left;
+	width: 50%;
+	padding-top: 30px;
+	padding-left: 10px;
+	text-decoration: underline;
+	color: rgb(0, 206, 141);
+	font-size: 13px;
+}
 
-	/* Post Data - Contents */
-	div.preset-manager-panel .upfront-post_data-part.part-module-panel .content-indent {
-		width: 40%;
-		display: inline-block;
-	}
-	div.preset-manager-panel .upfront-post_data-part.part-module-panel .content-indent input {
-		max-width: 4em;
-	}
-	
-	div.preset-manager-panel .comments-pagination_warning {
-		padding-top: 10px;
-	}
-	div.preset-manager-panel .comments-pagination_warning input {
-		display: none;
-	}
+/* Post Data - Contents */
+div.preset-manager-panel .upfront-post_data-part.part-module-panel .content-indent {
+	width: 40%;
+	display: inline-block;
+}
+div.preset-manager-panel .upfront-post_data-part.part-module-panel .content-indent input {
+	max-width: 4em;
+}
+
+div.preset-manager-panel .comments-pagination_warning {
+	padding-top: 10px;
+}
+div.preset-manager-panel .comments-pagination_warning input {
+	display: none;
+}
+
+/* Post Data - Featured Image */
+
+.upostdata-part.thumbnail {
+	overflow: hidden;
+	height: auto;
+}
+
+.upostdata-part.thumbnail img {
+	position: relative;
+	z-index: 2;
+}

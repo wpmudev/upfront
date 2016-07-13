@@ -212,7 +212,7 @@ class Upfront {
 		/**
 		 * Todo Sam: make it cleaner
 		 */
-		wp_enqueue_script("wp_shortcode", "/wp-includes/js/shortcode.js", array("jquery", "underscore"));
+		wp_enqueue_script("wp_shortcode", "/wp-includes/js/shortcode.js", array("underscore"));
 	}
 
 	function inject_global_dependencies () {

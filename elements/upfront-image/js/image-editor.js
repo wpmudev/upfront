@@ -278,7 +278,7 @@ define([
 		setDotAlignment: function() {
 			this.higlighActiveDot();
 			
-			if(this.isDotAlign === true) {
+			if(!!this.isDotAlign === true) {
 				this.setAlign(this.align, this.valign);
 			}
 		},
@@ -288,7 +288,7 @@ define([
 			this.$el.find('.image-align-point').removeClass('active-alignment-point');
 			
 			//Highlight the active dot if isDotAlign true
-			if(typeof this.isDotAlign !== "undefined" && this.isDotAlign === true) {
+			if(typeof this.isDotAlign !== "undefined" && !!this.isDotAlign === true) {
 				var activeDot = this.$el.find('.'+ this.valign +'-'+ this.align +'-point');
 
 				if(activeDot.length) {
@@ -812,6 +812,9 @@ define([
 			limitLeft = limits[2],
 			limitTop = limits[3];
 			
+			// If image cant be dragged return
+			if(limitRight === limitLeft && limitBottom === limitTop) return;
+
 			// Image is top left
 			if(limitLeft === left && limitTop === top) {
 				this.setDotAlignPosition('top', 'left');

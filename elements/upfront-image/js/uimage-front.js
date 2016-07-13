@@ -1,7 +1,6 @@
 jQuery(function($){
 	if(typeof uimages != 'undefined'){
 		var resizeWithText = function() {
-			console.log('Resizing!!');
 			var caption = this.content.find('figcaption'),
 				maxHeight = this.wH - 120 - caption.outerHeight(),
 				maxWidth = $(window).width() - 200
@@ -14,7 +13,7 @@ jQuery(function($){
 		};
 
 		/**
-		 * re-Resize Magnific Popup 100ms after MFP open (iPhone issue) 
+		 * re-Resize Magnific Popup 100ms after MFP open (iPhone issue)
 		 */
 		var resizeMFP = function() {
 			if(/i(Pad|Phone|Pod)/g.test(navigator.userAgent))

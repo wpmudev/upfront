@@ -110,8 +110,8 @@ class Upfront_UimageView extends Upfront_Object {
 			);
 			$markup .= '
 				<script type="text/javascript">
-					if(typeof ugallery == "undefined")
-						uimages = [];
+					if(typeof uimages == "undefined")
+						uimages = {};
 					uimages["' . $data['element_id'] . '"] = ' . json_encode($magnific_options) . ';
 				</script>
 			';

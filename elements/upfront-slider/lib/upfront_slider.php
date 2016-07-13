@@ -9,8 +9,10 @@ class Upfront_UsliderView extends Upfront_Object {
 	public function get_markup () {
 		$data = $this->properties_to_array();
 		$slides = array();
-		foreach($data['slides'] as $slide){
-			$slides[] = array_merge(self::slide_defaults(), $slide);
+		if ( isset($data['slides']) && $data['slides'] ) {
+			foreach($data['slides'] as $slide){
+				$slides[] = array_merge(self::slide_defaults(), $slide);
+			}
 		}
 
 		if (isset($data['usingNewAppearance']) === false) {
@@ -92,7 +94,7 @@ class Upfront_UsliderView extends Upfront_Object {
 			'has_settings' => 1,
 			'preset' => 'default',
 
-			'primaryStyle' => 'notext', // notext, below, over, side, onlytext
+			'primaryStyle' => 'default', // notext, below, over, side, onlytext
 
 			/* TO BE DEPRECATED, it is moved inside the slide */
 			'style' => 'bottomOver', // nocaption, below, above, right, bottomOver, topOver, bottomCover, middleCover, topCover
@@ -218,6 +220,7 @@ class Upfront_UsliderView extends Upfront_Object {
 			'choose_type' => __('Please choose the type of slider', 'upfront'),
 			'can_change' => __('This can later be changed via the settings panel', 'upfront'),
 			'img_only' => __('img only', 'upfront'),
+			'default' => __('default', 'upfront'),
 			'txt_over_img' => __('txt over img', 'upfront'),
 			'txt_below_img' => __('txt below img', 'upfront'),
 			'txt_on_side' => __('txt on the side', 'upfront'),

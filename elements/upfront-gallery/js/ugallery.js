@@ -213,6 +213,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		});
 		this. debouncedRender = _.debounce(this.render, 300);
 		this.debouncedRebindShuffle = _.debounce(this.rebindShuffleForDebouncing, 500);
+		this.delegateEvents();
 	},
 	onThumbChangeProportions: function(e) {
 		var factor = this.property('thumbProportions'),

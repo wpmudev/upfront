@@ -4,11 +4,18 @@
 	color: #476d8a;
 }
 #upfront-taxonomy-list {
-	max-height: 200px;
+	max-height: 150px;
 }
 #upfront-taxonomy-list label {
 	clear:right;
 	margin-bottom: 10px;
+}
+
+/* For Firefox fallback */
+#upfront-taxonomy-list label:before {
+	vertical-align: middle;
+	right: initial;
+	margin-right: 3px;
 }
 
 #upfront-taxonomy-add input#upfront-new_term,
@@ -20,10 +27,17 @@
 	width: 100%;
 }
 
+/* have to overwrite what's set on #sidebar-ui .upfront-tax-new_term (_editor-box.scss:80) */
+#upfront-taxonomy-add input.upfront-tax-new_term {
+	width: 77% !important;
+}
+#upfront-taxonomy-add button.ueditor-button-small {
+	vertical-align: top;
+}
+
 .upfront-taxonomy-hierarchical .upfront-taxonomy_item {
-	padding-left: 1em;
 	float: left;
-	margin: 0 0 10px;
+	margin: 0px;
     clear: both;
 }
 .upfront-taxonomy-hierarchical .upfront-taxonomy_item input {
@@ -32,7 +46,7 @@
 .upfront-taxonomy-hierarchical .upfront-taxonomy_item .upfront-taxonomy_item {
 	clear:left;
 	width: 100%;
-	padding: 10px 0 0 10px;
+	padding: 3px 0 0 10px;
 	margin: 0 0 0 7px;
 }
 
@@ -47,7 +61,7 @@
 }
 
 .upfront-taxonomy-list-panel i {
-	margin: 10px 3px 0 0;
+	margin: 3px 3px 0 0;
 	display: block;
 	background-image: url(../img/uf-ui-sprite.svg);
 	height: 20px;

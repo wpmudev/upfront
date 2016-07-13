@@ -1,7 +1,7 @@
 (function ($) {
 define([
 	"scripts/upfront/link-model",
-	"text!scripts/upfront/templates/link-panel.html",
+	"text!scripts/upfront/templates/link-panel.html"
 ], function(LinkModel, linkPanelTpl) {
 
 	var getAnchors = function() {
@@ -92,7 +92,7 @@ define([
 		visit_lightbox: function(e) {
 			e.preventDefault();
 			var url = $(e.target).attr('href');
-			
+
 			// if there is no url defined, no point going forward
 			if(!url || url==='')
 				return;
@@ -108,10 +108,10 @@ define([
 				var regionview = Upfront.data.region_views[region.cid];
 				regionview.show();
 			}
-			
+
 		},
 		getUrlanchor: function(url) {
-			if(typeof(url) == 'undefined') var url = $(location).attr('href');
+			if(typeof(url) == 'undefined') url = $(location).attr('href');
 
 			if(url.indexOf('#') >=0) {
 				var tempurl = url.split('#');
@@ -152,7 +152,7 @@ define([
 				this.createLightBox();
 			} else {
 				this.close();
-				this.model.trigger("change")
+				this.model.trigger("change");
 			}
 			//this.trigger('change', this.model);
 		},
@@ -270,12 +270,12 @@ define([
 			});
 
 			Upfront.Application.LayoutEditor.createLightboxRegion(name);
-			// this is required to send a 'dontflag' to the editor, 
+			// this is required to send a 'dontflag' to the editor,
 			// because the lightbox is created
 			// after the link is saved in the text.
-			// triggering the change again will refresh the editor's state 
+			// triggering the change again will refresh the editor's state
 			// and get rid of missing link flag
-			this.model.trigger("change", true); 
+			this.model.trigger("change", true);
 			this.render();
 		},
 
