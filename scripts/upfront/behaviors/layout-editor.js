@@ -876,6 +876,64 @@ var LayoutEditor = {
 			'global-region-manager'
 		);
 	},
+	
+	open_theme_fonts_manager: function() {
+		var me = {};
+		var textFontsManager = new Upfront.Views.Editor.Fonts.Text_Fonts_Manager({ collection: Upfront.Views.Editor.Fonts.theme_fonts_collection });
+		textFontsManager.render();
+		// Only enable font icon manager on builder for now
+		if (Upfront.Application.mode.current === Upfront.Application.MODE.THEME) {
+			var iconFontsManager = new Upfront.Views.Editor.Fonts.Icon_Fonts_Manager({collection: Upfront.Views.Editor.Fonts.icon_fonts_collection});
+			iconFontsManager.render();
+		}
+
+		var popup = Upfront.Popup.open(
+			function (data, $top, $bottom) {
+				var $me = $(this);
+				$me.empty()
+					.append('<p class="upfront-popup-placeholder">' + Upfront.Settings.l10n.global.behaviors.loading_content + '</p>');
+
+				me.$popup = {
+					"top": $top,
+					"content": $me,
+					"bottom": $bottom
+				};
+			},
+			{
+				width: 750
+			},
+			'font-manager-popup'
+		);
+
+		me.$popup.top.html(
+			'<ul class="upfront-tabs">' +
+				'<li id="theme-text-fonts-tab" class="active">' + Upfront.Settings.l10n.global.behaviors.theme_text_fonts + '</li>' +
+				(Upfront.Application.mode.current === Upfront.Application.MODE.THEME ? '<li id="theme-icon-fonts-tab">' + Upfront.Settings.l10n.global.behaviors.theme_icon_fonts + '</li>' : '') +
+			'</ul>' +
+			me.$popup.top.html()
+		);
+
+		me.$popup.top.on('click', '#theme-text-fonts-tab', function(event) {
+			me.$popup.content.html(textFontsManager.el);
+			$('#theme-icon-fonts-tab').removeClass('active');
+			$('#theme-text-fonts-tab').addClass('active');
+			$('.theme-fonts-ok-button').css('margin-top', '30px');
+		});
+
+		me.$popup.top.on('click', '#theme-icon-fonts-tab', function() {
+			me.$popup.content.html(iconFontsManager.el);
+			$('#theme-text-fonts-tab').removeClass('active');
+			$('#theme-icon-fonts-tab').addClass('active');
+			$('.theme-fonts-ok-button').css('margin-top', 0);
+		});
+
+		me.$popup.bottom.append('<a class="theme-fonts-ok-button">' + Upfront.Settings.l10n.global.behaviors.ok + '</a>');
+		me.$popup.content.html(textFontsManager.el);
+		textFontsManager.set_ok_button(me.$popup.bottom.find('.theme-fonts-ok-button'));
+		me.$popup.bottom.find('.theme-fonts-ok-button').on('click', function() {
+			Upfront.Popup.close();
+		});
+	},
 
 	_refresh_global_regions: function () {
 		return Upfront.Util.post({

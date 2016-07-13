@@ -118,6 +118,9 @@ define([
 		apply_paddings: function () {
 			return false;
 		},
+		retain_current_preset: function () {
+			return false;
+		},
 		_is_applying: function (from_view) {
 			if (this.parent_view && this.parent_view == from_view) return true;
 			if (this.parent_module_view && this.parent_module_view.parent_view && this.parent_module_view.parent_view == from_view) return true;

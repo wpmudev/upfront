@@ -1699,6 +1699,7 @@ define([
 				}
 			},
 			retain_current_preset: function () {
+				if ( !this.model.has_property('preset') ) return false;
 				var me = this,
 					currentPreset = this.model.get_property_value_by_name('current_preset') || 'default',
 					post_id = ( typeof _upfront_post_data.post_id !== 'undefined' ) ? _upfront_post_data.post_id : false,
