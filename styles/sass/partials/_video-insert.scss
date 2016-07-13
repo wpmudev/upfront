@@ -24,7 +24,7 @@
 	min-width: 122px;
 	width: 100%;
 	font-size: 0.8em;
-	padding: 10px 20px 10px 10px;
+	padding: 10px 10px 10px 10px;
 	margin-top: 16px;
 	background-color: rgba(242,249,255,1);
 	color: #ADADAD;
@@ -33,4 +33,11 @@
 	z-index: 2000000000000;
 	right: 96px;
 	position: relative;
+	text-align: right;
+}
+.video-insert-controls-panel > div {
+	margin-bottom: 10px;
+}
+.video-insert-controls-panel .upfront_toggle {
+	margin-left: 10px;
 }
