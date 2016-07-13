@@ -564,10 +564,10 @@ class Upfront_MediaServer extends Upfront_Server {
 						@unlink("{$pfx}{$filename}");
 						$this->_out(new Upfront_JsonResponse_Error("Error uploading the media item: {$media->error}"));
 				}
-				
+
 				$filename = $media->name;
-				
-				if(!preg_match('/\.(jpg|jpeg|gif|svg|png)$/i', $filename)) {
+
+				if(!preg_match('/\.(jpg|jpeg|gif|svg|png|mp4)$/i', $filename)) {
 					// We have an error happening!
 					@unlink("{$pfx}{$filename}");
 					$this->_out(new Upfront_JsonResponse_Error("Sorry, this file type is not permitted for security reasons."));
@@ -617,7 +617,7 @@ function upfront_media_file_upload () {
 		$deps->add_script("{$base_url}/build/file_upload/jquery.iframe-transport.js");
 	}
 
-	
+
 	echo '<script>var _upfront_media_upload=' . json_encode(array(
 		'normal' => Upfront_UploadHandler::get_action_url('upfront-media-upload'),
 		'theme' => Upfront_UploadHandler::get_action_url('upfront-media-upload-theme-image'),

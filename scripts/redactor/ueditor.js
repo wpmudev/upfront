@@ -50,18 +50,18 @@ $.fn.ueditor = function(options){
 };
 
 var hackRedactor = function(){
-    
+
     /*
     // Deprecated, moved to override methods
     var clean = $.Redactor.prototype.clean();
-    
+
     clean.savePreFormatting = function(html) {
         return html;
     };
 
    $.Redactor.prototype.clean = function () { return clean };
    */
-    
+
 	// Make click consistent
 	$.Redactor.prototype.airBindHide = function () {
 		if (!this.opts.air || !this.$toolbar) return;
@@ -779,7 +779,7 @@ var hackRedactor = function(){
     var l10n = Upfront.Settings && Upfront.Settings.l10n
         ? Upfront.Settings.l10n.global.ueditor
         : Upfront.mainData.l10n.global.ueditor
-    ; 
+    ;
 
     /**
      * Proxy the Redactor l10n
@@ -828,7 +828,7 @@ var Ueditor = function($el, options) {
 			observeLinks: false,
 			observeImages: false,
 			formattingTags: ['h1', 'h2', 'h3', 'h4', 'p', 'pre'],
-            inserts: Upfront.Settings.Application.PERMS.EMBED ? ["image", "embed"] : ["image"],
+            inserts: Upfront.Settings.Application.PERMS.EMBED ? ["image", "embed", "video"] : ["image", "video"],
             linkTooltip: false,
             cleanOnPaste: true, // font icons copy and paste wont work without this set to true - BUT, with it set to true, paste won't work AT ALL!!!
             replaceDivs: false,
@@ -922,8 +922,8 @@ var Ueditor = function($el, options) {
 
 
 
-    // Enter callback inside lists 
-    this.options.enterCallback = function (e) { 
+    // Enter callback inside lists
+    this.options.enterCallback = function (e) {
         // Current Block is a list item
         if(this.keydown.block.tagName === 'LI') {
             var current = this.selection.getCurrent(),
@@ -935,9 +935,9 @@ var Ueditor = function($el, options) {
 
             // Sublist to list
             if (
-                $parent.length !== 0 && 
+                $parent.length !== 0 &&
                 $listlist.length !== 0 &&
-                this.utils.isEmpty($parent.html()) && 
+                this.utils.isEmpty($parent.html()) &&
                 $list.next().length === 0
             ) {
                 var node = $(emptyList);
@@ -949,8 +949,8 @@ var Ueditor = function($el, options) {
             }
             // List to paragraph
             else if (
-                $parent.length !== 0 && 
-                this.utils.isEmpty($parent.html()) && 
+                $parent.length !== 0 &&
+                this.utils.isEmpty($parent.html()) &&
                 $list.next().length === 0
             ) {
                 var node = $(this.opts.emptyHtml);
@@ -960,7 +960,7 @@ var Ueditor = function($el, options) {
 
                 return false;
             }
-            // List 
+            // List
             else {
                 UeditorEvents.trigger("ueditor:enter", this, e);
             }
@@ -982,7 +982,7 @@ var Ueditor = function($el, options) {
             }
         }
         // Default
-        else {        
+        else {
             UeditorEvents.trigger("ueditor:enter", this, e);
         }
 
@@ -1140,7 +1140,7 @@ Ueditor.prototype = {
 
         caret = redactor.caret.getOffsetOfElement(node);
         if (!caret) return;
-        
+
         $el = $(node).clone();
         check = $el.text().substr(0, caret);
 
@@ -1163,7 +1163,7 @@ Ueditor.prototype = {
             if ("nest" in target && target.nest) {
                 $node.html(
                     '<' + target.tag + '><' + target.nest + '>' +
-                        text + 
+                        text +
                     '</' + target.nest + '></' + target.tag + '>'
                 );
             } else {
@@ -1417,6 +1417,11 @@ Ueditor.prototype = {
 		$("html").on('mousedown', {ueditor : me}, this.stopOnOutsideClick);
 	},
 	stopOnOutsideClick: function(e){
+		// Flag that should prevent redactor closing when unwanted, such as when clicking in image selector.
+		// Flag should be managed by the element that is using redactor, has to be set and unset when needed
+		// to keep proper functionality.
+		if (Upfront.preventRedactorStopOnOutsideClick === true) return;
+
 		if( !( $(e.target).hasClass("redactor_box")
 				|| $(e.target).parents().hasClass("redactor-box")
 				|| $(e.target).parents().hasClass("redactor_air")
@@ -1427,7 +1432,7 @@ Ueditor.prototype = {
 				|| $(e.target).parents().hasClass("redactor-dropdown"))
 			&& $(e.target).parents("#upfront-popup.upfront-postselector-popup").length === 0)
 		{
-            if(e.data.ueditor.$el.closest('a.menu_item').length > 0) { // blur on the menu item, dont stop the editor yet 
+            if(e.data.ueditor.$el.closest('a.menu_item').length > 0) { // blur on the menu item, dont stop the editor yet
                 e.data.ueditor.$el.trigger('blur');
             }
             else {
@@ -1611,11 +1616,11 @@ var InsertManagerInserts = Backbone.View.extend({
     className: "ueditor-post-insert-manager",
     $block: false,
     initialize: function(options){
-		
+
         if ( options.inserts && options.inserts.constructor === Array && !Upfront.Settings.Application.PERMS.EMBED ) {
 					options.inserts = _.without(options.inserts, "embed");
         }
-		
+
         this.insertsData = options.insertsData || {};
         this.inserts = options.inserts || {};
         this.redactor = options.redactor;
@@ -1685,18 +1690,18 @@ var InsertManagerInserts = Backbone.View.extend({
 
                     if(self.redactor.$element.find(self.$block).length < 1) {
 /*                        if(self.redactor.$element.hasClass('redactor-placeholder')) {
-                    
+
                             var f = jQuery.Event("keydown");
                             f.which = 65;
                             f.keyCode = 65;// # Some key code value
-                              
-                            
-                            
+
+
+
                             self.redactor.$element.trigger(f);
 
                         }
 */
-                        self.redactor.$element.append(self.$block);  
+                        self.redactor.$element.append(self.$block);
                     }
 
                     self.$block.replaceWith(insert.$el);

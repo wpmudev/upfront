@@ -1,0 +1,36 @@
+.video-insert-controls {
+	width: 26px;
+	height: 18px;
+  background-image: url('../img/uf-core-el-sprite.svg');
+	border-radius: 3px;
+	background-position: -287px -491px;
+	background-color: rgba(242,249,255,1);
+	position: absolute;
+	top: 15px;
+	left: 15px;
+	display: none;
+	cursor: pointer;
+}
+
+.uinsert-video-insert {
+	background: #eee;
+}
+.uinsert-video-insert:hover .video-insert-controls,
+.video-insert-controls.video-insert-controls-expanded {
+	display: block;
+}
+.video-insert-controls-panel {
+	display: none;
+	min-width: 122px;
+	width: 100%;
+	font-size: 0.8em;
+	padding: 10px 20px 10px 10px;
+	margin-top: 16px;
+	background-color: rgba(242,249,255,1);
+	color: #ADADAD;
+	box-shadow: 0px 2px 10px 0px rgba(34,50,64,1);
+	border: none;
+	z-index: 2000000000000;
+	right: 96px;
+	position: relative;
+}
