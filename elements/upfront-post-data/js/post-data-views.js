@@ -29,7 +29,7 @@ var Util = {
 };
 
 var Views = {
-	
+
 	DEFAULT: 'post_data',
 
 	_view: Backbone.View.extend({
@@ -51,12 +51,30 @@ var Views = {
 				}
 			;
 
+			if (false === data.post_id && Upfront.Application.is_builder) {
+				data.post_id = 'fake_post';
+			}
+
 			if ( this.element.authorId ) {
 				data.author_id = this.element.authorId;
 			}
 			if ( this.element.postDate ) {
 				data.post_date = this.element.postDate;
 			}
+			if ( data_type == 'featured_image' && this.element.full_featured_image ) {
+				data.selected_featured_image = this.element.full_featured_image;
+			}
+			if ( data_type == 'post_data' && this.element.set_post_title ) {
+				data.set_post_title = this.element.set_post_title;
+			}
+			if ( data_type == 'post_data' && this.element.set_post_content ) {
+				data.set_post_content = this.element.set_post_content;
+			}
+
+			// Let's notify all part views that we are currently loading
+			// This will disable editing until all part views is updated
+			this.element.toggle_child_objects_loading(true);
+
 			this._post_data_load = Upfront.Util
 				.post({
 					action: "upfront_post-data-load",
@@ -72,18 +90,22 @@ var Views = {
 							.empty()
 							.removeClass('upfront_post-data-loading');
 					}
-					else { 
+					else {
 						me.$el
 							.empty()
 							.append(me.tpl.error({l10n: l10n}))
 							.removeClass('upfront_post-data-loading');
 					}
+					// Notify all part views that we have finished loading
+					me.element.toggle_child_objects_loading(false);
 				})
 				.error(function () {
 					me.$el
 						.empty()
 						.append(me.tpl.error({l10n: l10n}))
 						.removeClass('upfront_post-data-loading');
+					// Notify all part views that we have finished loading
+					me.element.toggle_child_objects_loading(false);
 				})
 			;
 			this.$el
@@ -91,7 +113,7 @@ var Views = {
 				.append(this.tpl.load({l10n: l10n}))
 				.addClass('upfront_post-data-loading');
 		},
-		
+
 		/**
 		 * Re-render with the same cached data
 		 * @param {Array} only_objects
@@ -104,7 +126,7 @@ var Views = {
 				this.render();
 			}
 		},
-		
+
 		/**
 		 * Render the child object view
 		 * @param {Object} data
@@ -123,13 +145,13 @@ var Views = {
 				Upfront.Events.trigger('entity:object:refresh', view);
 			});
 		},
-		
+
 		tpl: {
 			main: _.template($template.filter("#post-data").html()),
 			error: _.template($template.filter("#error").html()),
 			load: _.template($template.filter("#loading").html())
 		}
-	}),
+	})
 
 };
 

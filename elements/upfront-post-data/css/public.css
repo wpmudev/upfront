@@ -12,16 +12,24 @@
 }
 .upostdata-part.thumbnail {
     overflow: hidden;
+    margin-bottom: 0;
 }
-.upostdata-part.thumbnail img {
+.upostdata-part.thumbnail img,
+.upfront-editable_entity .upostdata-part.thumbnail img{
     display: block;
-    max-width: 100%;
+    /* max-width: 100%; */
     max-height: none;
     height: auto;
-    margin: 0 auto;
 }
-.upostdata-part.thumbnail[data-resize="1"] img {
+.upostdata-part.thumbnail .upfront-featured-image-smaller {
+	position: relative;
+}
+.upostdata-part.thumbnail[data-resize="1"] img,
+.upfront-editable_entity .upostdata-part.thumbnail[data-resize="1"] img{
     max-width: none;
+}
+.uf-responsive .upostdata-part.thumbnail img {
+    max-width: 100%;
 }
 
 /* Hide the fallback image */

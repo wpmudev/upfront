@@ -22,7 +22,7 @@ define([
 			'click .upfront-css-selector': 'addSelector',
 			'click .upfront-css-type' : 'scrollToElement',
 			'mouseenter .upfront-css-selector': 'hiliteElement',
-			'mouseleave .upfront-css-selector': 'unhiliteElement',
+			'mouseleave .upfront-css-selector': 'unhiliteElement'
 		},
 		//elemenTypes' element id matches model's 'id_slug' attribute
 		elementTypes: {
@@ -46,7 +46,7 @@ define([
 			ThisPostModel: {label: l10n.post, id: 'this_post'},
 			UwidgetModel: {label: l10n.widget, id: 'widget'},
 			UyoutubeModel: {label: l10n.youtube, id: 'youtube'},
-			PlainTxtModel: {label: l10n.text, id:'text', preset_container: 'inline'},
+			PlainTxtModel: {label: l10n.text, id:'text', preset_container: 'inline'}
 		},
 		postElementTypes: {
 			post_data: {label: l10n.post_data, id: 'post_data'},
@@ -96,12 +96,12 @@ define([
 			this.createSelectors(Upfront.Application.LayoutEditor.Objects);
 
 			this.selectors = this.elementSelectors[this.modelType] || {};
-			
+
 			if(this.modelType === "PostDataModel") {
 				this.elementType = this.postElementTypes[this.dataPartType] || {label: l10n.post_data, id: 'post_data'};
 				this.selectors = this.elementSelectors['post_' + this.dataPartType] || {};
 			}
-			
+
 			this.element_id = options.element_id ? options.element_id : this.model.get_property_value_by_name('element_id');
 
 			if ( typeof options.change == 'function' ) this.listenTo(this, 'change', options.change);
@@ -335,7 +335,7 @@ define([
 			Upfront.Media.Manager.open(options).done(function(popup, result){
 				Upfront.Events.trigger('upfront:element:edit:stop');
 				if (!result) return;
-				if ( result.length == 0 ) return;
+				if ( 0 === result.length ) return;
 
 				var imageModel = result.models[0],
 					img = imageModel.get('image') ? imageModel.get('image') : result.models[0],
@@ -460,18 +460,14 @@ define([
 					src[1] + // Actual rule
 				'\n}\n';
 			});
+
+			// Handle closing comments being omitted from the processed string
+			// Only apply if the original contents has closing CSS comment, and the processed one does not
+			if (contents.match(/\*\/\s*$/) && !processed.match(/\*\/\s*$/)) {
+				processed += '\n*/';
+			}
+
 			return processed;
-		/*
-			var rules = contents.split('}'),
-				separator = '\n\n' + selector + ' ';
-
-
-			rules = _.map(rules, function(rule){return $.trim(rule);});
-
-			rules.pop();
-
-			return separator + rules.join('\n}' + separator) + '\n}';
-		*/
 		},
 		recursiveExistence: function(selector, clean_selector) {
 			var splitted = clean_selector.split(' ');
@@ -499,7 +495,7 @@ define([
 				return Upfront.Views.Editor.notify(l10n.style_name_nag, 'error');
 
 			return Upfront.Views.Editor.notify(l10n.preset_style_saved.replace(/%s/,  this.elementType.id));
-		},
+		}
 	});
 
 	var Preset_Insert_Font_Widget = Backbone.View.extend({

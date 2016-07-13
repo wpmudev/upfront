@@ -1,6 +1,6 @@
 (function ($) {
 define([
-		'elements/upfront-widget/js/settings',
+		'elements/upfront-widget/js/settings'
 	], function(UwidgetSettings) {
 
 	var l10n = Upfront.Settings.l10n.widget_element;
@@ -21,7 +21,7 @@ define([
 			if(! (this.model instanceof UwidgetModel)){
 				this.model = new UwidgetModel({properties: this.model.get('properties')});
 			}
-			
+
 			// copy values from saved ones to the realtime rendering ones in the editor
 			this.model.set_property('current_widget', this.model.get_property_value_by_name('widget'), true);
 			this.model.set_property('current_widget_specific_settings', this.model.get_property_value_by_name('widget_specific_fields'), true);
@@ -45,7 +45,7 @@ define([
 		},
 
 		get_content_markup: function () {
-			
+
 			var widget = this.model.get_property_value_by_name('current_widget');
 				me = this;
 
@@ -92,7 +92,7 @@ define([
 
 			var instance = {};
 
-			for( key in specific_fields) {
+			for( var key in specific_fields) {
 				instance[specific_fields[key]['name']] =  this.model.get_property_value_by_name(specific_fields[key]['name']);
 			}
 
@@ -108,12 +108,13 @@ define([
 					else {
 						me.render();
 					}
+					Upfront.Events.trigger('entity:object:refresh', me);
 				})
 				.error(function (ret) {
 					Upfront.Util.log("Error loading widget");
 
 			});
-		},
+		}
 
 
 

@@ -386,7 +386,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				'json' => false,
 				'as_array' => true
 			)
-    );
+		);
 
 		if(!is_array($presets)) {
 			$presets = json_decode($presets, true);

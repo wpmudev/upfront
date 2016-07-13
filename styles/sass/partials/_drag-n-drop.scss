@@ -86,7 +86,12 @@
 .upfront-module-active:not(.upfront-module-editing) > .upfront-resize-handle-s:not(.active-menu-item) {
   display: block !important;
 }
-.upfront-module-spacer > .upfront-resize-handle-s {
+.upfront-module:not(.upfront-module-disabled-all) > .upfront-resize-handle-s {
+  z-index: 2999;
+}
+.upfront-module-spacer > .upfront-resize-handle-s,
+.upfront-inline-panel-item-open .upfront-module-view > .upfront-module-active > .upfront-resize-handle-s,
+.upfront-inline-panel-item-open .upfront-module-view > .upfront-module-active:hover > .upfront-resize-handle-s {
   display: none !important;
 }
 
@@ -204,7 +209,8 @@
 		transform: scale(1, 1);
 	}
 }
-.ui-draggable-dragging {
+.ui-draggable-dragging,
+.upfront-wrapper-moving {
 	opacity: .6;
 	min-height: 0 !important;
 	/*-webkit-transition: max-width .3s, max-height .3s;*/

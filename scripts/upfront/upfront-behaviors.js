@@ -15,4 +15,4 @@ define([
 });
 
 })(jQuery);
-//@ sourceURL=upfront-behavior.js
+//# sourceURL=upfront-behavior.js

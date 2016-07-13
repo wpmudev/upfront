@@ -352,7 +352,7 @@
 	padding: 0;
 	margin: 0 -160px 2px 0;
 	position: relative;
-	top: -9px;
+	top: 5px;
 	left: 0;
 }
 .upfront-region-hidden-toggle:before {
@@ -441,6 +441,12 @@
 .upfront-editable_entity img {
   max-width: 100%;
   max-height: 100%;
+}
+
+.upfront-editable_entity.upfront-post-data-part.part-featured_image img {
+  max-width: none;
+  max-height: none;
+  overflow: hidden;
 }
 
 .ui-draggable {

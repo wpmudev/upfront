@@ -4,6 +4,11 @@
 
 .uslider .uslide{
 	opacity: 1;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
 }
 
 .uslider-crossfade .uslide{
@@ -232,4 +237,17 @@ div.uslide-image img {
 }
 .uslide-caption p{
 	width:100%;
+}
+
+.upfront-output-uslider .upfront-image-starting-select {
+	display: block;
+	margin:0;
+	position: absolute;
+	margin: 15px;
+	width: auto;
+}
+.upfront-output-uslider .uslider-starting-centered.upfront-initial-overlay-wrapper {
+	margin: auto;
+	background: transparent;
+	width: 80%;
 }

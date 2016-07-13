@@ -90,7 +90,7 @@ define([
 
 			this.listenTo(Upfront.Events, 'command:layout:save', this.saveResizing);
 			this.listenTo(Upfront.Events, 'command:layout:save_as', this.saveResizing);
-			
+
 			this.listenTo(Upfront.Events, "preset:image:updated", this.caption_updated, this);
 
 			this.listenTo(Upfront.Events, 'upfront:layout_size:change_breakpoint', function(newMode){
@@ -137,7 +137,7 @@ define([
 			this.render();
 			Upfront.Events.trigger('preset:image:updated', preset);
 		},
-		
+
 		caption_updated: function(preset) {
 			var currentPreset = this.model.get_property_value_by_name("preset");
 
@@ -366,7 +366,7 @@ define([
 		},
 
 		isSmallImage: function() {
-			var elementSize = this.property('element_size');
+			var elementSize = this.model.get_breakpoint_property_value('element_size', true);
 			if (this.resizingData.data && this.resizingData.data.elementSize) {
 				elementSize = this.resizingData.data.elementSize;
 			}
@@ -402,7 +402,7 @@ define([
 		},
 
 		get_content_markup: function () {
-			var elementSize = this.property('element_size'),
+			var elementSize = this.model.get_breakpoint_property_value('element_size', true),
 				me = this,
 				props = this.extract_properties(),
 				rendered,
@@ -427,6 +427,7 @@ define([
 			props.url = this.property('when_clicked') ? this.property('image_link') : false;
 			props.url = this.link.get('type') !== 'unlink' ? this.link.get('url') : false;
 			props.link_target = this.link.get('target');
+			props.element_size = elementSize;
 			props.size = this.temporaryProps.size;
 			props.position = this.temporaryProps.position;
 			props.marginTop = Math.max(0, -props.position.top);
@@ -471,7 +472,7 @@ define([
 
 			if (this.property('quick_swap')) {
 				smallSwap = props.element_size.width < 150 || props.element_size.height < 90 ? 'uimage-quick-swap-small' : '';
-				
+
 				if(Upfront.Application.user_can_modify_layout()) {
 					rendered += '<div class="upfront-quick-swap ' + smallSwap + '"><p>Change this image</p></div>';
 				}
@@ -503,7 +504,7 @@ define([
 					width: Math.min(elementSize.width, size.width),
 					height: Math.min(elementSize.height, size.height)
 				});
-				
+
 				img.attr('src', me.property('srcFull'))
 					.css({
 						width: size.width,
@@ -567,7 +568,7 @@ define([
 		},
 
 		update_style: function() {
-			var elementSize = this.property('element_size'),
+			var elementSize = this.model.get_breakpoint_property_value('element_size', true),
 				newSize = this.getElementShapeSize(elementSize)
 			;
 
@@ -575,7 +576,7 @@ define([
 				if ( elementSize.width != newSize.width || elementSize.height != newSize.height ) {
 					if ( ! this.resizeImage(newSize) ) {
 						// Can't resize? At least set the element_size
-						this.property('element_size', newSize);
+						this.model.set_breakpoint_property('element_size', newSize);
 					}
 				}
 				return newSize;
@@ -587,7 +588,7 @@ define([
 		on_render: function() {
 			var me = this,
 				onTop = ['bottom', 'fill_bottom'].indexOf(this.property('caption_alignment')) !== -1 || this.get_preset_property("caption-position") === 'below_image' ? ' sizehint-top' : '',
-				elementSize = this.property('element_size');
+				elementSize = this.model.get_breakpoint_property_value('element_size', true);
 
 			//Bind resizing events
 			if (!this.parent_module_view.$el.data('resizeHandling')) {
@@ -616,9 +617,8 @@ define([
 			} else {
 				var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint' + onTop);
 				this.$el.append(resizeHint);
-				// this.applyElementSize(elementSize.width, elementSize.height)
 				setTimeout( function () {
-					me.applyElementSize();
+					me.applyElementSize(false, false, false); // don't update property here
 				}, 300 );
 			}
 
@@ -689,21 +689,23 @@ define([
 
 			if(this.paddingControl && typeof this.paddingControl.isOpen !== 'undefined' && this.paddingControl.isOpen)	return;
 
-			// if (!this.controls) {
-				this.controls = this.createControls(); // It seems to be needed for image only so caption item shows up when it should
-			// }
+			if (!this.$control_el || this.$control_el.length === 0) {
+				this.$control_el = this.$el;
+			}
+			if ( this.controls ) {
+				this.controls.remove();
+				this.controls = false;
+				this.$control_el.find('>.upfront-element-controls').remove();
+			}
+			this.controls = this.createControls();
 
 			if (this.controls === false) return;
 
 			this.controls.render();
-			if (!this.$control_el || this.$control_el.length === 0) {
-				this.$control_el = this.$el;
-			}
 			if (this.$control_el.find('>.upfront-element-controls').length === 0) {
 				this.$control_el.append(elementControlsTpl);
-				// this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el);
+				this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el);
 			}
-			this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el); // we need to refresh controls because caption item has to be activated or deactivate depending on the `show caption`
 			this.updateAdvancedPadding();
 			this.controls.delegateEvents();
 		},
@@ -805,14 +807,14 @@ define([
 
 			return breakpointColumnPadding;
 		},
-		
+
 		after_breakpoint_change: function(){
-		
+
 			this.originalDesktopElementSize = this.property('element_size');
-			
-			if(this.mobileMode) {
-				this.render();
-			}
+
+			//if(this.mobileMode) {
+				this.render(); // @TODO prefer not to re-render on breakpoint change
+			//}
 		},
 
 		/***************************************************************************/
@@ -885,25 +887,21 @@ define([
 
 			// data.elementSize = {width: attr.width - (2 * padding), height: attr.height - (2 * padding) - captionHeight};
 			data.elementSize = {width: elementWidth < 0 ? 10 : elementWidth, height: elementHeight < 0 ? 10 : elementHeight};
-			
-			if(attr.axis === "e" || attr.axis === "w") {
-				data.elementSize.height = data.elementSize.height - vPadding;
-			}
 
 			newSize = this.getElementShapeSize(data.elementSize);
 			if ( false !== newSize ) {
 				data.elementSize = newSize;
 			}
 
-			this.applyElementSize();
+			this.applyElementSize(data.elementSize.width, data.elementSize.height, false); // This won't update element_size property
 
 			if(starting.length){
 				return starting.outerHeight(data.elementSize.height);
 			}
-			
+
 			//Wonderful stuff from here down
-			this.$('.uimage').css('height', data.elementSize.height);
-			
+			this.$('.uimage').css('height', data.elementSize.height - vPadding);
+
 			var is_locked = this.property('is_locked');
 
 			if(is_locked === false) {
@@ -945,18 +943,18 @@ define([
 						height: maskSize.height,
 						position: 'relative',
 						overflow: 'hidden'
-					});	
+					});
 				}
-				
+
 				if(typeof imageView.width !== "undefined") {
 					if(data.elementSize.width > imageView.width) {
-						img.css({left: imgPosition.left + (maskSize.width - imageView.width)});
+						img.css({left: imgPosition.left + (data.elementSize.width - imageView.width)});
 					}
 				}
-				
+
 				if(typeof imageView.height !== "undefined") {
 					if(data.elementSize.height > imageView.height) {
-						img.css({top: imgPosition.top + (maskSize.height - imageView.height)});
+						img.css({top: imgPosition.top + (data.elementSize.height - imageView.height)});
 					}
 				}
 
@@ -968,7 +966,7 @@ define([
 							margin = -(data.elementSize.height - containerHeight) / 2;
 						}
 					}
-					
+
 					if(vertical_align === "bottom") {
 						if(data.size.height < data.elementSize.height) {
 							margin = (data.size.height - data.elementSize.height);
@@ -976,17 +974,17 @@ define([
 							margin = -(data.elementSize.height - containerHeight)
 						}
 					}
-					
+
 					this.$('.upfront-image-caption-container').css({
 						'marginTop': -margin,
 					});
-					
+
 					this.property('marginTop', -margin);
 					this.property('position', {top: margin, left: current_position.left});
 
 				}
 			}
-			
+
 			this.updateControls();
 			this.setupBySize();
 		},
@@ -1008,7 +1006,7 @@ define([
 				sizeCheck = this.checkSize(),
 				isDotAlign = this.property('isDotAlign');
 
-			if(sizeCheck === "small" && isDotAlign === true) {	
+			if(sizeCheck === "small" && isDotAlign === true) {
 				imgPosition = {top: 0, left: 0};
 			}
 
@@ -1017,7 +1015,7 @@ define([
 					height: attr.height - (2 * padding),
 					width: attr.width - (2 * padding)
 				};
-				this.property('element_size', this.elementSize);
+				this.model.set_breakpoint_property('element_size', this.elementSize);
 				return;
 
 			//} else if (this.property('quick_swap')) {
@@ -1037,7 +1035,10 @@ define([
 				position: imgPosition
 			};
 
-			this.property('element_size', this.resizingData.data.elementSize);
+			var elementSize = this.resizingData.data.elementSize;
+
+			//this.model.set_breakpoint_property('element_size', this.resizingData.data.elementSize);
+			this.applyElementSize(elementSize.width, ('default_height' in elementSize ? elementSize.default_height : elementSize.height), true);
 
 			this.cropTimer = setTimeout(function(){
 				me.saveTemporaryResizing();
@@ -1046,21 +1047,21 @@ define([
 			this.resizingData = {};
 			this.showCaption();
 		},
-		
+
 		getMaskSize: function() {
 			var me = this,
 				size = this.property('size'),
 				checkSize = this.checkSize(),
-				elementSize = this.property('element_size'),
+				elementSize = this.model.get_breakpoint_property_value('element_size', true),
 				minWidth = Math.min(size.width, elementSize.width),
 				minHeight = Math.min(size.height, elementSize.height),
 				newSize;
 
-			newSize = { width: minWidth, height: minHeight};	
-			
+			newSize = { width: minWidth, height: minHeight};
+
 			return newSize;
 		},
-		
+
 		getImageViewport: function() {
 			var me = this,
 				img = this.resizingData.img,
@@ -1072,19 +1073,21 @@ define([
 			if(imgPosition.left < 0) {
 				viewWidth = img.width() - Math.abs(imgPosition.left);
 			}
-			
+
 			if(imgPosition.top < 0) {
 				viewHeight = img.height() - Math.abs(imgPosition.top);
 			}
 
 			viewPort = {width: viewWidth, height: viewHeight};
-			
+
 			return viewPort;
 
 		},
 
 		on_uimage_update: function (view) {
 			if ( !this.parent_module_view || this.parent_module_view != view ) return;
+			// Don't apply element size if on resizing
+			if ( !_.isUndefined(this.resizingData) && 'starting' in this.resizingData && this.resizingData.starting ) return;
 
 			this.applyElementSize();
 		},
@@ -1208,7 +1211,7 @@ define([
 
 		saveTemporaryResizing: function() {
 			var me = this,
-				elementSize = me.property('element_size'),
+				elementSize = me.model.get_breakpoint_property_value('element_size', true),
 				crop = {},
 				imageId = me.property('image_id'),
 				resize = me.temporaryProps.size,
@@ -1266,13 +1269,18 @@ define([
 		},
 
 		saveResizing: function() {
-		
+
 			// to fix responsive bug that crops the desktop image on save
-			if(this.mobileMode) {
+			/*if(this.mobileMode) {
 				this.property('element_size', this.originalDesktopElementSize);
-			}
-		
-			var me = this;
+			}*/
+
+			var me = this,
+				post_id = ( typeof _upfront_post_data.post_id !== 'undefined' ) ? _upfront_post_data.post_id : false,
+				layout_ids = ( typeof _upfront_post_data.layout !== 'undefined' ) ? _upfront_post_data.layout : '',
+				load_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 )
+			;
+
 			if(this.cropTimer){
 				clearTimeout(this.cropTimer);
 				this.cropTimer = false;
@@ -1280,6 +1288,9 @@ define([
 				this.saveTemporaryResizing().done(function(){
 					var saveData = {
 						element: JSON.stringify(Upfront.Util.model_to_json(me.model)),
+						post_id: post_id,
+						layout_ids: layout_ids,
+						load_dev: load_dev,
 						action: 'upfront_update_layout_element'
 					};
 					Upfront.Util.post(saveData);
@@ -1335,7 +1346,7 @@ define([
 					size: imgSize,
 					position: imgPosition
 				};
-				this.property('element_size', size);
+				this.model.set_breakpoint_property('element_size', size);
 				this.saveTemporaryResizing();
 				return true;
 			}
@@ -1363,26 +1374,41 @@ define([
 			}
 
 		},
-		applyElementSize: function (width, height) {
-			var me = this,
-				parent = this.parent_module_view.$('.upfront-editable_entity:first'),
-				resizer = parent,
-				captionHeight = this.get_preset_property("caption-position") === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
-				// padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
-				borderWidth = parseInt(this.$el.find('.upfront-image-caption-container').css('borderWidth') || 0, 10), // || 0 part is needed because parseInt empty sting returns NaN and breaks element height
-				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
-				hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
-				vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
-				// elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight}
-				elementSize = {width: ( width && !isNaN(width) ? width : resizer.width() ) - hPadding, height: ( height && !isNaN(height) ? height : resizer.height() ) - vPadding - captionHeight - (2 * borderWidth)}
-			;
-			this.property('element_size', elementSize);
-			this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
-					width: elementSize.width,
-					height: elementSize.height,
-					l10n: l10n.template
-				})
-			);
+		applyElementSize: function (width, height, set_property) {
+			if ( this.parent_module_view ) {
+				var me = this,
+					parent = this.parent_module_view.$el.find('.upfront-editable_entity:first'),
+					resizer = parent,
+					captionHeight = this.get_preset_property("caption-position") === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
+					// padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
+					borderWidth = parseInt(this.$el.find('.upfront-image-caption-container').css('borderWidth') || 0, 10), // || 0 part is needed because parseInt empty sting returns NaN and breaks element height
+					column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
+					hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
+					vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
+					// elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight}
+					elementSize = {width: ( width && !isNaN(width) ? width : resizer.width() ) - hPadding, height: ( height && !isNaN(height) ? height : resizer.height() ) - vPadding - captionHeight - (2 * borderWidth)},
+					newSize = this.getElementShapeSize(elementSize)
+				;
+				if ( false !== newSize ) {
+					elementSize = newSize;
+				}
+				if ( _.isUndefined(set_property) || set_property ) {
+					this.model.set_breakpoint_property('row', Upfront.Util.height_to_row(elementSize.height + vPadding), true);
+					if ( this.parent_module_view ) {
+						this.parent_module_view.model.set_breakpoint_property('row', Upfront.Util.height_to_row(elementSize.height + vPadding), true);
+					}
+					this.model.set_breakpoint_property('element_size', elementSize);
+				}
+				this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
+						width: elementSize.width,
+						height: elementSize.height,
+						l10n: l10n.template
+					})
+				);
+				// Let's override the min-height set to element
+				this.$el.find('> .upfront-object').css('min-height', (elementSize.height + vPadding) + 'px');
+				this.$el.closest('.upfront-module').css('min-height', (elementSize.height + vPadding) + 'px');
+			}
 		},
 
 		openImageSelector: function(e){
@@ -1475,7 +1501,7 @@ define([
 
 			Upfront.Views.Editor.notify(l10n.external_nag, 'error');
 		},
-		
+
 		lockImage: function () {
 			var me = this,
 				is_locked = this.property('is_locked'),
@@ -1486,7 +1512,7 @@ define([
 				this.controls.$el.find('.upfront-icon-region-lock-locked')
 					.addClass('upfront-icon-region-lock-unlocked')
 					.removeClass('upfront-icon-region-lock-locked');
-					
+
 				this.property('is_locked', false);
 
 				if(sizeCheck === "small") {
@@ -1495,9 +1521,9 @@ define([
 						height: '100%',
 						marginTop: 0
 					});
-					
+
 					this.fitImage();
-					
+
 					this.cropTimer = setTimeout(function(){
 						me.saveTemporaryResizing();
 					}, this.cropTimeAfterResize);
@@ -1507,25 +1533,25 @@ define([
 				this.controls.$el.find('.upfront-icon-region-lock-unlocked')
 					.addClass('upfront-icon-region-lock-locked')
 					.removeClass('upfront-icon-region-lock-unlocked');
-					
+
 				this.property('is_locked', true);
 			}
 		},
-		
+
 		fitImage: function() {
-			var maskSize = this.property('element_size'),
+			var maskSize = this.model.get_breakpoint_property_value('element_size', true),
 				position = this.property('position'),
 				size = this.property('size');
-				
+
 			var newSize = Upfront.Views.Editor.ImageEditor.getResizeImageDimensions(size, {width: maskSize.width, height: maskSize.height}, 'outer', 0);
-			
+
 			this.property('size', {width: newSize.width, height: newSize.height});
-			
+
 			this.temporaryProps = {
 				size: {width: newSize.width, height: newSize.height},
 				position: position
 			};
-			
+
 			this.property('vstretch', true);
 
 			this.$('.upfront-image-container img').css({
@@ -1534,20 +1560,20 @@ define([
 				left: '0px',
 				top: '0px'
 			});
-			
+
 			this.$('.upfront-image-wrapper').css({
 				height: maskSize.height
 			})
 		},
-		
+
 		checkSize: function() {
-			var maskSize = this.property('element_size'),
+			var maskSize = this.model.get_breakpoint_property_value('element_size', true),
 				size = this.property('size');
 
 			if(size.width >= maskSize.width && size.height >= maskSize.height) {
 				return 'big';
 			}
-			
+
 			return 'small';
 		},
 
@@ -1600,9 +1626,9 @@ define([
 			}
 
 			options.element_id = me.model.get_property_value_by_name('element_id');
-			
+
 			options.element_cols = me.get_element_columns();
-			
+
 			//Remove controls when open image editor
 			if(typeof this.controls !== "undefined") {
 				this.controls.remove();
@@ -1612,7 +1638,7 @@ define([
 				.done(function(result){
 					me.handleEditorResult(result);
 					this.stoppedTimer = false;
-					
+
 					// Update controls after image editor
 					me.updateControls();
 				})
@@ -1623,7 +1649,7 @@ define([
 						me.saveTemporaryResizing();
 						me.stoppedTimer = false;
 					}
-					
+
 					// Update controls after image editor
 					me.updateControls();
 				})
@@ -1706,31 +1732,32 @@ define([
 			var me = this,
 				panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
 				moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl(),
-				is_locked = this.property('is_locked')
+				is_locked = this.property('is_locked'),
+				controls = []
 			;
-			
-			if(typeof is_locked !== "undefined" && is_locked === true) {
-				var lock_icon = 'lock-locked';
-			} else {
-				var lock_icon = 'lock-unlocked';
+			if ( !this.mobileMode ) {
+				if(typeof is_locked !== "undefined" && is_locked === true) {
+					var lock_icon = 'lock-locked';
+				} else {
+					var lock_icon = 'lock-unlocked';
+				}
+
+				moreOptions.icon = 'more';
+				moreOptions.tooltip = l10n.ctrl.caption_position;
+
+				moreOptions.sub_items = {}
+				moreOptions.sub_items['swap'] = this.createControl('swap', l10n.btn.swap_image, 'openImageSelector');
+				moreOptions.sub_items['crop'] = this.createControl('crop', l10n.ctrl.edit_image, 'editRequest');
+				moreOptions.sub_items['link'] = this.createLinkControl();
+				moreOptions.sub_items['lock'] = this.createControl(lock_icon, l10n.ctrl.lock_image, 'lockImage');
+
+				controls.push(moreOptions);
 			}
-			
-			moreOptions.icon = 'more';
-			moreOptions.tooltip = l10n.ctrl.caption_position;
 
-			moreOptions.sub_items = {}
-			moreOptions.sub_items['swap'] = this.createControl('swap', l10n.btn.swap_image, 'openImageSelector');
-			moreOptions.sub_items['crop'] = this.createControl('crop', l10n.ctrl.edit_image, 'editRequest');
-			moreOptions.sub_items['link'] = this.createLinkControl();
-			moreOptions.sub_items['lock'] = this.createControl(lock_icon, l10n.ctrl.lock_image, 'lockImage');
+			controls.push(this.createPaddingControl());
+			controls.push(this.createControl('settings', Upfront.Settings.l10n.global.views.settings, 'on_settings_click'));
 
-			var controlls =  _([
-				moreOptions,
-				this.createPaddingControl(),
-				this.createControl('settings', Upfront.Settings.l10n.global.views.settings, 'on_settings_click')
-			]);
-
-		return controlls;
+			return _(controls);
 		}
 	});
 
@@ -1755,4 +1782,4 @@ define([
 
 });
 })(jQuery);
-//@ sourceURL=uimage.js
+//# sourceURL=uimage.js

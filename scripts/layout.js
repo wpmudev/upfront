@@ -259,7 +259,7 @@ jQuery(document).ready(function($){
 				min_height = height = 0;
 			if ( $regions.length > 1 ){
 				$regions.each(function(){
-					var min = parseInt($(this).css('min-height')),
+					var min = parseInt($(this).css('min-height'), 10),
 						h = $(this).outerHeight();
 					if ( min )
 						min_height = min > min_height ? min : min_height;
@@ -279,9 +279,9 @@ jQuery(document).ready(function($){
 				$sub = $(this).find('.upfront-region-side-top, .upfront-region-side-bottom'),
 				body_off = $('body').offset(),
 				height = $(window).height() - body_off.top,
-				$bg_overlay = $(this).find('.upfront-output-bg-overlay');
-			if ( $bg_overlay.length )
-				$bg_overlay.css('height', height);
+				$bg_overlay = $(this).find('.upfront-output-bg-overlay')
+			;
+			if ( $bg_overlay.length ) $bg_overlay.css('height', height);
 			$sub.each(function(){
 				height -= $(this).outerHeight();
 			});
@@ -290,7 +290,8 @@ jQuery(document).ready(function($){
 			});
 			// Keep element position to ratio if enabled
 			var behavior = $(this).attr('data-behavior'),
-				original_height = parseInt($(this).attr('data-original-height'));
+				original_height = parseInt($(this).attr('data-original-height'), 10)
+			;
 			if ( behavior == 'keep-ratio' && original_height > 0 ){
 				var $wrappers = $region.find('> .upfront-region-wrapper > .upfront-output-wrapper'),
 					region_off = $region.offset(),
@@ -298,85 +299,128 @@ jQuery(document).ready(function($){
 					lines = [],
 					line_index = -1,
 					total_height = 0,
+					total_fill = 0,
 					ori_bottom_space = 0,
-					pos_top = false,
-					pos_bottom = false,
-					available_space = false,
-					original_space = false,
-					top_ref = 0;
+					avail_bottom_space = 0,
+					available_space = 0,
+					original_space = 0
+				;
 
 				$wrappers.each(function(){
 					var $modules = $(this).find('> .upfront-output-module, > .upfront-output-module-group');
-					$modules.css('margin-top', '');
-					var wrap_off = $(this).offset(),
-						wrap_height = $(this).height();
-					if ( Math.abs(wrap_off.left-region_off.left) < 5 ){
-						line_index++;
-						lines[line_index] = {
-							wrappers: [],
-							height: wrap_height
-						};
-					}
-					else {
-						if ( wrap_height > lines[line_index].height )
-							lines[line_index].height = wrap_height;
-					}
+					if ( $modules.length == 0 ) return;
 					var wrap_obj = {
 						$el: $(this),
-						space: 0,
+						top_space: 0,
+						bottom_space: 0,
 						fill: 0,
 						modules: []
 					};
-					$modules.each(function(){
-						var margin_top = parseInt($(this).css('margin-top')),
-							height = $(this).height();
-						wrap_obj.space += margin_top;
+					$modules.each(function(module_index){
+						var $el = $(this).hasClass('upfront-output-module-group') ? $(this) : $(this).find('> .upfront-output-object');
+						$el.css({
+							paddingTop: '',
+							paddingBottom: '',
+							minHeight: ''
+						});
+						var padding_top = parseFloat($el.css('padding-top')),
+							padding_bottom = parseFloat($el.css('padding-bottom')),
+							height = parseFloat($(this).css('height')),
+							min_height = parseFloat($el.css('min-height'))
+						;
+						if ( module_index == 0 ) {
+							wrap_obj.top_space = padding_top;
+						}
+						wrap_obj.bottom_space = padding_bottom;
 						wrap_obj.fill += height;
 						wrap_obj.modules.push({
-							$el: $(this),
-							top: margin_top,
-							height: height
+							$el: $el,
+							top: padding_top,
+							bottom: padding_bottom,
+							height: height - padding_top - padding_bottom,
+							min_height: min_height !== min_height ? 0 : min_height
 						});
 					});
-					lines[line_index].wrappers.push(wrap_obj);
+					wrap_obj.fill -= wrap_obj.top_space + wrap_obj.bottom_space;
+
+					var wrap_off = $(this).offset(),
+						wrap_left = parseFloat($(this).css('margin-left')),
+						wrap_height = parseFloat($(this).css('height'))
+					;
+
+					if ( Math.abs(wrap_off.left-wrap_left-region_off.left) < 5 ){
+						line_index++;
+						lines[line_index] = {
+							wrappers: [wrap_obj],
+							height: wrap_height,
+							top_space: wrap_obj.top_space,
+							bottom_space: wrap_obj.bottom_space
+						};
+					}
+					else {
+						lines[line_index].top_space = wrap_obj.top_space < lines[line_index].top_space ? wrap_obj.top_space : lines[line_index].top_space;
+						if ( wrap_height >= lines[line_index].height ) {
+							lines[line_index].height = wrap_height;
+							lines[line_index].bottom_space = wrap_obj.bottom_space < lines[line_index].bottom_space ? wrap_obj.bottom_space : lines[line_index].bottom_space;
+						}
+						lines[line_index].wrappers.push(wrap_obj);
+					}
 				});
 
 				$.each(lines, function(index, line){
 					total_height += line.height;
+					total_fill += line.height - line.top_space - line.bottom_space;
+					original_space += line.top_space + line.bottom_space;
 				});
 				ori_bottom_space = original_height > total_height ? original_height-total_height : 0;
-				avail_bottom_space = height - original_height + ori_bottom_space;
+				original_space += ori_bottom_space;
+				available_space = height > total_fill ? height - total_fill : 0;
 
 				var count_space = function (from, until) {
 					var total_space = 0,
 						from = typeof from == "number" ? from : 0,
-						until = typeof until == "number" ? until : -1;
+						until = typeof until == "number" ? until : -1
+					;
 					$.each(lines, function(index, line){
-						if ( index < from || ( until > -1 && index > until ) )
-							return;
-						var space = 0;
+						if ( index < from || ( until > -1 && index > until ) ) return;
+						var top_space = false,
+							bottom_space = false,
+							line_height = 0
+						;
 						$.each(line.wrappers, function(w, wrap){
-							space = wrap.space > space ? wrap.space : space;
+							var wrap_height = wrap.fill + wrap.top_space + wrap.bottom_space;
+							line_height = wrap_height > line_height ? wrap_height : line_height;
 						});
-						total_space += space;
+						$.each(line.wrappers, function(w, wrap){
+							var wrap_bottom_space = line_height - wrap.fill - wrap.top_space;
+							top_space = ( top_space === false || wrap.top_space < top_space ) ? wrap.top_space : top_space;
+							bottom_space = ( bottom_space === false || wrap_bottom_space < bottom_space ) ? wrap_bottom_space : bottom_space;
+						});
+						total_space += top_space + bottom_space;
 					});
 					return total_space;
 				}
 
 				$.each(lines, function(index, line){
-					var top_space = 0,
-						bottom_space = 0;
-					if ( index > 0 )
-						top_space = count_space(0, index-1);
-					if ( index < lines.length-1 )
-						bottom_space = count_space(index+1);
+					var line_top_space = Math.round(line.top_space/original_space * available_space),
+						line_bottom_space = Math.round(line.bottom_space/original_space * available_space)
+					;
 					$.each(line.wrappers, function(w, wrap){
-						var ori_space = top_space + bottom_space + ori_bottom_space + wrap.space,
-							avail_space = top_space + bottom_space + avail_bottom_space + wrap.space;
-						avail_space = avail_space > 0 ? avail_space : 0;
 						$.each(wrap.modules, function(m, module){
-							var margin_top = module.top/ori_space * avail_space;
-							module.$el.css('margin-top', margin_top + 'px');
+							var new_top = module.top - line.top_space + line_top_space,
+								new_bottom = module.bottom - line.bottom_space + line_bottom_space,
+								min_height = module.min_height
+							;
+							if ( m == 0 ) {
+								module.$el.css('padding-top', new_top + 'px');
+								min_height -= module.top - new_top;
+							}
+							if ( m == wrap.modules.length - 1 ) {
+								module.$el.css('padding-bottom', new_bottom + 'px');
+								min_height -= module.bottom - new_bottom;
+							}
+							min_height = min_height > 0 ? min_height : 0;
+							module.$el.css('min-height', min_height + 'px');
 						});
 					});
 				});
@@ -484,6 +528,84 @@ jQuery(document).ready(function($){
 				}
 			}
 		});
+		$('.upfront-output-object .upfront-featured-image-smaller').each(function() {
+			var $img = $(this),
+				$container = $img.parent(),
+				data = $img.data('featured-image'),
+				align = $img.data('featured-align'),
+				valign = $img.data('featured-valign'),
+				dotalign = $img.data('featured-dotalign'),
+				mode = $img.data('featured-mode'),
+				imgHeight = $img.height(),
+				imgWidth = $img.width(),
+				breakpoint = get_breakpoint()
+			;
+
+			// If table or mobile breakpoint, image is smaller than container and dotAlign is true make it inline
+			if((breakpoint === "tablet" || breakpoint === "mobile") && 
+					((mode === "small" || mode === "vertical" ) && dotalign === true)) {
+
+				// Set text-align for parent container
+				$container.css({
+					'textAlign': align,
+					'maxWidth': '100%'
+				});
+				
+				// Make image inline
+				$img.css({
+					'position': 'static',
+					'display': 'inline-block'
+				});
+				
+				// Update margin to position image top or bottom
+				/*if(valign === "center") {
+					$img.css({
+						'marginTop': (data.offsetHeight / 2) - (imgHeight / 2),
+					});
+				} else if (valign === "bottom") {
+					$img.css({
+						'marginTop': (data.offsetHeight - imgHeight),
+					});
+				}*/
+			} else {
+				if((breakpoint === "tablet" || breakpoint === "mobile") && mode === "small") {
+					// Null above
+					$container.css({
+						'textAlign': 'center',
+						'maxWidth': '100%',
+						'width': '100%'
+					});
+					
+					$img.css({
+						'position': 'static',
+						'display': 'inline-block'
+					});
+				} else if ((breakpoint === "tablet" || breakpoint === "mobile") && mode !== "small") {
+					// Set image 100% width
+					$container.css({
+						'width': '100%',
+						'height': 'auto'
+					});
+					$img.css({
+						'width': '100%',
+						'height': 'auto',
+						'left': 0
+					});
+				} else {
+					// Null above and position image into parent container
+					$img.css({ 
+						'top': data.offsetTop, 
+						'left': data.offsetLeft,
+						'position': 'relative',
+						'display': 'block',
+						'marginTop': 0,
+						'width': 'initial'
+					});
+					
+					$container.css({ 'width': data.offsetWidth, 'height': data.offsetHeight});
+				}
+			}
+		});
 		$('.upfront-output-object .uf-post .thumbnail, .uf-post-data .upostdata-part.thumbnail').each(function(){
 			var is_upostdata = $(this).hasClass('upostdata-part'),
 				$object = $(this).closest('.upfront-output-object'),
@@ -492,10 +614,35 @@ jQuery(document).ready(function($){
 				padding_top = parseInt($object.css('padding-top'), 10),
 				padding_bottom = parseInt($object.css('padding-bottom'), 10),
 				$img = $(this).find('img'),
+				$container = $(this),
+				imgHeight = $img.height(),
+				imgWidth = $img.width(),
+				breakpoint = get_breakpoint(),
 				img = new Image,
 				img_h, img_w
 			;
 			if ( is_upostdata ) {
+				if(breakpoint === "tablet" || breakpoint === "mobile") {
+					// Set image 100% width
+					$container.css({
+						'width': '100%',
+						'height': 'auto'
+					});
+					$img.css({
+						'width': '100%',
+						'height': 'auto'
+					});
+					// Set height to image
+					height = imgHeight;
+					$object.css('min-height', height);
+					$object.closest('.upfront-output-object-group').css('min-height', height);
+				}
+				else {
+					$object.css('min-height', '');
+					$object.closest('.upfront-output-object-group').css('min-height', '');
+				}
+				
+				if ( !$img.hasClass('upfront-featured-image-fit-wrapper') ) return; // No fit for this
 				height -= padding_top + padding_bottom;
 				$(this).css('height', height);
 			}
@@ -524,12 +671,24 @@ jQuery(document).ready(function($){
 	$(window).on('load.uf_layout', lazyFixFullBg);
 
 	// Regions behavior on scroll
+	var _scroll_data = {};
 	function regions_scroll_update () {
 		var breakpoint = get_breakpoint(),
-			body_off = $('body').offset(),
+			body_off = typeof _scroll_data.body_off != 'undefined' ? _scroll_data.body_off : $('body').offset(),
 			scroll_top = $(window).scrollTop(),
 			win_height = $(window).height(),
-			scroll_bottom = scroll_top + win_height;
+			scroll_bottom = scroll_top + win_height,
+			$sticky_regions = typeof _scroll_data.$sticky_regions != 'undefined'
+				? _scroll_data.$sticky_regions
+				: $('.upfront-output-region-container[data-sticky="1"], .upfront-output-region-sub-container[data-sticky="1"]'),
+			$floating_regions = typeof _scroll_data.$floating_regions != 'undefined'
+				? _scroll_data.$floating_regions
+				: $('.upfront-output-region-container.upfront-region-container-full, .upfront-output-region-container.upfront-region-container-full .upfront-output-region-sub-container:not(.upfront-output-region-container-sticky), .upfront-output-region.upfront-region-side-fixed[data-restrict-to-container="1"]')
+		;
+		_scroll_data.body_off = body_off;
+		_scroll_data.$sticky_regions = $sticky_regions;
+		_scroll_data.$floating_regions = $floating_regions;
+
 		if ( body_off.top > 0 ){
 			scroll_top += body_off.top;
 			win_height -= body_off.top;
@@ -537,7 +696,7 @@ jQuery(document).ready(function($){
 		scroll_top = scroll_top < body_off.top ? body_off.top : scroll_top;
 
 		// Sticky region behavior
-		$('.upfront-output-region-container[data-sticky="1"], .upfront-output-region-sub-container[data-sticky="1"]').each(function(){
+		$sticky_regions.each(function(){
 			var is_sub_container = $(this).hasClass('upfront-output-region-sub-container'),
 				is_top = ( is_sub_container && $(this).nextAll('.upfront-grid-layout').length > 0 ),
 				offset = $(this).offset(),
@@ -575,7 +734,7 @@ jQuery(document).ready(function($){
 		});
 
 		// Floating behavior
-		$('.upfront-output-region-container.upfront-region-container-full, .upfront-output-region-container.upfront-region-container-full .upfront-output-region-sub-container:not(.upfront-output-region-container-sticky), .upfront-output-region.upfront-region-side-fixed[data-restrict-to-container="1"]').each(function(){
+		$floating_regions.each(function(){
 			var is_float = $(this).is('.upfront-region-side-fixed'),
 				is_full_screen = $(this).is('.upfront-region-container-full'),
 				is_sub_container = $(this).is('.upfront-output-region-sub-container'),
@@ -584,20 +743,21 @@ jQuery(document).ready(function($){
 				container_offset = $container.offset(),
 				container_bottom = container_offset.top + container_height,
 				height = $(this).height(),
-				top = is_float ? parseInt($(this).attr('data-top')) : 0,
+				top = is_float ? parseInt($(this).attr('data-top'), 10) : 0,
 				is_top = is_float ? ( typeof $(this).attr('data-top') != "undefined" ) : ( $(this).nextAll('.upfront-grid-layout').length > 0 ),
-				bottom = is_float ? parseInt($(this).attr('data-bottom')) : 0,
+				bottom = is_float ? parseInt($(this).attr('data-bottom'), 10) : 0,
 				is_bottom = is_float ? ( typeof $(this).attr('data-bottom') != "undefined" ) : ( $(this).prevAll('.upfront-grid-layout').length > 0 ),
-				css = {};
+				css = {}
+			;
 			if ( is_full_screen ) {
 				var $bg_image = $(this).find('.upfront-region-container-bg'),
 					is_bg_image = ( $bg_image.css('background-image') != 'none' ),
-					$bg_overlay = $(this).find('.upfront-output-bg-overlay'),
+					$bg_overlay = $(this).find('.upfront-output-bg-overlay:visible'),
 					is_bg_overlay = ( $bg_overlay.length > 0 ),
 					bg_position_y = 0,
 					bg_position_x = 0,
-					bg_position_css = $bg_image.css('background-position'),
-					full_screen_height = parseInt($(this).find('.upfront-region-center').css('min-height'));
+					bg_position_css = $bg_image.css('background-position')
+				;
 				if ( is_bg_image ) {
 					if ( typeof $bg_image.data('bg-position-y') == 'undefined' )
 						$bg_image.data('bg-position-y', bg_position_css.match(/\d+(%|px|)$/)[0]);
@@ -608,10 +768,10 @@ jQuery(document).ready(function($){
 					if ( typeof bg_position_y == 'string' && bg_position_y.match(/%$/) ){
 						var img = new Image;
 						img.src = $bg_image.css('background-image').replace(/^url\(\s*['"]?\s*/, '').replace(/\s*['"]?\s*\)$/, '');
-						bg_position_y = parseInt(bg_position_y)/100 * (height-img.height);
+						bg_position_y = parseInt(bg_position_y, 10)/100 * (height-img.height);
 					}
 					else {
-						bg_position_y = parseInt(bg_position_y);
+						bg_position_y = parseInt(bg_position_y, 10);
 					}
 				}
 			}
@@ -694,11 +854,11 @@ jQuery(document).ready(function($){
 	$("[data-group-link]").css({'cursor': 'pointer'});
 	$(document).on("click", "[data-group-link]", function () {
 		var url = $(this).data("groupLink");
-		var target = $(this).data("groupTarget");
+		var target = $(this).data("groupTarget") || '_self';
 
 		if(url.indexOf('#') === -1) {
 			// Not an anchor, follow link
-			window.open(url, $(this).data("groupTarget"));
+			window.open(url, target);
 			return;
 		}
 
@@ -1222,5 +1382,11 @@ jQuery(document).ready(function($){
 		Upfront.Events.once("application:mode:before_switch", reset_responsive_class);
 		Upfront.Events.once("layout:render", remove_responsive_class);
 	});
+	
+	// remove inline panels on Image Insert redactor-box FE
+	var $image_insert_inline_panels = $('.upfront-output-wrapper .upfront-inserted_image-basic-wrapper').find('.upfront-inline-panel-item');
+	if ( $image_insert_inline_panels.length > 0 ) {
+		$image_insert_inline_panels.remove();
+	}
 
 });

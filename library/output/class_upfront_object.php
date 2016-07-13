@@ -69,4 +69,9 @@ class Upfront_Object extends Upfront_Entity {
 		$type = $this->_get_property('type');
 		return ($type == $spacer_props['type']);
 	}
+
+	public function get_style_for ($breakpoint, $context, $col = false) {
+
+		return '';
+	}
 }

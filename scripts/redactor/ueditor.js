@@ -168,7 +168,7 @@ var hackRedactor = function(){
             this.$air.width(width);
         }
         if(bounds.right < bounds.left || bounds.right > winRight){
-            var parent = this.$editor.find('#selection-marker-' + bounds.i).parent();
+            parent = this.$editor.find('#selection-marker-' + bounds.i).parent();
             bounds.right =  Math.min(winRight, parent.offset().left + parent.width());
         }
 
@@ -345,7 +345,7 @@ var hackRedactor = function(){
                 },
                 setNodesMarker: function(range, node, type)
                 {
-                    var range = range.cloneRange();
+                    range = range.cloneRange();
 
                     try {
                         range.collapse(type);
@@ -444,7 +444,7 @@ var hackRedactor = function(){
             isEndOfElement: function(element){
                 if (typeof element == 'undefined')
                 {
-                    var element = this.$element;
+                    element = this.$element;
                     if (!element) return false;
                 }
 
@@ -834,7 +834,6 @@ var Ueditor = function($el, options) {
             replaceDivs: false,
             pastePlainText: false,
 			imageEditable: false,
-            replaceDivs: false,
             //cleanStyleOnEnter: false,
             //removeDataAttr: false,
             removeEmpty: false,
@@ -930,7 +929,8 @@ var Ueditor = function($el, options) {
                 $parent = $(current).closest('li'),
                 $list = $parent.parent('ul,ol'),
                 $listlist = $list.parent('li').parent('ul,ol'),
-                emptyList = '<li>&#x200b;</li>'
+                emptyList = '<li>&#x200b;</li>',
+				node
             ;
 
             // Sublist to list
@@ -940,7 +940,7 @@ var Ueditor = function($el, options) {
                 this.utils.isEmpty($parent.html()) &&
                 $list.next().length === 0
             ) {
-                var node = $(emptyList);
+                node = $(emptyList);
                 $listlist.append(node);
                 this.caret.setStart(node);
                 $parent.remove();
@@ -953,7 +953,7 @@ var Ueditor = function($el, options) {
                 this.utils.isEmpty($parent.html()) &&
                 $list.next().length === 0
             ) {
-                var node = $(this.opts.emptyHtml);
+                node = $(this.opts.emptyHtml);
                 $list.after(node);
                 this.caret.setStart(node);
                 $parent.remove();
@@ -971,7 +971,6 @@ var Ueditor = function($el, options) {
              */
             if( this.utils.isEmpty( this.keydown.block.innerText ) ){
                 $(this.selection.getBlock()).remove();
-                var node;
                 if( $list.next().is("p") && this.utils.isEmpty( $list.next().text() ) ){
                     node = $list.next("p");
                 }else{
@@ -1151,8 +1150,13 @@ Ueditor.prototype = {
 
             var $node = $(node),
                 rx = new RegExp('^' + src.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1") + ' ?'),
-                text = $node.html().replace(rx, '')
+                text = $node.html().replace(rx, ''),
+				new_caret
             ;
+
+			// Since we're using `.html()`, we want to make sure
+			// the converted entities are properly replaced
+			if ('>' === src) text = text.replace(/&gt;/, ''); // No "g" modifier, so we replace the first instance
 
             // Let's not do nested lists
             // or expansion within lists in general
@@ -1166,28 +1170,30 @@ Ueditor.prototype = {
                         text +
                     '</' + target.nest + '></' + target.tag + '>'
                 );
+
+				new_caret = $node.find(target.nest).last().get();
             } else {
                 var _node = document.createElement(target.tag);
                 _node.innerHTML = text;
-                $node.replaceWith( _node );
+                $node.replaceWith(_node);
 
+				new_caret = _node;
             }
 
-            // Set caret position to end of the target
-            redactor.caret.setEnd(
-                "nest" in target && target.nest
-                    ? $node.find(target.nest).last().get()
-                    : _node
-            );
-
+			// Set caret position to end of the target and sync
+			redactor.caret.setEnd(new_caret);
             redactor.code.sync();
+
             /**
              * Make sure the created node doesn't contain the space created by the spacebar!
              */
             _.delay( function(){
                $(redactor.selection.getBlock()).html(text);
-            }, 3 );
 
+			   // Re-set caret position to end of the target and re-sync
+			   redactor.caret.setEnd(new_caret);
+               redactor.code.sync();
+            }, 3 );
 
             return false;
         });
@@ -1202,13 +1208,16 @@ Ueditor.prototype = {
 			    this.redactor.core.destroy();
             this.$air.remove();
             this.$el.removeClass('ueditable');
-            this.redactor = false;
+            this.redactor.events.trigger('cleanUpListeners');
+            this.$el.data("ueditor", false);
+            //this.redactor = false;
 		}
 		if ("undefined" !== typeof Upfront.data.Ueditor) delete Upfront.data.Ueditor.instances[this.id];
 		this.startPlaceholder();
 		$("html").off('mousedown', this.stopOnOutsideClick);
 		$(document).off('keyup', this.stopOnEscape);
         this.active = false;
+
 	},
 
 	bindStartEvents: function() {
@@ -1326,7 +1335,7 @@ Ueditor.prototype = {
 	},
 	get_anchors: function () {
 		var regions = Upfront.Application.layout.get("regions"),
-			anchors = [];
+			anchors = []
 		;
 		regions.each(function (r) {
 			r.get("modules").each(function (module) {
@@ -1343,7 +1352,7 @@ Ueditor.prototype = {
 	getUrlanchor: function(url) {
 		// this does almost the opposite of the above function
 
-		if(typeof(url) == 'undefined') var url = $(location).attr('href');
+		if(typeof(url) == 'undefined') url = $(location).attr('href');
 
 		if(url.indexOf('#') >=0) {
 			var tempurl = url.split('#');
@@ -1528,7 +1537,7 @@ Ueditor.prototype = {
 			me.clickcount = me.clickcount+1;
 			me.lastmousedown = {x: e.pageX, y: e.pageY};
 			if(me.clickcount > 0)
-				setTimeout(function() { me.clickcount = 0 }, 400);
+				setTimeout(function() { me.clickcount = 0; }, 400);
 		});
 
 		$(document).one('mouseup', function(e){
@@ -1556,9 +1565,10 @@ Ueditor.prototype = {
 	},
 	getValue: function(is_simple_element){
 		var html = this.redactor.$element.html();
-		if(this.insertManager)
-			html = this.insertManager.insertExport(html, is_simple_element),
+		if(this.insertManager) {
+			html = this.insertManager.insertExport(html, is_simple_element);
             $html =  $("<div>").html( html );
+		}
 
         $html.find(".redactor-selection-marker").remove();
         /**
@@ -1660,20 +1670,19 @@ var InsertManagerInserts = Backbone.View.extend({
         this.__insert = insert;
         insert.start( this.$el, this.redactor.$editor )
             .done(function(args, resolved_insert){
+				var popup, results, insert;
 
                 /**
                  * Allows to get resolved insert from inserts with insert managers
                  */
                 if(_.isArray(args) ){
-                    var popup = args[0],
-                        results = args[0],
-                        insert = resolved_insert;
+                    popup = args[0];
+                    results = args[0];
+                    insert = resolved_insert;
                 }else{
-                    var popup = args,
-                        results = resolved_insert,
-                        insert = insert || self.__insert
-                    ;
-
+                    popup = args;
+                    results = resolved_insert;
+                    insert = insert || self.__insert;
                 }
 
                 // if(!results) Let's allow promises without result for now!
@@ -1969,9 +1978,10 @@ var InsertManager = Backbone.View.extend({
 			});
 	},
 	show_tooltip_in_this_location: function(redactor){
-		var $block = $( redactor.selection.getCurrent());
+		var current = redactor.selection.getCurrent(),
+            $block = $( current );
 
-		if(_.isEmpty( $block ) ) return false;
+		if( !current || _.isEmpty( $block ) ) return false;
 
 		var $image_embed_insert_wrappers = $(".upfront-inserted_image-wrapper, .upfront-inserted_embed-wrapper"),
 			block_top = $block.offset().top,
@@ -2131,7 +2141,7 @@ var ImagesHelper = {
 		Align: {
 			_apply: function ($img, data) {
 				data = $.extend({
-					float: "",
+					"float": "",
 					"text-align": "",
 					"width": ""
 				}, data);
@@ -2140,7 +2150,7 @@ var ImagesHelper = {
 			left: function (e) {
 				var $wrap = e.data.get_target(e.target),
 					$img = $wrap.find('img');
-				e.data.Align._apply($wrap, {float: "left"});
+				e.data.Align._apply($wrap, {"float": "left"});
 				e.data.Align._apply($img, {});
 				e.data.show_dialog($wrap);
 				Upfront.Events.trigger("upfront:editor:image_align", $wrap.get(), 'left');
@@ -2162,7 +2172,7 @@ var ImagesHelper = {
 			right: function (e) {
 				var $wrap = e.data.get_target(e.target),
 					$img = $wrap.find('img');
-				e.data.Align._apply($wrap, {float: "right"});
+				e.data.Align._apply($wrap, {"float": "right"});
 				e.data.Align._apply($img, {});
 				e.data.show_dialog($wrap);
 				Upfront.Events.trigger("upfront:editor:image_align", $wrap.get(), 'right');
@@ -2228,7 +2238,7 @@ var ImagesHelper = {
 				});
 				$("body").append($details);
 				$details.css({
-					left: $button.offset().left + 46 - ($details.width()/2),
+					left: $button.offset().left + 46 - ($details.width()/2)
 				});
 				$button.addClass('upfront-image-action-details-active');
 

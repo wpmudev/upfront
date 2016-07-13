@@ -1,56 +1,57 @@
-div.upfront-general-settings {
+.upfront-general-settings {
     font-family: 'Roboto';
 }
-div.upfront-general-settings div.upfront-debug-block {
+.upfront-general-settings .upfront-debug-block {
     border-bottom: 1px solid #eee;
     padding: 14px 0 10px;
     position: relative;
 }
-div.upfront-general-settings .upfront-debug-block:after {
+.upfront-general-settings .upfront-debug-block:after {
     content: '';
     clear: both;
     display: block;
 }
-div.upfront-general-settings .postbox .inside {
+.upfront-general-settings .postbox .inside {
     padding: 0 30px 12px;
     margin: 0;
 }
-div.upfront-general-settings div.upfront-debug-block:last-child {
+.upfront-general-settings .upfront-debug-block:last-child {
     border-bottom: none;
 }
-div.upfront-general-settings div.postbox-container {
+.upfront-general-settings .postbox-container {
     width: 100%;
 }
-div.upfront-general-settings div.postbox > h2.title {
+.upfront-general-settings .postbox h2.title {
     border-bottom: 1px solid #eee;
-    padding: 26px 30px 25px;
+    padding: 25px 30px 25px;
     margin-bottom: 0;
     color: #777;
     font-weight: bold;
+    margin-top:0;
 }
-div.upfront-col-right,
-div.upfront-general-settings div.upfront-col-left {
+.upfront-col-right,
+.upfront-general-settings .upfront-col-left {
     margin-top: 30px;
 }
 @media screen and (min-width: 920px) {
-    div.upfront-general-settings div.upfront-col-left {
+    .upfront-general-settings .upfront-col-left {
         width: 48%;
         float: left;
         margin-right: 2%;
     }
-    div.upfront-general-settings div.upfront-col-right {
+    .upfront-general-settings .upfront-col-right {
         width: 48%;
         float: left;
     }
 }
-div.upfront-general-settings h1,
-div.upfront-general-settings h2,
-div.upfront-general-settings h3,
-div.upfront-general-settings h4 {
+.upfront-general-settings h1,
+.upfront-general-settings h2,
+.upfront-general-settings h3,
+.upfront-general-settings h4 {
     text-transform: uppercase;
 }
-div.upfront-general-settings .upfront-debug-block a.upfront_button,
-div.upfront-general-settings .upfront-debug-block button {
+.upfront-general-settings .upfront-debug-block a.upfront_button,
+.upfront-general-settings .upfront-debug-block button {
     background-color: #AFAFAF;
     border: none;
     color: #fff;
@@ -63,56 +64,56 @@ div.upfront-general-settings .upfront-debug-block button {
     outline: none;
     line-height: normal;
 }
-div.upfront-general-settings .upfront-debug-block a.upfront_button:disabled,
-div.upfront-general-settings .upfront-debug-block button:disabled {
+.upfront-general-settings .upfront-debug-block a.upfront_button:disabled,
+.upfront-general-settings .upfront-debug-block button:disabled {
     -moz-opacity: 0.5;
     opacity: 0.5;
 }
-div.upfront-general-settings button.warning {
+.upfront-general-settings button.warning {
     background-color: #BE1E2E;
     border-bottom: 2px #991724 solid;
 }
-div.upfront-general-settings .warning-text {
+.upfront-general-settings .warning-text {
     color: #BE1E2E;
 }
-div.upfront-general-settings .upfront-debug-block p.left {
+.upfront-general-settings .upfront-debug-block p.left {
     padding-right: 190px;
 }
-div.upfront-general-settings div.inside.debug-options a.upfront_button,
-div.upfront-general-settings div.inside.debug-options button {
+.upfront-general-settings .inside.debug-options a.upfront_button,
+.upfront-general-settings .inside.debug-options button {
     position: absolute;
     right: 0;
     top: 50%;
     margin-top: -12px;
 }
-div.upfront-general-settings .lightgrey {
+.upfront-general-settings .lightgrey {
     color: #777;
 }
-div.upfront-general-settings a {
+.upfront-general-settings a {
     color: #18A7E0;
     text-decoration: none;
 }
-div.upfront-general-settings .postbox {
+.upfront-general-settings .postbox {
     border: none;
     border-radius: 6px;
     border-bottom: 2px #E4E4E4 solid;
     box-shadow: none;
 }
-div.upfront-general-settings .postbox .inside.version-info {
+.upfront-general-settings .postbox .inside.version-info {
     font-size: 14px;
     font-weight: bold;
 }
-div.upfront-general-settings .version-info span {
+.upfront-general-settings .version-info span {
     float: right;
 }
-div.upfront-general-settings a.documentation:first-child {
+.upfront-general-settings a.documentation:first-child {
     margin-right: 10%;
     margin-bottom: 10px;
 }
-div.upfront-general-settings a.documentation {
+.upfront-general-settings a.documentation {
     display: inline-block;
 }
-div.upfront-general-settings a.documentation:before {
+.upfront-general-settings a.documentation:before {
     content: "\f331";
     color: #82878c;
     font: 400 20px/1 dashicons;
@@ -126,7 +127,7 @@ div.upfront-general-settings a.documentation:before {
     text-decoration: none!important;
     vertical-align: top;
 }
-div.upfront-general-settings .upfront-debug-block a.visit-forum {
+.upfront-general-settings .upfront-debug-block a.visit-forum {
     margin-right: 6%;
     margin-bottom: 10px;
 }
@@ -134,8 +135,8 @@ div.upfront-general-settings .upfront-debug-block a.visit-forum {
     cursor: pointer;
 }
 .upfront_admin button.loading,
-div.upfront-general-settings .upfront-debug-block a.upfront_button.loading,
-div.upfront-general-settings .upfront-debug-block button.loading {
+.upfront-general-settings .upfront-debug-block a.upfront_button.loading,
+.upfront-general-settings .upfront-debug-block button.loading {
     background-image: url("../../img/loader-admin.gif");
     background-position: center right;
     background-size: 24px;
@@ -156,3 +157,17 @@ div.upfront-general-settings .upfront-debug-block button.loading {
     display: inline-block;
     cursor: pointer;
 }
+
+/**
+ * Changelog
+ */
+ .postbox .inside.changelog .previous {
+ 	display: none;
+ }
+ .postbox .inside.changelog .extra {
+ 	display: none;
+ }
+ .changelog .postbox {
+    max-height:400px;
+    overflow-y:auto;
+ }

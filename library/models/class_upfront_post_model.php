@@ -14,7 +14,7 @@ abstract class  Upfront_PostModel {
 				'post_type' => $post_type,
 				'post_status' => 'auto-draft',
 				'post_title' => $title,
-				'post_content' => (!empty($content) ? $content : 'Your content goes here :)'),
+				'post_content' => (!empty($content) ? $content : 'Please type your content here...'),
 				'post_name' => sanitize_title( $title )
 			),
 			$post_type

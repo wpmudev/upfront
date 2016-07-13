@@ -34,10 +34,11 @@ div.upfront-regions a#no_region_add_one {
 }
 
 .upfront-initial-overlay-wrapper {
-	background: #eeeff0;
-	margin: auto;
+	background-color:rgba(255,255,255,.9);
+	border:0;
 	position: absolute;
 	top: 0; left: 0; bottom: 0; right: 0;
 	text-align:center;
 	line-height: 80%;
+	margin:15px;
 }

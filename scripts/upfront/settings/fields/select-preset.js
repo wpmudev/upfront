@@ -9,7 +9,7 @@ define(function() {
 			var selectWidth = '';
 			var preset = this.$el.find('.upfront-chosen-select').val();
 
-			if(preset == 'default' && Upfront.Application.get_current() === Upfront.Application.MODE.THEME) {
+			if(preset == 'default') {
 				selectWidth = '230px';
 			} else {
 				selectWidth = '175px';

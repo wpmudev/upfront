@@ -52,6 +52,11 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 		return array();
 	}
 
+	public function get_property ($prop) {
+		if ( isset($this->_data[$prop]) ) return $this->_data[$prop];
+		return false;
+	}
+
 	/**
 	 * Fetches array of supported post parts.
 	 * @return array A list of known parts.
@@ -144,7 +149,6 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 			$padding_left = isset( $options['contents']['padding_left'] ) ? $options['contents']['padding_left'] : 0;
 			$padding_right = isset( $options['contents']['padding_right'] ) ? $options['contents']['padding_right'] : 0;
 		}
-
 
 		// New post part view
 		$style_variant->marginLeft = 0;

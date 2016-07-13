@@ -156,7 +156,7 @@ abstract class Upfront_EntityResolver {
 
 		if(isset($stored_current_screen)) {
 			//$current_screen = $current_screen::get($stored_current_screen);
-			$current_screen = call_user_func(array($current_screen, 'get', $stored_current_screen));
+			$current_screen = call_user_func(array($current_screen, 'get'), $stored_current_screen);
 		}
 
 		$cascade = self::get_entity_ids(self::get_entity_cascade($query));

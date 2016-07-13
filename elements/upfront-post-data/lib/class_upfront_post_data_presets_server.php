@@ -120,6 +120,54 @@ class Upfront_PostData_Presets_Server extends Upfront_DataElement_Preset_Server 
 	public static function get_instance () {
 		return self::$_instance;
 	}
+
+	protected function _add_hooks () {
+		parent::_add_hooks();
+		add_filter('upfront_get_' . $this->elementName . '_presets', array($this, 'get_augmented_presets'), 99);
+	}
+
+	/**
+	 * Filters our presets and augments with the calculated column data
+	 *
+	 * @param mixed $presets Presets, god only knows in what format.
+	 *
+	 * @return array Augmented presets
+	 */
+	public function get_augmented_presets ($presets) {
+		if (empty($presets)) return $presets;
+
+		if (!is_array($presets)) {
+			$presets = json_decode($presets, true);
+		}
+
+		$grid = Upfront_Grid::get_grid();
+		$breakpoint = $grid->get_default_breakpoint();
+		$col_size = (int)$breakpoint->get_column_width();
+
+		$full = $breakpoint->get_columns();
+		$half = (int)(($full - 1) / 2);
+
+		if (is_array($presets)) foreach ($presets as $idx => $preset) {
+			if (empty($preset['id'])) continue;
+
+			$left_indent = !empty($preset['left_indent']) && is_numeric($preset['left_indent'])
+				? (int)$preset['left_indent']
+				: 0
+			;
+			if ($left_indent < 0 && $left_indent > $half) $left_indent = 0;
+
+			$right_indent = !empty($preset['right_indent']) && is_numeric($preset['right_indent'])
+				? (int)$preset['right_indent']
+				: 0
+			;
+			if ($right_indent < 0 && $right_indent > $half) $right_indent = 0;
+
+			$presets[$idx]['calculated_left_indent'] = $left_indent * $col_size;
+			$presets[$idx]['calculated_right_indent'] = $right_indent * $col_size;
+		}
+
+		return $presets;
+	}
 	
 	public static function get_preset_defaults() {
 		$parts = self::get_typography_parts();
