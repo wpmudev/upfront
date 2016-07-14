@@ -37,7 +37,7 @@ class Upfront_Uwidget {
 		global $wp_registered_widgets;
 		$widget = $this->get_widget();
 		$result = Upfront_Permissions::current(Upfront_Permissions::BOOT)
-			? Upfront_UwidgetView::get_l10n('render_error')
+			? $this->_get_error_markup()
 			: ''
 		;
 		$args = !empty($wp_registered_widgets[$widget]['params']) ? $wp_registered_widgets[$widget]['params'] : array();
@@ -80,6 +80,20 @@ class Upfront_Uwidget {
 		$out = ob_get_clean();
 
 		return !empty($out) ? $out : $result;
+	}
+
+	/**
+	 * Getter for rendering error string markup
+	 *
+	 * @return string
+	 */
+	private function _get_error_markup () {
+		return '' .
+			esc_html(Upfront_UwidgetView::get_l10n('render_error')) .
+			'<div class="upfront-widget-note"><small>' .
+				esc_html(Upfront_UwidgetView::get_l10n('not_shown_to_visitors')) .
+			'</small></div>' .
+		'';
 	}
 
 	private function _get_admin_fields () {
