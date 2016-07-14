@@ -3157,9 +3157,7 @@ div#page.upfront-layout-view.upfront-layout-view .upfront-editable_entity.upfron
   height: 40px;
   margin: auto;
   visibility: visible;
-  opacity: 1;
-  -webkit-transition: visibility 0s linear 0.6s, -webkit-transform 0.6s, opacity 0.6s;
-  transition: visibility 0s linear 0.6s, transform 0.6s, opacity 0.6s; }
+  opacity: 1; }
 
 .upfront-inline-panel-top {
   top: 0;
