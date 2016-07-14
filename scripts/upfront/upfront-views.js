@@ -3409,6 +3409,9 @@ define([
 				this.listenTo(linkPanelControl, 'panel:open panel:close', function() {
 					me.toggleLinkPanel();
 				});
+				this.listenTo(linkPanelControl, 'panel:close', function() {
+					me.closeControlPanel();
+				});
 				this.listenTo(ungroupControl, 'click', function (e) {
 					me.on_ungroup();
 				});
