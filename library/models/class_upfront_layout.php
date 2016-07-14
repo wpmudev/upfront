@@ -1,7 +1,7 @@
 <?php
 
 class Upfront_Layout extends Upfront_JsonModel {
-	
+
 	public static $version = '1.0.0';
 
 	protected static $cascade;
@@ -71,7 +71,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 		return $layout;
 	}
-	
+
 	public static function from_cpt ($data, $storage_key = '') {
 		// We need to apply global regions that saved in db
 		$regions = array();
@@ -370,7 +370,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 				)
 			),
 		);
-		
+
 		return apply_filters('upfront-core-default_layouts', $layouts);
 	}
 
@@ -570,7 +570,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 			if(!empty($this->_data['layout']['specificity'])) {
 				$stylesheet = get_stylesheet();
 				$specific_layout = $stylesheet . "-". $this->_data['layout']['specificity'];
-				
+
 				// Delete option
 				delete_option( $specific_layout );
 			}
@@ -580,7 +580,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 		return $key;
 	}
-	
+
 	public function save_global_region () {
 		$scopes = array();
 		foreach ( $this->_data['regions'] as $region ){
@@ -661,7 +661,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 		return $this->set_element_by_path($current['path'], $data);
 	}
-	
+
 	/**
 	 * The path is an array with the position of the element inside the data array (region, module, object)
 	 */
@@ -711,7 +711,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 		$i = 0;
 		$found = false;
-		while(!$found && $i < sizeof($data[$next])){
+		if (!empty($data[$next])) while(!$found && $i < sizeof($data[$next])){
 			$found = self::get_element($id, $data[$next][$i], $next);
 			if($found)
 				array_unshift($found['path'], $i);
@@ -733,7 +733,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		}
 		return $value;
 	}
-	
+
 	/**
 	 * Backward compatibility conversion
 	 */
@@ -760,7 +760,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 				set_transient($transient_key, $this->to_json(), 120); // set to 120 second for now
 			}
 		}
-		
+
 	}
 
 }
