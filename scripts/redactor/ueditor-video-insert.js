@@ -55,7 +55,7 @@
 				return  out.html();
 			},
 
-			getOutput: function(){
+			getOutput: function() {
 				return  this.getSimpleOutput();
 			},
 
@@ -152,7 +152,7 @@
 				videoSelector.open({multiple_selection: false })
 					.done(function(videoData){
 						videoSelector.close();
-						var newEmbedVideo = $(videoData.embed).find('video').attr('width', parseInt(me.$editor.width(), 10)).attr('height', 'auto').attr('controls', 'controls');
+						var newEmbedVideo = $(videoData.embed).find('video').attr('width', parseInt(me.$el.closest('.redactor-box').width(), 10)).attr('height', 'auto').attr('controls', 'controls');
 						me.data.set({
 							'video_embed': newEmbedVideo,
 							'id': videoData.id
