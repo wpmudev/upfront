@@ -6,7 +6,7 @@
     define([
         'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section',
         'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-item-typography-editor',
-        'scripts/upfront/upfront-views-editor/commands/command-edit-custom-css'
+        'scripts/upfront/upfront-views-editor/commands/command-general-edit-custom-css'
     ], function ( SidebarPanel_Settings_Section, SidebarPanel_Settings_Item_Typography_Editor, Command_EditCustomCSS ) {
 
         return SidebarPanel_Settings_Section.extend({
