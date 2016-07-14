@@ -7,14 +7,14 @@
         'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section',
         'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-item-typography-editor',
         'scripts/upfront/upfront-views-editor/commands/command-general-edit-custom-css'
-    ], function ( SidebarPanel_Settings_Section, SidebarPanel_Settings_Item_Typography_Editor, Command_GeneralEditCustomCSS ) {
+    ], function ( SidebarPanel_Settings_Section, SidebarPanel_Settings_Item_Typography_Editor, Command_EditCustomCSS ) {
 
         return SidebarPanel_Settings_Section.extend({
             initialize: function () {
                 this.settings = _([
                     new SidebarPanel_Settings_Item_Typography_Editor({"model": this.model})
                 ]);
-                this.edit_css = new Command_GeneralEditCustomCSS({"model": this.model});
+                this.edit_css = new Command_EditCustomCSS({"model": this.model});
             },
             get_title: function () {
                 return l10n.typography_and_colors;
