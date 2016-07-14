@@ -47,15 +47,17 @@ class Upfront_Themes_RequiredPage {
 	}
 
 	protected function _create_page () {
-	    $page_slug = sanitize_title($this->_page_data['post_title']);
-        $page = get_page_by_path($page_slug);
-        if ( $page && $page->ID )
-            $post_id = $page->ID;
-        else
-    		$post_id = wp_insert_post(wp_parse_args($this->_page_data, array(
-    			'post_status' => 'publish',
-    			'post_type' => 'page'
-    		)));
+		$page_slug = sanitize_title($this->_page_data['post_title']);
+		$page = get_page_by_path($page_slug);
+		if ( $page && $page->ID ) {
+			$post_id = $page->ID;
+		} else {
+			$post_id = wp_insert_post(wp_parse_args($this->_page_data, array(
+				'post_status' => 'publish',
+				'post_type' => 'page'
+			)));
+			$this->_wp_template = 'page_tpl-' . $this->_page_data['page_slug'] . '.php';
+		}
 		if (!empty($this->_wp_template)) update_post_meta($post_id, '_wp_page_template', $this->_wp_template);
 		update_option($this->_key, $post_id);
 		$this->_post_id = $post_id;

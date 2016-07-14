@@ -181,7 +181,17 @@ class Upfront_Ajax extends Upfront_Server {
 		if ( !$template_slug && $post_id ) {
 			$uf_tpl_meta = strtolower($store_key . '-uf_wp_page_template');
 			$template_slug = get_post_meta($post_id, $uf_tpl_meta, true);
-			if ( !$template_slug || empty($template_slug) ) $template_slug = strtolower($store_key . '-default');
+			if ( !$template_slug || empty($template_slug) ) {
+				// let's try to check if tpl template was assigned
+				$template_slug = get_post_meta($post_id, '_wp_page_template', true);
+				if ( !$template_slug || empty($template_slug) ) {
+					// still none? then it is the default
+					$template_slug = strtolower($store_key . '-default');
+				} else {
+					// it is from tpl file, then we need to sanitize the name
+					$template_slug = sanitize_title($store_key . preg_replace('/page_tpl(.*)\.php/', '\1', $template_slug) . '-page-template');
+				}
+			}
 		}
 		if ( !$layout_change || empty($layout_change) ) $layout_change = 0; 
 

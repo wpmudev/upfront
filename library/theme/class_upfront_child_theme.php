@@ -166,6 +166,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		foreach ($pages as $page) {
 			$data['post_title'] = $page['name'];
+			$data['page_slug'] = $page['slug'];
 			$this->add_required_page($page['slug'], $page['layout'], $data, false);
 		}
 	}
