@@ -91,7 +91,11 @@ class Upfront_Layout extends Upfront_JsonModel {
 				$regions[] = $region;
 			}
 		}
+		
+		// Make sure we replace properties with global ones
+		$data["properties"] = self::get_layout_properties();
 		$data['regions'] = $regions;
+
 		return self::from_php($data, $storage_key);
 	}
 
