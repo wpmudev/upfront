@@ -259,11 +259,11 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				} else {
 					$preset['preset_style'] = str_replace('#page', 'div#page .upfront-output-region-container .upfront-output-module', $preset['preset_style']);
 				}
-				
+
 				if($this->isThisPostServer) {
 					$preset['preset_style'] = str_replace('.default', '.default.upfront-this_post', $preset['preset_style']);
 				}
-				
+
 				if($this->isCommentServer) {
 					$preset['preset_style'] = str_replace('.default', '.default.upfront-comment', $preset['preset_style']);
 				}
@@ -370,6 +370,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	public function properties_columns($array, $column) {
         $result = array();
         foreach ($array as $item) {
+			if (!is_array($item)) continue; // Not an array, nothing to do here
             if (array_key_exists($column, $item)) {
                 $result[] = $item[$column];
 			}
@@ -423,17 +424,17 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		return $updatedPresets;
 	}
-	
+
 	public function get_typography_values_by_tag($tag) {
 		$tag_typography = array();
-		
+
 		//Get breakpoints typography
 		$grid = Upfront_Grid::get_grid();
 		$breakpoint = $grid->get_default_breakpoint();
 		$typography = $breakpoint->get_typography();
-		
+
 		$theme_typography_array = array();
-		
+
 		if(!is_null(Upfront_ChildTheme::get_instance())) {
 			//We load this in case typography is empty or specific tag is empty
 			$layout_properties = Upfront_ChildTheme::get_instance()->getLayoutProperties();
@@ -449,11 +450,11 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		if(empty($typography)) {
 			$typography = $theme_typography_array;
 		}
-		
+
 		if(isset($typography[$tag]) && !empty($typography[$tag])) {
 			//Breakpoint typography exist
 			$tag_typography = $typography[$tag];
-			
+
 			//If tag is A we should inherit size and line-height from P
 			if($tag == "a") {
 				if(isset($typography['p']['size'])) {
@@ -474,13 +475,13 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		return $tag_typography;
 	}
-	
+
 	public function get_typography_defaults_array($defaults, $part) {
 		//Make sure we use array
 		if (is_object($defaults)) {
 			$defaults = get_object_vars($defaults);
 		}
-		
+
 		if (!is_array($defaults)) $defaults = array();
 		$defaults = wp_parse_args($defaults, array(
 			'font_face' => '',
