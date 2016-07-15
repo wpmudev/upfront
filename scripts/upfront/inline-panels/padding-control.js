@@ -252,7 +252,9 @@ define([
 			var column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
 				top_padding_use = this.model.get_breakpoint_property_value('top_padding_use', true),
 				bottom_padding_use = this.model.get_breakpoint_property_value('bottom_padding_use', true),
-				padding_top_val, padding_bottom_val
+				left_padding_use = this.model.get_breakpoint_property_value('left_padding_use', true),
+				right_padding_use = this.model.get_breakpoint_property_value('right_padding_use', true),
+				padding_top_val, padding_bottom_val, padding_left_val, padding_right_val
 			;
 
 			if(this.default_padding.top === false) {
@@ -261,19 +263,29 @@ define([
 			if(this.default_padding.bottom === false){
 				this.default_padding.bottom = column_padding;
 			}
+			if(this.default_padding.left === false){
+				this.default_padding.left = column_padding;
+			}
+			if(this.default_padding.right === false){
+				this.default_padding.right = column_padding;
+			}
+
 			padding_top_val = top_padding_use ? this.model.get_breakpoint_property_value('top_padding_num', true) : this.default_padding.top;
 			padding_bottom_val = bottom_padding_use ? this.model.get_breakpoint_property_value('bottom_padding_num', true) : this.default_padding.bottom;
-
+			padding_left_val = left_padding_use ? this.model.get_breakpoint_property_value('left_padding_num', true) : this.default_padding.left;
+			padding_right_val = right_padding_use ? this.model.get_breakpoint_property_value('right_padding_num', true) : this.default_padding.right;
 
 			if(typeof this.paddingTop !== 'undefined') {
 				this.paddingTop.get_field().val(padding_top_val);
-				if(typeof this.paddingTop.$el.find('#'+this.paddingTop.get_field_id()).slider('instance') !== 'undefined') 	this.paddingTop.$el.find('#'+this.paddingTop.get_field_id()).slider('value', padding_top_val);
-				this.paddingTop.$el.parent('.upfront-padding-container').find('.upfront-padding-value').html(padding_top_val);
 			}
 			if(typeof this.paddingBottom !== 'undefined') {
 				this.paddingBottom.get_field().val(padding_bottom_val);
-				if(typeof this.paddingBottom.$el.find('#'+this.paddingBottom.get_field_id()).slider('instance') !== 'undefined') 	this.paddingBottom.$el.find('#'+this.paddingBottom.get_field_id()).slider('value', padding_bottom_val);
-				this.paddingBottom.$el.parent('.upfront-padding-container').find('.upfront-padding-value').html(padding_bottom_val);
+			}
+			if(typeof this.paddingLeft !== 'undefined') {
+				this.paddingLeft.get_field().val(padding_left_val);
+			}
+			if(typeof this.paddingRight !== 'undefined') {
+				this.paddingRight.get_field().val(padding_right_val);
 			}
 		},
 		on_up_arrow_click: function() {
