@@ -1,18 +1,31 @@
-/* Element Wrapper */
-#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element,
-#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element {
-	<?php if(!empty($properties['element_wrapper_background'])) { ?>
-	background: <?php echo $properties['element_wrapper_background'] ?>;
+/* Form Wrapper */
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .upfront_login-form,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .upfront_login-form {
+	<?php if(!empty($properties['form_wrapper_background'])) { ?>
+	background: <?php echo $properties['form_wrapper_background'] ?>;
 	<?php } ?>
-	<?php if(!empty($properties['element_wrapper_use_border'])) { ?>
-			<?php if(!empty($properties['element_wrapper_border_width']) && !empty($properties['element_wrapper_border_type']) && !empty($properties['element_wrapper_border_color'])) { ?>border: <?php echo $properties['element_wrapper_border_width'] ?>px <?php echo $properties['element_wrapper_border_type'] ?> <?php echo $properties['element_wrapper_border_color'] ?>;<?php } ?>
+	<?php if(!empty($properties['form_wrapper_use_border'])) { ?>
+			<?php if(!empty($properties['form_wrapper_border_width']) && !empty($properties['form_wrapper_border_type']) && !empty($properties['form_wrapper_border_color'])) { ?>border: <?php echo $properties['form_wrapper_border_width'] ?>px <?php echo $properties['form_wrapper_border_type'] ?> <?php echo $properties['form_wrapper_border_color'] ?>;<?php } ?>
 	<?php } else { ?>
 			border: none;
 	<?php } ?>
-	<?php if(!empty($properties['element_wrapper_use_radius'])) { ?>
-			border-radius: <?php echo $properties['element_wrapper_border_radius1'] ? $properties['element_wrapper_border_radius1'] : 0 ?>px <?php echo $properties['element_wrapper_border_radius2'] ? $properties['element_wrapper_border_radius2'] : 0 ?>px <?php echo $properties['element_wrapper_border_radius4'] ? $properties['element_wrapper_border_radius4'] : 0 ?>px <?php echo $properties['element_wrapper_border_radius3'] ? $properties['element_wrapper_border_radius3'] : 0 ?>px;
+	<?php if(!empty($properties['form_wrapper_use_radius'])) { ?>
+			border-radius: <?php echo $properties['form_wrapper_border_radius1'] ? $properties['form_wrapper_border_radius1'] : 0 ?>px <?php echo $properties['form_wrapper_border_radius2'] ? $properties['form_wrapper_border_radius2'] : 0 ?>px <?php echo $properties['form_wrapper_border_radius4'] ? $properties['form_wrapper_border_radius4'] : 0 ?>px <?php echo $properties['form_wrapper_border_radius3'] ? $properties['form_wrapper_border_radius3'] : 0 ?>px;
 	<?php } else { ?>
 			border-radius: 0px;
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront_login.upfront_login-hover:hover .upfront_login-form:before,
+#page .<?php echo $properties['id'] ?> .upfront_login.upfront_login-click.active .upfront_login-form:before {
+	<?php if(!empty($properties['form_wrapper_background'])) { ?>
+	background: <?php echo $properties['form_wrapper_background'] ?>;
+	<?php } ?>
+	<?php if(!empty($properties['form_wrapper_use_border'])) { ?>
+			<?php if(!empty($properties['form_wrapper_border_width']) && !empty($properties['form_wrapper_border_type']) && !empty($properties['form_wrapper_border_color'])) { ?>border-top: <?php echo $properties['form_wrapper_border_width'] ?>px <?php echo $properties['form_wrapper_border_type'] ?> <?php echo $properties['form_wrapper_border_color'] ?>;
+			border-left: <?php echo $properties['form_wrapper_border_width'] ?>px <?php echo $properties['form_wrapper_border_type'] ?> <?php echo $properties['form_wrapper_border_color'] ?>;
+			<?php } ?>
+	<?php } else { ?>
+			border: none;
 	<?php } ?>
 }
 

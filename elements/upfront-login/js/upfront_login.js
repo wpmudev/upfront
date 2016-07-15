@@ -48,6 +48,7 @@ define([
 				'click .login-submit input.button-primary' : 'disable_default',
 				'click a.login-lostpassword-link' : 'disable_default',
 				'click a.logout_link' : 'disable_default',
+				'click .upfront_login.upfront_login-click .upfront_login-trigger' : 'trigger_login_click',
 			});
 			
 			this.delegateEvents();
@@ -204,6 +205,22 @@ define([
 					if (text) me.model.set_property('logout_link', text, true);
 					me.redraw_layout();
 				});
+			}
+		},
+		trigger_login_click: function (e) {
+			if (Upfront.Application.user_can_modify_layout()) {
+				var $root = $(e.target).closest(".upfront_login-click");
+				$root
+					.addClass("active")
+					.one("click", function () {
+						$root.removeClass("active");
+						return false;
+					})
+					.find(".upfront_login-form").on("click", function (e) {
+						e.stopPropagation();
+					})
+				;
+				return false;
 			}
 		},
 		get_content_markup: function () {
@@ -446,7 +463,7 @@ define([
 		default_view: function () {
 			this.$el.find('.state_settings_button_wrapper').hide();
 			this.$el.find('.state_modules.state_settings').hide();
-			this.$el.find('[class^="element_wrapper_settings"]').closest('.settings_module').show();
+			this.$el.find('[class^="form_wrapper_settings"]').closest('.settings_module').show();
 		},
 		toggle_view: function (selected) {
 			var me = this;
@@ -458,7 +475,7 @@ define([
 			}, 100);
 		},
 		change_view: function (part_style) {
-			if ( !part_style || part_style === 'element_wrapper' ) {
+			if ( !part_style || part_style === 'form_wrapper' ) {
 				this.default_view();
 			} else {
 				this.toggle_view(part_style);
