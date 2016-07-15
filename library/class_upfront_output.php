@@ -45,7 +45,7 @@ class Upfront_Output {
 				self::$layout_post_id = $layout_post_id;
 				$page_layout = Upfront_Server_PageLayout::get_instance()->get_layout($layout_post_id, $is_dev);
 				if ( $page_layout ) {
-					$layout = Upfront_Layout::from_php($page_layout, Upfront_Layout::STORAGE_KEY);
+					$layout = Upfront_Layout::from_cpt($page_layout, Upfront_Layout::STORAGE_KEY);
 					$load_from_options = false;
 				}
 			} else {
@@ -53,7 +53,7 @@ class Upfront_Output {
 				self::$layout_post_id = false;
 				$page_template  = self::get_page_template($layout_ids);
 				if ( $page_template ) {
-					$layout = Upfront_Layout::from_php($page_template, Upfront_Layout::STORAGE_KEY);
+					$layout = Upfront_Layout::from_cpt($page_template, Upfront_Layout::STORAGE_KEY);
 					$load_from_options = false;
 				}
 			}
