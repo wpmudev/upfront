@@ -174,6 +174,9 @@ abstract class Upfront_EntityResolver {
 				// 404 page layout
 				return __('404 Page', 'upfront');
 			}
+
+			if (empty($item) && empty($specificity)) return __('Single', 'upfront');
+
 			$post_type = get_post_type_object($item ? $item : 'post');
 			$name = false;
 
@@ -184,11 +187,11 @@ abstract class Upfront_EntityResolver {
 
 			if (!empty($post_type)) {
 				$name = is_object($post_type->labels)
-					? $post_type->labels->singular_name 
+					? $post_type->labels->singular_name
 					: $post_type->labels['singular_name']
 				;
 			}
-			
+
 			return !empty($specificity)
 				? sprintf("Single %s: %s", $name, $specificity)
 				: sprintf("Single %s", $name)

@@ -91,7 +91,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 				$regions[] = $region;
 			}
 		}
-		
+
 		// Make sure we replace properties with global ones
 		$data["properties"] = self::get_layout_properties();
 		$data['regions'] = $regions;
@@ -367,6 +367,11 @@ class Upfront_Layout extends Upfront_JsonModel {
 					'specificity' => 'single-404_page',
 					'item' => 'single-page',
 					'type' => 'single',
+				)
+			),
+			'single' => array(
+				'layout' => array(
+					'type' => 'single'
 				)
 			),
 		);
