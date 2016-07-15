@@ -220,7 +220,7 @@ class Upfront_LoginView extends Upfront_Object {
 			'px' => __("px", 'upfront'),
 			'preset' => array(
 				'part_to_style' => __("Part to Style:", 'upfront'),
-				'element_wrapper' => __("Element Wrapper", 'upfront'),
+				'form_wrapper' => __("Form Wrapper", 'upfront'),
 				'field_labels' => __("Field Labels", 'upfront'),
 				'input_fields' => __("Input Fields", 'upfront'),
 				'button' => __("Button", 'upfront'),
