@@ -42,7 +42,9 @@ define([
 
 			this.default_padding = {
 				top: false,
-				bottom: false
+				bottom: false,
+				left: false,
+				right: false
 			}
 
 			this.listenTo(Upfront.Events, "upfront:paddings:updated", this.refresh);
@@ -118,7 +120,7 @@ define([
 				me.default_padding.right = column_padding;
 			}
 
-			me.paddingTop = new Upfront.Views.Editor.Field.Text({
+			me.paddingTop = new Upfront.Views.Editor.Field.Number({
 				model: this.model,
 				use_breakpoint_property: true,
 				property: 'top_padding_num',
@@ -140,12 +142,12 @@ define([
 				}
 			});
 
-			me.paddingLeft = new Upfront.Views.Editor.Field.Text({
+			me.paddingLeft = new Upfront.Views.Editor.Field.Number({
 				model: this.model,
 				use_breakpoint_property: true,
 				property: 'left_padding_num',
 				label: '',
-				default_value: this.model.get_breakpoint_property_value('left_padding_num') || me.default_padding.bottom,
+				default_value: this.model.get_breakpoint_property_value('left_padding_num') || me.default_padding.left,
 				min: 0,
 				max: 200,
 				step: 5,
@@ -162,12 +164,12 @@ define([
 				}
 			});
 			
-			me.paddingRight = new Upfront.Views.Editor.Field.Text({
+			me.paddingRight = new Upfront.Views.Editor.Field.Number({
 				model: this.model,
 				use_breakpoint_property: true,
 				property: 'right_padding_num',
 				label: '',
-				default_value: this.model.get_breakpoint_property_value('right_padding_num') || me.default_padding.bottom,
+				default_value: this.model.get_breakpoint_property_value('right_padding_num') || me.default_padding.right,
 				min: 0,
 				max: 200,
 				step: 5,
@@ -184,7 +186,7 @@ define([
 				}
 			});
 			
-			me.paddingBottom = new Upfront.Views.Editor.Field.Text({
+			me.paddingBottom = new Upfront.Views.Editor.Field.Number({
 				model: this.model,
 				use_breakpoint_property: true,
 				property: 'bottom_padding_num',
@@ -210,15 +212,15 @@ define([
 			me.paddingTop.render();
 			$paddingTopContainer.append(me.paddingTop.$el);
 			$paddingControl.append($paddingTopContainer);
-			me.paddingBottom.render();
-			$paddingBottomContainer.append(me.paddingBottom.$el);
-			$paddingControl.append($paddingBottomContainer);
 			me.paddingLeft.render();
 			$paddingLeftContainer.append(me.paddingLeft.$el);
 			$paddingControl.append($paddingLeftContainer);
 			me.paddingRight.render();
 			$paddingRightContainer.append(me.paddingRight.$el);
 			$paddingControl.append($paddingRightContainer);
+			me.paddingBottom.render();
+			$paddingBottomContainer.append(me.paddingBottom.$el);
+			$paddingControl.append($paddingBottomContainer);
 
 			$paddingTopContainer.on('mousedown', function() {
 				Upfront.data.currentEntity.padding_hint_locked = true;
