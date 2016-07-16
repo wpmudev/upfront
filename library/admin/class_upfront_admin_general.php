@@ -1,7 +1,7 @@
 <?php
 
 class Upfront_Admin_General extends Upfront_Admin_Page {
-	
+
     function __construct(){
 		if ($this->_can_access( Upfront_Permissions::SEE_USE_DEBUG )) {
 			add_submenu_page( Upfront_Admin::$menu_slugs['main'], __("General Settings", Upfront::TextDomain),  __("General", Upfront::TextDomain), 'manage_options', Upfront_Admin::$menu_slugs['main'], array($this, "render_page") );
@@ -38,6 +38,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 						</div>
 					</div>
 				</div>
+				<?php $this->_render_api_options() ?>
 				<?php $this->_render_debug_options() ?>
 			</div>
 			<div class="upfront-col-right">
@@ -54,7 +55,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 							<div class="upfront-debug-block">
 								<h4><?php esc_html_e("Online Articles", Upfront::TextDomain) ?></h4>
 								<ul>
-								
+
 									<li><a href='https://premium.wpmudev.org/blog/upfront-1-0/' target="_blank"><?php esc_html_e("Upfront 1.0", Upfront::TextDomain) ?></a></li>
 									<li><a href='https://premium.wpmudev.org/blog/upfront-basics/' target="_blank"><?php esc_html_e("Upfront Part 1: The Basics, Theme Colors and Typography", Upfront::TextDomain) ?></a></li>
 									<li><a href='https://premium.wpmudev.org/blog/upfront-regions/' target="_blank"><?php esc_html_e("Upfront Part 2: Structuring Your Site with Regions", Upfront::TextDomain) ?></a></li>
@@ -75,7 +76,39 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 			</div>
 		</div>
 		<?php
-		
+
+	}
+
+	private function _render_api_options () {
+		$admin_keys = new Upfront_Admin_ApiKeys;
+		if (!$admin_keys->can_access()) return false;
+
+		$services = $admin_keys->get_services();
+		if (empty($services)) return false;
+
+		$admin_keys->process_submissions();
+
+		?>
+		<div class="postbox-container api_keys">
+			<div class='postbox'>
+				<h2 class="title"><?php esc_html_e("API Keys", Upfront::TextDomain) ?></h2>
+				<div class="inside api_keys">
+					<form method="POST">
+						<?php
+						foreach ($services as $service => $label) {
+							$admin_keys->render_key_box($service);
+						}
+						?>
+						<p>
+							<button class="upfront_button">
+								<?php esc_html_e('Save', 'upfront'); ?>
+							</button>
+						</p>
+					</form>
+				</div>
+			</div>
+		</div>
+		<?php
 	}
 
 	private function _render_debug_options(){

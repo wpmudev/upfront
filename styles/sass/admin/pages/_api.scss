@@ -1,0 +1,54 @@
+.upfront-general-settings .api_keys {
+	button {
+	    background-color: #AFAFAF;
+	    border: none;
+	    color: #fff;
+	    text-transform: uppercase;
+	    font-size: 12px;
+	    padding: 6px 16px;
+	    border-radius: 3px;
+	    -webkit-transition: padding 0.3s;
+	    transition: padding 0.3s;
+	    outline: none;
+	    line-height: normal;
+	}
+
+	.api.key {
+		border-bottom: 1px solid #eee;
+		padding: 14px 0 10px;
+	}
+
+	label {
+		& {
+			overflow: hidden;
+		}
+
+		.label {
+			float: left;
+			width: 25%;
+		}
+
+		input {
+			width: 72%;
+		}
+
+		.help {
+
+			& {
+				display: block;
+				position: relative;
+				color: #777;
+				text-indent: 20px;
+			}
+
+			&:before {
+				display: block;
+				position: absolute;
+				left: -20px;
+				content: "\f348";
+				font-family: dashicons;
+			}
+		}
+	}
+
+}

@@ -504,4 +504,44 @@ ul.upfront_restrictions_functionality_row:hover li {
 .upfront_admin_experimental .form_content .bottom_separator {
   border-bottom: 1px solid #eee; }
 
+.upfront-general-settings .api_keys button {
+  background-color: #AFAFAF;
+  border: none;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 12px;
+  padding: 6px 16px;
+  border-radius: 3px;
+  -webkit-transition: padding 0.3s;
+  transition: padding 0.3s;
+  outline: none;
+  line-height: normal; }
+
+.upfront-general-settings .api_keys .api.key {
+  border-bottom: 1px solid #eee;
+  padding: 14px 0 10px; }
+
+.upfront-general-settings .api_keys label {
+  overflow: hidden; }
+
+.upfront-general-settings .api_keys label .label {
+  float: left;
+  width: 25%; }
+
+.upfront-general-settings .api_keys label input {
+  width: 72%; }
+
+.upfront-general-settings .api_keys label .help {
+  display: block;
+  position: relative;
+  color: #777;
+  text-indent: 20px; }
+
+.upfront-general-settings .api_keys label .help:before {
+  display: block;
+  position: absolute;
+  left: -20px;
+  content: "\f348";
+  font-family: dashicons; }
+
 /*# sourceMappingURL=admin.css.map */
