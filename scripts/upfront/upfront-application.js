@@ -825,10 +825,18 @@ var Application = new (Backbone.Router.extend({
 		}
 
 		var app = this;
+		// Get the appropriate Loading Notice – whether builder or editor.
+		var loadingNoticeResult = Upfront.plugins.call('long-loading-notice');
+		// Editor Notice.
+		var loadingNotice = Upfront.Settings.l10n.global.application.long_loading_notice;
+		if(loadingNoticeResult.status && loadingNoticeResult.status === 'called' && loadingNoticeResult.result) {
+			// If Builder is loading, use its long_loading_notice instead.
+			loadingNotice = loadingNoticeResult.result;
+		}
 		// Start loading animation
 		app.loading = new Upfront.Views.Editor.Loading({
 			loading: Upfront.Settings.l10n.global.application.loading,
-			loading_notice: Upfront.Settings.l10n.global.application.long_loading_notice,
+			loading_notice: loadingNotice,
 			loading_type: 'upfront-boot',
 			done: Upfront.Settings.l10n.global.application.thank_you_for_waiting,
 			fixed: true,
