@@ -1152,6 +1152,15 @@ var PageTemplateEditor = PostSectionView.extend({
 			// activate flag for layout change
 			_upfront_post_data.layout_change = 1;
 		}
+		else {
+			// If layout isn't ready, let's trigger this again after it's ready
+			var me = this;
+			this.listenToOnce(Upfront.Events, "layout:after_render", function () {
+				// Don't call this if this view is not existing in DOM anymore
+				if ( !$.contains(document.documentElement, me.$el.get(0)) ) return;
+				me.on_layout_change();
+			});
+		}
 	},
 
 	get_options: function () {
