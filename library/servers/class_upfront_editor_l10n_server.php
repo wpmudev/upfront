@@ -481,6 +481,8 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'bottom_padding_short' => __('Padding Btm: ', 'upfront'),
 				'left_padding' => __('Left Padding', 'upfront'),
 				'right_padding' => __('Right Padding', 'upfront'),
+				'padding_title' => __('Adjust padding', 'upfront'),
+				'padding_keyboard' => __('Use Up & Down Keys to Change Top Padding', 'upfront'),
 				'css_and_anchor' => __('CSS Styles &amp; Anchor Settings', 'upfront'),
 				'css_styles' => __('CSS Styles', 'upfront'),
 				'element_css_styles' => __('Element CSS Styles', 'upfront'),

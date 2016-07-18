@@ -103,7 +103,7 @@ define([
 			}
 
 			if($paddingControl.length === 0){
-				$paddingControl = $('<div class="upfront-padding-control inline-panel-control-dialog"></div>');
+				$paddingControl = $('<div class="upfront-padding-control inline-panel-control-dialog"><span>'+ l10n.padding_title +'</span></div>');
 				me.$el.append($paddingControl);
 			}
 			
