@@ -113,6 +113,42 @@
 	margin-right: 5px;
 	margin-bottom: -4px;
 }
+.upfront-element-controls .upfront-inline-panel .padding-lock input[type=checkbox] {
+    position: relative;
+    left: 36px;
+    top: 6px;
+}
+.upfront-element-controls .upfront-inline-panel .padding-lock input[type=checkbox]:checked {
+    float:none !important;
+    left: 38px;
+    top: 7px;
+}
+.upfront-element-controls .upfront-inline-panel .padding-lock input[type=checkbox]{
+    display: none;
+}
+.upfront-element-controls .upfront-inline-panel .padding-lock label {
+    display: block;
+    height: 15px;
+    width: 15px;
+    background-image: url('../img/uf-core-el-sprite.png');
+    background-image: url('../img/uf-core-el-sprite.svg'), none;
+    background-position: -661px -172px;
+    background-color: #f7fbff;
+    left: 30px;
+    top: 3px;
+    position: relative;
+    cursor: pointer;
+}
+.upfront-element-controls .upfront-inline-panel .padding-lock .upfront-field-multiple-selected label {
+    background-position: -661px -140px;
+}
+.upfront-element-controls .upfront-inline-panel .padding-lock {
+    position: relative;
+    margin-top: -19px;
+    left: 0px;
+	top: 30px;
+	z-index: 100;
+}
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-padding-control span.upfront-padding-value {
     color: #00afec;
     font-weight: bold;
