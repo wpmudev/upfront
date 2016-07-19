@@ -79,6 +79,10 @@ define([
 			this.isOpen = true;
 			this.refresh();
 			this.$el.addClass('upfront-control-dialog-open');
+			
+			// Set position of padding container
+			this.update_position();
+
 			Upfront.Events.trigger('upfront:hide:subControl');
 		},
 
@@ -272,8 +276,8 @@ define([
 			// Empty padding container
 			$paddingControl.html('');
 			
-			// Append panel title
-			$paddingControlTitle = '<span class="upfront-padding-title">'+ l10n.padding_title +'</span>';
+			// Append panel title, arrow is not set like pseudo element because we cant update its styles with jQuery
+			$paddingControlTitle = '<span class="upfront-padding-arrow"></span><span class="upfront-padding-title">'+ l10n.padding_title +'</span>';
 			$paddingControl.append($paddingControlTitle);
 			
 			// Append padding icons
@@ -404,6 +408,17 @@ define([
 
 				this.refresh();
 			}
+		},
+		update_position: function() {
+			// Get number of elements before padding
+			var elementsNumber = this.$el.prevAll().length,
+				leftPosition = elementsNumber * 38;
+			
+			// Set container position
+			this.$el.find('.upfront-padding-control').css('left', -leftPosition);
+			
+			// Update arrow position under padding button
+			this.$el.find('.upfront-padding-arrow').css('left', leftPosition);
 		}
 	});
 

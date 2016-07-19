@@ -46,7 +46,7 @@
 	position: relative;
 	top: 9px;
 }
-.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-padding-control:before {
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-padding-arrow {
 	width: 0;
 	height: 0;
 	border-style: solid;
@@ -54,7 +54,7 @@
 	border-color: transparent transparent #e7ecf2 transparent;
 	position: absolute;
 	top: -5px;
-	left: 15px;
+	margin-left: 15px;
 	content: '';
 }
 .upfront-element-controls .upfront-inline-panel .upfront-padding-container .upfront-field-number[type=number] {
