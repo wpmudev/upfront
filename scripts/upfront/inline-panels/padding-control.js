@@ -207,10 +207,19 @@ define([
 					Upfront.Events.trigger("upfront:paddings:bottom:updated", this.model, Upfront.data.currentEntity);
 				}
 			});
-
+			
+			// Empty padding container
 			$paddingControl.html('');
+			
+			// Append panel title
 			$paddingControlTitle = '<span class="upfront-padding-title">'+ l10n.padding_title +'</span>';
 			$paddingControl.append($paddingControlTitle);
+			
+			// Append padding icons
+			$paddingControlTitle = '<span class="upfront-padding-keyboard">&nbsp;</span><span class="upfront-checkbox-info" title="'+ l10n.padding_keyboard +'"></span>';
+			$paddingControl.append($paddingControlTitle);
+
+			// Append padding controls
 			me.paddingTop.render();
 			$paddingTopContainer.append(me.paddingTop.$el);
 			$paddingControl.append($paddingTopContainer);

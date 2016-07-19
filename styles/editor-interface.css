@@ -10038,7 +10038,8 @@ div.sp-replacer:before {
   display: inline-block; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-padding-container {
-  text-align: center; }
+  text-align: center;
+  position: relative; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-padding-cotainer-left {
   text-align: left; }
@@ -10049,12 +10050,40 @@ div.sp-replacer:before {
 .upfront-element-controls .upfront-inline-panel .upfront-padding-title {
   font-size: 11px;
   text-transform: uppercase;
-  line-height: 35px;
+  line-height: 1;
   color: #2f475f;
   font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   font-weight: 700;
   position: relative;
   letter-spacing: 0.34px; }
+
+.upfront-element-controls .upfront-inline-panel .upfront-padding-keyboard {
+  background-position: -290px -284px;
+  width: 20px;
+  height: 11px;
+  background-image: url("../img/uf-core-el-sprite.svg");
+  position: absolute;
+  top: 50px;
+  left: 20px;
+  z-index: 99; }
+
+.upfront-element-controls .upfront-inline-panel .upfront-checkbox-info {
+  position: absolute;
+  top: 50px;
+  right: 20px;
+  z-index: 99;
+  cursor: pointer; }
+
+.upfront-element-controls .upfront-inline-panel .upfront-checkbox-info:before {
+  display: inline-block;
+  content: "";
+  width: 15px;
+  height: 15px;
+  background-image: url("../img/uf-core-el-sprite.svg");
+  background-position: -483px -141px;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-bottom: -4px; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-padding-control span.upfront-padding-value {
   color: #00afec;
