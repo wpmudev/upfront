@@ -183,6 +183,10 @@
                                 }
                                 me.fields.color.set_value( me.colors[value] );
                                 me.fields.color.update_input_border_color(me.colors[value]);
+								
+								// Update typeface when element changed
+								var typeface_value = me.fields.typeface.get_value();
+								me.fields.typeface.set_option_font(typeface_value);
                             }
                         }),
                         typeface: new Fields.Typeface_Chosen_Select({
