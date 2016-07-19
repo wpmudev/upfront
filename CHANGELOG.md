@@ -1,6 +1,13 @@
 Change Log
 ============
 
+1.3.3 - 2016-07-19
+-------------------------------------------------------------------------------
+- Add: Google Maps API key area in admin
+- Fix: global regions issue.
+- Fix: global theme settings issue.
+
+
 1.3.2 - 2016-06-24
 -------------------------------------------------------------------------------
 - Fix: drag and drop on responsive issue.
