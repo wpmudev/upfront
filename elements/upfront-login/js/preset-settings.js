@@ -18,7 +18,7 @@ define([
 					moduleType: 'Selectbox',
 					options: {
 						state: 'global',
-						default_value: 'element_wrapper',
+						default_value: 'form_wrapper',
 						title: '',
 						custom_class: 'image_style',
 						label: l10n.preset.part_to_style,
@@ -26,7 +26,7 @@ define([
 							name: 'part_style'
 						},
 						values: [
-							{ label: l10n.preset.element_wrapper, value: 'element_wrapper' },
+							{ label: l10n.preset.form_wrapper, value: 'form_wrapper' },
 							{ label: l10n.preset.field_labels, value: 'field_labels' },
 							{ label: l10n.preset.input_fields, value: 'input_fields' },
 							{ label: l10n.preset.button, value: 'button' },
@@ -42,10 +42,10 @@ define([
 						title: '',
 						multiple: false,
 						single: true,
-						state: 'element_wrapper_settings',
+						state: 'form_wrapper_settings',
 						abccolors: [
 							{
-								name: 'element_wrapper_background',
+								name: 'form_wrapper_background',
 								label: l10n.preset.wrapper_background
 							}
 						]
@@ -54,30 +54,30 @@ define([
 				{
 					moduleType: 'Border',
 					options: {
-						state: 'element_wrapper_settings',
+						state: 'form_wrapper_settings',
 						title: '',
 						fields: {
-							use: 'element_wrapper_use_border',
-							width: 'element_wrapper_border_width',
-							type: 'element_wrapper_border_type',
-							color: 'element_wrapper_border_color',
+							use: 'form_wrapper_use_border',
+							width: 'form_wrapper_border_width',
+							type: 'form_wrapper_border_type',
+							color: 'form_wrapper_border_color',
 						}
 					}
 				},
 				{
 					moduleType: 'Radius',
 					options: {
-						state: 'element_wrapper_settings',
+						state: 'form_wrapper_settings',
 						max_value: 100,
 						fields: {
-							use: 'element_wrapper_use_radius',
-							lock: 'element_wrapper_border_radius_lock',
-							radius: 'element_wrapper_radius',
-							radius_number: 'element_wrapper_radius_number',
-							radius1: 'element_wrapper_border_radius1',
-							radius2: 'element_wrapper_border_radius2',
-							radius3: 'element_wrapper_border_radius3',
-							radius4: 'element_wrapper_border_radius4'
+							use: 'form_wrapper_use_radius',
+							lock: 'form_wrapper_border_radius_lock',
+							radius: 'form_wrapper_radius',
+							radius_number: 'form_wrapper_radius_number',
+							radius1: 'form_wrapper_border_radius1',
+							radius2: 'form_wrapper_border_radius2',
+							radius3: 'form_wrapper_border_radius3',
+							radius4: 'form_wrapper_border_radius4'
 						}
 					}
 				},

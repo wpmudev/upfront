@@ -43,12 +43,19 @@
                         Upfront.Application.current_subapplication.get_layout_data().properties,
                         { 'name': 'typography' }
                     ),
-                    default_typography = {}
+                    default_typography = {},
+                    update_silently = true
                 ;
 
                 var pluginsCallResult = Upfront.plugins.call('get-default-typography', {default_typography: default_typography});
                 if (pluginsCallResult.status && pluginsCallResult.status === 'called' && pluginsCallResult.result) {
                     default_typography = pluginsCallResult.result;
+                }
+
+                if ( !layout_typography || ( 'value' in layout_typography && _.isEmpty(layout_typography.value) ) ) {
+                    // If layout_typography is empty or not exists, that means default typography will be used
+                    // In that case, we need to fill the tyopgraphy property with defaults, so set update_silently to false
+                    update_silently = false;
                 }
 
                 layout_typography = layout_typography && 'value' in layout_typography ? layout_typography.value : default_typography;
@@ -114,7 +121,7 @@
                         me.line_heights[element] = value.line_height;
                 });
 
-                this.update_typography(undefined, true);
+                this.update_typography(undefined, update_silently);
 
 
                 // Check for theme fonts if no theme fonts just return string
@@ -183,6 +190,10 @@
                                 }
                                 me.fields.color.set_value( me.colors[value] );
                                 me.fields.color.update_input_border_color(me.colors[value]);
+								
+								// Update typeface when element changed
+								var typeface_value = me.fields.typeface.get_value();
+								me.fields.typeface.set_option_font(typeface_value);
                             }
                         }),
                         typeface: new Fields.Typeface_Chosen_Select({

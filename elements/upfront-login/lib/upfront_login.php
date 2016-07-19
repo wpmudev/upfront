@@ -67,17 +67,13 @@ class Upfront_LoginView extends Upfront_Object {
 		}
 
 		$block = !empty($properties['style']) && 'form' == $properties['style'];
-		
-		$icon = !empty($properties['appearance']) && "icon" == $properties['appearance'];
 		$login_button_label = !empty($properties['login_button_label'])
 			? $properties['login_button_label']
 			: self::_get_l10n('log_in')
 		;
-		if ('icon' === $login_button_label) $login_button_label = '';
-
 		$trigger_label = !empty($properties['trigger_text']) ? $properties['trigger_text'] : $login_button_label;
 		$trigger = empty($block)
-			? self::_get_trigger_markup($icon, $trigger_label)
+			? self::_get_trigger_markup('', $trigger_label)
 			: ''
 		;
 		
@@ -220,7 +216,7 @@ class Upfront_LoginView extends Upfront_Object {
 			'px' => __("px", 'upfront'),
 			'preset' => array(
 				'part_to_style' => __("Part to Style:", 'upfront'),
-				'element_wrapper' => __("Element Wrapper", 'upfront'),
+				'form_wrapper' => __("Form Wrapper", 'upfront'),
 				'field_labels' => __("Field Labels", 'upfront'),
 				'input_fields' => __("Input Fields", 'upfront'),
 				'button' => __("Button", 'upfront'),

@@ -54,6 +54,9 @@ define([
 						Upfront.mainData[this.mainDataCollection] : [];
 
 				Upfront.mainData[this.mainDataCollection].unshift(this.getPresetDefaults('default'));
+
+				// Generate presets styles to page
+				Util.generatePresetsToPage(this.ajaxActionSlug, this.styleTpl);
 			}
 
 
