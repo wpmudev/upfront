@@ -92,6 +92,7 @@ define([
 			var me = this,
 				$paddingControl = me.$('.upfront-padding-control'),
 				$paddingTopContainer = $('<div class="upfront-padding-container upfront-padding-cotainer-top"></div>'),
+				$paddingLockContainer = $('<div class="upfront-padding-container upfront-padding-cotainer-lock"></div>'),
 				$paddingLeftContainer = $('<div class="upfront-padding-container upfront-padding-cotainer-left"></div>'),
 				$paddingRightContainer = $('<div class="upfront-padding-container upfront-padding-cotainer-right"></div>'),
 				$paddingBottomContainer = $('<div class="upfront-padding-container upfront-padding-cotainer-bottom"></div>'),
@@ -208,6 +209,66 @@ define([
 				}
 			});
 			
+			me.lockPadding = new Upfront.Views.Editor.Field.Checkboxes({
+				events: {
+					'click .upfront-field-multiple label': 'change',
+				},
+				model: this.model,
+				className: 'padding-lock',
+				use_breakpoint_property: true,
+				property: 'lock_padding',
+				label: "",
+				default_value: 0,
+				multiple: false,
+				values: [
+					{ label: '', value: 'yes' }
+				],
+				show: function(value) {
+					this.model.set_breakpoint_property('lock_padding', value);
+
+					var stateSettings = me.$el;
+					var usePadding = me.model.get_breakpoint_property_value('use_padding');
+					var padding = me.model.get_breakpoint_property_value('padding_number');
+
+					if(value == "yes" && usePadding == "yes") {
+						stateSettings.find('.padding-slider').show();
+						stateSettings.find('.padding-number').show();
+						stateSettings.find('.padding-top').hide();
+						stateSettings.find('.padding-bottom').hide();
+						stateSettings.find('.padding-left').hide();
+						stateSettings.find('.padding-right').hide();
+						
+						me.model.set_breakpoint_property('left_padding_num', padding);
+						me.model.set_breakpoint_property('top_padding_num', padding);
+						me.model.set_breakpoint_property('right_padding_num', padding);
+						me.model.set_breakpoint_property('bottom_padding_num', padding);
+						padding_left.get_field().val(padding);
+						padding_top.get_field().val(padding);
+						padding_right.get_field().val(padding);
+						padding_bottom.get_field().val(padding);
+
+						if(typeof(Upfront.data.currentEntity.paddingControl) !== 'undefined') {
+							Upfront.data.currentEntity.paddingControl.refresh();
+						}
+					} else {
+						if(usePadding == "yes") {
+							stateSettings.find('.padding-slider').hide();
+							stateSettings.find('.padding-number').hide();
+							stateSettings.find('.padding-top').show();
+							stateSettings.find('.padding-bottom').show();
+							stateSettings.find('.padding-left').show();
+							stateSettings.find('.padding-right').show();
+						}
+					}
+
+				},
+				change: function(value) {
+					console.log(value);
+					this.model.set_breakpoint_property('lock_padding', value);
+				},
+
+			}),
+		
 			// Empty padding container
 			$paddingControl.html('');
 			
@@ -223,6 +284,10 @@ define([
 			me.paddingTop.render();
 			$paddingTopContainer.append(me.paddingTop.$el);
 			$paddingControl.append($paddingTopContainer);
+			me.lockPadding.render();
+			$paddingLockContainer.append(me.lockPadding.$el);
+			me.lockPadding.delegateEvents();
+			$paddingControl.append($paddingLockContainer);
 			me.paddingLeft.render();
 			$paddingLeftContainer.append(me.paddingLeft.$el);
 			$paddingControl.append($paddingLeftContainer);
@@ -232,6 +297,10 @@ define([
 			me.paddingBottom.render();
 			$paddingBottomContainer.append(me.paddingBottom.$el);
 			$paddingControl.append($paddingBottomContainer);
+
+			$paddingLockContainer.find('.upfront-field-multiple label').on('click', function() {
+				$paddingLockContainer.find('input').change();
+			});
 
 			$paddingTopContainer.on('mousedown', function() {
 				Upfront.data.currentEntity.padding_hint_locked = true;
@@ -267,6 +336,8 @@ define([
 				bottom_padding_use = this.model.get_breakpoint_property_value('bottom_padding_use', true),
 				left_padding_use = this.model.get_breakpoint_property_value('left_padding_use', true),
 				right_padding_use = this.model.get_breakpoint_property_value('right_padding_use', true),
+				lock_padding = this.model.get_breakpoint_property_value('lock_padding', true),
+				lockPaddingField = this.lockPadding.get_field(),
 				padding_top_val, padding_bottom_val, padding_left_val, padding_right_val
 			;
 
@@ -287,6 +358,9 @@ define([
 			padding_bottom_val = bottom_padding_use ? this.model.get_breakpoint_property_value('bottom_padding_num', true) : this.default_padding.bottom;
 			padding_left_val = left_padding_use ? this.model.get_breakpoint_property_value('left_padding_num', true) : this.default_padding.left;
 			padding_right_val = right_padding_use ? this.model.get_breakpoint_property_value('right_padding_num', true) : this.default_padding.right;
+			
+			lock_padding ? lockPaddingField.attr('checked', 'checked') : lockPaddingField.removeAttr('checked');
+			lockPaddingField.trigger('change');
 
 			if(typeof this.paddingTop !== 'undefined') {
 				this.paddingTop.get_field().val(padding_top_val);
