@@ -231,33 +231,30 @@ define([
 				show: function(value) {
 					this.model.set_breakpoint_property('lock_padding', value);
 
-					/*
-					var stateSettings = me.$el;
-					var usePadding = me.model.get_breakpoint_property_value('use_padding');
-					var padding = me.model.get_breakpoint_property_value('padding_number');
-
-					if(value == "yes" && usePadding == "yes") {
+					if(value == "yes") {
+						me.paddingLeft.$el.find('input').prop( "disabled", true ).css('opacity', 0.4);
+						me.paddingRight.$el.find('input').prop( "disabled", true ).css('opacity', 0.4);
+						me.paddingBottom.$el.find('input').prop( "disabled", true ).css('opacity', 0.4);
 						
-						stateSettings.find('.padding-slider').show();
-						stateSettings.find('.padding-number').show();
-						stateSettings.find('.padding-top').hide();
-						stateSettings.find('.padding-bottom').hide();
-						stateSettings.find('.padding-left').hide();
-						stateSettings.find('.padding-right').hide();
-						
+						/*
 						me.model.set_breakpoint_property('left_padding_num', padding);
 						me.model.set_breakpoint_property('top_padding_num', padding);
 						me.model.set_breakpoint_property('right_padding_num', padding);
 						me.model.set_breakpoint_property('bottom_padding_num', padding);
-						padding_left.get_field().val(padding);
-						padding_top.get_field().val(padding);
+						me.paddingLeft.get_field().val(padding);
+						me.paddingLeft.get_field().val(padding);
 						padding_right.get_field().val(padding);
 						padding_bottom.get_field().val(padding);
 
 						if(typeof(Upfront.data.currentEntity.paddingControl) !== 'undefined') {
 							Upfront.data.currentEntity.paddingControl.refresh();
 						}
+						*/
 					} else {
+						me.paddingLeft.$el.find('input').prop( "disabled", false ).css('opacity', 1);
+						me.paddingRight.$el.find('input').prop( "disabled", false ).css('opacity', 1);
+						me.paddingBottom.$el.find('input').prop( "disabled", false ).css('opacity', 1);
+						/*
 						if(usePadding == "yes") {
 							stateSettings.find('.padding-slider').hide();
 							stateSettings.find('.padding-number').hide();
@@ -266,9 +263,8 @@ define([
 							stateSettings.find('.padding-left').show();
 							stateSettings.find('.padding-right').show();
 						}
+						*/
 					}
-					*/
-
 				},
 				change: function(value) {
 					this.model.set_breakpoint_property('lock_padding', value);
