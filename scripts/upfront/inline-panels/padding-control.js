@@ -55,12 +55,16 @@ define([
 
 			if (this.isDisabled) 	return;
 
-			e.preventDefault();
-
 			if (!target.closest('.upfront-icon-region-padding').length) {
 				e.stopPropagation();
 				return;
 			}
+			
+			if (target.hasClass('.upfront-field-checkbox')) {
+				return;
+			}
+			
+			e.preventDefault();
 
 			this.clicked(e);
 
@@ -214,9 +218,6 @@ define([
 			});
 			
 			me.lockPadding = new Upfront.Views.Editor.Field.Checkboxes({
-				events: {
-					'click .upfront-field-multiple label': 'change',
-				},
 				model: this.model,
 				className: 'padding-lock',
 				use_breakpoint_property: true,
@@ -230,11 +231,13 @@ define([
 				show: function(value) {
 					this.model.set_breakpoint_property('lock_padding', value);
 
+					/*
 					var stateSettings = me.$el;
 					var usePadding = me.model.get_breakpoint_property_value('use_padding');
 					var padding = me.model.get_breakpoint_property_value('padding_number');
 
 					if(value == "yes" && usePadding == "yes") {
+						
 						stateSettings.find('.padding-slider').show();
 						stateSettings.find('.padding-number').show();
 						stateSettings.find('.padding-top').hide();
@@ -264,10 +267,10 @@ define([
 							stateSettings.find('.padding-right').show();
 						}
 					}
+					*/
 
 				},
 				change: function(value) {
-					console.log(value);
 					this.model.set_breakpoint_property('lock_padding', value);
 				},
 
@@ -301,10 +304,6 @@ define([
 			me.paddingBottom.render();
 			$paddingBottomContainer.append(me.paddingBottom.$el);
 			$paddingControl.append($paddingBottomContainer);
-
-			$paddingLockContainer.find('.upfront-field-multiple label').on('click', function() {
-				$paddingLockContainer.find('input').change();
-			});
 
 			$paddingTopContainer.on('mousedown', function() {
 				Upfront.data.currentEntity.padding_hint_locked = true;
