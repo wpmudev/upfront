@@ -37,6 +37,13 @@
                 Upfront.Events.on("upfront:layout_size:change_breakpoint", function() {
                     editor.close();
                 });
+								
+                // fallback event if "upfront:layout_size:change_breakpoint" was not called
+                Upfront.Events.on("upfront:exit:responsive", function() {
+                    // do not proceed if not existing in DOM anymore
+                    if ( !$.contains(document.documentElement, editor.$el.get(0)) ) return;
+                    editor.close();
+                });
             }
         });
 
