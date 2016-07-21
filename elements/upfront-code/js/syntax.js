@@ -92,7 +92,7 @@ var Syntax = function () {
 
 	return {
 		TYPES: _types,
-		checker: _get_checker,
+		checker: _get_checker
 	};
 };
 
