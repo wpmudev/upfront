@@ -30,6 +30,7 @@ Panels.General = RootSettingsPanel.extend({
 		this.options = opts;
 		var me = this,
 			query = new QuerySettings({
+				className: 'upfront-post-settings',
 				model: this.model
 			}),
 			/*
