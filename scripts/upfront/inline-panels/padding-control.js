@@ -229,27 +229,21 @@ define([
 					{ label: '', value: 'yes' }
 				],
 				show: function(value) {
-					this.model.set_breakpoint_property('lock_padding', value);
-
 					if(value == "yes") {
+						var padding = me.model.get_breakpoint_property_value('top_padding_num');
+
 						me.paddingLeft.$el.find('input').prop( "disabled", true ).css('opacity', 0.4);
 						me.paddingRight.$el.find('input').prop( "disabled", true ).css('opacity', 0.4);
 						me.paddingBottom.$el.find('input').prop( "disabled", true ).css('opacity', 0.4);
-						
-						/*
-						me.model.set_breakpoint_property('left_padding_num', padding);
-						me.model.set_breakpoint_property('top_padding_num', padding);
-						me.model.set_breakpoint_property('right_padding_num', padding);
-						me.model.set_breakpoint_property('bottom_padding_num', padding);
-						me.paddingLeft.get_field().val(padding);
-						me.paddingLeft.get_field().val(padding);
-						padding_right.get_field().val(padding);
-						padding_bottom.get_field().val(padding);
 
-						if(typeof(Upfront.data.currentEntity.paddingControl) !== 'undefined') {
-							Upfront.data.currentEntity.paddingControl.refresh();
-						}
-						*/
+						this.model.set_breakpoint_property('left_padding_num', padding);
+						this.model.set_breakpoint_property('top_padding_num', padding);
+						this.model.set_breakpoint_property('right_padding_num', padding);
+						this.model.set_breakpoint_property('bottom_padding_num', padding);
+						me.paddingLeft.get_field().val(padding);
+						me.paddingRight.get_field().val(padding);
+						me.paddingTop.get_field().val(padding);
+						me.paddingBottom.get_field().val(padding);
 					} else {
 						me.paddingLeft.$el.find('input').prop( "disabled", false ).css('opacity', 1);
 						me.paddingRight.$el.find('input').prop( "disabled", false ).css('opacity', 1);
@@ -268,6 +262,7 @@ define([
 				},
 				change: function(value) {
 					this.model.set_breakpoint_property('lock_padding', value);
+					//Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
 				},
 
 			}),
@@ -335,8 +330,8 @@ define([
 				bottom_padding_use = this.model.get_breakpoint_property_value('bottom_padding_use', true),
 				left_padding_use = this.model.get_breakpoint_property_value('left_padding_use', true),
 				right_padding_use = this.model.get_breakpoint_property_value('right_padding_use', true),
-				lock_padding = this.model.get_breakpoint_property_value('lock_padding', true),
-				lockPaddingField = this.lockPadding.get_field(),
+				lockPadding = this.model.get_breakpoint_property_value('lock_padding', true),
+				lockPaddingField = this.lockPadding.$el.find('input'),
 				padding_top_val, padding_bottom_val, padding_left_val, padding_right_val
 			;
 
@@ -357,8 +352,8 @@ define([
 			padding_bottom_val = bottom_padding_use ? this.model.get_breakpoint_property_value('bottom_padding_num', true) : this.default_padding.bottom;
 			padding_left_val = left_padding_use ? this.model.get_breakpoint_property_value('left_padding_num', true) : this.default_padding.left;
 			padding_right_val = right_padding_use ? this.model.get_breakpoint_property_value('right_padding_num', true) : this.default_padding.right;
-			
-			lock_padding ? lockPaddingField.attr('checked', 'checked') : lockPaddingField.removeAttr('checked');
+
+			lockPadding ? lockPaddingField.attr('checked', 'checked') : lockPaddingField.removeAttr('checked');
 			lockPaddingField.trigger('change');
 
 			if(typeof this.paddingTop !== 'undefined') {

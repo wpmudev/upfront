@@ -118,7 +118,7 @@ define([
 						}
 					},
 					change: function(value) {
-						me.model.set_property('lock_padding', value);
+						me.model.set_breakpoint_property('lock_padding', value);
 					}
 				}),
 
@@ -295,7 +295,7 @@ define([
 
 			//Update fields when element padding is changed
 			var lockPadding      = this.model.get_breakpoint_property_value('lock_padding'),
-				lockPaddingField = this.fields._wrapped[1].get_field(),
+				lockPaddingField = this.fields._wrapped[1].$el.find('input'),
 				topPadding       = this.model.get_breakpoint_property_value('top_padding_num'),
 				bottomPadding    = this.model.get_breakpoint_property_value('bottom_padding_num'),
 				leftPadding      = this.model.get_breakpoint_property_value('left_padding_num'),
@@ -304,6 +304,7 @@ define([
 
 			lockPadding ? lockPaddingField.attr('checked', 'checked') : lockPaddingField.removeAttr('checked');
 			lockPaddingField.trigger('change');
+
 			this.fields._wrapped[4].get_field().val(topPadding);
 			this.fields._wrapped[5].get_field().val(leftPadding);
 			this.fields._wrapped[6].get_field().val(rightPadding);
