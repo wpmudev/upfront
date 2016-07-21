@@ -271,14 +271,14 @@ em {
   color: #adc3d8;
   display: none;
   font: 16px/24px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
-  z-index: 1;
+  z-index: 10001002;
   /* Disable text selection */
   -webkit-user-select: none;
   -khtml-user-select: none;
   -moz-user-select: none;
   -o-user-select: none;
   user-select: none;
-  z-index: 2040;
+  /* z-index:2040; */
   background: #334454;
   /* Old browsers */
   background: -moz-linear-gradient(top, #334454 0%, #3d5266 20%);
@@ -5705,7 +5705,8 @@ a.upfront-region-name-edit-trigger:before {
   position: fixed;
   top: 46px;
   left: 0;
-  z-index: 10000000;
+  /* z-index: 10000000; */
+  z-index: 10001003;
   bottom: 0;
   background-color: #334454;
   border-right: 1px solid #334454;
