@@ -92,25 +92,26 @@ var _alpha = "alpha",
 		decode_preset: function (breakpoint_id) {
 			breakpoint_id = breakpoint_id || (Upfront.Views.breakpoints_storage.get_breakpoints().get_active() || {}).id;
 			var current = this.get_property_value_by_name('current_preset') || this.get_property_value_by_name('preset') || 'default',
-				model = this.get_property_value_by_name("breakpoint_presets") || {}
+				model = this.get_property_value_by_name("breakpoint_presets") || {},
+				breakpoint_preset
 			;
-			
+
 			// we need to provide proper fallback here, mobile -> tablet -> desktop
 			if ( breakpoint_id == 'mobile' ) {
-				var breakpoint_preset = (model[breakpoint_id] || model['tablet'] || model['desktop'] || {}).preset;
+				breakpoint_preset = (model[breakpoint_id] || model['tablet'] || model['desktop'] || {}).preset;
 			} else if ( breakpoint_id == 'tablet' ) {
-				var breakpoint_preset = (model[breakpoint_id] || model['desktop'] || {}).preset;
+				breakpoint_preset = (model[breakpoint_id] || model['desktop'] || {}).preset;
 			} else {
-				var breakpoint_preset = (model[breakpoint_id] || {}).preset;
+				breakpoint_preset = (model[breakpoint_id] || {}).preset;
 			}
 			var actual = breakpoint_preset || current;
-			
+
 			// we have to retain current preset coz will be lose below
 			this.set_property('current_preset', current, true);
-			
-			// this will repaint the element but will also lose our current preset			
+
+			// this will repaint the element but will also lose our current preset
 			this.set_property('preset', actual, false); // Do *not* be silent here, we do want repaint
-			
+
 			return actual;
 		},
 
@@ -130,7 +131,7 @@ var _alpha = "alpha",
 		 */
 		encode_preset: function (preset_id, breakpoint_id) {
 			breakpoint_id = breakpoint_id || (Upfront.Views.breakpoints_storage.get_breakpoints().get_active() || {}).id;
-			var	data = this.get_property_value_by_name("breakpoint_presets") || {};
+			var	data = this.get_property_value_by_name("breakpoint_presets") || {},
 				current = (this.get_property_by_name('preset').previousAttributes() || {value: 'default'}).value,
 				default_bp_id = (Upfront.Views.breakpoints_storage.get_breakpoints().findWhere({'default': true}) || {}).id
 			;
@@ -519,10 +520,10 @@ var _alpha = "alpha",
 				});
 			}
 			if ( ref_models2.length > 1 ){
-				var index = _.indexOf(ref_models2, this);
-				if ( index == 0 )
+				var _index = _.indexOf(ref_models2, this);
+				if ( _index === 0 )
 					ret.right = ref_models2[1];
-				else if ( index == 1 ){
+				else if ( _index === 1 ){
 					ret.left = ref_models2[0];
 					ret.right = ref_models2.length > 2 ? ref_models2[2] : false;
 				}

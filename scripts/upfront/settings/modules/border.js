@@ -209,7 +209,7 @@ define([
 			this.fields._wrapped[this.fieldCounter + 2].set_value(settings.type);
 			this.fields._wrapped[this.fieldCounter + 3].set_value(settings.color);
 			this.fields._wrapped[this.fieldCounter + 3].update_input_border_color(settings.color);
-		},
+		}
 	});
 
 	return BorderSettingsModule;

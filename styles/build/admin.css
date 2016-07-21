@@ -76,6 +76,26 @@
   font-family: 'Roboto', Helvetica Neueu, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased; }
 
+/* EDIT THEME - ICON BUTTONS */
+.postbox.themes .download,
+.postbox.themes .edit.info {
+  width: 48px;
+  padding: 13px;
+  vertical-align: top;
+  background: url("../../img/uf-admin-sprite.svg") #AFAFAF; }
+
+.postbox.themes .download:hover,
+.postbox.themes .edit.info:hover {
+  background: url("../../img/uf-admin-sprite.svg") #999; }
+
+.postbox.themes .download,
+.postbox.themes .download:hover {
+  background-position: -100px -82px; }
+
+.postbox.themes .edit.info,
+.postbox.themes .edit.info:hover {
+  background-position: -100px -146px; }
+
 @media screen and (min-width: 920px) {
   .upfront-col-left, .upfront-col-right {
     width: 49%;

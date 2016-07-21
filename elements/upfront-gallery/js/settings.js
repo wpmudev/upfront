@@ -49,7 +49,7 @@ define([
 									{
 										name: 'caption-bg',
 										label: l10n.panel.caption_bg_label
-									},
+									}
 								]
 							}
 						},
@@ -71,13 +71,13 @@ define([
 									use: 'useborder',
 									width: 'borderwidth',
 									type: 'bordertype',
-									color: 'bordercolor',
+									color: 'bordercolor'
 								}
 							}
 						}
 					]
 				},
-				
+
 				migrateDefaultStyle: function(styles) {
 					//replace image wrapper class
 					styles = styles.replace(/(div)?\.upfront-gallery\s/g, '');
@@ -112,7 +112,7 @@ define([
 						'caption-bg': props.captionBackground,
 						'caption-text': props.captionColor
 					});
-				},
+				}
 			}
 		},
 		title: l10n.settings
@@ -123,4 +123,3 @@ define([
 
 	return UgallerySettings;
 });
-

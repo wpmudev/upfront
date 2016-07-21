@@ -32,7 +32,7 @@ define([
 							{ label: l10n.preset.button, value: 'button' },
 							{ label: l10n.preset.lost_password, value: 'lost_password_text' },
 							{ label: l10n.preset.login_trigger, value: 'login_trigger' },
-							{ label: l10n.preset.logout_link, value: 'logout_link' },
+							{ label: l10n.preset.logout_link, value: 'logout_link' }
 						]
 					}
 				},
@@ -60,7 +60,7 @@ define([
 							use: 'form_wrapper_use_border',
 							width: 'form_wrapper_border_width',
 							type: 'form_wrapper_border_type',
-							color: 'form_wrapper_border_color',
+							color: 'form_wrapper_border_color'
 						}
 					}
 				},
@@ -80,8 +80,8 @@ define([
 							radius4: 'form_wrapper_border_radius4'
 						}
 					}
-				},
-				
+				}
+
 			],
 			Static: [
 				{
@@ -146,7 +146,7 @@ define([
 							use: 'input_fields_use_border',
 							width: 'input_fields_border_width',
 							type: 'input_fields_border_type',
-							color: 'input_fields_border_color',
+							color: 'input_fields_border_color'
 						}
 					}
 				},
@@ -210,7 +210,7 @@ define([
 							use: 'button_use_border',
 							width: 'button_border_width',
 							type: 'button_border_type',
-							color: 'button_border_color',
+							color: 'button_border_color'
 						}
 					}
 				},
@@ -308,7 +308,7 @@ define([
 							use: 'login_trigger_use_border',
 							width: 'login_trigger_border_width',
 							type: 'login_trigger_border_type',
-							color: 'login_trigger_border_color',
+							color: 'login_trigger_border_color'
 						}
 					}
 				},
@@ -372,7 +372,7 @@ define([
 							use: 'logout_link_use_border',
 							width: 'logout_link_border_width',
 							type: 'logout_link_border_type',
-							color: 'logout_link_border_color',
+							color: 'logout_link_border_color'
 						}
 					}
 				},
@@ -392,7 +392,7 @@ define([
 							radius4: 'logout_link_border_radius4'
 						}
 					}
-				},
+				}
 			],
 			Hover: [
 				{
@@ -457,7 +457,7 @@ define([
 							use: 'input_fields_use_border_hover',
 							width: 'input_fields_border_width_hover',
 							type: 'input_fields_border_type_hover',
-							color: 'input_fields_border_color_hover',
+							color: 'input_fields_border_color_hover'
 						}
 					}
 				},
@@ -521,7 +521,7 @@ define([
 							use: 'button_use_border_hover',
 							width: 'button_border_width_hover',
 							type: 'button_border_type_hover',
-							color: 'button_border_color_hover',
+							color: 'button_border_color_hover'
 						}
 					}
 				},
@@ -619,7 +619,7 @@ define([
 							use: 'login_trigger_use_border_hover',
 							width: 'login_trigger_border_width_hover',
 							type: 'login_trigger_border_type_hover',
-							color: 'login_trigger_border_color_hover',
+							color: 'login_trigger_border_color_hover'
 						}
 					}
 				},
@@ -683,7 +683,7 @@ define([
 							use: 'logout_link_use_border_hover',
 							width: 'logout_link_border_width_hover',
 							type: 'logout_link_border_type_hover',
-							color: 'logout_link_border_color_hover',
+							color: 'logout_link_border_color_hover'
 						}
 					}
 				},
@@ -703,7 +703,7 @@ define([
 							radius4: 'logout_link_border_radius4_hover'
 						}
 					}
-				},
+				}
 			],
 			Focus: [
 				{
@@ -768,7 +768,7 @@ define([
 							use: 'input_fields_use_border_focus',
 							width: 'input_fields_border_width_focus',
 							type: 'input_fields_border_type_focus',
-							color: 'input_fields_border_color_focus',
+							color: 'input_fields_border_color_focus'
 						}
 					}
 				},
@@ -832,7 +832,7 @@ define([
 							use: 'button_use_border_focus',
 							width: 'button_border_width_focus',
 							type: 'button_border_type_focus',
-							color: 'button_border_color_focus',
+							color: 'button_border_color_focus'
 						}
 					}
 				},
@@ -930,7 +930,7 @@ define([
 							use: 'login_trigger_use_border_focus',
 							width: 'login_trigger_border_width_focus',
 							type: 'login_trigger_border_type_focus',
-							color: 'login_trigger_border_color_focus',
+							color: 'login_trigger_border_color_focus'
 						}
 					}
 				},
@@ -994,7 +994,7 @@ define([
 							use: 'logout_link_use_border_focus',
 							width: 'logout_link_border_width_focus',
 							type: 'logout_link_border_type_focus',
-							color: 'logout_link_border_color_focus',
+							color: 'logout_link_border_color_focus'
 						}
 					}
 				},
@@ -1014,7 +1014,7 @@ define([
 							radius4: 'logout_link_border_radius4_focus'
 						}
 					}
-				},
+				}
 			]
 		}
 	};

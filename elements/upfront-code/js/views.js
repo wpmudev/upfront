@@ -122,7 +122,7 @@ define([
 
 			/**
 			 * Propagated edit event - implicit settings click
-			 * 
+			 *
 			 * This is what happens on settings click.
 			 * Could have some custom logic but let's go with the default
 			 * The default being: double-click content for content edit, settings click for code edit
@@ -133,12 +133,12 @@ define([
 
 			/**
 			 * Explicit content double-click
-			 * 
+			 *
 			 * We want to edit *contents*, not the code in this scenario
 			 */
 			on_edit_content: function (){
 				if (this.is_editing) return false;
-				
+
 				if (!Upfront.Application.user_can_modify_layout()) return false;
 
 				// Since we're doing double duty here, let's first check if content editing mode is to boot
@@ -249,7 +249,7 @@ define([
 					.on("click", function () {
 						$root.hide();
 						Upfront.Media.Manager.open({
-							multiple_selection: false,
+							multiple_selection: false
 						}).done(function (popup, results) {
 							if (results && results.at) {
 								var selected = results.at(0).get("image").src,
@@ -336,7 +336,7 @@ define([
 				var editorTop = $editor.find('.upfront-css-top'),
 					editorBody = $editor.find('.upfront-css-body')
 				;
-				
+
 				//Enable only height resize
 				editorTop
 					.removeClass("ui-resizable-handle").addClass("ui-resizable-handle")
@@ -585,7 +585,7 @@ define([
 			on_edit: function () {
 				if (this.is_editing)
 					return false;
-				
+
 				if (!Upfront.Application.user_can_modify_layout()) return false;
 
 				this.is_editing = true;
@@ -604,7 +604,7 @@ define([
 							me.update_property.apply(this, [me.model]);
 						})
 						.on("focus click", function () {
-							$module.draggable("disable")
+							$module.draggable("disable");
 						})
 						.focus()
 					.end()

@@ -1,5 +1,5 @@
 define([
-	'scripts/upfront/settings/modules/base-module',
+	'scripts/upfront/settings/modules/base-module'
 ], function(BaseModule) {
 	var l10n = Upfront.Settings.l10n.preset_manager;
 
@@ -60,7 +60,7 @@ define([
 					change: function(value) {
 						//me.model.set_property('preset', this.get_value());
 					}
-				}),
+				});
 
 			this.listenTo(this.selectPresetField, 'change', this.previewPreset);
 
@@ -72,13 +72,13 @@ define([
 					new SimpleTextField({
 						model: this.model,
 						label: l10n.convert_preset_info,
-						className: 'migrate-preset-info migrate-info-icon',
+						className: 'migrate-preset-info migrate-info-icon'
 					}),
 
 					new SimpleTextField({
 						model: this.model,
 						label: l10n.select_preset_info,
-						className: 'migrate-preset-info',
+						className: 'migrate-preset-info'
 					}),
 
 					this.selectPresetField,
@@ -95,7 +95,7 @@ define([
 					new SimpleTextField({
 						model: this.model,
 						label: l10n.save_as_preset_button_info,
-						className: 'migrate-preset-info save-as-preset-info',
+						className: 'migrate-preset-info save-as-preset-info'
 					}),
 					new Upfront.Views.Editor.Field.Button({
 						model: this.model,
@@ -121,7 +121,7 @@ define([
 						model: this.model,
 						label: '',
 						default_value: me.suggestPresetName(this.options.elementPreset),
-						className: 'new-preset-button-input',
+						className: 'new-preset-button-input'
 					}),
 
 					new Upfront.Views.Editor.Field.Button({
@@ -147,10 +147,10 @@ define([
 
 							me.trigger('upfront:presets:new', preset_name.trim());
 						}
-					}),
+					})
 				]
 				//End new preset fields
-			}),
+			})
 			// new Upfront.Views.Editor.Settings.Item({
 				// model: this.model,
 				// className: 'existing-preset-module migrate-separator',

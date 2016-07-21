@@ -133,7 +133,7 @@ var GlobalSettings_View = Backbone.View.extend({
 	setup_tabs: function ($el) {},
 	setup_actions: function ($el) {},
 	setup_content: function () {},
-	save_settings: function () {},
+	save_settings: function () {}
 });
 
 var DiscussionFallback_View = GlobalSettings_View.extend({
@@ -192,7 +192,7 @@ var DiscussionSettings_View = GlobalSettings_View.extend({
 		var data = {
 			action: 'upfront-discussion_settings-' + this.active_view.type + '-save',
 			data: this.active_view.get_data()
-		}
+		};
 		Upfront.Util.post(data).done(function () {
 			Upfront.Popup.close();
 		});
@@ -291,7 +291,7 @@ var DiscussionSettings_Avatars_View = DiscussionSettings_ActionView.extend({
 						model: this.model,
 						property: 'show_avatars',
 						values: [{label: l10n.show_avatars, value: '1'}]
-					}),
+					})
 				])
 			},
 			{
@@ -305,9 +305,9 @@ var DiscussionSettings_Avatars_View = DiscussionSettings_ActionView.extend({
 							{label: l10n.rating.g, value: 'G', icon: 'http://1.gravatar.com/avatar/31cb559695bfc798dbf0981a52c7a748?s=32&d=&r=G&forcedefault=1'},
 							{label: l10n.rating.pg, value: 'PG', icon: 'http://1.gravatar.com/avatar/31cb559695bfc798dbf0981a52c7a748?s=32&d=&r=G&forcedefault=1'},
 							{label: l10n.rating.r, value: 'R', icon: 'http://1.gravatar.com/avatar/31cb559695bfc798dbf0981a52c7a748?s=32&d=&r=G&forcedefault=1'},
-							{label: l10n.rating.x, value: 'X', icon: 'http://1.gravatar.com/avatar/31cb559695bfc798dbf0981a52c7a748?s=32&d=&r=G&forcedefault=1'},
+							{label: l10n.rating.x, value: 'X', icon: 'http://1.gravatar.com/avatar/31cb559695bfc798dbf0981a52c7a748?s=32&d=&r=G&forcedefault=1'}
 						]
-					}),
+					})
 				])
 			},
 			{
@@ -318,7 +318,7 @@ var DiscussionSettings_Avatars_View = DiscussionSettings_ActionView.extend({
 						property: 'avatar_default',
 						layout: "vertical",
 						values: this.model.get("avatars")
-					}),
+					})
 				])
 			}
 		]);
@@ -346,7 +346,7 @@ var DiscussionSettings_Settings_View = DiscussionSettings_ActionView.extend({
 					this.spawn_checkbox(l10n.article.ping_status, 'default_ping_status', 'open'),
 					this.spawn_checkbox(l10n.article.comment_status, 'default_comment_status', 'open'),
 					this.spawn_checkbox(l10n.article.attachments, 'allow_attachments'),
-					this.spawn_checkbox(l10n.article.email, 'show_email_subscription_field'),
+					this.spawn_checkbox(l10n.article.email, 'show_email_subscription_field')
 				])
 			},
 			{
@@ -395,7 +395,7 @@ var DiscussionSettings_Settings_View = DiscussionSettings_ActionView.extend({
 						}),
 						depth: new CounterField({
 							model: this.model,
-							property: "default_comments_page",
+							property: "default_comments_page"
 						}),
 						page: new Upfront.Views.Editor.Field.Select({
 							model: this.model,
@@ -404,7 +404,7 @@ var DiscussionSettings_Settings_View = DiscussionSettings_ActionView.extend({
 								{label: l10n.other.last, value: 'newest'},
 								{label: l10n.other.first, value: 'oldest'}
 							]
-						}),
+						})
 					}),
 					new Upfront.Views.Editor.Field.Select({
 						model: this.model,
@@ -414,7 +414,7 @@ var DiscussionSettings_Settings_View = DiscussionSettings_ActionView.extend({
 							{label: l10n.other.older, value: 'asc'},
 							{label: l10n.other.newer, value: 'desc'}
 						]
-					}),
+					})
 
 				])
 			},
@@ -429,7 +429,7 @@ var DiscussionSettings_Settings_View = DiscussionSettings_ActionView.extend({
 				label: l10n.other.before_comment_appears,
 				fields: _([
 					this.spawn_checkbox(l10n.other.comment_moderation, 'comment_moderation'),
-					this.spawn_checkbox(l10n.other.comment_whitelist, 'comment_whitelist'),
+					this.spawn_checkbox(l10n.other.comment_whitelist, 'comment_whitelist')
 				])
 			},
 			{
@@ -473,8 +473,8 @@ var BooleanSubfieldField = Backbone.View.extend({
 		return _.template(this.options.field.$el.html(), {subfield: this.options.subfield.$el.html()});
 	},
 	get_value: function () {
-		var data = {}
-			$field = this.$el.find('[name="' + this.options.field.get_name() + '"]')
+		var data = {},
+			$field = this.$el.find('[name="' + this.options.field.get_name() + '"]'),
 			$subfield = this.$el.find('[name="' + this.options.subfield.get_name() + '"]')
 		;
 		data[this.options.field.get_name()] = $field.is(":checkbox") ? ($field.is(":checked") ? 1 : 0) : $field.val();
@@ -546,8 +546,8 @@ var Settings = ElementSettings.extend({
 			ajaxActionSlug: 'ucomment',
 			panelTitle: l10n.settings,
 			presetDefaults: Upfront.mainData.presetDefaults.ucomment,
-			styleTpl: styleTpl,
-		},
+			styleTpl: styleTpl
+		}
 	},
 	title: l10n.settings
 });

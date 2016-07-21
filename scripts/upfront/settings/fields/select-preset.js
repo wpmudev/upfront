@@ -49,13 +49,13 @@ define(function() {
 			var selected = '';
 			var currentPreset = this.get_saved_value() ? this.get_saved_value() : 'default';
 			if (value.value === this.clear_preset_name(currentPreset)) selected = ' selected="selected"';
-			
-			
+
+
 			// If default preset change label to make more sense which element is edited
 			if(value.value === "default") {
 				// Use language string for preset Default
 				value.label = l10n.default_label;
-				
+
 				var elementType = this.get_element_type(this.model.get_property_value_by_name('type'));
 				if(typeof elementType !== "undefined" && typeof elementType.label !== "undefined") {
 					value.label = l10n.default_label + ' ' + elementType.label;
@@ -70,7 +70,7 @@ define(function() {
 			preset = preset.replace(/[^-a-zA-Z0-9]/, '');
 			return preset;
 		},
-		
+
 		get_element_type: function(type) {
 			var elementTypes = {
 				UaccordionModel: {label: l10n.accordion, id: 'accordion'},
@@ -94,9 +94,9 @@ define(function() {
 				UyoutubeModel: {label: l10n.youtube, id: 'youtube'},
 				PlainTxtModel: {label: l10n.text, id:'text'}
 			};
-			
+
 			return elementTypes[type];
-		},
+		}
 	});
 
 	return SelectPresetField;

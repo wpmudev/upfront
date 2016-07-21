@@ -439,12 +439,14 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	}
 
 	public function getGlobalRegions($global_regions = array())  {
-		$is_builder = (( !empty($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'create_new') !== false ) ||
-			( !empty($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'create_new') !== false )
+		$is_builder = (
+			(function_exists('upfront_exporter_is_exporter_referer') && upfront_exporter_is_exporter_referer()) ||
+			(function_exists('upfront_exporter_is_exporter_uri') && upfront_exporter_is_exporter_uri())
 		);
-		if ( !$is_builder ) { // on builder always use the global region layout files below not from DB
+		if ( !$is_builder ) {
 			if (empty($global_regions) === false) return $global_regions;
 		}
+		// on builder always use the global region layout files below not from DB
 		// A bit reasoning about this. In global regions layout templates i.e. header & footer
 		// there can be more than one region since if there is element in header/footer region
 		// that links to lightbox, that lightbox is also included in layout template thus

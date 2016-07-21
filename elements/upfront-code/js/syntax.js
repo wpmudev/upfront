@@ -44,7 +44,7 @@ var Checker_Js = _.extend({}, Checker, {
 	validate: function () {
 		var ret = true;
 		try {
-			eval(this._value);
+			JSON.parse(this._value);
 		} catch (e) {
 			this._message = e.message;
 			ret = false;
@@ -60,7 +60,7 @@ var Checker_Html = _.extend({}, Checker, {
 			$div = $("<div />")
 		;
 		$div.html(test);
-		
+
 		if ($div.html().length != test.length) {
 			this._message = l10n.errors.error_markup;
 			ret = false;
@@ -92,7 +92,7 @@ var Syntax = function () {
 
 	return {
 		TYPES: _types,
-		checker: _get_checker,
+		checker: _get_checker
 	};
 };
 

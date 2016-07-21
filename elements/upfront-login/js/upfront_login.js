@@ -40,18 +40,6 @@ define([
 				}
 			});
 			this.model.get('properties').bind('change', this.handle_visual_padding_hint, this);
-			
-			this.events = _.extend({}, this.events, {
-				'click .login-username > label' : 'disable_default',
-				'click .login-password > label' : 'disable_default',
-				'click span.login-remember-label' : 'disable_default',
-				'click .login-submit input.button-primary' : 'disable_default',
-				'click a.login-lostpassword-link' : 'disable_default',
-				'click a.logout_link' : 'disable_default',
-				'click .upfront_login.upfront_login-click .upfront_login-trigger' : 'trigger_login_click',
-			});
-			
-			this.delegateEvents();
 		},
 
 		render: function () {
@@ -63,7 +51,7 @@ define([
 		on_render: function () {
 			if (Upfront.Application.user_can_modify_layout()) {
 				var me = this;
-				
+
 				// Username
 				$username = this.$el.find('label[for="user_login"]');
 				$username.ueditor({
@@ -79,7 +67,7 @@ define([
 					if (text) me.model.set_property('username_label', text, true);
 					me.redraw_layout();
 				});
-				
+
 				// Password
 				$password = this.$el.find('label[for="user_pass"]');
 				$password.ueditor({
@@ -95,11 +83,12 @@ define([
 					if (text) me.model.set_property('password_label', text, true);
 					me.redraw_layout();
 				});
-				
+
 				// Remember
 				$remember = this.$el.find('.login-remember > label');
 				$remember_checkbox = $remember.find('input');
-				$remember_label = $('<span class="login-remember-label"> ' + $remember.text() + '</span>');
+				$remember.find('input').remove();
+				$remember_label = $('<span class="login-remember-label"> ' + $remember.html() + '</span>');
 				$remember.html($remember_checkbox);
 				$remember_label.ueditor({
 					linebreaks: true,
@@ -115,33 +104,25 @@ define([
 					me.redraw_layout();
 				});
 				$remember.append($remember_label);
-				
+
 				// Login
-				// ueditor does not work on input submit so have to append span
-				$login_button = this.$el.find('.login-submit input.button-primary');
-				$login_button_placeholder = $('<span class="login-submit-label-container" style="height:'+ $login_button.outerHeight() +'px;"></span>');
-				$login_button.parent().prepend($login_button_placeholder);
-				$login_button_label = $('<span class="login-submit-label">' + $login_button.val() + '</span>');
-				$login_button.val('');
-				$login_button_label.ueditor({
+				$login_input_button = this.$el.find('.login-submit input.button-primary');
+				$login_button = this.$el.find('button.upfront-login-button');
+				$login_button.find('span.upfront-login-button-label').ueditor({
 					linebreaks: true,
 					disableLineBreak: true,
 					airButtons: ['upfrontIcons'],
 					autostart: false
 				})
-				.on('start', function(){
-					var $redactor_box = me.$el.find('.login-submit-label-container .redactor-box');
-					$redactor_box.css('height', $login_button.outerHeight());
-				})
 				.on('stop', function(){
-					var ed = me.$el.find('span.login-submit-label').data("ueditor"),
+					var ed = me.$el.find('span.upfront-login-button-label').data("ueditor"),
 						text = ed.getValue(true)
 					;
 					if (text) me.model.set_property('login_button_label', text, true);
 					me.redraw_layout();
 				});
-				$login_button_placeholder.append($login_button_label);
-				
+				$login_input_button.replaceWith($login_button);
+
 				// Lost Password Text
 				$lost_password_text = this.$el.find('span.login-lostpassword-label');
 				$lost_password_text.ueditor({
@@ -157,7 +138,7 @@ define([
 					if (text) me.model.set_property('lost_password_text', text, true);
 					me.redraw_layout();
 				});
-				
+
 				// Lost Password Link
 				$lost_password_link = this.$el.find('a.login-lostpassword-link');
 				$lost_password_link.ueditor({
@@ -173,7 +154,7 @@ define([
 					if (text) me.model.set_property('lost_password_link', text, true);
 					me.redraw_layout();
 				});
-				
+
 				// Login Link
 				$login_link = this.$el.find('span.upfront_login-label');
 				$login_link.ueditor({
@@ -189,7 +170,7 @@ define([
 					if (text) me.model.set_property('trigger_text', text, true);
 					me.redraw_layout();
 				});
-				
+
 				// Logout Link
 				$logout_link = this.$el.find('a.logout_link');
 				$logout_link.ueditor({
@@ -206,6 +187,15 @@ define([
 					me.redraw_layout();
 				});
 			}
+
+			this.events = _.extend({}, this.events, {
+				'click label' : 'disable_default',
+				'click button' : 'disable_default',
+				'click a' : 'disable_default',
+				'click .upfront_login.upfront_login-click .upfront_login-trigger' : 'trigger_login_click'
+			});
+			this.delegateEvents();
+
 		},
 		trigger_login_click: function (e) {
 			if (Upfront.Application.user_can_modify_layout()) {
@@ -217,6 +207,7 @@ define([
 						return false;
 					})
 					.find(".upfront_login-form").on("click", function (e) {
+						e.preventDefault();
 						e.stopPropagation();
 					})
 				;
@@ -331,7 +322,7 @@ define([
 				me = this,
 				preview_check = this.preview_field()
 			;
-			
+
 			this.preview_check_field = new preview_check({
 				model: this.model,
 				className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes float-right',
@@ -345,7 +336,7 @@ define([
 					this.property.set({'value': this.get_value()}, {'silent': false});
 				}
 			});
-			
+
 			this.settings = _([
 				appearance,
 				behavior,
@@ -427,11 +418,11 @@ define([
 			return previewField;
 		}
 	});
-	
+
 	var LoginSettings = ElementSettings.extend({
 		className: 'login-element-settings',
 		events: _.extend({},ElementSettings.prototype.events, this.events, {
-			'change input[name="part_style"]': 'toggle_part_style',
+			'change input[name="part_style"]': 'toggle_part_style'
     }),
 		panels: {
 			General: LoginSettings_Panel,
@@ -496,7 +487,7 @@ define([
 				? props[prop_name]
 				: false
 			;
-		},
+		}
 	});
 
 	var LoginSettings_Field_DisplayBehavior = Upfront.Views.Editor.Settings.Item.extend({
@@ -673,10 +664,10 @@ define([
 			this.add_module(module);
 		}
 	});
-	
+
 	// Generate presets styles to page
 	Util.generatePresetsToPage('login', styleTpl);
-	
+
 	Upfront.Application.LayoutEditor.add_object("Login", {
 		"Model": LoginModel,
 		"View": LoginView,

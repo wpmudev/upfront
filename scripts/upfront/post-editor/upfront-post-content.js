@@ -376,8 +376,8 @@ PostContentEditor.prototype = {
 			type: 'author',
 			events: function () {
 				return _.extend({}, _partView.prototype.events, {
-					'click .upostdata-part' : 'editAuthor',
-				})
+					'click .upostdata-part' : 'editAuthor'
+				});
 			},
 			init: function () {
 				this.listenTo(this.parent, 'change:author', this.authorChanged);
@@ -423,8 +423,8 @@ PostContentEditor.prototype = {
 			type: 'gravatar',
 			events: function () {
 				return _.extend({}, _partView.prototype.events, {
-					'click .upostdata-part' : 'editAuthor',
-				})
+					'click .upostdata-part' : 'editAuthor'
+				});
 			},
 			init: function () {
 				PostContentEditor.prototype.partView.author.prototype.init.call(this);
@@ -452,7 +452,7 @@ PostContentEditor.prototype = {
 					'click .upostdata-part': 'editDate',
 					'click .ueditor-action-pickercancel': 'editDateCancel',
 					'click .ueditor-action-pickerok': 'editDateOk'
-				})
+				});
 			},
 			init: function () {
 				this.listenTo(this.parent, 'change:date', this.dateChanged);
@@ -584,7 +584,7 @@ PostContentEditor.prototype = {
 			events: function () {
 				return _.extend({}, _partView.prototype.events, {
 					'click .upost_thumbnail_changer': 'editThumb'
-				})
+				});
 			},
 			editContent: function () {
 				_partView.prototype.editContent.call(this);
@@ -763,7 +763,7 @@ PostContentEditor.prototype = {
 					;
 
 					// Update post meta
-					me.updatePost(imageData)
+					me.updatePost(imageData);
 
 					//post.meta.save();
 					if(!img.length)
@@ -823,7 +823,7 @@ PostContentEditor.prototype = {
 					return this.model.set_property(name, value, silent);
 				}
 				return this.model.get_property_value_by_name(name);
-			},
+			}
 		}),
 
 		tags: _partView.extend({
@@ -1126,9 +1126,9 @@ PostContentEditor.prototype = {
 			range.collapse(false);//collapse the range to the end point.
 			range.select();//Select the range (make it the visible selection)
 		}
-	},
+	}
 
-}
+};
 
 
 
@@ -1481,7 +1481,7 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 	openImageEditor: function(newImage, imageInfo, postId){
 		var me = this,
 		mask = this.$('.ueditor_thumb'),
-		height = this.partOptions.featured_image && this.partOptions.featured_image.height ? this.partOptions.featured_image.height : 60
+		height = this.partOptions.featured_image && this.partOptions.featured_image.height ? this.partOptions.featured_image.height : 60,
 		editorOptions = _.extend({}, imageInfo, {
 			element_id: 'post_' + postId,
 			element_cols: Upfront.Util.grid.width_to_col(mask.width(), true),
@@ -1815,7 +1815,7 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 			this.parts.titles.off('change', this.onTitleEdited);
 
 		if(this.editors)
-			_.each(this.editors, function(e){e.stop()});
+			_.each(this.editors, function(e){e.stop();});
 
 		var draggable = this.$el.closest('.ui-draggable');
 		if(draggable.length)
@@ -1889,7 +1889,7 @@ return {
 	PostContentEditor: PostContentEditor,
 	PostContentEditorLegacy: PostContentEditorLegacy,
 	getMarkupper: function getMarkupper(){return markupper;}
-}
+};
 
 
 //End define

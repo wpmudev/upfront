@@ -52,7 +52,7 @@ define(function() {
 					values: [
 						{ label: l10n.mnu.left, value: 'left' },
 						{ label: l10n.mnu.center, value: 'center' },
-						{ label: l10n.mnu.right, value: 'right' },
+						{ label: l10n.mnu.right, value: 'right' }
 					],
 					change: function(value) {
 						me.model.set('menu_alignment', value);
@@ -111,7 +111,7 @@ define(function() {
 					me.fields._wrapped[3].set_value('over');
 				}
 			});
-		},
+		}
 	});
 
 	return MenuStyle;

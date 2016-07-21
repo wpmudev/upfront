@@ -14,6 +14,7 @@
                 this.$el.html("<span title='"+ l10n.responsive_mode +"'>" + l10n.responsive_mode + "</span>");
             },
             on_click: function () {
+                Upfront.Events.trigger('upfront:start:responsive');
                 Upfront.Application.start(Upfront.Application.MODE.RESPONSIVE);
             }
         });

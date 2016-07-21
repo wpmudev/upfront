@@ -40,14 +40,14 @@ jQuery(function($){
 			options = slider.find('.uslider').data();
 
 		/* if it is enclosed inside a lightbox,
-		 * then set it up on first instance of 
+		 * then set it up on first instance of
 		 * the lightbox showing up. Also store a flag
 		 * issetup in order to avoid repeating this process
 		 */
 
 		if(slider.closest('div.upfront-region-lightbox').length ) {
-			
-			// slider should stay hidden before the lightbox opens up, 
+
+			// slider should stay hidden before the lightbox opens up,
 			// or it kills the lightbox alignment because of its extra height
 			slider.hide();
 
@@ -65,9 +65,9 @@ jQuery(function($){
 				// do the thing
 				slider.show();
 				setupSlider(slider);
-				
+
 				slider.data('issetup', true);
-				
+
 			});
 
 			return;
@@ -87,13 +87,18 @@ jQuery(function($){
 		}
 
 		function updateSlider(slider) {
+			var uslides = slider.find('.uslides'),
+				caption_height = 0
+			;
 			slider.find('.uslide-above').each(function(){
 				var slide = $(this);
 				slide.find('.uslide-caption').remove().prependTo(slide);
+				caption_height = 1;
 			});
 			slider.find('.uslide-below').each(function(){
 				var slide = $(this);
 				slide.find('.uslide-caption').remove().appendTo(slide);
+				caption_height = 1;
 			});
 			slider.find('.uslide-left').each(function(){
 				var slide = $(this);
@@ -107,6 +112,7 @@ jQuery(function($){
 				var slide = $(this);
 				slide.find('.uslide-caption').remove().prependTo(slide.find('.uslide-image'));
 			});
+			uslides.attr('data-caption_height', caption_height).trigger('refresh');
 		}
 
 		function onBreakpointChange(slider, breakpoint) {
@@ -118,7 +124,7 @@ jQuery(function($){
 					default_style = slide.attr('data-style'),
 					all_styles = ['uslide-' + default_style]
 				;
-				for ( bp in map ) {
+				for ( var bp in map ) {
 					if ( !map[bp]['style'] ) continue;
 					all_styles.push('uslide-' + map[bp]['style']);
 				}
