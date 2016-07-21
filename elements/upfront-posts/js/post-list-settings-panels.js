@@ -32,10 +32,13 @@ Panels.General = RootSettingsPanel.extend({
 			query = new QuerySettings({
 				model: this.model
 			}),
+			/*
+			We are moving Thumbanil settings into presets
 			thumbnail = new ThumbnailSettings({
 				model: this.model,
 				title: l10n.thumbnail_size
 			}),
+			*/
 			autorefresh = function (value) {
 				this.model.set_property(this.options.property, value);
 				if ('list_type' === this.options.property) {
@@ -46,42 +49,57 @@ Panels.General = RootSettingsPanel.extend({
 			display_type = new Upfront.Views.Editor.Field.Radios({
 				model: this.model,
 				property: 'display_type',
-				label: l10n.display_type_label,
+				label: '',
 				layout: 'horizontal-inline',
 				icon_class: 'upfront-posts-display_type',
 				values: [
-					{label: l10n.single_post, value: 'single', icon: 'upfront-posts-single'},
-					{label: l10n.post_list, value: 'list', icon: 'upfront-posts-list'}
+					{label: l10n.single_post, value: 'single'},
+					{label: l10n.post_list, value: 'list'}
 				]
 			}),
-			list_type = new Upfront.Views.Editor.Field.Radios({
+			list_type = new Upfront.Views.Editor.Field.Select({
 				model: this.model,
 				property: 'list_type',
-				label: l10n.list_type_label,
+				label: '',
 				layout: 'horizontal',
+				default_value: 'custom',
 				values: [
 					{label: l10n.post_list_custom, value: 'custom'},
 					{label: l10n.post_list_tax, value: 'taxonomy'},
 					{label: l10n.post_list_generic, value: 'generic'}
 				]
+			}),
+			display_type_section = new Upfront.Views.Editor.Settings.Item({
+				model: this.model,
+				className: 'upfront-display-type-section',
+				title: l10n.query_settings,
+				fields: [display_type]
+			}),
+			list_type_section = new Upfront.Views.Editor.Settings.Item({
+				model: this.model,
+				className: 'upfront-list-type-section',
+				title: l10n.list_type_label,
+				fields: [list_type]
 			})
 		;
+		
 		display_type.on("changed", autorefresh);
+		
 		list_type.on("changed", autorefresh);
+		
 		query.on("post:added", function () {
 			this.trigger("post:added");
 		}, this);
+		
 		query.on("post:removed", function () {
 			this.trigger("post:removed");
 		}, this);
+		
 		this.settings = _([
-			new Upfront.Views.Editor.Settings.Item({
-				model: this.model,
-				title: l10n.query_settings,
-				fields: [display_type, list_type]
-			}),
+			display_type_section,
+			list_type_section,
 			query,
-			thumbnail
+			// thumbnail
 		]);
 	},
 
@@ -273,7 +291,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			me = this
 		;
 		if ("list" === display_type) {
-			this.fields.push(new Upfront.Views.Editor.Field.Radios({
+			this.fields.push(new Upfront.Views.Editor.Field.Select({
 				model: this.model,
 				label: l10n.pagination,
 				property: "pagination",
@@ -320,7 +338,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 				min: 1,
 				max: 20
 			}));
-			this.fields.push(new Upfront.Views.Editor.Field.Radios({
+			this.fields.push(new Upfront.Views.Editor.Field.Select({
 				model: this.model,
 				property: "sticky",
 				label: l10n.sticky_posts,
@@ -331,16 +349,16 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 				]
 			}));
 		}
-		this.fields.push(new Upfront.Views.Editor.Field.Radios({
-			model: this.model,
-			label: l10n.result_length,
-			property: "content",
-			layout: "horizontal-inline",
-			values: [
-				{label:l10n.excerpt, value:"excerpt"},
-				{label:l10n.full_post, value:"content"}
-			]
-		}));
+		// this.fields.push(new Upfront.Views.Editor.Field.Radios({
+			// model: this.model,
+			// label: l10n.result_length,
+			// property: "content",
+			// layout: "horizontal-inline",
+			// values: [
+				// {label:l10n.excerpt, value:"excerpt"},
+				// {label:l10n.full_post, value:"content"}
+			// ]
+		// }));
 	},
 
 	update_terms: function () {
