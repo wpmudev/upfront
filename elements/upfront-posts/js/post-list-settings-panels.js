@@ -129,8 +129,14 @@ var CustomSelectorField =  Upfront.Views.Editor.Field.Hidden.extend({
 		if (_.isArray(values) && values.length > 0) {
 			field += '<ol>';
 			_.each(values, function (value) {
+				var title = value.permalink;
+				
 				if (!value) return false;
-				field += '<li><span class="permalink">' + value.permalink + '</span><a href="#rmv" data-id="' + value.id + '"><i>&times;</i></a></li>';
+				
+				if(typeof value.post_title !== "undefined")
+					title = value.post_title;
+
+				field += '<li><span class="permalink">' + title + '</span><a href="#rmv" data-id="' + value.id + '"><i>&times;</i></a></li>';
 			});
 			field += '</ol>';
 		}
@@ -147,13 +153,14 @@ var CustomSelectorField =  Upfront.Views.Editor.Field.Hidden.extend({
 				if (!post) return false;
 				var id = post.get("ID"),
 					link = post.get("permalink"),
+					post_title = post.get("post_title"),
 					is_single = 'single' === me.model.get_property_value_by_name('display_type'),
 					values = me.get_decoded_values(me.options.property)
 				;
 				if (is_single) {
-					values = [{id: id, permalink: link}];
+					values = [{id: id, permalink: link, post_title: post_title}];
 				} else {
-					values.push({id: id, permalink: link});
+					values.push({id: id, permalink: link, post_title: post_title});
 					me.select_posts(e);
 				}
 				me.model.set_property(me.options.property, me.encode_values(values));
