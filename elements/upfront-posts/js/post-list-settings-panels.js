@@ -112,22 +112,22 @@ var CustomSelectorField =  Upfront.Views.Editor.Field.Hidden.extend({
 		return _.extend({},
 			Upfront.Views.Editor.Field.Hidden.prototype.events,
 			{'click a[href="#add"]': "select_posts"},
-			{'click ol li a[href="#rmv"]': "remove_post"}
+			{'click ul li a[href="#rmv"]': "remove_post"}
 		);
 	},
 	get_field_html: function () {
 		var field = Upfront.Views.Editor.Field.Hidden.prototype.get_field_html.apply(this),
 			values = this.get_decoded_values(this.options.property),
 			is_single = 'single' === this.model.get_property_value_by_name('display_type'),
-			string = values.length ? l10n.add_custom_post : l10n.select_custom_post
+			string = values.length ? l10n.add_custom_post : l10n.select_custom_post,
+			postCount = 1;
 		;
 		if (is_single) {
 			string = l10n.select_custom_post;
 			if (values) values = [_(values).first()];
 		}
-		field += '<i class="upfront-posts-custom-add_post"></i> <a href="#add">' + string + '</a>';
 		if (_.isArray(values) && values.length > 0) {
-			field += '<ol>';
+			field += '<ul class="upfront-posts-list">';
 			_.each(values, function (value) {
 				var title = value.permalink;
 				
@@ -135,11 +135,19 @@ var CustomSelectorField =  Upfront.Views.Editor.Field.Hidden.extend({
 				
 				if(typeof value.post_title !== "undefined")
 					title = value.post_title;
-
-				field += '<li><span class="permalink">' + title + '</span><a href="#rmv" data-id="' + value.id + '"><i>&times;</i></a></li>';
+				
+				if (!is_single) {
+					field += '<li><span class="post-count">' + postCount + '</span><span class="permalink">' + title + '</span><a href="#rmv" data-id="' + value.id + '"><i>&times;</i></a></li>';
+				} else {
+					field += '<li><span class="permalink">' + title + '</span><a href="#rmv" data-id="' + value.id + '"><i>&times;</i></a></li>';
+				}
+				
+				postCount++;
 			});
-			field += '</ol>';
+			field += '</ul>';
 		}
+		
+		field += '<i class="upfront-posts-custom-add_post"></i> <a href="#add" class="upfront-add-posts">' + string + '</a>';
 
 		return '<div class="custom_posts">' + field + '</div>';
 	},
