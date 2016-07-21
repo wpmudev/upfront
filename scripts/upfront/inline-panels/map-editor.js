@@ -1,5 +1,5 @@
 (function ($) {
-	
+
 var l10n = Upfront.Settings && Upfront.Settings.l10n
 	? Upfront.Settings.l10n.global.views
 	: Upfront.mainData.l10n.global.views
@@ -112,13 +112,13 @@ define([
 			var me = this,
 				$cssbody = editor.find('.upfront-css-body'),
 				topHeight = 0,
-				
+
 				$rsz = editor.find('.upfront_map-editor-complex-wrapper'),
 				onResize = function(e, ui){
 					var height = ui ? ui.size.height : editor.find('.upfront_map-editor-complex-wrapper').height(),
 						bodyHeight = height  - topHeight;
 					$cssbody.height(bodyHeight);
-					
+
 					_.each(me.editors, function(editor){
 						editor.resize();
 					});
@@ -130,7 +130,7 @@ define([
 						left: "",
 						top: ""
 					});
-					
+
 				}
 			;
 			// Add appropriate handle classes
@@ -164,7 +164,7 @@ define([
 			};
 			$(window).on('resize', this.resizeHandler);
 			this.resizeHandler();
-			
+
 			//Start the editors
 			this.editors = {};
 			this.timers = {};
@@ -218,7 +218,7 @@ define([
 			//Start resizable
 			editorBody.height(this.MIN_HEIGHT - editorTop.outerHeight());
 			this.startResizable($editor);
-			
+
 			//save edition
 			$editor.find('button').on('click', function(e){
 				_.each(me.editors, function(editor, type){
@@ -284,7 +284,7 @@ define([
 		checkJSon: function(json){
 			this.script_error = false;
 			try {
-				eval(json);
+				JSON.parse(json);
 			} catch (e) {
 				this.script_error = e.message;
 			}

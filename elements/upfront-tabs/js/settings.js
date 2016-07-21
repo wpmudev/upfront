@@ -26,7 +26,7 @@ define([
 									{
 										name: 'global-content-bg',
 										label: l10n.content_area_bg_label
-									},
+									}
 								]
 							}
 						},
@@ -39,7 +39,7 @@ define([
 									use: 'global-useborder',
 									width: 'global-borderwidth',
 									type: 'global-bordertype',
-									color: 'global-bordercolor',
+									color: 'global-bordercolor'
 								}
 							}
 						}
@@ -55,7 +55,7 @@ define([
 									{
 										name: 'static-tab-bg',
 										label: l10n.tab_bg_label
-									},
+									}
 								]
 							}
 						},
@@ -72,7 +72,7 @@ define([
 									style: 'static-style',
 									size: 'static-font-size',
 									line_height: 'static-line-height',
-									color: 'static-font-color',
+									color: 'static-font-color'
 								}
 							}
 						},
@@ -85,7 +85,7 @@ define([
 									use: 'static-useborder',
 									width: 'static-borderwidth',
 									type: 'static-bordertype',
-									color: 'static-bordercolor',
+									color: 'static-bordercolor'
 								}
 							}
 						}
@@ -102,13 +102,13 @@ define([
 								prepend: 'hover-',
 								prefix: 'static',
 								fields: {
-									use: 'hover-use-color',
+									use: 'hover-use-color'
 								},
 								abccolors: [
 									{
 										name: 'hover-tab-bg',
 										label: l10n.tab_bg_label
-									},
+									}
 								]
 							}
 						},
@@ -128,7 +128,7 @@ define([
 									style: 'hover-style',
 									size: 'hover-font-size',
 									line_height: 'hover-line-height',
-									color: 'hover-font-color',
+									color: 'hover-font-color'
 								}
 							}
 						},
@@ -143,7 +143,7 @@ define([
 									use: 'hover-useborder',
 									width: 'hover-borderwidth',
 									type: 'hover-bordertype',
-									color: 'hover-bordercolor',
+									color: 'hover-bordercolor'
 								}
 							}
 						},
@@ -156,7 +156,7 @@ define([
 								fields: {
 									use: 'hover-use-transition',
 									duration: 'hover-transition-duration',
-									easing: 'hover-transition-easing',
+									easing: 'hover-transition-easing'
 								}
 							}
 						}
@@ -173,13 +173,13 @@ define([
 								prepend: 'active-',
 								prefix: 'static',
 								fields: {
-									use: 'active-use-color',
+									use: 'active-use-color'
 							},
 							abccolors: [
 							{
 								name: 'active-tab-bg',
 								label: l10n.tab_bg_label
-							},
+							}
 						]
 					}
 				},
@@ -199,7 +199,7 @@ define([
 									style: 'active-style',
 									size: 'active-font-size',
 									line_height: 'active-line-height',
-									color: 'active-font-color',
+									color: 'active-font-color'
 								}
 							}
 						},
@@ -214,20 +214,20 @@ define([
 									use: 'active-useborder',
 									width: 'active-borderwidth',
 									type: 'active-bordertype',
-									color: 'active-bordercolor',
+									color: 'active-bordercolor'
 								}
 							}
 						}
 					]
 				},
-				
+
 				migrateElementStyle: function(styles, selector) {
 					//replace tab container which is one line with preset
 					styles = styles.replace(/\.upfront-tabs-container/g, '.tabs-wrapper');
-					
+
 					return styles;
 				},
-				
+
 				migrateDefaultStyle: function(styles) {
 					//replace image wrapper class
 					styles = styles.replace(/(div)?\.upfront-tabs\s/g, '');
@@ -235,28 +235,28 @@ define([
 
 					return styles;
 				},
-				
+
 				migratePresetProperties: function(newPreset) {
-					
+
 					var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default',
 						props = this.presets.findWhere({id: preset}),
 						obj = {};
-					
+
 					if(typeof props !== "undefined") {
 						_.each(props.attributes, function(preset_value, index) {
-							
+
 							if(index === 'id' || index === 'name' || index === 'preset_style' || index === 'legacy') {
 								return;
 							}
-							
+
 							obj[index] = preset_value;
 						});
 					}
 
 					//Migrate properties from existing preset
 					newPreset.set(obj);
-					
-					
+
+
 					newPreset.set({
 						'active-tab-bg': 'rgba(255,255,255, 0)',
 						'static-tab-bg': 'rgba(255,255,255, 0)',
@@ -265,9 +265,9 @@ define([
 						'hover-useborder': '',
 						'active-useborder': '',
 						'global-content-bg': 'rgba(255,255,255, 0)',
-						'global-useborder': '',
+						'global-useborder': ''
 					});
-				},
+				}
 			}
 		},
 		title: l10n.settings

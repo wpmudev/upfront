@@ -18,7 +18,7 @@ var LoadingView = Upfront.Views.ObjectView.extend({
 		return '<img src="' + Upfront.Settings.root_url + '/img/loading.gif" /> ' +
 			'<i>' + this.model.get_content() + '</i>' +
 		'';
-	},
+	}
 });
 
 //Upfront.Application.LayoutEditor.add_object("Image", {"Model": LoadingModel, "Command": ImageCommand}); // No command, this is built-in stub

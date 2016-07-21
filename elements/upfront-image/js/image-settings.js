@@ -29,7 +29,7 @@ define([
 								},
 								values: [
 									{ label: "Default", value: 'default' },
-									{ label: "Square", value: 'square' },
+									{ label: "Square", value: 'square' }
 								]
 							}
 						},
@@ -73,7 +73,7 @@ define([
 									{
 										name: 'caption-bg',
 										label: l10n.settings.caption_bg_label
-									},
+									}
 								]
 							}
 						},
@@ -86,21 +86,21 @@ define([
 									use: 'useborder',
 									width: 'borderwidth',
 									type: 'bordertype',
-									color: 'bordercolor',
+									color: 'bordercolor'
 								}
 							}
 						}
 					]
 				},
-				
+
 				migrateElementStyle: function(styles, selector) {
 					//replace image wrapper class
 					styles = styles.replace(/\.upfront-image/g, '.upfront-image-wrapper');
 					styles = styles.replace(/\.upfront-image-wrapper-container/g, '.upfront-image-container');
-					
+
 					return styles;
 				},
-				
+
 				migrateDefaultStyle: function(styles) {
 					//replace image wrapper class
 					styles = styles.replace(/(div)?\.upfront-image\s/g, '');
@@ -108,19 +108,21 @@ define([
 
 					return styles;
 				},
-				
+
 				migratePresetProperties: function(newPreset) {
 					var props = {},
-						useCaption = captionValue = '';
+						useCaption = '',
+						captionValue = ''
+					;
 
 					this.model.get('properties').each( function(prop) {
 						props[prop.get('name')] = prop.get('value');
 					});
-					
+
 					if(props.caption_position && props.caption_trigger) {
 						useCaption = 'yes';
 					}
-					
+
 					//Determinate caption value from settings
 					if(props.caption_position === 'over_image' && props.caption_alignment === 'top') {
 						captionValue = 'topOver';
@@ -142,10 +144,10 @@ define([
 						'caption-position': props.caption_position,
 						'caption-alignment': props.caption_alignment,
 						'caption-trigger': props.caption_trigger,
-						'caption-bg' : props.background,
+						'caption-bg' : props.background
 					});
 				},
-				
+
 				getModifiedProperties: function() {
 					var props = {};
 
@@ -157,12 +159,12 @@ define([
 						return true;
 					}
 
-					if((typeof props.caption_position !== "undefined" && props.caption_position !== false) || 
-					   (typeof props.caption_alignment !== "undefined" && props.caption_alignment !== false) || 
+					if((typeof props.caption_position !== "undefined" && props.caption_position !== false) ||
+					   (typeof props.caption_alignment !== "undefined" && props.caption_alignment !== false) ||
 					   (typeof props.caption_trigger !== "undefined" && props.caption_trigger !== "always_show")) {
 						return true;
 					}
-					
+
 					if(typeof props.background !== "undefined" && props.background !== "#000000") {
 						return true;
 					}
@@ -171,7 +173,7 @@ define([
 				}
 			}
 		},
-		
+
 		title: l10n.settings.label
 	});
 

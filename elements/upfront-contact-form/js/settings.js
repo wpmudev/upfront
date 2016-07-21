@@ -47,7 +47,7 @@ define([
 								label: l10n.fields.show_captcha,
 								value: 'true'
 							}
-						],
+						]
 					},
 					{
 						type: 'Select',
@@ -129,7 +129,7 @@ define([
 									{
 										name: 'static-button-bg',
 										label: l10n.button_bg_label
-									},
+									}
 								]
 							}
 						},
@@ -146,14 +146,14 @@ define([
 									style: 'static-style',
 									size: 'static-font-size',
 									line_height: 'static-line-height',
-									color: 'static-font-color',
+									color: 'static-font-color'
 								},
 								default_element: "field-labels",
 								elements: [
 									{ label: l10n.field_labels_label, value: "field-labels" },
 									{ label: l10n.field_values_label, value: "field-values" },
-									{ label: l10n.button_label, value: "button" },
-								],
+									{ label: l10n.button_label, value: "button" }
+								]
 							}
 						},
 						{
@@ -166,8 +166,8 @@ define([
 									use: 'static-fields-useborder',
 									width: 'static-fields-borderwidth',
 									type: 'static-fields-bordertype',
-									color: 'static-fields-bordercolor',
-								},
+									color: 'static-fields-bordercolor'
+								}
 							}
 						},
 						{
@@ -180,8 +180,8 @@ define([
 									use: 'static-button-useborder',
 									width: 'static-button-borderwidth',
 									type: 'static-button-bordertype',
-									color: 'static-button-bordercolor',
-								},
+									color: 'static-button-bordercolor'
+								}
 							}
 						}
 					],
@@ -197,7 +197,7 @@ define([
 								prepend: 'hover-',
 								prefix: 'static',
 								fields: {
-									use: 'hover-use-color',
+									use: 'hover-use-color'
 								},
 								abccolors: [
 									{
@@ -207,7 +207,7 @@ define([
 									{
 										name: 'hover-button-bg',
 										label: l10n.button_bg_label
-									},
+									}
 								]
 							}
 						},
@@ -227,14 +227,14 @@ define([
 									style: 'hover-style',
 									size: 'hover-font-size',
 									line_height: 'hover-line-height',
-									color: 'hover-font-color',
+									color: 'hover-font-color'
 								},
 								default_element: "field-labels",
 								elements: [
 									{ label: l10n.field_labels_label, value: "field-labels" },
 									{ label: l10n.field_values_label, value: "field-values" },
-									{ label: l10n.button_label, value: "button" },
-								],
+									{ label: l10n.button_label, value: "button" }
+								]
 							}
 						},
 						{
@@ -249,8 +249,8 @@ define([
 									use: 'hover-fields-useborder',
 									width: 'hover-fields-borderwidth',
 									type: 'hover-fields-bordertype',
-									color: 'hover-fields-bordercolor',
-								},
+									color: 'hover-fields-bordercolor'
+								}
 							}
 						},
 						{
@@ -265,8 +265,8 @@ define([
 									use: 'hover-button-useborder',
 									width: 'hover-button-borderwidth',
 									type: 'hover-button-bordertype',
-									color: 'hover-button-bordercolor',
-								},
+									color: 'hover-button-bordercolor'
+								}
 							}
 						},
 						{
@@ -278,7 +278,7 @@ define([
 								fields: {
 									use: 'hover-use-transition',
 									duration: 'hover-transition-duration',
-									easing: 'hover-transition-easing',
+									easing: 'hover-transition-easing'
 								}
 							}
 						}
@@ -295,7 +295,7 @@ define([
 								prepend: 'focus-',
 								prefix: 'static',
 								fields: {
-									use: 'focus-use-color',
+									use: 'focus-use-color'
 								},
 								abccolors: [
 									{
@@ -305,7 +305,7 @@ define([
 									{
 										name: 'focus-button-bg',
 										label: l10n.button_bg_label
-									},
+									}
 								]
 							}
 						},
@@ -325,13 +325,13 @@ define([
 									style: 'focus-style',
 									size: 'focus-font-size',
 									line_height: 'focus-line-height',
-									color: 'focus-font-color',
+									color: 'focus-font-color'
 								},
 								default_element: "field-labels",
 								elements: [
 									{ label: l10n.field_values_label, value: "field-values" },
-									{ label: l10n.button_label, value: "button" },
-								],
+									{ label: l10n.button_label, value: "button" }
+								]
 							}
 						},
 						{
@@ -346,8 +346,8 @@ define([
 									use: 'focus-fields-useborder',
 									width: 'focus-fields-borderwidth',
 									type: 'focus-fields-bordertype',
-									color: 'focus-fields-bordercolor',
-								},
+									color: 'focus-fields-bordercolor'
+								}
 							}
 						},
 						{
@@ -362,20 +362,20 @@ define([
 									use: 'focus-button-useborder',
 									width: 'focus-button-borderwidth',
 									type: 'focus-button-bordertype',
-									color: 'focus-button-bordercolor',
-								},
+									color: 'focus-button-bordercolor'
+								}
 							}
 						}
 					]
 				},
-				
+
 				migrateDefaultStyle: function(styles) {
 					//replace image wrapper class
 					styles = styles.replace(/(div)?\.upfront-contact-form\s/g, '');
 					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
 
 					return styles;
-				},
+				}
 			}
 		},
 		title: 'Contact Element'

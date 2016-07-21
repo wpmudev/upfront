@@ -75,7 +75,7 @@
 					data = {
 						"content" : content,
 						usingNewAppearance: true,
-						"additional_padding" : this.get_preset_property('additional_padding'),
+						"additional_padding" : this.get_preset_property('additional_padding')
 					};
 				}
 				var rendered = '';
@@ -95,7 +95,7 @@
 			on_render: function() {
 				var me = this,
 				blurTimeout = false;
-				
+
 				if (Upfront.Application.user_can_modify_layout()) {
 					this.$el.find('.upfront-object-content')
 						// .addClass('upfront-plain_txt') // WHY DO THIS, IT MESSES UP THE CSS LOGIC SINCE THAN WE HAVE DUPLICATED CLASS
@@ -205,7 +205,7 @@
 			"ContextMenu": TextMenu,
 			cssSelectors: {
 				'.plain-text-container': {label: l10n.css.container_label, info: l10n.css.container_info},
-				'.plain-text-container p': {label: l10n.css.p_label, info: l10n.css.p_info},
+				'.plain-text-container p': {label: l10n.css.p_label, info: l10n.css.p_info}
 			},
 			cssSelectorsId: 'PlainTxtModel'
 		});

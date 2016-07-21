@@ -53,7 +53,7 @@ define([
 					change: function(value) {
 						me.model.set(me.options.fields.easing, value);
 					}
-				}),
+				})
 			]);
 
 			//Add toggle typography checkbox
@@ -87,7 +87,7 @@ define([
 					})
 				);
 			}
-		},
+		}
 	});
 
 	return HovAnimationSettingsModule;

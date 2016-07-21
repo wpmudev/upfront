@@ -15,12 +15,12 @@ define([
 			this.options = options || {};
 			var me = this,
 				state = this.options.state;
-				
+
 			var TooltipField = Upfront.Views.Editor.Field.Text.extend({
 				get_field_html: function () {
 					return '<button class="checkbox-tooltip" title="' + me.options.tooltip_label +'">&nbsp;</button>';
 				}
-			});	
+			});
 
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Checkboxes({
@@ -41,17 +41,17 @@ define([
 					}
 				})
 			]);
-			
+
 			if(typeof me.options.tooltip !== "undefined" && me.options.tooltip) {
 				this.fields.push(
 					new TooltipField({
 						model: this.model,
 						label: '',
-						className: 'tooltip-icon',
+						className: 'tooltip-icon'
 					})
 				);
 			}
-		},
+		}
 	});
 
 	return CheckboxSettingsModule;

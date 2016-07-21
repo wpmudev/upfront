@@ -69,7 +69,7 @@ define([
 			this.clicked(e);
 
 			this.$el.siblings('.upfront-control-dialog-open').removeClass('upfront-control-dialog-open');
-			
+
 			this.listenTo(Upfront.Events, "upfront:hide:paddingPanel", this.close);
 
 			if (this.isOpen) {
@@ -371,14 +371,14 @@ define([
 		},
 		on_up_arrow_click: function() {
 			if(typeof this.paddingTop !== 'undefined') {
-				var padding_top_val = parseInt(this.model.get_breakpoint_property_value('top_padding_num', true)) - 5;
+				var padding_top_val = parseInt(this.model.get_breakpoint_property_value('top_padding_num', true), 10) - 5;
 
 				padding_top_val = padding_top_val < 0 ? 0 : padding_top_val;
 
 				this.model.set_breakpoint_property('top_padding_use', 'yes');
 				this.model.set_breakpoint_property('top_padding_num', padding_top_val);
 				this.model.set_breakpoint_property('top_padding_slider', padding_top_val);
-				
+
 				Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
 				Upfront.Events.trigger("upfront:paddings:top:updated", this.model, Upfront.data.currentEntity);
 
@@ -387,12 +387,12 @@ define([
 		},
 		on_down_arrow_click: function() {
 			if(typeof this.paddingTop !== 'undefined') {
-				var padding_top_val = parseInt(this.model.get_breakpoint_property_value('top_padding_num', true)) + 5;
+				var padding_top_val = parseInt(this.model.get_breakpoint_property_value('top_padding_num', true), 10) + 5;
 
 				this.model.set_breakpoint_property('top_padding_use', 'yes');
 				this.model.set_breakpoint_property('top_padding_num', padding_top_val);
 				this.model.set_breakpoint_property('top_padding_slider', padding_top_val);
-				
+
 				Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
 				Upfront.Events.trigger("upfront:paddings:top:updated", this.model, Upfront.data.currentEntity);
 

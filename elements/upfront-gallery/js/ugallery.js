@@ -516,7 +516,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		linkControl.icon = 'link';
 		linkControl.tooltip = l10n.ctrl.image_link;
 		linkControl.id = 'link';
-		
+
 		//Set icon width & height
 		linkControl.width = 30;
 		linkControl.height = 30;
@@ -726,7 +726,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 					me.property('lightbox_show_image_count', value);
 					me.setupLightbox();
 				}
-			}),
+			})
 		};
 
 		fields.lightbox_active_area_bg = new Upfront.Views.Editor.Field.Color({
@@ -806,7 +806,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 					'.mfp-title': {label: l10n.css.lightbox_caption, info: l10n.css.lightbox_caption},
 					'.mfp-arrow-left:before': {label: l10n.css.lightbox_arrow_left, info: l10n.css.lightbox_arrow_left},
 					'.mfp-arrow-right:before': {label: l10n.css.lightbox_arrow_right, info: l10n.css.lightbox_arrow_right},
-					'.mfp-counter': {label: l10n.css.lightbox_image_count, info: l10n.css.lightbox_image_count},
+					'.mfp-counter': {label: l10n.css.lightbox_image_count, info: l10n.css.lightbox_image_count}
 				},
 				change: function(content) {
 					me.property('styles', content);
@@ -885,7 +885,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			resizingFunction;
 
 		// Hide delete icon
-		if (!Upfront.Application.user_can_modify_layout()) {		
+		if (!Upfront.Application.user_can_modify_layout()) {
 			this.$el.find('.remove-image').remove();
 		}
 
@@ -1000,7 +1000,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		// 'row' property on resize.
 		// this.render(); <-- this is redundant and creates misscalculation of padding
 	},
-	
+
 	on_module_update: function (attr) {
 		this.render();
 	},
@@ -1106,7 +1106,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				status: 'ok',
 				element_id: element_id,
 				urlType: me.property('linkTo'),
-				url: image.full[0],
+				url: image.full[0]
 			});
 			// Also initialize image link defaults here
 			model.set('imageLink', {
@@ -1750,13 +1750,13 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	getControlItems: function(){
 		var me = this;
-		
-		moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl()
-		
+
+		moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl();
+
 		moreOptions.icon = 'more';
 		moreOptions.tooltip = l10n.ctrl.caption_position;
 
-		moreOptions.sub_items = {}
+		moreOptions.sub_items = {};
 		moreOptions.sub_items['add'] = this.createControl('add', l10n.template.add_img, 'openImageSelector', 38, 38);
 		moreOptions.sub_items['toggle-sorting'] = this.createControl('toggle-sorting', l10n.toggle_dnd, 'toggleSorting', 38, 38);
 

@@ -635,7 +635,7 @@ define([
 			this.settings = _([
 				new MapSettings_Field_Location({model: this.model}),
 				new MapSettings_Settings({model: this.model}),
-				new Upfront.Views.Editor.Settings.Settings_CSS({model: this.model }),
+				new Upfront.Views.Editor.Settings.Settings_CSS({model: this.model })
 			]);
 		},
 
@@ -688,7 +688,7 @@ define([
 					{label: l10n.style.roadmap, value: "ROADMAP"},
 					{label: l10n.style.satellite, value: "SATELLITE"},
 					{label: l10n.style.hybrid, value: "HYBRID"},
-					{label: l10n.style.terrain, value: "TERRAIN"},
+					{label: l10n.style.terrain, value: "TERRAIN"}
 				]
 			;
 			if (!saved_style) this.model.set_property("style", DEFAULTS.style, true);
@@ -698,7 +698,7 @@ define([
 				{label: l10n.ctrl.type, value: "map_type"},
 				{label: l10n.ctrl.scale, value: "scale"},
 				{label: l10n.ctrl.street_view, value: "street_view"},
-				{label: l10n.ctrl.overview, value: "overview_map"},
+				{label: l10n.ctrl.overview, value: "overview_map"}
 			];
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Slider({
@@ -775,7 +775,7 @@ define([
 					label: l10n.open_map_code_panel,
 					className: "open-map-code-panel-button",
 					compact: true
-				}),
+				})
 			]);
 		},
 		get_title: function () {

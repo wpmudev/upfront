@@ -1,5 +1,5 @@
 (function($) {
-	
+
 define(function(){
 	return {
 		bind_toggles: function () {
@@ -8,7 +8,7 @@ define(function(){
 			});
 			this.on('hide', function(){
 				this.$el.hide();
-			})
+			});
 		},
 		save_fields: function () {
 			// changes are auto saved, no need to invoke this, so blank it out

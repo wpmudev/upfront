@@ -163,7 +163,7 @@ define([
 							me.model.set(me.currentElement + me.options.fields.color, c);
 						}
 					}
-				}),
+				})
 
 			]);
 
