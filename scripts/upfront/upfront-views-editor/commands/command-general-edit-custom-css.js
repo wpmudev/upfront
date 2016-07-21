@@ -33,6 +33,9 @@
                         me.lazy_save_styles(content);
                     }
                 });
+								
+                // this will be used when Inserting Font on Responsive Global Theme CSS
+                Upfront.Application.generalCssEditor = editor;
 
                 Upfront.Events.on("upfront:layout_size:change_breakpoint", function() {
                     editor.close();

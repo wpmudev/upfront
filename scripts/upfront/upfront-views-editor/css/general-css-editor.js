@@ -5,8 +5,9 @@
         ;
     define([
         "text!upfront/templates/popup.html",
-        'scripts/upfront/upfront-views-editor/theme-colors'
-    ], function (popup_tpl, Theme_Colors) {
+        'scripts/upfront/upfront-views-editor/theme-colors',
+        'scripts/upfront/upfront-views-editor/fonts'
+    ], function (popup_tpl, Theme_Colors, Fonts) {
         /**
          * Like css editor but does not do saving and managing of styles.
          * Takes initial css from models "styles" property and fires change
@@ -21,6 +22,7 @@
             events: {
                 'click .upfront-css-save-ok': 'fire_save',
                 'click .upfront-css-close': 'close',
+                'click .upfront-css-font': 'startInsertFontWidget',
                 'click .upfront-css-image': 'openImagePicker',
                 'click .upfront-css-selector': 'addSelector'
             },
@@ -222,6 +224,10 @@
                     me.editor.insert('url("' + url + '")');
                     me.editor.focus();
                 });
+            },
+            startInsertFontWidget: function() {
+                var insertFontWidget = new Fonts.Insert_Font_Widget({ collection: Fonts.theme_fonts_collection });
+                $('#insert-font-widget').html(insertFontWidget.render().el);
             },
             addSelector: function(e) {
                 var selector = $(e.target).data('selector');
