@@ -73,7 +73,7 @@ define([
 			}
 
 			this._init_no_padding = ( this.model.get_property_value_by_name('no_padding') == 1 );
-			this.on('upfront:settings:panel:saved', this.onThisPanelSaved)
+			this.on('upfront:settings:panel:saved', this.onThisPanelSaved);
 		},
 
 		addCaptionBackgroundPicker: function(){

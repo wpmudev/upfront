@@ -96,7 +96,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 		urlParts = url.split('#');
 
-		if(urlParts[0].trim() != '')
+		if(urlParts[0].trim() !== '')
 			return urlParts[0];
 		else
 			return location.href.replace('?dev=true', '');
@@ -105,7 +105,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 	getUrlanchor: function(url) {
 		// this does almost the opposite of the above function
 
-		if(typeof(url) == 'undefined') var url = $(location).attr('href');
+		if(typeof(url) == 'undefined') url = $(location).attr('href');
 
 		if(url.indexOf('#') >=0) {
 			var tempurl = url.split('#');
@@ -115,7 +115,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 
 	get_anchors: function () {
 		var regions = Upfront.Application.layout.get("regions"),
-			anchors = [];
+			anchors = []
 		;
 		regions.each(function (r) {
 			r.get("modules").each(function (module) {
@@ -150,9 +150,9 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		var props = this.extract_properties();
 
 		//Check if preset is empty and set it to currentpreset (porting old data to new preset manager)
-		if(props.preset === "" && props.currentpreset != "") {
+		if(props.preset === "" && props.currentpreset !== "") {
 			props.preset = props.currentpreset;
-			this.model.set_property('preset', props.currentpreset)
+			this.model.set_property('preset', props.currentpreset);
 		}
 
 		props.href = this.link.get('url');
@@ -246,7 +246,7 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		blurTimeout = false;
 		this.delegateEvents();
 		var $target = this.$el.find('.upfront-object-content a.upfront_cta');
-		
+
 		if (Upfront.Application.user_can_modify_layout()) {
 			$target.ueditor({
 				linebreaks: true,

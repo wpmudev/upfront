@@ -51,7 +51,7 @@ define([
 		on_render: function () {
 			if (Upfront.Application.user_can_modify_layout()) {
 				var me = this;
-				
+
 				// Username
 				$username = this.$el.find('label[for="user_login"]');
 				$username.ueditor({
@@ -67,7 +67,7 @@ define([
 					if (text) me.model.set_property('username_label', text, true);
 					me.redraw_layout();
 				});
-				
+
 				// Password
 				$password = this.$el.find('label[for="user_pass"]');
 				$password.ueditor({
@@ -83,7 +83,7 @@ define([
 					if (text) me.model.set_property('password_label', text, true);
 					me.redraw_layout();
 				});
-				
+
 				// Remember
 				$remember = this.$el.find('.login-remember > label');
 				$remember_checkbox = $remember.find('input');
@@ -104,7 +104,7 @@ define([
 					me.redraw_layout();
 				});
 				$remember.append($remember_label);
-				
+
 				// Login
 				$login_input_button = this.$el.find('.login-submit input.button-primary');
 				$login_button = this.$el.find('button.upfront-login-button');
@@ -122,7 +122,7 @@ define([
 					me.redraw_layout();
 				});
 				$login_input_button.replaceWith($login_button);
-				
+
 				// Lost Password Text
 				$lost_password_text = this.$el.find('span.login-lostpassword-label');
 				$lost_password_text.ueditor({
@@ -138,7 +138,7 @@ define([
 					if (text) me.model.set_property('lost_password_text', text, true);
 					me.redraw_layout();
 				});
-				
+
 				// Lost Password Link
 				$lost_password_link = this.$el.find('a.login-lostpassword-link');
 				$lost_password_link.ueditor({
@@ -154,7 +154,7 @@ define([
 					if (text) me.model.set_property('lost_password_link', text, true);
 					me.redraw_layout();
 				});
-				
+
 				// Login Link
 				$login_link = this.$el.find('span.upfront_login-label');
 				$login_link.ueditor({
@@ -170,7 +170,7 @@ define([
 					if (text) me.model.set_property('trigger_text', text, true);
 					me.redraw_layout();
 				});
-				
+
 				// Logout Link
 				$logout_link = this.$el.find('a.logout_link');
 				$logout_link.ueditor({
@@ -187,15 +187,15 @@ define([
 					me.redraw_layout();
 				});
 			}
-			
+
 			this.events = _.extend({}, this.events, {
 				'click label' : 'disable_default',
 				'click button' : 'disable_default',
 				'click a' : 'disable_default',
-				'click .upfront_login.upfront_login-click .upfront_login-trigger' : 'trigger_login_click',
+				'click .upfront_login.upfront_login-click .upfront_login-trigger' : 'trigger_login_click'
 			});
 			this.delegateEvents();
-			
+
 		},
 		trigger_login_click: function (e) {
 			if (Upfront.Application.user_can_modify_layout()) {
@@ -322,7 +322,7 @@ define([
 				me = this,
 				preview_check = this.preview_field()
 			;
-			
+
 			this.preview_check_field = new preview_check({
 				model: this.model,
 				className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes float-right',
@@ -336,7 +336,7 @@ define([
 					this.property.set({'value': this.get_value()}, {'silent': false});
 				}
 			});
-			
+
 			this.settings = _([
 				appearance,
 				behavior,
@@ -418,11 +418,11 @@ define([
 			return previewField;
 		}
 	});
-	
+
 	var LoginSettings = ElementSettings.extend({
 		className: 'login-element-settings',
 		events: _.extend({},ElementSettings.prototype.events, this.events, {
-			'change input[name="part_style"]': 'toggle_part_style',
+			'change input[name="part_style"]': 'toggle_part_style'
     }),
 		panels: {
 			General: LoginSettings_Panel,
@@ -487,7 +487,7 @@ define([
 				? props[prop_name]
 				: false
 			;
-		},
+		}
 	});
 
 	var LoginSettings_Field_DisplayBehavior = Upfront.Views.Editor.Settings.Item.extend({
@@ -664,10 +664,10 @@ define([
 			this.add_module(module);
 		}
 	});
-	
+
 	// Generate presets styles to page
 	Util.generatePresetsToPage('login', styleTpl);
-	
+
 	Upfront.Application.LayoutEditor.add_object("Login", {
 		"Model": LoginModel,
 		"View": LoginView,

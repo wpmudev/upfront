@@ -18,7 +18,7 @@ var check_email = function(email){
 if(!String.prototype.trim){
 	String.prototype.trim = function(){
 		return this.replace(/^\s+|\s+$/g, '');
-	}
+	};
 }
 jQuery(function($){
 	var $form = $('div.upfront-contact-form');
@@ -38,7 +38,7 @@ jQuery(function($){
 				error = $elem.val().trim() ? false : 'You must write a subject for the message.';
 				break;
 			case 'sendermessage':
-				error = $elem.val().trim() ? false : 'You forgot to write a message.'
+				error = $elem.val().trim() ? false : 'You forgot to write a message.';
 		}
 		if(error){
 			$elem.addClass('ucontact-field-error');
@@ -49,7 +49,7 @@ jQuery(function($){
 			hide_message($form);
 		}
 	});
-	
+
 	$form.find('form').on('submit', function(e){
 		var name = $form.find('input[name=sendername]'),
 			email = $form.find('input[name=senderemail]'),

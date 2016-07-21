@@ -26,7 +26,7 @@ define([
 									{
 										name: 'active-content-bg-color',
 										label: l10n.content_area_bg_label
-									},
+									}
 								]
 							}
 						},
@@ -39,7 +39,7 @@ define([
 									use: 'global-useborder',
 									width: 'global-borderwidth',
 									type: 'global-bordertype',
-									color: 'global-bordercolor',
+									color: 'global-bordercolor'
 								}
 							}
 						}
@@ -75,7 +75,7 @@ define([
 									style: 'static-style',
 									size: 'static-font-size',
 									line_height: 'static-line-height',
-									color: 'static-font-color',
+									color: 'static-font-color'
 								}
 							}
 						},
@@ -88,7 +88,7 @@ define([
 									use: 'static-useborder',
 									width: 'static-borderwidth',
 									type: 'static-bordertype',
-									color: 'static-bordercolor',
+									color: 'static-bordercolor'
 								}
 							}
 						}
@@ -132,7 +132,7 @@ define([
 									style: 'hover-style',
 									size: 'hover-font-size',
 									line_height: 'hover-line-height',
-									color: 'hover-font-color',
+									color: 'hover-font-color'
 								}
 							}
 						},
@@ -147,7 +147,7 @@ define([
 									use: 'hover-useborder',
 									width: 'hover-borderwidth',
 									type: 'hover-bordertype',
-									color: 'hover-bordercolor',
+									color: 'hover-bordercolor'
 								}
 							}
 						},
@@ -160,7 +160,7 @@ define([
 								fields: {
 									use: 'hover-use-animation',
 									duration: 'hover-transition-duration',
-									easing: 'hover-transition-easing',
+									easing: 'hover-transition-easing'
 								}
 							}
 						}
@@ -204,7 +204,7 @@ define([
 									style: 'active-style',
 									size: 'active-font-size',
 									line_height: 'active-line-height',
-									color: 'active-font-color',
+									color: 'active-font-color'
 								}
 							}
 						},
@@ -219,13 +219,13 @@ define([
 									use: 'active-useborder',
 									width: 'active-borderwidth',
 									type: 'active-bordertype',
-									color: 'active-bordercolor',
+									color: 'active-bordercolor'
 								}
 							}
 						}
 					]
 				},
-				
+
 				migrateDefaultStyle: function(styles) {
 					//replace image wrapper class
 					styles = styles.replace(/(div)?\.upfront-accordion\s/g, '');
@@ -235,7 +235,7 @@ define([
 
 					return styles;
 				},
-				
+
 				migrateElementStyle: function(styles, selector) {
 					//add class for specificity
 					var search = new RegExp(selector.replace('.', '\.'), 'g');
@@ -245,25 +245,25 @@ define([
 				},
 
 				migratePresetProperties: function(newPreset) {
-					
+
 					var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default',
 						props = this.presets.findWhere({id: preset}),
 						obj = {};
-					
+
 					if(typeof props !== "undefined") {
 						_.each(props.attributes, function(preset_value, index) {
-							
+
 							if(index === 'id' || index === 'name' || index === 'preset_style' || index === 'legacy') {
 								return;
 							}
-							
+
 							obj[index] = preset_value;
 						});
 					}
-					
+
 					//Migrate properties from existing preset
 					newPreset.set(obj);
-				},
+				}
 			}
 		},
 		title: 'Accordion Settings'

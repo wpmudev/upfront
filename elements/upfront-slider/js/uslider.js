@@ -6,7 +6,7 @@ define([
 	'elements/upfront-slider/js/settings',
 	'scripts/upfront/preset-settings/util',
 	"scripts/upfront/link-model",
-	'text!elements/upfront-slider/tpl/preset-style.html',
+	'text!elements/upfront-slider/tpl/preset-style.html'
 ], function(sliderTpl, editorTpl, SliderSettings, PresetUtil, LinkModel, settingsStyleTpl){
 
 var l10n = Upfront.Settings.l10n.slider_element;
@@ -20,7 +20,7 @@ var Uslider_Slide = Backbone.Model.extend({
 			breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON()
 		;
 		if ( !breakpoint_id ) breakpoint_id = breakpoint.id;
-		if ( !(breakpoint_id in data) || (!attr in data[breakpoint_id]) ) return false;
+		if ( !(breakpoint_id in data) || (!(attr in data[breakpoint_id])) ) return false;
 		return data[breakpoint_id][attr];
 	},
 	set_breakpoint_attr: function (attr, value, breakpoint_id) {
@@ -84,7 +84,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			'change .uslider-starting-options input[type="radio"]': 'setSliderType'
 			// 'click .uslider-starting-options': 'checkStartingInputClick'
 		});
-		
+
 		//Update slide defaults to match preset settings
 		this.updateSlideDefaults();
 
@@ -119,14 +119,14 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		//Current Slide index
 		this.setCurrentSlide(0);
-		
+
 		var saveSliderPreset = function(properties) {
 			if (!Upfront.Application.user_can("MODIFY_PRESET")) {
 				// me.model.trigger("preset:updated", properties.id);
 				me.preset_updated(properties.id);
 				return false;
 			}
-			
+
 			Upfront.Util.post({
 				action: 'upfront_save_slider_preset',
 				data: properties
@@ -137,12 +137,12 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		// Let's not flood server on some nuber property firing changes like crazy
 		this.debouncedSavePreset = _.debounce(saveSliderPreset, 1000);
-		
+
 		this.delegateEvents();
 	},
-	
+
 	updateSlideDefaults: function() {
-		primary = this.get_preset_properties().primaryStyle,
+		var primary = this.get_preset_properties().primaryStyle,
 			defaults = {
 				below: 'below',
 				over: 'bottomOver',
@@ -175,7 +175,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		//this.render();
 		Upfront.Events.trigger('preset:slider:updated', preset);
 	},
-	
+
 	caption_updated: function(preset) {
 		var currentPreset = this.model.get_property_value_by_name("preset");
 		//If element use updated preset re-render
@@ -349,7 +349,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 	update_caption_controls: function(){
 		if (!Upfront.Application.user_can_modify_layout()) return false;
-		
+
 		var me = this,
 			panel = new Upfront.Views.Editor.InlinePanels.Panel()
 			;
@@ -481,7 +481,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		if(typeof(this.controls) !== 'undefined') {
 			this.controls = undefined;
 		}
-		
+
 		this.updateControls();
 	},
 
@@ -506,10 +506,10 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				notxt: 'nocaption'
 			}
 		;
-		
+
 		if (primary != this.lastStyle) {
 			this.model.slideCollection.each(function(slide){
-				var style = breakpoint.default ? slide.get('style') : slide.get_breakpoint_attr('style', breakpoint.id);
+				var style = breakpoint['default'] ? slide.get('style') : slide.get_breakpoint_attr('style', breakpoint.id);
 				if(
 					primary == 'below' && _.indexOf(['below', 'above'], style) == -1
 					||
@@ -517,7 +517,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 					||
 					primary == 'side' && _.indexOf(['right', 'left'], style) == -1
 				) {
-					if ( breakpoint.default ) {
+					if ( breakpoint['default'] ) {
 						slide.set('style', defaults[primary]);
 					}
 					else {
@@ -537,12 +537,12 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		//Hack to make the radio buttons work in the starting layout
 		e.stopPropagation(); //This is not a good practice
 	}, */
-	
+
 	setSliderType: function (e) {
 		var primaryStyle = $(e.currentTarget).val(),
 			style = 'default'
 		;
-		
+
 		if (primaryStyle == 'over') {
 			style = 'bottomOver';
 		}
@@ -555,11 +555,11 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		else if(primaryStyle == 'notxt') {
 			style = 'nocaption';
 		}
-		
+
 		this.model.set_property('primaryStyle', primaryStyle, true);
 		this.property('style', style);
-	},	
-	
+	},
+
 	firstImageSelection: function(e){
 		e.preventDefault();
 		this.first_time_opening_slider = true;
@@ -899,10 +899,10 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 
 	openImageSelector: function(e, replaceId){
-		
+
 		//Update slide defaults to match preset settings
 		this.updateSlideDefaults();
-		
+
 		var me = this,
 			sizer = this.model.slideCollection.length ? this.$('.upfront-default-slider-item-current').find('.uslide-image') : this.$('.upfront-object-content'),
 			baseline = Upfront.Settings.LayoutEditor.Grid.baseline,
@@ -926,7 +926,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		Upfront.Views.Editor.ImageSelector.open(selectorOptions).done(function(images, response){
 			me.addSlides(images, replaceId);
-			
+
 			if ( me.first_time_opening_slider ) {
 				me.addSliderPreset();
 				me.first_time_opening_slider = false;
@@ -939,7 +939,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			}
 		});
 	},
-	
+
 	addSliderPreset: function () {
 		var style = this.model.get_property_value_by_name('primaryStyle'),
 			element_id = this.model.get_property_value_by_name("element_id")
@@ -947,7 +947,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		// Skip if default
 		if(style === "default") return false;
-		
+
 		var defaultPreset = PresetUtil.getPresetProperties('slider', 'default') || {},
 			presetDefaults = !_.isEmpty(defaultPreset) ? defaultPreset : Upfront.mainData.presetDefaults.slider,
 			presetStyle = presetDefaults.preset_style || '',
@@ -961,18 +961,18 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				theme_preset: false
       		})
 		;
-		
+
 		this.presets.add(preset);
 		this.model.set_property('preset', preset.id, true);
 		this.updateSliderPreset(preset);
 		// Make sure we don't lose our current preset
 		this.model.encode_preset(preset.id);
 	},
-	
+
 	updateSliderPreset: function(properties) {
 		PresetUtil.updatePresetStyle('slider', properties, settingsStyleTpl);
 		this.debouncedSavePreset(properties);
-		
+
 		Upfront.mainData['sliderPresets'] = [];
 		_.each(this.presets.models, function(preset, presetIndex) {
 			Upfront.mainData['sliderPresets'].push(preset.attributes);
@@ -1013,24 +1013,24 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	/***************************************************************************/
 
 	on_element_resize_start: function(attr) {
-		
+
 		var properties = this.get_preset_properties(),
 			style = this.property('style'),
 			me = this
 		;
-		
+
 		if(typeof properties !== "undefined" && properties.primaryStyle === "side") return;
-		
+
 		if(_.indexOf(['nocaption', 'below', 'above', 'right', 'left'], style) == -1)
 			this.$('.uslider-caption').fadeOut('fast');
 		else if(style == 'right' || style == 'left'){
 			this.$('.uslide').css({height: '100%'});
 		}
 	},
-	
+
 	on_element_resizing: function(attr) {
 		if( !this.model.slideCollection.length ) return;
-		
+
 		var properties = this.get_preset_properties();
 		if(typeof properties !== "undefined" && properties.primaryStyle === "side") return;
 
@@ -1039,8 +1039,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			text = this.get_preset_properties().primaryStyle == 'below' ? current.find('.uslide-caption') : [],
 			textHeight = text.length ? text.height() : 0,
 			column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
-			vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
-			newElementSize = {width: parseInt( attr.width ), height: parseInt( attr.height ) - ( vPadding * 2 ) - textHeight},
+			vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding, 10 ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding, 10 ),
+			newElementSize = {width: parseInt( attr.width, 10 ), height: parseInt( attr.height, 10 ) - ( vPadding * 2 ) - textHeight},
 			imageWrapper = current.find('.uslide-image'),
 			style = this.get_preset_properties().primaryStyle,
 			wrapperSize = {width: style == 'side' ? imageWrapper.width() : newElementSize.width, height: newElementSize.height},
@@ -1057,12 +1057,12 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			.closest('.uslide').height(newElementSize.height)
 			.closest('.uslides').css({'padding-top' : newElementSize.height})
 		;
-		
+
 		//We should resize all slides
 		this.model.slideCollection.each(function (slide) {
 			me.calculateImageResize(wrapperSize, slide);
 		});
-		
+
 	},
 
 	on_element_resize: function(attr) {
@@ -1076,8 +1076,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			text = this.get_preset_properties().primaryStyle == 'below' ? mask.find('.uslide-caption') : [],
 			textHeight = text.length ? text.height() : 0,
 			column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
-			vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
-			newElementSize = {width: parseInt( attr.width ), height: parseInt( attr.height ) - ( vPadding * 2 ) - textHeight},
+			vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding, 10 ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding, 10 ),
+			newElementSize = {width: parseInt( attr.width, 10 ), height: parseInt( attr.height, 10 ) - ( vPadding * 2 ) - textHeight},
 			elementColumns = attr.col,
 			imageColumns = Math.max(3, Math.round(this.property('rightImageWidth') * elementColumns / this.property('rightWidth'))),
 			sideImageWidth = imageColumns * this.calculateColumnWidth()
@@ -1093,7 +1093,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		me.setTimer();
 	},
-	
+
 	calculateImageResize: function(wrapperSize, slide){
 		var img = this.$('.uslide[rel=' + slide.id + ']').find('img'),
 			currentPosition = img.position(),
@@ -1103,25 +1103,26 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			imgRatio = imgSize.width / imgSize.height,
 			wrapperRatio = wrapperSize.width / wrapperSize.height,
 			pivot = imgSize.width / imgSize.height > wrapperSize.width / wrapperSize.height ? 'height' : 'width',
-			other = pivot == 'height' ? 'width' : 'height'
+			other = pivot == 'height' ? 'width' : 'height',
+			final_width, final_height
 		;
 
 		if (pivot == 'height' && wrapperSize.height > imgSize.height) {
 // Old style, using CSS
 //img.css({width: 'auto', height: '100%', top: 0, left: Math.min(0, Math.max(imgPosition.left, wrapperSize.width - imgSize.width))});
-			var final_width = wrapperSize.height / imgSize.height * imgSize.width;
+			final_width = wrapperSize.height / imgSize.height * imgSize.width;
 			img.css({width: final_width, height: wrapperSize.height, top: 0, left: Math.min(0, Math.max(imgPosition.left, wrapperSize.width - imgSize.width))});
 		} else if (pivot == 'width' && wrapperSize.width > imgSize.width) {
 // Old style, using CSS
 //img.css({width: '100%',	height: 'auto',	left: 0, top: Math.min(0, Math.max(imgPosition.top, wrapperSize.height - imgSize.height))});
-			var final_height = wrapperSize.width / imgSize.width * imgSize.height;
+			final_height = wrapperSize.width / imgSize.width * imgSize.height;
 			img.css({width: wrapperSize.width,	height: final_height,	left: 0, top: Math.min(0, Math.max(imgPosition.top, wrapperSize.height - imgSize.height))});
 		} else {
 			if (pivot == 'height') {
-				var final_width = wrapperSize.height / imgSize.height * imgSize.width;
+				final_width = wrapperSize.height / imgSize.height * imgSize.width;
 				img.css({width: final_width, height: wrapperSize.height, top: 0, left: Math.min(0, Math.max(imgPosition.left, wrapperSize.width - imgSize.width))});
 			} else {
-				var final_height = wrapperSize.width / imgSize.width * imgSize.height;
+				final_height = wrapperSize.width / imgSize.width * imgSize.height;
 				img.css({width: wrapperSize.width,	height: final_height,	left: 0, top: Math.min(0, Math.max(imgPosition.top, wrapperSize.height - imgSize.height))});
 			}
 
@@ -1372,9 +1373,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	getControlItems: function(){
 		if( !this.model.slideCollection.length ) return _([]); // We need no controls when there is no slide
 		var me = this,
-			captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl(),
 			moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl(),
-			slideCollection = this.model.slideCollection;
+			slideCollection = this.model.slideCollection,
 			multiBelow = {
 				above: ['above', l10n.above_img],
 				below: ['below', l10n.below_img],
@@ -1421,9 +1421,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			captionControl.selected = multiControls[slide.get('style')] ? slide.get('style') : 'nocaption';
 			this.listenTo(captionControl, 'select', function(item){
 				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
-					previousStyle = breakpoint.default ? slide.get('style') : slide.get_breakpoint_attr('style', breakpoint.id)
+					previousStyle = breakpoint['default'] ? slide.get('style') : slide.get_breakpoint_attr('style', breakpoint.id)
 				;
-				if ( breakpoint.default ) {
+				if ( breakpoint['default'] ) {
 					slide.set('style', item);
 				}
 				else {
@@ -1440,10 +1440,10 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				}
 			});
 		}
-		
+
 		moreOptions.icon = 'more';
 		moreOptions.tooltip = l10n.cap_position;
-		moreOptions.sub_items = {}
+		moreOptions.sub_items = {};
 
 		moreOptions.sub_items['add'] = this.createControl('add', l10n.add_slide, 'openImageSelector');
 		moreOptions.sub_items['crop'] = this.createControl('crop', l10n.edit_img, 'imageEditMask');
@@ -1452,7 +1452,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		if( multiControls ) {
 			moreOptions.sub_items['caption'] = captionControl;
 		}
-		
+
 		moreOptions.sub_items['link'] = this.createLinkControl();
 
 		var controls = _([
@@ -1537,7 +1537,7 @@ Upfront.Application.LayoutEditor.add_object("USlider", {
 		'.upfront-default-slider-nav-item': {label: l10n.css.dots_label, info: l10n.css.dots_info},
 		'.uslider-dotnav-current': {label: l10n.css.dot_current_label, info: l10n.css.dot_current_info},
 		'.upfront-default-slider-nav-prev': {label: l10n.css.prev_label, info: l10n.css.prev_info},
-		'.upfront-default-slider-nav-next': {label: l10n.css.next_label, info: l10n.css.next_info},
+		'.upfront-default-slider-nav-next': {label: l10n.css.next_label, info: l10n.css.next_info}
 	},
 	cssSelectorsId: Upfront.data.uslider.defaults.type
 });

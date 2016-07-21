@@ -439,8 +439,8 @@ var Settings = ElementSettings.extend({
 			ajaxActionSlug: 'thispost',
 			panelTitle: l10n.settings,
 			presetDefaults: Upfront.mainData.presetDefaults.thispost,
-			styleTpl: styleTpl,
-		},
+			styleTpl: styleTpl
+		}
 	},
 
 	initialize: function (opts) {

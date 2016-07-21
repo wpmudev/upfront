@@ -42,11 +42,11 @@
 			this.listenTo(Upfront.Events, 'entity:resize_start', this.hideFrame);
 			this.listenTo(Upfront.Events, 'entity:resize_stop', this.onElementResize);
 		},
-		
+
 		on_element_resize_start: function (attr) {
 			this.hideFrame(this, this.model);
 		},
-		
+
 		on_element_resize: function (attr) {
 			this.onElementResize(this, this.model);
 		},
@@ -82,7 +82,7 @@
 					if(size.col != 0){
 						me.property('element_size', {
 							width: size.col,
-							height: size.row,
+							height: size.row
 						});
 					}
 
@@ -175,7 +175,7 @@
 
 		on_render: function(){
 			var parent = this.parent_module_view, me = this;
-			
+
 			this.setElementSize();
 
 			//Prevent iframe hijacking of events when dragging
@@ -257,10 +257,10 @@
 		title: l10n.general_settings,
 		initialize: function (opts) {
 			this.options = opts;
-			
-			me = this,
-			SettingsItem =  Upfront.Views.Editor.Settings.Item,
-			Fields = Upfront.Views.Editor.Field
+
+			var me = this,
+				SettingsItem =  Upfront.Views.Editor.Settings.Item,
+				Fields = Upfront.Views.Editor.Field
 			;
 
 			this.settings = _([
@@ -332,7 +332,7 @@
 							}
 						}),
 
-						new Upfront.Views.Editor.Settings.Settings_CSS({model: this.model }),
+						new Upfront.Views.Editor.Settings.Settings_CSS({model: this.model })
 					]
 				})
 			]);
@@ -340,7 +340,7 @@
 
 		get_title: function () {
 			return l10n.general_settings;
-		},
+		}
 	});
 	var LikeBoxSettings = ElementSettings.extend({
 		panels: {

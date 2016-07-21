@@ -42,7 +42,7 @@
             this.setElement($('#upfront-popup'));
 
             settings = _.clone(Upfront.data.usocial.globals ? Upfront.data.usocial.globals : Upfront.data.usocial.global_defaults);
-            settings.l10n = l10n.template
+            settings.l10n = l10n.template;
 
             this.$('#upfront-popup-top').html('<ul class="upfront-tabs">' +
                     '<li class="active upfront-social-popup-hd">' + l10n.global_settings + '</li>' +
@@ -131,7 +131,7 @@
         toggleService: function(e){
             e.preventDefault();
             var check = $(e.target),
-                li = $(e.target).closest('li')
+                li = $(e.target).closest('li');
                 input = li.find('input[type=text]')
             ;
 
@@ -517,7 +517,7 @@
             });
 
             this.trigger('rendered');
-        },
+        }
     });
 
     var Field_Button = Upfront.Views.Editor.Field.Field.extend({
@@ -558,7 +558,7 @@
             //Upfront.Events.on("social:sorting:fields:save", this.save_c_fields, this);
             this.$el.on('click', function(e){
                 me.hideServiceList(e);
-            })
+            });
         },
 
         render: function(){
@@ -726,7 +726,7 @@
             ;
             _.each(services, function(s){
                 hash[s.id] = s;
-            })
+            });
 
             if(typeof onlyOrder == 'undefined')
                 onlyOrder = false;
@@ -743,7 +743,7 @@
                             service.url = wrap.find('input[name=' + service.id + '_url]').val();
                             if(service.meta.length){
                                 _.each(service.meta, function(m){
-                                    m.value = wrap.find('input[name=' + m.id + ']' ).val()
+                                    m.value = wrap.find('input[name=' + m.id + ']' ).val();
                                 });
                             }
                         }
@@ -756,7 +756,7 @@
             _.each(services,function(s){
                 if(added.indexOf(s.id) == -1)
                     newServices.push(s);
-            })
+            });
 
             this.prop(this.options.prop, newServices, false);
         },
@@ -766,9 +766,9 @@
         serv: function(id, value, silent){
             var services = this.prop(this.options.prop);
             if(typeof value == 'undefined'){
-                for(var s in services){
-                    if(services[s].id == id)
-                        return services[s];
+                for(var srv in services){
+                    if(services[srv].id == id)
+                        return services[srv];
                 }
                 return false;
             }
@@ -964,7 +964,7 @@
                     fields: [services]
                 }),
                 this.getGlobalsButton()
-            ]
+            ];
         },
 
         getGlobalsButton: function() {
@@ -1005,7 +1005,7 @@
                 Upfront.data.social.panel.open().done(function(globals){
                     _.each(globals, function(val, name){
                         me.model.set_property(name, val, true);
-                    })
+                    });
                     me.model.trigger('change');
                 });
             else

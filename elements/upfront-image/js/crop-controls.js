@@ -4,15 +4,15 @@
 
 	var CropControls = Backbone.View.extend({
 		className: 'crop-contols-wrapper',
-		
+
 		initialize: function(options) {
 			this.options = options || {};
 		},
 
 		render: function() {
-			
+
 			var me = this;
-			
+
 			this.items = _([
 				new Upfront.Views.Editor.Field.Button({
 					model: this.model,
@@ -55,17 +55,17 @@
 					}
 				})
 			]);
-			
+
 			this.items.each(function(item){
 				item.render();
 				item.delegateEvents();
 
 				this.$el.append(item.el);
-				
+
 			}, this);
-			
+
 			return this;
-		},
+		}
 	});
 
 	return CropControls;

@@ -1294,7 +1294,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		Upfront.Events.trigger("featured:image:resized", newImageData);
 
 		import_promise.done(function(){
-			imageId = me.resizingData.data.imageId,
+			imageId = me.resizingData.data.imageId;
 			Upfront.Views.Editor.ImageEditor.saveImageEdition(
 				imageId,
 				me.resizingData.data.rotation,
