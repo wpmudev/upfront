@@ -89,7 +89,7 @@ define([
 					return contentL10n.lightbox;
 			}
 		},
-		
+
 		deleteItem: function(e) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -105,7 +105,7 @@ define([
 					})
 				;
 			}
-		},
+		}
 	});
 
 	return MenuItem;

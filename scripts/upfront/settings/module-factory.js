@@ -12,7 +12,7 @@ define([
 	'scripts/upfront/settings/modules/padding',
 	'scripts/upfront/settings/modules/anchor',
 	'scripts/upfront/settings/modules/menu-structure',
-	'elements/upfront-newnavigation/js/settings/menu-style',
+	'elements/upfront-newnavigation/js/settings/menu-style'
 ], function(TypographySettingsModule, BorderSettingsModule, HovAnimationSettingsModule, RadiusSettingsModule,
 			SelectboxSettingsModule, CheckboxSettingsModule, CaptionLocationSettingsModule, GalleryCaptionLocationSettingsModule,
 			ColorsSettingsModule, ElementStyleModule, PaddingSettingsModule, AnchorSettingsModule, MenuStructureModule, MenuStyleModule) {

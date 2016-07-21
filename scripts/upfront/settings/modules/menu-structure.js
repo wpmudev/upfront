@@ -13,7 +13,7 @@ define([
 		events: {
 			'mouseenter .menu-item-header': 'enableSorting',
 			'mouseleave .menu-item-header': 'disableSortingOnHeaderLeave',
-			'click .add-menu-item': 'addItem',
+			'click .add-menu-item': 'addItem'
 		},
 
 		initialize: function(options) {
@@ -209,7 +209,7 @@ define([
 					me.stopWatchingItemDepth(ui.item);
 					me.updateItemsPosition(ui.item);
 					me.sortingInProggres = false;
-				},
+				}
 			});
 		},
 

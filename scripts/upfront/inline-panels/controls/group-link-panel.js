@@ -25,7 +25,7 @@ define([
 				url: this.options.linkUrl,
 				target: this.options.linkTarget,
 				object: this.options.linkObject,
-				object_id: this.options.linkObjectId,
+				object_id: this.options.linkObjectId
 			});
 			this.view = new Upfront.Views.Editor.LinkPanel({
 				model: this.link,
@@ -60,7 +60,7 @@ define([
 			} else {
 				this.open();
 			}
-		},
+		}
 	});
 
 	return GroupLinkPanelControl;
