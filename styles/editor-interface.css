@@ -8637,7 +8637,7 @@ a.upfront-post-layout-trigger:before {
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 9999;
+  z-index: 10001009;
   font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   font-weight: normal; }
 
