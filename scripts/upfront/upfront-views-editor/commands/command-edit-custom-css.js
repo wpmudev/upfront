@@ -25,6 +25,20 @@
                     element_id: 'layout',
                     global: true
                 });
+								
+                // needs to close this when starting Responsive Mode
+                Upfront.Events.on("upfront:start:responsive", function() {
+                    // do not proceed if not existing in DOM anymore
+                    if ( !$.contains(document.documentElement, editor.$el.get(0)) ) return;
+                    editor.close();
+                });
+								
+                // needs to close this when activating Element Settings
+                Upfront.Events.on("element:settings:activate", function() {
+                    // do not proceed if not existing in DOM anymore
+                    if ( !$.contains(document.documentElement, editor.$el.get(0)) ) return;
+                    editor.close();
+                });
             }
         });
 
