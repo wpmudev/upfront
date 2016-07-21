@@ -113,7 +113,7 @@ define([
 						me.menuItemViews.push(menuStructureItem);
 						me.listenTo(menuStructureItem, 'change', function(data) {
 							me.menuItems[index] = data;
-							me.model.trigger('change');
+							me.model.trigger('change', me.model);
 						});
 					});
 					me.model.set_property('menu_items', response.data, true);
