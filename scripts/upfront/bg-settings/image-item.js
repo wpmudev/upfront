@@ -1,5 +1,5 @@
 (function($) {
-	
+
 var l10n = Upfront.Settings && Upfront.Settings.l10n
 	? Upfront.Settings.l10n.global.views
 	: Upfront.mainData.l10n.global.views
@@ -8,7 +8,7 @@ var l10n = Upfront.Settings && Upfront.Settings.l10n
 define([
 	'scripts/upfront/bg-settings/mixins'
 ], function(Mixins) {
-	
+
 	var ImageItem = Upfront.Views.Editor.Settings.Item.extend(_.extend({}, Mixins, {
 		group: false,
 		initialize: function (options) {
@@ -71,7 +71,7 @@ define([
 						values: [
 							{ label: l10n.featured_default_hide, value: 'hide' },
 							{ label: l10n.featured_default_color, value: 'color' },
-							{ label: l10n.featured_default_image, value: 'image' },
+							{ label: l10n.featured_default_image, value: 'image' }
 						],
 						change: function () {
 							var value = this.get_value(),
@@ -218,7 +218,7 @@ define([
 				};
 			this.$el.addClass('uf-bgsettings-item uf-bgsettings-imageitem');
 			options.fields = _.map(fields, function(field){ return field; });
-			
+
 			this.on('show', function(){
 				var bg_type = me.model.get_breakpoint_property_value('background_type', true),
 					bg_image = me.model.get_breakpoint_property_value('background_image', true),
@@ -241,7 +241,7 @@ define([
 					if ( !bg_image ) me.upload_image();
 				}
 			});
-			
+
 			this.bind_toggles();
 			this.constructor.__super__.initialize.call(this, options);
 		},

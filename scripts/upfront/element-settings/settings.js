@@ -111,7 +111,7 @@ define([
 			}
 
 			if (this.onSaveSettings) this.onSaveSettings();
-			
+
 			this.removePreviewClasses();
 		},
 
@@ -177,7 +177,7 @@ define([
 				titleHeight = this.$el.find('>.upfront-settings-title').outerHeight(true),
 				buttonHeight = this.$el.find('>.upfront-settings-button_panel').outerHeight(true)
 			;
-			this.$el.find('#sidebar-scroll-wrapper').css('max-height', (height-titleHeight-buttonHeight) + 'px')
+			this.$el.find('#sidebar-scroll-wrapper').css('max-height', (height-titleHeight-buttonHeight) + 'px');
 		},
 
 		cleanUp: function(){
