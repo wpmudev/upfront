@@ -86,7 +86,7 @@ var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
 								compact: true
 							})
 						]
-					}),
+					})
 				]
 			}),
 
@@ -193,7 +193,7 @@ var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
 								]
 							})
 						]
-					}),
+					})
 				]
 			}),
 
@@ -235,7 +235,7 @@ var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
 								]
 							})
 						]
-					}),
+					})
 				]
 			}),
 
@@ -315,11 +315,11 @@ var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
 								property: 'field_checkboxes4',
 								label: "",
 								values: [
-									{ label: "Single options", value: 'options1' },
+									{ label: "Single options", value: 'options1' }
 								]
 							})
 						]
-					}),
+					})
 				]
 			}),
 
@@ -345,7 +345,7 @@ var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
 								default_value: 30
 							})
 						]
-					}),
+					})
 				]
 			}),
 
@@ -375,7 +375,7 @@ var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
 								]
 							})
 						]
-					}),
+					})
 				]
 			}),
 
@@ -410,7 +410,7 @@ var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
 											{ label: "Options 4", value: 'options4', disabled: true },
 											{ label: "Options 5", value: 'options5' }
 										]
-									}),
+									})
 								]
 							}),
 							new Upfront.Views.Editor.Settings.Item({
@@ -440,7 +440,7 @@ var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
 										]
 									})
 								]
-							}),
+							})
 						]
 					}),
 					new Upfront.Views.Editor.Settings.ItemTabbed({
@@ -463,9 +463,9 @@ var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
 										]
 									})
 								]
-							}),
+							})
 						]
-					}),
+					})
 				]
 			}),
 
@@ -516,7 +516,7 @@ var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
 										]
 									})
 								]
-							}),
+							})
 						]
 					}),
 					new Upfront.Views.Editor.Settings.ItemTabbed({
@@ -542,11 +542,11 @@ var SettingExampleSettings = Upfront.Views.Editor.Settings.Settings.extend({
 										]
 									})
 								]
-							}),
+							})
 						]
-					}),
+					})
 				]
-			}),
+			})
 
 			// end Panels array
 		]);
