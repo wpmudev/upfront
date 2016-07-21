@@ -262,7 +262,8 @@ define([
 				},
 				change: function(value) {
 					this.model.set_breakpoint_property('lock_padding', value);
-					//Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
+					// Prevent loop
+					// Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
 				},
 
 			}),
