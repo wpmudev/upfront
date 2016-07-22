@@ -108,6 +108,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		this.listenTo(this.model, "preset:updated", this.preset_updated);
 
+		this.listenTo(Upfront.Events, 'upfront:layout_size:change_breakpoint', this.updateSliderHeight);
+
 		this.listenTo(Upfront.Events, 'command:layout:save', this.saveResizing);
 		this.listenTo(Upfront.Events, 'command:layout:save_as', this.saveResizing);
 
@@ -313,6 +315,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			options = slider.find('.uslider').data();
 
 			slider.find('.uslides').on('rendered', function(){
+				me.trigger('rendered');
 				Upfront.Events.trigger('entity:object:refresh', me);
 			});
 			slider.find('.uslides').upfront_default_slider(options);
@@ -451,10 +454,20 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			me.setImageResizable();
 		}
 
+		me.updateSliderHeight();
+	},
+
+	updateSliderHeight: function () {
+		var wrapper = this.$('.uslide-image'),
+			currentSlide = this.model.slideCollection.at(this.getCurrentSlide())
+		;
 		//Adapt slider height to the image crop
 		if(typeof(currentSlide) != 'undefined') {
-			var textHeight = this.get_preset_properties().primaryStyle == 'below' ? this.$('.uslide[rel=' + currentSlide.id + ']').find('.uslide-caption').outerHeight() : 0;
-			me.$('.uslides').css({ 'padding-top' : wrapper.height() + textHeight});
+			var textHeight = this.get_preset_properties().primaryStyle == 'below'
+					? this.$('.uslide[rel=' + currentSlide.id + ']').find('.uslide-caption').outerHeight(true)
+					: 0
+				;
+			this.$('.uslides').css({ 'padding-top' : wrapper.height() + textHeight});
 		}
 	},
 
@@ -524,8 +537,11 @@ var USliderView = Upfront.Views.ObjectView.extend({
 						slide.set_breakpoint_attr('style', defaults[primary], breakpoint.id);
 					}
 				}
-				var wrap = me.$('.uslide[rel=' + slide.id + ']').find('.uslide-image');
-				me.imageProps[slide.id] = me.calculateImageResize({width: wrap.width(), height:wrap.height()}, slide);
+				if ( primary == 'side' ) return;
+				me.once('rendered', function () {
+					var wrap = me.$('.uslide[rel=' + slide.id + ']').find('.uslide-image');
+					me.imageProps[slide.id] = me.calculateImageResize({width: wrap.width(), height:wrap.height()}, slide);
+				});
 			});
 
 			this.setTimer();
@@ -1095,6 +1111,16 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 
 	calculateImageResize: function(wrapperSize, slide){
+		var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
+			defaults = {
+				size: slide.get('size'),
+				cropOffset: slide.get('cropOffset'),
+				cropSize: slide.get('cropSize')
+			}
+		;
+		if ( !breakpoint.default ) { // No resizing on responsive, return default
+			return defaults;
+		}
 		var img = this.$('.uslide[rel=' + slide.id + ']').find('img'),
 			currentPosition = img.position(),
 			imgSize = slide.get('size'),
@@ -1180,6 +1206,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		return Upfront.Util.post(editOptions).done(function(response){
 			var images = response.data.images;
 			_.each(images, function(data, id){
+				if ( true === data.error ) return; // error, ignore this
 				var slide = me.model.slideCollection.get(id),
 					imageData = sentData[id]
 				;
@@ -1430,14 +1457,14 @@ var USliderView = Upfront.Views.ObjectView.extend({
 					slide.set_breakpoint_attr('style', item, breakpoint.id);
 				}
 				me.onSlidesCollectionChange();
-				if(primaryStyle == 'side' && previousStyle == 'nocaption' || item == 'nocaption'){
+				/*if(primaryStyle == 'side' && previousStyle == 'nocaption' || item == 'nocaption'){
 					//give time to the element to render
 					setTimeout(function(){
 						var wrap = me.$('.upfront-default-slider-item-current').find('.uslide-image');
 						me.imageProps[slide.id] = me.calculateImageResize({width: wrap.width(), height: wrap.height()}, slide);
 						me.setTimer();
 					}, 100);
-				}
+				}*/
 			});
 		}
 

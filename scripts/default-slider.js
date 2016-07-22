@@ -114,10 +114,11 @@
 			}
 
 			data.auto = slider_auto;
-			data.interval = $slider.attr('data-slider-interval') || data.interval;
+			data.interval = parseInt($slider.attr('data-slider-interval') || data.interval, 10);
 			data.effect = $slider.attr('data-slider-effect') || data.effect;
 			data.control = $slider.attr('data-slider-control') || data.control;
 			data.show_control = $slider.attr('data-slider-show-control') || data.show_control;
+			data.caption_height = parseInt($slider.attr('data-caption_height') || data.caption_height, 10) === 1;
 			$slider.addClass(data.classname.slider + '-control-' + data.control);
 			$slider.addClass(data.classname.slider + '-control-' + data.show_control);
 		},
@@ -173,7 +174,7 @@
 			this.items.each(function(){
 				var $img = $(this).find('img'),
 					$text = $(this).find('.uslide-caption'),
-					textHeight = me.opts.caption_height ? $text.outerHeight() : 0,
+					textHeight = me.opts.caption_height ? $text.outerHeight(true) : 0,
 					img_h = $img.height() + textHeight
 				;
 				max_height = max_height > img_h ? max_height : img_h;
@@ -327,8 +328,14 @@
 				if ( new_length ){
 					me.update_items($new_items);
 					me.update_nav();
-					if ( new_length != length )
+					if ( new_length != length ) {
 						me.slider_switch(data.starting_slide);
+					}
+				}
+				else {
+					if ( data.auto_height ) {
+						me.calc_height();
+					}
 				}
 				if ( !data.auto_height && data.adjust_slide_size){
 					me.adjust_slide_size();

@@ -87,13 +87,18 @@ jQuery(function($){
 		}
 
 		function updateSlider(slider) {
+			var uslides = slider.find('.uslides'),
+				caption_height = 0
+			;
 			slider.find('.uslide-above').each(function(){
 				var slide = $(this);
 				slide.find('.uslide-caption').remove().prependTo(slide);
+				caption_height = 1;
 			});
 			slider.find('.uslide-below').each(function(){
 				var slide = $(this);
 				slide.find('.uslide-caption').remove().appendTo(slide);
+				caption_height = 1;
 			});
 			slider.find('.uslide-left').each(function(){
 				var slide = $(this);
@@ -107,6 +112,7 @@ jQuery(function($){
 				var slide = $(this);
 				slide.find('.uslide-caption').remove().prependTo(slide.find('.uslide-image'));
 			});
+			uslides.attr('data-caption_height', caption_height).trigger('refresh');
 		}
 
 		function onBreakpointChange(slider, breakpoint) {
