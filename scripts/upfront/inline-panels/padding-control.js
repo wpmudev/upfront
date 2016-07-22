@@ -138,11 +138,22 @@ define([
 				min: 0,
 				max: 200,
 				step: 5,
-				change: function () {
-					var value = this.get_value();
+				change: function (value) {
+					var value = this.get_value(), 
+						lockPadding = this.model.get_breakpoint_property_value('lock_padding', true);
+					
+					if(lockPadding === "yes") {
+						this.model.set_breakpoint_property('left_padding_num', value);
+						this.model.set_breakpoint_property('top_padding_num', value);
+						this.model.set_breakpoint_property('right_padding_num', value);
+						this.model.set_breakpoint_property('bottom_padding_num', value);
+						me.paddingLeft.get_field().val(value);
+						me.paddingRight.get_field().val(value);
+						me.paddingTop.get_field().val(value);
+						me.paddingBottom.get_field().val(value);
+					}
 
 					this.model.set_breakpoint_property('use_padding', 'yes', true);
-					this.model.set_breakpoint_property('lock_padding', '', true);
 					this.model.set_breakpoint_property('top_padding_use', 'yes', true);
 					this.model.set_breakpoint_property('top_padding_slider', value, true); // silent, don't need to trigger update again
 					this.model.set_breakpoint_property('top_padding_num', value);
@@ -164,7 +175,6 @@ define([
 					var value = this.get_value();
 
 					this.model.set_breakpoint_property('use_padding', 'yes', true);
-					this.model.set_breakpoint_property('lock_padding', '', true);
 					this.model.set_breakpoint_property('left_padding_use', 'yes', true);
 					this.model.set_breakpoint_property('left_padding_slider', value, true); // silent, don't need to trigger update again
 					this.model.set_breakpoint_property('left_padding_num', value);
@@ -186,7 +196,6 @@ define([
 					var value = this.get_value();
 
 					this.model.set_breakpoint_property('use_padding', 'yes', true);
-					this.model.set_breakpoint_property('lock_padding', '', true);
 					this.model.set_breakpoint_property('right_padding_use', 'yes', true);
 					this.model.set_breakpoint_property('right_padding_slider', value, true); // silent, don't need to trigger update again
 					this.model.set_breakpoint_property('right_padding_num', value);
@@ -208,7 +217,6 @@ define([
 					var value = this.get_value();
 
 					this.model.set_breakpoint_property('use_padding', 'yes', true);
-					this.model.set_breakpoint_property('lock_padding', '', true);
 					this.model.set_breakpoint_property('bottom_padding_use', 'yes', true);
 					this.model.set_breakpoint_property('bottom_padding_slider', value, true); // silent, don't need to trigger update again
 					this.model.set_breakpoint_property('bottom_padding_num', value);
@@ -248,22 +256,10 @@ define([
 						me.paddingLeft.$el.find('input').prop( "disabled", false ).css('opacity', 1);
 						me.paddingRight.$el.find('input').prop( "disabled", false ).css('opacity', 1);
 						me.paddingBottom.$el.find('input').prop( "disabled", false ).css('opacity', 1);
-						/*
-						if(usePadding == "yes") {
-							stateSettings.find('.padding-slider').hide();
-							stateSettings.find('.padding-number').hide();
-							stateSettings.find('.padding-top').show();
-							stateSettings.find('.padding-bottom').show();
-							stateSettings.find('.padding-left').show();
-							stateSettings.find('.padding-right').show();
-						}
-						*/
 					}
 				},
 				change: function(value) {
 					this.model.set_breakpoint_property('lock_padding', value);
-					// Prevent loop
-					// Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
 				},
 
 			}),
