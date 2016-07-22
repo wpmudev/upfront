@@ -99,11 +99,11 @@ define([
 		on_render: function() {
 			var me = this,
 				$paddingControl = me.$('.upfront-padding-control'),
-				$paddingTopContainer = $('<div class="upfront-padding-container upfront-padding-cotainer-top"></div>'),
-				$paddingLockContainer = $('<div class="upfront-padding-container upfront-padding-cotainer-lock"></div>'),
-				$paddingLeftContainer = $('<div class="upfront-padding-container upfront-padding-cotainer-left"></div>'),
-				$paddingRightContainer = $('<div class="upfront-padding-container upfront-padding-cotainer-right"></div>'),
-				$paddingBottomContainer = $('<div class="upfront-padding-container upfront-padding-cotainer-bottom"></div>'),
+				$paddingTopContainer = $('<div class="upfront-padding-container upfront-padding-container-top"></div>'),
+				$paddingLockContainer = $('<div class="upfront-padding-container upfront-padding-container-lock"></div>'),
+				$paddingLeftContainer = $('<div class="upfront-padding-container upfront-padding-container-left"></div>'),
+				$paddingRightContainer = $('<div class="upfront-padding-container upfront-padding-container-right"></div>'),
+				$paddingBottomContainer = $('<div class="upfront-padding-container upfront-padding-container-bottom"></div>'),
 				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding
 			;
 
