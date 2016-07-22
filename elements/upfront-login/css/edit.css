@@ -102,6 +102,48 @@ div.upfront-login_element-module.upfront-module-active .upfront_login.upfront_lo
 	vertical-align: middle;
 }
 
+.upfront_login form#loginform p input.upfront-input-labels[type="text"],
+.upfront_login p.login-lostpassword input.upfront-input-labels[type="text"] {
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	height: auto;
+}
+
+.upfront_login form#loginform p.login-remember input.upfront-input-labels[type="text"] {
+	width: auto;
+	padding: 0;
+}
+
+.upfront_login.upfront_login-click form#loginform p.login-remember input.upfront-input-labels[type="text"],
+.upfront_login.upfront_login-hover form#loginform p.login-remember input.upfront-input-labels[type="text"] {
+	width: 80%;
+}
+
+.upfront_login form#loginform p.login-submit input.upfront-input-labels[type="text"],
+.upfront_login p.login-lostpassword input.upfront-input-labels[type="text"] {
+	text-align: center;
+}
+
+.upfront_login form#loginform p.login-submit input.upfront-input-labels[type="text"] {
+	border: 2px solid #269a47;
+	background: #2cad4a;
+	-webkit-box-shadow: 0 0 0px 1000px rgb(44, 173, 74) inset;
+	color: #fff;
+	-webkit-text-fill-color: rgb(255, 255, 255);
+	width: 100%;
+	text-align: center;
+}
+
+.upfront_login form#loginform p.login-submit input.upfront-input-labels[type="text"]:hover {
+	background-color: #269a47;
+}
+
+.upfront_login p.login-lostpassword input.upfront-input-labels.lostpassword-link[type="text"] {
+	color: #39a678;
+	-webkit-text-fill-color: rgb(57, 166, 120);
+}
+
 #element-settings-sidebar .upfront-settings-item.relative {
 	position: relative;
 }
