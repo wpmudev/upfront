@@ -1057,6 +1057,8 @@ var LayoutEditor = {
 			import_image_list = []
 		;
 		Upfront.Events.trigger('upfront:import_image:populate_theme_images', image_list);
+		if ( image_list.length <= 0 ) return;
+
 		Upfront.Util.post({
 			action: 'upfront_list_import_image',
 			images: image_list
