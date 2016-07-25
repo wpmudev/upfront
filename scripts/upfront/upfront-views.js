@@ -7316,6 +7316,7 @@ define([
 				this.local_view = null;
 				$(window).off('resize.upfront_layout');
 				$(window).off('scroll.upfront_layout');
+				this.stopListening(Upfront.Events, 'upfront:start:responsive');
 				if (this.bg_setting)
 					this.bg_setting.remove();
 				this.bg_setting = null;
@@ -7325,8 +7326,12 @@ define([
 				this.options = false;
 			},
 			open_edit_background: function () {
+				var me = this;
 				this.bg_setting.open().always(function(){
 
+				});
+				this.listenTo(Upfront.Events, 'upfront:start:responsive', function() {
+					if ( me.bg_setting ) me.bg_setting.close(false);
 				});
 			},
 			fix_height: function () {
