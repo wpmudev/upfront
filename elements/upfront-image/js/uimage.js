@@ -85,6 +85,9 @@ define([
 				this.property('has_settings', 1);
 			}
 
+			this.listenTo(Upfront.Events, 'upfront:import_image:populate_theme_images', this.populate_theme_images);
+			this.listenTo(Upfront.Events, 'upfront:import_image:imported', this.imported_theme_image);
+
 			this.listenTo(Upfront.Events, 'upfront:element:edit:start', this.on_element_edit_start);
 			this.listenTo(Upfront.Events, 'upfront:element:edit:stop', this.on_element_edit_stop);
 
@@ -153,6 +156,19 @@ define([
 
 			PresetUtil.updatePresetStyle('gallery', props, settingsStyleTpl);
 
+		},
+
+		populate_theme_images: function (image_list) {
+			if ( this.isThemeImage() ) image_list.push(this.property('srcFull'));
+		},
+
+		imported_theme_image: function (image) {
+			var src = this.property('srcFull');
+			if ( this.isThemeImage() && image.fullpath == src ) {
+				this.property('image_id', image.id);
+				this.property('srcFull', image.src);
+				this.property('srcOriginal', image.src);
+			}
 		},
 
 		setDefaults: function(){
@@ -1238,7 +1254,7 @@ define([
 				).done(function(results){
 					var imageData = results.data.images[imageId];
 
-					if(imageData.error && !me.isThemeImage){
+					if(imageData.error && !me.isThemeImage()){
 						Upfront.Views.Editor.notify(l10n.process_error, 'error');
 						return;
 					}
@@ -1256,7 +1272,7 @@ define([
 				});
 			});
 
-			if ( this.isThemeImage && 'themeExporter' in Upfront ) {
+			if ( this.isThemeImage() && 'themeExporter' in Upfront ) {
 				this.importImage().always(function(){
 					import_deferred.resolve();
 				});
@@ -1673,36 +1689,32 @@ define([
 		importImage: function () {
 			var me = this,
 				image_id = this.property('image_id'),
+				src = this.property('srcFull'),
 				opts = {
-					action: 'upfront-media-image-import',
-					images: [{
-						element_id: this.property('element_id'),
-						id: image_id,
-						src: this.property('srcFull')
-					}]
+					action: 'upfront_import_image',
+					images: [src]
 				},
 				deferred = $.Deferred()
 			;
 			Upfront.Util.post(opts).done(function(response){
 				var images = response.data.images;
-				if ( image_id in images ) {
-					var status = images[image_id].status;
-					if ( status == 'imported') {
-						me.property('image_id', images[image_id].id);
-						me.property('srcFull', images[image_id].src);
-						me.property('srcOriginal', images[image_id].src);
+				if ( parseInt(response.data.error, 10) !== 0 ) {
+					deferred.reject();
+					return;
+				}
+				_.each(images, function (image) {
+					var status = image.status;
+					if ( status === 'import_success' || status === 'exists') {
+						me.property('image_id', image.id);
+						me.property('srcFull', image.src);
+						me.property('srcOriginal', image.src);
 					}
-					else if ( status == 'exists' ) {
-						me.property('image_id', images[image_id].id);
-					}
-					else if ( status == 'fail' ) {
+					else {
 						deferred.reject();
 						return;
 					}
 					deferred.resolve(me.property('image_id'));
-					return;
-				}
-				deferred.reject();
+				});
 			});
 			return deferred.promise();
 		},

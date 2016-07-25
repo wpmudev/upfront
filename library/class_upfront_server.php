@@ -72,6 +72,7 @@ abstract class Upfront_Server implements IUpfront_Server {
 
 require_once('servers/class_upfront_ajax.php');
 require_once('servers/class_upfront_editor_ajax.php');
+require_once('servers/class_upfront_image.php');
 require_once('servers/class_upfront_javascript_main.php');
 require_once('servers/class_upfront_stylesheet_main.php');
 require_once('servers/class_upfront_stylesheet_editor.php');
