@@ -557,7 +557,7 @@
 						// and re-render the pane
 						me.collection.each(function (model) {
 							var files = model.get("files");
-							if (files && files[idx]) {
+							if (files && files[idx] && name === files[idx]) {
 								delete(files[idx]);
 								model.set("files", files);
 							}
