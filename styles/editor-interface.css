@@ -14969,12 +14969,36 @@ li#new-custom-breakpoint {
   border: 1px solid #a4bfd8; }
 
 .icon-fonts-list-item {
-  height: 32px;
+  /*height: 32px;*/
   line-height: 32px;
   border-bottom: 1px solid #e4eef6;
   padding-left: 20px;
   cursor: pointer;
   color: #263a4d; }
+
+.icon-fonts-list-item .font-filename {
+  display: none;
+  font-size: .8em;
+  font-weight: normal;
+  position: relative; }
+  .icon-fonts-list-item .font-filename a {
+    position: absolute;
+    right: 10px;
+    top: .8em;
+    height: 12px;
+    width: 12px;
+    border: 1px solid #ff0000;
+    display: none;
+    border-radius: 10px;
+    color: #ff0000;
+    line-height: 12px;
+    text-align: center;
+    font-size: 12px; }
+  .icon-fonts-list-item .font-filename:hover a {
+    display: block; }
+
+.icon-fonts-list-item.icon-fonts-list-item-active .font-filename {
+  display: block; }
 
 .upload-icon-font {
   border: 2px solid #85a9cc;
