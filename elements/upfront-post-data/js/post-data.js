@@ -1561,7 +1561,7 @@ var PostDataElement_Meta = PostDataElement.extend({
  * Add the elements to Upfront, only when in single layout. Place the element in DataElement.
  */
 function add_elements () {
-	if ( 'type' in _upfront_post_data.layout && 'single' === _upfront_post_data.layout.type ) {
+	if ( Upfront.Application.is_single() && !Upfront.Application.is_single('404_page') ) {
 		Upfront.Application.LayoutEditor.add_object("Upostdata-post_data", {
 			"Model": PostDataModel,
 			"View": PostDataView,
