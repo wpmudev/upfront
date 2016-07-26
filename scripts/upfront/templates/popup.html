@@ -411,6 +411,14 @@
 				{[ _.each(fonts, function(font) { ]}
 				<div data-family="{{ font.get('family') }}" class="icon-fonts-list-item {[ if (font.get('active')) { ]}icon-fonts-list-item-active{[ } ]}">
 					{{ font.get('name') }}{[ if (font.getUploadStatus() !== true) { ]} <span class="icon-font-upload-status" title="{{ font.getUploadStatus() }}">*</span>{[ } ]}
+					{[ _.each((font.get("files") || []), function (fname, fidx) { ]}
+						<div class="font-filename" data-name="{{fname}}" data-idx="{{fidx}}">
+							{{fname}}
+						{[ if ("theme-defined" === font.get("type")) { ]}
+							<a href="#remove">&times;</a>
+						{[ } ]}
+						</div>
+					{[ });]}
 				</div>
 				{[ }); ]}
 			</div>
