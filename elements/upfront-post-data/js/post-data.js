@@ -96,7 +96,9 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		this.$el.find('.upfront-object-content').empty().append(markup);
 		this.adjust_featured_image();
 		this.adjust_inserted_image();
-		this.prepare_editor();
+		if ( Upfront.Application.is_editor() ) {
+			this.prepare_editor();
+		}
 
 		// Show full image if we are in mobile mode
 		if(type === "featured_image") {
