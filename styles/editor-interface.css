@@ -14976,8 +14976,25 @@ li#new-custom-breakpoint {
   cursor: pointer;
   color: #263a4d; }
 
+.icon-fonts-list-item .font-fileset {
+  display: none; }
+
+.icon-fonts-list-item .font-name {
+  width: 120px;
+  overflow: hidden;
+  white-space: nowrap; }
+
+.icon-fonts-list-item a.expand-toggle {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 10px; }
+  .icon-fonts-list-item a.expand-toggle span.fileset-count {
+    color: #999;
+    text-transform: uppercase;
+    font-size: .8em; }
+
 .icon-fonts-list-item .font-filename {
-  display: none;
   font-size: .8em;
   font-weight: normal;
   position: relative; }
@@ -14997,7 +15014,7 @@ li#new-custom-breakpoint {
   .icon-fonts-list-item .font-filename:hover a {
     display: block; }
 
-.icon-fonts-list-item.icon-fonts-list-item-active .font-filename {
+.icon-fonts-list-item.expanded .font-fileset {
   display: block; }
 
 .upload-icon-font {
@@ -15391,6 +15408,16 @@ html {
 .upfront-disable-surroundings {
   box-shadow: 0 0 0 5000px rgba(0, 0, 10, 0.5);
   position: relative;
+  z-index: 2; }
+
+.upfront-disable-surroundings:before {
+  content: "";
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   z-index: 1; }
 
 .ueditor-insert-variant {
