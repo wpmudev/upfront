@@ -317,18 +317,55 @@
         var theme_fonts_collection = new ThemeFontsCollection(Upfront.mainData.themeFonts);
 
         var IconFont = Backbone.Model.extend({
-            getUploadStatus: function() {
-                if (_.keys(this.get('files')).length === 4) {
-                    return true;
-                }
-                var text = 'Please upload:';
-                _.each(['eot', 'woff', 'woff2', 'svg', 'ttf'], function(type) {
-                    if (_.isUndefined(this.get('files')[type])) {
-                        text += ' ' + type + ',';
-                    }
-                }, this);
-                return text.substring(0, text.length - 1) + ' file(s).';
-            }
+
+			/**
+			 * Gets the full types collection for icon font
+			 *
+			 * @return {Array}
+			 */
+			getFullCollectionSet: function () {
+				return [
+					'eot',
+					'woff',
+					//'woff2', // WOFF2 is optional
+					'ttf',
+					'svg'
+				];
+			},
+
+			/**
+			 * Gets the full types collection upload status
+			 *
+			 * @return {Boolean}
+			 */
+            getUploadStatus: function () {
+				var full = this.getFullCollectionSet() || [],
+					current = this.get('files') || {}
+				;
+				return _.keys(current).length === full.length;
+            },
+
+			/**
+			 * Gets the missing file types message
+			 *
+			 * @return {String}
+			 */
+			getUploadStatusMessage: function () {
+				var msg = l10n.icon_fonts_collection_incomplete || '',
+					current = this.get('files') || {},
+					missing = []
+				;
+				if (!msg) return '';
+
+				_.each(this.getFullCollectionSet(), function (type) {
+					if (type in current) return true;
+					missing.push(type);
+				});
+				return missing.length
+					? msg.replace(/%s/, missing.join(", "))
+					: ''
+				;
+			}
         });
         var IconFontCollection = Backbone.Collection.extend({
             model: IconFont
@@ -458,8 +495,13 @@
 				'click .font-filename a': 'removeFontFile'
             },
 
-            triggerFileChooser: function() {
+            triggerFileChooser: function (e) {
+				if (e && e.preventDefault) e.preventDefault();
+				if (e && e.stopPropagation) e.stopPropagation();
+
                 this.$el.find('#upfront-icon-font-input').click();
+
+				return false;
             },
 
             render: function() {
@@ -520,6 +562,7 @@
 								model.set("files", files);
 							}
 						});
+						me.fileUploadInitialized = false;
 						me.render();
 					})
 				;
@@ -575,13 +618,15 @@
                                 me.updateActiveFontStyle(font.family);
                             }
                         }
-
+						me.render();
+/*
                         fontObject = me.collection.findWhere({'family': font.family});
                         var listItem = me.$el.find('[data-family=' + font.family + ']');
                         listItem.find('.icon-font-upload-status').remove();
                         if (fontObject.getUploadStatus() !== true) {
-                            listItem.append('<span class="icon-font-upload-status" title="' + fontObject.getUploadStatus() + '">*</span>');
+                            listItem.append('<span class="icon-font-upload-status" title="' + fontObject.getUploadStatusMessage() + '">*</span>');
                         }
+*/
                     },
 					/**
 					 * Error handler
