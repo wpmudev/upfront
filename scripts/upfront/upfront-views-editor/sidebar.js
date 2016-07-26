@@ -241,6 +241,10 @@
                 if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.CONTENT ){
                     Upfront.Events.on('upfront:element:edit:start', this.preventUsage, this);
                     Upfront.Events.on('upfront:element:edit:stop', this.allowUsage, this);
+					
+					// Make sure we hide sidebar overlay when element settings cancelled or deactivated
+					Upfront.Events.on('element:settings:deactivate', this.allowUsage, this);
+					Upfront.Events.on('element:settings:canceled', this.allowUsage, this);
                 }
                 Upfront.Events.on("application:mode:after_switch", this.render, this);
                 Upfront.Events.on("application:user:fetch", this.render, this); // Re-build when we're ready
