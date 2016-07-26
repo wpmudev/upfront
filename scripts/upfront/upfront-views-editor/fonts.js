@@ -322,7 +322,7 @@
                     return true;
                 }
                 var text = 'Please upload:';
-                _.each(['eot', 'woff', 'svg', 'ttf'], function(type) {
+                _.each(['eot', 'woff', 'woff2', 'svg', 'ttf'], function(type) {
                     if (_.isUndefined(this.get('files')[type])) {
                         text += ' ' + type + ',';
                     }
@@ -482,10 +482,38 @@
 
             initializeFileUpload: function() {
                 if (!jQuery.fn.fileupload) return false; // No file upload, carry on
-
                 var me = this;
                 this.$el.find('#upfront-upload-icon-font').fileupload({
                     dataType: 'json',
+					/**
+					 * Pre-processing handler
+					 *
+					 * Validates submitted file types prior to sending them over
+					 *
+					 * @param {Object} e Event
+					 * @param {Object} data File upload object
+					 */
+					add: function (e, data) {
+						if (e.isDefaultPrevented()) {
+		                    return false;
+		                }
+
+						var allowed = true;
+						if (data.files && data.files.length) {
+							_.each(data.files, function (file) {
+								if (allowed) allowed = !!(file || {}).name.match(/\.(eot|woff|woff2|ttf|svg)$/);
+							});
+						}
+						if (!allowed) return false;
+
+		                if (data.autoUpload || (data.autoUpload !== false &&
+		                        $(this).fileupload('option', 'autoUpload'))) {
+		                    data.process().done(function () {
+		                        data.submit();
+		                    });
+		                }
+					},
+
                     done: function (e, data) {
                         var font = data.result.data.font;
                         var fontObject;
@@ -566,6 +594,9 @@
                         case 'woff':
                             longSrc += 'woff';
                             break;
+						case 'woff2':
+							longSrc += 'woff2';
+							break;
                         case 'ttf':
                             longSrc += 'truetype';
                             break;
