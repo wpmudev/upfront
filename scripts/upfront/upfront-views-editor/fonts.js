@@ -618,6 +618,7 @@
                                 me.updateActiveFontStyle(font.family);
                             }
                         }
+						me.fileUploadInitialized = false;
 						me.render();
 /*
                         fontObject = me.collection.findWhere({'family': font.family});
