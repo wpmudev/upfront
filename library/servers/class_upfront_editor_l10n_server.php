@@ -743,6 +743,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'style_name' => __('Style name', 'upfront'),
 				'select_post_type' => __('Select a post type:', 'upfront'),
 				'upload_icon_font' => __('Upload Icon Font', 'upfront'),
+				'icon_font_type_recommendation' => __('For best compatibility, use WOFF and WOFF2 formats.', 'upfront'),
 				'current_color' => __('Current color:', 'upfront'),
 				'theme_colors' => __('Theme colors:', 'upfront'),
 				'recent_colors' => __('Recent colors:', 'upfront'),

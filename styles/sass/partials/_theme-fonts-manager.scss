@@ -214,10 +214,24 @@
 	width: 233px;
 	height: 382px;
 }
+.icon-fonts-message i {
+	position: absolute;
+	top: 4px;
+	left: 15px;
+	width: 16px;
+	height: 16px;
+	background: url(../img/uf-core-el-sprite.svg) no-repeat -484px -140px;
+}
+.icon-fonts-message {
+	color: #263a4d;
+	padding-left: 35px;
+	font-size: .8em;
+	position: relative;
+}
 .icon-fonts-list {
 	background: white;
 	margin: 0 3px 0 15px;
-	height: 271px;
+	height: 221px;
 	border: 1px solid #a4bfd8;
 }
 .icon-fonts-list-item {
