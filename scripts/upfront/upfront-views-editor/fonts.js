@@ -322,7 +322,7 @@
                     return true;
                 }
                 var text = 'Please upload:';
-                _.each(['eot', 'woff', 'svg', 'ttf'], function(type) {
+                _.each(['eot', 'woff', 'woff2', 'svg', 'ttf'], function(type) {
                     if (_.isUndefined(this.get('files')[type])) {
                         text += ' ' + type + ',';
                     }
@@ -513,7 +513,7 @@
 		                    });
 		                }
 					},
-					
+
                     done: function (e, data) {
                         var font = data.result.data.font;
                         var fontObject;
@@ -594,6 +594,9 @@
                         case 'woff':
                             longSrc += 'woff';
                             break;
+						case 'woff2':
+							longSrc += 'woff2';
+							break;
                         case 'ttf':
                             longSrc += 'truetype';
                             break;

@@ -417,7 +417,7 @@
 			{[ if(Upfront.themeExporter && location.pathname.match(/\/create_new\/theme/) === null) { ]}
 			<div class="upload-icon-font">{{Upfront.Settings.l10n.global.views.upload_icon_font}}</div>
 			<form style="display: none" id="upfront-upload-icon-font" name="upfront-upload-icon-font" enctype="multipart/form-data" method="post" action="{{url}}" data-url="{{url}}?action=upfront-upload-icon-font">
-				<input type="file" accept=".eot,.woff,.ttf,.svg" name="media" id="upfront-icon-font-input">
+				<input type="file" accept=".eot,.woff,.woff2,.ttf,.svg" name="media" id="upfront-icon-font-input">
 				<input type="hidden" name="action" value="upfront-upload-icon-font">
 				<input type="submit" value="Upload">
 			</form>
