@@ -410,7 +410,10 @@
 			<div class="icon-fonts-list">
 				{[ _.each(fonts, function(font) { ]}
 				<div data-family="{{ font.get('family') }}" class="icon-fonts-list-item {[ if (font.get('active')) { ]}icon-fonts-list-item-active{[ } ]}">
-					{{ font.get('name') }}{[ if (font.getUploadStatus() !== true) { ]} <span class="icon-font-upload-status" title="{{ font.getUploadStatus() }}">*</span>{[ } ]}
+					{{ font.get('name') }}
+					{[ if ("default" !== font.get("type") && font.getUploadStatus() !== true) { ]}
+						<span class="icon-font-upload-status" title="{{ font.getUploadStatusMessage() }}">*</span>
+					{[ } ]}
 					{[ _.each((font.get("files") || []), function (fname, fidx) { ]}
 						<div class="font-filename" data-name="{{fname}}" data-idx="{{fidx}}">
 							{{fname}}
