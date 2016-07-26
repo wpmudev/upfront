@@ -410,10 +410,17 @@
 			<div class="icon-fonts-list">
 				{[ _.each(fonts, function(font) { ]}
 				<div data-family="{{ font.get('family') }}" class="icon-fonts-list-item {[ if (font.get('active')) { ]}icon-fonts-list-item-active{[ } ]}">
-					{{ font.get('name') }}
+					<div class="font-name">
+						{{ font.get('name') }}
+					</div>
+					<a href="#expand" class="expand-toggle">
+						<span class="fileset-count">{{ _.keys(font.get("files") || {}).length || 0 }} files</span>
+						<i>&hellip;</i>
+					</a>
 					{[ if ("default" !== font.get("type") && font.getUploadStatus() !== true) { ]}
 						<span class="icon-font-upload-status" title="{{ font.getUploadStatusMessage() }}">*</span>
 					{[ } ]}
+					<div class="font-fileset">
 					{[ _.each((font.get("files") || []), function (fname, fidx) { ]}
 						<div class="font-filename" data-name="{{fname}}" data-idx="{{fidx}}">
 							{{fname}}
@@ -422,7 +429,8 @@
 						{[ } ]}
 						</div>
 					{[ });]}
-				</div>
+					</div> <!-- font fileset -->
+				</div> <!-- font family -->
 				{[ }); ]}
 			</div>
 		{[ if(Upfront.themeExporter && location.pathname.match(/\/create_new\/theme/) === null) { ]}
