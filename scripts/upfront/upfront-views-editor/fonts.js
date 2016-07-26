@@ -454,7 +454,8 @@
             events: {
                 'click .upload-icon-font': 'triggerFileChooser',
                 'click .icon-font-upload-status': 'triggerFileChooser',
-                'click .icon-fonts-list-item': 'makeFontActive'
+                'click .icon-fonts-list-item': 'makeFontActive',
+				'click .font-filename a': 'removeFontFile'
             },
 
             triggerFileChooser: function() {
@@ -467,7 +468,6 @@
                     show_no_fonts_notice: false,
                     fonts: this.collection.models
                 }));
-
                 if (_.isUndefined(this.collection.findWhere({active: true}))) {
                     this.$el.find('[data-family="icomoon"]').addClass('icon-fonts-list-item-active');
                 }
@@ -479,6 +479,53 @@
 
                 return this;
             },
+
+			/**
+			 * Removes the selected font file from the collection
+			 *
+			 * @param {Object} e Event
+			 *
+			 * @return {Boolean}
+			 */
+			removeFontFile: function (e) {
+				if (e && e.preventDefault) e.preventDefault();
+				if (e && e.stopPropagation) e.stopPropagation();
+
+				var me = this,
+					$a = $(e.target),
+					$font = $a.closest(".font-filename"),
+					name = $font.attr("data-name"),
+					idx = $font.attr("data-idx")
+				;
+				if (!name || !idx) return false; // Nothing to do here
+
+				Upfront.Util
+					.post({
+						action: "upfront_remove_icon_font_file",
+						name: name,
+						idx: idx
+					})
+					.error(function (data) {
+						var error = ((data || {}).responseJSON || {}).error || 'Oops, something went wrong';
+						if (!_.isString(error) && (error || {}).message) error = error.message;
+						Upfront.Views.Editor.notify(error, 'error');
+					})
+					.done(function () {
+						// Success! This is where we update collection
+						// and re-render the pane
+						me.collection.each(function (model) {
+							var files = model.get("files");
+							if (files && files[idx]) {
+								delete(files[idx]);
+								model.set("files", files);
+							}
+						});
+						me.render();
+					})
+				;
+
+				return false;
+			},
 
             initializeFileUpload: function() {
                 if (!jQuery.fn.fileupload) return false; // No file upload, carry on
