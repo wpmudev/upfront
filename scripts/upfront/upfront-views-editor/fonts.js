@@ -342,7 +342,7 @@
 				var full = this.getFullCollectionSet() || [],
 					current = this.get('files') || {}
 				;
-				return _.keys(current).length === full.length;
+				return _.keys(current).length >= full.length;
             },
 
 			/**
@@ -492,6 +492,7 @@
                 'click .upload-icon-font': 'triggerFileChooser',
                 'click .icon-font-upload-status': 'triggerFileChooser',
                 'click .icon-fonts-list-item': 'makeFontActive',
+                'click .icon-fonts-list-item a.expand-toggle': 'expandListItems',
 				'click .font-filename a': 'removeFontFile'
             },
 
@@ -521,6 +522,25 @@
 
                 return this;
             },
+
+			/**
+			 * Expand file list items on family item click
+			 *
+			 * @param {Object} e Event
+			 *
+			 * @return {Boolean}
+			 */
+			expandListItems: function (e) {
+				if (e && e.preventDefault) e.preventDefault();
+				if (e && e.stopPropagation) e.stopPropagation();
+
+				var $a = $(e.target),
+					$family = $a.closest(".icon-fonts-list-item")
+				;
+				if ($family.length) $family.toggleClass("expanded");
+
+				return false;
+			},
 
 			/**
 			 * Removes the selected font file from the collection

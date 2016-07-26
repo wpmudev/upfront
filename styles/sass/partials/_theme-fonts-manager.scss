@@ -244,8 +244,32 @@
 }
 
 .icon-fonts-list-item {
-	.font-filename {
+
+	.font-fileset {
 		display: none;
+	}
+
+	.font-name {
+		width: 120px;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+
+	a.expand-toggle {
+		background: #fff;
+		display: block;
+		position: absolute;
+		top: 0;
+		right: 10px;
+
+		span.fileset-count {
+			color: #999;
+			text-transform: uppercase;
+			font-size: .8em;
+		}
+	}
+
+	.font-filename {
 		font-size: .8em;
 		font-weight: normal;
 		position: relative;
@@ -269,7 +293,7 @@
 			display: block;
 		}
 	}
-	&.icon-fonts-list-item-active .font-filename {
+	&.expanded .font-fileset {
 		display: block;
 	}
 }
