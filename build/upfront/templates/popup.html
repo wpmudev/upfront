@@ -414,14 +414,15 @@
 				</div>
 				{[ }); ]}
 			</div>
-			{[ if(Upfront.themeExporter && location.pathname.match(/\/create_new\/theme/) === null) { ]}
+		{[ if(Upfront.themeExporter && location.pathname.match(/\/create_new\/theme/) === null) { ]}
+			<div class="icon-fonts-message"><i></i>{{Upfront.Settings.l10n.global.views.icon_font_type_recommendation}}</div>
 			<div class="upload-icon-font">{{Upfront.Settings.l10n.global.views.upload_icon_font}}</div>
 			<form style="display: none" id="upfront-upload-icon-font" name="upfront-upload-icon-font" enctype="multipart/form-data" method="post" action="{{url}}" data-url="{{url}}?action=upfront-upload-icon-font">
 				<input type="file" accept=".eot,.woff,.woff2,.ttf,.svg" name="media" id="upfront-icon-font-input">
 				<input type="hidden" name="action" value="upfront-upload-icon-font">
 				<input type="submit" value="Upload">
 			</form>
-			{[ } ]}
+		{[ } ]}
 		</div>
 		<div class="preview-icon-fonts">
 			<div class="fonts-manager-panel-title">
