@@ -507,7 +507,21 @@
                         if (fontObject.getUploadStatus() !== true) {
                             listItem.append('<span class="icon-font-upload-status" title="' + fontObject.getUploadStatus() + '">*</span>');
                         }
-                    }
+                    },
+					/**
+					 * Error handler
+					 *
+					 * Notify the user of error when something went wrong
+					 * with font upload as a side-effect
+					 *
+					 * @param {Object} e Event object
+					 * @param {Object} data File uploader object
+					 */
+					fail: function (e, data) {
+						var error = (((data || {}).jqXHR || {}).responseJSON || {}).error || 'Oops, something went wrong';
+						if (!_.isString(error) && (error || {}).message) error = error.message;
+						Upfront.Views.Editor.notify(error, 'error');
+					}
                 });
             },
 
