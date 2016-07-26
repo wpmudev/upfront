@@ -14969,7 +14969,8 @@ li#new-custom-breakpoint {
   line-height: 39px;
   padding: 0;
   text-align: center;
-  color: #2f4770; }
+  color: #2f4770;
+  cursor: pointer; }
 
 .upload-icon-font .uf_font_icon {
   font-family: 'icomoon' !important; }
