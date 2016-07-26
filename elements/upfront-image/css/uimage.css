@@ -1387,7 +1387,7 @@ div.uimage-controls i.upfront-icon:before,
 }
 
 .upfront-editable_entity .uimage-below_image .upfront-image-caption-container {
-	overflow: visible !important;
+	overflow: visible;
 }
 .crop-contols-wrapper {
 	width: 102px;
