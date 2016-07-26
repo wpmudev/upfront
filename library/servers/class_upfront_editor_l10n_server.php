@@ -79,7 +79,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'exporting_layout' => __('Exporting layout: ', 'upfront'),
 				'excellent_start' => __('Excellent start!', 'upfront'),
 				'homepage_created' => __('Your HOMEPAGE — Static layout has been successfully created. You can create more Layouts for your theme by clicking ‘New Layout’ in  the left sidebar. Remember, the best themes in life <del>are free</del> have lots of layouts!', 'upfront'),
-				'style_exporter' => __('Style exported.', 'upfront'),
+				'style_exported' => __('Style exported.', 'upfront'),
 				'style_export_fail' => __('Style could not be exported.', 'upfront'),
 				'region_css_cleaned' => __('Region CSS cleaned', 'upfront'),
 				'cleaning_region_css' => __('Cleaning Region CSS...', 'upfront'),
