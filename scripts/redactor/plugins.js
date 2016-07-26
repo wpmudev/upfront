@@ -837,6 +837,10 @@ RedactorPlugins.upfrontLink = function() {
 				this.listenTo(this.linkPanel, 'linkpanel:close', function() {
 					// Didn't find any function to do this, so go raw
 					$('a.re-upfrontLink').click().removeClass('dropact redactor_act');
+					// Preserve caret position, or it will just reset to 0 after selection is removed.
+					var caretOffset = me.redactor.caret.getOffset();
+					me.redactor.selection.remove();
+					me.redactor.caret.setOffset(caretOffset);
 				});
 
 				this.linkPanel.render();
