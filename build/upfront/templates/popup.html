@@ -409,17 +409,18 @@
 			</div>
 			<div class="icon-fonts-list">
 				{[ _.each(fonts, function(font) { ]}
+					{[ if (0 === _.keys(font.get("files") || {}).length) return true; ]}
 				<div data-family="{{ font.get('family') }}" class="icon-fonts-list-item {[ if (font.get('active')) { ]}icon-fonts-list-item-active{[ } ]}">
 					<div class="font-name">
-						{{ font.get('name') }}
+						<span class="icon-font-family">{{ font.get('name') }}</span>
+						{[ if ("default" !== font.get("type") && font.getUploadStatus() !== true) { ]}
+						<span class="icon-font-upload-status" title="{{ font.getUploadStatusMessage() }}">*</span>
+						{[ } ]}
 					</div>
 					<a href="#expand" class="expand-toggle">
 						<span class="fileset-count">{{ _.keys(font.get("files") || {}).length || 0 }} files</span>
 						<i>&hellip;</i>
 					</a>
-					{[ if ("default" !== font.get("type") && font.getUploadStatus() !== true) { ]}
-						<span class="icon-font-upload-status" title="{{ font.getUploadStatusMessage() }}">*</span>
-					{[ } ]}
 					<div class="font-fileset">
 					{[ _.each((font.get("files") || []), function (fname, fidx) { ]}
 						<div class="font-filename" data-name="{{fname}}" data-idx="{{fidx}}">
