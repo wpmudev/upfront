@@ -61,6 +61,10 @@ abstract class Upfront_Entity {
 		return upfront_get_property_value($prop, $this->_data);
 	}
 
+	protected function _set_property ($prop, $value) {
+		return upfront_set_property_value($prop, $value, $this->_data);
+	}
+
 	/**
 	 * Retrieves translated property
 	 *
