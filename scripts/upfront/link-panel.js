@@ -395,7 +395,14 @@ define([
 				values: anchorValues,
 				default_value: anchorValue,
 				change: function () {
-					model.set({'url': this.get_value()});
+					var url = this.get_value();
+					// Quick fix for exporter url ending up in local site menus until we solve
+					// mapping anchors to pages
+					if (document.location.pathname.match(/^\/create_new/) !== null) {
+						url = '#' + url.split('#')[1];
+						console.log('new anchor is', url);
+					}
+					model.set({'url': url});
 				}
 			});
 			this.anchorSelect.render();
