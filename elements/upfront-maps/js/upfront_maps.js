@@ -93,6 +93,7 @@ define([
 				this.geocode();
 			}
 		},
+		
 		render: function () {
 			this.$el.empty();
 
@@ -204,6 +205,8 @@ define([
 				if (!this.model.get_property_value_by_name("map_center")) {
 					this.add_location_overlay();
 				}
+				// Display Empty API Key Overlay.
+				this.add_api_key_overlay();
 				// Re-render the map when needed
 				setTimeout(function () {
 					var center = me.map.getCenter();
@@ -225,6 +228,19 @@ define([
 				'height': height + 'px'
 			});
 			google.maps.event.trigger(this.map, 'resize');
+		},
+
+		// If no API Key, display notice.
+		add_api_key_overlay: function() {
+			if (!((window._upfront_api_keys || {})['gmaps'] || false) && Upfront.Application.user_can_modify_layout()) {
+				this.$el.append(
+					'<div id="upfront_map-api_key_overlay-wrapper" class="upfront-initial-overlay-wrapper">' +
+						'<div id="upfront_map-api_key_overlay" class="uf_el_map_initial-overlay upfront-initial-overlay-wrapper">' +
+						'<p id="upfront_map-api_key_overlay-instruction">' + l10n.api_key_empty + '</p>' +
+						'</div>' +
+					'</div>'
+				);
+			}
 		},
 
 		add_location_overlay: function () {

@@ -81,6 +81,7 @@ class Upfront_UmapView extends Upfront_Object{
 			),
 			'connectivity_warning' => __('Please, check your internet connectivity', 'upfront'),
 			'instructions' => __('Please enter address for us to generate a map from:', 'upfront'),
+			'api_key_empty' => __('Google Maps requires an API Key to work. Please enter your API Key in the field <a href="">here</a>. Alternatively, if you don\'t have an API Key, one can be registered <a href="">here</a>.', 'upfront'),
 			'placeholder' => __('Street, city, country', 'upfront'),
 			'or' => __('or', 'upfront'),
 			'use_current_location' => __('Use my current location', 'upfront'),
