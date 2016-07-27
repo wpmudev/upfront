@@ -367,8 +367,12 @@ class Upfront_Ajax extends Upfront_Server {
 
 		$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $save_dev);
 		$layout_post_id = Upfront_Server_PageLayout::get_instance()->save_layout($layout_post_id, $layout, $save_dev, $layout_slug);
+		
 		// we need to save global regions to DB, so can be reused to other page
 		$layout->save_global_region();
+		
+		// We need to save global layout options
+		$layout->save();
 		
 		// if there is a layout change
 		$layout_change_meta_name = strtolower($store_key . '-layout-change-flag');
