@@ -214,10 +214,11 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$typography = $layout->get_property_value('typography');
 		$out = '';
 		$faces = array();
+		if (is_object($typography)) $typography = (array)$typography;
 
 		if (is_array($typography)) {
 			foreach ( $typography as $element=>$properties ) {
-				$properties = wp_parse_args($properties, array(
+				$properties = wp_parse_args((array)$properties, array(
 					'font_face' => false,
 					'weight' => false,
 					'style' => false,
