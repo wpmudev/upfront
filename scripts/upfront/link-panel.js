@@ -402,7 +402,7 @@ define([
 					// proper support for that.
 					// Use case that we have to cover is in menu that is present on all pages
 					// make link to anchor on homepage or other specific page.
-					if (document.location.pathname.match(/^\/create_new/) !== null) {
+					if (document.location.pathname.match(/^\/create_new\//) !== null) {
 						url = '#' + url.split('#')[1];
 					}
 					model.set({'url': url});
