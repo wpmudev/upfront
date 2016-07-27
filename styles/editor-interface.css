@@ -14948,19 +14948,87 @@ li#new-custom-breakpoint {
   width: 233px;
   height: 382px; }
 
+.icon-fonts-message i {
+  position: absolute;
+  top: 4px;
+  left: 15px;
+  width: 16px;
+  height: 16px;
+  background: url(../img/uf-core-el-sprite.svg) no-repeat -484px -140px; }
+
+.icon-fonts-message {
+  color: #263a4d;
+  padding-left: 35px;
+  font-size: .8em;
+  position: relative; }
+
 .icon-fonts-list {
   background: white;
   margin: 0 3px 0 15px;
-  height: 271px;
-  border: 1px solid #a4bfd8; }
+  height: 221px;
+  border: 1px solid #a4bfd8;
+  overflow-y: scroll; }
 
 .icon-fonts-list-item {
-  height: 32px;
+  /*height: 32px;*/
   line-height: 32px;
   border-bottom: 1px solid #e4eef6;
   padding-left: 20px;
   cursor: pointer;
   color: #263a4d; }
+
+.icon-fonts-list-item .font-fileset {
+  display: none; }
+
+.icon-fonts-list-item .font-name {
+  width: 120px;
+  overflow: hidden; }
+  .icon-fonts-list-item .font-name .icon-font-family {
+    width: 100px;
+    overflow: hidden;
+    white-space: nowrap;
+    display: inline-block;
+    float: left; }
+
+.icon-fonts-list-item a.expand-toggle {
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 10px; }
+  .icon-fonts-list-item a.expand-toggle span.fileset-count {
+    color: #999;
+    text-transform: uppercase;
+    font-size: .8em; }
+  .icon-fonts-list-item a.expand-toggle i {
+    content: "";
+    display: inline-block;
+    width: 30px;
+    height: 20px;
+    background: url(../img/uf-core-el-sprite.svg) no-repeat -285px -452px;
+    color: transparent; }
+
+.icon-fonts-list-item .font-filename {
+  font-size: .8em;
+  font-weight: normal;
+  position: relative; }
+  .icon-fonts-list-item .font-filename a {
+    position: absolute;
+    right: 10px;
+    top: .8em;
+    height: 12px;
+    width: 12px;
+    border: 1px solid #ff0000;
+    display: none;
+    border-radius: 10px;
+    color: #ff0000;
+    line-height: 12px;
+    text-align: center;
+    font-size: 12px; }
+  .icon-fonts-list-item .font-filename:hover a {
+    display: block; }
+
+.icon-fonts-list-item.expanded .font-fileset {
+  display: block; }
 
 .upload-icon-font {
   border: 2px solid #85a9cc;
@@ -14969,7 +15037,8 @@ li#new-custom-breakpoint {
   line-height: 39px;
   padding: 0;
   text-align: center;
-  color: #2f4770; }
+  color: #2f4770;
+  cursor: pointer; }
 
 .upload-icon-font .uf_font_icon {
   font-family: 'icomoon' !important; }
@@ -15314,7 +15383,8 @@ html {
   position: relative; }
 
 .upostdata-part.edit-content {
-  position: relative; }
+  position: relative;
+  z-index: 10; }
 
 .upfront_edit_content_style,
 .upfront_edit_image_insert {
@@ -15352,6 +15422,16 @@ html {
 .upfront-disable-surroundings {
   box-shadow: 0 0 0 5000px rgba(0, 0, 10, 0.5);
   position: relative;
+  z-index: 2; }
+
+.upfront-disable-surroundings:before {
+  content: "";
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   z-index: 1; }
 
 .ueditor-insert-variant {

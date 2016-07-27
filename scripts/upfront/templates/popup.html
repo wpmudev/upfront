@@ -409,19 +409,40 @@
 			</div>
 			<div class="icon-fonts-list">
 				{[ _.each(fonts, function(font) { ]}
+					{[ if (0 === _.keys(font.get("files") || {}).length) return true; ]}
 				<div data-family="{{ font.get('family') }}" class="icon-fonts-list-item {[ if (font.get('active')) { ]}icon-fonts-list-item-active{[ } ]}">
-					{{ font.get('name') }}{[ if (font.getUploadStatus() !== true) { ]} <span class="icon-font-upload-status" title="{{ font.getUploadStatus() }}">*</span>{[ } ]}
-				</div>
+					<div class="font-name">
+						<span class="icon-font-family">{{ font.get('name') }}</span>
+						{[ if ("default" !== font.get("type") && font.getUploadStatus() !== true) { ]}
+						<span class="icon-font-upload-status" title="{{ font.getUploadStatusMessage() }}">*</span>
+						{[ } ]}
+					</div>
+					<a href="#expand" class="expand-toggle">
+						<span class="fileset-count">{{ _.keys(font.get("files") || {}).length || 0 }} files</span>
+						<i>&hellip;</i>
+					</a>
+					<div class="font-fileset">
+					{[ _.each((font.get("files") || []), function (fname, fidx) { ]}
+						<div class="font-filename" data-name="{{fname}}" data-idx="{{fidx}}">
+							{{fname}}
+						{[ if ("theme-defined" === font.get("type")) { ]}
+							<a href="#remove">&times;</a>
+						{[ } ]}
+						</div>
+					{[ });]}
+					</div> <!-- font fileset -->
+				</div> <!-- font family -->
 				{[ }); ]}
 			</div>
-			{[ if(Upfront.themeExporter && location.pathname.match(/\/create_new\/theme/) === null) { ]}
+		{[ if(Upfront.themeExporter && location.pathname.match(/\/create_new\/theme/) === null) { ]}
+			<div class="icon-fonts-message"><i></i>{{Upfront.Settings.l10n.global.views.icon_font_type_recommendation}}</div>
 			<div class="upload-icon-font">{{Upfront.Settings.l10n.global.views.upload_icon_font}}</div>
 			<form style="display: none" id="upfront-upload-icon-font" name="upfront-upload-icon-font" enctype="multipart/form-data" method="post" action="{{url}}" data-url="{{url}}?action=upfront-upload-icon-font">
-				<input type="file" name="media" id="upfront-icon-font-input">
+				<input type="file" accept=".eot,.woff,.woff2,.ttf,.svg" name="media" id="upfront-icon-font-input">
 				<input type="hidden" name="action" value="upfront-upload-icon-font">
 				<input type="submit" value="Upload">
 			</form>
-			{[ } ]}
+		{[ } ]}
 		</div>
 		<div class="preview-icon-fonts">
 			<div class="fonts-manager-panel-title">

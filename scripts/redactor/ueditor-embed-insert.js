@@ -338,7 +338,8 @@ var EmbedViews = {
 				});
 				$(this).empty().append(shortcode.$el);
 			}, {}, 'embed-shortcode').done(function (pop, code) {
-				me.trigger("insert", code);
+				if( code )
+					me.trigger("insert", code);
 			});
 		},
 		request_image: function (e) {
