@@ -409,6 +409,7 @@
 			</div>
 			<div class="icon-fonts-list">
 				{[ _.each(fonts, function(font) { ]}
+					{[ if (0 === _.keys(font.get("files") || {}).length) return true; ]}
 				<div data-family="{{ font.get('family') }}" class="icon-fonts-list-item {[ if (font.get('active')) { ]}icon-fonts-list-item-active{[ } ]}">
 					<div class="font-name">
 						<span class="icon-font-family">{{ font.get('name') }}</span>
