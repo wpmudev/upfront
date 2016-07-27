@@ -392,7 +392,7 @@ li.menu-item .uimage-controls.image-element-controls .upfront-inline-panel .upfr
 li.menu-item .uimage-controls.image-element-controls {
 	display: block;
 	visibility: hidden;
-	bottom: -30px;
+	bottom: -38px;
 	left: 0;
 	max-width: 100%;
 	overflow-x: hidden;
@@ -407,7 +407,6 @@ li.menu-item.controls-visible > .uimage-controls.image-element-controls {
 }
 li.menu-item.controls-visible > .uimage-controls.image-element-controls .upfront-inline-panel {
 	visibility: visible;
-	top: 8px;
 }
 li.menu-item .open-item-controls {
 	display: block;
