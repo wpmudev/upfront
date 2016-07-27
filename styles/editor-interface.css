@@ -14966,7 +14966,8 @@ li#new-custom-breakpoint {
   background: white;
   margin: 0 3px 0 15px;
   height: 221px;
-  border: 1px solid #a4bfd8; }
+  border: 1px solid #a4bfd8;
+  overflow-y: scroll; }
 
 .icon-fonts-list-item {
   /*height: 32px;*/
@@ -14981,8 +14982,13 @@ li#new-custom-breakpoint {
 
 .icon-fonts-list-item .font-name {
   width: 120px;
-  overflow: hidden;
-  white-space: nowrap; }
+  overflow: hidden; }
+  .icon-fonts-list-item .font-name .icon-font-family {
+    width: 100px;
+    overflow: hidden;
+    white-space: nowrap;
+    display: inline-block;
+    float: left; }
 
 .icon-fonts-list-item a.expand-toggle {
   display: block;
@@ -14993,6 +14999,13 @@ li#new-custom-breakpoint {
     color: #999;
     text-transform: uppercase;
     font-size: .8em; }
+  .icon-fonts-list-item a.expand-toggle i {
+    content: "";
+    display: inline-block;
+    width: 30px;
+    height: 20px;
+    background: url(../img/uf-core-el-sprite.svg) no-repeat -285px -452px;
+    color: transparent; }
 
 .icon-fonts-list-item .font-filename {
   font-size: .8em;

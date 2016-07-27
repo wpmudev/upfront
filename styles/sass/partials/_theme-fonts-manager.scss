@@ -233,6 +233,7 @@
 	margin: 0 3px 0 15px;
 	height: 221px;
 	border: 1px solid #a4bfd8;
+	overflow-y: scroll;
 }
 .icon-fonts-list-item {
 	/*height: 32px;*/
@@ -252,7 +253,14 @@
 	.font-name {
 		width: 120px;
 		overflow: hidden;
-		white-space: nowrap;
+
+		.icon-font-family {
+			width: 100px;
+			overflow: hidden;
+			white-space: nowrap;
+			display: inline-block;
+			float: left;
+		}
 	}
 
 	a.expand-toggle {
@@ -265,6 +273,15 @@
 			color: #999;
 			text-transform: uppercase;
 			font-size: .8em;
+		}
+
+		i {
+			content: "";
+			display: inline-block;
+			width: 30px;
+			height: 20px;
+			background: url(../img/uf-core-el-sprite.svg) no-repeat -285px -452px;
+			color: transparent;
 		}
 	}
 
