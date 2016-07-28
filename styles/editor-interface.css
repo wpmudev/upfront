@@ -15397,13 +15397,14 @@ html {
 .upfront_edit_content_style,
 .upfront_edit_image_insert {
   position: absolute;
-  left: 50%;
-  top: 50%;
+  margin: auto;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
   background: #e5f3ff;
   border-radius: 5px;
   width: 281px;
-  margin-left: -140px !important;
-  margin-top: -23px !important;
   height: 46px;
   line-height: 46px;
   text-align: center;
@@ -15411,7 +15412,8 @@ html {
   display: none;
   cursor: pointer;
   padding: 0 !important;
-  z-index: 10; }
+  z-index: 10;
+  max-width: 100%; }
 
 .Postpart_contents:hover .upfront_edit_content_style,
 .upostdata-part.edit-content:hover .upfront_edit_content_style {
