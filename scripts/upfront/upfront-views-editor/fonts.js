@@ -892,7 +892,7 @@
                         label: l10n.insert_font,
                         compact: true,
                         on_click: function(){
-                            me.finish();
+                            me.preview_font();
                         }
                     })
                 ];
@@ -910,7 +910,7 @@
                     this.render_variants(variants);
                 });
                 this.listenTo(this.fields[1], 'changed', function() {
-                    this.preview_font();
+                    // this.preview_font();
                 });
 
                 $('.choose-typeface select', this.$el).chosen({
@@ -934,8 +934,13 @@
                 $variant_field.trigger('chosen:updated');
             },
             preview_font: function() {
+                var font_value = this.fields[0].get_value();
+                if ( !font_value ) {
+                    this.finish();
+                    return;
+                }
                 this.replaceFont({
-                    font_family: this.fields[0].get_value(),
+                    font_family: font_value,
                     variant: Font_Model.parse_variant(this.fields[1].get_value())
                 });
             },
@@ -966,6 +971,7 @@
                 if (lines.length > 0) {
                     this.style_doc.insertLines(this.font_family_range.start.row + 1, lines);
                 }
+                this.finish();
             },
             reset_properties: function() {
                 var row, line, result;
