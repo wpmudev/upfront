@@ -1685,9 +1685,6 @@ define([
 
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				//this.listenTo(Upfront.Events, "entity:wrapper:update_position", this.on_wrapper_update);
-				
-				// after saving layout, we have to update preset and use current desktop preset when on responsive
-				this.listenTo(Upfront.Events, 'element:retain:preset', this.retain_current_preset);
 
 				if (this.init) this.init();
 			},
@@ -1696,34 +1693,6 @@ define([
 
 				if(!this.model.get_property_value_by_name('padding_slider')) {
 					this.model.init_property('padding_slider', column_padding);
-				}
-			},
-			retain_current_preset: function () {
-				if ( !this.model.has_property('preset') ) return false;
-				var me = this,
-					currentPreset = this.model.get_property_value_by_name('current_preset') || 'default',
-					post_id = ( typeof _upfront_post_data.post_id !== 'undefined' ) ? _upfront_post_data.post_id : false,
-					layout_ids = ( typeof _upfront_post_data.layout !== 'undefined' ) ? _upfront_post_data.layout : '',
-					load_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 ),
-					breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
-					is_responsive = breakpoint && !breakpoint['default']
-				;
-				
-				if ( is_responsive ) {
-					// while on Responsive mode, preset property gets overwritten by breakpoint presets
-					// so have to retain it back
-					this.model.set_property('preset', currentPreset, true);
-					var saveData = {
-						element: JSON.stringify(Upfront.Util.model_to_json(me.model)),
-						post_id: post_id,
-						layout_ids: layout_ids,
-						load_dev: load_dev,
-						action: 'upfront_update_layout_element'
-					};
-					Upfront.Util.post(saveData).done(function (response){
-						// now it is safe to repaint the view
-						me.model.decode_preset();
-					});
 				}
 			},
 			close_settings: function () {
@@ -1875,6 +1844,15 @@ define([
 
 				if ( breakpoint && !breakpoint['default'] ) {
 					this.update_position();
+				} else {
+					// when saving from responsive mode, preset gets overwritten by breakpoint presets
+					// we have to correct that here
+					var currentPreset = this.model.get_property_value_by_name('current_preset'),
+						setPreset = this.model.get_property_value_by_name('preset')
+					;
+					if ( currentPreset && setPreset !== currentPreset ) {
+						this.model.set_property('preset', currentPreset, false);
+					}
 				}
 
 				//**
