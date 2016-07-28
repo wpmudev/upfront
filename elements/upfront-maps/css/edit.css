@@ -162,6 +162,9 @@ border-width: 11px;
 }
 
 /* initial experience layout */
+#upfront_map-location_overlay-wrapper {
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.50);
+}
 
 #upfront_map-location_overlay-wrapper,
 .uf_el_map_initial-overlay {
@@ -170,8 +173,9 @@ border-width: 11px;
 }
 
 .uf_el_map_initial-overlay {
-	height: 150px;
-	padding:15px;
+	height: 125px;
+	padding: 15px;
+	margin: auto;
 }
 
 /* address input */
@@ -183,15 +187,17 @@ border-width: 11px;
 .uf_el_map_initial-overlay input[type="text"]:focus {
 	background:rgb(255,255,255);
 	color:rgb(100,100,100);
+	font: 1px solid #d0d0d0;
 }
 
 /* refresh button */
 .uf_el_map_initial-overlay button {
 	position: absolute;
-	top: 0;
+	top: 4px;
 	right: 0;
 	background-color: transparent;
 	padding: 10px;
+	color: rgba(218,224,230,1);
 }
 
 .uf_el_map_initial-overlay button ,
@@ -200,10 +206,14 @@ border-width: 11px;
 }
 
 .uf_el_map_initial-overlay .uf-address  {
-	margin:0 auto;
-	max-width:500px;
+	margin: 1rem auto;
+	max-width: 520px;
 	position: relative;
-	margin-bottom: 10px;
+}
+
+.upfront-ui.uf-address input {
+    height: 50px;
+	background: rgba(237,240,242,1);
 }
 
 .uf-current-location {
@@ -213,7 +223,7 @@ border-width: 11px;
 /* Use My Location */
 .uf-current-location a {
 	background:transparent;
-	color:#395269;
+	color: rgba(31,205,143,1);
 	text-decoration: underline;
 	padding:0;
 	margin:0;
