@@ -245,6 +245,18 @@ define([
 
 							me.editor.insert(colorString);
 							me.editor.focus();
+						},
+						change: function(color) {
+							var colorString;
+
+							if( color.get_is_theme_color() !== false ){
+								colorString = color.theme_color;
+							}else{
+								colorString = color.alpha < 1 ? color.toRgbString() : color.toHexString();
+							}
+
+							me.editor.insert(colorString);
+							me.editor.focus();
 						}
 					}
 				})
