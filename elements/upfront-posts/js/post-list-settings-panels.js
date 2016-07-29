@@ -83,6 +83,8 @@ Panels.General = RootSettingsPanel.extend({
 		;
 		display_type.on("changed", autorefresh);
 		list_type.on("changed", autorefresh);
+		query.on("setting:changed", autorefresh);
+		thumbnail.on("setting:changed", autorefresh);
 		query.on("post:added", function () {
 			this.trigger("post:added");
 		}, this);
@@ -251,7 +253,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 	},
 
 	populate_tax_items: function () {
-		var taxs = [], types = [];
+		var taxs = [], types = [], me = this;
 		var display_type = this.model.get_property_value_by_name("display_type");
 		_(Panels._initial.taxonomies).each(function (label, type) {
 			taxs.push({label: label, value: type});
@@ -269,7 +271,11 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 				label: l10n.limit,
 				property: "limit",
 				min: 1,
-				max: 20
+				max: 20,
+				change: function(value) {
+					me.model.set_property("limit", value);
+					me.trigger('setting:changed');
+				}
 			}));
 		}
 
@@ -278,7 +284,11 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			className: 'upfront-post-type',
 			label: l10n.post_type,
 			property: "post_type",
-			values: types
+			values: types,
+			change: function(value) {
+				me.model.set_property("post_type", value);
+				me.trigger('setting:changed');
+			}
 		}));
 		
 		if ("list" === display_type) {
@@ -288,7 +298,11 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 				label: l10n.offset,
 				property: "offset",
 				min: 1,
-				max: 20
+				max: 20,
+				change: function(value) {
+					me.model.set_property("offset", value);
+					me.trigger('setting:changed');
+				}
 			}));
 		}
 
@@ -297,7 +311,11 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			className: 'upfront-post-taxonomy',
 			label: l10n.taxonomy,
 			property: "taxonomy",
-			values: taxs
+			values: taxs,
+			change: function(value) {
+				me.model.set_property("taxonomy", value);
+				me.trigger('setting:changed');
+			}
 		}));
 		this.fields.push(new Upfront.Views.Editor.Field.Chosen_Select({
 			model: this.model,
@@ -305,7 +323,11 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			label: l10n.term,
 			compact: true,
 			property: "term",
-			values: [{label:l10n.select_tax, value:"", disabled: true}]
+			values: [{label:l10n.select_tax, value:"", disabled: true}],
+			change: function(value) {
+				me.model.set_property("term", value);
+				me.trigger('setting:changed');
+			}
 		}));
 		this.populate_shared_tax_generic_items();
 		if ("list" === display_type) {
@@ -334,6 +356,8 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 				],
 				change: function (value) {
 					me.toggle_offset_based_on_pagination_value(value);
+					me.model.set_property("pagination", value);
+					me.trigger('setting:changed');
 				}
 			}));
 		}
@@ -360,7 +384,9 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 	},
 
 	populate_shared_tax_generic_items: function () {
-		var display_type = this.model.get_property_value_by_name("display_type");
+		var display_type = this.model.get_property_value_by_name("display_type"),
+			me = this;
+
 		if ("list" === display_type) {
 			this.fields.push(new Upfront.Views.Editor.Field.Select({
 				model: this.model,
@@ -370,7 +396,11 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 					{label: l10n.sticky_ignore, value: ""},
 					{label: l10n.sticky_prepend, value: "prepend"},
 					{label: l10n.sticky_exclude, value: "exclude"}
-				]
+				],
+				change: function(value) {
+					me.model.set_property("sticky", value);
+					me.trigger('setting:changed');
+				}
 			}));
 		}
 		this.fields.push(new Upfront.Views.Editor.Field.Radios({
@@ -381,7 +411,11 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			values: [
 				{label:l10n.excerpt, value:"excerpt"},
 				{label:l10n.full_post, value:"content"}
-			]
+			],
+			change: function(value) {
+				me.model.set_property("content", value);
+				me.trigger('setting:changed');
+			}
 		}));
 	},
 
@@ -473,7 +507,8 @@ var ThumbnailSettings = Upfront.Views.Editor.Settings.Item.extend({
 			],
 			change: function (value) {
 				me.was_changed = true;
-				me.model.set_property('thumbnail_size', value, true);
+				me.model.set_property('thumbnail_size', value);
+				me.trigger('setting:changed');
 				me.populate_thumbnail_size_options();
 			}
 		}));
@@ -498,7 +533,8 @@ var ThumbnailSettings = Upfront.Views.Editor.Settings.Item.extend({
 			label: l10n.thumbnail_size_custom_width,
 			min: 1,
 			change: function (value) {
-				me.model.set_property('custom_thumbnail_width', value, true);
+				me.model.set_property('custom_thumbnail_width', value);
+				me.trigger('setting:changed');
 			}
 		}));
 
@@ -509,7 +545,8 @@ var ThumbnailSettings = Upfront.Views.Editor.Settings.Item.extend({
 			label: l10n.thumbnail_size_custom_height,
 			min: 1,
 			change: function (value) {
-				me.model.set_property('custom_thumbnail_height', value, true);
+				me.model.set_property('custom_thumbnail_height', value);
+				me.trigger('setting:changed');
 			}
 		}));
 	},
