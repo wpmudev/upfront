@@ -202,9 +202,10 @@ define([
 				if (props.style_overlay) {
 					this.map.setOptions({styles: props.style_overlay});
 				}
+				console.log(this.model.get_property_value_by_name("map_center"));
 				if (
-					this.model.get_property_value_by_name("map_center")
-					&& !((window._upfront_api_keys || {})['gmaps'] || false)) {
+					!this.model.get_property_value_by_name("map_center")
+					&& ((window._upfront_api_keys || {})['gmaps'] || false)) {
 					this.add_location_overlay();
 				}
 
