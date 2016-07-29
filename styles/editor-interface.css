@@ -14781,13 +14781,15 @@ li#new-custom-breakpoint {
 
 .icon-font-icons-preview::-webkit-scrollbar,
 #text-fonts-manager .font-weights-list-wrapper::-webkit-scrollbar,
-#text-fonts-manager .font-list::-webkit-scrollbar {
+#text-fonts-manager .font-list::-webkit-scrollbar,
+.icon-fonts-list::-webkit-scrollbar {
   background: none;
   width: 5px; }
 
 .icon-font-icons-preview::-webkit-scrollbar-thumb,
 #text-fonts-manager .font-weights-list-wrapper::-webkit-scrollbar-thumb,
-#text-fonts-manager .font-list::-webkit-scrollbar-thumb {
+#text-fonts-manager .font-list::-webkit-scrollbar-thumb,
+.icon-fonts-list::-webkit-scrollbar-thumb {
   border-right: 5px solid #1fcd8f; }
 
 #text-fonts-manager .font-weights-list input {
@@ -14973,18 +14975,22 @@ li#new-custom-breakpoint {
 
 .icon-fonts-list-item {
   border-bottom: 1px solid #e4eef6;
-  padding-left: 10px;
+  /* padding-left: 10px; */
   cursor: pointer;
   color: #263a4d;
   font: 400 13px/18px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif; }
 
 .icon-fonts-list-item .font-fileset {
-  display: none; }
+  display: none;
+  background: #f5f8fb; }
 
 .icon-fonts-list-item .font-name {
   width: 120px;
   overflow: hidden;
-  padding: 10px 0; }
+  padding: 10px 0;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 10px; }
   .icon-fonts-list-item .font-name .icon-font-family {
     width: 100%;
     overflow: hidden;
@@ -15000,14 +15006,13 @@ li#new-custom-breakpoint {
       right: 0; }
 
 .icon-fonts-list-item a.expand-toggle {
-  display: block;
-  position: absolute;
-  top: 0;
-  right: 10px; }
+  display: inline-block;
+  vertical-align: middle; }
   .icon-fonts-list-item a.expand-toggle span.fileset-count {
-    color: #999;
+    color: rgba(38, 58, 77, 0.5);
     text-transform: uppercase;
-    font-size: .8em; }
+    font: 800 10px/2 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+    margin-right: 5px; }
   .icon-fonts-list-item a.expand-toggle i {
     content: "";
     display: inline-block;
@@ -15019,27 +15024,40 @@ li#new-custom-breakpoint {
     border-radius: 2px; }
 
 .icon-fonts-list-item .font-filename {
-  font-size: .8em;
-  font-weight: normal;
-  position: relative; }
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 2;
+  position: relative;
+  padding: 5px 10px;
+  opacity: 0.8; }
   .icon-fonts-list-item .font-filename a {
     position: absolute;
     right: 10px;
-    top: .8em;
-    height: 12px;
-    width: 12px;
-    border: 1px solid #ff0000;
+    top: 8px;
+    height: 16px;
+    width: 16px;
     display: none;
-    border-radius: 10px;
-    color: #ff0000;
-    line-height: 12px;
-    text-align: center;
-    font-size: 12px; }
+    font-size: 1px; }
+    .icon-fonts-list-item .font-filename a:after {
+      content: '';
+      background: url(../img/uf-core-el-sprite.svg) no-repeat -484px -170px;
+      width: 16px;
+      height: 16px;
+      position: absolute;
+      top: 0;
+      left: 0; }
+  .icon-fonts-list-item .font-filename:hover {
+    opacity: 1;
+    background: #edf0f2; }
   .icon-fonts-list-item .font-filename:hover a {
     display: block; }
 
 .icon-fonts-list-item.expanded .font-fileset {
   display: block; }
+
+.icon-fonts-list-item-active {
+  box-shadow: inset 2px 0px 0px 0px #1fcd8f;
+  position: relative; }
 
 .upload-icon-font {
   border: 2px solid #85a9cc;
@@ -15061,7 +15079,8 @@ li#new-custom-breakpoint {
   width: 493px;
   height: 325px;
   overflow: auto;
-  border: 1px solid #bdd0e2; }
+  border: 1px solid #bdd0e2;
+  box-shadow: inset 0px -5px 10px 0px rgba(36, 58, 78, 0.15); }
 
 .icon-font-icon-preview {
   width: 81px;
@@ -15076,10 +15095,6 @@ li#new-custom-breakpoint {
 
 .icon-font-icon-preview:nth-child(6n) {
   border-right: 0 none; }
-
-.icon-fonts-list-item-active {
-  background: #e9faf4;
-  position: relative; }
 
 .icon-font-upload-status {
   display: inline-block;
