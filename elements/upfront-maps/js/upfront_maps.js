@@ -202,7 +202,8 @@ define([
 				if (props.style_overlay) {
 					this.map.setOptions({styles: props.style_overlay});
 				}
-				if (this.model.get_property_value_by_name("map_center")
+				if (
+					this.model.get_property_value_by_name("map_center")
 					&& !((window._upfront_api_keys || {})['gmaps'] || false)) {
 					this.add_location_overlay();
 				}
@@ -241,7 +242,7 @@ define([
 		// If no API Key, display notice.
 		add_api_key_overlay: function() {
 			this.$el.append(
-				'<div id="upfront_map-api_key_overlay-wrapper" class="upfront-initial-overlay-wrapper">' +
+				'<div id="upfront_map-api_key_overlay-wrapper" class="upfront-initial-overlay-wrapper upfront_map-api_key_element">' +
 					'<div id="upfront_map-api_key_overlay" class="uf_el_map_initial-overlay upfront-initial-overlay-wrapper">' +
 
 					'<div class="upfront-ui"><button type="button" class="upfront-field-icon upfront-icon-map-warning"></button></div>' +

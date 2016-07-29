@@ -162,7 +162,7 @@ border-width: 11px;
 }
 
 /* initial experience layout */
-#upfront_map-location_overlay-wrapper, #upfront_map-api_key_overlay-wrapper {
+#upfront_map-location_overlay-wrapper, .upfront_map-api_key_element {
     box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.50);
 }
 
@@ -179,6 +179,16 @@ border-width: 11px;
 }
 
 /* api key warning */
+
+.upfront_map-api_key_region {
+    margin: auto;
+	box-shadow: none;
+}
+
+.upfront-region-modal-bg #upfront_map-api_key_overlay {
+	height: 150px;
+}
+
 #upfront_map-api_key_overlay {
     max-width: 520px;
 	line-height: 1.5;

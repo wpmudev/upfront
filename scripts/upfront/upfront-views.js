@@ -156,6 +156,14 @@ define([
 							this.update_background_featured($type, $overlay);
 							break;
 						case 'map':
+							// If background type is map and is missing API Key, show notice.
+							if (
+								!((window._upfront_api_keys || {})['gmaps'] || false)
+								&& Upfront.Application.user_can_modify_layout()
+							) {
+								this.add_api_key_overlay();
+							}
+
 							this.update_background_map($type, $overlay);
 							break;
 						case 'slider':
@@ -349,6 +357,18 @@ define([
 				$(document).one("upfront-google_maps-loaded", function () {
 					me.update_background_map($type, $overlay);
 				});
+			},
+			// If no API Key, display notice.
+			add_api_key_overlay: function() {
+				this.$el.append(
+					'<div id="upfront_map-api_key_overlay-wrapper" class="upfront-initial-overlay-wrapper upfront_map-api_key_region">' +
+						'<div id="upfront_map-api_key_overlay" class="uf_el_map_initial-overlay upfront-initial-overlay-wrapper">' +
+
+						'<div class="upfront-ui"><button type="button" class="upfront-field-icon upfront-icon-map-warning"></button></div>' +
+						'<p id="upfront_map-api_key_overlay-instruction">' + Upfront.Settings.l10n.maps_element.api_key_empty_region + '</p>' +
+						'</div>' +
+					'</div>'
+				);
 			},
 			update_background_map: function ($type, $overlay) {
 				try {

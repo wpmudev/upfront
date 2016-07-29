@@ -81,7 +81,10 @@ class Upfront_UmapView extends Upfront_Object{
 			),
 			'connectivity_warning' => __('Please, check your internet connectivity', 'upfront'),
 			'instructions' => __('Please Enter Address:', 'upfront'),
-			'api_key_empty' => __('Google Maps requires an API Key to work. Please enter your API Key in the field <a href="">here</a>. Alternatively, if you don\'t have an API Key, one can be registered <a href="">here</a>.', 'upfront'),
+			'api_key_empty' => __('Google Maps requires an API Key to work. Please enter your API Key in the field <a href="' . 
+			admin_url('admin.php?page=upfront#api-key-gmaps') . 
+			'" target="_blank" data-bypass="true">here</a>. Alternatively, if you don\'t have an API Key, one can be registered <a href="https://console.developers.google.com/flows/enableapi?apiid=maps_backend,geocoding_backend,directions_backend,distance_matrix_backend,elevation_backend&keyType=CLIENT_SIDE&reusekey=true" target="_blank" data-bypass="true">here</a>.', 'upfront'),
+			'api_key_empty_region' => __('Google Maps requires an API Key to work.<br>Please register and enter your API Key in the WordPress Admin under the Upfront menu, General submenu.', 'upfront'),
 			'placeholder' => __('Street, city, country', 'upfront'),
 			'or' => __('or', 'upfront'),
 			'use_current_location' => __('Use My Current Location', 'upfront'),
