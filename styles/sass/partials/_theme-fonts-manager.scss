@@ -239,10 +239,10 @@
 }
 .icon-fonts-list-item {
 	border-bottom: 1px solid #e4eef6;
-	padding-left: 20px;
+	padding-left: 10px;
 	cursor: pointer;
 	color: #263a4d;
-	font:400 14px/18px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+	font:400 13px/18px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 }
 
 .icon-fonts-list-item {
@@ -257,12 +257,22 @@
 		padding:10px 0;
 
 		.icon-font-family {
-			width: 100px;
+			width:100%;
 			overflow: hidden;
 			white-space: nowrap;
 			display: inline-block;
-			float: left;
+			position: relative;
+
+			&:after {
+				content: '';
+		    width: 20px;
+		    height: 20px;
+		    background: linear-gradient(270deg, rgba(255,255,255,1), rgba(255,255,255,0.3));
+		    position: absolute;
+		    right: 0;
+			}
 		}
+
 	}
 
 	a.expand-toggle {
@@ -280,10 +290,12 @@
 		i {
 			content: "";
 			display: inline-block;
-			width: 30px;
-			height: 20px;
-			background: url(../img/uf-core-el-sprite.svg) no-repeat -285px -452px;
+			width: 26px;
+			height: 18px;
+			background: rgb(242,249,255) url(../img/uf-core-el-sprite.svg) no-repeat -288px -492px;
 			color: transparent;
+			border: 1px solid rgba(36,58,78,0.15);
+    	border-radius: 2px;
 		}
 	}
 
@@ -353,21 +365,10 @@
 	border-right: 0 none;
 }
 .icon-fonts-list-item-active {
-	background: #e9faf4;
+	box-shadow:inset 2px 0px 0px 0px rgb(31,205,143);
 	position: relative;
 }
-.icon-fonts-list-item-active:before {
-	position: absolute;
-	content: "";
-	display: block;
-	left: 5px;
-	top: 11px;
-	width: 12px;
-	height: 12px;
-	border: 3px solid #263a4d;
-	border-radius: 10px;
-	background: #1fcd8f;
-}
+
 .icon-font-upload-status {
 	display: inline-block;
 	padding: 0 3px;
