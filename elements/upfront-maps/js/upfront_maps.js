@@ -247,8 +247,8 @@ define([
 				'<div id="upfront_map-api_key_overlay-wrapper" class="upfront-initial-overlay-wrapper upfront_map-api_key_element">' +
 					'<div id="upfront_map-api_key_overlay" class="uf_el_map_initial-overlay upfront-initial-overlay-wrapper">' +
 
-					'<div class="upfront-ui"><button type="button" class="upfront-field-icon upfront-icon-map-warning"></button></div>' +
-					'<p id="upfront_map-api_key_overlay-instruction">' + l10n.api_key_empty + '</p>' +
+						'<div class="upfront-ui"><button type="button" class="upfront-field-icon upfront-icon-map-warning"></button></div>' +
+						'<p id="upfront_map-api_key_overlay-instruction">' + l10n.api_key_empty + '</p>' +
 					'</div>' +
 				'</div>'
 			);
