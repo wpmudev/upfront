@@ -263,21 +263,8 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 		});
 
 		this.fields = _([]);
-
-		if ("list" === display_type) {
-			this.fields.push(new Upfront.Views.Editor.Field.Number({
-				className: 'upfront-post-limit',
-				model: this.model,
-				label: l10n.limit,
-				property: "limit",
-				min: 1,
-				max: 20,
-				change: function(value) {
-					me.model.set_property("limit", value);
-					me.trigger('setting:changed');
-				}
-			}));
-		}
+		
+		this.populate_limit_items();
 
 		this.fields.push(new Upfront.Views.Editor.Field.Select({
 			model: this.model,
@@ -338,6 +325,26 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			this.toggle_offset_based_on_pagination_value(this.model.get_property_value_by_name("pagination"));
 		}, this);
 	},
+	
+	populate_limit_items: function () {
+		var me = this,
+			display_type = this.model.get_property_value_by_name("display_type");
+			
+		if ("list" === display_type) {
+			this.fields.push(new Upfront.Views.Editor.Field.Number({
+				className: 'upfront-post-limit',
+				model: this.model,
+				label: l10n.limit,
+				property: "limit",
+				min: 1,
+				max: 20,
+				change: function(value) {
+					me.model.set_property("limit", value);
+					me.trigger('setting:changed'x);
+				}
+			}));
+		}
+	},
 
 	populate_pagination_items: function () {
 		var display_type = this.model.get_property_value_by_name("display_type"),
@@ -386,6 +393,8 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 	populate_shared_tax_generic_items: function () {
 		var display_type = this.model.get_property_value_by_name("display_type"),
 			me = this;
+			
+		this.populate_limit_items();
 
 		if ("list" === display_type) {
 			this.fields.push(new Upfront.Views.Editor.Field.Select({
