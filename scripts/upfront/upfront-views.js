@@ -156,14 +156,6 @@ define([
 							this.update_background_featured($type, $overlay);
 							break;
 						case 'map':
-							// If background type is map and is missing API Key, show notice.
-							if (
-								!((window._upfront_api_keys || {})['gmaps'] || false)
-								&& Upfront.Application.user_can_modify_layout()
-							) {
-								this.add_api_key_overlay();
-							}
-
 							this.update_background_map($type, $overlay);
 							break;
 						case 'slider':
@@ -371,6 +363,14 @@ define([
 				);
 			},
 			update_background_map: function ($type, $overlay) {
+				// If background type is map and is missing API Key, show notice.
+				if (
+					!(window._upfront_api_keys || {})['gmaps']
+					&& Upfront.Application.user_can_modify_layout()
+				) {
+					this.add_api_key_overlay();
+				}
+
 				try {
 					if (!window.google.maps.Map) return this.postpone_map_init($type, $overlay);
 				} catch (e) {

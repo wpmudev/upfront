@@ -206,13 +206,13 @@ define([
 					// If no location and API key
 					// overlay is not there, show location overlay.
 					!this.model.get_property_value_by_name("map_center")
-					&& ((window._upfront_api_keys || {})['gmaps'] || false)) {
+					&& (window._upfront_api_keys || {})['gmaps']) {
 					this.add_location_overlay();
 				}
 
 				// Display Empty API Key Overlay.
 				if (
-					!((window._upfront_api_keys || {})['gmaps'] || false)
+					!(window._upfront_api_keys || {})['gmaps']
 					&& Upfront.Application.user_can_modify_layout()
 				) {
 					this.add_api_key_overlay();
@@ -248,7 +248,9 @@ define([
 					'<div id="upfront_map-api_key_overlay" class="uf_el_map_initial-overlay upfront-initial-overlay-wrapper">' +
 
 						'<div class="upfront-ui"><button type="button" class="upfront-field-icon upfront-icon-map-warning"></button></div>' +
-						'<p id="upfront_map-api_key_overlay-instruction">' + l10n.api_key_empty + '</p>' +
+						'<p id="upfront_map-api_key_overlay-instruction">' + l10n.api_key_empty + ' ' +
+							'<a href="' + l10n.api_key_url + '" target="_blank" data-bypass="true">' + l10n.here + '</a>' +
+						'</p>' +
 					'</div>' +
 				'</div>'
 			);
