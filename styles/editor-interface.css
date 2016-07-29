@@ -3440,7 +3440,7 @@ div#page.upfront-layout-view.upfront-layout-view .upfront-editable_entity.upfron
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 10001000; }
+  z-index: 10001004; }
 
 .upfront-inline-modal-wrap {
   margin: auto;
@@ -7405,7 +7405,7 @@ i.upfront-field-icon-burger-trigger {
   left: 0;
   right: 0;
   margin: auto;
-  z-index: 10001004;
+  z-index: 10001005;
   font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   font-size: 14px;
   box-sizing: border-box;
@@ -14743,9 +14743,11 @@ li#new-custom-breakpoint {
 
 #icon-fonts-manager .fonts-manager-panel-title,
 #text-fonts-manager .panel-title {
-  font: 18px/15px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
-  color: #273a4c;
-  margin: 16px 0 10px 0; }
+  font: 700 11px/15px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+  color: rgba(38, 58, 77, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.25px;
+  margin: 16px 0 5px 0; }
 
 #text-fonts-manager .panel {
   float: left; }
@@ -14967,22 +14969,22 @@ li#new-custom-breakpoint {
   margin: 0 3px 0 15px;
   height: 221px;
   border: 1px solid #a4bfd8;
-  overflow-y: scroll; }
+  overflow-y: auto; }
 
 .icon-fonts-list-item {
-  /*height: 32px;*/
-  line-height: 32px;
   border-bottom: 1px solid #e4eef6;
   padding-left: 20px;
   cursor: pointer;
-  color: #263a4d; }
+  color: #263a4d;
+  font: 400 14px/18px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif; }
 
 .icon-fonts-list-item .font-fileset {
   display: none; }
 
 .icon-fonts-list-item .font-name {
   width: 120px;
-  overflow: hidden; }
+  overflow: hidden;
+  padding: 10px 0; }
   .icon-fonts-list-item .font-name .icon-font-family {
     width: 100px;
     overflow: hidden;
@@ -15068,7 +15070,6 @@ li#new-custom-breakpoint {
 
 .icon-fonts-list-item-active {
   background: #e9faf4;
-  font-weight: bold;
   position: relative; }
 
 .icon-fonts-list-item-active:before {
@@ -15089,6 +15090,13 @@ li#new-custom-breakpoint {
   color: #ff0000;
   font-weight: bold;
   cursor: help; }
+
+.font-manager-popup .upfront-tabs li {
+  font: 300 16px/2.4 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+  padding: 0 15px; }
+
+.font-manager-popup .icon-fonts-list-item {
+  position: relative; }
 
 /*------------------- Setting sections tabs -----------------------*/
 #sidebar-ui ul.sidebar-panel-tabspane {
@@ -15389,13 +15397,14 @@ html {
 .upfront_edit_content_style,
 .upfront_edit_image_insert {
   position: absolute;
-  left: 50%;
-  top: 50%;
+  margin: auto;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
   background: #e5f3ff;
   border-radius: 5px;
   width: 281px;
-  margin-left: -140px !important;
-  margin-top: -23px !important;
   height: 46px;
   line-height: 46px;
   text-align: center;
@@ -15403,7 +15412,8 @@ html {
   display: none;
   cursor: pointer;
   padding: 0 !important;
-  z-index: 10; }
+  z-index: 10;
+  max-width: 100%; }
 
 .Postpart_contents:hover .upfront_edit_content_style,
 .upostdata-part.edit-content:hover .upfront_edit_content_style {

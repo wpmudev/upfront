@@ -212,6 +212,12 @@ div.preset-manager-panel .upfront-post_data-part.part-module-panel .typography_s
 	width: 200px !important;
 }
 
+div.preset-manager-panel .upfront-post_data-part.part-module-panel .typography_settings_item .fontSize,
+div.preset-manager-panel .upfront-post_data-part.part-module-panel .typography_settings_item .fontSize input,
+div.preset-manager-panel .upfront-post_data-part.part-module-panel .typography_settings_item .lineHeight input {
+	font-size: 12px;
+}
+
 div.preset-manager-panel .upfront-post_data-part.part-module-panel .typography_settings_item .lineHeight.element-toggled {
 	width: 80px;
 }

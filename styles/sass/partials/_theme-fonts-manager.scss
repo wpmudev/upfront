@@ -6,9 +6,11 @@
 }
 #icon-fonts-manager .fonts-manager-panel-title,
 #text-fonts-manager .panel-title {
-	font: 18px/15px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
-  color: #273a4c;
-  margin: 16px 0 10px 0;
+	font:700 11px/15px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+	color: rgba(38,58,77,.5);
+	text-transform:uppercase;
+	letter-spacing: 0.25px;
+	margin: 16px 0 5px 0;
 }
 #text-fonts-manager .panel {
   float: left;
@@ -233,15 +235,14 @@
 	margin: 0 3px 0 15px;
 	height: 221px;
 	border: 1px solid #a4bfd8;
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 .icon-fonts-list-item {
-	/*height: 32px;*/
-	line-height: 32px;
 	border-bottom: 1px solid #e4eef6;
 	padding-left: 20px;
 	cursor: pointer;
 	color: #263a4d;
+	font:400 14px/18px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 }
 
 .icon-fonts-list-item {
@@ -253,6 +254,7 @@
 	.font-name {
 		width: 120px;
 		overflow: hidden;
+		padding:10px 0;
 
 		.icon-font-family {
 			width: 100px;
@@ -352,7 +354,6 @@
 }
 .icon-fonts-list-item-active {
 	background: #e9faf4;
-	font-weight: bold;
 	position: relative;
 }
 .icon-fonts-list-item-active:before {
@@ -373,4 +374,11 @@
 	color: #ff0000;
 	font-weight: bold;
 	cursor: help;
+}
+.font-manager-popup .upfront-tabs li  {
+	font:300 16px/2.4 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+	padding:0 15px;
+}
+.font-manager-popup .icon-fonts-list-item {
+	position: relative;
 }

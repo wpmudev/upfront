@@ -198,7 +198,7 @@ class Upfront_PostDataPartView extends Upfront_Object {
 			$right_indent = $this->_part_view->get_property('right_indent');
 			$max_col = $col - intval($left_indent) - intval($right_indent);
 			$variants = Upfront_ChildTheme::getPostImageVariants();
-			foreach ( $variants as $variant ) {
+			if (is_array($variants)) foreach ( $variants as $variant ) {
 				$left = intval($variant->group->left);
 				$margin_left = intval($variant->group->margin_left);
 				$margin_right = intval($variant->group->margin_right);

@@ -280,13 +280,15 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			if (empty($typography)) {
 				switch ($breakpoint_id) {
 				case 'tablet':
-					$layout_properties = Upfront_ChildTheme::get_instance()->getLayoutProperties();
+					$child = Upfront_ChildTheme::get_instance();
+					$layout_properties = $child? $child->getLayoutProperties() : array();
 					$value = upfront_get_property_value('typography', array('properties'=>$layout_properties));
 					$typography = $value;
 					break;
 				case 'mobile':
 					if (empty($tablet_typography)) {
-						$layout_properties = Upfront_ChildTheme::get_instance()->getLayoutProperties();
+						$child = Upfront_ChildTheme::get_instance();
+						$layout_properties = $child? $child->getLayoutProperties() : array();
 						$value = upfront_get_property_value('typography', array('properties'=>$layout_properties));
 						$typography = $value;
 					} else {
@@ -295,7 +297,8 @@ class Upfront_StylesheetMain extends Upfront_Server {
 					break;
 				}
 			}
-			foreach ( $typography as $element=>$properties ){
+
+			if (is_array($typography)) foreach ( $typography as $element=>$properties ){
 
 				$properties = wp_parse_args($properties, array(
 					'font_face' => 'Arial',

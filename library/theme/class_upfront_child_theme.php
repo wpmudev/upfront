@@ -62,7 +62,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_get_post_image_variants', array($this, 'getPostImageVariants'), 10, 2);
 		add_filter('upfront_get_prev_post_image_variants', array($this, 'get_prev_post_image_variants'), 10, 2);
 		add_filter('upfront_get_other_post_image_variants', array($this, 'get_all_other_theme_variants'), 10, 2);
-		
+
 		add_filter('upfront_get_button_presets', array($this, 'getButtonPresets'), 10, 2);
 		add_filter('upfront_get_tab_presets', array($this, 'getTabPresets'), 10, 2);
 		add_filter('upfront_get_accordion_presets', array($this, 'getAccordionPresets'), 10, 2);
@@ -711,7 +711,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		return json_decode($presets, $as_array);
 	}
-	
+
 	public function getLoginPresets($presets, $args) {
 		if (empty($presets) === false) return $presets;
 
@@ -740,7 +740,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if (empty($presets) === false) return $presets;
 		return $this->_get_prepared_presets('featured_image_element_presets', $args);
 	}
-	
+
 	public function get_taxonomy_presets ($presets, $args) {
 		if (empty($presets) === false) return $presets;
 		return $this->_get_prepared_presets('taxonomy_element_presets', $args);
@@ -773,7 +773,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			$as_array = true;
 		}
 
-		return json_decode($presets, $as_array);	
+		return json_decode($presets, $as_array);
 	}
 
 	public function getAccordionPresets($presets, $args) {
@@ -1330,7 +1330,10 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
      * @return string
      */
     public static function get_post_image_variants_from_settings(){
-        $image_variants = self::_get_theme_settings()->get('post_image_variants');
+		$settings = self::_get_theme_settings();
+		if (!$settings) return '';
+		
+        $image_variants = $settings->get('post_image_variants');
         if( empty( $image_variants )){
             $image_variants = <<< VRT
 		[

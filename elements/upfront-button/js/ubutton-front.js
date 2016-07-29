@@ -18,7 +18,14 @@
 				map = rmap ? JSON.parse(rmap) : {},
 				$items
 			;
-			if (!map[breakpoint]) return true;
+			// we have to provide proper fallback here, mobile -> tablet -> desktop
+			if ( breakpoint == 'mobile' ) {
+				map[breakpoint] = map[breakpoint] || map['tablet'] || map['desktop'] || 'default';
+			} else if ( breakpoint == 'tablet' ) {
+				map[breakpoint] = map[breakpoint] || map['desktop'] || 'default';
+			} else {
+				map[breakpoint] = map[breakpoint] || 'default';
+			}
 
 			$items = $root.find(".upfront_cta");
 			$.each(map, function (bp, preset) {
