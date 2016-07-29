@@ -340,7 +340,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 				max: 20,
 				change: function(value) {
 					me.model.set_property("limit", value);
-					me.trigger('setting:changed'x);
+					me.trigger('setting:changed');
 				}
 			}));
 		}
