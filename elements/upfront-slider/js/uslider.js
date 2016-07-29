@@ -489,7 +489,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 					? this.$('.uslide[rel=' + currentSlide.id + ']').find('.uslide-caption').outerHeight(true)
 					: 0
 				;
-			this.$('.uslides').css({ 'padding-top' : wrapper.height() + textHeight});
+			this.$('.uslides').css({ 'padding-top' : wrapper.outerHeight(true) + textHeight});
 		}
 	},
 
