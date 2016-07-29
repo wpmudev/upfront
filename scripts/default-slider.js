@@ -172,10 +172,10 @@
 			;
 			this.$slider.css('height', 9999);
 			this.items.each(function(){
-				var $img = $(this).find('img'),
+				var $img = $(this).find('.uslide-image'),
 					$text = $(this).find('.uslide-caption'),
 					textHeight = me.opts.caption_height ? $text.outerHeight(true) : 0,
-					img_h = $img.height() + textHeight
+					img_h = $img.outerHeight(true) + textHeight
 				;
 				max_height = max_height > img_h ? max_height : img_h;
 			});
