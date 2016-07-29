@@ -70,6 +70,28 @@ p, h2, h3 { orphans: 3; widows: 3; }
 h2, h3 { page-break-after: avoid; }
 }
 
+/* ==|== default typography styles ========================= */
+p, h1, h2, h3, h4, h5, h6, ul, ol, pre, blockquote {
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+
+ul, ol {
+	margin-left: 15px;
+}
+ul ul, ul ol, ol ul, ol ol {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+blockquote {
+	padding: 15px;
+}
+
+.upfront-quote-alternative {
+	text-align: center;
+}
+
 /* ==|== grid requirements ==================== */
 
 #page {

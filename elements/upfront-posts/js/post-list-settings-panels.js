@@ -30,6 +30,7 @@ Panels.General = RootSettingsPanel.extend({
 		this.options = opts;
 		var me = this,
 			query = new QuerySettings({
+				className: 'upfront-post-settings',
 				model: this.model
 			}),
 			thumbnail = new ThumbnailSettings({
@@ -45,26 +46,40 @@ Panels.General = RootSettingsPanel.extend({
 			},
 			display_type = new Upfront.Views.Editor.Field.Radios({
 				model: this.model,
+				className: 'upfront-posts-display-type',
 				property: 'display_type',
-				label: l10n.display_type_label,
+				label: '',
 				layout: 'horizontal-inline',
 				icon_class: 'upfront-posts-display_type',
 				values: [
-					{label: l10n.single_post, value: 'single', icon: 'upfront-posts-single'},
-					{label: l10n.post_list, value: 'list', icon: 'upfront-posts-list'}
+					{label: l10n.single_post, value: 'single'},
+					{label: l10n.post_list, value: 'list'}
 				]
 			}),
-			list_type = new Upfront.Views.Editor.Field.Radios({
+			list_type = new Upfront.Views.Editor.Field.Select({
 				model: this.model,
 				property: 'list_type',
-				label: l10n.list_type_label,
+				label: '',
+				default_value: 'custom',
 				layout: 'horizontal',
 				values: [
 					{label: l10n.post_list_custom, value: 'custom'},
 					{label: l10n.post_list_tax, value: 'taxonomy'},
 					{label: l10n.post_list_generic, value: 'generic'}
 				]
-			})
+			}),
+			display_type_section = new Upfront.Views.Editor.Settings.Item({
+				model: this.model,
+				className: 'upfront-display-type-section',
+				title: l10n.query_settings,
+				fields: [display_type]
+			}),
+			list_type_section = new Upfront.Views.Editor.Settings.Item({
+				model: this.model,
+				className: 'upfront-list-type-section',
+				title: l10n.list_type_label,
+				fields: [list_type]
+ 			})
 		;
 		display_type.on("changed", autorefresh);
 		list_type.on("changed", autorefresh);
@@ -75,11 +90,8 @@ Panels.General = RootSettingsPanel.extend({
 			this.trigger("post:removed");
 		}, this);
 		this.settings = _([
-			new Upfront.Views.Editor.Settings.Item({
-				model: this.model,
-				title: l10n.query_settings,
-				fields: [display_type, list_type]
-			}),
+			display_type_section,
+			list_type_section,
 			query,
 			thumbnail
 		]);
@@ -93,28 +105,42 @@ var CustomSelectorField =  Upfront.Views.Editor.Field.Hidden.extend({
 		return _.extend({},
 			Upfront.Views.Editor.Field.Hidden.prototype.events,
 			{'click a[href="#add"]': "select_posts"},
-			{'click ol li a[href="#rmv"]': "remove_post"}
+			{'click ul li a[href="#rmv"]': "remove_post"}
 		);
 	},
 	get_field_html: function () {
 		var field = Upfront.Views.Editor.Field.Hidden.prototype.get_field_html.apply(this),
 			values = this.get_decoded_values(this.options.property),
 			is_single = 'single' === this.model.get_property_value_by_name('display_type'),
-			string = values.length ? l10n.add_custom_post : l10n.select_custom_post
+			string = values.length ? l10n.add_custom_post : l10n.select_custom_post,
+			postCount = 1;
 		;
 		if (is_single) {
 			string = l10n.select_custom_post;
 			if (values) values = [_(values).first()];
 		}
-		field += '<i class="upfront-posts-custom-add_post"></i> <a href="#add">' + string + '</a>';
 		if (_.isArray(values) && values.length > 0) {
-			field += '<ol>';
+			field += '<ul class="upfront-posts-list">';
 			_.each(values, function (value) {
 				if (!value) return false;
-				field += '<li><span class="permalink">' + value.permalink + '</span><a href="#rmv" data-id="' + value.id + '"><i>&times;</i></a></li>';
+				
+				var title = value.permalink;
+
+				if(typeof value.post_title !== "undefined")
+					title = value.post_title;
+				
+				if (!is_single) {
+					field += '<li><span class="post-count">' + postCount + '</span><span class="permalink">' + title + '</span><a href="#rmv" data-id="' + value.id + '"><i>&times;</i></a></li>';
+				} else {
+					field += '<li><span class="permalink">' + title + '</span><a href="#rmv" data-id="' + value.id + '"><i>&times;</i></a></li>';
+				}
+				
+				postCount++;
 			});
-			field += '</ol>';
+			field += '</ul>';
 		}
+		
+		field += '<i class="upfront-posts-custom-add_post"></i> <a href="#add" class="upfront-add-posts">' + string + '</a>';
 
 		return '<div class="custom_posts">' + field + '</div>';
 	},
@@ -128,13 +154,14 @@ var CustomSelectorField =  Upfront.Views.Editor.Field.Hidden.extend({
 				if (!post) return false;
 				var id = post.get("ID"),
 					link = post.get("permalink"),
+					post_title = post.get("post_title"),
 					is_single = 'single' === me.model.get_property_value_by_name('display_type'),
 					values = me.get_decoded_values(me.options.property)
 				;
 				if (is_single) {
-					values = [{id: id, permalink: link}];
+					values = [{id: id, permalink: link, post_title: post_title}];
 				} else {
-					values.push({id: id, permalink: link});
+					values.push({id: id, permalink: link, post_title: post_title});
 					me.select_posts(e);
 				}
 				me.model.set_property(me.options.property, me.encode_values(values));
@@ -190,6 +217,9 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 		$('.upfront-chosen-select', this.$el).chosen({
 			width: '230px'
 		});
+		
+		var display_type = this.model.get_property_value_by_name("display_type");
+		this.$el.addClass('upfront-display-type-' + display_type);
 	},
 
 	dispatch_settings: function () {
@@ -233,35 +263,54 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 		this.fields = _([]);
 
 		if ("list" === display_type) {
-			this.populate_pagination_items();
+			this.fields.push(new Upfront.Views.Editor.Field.Number({
+				className: 'upfront-post-limit',
+				model: this.model,
+				label: l10n.limit,
+				property: "limit",
+				min: 1,
+				max: 20
+			}));
+		}
+
+		this.fields.push(new Upfront.Views.Editor.Field.Select({
+			model: this.model,
+			className: 'upfront-post-type',
+			label: l10n.post_type,
+			property: "post_type",
+			values: types
+		}));
+		
+		if ("list" === display_type) {
 			this.fields.push(new Upfront.Views.Editor.Field.Number({
 				model: this.model,
+				className: 'upfront-offset-number',
 				label: l10n.offset,
 				property: "offset",
 				min: 1,
 				max: 20
 			}));
 		}
+
 		this.fields.push(new Upfront.Views.Editor.Field.Select({
 			model: this.model,
-			label: l10n.post_type,
-			property: "post_type",
-			values: types
-		}));
-		this.fields.push(new Upfront.Views.Editor.Field.Select({
-			model: this.model,
+			className: 'upfront-post-taxonomy',
 			label: l10n.taxonomy,
 			property: "taxonomy",
 			values: taxs
 		}));
 		this.fields.push(new Upfront.Views.Editor.Field.Chosen_Select({
 			model: this.model,
+			className: 'upfront-post-term',
 			label: l10n.term,
 			compact: true,
 			property: "term",
 			values: [{label:l10n.select_tax, value:"", disabled: true}]
 		}));
 		this.populate_shared_tax_generic_items();
+		if ("list" === display_type) {
+			this.populate_pagination_items();
+		}
 		this.once("rendered", this.update_terms, this);
 		this.once("rendered", function () {
 			this.toggle_offset_based_on_pagination_value(this.model.get_property_value_by_name("pagination"));
@@ -273,7 +322,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			me = this
 		;
 		if ("list" === display_type) {
-			this.fields.push(new Upfront.Views.Editor.Field.Radios({
+			this.fields.push(new Upfront.Views.Editor.Field.Select({
 				model: this.model,
 				label: l10n.pagination,
 				property: "pagination",
@@ -313,14 +362,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 	populate_shared_tax_generic_items: function () {
 		var display_type = this.model.get_property_value_by_name("display_type");
 		if ("list" === display_type) {
-			this.fields.push(new Upfront.Views.Editor.Field.Number({
-				model: this.model,
-				label: l10n.limit,
-				property: "limit",
-				min: 1,
-				max: 20
-			}));
-			this.fields.push(new Upfront.Views.Editor.Field.Radios({
+			this.fields.push(new Upfront.Views.Editor.Field.Select({
 				model: this.model,
 				property: "sticky",
 				label: l10n.sticky_posts,
@@ -416,9 +458,9 @@ var ThumbnailSettings = Upfront.Views.Editor.Settings.Item.extend({
 
 		this.fields = _([]);
 
-		this.fields.push(new Upfront.Views.Editor.Field.Radios({
+		this.fields.push(new Upfront.Views.Editor.Field.Select({
 			model: this.model,
-			className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios upfront-thumbnail-size-choices',
+			className: 'upfront-field-wrap upfront-field-wrap-radios upfront-thumbnail-size-choices',
 			property: 'thumbnail_size',
 			label: '',
 			layout: 'horizontal',
@@ -493,9 +535,6 @@ var ThumbnailSettings = Upfront.Views.Editor.Settings.Item.extend({
 	}
 
 });
-
-
-
 
 Panels.PostParts = RootSettingsPanel.extend({
 	title: l10n.post_part_settings,
