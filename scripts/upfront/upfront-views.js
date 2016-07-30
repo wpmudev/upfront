@@ -7099,6 +7099,7 @@ define([
 					me.$el.append(me.bg_setting.el);
 
 					me.fix_height();
+					me.update_grid_css(); // Don't forget to update grid CSS
 
 					// Use flexbox when we can
 					if ( Upfront.Util.css_support('flex') )
