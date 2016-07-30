@@ -349,8 +349,7 @@
                             show: function(){
                                 //spectrum = $('.sp-container:visible');
                             },
-                            choose: color_change,
-                            change: color_change
+                            choose: color_change
                         }
                     })
                     ;
