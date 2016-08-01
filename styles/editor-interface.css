@@ -14950,11 +14950,11 @@ li#new-custom-breakpoint {
 .manage-icon-fonts {
   float: left;
   width: 233px;
-  height: 382px; }
+  height: 350px; }
 
 .icon-fonts-message i {
   position: absolute;
-  top: 4px;
+  top: 0;
   left: 15px;
   width: 16px;
   height: 16px;
@@ -14963,8 +14963,10 @@ li#new-custom-breakpoint {
 .icon-fonts-message {
   color: #263a4d;
   padding-left: 35px;
-  font-size: .8em;
-  position: relative; }
+  font-size: 11px;
+  line-height: 16px;
+  position: relative;
+  margin-top: 5px; }
 
 .icon-fonts-list {
   background: white;
@@ -15060,14 +15062,15 @@ li#new-custom-breakpoint {
   position: relative; }
 
 .upload-icon-font {
-  border: 2px solid #85a9cc;
+  background-image: linear-gradient(-180deg, #FAFDFF 0%, #F2F9FF 100%);
+  border: 1px solid #A2BFDA;
+  border-radius: 3px;
+  color: #6486A6;
+  cursor: pointer;
+  display: inline-block;
+  font: 400 12px/16px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   margin: 15px 3px 0 14px;
-  height: 41px;
-  line-height: 39px;
-  padding: 0;
-  text-align: center;
-  color: #2f4770;
-  cursor: pointer; }
+  padding: 5px 10px; }
 
 .upload-icon-font .uf_font_icon {
   font-family: 'icomoon' !important; }
@@ -15077,7 +15080,7 @@ li#new-custom-breakpoint {
   margin-left: 15px;
   background: white;
   width: 493px;
-  height: 325px;
+  height: 300px;
   overflow: auto;
   border: 1px solid #bdd0e2;
   box-shadow: inset 0px -5px 10px 0px rgba(36, 58, 78, 0.15); }
