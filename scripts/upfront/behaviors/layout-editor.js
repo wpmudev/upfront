@@ -1081,13 +1081,13 @@ var LayoutEditor = {
 	open_import_image_dialog: function (image_list) {
 		var ed = Upfront.Behaviors.LayoutEditor;
 		if ( !ed.import_image_modal ){
-			ed.import_image_modal = new Upfront.Views.Editor.Modal({to: $('body'), button: false, top: 120, width: 640});
+			ed.import_image_modal = new Upfront.Views.Editor.Modal({to: $('body'), button: false, top: 120, width: 600});
 			ed.import_image_modal.render();
 			$('body').append(ed.import_image_modal.el);
 		}
 		ed.import_image_modal.open(function($content, $modal) {
 			var importing = false,
-				button = new Upfront.Views.Editor.Field.Button({
+				import_button = new Upfront.Views.Editor.Field.Button({
 					name: 'import_image',
 					label: Upfront.Settings.l10n.global.behaviors.import_image_button,
 					compact: true,
@@ -1098,7 +1098,6 @@ var LayoutEditor = {
 						ed.do_import_image(image_list).done(function () {
 							// Finished, let's show success message and close the modal
 							$content.html(
-								'<h1 class="upfront-modal-title">' + Upfront.Settings.l10n.global.behaviors.import_image_done + '</h1>' +
 								'<p>' + Upfront.Settings.l10n.global.behaviors.import_image_done_description + '</p>'
 							);
 							setTimeout(function(){
@@ -1108,11 +1107,19 @@ var LayoutEditor = {
 						importing = true;
 					}
 				}),
+				ignore_button = new Upfront.Views.Editor.Field.Button({
+					name: 'import_image_ignore',
+					label: Upfront.Settings.l10n.global.behaviors.import_image_ignore_button,
+					compact: true,
+					classname: 'upfront-import-image-button',
+					on_click: function () {
+						ed.import_image_modal.close();
+					}
+				}),
 				$image_list = $('<ul class="upfront-import-image-list upfront-scroll-panel"></ul>')
 			;
 			$modal.addClass('upfront-import-image-modal');
 			$content.html(
-				'<h1 class="upfront-modal-title">' + Upfront.Settings.l10n.global.behaviors.import_image + '</h1>' +
 				'<p>' + Upfront.Settings.l10n.global.behaviors.import_image_description + '</p>'
 			);
 			_.each(image_list, function (img, index) {
@@ -1123,9 +1130,11 @@ var LayoutEditor = {
 				);
 			});
 			$content.append($image_list);
-			button.render();
-			button.delegateEvents();
-			$content.append(button.$el);
+			_.each([import_button, ignore_button], function (button) {
+				button.render();
+				button.delegateEvents();
+				$content.append(button.$el);
+			});
 		}, ed);
 	},
 

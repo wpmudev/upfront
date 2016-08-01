@@ -106,10 +106,11 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'trash' => __('Trash', 'upfront'),
 				'preview_size' => __('Preview Size', 'upfront'),
 				'import_image' => __('Import Images', 'upfront'),
-				'import_image_description' => __('This layout have new images that hasn\'t been imported to your media. Some image-based element might not work correctly without these. Do you want to import these images?', 'upfront'),
+				'import_image_description' => __('This layout contains images that are not in your Media Library. If you plan on using those images, please import them, otherwise if you plan on replacing those images you can ignore this message.', 'upfront'),
 				'import_image_done' => __('Import Images Finished', 'upfront'),
 				'import_image_done_description' => __('Success! All images have been imported.', 'upfront'),
-				'import_image_button' => __('Import Images', 'upfront')
+				'import_image_button' => __('Import Images', 'upfront'),
+				'import_image_ignore_button' => __('Ignore', 'upfront')
 			),
 			'content' => array(
 				'apply' => __('Apply', 'upfront'),

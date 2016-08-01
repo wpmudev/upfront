@@ -22,7 +22,7 @@ var globalL10n = Upfront.Settings && Upfront.Settings.l10n
 var UgalleryImage = Backbone.Model.extend({
 	defaults: Upfront.data.ugallery.imageDefaults,
 	is_theme_image: function () {
-		return this.get('srcFull') && this.get('srcFull').match('wp-content/themes/');
+		return this.get('srcFull') && this.get('srcFull').match(Upfront.mainData.currentThemeUrl);
 	}
 });
 

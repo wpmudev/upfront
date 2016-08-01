@@ -302,7 +302,9 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			Upfront.Behaviors.GridEditor.init();
 		}
 		this.listenTo(Upfront.Events, "layout:after_render", Upfront.Behaviors.GridEditor.init);
-		this.listenTo(Upfront.Events, "layout:after_render", Upfront.Behaviors.LayoutEditor.import_image_dialog);
+		if ( false === Upfront.plugins.isForbiddenByPlugin('show import image dialog') ) {
+			this.listenTo(Upfront.Events, "layout:after_render", Upfront.Behaviors.LayoutEditor.import_image_dialog);
+		}
 	},
 
 	set_up_event_plumbing_after_render: function () {
