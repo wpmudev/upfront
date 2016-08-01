@@ -17,7 +17,8 @@ define([
 	"text!upfront/templates/region_container.html",
 	"text!upfront/templates/region.html",
 	"text!upfront/templates/wrapper.html",
-	"text!upfront/templates/layout.html"
+	"text!upfront/templates/layout.html",
+	"text!upfront/templates/api_key_overlay_region.html"
 ], function (RenderQueue, RenderQueueReporter) {
   var _template_files = [
     "text!upfront/templates/object.html",
@@ -27,7 +28,8 @@ define([
     "text!upfront/templates/region_container.html",
     "text!upfront/templates/region.html",
     "text!upfront/templates/wrapper.html",
-    "text!upfront/templates/layout.html"
+    "text!upfront/templates/layout.html",
+    "text!upfront/templates/api_key_overlay_region.html"
 ];
 
 	// Auto-assign the template contents to internal variable
@@ -353,13 +355,7 @@ define([
 			// If no API Key, display notice.
 			add_api_key_overlay: function() {
 				this.$el.append(
-					'<div id="upfront_map-api_key_overlay-wrapper" class="upfront-initial-overlay-wrapper upfront_map-api_key_region">' +
-						'<div id="upfront_map-api_key_overlay" class="uf_el_map_initial-overlay upfront-initial-overlay-wrapper">' +
-
-							'<div class="upfront-ui"><button type="button" class="upfront-field-icon upfront-icon-map-warning"></button></div>' +
-							'<p id="upfront_map-api_key_overlay-instruction">' + Upfront.Settings.l10n.maps_element.api_key_empty_region + '</p>' +
-						'</div>' +
-					'</div>'
+					_.template(_Upfront_Templates['api_key_overlay_region'])
 				);
 			},
 			update_background_map: function ($type, $overlay) {

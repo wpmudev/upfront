@@ -7,8 +7,16 @@ define([
 	'text!elements/upfront-maps/css/edit.css',
 	'scripts/upfront/element-settings/settings',
 	'scripts/upfront/element-settings/root-settings-panel',
-	'scripts/upfront/inline-panels/map-editor'
-], function (_ctx, maps_style, ElementSettings, RootSettingsPanel, MapEditorView) {
+	'scripts/upfront/inline-panels/map-editor',
+	'text!upfront/templates/api_key_overlay_element.html'
+], function (
+	_ctx,
+	maps_style,
+	ElementSettings,
+	RootSettingsPanel,
+	MapEditorView,
+	api_key_overlay_element_template
+) {
 
 	var DEFAULTS = {
 		OPTIMUM_MAP_HEIGHT: 300,
@@ -244,15 +252,7 @@ define([
 		// If no API Key, display notice.
 		add_api_key_overlay: function() {
 			this.$el.append(
-				'<div id="upfront_map-api_key_overlay-wrapper" class="upfront-initial-overlay-wrapper upfront_map-api_key_element">' +
-					'<div id="upfront_map-api_key_overlay" class="uf_el_map_initial-overlay upfront-initial-overlay-wrapper">' +
-
-						'<div class="upfront-ui"><button type="button" class="upfront-field-icon upfront-icon-map-warning"></button></div>' +
-						'<p id="upfront_map-api_key_overlay-instruction">' + l10n.api_key_empty + ' ' +
-							'<a href="' + l10n.api_key_url + '" target="_blank" data-bypass="true">' + l10n.here + '</a>' +
-						'</p>' +
-					'</div>' +
-				'</div>'
+				_.template(api_key_overlay_element_template)
 			);
 		},
 
