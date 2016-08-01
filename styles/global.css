@@ -88,6 +88,10 @@ blockquote {
 	padding: 15px;
 }
 
+del {
+	text-decoration: line-through;
+}
+
 .upfront-quote-alternative {
 	text-align: center;
 }
@@ -298,7 +302,7 @@ blockquote {
 }
 
 
-/* hack to fix empty paragraphs collapsing on each other 
+/* hack to fix empty paragraphs collapsing on each other
    note: Commented out since redactor no longer has that bug,
    so this fix is now redundant...
 
@@ -394,7 +398,7 @@ blockquote {
 	margin-left: auto !important;
 	margin-right: auto !important;
 }
-.uf-responsive .upfront-inserted_image-wrapper .wp-caption-text, 
+.uf-responsive .upfront-inserted_image-wrapper .wp-caption-text,
 .uf-responsive .upfront-inserted_image-wrapper .uinsert-image-wrapper {
     min-height: 0 !important;
     margin-top: 0;
@@ -454,8 +458,8 @@ blockquote {
 .flexbox-support .upfront-output-wrapper > .upfront-output-module,
 .flexbox-support .upfront-output-wrapper > .upfront-output-module-group,
 .flexbox-support .upfront-output-wrapper > .upfront-output-object {
-	-webkit-order: 0; 
-	-ms-flex-order: 0; 
+	-webkit-order: 0;
+	-ms-flex-order: 0;
 	order: 0;
 }
 /* End flexbox */
@@ -493,7 +497,7 @@ div.upfront-region-lightbox, div.upfront-region-side-lightbox,
   left: 50% !important;
 }
 .upfront-lightbox-bg {
-  position:fixed; 
+  position:fixed;
   top:0;
   left: 0;
   width: 100%;
@@ -504,7 +508,7 @@ div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-l
 	position: absolute;
 	top: 10px;
 	right: 0px;
-	cursor: pointer;	
+	cursor: pointer;
   font-family: Helvetica Neue, Helvetica,Arial, sans-serif;
   color:#fff;
   font-size:28px;
@@ -545,7 +549,7 @@ div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-l
 .upfront-navigation li { display: inline-block;  list-style:none; }
 
 .close_lightbox > .upfront-icon-popup-close {
-    
+
     font: 100 30px/16px Helvetica Neue, Helvetica, sans-serif; */
     color: #FFF;
 }
@@ -610,7 +614,7 @@ body .upfront-edit_layout a {
     z-index: 2;
 }
 /* Firefox checkboxes and radios are styled to match the rest of the browsers */
-@-moz-document url-prefix() { 
+@-moz-document url-prefix() {
   input[type=checkbox] {
     /* original check box are push outside the viexport */
     position: absolute ;
@@ -625,7 +629,7 @@ body .upfront-edit_layout a {
     margin : 0 -1em 0 0;
     background: url("../img/checkbox_firefox.png") no-repeat 0 0;
 
-  /* The following is used to adjust the position of 
+  /* The following is used to adjust the position of
      the check boxes on the text baseline */
 
     vertical-align: bottom;
@@ -681,7 +685,7 @@ body .upfront-edit_layout a {
     margin : 0 -1em 0 0;
     background: url("../img/radio_firefox.png") no-repeat 0 0;
 
-  /* The following is used to adjust the position of 
+  /* The following is used to adjust the position of
      the check boxes on the text baseline */
 
     vertical-align: bottom;
