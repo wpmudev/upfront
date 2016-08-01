@@ -225,6 +225,9 @@ jQuery(document).ready(function($){
 				if ( src && before_src != src && $el.hasClass('upfront-image-lazy') ){
 					$el.removeClass('upfront-image-lazy-loaded');
 				}
+				else {
+					$el.css('background-image', 'url("' + src + '")');
+				}
 			}
 			else if ( type == 'color' ) {
 				$(this).css('background-image', 'none');
