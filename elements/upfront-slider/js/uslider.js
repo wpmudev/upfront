@@ -34,7 +34,7 @@ var Uslider_Slide = Backbone.Model.extend({
 		return this.set('breakpoint', data);
 	},
 	is_theme_image: function () {
-		return this.get('srcFull') && this.get('srcFull').match(Upfront.mainData.currentThemeUrl);
+		return this.get('srcFull') && this.get('srcFull').match(Upfront.mainData.currentThemePath);
 	}
 });
 

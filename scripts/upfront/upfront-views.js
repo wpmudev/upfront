@@ -1844,9 +1844,9 @@ define([
 
 				if ( breakpoint && !breakpoint['default'] ) {
 					this.update_position();
-				} else {
+				} else if ( $('#element-settings-sidebar').children().length == 0 ) {
 					// when saving from responsive mode, preset gets overwritten by breakpoint presets
-					// we have to correct that here
+					// we have to correct that here but only when element settings not activated
 					var currentPreset = this.model.get_property_value_by_name('current_preset'),
 						setPreset = this.model.get_property_value_by_name('preset')
 					;
