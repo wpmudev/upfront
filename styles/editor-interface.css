@@ -6310,7 +6310,7 @@ a.upfront-region-name-edit-trigger:before {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 999998;
+  z-index: 10001003;
   width: 100%;
   height: 100%; }
 
@@ -6322,7 +6322,7 @@ a.upfront-region-name-edit-trigger:before {
   left: 50%;
   width: 520px;
   margin-left: -210px;
-  z-index: 999999;
+  z-index: 10001004;
   padding: 40px;
   text-align: center; }
 
