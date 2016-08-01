@@ -227,17 +227,7 @@
                                         me.colors[element] = rgba_string;
                                         me.update_typography(color);
                                     }
-                                },
-								change: function(color) {
-									var rgb = color.toRgb(),
-                                        rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')',
-                                        element = me.current_element;
-                                    rgba_string = color.get_is_theme_color() !== false ? color.theme_color: rgba_string;
-                                    if ( me.colors[element] != rgba_string ){
-                                        me.colors[element] = rgba_string;
-                                        me.update_typography(color);
-                                    }
-								}
+                                }
                             }
                         }),
                         size: new Fields.Number({

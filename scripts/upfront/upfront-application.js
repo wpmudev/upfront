@@ -302,7 +302,9 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			Upfront.Behaviors.GridEditor.init();
 		}
 		this.listenTo(Upfront.Events, "layout:after_render", Upfront.Behaviors.GridEditor.init);
-		this.listenTo(Upfront.Events, "layout:after_render", Upfront.Behaviors.LayoutEditor.import_image_dialog);
+		if ( false === Upfront.plugins.isForbiddenByPlugin('show import image dialog') ) {
+			this.listenTo(Upfront.Events, "layout:after_render", Upfront.Behaviors.LayoutEditor.import_image_dialog);
+		}
 	},
 
 	set_up_event_plumbing_after_render: function () {
@@ -822,10 +824,18 @@ var Application = new (Backbone.Router.extend({
 		}
 
 		var app = this;
+		// Get the appropriate Loading Notice – whether builder or editor.
+		var loadingNoticeResult = Upfront.plugins.call('long-loading-notice');
+		// Editor Notice.
+		var loadingNotice = Upfront.Settings.l10n.global.application.long_loading_notice;
+		if(loadingNoticeResult.status && loadingNoticeResult.status === 'called' && loadingNoticeResult.result) {
+			// If Builder is loading, use its long_loading_notice instead.
+			loadingNotice = loadingNoticeResult.result;
+		}
 		// Start loading animation
 		app.loading = new Upfront.Views.Editor.Loading({
 			loading: Upfront.Settings.l10n.global.application.loading,
-			loading_notice: Upfront.Settings.l10n.global.application.long_loading_notice,
+			loading_notice: loadingNotice,
 			loading_type: 'upfront-boot',
 			done: Upfront.Settings.l10n.global.application.thank_you_for_waiting,
 			fixed: true,

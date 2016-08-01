@@ -34,7 +34,7 @@ var Uslider_Slide = Backbone.Model.extend({
 		return this.set('breakpoint', data);
 	},
 	is_theme_image: function () {
-		return this.get('srcFull') && this.get('srcFull').match('wp-content/themes/');
+		return this.get('srcFull') && this.get('srcFull').match(Upfront.mainData.currentThemePath);
 	}
 });
 
@@ -489,7 +489,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 					? this.$('.uslide[rel=' + currentSlide.id + ']').find('.uslide-caption').outerHeight(true)
 					: 0
 				;
-			this.$('.uslides').css({ 'padding-top' : wrapper.height() + textHeight});
+			this.$('.uslides').css({ 'padding-top' : wrapper.outerHeight(true) + textHeight});
 		}
 	},
 

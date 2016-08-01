@@ -5171,35 +5171,46 @@ a.upfront-region-name-edit-trigger:before {
   color: #6486a6; }
 
 .upfront-import-image-modal {
-  text-align: center; }
+  text-align: center;
+  color: #1c2d3d;
+  font-size: 16px;
+  background: rgba(28, 45, 61, 0.5); }
+
+.upfront-import-image-modal .upfront-inline-modal-content {
+  padding: 40px; }
 
 .upfront-import-image-button {
-  display: block;
-  background: #1fcd8f;
-  color: #f1f8ff;
+  display: inline-block;
   font-size: 14px;
-  margin: 15px auto;
-  padding: 0 10px;
-  line-height: 34px;
-  height: 34px;
-  width: 130px;
-  text-align: center; }
+  margin: 0 20px;
+  padding: 0 20px;
+  line-height: 40px;
+  height: 40px;
+  text-align: center;
+  color: #7190af;
+  border: 1px solid #b2cbe2;
+  border-radius: 3px;
+  background: #f9fcff; }
 
 .upfront-import-image-list {
-  padding: 10px 0 0;
+  padding: 20px 0 0;
   text-align: center; }
 
 .upfront-import-image-list.upfront-scroll-panel {
   max-height: 320px; }
 
 .upfront-import-image-each {
-  width: 120px;
-  height: 90px;
+  width: 103px;
+  height: 75px;
+  border: 1px solid #a9cae8;
+  /* Below is image pattern for background */
+  background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+CjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0iI0U0RjNGRiI+PC9yZWN0Pgo8cmVjdCB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIGZpbGw9IiNEMkU3RjgiPjwvcmVjdD4KPHJlY3QgeD0iMTAiIHk9IjEwIiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIGZpbGw9IiNEMkU3RjgiPjwvcmVjdD4KPC9zdmc+") repeat;
+  background-position: 5px 0;
   overflow: hidden;
   display: inline-block;
-  margin: 0 10px 10px;
-  position: relative;
-  background: #ccc; }
+  vertical-align: top;
+  margin: 0 10px 20px;
+  position: relative; }
 
 .upfront-import-image-each.processing {
   animation-duration: 1s;
@@ -6299,7 +6310,7 @@ a.upfront-region-name-edit-trigger:before {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 999998;
+  z-index: 10001003;
   width: 100%;
   height: 100%; }
 
@@ -6311,7 +6322,7 @@ a.upfront-region-name-edit-trigger:before {
   left: 50%;
   width: 520px;
   margin-left: -210px;
-  z-index: 999999;
+  z-index: 10001004;
   padding: 40px;
   text-align: center; }
 
@@ -14781,13 +14792,15 @@ li#new-custom-breakpoint {
 
 .icon-font-icons-preview::-webkit-scrollbar,
 #text-fonts-manager .font-weights-list-wrapper::-webkit-scrollbar,
-#text-fonts-manager .font-list::-webkit-scrollbar {
+#text-fonts-manager .font-list::-webkit-scrollbar,
+.icon-fonts-list::-webkit-scrollbar {
   background: none;
   width: 5px; }
 
 .icon-font-icons-preview::-webkit-scrollbar-thumb,
 #text-fonts-manager .font-weights-list-wrapper::-webkit-scrollbar-thumb,
-#text-fonts-manager .font-list::-webkit-scrollbar-thumb {
+#text-fonts-manager .font-list::-webkit-scrollbar-thumb,
+.icon-fonts-list::-webkit-scrollbar-thumb {
   border-right: 5px solid #1fcd8f; }
 
 #text-fonts-manager .font-weights-list input {
@@ -14948,11 +14961,11 @@ li#new-custom-breakpoint {
 .manage-icon-fonts {
   float: left;
   width: 233px;
-  height: 382px; }
+  height: 350px; }
 
 .icon-fonts-message i {
   position: absolute;
-  top: 4px;
+  top: 0;
   left: 15px;
   width: 16px;
   height: 16px;
@@ -14961,8 +14974,10 @@ li#new-custom-breakpoint {
 .icon-fonts-message {
   color: #263a4d;
   padding-left: 35px;
-  font-size: .8em;
-  position: relative; }
+  font-size: 11px;
+  line-height: 16px;
+  position: relative;
+  margin-top: 5px; }
 
 .icon-fonts-list {
   background: white;
@@ -14973,74 +14988,100 @@ li#new-custom-breakpoint {
 
 .icon-fonts-list-item {
   border-bottom: 1px solid #e4eef6;
-  padding-left: 20px;
+  /* padding-left: 10px; */
   cursor: pointer;
   color: #263a4d;
-  font: 400 14px/18px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif; }
+  font: 400 13px/18px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif; }
 
 .icon-fonts-list-item .font-fileset {
-  display: none; }
+  display: none;
+  background: #f5f8fb; }
 
 .icon-fonts-list-item .font-name {
   width: 120px;
   overflow: hidden;
-  padding: 10px 0; }
+  padding: 10px 0;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 10px; }
   .icon-fonts-list-item .font-name .icon-font-family {
-    width: 100px;
+    width: 100%;
     overflow: hidden;
     white-space: nowrap;
     display: inline-block;
-    float: left; }
+    position: relative; }
+    .icon-fonts-list-item .font-name .icon-font-family:after {
+      content: '';
+      width: 20px;
+      height: 20px;
+      background: linear-gradient(270deg, white, rgba(255, 255, 255, 0.3));
+      position: absolute;
+      right: 0; }
 
 .icon-fonts-list-item a.expand-toggle {
-  display: block;
-  position: absolute;
-  top: 0;
-  right: 10px; }
+  display: inline-block;
+  vertical-align: middle; }
   .icon-fonts-list-item a.expand-toggle span.fileset-count {
-    color: #999;
+    color: rgba(38, 58, 77, 0.5);
     text-transform: uppercase;
-    font-size: .8em; }
+    font: 800 10px/2 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+    margin-right: 5px; }
   .icon-fonts-list-item a.expand-toggle i {
     content: "";
     display: inline-block;
-    width: 30px;
-    height: 20px;
-    background: url(../img/uf-core-el-sprite.svg) no-repeat -285px -452px;
-    color: transparent; }
+    width: 26px;
+    height: 18px;
+    background: #f2f9ff url(../img/uf-core-el-sprite.svg) no-repeat -288px -492px;
+    color: transparent;
+    border: 1px solid rgba(36, 58, 78, 0.15);
+    border-radius: 2px; }
 
 .icon-fonts-list-item .font-filename {
-  font-size: .8em;
-  font-weight: normal;
-  position: relative; }
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 2;
+  position: relative;
+  padding: 5px 10px;
+  opacity: 0.8; }
   .icon-fonts-list-item .font-filename a {
     position: absolute;
     right: 10px;
-    top: .8em;
-    height: 12px;
-    width: 12px;
-    border: 1px solid #ff0000;
+    top: 8px;
+    height: 16px;
+    width: 16px;
     display: none;
-    border-radius: 10px;
-    color: #ff0000;
-    line-height: 12px;
-    text-align: center;
-    font-size: 12px; }
+    font-size: 1px; }
+    .icon-fonts-list-item .font-filename a:after {
+      content: '';
+      background: url(../img/uf-core-el-sprite.svg) no-repeat -484px -170px;
+      width: 16px;
+      height: 16px;
+      position: absolute;
+      top: 0;
+      left: 0; }
+  .icon-fonts-list-item .font-filename:hover {
+    opacity: 1;
+    background: #edf0f2; }
   .icon-fonts-list-item .font-filename:hover a {
     display: block; }
 
 .icon-fonts-list-item.expanded .font-fileset {
   display: block; }
 
+.icon-fonts-list-item-active {
+  box-shadow: inset 2px 0px 0px 0px #1fcd8f;
+  position: relative; }
+
 .upload-icon-font {
-  border: 2px solid #85a9cc;
+  background-image: linear-gradient(-180deg, #FAFDFF 0%, #F2F9FF 100%);
+  border: 1px solid #A2BFDA;
+  border-radius: 3px;
+  color: #6486A6;
+  cursor: pointer;
+  display: inline-block;
+  font: 400 12px/16px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   margin: 15px 3px 0 14px;
-  height: 41px;
-  line-height: 39px;
-  padding: 0;
-  text-align: center;
-  color: #2f4770;
-  cursor: pointer; }
+  padding: 5px 10px; }
 
 .upload-icon-font .uf_font_icon {
   font-family: 'icomoon' !important; }
@@ -15050,9 +15091,10 @@ li#new-custom-breakpoint {
   margin-left: 15px;
   background: white;
   width: 493px;
-  height: 325px;
+  height: 300px;
   overflow: auto;
-  border: 1px solid #bdd0e2; }
+  border: 1px solid #bdd0e2;
+  box-shadow: inset 0px -5px 10px 0px rgba(36, 58, 78, 0.15); }
 
 .icon-font-icon-preview {
   width: 81px;
@@ -15067,22 +15109,6 @@ li#new-custom-breakpoint {
 
 .icon-font-icon-preview:nth-child(6n) {
   border-right: 0 none; }
-
-.icon-fonts-list-item-active {
-  background: #e9faf4;
-  position: relative; }
-
-.icon-fonts-list-item-active:before {
-  position: absolute;
-  content: "";
-  display: block;
-  left: 5px;
-  top: 11px;
-  width: 12px;
-  height: 12px;
-  border: 3px solid #263a4d;
-  border-radius: 10px;
-  background: #1fcd8f; }
 
 .icon-font-upload-status {
   display: inline-block;
@@ -16582,6 +16608,11 @@ div.preset-manager-panel .fontSize, div.preset-manager-panel .lineHeight, div.pr
   display: inline-block;
   margin-top: 0px;
   margin-right: 12px; }
+
+div.preset-manager-panel .fontSize,
+div.preset-manager-panel .fontSize input,
+div.preset-manager-panel .lineHeight input {
+  font-size: 12px; }
 
 div.preset-manager-panel .fontSize input {
   width: 50px; }

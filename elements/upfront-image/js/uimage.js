@@ -219,7 +219,7 @@ define([
 		},
 
 		isThemeImage: function() {
-			return this.property('srcFull') && this.property('srcFull').match('wp-content/themes/');
+			return this.property('srcFull') && this.property('srcFull').match(Upfront.mainData.currentThemePath);
 		},
 
 		replaceImage: function() {

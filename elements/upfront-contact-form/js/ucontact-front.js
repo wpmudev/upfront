@@ -92,7 +92,7 @@ jQuery(function($){
 			(message.attr("data-string") || 'You forgot to write a message.'),
 			errors, message
 		);
-		if (!realPerson.val().trim()) add_error(
+		if (typeof realPerson !== "undefined" && typeof realPerson.val() !== "undefined" && !realPerson.val().trim()) add_error(
 			'You must write CAPTCHA number.',
 			errors, realPerson
 		);

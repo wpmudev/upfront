@@ -1844,9 +1844,9 @@ define([
 
 				if ( breakpoint && !breakpoint['default'] ) {
 					this.update_position();
-				} else {
+				} else if ( $('#element-settings-sidebar').children().length == 0 ) {
 					// when saving from responsive mode, preset gets overwritten by breakpoint presets
-					// we have to correct that here
+					// we have to correct that here but only when element settings not activated
 					var currentPreset = this.model.get_property_value_by_name('current_preset'),
 						setPreset = this.model.get_property_value_by_name('preset')
 					;
@@ -7099,6 +7099,7 @@ define([
 					me.$el.append(me.bg_setting.el);
 
 					me.fix_height();
+					me.update_grid_css(); // Don't forget to update grid CSS
 
 					// Use flexbox when we can
 					if ( Upfront.Util.css_support('flex') )

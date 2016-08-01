@@ -103,6 +103,8 @@ var _alpha = "alpha",
 				breakpoint_preset = (model[breakpoint_id] || model['desktop'] || {}).preset;
 			} else {
 				breakpoint_preset = (model[breakpoint_id] || {}).preset;
+				// when on desktop, set `current_preset` to desktop preset
+				current = breakpoint_preset || 'default';
 			}
 			var actual = breakpoint_preset || current;
 

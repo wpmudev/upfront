@@ -47,13 +47,15 @@
 }
 .icon-font-icons-preview::-webkit-scrollbar,
 #text-fonts-manager .font-weights-list-wrapper::-webkit-scrollbar,
-#text-fonts-manager .font-list::-webkit-scrollbar {
+#text-fonts-manager .font-list::-webkit-scrollbar,
+.icon-fonts-list::-webkit-scrollbar {
   background: none;
   width: 5px;
 }
 .icon-font-icons-preview::-webkit-scrollbar-thumb,
 #text-fonts-manager .font-weights-list-wrapper::-webkit-scrollbar-thumb,
-#text-fonts-manager .font-list::-webkit-scrollbar-thumb {
+#text-fonts-manager .font-list::-webkit-scrollbar-thumb,
+.icon-fonts-list::-webkit-scrollbar-thumb {
   border-right: 5px solid #1fcd8f;
 }
 #text-fonts-manager .font-weights-list input {
@@ -214,11 +216,11 @@
 .manage-icon-fonts {
 	float: left;
 	width: 233px;
-	height: 382px;
+	height: 350px;
 }
 .icon-fonts-message i {
 	position: absolute;
-	top: 4px;
+	top: 0;
 	left: 15px;
 	width: 16px;
 	height: 16px;
@@ -227,8 +229,10 @@
 .icon-fonts-message {
 	color: #263a4d;
 	padding-left: 35px;
-	font-size: .8em;
+	font-size: 11px;
+	line-height:16px;
 	position: relative;
+	margin-top:5px;
 }
 .icon-fonts-list {
 	background: white;
@@ -239,72 +243,100 @@
 }
 .icon-fonts-list-item {
 	border-bottom: 1px solid #e4eef6;
-	padding-left: 20px;
+	/* padding-left: 10px; */
 	cursor: pointer;
 	color: #263a4d;
-	font:400 14px/18px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+	font:400 13px/18px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 }
 
 .icon-fonts-list-item {
 
 	.font-fileset {
 		display: none;
+		background: rgb(245,248,251);
 	}
 
 	.font-name {
 		width: 120px;
 		overflow: hidden;
 		padding:10px 0;
+		display:inline-block;
+		vertical-align: middle;
+		margin-left:10px;
 
 		.icon-font-family {
-			width: 100px;
+			width:100%;
 			overflow: hidden;
 			white-space: nowrap;
 			display: inline-block;
-			float: left;
+			position: relative;
+
+			&:after {
+				content: '';
+		    width: 20px;
+		    height: 20px;
+		    background: linear-gradient(270deg, rgba(255,255,255,1), rgba(255,255,255,0.3));
+		    position: absolute;
+		    right: 0;
+			}
 		}
+
 	}
 
 	a.expand-toggle {
-		display: block;
-		position: absolute;
-		top: 0;
-		right: 10px;
+		display:inline-block;
+		vertical-align: middle;
 
 		span.fileset-count {
-			color: #999;
+			color: rgba(38,58,77,0.5);
 			text-transform: uppercase;
-			font-size: .8em;
+			font:800 10px/2 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+			margin-right:5px;
 		}
 
 		i {
 			content: "";
 			display: inline-block;
-			width: 30px;
-			height: 20px;
-			background: url(../img/uf-core-el-sprite.svg) no-repeat -285px -452px;
+			width: 26px;
+			height: 18px;
+			background: rgb(242,249,255) url(../img/uf-core-el-sprite.svg) no-repeat -288px -492px;
 			color: transparent;
+			border: 1px solid rgba(36,58,78,0.15);
+    	border-radius: 2px;
 		}
 	}
 
 	.font-filename {
-		font-size: .8em;
-		font-weight: normal;
+		font-size: 12px;
+		font-weight: 400;
+		line-height:2; 
 		position: relative;
+		padding:5px 10px;
+		opacity: 0.8;
 
 		a {
-			position: absolute;
-		    right: 10px;
-			top: .8em;
-		    height: 12px;
-		    width: 12px;
-		    border: 1px solid #ff0000;
+				position: absolute;
+		  	right: 10px;
+				top: 8px;
+		    height: 16px;
+		    width: 16px;
 		    display: none;
-		    border-radius: 10px;
-		    color: #ff0000;
-		    line-height: 12px;
-		    text-align: center;
-		    font-size: 12px;
+		    font-size: 1px;
+
+		    &:after {
+		    	content: '';
+			    background: url(../img/uf-core-el-sprite.svg) no-repeat -484px -170px;
+			    width: 16px;
+			    height: 16px;
+			    position: absolute;
+			    top:0;
+			    left:0;
+		    }
+		}
+
+		&:hover {
+			opacity: 1;
+			background: rgb(237,240,242);
 		}
 
 		&:hover a {
@@ -316,15 +348,21 @@
 	}
 }
 
+.icon-fonts-list-item-active {
+	box-shadow:inset 2px 0px 0px 0px rgb(31,205,143);
+	position: relative;
+}
+
 .upload-icon-font {
-	border: 2px solid #85a9cc;
-	margin: 15px 3px 0 14px;
-	height: 41px;
-	line-height: 39px;
-	padding: 0;
-	text-align: center;
-	color: #2f4770;
+	background-image: linear-gradient(-180deg, #FAFDFF 0%, #F2F9FF 100%);
+	border: 1px solid #A2BFDA;
+	border-radius: 3px;
+	color: #6486A6;
 	cursor: pointer;
+	display: inline-block;
+	font:400 12px/16px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+	margin: 15px 3px 0 14px;
+	padding: 5px 10px;
 }
 .upload-icon-font .uf_font_icon {
 	font-family: 'icomoon' !important;
@@ -334,9 +372,10 @@
 	margin-left: 15px;
 	background: white;
 	width: 493px;
-	height: 325px;
+	height: 300px;
 	overflow: auto;
 	border: 1px solid #bdd0e2;
+	box-shadow: inset 0px -5px 10px 0px rgba(36,58,78,0.15);
 }
 .icon-font-icon-preview {
 	width: 81px;
@@ -352,22 +391,8 @@
 .icon-font-icon-preview:nth-child(6n) {
 	border-right: 0 none;
 }
-.icon-fonts-list-item-active {
-	background: #e9faf4;
-	position: relative;
-}
-.icon-fonts-list-item-active:before {
-	position: absolute;
-	content: "";
-	display: block;
-	left: 5px;
-	top: 11px;
-	width: 12px;
-	height: 12px;
-	border: 3px solid #263a4d;
-	border-radius: 10px;
-	background: #1fcd8f;
-}
+
+
 .icon-font-upload-status {
 	display: inline-block;
 	padding: 0 3px;
