@@ -909,9 +909,6 @@
                     var variants = theme_fonts_collection.get_variants(this.fields[0].get_value());
                     this.render_variants(variants);
                 });
-                this.listenTo(this.fields[1], 'changed', function() {
-                    // this.preview_font();
-                });
 
                 $('.choose-typeface select', this.$el).chosen({
                     width: '230px',
