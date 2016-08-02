@@ -102,6 +102,10 @@ div.upfront-login_element-module.upfront-module-active .upfront_login.upfront_lo
 	vertical-align: middle;
 }
 
+.upfront_login p.login-lostpassword {
+	margin: 3px;
+}
+
 .upfront_login form#loginform p input.upfront-input-labels[type="text"],
 .upfront_login p.login-lostpassword input.upfront-input-labels[type="text"] {
 	background: transparent;
