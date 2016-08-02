@@ -227,7 +227,6 @@
             },
             startInsertFontWidget: function() {
                 var insertFontWidget = new Fonts.Insert_Font_Widget({ collection: Fonts.theme_fonts_collection });
-                insertFontWidget.is_responsive = true;
                 $('#insert-font-widget').html(insertFontWidget.render().el);
             },
             addSelector: function(e) {

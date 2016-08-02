@@ -896,7 +896,7 @@
                         }
                     })
                 ];
-                this.is_responsive = false;
+                this.is_responsive = ( Upfront.Application.get_current() === Upfront.Settings.Application.MODE.RESPONSIVE );
             },
             render: function() {
                 $('#insert-font-widget').html('').addClass('open');
