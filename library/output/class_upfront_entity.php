@@ -154,7 +154,7 @@ abstract class Upfront_Entity {
 			}
 			if (!$this->_is_background_overlay($breakpoint_id)) {
 				if ('featured' == $type && has_post_thumbnail(Upfront_Output::get_post_id())) {
-					$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'single-post-thumbnail' );
+					$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( Upfront_Output::get_post_id() ), 'single-post-thumbnail' );
 					$background_image = $featured_image[0];
 				} else {
 					$background_image = $this->_get_breakpoint_property('background_image', $breakpoint_id);
