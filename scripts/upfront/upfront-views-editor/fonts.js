@@ -896,6 +896,7 @@
                         }
                     })
                 ];
+                this.is_responsive = false;
             },
             render: function() {
                 $('#insert-font-widget').html('').addClass('open');
@@ -943,7 +944,7 @@
             },
             replaceFont: function(font) {
                 var lines;
-                this.editor = Upfront.Application.cssEditor.editor || Upfront.Application.generalCssEditor.editor;
+								this.editor = ( this.is_responsive ) ? Upfront.Application.generalCssEditor.editor : Upfront.Application.cssEditor.editor;
                 this.style_doc = this.editor.getSession().getDocument();
 
                 this.last_selected_font = font;
@@ -972,7 +973,7 @@
             },
             reset_properties: function() {
                 var row, line, result;
-                this.editor = Upfront.Application.cssEditor.editor || Upfront.Application.generalCssEditor.editor;
+                this.editor = ( this.is_responsive ) ? Upfront.Application.generalCssEditor.editor : Upfront.Application.cssEditor.editor;
                 this.style_doc = this.editor.getSession().getDocument();
                 // Search forward only from font family row since lower properties override upper
                 result = {};

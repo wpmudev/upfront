@@ -792,6 +792,7 @@
 
             startInsertFontWidget: function() {
                 var insertFontWidget = new Fonts.Insert_Font_Widget({ collection: Fonts.theme_fonts_collection });
+                insertFontWidget.is_responsive = false;
                 $('#insert-font-widget').html(insertFontWidget.render().el);
             },
 
