@@ -16142,7 +16142,9 @@ a.missing-lightbox-warning:before {
 #upfront_map-location_overlay,
 #upfront_map-location_overlay p,
 .upfront-quick-swap p {
-  color: #3f5870; }
+  color: #1c2d3d;
+  font-weight: 200;
+  background: transparent; }
 
 .code-element-choose {
   text-align: center; }

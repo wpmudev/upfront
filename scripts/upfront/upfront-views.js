@@ -17,7 +17,8 @@ define([
 	"text!upfront/templates/region_container.html",
 	"text!upfront/templates/region.html",
 	"text!upfront/templates/wrapper.html",
-	"text!upfront/templates/layout.html"
+	"text!upfront/templates/layout.html",
+	"text!upfront/templates/api_key_overlay_region.html"
 ], function (RenderQueue, RenderQueueReporter) {
   var _template_files = [
     "text!upfront/templates/object.html",
@@ -27,7 +28,8 @@ define([
     "text!upfront/templates/region_container.html",
     "text!upfront/templates/region.html",
     "text!upfront/templates/wrapper.html",
-    "text!upfront/templates/layout.html"
+    "text!upfront/templates/layout.html",
+    "text!upfront/templates/api_key_overlay_region.html"
 ];
 
 	// Auto-assign the template contents to internal variable
@@ -350,7 +352,24 @@ define([
 					me.update_background_map($type, $overlay);
 				});
 			},
+			// If no API Key, display notice.
+			add_api_key_overlay: function() {
+				// Only add if overlay does not already exist.
+				if (!this.$el.find('#upfront_map-api_key_overlay-wrapper')[0]) {
+					this.$el.append(
+						_.template(_Upfront_Templates['api_key_overlay_region'])
+					);
+				}
+			},
 			update_background_map: function ($type, $overlay) {
+				// If background type is map and is missing API Key, show notice.
+				if (
+					!(window._upfront_api_keys || {})['gmaps']
+					&& Upfront.Application.user_can_modify_layout()
+				) {
+					this.add_api_key_overlay();
+				}
+
 				try {
 					if (!window.google.maps.Map) return this.postpone_map_init($type, $overlay);
 				} catch (e) {
