@@ -354,9 +354,12 @@ define([
 			},
 			// If no API Key, display notice.
 			add_api_key_overlay: function() {
-				this.$el.append(
-					_.template(_Upfront_Templates['api_key_overlay_region'])
-				);
+				// Only add if overlay does not already exist.
+				if (!this.$el.find('#upfront_map-api_key_overlay-wrapper')[0]) {
+					this.$el.append(
+						_.template(_Upfront_Templates['api_key_overlay_region'])
+					);
+				}
 			},
 			update_background_map: function ($type, $overlay) {
 				// If background type is map and is missing API Key, show notice.

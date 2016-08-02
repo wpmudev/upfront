@@ -126,6 +126,8 @@ define([
 				me = this
 			;
 			if (!location || location === old_location) return false;
+			// Do not geocode if no API Key has been set.
+			if (!(window._upfront_api_keys || {})['gmaps']) return false;
 			if (location === old_address) return false; // Do not re-geocode the same location
 			if (this._geocoding_in_progress) return false;
 			this._geocoding_in_progress = true;
@@ -210,9 +212,9 @@ define([
 				if (props.style_overlay) {
 					this.map.setOptions({styles: props.style_overlay});
 				}
+				// If no location and API key
+				// overlay is not there, show location overlay.
 				if (
-					// If no location and API key
-					// overlay is not there, show location overlay.
 					!this.model.get_property_value_by_name("map_center")
 					&& (window._upfront_api_keys || {})['gmaps']) {
 					this.add_location_overlay();
@@ -284,7 +286,8 @@ define([
 						element_id = me.model.get_property_value_by_name("element_id"),
 						add = $address.length ? $address.val() : ''
 					;
-					if (!add) return false;
+					// If no address or no API Key, return false.
+					if (!add || !(window._upfront_api_keys || {})['gmaps']) return false;
 
 					geocoder.geocode({address: add}, function (results, status) {
 						if (status != google.maps.GeocoderStatus.OK) return false;
