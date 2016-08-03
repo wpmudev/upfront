@@ -50,9 +50,15 @@ class Upfront_Server_Metadata implements IUpfront_Server {
 	public function inject_editor_data ($data) {
 		if (!empty($data['metadata'])) return $data;
 
+		$metadesc_length = defined('WDS_METADESC_LENGTH_CHAR_COUNT_LIMIT') && is_numeric(WDS_METADESC_LENGTH_CHAR_COUNT_LIMIT)
+			? WDS_METADESC_LENGTH_CHAR_COUNT_LIMIT
+			: 160
+		;
+
 		$data['metadata'] = array(
-			'key' => self::KEY_METADESC,
-			'supported_meta_keys' => self::get_supported_metadesc_keys(),
+			'metadesc_key' => self::KEY_METADESC,
+			'supported_metadesc_keys' => self::get_supported_metadesc_keys(),
+			'metadesc_length' => $metadesc_length
 		);
 
 		return $data;

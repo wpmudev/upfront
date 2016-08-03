@@ -21,14 +21,27 @@ define(["text!upfront/templates/post-editor/edition-box.html"], function (editio
 			'_wds_metadesc'
 		],
 
+		/**
+		 * Meta description character limit
+		 *
+		 * @type {Number}
+		 */
+		char_limit: 160,
+
 		events: {
 			"click a.ueditor-save-post-data": "handle_metadesc_update",
 			"keyup textarea": "handle_counter_update"
 		},
 
 		initialize: function () {
-			this.meta_key = ((Upfront.data || {}).metadata || {}).key || this.meta_key;
-			this.supported_meta_keys = ((Upfront.data || {}).metadata || {}).supported_meta_keys || this.supported_meta_keys;
+			this.meta_key = ((Upfront.data || {}).metadata || {}).metadesc_key || this.meta_key;
+			this.supported_meta_keys = ((Upfront.data || {}).metadata || {}).supported_metadesc_keys || this.supported_meta_keys;
+
+			var limit = !!((Upfront.data || {}).metadata || {}).metadesc_length
+				? parseInt(Upfront.data.metadata.metadesc_length, 10)
+				: false
+			;
+			this.char_limit = limit || this.char_limit;
 		},
 
 		render: function () {
@@ -53,7 +66,7 @@ define(["text!upfront/templates/post-editor/edition-box.html"], function (editio
 		 * @return {Integer}
 		 */
 		get_char_limit: function () {
-			return 16;
+			return this.char_limit;
 		},
 
 		/**
