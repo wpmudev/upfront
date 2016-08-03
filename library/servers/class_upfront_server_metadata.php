@@ -147,8 +147,11 @@ class Upfront_Server_Metadata implements IUpfront_Server {
 	 * @return bool
 	 */
 	public function process_post_meta_update ($meta_list, $post_id) {
-		if (empty($meta_list) || !is_numeric($post_id)) return false;
+		if (empty($meta_list) || !is_array($meta_list) || !is_numeric($post_id)) return false;
 		if (!current_user_can('edit_post', $post_id)) return false;
+
+		$post_id = (int)$post_id;
+		if (empty($post_id)) return false;
 
 		// Process meta description
 		if (isset($meta_list[self::KEY_METADESC])) {
