@@ -16,7 +16,6 @@ class Upfront_UmapView extends Upfront_Object{
 
 		if (empty($properties)) return ''; // No info for this map, carry on.
 
-		upfront_add_element_script('upfront_maps', array('js/upfront_maps-public.js', dirname(__FILE__)));
 		upfront_add_element_style('upfront_maps', array('css/visitor.css', dirname(__FILE__)));
 		
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
@@ -25,8 +24,18 @@ class Upfront_UmapView extends Upfront_Object{
 		}
 
 		$msg = esc_html(self::_get_l10n('preloading_msg'));
+		$class_name = 'ufm-gmap-container';
 
-		return "<div class='ufm-gmap-container' {$element_id} {$map}>{$msg}</div>";
+		// If Static Map, use appropriate script.
+		if ($static=true) {
+			upfront_add_element_script('upfront_maps', array('js/upfront_maps-static-public.js', dirname(__FILE__)));
+			$class_name = 'ufm-gmap-static-container';
+		} else {
+			// If dynamic map, add the necessary script.
+			upfront_add_element_script('upfront_maps', array('js/upfront_maps-public.js', dirname(__FILE__)));
+		}
+
+		return "<div class='$class_name' {$element_id} {$map}>{$msg}</div>";
 	}
 
 	public static function add_js_defaults($data){
