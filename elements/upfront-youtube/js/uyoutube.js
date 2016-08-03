@@ -490,12 +490,24 @@ var YoutubeSettings = ElementSettings.extend({
 
 	initialize: function (options) {
 		this.constructor.__super__.initialize.call(this, options);
-
+		
+		this.listenTo(Upfront.Events, "element:settings:canceled", this.settingRemove);
+		
 		this.listenTo(Upfront.Events, "upfront:youtube:added", this.multipleVideos);
 	},
 
 	actions: {
 		'single': 'upfront_youtube_single'
+	},
+	
+	settingRemove: function() {
+		var me = this;
+		
+		// Give some time
+		setTimeout( function () {
+			me.for_view.model.set_property('multiple_videos', me.multiple_videos, false);
+			me.for_view.parent_view.render();
+		}, 100);
 	},
 
 	multipleVideos: function(event) {
@@ -547,6 +559,7 @@ var YoutubeSettings = ElementSettings.extend({
 						if(videoCounter == videoFields.length) {
 							multiple_videos_array.sort(function(a,b) { return a.order - b.order; });
 							me.for_view.model.set_property('multiple_videos', multiple_videos_array, false);
+							me.multiple_videos = multiple_videos_array;
 						}
 					})
 					;
