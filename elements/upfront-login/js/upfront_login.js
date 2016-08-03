@@ -626,14 +626,15 @@ define([
 		"Element": LoginElement,
 		"Settings": LoginSettings,
 		cssSelectors: {
-			'.upfront_login-form p': {label: l10n.css.containers, info: l10n.css.containers_info},
-			'.upfront_login-form form label': {label: l10n.css.labels, info: l10n.css.labels_info},
-			'.upfront_login-form form input:not([type=submit]):not([type=checkbox])': {label: l10n.css.inputs, info: l10n.css.inputs_info},
-			'.upfront_login-form form  input[type=submit]': {label: l10n.css.button, info: l10n.css.button_info},
-			'.upfront_login-form form  input[type=checkbox]': {label: l10n.css.remember, info: l10n.css.remember_info},
-			'.login-lostpassword': {label: l10n.css.pwd_wrap, info: l10n.css.pwd_wrap_info},
-			'.upfront_login-form p .login-lostpassword-link': {label: l10n.css.pwd_link, info: l10n.css.pwd_link_info},
-			'.upfront_login-trigger': {label: l10n.css.close, info: l10n.css.close_info}
+			'.upfront_login-form': {label: l10n.css.form_wrapper, info: l10n.css.form_wrapper_info},
+			'.upfront_login-form p:not(.login-lostpassword)': {label: l10n.css.containers, info: l10n.css.containers_info},
+			'.upfront_login-form form#loginform label, .upfront_login-form form#loginform p:not(.login-submit):not(.login-remember) input.upfront-input-labels': {label: l10n.css.labels, info: l10n.css.labels_info},
+			'.upfront_login-form form#loginform input:not([type=submit]):not([type=checkbox]):not(.upfront-input-labels)': {label: l10n.css.inputs, info: l10n.css.inputs_info},
+			'.upfront_login-form form#loginform input[type=submit], .upfront_login-form form#loginform p.login-submit input.upfront-input-labels': {label: l10n.css.button, info: l10n.css.button_info},
+			'.upfront_login-form form#loginform input[type=checkbox]': {label: l10n.css.remember, info: l10n.css.remember_info},
+			'.upfront_login-form p.login-lostpassword': {label: l10n.css.pwd_wrap, info: l10n.css.pwd_wrap_info},
+			'.upfront_login-form p .login-lostpassword-link, .upfront_login-form p .upfront-input-labels.lostpassword-link': {label: l10n.css.pwd_link, info: l10n.css.pwd_link_info},
+			'.upfront_login-trigger': {label: l10n.css.login_trigger, info: l10n.css.login_trigger_info}
 		},
 		cssSelectorsId: Upfront.data.upfront_login.defaults.type
 	});

@@ -100,7 +100,7 @@ div.preset-manager-panel .color-module.two{
     height: 19px;
 }
 .upfront-field-wrap-color .sp-preview{
-    top: 1px;
+    top: 0px;
 }
 div.preset-manager-panel div.fontColor label, div.preset-manager-panel div.borderColor label{
     left: auto;
@@ -202,11 +202,15 @@ a.upfront-region-name-edit-trigger{
     float: right;
     margin-left: 6px;
 }
+div.preset-manager-panel .checkbox-tooltip{
+    left: auto;
+    right: 8px;
+}
 /*-------------- End of General --------------*/
 
 /*-------------- Sidebar --------------*/
 #sidebar-ui .sidebar-commands-control .command-start-responsive{
-    margin: 10px 10px 0 0;
+    margin: 0 8px 0 14px;
 }
 #sidebar-ui{
     left: auto;
@@ -250,7 +254,7 @@ a.upfront-region-name-edit-trigger{
     margin: 0 5px 0 0;
 }
 #sidebar-ui .sidebar-commands-control .command-grid{
-    margin: 1px 77px 8px 12px;
+    margin: 0px 6px 8px 12px;
 }
 #sidebar-ui ul.sidebar-panel-tabspane{
     padding: 0 10px 5px 0;
@@ -317,6 +321,23 @@ a.upfront-region-name-edit-trigger{
 }
 .upfront-field-select-option{
     margin: 0 0 0 10px !important;
+}
+.upfront-icon-redo:before, .upfront-icon-undo:before{
+    right: 7px;
+    left: auto;
+}
+#sidebar-ui .sidebar-commands-control .command-save{
+    margin: 10px 0 0 15px;
+    float: left;
+}
+#sidebar-ui .sidebar-commands-control.sidebar-commands-responsive-control .command-save{
+    margin-top: 44px;
+}
+#sidebar-ui .sidebar-commands-control li{
+    margin: 0 6px 8px 6px;
+}
+#sidebar-ui .upfront-typography-fields-left{
+    width: 53%;
 }
 /*-------------- End of Sidebar --------------*/
 
@@ -730,10 +751,13 @@ div#page.upfront-layout-view .upfront-editable_entity.upfront-module .upfront-ac
     text-align: left;
 }
 .upfront-field-text.ueditor-post-url-text{
-    float: left;
-    direction: ltr;
-    text-align: left;
+    float: right;
+    direction: rtl;
+    text-align: right;
     margin-top: 5px;
+}
+#sidebar-ui .ueditor-save-post-data, #sidebar-ui #upfront-tax-add_term{
+    top: 4px;
 }
 .ueditor-box-title{
     padding: 0 10px 0 0;
