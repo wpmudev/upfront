@@ -491,7 +491,7 @@ var YoutubeSettings = ElementSettings.extend({
 	initialize: function (options) {
 		this.constructor.__super__.initialize.call(this, options);
 		
-		this.listenTo(Upfront.Events, "element:settings:canceled", this.settingRemove);
+		this.listenTo(Upfront.Events, "element:settings:canceled", this.deactivateSettings);
 		
 		this.listenTo(Upfront.Events, "upfront:youtube:added", this.multipleVideos);
 	},
@@ -500,7 +500,7 @@ var YoutubeSettings = ElementSettings.extend({
 		'single': 'upfront_youtube_single'
 	},
 	
-	settingRemove: function() {
+	deactivateSettings: function() {
 		var me = this;
 		
 		// Give some time
