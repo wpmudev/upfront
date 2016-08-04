@@ -39,12 +39,15 @@
 
 	<script id="post-box-metadesc" type="text/template">
 		<div class="ueditor-post-page-metadesc">
-			<p id="post-metadesc" class="ueditor-previous-data ueditor-previous-data-toggle"><span>Meta</span> <a href="#" class="ueditor-edit-post-metadesc ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a></p>
+			<p id="post-metadesc" class="ueditor-previous-data ueditor-previous-data-toggle">
+				<span>{{ metadesc || Upfront.Settings.l10n.global.views.meta_description }}</span>
+				<a href="#" class="ueditor-edit-post-metadesc ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
+			</p>
 
 
 			<div class="ueditor-togglable ueditor-togglable-post-metadesc">
 				<div class="ueditor-row">
-					<textarea class="upfront-field-text ueditor-post-metadesc-text">{{metadesc}}</textarea>
+					<textarea class="upfront-field-text upfront-field-textarea ueditor-post-metadesc-text">{{metadesc}}</textarea>
 					<div class="char-counter {[ if (char_limit < metadesc.length) { ]}over-limit{[ } ]}" data-limit="{{char_limit}}">
 						<span class="current">{{metadesc.length}}</span> / <span class="limit">{{char_limit}}</span>
 					</div>

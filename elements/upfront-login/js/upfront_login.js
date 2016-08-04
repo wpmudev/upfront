@@ -626,7 +626,8 @@ define([
 		"Element": LoginElement,
 		"Settings": LoginSettings,
 		cssSelectors: {
-			'.upfront_login-form': {label: l10n.css.form_wrapper, info: l10n.css.form_wrapper_info},
+			'.upfront_login-form:not(.triggered)': {label: l10n.css.form_wrapper, info: l10n.css.form_wrapper_info},
+			'.upfront_login-form.triggered': {label: l10n.css.form_wrapper_triggered, info: l10n.css.form_wrapper_triggered_info},
 			'.upfront_login-form p:not(.login-lostpassword)': {label: l10n.css.containers, info: l10n.css.containers_info},
 			'.upfront_login-form form#loginform label, .upfront_login-form form#loginform p:not(.login-submit):not(.login-remember) input.upfront-input-labels': {label: l10n.css.labels, info: l10n.css.labels_info},
 			'.upfront_login-form form#loginform input:not([type=submit]):not([type=checkbox]):not(.upfront-input-labels)': {label: l10n.css.inputs, info: l10n.css.inputs_info},
