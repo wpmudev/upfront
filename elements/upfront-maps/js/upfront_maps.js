@@ -164,6 +164,76 @@ define([
 
 		on_render: function () {
 			this.update_properties();
+			//this.dynamic_map();
+			this.static_map();
+		},
+
+		static_map: function () {
+			var me = this,
+				$el = this.$el.find('.ufm-gmap-container:first'),
+				height = (this.model.get_breakpoint_property_value("row", true) ? this.model.get_breakpoint_property_value("row", true) : this.parent_module_view.model.get_breakpoint_property_value("row", true)),
+				scale = 1,
+				markers = this.model.get_property_value_by_name("markers") || [],
+				props = {
+					center: this.model.get_property_value_by_name("map_center") || DEFAULTS.center,
+					zoom: parseInt(this.model.get_property_value_by_name("zoom"), 10) || DEFAULTS.zoom,
+					type: this.model.get_property_value_by_name("style") || DEFAULTS.style,
+					hide_markers: this.model.get_property_value_by_name("hide_markers") || false,
+				}
+			;
+			height = height ? parseInt(height,10) * Upfront.Settings.LayoutEditor.Grid.baseline : DEFAULTS.OPTIMUM_MAP_HEIGHT;
+			// Google Maps API free size limit is 640x640 (larger does not work).
+			if(parseInt(height,10) > 640) {
+				height = 640;
+				scale = 2;
+			}
+			$el.width('100%');
+			var width = $el.width();
+			if(parseInt(width,10) > 640) {
+				width = 640;
+				scale = 2;
+			}
+			var query_strings = 'center=' + props.center[0] + ',' + props.center[1] +
+				'&size=' + width + 'x' + height +
+				'&zoom=' + props.zoom +
+				'&scale=' + scale +
+				'&maptype=' + props.type.toLowerCase();
+
+			if (!props.hide_markers) {
+				$.each(markers, function(index, marker) {
+					var mrk = '&markers=' +
+						'%7C' + marker.lat + ',' + marker.lng;
+					query_strings += mrk;
+				});
+			}
+			// Get Div with Map Background Image
+			var img = this.load_static_img(query_strings);
+
+			// Set container height to its container height.
+			$el.height(height);
+			// Get rid of default message or other previous HTML.
+			$el.empty();
+			// Add Image to the DOM.
+			$el.append(img)
+
+			// Add Location and Empty API Key Overlays if relevant.
+			this.add_overlays();
+		},
+
+
+		load_static_img: function (query_strings) {
+			var key = (window._upfront_api_keys || {})['gmaps'] || false;
+			// Create Image Element.
+			var image = document.createElement("img");
+
+			// Use Google Maps API Key.
+			key = key ? 'key=' + key + '&': '';
+			image.src = "//maps.googleapis.com/maps/api/staticmap?" + key + query_strings;
+			image.className = 'upfront-map_element_static';
+			return image;
+		},
+
+		dynamic_map: function () {
 			var me = this,
 				$el = this.$el.find('.ufm-gmap-container:first'),
 				height = (this.model.get_breakpoint_property_value("row", true) ? this.model.get_breakpoint_property_value("row", true) : this.parent_module_view.model.get_breakpoint_property_value("row", true)),
@@ -212,21 +282,9 @@ define([
 				if (props.style_overlay) {
 					this.map.setOptions({styles: props.style_overlay});
 				}
-				// If no location and API key
-				// overlay is not there, show location overlay.
-				if (
-					!this.model.get_property_value_by_name("map_center")
-					&& (window._upfront_api_keys || {})['gmaps']) {
-					this.add_location_overlay();
-				}
-
-				// Display Empty API Key Overlay.
-				if (
-					!(window._upfront_api_keys || {})['gmaps']
-					&& Upfront.Application.user_can_modify_layout()
-				) {
-					this.add_api_key_overlay();
-				}
+				
+				// Add Location and Empty API Key Overlays if relevant.
+				this.add_overlays();
 
 				// Re-render the map when needed
 				setTimeout(function () {
@@ -241,6 +299,24 @@ define([
 			}
 		},
 
+		add_overlays: function () {
+			// If no location and API key
+			// overlay is not there, show location overlay.
+			if (
+				!this.model.get_property_value_by_name("map_center")
+				&& (window._upfront_api_keys || {})['gmaps']) {
+				this.add_location_overlay();
+			}
+
+			// Display Empty API Key Overlay.
+			if (
+				!(window._upfront_api_keys || {})['gmaps']
+				&& Upfront.Application.user_can_modify_layout()
+			) {
+				this.add_api_key_overlay();
+			}
+		},
+
 		refresh_map: function () {
 			var $el = this.$el.find('.ufm-gmap-container:first'),
 				height = (this.model.get_breakpoint_property_value("row", true) ? this.model.get_breakpoint_property_value("row", true) : this.parent_module_view.model.get_breakpoint_property_value("row", true));
@@ -252,7 +328,7 @@ define([
 		},
 
 		// If no API Key, display notice.
-		add_api_key_overlay: function() {
+		add_api_key_overlay: function () {
 			this.$el.append(
 				_.template(api_key_overlay_element_template)
 			);

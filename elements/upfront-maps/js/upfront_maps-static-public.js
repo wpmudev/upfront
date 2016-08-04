@@ -49,7 +49,7 @@ function init_map ($el) {
 		$.each(markers, function(index, marker) {
 			var mrk = '&markers=' +
 				'%7C' + marker.lat + ',' + marker.lng;
-			$query_strings += mrk;
+			query_strings += mrk;
 		});
 	}
 	// Get Div with Map Background Image
