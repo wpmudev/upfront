@@ -22,7 +22,7 @@
 					<div class="misc-pub-section misc-pub-visibility"></div>
 					<div class="misc-pub-section  misc-pub-schedule"></div>
 				</div>
-				
+
 				<!--
 				<div class="ueditor-box-bottom-buttons">
 					{[ if(cancelButton){ ]}
@@ -32,14 +32,34 @@
 					<a href="#" class="ueditor-action-trash ueditor-box-icon ueditor-box-icon-text" title="{{Upfront.Settings.l10n.global.content.trash}}">{{Upfront.Settings.l10n.global.content.trash}}</a>
 				</div>
 				-->
-				
+
 			</div>
         </div>
     </script>
 
+	<script id="post-box-metadesc" type="text/template">
+		<div class="ueditor-post-page-metadesc">
+			<p id="post-metadesc" class="ueditor-previous-data ueditor-previous-data-toggle">
+				<span>{{ metadesc || Upfront.Settings.l10n.global.views.meta_description }}</span>
+				<a href="#" class="ueditor-edit-post-metadesc ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
+			</p>
+
+
+			<div class="ueditor-togglable ueditor-togglable-post-metadesc">
+				<div class="ueditor-row">
+					<textarea class="upfront-field-text upfront-field-textarea ueditor-post-metadesc-text">{{metadesc}}</textarea>
+					<div class="char-counter {[ if (char_limit < metadesc.length) { ]}over-limit{[ } ]}" data-limit="{{char_limit}}">
+						<span class="current">{{metadesc.length}}</span> / <span class="limit">{{char_limit}}</span>
+					</div>
+					<a href="#" class="ueditor-save-post-data  ueditor-button-save ueditor-button-small-ok">{{Upfront.Settings.l10n.global.content.ok}}</a>
+				</div>
+			</div>
+		</div>
+	</script>
+
     <script id="post-url-editor" type="text/template">
         <label id="post-url-display-label">{{url_label}}:</label>
-        
+
 		<div class="ueditor-post-page-title">
 			<p id="post-title" class="ueditor-previous-data ueditor-previous-data-toggle"><span>{{postTitle}}</span> <a href="#" class="ueditor-edit-post-title ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a></p>
 
@@ -69,7 +89,7 @@
         <label id="post-categories-display-label">{{labels.name}}:</label>
         <!--
 		<a href="#" class="ueditor-edit-categories ueditor-btn-edit">{{Upfront.Settings.l10n.global.views.edit}}</a>
-        
+
 		<p id="post-category-display" class="ueditor-previous-data ueditor-previous-data-toggle ueditor-previous-data-small">
             {{postTerms.pluck("name").join(", ").trim()}}
         </p>
@@ -88,7 +108,7 @@
 					</div>
 				</div>
 				<div class="taxonomy-panel-content most-used-categories" id="topcategories">
-				
+
 				</div>
 			</div>
             <a href="#" class="add-new-taxonomies-btn ueditor-ok-button">{{Upfront.Settings.l10n.global.content.add_new.replace("%s", labels.singular_name)}}</a>
@@ -107,7 +127,7 @@
 
     <script type="text/template" id="upfront-term-single-tpl">
         <div class="upfront-taxonomy_item" id="upfront-term_item-{{ termId }}">
-            
+
             <input type="checkbox" id="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}" class="upfront-field-checkbox" value="{{ termId }}" {{ postTerms.get(termId) || typeof selected !== "undefined" ? 'checked="checked"' : '' }} />
             <label for="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}">
 				 {{ term.get('name') }}
@@ -119,7 +139,7 @@
             {[ } ]}
         </div>
     </script>
-	
+
 	<script type="text/template" id="upfront-term-mostused-tpl">
 		<div id="upfront-taxonomy-list" class="upfront-scroll-panel">
 			{[ _.each( mostUsed, function(term, idx){ ]}
@@ -129,7 +149,7 @@
 			{[ }); ]}
 		</div>
     </script>
-	
+
 	<script type="text/template" id="upfront-term-mostused-single-tpl">
         <div class="upfront-taxonomy_item" id="upfront-term_item-{{ termId }}">
             <input type="checkbox" id="upfront-taxonomy-{{ term.taxonomy }}-{{ termId }}" class="upfront-field-checkbox" value="{{ termId }}" {{ postTerms.get(termId) || typeof selected !== "undefined" ? 'checked="checked"' : '' }} />
@@ -146,7 +166,7 @@
 			{{ termTemplate({ term: term }) }}
 			{[ }); ]}
 		</div>
-		
+
 		<div class="upfront-taxonomy-chosen"></div>
 	</script>
 
@@ -157,7 +177,7 @@
             {{ term.get('name') }}
         </div>
     </script>
-		
+
 	<script type="text/template" id="upfront-page-template-list-tpl">
 		<label id="post-tags-display-label">{{ label }}:</label>
 		<div class="upfront-page-template-dropdown">
@@ -168,20 +188,20 @@
 		<div class="upfront-page-template-action">
 		</div>
 	</script>
-	
+
 	<script type="text/template" id="upfront-page-action">
 		<a href="" class="delete-post-template upfront-delete-template-button">{{Upfront.Settings.l10n.global.content.delete_template}}</a>
 		<a href="" class="update-post-template upfront-select-template-button">{{Upfront.Settings.l10n.global.content.update_template}}</a>
 		<a href="" class="reset-post-template upfront-select-template-button">{{Upfront.Settings.l10n.global.content.reset_changes}}</a>
 		<a href="" class="save-post-template upfront-select-template-button">{{Upfront.Settings.l10n.global.content.save_template}}</a>
 	</script>
-	
+
 	<script type="text/template" id="upfront-apply-page-action">
 		<div class="upfront-apply-page-modal">
 			<p>{{Upfront.Settings.l10n.global.content.apply_template_warning}}</p>
 		</div>
 	</script>
-		
+
     <script type="text/template" id="post-status-tpl">
         <label id="post-status-display-label" class="ueditor-icon-label">{{Upfront.Settings.l10n.global.content.status}}:</label>
         <span id="post-status-display" class="ueditor-previous-data">{{status.name}}</span>
@@ -244,7 +264,7 @@
                 <input type="text" class="schedule-hours" name="hh" value="{{currentHour}}" size="2" maxlength="2" min="0" max="23" autocomplete="off">
                 : <label class="screen-reader-text">{{Upfront.Settings.l10n.global.content.minute}}</label>
                 <input type="text" class="schedule-minutes" name="mn" value="{{currentMinute}}" size="2" maxlength="2" min="0" max="59" autocomplete="off">
-				
+
 				 <a href="#" class="ueditor-save-post-date  ueditor-button-small-ok ueditor-ok-button">{{Upfront.Settings.l10n.global.content.ok}}</a>
             </div>
         </div>

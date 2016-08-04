@@ -321,9 +321,9 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			$post->sticky = is_sticky($post->ID);
 			$post->is_new = false;
 			$post->server_time = date('m/d/Y h:i:s a', time());
-			
+
 			if ( empty($post->post_name) ) $post->post_name = $this->_remove_unicodes_url($post->post_title);
-			
+
 			$this->_out(new Upfront_JsonResponse_Success($post));
 		}
 		else if( $data['id'] === '0') { //New post
@@ -391,14 +391,14 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		)));
 
 	}
-	
+
 	function fetch_page_templates($data){
 		$store_key = strtolower(str_replace('_dev','',Upfront_Layout::get_storage_key()));
-		$template_type = isset($data['template_type']) 
+		$template_type = isset($data['template_type'])
 			? $data['template_type']
-			: false 
+			: false
 		;
-		$dev_type = ( $data['load_dev'] == 1 ) 
+		$dev_type = ( $data['load_dev'] == 1 )
 			? Upfront_PageTemplate::LAYOUT_TEMPLATE_DEV_TYPE
 			: Upfront_PageTemplate::LAYOUT_TEMPLATE_TYPE
 		;
@@ -411,7 +411,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 				))
 			: array()
 		;
-		
+
 		if ( $template_type == 'page' ) {
 			$page_templates = get_page_templates();
 			foreach ( $page_templates as $template_name => $template_filename ) {
@@ -442,7 +442,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 				}
 			}
 		}
-		
+
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			"results" => $templates
 		)));
@@ -472,7 +472,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		}
 		// making sure post names/slugs are sanitized
 		if ( isset($data['post_name']) ) $data['post_name'] = $this->_remove_unicodes_url($data['post_name']);
-		
+
 		if(!$data['ID']){
 			unset($data['ID']);
 			$id = wp_insert_post($data);
@@ -628,68 +628,96 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		)));
 	}
 
-	function fetch_meta_list($data) {
+	/**
+	 * Fetches the initial meta list
+	 *
+	 * Outputs JSON and dies
+	 *
+	 * @param array $data Submitted meta list descriptor
+	 */
+	function fetch_meta_list ($data) {
 		if (!Upfront_Permissions::current(Upfront_Permissions::EDIT)) $this->_reject();
+
 		$meta_type = $data['metaType'];
-		if(!$meta_type && array_search($meta_type, array('comment', 'post')) == FALSE)
+		if (!$meta_type && array_search($meta_type, array('comment', 'post')) === false) {
 			$this->_out(new Upfront_JsonResponse_Error("Invalid meta type"));
+		}
 
 		$object_id = $data['objectId'];
-		if(!$object_id)
-			$this->_out(new Upfront_JsonResponse_Error("No object id given"));
+		if (!$object_id) $this->_out(new Upfront_JsonResponse_Error("No object id given"));
 
 		$meta = $this->parse_single_meta(get_metadata($meta_type, $object_id));
 
 		// Extract values
-		foreach($meta as $key => $val){
-			if(is_array($val) && sizeof($val) == 1)
-				$meta[$key] = $val[0];
+		foreach ($meta as $key => $val) {
+			if (is_array($val) && sizeof($val) == 1) $meta[$key] = $val[0];
 		}
+		
 		$this->_out(new Upfront_JsonResponse_Success(array('results' => $meta)));
 	}
 
-	function save_meta_list($data){
+	/**
+	 * Saves meta list from the request
+	 *
+	 * Outputs JSON and dies
+	 *
+	 * @param array $data Submitted meta list, with descriptor
+	 */
+	function save_meta_list ($data) {
 		if (!Upfront_Permissions::current(Upfront_Permissions::EDIT)) $this->_reject();
+
 		$meta_type = $data['metaType'];
-		if(!$meta_type && array_search($meta_type, array('comment', 'post')) == FALSE)
+		if (!$meta_type && array_search($meta_type, array('comment', 'post')) === false) {
 			$this->_out(new Upfront_JsonResponse_Error("Invalid meta type"));
+		}
 
 		$object_id = $data['objectId'];
-		if(!$object_id)
-			$this->_out(new Upfront_JsonResponse_Error("No object id given"));
+		if (!$object_id) $this->_out(new Upfront_JsonResponse_Error("No object id given"));
 
-		if(
+		if (
 			($meta_type == 'post' && !current_user_can('edit_posts')) ||
 			($meta_type == 'comment' && !current_user_can('moderate_comments')) ||
 			($meta_type == 'user' && !current_user_can('edit_users'))
-			){
+		) {
 			$this->_out(new Upfront_JsonResponse_Error("You can't do this"));
 		}
 
-		$updated = array();
-
-		if(!empty($data['removed'])){
+		if (!empty($data['removed'])) {
 			$data['removed'] = $this->_remove_page_template_meta($data['removed']);
-			foreach($data['removed'] as $meta)
+			foreach($data['removed'] as $meta) {
 				delete_metadata($meta_type, $object_id, $meta['meta_key']);
+			}
 		}
 
-		if(!empty($data['added'])){
+		if (!empty($data['added'])) {
 			$data['added'] = $this->_remove_page_template_meta($data['added']);
-			foreach($data['added'] as $meta)
+			foreach($data['added'] as $meta) {
 				update_metadata($meta_type, $object_id, $meta['meta_key'], (!empty($meta['meta_value']) ? $meta['meta_value'] : false));
+			}
 		}
 
-		if(!empty($data['changed'])){
+		if (!empty($data['changed'])) {
 			$data['changed'] = $this->_remove_page_template_meta($data['changed']);
-			foreach($data['changed'] as $meta)
+			foreach($data['changed'] as $meta) {
 				update_metadata($meta_type, $object_id, $meta['meta_key'], (!empty($meta['meta_value']) ? $meta['meta_value'] : false));
-
+			}
 		}
-		
-		if(!empty($data['all'])){
+
+		if (!empty($data['all'])) {
 			$data['all'] = $this->_remove_page_template_meta($data['all']);
 		}
+
+		/**
+		 * Fires off after the meta list has been processed and
+		 * before the response is generated
+		 *
+		 * @param array $data Sent meta list that's been processed
+		 * @param string $meta_type Type of meta being being processed
+		 * @param int $object_id Internal WP ID of the object that the meta belongs to
+		 *
+		 * @since v1.4-BETA-3
+		 */
+		do_action('upfront-meta_list-save', $data, $meta_type, $object_id);
 
 		$meta = $this->parse_single_meta(get_metadata($meta_type, $object_id));
 
@@ -751,11 +779,11 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$post->featured_image = $this->_get_post_featured_image($post);
 		return $post;
 	}
-	
+
 	private function _remove_unicodes_url ($url) {
 		// just in case not yet sanitize_title
 		$url = sanitize_title($url);
-		
+
 		// removing unicodes
 		$unicode_pattern = array(
 			'/%e2%80%8b/', // zero width space
@@ -764,10 +792,10 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			'/%e2%80%8e/', // left to right mark
 			'/%e2%80%8f/' // right to left mark
 		);
-		
+
 		return preg_replace($unicode_pattern,'',$url);
 	}
-	
+
 	/**
 	* Removes any meta related to Page Templates,
 	* those meta will be handled on Page Layout at class_upfront_ajax.php

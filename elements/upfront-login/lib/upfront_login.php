@@ -167,6 +167,8 @@ class Upfront_LoginView extends Upfront_Object {
 			'css' => array(
 				'form_wrapper' => __('Form Wrapper', 'upfront'),
 				'form_wrapper_info' => __('Container wrapper for the login form.', 'upfront'),
+				'form_wrapper_triggered' => __('Form Wrapper Triggered', 'upfront'),
+				'form_wrapper_triggered_info' => __('Container wrapper for the triggered login form via click or hover.', 'upfront'),
 				'containers' => __('Field Containers', 'upfront'),
 				'containers_info' => __('Wrapper layer for every field', 'upfront'),
 				'labels' => __('Field Labels', 'upfront'),

@@ -5045,53 +5045,6 @@ a.upfront-region-name-edit-trigger:before {
   right: 0px;
   z-index: 999999999; }
 
-.upfront-structure-modal .upfront-field-wrap .upfront-field-label-block {
-  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
-  color: #27394b;
-  font-size: 18px;
-  font-weight: bold;
-  margin: 0 0 10px; }
-
-.upfront-structure-modal .upfront-field-multiple-vertical {
-  margin-right: 38px; }
-
-.upfront-structure-modal .upfront-field-multiple-vertical:last-child {
-  margin-right: 0; }
-
-.upfront-structure-modal .upfront-field-multiple-horizontal-inline {
-  margin-right: 60px; }
-
-.upfront-edit-grid-wrap {
-  margin: 0 0 10px; }
-
-.upfront-edit-grid {
-  width: 190px;
-  margin-right: 20px;
-  float: left; }
-
-.upfront-edit-grid-custom {
-  width: 280px; }
-
-.upfront-edit-page-color {
-  float: left;
-  width: 190px; }
-
-.upfront-grid-width-preview {
-  color: #85a9cb;
-  font-family: "Verdana";
-  font-size: 11px;
-  line-height: 12px; }
-
-.upfront-edit-grid-custom .upfront-grid-width-preview {
-  float: right;
-  margin-top: -27px; }
-
-.upfront-edit-grid-custom .upfront-field-number[type=number] {
-  width: 60px; }
-
-.upfront-edit-page-color .upfront-field-wrap-color label {
-  float: none; }
-
 .upfront-message-modal {
   font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   color: #3c5266; }
@@ -10716,19 +10669,19 @@ a.ueditor-select-option:hover {
   color: #2f475f;
   font-weight: normal; }
 
-#post-title span {
+#post-title span, #post-metadesc span {
   font-family: Verdana;
   font-size: 11px;
   color: #2f475f;
   font-weight: normal; }
 
-#post-url-slug a, #post-title a {
+#post-url-slug a, #post-title a, #post-metadesc a {
   font-weight: normal; }
 
 .misc-pub-post-url .upfront-settings-toggled {
   background-color: transparent !important; }
 
-.ueditor-post-page-title {
+.ueditor-post-page-title, .ueditor-post-page-url {
   border-bottom: 1px solid rgba(184, 207, 230, 0.3);
   padding-bottom: 10px;
   margin-bottom: 10px; }
@@ -10740,6 +10693,13 @@ a.ueditor-select-option:hover {
   border: solid 1px #a2bfda;
   margin: 0px;
   display: inline-block; }
+
+.ueditor-post-page-metadesc .char-counter {
+  font-size: 10px;
+  color: #779cbd; }
+
+.ueditor-post-page-metadesc .char-counter.over-limit .current {
+  color: #e75757; }
 
 .ueditor-post-title-text {
   margin-bottom: 10px; }
@@ -16142,7 +16102,9 @@ a.missing-lightbox-warning:before {
 #upfront_map-location_overlay,
 #upfront_map-location_overlay p,
 .upfront-quick-swap p {
-  color: #3f5870; }
+  color: #1c2d3d;
+  font-weight: 200;
+  background: transparent; }
 
 .code-element-choose {
   text-align: center; }
