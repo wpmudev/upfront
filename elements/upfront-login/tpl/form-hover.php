@@ -1,4 +1,4 @@
-<div class="upfront_login upfront_login-hover triggered">
+<div class="upfront_login upfront_login-hover">
 	<?php echo $trigger; ?>
 	<div class="upfront_login-form-wrapper" style="<?php echo esc_attr($offset); ?>">
 		<div class="upfront_login-form triggered">
