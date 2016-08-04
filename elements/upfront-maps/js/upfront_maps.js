@@ -24,6 +24,7 @@ define([
 		zoom: 10,
 		style: 'ROADMAP',
 		use_custom_map_code: false,
+		static_map: false,
 		controls: {
 			pan: false,
 			zoom: false,
@@ -164,8 +165,12 @@ define([
 
 		on_render: function () {
 			this.update_properties();
-			//this.dynamic_map();
-			this.static_map();
+			var static = !!this.model.get_property_value_by_name("static_map") || false;
+			if (static) {
+				this.static_map();
+			} else {
+				this.dynamic_map();
+			}
 		},
 
 		static_map: function () {
@@ -179,6 +184,7 @@ define([
 					zoom: parseInt(this.model.get_property_value_by_name("zoom"), 10) || DEFAULTS.zoom,
 					type: this.model.get_property_value_by_name("style") || DEFAULTS.style,
 					hide_markers: this.model.get_property_value_by_name("hide_markers") || false,
+					static_map: this.model.get_property_value_by_name("static_map") || false
 				}
 			;
 			height = height ? parseInt(height,10) * Upfront.Settings.LayoutEditor.Grid.baseline : DEFAULTS.OPTIMUM_MAP_HEIGHT;
@@ -249,6 +255,7 @@ define([
 					streetViewControl: controls.indexOf("street_view") >= 0 || DEFAULTS.controls.street_view,
 					overviewMapControl: controls.indexOf("overview_map") >= 0 || DEFAULTS.controls.overview_map,
 					style_overlay: (this.model.get_property_value_by_name("use_custom_map_code") ? JSON.parse(this.model.get_property_value_by_name("map_styles")) || false : false),
+					static_map: (this.model.get_property_value_by_name("static_map") ? JSON.parse(this.model.get_property_value_by_name("static_map")) || false : false),
 					draggable: !!this.model.get_property_value_by_name("draggable"),
 					scrollwheel: !!this.model.get_property_value_by_name("scrollwheel")
 				}
@@ -853,6 +860,16 @@ define([
 					property: "hide_markers",
 					hide_label: true,
 					values: [{label: l10n.hide_markers, value: 1}],
+					multiple: false,
+					change: function () { this.property.set({value: this.get_value()}); }
+				}),
+				new Upfront.Views.Editor.Field.Checkboxes({
+					model: this.model,
+					label: l10n.static_map,
+					className: "upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes static_map-checkbox",
+					property: "static_map",
+					hide_label: true,
+					values: [{label: l10n.static_map + '<span class="checkbox-info" title="' + l10n.static_map_info + '"></span>', value: 1}],
 					multiple: false,
 					change: function () { this.property.set({value: this.get_value()}); }
 				}),
