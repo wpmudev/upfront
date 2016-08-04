@@ -777,6 +777,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'label_page_details' => __('Page Details', 'upfront'),
 				'label_post_details' => __('Post Details', 'upfront'),
 				'label_show_templates' => __('Show Templates For', 'upfront'),
+				'meta_description' => __('Meta description', 'upfront'),
 			),
 		);
 		return !empty($key)

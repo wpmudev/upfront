@@ -10669,19 +10669,19 @@ a.ueditor-select-option:hover {
   color: #2f475f;
   font-weight: normal; }
 
-#post-title span {
+#post-title span, #post-metadesc span {
   font-family: Verdana;
   font-size: 11px;
   color: #2f475f;
   font-weight: normal; }
 
-#post-url-slug a, #post-title a {
+#post-url-slug a, #post-title a, #post-metadesc a {
   font-weight: normal; }
 
 .misc-pub-post-url .upfront-settings-toggled {
   background-color: transparent !important; }
 
-.ueditor-post-page-title {
+.ueditor-post-page-title, .ueditor-post-page-url {
   border-bottom: 1px solid rgba(184, 207, 230, 0.3);
   padding-bottom: 10px;
   margin-bottom: 10px; }
@@ -10693,6 +10693,13 @@ a.ueditor-select-option:hover {
   border: solid 1px #a2bfda;
   margin: 0px;
   display: inline-block; }
+
+.ueditor-post-page-metadesc .char-counter {
+  font-size: 10px;
+  color: #779cbd; }
+
+.ueditor-post-page-metadesc .char-counter.over-limit .current {
+  color: #e75757; }
 
 .ueditor-post-title-text {
   margin-bottom: 10px; }
