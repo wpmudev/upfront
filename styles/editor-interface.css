@@ -14706,6 +14706,9 @@ li#new-custom-breakpoint {
 .chosen-container:not(.chosen-with-drop) .chosen-drop {
   display: none !important; }
 
+#settings .chosen-container-multi .chosen-choices li.search-field input[type=text] {
+  height: 20px; }
+
 /* Theme fonts managesr */
 #text-fonts-manager {
   width: 750px;
@@ -16101,6 +16104,7 @@ a.missing-lightbox-warning:before {
 .upfront-code_element-module button.embed,
 #upfront_map-location_overlay,
 #upfront_map-location_overlay p,
+#upfront_map-api_key_overlay p,
 .upfront-quick-swap p {
   color: #1c2d3d;
   font-weight: 200;
