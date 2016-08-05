@@ -217,6 +217,12 @@ background-position: -699px -646px;
 }
 .rotate, .rotate-time {
 	display: inline-block;
+	font-size: 12px;
+}
+.rotate-time .upfront-field-number[type="number"] {
+	width: 60px;
+	font-size: 12px;
+	margin-left: 10px;
 }
 .rotate-effect, .slider-contrls-style {
 	width: 225px;
