@@ -1992,9 +1992,6 @@ var InsertManager = Backbone.View.extend({
 				show_tooltip = false;
 			}
 		});
-		
-		console.log(redactor.caret);
-		console.log(redactor);
 
 		return 	show_tooltip
 				&& 	$block.closest(".ueditor-insert").length === 0
