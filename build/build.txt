@@ -27,6 +27,7 @@ text!upfront/templates/region_container.html
 text!upfront/templates/region.html
 text!upfront/templates/wrapper.html
 text!upfront/templates/layout.html
+text!upfront/templates/api_key_overlay_region.html
 upfront/upfront-views.js
 chosen/chosen.jquery.min.js
 C:/Users/diobethray/Documents/diobeth/vagrantthree/www/upfrontthree/wp-content/themes/upfront/scripts/upfront/global-event-handlers.js
@@ -319,6 +320,7 @@ text!elements/upfront-login/tpl/preset-style.html
 C:/Users/diobethray/Documents/diobeth/vagrantthree/www/upfrontthree/wp-content/themes/upfront/elements/upfront-login/js/preset-settings.js
 C:/Users/diobethray/Documents/diobeth/vagrantthree/www/upfrontthree/wp-content/themes/upfront/elements/upfront-login/js/upfront_login.js
 text!elements/upfront-maps/css/edit.css
+text!upfront/templates/api_key_overlay_element.html
 C:/Users/diobethray/Documents/diobeth/vagrantthree/www/upfrontthree/wp-content/themes/upfront/elements/upfront-maps/js/upfront_maps.js
 C:/Users/diobethray/Documents/diobeth/vagrantthree/www/upfrontthree/wp-content/themes/upfront/elements/upfront-newnavigation/js/menuitem.js
 C:/Users/diobethray/Documents/diobeth/vagrantthree/www/upfrontthree/wp-content/themes/upfront/elements/upfront-newnavigation/js/model.js
