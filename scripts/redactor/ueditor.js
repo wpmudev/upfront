@@ -1975,8 +1975,11 @@ var InsertManager = Backbone.View.extend({
 	show_tooltip_in_this_location: function(redactor){
 		var current = redactor.selection.getCurrent(),
             $block = $( current );
+			
+			
 
 		if( !current || _.isEmpty( $block ) ) return false;
+		
 
 		var $image_embed_insert_wrappers = $(".upfront-inserted_image-wrapper, .upfront-inserted_embed-wrapper"),
 			block_top = $block.offset().top,
@@ -1989,6 +1992,9 @@ var InsertManager = Backbone.View.extend({
 				show_tooltip = false;
 			}
 		});
+		
+		console.log(redactor.caret);
+		console.log(redactor);
 
 		return 	show_tooltip
 				&& 	$block.closest(".ueditor-insert").length === 0
