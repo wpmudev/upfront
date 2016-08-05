@@ -39,6 +39,17 @@
 	margin-top: 10px;
 }
 
+@-moz-document url-prefix() { 
+	.thumb-size-slider,
+	.thumb-padding-slider,
+	.thumb-bottom-padding-slider,
+	.thumb-side-padding-slider  {
+		width: 140px;
+		float: left;
+		margin-top: 10px;
+	}
+}
+
 .thumb-size-number,
 .thumb-padding-number,
 .thumb-bottom-padding-number,
