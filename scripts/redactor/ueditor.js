@@ -1974,9 +1974,9 @@ var InsertManager = Backbone.View.extend({
 	},
 	show_tooltip_in_this_location: function(redactor){
 		var current = redactor.selection.getCurrent(),
-            $block = $( current );
-			
-			
+            $block = $( current ),
+			$prevBlock = $block.parent().prev(),
+			indexPosition = redactor.range.startOffset;
 
 		if( !current || _.isEmpty( $block ) ) return false;
 		
@@ -1995,7 +1995,7 @@ var InsertManager = Backbone.View.extend({
 
 		return 	show_tooltip
 				&& 	$block.closest(".ueditor-insert").length === 0
-				&&  ( $.trim( $block.html() ) === "<br>" || ( typeof $block.closest("p.nosortable").html() !== "undefined" &&  $.trim( $block.closest("p.nosortable").html() ) === "" ) ) ;
+				&&  ( $.trim( $block.html() ) === "<br>" || (indexPosition < 2 && $.trim( $prevBlock.html() ) === "<br>") || ( typeof $block.closest("p.nosortable").html() !== "undefined" &&  $.trim( $block.closest("p.nosortable").html() ) === "" ) ) ;
 	}
 });
 
