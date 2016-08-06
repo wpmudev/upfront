@@ -90,7 +90,8 @@ Panels.General = RootSettingsPanel.extend({
 		
 		list_type.on("changed", autorefresh);
 		query.on("setting:changed", autorefresh);
-		thumbnail.on("setting:changed", autorefresh);
+		/* We are moving Thumbnail settings to presets */
+		//thumbnail.on("setting:changed", autorefresh);
 		query.on("post:added", function () {
 			this.trigger("post:added");
 		}, this);
@@ -132,8 +133,6 @@ var CustomSelectorField =  Upfront.Views.Editor.Field.Hidden.extend({
 		if (_.isArray(values) && values.length > 0) {
 			field += '<ul class="upfront-posts-list">';
 			_.each(values, function (value) {
-				var title = value.permalink;
-				
 				if (!value) return false;
 
 				var title = value.permalink;
