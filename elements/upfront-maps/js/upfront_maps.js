@@ -7,8 +7,16 @@ define([
 	'text!elements/upfront-maps/css/edit.css',
 	'scripts/upfront/element-settings/settings',
 	'scripts/upfront/element-settings/root-settings-panel',
-	'scripts/upfront/inline-panels/map-editor'
-], function (_ctx, maps_style, ElementSettings, RootSettingsPanel, MapEditorView) {
+	'scripts/upfront/inline-panels/map-editor',
+	'text!upfront/templates/api_key_overlay_element.html'
+], function (
+	_ctx,
+	maps_style,
+	ElementSettings,
+	RootSettingsPanel,
+	MapEditorView,
+	api_key_overlay_element_template
+) {
 
 	var DEFAULTS = {
 		OPTIMUM_MAP_HEIGHT: 300,
@@ -93,6 +101,7 @@ define([
 				this.geocode();
 			}
 		},
+		
 		render: function () {
 			this.$el.empty();
 
@@ -117,6 +126,8 @@ define([
 				me = this
 			;
 			if (!location || location === old_location) return false;
+			// Do not geocode if no API Key has been set.
+			if (!(window._upfront_api_keys || {})['gmaps']) return false;
 			if (location === old_address) return false; // Do not re-geocode the same location
 			if (this._geocoding_in_progress) return false;
 			this._geocoding_in_progress = true;
@@ -201,9 +212,22 @@ define([
 				if (props.style_overlay) {
 					this.map.setOptions({styles: props.style_overlay});
 				}
-				if (!this.model.get_property_value_by_name("map_center")) {
+				// If no location and API key
+				// overlay is not there, show location overlay.
+				if (
+					!this.model.get_property_value_by_name("map_center")
+					&& (window._upfront_api_keys || {})['gmaps']) {
 					this.add_location_overlay();
 				}
+
+				// Display Empty API Key Overlay.
+				if (
+					!(window._upfront_api_keys || {})['gmaps']
+					&& Upfront.Application.user_can_modify_layout()
+				) {
+					this.add_api_key_overlay();
+				}
+
 				// Re-render the map when needed
 				setTimeout(function () {
 					var center = me.map.getCenter();
@@ -225,6 +249,13 @@ define([
 				'height': height + 'px'
 			});
 			google.maps.event.trigger(this.map, 'resize');
+		},
+
+		// If no API Key, display notice.
+		add_api_key_overlay: function() {
+			this.$el.append(
+				_.template(api_key_overlay_element_template)
+			);
 		},
 
 		add_location_overlay: function () {
@@ -255,7 +286,8 @@ define([
 						element_id = me.model.get_property_value_by_name("element_id"),
 						add = $address.length ? $address.val() : ''
 					;
-					if (!add) return false;
+					// If no address or no API Key, return false.
+					if (!add || !(window._upfront_api_keys || {})['gmaps']) return false;
 
 					geocoder.geocode({address: add}, function (results, status) {
 						if (status != google.maps.GeocoderStatus.OK) return false;

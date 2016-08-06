@@ -54,106 +54,59 @@ define([
 
 				// Username
 				$username = this.$el.find('label[for="user_login"]');
-				$username.ueditor({
-					linebreaks: true,
-					disableLineBreak: true,
-					airButtons: ['upfrontIcons'],
-					autostart: false
-				})
-				.on('stop', function(){
-					var ed = me.$el.find('label[for="user_login"]').data("ueditor"),
-						text = ed.getValue(true)
-					;
+				$username_input_label = $('<input type="text" class="upfront-input-labels" value="'+ $username.text() +'"/>');
+				$username_input_label.on('change', function(){
+					var text = $(this).val();
 					if (text) me.model.set_property('username_label', text, true);
-					me.redraw_layout();
 				});
+				$username.replaceWith($username_input_label);
 
 				// Password
 				$password = this.$el.find('label[for="user_pass"]');
-				$password.ueditor({
-					linebreaks: true,
-					disableLineBreak: true,
-					airButtons: ['upfrontIcons'],
-					autostart: false
-				})
-				.on('stop', function(){
-					var ed = me.$el.find('label[for="user_pass"]').data("ueditor"),
-						text = ed.getValue(true)
-					;
+				$password_input_label = $('<input type="text" class="upfront-input-labels" value="'+ $password.text() +'"/>');
+				$password_input_label.on('change', function(){
+					var text = $(this).val();
 					if (text) me.model.set_property('password_label', text, true);
-					me.redraw_layout();
 				});
+				$password.replaceWith($password_input_label);
 
 				// Remember
 				$remember = this.$el.find('.login-remember > label');
 				$remember_checkbox = $remember.find('input');
-				$remember.find('input').remove();
-				$remember_label = $('<span class="login-remember-label"> ' + $remember.html() + '</span>');
+				$remember_input_label = $('<input type="text" class="upfront-input-labels" value="'+ $remember.text() +'"/>');
 				$remember.html($remember_checkbox);
-				$remember_label.ueditor({
-					linebreaks: true,
-					disableLineBreak: true,
-					airButtons: ['upfrontIcons'],
-					autostart: false
-				})
-				.on('stop', function(){
-					var ed = me.$el.find('span.login-remember-label').data("ueditor"),
-						text = ed.getValue(true)
-					;
+				$remember_input_label.on('change', function(){
+					var text = $(this).val();
 					if (text) me.model.set_property('remember_label', text, true);
-					me.redraw_layout();
 				});
-				$remember.append($remember_label);
+				$remember.append($remember_input_label);
 
-				// Login
-				$login_input_button = this.$el.find('.login-submit input.button-primary');
-				$login_button = this.$el.find('button.upfront-login-button');
-				$login_button.find('span.upfront-login-button-label').ueditor({
-					linebreaks: true,
-					disableLineBreak: true,
-					airButtons: ['upfrontIcons'],
-					autostart: false
-				})
-				.on('stop', function(){
-					var ed = me.$el.find('span.upfront-login-button-label').data("ueditor"),
-						text = ed.getValue(true)
-					;
+				// Login button
+				$login_button = this.$el.find('.login-submit input.button-primary');
+				$login_button_label = $('<input type="text" class="upfront-input-labels" value="'+ $login_button.val() +'"/>');
+				$login_button_label.on('change', function(){
+					var text = $(this).val();
 					if (text) me.model.set_property('login_button_label', text, true);
-					me.redraw_layout();
 				});
-				$login_input_button.replaceWith($login_button);
+				$login_button.replaceWith($login_button_label);
 
 				// Lost Password Text
 				$lost_password_text = this.$el.find('span.login-lostpassword-label');
-				$lost_password_text.ueditor({
-					linebreaks: true,
-					disableLineBreak: true,
-					airButtons: ['upfrontIcons'],
-					autostart: false
-				})
-				.on('stop', function(){
-					var ed = me.$el.find('span.login-lostpassword-label').data("ueditor"),
-						text = ed.getValue(true)
-					;
+				$lost_password_text_input_label = $('<input type="text" class="upfront-input-labels" value="'+ $lost_password_text.text() +'"/>');
+				$lost_password_text_input_label.on('change', function(){
+					var text = $(this).val();
 					if (text) me.model.set_property('lost_password_text', text, true);
-					me.redraw_layout();
 				});
+				$lost_password_text.replaceWith($lost_password_text_input_label);
 
 				// Lost Password Link
 				$lost_password_link = this.$el.find('a.login-lostpassword-link');
-				$lost_password_link.ueditor({
-					linebreaks: true,
-					disableLineBreak: true,
-					airButtons: ['upfrontIcons'],
-					autostart: false
-				})
-				.on('stop', function(){
-					var ed = me.$el.find('a.login-lostpassword-link').data("ueditor"),
-						text = ed.getValue(true)
-					;
+				$lost_password_link_input_label = $('<input type="text" class="upfront-input-labels lostpassword-link" value="'+ $lost_password_link.text() +'"/>');
+				$lost_password_link_input_label.on('change', function(){
+					var text = $(this).val();
 					if (text) me.model.set_property('lost_password_link', text, true);
-					me.redraw_layout();
 				});
+				$lost_password_link.replaceWith($lost_password_link_input_label);
 
 				// Login Link
 				$login_link = this.$el.find('span.upfront_login-label');
@@ -190,7 +143,6 @@ define([
 
 			this.events = _.extend({}, this.events, {
 				'click label' : 'disable_default',
-				'click button' : 'disable_default',
 				'click a' : 'disable_default',
 				'click .upfront_login.upfront_login-click .upfront_login-trigger' : 'trigger_login_click'
 			});
@@ -674,14 +626,16 @@ define([
 		"Element": LoginElement,
 		"Settings": LoginSettings,
 		cssSelectors: {
-			'.upfront_login-form p': {label: l10n.css.containers, info: l10n.css.containers_info},
-			'.upfront_login-form form label': {label: l10n.css.labels, info: l10n.css.labels_info},
-			'.upfront_login-form form input:not([type=submit]):not([type=checkbox])': {label: l10n.css.inputs, info: l10n.css.inputs_info},
-			'.upfront_login-form form  input[type=submit]': {label: l10n.css.button, info: l10n.css.button_info},
-			'.upfront_login-form form  input[type=checkbox]': {label: l10n.css.remember, info: l10n.css.remember_info},
-			'.login-lostpassword': {label: l10n.css.pwd_wrap, info: l10n.css.pwd_wrap_info},
-			'.upfront_login-form p .login-lostpassword-link': {label: l10n.css.pwd_link, info: l10n.css.pwd_link_info},
-			'.upfront_login-trigger': {label: l10n.css.close, info: l10n.css.close_info}
+			'.upfront_login-form:not(.triggered)': {label: l10n.css.form_wrapper, info: l10n.css.form_wrapper_info},
+			'.upfront_login-form.triggered': {label: l10n.css.form_wrapper_triggered, info: l10n.css.form_wrapper_triggered_info},
+			'.upfront_login-form p:not(.login-lostpassword)': {label: l10n.css.containers, info: l10n.css.containers_info},
+			'.upfront_login-form form#loginform label, .upfront_login-form form#loginform p:not(.login-submit):not(.login-remember) input.upfront-input-labels': {label: l10n.css.labels, info: l10n.css.labels_info},
+			'.upfront_login-form form#loginform input:not([type=submit]):not([type=checkbox]):not(.upfront-input-labels)': {label: l10n.css.inputs, info: l10n.css.inputs_info},
+			'.upfront_login-form form#loginform input[type=submit], .upfront_login-form form#loginform p.login-submit input.upfront-input-labels': {label: l10n.css.button, info: l10n.css.button_info},
+			'.upfront_login-form form#loginform input[type=checkbox]': {label: l10n.css.remember, info: l10n.css.remember_info},
+			'.upfront_login-form p.login-lostpassword': {label: l10n.css.pwd_wrap, info: l10n.css.pwd_wrap_info},
+			'.upfront_login-form p .login-lostpassword-link, .upfront_login-form p .upfront-input-labels.lostpassword-link': {label: l10n.css.pwd_link, info: l10n.css.pwd_link_info},
+			'.upfront_login-trigger': {label: l10n.css.login_trigger, info: l10n.css.login_trigger_info}
 		},
 		cssSelectorsId: Upfront.data.upfront_login.defaults.type
 	});

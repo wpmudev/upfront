@@ -177,6 +177,8 @@ define([
 			$('[name="background_use_custom_map_code"]', this.$el).trigger('change');
 		},
 		geocode_location: function () {
+			// Do not geocode if no API Key has been set.
+			if (!(window._upfront_api_keys || {})['gmaps']) return false;
 			if ( this._geocoding == true || !this._location_changed ) return;
 			var me = this,
 				location = this._location,

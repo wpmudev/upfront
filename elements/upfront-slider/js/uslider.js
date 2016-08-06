@@ -32,6 +32,9 @@ var Uslider_Slide = Backbone.Model.extend({
 		if ( !(breakpoint_id in data) ) data[breakpoint_id] = {};
 		data[breakpoint_id][attr] = value;
 		return this.set('breakpoint', data);
+	},
+	is_theme_image: function () {
+		return this.get('srcFull') && this.get('srcFull').match(Upfront.mainData.currentThemePath);
 	}
 });
 
@@ -107,6 +110,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		this.listenTo(Upfront.Events, "preset:slider:updated", this.caption_updated, this);
 
 		this.listenTo(this.model, "preset:updated", this.preset_updated);
+
+		this.listenTo(Upfront.Events, 'upfront:import_image:populate_theme_images', this.populate_theme_images);
+		this.listenTo(Upfront.Events, 'upfront:import_image:imported', this.imported_theme_image);
 
 		this.listenTo(Upfront.Events, 'upfront:layout_size:change_breakpoint', this.updateSliderHeight);
 
@@ -198,6 +204,22 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 	on_edit: function(){
 		return false;
+	},
+
+	populate_theme_images: function (image_list) {
+		this.model.slideCollection.each(function(slide){
+			if ( slide.is_theme_image() ) image_list.push(slide.get('srcFull'));
+		});
+	},
+
+	imported_theme_image: function (image) {
+		this.model.slideCollection.each(function(slide){
+			var src = slide.get('srcFull');
+			if ( slide.is_theme_image() && image.filepath === src ) {
+				slide.set('id', image.id);
+				slide.set('srcFull', image.src);
+			}
+		});
 	},
 
 	get_content_markup: function() {
@@ -467,7 +489,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 					? this.$('.uslide[rel=' + currentSlide.id + ']').find('.uslide-caption').outerHeight(true)
 					: 0
 				;
-			this.$('.uslides').css({ 'padding-top' : wrapper.height() + textHeight});
+			this.$('.uslides').css({ 'padding-top' : wrapper.outerHeight(true) + textHeight});
 		}
 	},
 

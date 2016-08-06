@@ -92,6 +92,10 @@ jQuery(function($){
 			(message.attr("data-string") || 'You forgot to write a message.'),
 			errors, message
 		);
+		if (typeof realPerson !== "undefined" && typeof realPerson.val() !== "undefined" && !realPerson.val().trim()) add_error(
+			'You must write CAPTCHA number.',
+			errors, realPerson
+		);
 
 		if (errors.length > 0){
 			//Stop sending

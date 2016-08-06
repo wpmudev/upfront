@@ -1180,6 +1180,8 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 		//this.prepareBox();
 	},
     title_blurred: function(){
+		if(typeof this.box === "undefined") return;
+
         if( this.post.is_new && !this.box.urlEditor.hasDefinedSlug && !_.isEmpty(this.parts.titles.html()) ){
             this.post.set("post_name",  this.parts.titles.html().toLowerCase().replace(/\ /g,'-'));
             this.box.urlEditor.render();

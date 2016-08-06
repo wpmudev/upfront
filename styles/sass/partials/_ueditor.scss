@@ -7,17 +7,19 @@
 }
 .upostdata-part.edit-content {
     position: relative;
+    z-index: 10;
 }
 .upfront_edit_content_style,
 .upfront_edit_image_insert{
     position: absolute;
-    left: 50%;
-    top: 50%;
+    margin: auto;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
     background: #e5f3ff;
     border-radius: 5px;
     width: 281px;
-    margin-left: -140px !important;
-    margin-top: -23px !important;
     height: 46px;
     line-height: 46px;
     text-align: center;
@@ -26,6 +28,7 @@
     cursor: pointer;
     padding: 0 !important;
     z-index: 10;
+    max-width: 100%;
 }
 .Postpart_contents:hover .upfront_edit_content_style,
 .upostdata-part.edit-content:hover .upfront_edit_content_style{
@@ -44,6 +47,16 @@
 .upfront-disable-surroundings{
     box-shadow: 0 0 0 5000px rgba(0,0,10,.5);
     position:relative;
+    z-index: 2;
+}
+.upfront-disable-surroundings:before {
+    content: "";
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     z-index: 1;
 }
 .ueditor-insert-variant{

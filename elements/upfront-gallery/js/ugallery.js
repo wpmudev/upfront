@@ -20,7 +20,10 @@ var globalL10n = Upfront.Settings && Upfront.Settings.l10n
 	: Upfront.mainData.l10n.global.views;
 
 var UgalleryImage = Backbone.Model.extend({
-	defaults: Upfront.data.ugallery.imageDefaults
+	defaults: Upfront.data.ugallery.imageDefaults,
+	is_theme_image: function () {
+		return this.get('srcFull') && this.get('srcFull').match(Upfront.mainData.currentThemePath);
+	}
 });
 
 var UgalleryImages = Backbone.Collection.extend({
@@ -116,6 +119,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 		this.listenTo(this.model, "preset:updated", this.preset_updated);
 		this.listenTo(Upfront.Events, "preset:gallery:updated", this.caption_updated, this);
+
+		this.listenTo(Upfront.Events, 'upfront:import_image:populate_theme_images', this.populate_theme_images);
+		this.listenTo(Upfront.Events, 'upfront:import_image:imported', this.imported_theme_image);
 
 		this.lastThumbnailSize = {width: this.property('thumbWidth'), height: this.property('thumbHeight')};
 
@@ -272,6 +278,26 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	preventClose: function(event) {
 		event.stopPropagation();
+	},
+
+	populate_theme_images: function (image_list) {
+		this.images.each(function(each){
+			if ( each.is_theme_image() ) image_list.push(each.get('srcFull'));
+		});
+	},
+
+	imported_theme_image: function (image) {
+		var me = this;
+		this.images.each(function(each){
+			var id = each.get('id'),
+				src = each.get('srcFull')
+			;
+			if ( each.is_theme_image() && image.filepath === src ) {
+				each.set('id', image.id);
+				each.set('srcFull', image.src);
+				me.$el.find('.ugallery_item[rel=' + id + ']').attr('rel', image.id);
+			}
+		});
 	},
 
 	// Remove default dblclick behavior because it messes up things

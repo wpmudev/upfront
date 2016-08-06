@@ -225,6 +225,9 @@ jQuery(document).ready(function($){
 				if ( src && before_src != src && $el.hasClass('upfront-image-lazy') ){
 					$el.removeClass('upfront-image-lazy-loaded');
 				}
+				else {
+					$el.css('background-image', 'url("' + src + '")');
+				}
 			}
 			else if ( type == 'color' ) {
 				$(this).css('background-image', 'none');
@@ -1339,6 +1342,7 @@ jQuery(document).ready(function($){
 			var $me = $(this),
 				rmap = $me.attr("data-preset_map"),
 				map = rmap ? JSON.parse(rmap) : {},
+				current_preset_class,
 				final_preset_class
 			;
 
@@ -1356,12 +1360,20 @@ jQuery(document).ready(function($){
 			}
 
 			$.each(map, function (bp, preset) {
-				$me.removeClass(preset);
+				if ( $me.hasClass(preset) ) {
+					current_preset_class = preset;
+					$me.removeClass(preset);
+				}
 				if (bp === breakpoint && !final_preset_class) final_preset_class = preset;
 			});
 
 			if (final_preset_class) {
 				$me.addClass(final_preset_class);
+				// find all children with such preset class, some elements do have this
+				$me.find('.' + current_preset_class).each(function(){
+					$(this).removeClass(current_preset_class);
+					$(this).addClass(final_preset_class);
+				});
 			}
 
 		});

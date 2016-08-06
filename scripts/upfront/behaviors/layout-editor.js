@@ -1041,6 +1041,144 @@ var LayoutEditor = {
 			);
 		});
 		$el.append($lists);
+	},
+
+	/**
+	 * Show import image dialog.
+	 * This will call an event that will try to populate the theme images, then check if image exists.
+	 * If there is image to be imported, show. Otherwise, just ignore.
+	 *
+	 * @author Jeffri
+	 */
+	import_image_dialog: function () {
+		var ed = Upfront.Behaviors.LayoutEditor,
+			import_each = 2,
+			image_list = [],
+			import_image_list = []
+		;
+		Upfront.Events.trigger('upfront:import_image:populate_theme_images', image_list);
+		if ( image_list.length <= 0 ) return;
+
+		Upfront.Util.post({
+			action: 'upfront_list_import_image',
+			images: image_list
+		}).done(function(response){
+			if ( parseInt(response.data.error, 10) !== 0 ) return;
+			_.each(response.data.images, function (image) {
+				if ( image.status === 'not_exists' ) import_image_list.push(image.filepath);
+				else if ( image.status === 'exists' ) Upfront.Events.trigger('upfront:import_image:imported', image);
+			});
+			if ( import_image_list.length > 0 ) ed.open_import_image_dialog(import_image_list);
+		});
+	},
+
+	/**
+	 * Handling the import image dialog
+	 *
+	 * @author Jeffri
+	 * @param image_list
+	 */
+	open_import_image_dialog: function (image_list) {
+		var ed = Upfront.Behaviors.LayoutEditor;
+		if ( !ed.import_image_modal ){
+			ed.import_image_modal = new Upfront.Views.Editor.Modal({to: $('body'), button: false, top: 120, width: 600});
+			ed.import_image_modal.render();
+			$('body').append(ed.import_image_modal.el);
+		}
+		ed.import_image_modal.open(function($content, $modal) {
+			var importing = false,
+				import_button = new Upfront.Views.Editor.Field.Button({
+					name: 'import_image',
+					label: Upfront.Settings.l10n.global.behaviors.import_image_button,
+					compact: true,
+					classname: 'upfront-import-image-button',
+					on_click: function () {
+						if ( importing ) return; // Prevent multiple click
+						// Import images
+						ed.do_import_image(image_list).done(function () {
+							// Finished, let's show success message and close the modal
+							$content.html(
+								'<p>' + Upfront.Settings.l10n.global.behaviors.import_image_done_description + '</p>'
+							);
+							setTimeout(function(){
+								ed.import_image_modal.close();
+							}, 3000);
+						});
+						importing = true;
+					}
+				}),
+				ignore_button = new Upfront.Views.Editor.Field.Button({
+					name: 'import_image_ignore',
+					label: Upfront.Settings.l10n.global.behaviors.import_image_ignore_button,
+					compact: true,
+					classname: 'upfront-import-image-button',
+					on_click: function () {
+						ed.import_image_modal.close();
+					}
+				}),
+				$image_list = $('<ul class="upfront-import-image-list upfront-scroll-panel"></ul>')
+			;
+			$modal.addClass('upfront-import-image-modal');
+			$content.html(
+				'<p>' + Upfront.Settings.l10n.global.behaviors.import_image_description + '</p>'
+			);
+			_.each(image_list, function (img, index) {
+				$image_list.append(
+					'<li class="upfront-import-image-each" id="import-image-' + index + '">' +
+						'<img src="' + img + '" alt="" />' +
+					'</li>'
+				);
+			});
+			$content.append($image_list);
+			_.each([import_button, ignore_button], function (button) {
+				button.render();
+				button.delegateEvents();
+				$content.append(button.$el);
+			});
+		}, ed);
+	},
+
+	/**
+	 * Do importing the images from import_image_dialog, a recursive function
+	 *
+	 * @author Jeffri
+	 * @param image_list
+	 */
+	do_import_image: function (image_list) {
+		var ed = Upfront.Behaviors.LayoutEditor,
+			import_each = 4,
+			each_image_list,
+			_update_image_status = function (status) {
+				for ( var i = ed._import_image_index; i < ed._import_image_index + import_each; i++ ) {
+					$('#import-image-'+i).removeClass('processing done').addClass(status);
+				}
+			}
+		;
+		if ( !ed._import_image_index ) ed._import_image_index = 0;
+		if ( !ed._import_image_deferred ) ed._import_image_deferred = new $.Deferred();
+
+		each_image_list = image_list.slice(ed._import_image_index, ed._import_image_index + import_each);
+
+		if ( each_image_list.length === 0 ) {
+			ed._import_image_deferred.resolve();
+			ed._import_image_index = false;
+			return;
+		}
+
+		_update_image_status('processing');
+
+		Upfront.Util.post({
+			action: 'upfront_import_image',
+			images: each_image_list
+		}).done(function (response) {
+			_.each(response.data.images, function (image) {
+				if ( image.status === 'import_success' ) Upfront.Events.trigger('upfront:import_image:imported', image);
+			});
+			_update_image_status('done');
+			ed._import_image_index += import_each;
+			ed.do_import_image(image_list);
+		});
+		return ed._import_image_deferred.promise();
 	}
 };
 

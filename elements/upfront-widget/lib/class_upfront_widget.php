@@ -154,10 +154,13 @@ class Upfront_Uwidget {
 				else $fields[$id] = array('name' =>$fieldname);
 				if (strtolower($node->nodeName) == 'select') {
 					$fields[$id]['type'] = $node->nodeName;
+					$fields[$id]['value'] = '';
 					$fields[$id]['options'] = array();
 					foreach($xpath->query('./option', $node) as $option) {
 						$fields[$id]['options'][$option->getAttribute('value')] = $option->nodeValue;
+						if ( empty($fields[$id]['value']) ) $fields[$id]['value'] = $option->nodeValue;
 					}
+					
 				} elseif('textarea' === strtolower($node->nodeName)) {
 					$fields[$id]['type'] = $node->nodeName;
 					$fields[$id]['value'] = $node->nodeValue;

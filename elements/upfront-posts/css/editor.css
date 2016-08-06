@@ -267,6 +267,59 @@
 	display: none;
 }
 
+.upfront-display-type-section .upfront-posts-display-type {
+	margin-top: -7px;
+}
+
+.upfront-display-type-single .upfront-settings-item-content .upfront-post-term,
+.upfront-display-type-single .upfront-settings-item-content .upfront-post-type,
+.upfront-display-type-single .upfront-settings-item-content .upfront-post-taxonomy {
+	margin-top: 10px;
+}
+
+.upfront-display-type-list .upfront-settings-item-content .upfront-post-term {
+	margin-top: 5px;
+}
+
+.upfront-display-type-list .upfront-settings-item-content .upfront-post-limit,
+.upfront-display-type-list .upfront-settings-item-content .upfront-post-type {
+	margin-top: 15px;
+}
+
+.upfront-settings-item-content .upfront-post-limit,
+.upfront-settings-item-content .upfront-post-type,
+.upfront-display-type-list .upfront-settings-item-content .upfront-offset-number,
+.upfront-display-type-list .upfront-settings-item-content .upfront-post-taxonomy {
+	display: inline-block;
+}
+
+.upfront-post-limit .upfront-field-label-block,
+.upfront-post-type .upfront-field-label-block,
+.upfront-offset-number .upfront-field-label-block,
+.upfront-post-taxonomy .upfront-field-label-block,
+.upfront-post-term .upfront-field-label-block {
+	margin-bottom: 3px !important;
+}
+
+.upfront-settings-item-content .upfront-post-limit input,
+.upfront-display-type-list .upfront-settings-item-content .upfront-offset-number input {
+	font-size: 12px;
+	height: 26px;
+}
+
+.upfront-settings-item-content .upfront-post-limit,
+.upfront-display-type-list .upfront-settings-item-content .upfront-offset-number {
+	width: 65px;
+	position: relative;
+	top: -8px;
+}
+
+.upfront-settings-item-content .upfront-post-type,
+.upfront-display-type-list .upfront-settings-item-content .upfront-post-taxonomy {
+	width: 160px;
+	margin-top: 5px;
+}
+
 .upfront-settings-item-content .post_parts.ui-sortable li .part_action:after {
 	display: inline-block;
 	background-image: url(../../../img/uf-ui-sprite.png);

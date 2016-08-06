@@ -243,7 +243,7 @@ class Upfront_Posts_PostsData {
 			'thumbnail_size_medium' => __('Medium', 'upfront'),
 			'thumbnail_size_large' => __('Large', 'upfront'),
 			'thumbnail_size_post_feature' => __('Post Feature Image', 'upfront'),
-			'thumbnail_size_custom' => __('Custom <em>(existing images not affected)</em>', 'upfront'),
+			'thumbnail_size_custom' => __('Custom <em>(existing not affected)</em>', 'upfront'),
 			'thumbnail_size_custom_width' => __('Custom Width in px', 'upfront'),
 			'thumbnail_size_custom_height' => __('Custom Height in px', 'upfront'),
 		);

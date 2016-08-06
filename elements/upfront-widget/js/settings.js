@@ -77,7 +77,8 @@ define([
 						property: specific_fields[key]['name'],
 						label: specific_fields[key]['label'],
 						values: _.map(specific_fields[key]['options'], function(option, key){ return { label: option, value: key }; }),
-						change: this.clear_cache
+						change: this.clear_cache,
+						default_value: specific_fields[key]['value']
 
 					});
 				}

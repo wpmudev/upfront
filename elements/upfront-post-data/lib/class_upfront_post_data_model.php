@@ -8,7 +8,12 @@ class Upfront_Post_Data_Model {
 
 	/**
 	 * Fetch post
+	 *
+	 * Sets query in the loop flag as side-effect
+	 *
 	 * @param  integer $post_id Raw data (element properties)
+	 *
+	 * @return WP_Post
 	 */
 	public static function get_post ($post_id = null) {
 		global $wp_query;

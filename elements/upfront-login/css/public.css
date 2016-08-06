@@ -1,7 +1,6 @@
 /* GENERAL FORM STYLE 
 	 ================== */
-.upfront_login-form form input,
-.upfront_login-form form button.upfront-login-button {
+.upfront_login-form form input {
 	height:40px;
 	border:3px solid #ceddea;
 	background-color: #fff;
@@ -11,16 +10,14 @@
 	border-color: #aec4d8;
 	outline:none;
 }
-.upfront_login-form form input[type="submit"],
-.upfront_login-form form button.upfront-login-button{
+.upfront_login-form form input[type="submit"] {
 	border: 2px solid #269a47;
 	background-color: #2cad4a;
 	color: #fff;
 	width: 100%;
 	text-align: center;
 }
-.upfront_login-form form input[type="submit"]:hover,
-.upfront_login-form form button.upfront-login-button:hover {
+.upfront_login-form form input[type="submit"]:hover {
 	background-color: #269a47;
 }
 .upfront_login-form form input[type="checkbox"]{
@@ -196,8 +193,7 @@
 
 
 
-div.upfront-output-upfront-login_element form#loginform input:not([type=checkbox]),
-div.upfront-output-upfront-login_element form#loginform button.upfront-login-button {
+div.upfront-output-upfront-login_element form#loginform input:not([type=checkbox]) {
   width: 100%;
   padding:0 10px;
   box-sizing: border-box;

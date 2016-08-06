@@ -5,3 +5,4 @@ phpunit.bat
 bin
 phpunit.xml.dist
 npm-debug.log
+*.patch
