@@ -952,13 +952,15 @@ define(function() {
 			_is_dirty = false,
 			_preview_url = false,
 			_revision_idx = false,
-			run = function (layout) {
+			_tab_id = false,
+			run = function (layout, tab_id) {
 				if (!!Upfront.Settings.Application.PERMS.REVISIONS) { // Only rebind stuff when revisions listening is enabled.
 					if (Upfront.Application.mode.current === Upfront.Application.MODE.THEME) {
 						// Exporter mode
 						rebind_exporter_events();
 					} else {
 						// Normal mode
+						_tab_id = tab_id;
 						_layout = layout;
 						rebind_events();
 					}
@@ -1036,6 +1038,7 @@ define(function() {
 				if (_layout_data && _layout_data.regions) _layout_data.regions = _(_layout_data.regions).reject(function (reg) { return reg.name === "shadow"; });
 				_layout_data.layout = _upfront_post_data.layout;
 				_layout_data.preferred_layout = _layout.get("current_layout");
+				_layout_data.tab_id = _tab_id;
 
 				//_layout_data = JSON.stringify(_layout_data, undefined, 2);
 				_layout_data = JSON.stringify(_layout_data);
@@ -1066,13 +1069,17 @@ define(function() {
 							var users = _.values(data.concurrent_users).join(', ');
 							Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.views.already_edited_nag.replace(/%s/, users), 'error');
 						}
+						// If multiple tabs are open, warn on save.
+						if (data.other_tab_open) {
+							Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.views.multiple_tabs_nag, 'error');
+						}
 					})
 					.error(function () {
 						Upfront.Util.log("error building layout preview");
 					})
 				;
 
-				run(_layout);
+				run(_layout, _tab_id);
 			},
 			clear = function () {
 				_is_dirty = false; // Clear dirty flag, we just saved changes

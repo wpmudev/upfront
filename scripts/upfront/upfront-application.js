@@ -1088,7 +1088,9 @@ var Application = new (Backbone.Router.extend({
 
 		Upfront.Application.loading.done(function () {
 
-			Upfront.PreviewUpdate.run(me.layout);
+			// Create unique ID for current tab session.
+			var tab_id = Upfront.Util.get_unique_id('tab_id');
+			Upfront.PreviewUpdate.run(me.layout, tab_id);
 
 			Upfront.Events.trigger("application:mode:after_switch");
 		});
