@@ -16930,6 +16930,9 @@ div.preset-manager-panel .checkbox-tooltip {
   position: static;
   top: 0px; }
 
+.upfront-inline-panel-item.group-link-control {
+  z-index: 51; }
+
 /**
  * Compatibility issue nag popup, v1 check
  */
