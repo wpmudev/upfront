@@ -17,10 +17,16 @@
                     require(['content'], function() {
                         if(self.getPostId() !== false) {
                             setTimeout(self.prepare_editor(self));
+                            self.initialize_post_data_editor();
                         }
                     });
+                    return;
                 }
+                this.initialize_post_data_editor();
 
+            },
+            initialize_post_data_editor: function() {
+                var self = this;
                 this.listenTo(Upfront.Views.PostDataEditor, 'loaded', function(contentEditor) {
                     if ( contentEditor ) {
                         Upfront.Views.PostBox = contentEditor.prepareBox();
@@ -45,6 +51,7 @@
                 }
 
                 this.editor = Upfront.Views.PostDataEditor;
+
             },
             get_name: function () {
                 return 'post_details';

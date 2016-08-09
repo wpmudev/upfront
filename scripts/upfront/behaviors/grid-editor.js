@@ -3211,6 +3211,11 @@ var GridEditor = {
 		app.layout_view.update_grid_css();
 		this.init(); // re-init to update grid values
 
+		if ( app.layout_ready ) {
+			// Trigger updated event if it is changed after layout finished rendering
+			Upfront.Events.trigger('upfront:grid:updated');
+		}
+
 		if (
 				flag_update_breakpoint &&
 				true === Upfront.plugins.isRequiredByPlugin('update grid')

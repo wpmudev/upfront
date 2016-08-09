@@ -62,7 +62,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_get_post_image_variants', array($this, 'getPostImageVariants'), 10, 2);
 		add_filter('upfront_get_prev_post_image_variants', array($this, 'get_prev_post_image_variants'), 10, 2);
 		add_filter('upfront_get_other_post_image_variants', array($this, 'get_all_other_theme_variants'), 10, 2);
-		
+
 		add_filter('upfront_get_button_presets', array($this, 'getButtonPresets'), 10, 2);
 		add_filter('upfront_get_tab_presets', array($this, 'getTabPresets'), 10, 2);
 		add_filter('upfront_get_accordion_presets', array($this, 'getAccordionPresets'), 10, 2);
@@ -711,7 +711,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		return json_decode($presets, $as_array);
 	}
-	
+
 	public function getLoginPresets($presets, $args) {
 		if (empty($presets) === false) return $presets;
 
@@ -740,7 +740,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if (empty($presets) === false) return $presets;
 		return $this->_get_prepared_presets('featured_image_element_presets', $args);
 	}
-	
+
 	public function get_taxonomy_presets ($presets, $args) {
 		if (empty($presets) === false) return $presets;
 		return $this->_get_prepared_presets('taxonomy_element_presets', $args);
@@ -773,7 +773,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			$as_array = true;
 		}
 
-		return json_decode($presets, $as_array);	
+		return json_decode($presets, $as_array);
 	}
 
 	public function getAccordionPresets($presets, $args) {
@@ -1138,38 +1138,11 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	/**
 	 * Called from the implementing theme,
 	 * this method will actually import the background slider images.
+	 *
+	 * @param $filepath
 	 */
 	protected function _import_slider_image ($filepath) {
-        $key = $this->get_prefix() . '-slider-images';
-        $images = get_option($key, array());
-        if (!empty($images[$filepath])) return $images[$filepath];
-
-        // else import image
-        $wp_upload_dir = wp_upload_dir();
-        $pfx = !empty($wp_upload_dir['path']) ? trailingslashit($wp_upload_dir['path']) : '';
-        if (!function_exists('wp_generate_attachment_metadata')) require_once(ABSPATH . 'wp-admin/includes/image.php');
-        $filename = basename($filepath);
-        while (file_exists("{$pfx}{$filename}")) {
-            $filename = rand() . $filename;
-        }
-        $full_img_path = get_stylesheet_directory() . DIRECTORY_SEPARATOR . ltrim($filepath, '/');
-        @copy($full_img_path, "{$pfx}{$filename}");
-        $wp_filetype = wp_check_filetype(basename($filename), null);
-        $attachment = array(
-            'guid' => $wp_upload_dir['url'] . '/' . basename($filename),
-            'post_mime_type' => $wp_filetype['type'],
-            'post_title' => preg_replace('/\.[^.]+$/', '', basename($filename)),
-            'post_content' => '',
-            'post_status' => 'inherit'
-        );
-        $attach_id = wp_insert_attachment($attachment, "{$pfx}{$filename}");
-        $attach_data = wp_generate_attachment_metadata( $attach_id, "{$pfx}{$filename}" );
-        wp_update_attachment_metadata( $attach_id, $attach_data );
-
-        $images[$filepath] = $attach_id;
-        update_option($key, $images);
-
-        return $attach_id;
+		return Upfront_ImageServer::get_instance()->maybe_import_image($filepath);
     }
 
 
@@ -1357,7 +1330,10 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
      * @return string
      */
     public static function get_post_image_variants_from_settings(){
-        $image_variants = self::_get_theme_settings()->get('post_image_variants');
+		$settings = self::_get_theme_settings();
+		if (!$settings) return '';
+		
+        $image_variants = $settings->get('post_image_variants');
         if( empty( $image_variants )){
             $image_variants = <<< VRT
 		[

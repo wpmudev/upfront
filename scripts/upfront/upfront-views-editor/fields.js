@@ -520,8 +520,8 @@
                 this.$(".sp-container").data("field_color", this);
                 this.$(".sp-container").data("$spectrum", this.$spectrum );
                 this.$(".sp-container").find(".sp-choose").on("click.spectrum", function(e){
-                    if(me.options.spectrum && me.options.spectrum.move && me.color)
-                        me.options.spectrum.move(me.color);
+                    if(me.options.spectrum && me.options.spectrum.choose && me.color)
+                        me.options.spectrum.choose(me.color);
 
                     if( me.options.autoHide !== true ){
                         me.$(".sp-replacer").removeClass("sp-active");
@@ -608,7 +608,7 @@
 					}, 100);
                 }
 
-                if( !this.options.spectrum.flat && ( !this.field_options || !this.field_options.flat ) && this.field_options.hideOnOuterClick )
+                if( this.options.spectrum && !this.options.spectrum.flat && ( !this.field_options || !this.field_options.flat ) && this.field_options.hideOnOuterClick )
                     $("html").on('mousedown', _.bind( this.hide_on_outer_click, this ) );
             },
             on_spectrum_beforeShow: function(color){

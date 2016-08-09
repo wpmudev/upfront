@@ -16,21 +16,21 @@ $main = upfront_create_region(
   'background_type' => 'color',
   'background_color' => 'rgba(247,247,247,1)',
   'version' => '1.0.0',
-  'breakpoint' => 
+  'breakpoint' =>
   (array)(array(
-     'tablet' => 
+     'tablet' =>
     (array)(array(
        'edited' => false,
        'col' => 24,
     )),
-     'mobile' => 
+     'mobile' =>
     (array)(array(
        'edited' => false,
        'col' => 24,
     )),
   )),
   'use_padding' => 0,
-  'sub_regions' => 
+  'sub_regions' =>
   array (
     0 => false,
   ),
@@ -50,7 +50,7 @@ $main->add_element("Uimage", array (
   'margin_top' => '0',
   'class' => 'upfront-image_module',
   'id' => 'module-1468468775154-1739',
-  'options' => 
+  'options' =>
   array (
     'src' => get_template_directory_uri() . '/img/uf_logo-47x47.png',
     'srcFull' => get_template_directory_uri() . '/img/uf_logo.png',
@@ -63,23 +63,23 @@ $main->add_element("Uimage", array (
     'caption_alignment' => false,
     'caption_trigger' => 'always_show',
     'image_status' => 'ok',
-    'size' => 
+    'size' =>
     (array)(array(
        'width' => 47,
        'height' => 47,
     )),
-    'fullSize' => 
+    'fullSize' =>
     (array)(array(
        'width' => 90,
        'height' => 90,
     )),
-    'position' => 
+    'position' =>
     (array)(array(
        'top' => 0,
        'left' => 0,
     )),
     'marginTop' => 36.5,
-    'element_size' => 
+    'element_size' =>
     (array)(array(
        'width' => 1050,
        'height' => 90,
@@ -105,7 +105,7 @@ $main->add_element("Uimage", array (
     'id_slug' => 'image',
     'when_clicked' => false,
     'image_link' => '',
-    'link' => 
+    'link' =>
     (array)(array(
        'type' => false,
        'url' => '',
@@ -130,36 +130,36 @@ $main->add_element("Uimage", array (
   'wrapper_id' => 'wrapper-1468469358762-1976',
   'edited' => true,
   'new_line' => true,
-  'wrapper_breakpoint' => 
+  'wrapper_breakpoint' =>
   array (
-    'tablet' => 
+    'tablet' =>
     array (
       'clear' => true,
       'col' => 12,
       'order' => 1,
     ),
-    'current_property' => 
+    'current_property' =>
     array (
       0 => 'order',
     ),
-    'mobile' => 
+    'mobile' =>
     array (
       'clear' => true,
       'col' => 7,
       'order' => 1,
     ),
   ),
-  'breakpoint' => 
+  'breakpoint' =>
   array (
-    'tablet' => 
+    'tablet' =>
     array (
       'col' => 12,
     ),
-    'current_property' => 
+    'current_property' =>
     array (
       0 => 'col',
     ),
-    'mobile' => 
+    'mobile' =>
     array (
       'col' => 7,
     ),
@@ -174,11 +174,11 @@ $main->add_element("PlainTxt", array (
   'margin_bottom' => '0',
   'class' => 'module-1468409923827-1672',
   'id' => 'module-1468409923827-1672',
-  'options' => 
+  'options' =>
   array (
     'view_class' => 'PlainTxtView',
     'id_slug' => 'plain_text',
-    'content' => '<h1 style="text-align: center;">Welcome to '. wp_get_theme()->get('Name') .' Homepage</h1>',
+    'content' => '<h1 style="text-align: center;">Welcome to Upfront</h1>',
     'type' => 'PlainTxtModel',
     'element_id' => 'text-object-1468409923826-1943',
     'class' => 'c24 upfront-plain_txt',
@@ -195,9 +195,9 @@ $main->add_element("PlainTxt", array (
     'right_padding_num' => 15,
     'anchor' => '',
     'current_preset' => 'default',
-    'breakpoint_presets' => 
+    'breakpoint_presets' =>
     (array)(array(
-       'desktop' => 
+       'desktop' =>
       (array)(array(
          'preset' => 'default',
       )),
@@ -213,36 +213,36 @@ $main->add_element("PlainTxt", array (
   'wrapper_id' => 'wrapper-1468409954037-1564',
   'edited' => true,
   'new_line' => true,
-  'wrapper_breakpoint' => 
+  'wrapper_breakpoint' =>
   array (
-    'tablet' => 
+    'tablet' =>
     array (
       'clear' => true,
       'col' => 12,
       'order' => 2,
     ),
-    'mobile' => 
+    'mobile' =>
     array (
       'clear' => true,
       'col' => 7,
       'order' => 2,
     ),
-    'current_property' => 
+    'current_property' =>
     array (
       0 => 'order',
     ),
   ),
-  'breakpoint' => 
+  'breakpoint' =>
   array (
-    'tablet' => 
+    'tablet' =>
     array (
       'col' => 12,
     ),
-    'current_property' => 
+    'current_property' =>
     array (
       0 => 'col',
     ),
-    'mobile' => 
+    'mobile' =>
     array (
       'col' => 7,
     ),
@@ -255,9 +255,9 @@ $main->add_element("PlainTxt", array (
   'margin_top' => '0',
   'class' => '',
   'id' => 'module-1468468185982-1850',
-  'options' => 
+  'options' =>
   array (
-    'content' => '<p style="text-align: center;">Get started building right away.</p>',
+    'content' => '<p style="text-align: center;">Choose from our collection of starter themes and get started customizing your site right away.</p> <p style="text-align: center;">Or start from scratch with the Upfront Builder and bring the site you’ve always dreamed of to life.</p>',
     'type' => 'PlainTxtModel',
     'view_class' => 'PlainTxtView',
     'element_id' => 'text-object-1468468185981-1427',
@@ -285,36 +285,36 @@ $main->add_element("PlainTxt", array (
   'wrapper_id' => 'wrapper-1468471260996-1730',
   'edited' => true,
   'new_line' => true,
-  'wrapper_breakpoint' => 
+  'wrapper_breakpoint' =>
   array (
-    'tablet' => 
+    'tablet' =>
     array (
       'clear' => true,
       'col' => 12,
       'order' => 3,
     ),
-    'current_property' => 
+    'current_property' =>
     array (
       0 => 'order',
     ),
-    'mobile' => 
+    'mobile' =>
     array (
       'clear' => true,
       'col' => 7,
       'order' => 3,
     ),
   ),
-  'breakpoint' => 
+  'breakpoint' =>
   array (
-    'tablet' => 
+    'tablet' =>
     array (
       'col' => 12,
     ),
-    'current_property' => 
+    'current_property' =>
     array (
       0 => 'col',
     ),
-    'mobile' => 
+    'mobile' =>
     array (
       'col' => 7,
     ),
@@ -325,7 +325,7 @@ $main->add_element("Uspacer", array (
   'columns' => '10',
   'class' => 'upfront-module-spacer',
   'id' => 'module-1468471512621-1498',
-  'options' => 
+  'options' =>
   array (
     'type' => 'UspacerModel',
     'view_class' => 'UspacerView',
@@ -342,92 +342,11 @@ $main->add_element("Uspacer", array (
   'new_line' => true,
 ));
 
-$main->add_element("Button", array (
-  'columns' => '4',
-  'margin_left' => '0',
-  'margin_top' => '0',
-  'class' => 'button-style',
-  'id' => 'module-1468468186040-1270',
-  'options' => 
-  array (
-    'content' => 'Replay Quick Tour',
-    'href' => '',
-    'linkTarget' => '',
-    'align' => 'center',
-    'type' => 'ButtonModel',
-    'view_class' => 'ButtonView',
-    'class' => 'c24 upfront-button upfront-replay-quick-tour',
-    'has_settings' => 1,
-    'id_slug' => 'ubutton',
-    'preset' => 'default',
-    'element_id' => 'button-object-1468468186037-1048',
-    'link' => 
-    (array)(array(
-       'type' => 'unlink',
-       'url' => '',
-       'target' => '',
-    )),
-    'padding_slider' => 15,
-    'top_padding_num' => '15',
-    'bottom_padding_num' => 15,
-    'use_padding' => 'yes',
-    'usingNewAppearance' => true,
-    'lock_padding' => '',
-    'padding_number' => 15,
-    'left_padding_num' => 15,
-    'right_padding_num' => 15,
-    'anchor' => '',
-    'current_preset' => 'default',
-    'top_padding_use' => 'yes',
-    'top_padding_slider' => '15',
-  ),
-  'content' => 'Click here',
-  'href' => '',
-  'align' => 'center',
-  'row' => 11,
-  'wrapper_id' => 'wrapper-1468471459791-1630',
-  'edited' => true,
-  'wrapper_breakpoint' => 
-  array (
-    'tablet' => 
-    array (
-      'clear' => true,
-      'col' => 12,
-      'order' => 4,
-    ),
-    'current_property' => 
-    array (
-      0 => 'order',
-    ),
-    'mobile' => 
-    array (
-      'clear' => true,
-      'col' => 7,
-      'order' => 4,
-    ),
-  ),
-  'breakpoint' => 
-  array (
-    'tablet' => 
-    array (
-      'col' => 12,
-    ),
-    'current_property' => 
-    array (
-      0 => 'col',
-    ),
-    'mobile' => 
-    array (
-      'col' => 7,
-    ),
-  ),
-));
-
 $main->add_element("Uspacer", array (
   'columns' => '10',
   'class' => 'upfront-module-spacer',
   'id' => 'module-1468471515177-1567',
-  'options' => 
+  'options' =>
   array (
     'type' => 'UspacerModel',
     'view_class' => 'UspacerView',
@@ -444,4 +363,3 @@ $main->add_element("Uspacer", array (
 ));
 
 $regions->add($main);
-

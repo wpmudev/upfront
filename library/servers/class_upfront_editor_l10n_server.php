@@ -79,7 +79,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'exporting_layout' => __('Exporting layout: ', 'upfront'),
 				'excellent_start' => __('Excellent start!', 'upfront'),
 				'homepage_created' => __('Your HOMEPAGE — Static layout has been successfully created. You can create more Layouts for your theme by clicking ‘New Layout’ in  the left sidebar. Remember, the best themes in life <del>are free</del> have lots of layouts!', 'upfront'),
-				'style_exporter' => __('Style exported.', 'upfront'),
+				'style_exported' => __('Style exported.', 'upfront'),
 				'style_export_fail' => __('Style could not be exported.', 'upfront'),
 				'region_css_cleaned' => __('Region CSS cleaned', 'upfront'),
 				'cleaning_region_css' => __('Cleaning Region CSS...', 'upfront'),
@@ -104,7 +104,13 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'global_regions' => __('Global Regions', 'upfront'),
 				'lightboxes' => __('Lightboxes', 'upfront'),
 				'trash' => __('Trash', 'upfront'),
-				'preview_size' => __('Preview Size', 'upfront')
+				'preview_size' => __('Preview Size', 'upfront'),
+				'import_image' => __('Import Images', 'upfront'),
+				'import_image_description' => __('This layout contains images that are not in your Media Library. If you plan on using those images, please import them, otherwise if you plan on replacing those images you can ignore this message.', 'upfront'),
+				'import_image_done' => __('Import Images Finished', 'upfront'),
+				'import_image_done_description' => __('Success! All images have been imported.', 'upfront'),
+				'import_image_button' => __('Import Images', 'upfront'),
+				'import_image_ignore_button' => __('Ignore', 'upfront')
 			),
 			'content' => array(
 				'apply' => __('Apply', 'upfront'),
@@ -494,6 +500,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'button_presets_save_fail' => __('Button presets could not be saved.', 'upfront'),
 				'choose_font' => __('Choose Font', 'upfront'),
 				'theme_fonts_save_fail' => __('Theme fonts could not be saved.', 'upfront'),
+				'icon_fonts_collection_incomplete' => __('Please, upload %s files.', 'upfront'),
 				'font_styles_selected' => __('%d font styles selected', 'upfront'),
 				'already_added' => __('Already added', 'upfront'),
 				'body_preview_quote' => __('"Imagination will often carry us to worlds that never were, but without it we go nowhere" — Carl Sagan', 'upfront'),
@@ -740,6 +747,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'style_name' => __('Style name', 'upfront'),
 				'select_post_type' => __('Select a post type:', 'upfront'),
 				'upload_icon_font' => __('Upload Icon Font', 'upfront'),
+				'icon_font_type_recommendation' => __('For best compatibility, use at least WOFF and WOFF2 formats.', 'upfront'),
 				'current_color' => __('Current color:', 'upfront'),
 				'theme_colors' => __('Theme colors:', 'upfront'),
 				'recent_colors' => __('Recent colors:', 'upfront'),
@@ -771,6 +779,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'label_page_details' => __('Page Details', 'upfront'),
 				'label_post_details' => __('Post Details', 'upfront'),
 				'label_show_templates' => __('Show Templates For', 'upfront'),
+				'meta_description' => __('Meta description', 'upfront'),
 			),
 		);
 		return !empty($key)

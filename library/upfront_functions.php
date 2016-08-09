@@ -195,11 +195,18 @@ function upfront_ajax_init () {
 	if ($stylesheet === false) $stylesheet = apply_filters('upfront_get_stylesheet', $stylesheet);
 
 	upfront_switch_stylesheet($stylesheet);
-	if ( !is_array($layout_ids) )
-		return;
+	if ( !is_array($layout_ids) ) return;
+
+	// Let's setup the $post object on single post/page, so we can get post data from AJAX request
+	if ( 'single' === $layout_ids['type'] && isset($layout_ids['item']) && isset($layout_ids['specificity']) ) {
+		$post_id = intval(str_replace($layout_ids['item'] . '-', '', $layout_ids['specificity']));
+		global $post;
+		$post = get_post($post_id);
+		setup_postdata($post);
+	}
+
 	$layout = Upfront_Layout::from_entity_ids($layout_ids, $storage_key, $load_dev);
-	if ( $layout->is_empty() )
-		$layout = Upfront_Layout::create_layout($layout_ids);
+	if ( $layout->is_empty() ) $layout = Upfront_Layout::create_layout($layout_ids);
 }
 
 /**

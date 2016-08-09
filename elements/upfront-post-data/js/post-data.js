@@ -96,7 +96,9 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		this.$el.find('.upfront-object-content').empty().append(markup);
 		this.adjust_featured_image();
 		this.adjust_inserted_image();
-		this.prepare_editor();
+		if ( Upfront.Application.is_editor() ) {
+			this.prepare_editor();
+		}
 
 		// Show full image if we are in mobile mode
 		if(type === "featured_image") {
@@ -1561,7 +1563,7 @@ var PostDataElement_Meta = PostDataElement.extend({
  * Add the elements to Upfront, only when in single layout. Place the element in DataElement.
  */
 function add_elements () {
-	if ( 'type' in _upfront_post_data.layout && 'single' === _upfront_post_data.layout.type ) {
+	if ( Upfront.Application.is_single() && !Upfront.Application.is_single('404_page') ) {
 		Upfront.Application.LayoutEditor.add_object("Upostdata-post_data", {
 			"Model": PostDataModel,
 			"View": PostDataView,

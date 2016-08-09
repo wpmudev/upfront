@@ -464,6 +464,13 @@ div.preset-manager-panel .fontSize, div.preset-manager-panel .lineHeight, div.pr
 	margin-top: 0px;
 	margin-right: 12px;
 }
+
+div.preset-manager-panel .fontSize,
+div.preset-manager-panel .fontSize input,
+div.preset-manager-panel .lineHeight input {
+	font-size: 12px;
+}
+
 div.preset-manager-panel .fontSize input {
 	width: 50px;
 }
