@@ -177,6 +177,11 @@
   outline: none;
   cursor: text; }
 
+a[data-is-anchor="1"] {
+  display: block;
+  width: 100%;
+  height: 0; }
+
 .upfront-no-select {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -7360,7 +7365,7 @@ i.upfront-field-icon-burger-trigger {
   left: 0;
   background: #263a4d;
   opacity: .75;
-  z-index: 10001003; }
+  z-index: 10001004; }
 
 #upfront-popup {
   position: fixed;
@@ -16924,6 +16929,9 @@ div.preset-manager-panel .checkbox-tooltip {
 .image-sub-control .uimage-control-panel-item {
   position: static;
   top: 0px; }
+
+.upfront-inline-panel-item.group-link-control {
+  z-index: 51; }
 
 /**
  * Compatibility issue nag popup, v1 check
