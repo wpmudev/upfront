@@ -183,6 +183,7 @@ border-width: 11px;
 .upfront_map-api_key_region {
     margin: auto;
 	box-shadow: none;
+	background-color: #fff;
 }
 
 .upfront-region-modal-bg #upfront_map-api_key_overlay {
@@ -199,8 +200,16 @@ border-width: 11px;
 	background-position: -480px -202px;
 }
 .upfront-ui .upfront-icon-map-warning {
-    position: static;
+    position: relative;
+    top: 0px;
     margin: auto;
+}
+#upfront_map-api_key_overlay-instruction {
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+#upfront_map-location_overlay-instruction {
+    margin-top: 5px;
 }
 
 /* address input */
@@ -253,6 +262,7 @@ border-width: 11px;
 	text-decoration: underline;
 	padding:0;
 	margin:0;
+	font-weight: 400;
 }
 .uf-current-location a:hover { cursor: pointer; }
 
