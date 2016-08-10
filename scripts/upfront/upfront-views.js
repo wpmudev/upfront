@@ -5546,10 +5546,10 @@ define([
 				else {
 					this.remove_background();
 				}
+				this.update_padding();
 				this.update_position();
 				this.update_buttons();
 				this.update_size_hint(this.col * grid.column_width, parseInt(this.$el.css('height'), 10));
-				this.update_padding();
 				this.trigger("region_update", this);
 			},
 			update_position: function () {
