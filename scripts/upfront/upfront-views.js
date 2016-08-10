@@ -356,7 +356,7 @@ define([
 			add_api_key_overlay: function() {
 				// Only add if overlay does not already exist.
 				if (!this.$el.find('#upfront_map-api_key_overlay-wrapper')[0]) {
-					this.$el.append(
+					this.$el.find('.upfront-region-bg-overlay').append(
 						_.template(_Upfront_Templates['api_key_overlay_region'])
 					);
 				}
