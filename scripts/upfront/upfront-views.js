@@ -356,7 +356,7 @@ define([
 			add_api_key_overlay: function() {
 				// Only add if overlay does not already exist.
 				if (!this.$el.find('#upfront_map-api_key_overlay-wrapper')[0]) {
-					this.$el.append(
+					this.$el.find('.upfront-region-bg-overlay').append(
 						_.template(_Upfront_Templates['api_key_overlay_region'])
 					);
 				}
@@ -5546,10 +5546,10 @@ define([
 				else {
 					this.remove_background();
 				}
+				this.update_padding();
 				this.update_position();
 				this.update_buttons();
 				this.update_size_hint(this.col * grid.column_width, parseInt(this.$el.css('height'), 10));
-				this.update_padding();
 				this.trigger("region_update", this);
 			},
 			update_position: function () {
