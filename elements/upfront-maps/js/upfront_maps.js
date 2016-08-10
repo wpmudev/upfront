@@ -253,6 +253,8 @@ define([
 
 		// If no API Key, display notice.
 		add_api_key_overlay: function() {
+			// Hide Map in background.
+			this.el.querySelector('.upfront-map_element-object').style.opacity = 0;
 			this.$el.append(
 				_.template(api_key_overlay_element_template)
 			);
@@ -263,12 +265,14 @@ define([
 				$location = this.$el.find("#upfront_map-location_overlay-wrapper")
 			;
 			if (!$location.length && Upfront.Application.user_can_modify_layout()) {
+				// Hide Map in background.
+				this.el.querySelector('.upfront-map_element-object').style.opacity = 0;
 				this.$el.append(
 					'<div id="upfront_map-location_overlay-wrapper" class="upfront-initial-overlay-wrapper">' +
 						'<div id="upfront_map-location_overlay" class="uf_el_map_initial-overlay upfront-initial-overlay-wrapper">' +
 							'<p id="upfront_map-location_overlay-instruction">' + l10n.instructions + '</p>' +
 							'<div id="upfront_map-location_overlay-address" class="upfront-ui uf-address">' +
-								'<input type="text" id="upfront_map-location_overlay-location" placeholder="' + l10n.placeholder + '" />' +
+								'<input type="text" id="upfront_map-location_overlay-location"/>' +
 								'<button type="button" id="upfront_map-location_overlay-use_location" class="upfront-field-icon upfront-icon-map-refresh"></button></div>' +
 								'<span class="uf-current-location">' + l10n.or + ' <a id="upfront_map-location_overlay-use_current">' + l10n.use_current_location + '</a></span>' +
 						'</div>' +
