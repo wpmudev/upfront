@@ -67,21 +67,21 @@
 			"alt+g": "toggle_grid"
 		},
 		_dispatch: function ( event ) {
-			for(var shortcut in this.shortcuts){
+			_(this.shortcuts).each( function( fn, shortcut ){
 				shortcut = shortcut.replace(/^\s+|\s/g,'');
-				var fn = this.shortcuts[shortcut].replace(/^\s+|\s/g,'');
+				fn = fn.replace(/^\s+|\s/g,'');
 				var variations = shortcut.split(",");
-				for( var _i in  variations){
-					var splitted = variations[_i].split("+"),
-						control_part = splitted.length > 1 ?  splitted[0].toLowerCase() + "Key" : false,
-						k = splitted[1];
+				_(variations).each( function( variation ){
+					var splitted = variation.split("+"),
+							control_part = splitted.length > 1 ?  splitted[0].toLowerCase() + "Key" : false,
+							k = splitted[1];
 					if( control_part && event[control_part] && this.keys[k] === event.keyCode  ){
 						this._call_method( event, fn );
 					}else if( false === control_part &&  this.control_keys[k] === event.keyCode ){
 						this._call_method( event, fn );
 					}
-				}
-			}
+				}, this);
+			}, this);
 		},
 		_call_method: function(event, fn){
 			if( typeof this[fn] === "function" )
@@ -105,7 +105,7 @@
 
 	};
 
-define(Shortcuts);
+	define(Shortcuts);
 
 })(jQuery);
 //# sourceURL=shortcuts.js
