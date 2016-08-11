@@ -1048,6 +1048,7 @@ define(function() {
 				set_data();
 
 				Upfront.Events.trigger("preview:build:start");
+				$(document).trigger("upfront:preview:build:start");
 				Upfront.Util.post({action: "upfront_build_preview", "data": _layout_data, "current_url": window.location.href})
 					.success(function (response) {
 						var data = response.data || {};
@@ -1059,6 +1060,8 @@ define(function() {
 						}
 						_saving_flag = false;
 						Upfront.Events.trigger("preview:build:stop");
+						$(document).trigger("upfront:preview:build:stop");
+
 						//Upfront.Util.log("we're good here");
 
 						// Notify about concurrent edits
