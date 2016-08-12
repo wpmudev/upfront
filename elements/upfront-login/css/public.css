@@ -22,7 +22,6 @@
 }
 .upfront_login-form form input[type="checkbox"]{
 	height:20px;
-	margin-bottom:15px;
 	position: relative;
 	top: 3px;
 }
@@ -199,14 +198,14 @@ div.upfront-output-upfront-login_element form#loginform input:not([type=checkbox
   box-sizing: border-box;
 }
 
-div.upfront-output-upfront-login_element form#loginform p:first-child {
-	margin-top: 0;
+div.upfront-output-upfront-login_element form#loginform input.upfront-input-labels {
+	padding: 0;
 }
 
 div.upfront-output-upfront-login_element form#loginform p {
   text-align:left;
   line-height: 1.2;
-  margin-top:1em
+  margin-bottom: 10px;
 }
 
 div.upfront-output-upfront-login_element form#loginform label {
@@ -220,8 +219,8 @@ div.upfront-output-upfront-login_element form#loginform label:not(.uf-click-to-e
 input#rememberme {
   width:18px;
   height:18px;  
-  /*vertical-align:middle;*/
-  margin-right:10px
+  /*vertical-align:middle;
+  margin-right:10px*/
 }
 /*input#rememberme:before {
   content:'';
