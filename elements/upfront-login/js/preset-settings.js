@@ -423,12 +423,16 @@ define([
 						single: true,
 						state: 'input_fields_settings',
 						prepend: 'hover_',
+						toggle: true,
 						abccolors: [
 							{
 								name: 'hover_input_fields_background',
 								label: l10n.preset.field_background
 							}
-						]
+						],
+						fields: {
+							use: 'hover_use_input_fields_background'
+						}
 					}
 				},
 				{
@@ -491,12 +495,16 @@ define([
 						single: true,
 						state: 'button_settings',
 						prepend: 'hover_',
+						toggle: true,
 						abccolors: [
 							{
 								name: 'hover_button_background',
 								label: l10n.preset.button_background
 							}
-						]
+						],
+						fields: {
+							use: 'hover_use_button_background'
+						}
 					}
 				},
 				{
@@ -559,12 +567,16 @@ define([
 						single: true,
 						state: 'lost_password_text_settings',
 						prepend: 'hover_',
+						toggle: true,
 						abccolors: [
 							{
 								name: 'hover_lost_password_text_link_color',
 								label: l10n.preset.link_color
 							}
-						]
+						],
+						fields: {
+							use: 'hover_use_lost_password_text_link_color'
+						}
 					}
 				},
 				{
@@ -595,12 +607,16 @@ define([
 						single: true,
 						state: 'login_trigger_settings',
 						prepend: 'hover_',
+						toggle: true,
 						abccolors: [
 							{
 								name: 'hover_login_trigger_button_background',
 								label: l10n.preset.button_background
 							}
-						]
+						],
+						fields: {
+							use: 'hover_use_login_trigger_button_background'
+						}
 					}
 				},
 				{
@@ -663,12 +679,16 @@ define([
 						single: true,
 						state: 'logout_link_settings',
 						prepend: 'hover_',
+						toggle: true,
 						abccolors: [
 							{
 								name: 'hover_logout_link_button_background',
 								label: l10n.preset.button_background
 							}
-						]
+						],
+						fields: {
+							use: 'hover_use_logout_link_button_background'
+						}
 					}
 				},
 				{
@@ -753,12 +773,16 @@ define([
 						single: true,
 						state: 'input_fields_settings',
 						prepend: 'focus_',
+						toggle: true,
 						abccolors: [
 							{
 								name: 'focus_input_fields_background',
 								label: l10n.preset.field_background
 							}
-						]
+						],
+						fields: {
+							use: 'focus_use_input_fields_background'
+						}
 					}
 				},
 				{
@@ -821,12 +845,16 @@ define([
 						single: true,
 						state: 'button_settings',
 						prepend: 'focus_',
+						toggle: true,
 						abccolors: [
 							{
 								name: 'focus_button_background',
 								label: l10n.preset.button_background
 							}
-						]
+						],
+						fields: {
+							use: 'focus_use_button_background'
+						}
 					}
 				},
 				{
@@ -889,12 +917,16 @@ define([
 						single: true,
 						state: 'lost_password_text_settings',
 						prepend: 'focus_',
+						toggle: true,
 						abccolors: [
 							{
 								name: 'focus_lost_password_text_link_color',
 								label: l10n.preset.link_color
 							}
-						]
+						],
+						fields: {
+							use: 'focus_use_lost_password_text_link_color'
+						}
 					}
 				},
 				{
@@ -925,12 +957,16 @@ define([
 						single: true,
 						state: 'login_trigger_settings',
 						prepend: 'focus_',
+						toggle: true,
 						abccolors: [
 							{
 								name: 'focus_login_trigger_button_background',
 								label: l10n.preset.button_background
 							}
-						]
+						],
+						fields: {
+							use: 'focus_use_login_trigger_button_background'
+						}
 					}
 				},
 				{
@@ -993,12 +1029,16 @@ define([
 						single: true,
 						state: 'logout_link_settings',
 						prepend: 'focus_',
+						toggle: true,
 						abccolors: [
 							{
 								name: 'focus_logout_link_button_background',
 								label: l10n.preset.button_background
 							}
-						]
+						],
+						fields: {
+							use: 'focus_use_logout_link_button_background'
+						}
 					}
 				},
 				{
