@@ -195,10 +195,10 @@ a.upfront-region-name-edit-trigger{
 .uf-bgsettings-imageitem .uf-bgsettings-image-pos-x-num{
     margin: 0 30px 0 0;
 }
-.upfront-region-bg-setting-tab-primary .uf-bgsettings-image-pick{
+.upfront-bg-setting-tab-primary .uf-bgsettings-image-pick{
     float: left;
 }
-.upfront-region-bg-setting-type{
+.upfront-bg-setting-type{
     float: right;
     margin-left: 6px;
 }
@@ -496,7 +496,7 @@ li.activate-breakpoints-dropdown{
 .ulinkpanel .upfront-field-wrap-radios > label, .ulinkpanel-dark .upfront-field-wrap-radios > label{
     margin: 0 0 0 15px;
 }
-.uslider-slides-setting .upfront-region-bg-slider-add-image{
+.uslider-slides-setting .upfront-bg-slider-add-image{
     float: right;
 }
 
@@ -618,8 +618,8 @@ div#page.upfront-layout-view .upfront-editable_entity.upfront-module .upfront-ac
     margin-right: 5px;
     margin-left: auto;
 }
-.upfront-region-bg-slider-image,
-.upfront-region-bg-slider-add-image {
+.upfront-bg-slider-image,
+.upfront-bg-slider-add-image {
     float: right;
     margin: 0 7px 15px 7px;
 }

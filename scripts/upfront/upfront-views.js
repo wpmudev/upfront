@@ -5498,7 +5498,7 @@ define([
 						right:43,
 						keep_position: false
 					};
-				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting(opts);
+				this.bg_setting = new Upfront.Views.Editor.RegionBgSetting(opts);
 				this.bg_setting.for_view = this;
 				this.bg_setting.render();
 				this.$el.append(this.bg_setting.el);
@@ -6011,7 +6011,7 @@ define([
 			},
 			render_bg_setting: function () {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
-				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: $main, width: 420});
+				this.bg_setting = new Upfront.Views.Editor.RegionBgSettingFixed({model: this.model, to: $main, width: 420});
 				this.bg_setting.render();
 				$main.append(this.bg_setting.el);
 				this.listenTo(this.bg_setting, "modal:open", this.on_modal_open);
@@ -6318,7 +6318,7 @@ define([
 			},
 			render_bg_setting: function () {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
-				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: $main, width: 420});
+				this.bg_setting = new Upfront.Views.Editor.RegionBgSettingLightbox({model: this.model, to: $main, width: 420});
 				this.bg_setting.for_view = this;
 				this.bg_setting.render();
 				$main.append(this.bg_setting.el);
