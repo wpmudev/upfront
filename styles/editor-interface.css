@@ -13199,9 +13199,9 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-e
   padding-left: 0;
   padding-right: 0; }
 
-#page div.upfront-object.uposts-object {
-  padding: 0; }
-
+/*#page div.upfront-object.uposts-object {
+  padding: 0;
+}*/
 .upfront-content-marker {
   margin: 0;
   padding: 0;
