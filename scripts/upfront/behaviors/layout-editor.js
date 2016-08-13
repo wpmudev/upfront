@@ -973,7 +973,7 @@ var LayoutEditor = {
 				$title = $('<h3 class="global-region-manager-title">'+ manager.title +'</h3>'),
 				$content = $('<div class="global-region-manager-content upfront-scroll-panel"></div>');
 			$wrap.append([$title, $content]);
-			ed._render_regions(manager.data, $content);
+			ed._render_regions(manager.data, $content, manager.classname);
 			$el.append($wrap);
 			// don't propagate scroll
 			Upfront.Views.Mixins.Upfront_Scroll_Mixin.stop_scroll_propagation($content);
@@ -1011,7 +1011,7 @@ var LayoutEditor = {
 		});
 	},
 
-	_render_regions: function (regions, $el) {
+	_render_regions: function (regions, $el, type) {
 		var $lists = $('<ul class="global-region-manager-lists"></ul>');
 		_.each(regions, function(region){
 			var classes = ['global-region-manager-list'],
@@ -1040,6 +1040,15 @@ var LayoutEditor = {
 				'</li>'
 			);
 		});
+		// If no regions, display message.
+		if (regions.length < 1) {
+			if (type === 'lightbox') {
+				var message = Upfront.Settings.l10n.global.behaviors.no_lightboxes;
+			} else {
+				var message = Upfront.Settings.l10n.global.behaviors.no_global_regions;
+			}
+			$lists = '<span class="region-list-empty">' + message + '</span>';
+		}
 		$el.append($lists);
 	},
 
