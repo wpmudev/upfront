@@ -77,6 +77,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 			// This will be used for the breakpoint preset toggling
 			$preset = $this->_get_preset($data, $preset_map);
 
+			$view->set_preset($preset);
 
 			$breakpoint = upfront_get_property_value('breakpoint', $data);
 			$theme_styles = array('default' => $theme_style);

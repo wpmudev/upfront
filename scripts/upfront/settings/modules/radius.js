@@ -264,7 +264,7 @@ define([
 					change: function(value) {
 						me.model.set(me.options.fields.radius3, value);
 					}
-				}),
+				})
 
 
 			]);
@@ -319,7 +319,7 @@ define([
 			s.$el.find('#'+s.get_field_id()).slider('value', settings.radius);
 			s.get_field().val(settings.radius);
 			s.trigger('changed');
-		},
+		}
 	});
 
 	return RadiusSettingsModule;

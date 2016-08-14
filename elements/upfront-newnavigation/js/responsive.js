@@ -149,7 +149,7 @@ jQuery(document).ready(function($) {
 			});
 
 			//Make sure parent wrapper have higher z-index
-			$(this).closest('.upfront-output-module').css({'z-index': '9999', position: 'relative'})
+			$(this).closest('.upfront-output-module').css({'z-index': '9999', position: 'relative'});
 		}
 	});
 
@@ -281,20 +281,20 @@ jQuery(document).ready(function($) {
 						});
 					}
 					return el.currentStyle[prop] ? el.currentStyle[prop] : null;
-				}
+				};
 				return this;
-			}
+			};
 		}
-		
+
 		var breakpoint = window.getComputedStyle(document.body,':after').getPropertyValue('content');
-		
+
 		if(breakpoint === null && $('html').hasClass('ie8')) {
 			breakpoint = window.get_breakpoint_ie8($( window ).width());
 			$(window).trigger('resize');
 		}
 
 		if(breakpoint) {
-			breakpoint = breakpoint.replace(/['"]/g, '')
+			breakpoint = breakpoint.replace(/['"]/g, '');
 			if (current_breakpoint != breakpoint) {
 				previous_breakpoint = current_breakpoint;
 				current_breakpoint = breakpoint;
@@ -320,10 +320,10 @@ jQuery(document).ready(function($) {
 		elements.each(function () {
 
 			var breakpoints = $(this).data('breakpoints');
-			
+
 			var usingNewAppearance = $(this).data('new-appearance');
 
-			var currentwidth = (typeof(bpwidth) != 'undefined') ? parseInt(bpwidth) : $(window).width();
+			var currentwidth = (typeof(bpwidth) != 'undefined') ? parseInt(bpwidth, 10) : $(window).width();
 
 			var currentKey, preset, responsive_css;
 
@@ -418,7 +418,7 @@ jQuery(document).ready(function($) {
 			} else {
 				// Leave old code for backward compatibility
 				var bparray = [];
-				for (key in breakpoints) {
+				for (var key in breakpoints) {
 					if (key !== 'preset') bparray.push(breakpoints[key]);
 				}
 
@@ -430,7 +430,7 @@ jQuery(document).ready(function($) {
 				});
 
 				for (key in bparray) {
-					if(bparray[key] && bparray[key]['width'] && parseInt(currentwidth) >= parseInt(bparray[key]['width'])) {
+					if(bparray[key] && bparray[key]['width'] && parseInt(currentwidth, 10) >= parseInt(bparray[key]['width'], 10)) {
 
 						if(bparray[key]['burger_menu'] == 'yes') {
 
@@ -516,4 +516,3 @@ jQuery(document).ready(function($) {
 		roll_responsive_nav( e.selector, e.width);
 	});
 });
-

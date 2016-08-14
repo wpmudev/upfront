@@ -85,6 +85,9 @@ define([
 				this.property('has_settings', 1);
 			}
 
+			this.listenTo(Upfront.Events, 'upfront:import_image:populate_theme_images', this.populate_theme_images);
+			this.listenTo(Upfront.Events, 'upfront:import_image:imported', this.imported_theme_image);
+
 			this.listenTo(Upfront.Events, 'upfront:element:edit:start', this.on_element_edit_start);
 			this.listenTo(Upfront.Events, 'upfront:element:edit:stop', this.on_element_edit_stop);
 
@@ -105,7 +108,7 @@ define([
 				this.link = new LinkModel({
 					type: this.property('when_clicked'),
 					url: this.property('image_link'),
-					target: this.property('link_target'),
+					target: this.property('link_target')
 				});
 				this.property('link', this.link.toJSON());
 			} else {
@@ -153,6 +156,19 @@ define([
 
 			PresetUtil.updatePresetStyle('gallery', props, settingsStyleTpl);
 
+		},
+
+		populate_theme_images: function (image_list) {
+			if ( this.isThemeImage() ) image_list.push(this.property('srcFull'));
+		},
+
+		imported_theme_image: function (image) {
+			var src = this.property('srcFull');
+			if ( this.isThemeImage() && image.fullpath == src ) {
+				this.property('image_id', image.id);
+				this.property('srcFull', image.src);
+				this.property('srcOriginal', image.src);
+			}
 		},
 
 		setDefaults: function(){
@@ -203,7 +219,7 @@ define([
 		},
 
 		isThemeImage: function() {
-			return this.property('srcFull') && this.property('srcFull').match('wp-content/themes/');
+			return this.property('srcFull') && this.property('srcFull').match(Upfront.mainData.currentThemePath);
 		},
 
 		replaceImage: function() {
@@ -222,7 +238,7 @@ define([
 			});
 
 			this.listenTo(control, 'panel:ok', function() {
-				if(linkPanel.model.get('type') == 'lightbox' && linkPanel.$el.find('.js-ulinkpanel-lightbox-input').val() != '') {
+				if(linkPanel.model.get('type') == 'lightbox' && linkPanel.$el.find('.js-ulinkpanel-lightbox-input').val() !== '') {
 					linkPanel.createLightBox();
 				}
 				control.close();
@@ -878,10 +894,10 @@ define([
 				captionHeight = this.get_preset_property("caption-position") === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
 				// padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
 				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
-				elementWidth = parseInt(attr.width),
-				elementHeight = parseInt(attr.height) - captionHeight,
-				hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
-				vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
+				elementWidth = parseInt(attr.width, 10),
+				elementHeight = parseInt(attr.height, 10) - captionHeight,
+				hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding, 10 ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding, 10 ),
+				vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding, 10 ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding, 10 ),
 				ratio,
 				newSize;
 
@@ -971,12 +987,12 @@ define([
 						if(data.size.height < data.elementSize.height) {
 							margin = (data.size.height - data.elementSize.height);
 						} else {
-							margin = -(data.elementSize.height - containerHeight)
+							margin = -(data.elementSize.height - containerHeight);
 						}
 					}
 
 					this.$('.upfront-image-caption-container').css({
-						'marginTop': -margin,
+						'marginTop': -margin
 					});
 
 					this.property('marginTop', -margin);
@@ -1002,7 +1018,7 @@ define([
 				img = this.resizingData.img,
 				imgSize = {width: img.width(), height: img.height()},
 				imgPosition = img.position(),
-				padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding);
+				padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
 				sizeCheck = this.checkSize(),
 				isDotAlign = this.property('isDotAlign');
 
@@ -1238,7 +1254,7 @@ define([
 				).done(function(results){
 					var imageData = results.data.images[imageId];
 
-					if(imageData.error && !me.isThemeImage){
+					if(imageData.error && !me.isThemeImage()){
 						Upfront.Views.Editor.notify(l10n.process_error, 'error');
 						return;
 					}
@@ -1256,7 +1272,7 @@ define([
 				});
 			});
 
-			if ( this.isThemeImage && 'themeExporter' in Upfront ) {
+			if ( this.isThemeImage() && 'themeExporter' in Upfront ) {
 				this.importImage().always(function(){
 					import_deferred.resolve();
 				});
@@ -1383,8 +1399,8 @@ define([
 					// padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
 					borderWidth = parseInt(this.$el.find('.upfront-image-caption-container').css('borderWidth') || 0, 10), // || 0 part is needed because parseInt empty sting returns NaN and breaks element height
 					column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
-					hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
-					vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
+					hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding, 10 ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding, 10 ),
+					vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding, 10 ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding, 10 ),
 					// elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight}
 					elementSize = {width: ( width && !isNaN(width) ? width : resizer.width() ) - hPadding, height: ( height && !isNaN(height) ? height : resizer.height() ) - vPadding - captionHeight - (2 * borderWidth)},
 					newSize = this.getElementShapeSize(elementSize)
@@ -1416,7 +1432,7 @@ define([
 			if (e && e.preventDefault) e.preventDefault();
 
 			Upfront.Views.Editor.ImageSelector.open({
-				multiple_sizes: false,
+				multiple_sizes: false
 			}).done(function(images){
 				var sizes = {};
 				_.each(images, function(image, id){
@@ -1466,7 +1482,7 @@ define([
 
 			this.property('align', result.align, true);
 			this.property('valign', result.valign, true);
-			this.property('isDotAlign', result.isDotAlign, true)
+			this.property('isDotAlign', result.isDotAlign, true);
 			this.property('stretch', result.stretch, true);
 			this.property('vstretch', result.vstretch, true);
 			this.property('quick_swap', false, true);
@@ -1563,7 +1579,7 @@ define([
 
 			this.$('.upfront-image-wrapper').css({
 				height: maskSize.height
-			})
+			});
 		},
 
 		checkSize: function() {
@@ -1673,36 +1689,32 @@ define([
 		importImage: function () {
 			var me = this,
 				image_id = this.property('image_id'),
+				src = this.property('srcFull'),
 				opts = {
-					action: 'upfront-media-image-import',
-					images: [{
-						element_id: this.property('element_id'),
-						id: image_id,
-						src: this.property('srcFull')
-					}]
+					action: 'upfront_import_image',
+					images: [src]
 				},
 				deferred = $.Deferred()
 			;
 			Upfront.Util.post(opts).done(function(response){
 				var images = response.data.images;
-				if ( image_id in images ) {
-					var status = images[image_id].status;
-					if ( status == 'imported') {
-						me.property('image_id', images[image_id].id);
-						me.property('srcFull', images[image_id].src);
-						me.property('srcOriginal', images[image_id].src);
+				if ( parseInt(response.data.error, 10) !== 0 ) {
+					deferred.reject();
+					return;
+				}
+				_.each(images, function (image) {
+					var status = image.status;
+					if ( status === 'import_success' || status === 'exists') {
+						me.property('image_id', image.id);
+						me.property('srcFull', image.src);
+						me.property('srcOriginal', image.src);
 					}
-					else if ( status == 'exists' ) {
-						me.property('image_id', images[image_id].id);
-					}
-					else if ( status == 'fail' ) {
+					else {
 						deferred.reject();
 						return;
 					}
 					deferred.resolve(me.property('image_id'));
-					return;
-				}
-				deferred.reject();
+				});
 			});
 			return deferred.promise();
 		},
@@ -1733,19 +1745,20 @@ define([
 				panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
 				moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl(),
 				is_locked = this.property('is_locked'),
-				controls = []
+				controls = [],
+				lock_icon
 			;
 			if ( !this.mobileMode ) {
 				if(typeof is_locked !== "undefined" && is_locked === true) {
-					var lock_icon = 'lock-locked';
+					lock_icon = 'lock-locked';
 				} else {
-					var lock_icon = 'lock-unlocked';
+					lock_icon = 'lock-unlocked';
 				}
 
 				moreOptions.icon = 'more';
 				moreOptions.tooltip = l10n.ctrl.caption_position;
 
-				moreOptions.sub_items = {}
+				moreOptions.sub_items = {};
 				moreOptions.sub_items['swap'] = this.createControl('swap', l10n.btn.swap_image, 'openImageSelector');
 				moreOptions.sub_items['crop'] = this.createControl('crop', l10n.ctrl.edit_image, 'editRequest');
 				moreOptions.sub_items['link'] = this.createLinkControl();

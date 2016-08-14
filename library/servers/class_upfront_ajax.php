@@ -181,7 +181,17 @@ class Upfront_Ajax extends Upfront_Server {
 		if ( !$template_slug && $post_id ) {
 			$uf_tpl_meta = strtolower($store_key . '-uf_wp_page_template');
 			$template_slug = get_post_meta($post_id, $uf_tpl_meta, true);
-			if ( !$template_slug || empty($template_slug) ) $template_slug = strtolower($store_key . '-default');
+			if ( !$template_slug || empty($template_slug) ) {
+				// let's try to check if tpl template was assigned
+				$template_slug = get_post_meta($post_id, '_wp_page_template', true);
+				if ( !$template_slug || empty($template_slug) ) {
+					// still none? then it is the default
+					$template_slug = strtolower($store_key . '-default');
+				} else {
+					// it is from tpl file, then we need to sanitize the name
+					$template_slug = sanitize_title($store_key . preg_replace('/page_tpl(.*)\.php/', '\1', $template_slug) . '-page-template');
+				}
+			}
 		}
 		if ( !$layout_change || empty($layout_change) ) $layout_change = 0; 
 
@@ -357,8 +367,12 @@ class Upfront_Ajax extends Upfront_Server {
 
 		$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $save_dev);
 		$layout_post_id = Upfront_Server_PageLayout::get_instance()->save_layout($layout_post_id, $layout, $save_dev, $layout_slug);
+		
 		// we need to save global regions to DB, so can be reused to other page
 		$layout->save_global_region();
+		
+		// We need to save global layout options
+		$layout->save();
 		
 		// if there is a layout change
 		$layout_change_meta_name = strtolower($store_key . '-layout-change-flag');
@@ -697,17 +711,6 @@ class Upfront_Ajax extends Upfront_Server {
 		$sql = "DELETE FROM {$wpdb->options} WHERE option_name REGEXP %s";
 		return $wpdb->query($wpdb->prepare($sql, $rx));
 	}
-	
-	private function _delete_user_options () {
-		$store_key = strtolower(str_replace('_dev','',Upfront_Layout::get_storage_key()));
-		
-		// removing user site option for Builder Getting Started exp
-		$store_key = (preg_match('/uf-/', $store_key))
-			? $store_key
-			: 'uf-' . $store_key
-		;
-		delete_user_option( get_current_user_id(), $store_key . '_show_builder_exp', true );
-	}
 
 	function reset_all_from_db () {
 		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
@@ -748,8 +751,7 @@ class Upfront_Ajax extends Upfront_Server {
 				}
 			}
 		}
-		
-		$this->_delete_user_options(); // removing user site options
+		do_action('upfront_cleanup_user_options', $store_key); // removing user site options on builder
 		$this->_reset_cache(); // When resetting all, also do cache.
 
 		$this->_out(new Upfront_JsonResponse_Success("All is well"));

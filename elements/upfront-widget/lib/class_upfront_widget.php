@@ -37,7 +37,7 @@ class Upfront_Uwidget {
 		global $wp_registered_widgets;
 		$widget = $this->get_widget();
 		$result = Upfront_Permissions::current(Upfront_Permissions::BOOT)
-			? Upfront_UwidgetView::get_l10n('render_error')
+			? $this->_get_error_markup()
 			: ''
 		;
 		$args = !empty($wp_registered_widgets[$widget]['params']) ? $wp_registered_widgets[$widget]['params'] : array();
@@ -80,6 +80,20 @@ class Upfront_Uwidget {
 		$out = ob_get_clean();
 
 		return !empty($out) ? $out : $result;
+	}
+
+	/**
+	 * Getter for rendering error string markup
+	 *
+	 * @return string
+	 */
+	private function _get_error_markup () {
+		return '' .
+			esc_html(Upfront_UwidgetView::get_l10n('render_error')) .
+			'<div class="upfront-widget-note"><small>' .
+				esc_html(Upfront_UwidgetView::get_l10n('not_shown_to_visitors')) .
+			'</small></div>' .
+		'';
 	}
 
 	private function _get_admin_fields () {
@@ -140,10 +154,13 @@ class Upfront_Uwidget {
 				else $fields[$id] = array('name' =>$fieldname);
 				if (strtolower($node->nodeName) == 'select') {
 					$fields[$id]['type'] = $node->nodeName;
+					$fields[$id]['value'] = '';
 					$fields[$id]['options'] = array();
 					foreach($xpath->query('./option', $node) as $option) {
 						$fields[$id]['options'][$option->getAttribute('value')] = $option->nodeValue;
+						if ( empty($fields[$id]['value']) ) $fields[$id]['value'] = $option->nodeValue;
 					}
+					
 				} elseif('textarea' === strtolower($node->nodeName)) {
 					$fields[$id]['type'] = $node->nodeName;
 					$fields[$id]['value'] = $node->nodeValue;

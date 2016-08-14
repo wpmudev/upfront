@@ -65,6 +65,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			this.listenTo(this.parent_module_view, 'update_position', this.update_position);
 		}
 
+		this.listenTo(Upfront.Events, 'entity:drop:before_render', this.set_prev_region_container);
 		this.update_height();
 	},
 
@@ -95,7 +96,9 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		this.$el.find('.upfront-object-content').empty().append(markup);
 		this.adjust_featured_image();
 		this.adjust_inserted_image();
-		this.prepare_editor();
+		if ( Upfront.Application.is_editor() ) {
+			this.prepare_editor();
+		}
 
 		// Show full image if we are in mobile mode
 		if(type === "featured_image") {
@@ -277,6 +280,10 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		if ( type == 'featured_image' && !this.object_group_view.mobileMode ) {
 			this.remove_region_class('upfront-region-container-has-' + type, true);
 		}
+
+
+		if( this.prev_region_container )
+			this.prev_region_container.removeClass( 'upfront-region-container-has-' + type );
 	},
 
 	adjust_featured_image: function () {
@@ -390,6 +397,16 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 				this.editor_view
 			);
 		}
+	},
+	/**
+	 * Sets previous region container when element is moved to a new region
+	 *
+	 * @event Upfront.Events::entity:drop:render
+	 * @param dragdrop
+	 * @param region_container
+     */
+	set_prev_region_container: function( dragdrop, region_container){
+		this.prev_region_container = region_container;
 	}
 
 });
@@ -403,6 +420,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 		this.listenTo(Upfront.Events, 'editor:post:tax:updated', this.update_categories);
 
+
 		/*_.extend(this.events, {
 			'click .upfront-post-part-trigger': 'on_edit_click'
 		});*/
@@ -415,6 +433,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 		this.delegateEvents();
 	},
+
 
 	get_extra_buttons: function(){
 		//return '<a href="#" title="' + l10n.edit_post_parts + '" class="upfront-icon-button upfront-icon-button-nav upfront-post-part-trigger"></a>';
@@ -1277,7 +1296,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		Upfront.Events.trigger("featured:image:resized", newImageData);
 
 		import_promise.done(function(){
-			imageId = me.resizingData.data.imageId,
+			imageId = me.resizingData.data.imageId;
 			Upfront.Views.Editor.ImageEditor.saveImageEdition(
 				imageId,
 				me.resizingData.data.rotation,
@@ -1544,7 +1563,7 @@ var PostDataElement_Meta = PostDataElement.extend({
  * Add the elements to Upfront, only when in single layout. Place the element in DataElement.
  */
 function add_elements () {
-	if ( 'type' in _upfront_post_data.layout && 'single' === _upfront_post_data.layout.type ) {
+	if ( Upfront.Application.is_single() && !Upfront.Application.is_single('404_page') ) {
 		Upfront.Application.LayoutEditor.add_object("Upostdata-post_data", {
 			"Model": PostDataModel,
 			"View": PostDataView,

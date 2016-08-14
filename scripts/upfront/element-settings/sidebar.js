@@ -79,5 +79,8 @@ define([], function () {
 
 	// Also destroy settings when breakpoint is toggled
 	Upfront.Events.on('upfront:layout_size:change_breakpoint', destroySettings);
+
+	// And destroy settings when content style is called
+	Upfront.Events.on('upfront:edit_content_style:start', destroySettings);
 });
 })(jQuery);

@@ -33,8 +33,25 @@
                         me.lazy_save_styles(content);
                     }
                 });
+								
+                // this will be used when Inserting Font on Responsive Global Theme CSS
+                Upfront.Application.generalCssEditor = editor;
 
                 Upfront.Events.on("upfront:layout_size:change_breakpoint", function() {
+                    editor.close();
+                });
+								
+                // needs to close this when exiting Responsive Mode
+                Upfront.Events.on("upfront:exit:responsive", function() {
+                    // do not proceed if not existing in DOM anymore
+                    if ( !$.contains(document.documentElement, editor.$el.get(0)) ) return;
+                    editor.close();
+                });
+								
+                // needs to close this when activating Element Settings
+                Upfront.Events.on("element:settings:activate", function() {
+                    // do not proceed if not existing in DOM anymore
+                    if ( !$.contains(document.documentElement, editor.$el.get(0)) ) return;
                     editor.close();
                 });
             }

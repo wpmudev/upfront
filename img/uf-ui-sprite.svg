@@ -1831,6 +1831,8 @@
 	</g>
 	<polygon fill="#A2BEDA" points="352,248 349,252 355,252 	"/>
 	<polygon fill="#A2BEDA" points="352,264 355,260 349,260 	"/>
+	<path fill-rule="evenodd" clip-rule="evenodd" fill="#6A91B4" d="M199,285v2h-2v-2H199z M207,293v2h-2v-2H207z M208,292h-4v4h4V292
+		z M200,284h-4v4h4V284z M200,285.5c3.5,0.2,6.2,3,6.5,6.5h-1c-0.2-2.9-2.6-5.2-5.5-5.5V285.5z"/>
 </g>
 <g id="area-markers">
 </g>

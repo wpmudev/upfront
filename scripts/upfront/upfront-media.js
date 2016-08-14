@@ -1292,6 +1292,7 @@ define([
 		},
 		switch_to_embed: function (e) {
 			return false;
+			/*
 			e.preventDefault();
 			e.stopPropagation();
 			this.$el
@@ -1299,6 +1300,7 @@ define([
 				.filter(".embed").addClass("active")
 			;
 			this.trigger("media_manager:switcher:to_embed");
+			*/
 		},
 		switch_to_upload: function (e) {
 			e.preventDefault();

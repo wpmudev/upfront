@@ -9,15 +9,9 @@ define(function() {
 			var selectWidth = '';
 			var preset = this.$el.find('.upfront-chosen-select').val();
 
-			if(preset == 'default') {
-				selectWidth = '230px';
-			} else {
-				selectWidth = '175px';
-			}
-
 			this.$el.find('.upfront-chosen-select').chosen({
 				search_contains: true,
-				width: selectWidth,
+				width: '175px',
 				disable_search: !Upfront.Application.user_can("MODIFY_PRESET")
 			});
 
@@ -55,6 +49,19 @@ define(function() {
 			var selected = '';
 			var currentPreset = this.get_saved_value() ? this.get_saved_value() : 'default';
 			if (value.value === this.clear_preset_name(currentPreset)) selected = ' selected="selected"';
+
+
+			// If default preset change label to make more sense which element is edited
+			if(value.value === "default") {
+				// Use language string for preset Default
+				value.label = l10n.default_label;
+
+				var elementType = this.get_element_type(this.model.get_property_value_by_name('type'));
+				if(typeof elementType !== "undefined" && typeof elementType.label !== "undefined") {
+					value.label = l10n.default_label + ' ' + elementType.label;
+				}
+			}
+
 			return ['<option value="', value.value, '"', selected, '>', value.label, '</option>'].join('');
 		},
 
@@ -63,6 +70,33 @@ define(function() {
 			preset = preset.replace(/[^-a-zA-Z0-9]/, '');
 			return preset;
 		},
+
+		get_element_type: function(type) {
+			var elementTypes = {
+				UaccordionModel: {label: l10n.accordion, id: 'accordion'},
+				UcommentModel: {label: l10n.comments, id: 'comment'},
+				UcontactModel: {label: l10n.contact_form, id: 'contact'},
+				UgalleryModel: {label: l10n.gallery, id: 'gallery'},
+				UimageModel: {label: l10n.image, id: 'image'},
+				LoginModel: {label: l10n.login, id: 'login'},
+				LikeBox: {label: l10n.like_box, id: 'likebox'},
+				MapModel: {label: l10n.map, id: 'map'},
+				UnewnavigationModel: {label: l10n.navigation, id: 'nav'},
+				ButtonModel: {label: l10n.button, id: 'button'},
+				PostsModel: {label: l10n.posts, id: 'posts'},
+				UsearchModel: {label: l10n.search, id: 'search'},
+				USliderModel: {label: l10n.slider, id: 'slider'},
+				SocialMediaModel: {label: l10n.social, id: 'social'},
+				UtabsModel: {label: l10n.tabs, id: 'tab'},
+				ThisPageModel: {label: l10n.page, id: 'this_page'},
+				ThisPostModel: {label: l10n.post, id: 'this_post'},
+				UwidgetModel: {label: l10n.widget, id: 'widget'},
+				UyoutubeModel: {label: l10n.youtube, id: 'youtube'},
+				PlainTxtModel: {label: l10n.text, id:'text'}
+			};
+
+			return elementTypes[type];
+		}
 	});
 
 	return SelectPresetField;

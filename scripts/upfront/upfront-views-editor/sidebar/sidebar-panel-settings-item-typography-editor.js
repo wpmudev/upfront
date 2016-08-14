@@ -13,7 +13,7 @@
         return SidebarPanel_Settings_Item.extend({
             fields: {},
             current_element: 'h1',
-            elements: ["h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "a:hover", "ul", "ol", "blockquote", 'blockquote.upfront-quote-alternative'],
+            elements: ["h1", "h2", "h3", "h4", "h5", "h6", "p", "a", "a:hover", "pre", "ul", "ol", "blockquote", 'blockquote.upfront-quote-alternative'],
             inline_elements: ["a", "a:hover"],
             typefaces: {},
             styles: {},
@@ -43,12 +43,26 @@
                         Upfront.Application.current_subapplication.get_layout_data().properties,
                         { 'name': 'typography' }
                     ),
-                    default_typography = {}; //$.parseJSON('{\"h1\":{\"weight\":\"100\",\"style\":\"normal\",\"size\":\"72\",\"line_height\":\"1\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"h2\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"50\",\"line_height\":\"1\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h3\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"36\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h4\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"30\",\"line_height\":\"1.2\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"h5\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"25\",\"line_height\":\"1.2\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"h6\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"22\",\"line_height\":\"1.3\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"p\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"18\",\"line_height\":\"1.4\",\"font_face\":\"Georgia\",\"font_family\":\"serif\"},\"a\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,206,141,1)\"},\"a:hover\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":false,\"line_height\":false,\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(0,165,113,1)\"},\"ul\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\",\"color\":\"rgba(0,0,0,1)\"},\"ol\":{\"weight\":\"400\",\"style\":\"normal\",\"size\":\"16\",\"line_height\":\"1.5\",\"font_face\":\"Arial\",\"font_family\":\"sans-serif\"},\"blockquote\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"},\"blockquote.upfront-quote-alternative\":{\"weight\":\"400\",\"style\":\"italic\",\"size\":\"20\",\"line_height\":\"1.5\",\"font_face\":\"Georgia\",\"font_family\":\"serif\",\"color\":\"rgba(103,103,103,1)\"}}');
+                    default_typography = {},
+                    update_silently = true
+                ;
 
-                layout_typography = layout_typography ? layout_typography.value : default_typography;
+                var pluginsCallResult = Upfront.plugins.call('get-default-typography', {default_typography: default_typography});
+                if (pluginsCallResult.status && pluginsCallResult.status === 'called' && pluginsCallResult.result) {
+                    default_typography = pluginsCallResult.result;
+                }
+
+                if ( !layout_typography || ( 'value' in layout_typography && _.isEmpty(layout_typography.value) ) ) {
+                    // If layout_typography is empty or not exists, that means default typography will be used
+                    // In that case, we need to fill the tyopgraphy property with defaults, so set update_silently to false
+                    update_silently = false;
+                }
+
+                layout_typography = layout_typography && 'value' in layout_typography ? layout_typography.value : default_typography;
                 var big_tablet_breakpoint,
                     tablet_breakpoint,
-                    switcheroo;
+                    switcheroo
+                ;
 
                 // Breakpoint's typography should initialize like this:
                 // - if there is no typography for current breakpoint it should inherit settings from
@@ -85,7 +99,7 @@
                         }
                     } else {
                         // ensures that when theme is created there will be reasonable values for typography
-                        typography = layout_typography || default_typography;
+                        typography = !_.isEmpty(layout_typography) ? layout_typography : default_typography;
                     }
                 }
 
@@ -93,6 +107,22 @@
 
                 //Pass global typography settings to typography module
                 Upfront.mainData.global_typography = typography;
+
+                // Load saved styles for all elements
+                _.each(typography, function (value, element) {
+                    me.typefaces[element] = value.font_face;
+                    me.colors[element] = value.color;
+
+                    me.styles[element] = Fonts.Model.get_variant(value.weight, value.style);
+
+                    if ( value.size )
+                        me.sizes[element] = value.size;
+                    if ( value.line_height )
+                        me.line_heights[element] = value.line_height;
+                });
+
+                this.update_typography(undefined, update_silently);
+
 
                 // Check for theme fonts if no theme fonts just return string
                 var currentMode = Upfront.Application.get_current();
@@ -123,19 +153,6 @@
                     return;
                 }
 
-                // Load saved styles for all elements
-                _.each(typography, function (value, element) {
-                    me.typefaces[element] = value.font_face;
-                    me.colors[element] = value.color;
-
-                    me.styles[element] = Fonts.Model.get_variant(value.weight, value.style);
-
-                    if ( value.size )
-                        me.sizes[element] = value.size;
-                    if ( value.line_height )
-                        me.line_heights[element] = value.line_height;
-                });
-
                 if ( !this.fields.length ) {
                     this.fields = {
                         start_font_manager: chooseButton,
@@ -152,6 +169,7 @@
                                 { label: l10n.p, value: "p" },
                                 { label: l10n.a, value: "a" },
                                 { label: l10n.ahover, value: "a:hover" },
+                                { label: l10n.pre, value: "pre" },
                                 { label: l10n.ul, value: "ul" },
                                 { label: l10n.ol, value: "ol" },
                                 { label: l10n.bq, value: "blockquote" },
@@ -172,6 +190,10 @@
                                 }
                                 me.fields.color.set_value( me.colors[value] );
                                 me.fields.color.update_input_border_color(me.colors[value]);
+								
+								// Update typeface when element changed
+								var typeface_value = me.fields.typeface.get_value();
+								me.fields.typeface.set_option_font(typeface_value);
                             }
                         }),
                         typeface: new Fields.Typeface_Chosen_Select({
@@ -254,7 +276,6 @@
                 this.$el.append($wrap_left);
                 $wrap_right.append([this.fields.color.el, this.fields.line_height.el]);
                 this.$el.append($wrap_right);
-                this.update_typography(undefined, true);
             },
             /*
              * Style field needs some special treatment since options are completely changed
@@ -292,7 +313,8 @@
                 var availableStyles = this.get_styles(),
                     elementTypeface = this.typefaces[this.current_element],
                     elementStyle = this.styles[this.current_element],
-                    style;
+                    style
+                ;
 
                 if (elementStyle) {
                     style = elementStyle;
@@ -322,7 +344,8 @@
                 var typography = this.typography,
                     element = this.current_element,
                     styles = [],
-                    variants;
+                    variants
+                ;
 
                 if (false === typography) typography = {};
 
@@ -339,7 +362,8 @@
                 var me = this,
                     css = [],
                     breakpointCss = [],
-                    options = {};
+                    options = {}
+                ;
 
                 _.each(this.elements, function(element) {
                     var rules = [],
@@ -353,7 +377,8 @@
                         $this_el = $('.upfront-object-content ' + element ),
                         font_family,
                         style_base,
-                        theme_color_class;
+                        theme_color_class
+                    ;
 
                     style_base = Fonts.Model.parse_variant(me.styles[element] || 'regular');
                     weight = style_base.weight;
@@ -468,10 +493,10 @@
                 }
             },
             update_typography_elements: function (view) {
-                var me = this;
-                var css = [],
+                var me = this,
+                    css = [],
                     $style = false
-                    ;
+                ;
                 $style = $("style#typography-colors");
                 if (!$style.length) {
                     $("body").append('<style id="typography-colors" />');

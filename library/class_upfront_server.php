@@ -8,19 +8,44 @@
 
 
 interface IUpfront_Server {
+
+	/**
+	 * Supposed to serve the instance
+	 */
 	public static function serve ();
 }
 
+/**
+ * Upfront server with output support abstraction
+ */
 abstract class Upfront_Server implements IUpfront_Server {
 
 	const REJECT_NOT_ALLOWED = "not allowed";
 
+	/**
+	 * Debugger instance
+	 *
+	 * @var object
+	 */
 	protected $_debugger;
 
+	/**
+	 * Creates an instance
+	 *
+	 * Never directly to the outside world.
+	 */
 	protected function __construct () {
 		$this->_debugger = Upfront_Debug::get_debugger();
 	}
 
+	/**
+	 * Converts a name to an Upfront class
+	 *
+	 * @param string $name Name to convert
+	 * @param bool $check_existence Optionally check for class existence first (defaults to false)
+	 *
+	 * @return mixed (string)Class name, or (bool)false
+	 */
 	public static function name_to_class ($name, $check_existence=false) {
 		$parts = array_map('ucfirst', array_map('strtolower', explode('_', $name)));
 		$valid = 'Upfront_' . join('', $parts);
@@ -68,10 +93,11 @@ abstract class Upfront_Server implements IUpfront_Server {
 	}
 }
 
-/** --- Load up the implementations --- **/
+/* --- Load up the implementations --- */
 
 require_once('servers/class_upfront_ajax.php');
 require_once('servers/class_upfront_editor_ajax.php');
+require_once('servers/class_upfront_image.php');
 require_once('servers/class_upfront_javascript_main.php');
 require_once('servers/class_upfront_stylesheet_main.php');
 require_once('servers/class_upfront_stylesheet_editor.php');
@@ -89,3 +115,4 @@ require_once('servers/class_upfront_theme_colors_server.php');
 require_once('servers/class_upfront_server_post_image_variants.php');
 require_once('servers/class_upfront_markup_server.php');
 require_once('servers/class_upfront_editor_l10n_server.php');
+require_once('servers/class_upfront_server_metadata.php');

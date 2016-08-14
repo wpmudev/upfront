@@ -27,6 +27,7 @@ text!upfront/templates/region_container.html
 text!upfront/templates/region.html
 text!upfront/templates/wrapper.html
 text!upfront/templates/layout.html
+text!upfront/templates/api_key_overlay_region.html
 upfront/upfront-views.js
 chosen/chosen.jquery.min.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/global-event-handlers.js
@@ -53,6 +54,7 @@ C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/element-settin
 text!scripts/upfront/templates/link-panel.html
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/link-panel.js
 text!upfront/templates/post-editor/edition-box.html
+upfront/post-editor/post-box-metadesc.js
 upfront/post-editor/upfront-post-edit.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/jquery-plugins.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/mixins/upfront-icon-mixin.js
@@ -318,6 +320,7 @@ text!elements/upfront-login/tpl/preset-style.html
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-login/js/preset-settings.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-login/js/upfront_login.js
 text!elements/upfront-maps/css/edit.css
+text!upfront/templates/api_key_overlay_element.html
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-maps/js/upfront_maps.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-newnavigation/js/menuitem.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-newnavigation/js/model.js

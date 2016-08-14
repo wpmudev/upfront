@@ -14,8 +14,15 @@
             initialize : function(){
                 var self = this;
                 this.template = _.template(sidebar_settings_theme_colors_tpl);
+
+				// Clear old events
+				Upfront.Events.off("command:layout:save", this.on_save);
+				Upfront.Events.off("command:layout:save_as", this.on_save);
+				
+				// Rebind events
                 Upfront.Events.on("command:layout:save", this.on_save, this);
                 Upfront.Events.on("command:layout:save_as", this.on_save, this);
+
                 if (Upfront.Settings.Application.NO_SAVE) Upfront.Events.on("preview:build:start", this.on_save, this); // Also build colors on preview, only in anonymous mode
                 this.update_styles();
                 Theme_Colors.colors.bind('change reset add', this.update_styles, this);
@@ -120,7 +127,7 @@
                     empty_picker = new Fields.Color({
                         className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch',
                         hide_label : true,
-                        default_value: 'rgba(0, 0, 0, 0)',
+                        default_value: '#ffffff', // Need to not be transparent, because theme colors can't be transparent
                         blank_alpha: 0,
                         spectrum: {
                             choose: function (color) {
@@ -134,6 +141,15 @@
                             change: function (color) {
                                 if (!_.isObject(color)) return false;
                                 empty_picker.update_input_val(color.toHexString());
+
+								// Decide whether to update or to add the new color
+								if (self.theme_colors.colors.at(index)) {
+									self.update_colors(this, color, index);
+								} else {
+									self.add_new_color(color, index); // Need to actually add a color here, as it won't be otherwise
+									self.update_colors(this, color, index); // And to update too because hail satan
+								}
+								// Done
                             }
                         }
                     });
@@ -149,8 +165,7 @@
             add_previous_pickers : function(){
                 var self = this;
                 this.$(".theme-colors-color-picker").each(function(index){
-                    var picker = this,
-                        $this = $(this),
+                    var $this = $(this),
                         color = $this.data("color"),
                         model = self.theme_colors.colors.at(index),
                         picker = new Fields.Color({
@@ -272,6 +287,7 @@
             },
             render_bottom : function(){
                 return;
+				/*
                 this.$(".panel-setting-theme-colors-bottom").html(
                     this.bottomTemplate( {
                         colors : Theme_Colors.colors.toJSON(),
@@ -279,6 +295,7 @@
                     } )
                 );
                 this.add_slider();
+				*/
             },
             color_luminance : function (hex, lum) {
                 // validate hex string

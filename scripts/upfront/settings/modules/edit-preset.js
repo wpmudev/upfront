@@ -15,7 +15,8 @@ define([
 
 			var me = this,
 				firstStateButton = false,
-				firstStateSettings = false
+				firstStateSettings = false,
+				fields = []
 			;
 
 			if (
@@ -23,7 +24,7 @@ define([
 				&& this.options.model.get('id') !== 'default'
 				&& Upfront.Application.user_can("DELETE_PRESET")
 			) {
-				var fields = [
+				fields = [
 					new Upfront.Views.Editor.Field.Button({
 						model: this.model,
 						label: l10n.delete_label,
@@ -41,7 +42,7 @@ define([
 				&& (this.options.model.get('id') === 'default' || this.options.model.get('theme_preset') === true)
 				&& Upfront.Application.user_can("MODIFY_PRESET")
 			) {
-				var fields = [
+				fields = [
 					new Upfront.Views.Editor.Field.Button({
 						model: this.model,
 						label: 'Reset',
@@ -53,7 +54,7 @@ define([
 					})
 				];
 			} else {
-				var fields = [];
+				fields = [];
 			}
 
 			if (Upfront.Application.user_can("MODIFY_PRESET")) {

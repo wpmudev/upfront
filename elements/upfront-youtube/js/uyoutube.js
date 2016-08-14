@@ -113,14 +113,13 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 
 		//Call resize function to match player width with object width
 		me.onResizeStop();
-
-		//Delay events else values are empty
-		setTimeout(function(){
+		
+		// wait for the video to be added before showing the settings
+		this.listenTo(Upfront.Events, "upfront:youtube:added:done", function(){
 			me.on_settings_click();
-			//Trigger event for adding videos to array
-			Upfront.Events.trigger("upfront:youtube:added");
-
-		}, 50);
+			me.stopListening(Upfront.Events, "upfront:youtube:added:done");
+		});
+		Upfront.Events.trigger("upfront:youtube:added");
 	},
 
 	on_render: function() {
@@ -490,7 +489,7 @@ var YoutubeSettings = ElementSettings.extend({
 
 	initialize: function (options) {
 		this.constructor.__super__.initialize.call(this, options);
-
+		
 		this.listenTo(Upfront.Events, "upfront:youtube:added", this.multipleVideos);
 	},
 
@@ -547,6 +546,7 @@ var YoutubeSettings = ElementSettings.extend({
 						if(videoCounter == videoFields.length) {
 							multiple_videos_array.sort(function(a,b) { return a.order - b.order; });
 							me.for_view.model.set_property('multiple_videos', multiple_videos_array, false);
+							Upfront.Events.trigger("upfront:youtube:added:done");
 						}
 					})
 					;

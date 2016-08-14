@@ -395,7 +395,17 @@ define([
 				values: anchorValues,
 				default_value: anchorValue,
 				change: function () {
-					model.set({'url': this.get_value()});
+					var url = this.get_value();
+					// Quick fix for exporter url ending up in local site menus until we solve
+					// mapping anchors to pages. This will allow user to create links to anchors
+					// on specific pages when using editor, but builder for now does not have
+					// proper support for that.
+					// Use case that we have to cover is in menu that is present on all pages
+					// make link to anchor on homepage or other specific page.
+					if (document.location.pathname.match(/^\/create_new\//) !== null) {
+						url = '#' + url.split('#')[1];
+					}
+					model.set({'url': url});
 				}
 			});
 			this.anchorSelect.render();

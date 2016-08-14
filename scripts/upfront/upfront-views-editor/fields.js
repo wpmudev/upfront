@@ -520,8 +520,8 @@
                 this.$(".sp-container").data("field_color", this);
                 this.$(".sp-container").data("$spectrum", this.$spectrum );
                 this.$(".sp-container").find(".sp-choose").on("click.spectrum", function(e){
-                    if(me.options.spectrum && me.options.spectrum.move && me.color)
-                        me.options.spectrum.move(me.color);
+                    if(me.options.spectrum && me.options.spectrum.choose && me.color)
+                        me.options.spectrum.choose(me.color);
 
                     if( me.options.autoHide !== true ){
                         me.$(".sp-replacer").removeClass("sp-active");
@@ -598,12 +598,17 @@
 
                 });
 
-                if( !_.isEmpty( input_val ) ){
-                    var input_val_color = tinycolor( input_val );
-                    this.toggle_alpha_selector( input_val_color );
+                if( !_.isEmpty( color ) ){
+                    var me = this,
+						input_val_color = tinycolor( color );
+
+					// We need a delay to load if color is theme color
+				    setTimeout( function() {
+						me.toggle_alpha_selector( color );
+					}, 100);
                 }
 
-                if( ( !this.field_options || !this.field_options.flat ) && this.field_options.hideOnOuterClick )
+                if( this.options.spectrum && !this.options.spectrum.flat && ( !this.field_options || !this.field_options.flat ) && this.field_options.hideOnOuterClick )
                     $("html").on('mousedown', _.bind( this.hide_on_outer_click, this ) );
             },
             on_spectrum_beforeShow: function(color){
@@ -792,7 +797,7 @@
                 if( Upfront.Views.Theme_Colors.colors.is_theme_color( color ) ){
 
                     $alpha.addClass("sp-alpha-disabled sp-alpha-lower-opacity");
-                    $overlay = $("<span class='sp-alpha-overlay' title='"+ l10n.theme_colors_opacity_disabled +"'></span>")
+                    $overlay = $("<span class='sp-alpha-overlay' title='"+ l10n.theme_colors_opacity_disabled +"'>"+ l10n.theme_colors_opacity_disabled +"</span>")
                         .on("click", function(e){
                             e.stopPropagation();
                             e.preventDefault();

@@ -20,7 +20,10 @@ var globalL10n = Upfront.Settings && Upfront.Settings.l10n
 	: Upfront.mainData.l10n.global.views;
 
 var UgalleryImage = Backbone.Model.extend({
-	defaults: Upfront.data.ugallery.imageDefaults
+	defaults: Upfront.data.ugallery.imageDefaults,
+	is_theme_image: function () {
+		return this.get('srcFull') && this.get('srcFull').match(Upfront.mainData.currentThemePath);
+	}
 });
 
 var UgalleryImages = Backbone.Collection.extend({
@@ -116,6 +119,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 		this.listenTo(this.model, "preset:updated", this.preset_updated);
 		this.listenTo(Upfront.Events, "preset:gallery:updated", this.caption_updated, this);
+
+		this.listenTo(Upfront.Events, 'upfront:import_image:populate_theme_images', this.populate_theme_images);
+		this.listenTo(Upfront.Events, 'upfront:import_image:imported', this.imported_theme_image);
 
 		this.lastThumbnailSize = {width: this.property('thumbWidth'), height: this.property('thumbHeight')};
 
@@ -272,6 +278,26 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	preventClose: function(event) {
 		event.stopPropagation();
+	},
+
+	populate_theme_images: function (image_list) {
+		this.images.each(function(each){
+			if ( each.is_theme_image() ) image_list.push(each.get('srcFull'));
+		});
+	},
+
+	imported_theme_image: function (image) {
+		var me = this;
+		this.images.each(function(each){
+			var id = each.get('id'),
+				src = each.get('srcFull')
+			;
+			if ( each.is_theme_image() && image.filepath === src ) {
+				each.set('id', image.id);
+				each.set('srcFull', image.src);
+				me.$el.find('.ugallery_item[rel=' + id + ']').attr('rel', image.id);
+			}
+		});
 	},
 
 	// Remove default dblclick behavior because it messes up things
@@ -516,7 +542,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		linkControl.icon = 'link';
 		linkControl.tooltip = l10n.ctrl.image_link;
 		linkControl.id = 'link';
-		
+
 		//Set icon width & height
 		linkControl.width = 30;
 		linkControl.height = 30;
@@ -546,6 +572,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 					'max-width': maxWidth,
 					'max-height': maxHeight
 				});
+
+				// Resize lightbox on window resize
+				me.resizeLightboxContainer();
 			}
 		;
 
@@ -645,8 +674,20 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			$('body').append('<style id="' + containerClass + '"></style>');
 		}
 		$('style#' + containerClass).html(this.property('styles'));
-	},
 
+		//Resize lightbox to fit editor container
+		this.resizeLightboxContainer();
+	},
+	resizeLightboxContainer: function() {
+		var currentLightbox = $( '.mfp-bg, .mfp-wrap' ),
+			sidebar_ui = $( '#sidebar-ui' ),
+			sidebar_ui_width = sidebar_ui.width(),
+			lightbox_content = currentLightbox.find( '.mfp-container' )
+		;
+
+		currentLightbox.css( 'left', sidebar_ui_width );
+		lightbox_content.css( 'width', currentLightbox.width() - sidebar_ui_width );
+	},
 	createLightboxSettings: function () {
 		$('.mfp-container').append(_.template(lightboxTpl, {
 			edit_lightbox_css: l10n.lightbox.edit_css,
@@ -711,7 +752,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 					me.property('lightbox_show_image_count', value);
 					me.setupLightbox();
 				}
-			}),
+			})
 		};
 
 		fields.lightbox_active_area_bg = new Upfront.Views.Editor.Field.Color({
@@ -791,7 +832,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 					'.mfp-title': {label: l10n.css.lightbox_caption, info: l10n.css.lightbox_caption},
 					'.mfp-arrow-left:before': {label: l10n.css.lightbox_arrow_left, info: l10n.css.lightbox_arrow_left},
 					'.mfp-arrow-right:before': {label: l10n.css.lightbox_arrow_right, info: l10n.css.lightbox_arrow_right},
-					'.mfp-counter': {label: l10n.css.lightbox_image_count, info: l10n.css.lightbox_image_count},
+					'.mfp-counter': {label: l10n.css.lightbox_image_count, info: l10n.css.lightbox_image_count}
 				},
 				change: function(content) {
 					me.property('styles', content);
@@ -870,7 +911,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			resizingFunction;
 
 		// Hide delete icon
-		if (!Upfront.Application.user_can_modify_layout()) {		
+		if (!Upfront.Application.user_can_modify_layout()) {
 			this.$el.find('.remove-image').remove();
 		}
 
@@ -985,7 +1026,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		// 'row' property on resize.
 		// this.render(); <-- this is redundant and creates misscalculation of padding
 	},
-	
+
 	on_module_update: function (attr) {
 		this.render();
 	},
@@ -1091,7 +1132,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				status: 'ok',
 				element_id: element_id,
 				urlType: me.property('linkTo'),
-				url: image.full[0],
+				url: image.full[0]
 			});
 			// Also initialize image link defaults here
 			model.set('imageLink', {
@@ -1735,13 +1776,13 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	getControlItems: function(){
 		var me = this;
-		
-		moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl()
-		
+
+		moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl();
+
 		moreOptions.icon = 'more';
 		moreOptions.tooltip = l10n.ctrl.caption_position;
 
-		moreOptions.sub_items = {}
+		moreOptions.sub_items = {};
 		moreOptions.sub_items['add'] = this.createControl('add', l10n.template.add_img, 'openImageSelector', 38, 38);
 		moreOptions.sub_items['toggle-sorting'] = this.createControl('toggle-sorting', l10n.toggle_dnd, 'toggleSorting', 38, 38);
 

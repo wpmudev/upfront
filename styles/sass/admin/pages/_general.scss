@@ -17,12 +17,13 @@
 }
 
 .upfront-col-right,
-.upfront-general-settings .upfront-col-left {
-    margin-top: 30px;
+.upfront-col-left {
+    margin-top: 20px;
 }
 
 .upfront-general-settings .upfront-debug-block a.upfront_button,
-.upfront-general-settings .upfront-debug-block button {
+.upfront-general-settings .upfront-debug-block button,
+.upfront_admin button {
     background-color: #AFAFAF;
     border: none;
     color: #fff;

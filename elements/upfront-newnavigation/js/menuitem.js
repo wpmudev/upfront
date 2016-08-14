@@ -227,7 +227,7 @@ return (function ($) {
 			var content = '<a class="menu_item uf-click-to-edit-text';
 
 			if(me.newitem) content = content + ' new_menu_item menu_item_placeholder';
-			
+
 			if (Upfront.Application.user_can_modify_layout()) {
 				content = content+'" ><span class="menu_item-ueditor">'+this.model['menu-item-title']+'</span></a><i class="delete_menu_item">x</i><span class="open-item-controls"></span>';
 			} else {
@@ -383,7 +383,7 @@ return (function ($) {
 
 			urlParts = url.split('#');
 
-			if(urlParts[0].trim() != '')
+			if(urlParts[0].trim() !== '')
 				return urlParts[0];
 			else
 				return location.href.replace('?dev=true', '');
@@ -415,7 +415,7 @@ return (function ($) {
 				menu_item.blur();
 			}
 
-			if (me.model['menu-item-title'].trim() == '') {
+			if (me.model['menu-item-title'].trim() === '') {
 				if (typeof(keep) != 'undefined' && keep) {
 					var title_text = menu_item.next('a.ueditor-placeholder').text() || (menu_item.is("a.menu_item_placeholder") ? menu_item.text() : '');
 					me.model['menu-item-title'] = title_text;
@@ -429,7 +429,7 @@ return (function ($) {
 				'action': "upfront_new_update_menu_item",
 				'menu': me.parent_view.model.get_property_value_by_name('menu_id') ,
 				'menu-item': this.model
-			}
+			};
 
 			if (typeof this.model['menu-item-db-id'] != 'undefined') {
 				postdata['menu-item-id'] = me.model['menu-item-db-id'];

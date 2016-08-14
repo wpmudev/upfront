@@ -80,8 +80,6 @@ define([
 			var currentBreakpoint,
 				breakpointsData;
 
-			this.removePreviewClasses();
-
 			// Setup model so that it saves breakpoint values to breakpoint property
 			if (this.hasBreakpointSettings === true && this.breakpointSpecificSettings) {
 				currentBreakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active();
@@ -113,6 +111,8 @@ define([
 			}
 
 			if (this.onSaveSettings) this.onSaveSettings();
+
+			this.removePreviewClasses();
 		},
 
 		cancelSettings: function() {
@@ -177,7 +177,7 @@ define([
 				titleHeight = this.$el.find('>.upfront-settings-title').outerHeight(true),
 				buttonHeight = this.$el.find('>.upfront-settings-button_panel').outerHeight(true)
 			;
-			this.$el.find('#sidebar-scroll-wrapper').css('max-height', (height-titleHeight-buttonHeight) + 'px')
+			this.$el.find('#sidebar-scroll-wrapper').css('max-height', (height-titleHeight-buttonHeight) + 'px');
 		},
 
 		cleanUp: function(){

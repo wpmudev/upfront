@@ -40,14 +40,14 @@ jQuery(function($){
 			options = slider.find('.uslider').data();
 
 		/* if it is enclosed inside a lightbox,
-		 * then set it up on first instance of 
+		 * then set it up on first instance of
 		 * the lightbox showing up. Also store a flag
 		 * issetup in order to avoid repeating this process
 		 */
 
 		if(slider.closest('div.upfront-region-lightbox').length ) {
-			
-			// slider should stay hidden before the lightbox opens up, 
+
+			// slider should stay hidden before the lightbox opens up,
 			// or it kills the lightbox alignment because of its extra height
 			slider.hide();
 
@@ -65,9 +65,9 @@ jQuery(function($){
 				// do the thing
 				slider.show();
 				setupSlider(slider);
-				
+
 				slider.data('issetup', true);
-				
+
 			});
 
 			return;
@@ -87,13 +87,18 @@ jQuery(function($){
 		}
 
 		function updateSlider(slider) {
+			var uslides = slider.find('.uslides'),
+				caption_height = 0
+			;
 			slider.find('.uslide-above').each(function(){
 				var slide = $(this);
 				slide.find('.uslide-caption').remove().prependTo(slide);
+				caption_height = 1;
 			});
 			slider.find('.uslide-below').each(function(){
 				var slide = $(this);
 				slide.find('.uslide-caption').remove().appendTo(slide);
+				caption_height = 1;
 			});
 			slider.find('.uslide-left').each(function(){
 				var slide = $(this);
@@ -107,9 +112,11 @@ jQuery(function($){
 				var slide = $(this);
 				slide.find('.uslide-caption').remove().prependTo(slide.find('.uslide-image'));
 			});
+			uslides.attr('data-caption_height', caption_height).trigger('refresh');
 		}
 
 		function onBreakpointChange(slider, breakpoint) {
+			breakpoint = !breakpoint ? 'desktop' : breakpoint;
 			slider.find('.uslide').each(function(){
 				var slide = $(this),
 					breakpoint_data = slide.attr('data-breakpoint'),
@@ -117,7 +124,7 @@ jQuery(function($){
 					default_style = slide.attr('data-style'),
 					all_styles = ['uslide-' + default_style]
 				;
-				for ( bp in map ) {
+				for ( var bp in map ) {
 					if ( !map[bp]['style'] ) continue;
 					all_styles.push('uslide-' + map[bp]['style']);
 				}
@@ -131,4 +138,43 @@ jQuery(function($){
 		}
 
 	});
+	
+	
+	/**
+	 * Fix DOM children responsive preset classes
+	 *
+	 * Legacy preset elements double up their preset classes in DOM children,
+	 * which doesn't get pick up by the responsive preset processing in `layout.js`.
+	 *
+	 * This is where we handle those cases, for the current element
+	 *
+	 * @param {Object} e Event - ignore
+	 * @param {String} breakpoint The current breakpoint to inherit
+	 */
+	$(document).on("upfront-responsive_presets-changed", function (e, breakpoint) {
+		$(".upfront-uslider").each(function () {
+			var $root = $(this),
+				rmap = $root.attr("data-preset_map"),
+				map = rmap ? JSON.parse(rmap) : {},
+				$items
+			;
+			
+			// we have to provide proper fallback here, mobile -> tablet -> desktop
+			if ( breakpoint == 'mobile' ) {
+				map[breakpoint] = map[breakpoint] || map['tablet'] || map['desktop'] || 'default';
+			} else if ( breakpoint == 'tablet' ) {
+				map[breakpoint] = map[breakpoint] || map['desktop'] || 'default';
+			} else {
+				map[breakpoint] = map[breakpoint] || 'default';
+			}
+			
+			$items = $root.find(".uslider-caption-background");
+			$.each(map, function (bp, preset) {
+				$items.removeClass('slider-preset-' + preset);
+				if (bp === breakpoint) $items.addClass('slider-preset-' + preset);
+			});
+
+		});
+	});
+	
 });

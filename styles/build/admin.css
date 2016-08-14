@@ -23,8 +23,7 @@
   font-family: 'Roboto';
   font-size: 15px;
   color: #8e8e8e;
-  margin-top: 30px;
-  margin-bottom: 30px; }
+  margin-top: 0px; }
 
 .upfront_admin .float_left {
   float: left; }
@@ -72,13 +71,34 @@
   padding: 25px 30px 25px;
   margin-bottom: 0;
   color: #777;
-  font-weight: bold;
+  font-weight: 400;
   margin-top: 0;
-  font-family: 'Roboto', Helvetica Neueu, Helvetica, Arial, sans-serif; }
+  font-family: 'Roboto', Helvetica Neueu, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased; }
+
+/* EDIT THEME - ICON BUTTONS */
+.postbox.themes .download,
+.postbox.themes .edit.info {
+  width: 48px;
+  padding: 13px;
+  vertical-align: top;
+  background: url("../../img/uf-admin-sprite.svg") #AFAFAF; }
+
+.postbox.themes .download:hover,
+.postbox.themes .edit.info:hover {
+  background: url("../../img/uf-admin-sprite.svg") #999; }
+
+.postbox.themes .download,
+.postbox.themes .download:hover {
+  background-position: -100px -82px; }
+
+.postbox.themes .edit.info,
+.postbox.themes .edit.info:hover {
+  background-position: -100px -146px; }
 
 @media screen and (min-width: 920px) {
   .upfront-col-left, .upfront-col-right {
-    width: 48%;
+    width: 49%;
     float: left; }
   .upfront-col-left {
     margin-right: 2%; } }
@@ -237,11 +257,12 @@ input.upfront_toggle_checkbox {
   border-bottom: none; }
 
 .upfront-col-right,
-.upfront-general-settings .upfront-col-left {
-  margin-top: 30px; }
+.upfront-col-left {
+  margin-top: 20px; }
 
 .upfront-general-settings .upfront-debug-block a.upfront_button,
-.upfront-general-settings .upfront-debug-block button {
+.upfront-general-settings .upfront-debug-block button,
+.upfront_admin button {
   background-color: #AFAFAF;
   border: none;
   color: #fff;
@@ -354,9 +375,6 @@ input.upfront_toggle_checkbox {
   max-height: 400px;
   overflow-y: auto; }
 
-#upfront_restrictions_form {
-  padding: 0 10px; }
-
 #upfront_user_restrictions_listing {
   display: table;
   table-layout: fixed;
@@ -367,7 +385,7 @@ input.upfront_toggle_checkbox {
   -o-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
-  margin-top: 40px;
+  margin-top: 20px;
   padding-bottom: 5px;
   border-bottom: 2px solid #e4e4e4; }
 
@@ -451,7 +469,8 @@ ul.upfront_restrictions_functionality_row:hover li {
   background: #fff;
   text-align: left; }
 
-#upront_restrictions_submit {
+#upront_restrictions_submit,
+.upfront_admin .create.theme {
   display: block;
   width: 187px;
   height: 40px;
@@ -463,16 +482,12 @@ ul.upfront_restrictions_functionality_row:hover li {
   margin: 30px auto;
   border: none;
   text-align: center;
-  -mox-border-radius: 4px;
-  -o-border-radius: 4px;
-  -webkit-border-radius: 4px;
   border-radius: 4px;
   text-transform: uppercase;
   cursor: pointer; }
 
-.upfront_admin_experimental .upfront_admin_experimental_contents {
-  padding-left: 10px;
-  padding-right: 10px; }
+.upfront_admin .create.theme {
+  margin: 0 auto; }
 
 .upfront_admin_experimental .form_content {
   display: inline-block;

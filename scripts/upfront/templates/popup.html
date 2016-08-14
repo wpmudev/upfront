@@ -409,77 +409,138 @@
 			</div>
 			<div class="icon-fonts-list">
 				{[ _.each(fonts, function(font) { ]}
+					{[ if (0 === _.keys(font.get("files") || {}).length) return true; ]}
 				<div data-family="{{ font.get('family') }}" class="icon-fonts-list-item {[ if (font.get('active')) { ]}icon-fonts-list-item-active{[ } ]}">
-					{{ font.get('name') }}{[ if (font.getUploadStatus() !== true) { ]} <span class="icon-font-upload-status" title="{{ font.getUploadStatus() }}">*</span>{[ } ]}
-				</div>
+					<div class="font-name">
+						<span class="icon-font-family">{{ font.get('name') }}</span>
+						{[ if ("default" !== font.get("type") && font.getUploadStatus() !== true) { ]}
+						<span class="icon-font-upload-status" title="{{ font.getUploadStatusMessage() }}">*</span>
+						{[ } ]}
+					</div>
+					<a href="#expand" class="expand-toggle">
+						<span class="fileset-count">{{ _.keys(font.get("files") || {}).length || 0 }} files</span>
+						<i>&hellip;</i>
+					</a>
+					<div class="font-fileset">
+					{[ _.each((font.get("files") || []), function (fname, fidx) { ]}
+						<div class="font-filename" data-name="{{fname}}" data-idx="{{fidx}}">
+							{{fname}}
+						{[ if ("theme-defined" === font.get("type")) { ]}
+							<a href="#remove">&times;</a>
+						{[ } ]}
+						</div>
+					{[ });]}
+					</div> <!-- font fileset -->
+				</div> <!-- font family -->
 				{[ }); ]}
 			</div>
-			{[ if(Upfront.themeExporter && location.pathname.match(/\/create_new\/theme/) === null) { ]}
+		{[ if(Upfront.themeExporter && location.pathname.match(/\/create_new\/theme/) === null) { ]}
+			<div class="icon-fonts-message"><i></i>{{Upfront.Settings.l10n.global.views.icon_font_type_recommendation}}</div>
 			<div class="upload-icon-font">{{Upfront.Settings.l10n.global.views.upload_icon_font}}</div>
 			<form style="display: none" id="upfront-upload-icon-font" name="upfront-upload-icon-font" enctype="multipart/form-data" method="post" action="{{url}}" data-url="{{url}}?action=upfront-upload-icon-font">
-				<input type="file" name="media" id="upfront-icon-font-input">
+				<input type="file" accept=".eot,.woff,.woff2,.ttf,.svg" name="media" id="upfront-icon-font-input">
 				<input type="hidden" name="action" value="upfront-upload-icon-font">
 				<input type="submit" value="Upload">
 			</form>
-			{[ } ]}
+		{[ } ]}
 		</div>
 		<div class="preview-icon-fonts">
 			<div class="fonts-manager-panel-title">
 				{{Upfront.Settings.l10n.global.content.icon_font_icons_preview}}
 			</div>
 			<div class="icon-font-icons-preview">
+				<div class="icon-font-icon-preview uf_font_icon" title="1">1</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="2">2</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="3">3</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="4">4</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="5">5</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="6">6</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="7">7</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="8">8</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="9">9</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="0">0</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="!">!</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="@">@</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="#">#</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="$">$</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="%">%</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="^">^</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="&">&</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="*">*</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="(">(</div>
+				<div class="icon-font-icon-preview uf_font_icon" title=")">)</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="-">-</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="_">_</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="=">=</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="+">+</div>
+
 				<div class="icon-font-icon-preview uf_font_icon" title="A">A</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="B">B</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="C">C</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="D">D</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="E">E</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="F">F</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="G">G</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="H">H</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="I">I</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="J">J</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="K">K</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="L">L</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="M">M</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="N">N</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="O">O</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="P">P</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="Q">Q</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="R">R</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="S">S</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="T">T</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="U">U</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="V">V</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="W">W</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="X">X</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="Y">Y</div>
-				<div class="icon-font-icon-preview uf_font_icon" title="Z">Z</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="a">a</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="B">B</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="b">b</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="C">C</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="c">c</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="D">D</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="d">d</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="E">E</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="e">e</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="F">F</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="f">f</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="G">G</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="g">g</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="H">H</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="h">h</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="I">I</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="i">i</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="J">J</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="j">j</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="K">K</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="k">k</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="L">L</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="l">l</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="M">M</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="m">m</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="N">N</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="n">n</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="O">O</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="o">o</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="P">P</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="p">p</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="Q">Q</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="q">q</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="R">R</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="r">r</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="S">S</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="s">s</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="T">T</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="t">t</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="U">U</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="u">u</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="V">V</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="v">v</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="W">W</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="w">w</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="X">X</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="x">x</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="Y">Y</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="y">y</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="Z">Z</div>
 				<div class="icon-font-icon-preview uf_font_icon" title="z">z</div>
+
+				<div class="icon-font-icon-preview uf_font_icon" title="[">[</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="{">{</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="]">]</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="}">}</div>
+				<div class="icon-font-icon-preview uf_font_icon" title=";">;</div>
+				<div class="icon-font-icon-preview uf_font_icon" title=":">:</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="'">'</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="&quot;">"</div>
+				<div class="icon-font-icon-preview uf_font_icon" title=",">,</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="<"><</div>
+				<div class="icon-font-icon-preview uf_font_icon" title=".">.</div>
+				<div class="icon-font-icon-preview uf_font_icon" title=">">></div>
+				<div class="icon-font-icon-preview uf_font_icon" title="/">/</div>
+				<div class="icon-font-icon-preview uf_font_icon" title="?">?</div>
 			</div>
 		</div>
 	</script>

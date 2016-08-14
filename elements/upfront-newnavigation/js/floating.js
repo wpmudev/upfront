@@ -41,16 +41,16 @@
 
 				if(toolbarsheight > 0)
 					$root.css('margin-top', '');
-			}
+			};
 
 			var dispatch_movement = function () {
 				var top = $win.scrollTop();
-				var top_offset = $('section.upfront-layout').css('margin-top')?parseInt($('section.upfront-layout').css('margin-top')):0;
+				var top_offset = $('section.upfront-layout').css('margin-top') ? parseInt($('section.upfront-layout').css('margin-top'), 10) : 0;
 				if (top > (start_position.top+top_offset-toolbarsheight) && !$root.is('[data-already_floating="yes"]')) start_floating();
 				else if (top <= (start_position.top+top_offset-toolbarsheight) && $root.is('[data-already_floating="yes"]')) stop_floating();
 			};
 
-			var destroy = function () {		
+			var destroy = function () {
 				start_position = {
 					top: 0,
 					left: 0
@@ -64,7 +64,7 @@
 			};
 
 			var init = function () {
-				
+
 				start_position = $root.offset();
 				start_size = {width: $root.width(), height: $root.height()};
 				$win
@@ -80,10 +80,10 @@
 
 			return {
 				destroy: destroy
-			}
+			};
 		};
 
-		
+
 		return FloatNav;
 	});
 

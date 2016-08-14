@@ -317,18 +317,55 @@
         var theme_fonts_collection = new ThemeFontsCollection(Upfront.mainData.themeFonts);
 
         var IconFont = Backbone.Model.extend({
-            getUploadStatus: function() {
-                if (_.keys(this.get('files')).length === 4) {
-                    return true;
-                }
-                var text = 'Please upload:';
-                _.each(['eot', 'woff', 'svg', 'ttf'], function(type) {
-                    if (_.isUndefined(this.get('files')[type])) {
-                        text += ' ' + type + ',';
-                    }
-                }, this);
-                return text.substring(0, text.length - 1) + ' file(s).';
-            }
+
+			/**
+			 * Gets the full types collection for icon font
+			 *
+			 * @return {Array}
+			 */
+			getFullCollectionSet: function () {
+				return [
+					'eot',
+					'woff',
+					//'woff2', // WOFF2 is optional
+					'ttf',
+					'svg'
+				];
+			},
+
+			/**
+			 * Gets the full types collection upload status
+			 *
+			 * @return {Boolean}
+			 */
+            getUploadStatus: function () {
+				var full = this.getFullCollectionSet() || [],
+					current = this.get('files') || {}
+				;
+				return _.keys(current).length >= full.length;
+            },
+
+			/**
+			 * Gets the missing file types message
+			 *
+			 * @return {String}
+			 */
+			getUploadStatusMessage: function () {
+				var msg = l10n.icon_fonts_collection_incomplete || '',
+					current = this.get('files') || {},
+					missing = []
+				;
+				if (!msg) return '';
+
+				_.each(this.getFullCollectionSet(), function (type) {
+					if (type in current) return true;
+					missing.push(type);
+				});
+				return missing.length
+					? msg.replace(/%s/, missing.join(", "))
+					: ''
+				;
+			}
         });
         var IconFontCollection = Backbone.Collection.extend({
             model: IconFont
@@ -454,11 +491,18 @@
             events: {
                 'click .upload-icon-font': 'triggerFileChooser',
                 'click .icon-font-upload-status': 'triggerFileChooser',
-                'click .icon-fonts-list-item': 'makeFontActive'
+                'click .icon-fonts-list-item': 'makeFontActive',
+                'click .icon-fonts-list-item a.expand-toggle': 'expandListItems',
+				'click .font-filename a': 'removeFontFile'
             },
 
-            triggerFileChooser: function() {
+            triggerFileChooser: function (e) {
+				if (e && e.preventDefault) e.preventDefault();
+				if (e && e.stopPropagation) e.stopPropagation();
+
                 this.$el.find('#upfront-icon-font-input').click();
+
+				return false;
             },
 
             render: function() {
@@ -467,7 +511,6 @@
                     show_no_fonts_notice: false,
                     fonts: this.collection.models
                 }));
-
                 if (_.isUndefined(this.collection.findWhere({active: true}))) {
                     this.$el.find('[data-family="icomoon"]').addClass('icon-fonts-list-item-active');
                 }
@@ -480,12 +523,107 @@
                 return this;
             },
 
+			/**
+			 * Expand file list items on family item click
+			 *
+			 * @param {Object} e Event
+			 *
+			 * @return {Boolean}
+			 */
+			expandListItems: function (e) {
+				if (e && e.preventDefault) e.preventDefault();
+				if (e && e.stopPropagation) e.stopPropagation();
+
+				var $a = $(e.target),
+					$family = $a.closest(".icon-fonts-list-item")
+				;
+				if ($family.length) $family.toggleClass("expanded");
+
+				return false;
+			},
+
+			/**
+			 * Removes the selected font file from the collection
+			 *
+			 * @param {Object} e Event
+			 *
+			 * @return {Boolean}
+			 */
+			removeFontFile: function (e) {
+				if (e && e.preventDefault) e.preventDefault();
+				if (e && e.stopPropagation) e.stopPropagation();
+
+				var me = this,
+					$a = $(e.target),
+					$font = $a.closest(".font-filename"),
+					name = $font.attr("data-name"),
+					idx = $font.attr("data-idx")
+				;
+				if (!name || !idx) return false; // Nothing to do here
+
+				Upfront.Util
+					.post({
+						action: "upfront_remove_icon_font_file",
+						name: name,
+						idx: idx
+					})
+					.error(function (data) {
+						var error = ((data || {}).responseJSON || {}).error || 'Oops, something went wrong';
+						if (!_.isString(error) && (error || {}).message) error = error.message;
+						Upfront.Views.Editor.notify(error, 'error');
+					})
+					.done(function () {
+						// Success! This is where we update collection
+						// and re-render the pane
+						me.collection.each(function (model) {
+							var files = model.get("files");
+							if (files && files[idx] && name === files[idx]) {
+								delete(files[idx]);
+								model.set("files", files);
+							}
+						});
+						me.fileUploadInitialized = false;
+						me.render();
+					})
+				;
+
+				return false;
+			},
+
             initializeFileUpload: function() {
                 if (!jQuery.fn.fileupload) return false; // No file upload, carry on
-
                 var me = this;
                 this.$el.find('#upfront-upload-icon-font').fileupload({
                     dataType: 'json',
+					/**
+					 * Pre-processing handler
+					 *
+					 * Validates submitted file types prior to sending them over
+					 *
+					 * @param {Object} e Event
+					 * @param {Object} data File upload object
+					 */
+					add: function (e, data) {
+						if (e.isDefaultPrevented()) {
+		                    return false;
+		                }
+
+						var allowed = true;
+						if (data.files && data.files.length) {
+							_.each(data.files, function (file) {
+								if (allowed) allowed = !!(file || {}).name.match(/\.(eot|woff|woff2|ttf|svg)$/);
+							});
+						}
+						if (!allowed) return false;
+
+		                if (data.autoUpload || (data.autoUpload !== false &&
+		                        $(this).fileupload('option', 'autoUpload'))) {
+		                    data.process().done(function () {
+		                        data.submit();
+		                    });
+		                }
+					},
+
                     done: function (e, data) {
                         var font = data.result.data.font;
                         var fontObject;
@@ -500,14 +638,31 @@
                                 me.updateActiveFontStyle(font.family);
                             }
                         }
-
+						me.fileUploadInitialized = false;
+						me.render();
+/*
                         fontObject = me.collection.findWhere({'family': font.family});
                         var listItem = me.$el.find('[data-family=' + font.family + ']');
                         listItem.find('.icon-font-upload-status').remove();
                         if (fontObject.getUploadStatus() !== true) {
-                            listItem.append('<span class="icon-font-upload-status" title="' + fontObject.getUploadStatus() + '">*</span>');
+                            listItem.append('<span class="icon-font-upload-status" title="' + fontObject.getUploadStatusMessage() + '">*</span>');
                         }
-                    }
+*/
+                    },
+					/**
+					 * Error handler
+					 *
+					 * Notify the user of error when something went wrong
+					 * with font upload as a side-effect
+					 *
+					 * @param {Object} e Event object
+					 * @param {Object} data File uploader object
+					 */
+					fail: function (e, data) {
+						var error = (((data || {}).jqXHR || {}).responseJSON || {}).error || 'Oops, something went wrong';
+						if (!_.isString(error) && (error || {}).message) error = error.message;
+						Upfront.Views.Editor.notify(error, 'error');
+					}
                 });
             },
 
@@ -552,6 +707,9 @@
                         case 'woff':
                             longSrc += 'woff';
                             break;
+						case 'woff2':
+							longSrc += 'woff2';
+							break;
                         case 'ttf':
                             longSrc += 'truetype';
                             break;
@@ -734,10 +892,11 @@
                         label: l10n.insert_font,
                         compact: true,
                         on_click: function(){
-                            me.finish();
+                            me.preview_font();
                         }
                     })
                 ];
+                this.is_responsive = ( Upfront.Application.get_current() === Upfront.Settings.Application.MODE.RESPONSIVE );
             },
             render: function() {
                 $('#insert-font-widget').html('').addClass('open');
@@ -750,9 +909,6 @@
                 this.listenTo(this.fields[0], 'changed', function() {
                     var variants = theme_fonts_collection.get_variants(this.fields[0].get_value());
                     this.render_variants(variants);
-                });
-                this.listenTo(this.fields[1], 'changed', function() {
-                    this.preview_font();
                 });
 
                 $('.choose-typeface select', this.$el).chosen({
@@ -776,14 +932,19 @@
                 $variant_field.trigger('chosen:updated');
             },
             preview_font: function() {
+                var font_value = this.fields[0].get_value();
+                if ( !font_value ) {
+                    this.finish();
+                    return;
+                }
                 this.replaceFont({
-                    font_family: this.fields[0].get_value(),
+                    font_family: font_value,
                     variant: Font_Model.parse_variant(this.fields[1].get_value())
                 });
             },
             replaceFont: function(font) {
                 var lines;
-                this.editor = Upfront.Application.cssEditor.editor;
+								this.editor = ( this.is_responsive ) ? Upfront.Application.generalCssEditor.editor : Upfront.Application.cssEditor.editor;
                 this.style_doc = this.editor.getSession().getDocument();
 
                 this.last_selected_font = font;
@@ -808,10 +969,11 @@
                 if (lines.length > 0) {
                     this.style_doc.insertLines(this.font_family_range.start.row + 1, lines);
                 }
+                this.finish();
             },
             reset_properties: function() {
                 var row, line, result;
-                this.editor = Upfront.Application.cssEditor.editor;
+                this.editor = ( this.is_responsive ) ? Upfront.Application.generalCssEditor.editor : Upfront.Application.cssEditor.editor;
                 this.style_doc = this.editor.getSession().getDocument();
                 // Search forward only from font family row since lower properties override upper
                 result = {};

@@ -23,8 +23,8 @@
     font-family: 'Roboto';
     font-size: 15px;
     color: #8e8e8e;
-    margin-top: 30px;
-    margin-bottom: 30px;
+    margin-top: 0px;
+    //margin-bottom: 30px;
 }
 .upfront_admin .float_left {
     float: left;
@@ -77,14 +77,36 @@
     padding: 25px 30px 25px;
     margin-bottom: 0;
     color: #777;
-    font-weight: bold;
+    font-weight: 400;
     margin-top:0;
     font-family: 'Roboto', Helvetica Neueu, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* EDIT THEME - ICON BUTTONS */
+.postbox.themes .download,
+.postbox.themes .edit.info {
+    width:48px;
+    padding:13px;
+    vertical-align: top;
+    background: url("../../img/uf-admin-sprite.svg") #AFAFAF;
+}
+.postbox.themes .download:hover,
+.postbox.themes .edit.info:hover {
+    background: url("../../img/uf-admin-sprite.svg") #999;
+}
+.postbox.themes .download,
+.postbox.themes .download:hover {
+    background-position: -100px -82px;
+}
+.postbox.themes .edit.info,
+.postbox.themes .edit.info:hover {
+    background-position: -100px -146px;
 }
 
 @media screen and (min-width: 920px) {
     .upfront-col-left, .upfront-col-right {
-        width: 48%;
+        width: 49%;
         float: left;
     }
     .upfront-col-left {

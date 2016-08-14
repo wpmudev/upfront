@@ -90,7 +90,7 @@ define([
 					],
 					change: function(value) {
 						me.model.set('showCaptionOnHover', value);
-					},
+					}
 				}),
 
 				new Upfront.Views.Editor.Field.Radios({

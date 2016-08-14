@@ -26,7 +26,7 @@ define([
 									{
 										name: 'bg_color',
 										label: l10n.settings.content_area_bg
-									},
+									}
 								]
 							}
 						},
@@ -39,7 +39,7 @@ define([
 									use: 'useborder',
 									width: 'border_width',
 									type: 'border_style',
-									color: 'border_color',
+									color: 'border_color'
 								}
 							}
 						},
@@ -74,11 +74,11 @@ define([
 									{ label: l10n.ul, value: "ul" },
 									{ label: l10n.ol, value: "ol" },
 									{ label: l10n.bq, value: "blockquote" },
-									{ label: l10n.bqalt, value: "blockquote-alternative" },
-								],
+									{ label: l10n.bqalt, value: "blockquote-alternative" }
+								]
 							}
 						},
-						
+
 						{
 							moduleType: 'Checkbox',
 							options: {
@@ -90,17 +90,17 @@ define([
 									checkbox: 'additional_padding'
 								}
 							}
-						},
+						}
 					]
 				},
-				
+
 				migrateElementStyle: function(styles, selector) {
 					//replace container class
 					styles = styles.replace(/\.upfront-plain_txt/g, ' .plain-text-container');
-					
+
 					return styles;
 				},
-				
+
 				migratePresetProperties: function(newPreset) {
 					var props = {},
 						useBorder = '',
@@ -112,8 +112,8 @@ define([
 
 /*
 // Too complex, and can fail in edge cases - check the comment below for the new approach explanation and details
-					if((typeof props.border_color !== "undefined" && props.border_color !== "rgba(0, 0, 0, 0)") && 
-					   (typeof props.border_style !== "undefined" && props.border_style !== "none") && 
+					if((typeof props.border_color !== "undefined" && props.border_color !== "rgba(0, 0, 0, 0)") &&
+					   (typeof props.border_style !== "undefined" && props.border_style !== "none") &&
 					   (typeof props.border_width !== "undefined" && props.border_width !== 1)) {
 							useBorder = 'yes';
 					}
@@ -140,7 +140,7 @@ define([
 						'additional_padding': usePadding
 					});
 				},
-				
+
 				getModifiedProperties: function() {
 					var props = {};
 
@@ -151,13 +151,13 @@ define([
 					if(typeof props.theme_style !== "undefined" && (props.theme_style !== "_default" && props.theme_style !== "" && props.theme_style !== " ")) {
 						return true;
 					}
-					
-					if((typeof props.border_color !== "undefined" && props.border_color !== "rgba(0, 0, 0, 0)") || 
-					   (typeof props.border_style !== "undefined" && props.border_style !== "none") || 
+
+					if((typeof props.border_color !== "undefined" && props.border_color !== "rgba(0, 0, 0, 0)") ||
+					   (typeof props.border_style !== "undefined" && props.border_style !== "none") ||
 					   (typeof props.border_width !== "undefined" && props.border_width !== 1)) {
 						return true;
 					}
-					
+
 					if(typeof props.bg_color !== "undefined" && props.bg_color !== "rgba(0, 0, 0, 0)") {
 						return true;
 					}

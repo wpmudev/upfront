@@ -468,7 +468,7 @@
                     var me = this,
                         _inserts = {},
                         inserts_from_shortcode = {}// inserts created from caption shortcode
-                        remaining_images = contentElement.find('img');
+                        remaining_images = contentElement.find('img')
                         ;
 
                     if( !contentElement.is(".wp-caption-text") ) this.$editor = contentElement;

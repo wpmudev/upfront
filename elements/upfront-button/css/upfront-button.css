@@ -4,23 +4,22 @@
 	text-decoration: none;
 	height: 100%;
 	vertical-align: middle;
-	background: rgb(255, 255, 255);
-	color: rgb(0, 0, 0);
-	font-size: 14px;
-	font-style: normal;
-	font-weight: 600;
-	font-family: "Arial";
-	line-height: 2;
-	cursor: pointer;
-	border: 2px solid rgb(0, 0, 0);
-	transition: all 0.25s linear;
-}
-
-.upfront_cta:hover {
-	background: rgb(0, 0, 0);
-	color: rgb(255, 255, 255);
 }
 
 .upfront-output-object.upfront-button {
 	display: table;	
+}
+
+a.upfront_cta, a.upfront_cta:hover,
+.upfront-object-content a.upfront_cta,
+.upfront-object-content a.upfront_cta:hover {
+	color: rgb(255, 255, 255);
+	font-family: Arial;
+	font-size: 14px;
+	font-weight: 400;
+	font-style: normal;
+	line-height: 2;
+	border: none;
+	border-radius: 20px 20px 20px 20px;
+	background-color: rgb(64, 64, 64);
 }
