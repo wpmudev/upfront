@@ -59,7 +59,13 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 
 		this.trimListTitle();
 
-		rendered = this.youtubeTpl(this.extract_properties());
+		var multiple_videos = this.model.get_property_value_by_name('multiple_videos');
+		var video_id = multiple_videos.length > 0 ? multiple_videos[0]['id'] : '';
+		var loop = this.model.get_property_value_by_name('loop').length > 0 ? true : false;
+		// Enable or Disable Looping.
+		props.loop_string = loop ? '&loop=loop&playlist=' + video_id : '';
+
+		rendered = this.youtubeTpl(props);
 
 		if(this.property('youtube_status') === 'starting' && !props.multiple_videos && Upfront.Application.user_can_modify_layout()){
 		rendered += '<div class="upfront-youtube-starting-select upfront-initial-overlay-wrapper">' +
@@ -313,6 +319,24 @@ var BehaviorPanel = RootSettingsPanel.extend({
 						model: this.model,
 						property: 'thumbHeight'
 					})
+				]
+			}),
+			new SettingsItem({
+				model: this.model,
+				title: l10n.playback,
+				className: 'loop-video general_settings_item',
+				fields: [
+					new Fields.Checkboxes({
+						model: this.model,
+							property: 'loop',
+							className: 'loop upfront-field-wrap',
+							values: [
+								{ label: l10n.loop, value: 'loop' }
+							],
+							change: function(value) {
+								this.model.set_property('loop', value);
+							}
+					}),
 				]
 			}),
 			new SettingsItem({
