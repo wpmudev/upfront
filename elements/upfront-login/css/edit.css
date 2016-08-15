@@ -112,6 +112,7 @@ div.upfront-login_element-module.upfront-module-active .upfront_login.upfront_lo
 	border: 0;
 	border-radius: 0;
 	height: auto;
+	width: 100%;
 }
 
 .upfront_login form#loginform p.login-remember input.upfront-input-labels[type="text"] {
