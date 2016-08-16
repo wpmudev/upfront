@@ -334,6 +334,9 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'type_link_phone' => __('Type Phone Number', Upfront::TextDomain)
 			),
 			'views' => array(
+				'close_upfront' => __('Close Upfront', 'upfront'),
+				'wp_admin' => __('WP Admin', 'upfront'),
+				'help_and_support' => __('Help &amp; Support', 'upfront'),
 				'change_featured_image' => __('Change Feature Image', 'upfront'),
 				'add_featured_image' => __('Add Feature Image', 'upfront'),
 				'unsaved_changes_nag' => __('You have unsaved changes you\'re about to lose by navigating off this page.', 'upfront'),

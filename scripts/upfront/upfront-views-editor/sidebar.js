@@ -96,7 +96,16 @@
                     new Commands.Command_Logo({"model": this.model})
                 ]);
                 //if ( !Upfront.Settings.Application.NO_SAVE ) this.commands.push(new Command_Exit({"model": this.model}));
-                this.commands.push(new Commands.Command_Exit({"model": this.model})); // *Always* show exit
+                //this.commands.push(new Commands.Command_Exit({"model": this.model})); // *Always* show exit
+                this.commands.push(new Commands.Command_Menu({"model": this.model}));
+                this.listenTo(Upfront.Events, 'upfront:more_menu:open', this.on_menu_open);
+                this.listenTo(Upfront.Events, 'upfront:more_menu:close', this.on_menu_close);
+            },
+            on_menu_open: function () {
+                this.$el.addClass('more-menu-open clearfix');
+            },
+            on_menu_close: function () {
+                this.$el.removeClass('more-menu-open clearfix');
             }
         });
 
