@@ -195,6 +195,7 @@ border-width: 11px;
 	line-height: 1.5;
 	background: transparent;
 	height: 115px;
+	font-family: "Open Sans", "Helvetica Neueu", Helvetica, Arial, sans-serif;
 }
 .upfront-icon-map-warning:before {
 	content: ' ';
