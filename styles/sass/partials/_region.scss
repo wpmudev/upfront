@@ -1086,26 +1086,16 @@
 	display: inline-block;
 	width: 40px;
 }
-.upfront-region-bg-setting-header {
-  margin: -16px -16px 0;
-  padding: 0 16px 12px;
-  border-bottom: 1px solid #cce1f4;
-  position: relative;
-}
 .upfront-region-bg-setting-name {
 	color: #6a8eb5;
 }
-.upfront-region-bg-setting-name-wrap {
-	padding: 16px 0 0;
-}
 .upfront-region-bg-setting-is-global {
-  display: inline-block;
-  background: #20394f;
-  color: #e2f3ff;
-  border-radius: 3px;
+  color: #20394f;
   font: 10px/10px Verdana, sans-serif;
-  padding: 2px 3px;
-  margin: 0 0 0 5px;
+	text-transform: uppercase;
+	position: absolute;
+	right: 15px;
+	top: 17px;
 }
 a.upfront-region-name-edit-trigger {
 	font-size: 11px;
@@ -1117,16 +1107,9 @@ a.upfront-region-name-edit-trigger {
 	display: inline-block;
 	height: 18px;
 	line-height: 20px;
-}
-a.upfront-region-name-edit-trigger:hover {
-	border-bottom: 1px solid #00cf8b;
-	color: #243877;
-	text-decoration: none;
-}
-a.upfront-region-name-edit-trigger:before {
 	position: absolute;
-	top: 0;
-	left: -20px;
+	right: 15px;
+	top: 17px;
 }
 .upfront-region-bg-setting-name-edit .upfront-field-wrap-text {
 	width: 170px;
@@ -1163,9 +1146,6 @@ a.upfront-region-name-edit-trigger:before {
   border: 1px solid rgb(163, 191, 217);
   border-radius: 3px;
   padding: 0 10px;
-}
-.upfront-region-bg-setting-region-type {
-	margin: 0 0 20px;
 }
 .upfront-region-bg-setting-region-nav {
 	width: 45%;
@@ -1217,7 +1197,6 @@ a.upfront-region-name-edit-trigger:before {
 }
 .auto-resize-off, .auto-resize-on {
 	display: inline-block;
-	float: right;
 	width: 40px;
 	height: 16px;
 	padding: 3px 4px;

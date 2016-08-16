@@ -310,6 +310,7 @@ em {
 #sidebar-ui.collapsed #sidebar-ui-wrapper {
   display: none; }
 
+#region-settings-sidebar .sidebar-commands li,
 #sidebar-ui .sidebar-commands li,
 #sidebar-ui .sidebar-panel-title,
 #sidebar-ui .sidebar-panel-content,
@@ -319,18 +320,22 @@ em {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box; }
 
+#region-settings-sidbar .sidebar-commands-header,
 #sidebar-ui .sidebar-commands-header {
   background: #3d5266;
   overflow: hidden; }
 
+#region-settings-sidebar .command-logo,
 #sidebar-ui .command-logo {
   padding: 7px 15px 7px;
   float: left;
   opacity: 0.85; }
 
+#region-settings-sidebar .upfront-logo,
 #sidebar-ui .upfront-logo {
   margin: 0; }
 
+#region-settings-sidebar .command-exit,
 #sidebar-ui .command-exit {
   padding: 11px 15px;
   float: right;
@@ -3546,26 +3551,16 @@ div#page.upfront-layout-view.upfront-layout-view .upfront-editable_entity.upfron
   display: inline-block;
   width: 40px; }
 
-.upfront-region-bg-setting-header {
-  margin: -16px -16px 0;
-  padding: 0 16px 12px;
-  border-bottom: 1px solid #cce1f4;
-  position: relative; }
-
 .upfront-region-bg-setting-name {
   color: #6a8eb5; }
 
-.upfront-region-bg-setting-name-wrap {
-  padding: 16px 0 0; }
-
 .upfront-region-bg-setting-is-global {
-  display: inline-block;
-  background: #20394f;
-  color: #e2f3ff;
-  border-radius: 3px;
+  color: #20394f;
   font: 10px/10px Verdana, sans-serif;
-  padding: 2px 3px;
-  margin: 0 0 0 5px; }
+  text-transform: uppercase;
+  position: absolute;
+  right: 15px;
+  top: 17px; }
 
 a.upfront-region-name-edit-trigger {
   font-size: 11px;
@@ -3576,17 +3571,10 @@ a.upfront-region-name-edit-trigger {
   margin: 0 0 0 25px;
   display: inline-block;
   height: 18px;
-  line-height: 20px; }
-
-a.upfront-region-name-edit-trigger:hover {
-  border-bottom: 1px solid #00cf8b;
-  color: #243877;
-  text-decoration: none; }
-
-a.upfront-region-name-edit-trigger:before {
+  line-height: 20px;
   position: absolute;
-  top: 0;
-  left: -20px; }
+  right: 15px;
+  top: 17px; }
 
 .upfront-region-bg-setting-name-edit .upfront-field-wrap-text {
   width: 170px;
@@ -3623,9 +3611,6 @@ a.upfront-region-name-edit-trigger:before {
   border: 1px solid #a3bfd9;
   border-radius: 3px;
   padding: 0 10px; }
-
-.upfront-region-bg-setting-region-type {
-  margin: 0 0 20px; }
 
 .upfront-region-bg-setting-region-nav {
   width: 45%;
@@ -3676,7 +3661,6 @@ a.upfront-region-name-edit-trigger:before {
 
 .auto-resize-off, .auto-resize-on {
   display: inline-block;
-  float: right;
   width: 40px;
   height: 16px;
   padding: 3px 4px;
@@ -5755,6 +5739,7 @@ a.upfront-region-name-edit-trigger:before {
 #element-settings-sidebar.collapsed #settings {
   display: none; }
 
+#region-settings-sidebar .upfront-settings-title,
 #element-settings-sidebar .upfront-settings-title {
   height: 44px;
   line-height: 41px;
@@ -5814,7 +5799,9 @@ a.upfront-region-name-edit-trigger:before {
   width: 260px;
   height: 50px; }
 
+#region-settings-sidebar .uf-settings-panel__title,
 #element-settings-sidebar .uf-settings-panel__title {
+  position: relative;
   height: 38px;
   background-color: #e6f2ff;
   line-height: 37px;
@@ -5823,10 +5810,15 @@ a.upfront-region-name-edit-trigger:before {
   cursor: pointer;
   color: #2f476f; }
 
+#region-settings-sidebar .uf-settings-panel__title {
+  background-color: #dae5f0; }
+
+#region-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title,
 #element-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title {
   background-color: #dae5f0;
   border-bottom: 1px solid #dae5f0; }
 
+#region-settings-sidebar .uf-settings-panel__title:before,
 #element-settings-sidebar .uf-settings-panel__title:before {
   content: '';
   width: 0;
@@ -5840,6 +5832,7 @@ a.upfront-region-name-edit-trigger:before {
   border-bottom: 4px solid transparent;
   border-left: 4px solid #6a8db4; }
 
+#region-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title:before,
 #element-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title:before {
   top: 17px;
   right: 15px;
@@ -6256,6 +6249,250 @@ a.upfront-region-name-edit-trigger:before {
 #element-settings-sidebar .migrate-preset-overlay .new-preset-button-cancel,
 #element-settings-sidebar .migrate-preset-overlay .new-preset-button-input {
   margin-top: -6px; }
+
+#region-settings-sidebar {
+  position: fixed;
+  top: 0px;
+  left: 0;
+  z-index: 10000000;
+  bottom: 0;
+  background-color: #334454;
+  border-right: 1px solid #334454;
+  width: 260px;
+  background: #3d5266; }
+
+#region-settings-sidebar .upfront-region-bg-setting-region-type {
+  padding: 0 15px 5px;
+  background: #e6ebf1; }
+
+#region-settings-sidebar .upfront-region-bg-setting-region-type div:first-child {
+  width: 130px;
+  display: inline-block; }
+
+#region-settings-sidebar .upfront-region-bg-setting-auto-resize {
+  width: 80px;
+  line-height: 25px;
+  padding-top: 5px;
+  margin: 0; }
+
+#region-settings-sidebar .upfront-region-bg-setting-auto-resize span {
+  display: block;
+  margin-left: 0; }
+
+#region-settings-sidebar .upfront-region-bg-setting-auto-resize .auto-resize-off,
+#region-settings-sidebar .upfront-region-bg-setting-auto-resize .auto-resize-on {
+  height: 11px; }
+
+#region-settings-sidebar .upfront-region-bg-setting-tab-color,
+#region-settings-sidebar .upfront-region-bg-setting-tab-image,
+#region-settings-sidebar .upfront-region-bg-setting-tab-video,
+#region-settings-sidebar .upfront-region-bg-setting-tab-slider,
+#region-settings-sidebar .upfront-region-bg-setting-tab-map,
+#region-settings-sidebar .upfront-region-bg-setting-padding,
+#region-settings-sidebar .upfront-region-bg-setting-footer,
+#region-settings-sidebar .upfront-region-bg-setting-type {
+  padding: 10px 15px;
+  clear: both;
+  width: auto;
+  float: none;
+  background: #f7fbff; }
+
+#region-settings-sidebar .upfront-region-bg-setting-tab-color {
+  padding-top: 0; }
+
+#region-settings-sidebar .upfront-region-bg-setting-footer {
+  margin: 0;
+  top: auto; }
+
+#region-settings-sidebar .upfront-region-bg-setting-padding {
+  top: 0; }
+
+#region-settings-sidebar .upfront-region-bg-setting-tab-color > div,
+#region-settings-sidebar .upfront-region-bg-setting-tab-image > div,
+#region-settings-sidebar .upfront-region-bg-setting-tab-video > div,
+#region-settings-sidebar .upfront-region-bg-setting-tab-slider > div,
+#region-settings-sidebar .upfront-region-bg-setting-tab-map > div,
+#region-settings-sidebar .upfront-region-bg-setting-padding > div,
+#region-settings-sidebar .upfront-region-bg-setting-footer > div,
+#region-settings-sidebar .upfront-region-bg-setting-type > div {
+  max-width: 230px; }
+
+#region-settings-sidebar .upfront-region-bg-setting-footer .upfront-region-bg-setting-edit-css {
+  padding: 0; }
+
+#region-settings-sidebar .upfront-region-bg-setting-tab-primary {
+  width: 100%;
+  float: none; }
+
+#region-settings-sidebar .close_button {
+  color: red; }
+
+#region-settings-sidebar .upfront-region-bg-setting-tab-color .sp-replacer {
+  width: 20px;
+  height: 20px;
+  margin-right: 5px; }
+
+#region-settings-sidebar .upfront-region-bg-setting-type .upfront-field-wrap-select {
+  margin-top: 0; }
+
+#region-settings-sidebar .upfront-region-bg-setting-label {
+  font-size: 12px;
+  color: #808080; }
+
+#region-settings-sidebar .upfront-region-bg-setting-padding .upfront-field-wrap-number {
+  width: auto;
+  padding-left: 0;
+  top: 0; }
+
+#region-settings-sidebar .upfront-region-bg-setting-padding input[type=number] {
+  height: 25px;
+  width: 65px; }
+
+#region-settings-sidebar .upfront-region-bg-setting-padding .upfront-region-bg-setting-padding-top,
+#region-settings-sidebar .upfront-region-bg-setting-padding .upfront-region-bg-setting-padding-bottom {
+  width: 115px;
+  float: left; }
+
+/* Edit button */
+#region-settings-sidebar .upfront-region-name-edit-trigger {
+  display: none;
+  border: 1px solid;
+  padding: 0 10px;
+  line-height: 16px;
+  height: auto;
+  top: 13px; }
+
+#region-settings-sidebar .upfront-region-bg-setting-header:hover .upfront-region-name-edit-trigger {
+  display: block; }
+
+/* Is global tag */
+#region-settings-sidebar .upfront-region-bg-setting-is-global {
+  display: block; }
+
+#region-settings-sidebar .upfront-region-bg-setting-header:hover .upfront-region-bg-setting-is-global {
+  display: none !important; }
+
+#region-settings-sidebar .upfront-settings-title {
+  padding-left: 15px;
+  position: relative; }
+
+#region-settings-sidebar .upfront-region-bg-setting-name-edit .upfront-field-wrap-text {
+  width: 100px; }
+
+#region-settings-sidebar .upfront-region-bg-setting-make_global:before {
+  display: none; }
+
+#region-settings-sidebar .upfront-region-bg-setting-name input[type=button] {
+  background-color: transparent; }
+
+#region-settings-sidebar .upfront-region-bg-setting-name-edit .upfront-region-bg-setting-name-save {
+  margin-right: 15px; }
+
+#region-settings-sidebar .upfront-region-name-edit-value {
+  padding-left: 25px; }
+
+#region-settings-sidebar .upfront-region-name-edit-value:before {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  left: 15px;
+  top: 13px;
+  display: block;
+  content: "";
+  background: blue; }
+
+#region-settings-sidebar.region-settings-sidebar-color .upfront-region-name-edit-value:before {
+  background: red; }
+
+#region-settings-sidebar.region-settings-sidebar-video .upfront-region-name-edit-value:before {
+  background: yellow; }
+
+#region-settings-sidebar.region-settings-sidebar-map .upfront-region-name-edit-value:before {
+  background: green; }
+
+#region-settings-sidebar.region-settings-sidebar-image .upfront-region-name-edit-value:before {
+  background: brown; }
+
+#region-settings-sidebar.region-settings-sidebar-slider .upfront-region-name-edit-value:before {
+  background: black; }
+
+#region-settings-sidebar .region-no-edit-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.6);
+  max-width: 260px !important;
+  z-index: 20000000000; }
+
+#region-settings-sidebar .upfront-region-bg-setting-tab-color,
+#region-settings-sidebar .upfront-region-bg-setting-tab-image,
+#region-settings-sidebar .upfront-region-bg-setting-tab-video,
+#region-settings-sidebar .upfront-region-bg-setting-tab-slider,
+#region-settings-sidebar .upfront-region-bg-setting-tab-map,
+#region-settings-sidebar .upfront-region-bg-setting-padding,
+#region-settings-sidebar .upfront-region-bg-setting-footer,
+#region-settings-sidebar .upfront-region-bg-setting-region-type,
+#region-settings-sidebar .upfront-region-bg-setting-type {
+  position: relative; }
+
+#region-settings-sidebar div.padding-lock {
+  left: 90px; }
+
+#region-settings-sidebar div.padding-lock label {
+  background-position: -661px -140px; }
+
+#region-settings-sidebar div.padding-lock .upfront-field-multiple-selected label {
+  background-position: -661px -172px; }
+
+#region-settings-sidebar .upfront-region-bg-setting-label-customize-padding {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 12px; }
+
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior,
+#region-settings-sidebar .upfront-region-bg-setting-region-nav {
+  margin: 0; }
+
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior {
+  width: 60%; }
+
+#region-settings-sidebar .upfront-region-bg-setting-region-nav {
+  width: 40%; }
+
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-region-bg-setting-label,
+#region-settings-sidebar .upfront-region-bg-setting-region-nav .upfront-region-bg-setting-label {
+  text-transform: uppercase;
+  font-weight: bold; }
+
+#region-settings-sidebar .upfront-region-bg-setting-region-nav .upfront-field-wrap-checkboxes,
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-wrap-radios {
+  margin-right: 0;
+  margin-top: 5px; }
+
+#region-settings-sidebar .close_button {
+  background: #1fcd8f;
+  box-shadow: 0 1px 0 rgba(37, 58, 77, 0.5);
+  color: #f1f8ff;
+  font-size: 16px;
+  float: right;
+  margin: 15px 15px 0 0;
+  padding: 0 25px;
+  line-height: 36px;
+  height: 36px;
+  text-align: center;
+  cursor: pointer; }
+
+#region-settings-sidebar .sidebar-commands {
+  list-style-type: none; }
+
+#region-settings-sidebar .command-exit:before {
+  content: " ";
+  background-image: url("../img/uf-ui-sprite.svg?v=20131127");
+  background-repeat: no-repeat;
+  display: block;
+  cursor: pointer; }
 
 /* ----- Save As dialog ----- */
 #upfront-save-dialog-background {
@@ -13096,10 +13333,10 @@ a.upfront-css-edit, a.upfront-preset-edit {
   display: inline-block;
   opacity: .8; }
 
-a.upfront-css-edit:hover, a.upfront-preset-edit:hover, a.upfront-region-name-edit-trigger:hover {
+a.upfront-css-edit:hover, a.upfront-preset-edit:hover {
   opacity: 1; }
 
-a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-edit-trigger:before {
+a.upfront-css-edit:before, a.upfront-preset-edit:before {
   display: inline-block;
   content: '';
   width: 20px;
@@ -13349,19 +13586,23 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-e
   width: 180px; }
 
 /* Padding Settings */
+#region-settings-sidebar .padding-lock input[type=checkbox],
 #element-settings-sidebar .padding-lock input[type=checkbox] {
   position: relative;
   left: 36px;
   top: 6px; }
 
+#region-settings-sidebar .padding-lock input[type=checkbox]:checked,
 #element-settings-sidebar .padding-lock input[type=checkbox]:checked {
   float: none !important;
   left: 38px;
   top: 7px; }
 
+#region-settings-sidebar .padding-lock input[type=checkbox],
 #element-settings-sidebar .padding-lock input[type=checkbox] {
   display: none; }
 
+#region-settings-sidebar .padding-lock label,
 #element-settings-sidebar .padding-lock label {
   display: block;
   height: 15px;
@@ -13375,9 +13616,11 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-e
   position: relative;
   cursor: pointer; }
 
+#region-settings-sidebar .padding-lock .upfront-field-multiple-selected label,
 #element-settings-sidebar .padding-lock .upfront-field-multiple-selected label {
   background-position: -661px -140px; }
 
+#region-settings-sidebar .padding-lock,
 #element-settings-sidebar .padding-lock {
   position: relative;
   margin-top: -19px;
@@ -15077,9 +15320,6 @@ html {
   border-radius: 3px;
   padding: 4px 6px;
   margin-left: 8px; }
-
-.upfront-region-bg-setting-add-global-region {
-  margin-bottom: 20px; }
 
 .upfront-add-region-modal .upfront-inline-modal-content {
   background: -webkit-linear-gradient(left, transparent 50%, #c8e1f6 0);

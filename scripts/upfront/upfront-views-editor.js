@@ -235,8 +235,9 @@
 		"scripts/upfront/global-event-handlers",
 		"scripts/upfront/inline-panels/inline-panels",
 		"scripts/upfront/element-settings/sidebar",
-		"scripts/upfront/link-panel", // If adding more arguments adjust _.rest in line 72
-		"upfront/post-editor/upfront-post-edit",
+		"scripts/upfront/link-panel",
+		'scripts/upfront/region-settings/sidebar',
+		"upfront/post-editor/upfront-post-edit", // If adding more arguments adjust _.rest in line 271
 		"text!upfront/templates/property.html",
 		"text!upfront/templates/properties.html",
 		"text!upfront/templates/property_edit.html",
@@ -250,7 +251,7 @@
 		"text!upfront/templates/sidebar_settings_theme_colors.html",
 		"text!upfront/templates/color_picker.html",
 		'spectrum'
-	], function (chosen, globalEventHandlers, InlinePanelsLoader, ElementSettingsSidebar, LinkPanel, PostEditorBox) {
+	], function (chosen, globalEventHandlers, InlinePanelsLoader, ElementSettingsSidebar, LinkPanel, RegionSettingsSidebar, PostEditorBox) {
 		var _template_files = [
 			"text!upfront/templates/property.html",
 			"text!upfront/templates/properties.html",
@@ -267,7 +268,7 @@
 		];
 
 		// Auto-assign the template contents to internal variable
-		var _template_args = _.rest(arguments, 6),
+		var _template_args = _.rest(arguments, 7),
 			_Upfront_Templates = {}
 			;
 		_(_template_files).each(function (file, idx) {
@@ -465,7 +466,7 @@
 
 				loading.render();
 				$('body').append(loading.$el);
-				
+
 				// will be cleared when User chooses to stay
 				this.tmout = setTimeout(function () {
 					loading.cancel();
@@ -482,7 +483,7 @@
 				}
 
 				window.location.reload(true);
-				
+
 			},
 			stayed: function () {
 				clearTimeout(this.tmout);

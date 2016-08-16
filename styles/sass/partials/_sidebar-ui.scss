@@ -94,6 +94,7 @@
 	display:none;
 }
 
+#region-settings-sidebar .sidebar-commands li,
 #sidebar-ui .sidebar-commands li,
 #sidebar-ui .sidebar-panel-title,
 #sidebar-ui .sidebar-panel-content,
@@ -103,18 +104,22 @@
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 }
+#region-settings-sidbar .sidebar-commands-header,
 #sidebar-ui .sidebar-commands-header {
 	background: rgb(61,82,102);
 	overflow: hidden;
 }
+#region-settings-sidebar .command-logo,
 #sidebar-ui .command-logo {
 	padding: 7px 15px 7px;
 	float: left;
 	opacity:0.85;
 }
+#region-settings-sidebar .upfront-logo,
 #sidebar-ui .upfront-logo {
 	margin: 0;
 }
+#region-settings-sidebar .command-exit,
 #sidebar-ui .command-exit {
 	padding: 11px 15px;
 	float: right;

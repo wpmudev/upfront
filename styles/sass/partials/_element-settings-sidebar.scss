@@ -24,6 +24,7 @@
 	display: none;
 }
 
+#region-settings-sidebar .upfront-settings-title,
 #element-settings-sidebar .upfront-settings-title {
 	height: 44px;
 	line-height: 41px;
@@ -91,7 +92,9 @@
 	height: 50px;
 }
 
+#region-settings-sidebar .uf-settings-panel__title,
 #element-settings-sidebar .uf-settings-panel__title {
+	position: relative;
 	height: 38px;
 	background-color: #e6f2ff;
 	line-height: 37px;
@@ -101,11 +104,16 @@
 	color: #2f476f;
 }
 
+#region-settings-sidebar .uf-settings-panel__title {
+	background-color: #dae5f0;
+}
+#region-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title,
 #element-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title {
 	background-color: #dae5f0;
 	border-bottom: 1px solid #dae5f0;
 }
 
+#region-settings-sidebar .uf-settings-panel__title:before,
 #element-settings-sidebar .uf-settings-panel__title:before {
 	content: '';
 	width: 0;
@@ -120,6 +128,7 @@
 	border-left: 4px solid #6a8db4;
 }
 
+#region-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title:before,
 #element-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title:before {
 	top: 17px;
 	right: 15px;

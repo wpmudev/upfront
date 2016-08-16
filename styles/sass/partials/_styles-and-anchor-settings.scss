@@ -119,20 +119,23 @@
 }
 
 /* Padding Settings */
-
+#region-settings-sidebar .padding-lock input[type=checkbox],
 #element-settings-sidebar .padding-lock input[type=checkbox] {
     position: relative;
     left: 36px;
     top: 6px;
 }
+#region-settings-sidebar .padding-lock input[type=checkbox]:checked,
 #element-settings-sidebar .padding-lock input[type=checkbox]:checked {
     float:none !important;
     left: 38px;
     top: 7px;
 }
+#region-settings-sidebar .padding-lock input[type=checkbox],
 #element-settings-sidebar .padding-lock input[type=checkbox]{
     display: none;
 }
+#region-settings-sidebar .padding-lock label,
 #element-settings-sidebar .padding-lock label {
     display: block;
     height: 15px;
@@ -146,9 +149,11 @@
     position: relative;
     cursor: pointer;
 }
+#region-settings-sidebar .padding-lock .upfront-field-multiple-selected label,
 #element-settings-sidebar .padding-lock .upfront-field-multiple-selected label {
     background-position: -661px -140px;
 }
+#region-settings-sidebar .padding-lock,
 #element-settings-sidebar .padding-lock {
     position: relative;
     margin-top: -19px;

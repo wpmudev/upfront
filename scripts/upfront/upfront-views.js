@@ -9,6 +9,7 @@ var l10n = Upfront.Settings && Upfront.Settings.l10n
 define([
 	"scripts/upfront/render-queue",
 	"scripts/upfront/render-queue-reporter",
+	'scripts/upfront/region-settings/region-settings-panel',
 	// Template files
 	"text!upfront/templates/object.html",
 	"text!upfront/templates/object_group.html",
@@ -18,7 +19,7 @@ define([
 	"text!upfront/templates/region.html",
 	"text!upfront/templates/wrapper.html",
 	"text!upfront/templates/layout.html"
-], function (RenderQueue, RenderQueueReporter) {
+], function (RenderQueue, RenderQueueReporter, RegionSettingsPanel) {
   var _template_files = [
     "text!upfront/templates/object.html",
     "text!upfront/templates/object_group.html",
@@ -31,7 +32,7 @@ define([
 ];
 
 	// Auto-assign the template contents to internal variable
-	var _template_args = _.rest(arguments, 2),
+	var _template_args = _.rest(arguments, 3),
 		_Upfront_Templates = {}
 	;
 	_(_template_files).each(function (file, idx) {
@@ -2087,7 +2088,7 @@ define([
 
 				//this.update_position();
 				this.checkUiOffset();
-				
+
 				// ensure all controls updated on breakpoint change
 				if ( typeof this.parent_module_view !== "undefined" && this.parent_module_view ) {
 					this.$control_el = this.parent_module_view.$('.upfront-module');
@@ -2098,15 +2099,15 @@ define([
 							me.paddingControl.refresh(me.paddingControl.model);
 							me.apply_paddings($obj);
 							me.after_breakpoint_change();
-						}						
+						}
 					}, 300);
 				}
 			},
-			
+
 			after_breakpoint_change: function(){
 				//Override this method on Element views for specifics
 			},
-			
+
 			activate: function () {
 				// Deactivate previous ObjectView
 				if(typeof(Upfront.data.prevEntity) !== 'undefined' && Upfront.data.prevEntity !== false) {
@@ -5372,21 +5373,14 @@ define([
 				this.$el.append(this.region_panels.el);
 			},
 			render_bg_setting: function () {
-				var container_view = this.parent_view.get_container_view(this.model),
-					opts = {
-						model: this.model,
-						to: this.$el,
-						width: 420,
-						top: 52,
-						right:43,
-						keep_position: false
-					};
-				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting(opts);
+				var opts = {
+					model: this.model
+				};
+				this.bg_setting = new RegionSettingsPanel(opts);
 				this.bg_setting.for_view = this;
 				this.bg_setting.render();
-				this.$el.append(this.bg_setting.el);
-				this.listenTo(this.bg_setting, "modal:open", this.on_modal_open);
-				this.listenTo(this.bg_setting, "modal:close", this.on_modal_close);
+				this.listenTo(this.bg_setting, "region:settings:open", this.on_settings_open);
+				this.listenTo(this.bg_setting, "region:settings:close", this.on_settings_close);
 			},
 			update: function () {
 				var grid = Upfront.Settings.LayoutEditor.Grid,
@@ -5760,28 +5754,16 @@ define([
 
 
 				if(this.model.get('type') == 'lightbox') {
-					this.bg_setting.right =  80;
-					this.bg_setting.top = setting_offset.top;
-
 					var container_view = this.parent_view.get_container_view(this.model);
 					container_view.trigger_edit_lightbox(e);
-				}
-				else {
-					if ( this.bg_setting.width < setting_offset.left - 10 ) {
-						this.bg_setting.right = ( offset.left + width - setting_offset.left ) + 10;
-						this.bg_setting.left = -1;
-					}
-					else {
-						this.bg_setting.right = -1;
-						this.bg_setting.left = width;
-					}
-					this.bg_setting.top = setting_offset.top - offset.top;
 				}
 
 				container_view.$el.addClass('upfront-region-bg-setting-open');
 				this.bg_setting.open().always(function(){
 					container_view.$el.removeClass('upfront-region-bg-setting-open');
 				});
+
+				Upfront.Events.trigger('region:settings:activate', this.bg_setting);
 			},
 			on_hide_click: function (e) {
 				e.preventDefault();
@@ -5814,11 +5796,11 @@ define([
 				container_view.close_edit();
 				e.stopPropagation();
 			},
-			on_modal_open: function () {
+			on_settings_open: function () {
 				var container_view = this.parent_view.get_container_view(this.model);
 				container_view.$el.find('.upfront-region-finish-edit').css('display', 'none'); // hide finish edit button
 			},
-			on_modal_close: function () {
+			on_settings_close: function () {
 				var container_view = this.parent_view.get_container_view(this.model);
 				container_view.$el.find('.upfront-region-finish-edit').css('display', ''); // reset hide finish edit button
 			},
