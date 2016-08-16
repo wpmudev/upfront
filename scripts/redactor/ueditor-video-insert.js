@@ -52,6 +52,7 @@
 				}
 
 				var out = $('<div><div class="uinsert-video-insert">' + $('<div/>').append($embed).html() + '</div></div>');
+				debugger;
 				return  out.html();
 			},
 
@@ -98,28 +99,28 @@
 			render: function(){
 				var me = this;
 				this.$el.addClass('uinsert-video-insert');
-				var $embed = $(this.data.get('video_embed'));
-				if (this.data.get('mute') === true) {
-					$embed.attr('muted', true);
-				} else {
-					$embed.removeAttr('muted');
-				}
-				if (this.data.get('controls') === true) {
-					$embed.attr('controls', 'controls');
-				} else {
-					$embed.removeAttr('controls');
-				}
-				if (this.data.get('autoplay') === true) {
-					$embed.attr('autoplay', true);
-				} else {
-					$embed.removeAttr('autoplay');
-				}
-				if (this.data.get('loop') === true) {
-					$embed.attr('loop', true);
-				} else {
-					$embed.removeAttr('loop');
-				}
-				this.$el.html($embed);
+				// var $embed = $(this.data.get('video_embed'));
+				// if (this.data.get('mute') === true) {
+					// $embed.attr('muted', true);
+				// } else {
+					// $embed.removeAttr('muted');
+				// }
+				// if (this.data.get('controls') === true) {
+					// $embed.attr('controls', 'controls');
+				// } else {
+					// $embed.removeAttr('controls');
+				// }
+				// if (this.data.get('autoplay') === true) {
+					// $embed.attr('autoplay', true);
+				// } else {
+					// $embed.removeAttr('autoplay');
+				// }
+				// if (this.data.get('loop') === true) {
+					// $embed.attr('loop', true);
+				// } else {
+					// $embed.removeAttr('loop');
+				// }
+				this.$el.html('<p>here goes video in actual render in live</p>');
 
 				this.$el.css('position', 'relative');
 				var controls = $('<div class="video-insert-controls">' +
@@ -199,18 +200,27 @@
 
 			importInserts: function(contentElement, insertsData){
 				var inserts = {};
+				var videoEmbedTpl = '<video class="wp-video-shortcode" id="{{id}}" width="{{width}}" height="auto" {{autoplay}} {{loop}} {{muted}} {{controls}}><source type="video/mp4" src="{{source}}"><a href="{{source}}">{{source}}</a></video>';
 				contentElement.find('.uinsert-video-insert').each(function () {
 					var $videoInsert = $(this),
 						insert,
-						$video = $videoInsert.find('video'),
+						$videoPlaceholder = $videoInsert.find('.video-placeholder'),
 						data = {}
 					;
 
-					data.video_embed = $('<div/>').append($video).html();
-					data.controls = !! $video.attr('controls');
-					data.autoplay = !! $video.attr('autoplay');
-					data.loop = !! $video.attr('loop');
-					data.mute = !! $video.attr('muted');
+					data.controls = !! $videoPlaceholder.attr('data-video-embded-controls');
+					data.autoplay = !! $videoPlaceholder.attr('data-video-embded-autoplay');
+					data.loop = !! $videoPlaceholder.attr('data-video-embded-loop');
+					data.mute = !! $videoPlaceholder.attr('data-video-embded-muted');
+					data.video_embed = _.template(videoEmbedTpl, {
+						id: $videoPlaceholder.attr('data-video-embed-id'),
+						source: $videoPlaceholder.attr('data-video-embed-source'),
+						controls: data.controls ? 'controls="controls"': '',
+						autoplay: data.autoplay ? 'autoplay="true"': '',
+						loop: data.loop ? 'loop="true"': '',
+						muted: data.mute ? 'muted="true"': '',
+						width: $videoPlaceholder.attr('data-video-embed-width')
+					});
 
 					insert = new VideoInsert({data: data});
 					inserts[insert.data.id] = insert;

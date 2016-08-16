@@ -64,6 +64,26 @@
 					content = $content.html();
 				}
 
+				var $videoReplacer = $(content);
+				$('video', $videoReplacer).replaceWith(function() {
+					var replacement = $('<div><div class="video-placeholder">here would go video if</div></div>');
+					var $video = $(this);
+					$('.video-placeholder', replacement)
+						.attr('data-video-embed-width', $(this).attr('width'))
+						.attr('data-video-embed-preload', $(this).attr('preload'))
+						.attr('data-video-embed-controls', $(this).attr('controls'))
+						.attr('data-video-embed-loop', $(this).attr('loop'))
+						.attr('data-video-embed-source', $('source', this).attr('src'))
+						.attr('data-video-embed-muted', $(this).attr('muted'))
+						.attr('data-video-embed-id', $(this).attr('id'));
+
+					return replacement.html();
+				});
+				content = '';
+				$videoReplacer.each(function() {
+					content += $('<div/>').append(this).html();
+				});
+
 				if (this.model.get_property_value_by_name('usingNewAppearance') !== true && this.model.get_property_value_by_name('usingNewAppearance') !== 'true') {
 					data = {
 						"content" : content,
@@ -95,7 +115,7 @@
 			on_render: function() {
 				var me = this,
 				blurTimeout = false;
-				
+
 				if (Upfront.Application.user_can_modify_layout()) {
 					this.$el.find('.upfront-object-content')
 						// .addClass('upfront-plain_txt') // WHY DO THIS, IT MESSES UP THE CSS LOGIC SINCE THAN WE HAVE DUPLICATED CLASS
