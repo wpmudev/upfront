@@ -6,7 +6,8 @@
 .upfront-ui .upfront-structure-field-icon:before,
 .upfront-util-icon:before,
 .upfront-ui .upfront-icon.upfront-icon-edit-css:before,
-.upfront-ui .upfront-icon.upfront-icon-region-add:before {
+.upfront-ui .upfront-icon.upfront-icon-region-add:before,
+.upfront-ui .upfront-icon.upfront-icon-more-menu:before {
 	content: " ";
 	background-image: url('../img/uf-core-el-sprite.svg?v=20131127');
 	background-repeat: no-repeat;
@@ -148,6 +149,13 @@
     background-position: -289px -607px;
 }
 
+.upfront-icon-more-menu:before {
+	background-position: -288px -488px;
+}
+.upfront-icon-more-menu-active:before {
+	background-position: -288px -519px;
+}
+
 .upfront-tabs-container .tabs-tab i {
 	z-index: 2;
 }
@@ -203,6 +211,10 @@
 .upfront-icon-start-responsive:before,
 .upfront-icon-panel-settings:before {
 	background-position: -41px -415px;
+	opacity:.5;
+}
+.upfront-icon-themes:before {
+	background-position: -41px -75px;
 	opacity:.5;
 }
 .upfront-icon-button-hide:before {

@@ -25,15 +25,25 @@ require_once(dirname(__FILE__) . '/library/class_upfront_admin.php');
 
 Upfront_Behavior::debug()->set_baseline();
 
-
+/**
+ * Main class
+ */
 class Upfront {
 
-    /**
-     * string theme text domain
-     */
-    const TextDomain = "upfront";
+	/**
+	 * Theme text domain
+	 *
+	 * @var string
+	 */
+	const TextDomain = "upfront";
 
 	public static $Excluded_Files = array(".", "..", ".DS_Store");
+
+	/**
+	 * Servers to load automatically
+	 *
+	 * @var array
+	 */
 	private $_servers = array(
 		'ajax',
 		'javascript_main',
@@ -41,8 +51,17 @@ class Upfront {
 		'stylesheet_editor',
 		'element_styles',
 	);
+
+	/**
+	 * Debugger instance
+	 *
+	 * @var object
+	 */
 	private $_debugger;
 
+	/**
+	 * Instantiate class - never to the outsiders
+	 */
 	private function __construct () {
 		$this->_debugger = Upfront_Debug::get_debugger();
 		$servers = apply_filters('upfront-servers', $this->_servers);
@@ -51,13 +70,18 @@ class Upfront {
 		do_action('upfront-core-initialized');
 	}
 
+	/**
+	 * Public spawning interface
+	 */
 	public static function serve () {
 		$me = new self;
 		$me->_add_hooks();
 		$me->_add_supports();
-
 	}
 
+	/**
+	 * Add basic set of hooks
+	 */
 	private function _add_hooks () {
 		add_filter('body_class', array($this, 'inject_grid_scope_class'));
 		add_action('wp_head', array($this, "inject_global_dependencies"), 0);
@@ -67,17 +91,19 @@ class Upfront {
 		add_action('admin_bar_menu', array($this, 'add_edit_menu'), 85);
 
 		if (is_admin()) {
-		
 			require_once(dirname(__FILE__) . '/library/servers/class_upfront_admin.php');
 			if (class_exists('Upfront_Server_Admin')) Upfront_Server_Admin::serve();
 		}
 
-
-		if( is_rtl() )
+		if ( is_rtl() ) {
 			add_action('wp_head', array($this, "inject_rtl_dependencies"), 99);
+		}
 
 	}
 
+	/**
+	 * Set up parent and child theme text domains
+	 */
 	public static function load_textdomain () {
 		$path = untrailingslashit(self::get_root_dir()) . '/languages';
 
@@ -95,6 +121,9 @@ class Upfront {
 
 	}
 
+	/**
+	 * Add theme extra features
+	 */
 	private function _add_supports () {
 		add_theme_support('post-thumbnails');
 		add_theme_support('title-tag'); // Let WP deal with our theme titles
@@ -109,29 +138,49 @@ class Upfront {
 		}
 	}
 
+	/**
+	 * Instantiate auto-bootable server
+	 *
+	 * @param string $comp Server to boot
+	 */
 	private function _run_server ($comp) {
 		$class = Upfront_Server::name_to_class($comp);
 		if (!$class) return false;
 		call_user_func(array($class, 'serve'));
 	}
 
+	/**
+	 * Gets parent theme root URL
+	 *
+	 * @return string
+	 */
 	public static function get_root_url () {
 		return get_template_directory_uri();
 	}
 
+	/**
+	 * Gets parent theme root path
+	 *
+	 * @return string
+	 */
 	public static function get_root_dir () {
 		return get_template_directory();
 	}
 
+	/**
+	 * Inject admin toolbar menu entry
+	 *
+	 * @param object $wp_admin_bar Toolbar
+	 */
 	public function add_edit_menu ($wp_admin_bar) {
 		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) return false;
 
 		$item = array(
 			'id' => 'upfront-edit_layout',
-            'title' => '<span class="ab-icon"></span><span class="ab-label">' . __('Upfront', 'upfront') . '</span>',
+			'title' => '<span class="ab-icon"></span><span class="ab-label">' . __('Upfront', 'upfront') . '</span>',
 			'href' => (is_admin() ? home_url('/?editmode=true', is_ssl() ? "https" : null) : '#'),
 			'meta' => array(
-				'class' => 'upfront-edit_layout upfront-editable_trigger'
+				'class' => 'upfront-edit_layout upfront-editable_trigger',
 			),
 		);
 		$permalinks_on = get_option('permalink_structure');
@@ -169,12 +218,22 @@ class Upfront {
 		do_action('upfront-admin_bar-process', $wp_admin_bar, $item);
 	}
 
+	/**
+	 * Appends grid scope class to the classes array
+	 *
+	 * @param array $cls Classes up to here
+	 *
+	 * @return array
+	 */
 	function inject_grid_scope_class ($cls) {
 		$grid = Upfront_Grid::get_grid();
 		$cls[] = $grid->get_grid_scope();
 		return $cls;
 	}
-	
+
+	/**
+	 * Handles core WP front-end dependencies injection
+	 */
 	public function inject_core_wp_dependencies () {
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
 
@@ -215,32 +274,31 @@ class Upfront {
 		wp_enqueue_script("wp_shortcode", "/wp-includes/js/shortcode.js", array("underscore"));
 	}
 
+	/**
+	 * Handles global FE dependencies injection
+	 */
 	function inject_global_dependencies () {
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
 		wp_enqueue_script('jquery');
 
-		//Basic styles for upfront to work are always loaded.
+		// Basic styles for upfront to work are always loaded.
 		$global_style = Upfront_Behavior::compression()->has_experiments()
 			? '/styles/global.min.css'
 			: '/styles/global.css'
 		;
 		wp_enqueue_style('upfront-global', self::get_root_url() . $global_style, array(), Upfront_ChildTheme::get_version());
 
-
-
-        if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
-            // Don't queue the front grid if has permission to boot Upfront, queue editor grid instead
-    		wp_enqueue_style('upfront-front-grid', admin_url('admin-ajax.php?action=upfront_load_grid'), array(), Upfront_ChildTheme::get_version());
-        }
+		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
+			// Don't queue the front grid if has permission to boot Upfront, queue editor grid instead
+			wp_enqueue_style('upfront-front-grid', admin_url('admin-ajax.php?action=upfront_load_grid'), array(), Upfront_ChildTheme::get_version());
+		}
 
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			do_action('upfront-core-wp_dependencies');
 
 			wp_enqueue_style('upfront-editor-interface', self::get_root_url() . ( $this->_debugger->is_dev()  ?  '/styles/editor-interface.css' : '/styles/editor-interface.min.css' ) , array(), Upfront_ChildTheme::get_version());
 
-
-
-			$link_urls =  array(
+			$link_urls = array(
 				admin_url('admin-ajax.php?action=upfront_load_editor_grid'),
 				self::get_root_url() . '/scripts/chosen/chosen.min.css',
 				self::get_root_url() . '/styles/font-icons.css',
@@ -257,11 +315,13 @@ class Upfront {
 				'600italic',
 			));
 
-
 			add_action('wp_footer', array($this, 'add_responsive_css'));
 		}
 	}
 
+	/**
+	 * Handles Upfront editor-specific FE dependencies injection
+	 */
 	function inject_upfront_dependencies () {
 
 		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
@@ -270,9 +330,9 @@ class Upfront {
 		}
 
 		$url = self::get_root_url();
-		//Boot Edit Mode if the querystring contains the editmode param
-		if (isset($_GET['editmode']))
-			echo upfront_boot_editor_trigger();
+
+		// Boot Edit Mode if the querystring contains the editmode param
+		if (isset($_GET['editmode'])) echo upfront_boot_editor_trigger();
 
 		$storage_key = apply_filters('upfront-data-storage-key', Upfront_Layout::STORAGE_KEY);
 		$save_storage_key = $storage_key;
@@ -293,14 +353,15 @@ class Upfront {
 			$deps->add_script($url);
 		}
 
+		$layout_post_data = json_encode(array(
+			'layout' => Upfront_EntityResolver::get_entity_ids(),
+			'post_id' => (is_singular() ? apply_filters('upfront-data-post_id', get_the_ID()) : false),
+		));
 		echo '<script type="text/javascript">
-			var _upfront_post_data=' . json_encode(array(
-				'layout' => Upfront_EntityResolver::get_entity_ids(),
-				'post_id' => (is_singular() ? apply_filters('upfront-data-post_id', get_the_ID()) : false)
-			)) . ';
-			var _upfront_storage_key = "' . $storage_key . '";
-			var _upfront_save_storage_key = "' . $save_storage_key . '";
-			var _upfront_stylesheet = "' . get_stylesheet() . '";
+			var _upfront_post_data=' . $layout_post_data . ';
+			var _upfront_storage_key = "' . esc_js($storage_key) . '";
+			var _upfront_save_storage_key = "' . esc_js($save_storage_key) . '";
+			var _upfront_stylesheet = "' . esc_js(get_stylesheet()) . '";
 			var _upfront_debug_mode = ' . (int)Upfront_Behavior::debug()->is_debug() . ';
 			var _upfront_please_hold_on = ' . json_encode(__('Please, hold on for just a little bit more', 'upfront')) . ';
 		</script>';
@@ -313,14 +374,17 @@ EOAdditivemarkup;
 		do_action('upfront-core-inject_dependencies');
 	}
 
+	/**
+	 * Injects responsive CSS
+	 */
 	function add_responsive_css () {
-		include(self::get_root_dir().'/styles/editor-interface-responsive.html');
+		include(self::get_root_dir() . '/styles/editor-interface-responsive.html');
 	}
 
 	/**
 	 * Injects dependencies for rtl languages
 	 */
-	function inject_rtl_dependencies(){
+	function inject_rtl_dependencies () {
 
 		wp_enqueue_style('upfront-global-rtl', self::get_root_url() . ( $this->_debugger->is_dev() ? "/styles/global-rtl.css" : "/styles/global-rtl.min.css" ), array(), Upfront_ChildTheme::get_version());
 	}
@@ -329,46 +393,46 @@ add_action('init', array('Upfront', 'serve'), 0);
 add_action('after_setup_theme', array('Upfront', "load_textdomain"));
 
 /**
- * filters wp caption atts to hide the caption in case show_caption is equal  to "0"
+ * Filters wp caption atts to hide the caption in case show_caption is equal  to "0"
  */
 add_filter("shortcode_atts_caption", 'uf_shortcode_atts_caption', 10, 3);
 
 /**
  * Filters wp captions atts to remove the caption in case show_caption is equal to "0"
  *
- * @param $out
- * @param $pairs
- * @param $atts
+ * @param array $out The output array of shortcode attributes.
+ * @param array $pairs The supported attributes and their defaults.
+ * @param array $atts The user defined shortcode attributes.
  * @return mixed
  */
-function uf_shortcode_atts_caption(  $out, $pairs, $atts ){
+function uf_shortcode_atts_caption ($out, $pairs, $atts) {
 
-    if( isset( $atts['show_caption'] ) && $atts['show_caption'] == "0" )
-        $out['caption'] = "&nbsp;";
+	if (isset( $atts['show_caption'] ) && "0" == $atts['show_caption']) {
+		$out['caption'] = "&nbsp;";
+	}
 
-    return $out;
+	return $out;
 }
 
 
 /**
  * Filters image caption shortcode to generate uf caption specific markup
- *
  */
 add_filter("img_caption_shortcode", "uf_image_caption_shortcode", 10, 3);
 /**
  * Uses img_caption_shortcode to add support for UF image variants
  *
- * @param $out
- * @param $attr
- * @param $content
+ * @param string $out Out
+ * @param array $attr Attributes attributed to the shortcode.
+ * @param string $content Shortcode content.
  *
  * @return string|void
  */
-function uf_image_caption_shortcode( $out, $attr, $content ){
+function uf_image_caption_shortcode ($out, $attr, $content) {
 
 	$is_wp_cation = strpos($attr["id"], "uinsert-" ) === false;
 
-	if( $is_wp_cation ) return; // returning null let's wp do it's own logic and rendering for caption shortcode
+	if ($is_wp_cation) return; // returning null let's wp do it's own logic and rendering for caption shortcode
 
 	$image_reg = preg_match('/src="([^"]+)"/', $content, $image_arr);
 	$href_reg = preg_match('/href="([^"]+)"/', $content, $anchor_arr);
@@ -393,6 +457,6 @@ function uf_image_caption_shortcode( $out, $attr, $content ){
  * Loads iconfont in admin to display toolbar icon.
  */
 function uf_admin_bar_styles() {
-    wp_enqueue_style( 'uf-font-icons', get_template_directory_uri() . '/styles/font-icons.css');
+	wp_enqueue_style( 'uf-font-icons', get_template_directory_uri() . '/styles/font-icons.css');
 }
 add_action( 'admin_enqueue_scripts', 'uf_admin_bar_styles' );

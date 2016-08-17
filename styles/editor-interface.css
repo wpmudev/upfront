@@ -177,6 +177,11 @@
   outline: none;
   cursor: text; }
 
+a[data-is-anchor="1"] {
+  display: block;
+  width: 100%;
+  height: 0; }
+
 .upfront-no-select {
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -323,6 +328,9 @@ em {
   background: #3d5266;
   overflow: hidden; }
 
+#sidebar-ui .sidebar-commands-header.more-menu-open {
+  overflow: visible; }
+
 #sidebar-ui .command-logo {
   padding: 7px 15px 7px;
   float: left;
@@ -335,6 +343,73 @@ em {
   padding: 11px 15px;
   float: right;
   opacity: .6; }
+
+#sidebar-ui .command-more-menu {
+  float: right;
+  width: 26px;
+  height: 18px;
+  margin: 15px 16px 0 0;
+  opacity: 0.5;
+  transition: opacity;
+  position: relative; }
+
+#sidebar-ui .command-more-menu:hover {
+  opacity: 0.8; }
+
+#sidebar-ui .command-more-menu.menu-open {
+  opacity: 1;
+  overflow: visible; }
+
+#sidebar-ui .command-more-menu .upfront-icon-more-menu {
+  display: block;
+  width: 26px;
+  height: 18px;
+  background: #fff;
+  border-radius: 3px;
+  position: relative;
+  z-index: 1100; }
+
+#sidebar-ui .command-more-menu.menu-open .upfront-icon-more-menu {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0; }
+
+#sidebar-ui .command-more-menu .upfront-icon-more-menu:before {
+  margin: -3px 1px 0; }
+
+#sidebar-ui .command-more-menu .command-more-menu-list {
+  display: block;
+  position: absolute;
+  top: 18px;
+  right: 0;
+  width: 140px;
+  background: #fff;
+  border-radius: 3px;
+  color: #395773;
+  padding: 3px;
+  z-index: 1000;
+  display: none; }
+
+#sidebar-ui .command-more-menu.menu-open .command-more-menu-list {
+  display: block;
+  border-top-right-radius: 0;
+  box-shadow: 0 0 10px rgba(39, 58, 76, 0.8); }
+
+#sidebar-ui .command-more-menu .command-more-menu-list li {
+  display: block;
+  height: 25px;
+  line-height: 25px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #263A4D;
+  letter-spacing: 0.46px;
+  padding: 0 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  cursor: pointer; }
+
+#sidebar-ui .command-more-menu .command-more-menu-list li:hover {
+  color: #fff;
+  background: #3aa3e3; }
 
 #sidebar-ui .sidebar-editor-mode {
   border-top: 1px solid #3f5870;
@@ -6307,7 +6382,8 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-ui .upfront-structure-field-icon:before,
 .upfront-util-icon:before,
 .upfront-ui .upfront-icon.upfront-icon-edit-css:before,
-.upfront-ui .upfront-icon.upfront-icon-region-add:before {
+.upfront-ui .upfront-icon.upfront-icon-region-add:before,
+.upfront-ui .upfront-icon.upfront-icon-more-menu:before {
   content: " ";
   background-image: url("../img/uf-core-el-sprite.svg?v=20131127");
   background-repeat: no-repeat;
@@ -6447,6 +6523,12 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-icon-element-meta:before {
   background-position: -289px -607px; }
 
+.upfront-icon-more-menu:before {
+  background-position: -288px -488px; }
+
+.upfront-icon-more-menu-active:before {
+  background-position: -288px -519px; }
+
 .upfront-tabs-container .tabs-tab i {
   z-index: 2; }
 
@@ -6490,6 +6572,10 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-icon-start-responsive:before,
 .upfront-icon-panel-settings:before {
   background-position: -41px -415px;
+  opacity: .5; }
+
+.upfront-icon-themes:before {
+  background-position: -41px -75px;
   opacity: .5; }
 
 .upfront-icon-button-hide:before {
@@ -7360,7 +7446,7 @@ i.upfront-field-icon-burger-trigger {
   left: 0;
   background: #263a4d;
   opacity: .75;
-  z-index: 10001003; }
+  z-index: 10001004; }
 
 #upfront-popup {
   position: fixed;
@@ -13305,9 +13391,9 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-e
   padding-left: 0;
   padding-right: 0; }
 
-#page div.upfront-object.uposts-object {
-  padding: 0; }
-
+/*#page div.upfront-object.uposts-object {
+  padding: 0;
+}*/
 .upfront-content-marker {
   margin: 0;
   padding: 0;
@@ -15406,7 +15492,8 @@ html {
 
 .global-region-manager-content {
   overflow-y: scroll;
-  max-height: 300px; }
+  max-height: 300px;
+  min-height: 100px; }
 
 .global-region-manager-lists {
   list-style-type: none;
@@ -15417,6 +15504,10 @@ html {
   padding: 5px 20px;
   line-height: 20px;
   position: relative; }
+
+.region-list-empty {
+  padding: 0px 20px;
+  line-height: 30px; }
 
 .global-region-manager-list:hover {
   background: #c4dbef; }
@@ -17035,6 +17126,9 @@ div.preset-manager-panel .checkbox-tooltip {
 .image-sub-control .uimage-control-panel-item {
   position: static;
   top: 0px; }
+
+.upfront-inline-panel-item.group-link-control {
+  z-index: 51; }
 
 /**
  * Compatibility issue nag popup, v1 check

@@ -101,6 +101,7 @@ C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/region/region-fixed-edit-position.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/region/region-fixed-panels.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/region.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/commands.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command-cancel-post-layout.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command-delete.js
@@ -149,6 +150,10 @@ C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/content-editor/content-editor-comments.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/content-editor.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command-popup-list.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/menu/command-close.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/menu/command-wpadmin.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/menu/command-help.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command-menu.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/topbar.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/loading.js

@@ -1059,6 +1059,7 @@ define(function() {
 						}
 						_saving_flag = false;
 						Upfront.Events.trigger("preview:build:stop");
+
 						//Upfront.Util.log("we're good here");
 
 						// Notify about concurrent edits
