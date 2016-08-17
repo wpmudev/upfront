@@ -102,7 +102,9 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'show_debug_info' => __('Show debugging info/outline', 'upfront'),
 				'close' => __('Close', 'upfront'),
 				'global_regions' => __('Global Regions', 'upfront'),
+				'no_global_regions' => __('No Global Regions Found', 'upfront'),
 				'lightboxes' => __('Lightboxes', 'upfront'),
+				'no_lightboxes' => __('No Lightboxes Found', 'upfront'),
 				'trash' => __('Trash', 'upfront'),
 				'preview_size' => __('Preview Size', 'upfront'),
 				'import_image' => __('Import Images', 'upfront'),
@@ -332,6 +334,9 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'type_link_phone' => __('Type Phone Number', Upfront::TextDomain)
 			),
 			'views' => array(
+				'close_upfront' => __('Close Upfront', 'upfront'),
+				'wp_admin' => __('WP Admin', 'upfront'),
+				'help_and_support' => __('Help &amp; Support', 'upfront'),
 				'change_featured_image' => __('Change Feature Image', 'upfront'),
 				'add_featured_image' => __('Add Feature Image', 'upfront'),
 				'unsaved_changes_nag' => __('You have unsaved changes you\'re about to lose by navigating off this page.', 'upfront'),

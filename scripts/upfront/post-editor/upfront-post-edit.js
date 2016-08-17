@@ -50,10 +50,12 @@ var Box = Backbone.View.extend({
         Upfront.Events.off("command:layout:trash", this.trash);
         Upfront.Events.off("command:layout:save", this.publish);
         Upfront.Events.off("command:layout:save_as", this.save_as_publish);
+        Upfront.Events.off("command:post:save", this.publish);
 
         Upfront.Events.on("command:layout:trash", this.trash, this);
         Upfront.Events.on("command:layout:save", this.publish, this);
         Upfront.Events.on("command:layout:save_as", this.save_as_publish, this);
+        Upfront.Events.on("command:post:save", this.publish, this);
 
     },
 
