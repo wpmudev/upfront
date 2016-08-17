@@ -1088,8 +1088,14 @@ var Application = new (Backbone.Router.extend({
 
 		Upfront.Application.loading.done(function () {
 
-			// Create unique ID for current tab session.
-			var tab_id = Upfront.Util.get_unique_id('tab_id');
+			// Use Tab ID to warn about multiple tabs editing same layout.
+			var tab_id = sessionStorage.getItem('upfront_tab_id');
+			// If no tab_id is saved in sessionStorage, create one.
+			if (tab_id === null) {
+				// Create unique ID for current tab session.
+				tab_id = Upfront.Util.get_unique_id('tab_id');
+				sessionStorage.setItem('upfront_tab_id', tab_id);
+			}
 			Upfront.PreviewUpdate.run(me.layout, tab_id);
 
 			Upfront.Events.trigger("application:mode:after_switch");
