@@ -10,31 +10,7 @@ define([
 var l10n = Upfront.Settings.l10n.posts_element;
 
 var PostsSettings = ElementSettings.extend({
-	panels: {
-		Appearance: {
-			mainDataCollection: 'postsPresets',
-			styleElementPrefix: 'posts-preset',
-			ajaxActionSlug: 'posts',
-			panelTitle: l10n.settings,
-			presetDefaults: Upfront.mainData.presetDefaults.posts,
-			styleTpl: styleTpl,
-
-			migrateDefaultStyle: function(styles) {
-					//replace image wrapper class
-					styles = styles.replace(/(div)?\.uposts-object\s/g, '');
-					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
-
-					return styles;
-			},
-
-			migrateElementStyle: function(styles, selector) {
-				//replace posts container which is one line with preset
-				styles = styles.replace(/\.uposts-object/g, '');
-
-				return styles;
-			}
-		}
-	},
+	panels: {},
 
 	initialize: function (opts) {
 		// Call the super constructor here, so that the appearance panel is instantiated
@@ -43,12 +19,12 @@ var PostsSettings = ElementSettings.extend({
 		this.options = opts;
 		var me = this,
 			general = new Panels.General({model: this.model}),
-			post_parts = new Panels.PostParts({model: this.model})
+			post_parts = new Panels.get_panel('posts');
 		;
 		general.on("settings:dispatched", this.rerender, this);
 		general.on("post:removed", this.rerender, this);
 		general.on("post:added", this.rerender, this);
-		post_parts.on("settings:dispatched", this.rerender, this);
+		//post_parts.on("settings:dispatched", this.rerender, this);
 
 		this.panels = _.extend({ General: general, PostParts: post_parts }, this.panels);
 	},
