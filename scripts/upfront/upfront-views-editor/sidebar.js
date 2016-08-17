@@ -11,7 +11,8 @@
         'scripts/upfront/upfront-views-editor/sidebar/sidebar-panels',
         'scripts/upfront/upfront-views-editor/sidebar/commands/sidebar-commands-primary-post-type',
         'scripts/upfront/upfront-views-editor/breakpoint',
-        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-responsive-section-typography'
+        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-responsive-section-typography',
+        'scripts/upfront/upfront-views-editor/commands/command-save-post'
     ], function (
         SidebarPanel,
         DraggableElement,
@@ -20,7 +21,8 @@
         SidebarPanels,
         SidebarCommands_PrimaryPostType,
         Breakpoint,
-        SidebarPanel_Responsive_Settings_Section_Typography
+        SidebarPanel_Responsive_Settings_Section_Typography,
+				CommandSavePost
     ) {
         var SidebarCommands_Control = Commands.Commands.extend({
             className: function() {
@@ -66,6 +68,11 @@
 										Upfront.Application.user_can_modify_layout()
 								) {
                     this.commands.push(new Commands.Command_SaveLayout({"model": this.model}));
+								} else if (!Upfront.Settings.Application.NO_SAVE &&
+										false === Upfront.plugins.isForbiddenByPlugin('show save layout command') &&
+										Upfront.Application.user_can_save_content()
+								) {
+                    this.commands.push(new CommandSavePost({"model": this.model}));
                 } else if (
 										false === Upfront.plugins.isForbiddenByPlugin('show preview layout command') &&
 										Upfront.Settings.Application.PERMS.REVISIONS
@@ -241,7 +248,7 @@
                 if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.CONTENT ){
                     Upfront.Events.on('upfront:element:edit:start', this.preventUsage, this);
                     Upfront.Events.on('upfront:element:edit:stop', this.allowUsage, this);
-					
+
 					// Make sure we hide sidebar overlay when element settings cancelled or deactivated
 					Upfront.Events.on('element:settings:deactivate', this.allowUsage, this);
 					Upfront.Events.on('element:settings:canceled', this.allowUsage, this);
