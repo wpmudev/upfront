@@ -1,7 +1,7 @@
 <div class="upfront-youtube-container <?php if ($multiple_videos && count($multiple_videos) < 2) { ?>uyoutube-single<?php } else { ?>uyoutube-multiple-<?php echo $display_style ?><?php } ?>">
     <?php if ($multiple_videos && count($multiple_videos) == 1) { ?>
 		<?php if(!empty($multiple_videos[0]['id'])) { ?>
-			<iframe src="https://www.youtube.com/embed/<?php echo $multiple_videos[0]['id'] ?>?modestbranding=1<?php echo $loop_string ?>" height="<?php echo $player_height ?>" width="<?php echo $player_width ?>"></iframe>
+		<iframe src="https://www.youtube.com/embed/<?php echo $multiple_videos[0]['id'] ?>?modestbranding=1<?php echo $loop_string ?><?php echo $autoplay_string ?>" height="<?php echo $player_height ?>" width="<?php echo $player_width ?>"></iframe>
 			<?php if(!empty($multiple_show_title[0])){ ?>
 				<h3><?php echo $multiple_videos[0]['title'] ?></h3>
 			<?php } ?>
@@ -13,7 +13,7 @@
 	<?php if (count($multiple_videos) > 1) { ?>
     <div class="uyoutube-main-video">
       <?php if ( !empty($multiple_videos[0] ) ) { ?>
-        <iframe src="https://www.youtube.com/embed/<?php echo $multiple_videos[0]['id'] ?>?modestbranding=1<?php echo $loop_string ?>" height="<?php echo $player_height ?>" width="<?php echo $player_width ?>"></iframe>
+      <iframe src="https://www.youtube.com/embed/<?php echo $multiple_videos[0]['id'] ?>?modestbranding=1<?php echo $loop_string ?><?php echo $autoplay_string ?>" height="<?php echo $player_height ?>" width="<?php echo $player_width ?>"></iframe>
 		<h3><?php echo $multiple_videos[0]['title'] ?></h3>
 	  <?php } else { ?>
         <div class="uyoutube-player" style="height:<?php echo $player_height ?>px; width:<?php echo $player_width ?>px;"></div>

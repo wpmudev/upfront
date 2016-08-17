@@ -62,8 +62,10 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 		var multiple_videos = this.model.get_property_value_by_name('multiple_videos');
 		var video_id = multiple_videos.length > 0 ? multiple_videos[0]['id'] : '';
 		var loop = this.model.get_property_value_by_name('loop').length > 0 ? true : false;
-		// Enable or Disable Looping.
-		props.loop_string = loop ? '&loop=loop&playlist=' + video_id : '';
+		var autoplay = this.model.get_property_value_by_name('autoplay').length > 0 ? true : false;
+		// Enable or Disable Looping/Autoplay.
+		props.loop_string = loop ? '&loop=1&playlist=' + video_id : '';
+		props.autoplay_string = autoplay ? '&autoplay=1' : '';
 
 		rendered = this.youtubeTpl(props);
 
@@ -326,6 +328,17 @@ var BehaviorPanel = RootSettingsPanel.extend({
 				title: l10n.playback,
 				className: 'loop-video general_settings_item',
 				fields: [
+					new Fields.Checkboxes({
+						model: this.model,
+							property: 'autoplay',
+							className: 'autoplay upfront-field-wrap',
+							values: [
+								{ label: l10n.autoplay, value: 'autoplay' }
+							],
+							change: function(value) {
+								this.model.set_property('autoplay', value);
+							}
+					}),
 					new Fields.Checkboxes({
 						model: this.model,
 							property: 'loop',

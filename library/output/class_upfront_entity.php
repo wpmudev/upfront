@@ -303,7 +303,7 @@ abstract class Upfront_Entity {
 				// hack additional attributes
 				$vid_attrs = array(
 					'.*?vimeo\.' => ($loop === 1 ? '&amp;loop=1' : 'loop=0') . $autoplay_attr . ( $mute == 1 ? '&amp;api=1&amp;player_id=' . $video_id : '' ),
-					'.*?youtube\.com\/(v|embed)\/(.+?)(\/|\?).*?$' =>  '&amp;controls=0&amp;showinfo=0&amp;rel=0&amp;wmode=transparent&amp;html5=1&amp;modestbranding=1&amp;' . ($loop === 1 ? '&amp;loop=1' : 'loop=0') . $autoplay_attr . ( $mute == 1 ? '&amp;enablejsapi=1' /*. '&amp;origin=' . site_url()*/ : '' ),
+					'.*?youtube\.com\/(v|embed)\/(.+?)(\/|\?).*?$' =>  '&amp;controls=0&amp;showinfo=0&amp;rel=0&amp;wmode=transparent&amp;html5=1&amp;modestbranding=1' . ($loop === 1 ? '&amp;loop=1&amp;enablejsapi=1' : 'loop=0') . $autoplay_attr . ( $mute == 1 ? '&amp;enablejsapi=1' /*. '&amp;origin=' . site_url()*/ : '' ),
 					'.*?wistia\.' => ($loop === 1 ? 'endVideoBehavior=loop' : '') . ( $autoplay == 1 ? '&amp;autoPlay=true' : '' ) . ( $mute == 1 ? '&amp;volume=0' : '' )
 				);
 				$vid_attr = '';
