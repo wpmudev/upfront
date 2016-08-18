@@ -121,7 +121,7 @@ define([
 		},
 		upload_slider_images: function () {
 			var me = this;
-			Upfront.Views.Editor.ImageSelector.open({multiple: true}).done(function(images){
+			Upfront.Views.Editor.ImageSelector.open({multiple: true, multiple_sizes: false}).done(function(images){
 				var image_ids = [];
 				_.each(images, function(image, id){
 					id = parseInt(id, 10);
@@ -144,7 +144,7 @@ define([
 			this.$el.on('click', '.upfront-bg-slider-add-image', function (e) {
 				e.preventDefault();
 				e.stopPropagation();
-				Upfront.Views.Editor.ImageSelector.open({multiple: true}).done(function(images){
+				Upfront.Views.Editor.ImageSelector.open({multiple: true, multiple_sizes: false}).done(function(images){
 					var slide_images = _.clone(me.model.get_breakpoint_property_value('background_slider_images', true) || []);
 					_.each(images, function(image, id){
 						id = parseInt(id, 10);
