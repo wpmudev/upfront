@@ -12,21 +12,16 @@ var l10n = Upfront.Settings.l10n.posts_element;
 var PostsSettings = ElementSettings.extend({
 	panels: {},
 
-	initialize: function (opts) {
-		// Call the super constructor here, so that the appearance panel is instantiated
-		this.constructor.__super__.initialize.call(this, opts);
-
-		this.options = opts;
+	initialize: function () {
 		var me = this,
-			general = new Panels.General({model: this.model}),
-			post_parts = new Panels.get_panel('posts');
+			data_type = this.model.get_property_value_by_name('data_type'),
+			panels = {},
+			title = Upfront.Settings.l10n.post_data_element.elements[data_type] || data_type
 		;
-		general.on("settings:dispatched", this.rerender, this);
-		general.on("post:removed", this.rerender, this);
-		general.on("post:added", this.rerender, this);
-		//post_parts.on("settings:dispatched", this.rerender, this);
 
-		this.panels = _.extend({ General: general, PostParts: post_parts }, this.panels);
+		this.panels = Panels.get_panel();
+		this.title = title;
+		ElementSettings.prototype.initialize.apply(this, arguments);
 	},
 
 	rerender: function () {
@@ -34,7 +29,7 @@ var PostsSettings = ElementSettings.extend({
 			panels = _(this.panels),
 			me = this,
 			general = new Panels.General({model: this.model}),
-			post_parts = new Panels.PostParts({model: this.model})
+			post_parts = new Panels.get_panel('posts');
 		;
 
 		panels.each(function (pl, idx) {

@@ -17,25 +17,28 @@ Upfront.Util.post({
 	Panels._initial = initialData.data;
 }); // End response wrap
 
+var Modules = _.extend(
+	{},
+	_.omit(Posts_Modules, 'template')
+);
 
 var Panels = {
 	_initial: {},
 	get_panel: function (data_type) {
 		var pnls = {};
-		
-		if (Upfront.Application.user_can("MODIFY_PRESET")) {
-			var option = _.omit(Posts_Modules, 'template')
-			;
-			if (!option) return;
 
-			pnls['appearance'] = option;
-		}
+		if (Upfront.Application.user_can("MODIFY_PRESET")) _.each(Upfront.data['upfront_posts'].post_parts, function (part) {
+				var part_name = 'part_' + part,
+					option = Modules[part_name] ? Modules[part_name] : false
+				;
+				if (!option) return;
+
+				pnls[part] = option;
+			});
 
 		var overall = Main.extend({part_panels: pnls, data_type: data_type});
-		
-		console.log(overall);
 
-		return {stuff: overall};
+		return {Parts: overall};
 	}
 };
 
@@ -714,7 +717,7 @@ var Main = PresetManager.extend({
 			mainDataCollection: this.data_type + '_elementPresets',
 			styleElementPrefix: this.data_type + '_element',
 			ajaxActionSlug: this.data_type + '_element',
-			styleTpl: Templates[this.data_type],
+			styleTpl: Posts_Modules.template,
 			presetDefaults: _.extend(elementDefaults, {
 				id: "default",
 				name: "Default"
