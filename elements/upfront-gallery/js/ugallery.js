@@ -1076,7 +1076,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		var ids = !_.isUndefined( this.imageLabels[imageId] ) ?  this.imageLabels[imageId].match(/-?\d+/g) : false,
 			labels = []
 		;
-
 		if(ids){
 			_.each(this.labels, function(label){
 				if(ids.indexOf(label.id.toString()) !== -1 && label.id !== '0') {
@@ -1084,7 +1083,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				}
 			});
 		}
-
 		return labels;
 	},
 
@@ -1483,13 +1481,12 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	addLabel: function(text, imageId){
 		var label = Upfront.data.ugallery.label_names[text],
 			labelId;
-
-		if (!label) {
+			
+		if (typeof label === 'undefined' || !label) {
 			return this.createLabel(text, imageId);
 		}
 
 		labelId = '"label_' + label.id + '"';
-
 		this.addToGalleryLabels(label);
 
 		this.associateLabelWithImage(imageId, labelId, label);
@@ -1523,15 +1520,16 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		var labelInGallery = false,
 			i = 0,
 		  labelIdAsInt = parseInt(label.id, 10); // if not done labels will be duplicated
-
+		
 		while (i < this.labels.length && !labelInGallery) {
-			labelInGallery = this.labels[i].id === labelIdAsInt;
+			savedLabelId = parseInt(this.labels[i].id, 10);
+			labelInGallery = savedLabelId === labelIdAsInt;
 			i++;
 		}
 
 		if (!labelInGallery) {
 			this.labels.push({
-				id: labelIdAsInt,
+				id: labelIdAsInt.toString(),
 				text: label.text
 			});
 		}
