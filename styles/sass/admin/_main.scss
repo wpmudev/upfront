@@ -111,7 +111,27 @@
     width: 140px;
     height: 45px;
     position: absolute;
-    margin: auto auto;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+.uf-thx-theme_screenshot .no-image {
+	background: #F1F1F1;
+    width: 225px;
+    height: 126px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    position: relative;
+}
+.uf-thx-theme_screenshot .no-image:before {
+	content: '';
+    background: url("../../img/uf-admin-sprite.svg") #F1F1F1;
+    width: 145px;
+    height: 45px;
+    position: absolute;
+    margin: auto;
     top: 0;
     bottom: 0;
     left: 0;
