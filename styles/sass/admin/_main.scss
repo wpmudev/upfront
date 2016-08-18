@@ -73,11 +73,11 @@
 
 .upfront_admin .postbox h2.title {
     border-bottom: 1px solid #eee;
-    padding: 25px 30px 25px;
+    padding: 0 30px 0;
     margin-bottom: 0;
     color: #777;
     margin-top:0;
-    font: bold 18px/1 'Roboto Condensed', Helvetica Neueu, Helvetica, Arial, sans-serif;
+    font: bold 18px/60px 'Roboto Condensed', Helvetica Neueu, Helvetica, Arial, sans-serif;
     letter-spacing: -0.5px;
     -webkit-font-smoothing: antialiased;
 }
@@ -96,12 +96,28 @@
 }
 .postbox.themes .download,
 .postbox.themes .download:hover {
-    background-position: -100px -82px;
+    background-position: -100px -80px;
 }
 .postbox.themes .edit.info,
 .postbox.themes .edit.info:hover {
     background-position: -100px -146px;
 }
+
+/* NO THUMBNAIL THEME STYLING */
+
+.uf-thx-theme a:before {
+    content: '';
+    background: url("../../img/uf-admin-sprite.svg") #F1F1F1;
+    width: 140px;
+    height: 45px;
+    position: absolute;
+    margin: auto auto;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
 
 @media screen and (min-width: 920px) {
     .upfront-col-left, .upfront-col-right {
