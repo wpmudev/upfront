@@ -148,7 +148,9 @@ class Upfront_EditPost_VirtualSubpage extends Upfront_VirtualSubpage {
 		global $post, $wp_query;
 		$wp_query = new WP_Query(array(
 			'p' => $post_id,
+			'post_status' => array( 'publish', 'pending', 'draft', 'auto-draft', 'future', 'private', 'inherit', 'trash' )
 		));
+
 		add_filter('upfront-data-post_id', create_function('', "return $post_id;"));
 	}
 
