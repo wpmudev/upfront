@@ -1,5 +1,5 @@
 define([
-	'elements/upfront-post-data/js/panel-abstractions',
+	'elements/upfront-posts/js/post-list-modules-abstraction',
 	'text!elements/upfront-posts/tpl/views.html'
 ], function (Panel, template) {
 	var l10n = Upfront.Settings.l10n.post_data_element;
