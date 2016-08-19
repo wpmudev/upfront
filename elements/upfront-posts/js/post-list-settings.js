@@ -12,16 +12,18 @@ var l10n = Upfront.Settings.l10n.posts_element;
 var PostsSettings = ElementSettings.extend({
 	panels: {},
 
-	initialize: function () {
+	initialize: function (opts) {
+		
+		this.constructor.__super__.initialize.call(this, opts);
+		
 		var me = this,
-			data_type = this.model.get_property_value_by_name('data_type'),
-			panels = {},
-			title = Upfront.Settings.l10n.post_data_element.elements[data_type] || data_type
+			general = Panels.General,
+			post_parts = Panels.get_panel('posts')
 		;
-
-		this.panels = Panels.get_panel();
-		this.title = title;
-		ElementSettings.prototype.initialize.apply(this, arguments);
+		
+		this.panels = _.extend({ General: general, Parts: post_parts }, this.panels);
+		
+		ElementSettings.prototype.initialize.apply(this, opts);
 	},
 
 	rerender: function () {
