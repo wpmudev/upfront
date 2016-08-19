@@ -34,11 +34,11 @@ var Panels = {
 				if (!option) return;
 
 				pnls[part] = option;
-			});
+		});
 
 		var overall = Main.extend({part_panels: pnls, data_type: data_type});
 
-		return {Parts: overall};
+		return overall;
 	}
 };
 
@@ -714,14 +714,11 @@ var Main = PresetManager.extend({
 		}
 
 		_.extend(this, {
-			mainDataCollection: this.data_type + '_elementPresets',
-			styleElementPrefix: this.data_type + '_element',
-			ajaxActionSlug: this.data_type + '_element',
+			mainDataCollection: 'postsPresets',
+			styleElementPrefix: 'posts-preset',
+			ajaxActionSlug: 'posts',
 			styleTpl: Posts_Modules.template,
-			presetDefaults: _.extend(elementDefaults, {
-				id: "default",
-				name: "Default"
-			})
+			presetDefaults: Upfront.mainData.presetDefaults.posts
 		});
 
 		PresetManager.prototype.initialize.apply(this, arguments);
