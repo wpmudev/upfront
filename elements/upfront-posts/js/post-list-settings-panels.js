@@ -762,6 +762,13 @@ var Main = PresetManager.extend({
 			});
 		}, this);
 		// Yeah, so that's done
+		
+		// Add wrappers
+		var element_wrapper = new Modules['element_wrapper']({ model: preset_model}),
+			post_wrapper = new Modules['post_wrapper']({ model: preset_model});
+	
+		this.settings.push(element_wrapper);
+		this.settings.push(post_wrapper)
 
 		_.each(this.part_panels, function (panel, idx) {
 			var pnl = new panel({
