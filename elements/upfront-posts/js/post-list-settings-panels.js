@@ -764,15 +764,16 @@ var Main = PresetManager.extend({
 		// Yeah, so that's done
 		
 		// Add wrappers
-		var element_wrapper = new Modules['element_wrapper']({ model: preset_model}),
-			post_wrapper = new Modules['post_wrapper']({ model: preset_model});
-	
+		var element_wrapper = new Modules['element_wrapper']({ model: preset_model, className: 'upfront-post_data-part part-module-panel upfront-posts-wrapper'}),
+			post_wrapper = new Modules['post_wrapper']({ model: preset_model, className: 'upfront-post_data-part part-module-panel upfront-posts-wrapper'});
+		
 		this.settings.push(element_wrapper);
-		this.settings.push(post_wrapper)
+		this.settings.push(post_wrapper);
 
 		_.each(this.part_panels, function (panel, idx) {
 			var pnl = new panel({
-				model: preset_model
+				model: preset_model,
+				className: 'upfront-post_data-part part-module-panel upfront-posts-module'
 			});
 
 			var me = this;
@@ -788,7 +789,13 @@ var Main = PresetManager.extend({
 		setTimeout( function() {
 			//Move Edit Preset to bottom
 			me.$el.find('.upfront-settings-css').parent().append(me.$el.find('.upfront-settings-css'));
-		}, 50);
+
+			// Wrap wrappers
+			me.$el.find( ".upfront-posts-wrapper" ).wrapAll( "<div class='upfront-post-wrappers' />");
+			
+			// Wrap modules
+			me.$el.find( ".upfront-posts-modules" ).wrapAll( "<div class='upfront-post-modules' />");
+		}, 150);
 	},
 	getTitle: function() {
 		return 'Presets';

@@ -81,6 +81,9 @@ define([
 			this.state.render();
 
 			this.$el.append(this.state.$el);
+
+			//Move Edit Preset to bottom
+			this.$el.find('.state_modules').append(this.$el.find('.edit_preset_css'));
 			this.$el.addClass("preset_specific");
 		},
 		get_modules: function () {
