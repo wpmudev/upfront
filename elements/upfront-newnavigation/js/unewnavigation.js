@@ -397,7 +397,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		newMenuName.render();
 
-		me.$el.find('div.upfront-object-content').append(newMenuName.el);
+		me.$el.find('div.upfront-object-content').append('<div class="upfront_new_menu_name_and_button"></div>');
+		me.$el.find('div.upfront-object-content .upfront_new_menu_name_and_button').append(newMenuName.el);
 
 		var newMenuButton = new Upfront.Views.Editor.Field.Button({
 			model: me.model,
@@ -407,7 +408,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		});
 
 		newMenuButton.render();
-		me.$el.find('div.upfront-object-content').append(newMenuButton.el);
+		me.$el.find('div.upfront-object-content .upfront_new_menu_name_and_button').append(newMenuButton.el);
 
 		me.$el.find('div.upfront-object-content > div.new_menu_name').on('mouseover', function() {
 			me.$el.parent().parent().parent().draggable('disable');

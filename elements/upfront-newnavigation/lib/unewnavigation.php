@@ -224,7 +224,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				'responsive_subitem_label' => __('Responsive Sub Menu Item', 'upfront'),
 				'responsive_subitem_hover_label' => __('Responsive Sub Menu Item hover', 'upfront'),
 			),
-			'new_menu_name' => __('New Menu Name', 'upfront'),
+			'new_menu_name' => __('Type new menu name...', 'upfront'),
 			'create_new' => __('Create New', 'upfront'),
 			'link_name' => __('Link Name', 'upfront'),
 			'mnu' => array(
