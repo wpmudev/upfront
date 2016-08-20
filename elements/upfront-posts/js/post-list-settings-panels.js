@@ -731,6 +731,7 @@ var Main = PresetManager.extend({
 		Upfront.Application.cssEditor.elementTypes.PostDataModel = Upfront.Application.cssEditor.elementTypes.PostDataModel || {id: this.data_type, label: this.data_type};
 	},
 	setupItems: function () {
+		var me = this;
 		var preset = this.clear_preset_name(this.model.decode_preset() || 'default');
 		var preset_model = this.presets.findWhere({id: preset});
 
@@ -776,6 +777,11 @@ var Main = PresetManager.extend({
 
 			this.settings.push(pnl);
 		}, this);
+		
+		setTimeout( function() {
+			//Move Edit Preset to bottom
+			me.$el.find('.upfront-settings-css').parent().append(me.$el.find('.upfront-settings-css'));
+		}, 50);
 	},
 	getTitle: function() {
 		return 'Presets';
