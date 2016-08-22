@@ -6,7 +6,8 @@ define([
 	'scripts/upfront/preset-settings/preset-manager',
 	'scripts/upfront/preset-settings/util',
 	'elements/upfront-posts/js/post-list-settings-modules',
-], function(tpl, Parts, RootSettingsPanel, PresetManager, Util, Posts_Modules) {
+	'scripts/upfront/preset-settings/util',
+], function(tpl, Parts, RootSettingsPanel, PresetManager, Util, Posts_Modules, PresetUtil) {
 
 var l10n = Upfront.Settings.l10n.posts_element;
 var $template = $(tpl);
@@ -24,10 +25,12 @@ var Modules = _.extend(
 
 var Panels = {
 	_initial: {},
-	get_panel: function (data_type) {
+	get_panel: function (preset) {
 		var pnls = {};
 
-		if (Upfront.Application.user_can("MODIFY_PRESET")) _.each(Upfront.data['upfront_posts'].post_parts, function (part) {
+		props = PresetUtil.getPresetProperties('button', preset) || {};
+
+		if (Upfront.Application.user_can("MODIFY_PRESET")) _.each(props.enabled_post_parts, function (part) {
 				var part_name = 'part_' + part,
 					option = Modules[part_name] ? Modules[part_name] : false
 				;
@@ -36,7 +39,7 @@ var Panels = {
 				pnls[part] = option;
 		});
 
-		var overall = Main.extend({part_panels: pnls, data_type: data_type});
+		var overall = Main.extend({part_panels: pnls, data_type: 'posts'});
 
 		return overall;
 	}

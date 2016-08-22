@@ -16,9 +16,11 @@ var PostsSettings = ElementSettings.extend({
 		
 		this.constructor.__super__.initialize.call(this, opts);
 		
+		var preset = this.model.get_property_value_by_name('preset');
+		
 		var me = this,
 			general = Panels.General,
-			post_parts = Panels.get_panel('posts')
+			post_parts = Panels.get_panel(preset)
 		;
 		
 		this.panels = _.extend({ General: general, Parts: post_parts }, this.panels);
