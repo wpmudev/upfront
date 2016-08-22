@@ -67,10 +67,25 @@ define([
 		},
 		render: function () {
 			this.fields = _(this.map_panel_fields());
-			this.options.title = this.title;
-			BaseModule.prototype.render.apply(this, arguments);
-
 			var modules = this.get_modules();
+			
+			this.$el.html('');
+			
+			if (this.title && this.options.toggle !== true) {
+				this.$el.append('<div class="upfront-settings-item-title">' + this.options.title + '</div>');
+			}
+			
+			this.$el.append('<div class="upfront-settings-post-wrapper"></div>');
+
+			var $module_content = this.$el.find('.upfront-settings-post-wrapper');
+			$module_content.append('<div class="upfront-settings-item-content"></div>');
+			var $content = this.$el.find('.upfront-settings-item-content');
+			
+			this.fields.each(function(field){
+				field.render();
+				field.delegateEvents();
+				$content.append(field.el);
+			});
 
 			this.state = new StateSettings({
 				model: this.model,
@@ -79,11 +94,13 @@ define([
 			});
 			this.state.render();
 
-			this.$el.append(this.state.$el);
+			$module_content.append(this.state.$el);
 
 			//Move Edit Preset to bottom
-			this.$el.find('.state_modules').append(this.$el.find('.edit_preset_css'));
+			$module_content.find('.state_modules').append(this.$el.find('.edit_preset_css'));
 			this.$el.addClass("preset_specific");
+
+			this.trigger('rendered');
 		},
 		get_modules: function () {
 			var me = this,
@@ -162,9 +179,27 @@ define([
 				.append('<a href="#toggle" class="toggle">&times;</a>')
 			;
 			
-			var $content = this.$el.find('.upfront-settings-item-content:first, .state_modules');
+			var $content = this.$el.find('.upfront-settings-post-wrapper');
 			$content.hide();
 		},
+		toggle_box: function (e) {
+			if (e && e.preventDefault) e.preventDefault();
+			if (e && e.stopPropagation) e.stopPropagation();
+
+			var $content = this.$el.find('.upfront-settings-post-wrapper');
+			if ($content.is(":visible")) this.hide_content();
+			else this.show_content();
+
+			return false;
+		},
+		hide_content: function () {
+			var $content = this.$el.find('.upfront-settings-post-wrapper');
+			return $content.hide();
+		},
+		show_content: function () {
+			var $content = this.$el.find('.upfront-settings-post-wrapper');
+			return $content.show();
+		}
 	});
 
 	return {
