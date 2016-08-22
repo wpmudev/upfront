@@ -8,6 +8,10 @@
   overflow: hidden;
   display: block; }
 
+.postbox.newtheme .character {
+  background-image: url("../../img/uf-admin-sprite.svg");
+  background-repeat: no-repeat; }
+
 .upfront_admin {
   padding: 0 10px; }
 
