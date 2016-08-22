@@ -184,6 +184,15 @@ class Upfront_Posts_PostsData {
 				'wrappers_label' => __('Wrappers:', 'upfront'),
 				'post_wrapper' => __('Post Wrapper', 'upfront'),
 				'modules_label' => __('Post Parts:', 'upfront'),
+				'categories_title' => __('Categories', 'upfront'),
+				'author_title' => __('Author', 'upfront'),
+				'comment_count_title' => __('Comment Count', 'upfront'),
+				'date_title' => __('Date', 'upfront'),
+				'content_title' => __('Excerpt / Content', 'upfront'),
+				'featured_image_title' => __('Feat. Img', 'upfront'),
+				'tags_title' => __('Tags', 'upfront'),
+				'title_title' => __('Title', 'upfront'),
+				'read_more_title' => __('Read More', 'upfront'),
 			),
 			
 			'css' => array(
