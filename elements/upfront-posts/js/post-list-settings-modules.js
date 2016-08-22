@@ -133,8 +133,26 @@ define([
 		}
 	});
 	
+	Modules.part_gravatar = Panel.Toggleable.extend({
+		title: l10n.modules.gravatar_title,
+		data_part: 'gravatar',
+		get_fields: function () {
+			return [
+				{
+					type: 'Select',
+					label: l10n.numeric,
+					label_style: 'inline',
+					property: 'display_name',
+					values: [
+						{label: l10n.numeric, value: 'display_name'},
+					]
+				}
+			];
+		}
+	});
+	
 	Modules.part_date_posted = Panel.Toggleable.extend({
-		title: l10n.modules.date_title,
+		title: l10n.modules.date_posted_title,
 		data_part: 'date_posted',
 		get_fields: function () {
 			return [

@@ -25,24 +25,6 @@ var Modules = _.extend(
 
 var Panels = {
 	_initial: {},
-	get_panel: function (preset) {
-		var pnls = {};
-
-		props = PresetUtil.getPresetProperties('button', preset) || {};
-
-		if (Upfront.Application.user_can("MODIFY_PRESET")) _.each(props.enabled_post_parts, function (part) {
-				var part_name = 'part_' + part,
-					option = Modules[part_name] ? Modules[part_name] : false
-				;
-				if (!option) return;
-
-				pnls[part] = option;
-		});
-
-		var overall = Main.extend({part_panels: pnls, data_type: 'posts'});
-
-		return overall;
-	}
 };
 
 RootSettingsPanel = RootSettingsPanel.extend({
@@ -613,9 +595,10 @@ var ThumbnailSettings = Upfront.Views.Editor.Settings.Item.extend({
 
 });
 
-var Main = PresetManager.extend({
+
+Panels.PostParts = PresetManager.extend({
 	initialize: function () {
-		var data_type_idx = 'upfront_post_data_' + this.data_type,
+		var data_type_idx = 'upfront_post_data_posts',
 			data_type_defaults = {},
 			elementDefaults
 		;
@@ -639,7 +622,7 @@ var Main = PresetManager.extend({
 		}, this);
 
 		// HACK!!! Force element type so the css editor works
-		Upfront.Application.cssEditor.elementTypes.PostDataModel = Upfront.Application.cssEditor.elementTypes.PostDataModel || {id: this.data_type, label: this.data_type};
+		Upfront.Application.cssEditor.elementTypes.PostDataModel = Upfront.Application.cssEditor.elementTypes.PostDataModel || {id: 'posts', label: 'Posts'};
 	},
 	setupItems: function () {
 		var me = this;
@@ -680,9 +663,11 @@ var Main = PresetManager.extend({
 		
 		this.settings.push(element_wrapper);
 		this.settings.push(post_wrapper);
+		
+		var post_parts = preset_model.get('enabled_post_parts') || [];
 
-		_.each(this.part_panels, function (panel, idx) {
-			var pnl = new panel({
+		_.each(post_parts, function (panel, idx) {
+			var pnl = new Modules['part_' + panel]({
 				model: preset_model,
 				className: 'upfront-post_data-part part-module-panel upfront-posts-module'
 			});
@@ -698,18 +683,61 @@ var Main = PresetManager.extend({
 		}, this);
 		
 		setTimeout( function() {
-			//Move Edit Preset to bottom
-			me.$el.find('.upfront-settings-css').parent().append(me.$el.find('.upfront-settings-css'));
-
-			// Wrap wrappers
-			me.$el.find( ".upfront-posts-wrapper" ).wrapAll( "<div class='upfront-post-wrappers' />");
-			me.$el.find( ".upfront-post-wrappers" ).prepend("<span class='upfront-post-wrapper-title'>" + l10n.modules.wrappers_label + "</span>");
-			
-			// Wrap modules
-			me.$el.find( ".upfront-posts-module" ).wrapAll( "<div class='upfront-post-modules' />");
-			me.$el.find( ".upfront-post-modules" ).prepend("<span class='upfront-post-wrapper-title'>" + l10n.modules.modules_label + "</span>");
+			me.wrap_modules();
+			me.add_module(preset_model);
 		}, 150);
 	},
+	
+	wrap_modules: function() {
+		//Move Edit Preset to bottom
+		this.$el.find('.upfront-settings-css').parent().append(this.$el.find('.upfront-settings-css'));
+
+		// Wrap wrappers
+		this.$el.find( ".upfront-posts-wrapper" ).wrapAll( "<div class='upfront-post-wrappers' />");
+		this.$el.find( ".upfront-post-wrappers" ).prepend("<span class='upfront-post-wrapper-title'>" + l10n.modules.wrappers_label + "</span>");
+		
+		// Wrap modules
+		this.$el.find( ".upfront-posts-module" ).wrapAll( "<div class='upfront-post-modules' />");
+		this.$el.find( ".upfront-post-modules" ).prepend("<span class='upfront-post-wrapper-title'>" + l10n.modules.modules_label + "</span>");
+	},
+	
+	add_module: function(model) {
+		var me = this;
+		var add_button = new Upfront.Views.Editor.Field.Select({
+			model: this.model,
+			property: "post_parts",
+			multiple: false,
+			values: this.get_unused_modules(model),
+			show: function() {
+				
+			},
+			change: function(value) {
+				var enabled_post_parts = model.get('enabled_post_parts') || [];
+				enabled_post_parts.push(value);
+				model.set('enabled_post_parts', enabled_post_parts);
+				
+				me.render();
+			}
+		});
+
+		add_button.render();
+		this.$el.find( ".upfront-post-wrappers" ).prepend(add_button.$el);
+	},
+	
+	get_unused_modules: function(preset) {
+		var post_parts = this.model.get_property_value_by_name('post_parts'),
+			enabled_post_parts = preset.get('enabled_post_parts') || [],
+			unused_parts = [];
+
+		_.each(post_parts, function (part) {
+			if(enabled_post_parts.indexOf(part) === -1) {
+				unused_parts.push({ value: part, label: l10n['modules'][part + '_title'] });
+			}
+		});
+		
+		return unused_parts;
+	},
+	
 	getTitle: function() {
 		return 'Presets';
 	},
