@@ -1582,6 +1582,24 @@ var Application = new (Backbone.Router.extend({
 		if ( is_single_page && this.user_can("SINGLEPAGE_LAYOUT_MODE") ) return true;
 		if ( !is_single_page && is_single && this.user_can("SINGLEPOST_LAYOUT_MODE") ) return true;
 		return false;
+	},
+
+	/**
+	 * Check if user can modify post/page content (e.g. title, content, categories, tags; not layout).
+	 *
+	 * Let's keep this simple for now since in other places it is checked if user has permissions
+	 * to start editing existing or create new post/page and it's hard to get owner of current
+	 * page.
+	 * Just check if user has permission to edit own or others posts.
+	 *
+	 * Do not use this where more thourough check is needed.
+	 *
+	 * @return {Boolean}
+	 */
+	user_can_save_content: function() {
+		if ( this.is_single() && (this.user_can("EDIT_OWN") || this.user_can("EDIT") )) return true;
+
+		return false;
 	}
 
 }))();

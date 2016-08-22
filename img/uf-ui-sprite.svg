@@ -1275,10 +1275,6 @@
 		</g>
 	</g>
 	<path fill="#CCE6FF" d="M45,44v16h13V44H45z M56,59h-9v-3h9V59z M56,55h-9v-6h9V55z M56,48h-9v-3h9V48z"/>
-	<g>
-		<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#CCE6FF" points="45,84 46,92 58,92 59,84 		"/>
-		<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#CCE6FF" points="58,82 52,82 51,80 47,80 46,83 58,83 		"/>
-	</g>
 	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#779CBD" points="51,116 51,124 54,120 	"/>
 	<circle fill-rule="evenodd" clip-rule="evenodd" fill="#C0DDF6" cx="52" cy="154" r="8"/>
 	<polygon fill-rule="evenodd" clip-rule="evenodd" fill="#779CBD" points="56,153 48,153 52,156 	"/>
@@ -1833,6 +1829,24 @@
 	<polygon fill="#A2BEDA" points="352,264 355,260 349,260 	"/>
 	<path fill-rule="evenodd" clip-rule="evenodd" fill="#6A91B4" d="M199,285v2h-2v-2H199z M207,293v2h-2v-2H207z M208,292h-4v4h4V292
 		z M200,284h-4v4h4V284z M200,285.5c3.5,0.2,6.2,3,6.5,6.5h-1c-0.2-2.9-2.6-5.2-5.5-5.5V285.5z"/>
+	<g>
+		<defs>
+			<path id="SVGID_61_" d="M47,85h10l-0.8,4c-0.1,0.5-0.7,1-1.2,1h-6c-0.6,0-1.1-0.4-1.2-1L47,85z M52,83h4v1h-4V83z M48,83
+				c0-0.6,0.4-1,1-1h2c0.6,0,1,0.4,1,1v1h-4V83z"/>
+		</defs>
+		<clipPath id="SVGID_62_">
+			<use xlink:href="#SVGID_61_"  overflow="visible"/>
+		</clipPath>
+		<g clip-path="url(#SVGID_62_)">
+			<defs>
+				<rect id="SVGID_63_" x="-4" y="-508" width="900" height="662"/>
+			</defs>
+			<clipPath id="SVGID_64_">
+				<use xlink:href="#SVGID_63_"  overflow="visible"/>
+			</clipPath>
+			<rect x="42" y="77" clip-path="url(#SVGID_64_)" fill="#7AA5CC" width="20" height="18"/>
+		</g>
+	</g>
 </g>
 <g id="area-markers">
 </g>
