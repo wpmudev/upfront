@@ -181,7 +181,9 @@ class Upfront_Posts_PostsData {
 			
 			'modules' => array(
 				'element_wrapper' => __('Element Wrapper', 'upfront'),
-				'post_wrapper' => __('Post Wrapper', 'upfront')
+				'wrappers_label' => __('Wrappers:', 'upfront'),
+				'post_wrapper' => __('Post Wrapper', 'upfront'),
+				'modules_label' => __('Post Parts:', 'upfront'),
 			),
 			
 			'css' => array(

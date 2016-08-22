@@ -792,9 +792,11 @@ var Main = PresetManager.extend({
 
 			// Wrap wrappers
 			me.$el.find( ".upfront-posts-wrapper" ).wrapAll( "<div class='upfront-post-wrappers' />");
+			me.$el.find( ".upfront-post-wrappers" ).prepend("<span class='upfront-post-wrapper-title'>" + l10n.modules.wrappers_label + "</span>");
 			
 			// Wrap modules
 			me.$el.find( ".upfront-posts-modules" ).wrapAll( "<div class='upfront-post-modules' />");
+			me.$el.find( ".upfront-post-modules" ).prepend("<span class='upfront-post-wrapper-title'>" + l10n.modules.modules_label + "</span>");
 		}, 150);
 	},
 	getTitle: function() {
