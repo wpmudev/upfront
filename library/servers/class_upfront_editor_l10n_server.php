@@ -573,6 +573,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
                 'choose_global_region' => __('Choose from Global Regions', 'upfront'),
                 'make_this_region_global' => __('Make this a Global Region', 'upfront'),
                 'select_global_region' => __('Select Global Region', 'upfront'),
+				'inherit' => __('Use Desktop Settings', 'upfront'),
 				'solid_color' => __('Solid color', 'upfront'),
 				'video' => __('Video', 'upfront'),
 				'image_slider' => __('Image slider', 'upfront'),

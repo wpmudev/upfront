@@ -174,6 +174,7 @@ define([
 				var $bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
 					color = this.model.get_breakpoint_property_value('background_color', true)
 				;
+				this.remove_api_key_overlay();
 				if ( color ) {
 					$bg.css('background-color', color);
 				} else {
@@ -230,6 +231,7 @@ define([
 					image = this.model.get_breakpoint_property_value('background_image', true),
 					ratio = parseFloat(this.model.get_breakpoint_property_value('background_image_ratio', true))
 				;
+				this.remove_api_key_overlay();
 				this.update_background_color();
 				this._update_background_image_from_data({
 					image: image,
@@ -252,6 +254,7 @@ define([
 						}
 					}
 				;
+				this.remove_api_key_overlay();
 				$bg.addClass('no-featured_image');
 				if ( bg_default == 'hide' ) {
 					$bg.css('background-color', '');
@@ -361,6 +364,9 @@ define([
 					);
 				}
 			},
+			remove_api_key_overlay: function () {
+				this.$el.find('#upfront_map-api_key_overlay-wrapper').remove();
+			},
 			update_background_map: function ($type, $overlay) {
 				// If background type is map and is missing API Key, show notice.
 				if (
@@ -425,7 +431,9 @@ define([
 					rotate = this.model.get_breakpoint_property_value('background_slider_rotate', true),
 					rotate_time = this.model.get_breakpoint_property_value('background_slider_rotate_time', true),
 					control = this.model.get_breakpoint_property_value('background_slider_control', true),
-					transition = this.model.get_breakpoint_property_value('background_slider_transition', true);
+					transition = this.model.get_breakpoint_property_value('background_slider_transition', true)
+				;
+				this.remove_api_key_overlay();
 				if ( slide_images ) {
 					if ( rotate ) {
 						$type.attr('data-slider-auto', 1);
@@ -479,7 +487,9 @@ define([
 					width = this.model.get_breakpoint_property_value('background_video_width', true),
 					height = this.model.get_breakpoint_property_value('background_video_height', true),
 					style = this.model.get_breakpoint_property_value('background_video_style', true) || 'crop',
-					ratio, $embed;
+					ratio, $embed
+				;
+				this.remove_api_key_overlay();
 				if ( style == 'inside' && color ) {
 					$bg.css('background-color', color);
 				} else {
@@ -5472,7 +5482,7 @@ define([
 				this.$el.find('> .upfront-region-wrapper > .upfront-modules_container').append(local_view.el);
 				local_view.render();
 				this.render_panels();
-				this.render_bg_setting();
+				// this.render_bg_setting();
 				//if ( this._is_clipped() )
 				//	this.$el.append('<div class="upfront-region-active-overlay" />');
 				this.display_region_hint();
@@ -5850,9 +5860,11 @@ define([
 				}
 
 				var me = this,
-					container_view = this.parent_view.get_container_view(this.model);
+					container_view = this.parent_view.get_container_view(this.model)
+				;
+
 				this.listenToOnce(Upfront.Events, "entity:region:deactivated", function(deac){
-					if(e && !this.$el.is($(e.target).closest('div.upfront-region'))) {
+					if(e && !this.$el.is($(e.target).closest('div.upfront-region')) && me.bg_setting) {
 						me.bg_setting.close(false);
 					}
 				});
@@ -5879,6 +5891,8 @@ define([
 
 
 
+				this.render_bg_setting();
+
 				if(this.model.get('type') == 'lightbox') {
 					this.bg_setting.right =  80;
 					this.bg_setting.top = setting_offset.top;
@@ -5899,7 +5913,6 @@ define([
 				}
 
 				container_view.$el.addClass('upfront-region-bg-setting-open');
-				this.render_bg_setting();
 				this.bg_setting.open().always(function(){
 					container_view.$el.removeClass('upfront-region-bg-setting-open');
 				});
@@ -5943,6 +5956,7 @@ define([
 				var container_view = this.parent_view.get_container_view(this.model);
 				container_view.$el.find('.upfront-region-finish-edit').css('display', ''); // reset hide finish edit button
 				this.bg_setting.remove(); // removing it here, i'll be re-rendered before opening
+				this.bg_setting = false;
 			},
 			on_change_breakpoint: function (breakpoint) {
 				var $delete = this.$el.find('> .upfront-entity_meta > a.upfront-entity-delete_trigger'),
