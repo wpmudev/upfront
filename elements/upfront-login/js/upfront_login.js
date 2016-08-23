@@ -139,6 +139,12 @@ define([
 					if (text) me.model.set_property('logout_link', text, true);
 					me.redraw_layout();
 				});
+				
+				// tweaking z-index for triggered forms
+				var current_style = me.model.get_property_value_by_name("style");
+				if ( current_style && current_style !== 'form' ) {
+					me.$el.closest('.upfront-objects_container').css('z-index',3000);
+				}
 			}
 
 			this.events = _.extend({}, this.events, {
