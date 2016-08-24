@@ -4,11 +4,14 @@ define([
 ], function(editorTpl) {
 	var l10n = Upfront.Settings.l10n.image_element;
 
+	// Had some mysterious issue with deferred not being the one we need,
+	// this resolves it.
+	var theOneDeferred;
+
 	var VideoSelector = Backbone.View.extend({
 		selectorTpl: _.template($(editorTpl).find('#selector-tpl').html()),
 		progressTpl: _.template($(editorTpl).find('#progress-tpl').html()),
 		formTpl: _.template($(editorTpl).find('#upload-form-tpl').html()),
-		deferred: $.Deferred(),
 		defaultOptions: {multiple: false, multiple_sizes: true, preparingText: l10n.sel.preparing},
 		options: {},
 
@@ -84,7 +87,60 @@ define([
 				video_id: response.data[0]
 			})
 				.done(function(response2){
-					me.deferred.resolve({id: response.data[0], embed: response2.data.url});
+					var filename = $('source', response2.data.url).attr('src').split('?')[0];
+					$('body').append('<video id="tempVideoForThumb" controls="controls" preload="none"></video>');
+
+					var $tempVideo = $('#tempVideoForThumb');
+					var donethedead = false;
+
+					var getThumb = function() {
+						var thumbName = filename.split('/');
+						thumbName = thumbName[thumbName.length - 1];
+						thumbName = thumbName.split('.');
+						thumbName = thumbName[0] + '-video-thumbnail.png';
+
+						donethedead = true;
+
+						var width = $tempVideo.width();
+						var height = $tempVideo.height();
+						var canvas = document.createElement('canvas');
+						canvas.width = width;
+						canvas.height = height;
+
+						var ctx = canvas.getContext('2d');
+						ctx.drawImage($tempVideo[0], 0, 0, width, height);
+						//document.body.appendChild(canvas);
+						var base64image = canvas.toDataURL();
+						var data = {
+							base64image: base64image,
+							thumbname: thumbName,
+							action: 'upfront-upload-video-thumbnail',
+							videoId: response.data[0]
+						};
+						Upfront.Util.post(data).done( function(response3) {
+							var videoData = {
+								id: response.data[0],
+								embed: response2.data.url,
+								cover: response3.data.thumburl,
+								width: width,
+								height: height,
+								aspect: Math.round(width/height*100)/100
+							};
+							theOneDeferred.resolve(videoData);
+							$tempVideo.remove();
+						});
+					};
+
+					$tempVideo[0].addEventListener('canplay', function() {
+							this.currentTime = 0;
+					}, false);
+					$tempVideo[0].addEventListener('seeked', function() {
+						if (donethedead) return;
+						    getThumb();
+					}, false);
+
+					$tempVideo[0].src = filename;
+					$tempVideo[0].load();
 				})
 			.error(function(){
 				Upfront.Views.Editor.notify(l10n.sel.upload_error, 'error');
@@ -93,7 +149,7 @@ define([
 		},
 
 		open: function(options) {
-			this.deferred = $.Deferred();
+			theOneDeferred = $.Deferred();
 
 			if(! _.isObject(options)) {
 				options = {};
@@ -105,7 +161,7 @@ define([
 
 			Upfront.Events.trigger('upfront:element:edit:start', 'media-upload');
 
-			return this.deferred.promise();
+			return theOneDeferred.promise();
 		},
 
 		openSelector: function() {
@@ -338,6 +394,7 @@ define([
 
 			Upfront.Media.Manager.open(opts)
 				.done(function(popup, result){
+					console.log('meida manager', result);
 					if(result && result.length > 0){
 						var video_id = result.at(0).get('ID');
 						Upfront.Util.post({
@@ -345,7 +402,7 @@ define([
 							video_id: video_id
 						})
 							.done(function(response2){
-								me.deferred.resolve({id: video_id, embed: response2.data.url});
+								theOneDeferred.resolve({id: video_id, embed: response2.data.url});
 							})
 						.error(function(){
 							Upfront.Views.Editor.notify(l10n.sel.upload_error, 'error');

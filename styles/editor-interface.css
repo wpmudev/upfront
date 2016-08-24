@@ -2557,9 +2557,6 @@ div#page.upfront-layout-view.upfront-layout-view .upfront-editable_entity.upfron
   display: none;
   cursor: pointer; }
 
-.uinsert-video-insert {
-  background: #eee; }
-
 .uinsert-video-insert:hover .video-insert-controls,
 .video-insert-controls.video-insert-controls-expanded {
   display: block; }
@@ -9524,6 +9521,10 @@ a.upfront-post-layout-trigger:before {
 
 .upfront-media-controls .insert_options .upfront-field-wrap {
   line-height: 40px; }
+
+/* --- Media manager videos --- */
+.upfront-media_manager-post_image li.upfront-media_item .thumbnail img.media-library-video-thumbnail {
+  height: 100%; }
 
 /* --- Color Picker --- */
 /***

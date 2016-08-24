@@ -11,14 +11,17 @@
 
 		var VideoInsert = Insert.UeditorInsert.extend({
 			type: 'video',
+
 			// Allows controls to remain open when view is re-rendered
 			controlsOpen: false,
+
 			defaults: {
 				'mute': false,
 				'controls': true,
 				'loop': false,
 				'autoplay': false
 			},
+
 			events:{
 				'click .video-insert-controls': 'toggleVideoControls',
 				'click .swap-video-insert-button': 'swapVideo',
@@ -60,28 +63,67 @@
 			},
 
 			start: function($el) {
-				var me = this,
-					deferred = new $.Deferred(),
-					videoSelector = new VideoSelector()
-				;
+				var deferred = new $.Deferred();
 
-				Upfront.preventRedactorStopOnOutsideClick = true;
 				this.$editor = $el.closest(".redactor-box");
 				this.data.set(this.defaults, {silent: true});
+
+				this.selectVideo(deferred);
+
+				return deferred;
+			},
+
+			/**
+			 * Proxy for selectVideo that ensures it will be called without arguments.
+			 */
+			swapVideo: function() {
+				this.selectVideo();
+			},
+
+			/**
+			 * Starts video selector and updates model with results.
+			 */
+			selectVideo: function(deferred) {
+				var videoSelector = new VideoSelector(),
+					me = this;
+
+				Upfront.preventRedactorStopOnOutsideClick = true;
 
 				videoSelector.open({multiple_selection: false })
 					.done(function(videoData){
 						videoSelector.close();
-						var newEmbedVideo = $(videoData.embed).find('video').attr('preload', 'none').attr('width', parseInt(me.$editor.width(), 10)).attr('height', 'auto').attr('controls', 'controls');
+
 						me.data.set({
-							'video_embed': newEmbedVideo,
+							'video_embed': me.getEmbedFromVideoData(videoData),
 							'id': videoData.id
 						});
-						deferred.resolve(me, videoData.embed);
+
+						if (deferred) {
+							deferred.resolve(me, videoData.embed);
+						}
+
 						Upfront.preventRedactorStopOnOutsideClick = false;
 					});
+			},
 
-				return deferred;
+			/**
+			 * Creates embed html from uploaded video data.
+			 */
+			getEmbedFromVideoData: function(videoData) {
+				// Fit video to parent
+				var width = parseInt(this.$editor.width(), 10);
+
+				var embed = $(videoData.embed).find('video')
+					.attr('preload', 'none') // Prevent video from preloading in editor,
+																	// it causes too much requests and they block
+																	// communication with server. Default is 'auto'
+					.attr('width', width)
+					.attr('height', Math.round(width / videoData.aspect))
+					.attr('data-cover-url', videoData.cover) // Since we don't load video, setup cover image
+					.attr('data-aspect', videoData.aspect) // For future use
+					.attr('controls', 'controls'); // Shown by default
+
+				return embed;
 			},
 
 			toggleVideoControls: function(event) {
@@ -94,6 +136,7 @@
 					this.$el.find('.video-insert-controls').addClass('video-insert-controls-expanded');
 				}
 			},
+
 			// Insert editor UI
 			render: function(){
 				var me = this;
@@ -121,6 +164,10 @@
 				}
 				this.$el.html($embed);
 
+				// Add cover image since we do not preload video, far better than empty space
+				$embed.css('background-image', 'url(' + $embed.attr('data-cover-url') + ')')
+					.css('background-size', 'cover');
+
 				this.$el.css('position', 'relative');
 				var controls = $('<div class="video-insert-controls">' +
 						'<div class="video-insert-controls-panel">' +
@@ -142,23 +189,6 @@
 				if (this.$el.parent().is('p')) {
 					this.$el.unwrap();
 				}
-			},
-			swapVideo: function() {
-				var videoSelector = new VideoSelector(),
-					me = this;
-
-				Upfront.preventRedactorStopOnOutsideClick = true;
-
-				videoSelector.open({multiple_selection: false })
-					.done(function(videoData){
-						videoSelector.close();
-						var newEmbedVideo = $(videoData.embed).find('video').attr('width', parseInt(me.$el.closest('.redactor-box').width(), 10)).attr('height', 'auto').attr('controls', 'controls');
-						me.data.set({
-							'video_embed': newEmbedVideo,
-							'id': videoData.id
-						});
-						Upfront.preventRedactorStopOnOutsideClick = false;
-					});
 			},
 			toggleMute: function() {
 				if (this.data.get('mute') === true) {

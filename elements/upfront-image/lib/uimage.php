@@ -738,11 +738,13 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		$video_html = wp_video_shortcode( array('src' => $video_url) );
 		$video_html = preg_replace('#width="\d+"#', 'width="1920"', $video_html);
 		$video_html = preg_replace('#height="\d+"#', 'height="1080"', $video_html);
-		$video_html = str_replace('preload="metadata"', 'preload="auto"', $video_html);
-		$video_html = str_replace('controls="controls"', '', $video_html);
+		$video_html = str_replace('preload="metadata"', 'preload="none"', $video_html);
+		$video_html = str_replace('controls="controls"', $video_html);
 
+		$thumburl = get_post_meta($video_id, 'thumburl', true);
 		$result = array(
-			'url' => $video_html
+			'url' => $video_html,
+			'thumburl' => $thumburl
 		);
 
 		return $this->_out(new Upfront_JsonResponse_Success($result));

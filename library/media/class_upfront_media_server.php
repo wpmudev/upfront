@@ -29,6 +29,7 @@ class Upfront_MediaServer extends Upfront_Server {
 			upfront_add_ajax('upfront-media-remove_item', array($this, "remove_item"));
 			upfront_add_ajax('upfront-media-update_media_item', array($this, "update_media_item"));
 			upfront_add_ajax('upfront-media-upload', array($this, "upload_media"));
+			upfront_add_ajax('upfront-upload-video-thumbnail', array($this, "upload_video_thumbnail"));
 			upfront_add_ajax('upfront-upload-icon-font', array($this, "upload_icon_font"));
 			upfront_add_ajax('upfront_update_active_icon_font', array($this, "update_active_icon_font"));
 
@@ -410,7 +411,18 @@ class Upfront_MediaServer extends Upfront_Server {
 		$data = stripslashes_deep($_POST);
 		$data['type'] = !empty($data['type']) ? $data['type'] : array('images');
 		$query = Upfront_MediaCollection::apply_filters($data);
-		$this->_out(new Upfront_JsonResponse_Success($query->to_php()));
+		$results = $query->to_php();
+
+		if (in_array('videos',  $data['type'])) {
+			error_log('getting videos' . json_encode($results['items']));
+			foreach($results['items'] as $index=>$video) {
+				$thumburl = get_post_meta(intval($video['ID']), 'thumburl', true);
+				if ($thumburl !== '') {
+					$results['items'][$index]['thumbnail'] = '<img class="media-library-video-thumbnail" src="' . $thumburl . '" />';
+				}
+			}
+		}
+		$this->_out(new Upfront_JsonResponse_Success($results));
 	}
 
 	public function list_theme_images () {
@@ -636,6 +648,89 @@ class Upfront_MediaServer extends Upfront_Server {
 		}
 
 		$this->_out(new Upfront_JsonResponse_Success($new_ids));
+	}
+
+	public function upload_video_thumbnail () {
+		$new_ids = array();
+
+		// if (!$this->_check_valid_request_level(Upfront_Permissions::UPLOAD)) $this->_out(new Upfront_JsonResponse_Error("You can't do this."));
+		$request = stripslashes_deep($_POST);
+
+		$base64image = !empty($request['base64image']) ? $request['base64image'] : false;
+		if (!$base64image) $this->_out(new Upfront_JsonResponse_Error("Invalid base64 image"));
+
+		$thumbname = !empty($request['thumbname']) ? $request['thumbname'] : false;
+		if (!$thumbname) $this->_out(new Upfront_JsonResponse_Error("Invalid thumbnail name"));
+
+		$videoId = !empty($request['videoId']) ? $request['videoId'] : false;
+		if (!$thumbname) $this->_out(new Upfront_JsonResponse_Error("Invalid video id"));
+
+		if (!function_exists('wp_generate_attachment_metadata')) require_once(ABSPATH . 'wp-admin/includes/image.php');
+
+		$tempdir = get_temp_dir();
+
+		// $mb = 1024 * 1024;
+		// $space_used = function_exists('get_space_used')
+			// ? (int)get_space_used() * $mb
+			// : 0
+		// ;
+		// $space_allowed = function_exists('get_space_allowed')
+			// ? (int)get_space_allowed() * $mb
+			// : 0
+		// ;
+
+		$base64image = explode(',', $base64image);
+
+		$image = base64_decode($base64image[1]);
+
+		$filepath = $tempdir . $thumbname;
+
+		file_put_contents($filepath, $image);
+		$file_size = getimagesize($filepath);
+
+		// if ($space_allowed && $file_size && $file_size + $space_used > $space_allowed) {
+			// // Upload quota exceeded
+			// @unlink("{$pfx}{$filename}");
+			// $this->_out(new Upfront_JsonResponse_Error(__("Error uploading the media item: allocated space quota exceeded", 'upfront')));
+		// }
+
+		// array based on $_FILE as seen in PHP file uploads
+		$file = array(
+			'name' => $thumbname, // ex: wp-header-logo.png
+			'type' => 'image/jpg',
+			'tmp_name' => $filepath,
+			'error' => 0,
+			'size' => filesize($filepath),
+		);
+
+		$overrides = array(
+			'test_form' => false,
+			'test_size' => true,
+			'test_upload' => true,
+		);
+
+		// move the temporary file into the uploads directory
+		$results = wp_handle_sideload( $file, $overrides );
+
+		if (!empty($results['error'])) {
+			die('Could not upload thumbnail');
+		} else {
+
+			// $filename = $results['file']; // full path to the file
+			// $local_url = $results['url']; // URL to the file in the uploads dir
+			// $type = $results['type']; // MIME type of the file
+
+			// Drop transients for quotas et al
+			if (is_multisite()) {
+				delete_transient('dirsize_cache');
+			}
+
+			// Connect thumb url to video
+			add_post_meta(intval($videoId), 'thumburl', $results['url']);
+
+			$this->_out(new Upfront_JsonResponse_Success(array("thumburl" => $results['url'])));
+		}
+
 	}
 
 	private function _check_valid_request_level ($level) {
