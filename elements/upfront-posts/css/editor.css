@@ -150,99 +150,101 @@
 }
 
 /* --- Post parts list --- */
-.uposts-parts-picker-setting {
-    margin: 0 0 5px;
-}
-.uposts-parts-picker-setting .upfront-field-multiple-horizontal-inline {
-    margin: 0 15px 5px 0;
-}
-.upfront-settings-item-content .post_parts.ui-sortable {
-	margin-top: 1em;
-}
-.upfront-settings-item-content .post_parts.ui-sortable li {
-	border: 1px solid #9bbfde;
-	margin: 2px;
-	border-radius: 4px;
-	cursor: move;
-	position: relative;
-}
-.upfront-settings-item-content .post_parts.ui-sortable li:before {
-	display: block;
-	position: absolute;
-	content: "\22EE";
-	background: #9bbfde;
-	width: 14px;
-	height: 22px;
-	line-height: 22px;
-	font-size: 22px;
-	color: #f1f9ff;
-	padding: 0 0 0 2px;
-}
-.upfront-settings-item-content .post_parts.ui-sortable li:hover {
-    border-color: #5984ab;
-}
-.upfront-settings-item-content .post_parts.ui-sortable li:hover:before {
-    background: #5984ab;
-}
-.upfront-settings-item-content .post_parts.ui-sortable li .name_action_wrapper {
-	clear: both; 
-	height: 22px;
-	margin-left: 12px;
-    height: 20px;
-    overflow: hidden;
-}
-.upfront-settings-item-content .post_parts.ui-sortable li .name_action_wrapper span {
-	display: block;
-	float: left;
-	margin-left: 8px;
+
+div.upfront-post-wrappers, div.upfront-post-modules {
+	padding: 2px 15px
 }
 
-.upfront-settings-item-content .post_parts.ui-sortable li .options { 
-	min-height: 24px;
-	padding: 1px;
-	background: rgb(218, 231, 244);
-}
-.upfront-settings-item-content .post_parts.ui-sortable li .options .option {
-	width: 65%; 
-}
-.upfront-settings-item-content .post_parts.ui-sortable li .options .edit_part { 
-	display: block;
-	position: absolute;
-	right: 12px;
-	bottom: 6px;
-	background: #00a167;
-	border-radius: 4px;
-	padding: 0 3px;
-    max-width: 62px;
-    overflow: hidden;
-    height: 16px;
-    white-space: nowrap;
-}
-.upfront-settings-item-content .post_parts.ui-sortable li .options .edit_part a { 
-	color: white;
-}
-.upfront-settings-item-content .post_parts.ui-sortable li .options  .upfront-field-label-inline {
-	padding-right: 4px; 
-}
-.upfront-settings-item-content .post_parts.ui-sortable li .options input { max-width: 50%; }
-.upfront-settings-item-content .post_parts.ui-sortable li .options.categories-options input { max-width: 25%; }
-.upfront-settings-item-content .post_parts.ui-sortable li .options.tags-options input { max-width: 25%; }
-.upfront-settings-item-content .post_parts.ui-sortable li .options.content-options input { max-width: 40%; }
-.upfront-settings-item-content .post_parts.ui-sortable li .options.gravatar-options input { max-width: 40%; }
-.upfront-settings-item-content .post_parts.ui-sortable li .options.date_posted-options input { max-width: 60%; }
 
-.upfront-settings-item-content .post_parts.ui-sortable li .part_action {
-	position: absolute;
-	right: 24px;
+
+div.preset-manager-panel div.preset_specific.upfront-posts-part {
+	background: none;
 }
-.upfront-settings-item-content .post_parts.ui-sortable li .part_action a {
-	margin-right: 3px;
+
+div.preset-manager-panel div.preset_specific.upfront-posts-part:before {
 	display: none;
 }
-.upfront-settings-item-content .post_parts.ui-sortable li:hover .part_action a {
-	display: inline;
+
+div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-settings-item-title {
+	border: 1px solid rgb(162, 191, 218);
+	display: block;
+	height: 24px;
+	line-height: 22px;
+	border-radius: 3px;
+	margin-bottom: 2px;
+	position: relative;
 }
 
+div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-settings-item-title .upfront-posts-module-title {
+	display: inline-block;
+	color: #4e4770;
+    font-size: 11px;
+	font-family: Verdana, sans-serif;
+	text-decoration: none;
+	font-weight: normal;
+	text-transform: capitalize;
+	position: relative;
+	left: 6px;
+	overflow: hidden;
+}
+
+div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-settings-item-title .upfront-posts-preview {
+	display: inline-block;
+	width: 12px;
+	height: 22px;
+	position: relative;
+}
+
+div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-settings-item-title .upfront-posts-preview:before {
+	content: '';
+	display: block;
+	position: absolute;
+	box-sizing: border-box;
+	width: 12px;
+	height: 22px;
+	display: block;
+	overflow: hidden;
+	position: relative;
+	/* magic happens below */
+	background-color: #DFE9F2;
+	background-image: -webkit-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -webkit-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+	background-image: -moz-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -moz-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+	background-image: -o-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -o-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+	background-image: linear-gradient(to top right, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), linear-gradient(to top right, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+	-webkit-background-size: 8px 8px;
+	-moz-background-size: 8px 8px;
+	background-size: 8px 8px;
+	background-position: 2px 0px, 6px 4px;
+}
+
+div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-settings-item-title .upfront-post-delete-part {
+	display: none;
+	position: absolute;
+	top: -5px;
+	right: 5px;
+}
+
+div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-settings-item-title:hover .upfront-post-delete-part {
+	display: block;
+}
+
+div.preset-manager-panel .upfront-post-wrapper-title {
+    font-size: 11px;
+	font-weight: bold;
+    color: #2f475f;
+    font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+	text-transform: uppercase;
+}
+
+div.preset-manager-panel .upfront-post-wrappers {
+	border-bottom: 1px solid #e5eef8;
+	position: relative;
+}
+
+div.preset-manager-panel .upfront-add-post-module {
+	position: absolute;
+	top: 150px;
+}
 
 /* --- Icons --- */
 .upfront-field-icon.upfront-posts-display_type {

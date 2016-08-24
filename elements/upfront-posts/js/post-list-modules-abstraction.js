@@ -17,7 +17,7 @@ define([
 				? BaseModule.prototype.className()
 				: (BaseModule.prototype.className || '')
 			).split(' ');
-			cls.push('upfront-post_data-part');
+			cls.push('upfront-posts-part');
 			cls.push('part-module-panel');
 			return cls.join(' ');
 		},
@@ -165,7 +165,7 @@ define([
 	var ToggleableOptions = OptionsModule.extend({
 		events: function () {
 			return _.extend({}, OptionsModule.prototype.events, {
-				'click .upfront-settings-item-title .delete-part': 'delete',
+				'click .upfront-settings-item-title .upfront-post-delete-part': 'delete',
 				'click .upfront-settings-item-title': 'toggle_box'
 			});
 		},
@@ -178,7 +178,7 @@ define([
 				.empty()
 				.append('<span class="upfront-posts-preview"></span>')
 				.append('<span class="upfront-posts-module-title">' + this.title + '</span>')
-				.append('<a href="#delete" class="delete-part">&times;</a>')
+				.append('<a href="#delete" class="upfront-post-delete-part">&times;</a>')
 			;
 			
 			var $content = this.$el.find('.upfront-settings-post-wrapper');

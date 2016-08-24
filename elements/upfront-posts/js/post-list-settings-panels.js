@@ -659,8 +659,8 @@ Panels.PostParts = PresetManager.extend({
 		// Yeah, so that's done
 		
 		// Add wrappers
-		var element_wrapper = new Modules['element_wrapper']({ model: preset_model, className: 'upfront-post_data-part part-module-panel upfront-posts-wrapper'}),
-			post_wrapper = new Modules['post_wrapper']({ model: preset_model, className: 'upfront-post_data-part part-module-panel upfront-posts-wrapper'});
+		var element_wrapper = new Modules['element_wrapper']({ model: preset_model, className: 'upfront-posts-part part-module-panel upfront-posts-wrapper'}),
+			post_wrapper = new Modules['post_wrapper']({ model: preset_model, className: 'upfront-posts-part part-module-panel upfront-posts-wrapper'});
 		
 		this.settings.push(element_wrapper);
 		this.settings.push(post_wrapper);
@@ -670,7 +670,7 @@ Panels.PostParts = PresetManager.extend({
 		_.each(post_parts, function (panel, idx) {
 			var pnl = new Modules['part_' + panel]({
 				model: preset_model,
-				className: 'upfront-post_data-part part-module-panel upfront-posts-module'
+				className: 'upfront-posts-part part-module-panel upfront-posts-module'
 			});
 
 			var me = this;
@@ -706,6 +706,7 @@ Panels.PostParts = PresetManager.extend({
 		var me = this;
 		var add_button = new Upfront.Views.Editor.Field.Select({
 			model: this.model,
+			className: 'upfront-add-post-module',
 			property: "post_parts",
 			multiple: false,
 			values: this.get_unused_modules(model),
