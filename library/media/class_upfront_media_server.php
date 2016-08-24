@@ -29,7 +29,8 @@ class Upfront_MediaServer extends Upfront_Server {
 			upfront_add_ajax('upfront-media-remove_item', array($this, "remove_item"));
 			upfront_add_ajax('upfront-media-update_media_item', array($this, "update_media_item"));
 			upfront_add_ajax('upfront-media-upload', array($this, "upload_media"));
-			upfront_add_ajax('upfront-upload-video-thumbnail', array($this, "upload_video_thumbnail"));
+			upfront_add_ajax('upfront-save-video-info', array($this, "save_video_info"));
+			upfront_add_ajax('upfront-get-video-info', array($this, "get_video_info"));
 			upfront_add_ajax('upfront-upload-icon-font', array($this, "upload_icon_font"));
 			upfront_add_ajax('upfront_update_active_icon_font', array($this, "update_active_icon_font"));
 
@@ -650,11 +651,14 @@ class Upfront_MediaServer extends Upfront_Server {
 		$this->_out(new Upfront_JsonResponse_Success($new_ids));
 	}
 
-	public function upload_video_thumbnail () {
+	public function save_video_info () {
 		$new_ids = array();
 
 		// if (!$this->_check_valid_request_level(Upfront_Permissions::UPLOAD)) $this->_out(new Upfront_JsonResponse_Error("You can't do this."));
 		$request = stripslashes_deep($_POST);
+
+		$videoId = !empty($request['videoId']) ? intval($request['videoId']) : false;
+		if (!$videoId) $this->_out(new Upfront_JsonResponse_Error("Invalid video id"));
 
 		$base64image = !empty($request['base64image']) ? $request['base64image'] : false;
 		if (!$base64image) $this->_out(new Upfront_JsonResponse_Error("Invalid base64 image"));
@@ -662,8 +666,17 @@ class Upfront_MediaServer extends Upfront_Server {
 		$thumbname = !empty($request['thumbname']) ? $request['thumbname'] : false;
 		if (!$thumbname) $this->_out(new Upfront_JsonResponse_Error("Invalid thumbnail name"));
 
-		$videoId = !empty($request['videoId']) ? $request['videoId'] : false;
-		if (!$thumbname) $this->_out(new Upfront_JsonResponse_Error("Invalid video id"));
+		$embed = !empty($request['embed']) ? $request['embed'] : false;
+		if (!$embed) $this->_out(new Upfront_JsonResponse_Error("Embed is required"));
+
+		$width = !empty($request['width']) ? $request['width'] : false;
+		if (!$width) $this->_out(new Upfront_JsonResponse_Error("Width is required"));
+
+		$height = !empty($request['height']) ? $request['height'] : false;
+		if (!$height) $this->_out(new Upfront_JsonResponse_Error("Height is required"));
+
+		$aspect = !empty($request['aspect']) ? $request['aspect'] : false;
+		if (!$aspect) $this->_out(new Upfront_JsonResponse_Error("Aspect is required"));
 
 		if (!function_exists('wp_generate_attachment_metadata')) require_once(ABSPATH . 'wp-admin/includes/image.php');
 
@@ -725,13 +738,34 @@ class Upfront_MediaServer extends Upfront_Server {
 				delete_transient('dirsize_cache');
 			}
 
-			// Connect thumb url to video
-			add_post_meta(intval($videoId), 'thumburl', $results['url']);
+			// Save video info for video
+			add_post_meta($videoId, 'videoinfo', array(
+					'id' => $videoId,
+					'embed' => $embed,
+					'cover' => $results['url'],
+					'width' => $width,
+					'height' => $height,
+					'aspect' => $aspect
+				)
+			);
 
 			$this->_out(new Upfront_JsonResponse_Success(array("thumburl" => $results['url'])));
 		}
-
 	}
+
+	function get_video_info() {
+		$data = stripslashes_deep($_POST);
+
+		$video_id = !empty($data['video_id']) ? intval($data['video_id']) : false;
+		if (!$video_id) $this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('invalid_id')));
+
+		return $this->_out(new Upfront_JsonResponse_Success(
+			array(
+				'videoinfo' => get_post_meta($video_id, 'videoinfo', true)
+			)
+		));
+	}
+
 
 	private function _check_valid_request_level ($level) {
 		if (!Upfront_Permissions::current($level)) return false;

@@ -91,6 +91,7 @@ define([
 					$('body').append('<video id="tempVideoForThumb" controls="controls" preload="none"></video>');
 
 					var $tempVideo = $('#tempVideoForThumb');
+					var tempVideo = $tempVideo[0];
 					var donethedead = false;
 
 					var getThumb = function() {
@@ -104,19 +105,27 @@ define([
 						var width = $tempVideo.width();
 						var height = $tempVideo.height();
 						var canvas = document.createElement('canvas');
+						var aspect = Math.round(width/height*100)/100;
 						canvas.width = width;
 						canvas.height = height;
 
 						var ctx = canvas.getContext('2d');
-						ctx.drawImage($tempVideo[0], 0, 0, width, height);
-						//document.body.appendChild(canvas);
+						ctx.drawImage(tempVideo, 0, 0, width, height);
 						var base64image = canvas.toDataURL();
+
+						// Let's generate thumbnail and save all info so we can pop it
+						// up when video is just chosen from media library
 						var data = {
+							videoId: response.data[0],
+							embed: response2.data.url,
+							width: width,
+							height: height,
+							aspect: aspect,
 							base64image: base64image,
 							thumbname: thumbName,
-							action: 'upfront-upload-video-thumbnail',
-							videoId: response.data[0]
+							action: 'upfront-save-video-info'
 						};
+
 						Upfront.Util.post(data).done( function(response3) {
 							var videoData = {
 								id: response.data[0],
@@ -124,23 +133,23 @@ define([
 								cover: response3.data.thumburl,
 								width: width,
 								height: height,
-								aspect: Math.round(width/height*100)/100
+								aspect: aspect
 							};
 							theOneDeferred.resolve(videoData);
 							$tempVideo.remove();
 						});
 					};
 
-					$tempVideo[0].addEventListener('canplay', function() {
+					tempVideo.addEventListener('canplay', function() {
 							this.currentTime = 0;
 					}, false);
-					$tempVideo[0].addEventListener('seeked', function() {
+					tempVideo.addEventListener('seeked', function() {
 						if (donethedead) return;
 						    getThumb();
 					}, false);
 
-					$tempVideo[0].src = filename;
-					$tempVideo[0].load();
+					tempVideo.src = filename;
+					tempVideo.load();
 				})
 			.error(function(){
 				Upfront.Views.Editor.notify(l10n.sel.upload_error, 'error');
@@ -398,11 +407,11 @@ define([
 					if(result && result.length > 0){
 						var video_id = result.at(0).get('ID');
 						Upfront.Util.post({
-							action: 'upfront-media-video_info',
+							action: 'upfront-get-video-info',
 							video_id: video_id
 						})
 							.done(function(response2){
-								theOneDeferred.resolve({id: video_id, embed: response2.data.url});
+								theOneDeferred.resolve(response2.data.videoinfo);
 							})
 						.error(function(){
 							Upfront.Views.Editor.notify(l10n.sel.upload_error, 'error');
