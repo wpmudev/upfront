@@ -415,11 +415,10 @@ class Upfront_MediaServer extends Upfront_Server {
 		$results = $query->to_php();
 
 		if (in_array('videos',  $data['type'])) {
-			error_log('getting videos' . json_encode($results['items']));
 			foreach($results['items'] as $index=>$video) {
-				$thumburl = get_post_meta(intval($video['ID']), 'thumburl', true);
-				if ($thumburl !== '') {
-					$results['items'][$index]['thumbnail'] = '<img class="media-library-video-thumbnail" src="' . $thumburl . '" />';
+				$video_info = get_post_meta(intval($video['ID']), 'videoinfo', true);
+				if (is_array($video_info) && $video_info['cover'] !== '') {
+					$results['items'][$index]['thumbnail'] = '<img class="media-library-video-thumbnail" src="' . $video_info['cover'] . '" />';
 				}
 			}
 		}
