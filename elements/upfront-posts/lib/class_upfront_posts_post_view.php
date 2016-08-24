@@ -28,6 +28,43 @@ class Upfront_Posts_PostView {
 	public function __construct ($data=array()) {
 		$this->_data = $data;
 	}
+	
+	/**
+	 * Preset ID getter
+	 *
+	 * @param array $data Data to parse for preset
+	 *
+	 * @return string Preset ID, or default
+	 */
+	public static function get_preset_id ($data) {
+		if (empty($data['preset'])) $data['preset'] = 'default';
+		return $data['preset'];
+	}
+	
+	/**
+	 * Get post parts from preset
+	 *
+	 * @param array $data Data hash
+	 *
+	 * @return array enabled_post_parts
+	 */
+	public static function get_post_parts ($data) {
+		$preset_id = self::get_preset_id($data);
+
+		if (!empty($preset_id)) {
+			$preset_server = Upfront_Posts_Presets_Server::get_instance();
+			$preset = !empty($preset_server)
+				? $preset_server->get_preset_by_id($preset_id)
+				: false
+			;
+			
+			if (!empty($preset) && isset($preset['enabled_post_parts'])) {
+				return $preset['enabled_post_parts'];
+			}
+		}
+
+		return array();
+	}
 
 	/**
 	 * Main public method.
@@ -39,13 +76,11 @@ class Upfront_Posts_PostView {
 	public function get_markup ($post) {
 		if (empty($post)) return false;
 		$this->_post = $post;
+		
+		$post_parts = self::get_post_parts($this->_data);
 
-		$post_parts = $this->_data['post_parts'];
-		$enabled_post_parts = $this->_data['enabled_post_parts'];
-		if (!is_array($post_parts)) $post_parts = $enabled_post_parts;
 		$out = '';
 		foreach ($post_parts as $part) {
-			if (!in_array($part, $enabled_post_parts)) continue;
 			$method = "expand_{$part}_template";
 			if (method_exists($this, $method)) $out .= $this->$method();
 			else $out .= apply_filters('upfront_posts-' . $method, '', $post);
