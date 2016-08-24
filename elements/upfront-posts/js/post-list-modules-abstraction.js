@@ -165,7 +165,8 @@ define([
 	var ToggleableOptions = OptionsModule.extend({
 		events: function () {
 			return _.extend({}, OptionsModule.prototype.events, {
-				'click .upfront-settings-item-title .toggle': 'toggle_box'
+				'click .upfront-settings-item-title .delete-part': 'delete',
+				'click .upfront-settings-item-title': 'toggle_box'
 			});
 		},
 		render: function () {
@@ -175,8 +176,9 @@ define([
 
 			this.$el.find(".upfront-settings-item-title")
 				.empty()
+				.append('<span class="upfront-posts-preview"></span>')
 				.append('<span class="upfront-posts-module-title">' + this.title + '</span>')
-				.append('<a href="#toggle" class="toggle">&times;</a>')
+				.append('<a href="#delete" class="delete-part">&times;</a>')
 			;
 			
 			var $content = this.$el.find('.upfront-settings-post-wrapper');
