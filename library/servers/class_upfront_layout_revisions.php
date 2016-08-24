@@ -256,7 +256,7 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 		));
 		$concurrent_users = array();
 		$current_tab_decoded = json_decode($data, true);
-		$current_tab_id = isset($current_tab_decoded) ? $current_tab_decoded['tab_id'] : '';
+		$current_tab_id = !empty($current_tab_decoded['tab_id']) ? $current_tab_decoded['tab_id'] : '';
 		if (!empty($current_revisions)) foreach ($current_revisions as $rvsn) {
 			if (empty($rvsn->post_author)) continue;
 			
@@ -268,12 +268,12 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 
 			// If current user, check tab_id for differences.
 			if ($user->ID === $current_user_id) {
-				if (!empty($rvsn->post_content)) {
+				if (!empty($current_tab_id) && !empty($rvsn->post_content)) {
 					$saved_tab_decoded = unserialize(base64_decode($rvsn->post_content));
 					$saved_tab_id = $saved_tab_decoded['tab_id'];
 					// If the current tab id does not match the last revision
 					// from 15 minutes ago, warn the user via upfront-util.js.
-					if (!empty($current_tab_id) && $current_tab_id !== $saved_tab_id) {
+					if ($current_tab_id !== $saved_tab_id) {
 						$other_tab_open = true;
 					}
 				}
