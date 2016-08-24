@@ -18,15 +18,21 @@ var PostsSettings = ElementSettings.extend({
 
 		this.panels = _.extend({ General: Panels.General, Parts: Panels.PostParts }, this.panels);
 		
+		this.stopListening(Upfront.Events, 'posts:settings:dispatched');
+		this.stopListening(Upfront.Events, 'posts:post:added');
+		this.stopListening(Upfront.Events, 'posts:post:removed');
+		
+		this.listenTo(Upfront.Events, 'posts:settings:dispatched', this.rerender, this);
+		this.listenTo(Upfront.Events, 'posts:post:added', this.rerender, this);
+		this.listenTo(Upfront.Events, 'posts:post:removed', this.rerender, this);
+		
 		ElementSettings.prototype.initialize.apply(this, opts);
 	},
 
 	rerender: function () {
 		var active_panel = -1,
 			panels = _(this.panels),
-			me = this,
-			general = new Panels.General({model: this.model}),
-			post_parts = new Panels.get_panel('posts');
+			me = this
 		;
 
 		panels.each(function (pl, idx) {

@@ -53,7 +53,8 @@ Panels.General = RootSettingsPanel.extend({
 				if ('list_type' === this.options.property) {
 					query.dispatch_settings();
 				}
-				me.trigger("settings:dispatched");
+				
+				Upfront.Events.trigger('posts:settings:dispatched', this);
 			},
 			display_type = new Upfront.Views.Editor.Field.Radios({
 				model: this.model,
@@ -101,11 +102,11 @@ Panels.General = RootSettingsPanel.extend({
 		/* We are moving Thumbnail settings to presets */
 		//thumbnail.on("setting:changed", autorefresh);
 		query.on("post:added", function () {
-			this.trigger("post:added");
+			Upfront.Events.trigger('posts:post:added', this);
 		}, this);
 		
 		query.on("post:removed", function () {
-			this.trigger("post:removed");
+			Upfront.Events.trigger('posts:post:removed', this);
 		}, this);
 		
 		this.settings = _([
