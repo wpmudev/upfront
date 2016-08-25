@@ -3563,7 +3563,6 @@ define([
 				this.$bg.toggleClass('upfront-module-group-bg-padding', use_padding ? true : false);
 
 				this.update_position();
-				this.update_background();
 				// Check if width is changed, if it did, let's normalize child modules
 				if ( Upfront.Application.layout_ready && prop && ( prop.id == 'class' || prop.id == 'breakpoint' ) && prev_col != col ) {
 					this.normalize_child_modules(prev_col);
@@ -3577,7 +3576,10 @@ define([
 
 				this.apply_paddings(this.$el.find('> .upfront-modules_container'));
 
-				if ( ! breakpoint ) return;
+				if ( ! breakpoint ) {
+					this.update_background();
+					return;
+				}
 
 				var $toggle = this.$el.find('> .upfront-module-hidden-toggle'),
 					hide = this.model.get_breakpoint_property_value('hide', true)
@@ -3612,6 +3614,7 @@ define([
 					this._theme_style = theme_style;
 				}
 				this.update_size_hint();
+				this.update_background();
 				this.trigger('update_position', this, this.model);
 				Upfront.Events.trigger('entity:module_group:update_position', this, this.model);
 			},
@@ -4029,7 +4032,7 @@ define([
 				}
 				this.on_finish(); // make sure to close editing
 				//this.update_position();
-				this.update_background();
+				//this.update_background();
 			},
 			on_grid_update: function () {
 				this.update_background();
