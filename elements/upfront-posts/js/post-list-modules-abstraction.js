@@ -196,11 +196,26 @@ define([
 		},
 		hide_content: function () {
 			var $content = this.$el.find('.upfront-settings-post-wrapper');
+			
+			// Remove shadow overlay
+			this.$el.find(".upfront-settings-item-title").removeClass('active-panel');
+			
 			return $content.hide();
 		},
 		show_content: function () {
 			var $content = this.$el.find('.upfront-settings-post-wrapper');
+			
+			this.hide_all();
+			
+			// Add shadow overlay
+			this.$el.find(".upfront-settings-item-title").addClass('active-panel');
+			
 			return $content.show();
+		},
+		hide_all: function() {
+			var $wrapper = this.$el.parent();
+			$wrapper.parent().find(".upfront-settings-item-title").removeClass('active-panel');
+			$wrapper.parent().find('.upfront-settings-post-wrapper').hide();
 		}
 	});
 

@@ -186,6 +186,13 @@ div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-setting
 	position: relative;
 	left: 6px;
 	overflow: hidden;
+	z-index: 99;
+}
+
+div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-settings-item-title.active-panel {
+	box-shadow:0 0 10px 3000px rgba(60,82,103,.8);
+	border-radius: 3px;
+	z-index: 998;
 }
 
 div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-settings-item-title .upfront-posts-preview {
@@ -226,6 +233,14 @@ div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-setting
 
 div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-settings-item-title:hover .upfront-post-delete-part {
 	display: block;
+}
+
+div.preset-manager-panel .upfront-settings-post-wrapper {
+	position: absolute;
+	width: 100%;
+	z-index: 999;
+	background: #f7fbff;
+	box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.50);
 }
 
 div.preset-manager-panel .upfront-post-wrapper-title {
