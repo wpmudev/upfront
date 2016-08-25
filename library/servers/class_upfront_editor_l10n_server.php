@@ -341,6 +341,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'add_featured_image' => __('Add Feature Image', 'upfront'),
 				'unsaved_changes_nag' => __('You have unsaved changes you\'re about to lose by navigating off this page.', 'upfront'),
 				'already_edited_nag' => __('Someone is already working on this: %s', 'upfront'),
+				'multiple_tabs_nag' => __('Another tab is already working on this.', 'upfront'),
 				'trash' => __('Trash', 'upfront'),
 				'save' => __('Save', 'upfront'),
 				'save_element' => __('Save Element', 'upfront'),

@@ -248,20 +248,39 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 
 		// Check concurrent edits from other users
 		$current_user_id = get_current_user_id();
-		$current_others_revisions = $this->_data->get_entity_revisions($layout->get_cascade(), array(
+		$other_tab_open = false;
+		$current_revisions = $this->_data->get_entity_revisions($layout->get_cascade(), array(
 			'date_query' => array(array(
 				'after' => "-15 minutes", // 15 minutes cutoff time
-			)),
-			'author__not_in' => array($current_user_id), // not current guy
+			))
 		));
 		$concurrent_users = array();
-		if (!empty($current_others_revisions)) foreach ($current_others_revisions as $rvsn) {
+		$current_tab_decoded = json_decode($data, true);
+		$current_tab_id = !empty($current_tab_decoded['tab_id']) ? $current_tab_decoded['tab_id'] : '';
+		if (!empty($current_revisions)) foreach ($current_revisions as $rvsn) {
 			if (empty($rvsn->post_author)) continue;
 			
 			$user = get_user_by('id', $rvsn->post_author);
-			if (empty($user) || empty($user->ID)) continue;
+			// If empty, skip.
+			if ( empty($user) || empty($user->ID)) {
+				continue;
+			}
 
-			$concurrent_users[$user->ID] = $user->display_name;
+			// If current user, check tab_id for differences.
+			if ($user->ID === $current_user_id) {
+				if (!empty($current_tab_id) && !empty($rvsn->post_content)) {
+					$saved_tab_decoded = unserialize(base64_decode($rvsn->post_content));
+					$saved_tab_id = $saved_tab_decoded['tab_id'];
+					// If the current tab id does not match the last revision
+					// from 15 minutes ago, warn the user via upfront-util.js.
+					if ($current_tab_id !== $saved_tab_id) {
+						$other_tab_open = true;
+					}
+				}
+			} else {
+				// If other user, record other user name.
+				$concurrent_users[$user->ID] = $user->display_name;
+			}
 		}
 
 		$preview_url = remove_query_arg('editmode', add_query_arg(array(
@@ -271,6 +290,7 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 			'html' => $preview_url,
 			'idx' => $layout_id_key,
 			'concurrent_users' => $concurrent_users,
+			'other_tab_open' => $other_tab_open,
 		)));
 	}
 
