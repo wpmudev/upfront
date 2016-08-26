@@ -263,9 +263,15 @@ del {
   /*max-width: 100%;*/
   padding-left: 0px !important;
   padding-right: 0px !important;
+  position: relative;
 }
 .ueditor-insert div, .ueditor-insert a, .ueditor-insert img {
 	max-width: 100%;
+}
+.ueditor-insert .ueditor-insert-remove {
+	position: absolute;
+	right: 10px;
+	top: 10px;
 }
 .ueditor-insert-variant-group.ueditor-insert-float-left {
   float: left;
