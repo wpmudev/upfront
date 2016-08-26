@@ -272,6 +272,10 @@ del {
 	position: absolute;
 	right: 10px;
 	top: 10px;
+	display: none;
+}
+.ueditor-insert:hover .ueditor-insert-remove {
+	display: block;
 }
 .ueditor-insert-variant-group.ueditor-insert-float-left {
   float: left;
