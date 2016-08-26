@@ -264,6 +264,9 @@ del {
   padding-left: 0px !important;
   padding-right: 0px !important;
 }
+.ueditor-insert div, .ueditor-insert a, .ueditor-insert img {
+	max-width: 100%;
+}
 .ueditor-insert-variant-group.ueditor-insert-float-left {
   float: left;
   margin-right: 15px;
