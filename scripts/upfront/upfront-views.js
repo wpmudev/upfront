@@ -630,9 +630,13 @@ define([
 			remove_background: function () {
 				var $bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
 					$overlay = this.$el.find('.upfront-region-bg-overlay');
+				
+				if($overlay.parent().hasClass('upfront-module-group-bg')) return;
+					
 				if ( $overlay.length ) {
 					$overlay.hide();
 				}
+				
 				$bg.css({
 					backgroundColor: "",
 					backgroundImage: "none",
