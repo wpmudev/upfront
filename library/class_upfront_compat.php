@@ -65,12 +65,38 @@ class Upfront_Compat implements IUpfront_Server {
 			$this->_check_v1_backup();
 		}
 
+		add_action('wp_prepare_themes_for_js', array($this, 'prevent_conflicted_children_updates'));
+
 		add_action('wp_ajax_upfront-notices-dismiss', array($this, 'json_dismiss_notices'));
 
 		// Hummingbird compat layer
 		add_filter('wphb_minification_display_enqueued_file', array($this, 'is_upfront_resource_skippable_with_hummingbird'), 10, 3);
 		add_filter('wphb_combine_resource', array($this, 'is_upfront_resource_skippable_with_hummingbird'), 10, 3);
 		add_filter('wphb_minify_resource', array($this, 'is_upfront_resource_skippable_with_hummingbird'), 10, 3);
+	}
+
+	/**
+	 * Suppresses individual site update notices
+	 *
+	 * @param array $themes Prepared themes
+	 *
+	 * @return array
+	 */
+	public function prevent_conflicted_children_updates ($themes) {
+		if (empty($themes) || !is_array($themes)) return $themes;
+		
+		foreach ($themes as $slug => $theme) {
+			if (empty($theme['hasUpdate'])) continue; // No update info for this one, nothing to do here
+			if (empty($theme['parent'])) continue; // Not a child theme, nothing to do here
+
+			$parent = wp_get_theme($slug)->parent();
+			if (empty($parent)) continue; // Oops
+
+			if ('upfront' !== $parent->get_template()) continue; // Not an upfront child
+
+			$themes[$slug]['hasUpdate'] = false; // No, we don't have a WP.org update
+		}
+		return $themes;
 	}
 
 	/**
