@@ -65,7 +65,10 @@ class Upfront_Compat implements IUpfront_Server {
 			$this->_check_v1_backup();
 		}
 
-		add_action('wp_prepare_themes_for_js', array($this, 'prevent_conflicted_children_updates'));
+		if (is_admin()) {
+			// Only in admin area
+			add_filter('site_transient_update_themes', array($this, 'prevent_conflicted_children_updates'));
+		}
 
 		add_action('wp_ajax_upfront-notices-dismiss', array($this, 'json_dismiss_notices'));
 
@@ -76,27 +79,57 @@ class Upfront_Compat implements IUpfront_Server {
 	}
 
 	/**
-	 * Suppresses individual site update notices
+	 * Suppresses Upfront child themes update notices in regular WP areas
 	 *
-	 * @param array $themes Prepared themes
+	 * @param mixed $raw Transient content - theme updates response
+	 *
+	 * @return mixed Processed response
+	 */
+	public function prevent_conflicted_children_updates ($raw) {
+		if (defined('DOING_AJAX') && DOING_AJAX) return $raw; // Presumably we know what we're doing there
+
+		if (empty($raw) || empty($raw->response)) return $raw; // So nothing new here, carry on
+
+		$screen = get_current_screen();
+		if (empty($screen)) return $raw; // If it's too early to do this, we're probably good with raw
+
+		// Now, let's attempt to match pages
+		if (preg_match('/upfront|builder/', $screen->id)) return $raw; // We know what to do here
+
+		$updates = is_array($raw->response) ? $raw->response : array();
+		$children = $this->_get_children_cache();
+
+		foreach ($updates as $key => $nfo) {
+			if (in_array($key, $children)) unset($raw->response[$key]);
+		}
+
+		return $raw;
+	}
+
+	/**
+	 * Get the list of all Upfront children
+	 *
+	 * Populate the Upfront children cache if none is set
 	 *
 	 * @return array
 	 */
-	public function prevent_conflicted_children_updates ($themes) {
-		if (empty($themes) || !is_array($themes)) return $themes;
-		
-		foreach ($themes as $slug => $theme) {
-			if (empty($theme['hasUpdate'])) continue; // No update info for this one, nothing to do here
-			if (empty($theme['parent'])) continue; // Not a child theme, nothing to do here
+	private function _get_children_cache () {
+		$result = wp_cache_get('upfront-children', 'upfront');
+		if (false !== $result && is_array($result)) return $result; // We have cache, let's go
 
-			$parent = wp_get_theme($slug)->parent();
+		$result = array();
+		$themes = wp_get_themes();
+		if (!empty($themes)) foreach ($themes as $key => $theme) {
+			$parent = $theme->parent();
 			if (empty($parent)) continue; // Oops
-
 			if ('upfront' !== $parent->get_template()) continue; // Not an upfront child
-
-			$themes[$slug]['hasUpdate'] = false; // No, we don't have a WP.org update
+			$result[] = $key;
 		}
-		return $themes;
+
+		$timeout = apply_filters('upfront-compat-cache_expiry', HOUR_IN_SECONDS/4); // Keep the result around for a while
+		wp_cache_set('upfront-children', $result, 'upfront', $timeout);
+
+		return $result;
 	}
 
 	/**
