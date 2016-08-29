@@ -112,7 +112,9 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				if(isset($preset['preset_style']) && !empty($preset['preset_style'])) {
 					
 					// WARNING!!! This is added to prevent enourmos amount of slashes in preset_style
-					$preset['preset_style'] = str_replace("\\\\\\\\", "\\", $preset['preset_style']);
+					$preset['preset_style'] = str_replace("\\\\\\\\\\", "\\", $preset['preset_style']);
+					// Do it twice just in case we have multiple slashes
+					$preset['preset_style'] = str_replace("\\\\\\\\\\", "\\", $preset['preset_style']);
 
 					$preset['preset_style'] = str_replace("@n", "\n", $preset['preset_style']);
 				}
