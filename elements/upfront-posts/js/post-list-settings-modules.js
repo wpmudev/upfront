@@ -10,18 +10,40 @@ define([
 	Modules.element_wrapper = Panel.Toggleable.extend({
 		title: l10n.modules.element_wrapper,
 		data_part: 'element_wrapper',
-		get_fields: function () {
-			return [
-				{
-					type: 'Select',
-					label: l10n.numeric,
-					label_style: 'inline',
-					property: 'display_name',
-					values: [
-						{label: l10n.numeric, value: 'display_name'},
-					]
+		get_modules: function () {
+			var modules = [], // gravatar doesn't have typography
+				me = this,
+				name = function (name) { return 'posts-element-wrapper'; }
+			;
+
+			modules.push({
+				moduleType: 'Border',
+				options: {
+					toggle: true,
+					state: 'static',
+					fields: {
+						use: name('use-border'),
+						width: name('border-width'),
+						type: name('border-type'),
+						color: name('border-color')
+					}
 				}
-			];
+			});	
+
+			modules.push({
+				moduleType: 'Colors',
+				options: {
+					toggle: true,
+					state: 'static',
+					multiple: false,
+					single: true,
+					fields: {
+						use: name('use-bgcolor')
+					}
+				}
+			});
+
+			return modules;
 		}
 	});
 	
