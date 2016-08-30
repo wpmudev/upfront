@@ -236,8 +236,8 @@ div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-setting
 }
 
 div.preset-manager-panel .upfront-settings-post-wrapper {
-	position: absolute;
-	width: 100%;
+	position: fixed;
+	width: 230px;
 	z-index: 999;
 	background: #f7fbff;
 	border-radius: 3px;
