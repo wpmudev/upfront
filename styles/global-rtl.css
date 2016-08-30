@@ -123,6 +123,13 @@ div.preset-manager-panel div.borderWidth{
     right:90px;
     left: auto;
 }
+div.preset-manager-panel .upfront-settings-post-wrapper .edit_preset_css {
+	position: relative;
+	top: 10px;
+	right: 10px;
+	left: auto;
+	margin-bottom: 10px;
+}
 div.preset-manager-panel .edit_preset_css:before, #element-settings-sidebar .upfront-css-edit:before{
     left: auto;
     right: 8px;
