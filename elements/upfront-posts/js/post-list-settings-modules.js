@@ -13,7 +13,7 @@ define([
 		get_modules: function () {
 			var modules = [], // gravatar doesn't have typography
 				me = this,
-				name = function (name) { return 'posts-element-wrapper'; }
+				name = function (name) { return 'element_wrapper-' + name; }
 			;
 
 			modules.push({
@@ -21,6 +21,7 @@ define([
 				options: {
 					toggle: true,
 					state: 'static',
+					showLabel: false,
 					fields: {
 						use: name('use-border'),
 						width: name('border-width'),

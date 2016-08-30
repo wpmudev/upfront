@@ -17,6 +17,10 @@ define([
 			this.options = options || {};
 			this.fieldCounter = 0;
 			this.currentElement = '';
+			if(typeof this.options.showLabel === "undefined") { 
+				this.options.showLabel = true; 
+			}
+			
 			var me = this,
 				state = this.options.state,
 				custom_class = '';
@@ -106,11 +110,11 @@ define([
 
 				new Upfront.Views.Editor.Field.Color({
 					model: this.model,
-					className: state + '-border-color upfront-field-wrap upfront-field-wrap-color sp-cf borderColor ' + custom_class,
+					className: state + '-border-color upfront-field-wrap upfront-field-wrap-color sp-cf borderColor ' + custom_class + ' color-label-' + this.options.showLabel,
 					name: this.currentElement + me.options.fields.color,
 					blank_alpha : 0,
 					label_style: 'inline',
-					label: l10n.color,
+					label: this.options.showLabel ? l10n.color : '',
 					default_value: '#000',
 					spectrum: {
 						preferredFormat: 'rgb',
