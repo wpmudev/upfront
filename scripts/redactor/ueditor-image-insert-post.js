@@ -88,6 +88,9 @@ var PostImageInsert = base.ImageInsertBase.extend({
         if( data.show_caption == 0 ){
             data.style.image.width_cls = Upfront.Settings.LayoutEditor.Grid.class + 24;
         }
+        else {
+            data.style.image.width_cls = Upfront.Settings.LayoutEditor.Grid.class + data.style.image.col;
+        }
         var $group = this.$el.find(".ueditor-insert-variant-group"),
             ge = Upfront.Behaviors.GridEditor,
             $parent = $('.upfront-content-marker-contents'),
