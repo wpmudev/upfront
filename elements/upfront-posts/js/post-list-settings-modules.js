@@ -37,9 +37,13 @@ define([
 					state: 'static',
 					multiple: false,
 					single: true,
-					fields: {
-						use: name('use-bgcolor')
-					}
+					toggle: false,
+					abccolors: [
+						{
+							name: name('background-color'),
+							label: l10n.modules.bg_label
+						}
+					]
 				}
 			});
 

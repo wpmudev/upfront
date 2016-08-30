@@ -193,7 +193,8 @@ class Upfront_Posts_PostsData {
 				'tags_title' => __('Tags', 'upfront'),
 				'title_title' => __('Title', 'upfront'),
 				'read_more_title' => __('Read More', 'upfront'),
-				'gravatar_title' => __('Gravatar', 'upfront')
+				'gravatar_title' => __('Gravatar', 'upfront'),
+				'bg_label' => __('Background', 'upfront')
 			),
 			
 			'css' => array(
