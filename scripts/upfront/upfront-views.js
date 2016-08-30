@@ -3258,6 +3258,7 @@ define([
 				"click > .upfront-module-group-toggle-container > .upfront-module-group-edit": "on_edit",
 				"click > .upfront-entity_meta > a.upfront-entity-hide_trigger": "on_hide_click",
 				"click > .upfront-module-hidden-toggle > a.upfront-entity-hide_trigger": "on_hide_click",
+				"click > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
 				//"click a.redactor_act": "onOpenPanelClick",
 				//"click .upfront-save_settings": "onOpenPanelClick",
 				"click .open-item-controls": "onOpenItemControlsClick",
@@ -4032,14 +4033,18 @@ define([
 				this.update_position();
 			},
 			on_change_breakpoint: function (breakpoint) {
-				var $hide = this.$el.find('> .upfront-entity_meta > a.upfront-entity-hide_trigger');
+				var $hide = this.$el.find('> .upfront-entity_meta > a.upfront-entity-hide_trigger'),
+					$delete = this.$el.find('> .upfront-entity_meta > a.upfront-entity-delete_trigger')
+				;
 				if ( !breakpoint['default'] ){
 					this.$el.addClass('upfront-module-group-reorder-mode');
 					$hide.show();
+					$delete.hide();
 				}
 				else {
 					this.$el.removeClass('upfront-module-group-reorder-mode');
 					$hide.hide();
+					$delete.show();
 				}
 				this.on_finish(); // make sure to close editing
 				//this.update_position();
@@ -4052,6 +4057,7 @@ define([
 				// We don't want to deactivate the Group when Settings sidebar is open
 				if($('#element-settings-sidebar').html() !== '' || $('#settings').html() !== '') return false;
 				Upfront.data.prevEntity = false;
+				this.$el.closest('.upfront-region-container').removeClass('upfront-region-module-activated');
 				this.$el.removeClass("upfront-module-group-active");
 				this.check_deactivated();
 				this.trigger("upfront:entity:deactivate", this);
@@ -4081,6 +4087,8 @@ define([
 				this.trigger("activated", this);
 				this.trigger("upfront:entity:activate", this);
 				this.listenToOnce(this, 'deactivated', this.deactivate);
+				$('.upfront-region-module-activated').removeClass('.upfront-region-module-activated');
+				this.$el.closest('.upfront-region-container').addClass('upfront-region-module-activated');
 				this.$el.addClass("upfront-module-group-active");
 			},
 			remove: function(){
@@ -4159,7 +4167,7 @@ define([
 						}
 					}
 				}
-				view.remove();
+				//view.remove(); // Unneeded as below model.remove call will also call view.remove eventually
 				this.model.remove(view.model);
 				this.normalize_child_spacing();
 				Upfront.Events.trigger("entity:removed:after");
