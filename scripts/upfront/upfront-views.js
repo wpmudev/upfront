@@ -2063,6 +2063,7 @@ define([
 					this.parent_module_view.$el.find('>.upfront-module').removeClass('upfront-module-editing');
 					this.parent_module_view.enable_interaction(false);
 				}
+				Upfront.Events.trigger('entity:object:refresh', this);
 			},
 			on_element_resize_start: function (attr) {
 
