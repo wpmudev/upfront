@@ -9,7 +9,7 @@ define([
 	'elements/upfront-posts/js/post-list-meta-views'
 ], function (BaseModule, FieldFactory, StateSettings, Inserts, Meta) {
 
-	var l10n = Upfront.Settings.l10n.post_data_element;
+	var l10n = Upfront.Settings.l10n.posts_element;
 
 	var OptionsModule = BaseModule.extend({
 		className: function () {
@@ -26,13 +26,6 @@ define([
 				fields = this.get_fields(),
 				object_model = new Upfront.Models.ObjectModel()
 			;
-
-			fields.push({
-				type: "Button",
-				label: l10n.custom_markup,
-				className: 'edit_preset_label',
-				compact: true
-			});
 
 			_(this.model.attributes).each(function (value, key) {
 				if ("id" === key || "name" === key) return true;
