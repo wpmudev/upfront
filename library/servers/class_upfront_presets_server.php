@@ -580,6 +580,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			'post' => __('Post', 'upfront'),
 			'widget' => __('Widget', 'upfront'),
 			'youtube' => __('YouTube', 'upfront'),
+			'margin' => __('Margin', 'upfront'),
 			'text' => __('Text', 'upfront'),
 			'code' => __('Code', 'upfront'),
 			'default_label' => __('Default', 'upfront'),
