@@ -58,7 +58,7 @@ define([
 		get_modules: function () {
 			var modules = [], // gravatar doesn't have typography
 				me = this,
-				name = function (name) { return 'element_wrapper-' + name; }
+				name = function (name) { return 'post_wrapper-' + name; }
 			;
 			
 			modules.push({
