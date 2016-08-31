@@ -698,6 +698,11 @@ Panels.PostParts = PresetManager.extend({
 		this.$el.find( ".upfront-posts-wrapper" ).wrapAll( "<div class='upfront-post-wrappers' />");
 		this.$el.find( ".upfront-post-wrappers" ).prepend("<span class='upfront-post-wrapper-title'>" + l10n.modules.wrappers_label + "</span>");
 		
+		// Make sure we always have upfront-posts-module
+		if(this.$el.find( ".upfront-posts-module").length === 0) {
+			this.$el.find('.upfront-post-wrappers').after("<div class='upfront-posts-module'></div>");
+		}
+		
 		// Wrap modules
 		this.$el.find( ".upfront-posts-module" ).wrapAll( "<div class='upfront-post-modules' />");
 		this.$el.find( ".upfront-post-modules" ).prepend("<span class='upfront-post-wrapper-title'>" + l10n.modules.modules_label + "</span>");

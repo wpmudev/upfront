@@ -155,7 +155,37 @@ div.upfront-post-wrappers, div.upfront-post-modules {
 	padding: 2px 15px
 }
 
+div.upfront-post-wrappers {
+	padding-bottom: 10px;
+}
 
+.upfront-add-post-module .upfront-field-select {
+	border: #f7fbff;
+	background: none;
+	width: 128px;
+	margin-top: 10px;
+	cursor: initial;
+}
+
+.upfront-add-post-module .upfront-field-select:after {
+	display: none;
+}
+
+.upfront-add-post-module .upfront-field-select-options {
+	background: #fff;
+}
+
+.upfront-add-post-module .upfront-field-select-value {
+	border: 1px solid #a2bfda;
+	width: 48px;
+	height: 24px;
+	cursor: pointer;
+	float: right;
+}
+
+.upfront-post-modules .upfront-posts-module:first-child {
+	margin-top: 10px;
+}
 
 div.preset-manager-panel div.preset_specific.upfront-posts-part {
 	background: none;
@@ -275,7 +305,8 @@ div.preset-manager-panel .upfront-post-wrappers {
 
 div.preset-manager-panel .upfront-add-post-module {
 	position: absolute;
-	top: 150px;
+	top: 90px;
+    right: 15px;
 }
 
 /* --- Icons --- */
