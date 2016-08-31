@@ -181,7 +181,7 @@ define([
 				.empty()
 				.append('<span class="upfront-posts-preview"><span class="styles-holder">A</span></span>')
 				.append('<span class="upfront-posts-module-title">' + this.title + '</span>')
-				.append('<a href="#delete" class="upfront-post-delete-part">&times;</a>')
+				.append('<a href="#delete" class="upfront-post-delete-part">-</a>')
 			;
 			
 			var $content = this.$el.find('.upfront-settings-post-wrapper');
