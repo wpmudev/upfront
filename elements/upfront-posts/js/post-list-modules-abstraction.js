@@ -12,6 +12,11 @@ define([
 	var l10n = Upfront.Settings.l10n.posts_element;
 
 	var OptionsModule = BaseModule.extend({
+		initialize: function (options) {
+			BaseModule.prototype.initialize.call(this, options);
+			this.listenTo(Upfront.Events, 'posts:element:preset:updated', this.updatePreview);
+		},
+		
 		className: function () {
 			var cls = (typeof this.initialize === typeof BaseModule.prototype.className
 				? BaseModule.prototype.className()
@@ -92,6 +97,8 @@ define([
 			//Move Edit Preset to bottom
 			$module_content.find('.state_modules').append(this.$el.find('.edit_preset_css'));
 			this.$el.addClass("preset_specific");
+			
+			this.updatePreview();
 
 			this.trigger('rendered');
 		},
@@ -150,6 +157,9 @@ define([
 				resize_cbk();
 			});
 		},
+		updatePreview: function() {
+			// Will be overriden by ToggleableOptions.updatePreview
+		},
 		// These two just satisfy the interface
 		get_name: function () { return false; },
 		get_value: function () { return false; }
@@ -169,13 +179,33 @@ define([
 
 			this.$el.find(".upfront-settings-item-title")
 				.empty()
-				.append('<span class="upfront-posts-preview"></span>')
+				.append('<span class="upfront-posts-preview"><span class="styles-holder"></span></span>')
 				.append('<span class="upfront-posts-module-title">' + this.title + '</span>')
 				.append('<a href="#delete" class="upfront-post-delete-part">&times;</a>')
 			;
 			
 			var $content = this.$el.find('.upfront-settings-post-wrapper');
 			$content.hide();
+		},
+		updatePreview: function() {
+			var me = this,
+				borderWidth = this.options.model.get(this.data_part + '-border-width'),
+				borderType = this.options.model.get(this.data_part + '-border-type'),
+				borderColor = this.options.model.get(this.data_part + '-border-color'),
+				backgroundColor = this.options.model.get(this.data_part + '-background-color')
+			;
+
+			setTimeout( function () {
+				me.$el.find('.upfront-posts-preview .styles-holder').css({
+					'borderStyle': borderType,
+					'borderWidth': borderWidth,
+					'borderColor': borderColor
+				});
+				
+				me.$el.find('.upfront-posts-preview .styles-holder').css({
+					'backgroundColor': backgroundColor
+				});
+			}, 50);
 		},
 		toggle_box: function (e) {
 			if (e && e.preventDefault) e.preventDefault();

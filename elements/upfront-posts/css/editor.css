@@ -197,19 +197,9 @@ div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-setting
 
 div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-settings-item-title .upfront-posts-preview {
 	display: inline-block;
-	width: 12px;
-	height: 22px;
-	position: relative;
-}
-
-div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-settings-item-title .upfront-posts-preview:before {
-	content: '';
-	display: block;
-	position: absolute;
 	box-sizing: border-box;
 	width: 12px;
 	height: 22px;
-	display: block;
 	overflow: hidden;
 	position: relative;
 	/* magic happens below */
@@ -222,6 +212,16 @@ div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-setting
 	-moz-background-size: 8px 8px;
 	background-size: 8px 8px;
 	background-position: 2px 0px, 6px 4px;
+}
+
+div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-settings-item-title .upfront-posts-preview .styles-holder {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 12px;
+	height: 22px;
+	display: block;
+	overflow: hidden;
 }
 
 div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-settings-item-title .upfront-post-delete-part {

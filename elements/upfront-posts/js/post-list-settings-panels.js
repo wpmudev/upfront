@@ -620,6 +620,7 @@ Panels.PostParts = PresetManager.extend({
 
 		this.listenTo(this.model, 'preset:updated', function () {
 			this.model.get("objects").trigger("change");
+			Upfront.Events.trigger('posts:element:preset:updated');
 		}, this);
 
 		// HACK!!! Force element type so the css editor works
