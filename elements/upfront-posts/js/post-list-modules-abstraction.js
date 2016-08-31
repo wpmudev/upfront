@@ -179,7 +179,7 @@ define([
 
 			this.$el.find(".upfront-settings-item-title")
 				.empty()
-				.append('<span class="upfront-posts-preview"><span class="styles-holder"></span></span>')
+				.append('<span class="upfront-posts-preview"><span class="styles-holder">A</span></span>')
 				.append('<span class="upfront-posts-module-title">' + this.title + '</span>')
 				.append('<a href="#delete" class="upfront-post-delete-part">&times;</a>')
 			;
@@ -189,21 +189,26 @@ define([
 		},
 		updatePreview: function() {
 			var me = this,
+				useBorder = this.options.model.get(this.data_part + '-use-border'),
 				borderWidth = this.options.model.get(this.data_part + '-border-width'),
 				borderType = this.options.model.get(this.data_part + '-border-type'),
 				borderColor = this.options.model.get(this.data_part + '-border-color'),
-				backgroundColor = this.options.model.get(this.data_part + '-background-color')
+				backgroundColor = this.options.model.get(this.data_part + '-background-color'),
+				fontColor = this.options.model.get(this.data_part + '-font-color')
 			;
 
 			setTimeout( function () {
-				me.$el.find('.upfront-posts-preview .styles-holder').css({
-					'borderStyle': borderType,
-					'borderWidth': borderWidth,
-					'borderColor': borderColor
-				});
+				if(useBorder) {
+					me.$el.find('.upfront-posts-preview .styles-holder').css({
+						'borderStyle': borderType,
+						'borderWidth': '1px',
+						'borderColor': borderColor
+					});
+				}
 				
 				me.$el.find('.upfront-posts-preview .styles-holder').css({
-					'backgroundColor': backgroundColor
+					'backgroundColor': backgroundColor,
+					'color': fontColor
 				});
 			}, 50);
 		},

@@ -222,6 +222,7 @@ div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-setting
 	height: 22px;
 	display: block;
 	overflow: hidden;
+	text-align: center;
 }
 
 div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-settings-item-title .upfront-post-delete-part {
