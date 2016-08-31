@@ -660,8 +660,8 @@ Panels.PostParts = PresetManager.extend({
 		// Yeah, so that's done
 		
 		// Add wrappers
-		var element_wrapper = new Modules['element_wrapper']({ model: preset_model, className: 'upfront-posts-part part-module-panel upfront-posts-wrapper'}),
-			post_wrapper = new Modules['post_wrapper']({ model: preset_model, className: 'upfront-posts-part part-module-panel upfront-posts-wrapper'});
+		var element_wrapper = new Modules['element_wrapper']({ model: preset_model, className: 'upfront-posts-part part-module-panel upfront-posts-wrapper', removable: false}),
+			post_wrapper = new Modules['post_wrapper']({ model: preset_model, className: 'upfront-posts-part part-module-panel upfront-posts-wrapper', removable: false});
 		
 		this.settings.push(element_wrapper);
 		this.settings.push(post_wrapper);
