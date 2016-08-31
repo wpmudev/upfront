@@ -349,6 +349,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		if ( type != 'content' ) return;
 		var me = this,
 			ed = Upfront.Behaviors.GridEditor,
+			breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 			pos = ed.get_position(this.$el.find('> .upfront-object')),
 			left_indent = parseInt(this.object_group_view.get_preset_property('left_indent'), 10),
 			right_indent = parseInt(this.object_group_view.get_preset_property('right_indent'), 10),
@@ -372,7 +373,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 				else if ( 'right' == variant.group['float'] ) {
 					group_margin_right = ( right_indent - Math.abs(margin_right) ) * ed.col_size;
 				}
-				else if ( 'none' == variant.group['float'] ) {
+				else if ( 'none' == variant.group['float'] && ( !breakpoint || breakpoint['default'] ) ) {
 					group_margin_left = ( left_indent - Math.abs(margin_left) + Math.abs(left) ) * ed.col_size;
 					variant_max_col -= left;
 				}
