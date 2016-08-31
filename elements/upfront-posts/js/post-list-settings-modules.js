@@ -55,18 +55,63 @@ define([
 	Modules.post_wrapper = Panel.Toggleable.extend({
 		title: l10n.modules.post_wrapper,
 		data_part: 'post_wrapper',
-		get_fields: function () {
-			return [
-				{
-					type: 'Select',
-					label: l10n.numeric,
-					label_style: 'inline',
-					property: 'display_name',
-					values: [
-						{label: l10n.numeric, value: 'display_name'},
+		get_modules: function () {
+			var modules = [], // gravatar doesn't have typography
+				me = this,
+				name = function (name) { return 'element_wrapper-' + name; }
+			;
+			
+			modules.push({
+				moduleType: 'Margin',
+				options: {
+					toggle: true,
+					state: 'static',
+					fields: {
+						use: name('use-margin'),
+						lock: name('lock-margin'),
+						slider: name('slider-margin'),
+						margin_number: name('number-margin'),
+						left_num: name('left-margin'),
+						top_num: name('top-margin'),
+						right_num: name('right-margin'),
+						bottom_num: name('bottom-margin')
+					}
+				}
+			});	
+			
+			modules.push({
+				moduleType: 'Border',
+				options: {
+					toggle: true,
+					state: 'static',
+					showLabel: false,
+					fields: {
+						use: name('use-border'),
+						width: name('border-width'),
+						type: name('border-type'),
+						color: name('border-color')
+					}
+				}
+			});	
+
+			modules.push({
+				moduleType: 'Colors',
+				options: {
+					toggle: true,
+					state: 'static',
+					multiple: false,
+					single: true,
+					toggle: false,
+					abccolors: [
+						{
+							name: name('background-color'),
+							label: l10n.modules.bg_label
+						}
 					]
 				}
-			];
+			});
+
+			return modules;
 		}
 	});
 	
