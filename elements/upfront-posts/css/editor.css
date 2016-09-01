@@ -284,7 +284,7 @@ div.preset-manager-panel .upfront-settings-post-wrapper {
 	position: fixed;
 	width: 240px;
 	margin-left: -5px;
-	z-index: 99;
+	z-index: 999;
 	background: #f7fbff;
 	border-radius: 3px;
 	margin-top: 5px;
@@ -321,7 +321,7 @@ div.preset-manager-panel .upfront-add-post-module .upfront-field-select-options 
 	border: 1px solid #cbdbec;
 	border-radius: 6px;
 	max-height: 200px;
-	z-index: 100;
+	z-index: 1000;
 }
 
 div.preset-manager-panel .upfront-add-post-module .upfront-field-select-options li {
