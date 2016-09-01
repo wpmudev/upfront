@@ -221,9 +221,7 @@
 			toggle_box: function (e) {
 				if (e && e.preventDefault) e.preventDefault();
 				if (e && e.stopPropagation) e.stopPropagation();
-				
-				console.log($(e.target).hasClass('.upfront-post-delete-part'));
-				
+
 				if (e && $(e.target).hasClass('.upfront-post-delete-part')) return;
 
 				var $content = this.$el.find('.upfront-settings-post-wrapper');
@@ -256,14 +254,16 @@
 				$wrapper.parent().find('.upfront-settings-post-wrapper').hide();
 			},
 			removePart: function(e) {
-				if (e && e.preventDefault) e.preventDefault();				
-				
-				var enabled_parts = this.options.model.get('enabled_post_parts'),
+				if (e && e.preventDefault) e.preventDefault();
+
+				var enabled_parts = this.model.get('enabled_post_parts'),
 					removedIndex = _.indexOf(enabled_parts, this.data_part)
 				;
 
 				if(removedIndex != -1){
 					enabled_parts.splice(removedIndex, 1);
+					this.model.set('enabled_post_parts', enabled_parts);
+					this.$el.remove();
 				}
 			}
 		});

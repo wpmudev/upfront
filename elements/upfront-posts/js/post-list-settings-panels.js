@@ -629,14 +629,14 @@ Panels.PostParts = PresetManager.extend({
 	setupItems: function () {
 		var me = this;
 		var preset = this.clear_preset_name(this.model.decode_preset() || 'default');
-		var preset_model = this.presets.findWhere({id: preset});
+		this.preset_model = this.presets.findWhere({id: preset});
 
 		// So what do we do when we don't have the appropriate preset model?
-		if (!preset_model) {
+		if (!this.preset_model) {
 			// Why, spawn the default, of course!
 			preset = 'default';
 			this.property('preset', preset);
-			preset_model = this.presets.findWhere({id: preset});
+			this.preset_model = this.presets.findWhere({id: preset});
 		}
 
 		PresetManager.prototype.setupItems.apply(this, arguments);
@@ -660,17 +660,17 @@ Panels.PostParts = PresetManager.extend({
 		// Yeah, so that's done
 		
 		// Add wrappers
-		var element_wrapper = new Modules['element_wrapper']({ model: preset_model, className: 'upfront-posts-part part-module-panel upfront-posts-wrapper', removable: false}),
-			post_wrapper = new Modules['post_wrapper']({ model: preset_model, className: 'upfront-posts-part part-module-panel upfront-posts-wrapper', removable: false});
+		var element_wrapper = new Modules['element_wrapper']({ model: this.preset_model, className: 'upfront-posts-part part-module-panel upfront-posts-wrapper', removable: false}),
+			post_wrapper = new Modules['post_wrapper']({ model: this.preset_model, className: 'upfront-posts-part part-module-panel upfront-posts-wrapper', removable: false});
 		
 		this.settings.push(element_wrapper);
 		this.settings.push(post_wrapper);
 		
-		var post_parts = preset_model.get('enabled_post_parts') || [];
+		var post_parts = this.preset_model.get('enabled_post_parts') || [];
 
 		_.each(post_parts, function (panel, idx) {
 			var pnl = new Modules['part_' + panel]({
-				model: preset_model,
+				model: this.preset_model,
 				className: 'upfront-posts-part part-module-panel upfront-posts-module'
 			});
 
@@ -686,7 +686,7 @@ Panels.PostParts = PresetManager.extend({
 		
 		setTimeout( function() {
 			me.wrap_modules();
-			me.add_module(preset_model);
+			me.add_module();
 		}, 150);
 	},
 	
@@ -708,21 +708,21 @@ Panels.PostParts = PresetManager.extend({
 		this.$el.find( ".upfront-post-modules" ).prepend("<span class='upfront-post-wrapper-title'>" + l10n.modules.modules_label + "</span>");
 	},
 	
-	add_module: function(model) {
+	add_module: function() {
 		var me = this;
 		var add_button = new Upfront.Views.Editor.Field.Select({
 			model: this.model,
 			className: 'upfront-add-post-module',
 			property: "post_parts",
 			multiple: false,
-			values: this.get_unused_modules(model),
+			values: this.get_unused_modules(me.preset_model),
 			show: function() {
 				
 			},
 			change: function(value) {
-				var enabled_post_parts = model.get('enabled_post_parts') || [];
+				var enabled_post_parts = me.preset_model.get('enabled_post_parts') || [];
 				enabled_post_parts.push(value);
-				model.set('enabled_post_parts', enabled_post_parts);
+				me.preset_model.set('enabled_post_parts', enabled_post_parts);
 				
 				me.render();
 			}
