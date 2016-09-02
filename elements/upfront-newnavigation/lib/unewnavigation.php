@@ -7,6 +7,7 @@
 class Upfront_UnewnavigationView extends Upfront_Object {
 
 	public function get_markup () {
+		$breakpoint_menu_id = $this->_get_property('breakpoint_menu_id');
 		$menu_id = $this->_get_property('menu_id');
 		$menu_slug = $this->_get_property('menu_slug');
 		$activeBreakpoints = Upfront_Grid::get_grid()->get_breakpoints();
@@ -118,32 +119,53 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 			//wp_enqueue_script('unewnavigation', upfront_element_url('js/public.js', dirname(__FILE__)));
 			upfront_add_element_script('unewnavigation', array('js/public.js', dirname(__FILE__)));
 		}
-
-		if($menu_slug) {
-			$menu = wp_get_nav_menu_object($menu_slug);
-			if($menu)
-				$menu_id = $menu->term_id;
-		}
-
-		if ( $menu_id ) {
-			$menu = wp_nav_menu(array(
-				'menu' => $menu_id,
-				'fallback_cb'     => false,
-				'echo' => false,
-				'walker' => new upfront_nav_walker(),
-			));
-		} else {
-			if($new_appearance == 'true') {
-				return "<div class='{$preset} {$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
-			} else {
-				return "<div class='{$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
-			}
-		}
 		
-		if($new_appearance == 'true') {
-			return "<div class='nav-preset-{$preset} {$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
+		$breakpoint_menu_id = is_array($breakpoint_menu_id) ? $breakpoint_menu_id : array();
+		if ( count($breakpoint_menu_id) ) {
+			// return all menu for each breakpoint
+			$menu_html = '';
+			foreach ( $breakpoint_menu_id as $breakpoint => $breakpoint_menu ) {
+				if ( isset($breakpoint_menu['menu_id']) ) {
+					$menu = wp_nav_menu(array(
+						'menu' => $breakpoint_menu['menu_id'],
+						'fallback_cb'     => false,
+						'echo' => false,
+						'walker' => new upfront_nav_walker(),
+					));
+					if($new_appearance == 'true') {
+						$menu_html .= "<div class='nav-preset-{$preset} {$float_class} upfront-output-unewnavigation upfront-navigation upfront-breakpoint-navigation upfront-{$breakpoint}-breakpoint-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
+					} else {
+						$menu_html .= "<div class='{$float_class} upfront-output-unewnavigation upfront-navigation upfront-breakpoint-navigation upfront-{$breakpoint}-breakpoint-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
+					}
+				}
+			}
+			return $menu_html;
 		} else {
-			return "<div class='{$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
+			// normal display with no other menu on each breakpoint
+			if($menu_slug) {
+				$menu = wp_get_nav_menu_object($menu_slug);
+				if($menu)
+					$menu_id = $menu->term_id;
+			}
+			if ( $menu_id ) {
+				$menu = wp_nav_menu(array(
+					'menu' => $menu_id,
+					'fallback_cb'     => false,
+					'echo' => false,
+					'walker' => new upfront_nav_walker(),
+				));
+			} else {
+				if($new_appearance == 'true') {
+					return "<div class='{$preset} {$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
+				} else {
+					return "<div class='{$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
+				}
+			}
+			if($new_appearance == 'true') {
+				return "<div class='nav-preset-{$preset} {$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
+			} else {
+				return "<div class='{$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
+			}
 		}
 	}
 
