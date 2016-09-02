@@ -195,12 +195,12 @@
 			},
 			updatePreview: function() {
 				var me = this,
-					useBorder = this.options.model.get(this.data_part + '-use-border'),
-					borderWidth = this.options.model.get(this.data_part + '-border-width'),
-					borderType = this.options.model.get(this.data_part + '-border-type'),
-					borderColor = this.options.model.get(this.data_part + '-border-color'),
-					backgroundColor = this.options.model.get(this.data_part + '-background-color'),
-					fontColor = this.options.model.get(this.data_part + '-font-color')
+					useBorder = this.model.get(this.data_part + '-use-border'),
+					borderWidth = this.model.get(this.data_part + '-border-width'),
+					borderType = this.model.get(this.data_part + '-border-type'),
+					borderColor = this.model.get(this.data_part + '-border-color'),
+					backgroundColor = this.model.get(this.data_part + '-background-color'),
+					fontColor = this.model.get(this.data_part + '-font-color')
 				;
 
 				setTimeout( function () {
