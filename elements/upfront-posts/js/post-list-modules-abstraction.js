@@ -264,6 +264,8 @@
 					enabled_parts.splice(removedIndex, 1);
 					this.model.set('enabled_post_parts', enabled_parts);
 					this.$el.remove();
+					
+					this.trigger('update:preset');
 				}
 			}
 		});

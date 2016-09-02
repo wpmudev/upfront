@@ -640,24 +640,11 @@ Panels.PostParts = PresetManager.extend({
 		}
 
 		PresetManager.prototype.setupItems.apply(this, arguments);
-
+		
 		// Make sure we update hidden objects on preset change
 		if (this.selectPresetModule) this.listenTo(this.selectPresetModule, 'upfront:presets:change', function () {
 			this.model.get("objects").trigger("change");
-			var me = this;
-			setTimeout(function(){
-				me.update_parts();
-			});
 		}, this);
-		// If properties changed (i.e cancel)
-		this.listenTo(this.model, 'change', function (attr) {
-			if ( !('changed' in attr && 'properties' in attr.changed)  ) return;
-			var me = this;
-			setTimeout(function(){
-				me.update_parts();
-			});
-		}, this);
-		// Yeah, so that's done
 		
 		// Add wrappers
 		var element_wrapper = new Modules['element_wrapper']({ model: this.preset_model, className: 'upfront-posts-part part-module-panel upfront-posts-wrapper', removable: false}),
@@ -675,10 +662,9 @@ Panels.PostParts = PresetManager.extend({
 			});
 
 			var me = this;
-			this.listenTo(pnl, "part:hide:toggle", function (part_type, enable) {
-				this.update_parts();
-				//this.updatePreset(preset_model.toJSON()); // Not needed, since we're sending (current local) preset data with request
-				this.updatePreset(preset_model.toJSON()); // Update: actually *still* needed, because presets aren't necessarily being saved on preset save...
+			this.listenTo(pnl, "update:preset", function (part_type, enable) {
+				this.updatePreset(this.preset_model.toJSON()); // Update: actually *still* needed, because presets aren't necessarily being saved on preset save...
+				this.render();
 			}, this);
 
 			this.settings.push(pnl);
@@ -724,6 +710,8 @@ Panels.PostParts = PresetManager.extend({
 				enabled_post_parts.push(value);
 				me.preset_model.set('enabled_post_parts', enabled_post_parts);
 				
+				me.updatePreset(me.preset_model.toJSON());
+				
 				me.render();
 			}
 		});
@@ -749,99 +737,6 @@ Panels.PostParts = PresetManager.extend({
 	getTitle: function() {
 		return 'Presets';
 	},
-
-	update_parts: function () {
-		var me = this,
-			preset = this.property("preset"),
-			preset_model = this.presets.findWhere({id: preset}),
-			hidden_parts = preset_model.get("hidden_parts") || [],
-			parts = this.model.get_property_value_by_name("type_parts") || [],
-			breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled(),
-			active_breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON()
-		;
-		_.each(parts, function (part) {
-			me.update_object(part, hidden_parts.indexOf(part) < 0);
-		});
-		if  ( active_breakpoint['default'] ) {
-			// Also update the responsive part
-			_.each(breakpoints, function (breakpoint) {
-				breakpoint = breakpoint.toJSON();
-				var breakpoint_presets = me.property("breakpoint_presets");
-				if ( breakpoint['default'] ) return;
-				if ( !breakpoint_presets ) return;
-				if ( !(breakpoint.id in breakpoint_presets) || !('preset' in breakpoint_presets[breakpoint.id]) ) return;
-				var preset = breakpoint_presets[breakpoint.id].preset,
-					preset_model = me.presets.findWhere({id: preset}),
-					hidden_parts = preset_model.get("hidden_parts") || []
-				;
-				_.each(parts, function (part) {
-					me.update_object(part, hidden_parts.indexOf(part) < 0, breakpoint);
-				});
-			});
-		}
-		this.model.get("objects").trigger("change");
-	},
-
-	has_object: function (type) {
-		return ( this.find_object(type) ? true : false );
-	},
-	find_object: function (type) {
-		var objects = this.model.get('objects');
-		if ( !objects ) return false;
-		return objects.find(function(object){
-			var part_type = object.get_property_value_by_name('part_type');
-			if ( type == part_type ) return true;
-			return false;
-		});
-	},
-	find_wrapper: function (object) {
-		var wrappers = this.model.get('wrappers'),
-			wrapper_id = object.get_wrapper_id()
-		;
-		return wrappers.get_by_wrapper_id(wrapper_id);
-	},
-	update_object: function (type, enable, breakpoint) {
-		enable = !!enable;
-		breakpoint = breakpoint ? breakpoint : Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
-		var objects = this.model.get('objects'),
-			wrappers = this.model.get('wrappers'),
-			object = this.find_object(type)
-		;
-		if ( breakpoint['default'] ) {
-			// Default breakpoint, actually add/remove objects
-			if ( !object && enable ) {
-				var wrapper_id = Upfront.Util.get_unique_id("wrapper"),
-					wrapper = new Upfront.Models.Wrapper({
-						properties: [
-							{ name: 'wrapper_id', value: wrapper_id },
-							{ name: 'class', value: 'c24 clr' }
-						]
-					})
-				;
-				object = new Upfront.Models.PostDataPartModel({
-					properties: [
-						{ name: 'view_class', value: 'PostDataPartView' },
-						{ name: 'part_type', value: type },
-						{ name: 'has_settings', value: 0 },
-						{ name: 'class', value: 'c24 upfront-post-data-part' },
-						{ name: 'wrapper_id', value: wrapper_id }
-					]
-				});
-				wrappers.add(wrapper, {silent: true});
-				objects.add(object);
-			}
-			else if ( object && !enable ) {
-				var object_view = Upfront.data.object_views[object.cid];
-				object_view.parent_view.on_entity_remove(null, object_view);
-			}
-		}
-		else {
-			// On responsive, just hide/show available object
-			if ( object ) {
-				object.set_breakpoint_property('hide', (enable ? 0 : 1), false, breakpoint);
-			}
-		}
-	}
 });
 
 return Panels;
