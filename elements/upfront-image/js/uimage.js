@@ -999,6 +999,10 @@ define([
 					this.property('position', {top: margin, left: current_position.left});
 
 				}
+				
+				if(sizeCheck === "small" && isDotAlign !== true) {
+					this.property('marginTop', 0);
+				}
 			}
 
 			this.updateControls();
