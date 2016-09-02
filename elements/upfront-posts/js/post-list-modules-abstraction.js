@@ -206,7 +206,7 @@
 				setTimeout( function () {
 					if(useBorder) {
 						me.$el.find('.upfront-posts-preview .styles-holder').css({
-							'borderStyle': borderType,
+							'borderStyle': 'solid',
 							'borderWidth': '1px',
 							'borderColor': borderColor
 						});
