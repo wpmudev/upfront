@@ -1776,10 +1776,12 @@ var InsertManager = Backbone.View.extend({
     position_tooltips: function(redactor){
         if( !this.$tooltips ) return;
 
-        var $current = $( redactor.selection.getCurrent());
+        var $current = $( redactor.selection.getCurrent() ),
+			$position = $( redactor.selection.getBlock() ).position();
+
         if( this.show_tooltip_in_this_location( redactor ) ){
-			if( typeof $current[0] === "undefined" || !_.isElement($current[0]) ) return;
-            var css = _.extend( $current.position(), { marginLeft: _.isArray($current) && _.isElement($current[0]) ?   $current.css("padding-left") : 0 } );
+			if( typeof $current[0] === "undefined" ) return;
+            var css = _.extend( $position, { marginLeft: _.isArray($current)  ?   $current.css("padding-left") : 0 } );
             this.$tooltips.css( css );
             this.$tooltips.show();
             UeditorEvents.trigger("ueditor:insert:relocate", $current);
@@ -1983,7 +1985,10 @@ var InsertManager = Backbone.View.extend({
 
 		var $image_embed_insert_wrappers = $(".upfront-inserted_image-wrapper, .upfront-inserted_embed-wrapper"),
 			block_top = $block.offset().top,
+			block_html = $.trim( $block.html() ) || '',
+			prevblock_html = $.trim( $prevBlock.html() ) || '',
 			show_tooltip = true;
+			
 		$image_embed_insert_wrappers.each(function(){
 			var $this = $(this),
 				height = $this.find(".ueditor-insert-variant-group").height(),
@@ -1995,7 +2000,7 @@ var InsertManager = Backbone.View.extend({
 
 		return 	show_tooltip
 				&& 	$block.closest(".ueditor-insert").length === 0
-				&&  ( $.trim( $block.html() ) === "<br>" || (indexPosition < 2 && $.trim( $prevBlock.html() ) === "<br>") || ( typeof $block.closest("p.nosortable").html() !== "undefined" &&  $.trim( $block.closest("p.nosortable").html() ) === "" ) ) ;
+				&&  ( block_html.match(/<br>/g) || ( indexPosition < 1 && prevblock_html.match(/<br>/g) ) || ( typeof $block.closest("p.nosortable").html() !== "undefined" &&  $.trim( $block.closest("p.nosortable").html() ) === "" ) ) ;
 	}
 });
 
