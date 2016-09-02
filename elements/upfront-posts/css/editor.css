@@ -204,6 +204,21 @@ div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-setting
 	border-radius: 3px;
 	margin-bottom: 2px;
 	position: relative;
+	cursor: pointer;
+}
+
+div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-settings-item-title:hover:before,
+div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-settings-item-title.active-panel:before {
+	right: 10px;
+    top: 4px;
+    width: 15px;
+    height: 14px;
+    content: "";
+    display: block;
+    position: absolute;
+	z-index: 998;
+	background-position: -823px -44px !important;
+	background-image: url(../../../img/uf-ui-sprite.png);
 }
 
 div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-settings-item-title .upfront-posts-module-title {
