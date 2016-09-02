@@ -280,7 +280,6 @@ PostContentEditor.prototype = {
 					this.$content
 						.off('blur')
 						.on('blur', _.bind(this.blur, this))
-						.off('keyup')
 						.on('keyup', _.bind(this.keyup, this))
 						.off('stop')
 						.on("stop", _.bind(this.stopEditContent, this))
