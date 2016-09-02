@@ -264,11 +264,11 @@
                         setting_dropdown.css('top', dropDownTop + "px");
                         setting_dropdown.css('display', 'block');
                     }
+					
+					return $content.show();
                 }, 10);
 				
-				$('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, this.on_scroll);
-				
-				return $content.show();
+				$('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, this.on_scroll);				
 			},
 			on_scroll: function(e) {
 				$('.upfront-settings-item-title').removeClass('active-panel');
