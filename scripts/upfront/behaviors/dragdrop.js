@@ -357,11 +357,17 @@ DragDrop.prototype = {
 						&&
 						(
 							(
-								( !breakpoint || breakpoint['default'] ) && wrap.col >= min_col &&
+								( !breakpoint || breakpoint['default'] )
+								&&
+								wrap.col >= min_col
+								&&
 								(
-									( next_wrap && !next_wrap_clr && !wrap_me_only && ( $next_wrap.find(that.el_selector).size() > 1 || !is_next_me ) ) ||
-									( prev_wrap && !wrap_clr && !wrap_me_only && ( $prev_wrap.find(that.el_selector).size() > 1 || !is_prev_me ) ) ||
-									( next_wrap && prev_wrap && !next_wrap_clr && !wrap_clr ) ||
+									( next_wrap && !next_wrap_clr && !wrap_me_only )
+									||
+									( prev_wrap && !wrap_clr && !wrap_me_only )
+									||
+									( next_wrap && prev_wrap && !next_wrap_clr && !wrap_clr )
+									||
 									( !prev_wrap && !next_wrap && is_wrap_me && has_siblings )
 								)
 							)
@@ -381,7 +387,8 @@ DragDrop.prototype = {
 								bottom = Math.ceil(el.grid_center.y),
 								$prev = $els[i-1] ? $els.eq(i-1) : false,
 								prev = $prev ? ed.get_el($prev) : false,
-								prev_me = ( prev && prev._id == me._id );
+								prev_me = ( prev && prev._id == me._id )
+							;
 							that.drops.push({
 								_id: ed._new_id(),
 								top: top,
@@ -444,8 +451,8 @@ DragDrop.prototype = {
 						//}
 					}
 					// Don't add another droppable if this is not the first el from wrapper, only on responsive
-					if ( breakpoint && !breakpoint['default'] && has_siblings && sibling_index > 0 )
-						return;
+					if ( breakpoint && !breakpoint['default'] && has_siblings && sibling_index > 0 ) return;
+
 					// Add droppable before each wrapper that start in new line
 					if ( !is_spacer && wrap_clr && !( is_wrap_me && ( !next_wrap || next_wrap_clr ) ) ){
 						var top = ( wrap.grid.top == area.grid.top ) ? area.grid.top - 5 : current_full_top,
@@ -513,7 +520,7 @@ DragDrop.prototype = {
 									});
 								}
 								else {
-									current_full_top = Math.ceil(max_row_el.grid_center.y) + 1;
+									current_full_top = Math.ceil( max_row_el.grid_center.y + Math.ceil( (max_row_el.grid.bottom - max_row_el.grid_center.y) / 2 ) ) + 1;
 								}
 							}
 						}
