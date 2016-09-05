@@ -11731,7 +11731,7 @@ a.ueditor-action-trash:before {
 
 body .redactor_air {
   position: absolute;
-  z-index: 9999;
+  z-index: 99999999;
   /* background: rgba(30, 47, 63, .95); */
   border-radius: 2px;
   min-height: 36px;
