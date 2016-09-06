@@ -4802,9 +4802,6 @@ define([
 				this.listenTo(Upfront.Events, "command:newpage:start", this.close_edit);
 				this.listenTo(Upfront.Events, "command:newpost:start", this.close_edit);
 				this.$el.find('.upfront-region-edit-fixed-trigger').show();
-				if ( Upfront.Application.sidebar.visible )
-					Upfront.Application.sidebar.toggleSidebar();
-				e.stopPropagation();
 			},
 			finish_edit: function (e) {
 				Upfront.Events.trigger("entity:region:deactivated");
@@ -5497,12 +5494,18 @@ define([
 						top: 52,
 						right:43,
 						keep_position: false
-					};
+					},
+					region_settings_sidebar = $('#region-settings-sidebar');
 				this.bg_setting = new Upfront.Views.Editor.RegionBgSetting(opts);
 				this.bg_setting.for_view = this;
 				this.bg_setting.render();
-				this.$el.append(this.bg_setting.el);
-				this.listenTo(this.bg_setting, "modal:open", this.on_modal_open);
+				// Replace contents of region_settings_sidebar.
+				Upfront.Events.trigger('region:settings:activate', this.bg_setting);
+
+				this.listenTo(this.bg_setting, "modal:open", function() {
+					region_settings_sidebar.css('opacity', '');
+					this.on_modal_open();
+				});
 				this.listenTo(this.bg_setting, "modal:close", this.on_modal_close);
 			},
 			update: function () {

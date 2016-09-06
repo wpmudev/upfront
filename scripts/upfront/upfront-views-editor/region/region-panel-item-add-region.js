@@ -86,7 +86,12 @@
             add_region_modal: function (e) {
                 var to = this.options.to,
                     me = this,
-                    modal = new Modal({to: this.panel_view.panels_view.$el, button: true, width: 422}),
+                    modal = new Modal({
+											to: this.panel_view.panels_view.$el,
+											width: 500,
+											button: true,
+											button_text: l10n.add_region
+										}),
                     disable_global = ( ( to == 'left' || to == 'right' ) && me.model.get('scope') == 'global' );
                 var parentContainer = me.$el.parents('.upfront-region-center');
                 parentContainer.addClass('upfront-region-editing-modal');

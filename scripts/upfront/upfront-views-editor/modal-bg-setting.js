@@ -268,7 +268,7 @@
 					});
 					this._color_item.render();
 				}
-				this._color_item.trigger('show');
+				//this._color_item.trigger('show');
 				this._render_tab_template($tab, this._color_item.$el, '');
 			},
 
