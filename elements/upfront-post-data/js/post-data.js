@@ -764,12 +764,14 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 	checkSize: function() {
 		var imageData = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data');
-
+		
 		var maskSize = this.model.get_breakpoint_property_value('element_size', true),
 			size = imageData.imageSize;
-
-		if(size.width >= maskSize.width && size.height >= maskSize.height) {
-			return 'big';
+		
+		if ( typeof size !== 'undefined' && typeof maskSize !== 'undefined' ) {
+			if(size.width >= maskSize.width && size.height >= maskSize.height) {
+				return 'big';
+			}
 		}
 
 		return 'small';
@@ -784,7 +786,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		if ( !this.is_featured_image_set() ) return;
 		// Retrieve image data from post meta
 		var imageData = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data');
-
+		if ( typeof imageData === 'undefined' ) return;
 		// Store variables used in resize event handlers
 		this.resizingData = {
 			data: {
