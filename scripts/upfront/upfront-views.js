@@ -3687,7 +3687,7 @@ define([
 					combine_right_spacer = 0
 				;
 				// Make sure module interaction is enabled first to prevent issue after ungroup
-				this.toggle_modules_interaction(true, true);
+				this.toggle_modules_interaction(true, true, true);
 				ed.start(this, this.model);
 				// Find previous and next wrapper
 				_.each(region_lines, function (l) {
@@ -4017,14 +4017,17 @@ define([
 					this.$el.draggable('option', 'disabled', false);
 				}
 			},
-			toggle_modules_interaction: function (enable, can_edit) {
+			toggle_modules_interaction: function (enable, can_edit, force) {
 				can_edit = can_edit === true ? true : false;
+				force = force === true ? true : false;
 				this.model.get('modules').each(function(module){
 					var module_view = Upfront.data.module_views ? Upfront.data.module_views[module.cid] : false;
 					if ( module_view ) {
 						if ( enable ) {
 							module_view.enable_interaction(true);
-							module_view.disable_interaction(!can_edit, false, true, true, !can_edit);
+							if ( !force ) { // element inside group has limited interaction, when force is passed, we allow all interaction
+								module_view.disable_interaction(!can_edit, false, true, true, !can_edit);
+							}
 						}
 						else {
 							module_view.disable_interaction(true, false, false, false, true);
