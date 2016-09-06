@@ -1,5 +1,10 @@
 /* GENERAL FORM STYLE 
 	 ================== */
+	 
+.upfront_login-block .upfront_login-form {
+	padding: 10px;
+}	 
+
 .upfront_login-form form input {
 	height:40px;
 	background-color: #fff;

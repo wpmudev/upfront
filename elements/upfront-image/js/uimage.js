@@ -518,7 +518,7 @@ define([
 					overflow: 'hidden',
 					position: 'relative',
 					width: Math.min(elementSize.width, size.width),
-					height: size.height
+					height: Math.min(elementSize.height, size.height),
 				});
 
 				img.attr('src', me.property('srcFull'))

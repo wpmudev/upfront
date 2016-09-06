@@ -256,7 +256,10 @@ class Upfront_Ajax extends Upfront_Server {
 			// Resolve existing page template to a layout
 			$tpl = preg_replace('/page_tpl-(.*)\.php/', '\1', $_POST['use_existing']);
 			$theme = Upfront_ChildTheme::get_instance();
-			$settings = $theme->get_theme_settings();
+			$settings = !empty($theme) && is_object($theme) && is_callable(array($theme, 'get_theme_settings'))
+				? $theme->get_theme_settings()
+				: array()
+			;
 			if (!empty($tpl) && !empty($settings)) {
 				$required_pages = $settings->get('required_pages');
 				if (!empty($required_pages)) $required_pages = json_decode($required_pages, true);
