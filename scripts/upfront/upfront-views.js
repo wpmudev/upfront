@@ -5490,17 +5490,19 @@ define([
 					opts = {
 						model: this.model,
 						to: this.$el,
-						width: 420,
-						top: 52,
-						right:43,
+						width: 260,
+						top: 0,
+						left:0,
 						keep_position: false
 					},
 					region_settings_sidebar = $('#region-settings-sidebar');
 				this.bg_setting = new Upfront.Views.Editor.RegionBgSetting(opts);
 				this.bg_setting.for_view = this;
 				this.bg_setting.render();
+				// Causes color picker not to work
+				//Upfront.Events.trigger('region:settings:activate', this.bg_setting);
 				// Replace contents of region_settings_sidebar.
-				Upfront.Events.trigger('region:settings:activate', this.bg_setting);
+				region_settings_sidebar.html(this.bg_setting.el);
 
 				this.listenTo(this.bg_setting, "modal:open", function() {
 					region_settings_sidebar.css('opacity', '');

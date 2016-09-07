@@ -11,6 +11,12 @@
 
 
 		return ModalBgSetting.extend({
+			events: {
+				// Cancel button:
+				//"click .upfront-inline-modal-cancel": "on_click",
+				"click .upfront-inline-modal-content": "on_click_content",
+				"click .upfront-inline-modal-save": "on_click_save"
+			},
 			render_modal: function ($content, $modal) {
 				var me = this,
 					setting_cback = this.get_template(),
@@ -139,22 +145,21 @@
 							});
 						}
 					}),
-					make_global = new Fields.Checkboxes({
+					make_global = new Fields.Button({
 						model: this.model,
 						name: 'scope',
-						multiple: false,
-						values: [
-							{ label: l10n.make_global, value: 'global' }
-						],
-						change: function(){
-							var value = this.get_value();
-							if ( value == 'global' ){
-								me.apply_region_scope(this.model, 'global');
-								$region_name.find('.upfront-region-bg-setting-is-global').show();
-							}
-							//else {
-							//	me.apply_region_scope(this.model, 'local');
-							//}
+						classname: 'upfront-region-bg-setting-globalize',
+						label: l10n.make_global,
+						compact: true,
+						on_click: function(){
+							me.apply_region_scope(this.model, 'global');
+							$region_auto.show();
+							// Show Global Label.
+							$region_name.find('.upfront-region-bg-setting-is-global').show();
+							// Show Localize button.
+							localize_region.$el.show();
+							// Hide this button.
+							this.$el.hide();
 						}
 					}),
 					localize_region = new Fields.Button({
@@ -165,12 +170,12 @@
 						compact: true,
 						on_click: function () {
 							me.apply_region_scope(this.model, 'local');
-							$region_name.find('.upfront-region-bg-setting-name-wrap').show();
 							$region_auto.show();
-							$region_name.find('.upfront-region-bg-setting-name-edit').hide();
+							// Hide Global Label.
 							$region_name.find('.upfront-region-bg-setting-is-global').hide();
-							make_global.$el.find('[value=global]').prop('checked', false);
+							// Show Make Global button.
 							make_global.$el.show();
+							// Hide this button.
 							this.$el.hide();
 						},
 						rendered: function () {
@@ -180,7 +185,7 @@
 					name_save = new Fields.Button({
 						model: this.model,
 						name: 'save',
-						label: l10n.save,
+						label: l10n.ok,
 						compact: true,
 						classname: 'upfront-region-bg-setting-name-save',
 						on_click: function () {

@@ -590,7 +590,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
                 'layout_no_global_footer' => __('This layout doesn\'t use global footer', 'upfront'),
 				'global' => __('Global', 'upfront'),
 				'make_global' => __('Make Global', 'upfront'),
-				'localize_region' => __('Localize Region', 'upfront'),
+				'localize_region' => __('Localize', 'upfront'),
 				'edit_region_header_ok' => __('Ok', 'upfront'),
 				'ok_camel_case' => __('Ok', 'upfront'),
 				'localize_region_info' => __('Detaches this from Global Region'),

@@ -5,13 +5,13 @@
 -->
 <script type="text/template" id="upfront-region-bg-setting">
 	<div class="upfront-region-bg-setting-header clearfix">
-		<div class="upfront-region-bg-setting-auto-resize"></div>
 		<div class="upfront-region-bg-setting-name"></div>
 	</div>
 
 	<div class="upfront-region-bg-setting-region-type">
 		<!-- <div class="upfront-bg-setting-label">{{Upfront.Settings.l10n.global.views.area_type}}</div> -->
 	</div>
+	<div class="upfront-region-bg-setting-auto-resize"></div>
 	<div class="upfront-region-bg-setting-region-behavior">
 		<div class="upfront-bg-setting-label">{{Upfront.Settings.l10n.global.views.element_behavior}}</div>
 	</div>
@@ -84,8 +84,9 @@
 
 <script type="text/template" id="upfront-region-bg-setting-name">
 	<div class="upfront-region-bg-setting-name-wrap">
+		<span class="upfront-region-type-icon"></span>
 		<span class="upfront-region-name-edit-value"></span>
-		<span class="upfront-region-bg-setting-is-global">{{Upfront.Settings.l10n.global.views.global}}</span>
+		<span class="upfront-region-bg-setting-is-global">{{Upfront.Settings.l10n.global.views.global.toUpperCase()}}</span>
 		<a href="#" class="upfront-region-name-edit-trigger">{{Upfront.Settings.l10n.global.views.edit}}</a>
 	</div>
 	<div class="upfront-region-bg-setting-name-edit"></div>
