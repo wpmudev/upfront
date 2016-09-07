@@ -9,26 +9,33 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 	public function get_markup () {
 		$menu_id = $this->_get_property('menu_id');
 		$menu_slug = $this->_get_property('menu_slug');
-
 		$activeBreakpoints = Upfront_Grid::get_grid()->get_breakpoints();
-
-
-
-
-
-
 		$preset = $this->_get_property('preset');
 		if (!isset($preset)) {
 			$preset = 'default';
 		}
-
-		$preset_props = Upfront_Nav_Presets_Server::get_instance()->get_preset_properties($preset);
 		$breakpoint_data = $this->_get_property('breakpoint');
 		
 		if ($this->_get_property('usingNewAppearance') == true) {
+			/* NEW APPEARANCE */
+			// preset here uses the Desktop one
+			$preset_props = Upfront_Nav_Presets_Server::get_instance()->get_preset_properties($preset);
 			$breakpoint_data['preset'] = isset($preset_props['breakpoint'])?$preset_props['breakpoint']:false;
+			// catering breakpoint presets
+			$breakpoint_presets = $this->_get_property('breakpoint_presets');
+			$breakpoint_presets = is_array($breakpoint_presets) ? $breakpoint_presets : array();
+			foreach ( $breakpoint_presets as $key=>$properties ) {
+				// skip the desktop since already catered above
+				if ( $key == 'desktop' ) continue;
+				// if preset not defined skip also
+				if ( !isset($properties['preset']) ) continue;
+				// supplying correct breakpoint preset data
+				$preset_props = Upfront_Nav_Presets_Server::get_instance()->get_preset_properties($properties['preset']);
+				$breakpoint_data['preset'][$key] = ( isset($preset_props['breakpoint']) && isset($preset_props['breakpoint'][$key]) ) ? $preset_props['breakpoint'][$key] : false;
+			}
 		} else {
-			$breakpoint_property = $this->_get_property('breakpoint');
+			/* OLD APPEARANCE */
+			$breakpoint_property = $breakpoint_data;
 			$breakpoint_property = is_array($breakpoint_property) ? $breakpoint_property : array();
 			foreach ($breakpoint_property as $key=>$properties) {
 				$breakpoint_data['preset'][$key] = $properties;
@@ -41,9 +48,8 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 					$breakpoint_data['preset'][$key]['burger_over'] = $properties['burger_over'];
 				}
 			}
-			
 		}
-
+		
 		// if a breakpoint does not have info to render menu style, copy it from one higher
 		if(is_array($breakpoint_data['preset'])) {
 			$higher_name = '';
@@ -54,15 +60,16 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 					$breakpoint_data['preset'][$name] = $breakpoint_data['preset'][$higher_name];
 
 				$higher_name = $name;
-			}
-
-			/** if breakpoint has menu_style set to burger, but no
-				burger_alignment is defined, set it to default
-			**/
-			if(isset($breakpoint_data['preset'][$name]) && isset($breakpoint_data['preset'][$name]['menu_style']) && $breakpoint_data['preset'][$name]['menu_style'] && !isset($breakpoint_data['preset'][$name]['burger_alignment']) ) {
-				$breakpoint_data['preset'][$name]['burger_alignment'] = 'left';
+				
+				/** if breakpoint has menu_style set to burger, but no
+					burger_alignment is defined, set it to default
+				**/
+				if(isset($breakpoint_data['preset'][$name]) && isset($breakpoint_data['preset'][$name]['menu_style']) && $breakpoint_data['preset'][$name]['menu_style'] && !isset($breakpoint_data['preset'][$name]['burger_alignment']) ) {
+					$breakpoint_data['preset'][$name]['burger_alignment'] = 'left';
+				}
 			}
 		}
+		
 		$menu_style = $this->_get_property('menu_style');
 		$menu_alignment = $this->_get_property('menu_alignment');
 

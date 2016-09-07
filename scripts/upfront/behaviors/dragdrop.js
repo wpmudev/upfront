@@ -336,9 +336,13 @@ DragDrop.prototype = {
 						next_wrap_el_left = next_wrap ? ed.get_wrap_el_min(next_wrap) : false,
 						next_clr_el_top = next_clr ? ed.get_wrap_el_min(next_clr, false, true) : false,
 						row_wraps = _.map(line.wrappers, map_wrappers),
-						max_row_wrap = _.max(row_wraps, function(row_wrap){ return ( me_wrap && me_wrap._id == row_wrap._id ) ? -1 : row_wrap.grid.bottom; }),
-						min_row_wrap = _.min(row_wraps, function(row_wrap){ return ed.get_wrap_el_min(row_wrap, false, true).grid.top; }),
+						row_wraps_no_spacer = _.map(_.filter(line.wrappers, function(row_wrap){ return !row_wrap.spacer; }), map_wrappers),
+						row_wraps_sort_bottom = _.sortBy(row_wraps_no_spacer, function(row_wrap){ return ed.get_wrap_el_max(row_wrap, false, true).grid.bottom; }),
+						row_wraps_sort_top = _.sortBy(row_wraps_no_spacer, function(row_wrap){ return ed.get_wrap_el_min(row_wrap, false, true).grid.top; }),
+						max_row_wrap = _.last(row_wraps_sort_bottom),
+						min_row_wrap = _.first(row_wraps_sort_top),
 						min_row_el = ed.get_wrap_el_min(min_row_wrap, false, true),
+						max_row_el = ed.get_wrap_el_max(max_row_wrap, false, true),
 						wrap_me_in_row = _.find(row_wraps, function(row_wrap){ return me_wrap && me_wrap._id == row_wrap._id; })
 					;
 
@@ -353,11 +357,17 @@ DragDrop.prototype = {
 						&&
 						(
 							(
-								( !breakpoint || breakpoint['default'] ) && wrap.col >= min_col &&
+								( !breakpoint || breakpoint['default'] )
+								&&
+								wrap.col >= min_col
+								&&
 								(
-									( next_wrap && !next_wrap_clr && !wrap_me_only && ( $next_wrap.find(that.el_selector).size() > 1 || !is_next_me ) ) ||
-									( prev_wrap && !wrap_clr && !wrap_me_only && ( $prev_wrap.find(that.el_selector).size() > 1 || !is_prev_me ) ) ||
-									( next_wrap && prev_wrap && !next_wrap_clr && !wrap_clr ) ||
+									( next_wrap && !next_wrap_clr && !wrap_me_only )
+									||
+									( prev_wrap && !wrap_clr && !wrap_me_only )
+									||
+									( next_wrap && prev_wrap && !next_wrap_clr && !wrap_clr )
+									||
 									( !prev_wrap && !next_wrap && is_wrap_me && has_siblings )
 								)
 							)
@@ -377,7 +387,8 @@ DragDrop.prototype = {
 								bottom = Math.ceil(el.grid_center.y),
 								$prev = $els[i-1] ? $els.eq(i-1) : false,
 								prev = $prev ? ed.get_el($prev) : false,
-								prev_me = ( prev && prev._id == me._id );
+								prev_me = ( prev && prev._id == me._id )
+							;
 							that.drops.push({
 								_id: ed._new_id(),
 								top: top,
@@ -440,15 +451,16 @@ DragDrop.prototype = {
 						//}
 					}
 					// Don't add another droppable if this is not the first el from wrapper, only on responsive
-					if ( breakpoint && !breakpoint['default'] && has_siblings && sibling_index > 0 )
-						return;
+					if ( breakpoint && !breakpoint['default'] && has_siblings && sibling_index > 0 ) return;
+
 					// Add droppable before each wrapper that start in new line
 					if ( !is_spacer && wrap_clr && !( is_wrap_me && ( !next_wrap || next_wrap_clr ) ) ){
 						var top = ( wrap.grid.top == area.grid.top ) ? area.grid.top - 5 : current_full_top,
 							el_top = ed.get_wrap_el_min(wrap, false, true),
 							bottom = Math.ceil(el_top.grid_center.y),
 							is_drop_me = ( prev_wrap_clr && is_prev_me && !has_siblings ),
-							me_top = ( is_drop_me ? prev_wrap.grid.top : wrap.grid.top )
+							me_top = ( is_drop_me ? prev_wrap.grid.top : wrap.grid.top ),
+							last_row_wraps = _.last(row_wraps_sort_bottom, 2)
 						;
 						if ( can_drop(me_top, el_top.grid.top-1) ){
 							if ( breakpoint && !breakpoint['default'] && ( is_wrap_me || ( prev_wrap_clr && is_prev_me ) ) && has_siblings ) {
@@ -481,7 +493,35 @@ DragDrop.prototype = {
 									row_wraps: false,
 									me_in_row: false
 								});
-								current_full_top = bottom+1;
+								if ( last_row_wraps.length === 2 ) {
+									// To allow all drop position to be selectable, we calculate the most bottom 2 elements in a row and get the middle position between both
+									_.each(last_row_wraps, function (each, l) {
+										var sort_els = _.sortBy(ed.get_wrap_els(each), function (el) {
+												return el.grid.bottom;
+											}),
+											last_els = _.last(sort_els, 2),
+											last_el = _.last(last_els),
+											bottom = last_el.grid.bottom
+										;
+										if ( l === 0 ) {
+											current_full_top = bottom;
+										}
+										else {
+											// Special cases to handle last element if the position didn't allow it to be selected
+											if (
+												( last_els.length === 2 && current_full_top < last_els[0].grid.bottom )
+												||
+												( last_el.grid_center.y > current_full_top )
+											) {
+												current_full_top = last_el.grid_center.y;
+											}
+											current_full_top += Math.ceil( (bottom - current_full_top) / 2 );
+										}
+									});
+								}
+								else {
+									current_full_top = Math.ceil( max_row_el.grid_center.y + Math.ceil( (max_row_el.grid.bottom - max_row_el.grid_center.y) / 2 ) ) + 1;
+								}
 							}
 						}
 					}
@@ -627,8 +667,7 @@ DragDrop.prototype = {
 					bottom = ( expand_lock ? area.grid.bottom : ( area.grid.bottom-current_full_top > row ? area.grid.bottom + 5 : current_full_top + row ) ),
 					last_wrappers = _.map(last_line.wrappers, map_wrappers),
 					bottom_wrap = _.max(last_wrappers, function(each){
-						if ( me_wrap && me_wrap._id == each._id )
-							return 0;
+						if ( me_wrap && me_wrap._id == each._id ) return 0;
 						return each.grid.bottom;
 					}),
 					top = bottom_wrap.grid.bottom+1,
