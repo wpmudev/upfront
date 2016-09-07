@@ -656,7 +656,7 @@ a.image-edit-button.deactivated:hover {
 
 .upfront-ui.uimage-control-panel {
 	position: absolute;
-	min-width: 150px;
+	min-width: 152px;
 	z-index: 2001;
 	background: rgba(230,236,242,1);
 	padding: 5px;

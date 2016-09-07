@@ -308,7 +308,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'align_right' => __("Align right", Upfront::TextDomain),
 				'align_none' => __("Align none", Upfront::TextDomain),
 				'align_center' => __("No alignment", Upfront::TextDomain),
-				'choose_image_insert' => __('Choose Image Insert: ', Upfront::TextDomain),
+				'choose_image_insert' => __('Image Insert: ', Upfront::TextDomain),
 				'left' => __('Left',  Upfront::TextDomain),
 				'right' => __('Right',  Upfront::TextDomain),
 				'center' => __('Center',  Upfront::TextDomain),
