@@ -1006,51 +1006,6 @@
 	margin: 36px 6px 0 0;
 	float: right;
 }
-.upfront-inline-modal,
-.upfront-inline-modal-wrap {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	z-index: 10001004;
-}
-.upfront-inline-modal {
-}
-.upfront-inline-modal-wrap {
-	margin: auto;
-	width: 50%;
-	border: 1px solid #fff;
-	background: #e5f3ff;
-	-moz-box-shadow: 0 0 20px rgba(39,58,76,.8);
-	-webkit-box-shadow: 0 0 20px rgba(39,58,76,.8);
-	box-shadow: 0 0 20px rgba(39,58,76,.8);
-}
-.upfront-inline-modal-wrap .upfront-inline-modal-content {
-	padding: 16px;
-}
-.upfront-inline-modal-wrap .upfront-inline-modal-content:before,
-.upfront-inline-modal-wrap .upfront-inline-modal-content:after {
-  content: " ";
-  display: table;
-}
-.upfront-inline-modal-wrap .upfront-inline-modal-content:after {
-  clear: both;
-}
-.upfront-inline-modal-save,
-.upfront-inline-modal-save:hover {
-	position: absolute;
-	bottom: -35px;
-	right: 0;
-	color: #f1f8ff;
-	font-size: 18px;
-	height: 34px;
-	line-height: 34px;
-	padding: 0 36px;
-	background: #2ecb90;
-	border: none;
-	border-bottom: 1px solid rgba(27,45,63,.5);
-}
 .upfront-region-modal-color {
 	background: none;
 	border-bottom: none;
@@ -1066,11 +1021,8 @@
 	width: 120px;
 	margin: 0 auto;
 }
-.upfront-region-modal-bg .upfront-inline-modal-wrap {
-	width: 384px;
-}
 .upfront-region-bg-setting-fixed-region {
-	margin: 0 0 10px;
+	margin: 20px 0 10px;
 }
 .upfront-region-bg-setting-fixed-region .upfront-region-bg-setting-label {
 	margin: 0 0 5px;
@@ -1177,18 +1129,6 @@ a.upfront-region-name-edit-trigger:before {
 	float: left;
   margin: 0 0 20px;
 }
-.upfront-region-bg-setting-type {
-	clear: both;
-	width: 36%;
-	float: left;
-}
-.upfront-region-bg-setting-tab .upfront-field-number{
-	width: 55px;
-}
-.upfront-region-bg-setting-tab .sp-replacer {
-	float: none;
-	width: auto;
-}
 .upfront-region-bg-setting-footer {
 	color: #1f2f3f;
 	font-family: "Verdana";
@@ -1241,23 +1181,6 @@ a.upfront-region-name-edit-trigger:before {
 	float: right;
 }
 
-.upfront-region-bg-setting-change-image {
-	cursor: pointer;
-	float: left;
-	white-space: nowrap;
-	padding: 0 10px;
-	background: #e6f3ff;
-	color: #253a4e;
-	font-family: "Verdana";
-	font-size: 11px;
-	box-shadow: inset 0 2px 0 rgb(242, 249, 255);
-	border: 1px solid rgb(163, 191, 217);
-	border-radius: 3px;
-	margin: 10px 30px 0 0;
-}
-.upfront-region-bg-setting-change-image:hover {
-	border-color: rgb(96, 127, 153);
-}
 .upfront-region-bg-setting-edit-css {
 	display: inline-block;
 	vertical-align: top;
@@ -1284,30 +1207,52 @@ a.upfront-region-name-edit-trigger:before {
 	float: right;
 	margin: 4px 0 10px;
 }
-.upfront-region-bg-setting-tab-primary {
-	width: 62%;
-	float: right;
-}
-.upfront-region-bg-setting-tab-secondary {
-	padding: 10px 0 0;
+
+
+/* Padding Settings */
+.upfront-region-bg-setting-padding {
+	background: none;
+	overflow: hidden;
+	position: relative;
+	padding: 16px 0;
+	top: 16px;
+	border-top: 1px solid #cce1f4;
 	clear: both;
 }
-
-.upfront-region-bg-setting-heading {
-	color: #27394b;
-	font-size: 18px;
-	font-weight: bold;
-	margin: 0 0 10px;
+.upfront-region-bg-setting-padding .upfront-field-select-single {
+	width: 215px;
+	display:inline-block;
 }
-.upfront-region-bg-setting-label {
-	color: #3f617f;
-	font-size: 14px;
-	line-height: 20px;
+.upfront-region-bg-setting-padding .upfront-settings-item-title span {
+	margin-top: 3px;
+	display: inline-block;
 }
-.upfront-region-bg-setting-label-alt {
-	color: #2f475d;
-	font-family: "Verdana";
-	font-size: 11px;
+.upfront-region-bg-setting-padding .upfront-field-wrap-multiple:first-child {
+	margin-top: 0;
+}
+.upfront-region-bg-setting-padding .upfront-field-wrap-slider {
+	display: inline-block;
+	width: 63%;
+	margin: 0 5% 0 2%;
+	border-left: 2px solid #C2D5E6;
+	padding-left: 5%;
+	padding-top: 6px;
+	height: 30px;
+}
+.upfront-region-bg-setting-padding .upfront-field-wrap-number {
+	width: 30%;
+	display: inline-block;
+	padding-left: 5px;
+	margin: 0;
+	position: relative;
+	top: -10px;
+}
+.upfront-region-bg-setting-padding .upfront-field-wrap-number label {
+	margin: 0;
+}
+.upfront-region-bg-setting-padding .upfront-field-wrap-number .upfront-field-number {
+	width: 45px;
+	clear: both;
 }
 
 .region-resizable-helper {

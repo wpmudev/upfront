@@ -68,7 +68,7 @@ text!upfront/templates/color_picker.html
 text!upfront/templates/popup.html
 /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/fonts.js
 /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/modal.js
-text!upfront/templates/region_edit_panel.html
+text!upfront/templates/bg_setting.html
 /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/modal-bg-setting.js
 /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/settings/settings-item.js
 /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/settings/settings-panel.js
@@ -100,6 +100,10 @@ text!upfront/templates/region_add_panel.html
 /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/region/region-panel-item-expand-lock.js
 /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/region/region-fixed-edit-position.js
 /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/region/region-fixed-panels.js
+text!upfront/templates/region_edit_panel.html
+/Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/region/region-bg-setting.js
+/Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/region/region-bg-setting-fixed.js
+/Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/region/region-bg-setting-lightbox.js
 /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/region.js
 /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/commands.js
 /Users/jeffri/Documents/vagrant-local/www/wordpress-multisite/htdocs/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command.js
