@@ -8,10 +8,12 @@
 		<div class="upfront-region-bg-setting-name"></div>
 	</div>
 
-	<div class="upfront-region-bg-setting-region-type">
-		<!-- <div class="upfront-bg-setting-label">{{Upfront.Settings.l10n.global.views.area_type}}</div> -->
+	<div class="upfront-region-bg-setting-region-style-container">
+		<div class="upfront-region-bg-setting-region-type">
+			<!-- <div class="upfront-bg-setting-label">{{Upfront.Settings.l10n.global.views.area_type}}</div> -->
+		</div>
+		<div class="upfront-region-bg-setting-auto-resize"></div>
 	</div>
-	<div class="upfront-region-bg-setting-auto-resize"></div>
 	<div class="upfront-region-bg-setting-region-behavior">
 		<div class="upfront-bg-setting-label">{{Upfront.Settings.l10n.global.views.element_behavior}}</div>
 	</div>
@@ -29,7 +31,12 @@
 	<div class="upfront-bg-setting-tab upfront-bg-setting-tab-map"></div>
 	<div class="upfront-bg-setting-tab upfront-bg-setting-tab-video"></div>
 
-	<div class="upfront-region-bg-setting-padding"></div>
+	<div class="uf-settings-panel upfront-settings_panel advanced-settings uf-settings-panel--expanded">
+		<div class="uf-settings-panel__title">{{Upfront.Settings.l10n.global.views.advanced_settings}}</div>
+		<div class="uf-settings-panel__body" style="display: block;">
+			<div class="upfront-region-bg-setting-padding"></div>
+		</div>
+	</div>
 	<div class="upfront-region-bg-setting-footer clearfix">
 		<div class="upfront-region-bg-setting-sticky"></div>
 		<div class="upfront-region-bg-setting-edit-css upfront-icon upfront-icon-edit-css">
@@ -93,6 +100,9 @@
 </script>
 
 <script type="text/template" id="upfront-region-bg-setting-padding">
+	<span class="upfront-settings-item-title">
+		{{Upfront.Settings.l10n.global.views.customize_padding.toUpperCase()}}
+	</span>
 	<div class="upfront-region-bg-setting-padding-type"></div>
 	<div class="upfront-region-bg-setting-equal-padding"></div>
 	<div class="upfront-region-bg-setting-varied-padding">

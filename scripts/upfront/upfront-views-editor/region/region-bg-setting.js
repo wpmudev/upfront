@@ -15,6 +15,7 @@
 				// Cancel button:
 				//"click .upfront-inline-modal-cancel": "on_click",
 				"click .upfront-inline-modal-content": "on_click_content",
+				"click .uf-settings-panel__title": "toggle_advanced_settings",
 				"click .upfront-inline-modal-save": "on_click_save"
 			},
 			render_modal: function ($content, $modal) {
@@ -185,7 +186,7 @@
 					name_save = new Fields.Button({
 						model: this.model,
 						name: 'save',
-						label: l10n.ok,
+						label: l10n.ok.toLowerCase(),
 						compact: true,
 						classname: 'upfront-region-bg-setting-name-save',
 						on_click: function () {
@@ -278,10 +279,11 @@
 					total_container = collection.total_container(['shadow', 'lightbox']), // don't include shadow and lightbox region
 					is_top = index_container == 0,
 					is_bottom = index_container == total_container-1,
-					region_type = new Fields.Radios({
+					region_type = new Fields.Select({
 						model: this.model,
 						name: 'type',
 						default_value: 'wide',
+						label: l10n.region_style,
 						layout: 'horizontal-inline',
 						values: this.get_region_types(index_container),
 						change: function () {
@@ -486,24 +488,6 @@
 							}
 						}
 					}),
-					top_bg_padding_slider = new Fields.Slider({
-						model: this.model,
-						use_breakpoint_property: true,
-						property: 'top_bg_padding_slider',
-						label: '',
-						default_value: this.model.get_breakpoint_property_value('top_bg_padding_slider') || 0,
-						min: 0,
-						max: 200,
-						step: 5,
-						valueTextFilter: function () {return '';},
-						change: function () {
-							var value = this.get_value();
-
-							this.model.set_breakpoint_property('top_bg_padding_slider', value);
-							top_bg_padding_num.get_field().val(value);
-							this.model.set_breakpoint_property('top_bg_padding_num', value, true);
-						}
-					}),
 					top_bg_padding_num = new Fields.Number({
 						model: this.model,
 						use_breakpoint_property: true,
@@ -518,26 +502,6 @@
 							var value = this.get_value();
 
 							this.model.set_breakpoint_property('top_bg_padding_num', value);
-							this.model.set_breakpoint_property('top_bg_padding_slider', value, true);
-							top_bg_padding_slider.$el.find('#'+top_bg_padding_slider.get_field_id()).slider('value', value);
-						}
-					}),
-					bottom_bg_padding_slider = new Fields.Slider({
-						model: this.model,
-						use_breakpoint_property: true,
-						property: 'bottom_bg_padding_slider',
-						label: '',
-						default_value: this.model.get_breakpoint_property_value('bottom_bg_padding_slider') || 0,
-						min: 0,
-						max: 200,
-						step: 5,
-						valueTextFilter: function () {return '';},
-						change: function () {
-							var value = this.get_value();
-
-							this.model.set_breakpoint_property('bottom_bg_padding_slider', value);
-							bottom_bg_padding_num.get_field().val(value);
-							this.model.set_breakpoint_property('bottom_bg_padding_num', value, true);
 						}
 					}),
 					bottom_bg_padding_num = new Fields.Number({
@@ -553,34 +517,6 @@
 							var value = this.get_value();
 
 							this.model.set_breakpoint_property('bottom_bg_padding_num', value);
-							this.model.set_breakpoint_property('bottom_bg_padding_slider', value, true);
-							bottom_bg_padding_slider.$el.find('#'+bottom_bg_padding_slider.get_field_id()).slider('value', value);
-						}
-					}),
-					bg_padding_slider = new Fields.Slider({
-						model: this.model,
-						use_breakpoint_property: true,
-						property: 'bg_padding_slider',
-						label: '',
-						default_value: this.model.get_breakpoint_property_value('bg_padding_slider') || 0,
-						min: 0,
-						max: 200,
-						step: 5,
-						valueTextFilter: function () {return '';},
-						change: function () {
-							var value = this.get_value();
-
-							this.model.set_breakpoint_property('bg_padding_slider', value);
-							this.model.set_breakpoint_property('top_bg_padding_slider', value, true);
-							this.model.set_breakpoint_property('bottom_bg_padding_slider', value, true);
-							top_bg_padding_slider.$el.find('#'+top_bg_padding_slider.get_field_id()).slider('value', value);
-							bottom_bg_padding_slider.$el.find('#'+bottom_bg_padding_slider.get_field_id()).slider('value', value);
-							bg_padding_num.get_field().val(value);
-							top_bg_padding_num.get_field().val(value);
-							bottom_bg_padding_num.get_field().val(value);
-							this.model.set_breakpoint_property('bg_padding_num', value, true);
-							this.model.set_breakpoint_property('top_bg_padding_num', value, true);
-							this.model.set_breakpoint_property('bottom_bg_padding_num', value, true);
 						}
 					}),
 					bg_padding_num = new Fields.Number({
@@ -600,12 +536,6 @@
 							bottom_bg_padding_num.get_field().val(value);
 							this.model.set_breakpoint_property('top_bg_padding_num', value, true);
 							this.model.set_breakpoint_property('bottom_bg_padding_num', value, true);
-							this.model.set_breakpoint_property('bg_padding_slider', value, true);
-							this.model.set_breakpoint_property('top_bg_padding_slider', value, true);
-							this.model.set_breakpoint_property('bottom_bg_padding_slider', value, true);
-							bg_padding_slider.$el.find('#'+bg_padding_slider.get_field_id()).slider('value', value);
-							top_bg_padding_slider.$el.find('#'+top_bg_padding_slider.get_field_id()).slider('value', value);
-							bottom_bg_padding_slider.$el.find('#'+bottom_bg_padding_slider.get_field_id()).slider('value', value);
 						}
 					}),
 					$region_padding_type,
@@ -622,16 +552,10 @@
 
 				bg_padding_type.render();
 				$region_padding_type.append(bg_padding_type.$el);
-				top_bg_padding_slider.render();
-				$region_top_padding.append(top_bg_padding_slider.$el);
 				top_bg_padding_num.render();
 				$region_top_padding.append(top_bg_padding_num.$el);
-				bottom_bg_padding_slider.render();
-				$region_bottom_padding.append(bottom_bg_padding_slider.$el);
 				bottom_bg_padding_num.render();
 				$region_bottom_padding.append(bottom_bg_padding_num.$el);
-				bg_padding_slider.render();
-				$region_equal_padding.append(bg_padding_slider.$el);
 				bg_padding_num.render();
 				$region_equal_padding.append(bg_padding_num.$el);
 			},
@@ -753,6 +677,16 @@
 
 				this.listenTo(Upfront.Application.cssEditor, 'updateStyles', this.adjust_grid_padding);
 			},
+			toggle_advanced_settings: function() {
+				if (this.$el.find('.advanced-settings').hasClass('uf-settings-panel--expanded')) {
+					this.$el.find('.advanced-settings').removeClass('uf-settings-panel--expanded')
+						.find('.uf-settings-panel__body').hide();
+				} else {
+					this.$el.find('.advanced-settings').addClass('uf-settings-panel--expanded')
+						.find('.uf-settings-panel__body').show();
+			}
+
+		},
 
 			adjust_grid_padding: function() {
 				var togglegrid = new Upfront.Views.Editor.Command_ToggleGrid();

@@ -1073,9 +1073,9 @@
 	height: 24px;
 	display: block;
 	float: left;
-	border: 1px;
-	border-style: double;
 	margin-right: 5px;
+	border: 1px solid #A2BFDA;
+	box-shadow: inset 0 0 0 1px #fff;
 }
 
 .upfront-region-bg-setting-name-wrap {
@@ -1151,20 +1151,36 @@ a.upfront-region-name-edit-trigger:hover {
 	border-radius: 3px;
 	padding: 0 10px;
 	color: #6486a6;
+	text-transform: capitalize;
+}
+.upfront-region-bg-setting-region-style-container {
+	background: #e7ecf2;
+	padding: 16px 16px 5px;
+}
+.upfront-region-bg-setting-region-style-container .upfront-field-label, .upfront-region-bg-setting-auto-resize span {
+	color: #96acc1;
+	font-weight: 300;
+	margin-bottom: 5px;
+}
+.upfront-region-bg-setting-region-style-container .upfront-field-label:after, .upfront-region-bg-setting-auto-resize span:after {
+	content: ':';
 }
 .upfront-region-bg-setting-region-type {
-	margin: 0 0 20px;
+	width: 140px;
+	display: inline-block;
 }
 .upfront-region-bg-setting-region-nav {
 	width: 45%;
 	float: right;
 	margin: 0 0 20px;
 }
+
 .upfront-region-bg-setting-region-behavior {
 	width: 50%;
 	float: left;
   margin: 0 0 20px;
 }
+
 .upfront-region-bg-setting-footer {
 	color: #1f2f3f;
 	font-family: "Verdana";
@@ -1177,27 +1193,34 @@ a.upfront-region-name-edit-trigger:hover {
 	clear: both;
 }
 
+.upfront-region-bg-setting-region-type > div {
+	margin: 0;
+}
+
 .upfront-region-bg-setting-auto-resize {
 	cursor: pointer;
-	float: right;
 	white-space: nowrap;
 	color: #513a4e;
 	font-family: "Verdana";
 	font-size: 11px;
 	line-height: 16px;
-	margin: 20px 0 0;
+	margin: 0;
+	vertical-align: top;
+	display: inline-block;
+	margin-left: 14px;
 }
-.upfront-region-bg-setting-auto-resize-disabled {
-	cursor: not-allowed;
-	opacity: 0.5;
+
+.upfront-region-bg-setting-auto-resize span {
+	display: block;
 }
+
 .auto-resize-off, .auto-resize-on {
 	display: inline-block;
-	float: right;
+	float: none;
 	width: 40px;
 	height: 16px;
 	padding: 3px 4px;
-	margin: 0 0 0 10px;
+	margin: 5px 0 0;
 	border-radius: 8px;
 	background: #98a8b8;
 }
@@ -1246,14 +1269,54 @@ a.upfront-region-name-edit-trigger:hover {
 
 
 /* Padding Settings */
-.upfront-region-bg-setting-padding {
-	background: none;
-	overflow: hidden;
+#region-settings-sidebar .uf-settings-panel.upfront-settings_panel.advanced-settings.uf-settings-panel {
+	border-top: 1px solid #c4d5e5;
+}
+#region-settings-sidebar .uf-settings-panel.upfront-settings_panel.advanced-settings .uf-settings-panel__title:after {
+	content: '';
+	width: 0;
+	height: 0;
+	display: block;
+	position: absolute;
+	z-index: 1;
+	top: 14px;
+	right: 16px;
+	border-top: 4px solid transparent;
+	border-bottom: 4px solid transparent;
+	border-left: 4px solid #6a8db4;
+}
+
+#region-settings-sidebar .uf-settings-panel.upfront-settings_panel.advanced-settings.uf-settings-panel--expanded .uf-settings-panel__title:after {
+	top: 17px;
+	right: 15px;
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 4px solid #6a8db4;
+	border-bottom: 0 none;
+}
+
+#region-settings-sidebar .uf-settings-panel.upfront-settings_panel.advanced-settings.uf-settings-panel--expanded .uf-settings-panel__title {
+	background: #dae6f2;
+}
+
+#region-settings-sidebar .uf-settings-panel__title {
+	height: 38px;
+	background-color: #e6f2ff;
+	line-height: 37px;
+	padding-left: 15px;
+	border-bottom: 1px solid #c3d5e6;
+	cursor: pointer;
+	color: #2f476f;
+	font-size: 15px;
+	margin: 0;
 	position: relative;
-	padding: 16px 0;
-	top: 16px;
+}
+
+.upfront-region-bg-setting-padding {
+	background: #f7fbff;
+	overflow: hidden;
 	border-top: 1px solid #cce1f4;
-	clear: both;
+	padding: 16px;
 }
 .upfront-region-bg-setting-padding .upfront-field-select-single {
 	width: 215px;
@@ -1276,12 +1339,13 @@ a.upfront-region-name-edit-trigger:hover {
 	height: 30px;
 }
 .upfront-region-bg-setting-padding .upfront-field-wrap-number {
-	width: 30%;
-	display: inline-block;
-	padding-left: 5px;
-	margin: 0;
-	position: relative;
-	top: -10px;
+	margin: 5px 0;
+}
+.upfront-region-bg-setting-padding-bottom {
+	float: right;
+}
+.upfront-region-bg-setting-padding-top {
+	float: left;
 }
 .upfront-region-bg-setting-padding .upfront-field-wrap-number label {
 	margin: 0;

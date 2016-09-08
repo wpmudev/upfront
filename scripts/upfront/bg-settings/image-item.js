@@ -23,7 +23,7 @@ define([
 				fixed_fields = ['bg_color', 'bg_position_x', 'bg_position_y', 'bg_position_x_num', 'bg_position_y_num'],
 				fields = {
 					pick_image: new Upfront.Views.Editor.Field.Button({
-						label: l10n.pick_image,
+						label: l10n.browse,
 						compact: true,
 						classname: 'uf-button-alt uf-bgsettings-image-pick',
 						on_click: function(){

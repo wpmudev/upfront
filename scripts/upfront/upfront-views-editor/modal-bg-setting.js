@@ -83,6 +83,13 @@
 							if ( saved != value ) {
 								me.prompt_responsive_change(this.property_name);
 							}
+							// Resize Select if image.
+							if (value === 'image') {
+								this.$el.addClass('upfront-bg-setting-type-image');
+								this.el.querySelector('div').style.minWidth = '140px'
+							} else {
+								this.$el.removeClass('upfront-bg-setting-type-image');
+							}
 						}
 					})
 				;
