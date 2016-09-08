@@ -140,18 +140,22 @@ jQuery(document).ready(function($) {
 	}
 
 	$win.on('load', floatInit);
+	
+	function hasNavInit() {
+		//Work around for having the region container have a higher z-index if it contains the nav, so that the dropdowns, if overlapping to the following regions should not loose "hover" when the mouse travels down to the next region.
+		$('div.upfront-navigation').each(function() {
+			if($(this).find('ul.sub-menu').length > 0) {
+				$(this).closest('.upfront-output-region-container, .upfront-output-region-sub-container').each(function() {
+					$(this).addClass('upfront-region-container-has-nav');
+				});
 
-	//Work around for having the region container have a higher z-index if it contains the nav, so that the dropdowns, if overlapping to the following regions should not loose "hover" when the mouse travels down to the next region.
-	$('div.upfront-navigation').each(function() {
-		if($(this).find('ul.sub-menu').length > 0) {
-			$(this).closest('.upfront-output-region-container, .upfront-output-region-sub-container').each(function() {
-				$(this).addClass('upfront-region-container-has-nav');
-			});
-
-			//Make sure parent wrapper have higher z-index
-			$(this).closest('.upfront-output-module').css({'z-index': '9999', position: 'relative'});
-		}
-	});
+				//Make sure parent wrapper have higher z-index
+				$(this).closest('.upfront-output-module').css({'z-index': '9999', position: 'relative'});
+			}
+		});
+	}
+	
+	hasNavInit();
 
 	$('body').on('touchstart click', '.burger_nav_close, .burger_overlay', null, function() {
 		$(this).closest('.upfront-navigation').find('div.responsive_nav_toggler').trigger('click');
@@ -520,6 +524,7 @@ jQuery(document).ready(function($) {
 		TOGGLING BREAKPOINT MENU
 	**/
 	$(document).on('upfront-breakpoint-change', function(e, breakpoint) {
+		hasNavInit();
 		toggle_breakpoint_menu(breakpoint);
 	});
 	function toggle_breakpoint_menu(breakpoint) {
