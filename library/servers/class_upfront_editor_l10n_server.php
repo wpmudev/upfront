@@ -627,6 +627,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'overlay_bg' => __('Overlay BG', 'upfront'),
 				'active_area_bg' => __('Active Area BG', 'upfront'),
 				'image_position' => __('Image Position', 'upfront'),
+				'image_size' => __('Image Size', 'upfront'),
 				'bg_color' => __('Background Color', 'upfront'),
                 'bg_color_short' => __('BG Color', 'upfront'),
                 'browse' => __('Browse...', 'upfront'),

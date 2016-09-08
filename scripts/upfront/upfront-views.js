@@ -184,6 +184,7 @@ define([
 				var is_layout = ( this instanceof Layout ),
 					repeat = this.model.get_breakpoint_property_value('background_repeat', true),
 					position = this.model.get_breakpoint_property_value('background_position', true),
+					size = this.model.get_breakpoint_property_value('background_size', true),
 					style = this.model.get_breakpoint_property_value('background_style', true)
 				;
 				if ( data.image ){
@@ -207,7 +208,7 @@ define([
 						});
 					} else {
 						$type.css({
-							backgroundSize: "auto auto",
+							backgroundSize: size,
 							backgroundRepeat: repeat,
 							backgroundPosition: position
 						});

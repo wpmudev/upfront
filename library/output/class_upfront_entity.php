@@ -126,6 +126,7 @@ abstract class Upfront_Entity {
 		$background_repeat = $this->_get_breakpoint_property('background_repeat', $breakpoint_id);
 		$background_fill = $this->_get_breakpoint_property('background_fill', $breakpoint_id);
 		$background_position = $this->_get_breakpoint_property('background_position', $breakpoint_id);
+		$background_size = $this->_get_breakpoint_property('background_size', $breakpoint_id);
 		$background_style = $this->_get_breakpoint_property('background_style', $breakpoint_id);
 		$background_image = preg_replace('/^https?:/', '', $background_image);
 		if (!$lazy_loading) {
@@ -136,7 +137,7 @@ abstract class Upfront_Entity {
 			$css[] = 'background-repeat: no-repeat';
 			$css[] = 'background-position: 50% 50%';
 		} else {
-			$css[] = 'background-size: auto auto';
+			$css[] = "background-size: $background_size";
 			$css[] = 'background-repeat: ' . $background_repeat;
 			$css[] = 'background-position: ' . $background_position;
 		}

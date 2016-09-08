@@ -16,12 +16,22 @@
 
 #region-settings-sidebar .upfront-inline-modal-content {
 	padding: 0;
+	background: #f7fbff;
 }
 
 #region-settings-sidebar .upfront-region-modal-bg {
 	background: #3d5266;
 	width: 260px;
 	margin-top: 46px;
+}
+
+.upfront-bg-setting-type > div:first-of-type {
+	height: 11px;
+}
+
+.upfront-bg-setting-type .upfront-bg-setting-label {
+	float: left;
+	margin: 0 10px 3px 0;
 }
 
 /* Fix bug where if opacity is set on upfront-region-container-bg, controls become unaccessible (or even invisible) */
@@ -1160,7 +1170,7 @@ a.upfront-region-name-edit-trigger:hover {
 .upfront-region-bg-setting-region-style-container .upfront-field-label, .upfront-region-bg-setting-auto-resize span {
 	color: #96acc1;
 	font-weight: 300;
-	margin-bottom: 5px;
+	margin-bottom: 8px;
 }
 .upfront-region-bg-setting-region-style-container .upfront-field-label:after, .upfront-region-bg-setting-auto-resize span:after {
 	content: ':';

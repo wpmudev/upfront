@@ -5,10 +5,16 @@
 	font-size: 14px;
 	line-height: 20px;
 	font-weight: normal;
-	margin-bottom: 13px;
+	margin-bottom: 0;
+}
+.uf-bgsettings-image-size label.upfront-field-label.upfront-field-label-block {
+	margin-bottom: 10px;
 }
 .upfront-bg-setting-tab-primary .upfront-field-wrap {
 	margin: 0;
+}
+.upfront-bg-setting-type .upfront-field-wrap {
+	margin: 3px 0 0;
 }
 .uf-bgsettings-color-pick {
 }
@@ -20,13 +26,27 @@
   	border: 1px solid rgb(163, 191, 217);
   	border-radius: 3px;
 }
+
 .upfront-bg-setting-type-image {
 	max-width: 140px;
 }
 
+.upfront-bg-setting-tab.upfront-bg-setting-tab-image {
+	background: #f7fbff;
+}
+
+.upfront-bg-setting-tab-image .upfront-field-label-block:after {
+}
+
+.upfront-bg-setting-tab-image .upfront-bg-setting-tab-primary {
+	float: none;
+	padding: 0 16px;
+	background: none;
+}
+
 .upfront-bg-setting-tab-primary .uf-bgsettings-image-pick {
 	position: absolute;
-	top: 150px;
+	top: 138px;
 	right: 15px;
 }
 .upfront-settings_panel .uf-bgsettings-image-pick {
@@ -34,33 +54,44 @@
 	margin: -34px 0 0;
 }
 .uf-bgsettings-image-pick .upfront-field-button {
-	height: 24px;
+	height: 26px;
 	padding: 0 10px;
 }
 .uf-bgsettings-imageitem .uf-bgsettings-image-tile {
 	clear: both;
 	padding: 5px 0 0;
 }
+.uf-bgsettings-item.uf-bgsettings-imageitem {
+	position: relative;
+}
 .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y {
-	float: left;
-	width: 38%;
+	padding: 0 16px;
+	margin: 0;
+	width: 155px;
 }
 .uf-bgsettings-imageitem .uf-bgsettings-image-pos-x {
 	clear: both;
 	width: 34%;
-	margin: 0 5px 0 10px;
+	margin: 0 5px 20px 25px;
 }
 .upfront-settings_panel  .uf-bgsettings-image-pos-x {
 	width: 40%;
 }
- .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num {
-	margin: -90px 0 5px 30px;
+.uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num {
+	position: absolute;
+	top: 17px;
+	left: 40px;
 }
 .uf-bgsettings-imageitem .uf-bgsettings-image-pos-x-num {
-	margin: 0 0 0 30px;
+	position: absolute;
+	top: 60px;
+	left: 40px;
 }
 .uf-bgsettings-imageitem .upfront-field-slider-value {
 	display: none;
+}
+.upfront-settings-item-content .upfront-field-wrap-slider label:after {
+	content: none;
 }
 .uf-bgsettings-imageitem .uf-bgsettings-image-default {
 	float: left;
@@ -74,11 +105,44 @@
 }
 .uf-bgsettings-image-color {
 	float: right;
-	width: 62%;
+	width: 28%;
+	position: absolute;
+	top: -49px;
+	right: 16px;
+}
+.upfront-bg-setting-tab-image .uf-bgsettings-item .upfront-field-wrap .upfront-field-label-block,
+.uf-bgsettings-image-color label {
+	color: #96acc1;
+	font-size: 11px;
+	font-family: verdana, sans-serif;
+	padding: 0;
+}
+
+.upfront-bg-setting-type .upfront-bg-setting-label:after,
+.uf-bgsettings-image-size label.upfront-field-label:after,
+.uf-bgsettings-image-pos-y label.upfront-field-label-block:after,
+.uf-bgsettings-image-style > label:after {
+	content: ':';
+}
+.upfront-field-wrap.uf-bgsettings-image-color .upfront-field-label-block {
+	color: #96acc1;
+	font-size: 10px;
+	font-family: verdana, sans-serif;
+	margin-left: 3px;
+	padding: 0;
+	float: right;
+	line-height: 24px;
 }
 .upfront-settings_panel .uf-bgsettings-image-color {
 	width: 35%;
 	margin-top: -63px;
+}
+.upfront-field-wrap.upfront-field-wrap-number.uf-bgsettings-image-size {
+	position: absolute;
+	top: 0;
+	right: 16px;
+	margin: 0;
+	margin-bottom: 9px;
 }
 .uf-bgsettings-map-location {
 	float: left;
@@ -208,11 +272,12 @@
 .background-type-field .upfront-field-select, 
 .background-image-field .upfront-field-select {
 	max-width: 140px;
+	margin-top: 3px;
 }
 
 .upfront-bg-setting-type {
 	width: 100%;
-	padding: 16px;
+	padding: 10px 16px;
 	background: #f7fbff;
 }
 .upfront-bg-setting-tab-color {
@@ -238,11 +303,14 @@ span.upfront-settings-item-title:after {
 }
 
 .upfront-bg-setting-tab-primary {
-	width: 62%;
+	width: 66%;
 	float: right;
 }
 .upfront-bg-setting-tab-color .upfront-bg-setting-tab-primary {
 	float: none;
+}
+.upfront-bg-setting-tab-color div.upfront-bg-setting-tab-primary .upfront-field-wrap .upfront-field-label-block {
+	line-height: 25px;
 }
 .uf-bgsettings-color-pick label.upfront-field-label.upfront-field-label-block {
 	float: right;
@@ -268,13 +336,16 @@ span.upfront-settings-item-title:after {
 	margin: 0 0 10px;
 }
 
-.upfront-bg-setting-label {
-	color: #7d99b3;
-	font-size: 10px;
+.upfront-bg-setting-label,
+div.upfront-bg-setting-tab-primary .upfront-field-wrap .upfront-field-label-block {
+	color: #96acc1;
+	font-size: 11px;
+	font-family: verdana, sans-serif;
+	margin: 0;
+	padding: 0;
 	line-height: 10px;
 }
 .upfront-bg-setting-label:after {
-	content: ':';
 }
 .upfront-bg-setting-label-alt {
 	color: #2f475d;

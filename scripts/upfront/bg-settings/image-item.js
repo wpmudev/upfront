@@ -20,7 +20,7 @@ define([
 					step: 1
 				},
 				tile_fields = ['bg_tile'],
-				fixed_fields = ['bg_color', 'bg_position_x', 'bg_position_y', 'bg_position_x_num', 'bg_position_y_num'],
+				fixed_fields = ['bg_color', 'bg_position_x', 'bg_position_y', 'bg_position_x_num', 'bg_position_y_num', 'bg_size'],
 				fields = {
 					pick_image: new Upfront.Views.Editor.Field.Button({
 						label: l10n.browse,
@@ -214,7 +214,31 @@ define([
 						rendered: function (){
 							this.$el.addClass('uf-bgsettings-image-pos-x-num');
 						}
-					}, pos_option))
+					}, pos_option)),
+					bg_size: new Upfront.Views.Editor.Field.Number(_.extend({
+						model: this.model,
+						property: 'background_size_percent',
+						label: l10n.image_size,
+						label_style: 'block',
+						use_breakpoint_property: true,
+						suffix: '%',
+						change: function () {
+							var value = this.get_value();
+							me._bg_size = value;
+							// Value separate from 'background_size' without percent suffix for populating input.
+							this.model.set_breakpoint_property(this.property_name, value);
+							me.update_image();
+						},
+						rendered: function (){
+							this.$el.addClass('uf-bgsettings-image-size');
+						}
+					}, {
+							default_value: 100,
+							min: 0,
+							max: 1000,
+							step: 1
+						}
+					))
 				};
 			this.$el.addClass('uf-bgsettings-item uf-bgsettings-imageitem');
 			options.fields = _.map(fields, function(field){ return field; });
@@ -226,6 +250,8 @@ define([
 				;
 				me._bg_style = fields.bg_style.get_value();
 				me._bg_tile = fields.bg_tile.get_value();
+				me._bg_size = fields.bg_size.get_value();
+				fields.bg_size.trigger('changed');
 				me._bg_position_y = fields.bg_position_y.get_value();
 				fields.bg_position_y.trigger('changed');
 				me._bg_position_x = fields.bg_position_x.get_value();
@@ -251,13 +277,14 @@ define([
 				is_repeat_y = _.contains(tile, 'y'),
 				is_repeat_x = _.contains(tile, 'x'),
 				pos_y = this._bg_position_y,
-				pos_x = this._bg_position_x
+				pos_x = this._bg_position_x,
+				bg_size = this._bg_size
 			;
 			if ( style == 'full' ) {
 				this.model.set_breakpoint_property('background_style', 'full');
 			}
 			else {
-				if ( style == 'tile' ){
+				if ( style == 'tile' ) {
 					this.model.set_breakpoint_property('background_style', 'tile');
 					if ( is_repeat_x && is_repeat_y ) {
 						this.model.set_breakpoint_property('background_repeat', 'repeat');
@@ -272,10 +299,11 @@ define([
 						this.model.set_breakpoint_property('background_repeat', 'no-repeat');
 					}
 				}
-				else if ( style == 'fixed' ){
+				else if ( style == 'fixed' ) {
 					this.model.set_breakpoint_property('background_style', 'fixed');
 					this.model.set_breakpoint_property('background_repeat', 'no-repeat');
 					this.model.set_breakpoint_property('background_position', pos_x + '% ' + pos_y + '%');
+					this.model.set_breakpoint_property('background_size', bg_size + '%');
 				}
 				else {
 					this.model.set_breakpoint_property('background_style', style);
