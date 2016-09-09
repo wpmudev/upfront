@@ -441,7 +441,7 @@
 						default_value: '',
 						layout: 'horizontal-inline',
 						values: [
-							{ label: l10n.sticky_region, value: '1' }
+							{ label: l10n.sticky_region + ':', value: '1' }
 						],
 						change: function () {
 							var value = this.get_value();
@@ -455,6 +455,7 @@
 				// Show the sticky option if there's no sticky region yet AND the region is <= 300px height
 				if ( ( !has_sticky && this.for_view.$el.height() <= 300 ) || this.model.get('sticky') ) {
 					region_sticky.render();
+					region_sticky.$el.find('label').append('<span class="upfront-bg-setting-sticky-toggle"></span>');
 					$region_sticky.append(region_sticky.$el);
 				}
 				else {
@@ -465,12 +466,13 @@
 			render_padding_settings: function ($content) {
 				var $template = $(region_edit_panel_tpl),
 					tpl = _.template($template.find('#upfront-region-bg-setting-padding').html()),
-					bg_padding_type = new Fields.Radios({
+					bg_padding_type = new Fields.Checkboxes({
 						model: this.model,
 						use_breakpoint_property: true,
 						property: 'bg_padding_type',
 						label: '',
-						values: [{ label: l10n.varied_padding, value: 'varied' }, { label: l10n.equal_padding, value: 'equal' }],
+						values: [{ label: ' ', value: 'varied' }, { label: l10n.equal_padding, value: 'equal' }],
+						multiple: false,
 						default_value: this.model.get_breakpoint_property_value('bg_padding_type') || 'varied',
 						change: function () {
 							this.model.set_breakpoint_property('bg_padding_type', this.get_value());
