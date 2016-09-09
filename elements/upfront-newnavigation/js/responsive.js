@@ -519,7 +519,39 @@ jQuery(document).ready(function($) {
 	$(document).on('changed_breakpoint', function(e) {
 		roll_responsive_nav( e.selector, e.width);
 	});
+	
+	/**
+		TOGGLING BREAKPOINT MENU
+	**/
 	$(document).on('upfront-breakpoint-change', function(e, breakpoint) {
 		hasNavInit();
+		toggle_breakpoint_menu(breakpoint);
 	});
+	function toggle_breakpoint_menu(breakpoint) {
+		breakpoint = breakpoint || 'desktop';
+		$('.upfront-output-object.upfront-output-unewnavigation').each(function(){
+			var $this = $(this),
+				$target = get_target_breakpoint_menu($this, breakpoint)
+			;
+			if ( $target.length ) {
+				$this.find('.upfront-breakpoint-navigation').hide();
+				$target.show();
+			}
+		});
+	}
+	// proper fallback to higher menu if target breakpoint menu not set
+	function get_target_breakpoint_menu(parent, breakpoint) {
+		var $target = parent.find('.upfront-'+ breakpoint +'-breakpoint-navigation');
+		if ( breakpoint == 'mobile' ) {
+			// fallback to tablet menu
+			if ( $target.length == 0 ) $target = parent.find('.upfront-tablet-breakpoint-navigation');
+			// fallback to desktop menu
+			if ( $target.length == 0 ) $target = parent.find('.upfront-desktop-breakpoint-navigation');
+		} else if ( breakpoint == 'tablet' ) {
+			// fallback to desktop menu
+			if ( $target.length == 0 ) $target = parent.find('.upfront-desktop-breakpoint-navigation');
+		} 
+		return $target;
+	}
+	toggle_breakpoint_menu(window.upfront_get_breakpoint());
 });

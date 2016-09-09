@@ -441,8 +441,21 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				var id = me.$el.find('div.upfront-object-content > div.existing_menu_list input:checked').val();
 				me.property('menu_id', id, true);
 				me.property('menu_slug', MenuUtil.getMenuSlugById(id));
+				me.save_breakpoint_menu(id);
 			}
+			
 		});
+	},
+	/** 
+		setting default menu for desktop breakpoint
+	**/
+	save_breakpoint_menu: function(menu_id) {
+		var breakpointMenuData = this.model.get_property_value_by_name('breakpoint_menu_id');
+		breakpointMenuData = ( breakpointMenuData ) ? breakpointMenuData : {};
+		breakpointMenuData['desktop'] = {
+			menu_id: menu_id.toString()
+		};
+		this.property('breakpoint_menu_id', breakpointMenuData, true);
 	},
 	create_new_menu: function(MenuName) {
 		var me = this;
@@ -451,6 +464,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			.success(function (ret) {
 				me.property('menu_slug', ret.data.slug, true);
 				me.property('menu_id', ret.data.term_id);
+				me.save_breakpoint_menu(ret.data.term_id);
 				Upfront.Events.trigger("menu_element:menu_created", ret.data);
 			})
 			.error(function (ret) {
@@ -474,8 +488,32 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		var menu_id = this.model.get_property_value_by_name('menu_id'),
 			me = this
+			currentBreakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active(),
+			breakpointMenuData = this.model.get_property_value_by_name('breakpoint_menu_id')
 		;
 		var menu_slug =  this.model.get_property_value_by_name('menu_slug');
+		
+		// overwriting menu to use breakpoint menu but only if element settings is not activated
+		// so that we can still change the menu on element settings
+		if ( $('#element-settings-sidebar input[name="menu_id"]').length == 0 ) {
+			if ( menu_id && typeof currentBreakpoint.id !== 'undefined' ) {
+				// filtering breakpoint menu ids 
+				var breakpoint_menu_ids = [];
+				for ( key in breakpointMenuData ) {
+					breakpoint_menu_ids[key] = breakpointMenuData[key].menu_id;
+				}
+				// proper fallback for breakpoint menu
+				var breakpoint_menu_id = breakpoint_menu_ids[currentBreakpoint.id];
+				if ( currentBreakpoint.id == 'mobile' ) {
+					menu_id = breakpoint_menu_id || breakpoint_menu_ids['tablet'] || breakpoint_menu_ids['desktop'] || menu_id;
+				} else if ( currentBreakpoint.id == 'tablet' ) {
+					menu_id = breakpoint_menu_id || breakpoint_menu_ids['desktop'] || menu_id;
+				} else {
+					menu_id = breakpoint_menu_id || menu_id;
+				}
+				me.property('menu_id', menu_id, true);
+			}
+		}
 
 		properties = this.get_preset_properties();
 

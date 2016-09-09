@@ -661,7 +661,7 @@ define([
 			// Show full image if we are in mobile mode
 			if (this.mobileMode) {
 				this.$('.uimage').addClass('uimage-mobile-mode');
-				this.setMobileMode();
+				this.once('update_position', this.setMobileMode); // Run setMobileMode after positioning finished
 			}
 
 			this.setStuckToTop();
@@ -792,7 +792,9 @@ define([
 		},
 
 		setMobileMode: function(){
-			var props = this.extract_properties();
+			var props = this.extract_properties(),
+				row = this.model.get_breakpoint_property_value('row', false)
+			;
 			this.mobileMode = true;
 			this.$el
 				.find('.uimage-resize-hint').hide().end()
@@ -808,6 +810,12 @@ define([
 					})
 					.attr('src', this.property('src'))
 			;
+			if ( false === row ) { // No row defined in this element breakpoint, remove defined height
+				this.$el.find('> .upfront-object').css('min-height', '');
+				if ( this.parent_module_view ) {
+					this.parent_module_view.$el.find('> .upfront-module').css('min-height', '');
+				}
+			}
 		},
 
 		unsetMobileMode: function(){
