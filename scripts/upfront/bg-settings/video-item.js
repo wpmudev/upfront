@@ -14,7 +14,7 @@ define([
 		initialize: function (options) {
 			var me = this,
 				fields = {
-										video: new Upfront.Views.Editor.Field.Text({
+					video: new Upfront.Views.Editor.Field.Text({
 						model: this.model,
 						label: l10n.video_url + ':',
 						property: 'background_video',

@@ -194,6 +194,8 @@
 							$region_name.find('.upfront-region-bg-setting-name-wrap').show();
 							$region_auto.show();
 							$region_name.find('.upfront-region-bg-setting-name-edit').hide();
+							// Make panels editable.
+							me.toggle_editable_region_panels(true);
 							if ( this.model.get('scope') == 'global' ) {
 								make_global.$el.hide();
 								if ( !localize_region._no_display )
@@ -248,6 +250,8 @@
 					e.preventDefault();
 					$region_name.find('.upfront-region-bg-setting-name-wrap').hide();
 					$region_auto.hide();
+					// Make panels un-editable.
+					me.toggle_editable_region_panels(false);
 					$region_name.find('.upfront-region-bg-setting-name-edit').show();
 					if ( me.model.get('scope') != 'global' )
 						region_name.get_field().prop('disabled', false).trigger('focus').select();
@@ -266,6 +270,16 @@
 				}
 				else {
 					$region_auto.hide();
+				}
+			},
+
+			toggle_editable_region_panels: function(make_editable) {
+				if (make_editable) {
+					// Make content editable.
+					return $('.upfront-bg-setting-type, .upfront-region-bg-setting-region-style-container, .upfront-region-bg-setting-footer, .upfront-bg-setting-tab').css({ pointerEvents: "auto", opacity: 1});
+				} else {
+					// Make content un-editable.
+					return $('.upfront-bg-setting-type, .upfront-region-bg-setting-region-style-container, .upfront-region-bg-setting-footer, .upfront-bg-setting-tab').css({ pointerEvents: "none", opacity: 0.5});
 				}
 			},
 
@@ -473,7 +487,7 @@
 						label: '',
 						values: [{ label: ' ', value: 'varied' }, { label: l10n.equal_padding, value: 'equal' }],
 						multiple: false,
-						default_value: this.model.get_breakpoint_property_value('bg_padding_type') || 'varied',
+						default_value: this.model.get_breakpoint_property_value('bg_padding_type') || 'equal',
 						change: function () {
 							this.model.set_breakpoint_property('bg_padding_type', this.get_value());
 						},
