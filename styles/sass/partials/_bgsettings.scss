@@ -96,6 +96,40 @@ div.upfront-bg-setting-tab-primary .uf-bgsettings-image-style .upfront-field-lab
 	top: 60px;
 	left: 40px;
 }
+
+.upfront-bg-setting-tab-slider {
+	padding: 0 16px 10px;
+	overflow: auto;
+}
+
+.upfront-region-modal-bg .upfront-bg-setting-tab-slider .upfront-settings-item-title, .upfront-bg-setting-tab-slider .upfront-settings-item-title:after {
+	background: none;
+	border: none;
+}
+
+.uf-bgsettings-slider-slidesitem .upfront-settings-item-title span {
+	margin: 0;
+	padding: 0;
+	background: transparent;
+}
+
+.upfront-bg-setting-tab-slider .upfront-bg-setting-tab-primary {
+	float: none;
+	width: auto;
+}
+
+div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-block {
+	margin-bottom: 3px;
+	color: #96acc1;
+	font-size: 11px;
+	font-family: verdana, sans-serif;
+	padding: 0;
+}
+
+.uf-bgsettings-slideritem label span {
+	font-weight: normal;
+}
+
 .uf-bgsettings-imageitem .upfront-field-slider-value {
 	display: none;
 }
@@ -206,29 +240,36 @@ div.upfront-bg-setting-tab-primary .uf-bgsettings-image-style .upfront-field-lab
 	float: right;
 	max-width: 57%;
 }
+
 .upfront-settings_panel .uf-bgsettings-map-style,
 .upfront-settings_panel .uf-bgsettings-map-controls {
 	float: none;
 	margin-right: 0;
 	width: auto;
 }
+
 .uf-bgsettings-mapitem .uf-bgsettings-map-custom-map-code {
 	margin-top: 0;
 }
+
 .uf-bgsettings-map-custom-map-code,
 .uf-bgsettings-map-show-marker {
 	clear: both;
 	float: left;
 	width: 100%;
 }
+
 .uf-bgsettings-slideritem .uf-bgsettings-slider-rotate {
 	display: inline-block;
+	margin-right: 0;
 }
+
 .uf-bgsettings-slideritem .uf-bgsettings-slider-time {
 	display: inline-block;
 	position: relative;
 	top: -2px;
 	margin-left: 5px;
+	margin-top: 0;
 }
 
 .upfront-bg-slider-slides {
@@ -285,22 +326,24 @@ div.upfront-bg-setting-tab-primary .uf-bgsettings-image-style .upfront-field-lab
 	-o-transform: translateY(-50%);
 	transform: translateY(-50%);
 }
+
 .upfront-bg-slider-delete-image {
 	position: absolute;
 	top: -5px;
 	right: -5px;
 	width: 16px;
 	height: 16px;
-	line-height: 16px;
+	line-height: 15px;
 	border-radius: 8px;
-	background: #233d54;
+	background: #dd4547;
 	color: #fff;
-	font-size: 10px;
+	font-size: 13px;
 	font-family: Verdana, sans-serif;
 	text-align: center;
 	cursor: pointer;
 	display: none;
 }
+
 .upfront-bg-slider-image:hover .upfront-bg-slider-delete-image {
 	display: block;
 }

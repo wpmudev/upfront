@@ -20,7 +20,7 @@ define([
 				fields = {
 					transition: new Upfront.Views.Editor.Field.Select({
 						model: this.model,
-						label: l10n.slider_transition,
+						label: l10n.slider_transition + ':',
 						property: 'background_slider_transition',
 						use_breakpoint_property: true,
 						default_value: 'crossfade',
@@ -67,15 +67,15 @@ define([
 							this.$el.addClass('uf-bgsettings-slider-time');
 						}
 					}),
-					control: new Upfront.Views.Editor.Field.Radios({
+					control: new Upfront.Views.Editor.Field.Select({
 						model: this.model,
 						property: 'background_slider_control',
 						use_breakpoint_property: true,
 						default_value: 'always',
-						layout: 'horizontal-inline',
+						label: l10n.show_ctrl + ':',
 						values: [
-							{ label: l10n.always_show_ctrl, value: 'always' },
-							{ label: l10n.show_ctrl_hover, value: 'hover' }
+							{ label: l10n.always, value: 'always' },
+							{ label: l10n.on_hover, value: 'hover' }
 						],
 						change: set_value,
 						rendered: function (){
@@ -190,7 +190,7 @@ define([
 		update_slider_slides: function () {
 			var me = this,
 				slide_images = me.model.get_breakpoint_property_value('background_slider_images', true),
-				$add = $('<div class="upfront-bg-slider-add-image upfront-icon upfront-icon-region-add-slide">' + l10n.add_slide + '</div>'),
+				$add = $('<div class="upfront-bg-slider-add-image upfront-icon upfront-icon-region-add-slide"></div>'),
 				$wrap = this.$el.find('.upfront-settings-item-content');
 			$wrap.html('');
 			
