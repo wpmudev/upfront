@@ -1088,8 +1088,25 @@
 	display: block;
 	float: left;
 	margin-right: 5px;
-	border: 1px solid #A2BFDA;
-	box-shadow: inset 0 0 0 1px #fff;
+	background-image: url("../img/uf-ui-sprite.svg?v=20131127");
+	background-repeat: no-repeat;
+}
+.upfront-region-type-icon.upfront-region-type-icon-color {
+	background-position: -40px -508px
+	/*border: 1px solid #A2BFDA;
+	 *box-shadow: inset 0 0 0 1px #fff;*/
+}
+.upfront-region-type-icon.upfront-region-type-icon-image {
+	background-position: -163px -508px;
+}
+.upfront-region-type-icon.upfront-region-type-icon-video {
+	background-position: -411px -508px;
+}
+.upfront-region-type-icon.upfront-region-type-icon-map {
+	background-position: -162px -542px;
+}
+.upfront-region-type-icon.upfront-region-type-icon-slider {
+	background-position: -39px -541px;
 }
 
 .upfront-region-bg-setting-name-wrap {

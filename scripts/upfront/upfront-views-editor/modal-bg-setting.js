@@ -77,8 +77,13 @@
 								value = this.get_value()
 							;
 							this.model.set_breakpoint_property(this.property_name, value);
+							// Update which panel to display.
 							$content.find('.upfront-bg-setting-tab').not('.upfront-bg-setting-tab-'+value).hide();
 							$content.find('.upfront-bg-setting-tab-'+value).show();
+							// Replace icon with new type's icon.
+							var former_class = $content.find('.upfront-region-type-icon')[0].classList[1];
+							$content.find('.upfront-region-type-icon').addClass('upfront-region-type-icon-'+value).removeClass(former_class);
+
 							me.render_modal_tab(value, $content.find('.upfront-bg-setting-tab-'+value), $content);
 							if ( saved != value ) {
 								me.prompt_responsive_change(this.property_name);

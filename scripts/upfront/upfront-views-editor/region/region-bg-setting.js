@@ -13,7 +13,7 @@
 		return ModalBgSetting.extend({
 			events: {
 				// Cancel button:
-				//"click .upfront-inline-modal-cancel": "on_click",
+				"click .upfront-inline-modal-cancel": "on_click_cancel",
 				"click .upfront-inline-modal-content": "on_click_content",
 				"click .uf-settings-panel__title": "toggle_advanced_settings",
 				"click .upfront-inline-modal-save": "on_click_save"
@@ -686,9 +686,13 @@
 				} else {
 					this.$el.find('.advanced-settings').addClass('uf-settings-panel--expanded')
 						.find('.uf-settings-panel__body').show();
-			}
-
-		},
+				}
+			},
+			
+			// Close Region Settings Sidebar.
+			on_click_cancel: function() {
+				this.close(false);
+			},
 
 			adjust_grid_padding: function() {
 				var togglegrid = new Upfront.Views.Editor.Command_ToggleGrid();

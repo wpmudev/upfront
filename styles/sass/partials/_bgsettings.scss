@@ -33,7 +33,7 @@
 
 .upfront-bg-setting-tab.upfront-bg-setting-tab-image {
 	background: #f7fbff;
-	padding: 0 0 16px;
+	padding: 0;
 }
 
 .upfront-bg-setting-tab-image .upfront-field-label-block:after {
@@ -496,6 +496,29 @@ div.upfront-bg-setting-tab-primary .upfront-field-wrap .upfront-field-label-bloc
 	font-size: 11px;
 }
 
+/* Cancel Button */
+#region-settings-sidebar .upfront-inline-modal-cancel {
+	position: absolute;
+	bottom: -48px;
+	left: 16px;
+	color: #fff;
+	font-weight: 100;
+	font-size: 14px;
+}
+
+#region-settings-sidebar .upfront-inline-modal-cancel:before {
+	display: inline-block;
+	content: '';
+	width: 20px;
+	height: 15px;
+	background-image: url("../img/uf-ui-sprite.svg");
+	background-position: -735px -236px;
+	opacity: 0.7;
+	position: relative;
+	top: 3px;
+}
+
+/* Save Button */
 #region-settings-sidebar .upfront-inline-modal-save, #region-settings-sidebar .upfront-inline-modal-save:hover {
 	position: absolute;
 	bottom: -56px;
