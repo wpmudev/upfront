@@ -341,9 +341,7 @@ PostContentEditor.prototype = {
 						}
 
 					});
-
 					content = $.trim( this.editor.getValue() );
-
 					content = content.replace(/(\n)*?<br\s*\/?>\n*/g, "<br/>");
 					if ( isExcerpt ) {
 						this.parent.currentData.excerpt = content;
@@ -958,7 +956,8 @@ PostContentEditor.prototype = {
 
 	bindBarEvents: function(){
 		var me = this,
-			events = ['cancel', 'publish', 'draft', 'trash', 'auto-draft']
+			events = ['cancel', 'publish', 'draft', 'trash', 'auto-draft'],
+			editor = Upfront.Views.PostDataEditor.contentEditor
 		;
 
 		_.each(events, function(e){
@@ -967,34 +966,16 @@ PostContentEditor.prototype = {
 					view.trigger(e);
 				});
 				var results = {};
-				if(e=='publish' || e=='draft' || e=='auto-draft'){
-					results.title = me.currentData.title;
-					results.content = me.currentData.content;
-					results.excerpt = me.currentData.excerpt;
-					results.author = me.currentData.author;
-					results.date = me.currentData.date;
-					results.inserts = me.currentData.inserts;
-					// if(me.currentContent){
-						// var editor = $(me.currentContent).data('ueditor');
-//
-                        // // cleanup inserts markup
-                        // me.$el.find(".upfront-inline-panel").remove();
-                        // me.$el.find(".ueditor-insert-remove").remove();
-//
-						// results.content = $.trim( editor.getValue() );
-						// results.content = results.content.replace(/(\n)*?<br\s*\/?>\n*/g, "<br/>");
-						// results.inserts = editor.getInsertsData();
-						// results.author = me.postAuthor;
-					// }
-					// if(me.selectedDate)
-						// results.date = me.selectedDate;
-
-					if(me.postStatus)
-						results.status = me.postStatus;
-					if(me.postVisibility)
-						results.visibility = me.postVisibility;
-					if(me.postPassword)
-						results.pass = me.postPassword;
+				if( (e=='publish' || e=='draft' || e=='auto-draft') && editor ){
+					results.title = editor.currentData.title;
+					results.content = editor.currentData.content;
+					results.excerpt = editor.currentData.excerpt;
+					results.author = editor.currentData.author;
+					results.date = editor.currentData.date;
+					results.inserts = editor.currentData.inserts;
+					if(editor.postStatus) results.status = editor.postStatus;
+					if(editor.postVisibility) results.visibility = editor.postVisibility;
+					if(editor.postPassword) results.pass = editor.postPassword;
 				}
 				me.trigger(e, results);
 			});
