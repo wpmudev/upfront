@@ -57,8 +57,9 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 			foreach ($activeBreakpoints as $name => $point) {
 				$data = $point->get_data();
 
-				if(!array_key_exists($name, $breakpoint_data['preset']) && $higher_name != '')
+				if(!array_key_exists($name, $breakpoint_data['preset']) && '' != $higher_name && !empty($breakpoint_data['preset'][$higher_name])) {
 					$breakpoint_data['preset'][$name] = $breakpoint_data['preset'][$higher_name];
+				}
 
 				$higher_name = $name;
 
