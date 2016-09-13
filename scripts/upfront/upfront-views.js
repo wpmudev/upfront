@@ -197,7 +197,7 @@ define([
 							overflowBottom: 0
 						});
 					}
-					if ( style == 'full' || style == 'parallax' ){
+					if ( style == 'full') {
 						var size = this._get_full_size_el((is_layout ? $(window) : $type), data.ratio, false);
 						$type.data('bg-position-y', size[3]);
 						$type.data('bg-position-x', size[2]);
@@ -550,7 +550,7 @@ define([
 						if ( $overlay.data('uparallax') ) $overlay.uparallax('refresh');
 					}, 2000);
 				}
-				if ( style == 'full' || style == 'parallax' ) {
+				if ( style == 'full') {
 					var size = this._get_full_size_el($type, data.ratio, false);
 					$type.data('bg-position-y', size[3]);
 					$type.data('bg-position-x', size[2]);
