@@ -1,7 +1,7 @@
 <?php
 
 class Upfront_Layout extends Upfront_JsonModel {
-	
+
 	public static $version = '1.0.0';
 
 	protected static $cascade;
@@ -70,6 +70,33 @@ class Upfront_Layout extends Upfront_JsonModel {
 		}
 
 		return $layout;
+	}
+
+	public static function from_cpt ($data, $storage_key = '') {
+		// We need to apply global regions that saved in db
+		$regions = array();
+		$regions_added = array();
+		if ( isset($data['regions']) ) {
+			foreach ( $data['regions'] as $region ) {
+				if ( isset( $region['scope'] ) && $region['scope'] != 'local' ){
+					$applied_scope = self::_apply_scoped_region($region);
+					foreach ( $applied_scope as $applied_data ) {
+						if ( !in_array($applied_data['name'], $regions_added) ){
+							$regions[] = $applied_data;
+							$regions_added[] = $applied_data['name'];
+						}
+					}
+					continue;
+				}
+				$regions[] = $region;
+			}
+		}
+
+		// Make sure we replace properties with global ones
+		$data["properties"] = self::get_layout_properties();
+		$data['regions'] = $regions;
+
+		return self::from_php($data, $storage_key);
 	}
 
 	public static function from_php ($data, $storage_key = '') {
@@ -342,8 +369,13 @@ class Upfront_Layout extends Upfront_JsonModel {
 					'type' => 'single',
 				)
 			),
+			'single' => array(
+				'layout' => array(
+					'type' => 'single'
+				)
+			),
 		);
-		
+
 		return apply_filters('upfront-core-default_layouts', $layouts);
 	}
 
@@ -533,7 +565,28 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 	public function save () {
 		$key = $this->get_id();
+		$this->save_global_region();
+		if ( $this->_data['properties'] ) {
+			update_option(self::_get_layout_properties_id(), json_encode($this->_data['properties']));
+		}
 
+		// Delete custom post layout for current post when Save for all posts clicked
+		if(!empty($this->_data['layout']) && $this->_data['preferred_layout'] == "single-post") {
+			if(!empty($this->_data['layout']['specificity'])) {
+				$stylesheet = get_stylesheet();
+				$specific_layout = $stylesheet . "-". $this->_data['layout']['specificity'];
+
+				// Delete option
+				delete_option( $specific_layout );
+			}
+		}
+
+		update_option($key, $this->to_json());
+
+		return $key;
+	}
+
+	public function save_global_region () {
 		$scopes = array();
 		foreach ( $this->_data['regions'] as $region ){
 			$region['scope'] = !empty($region['scope']) ? $region['scope'] : '';
@@ -569,24 +622,6 @@ class Upfront_Layout extends Upfront_JsonModel {
 			}
 			update_option(self::_get_scope_id($scope), json_encode($scope_data));
 		}
-		if ( $this->_data['properties'] ) {
-			update_option(self::_get_layout_properties_id(), json_encode($this->_data['properties']));
-		}
-
-		// Delete custom post layout for current post when Save for all posts clicked
-		if(!empty($this->_data['layout']) && $this->_data['preferred_layout'] == "single-post") {
-			if(!empty($this->_data['layout']['specificity'])) {
-				$stylesheet = get_stylesheet();
-				$specific_layout = $stylesheet . "-". $this->_data['layout']['specificity'];
-				
-				// Delete option
-				delete_option( $specific_layout );
-			}
-		}
-
-		update_option($key, $this->to_json());
-
-		return $key;
 	}
 
 	public function delete ($all = false) {
@@ -631,7 +666,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 		return $this->set_element_by_path($current['path'], $data);
 	}
-	
+
 	/**
 	 * The path is an array with the position of the element inside the data array (region, module, object)
 	 */
@@ -681,7 +716,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 		$i = 0;
 		$found = false;
-		while(!$found && $i < sizeof($data[$next])){
+		if (!empty($data[$next])) while(!$found && $i < sizeof($data[$next])){
 			$found = self::get_element($id, $data[$next][$i], $next);
 			if($found)
 				array_unshift($found['path'], $i);
@@ -703,7 +738,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		}
 		return $value;
 	}
-	
+
 	/**
 	 * Backward compatibility conversion
 	 */
@@ -730,7 +765,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 				set_transient($transient_key, $this->to_json(), 120); // set to 120 second for now
 			}
 		}
-		
+
 	}
 
 }

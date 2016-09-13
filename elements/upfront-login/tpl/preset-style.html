@@ -1,1 +1,580 @@
+/* Form Wrapper */
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .upfront_login-form,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .upfront_login-form {
+	<?php if(!empty($properties['form_wrapper_background'])) { ?>
+	background: <?php echo $properties['form_wrapper_background'] ?>;
+	<?php } ?>
+	<?php if(!empty($properties['form_wrapper_use_border'])) { ?>
+			<?php if(!empty($properties['form_wrapper_border_width']) && !empty($properties['form_wrapper_border_type']) && !empty($properties['form_wrapper_border_color'])) { ?>border: <?php echo $properties['form_wrapper_border_width'] ?>px <?php echo $properties['form_wrapper_border_type'] ?> <?php echo $properties['form_wrapper_border_color'] ?>;<?php } ?>
+	<?php } else { ?>
+			border: none;
+	<?php } ?>
+	<?php if(!empty($properties['form_wrapper_use_radius'])) { ?>
+			border-radius: <?php echo $properties['form_wrapper_border_radius1'] ? $properties['form_wrapper_border_radius1'] : 0 ?>px <?php echo $properties['form_wrapper_border_radius2'] ? $properties['form_wrapper_border_radius2'] : 0 ?>px <?php echo $properties['form_wrapper_border_radius4'] ? $properties['form_wrapper_border_radius4'] : 0 ?>px <?php echo $properties['form_wrapper_border_radius3'] ? $properties['form_wrapper_border_radius3'] : 0 ?>px;
+	<?php } else { ?>
+			border-radius: 0px;
+	<?php } ?>
+	overflow: hidden;
+}
+#page .<?php echo $properties['id'] ?> .upfront_login.upfront_login-hover:hover .upfront_login-form:before,
+#page .<?php echo $properties['id'] ?> .upfront_login.upfront_login-click.active .upfront_login-form:before {
+	<?php if(!empty($properties['form_wrapper_background'])) { ?>
+	background: <?php echo $properties['form_wrapper_background'] ?>;
+	<?php } ?>
+	<?php if(!empty($properties['form_wrapper_use_border'])) { ?>
+			<?php if(!empty($properties['form_wrapper_border_width']) && !empty($properties['form_wrapper_border_type']) && !empty($properties['form_wrapper_border_color'])) { ?>border-top: <?php echo $properties['form_wrapper_border_width'] ?>px <?php echo $properties['form_wrapper_border_type'] ?> <?php echo $properties['form_wrapper_border_color'] ?>;
+			border-left: <?php echo $properties['form_wrapper_border_width'] ?>px <?php echo $properties['form_wrapper_border_type'] ?> <?php echo $properties['form_wrapper_border_color'] ?>;
+			<?php } ?>
+	<?php } else { ?>
+			border: none;
+	<?php } ?>
+}
+
+/* Field Labels */
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form p:not(.login-submit) input.upfront-input-labels {
+	<?php if(!empty($properties['field_labels_use_typography'])) { ?>
+		<?php if(!empty($properties['field_labels_color'])) { ?>-webkit-text-fill-color: <?php echo $properties['field_labels_color']  ?>; <?php } ?>
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form label,
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form p:not(.login-submit) input.upfront-input-labels,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form label {
+	<?php if(!empty($properties['field_labels_use_typography'])) { ?>
+		<?php if(!empty($properties['field_labels_color'])) { ?>color: <?php echo $properties['field_labels_color']  ?>; <?php } ?>
+		<?php if(!empty($properties['field_labels_font_face'])) { ?>font-family: <?php echo $properties['field_labels_font_face']  ?>; <?php } ?>
+		<?php if(!empty($properties['field_labels_font_size'])) { ?>font-size: <?php echo $properties['field_labels_font_size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['field_labels_weight'])) { ?>font-weight: <?php echo $properties['field_labels_weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['field_labels_style'])) { ?>font-style: <?php echo $properties['field_labels_style']  ?>;<?php } ?>
+		<?php if(!empty($properties['field_labels_line_height'])) { ?>line-height: <?php echo $properties['field_labels_line_height']  ?>;<?php } ?>
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form p:not(.login-submit) input.upfront-input-labels:hover {
+	<?php if(!empty($properties['hover_field_labels_use_typography']) && $properties['hover_field_labels_use_typography'] == 'yes') { ?>
+		<?php if(!empty($properties['hover_field_labels_color'])) { ?>-webkit-text-fill-color: <?php echo $properties['hover_field_labels_color']  ?>; <?php } ?>
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form label:hover,
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form p:not(.login-submit) input.upfront-input-labels:hover,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form label:hover {
+	<?php if(!empty($properties['hover_field_labels_use_typography']) && $properties['hover_field_labels_use_typography'] == 'yes') { ?>
+		<?php if(!empty($properties['hover_field_labels_color'])) { ?>color: <?php echo $properties['hover_field_labels_color']  ?>; <?php } ?>
+		<?php if(!empty($properties['hover_field_labels_font_face'])) { ?>font-family: <?php echo $properties['hover_field_labels_font_face']  ?>; <?php } ?>
+		<?php if(!empty($properties['hover_field_labels_font_size'])) { ?>font-size: <?php echo $properties['hover_field_labels_font_size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['hover_field_labels_weight'])) { ?>font-weight: <?php echo $properties['hover_field_labels_weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['hover_field_labels_style'])) { ?>font-style: <?php echo $properties['hover_field_labels_style']  ?>;<?php } ?>
+		<?php if(!empty($properties['hover_field_labels_line_height'])) { ?>line-height: <?php echo $properties['hover_field_labels_line_height']  ?>;<?php } ?>
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form p:not(.login-submit) input.upfront-input-labels:focus {
+	<?php if(!empty($properties['focus_field_labels_use_typography']) && $properties['focus_field_labels_use_typography'] == 'yes') { ?>
+		<?php if(!empty($properties['focus_field_labels_color'])) { ?>-webkit-text-fill-color: <?php echo $properties['focus_field_labels_color']  ?>; <?php } ?>
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form label:focus,
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form p:not(.login-submit) input.upfront-input-labels:focus,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form label:focus {
+	<?php if(!empty($properties['focus_field_labels_use_typography']) && $properties['focus_field_labels_use_typography'] == 'yes') { ?>
+		<?php if(!empty($properties['focus_field_labels_color'])) { ?>color: <?php echo $properties['focus_field_labels_color']  ?>; <?php } ?>
+		<?php if(!empty($properties['focus_field_labels_font_face'])) { ?>font-family: <?php echo $properties['focus_field_labels_font_face']  ?>; <?php } ?>
+		<?php if(!empty($properties['focus_field_labels_font_size'])) { ?>font-size: <?php echo $properties['focus_field_labels_font_size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['focus_field_labels_weight'])) { ?>font-weight: <?php echo $properties['focus_field_labels_weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['focus_field_labels_style'])) { ?>font-style: <?php echo $properties['focus_field_labels_style']  ?>;<?php } ?>
+		<?php if(!empty($properties['focus_field_labels_line_height'])) { ?>line-height: <?php echo $properties['focus_field_labels_line_height']  ?>;<?php } ?>
+	<?php } ?>
+}
+
+/* Input Fields */
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="text"]:not(.upfront-input-labels),
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="password"],
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form input[type="text"],
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form input[type="password"] {
+	<?php if(!empty($properties['input_fields_background'])) { ?>
+	background: <?php echo $properties['input_fields_background'] ?>;
+	-webkit-box-shadow: 0 0 0px 1000px <?php echo $properties['input_fields_background'] ?> inset;
+	<?php } ?>
+	<?php if(!empty($properties['input_fields_use_typography'])) { ?>
+		<?php if(!empty($properties['input_fields_color'])) { ?>color: <?php echo $properties['input_fields_color']  ?>; <?php } ?>
+		<?php if(!empty($properties['input_fields_color'])) { ?>-webkit-text-fill-color: <?php echo $properties['input_fields_color']  ?>; <?php } ?>
+		<?php if(!empty($properties['input_fields_font_face'])) { ?>font-family: <?php echo $properties['input_fields_font_face']  ?>; <?php } ?>
+		<?php if(!empty($properties['input_fields_font_size'])) { ?>font-size: <?php echo $properties['input_fields_font_size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['input_fields_weight'])) { ?>font-weight: <?php echo $properties['input_fields_weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['input_fields_style'])) { ?>font-style: <?php echo $properties['input_fields_style']  ?>;<?php } ?>
+		<?php if(!empty($properties['input_fields_line_height'])) { ?>line-height: <?php echo $properties['input_fields_line_height']  ?>;<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['input_fields_use_border'])) { ?>
+			<?php if(!empty($properties['input_fields_border_width']) && !empty($properties['input_fields_border_type']) && !empty($properties['input_fields_border_color'])) { ?>border: <?php echo $properties['input_fields_border_width'] ?>px <?php echo $properties['input_fields_border_type'] ?> <?php echo $properties['input_fields_border_color'] ?>;<?php } ?>
+	<?php } else { ?>
+			border: none;
+	<?php } ?>
+	<?php if(!empty($properties['input_fields_use_radius'])) { ?>
+			border-radius: <?php echo $properties['input_fields_border_radius1'] ? $properties['input_fields_border_radius1'] : 0 ?>px <?php echo $properties['input_fields_border_radius2'] ? $properties['input_fields_border_radius2'] : 0 ?>px <?php echo $properties['input_fields_border_radius4'] ? $properties['input_fields_border_radius4'] : 0 ?>px <?php echo $properties['input_fields_border_radius3'] ? $properties['input_fields_border_radius3'] : 0 ?>px;
+	<?php } else { ?>
+			border-radius: 0px;
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="text"]:hover:not(.upfront-input-labels),
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="password"]:hover,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form input[type="text"]:hover,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form input[type="password"]:hover {
+	<?php if(!empty($properties['hover_use_input_fields_background']) && $properties['hover_use_input_fields_background'] == 'yes') { ?>
+			<?php if(!empty($properties['hover_input_fields_background'])) { ?>
+			background: <?php echo $properties['hover_input_fields_background'] ?>;
+			-webkit-box-shadow: 0 0 0px 1000px <?php echo $properties['hover_input_fields_background'] ?> inset;
+			<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['hover_input_fields_use_typography']) && $properties['hover_input_fields_use_typography'] == 'yes') { ?>
+		<?php if(!empty($properties['hover_input_fields_color'])) { ?>color: <?php echo $properties['hover_input_fields_color']  ?>; <?php } ?>
+		<?php if(!empty($properties['hover_input_fields_color'])) { ?>-webkit-text-fill-color: <?php echo $properties['hover_input_fields_color']  ?>; <?php } ?>
+		<?php if(!empty($properties['hover_input_fields_font_face'])) { ?>font-family: <?php echo $properties['hover_input_fields_font_face']  ?>; <?php } ?>
+		<?php if(!empty($properties['hover_input_fields_font_size'])) { ?>font-size: <?php echo $properties['hover_input_fields_font_size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['hover_input_fields_weight'])) { ?>font-weight: <?php echo $properties['hover_input_fields_weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['hover_input_fields_style'])) { ?>font-style: <?php echo $properties['hover_input_fields_style']  ?>;<?php } ?>
+		<?php if(!empty($properties['hover_input_fields_line_height'])) { ?>line-height: <?php echo $properties['hover_input_fields_line_height']  ?>;<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['hover_input_fields_use_border']) && $properties['hover_input_fields_use_border'] == 'yes') { ?>
+			<?php if(!empty($properties['hover_input_fields_border_width']) && !empty($properties['hover_input_fields_border_type']) && !empty($properties['hover_input_fields_border_color'])) { ?>border: <?php echo $properties['hover_input_fields_border_width'] ?>px <?php echo $properties['hover_input_fields_border_type'] ?> <?php echo $properties['hover_input_fields_border_color'] ?>;<?php } ?>
+	<?php } else { ?>
+			<?php if(!empty($properties['input_fields_use_border'])) { ?>
+					<?php if(!empty($properties['input_fields_border_width']) && !empty($properties['input_fields_border_type']) && !empty($properties['input_fields_border_color'])) { ?>border: <?php echo $properties['input_fields_border_width'] ?>px <?php echo $properties['input_fields_border_type'] ?> <?php echo $properties['input_fields_border_color'] ?>;<?php } ?>
+			<?php } else { ?>
+					border: none;
+			<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['hover_input_fields_use_radius']) && $properties['hover_input_fields_use_radius'] == 'yes') { ?>
+			border-radius: <?php echo $properties['hover_input_fields_border_radius1'] ? $properties['hover_input_fields_border_radius1'] : 0 ?>px <?php echo $properties['hover_input_fields_border_radius2'] ? $properties['hover_input_fields_border_radius2'] : 0 ?>px <?php echo $properties['hover_input_fields_border_radius4'] ? $properties['hover_input_fields_border_radius4'] : 0 ?>px <?php echo $properties['hover_input_fields_border_radius3'] ? $properties['hover_input_fields_border_radius3'] : 0 ?>px;
+	<?php } else { ?>
+			<?php if(!empty($properties['input_fields_use_radius'])) { ?>
+					border-radius: <?php echo $properties['input_fields_border_radius1'] ? $properties['input_fields_border_radius1'] : 0 ?>px <?php echo $properties['input_fields_border_radius2'] ? $properties['input_fields_border_radius2'] : 0 ?>px <?php echo $properties['input_fields_border_radius4'] ? $properties['input_fields_border_radius4'] : 0 ?>px <?php echo $properties['input_fields_border_radius3'] ? $properties['input_fields_border_radius3'] : 0 ?>px;
+			<?php } else { ?>
+					border-radius: 0px;
+			<?php } ?>
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="text"]:focus:not(.upfront-input-labels),
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="password"]:focus,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form input[type="text"]:focus,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form input[type="password"]:focus {
+	<?php if(!empty($properties['focus_use_input_fields_background']) && $properties['focus_use_input_fields_background'] == 'yes') { ?>
+			<?php if(!empty($properties['focus_input_fields_background'])) { ?>
+			background: <?php echo $properties['focus_input_fields_background'] ?>;
+			-webkit-box-shadow: 0 0 0px 1000px <?php echo $properties['focus_input_fields_background'] ?> inset;
+			<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['focus_input_fields_use_typography']) && $properties['focus_input_fields_use_typography'] == 'yes') { ?>
+		<?php if(!empty($properties['focus_input_fields_color'])) { ?>color: <?php echo $properties['focus_input_fields_color']  ?>; <?php } ?>
+		<?php if(!empty($properties['focus_input_fields_color'])) { ?>-webkit-text-fill-color: <?php echo $properties['focus_input_fields_color']  ?>; <?php } ?>
+		<?php if(!empty($properties['focus_input_fields_font_face'])) { ?>font-family: <?php echo $properties['focus_input_fields_font_face']  ?>; <?php } ?>
+		<?php if(!empty($properties['focus_input_fields_font_size'])) { ?>font-size: <?php echo $properties['focus_input_fields_font_size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['focus_input_fields_weight'])) { ?>font-weight: <?php echo $properties['focus_input_fields_weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['focus_input_fields_style'])) { ?>font-style: <?php echo $properties['focus_input_fields_style']  ?>;<?php } ?>
+		<?php if(!empty($properties['focus_input_fields_line_height'])) { ?>line-height: <?php echo $properties['focus_input_fields_line_height']  ?>;<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['focus_input_fields_use_border']) && $properties['focus_input_fields_use_border'] == 'yes') { ?>
+			<?php if(!empty($properties['focus_input_fields_border_width']) && !empty($properties['focus_input_fields_border_type']) && !empty($properties['focus_input_fields_border_color'])) { ?>border: <?php echo $properties['focus_input_fields_border_width'] ?>px <?php echo $properties['focus_input_fields_border_type'] ?> <?php echo $properties['focus_input_fields_border_color'] ?>;<?php } ?>
+	<?php } else { ?>
+			<?php if(!empty($properties['input_fields_use_border'])) { ?>
+					<?php if(!empty($properties['input_fields_border_width']) && !empty($properties['input_fields_border_type']) && !empty($properties['input_fields_border_color'])) { ?>border: <?php echo $properties['input_fields_border_width'] ?>px <?php echo $properties['input_fields_border_type'] ?> <?php echo $properties['input_fields_border_color'] ?>;<?php } ?>
+			<?php } else { ?>
+					border: none;
+			<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['focus_input_fields_use_radius']) && $properties['focus_input_fields_use_radius'] == 'yes') { ?>
+			border-radius: <?php echo $properties['focus_input_fields_border_radius1'] ? $properties['focus_input_fields_border_radius1'] : 0 ?>px <?php echo $properties['focus_input_fields_border_radius2'] ? $properties['focus_input_fields_border_radius2'] : 0 ?>px <?php echo $properties['focus_input_fields_border_radius4'] ? $properties['focus_input_fields_border_radius4'] : 0 ?>px <?php echo $properties['focus_input_fields_border_radius3'] ? $properties['focus_input_fields_border_radius3'] : 0 ?>px;
+	<?php } else { ?>
+			<?php if(!empty($properties['input_fields_use_radius'])) { ?>
+					border-radius: <?php echo $properties['input_fields_border_radius1'] ? $properties['input_fields_border_radius1'] : 0 ?>px <?php echo $properties['input_fields_border_radius2'] ? $properties['input_fields_border_radius2'] : 0 ?>px <?php echo $properties['input_fields_border_radius4'] ? $properties['input_fields_border_radius4'] : 0 ?>px <?php echo $properties['input_fields_border_radius3'] ? $properties['input_fields_border_radius3'] : 0 ?>px;
+			<?php } else { ?>
+					border-radius: 0px;
+			<?php } ?>
+	<?php } ?>
+}
+
+/* Button */
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form#loginform p.login-submit input.upfront-input-labels {
+	<?php if(!empty($properties['button_background'])) { ?>
+	-webkit-box-shadow: 0 0 0px 1000px <?php echo $properties['button_background'] ?> inset;
+	<?php } ?>
+	<?php if(!empty($properties['button_use_typography'])) { ?>
+		<?php if(!empty($properties['button_color'])) { ?>-webkit-text-fill-color: <?php echo $properties['button_color']  ?>; <?php } ?>
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form#loginform p.login-submit input.upfront-input-labels,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form#loginform input[type="submit"] {
+	<?php if(!empty($properties['button_background'])) { ?>
+	background: <?php echo $properties['button_background'] ?>;
+	<?php } ?>
+	<?php if(!empty($properties['button_use_typography'])) { ?>
+		<?php if(!empty($properties['button_color'])) { ?>color: <?php echo $properties['button_color']  ?>; <?php } ?>
+		<?php if(!empty($properties['button_font_face'])) { ?>font-family: <?php echo $properties['button_font_face']  ?>; <?php } ?>
+		<?php if(!empty($properties['button_font_size'])) { ?>font-size: <?php echo $properties['button_font_size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['button_weight'])) { ?>font-weight: <?php echo $properties['button_weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['button_style'])) { ?>font-style: <?php echo $properties['button_style']  ?>;<?php } ?>
+		<?php if(!empty($properties['button_line_height'])) { ?>line-height: <?php echo $properties['button_line_height']  ?>;<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['button_use_border'])) { ?>
+			<?php if(!empty($properties['button_border_width']) && !empty($properties['button_border_type']) && !empty($properties['button_border_color'])) { ?>border: <?php echo $properties['button_border_width'] ?>px <?php echo $properties['button_border_type'] ?> <?php echo $properties['button_border_color'] ?>;<?php } ?>
+	<?php } else { ?>
+			border: none;
+	<?php } ?>
+	<?php if(!empty($properties['button_use_radius'])) { ?>
+			border-radius: <?php echo $properties['button_border_radius1'] ? $properties['button_border_radius1'] : 0 ?>px <?php echo $properties['button_border_radius2'] ? $properties['button_border_radius2'] : 0 ?>px <?php echo $properties['button_border_radius4'] ? $properties['button_border_radius4'] : 0 ?>px <?php echo $properties['button_border_radius3'] ? $properties['button_border_radius3'] : 0 ?>px;
+	<?php } else { ?>
+			border-radius: 0px;
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form#loginform p.login-submit input.upfront-input-labels:hover {
+	<?php if(!empty($properties['hover_use_button_background']) && $properties['hover_use_button_background'] == 'yes') { ?>
+			<?php if(!empty($properties['hover_button_background'])) { ?>
+			-webkit-box-shadow: 0 0 0px 1000px <?php echo $properties['hover_button_background'] ?> inset;
+			<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['hover_button_use_typography']) && $properties['hover_button_use_typography'] == 'yes') { ?>
+		<?php if(!empty($properties['hover_button_color'])) { ?>-webkit-text-fill-color: <?php echo $properties['hover_button_color']  ?>; <?php } ?>
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form#loginform p.login-submit input.upfront-input-labels:hover,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form#loginform input[type="submit"]:hover {
+	<?php if(!empty($properties['hover_use_button_background']) && $properties['hover_use_button_background'] == 'yes') { ?>
+			<?php if(!empty($properties['hover_button_background'])) { ?>
+			background: <?php echo $properties['hover_button_background'] ?>;
+			<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['hover_button_use_typography']) && $properties['hover_button_use_typography'] == 'yes') { ?>
+		<?php if(!empty($properties['hover_button_color'])) { ?>color: <?php echo $properties['hover_button_color']  ?>; <?php } ?>
+		<?php if(!empty($properties['hover_button_font_face'])) { ?>font-family: <?php echo $properties['hover_button_font_face']  ?>; <?php } ?>
+		<?php if(!empty($properties['hover_button_font_size'])) { ?>font-size: <?php echo $properties['hover_button_font_size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['hover_button_weight'])) { ?>font-weight: <?php echo $properties['hover_button_weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['hover_button_style'])) { ?>font-style: <?php echo $properties['hover_button_style']  ?>;<?php } ?>
+		<?php if(!empty($properties['hover_button_line_height'])) { ?>line-height: <?php echo $properties['hover_button_line_height']  ?>;<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['hover_button_use_border']) && $properties['hover_button_use_border'] == 'yes') { ?>
+			<?php if(!empty($properties['hover_button_border_width']) && !empty($properties['hover_button_border_type']) && !empty($properties['hover_button_border_color'])) { ?>border: <?php echo $properties['hover_button_border_width'] ?>px <?php echo $properties['hover_button_border_type'] ?> <?php echo $properties['hover_button_border_color'] ?>;<?php } ?>
+	<?php } else { ?>
+			<?php if(!empty($properties['button_use_border'])) { ?>
+					<?php if(!empty($properties['button_border_width']) && !empty($properties['button_border_type']) && !empty($properties['button_border_color'])) { ?>border: <?php echo $properties['button_border_width'] ?>px <?php echo $properties['button_border_type'] ?> <?php echo $properties['button_border_color'] ?>;<?php } ?>
+			<?php } else { ?>
+					border: none;
+			<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['hover_button_use_radius']) && $properties['hover_button_use_radius'] == 'yes') { ?>
+			border-radius: <?php echo $properties['hover_button_border_radius1'] ? $properties['hover_button_border_radius1'] : 0 ?>px <?php echo $properties['hover_button_border_radius2'] ? $properties['hover_button_border_radius2'] : 0 ?>px <?php echo $properties['hover_button_border_radius4'] ? $properties['hover_button_border_radius4'] : 0 ?>px <?php echo $properties['hover_button_border_radius3'] ? $properties['hover_button_border_radius3'] : 0 ?>px;
+	<?php } else { ?>
+			<?php if(!empty($properties['button_use_radius'])) { ?>
+					border-radius: <?php echo $properties['button_border_radius1'] ? $properties['button_border_radius1'] : 0 ?>px <?php echo $properties['button_border_radius2'] ? $properties['button_border_radius2'] : 0 ?>px <?php echo $properties['button_border_radius4'] ? $properties['button_border_radius4'] : 0 ?>px <?php echo $properties['button_border_radius3'] ? $properties['button_border_radius3'] : 0 ?>px;
+			<?php } else { ?>
+					border-radius: 0px;
+			<?php } ?>
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form#loginform p.login-submit input.upfront-input-labels:focus {
+	<?php if(!empty($properties['focus_use_button_background']) && $properties['focus_use_button_background'] == 'yes') { ?>
+			<?php if(!empty($properties['focus_button_background'])) { ?>
+			-webkit-box-shadow: 0 0 0px 1000px <?php echo $properties['focus_button_background'] ?> inset;
+			<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['focus_button_use_typography']) && $properties['focus_button_use_typography'] == 'yes') { ?>
+		<?php if(!empty($properties['focus_button_color'])) { ?>-webkit-text-fill-color: <?php echo $properties['focus_button_color']  ?>; <?php } ?>
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form#loginform p.login-submit input.upfront-input-labels:focus,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form#loginform input[type="submit"]:focus {
+	<?php if(!empty($properties['focus_use_button_background']) && $properties['focus_use_button_background'] == 'yes') { ?>
+			<?php if(!empty($properties['focus_button_background'])) { ?>
+			background: <?php echo $properties['focus_button_background'] ?>;
+			<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['focus_button_use_typography']) && $properties['focus_button_use_typography'] == 'yes') { ?>
+		<?php if(!empty($properties['focus_button_color'])) { ?>color: <?php echo $properties['focus_button_color']  ?>; <?php } ?>
+		<?php if(!empty($properties['focus_button_font_face'])) { ?>font-family: <?php echo $properties['focus_button_font_face']  ?>; <?php } ?>
+		<?php if(!empty($properties['focus_button_font_size'])) { ?>font-size: <?php echo $properties['focus_button_font_size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['focus_button_weight'])) { ?>font-weight: <?php echo $properties['focus_button_weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['focus_button_style'])) { ?>font-style: <?php echo $properties['focus_button_style']  ?>;<?php } ?>
+		<?php if(!empty($properties['focus_button_line_height'])) { ?>line-height: <?php echo $properties['focus_button_line_height']  ?>;<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['focus_button_use_border']) && $properties['focus_button_use_border'] == 'yes') { ?>
+			<?php if(!empty($properties['focus_button_border_width']) && !empty($properties['focus_button_border_type']) && !empty($properties['focus_button_border_color'])) { ?>border: <?php echo $properties['focus_button_border_width'] ?>px <?php echo $properties['focus_button_border_type'] ?> <?php echo $properties['focus_button_border_color'] ?>;<?php } ?>
+	<?php } else { ?>
+			<?php if(!empty($properties['button_use_border'])) { ?>
+					<?php if(!empty($properties['button_border_width']) && !empty($properties['button_border_type']) && !empty($properties['button_border_color'])) { ?>border: <?php echo $properties['button_border_width'] ?>px <?php echo $properties['button_border_type'] ?> <?php echo $properties['button_border_color'] ?>;<?php } ?>
+			<?php } else { ?>
+					border: none;
+			<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['focus_button_use_radius']) && $properties['focus_button_use_radius'] == 'yes') { ?>
+			border-radius: <?php echo $properties['focus_button_border_radius1'] ? $properties['focus_button_border_radius1'] : 0 ?>px <?php echo $properties['focus_button_border_radius2'] ? $properties['focus_button_border_radius2'] : 0 ?>px <?php echo $properties['focus_button_border_radius4'] ? $properties['focus_button_border_radius4'] : 0 ?>px <?php echo $properties['focus_button_border_radius3'] ? $properties['focus_button_border_radius3'] : 0 ?>px;
+	<?php } else { ?>
+			<?php if(!empty($properties['button_use_radius'])) { ?>
+					border-radius: <?php echo $properties['button_border_radius1'] ? $properties['button_border_radius1'] : 0 ?>px <?php echo $properties['button_border_radius2'] ? $properties['button_border_radius2'] : 0 ?>px <?php echo $properties['button_border_radius4'] ? $properties['button_border_radius4'] : 0 ?>px <?php echo $properties['button_border_radius3'] ? $properties['button_border_radius3'] : 0 ?>px;
+			<?php } else { ?>
+					border-radius: 0px;
+			<?php } ?>
+	<?php } ?>
+}
+
+/* Lost Password */
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword input.upfront-input-labels.lostpassword-link {
+	<?php if(!empty($properties['lost_password_text_link_color'])) { ?>-webkit-text-fill-color: <?php echo $properties['lost_password_text_link_color']  ?>; <?php } ?>
+}
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .login-lostpassword a {
+	<?php if(!empty($properties['lost_password_text_link_color'])) { ?>color: <?php echo $properties['lost_password_text_link_color']  ?>; <?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword input.upfront-input-labels {
+	<?php if(!empty($properties['lost_password_text_use_typography'])) { ?>
+		<?php if(!empty($properties['lost_password_text_color'])) { ?>-webkit-text-fill-color: <?php echo $properties['lost_password_text_color']  ?>; <?php } ?>
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword input.upfront-input-labels,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .login-lostpassword,
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword {
+	<?php if(!empty($properties['lost_password_text_use_typography'])) { ?>
+		<?php if(!empty($properties['lost_password_text_color'])) { ?>color: <?php echo $properties['lost_password_text_color']  ?>; <?php } ?>
+		<?php if(!empty($properties['lost_password_text_font_face'])) { ?>font-family: <?php echo $properties['lost_password_text_font_face']  ?>; <?php } ?>
+		<?php if(!empty($properties['lost_password_text_font_size'])) { ?>font-size: <?php echo $properties['lost_password_text_font_size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['lost_password_text_weight'])) { ?>font-weight: <?php echo $properties['lost_password_text_weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['lost_password_text_style'])) { ?>font-style: <?php echo $properties['lost_password_text_style']  ?>;<?php } ?>
+		<?php if(!empty($properties['lost_password_text_line_height'])) { ?>line-height: <?php echo $properties['lost_password_text_line_height']  ?>;<?php } ?>
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword input.upfront-input-labels.lostpassword-link:hover {
+	<?php if(!empty($properties['hover_use_lost_password_text_link_color']) && $properties['hover_use_lost_password_text_link_color'] == 'yes') { ?>
+			<?php if(!empty($properties['hover_lost_password_text_link_color'])) { ?>-webkit-text-fill-color: <?php echo $properties['hover_lost_password_text_link_color']  ?>; <?php } ?>
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .login-lostpassword a:hover {
+	<?php if(!empty($properties['hover_use_lost_password_text_link_color']) && $properties['hover_use_lost_password_text_link_color'] == 'yes') { ?>
+			<?php if(!empty($properties['hover_lost_password_text_link_color'])) { ?>color: <?php echo $properties['hover_lost_password_text_link_color']  ?>; <?php } ?>
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword input.upfront-input-labels:hover {
+	<?php if(!empty($properties['hover_lost_password_text_use_typography']) && $properties['hover_lost_password_text_use_typography'] == 'yes') { ?>
+		<?php if(!empty($properties['hover_lost_password_text_color'])) { ?>-webkit-text-fill-color: <?php echo $properties['hover_lost_password_text_color']  ?>; <?php } ?>
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword input.upfront-input-labels:hover,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .login-lostpassword:hover {
+	<?php if(!empty($properties['hover_lost_password_text_use_typography']) && $properties['hover_lost_password_text_use_typography'] == 'yes') { ?>
+		<?php if(!empty($properties['hover_lost_password_text_color'])) { ?>color: <?php echo $properties['hover_lost_password_text_color']  ?>; <?php } ?>
+		<?php if(!empty($properties['hover_lost_password_text_font_face'])) { ?>font-family: <?php echo $properties['hover_lost_password_text_font_face']  ?>; <?php } ?>
+		<?php if(!empty($properties['hover_lost_password_text_font_size'])) { ?>font-size: <?php echo $properties['hover_lost_password_text_font_size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['hover_lost_password_text_weight'])) { ?>font-weight: <?php echo $properties['hover_lost_password_text_weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['hover_lost_password_text_style'])) { ?>font-style: <?php echo $properties['hover_lost_password_text_style']  ?>;<?php } ?>
+		<?php if(!empty($properties['hover_lost_password_text_line_height'])) { ?>line-height: <?php echo $properties['hover_lost_password_text_line_height']  ?>;<?php } ?>
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword input.upfront-input-labels.lostpassword-link:focus {
+	<?php if(!empty($properties['focus_use_lost_password_text_link_color']) && $properties['focus_use_lost_password_text_link_color'] == 'yes') { ?>
+			<?php if(!empty($properties['focus_lost_password_text_link_color'])) { ?>-webkit-text-fill-color: <?php echo $properties['focus_lost_password_text_link_color']  ?>; <?php } ?>
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .login-lostpassword a:focus {
+	<?php if(!empty($properties['focus_use_lost_password_text_link_color']) && $properties['focus_use_lost_password_text_link_color'] == 'yes') { ?>
+			<?php if(!empty($properties['focus_lost_password_text_link_color'])) { ?>color: <?php echo $properties['focus_lost_password_text_link_color']  ?>; <?php } ?>
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword input.upfront-input-labels:focus {
+	<?php if(!empty($properties['focus_lost_password_text_use_typography']) && $properties['focus_lost_password_text_use_typography'] == 'yes') { ?>
+		<?php if(!empty($properties['focus_lost_password_text_color'])) { ?>-webkit-text-fill-color: <?php echo $properties['focus_lost_password_text_color']  ?>; <?php } ?>
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword input.upfront-input-labels:focus,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .login-lostpassword:focus {
+	<?php if(!empty($properties['focus_lost_password_text_use_typography']) && $properties['focus_lost_password_text_use_typography'] == 'yes') { ?>
+		<?php if(!empty($properties['focus_lost_password_text_color'])) { ?>color: <?php echo $properties['focus_lost_password_text_color']  ?>; <?php } ?>
+		<?php if(!empty($properties['focus_lost_password_text_font_face'])) { ?>font-family: <?php echo $properties['focus_lost_password_text_font_face']  ?>; <?php } ?>
+		<?php if(!empty($properties['focus_lost_password_text_font_size'])) { ?>font-size: <?php echo $properties['focus_lost_password_text_font_size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['focus_lost_password_text_weight'])) { ?>font-weight: <?php echo $properties['focus_lost_password_text_weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['focus_lost_password_text_style'])) { ?>font-style: <?php echo $properties['focus_lost_password_text_style']  ?>;<?php } ?>
+		<?php if(!empty($properties['focus_lost_password_text_line_height'])) { ?>line-height: <?php echo $properties['focus_lost_password_text_line_height']  ?>;<?php } ?>
+	<?php } ?>
+}
+
+/* Login Trigger */
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .upfront_login-trigger,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .upfront_login-trigger {
+	<?php if(!empty($properties['login_trigger_button_background'])) { ?>
+	background: <?php echo $properties['login_trigger_button_background'] ?>;
+	<?php } ?>
+	<?php if(!empty($properties['login_trigger_use_typography'])) { ?>
+		<?php if(!empty($properties['login_trigger_color'])) { ?>color: <?php echo $properties['login_trigger_color']  ?>; <?php } ?>
+		<?php if(!empty($properties['login_trigger_font_face'])) { ?>font-family: <?php echo $properties['login_trigger_font_face']  ?>; <?php } ?>
+		<?php if(!empty($properties['login_trigger_font_size'])) { ?>font-size: <?php echo $properties['login_trigger_font_size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['login_trigger_weight'])) { ?>font-weight: <?php echo $properties['login_trigger_weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['login_trigger_style'])) { ?>font-style: <?php echo $properties['login_trigger_style']  ?>;<?php } ?>
+		<?php if(!empty($properties['login_trigger_line_height'])) { ?>line-height: <?php echo $properties['login_trigger_line_height']  ?>;<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['login_trigger_use_border'])) { ?>
+			<?php if(!empty($properties['login_trigger_border_width']) && !empty($properties['login_trigger_border_type']) && !empty($properties['login_trigger_border_color'])) { ?>border: <?php echo $properties['login_trigger_border_width'] ?>px <?php echo $properties['login_trigger_border_type'] ?> <?php echo $properties['login_trigger_border_color'] ?>;<?php } ?>
+	<?php } else { ?>
+			border: none;
+	<?php } ?>
+	<?php if(!empty($properties['login_trigger_use_radius'])) { ?>
+			border-radius: <?php echo $properties['login_trigger_border_radius1'] ? $properties['login_trigger_border_radius1'] : 0 ?>px <?php echo $properties['login_trigger_border_radius2'] ? $properties['login_trigger_border_radius2'] : 0 ?>px <?php echo $properties['login_trigger_border_radius4'] ? $properties['login_trigger_border_radius4'] : 0 ?>px <?php echo $properties['login_trigger_border_radius3'] ? $properties['login_trigger_border_radius3'] : 0 ?>px;
+	<?php } else { ?>
+			border-radius: 0px;
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .upfront_login-trigger:hover,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .upfront_login-trigger:hover {
+	<?php if(!empty($properties['hover_use_login_trigger_button_background']) && $properties['hover_use_login_trigger_button_background'] == 'yes') { ?>
+			<?php if(!empty($properties['hover_login_trigger_button_background'])) { ?>
+			background: <?php echo $properties['hover_login_trigger_button_background'] ?>;
+			<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['hover_login_trigger_use_typography']) && $properties['hover_login_trigger_use_typography'] == 'yes') { ?>
+		<?php if(!empty($properties['hover_login_trigger_color'])) { ?>color: <?php echo $properties['hover_login_trigger_color']  ?>; <?php } ?>
+		<?php if(!empty($properties['hover_login_trigger_font_face'])) { ?>font-family: <?php echo $properties['hover_login_trigger_font_face']  ?>; <?php } ?>
+		<?php if(!empty($properties['hover_login_trigger_font_size'])) { ?>font-size: <?php echo $properties['hover_login_trigger_font_size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['hover_login_trigger_weight'])) { ?>font-weight: <?php echo $properties['hover_login_trigger_weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['hover_login_trigger_style'])) { ?>font-style: <?php echo $properties['hover_login_trigger_style']  ?>;<?php } ?>
+		<?php if(!empty($properties['hover_login_trigger_line_height'])) { ?>line-height: <?php echo $properties['hover_login_trigger_line_height']  ?>;<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['hover_login_trigger_use_border']) && $properties['hover_login_trigger_use_border'] == 'yes') { ?>
+			<?php if(!empty($properties['hover_login_trigger_border_width']) && !empty($properties['hover_login_trigger_border_type']) && !empty($properties['hover_login_trigger_border_color'])) { ?>border: <?php echo $properties['hover_login_trigger_border_width'] ?>px <?php echo $properties['hover_login_trigger_border_type'] ?> <?php echo $properties['hover_login_trigger_border_color'] ?>;<?php } ?>
+	<?php } else { ?>
+			<?php if(!empty($properties['login_trigger_use_border'])) { ?>
+					<?php if(!empty($properties['login_trigger_border_width']) && !empty($properties['login_trigger_border_type']) && !empty($properties['login_trigger_border_color'])) { ?>border: <?php echo $properties['login_trigger_border_width'] ?>px <?php echo $properties['login_trigger_border_type'] ?> <?php echo $properties['login_trigger_border_color'] ?>;<?php } ?>
+			<?php } else { ?>
+					border: none;
+			<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['hover_login_trigger_use_radius']) && $properties['hover_login_trigger_use_radius'] == 'yes') { ?>
+			border-radius: <?php echo $properties['hover_login_trigger_border_radius1'] ? $properties['hover_login_trigger_border_radius1'] : 0 ?>px <?php echo $properties['hover_login_trigger_border_radius2'] ? $properties['hover_login_trigger_border_radius2'] : 0 ?>px <?php echo $properties['hover_login_trigger_border_radius4'] ? $properties['hover_login_trigger_border_radius4'] : 0 ?>px <?php echo $properties['hover_login_trigger_border_radius3'] ? $properties['hover_login_trigger_border_radius3'] : 0 ?>px;
+	<?php } else { ?>
+			<?php if(!empty($properties['login_trigger_use_radius'])) { ?>
+					border-radius: <?php echo $properties['login_trigger_border_radius1'] ? $properties['login_trigger_border_radius1'] : 0 ?>px <?php echo $properties['login_trigger_border_radius2'] ? $properties['login_trigger_border_radius2'] : 0 ?>px <?php echo $properties['login_trigger_border_radius4'] ? $properties['login_trigger_border_radius4'] : 0 ?>px <?php echo $properties['login_trigger_border_radius3'] ? $properties['login_trigger_border_radius3'] : 0 ?>px;
+			<?php } else { ?>
+					border-radius: 0px;
+			<?php } ?>
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .upfront_login-trigger:focus,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .upfront_login-trigger:focus {
+	<?php if(!empty($properties['focus_use_login_trigger_button_background']) && $properties['focus_use_login_trigger_button_background'] == 'yes') { ?>
+			<?php if(!empty($properties['focus_login_trigger_button_background'])) { ?>
+			background: <?php echo $properties['focus_login_trigger_button_background'] ?>;
+			<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['focus_login_trigger_use_typography']) && $properties['focus_login_trigger_use_typography'] == 'yes') { ?>
+		<?php if(!empty($properties['focus_login_trigger_color'])) { ?>color: <?php echo $properties['focus_login_trigger_color']  ?>; <?php } ?>
+		<?php if(!empty($properties['focus_login_trigger_font_face'])) { ?>font-family: <?php echo $properties['focus_login_trigger_font_face']  ?>; <?php } ?>
+		<?php if(!empty($properties['focus_login_trigger_font_size'])) { ?>font-size: <?php echo $properties['focus_login_trigger_font_size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['focus_login_trigger_weight'])) { ?>font-weight: <?php echo $properties['focus_login_trigger_weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['focus_login_trigger_style'])) { ?>font-style: <?php echo $properties['focus_login_trigger_style']  ?>;<?php } ?>
+		<?php if(!empty($properties['focus_login_trigger_line_height'])) { ?>line-height: <?php echo $properties['focus_login_trigger_line_height']  ?>;<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['focus_login_trigger_use_border']) && $properties['focus_login_trigger_use_border'] == 'yes') { ?>
+			<?php if(!empty($properties['focus_login_trigger_border_width']) && !empty($properties['focus_login_trigger_border_type']) && !empty($properties['focus_login_trigger_border_color'])) { ?>border: <?php echo $properties['focus_login_trigger_border_width'] ?>px <?php echo $properties['focus_login_trigger_border_type'] ?> <?php echo $properties['focus_login_trigger_border_color'] ?>;<?php } ?>
+	<?php } else { ?>
+			<?php if(!empty($properties['login_trigger_use_border'])) { ?>
+					<?php if(!empty($properties['login_trigger_border_width']) && !empty($properties['login_trigger_border_type']) && !empty($properties['login_trigger_border_color'])) { ?>border: <?php echo $properties['login_trigger_border_width'] ?>px <?php echo $properties['login_trigger_border_type'] ?> <?php echo $properties['login_trigger_border_color'] ?>;<?php } ?>
+			<?php } else { ?>
+					border: none;
+			<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['focus_login_trigger_use_radius']) && $properties['focus_login_trigger_use_radius'] == 'yes') { ?>
+			border-radius: <?php echo $properties['focus_login_trigger_border_radius1'] ? $properties['focus_login_trigger_border_radius1'] : 0 ?>px <?php echo $properties['focus_login_trigger_border_radius2'] ? $properties['focus_login_trigger_border_radius2'] : 0 ?>px <?php echo $properties['focus_login_trigger_border_radius4'] ? $properties['focus_login_trigger_border_radius4'] : 0 ?>px <?php echo $properties['focus_login_trigger_border_radius3'] ? $properties['focus_login_trigger_border_radius3'] : 0 ?>px;
+	<?php } else { ?>
+			<?php if(!empty($properties['login_trigger_use_radius'])) { ?>
+					border-radius: <?php echo $properties['login_trigger_border_radius1'] ? $properties['login_trigger_border_radius1'] : 0 ?>px <?php echo $properties['login_trigger_border_radius2'] ? $properties['login_trigger_border_radius2'] : 0 ?>px <?php echo $properties['login_trigger_border_radius4'] ? $properties['login_trigger_border_radius4'] : 0 ?>px <?php echo $properties['login_trigger_border_radius3'] ? $properties['login_trigger_border_radius3'] : 0 ?>px;
+			<?php } else { ?>
+					border-radius: 0px;
+			<?php } ?>
+	<?php } ?>
+}
+
+/* Logout Link */
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element a.logout_link,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element a.logout_link {
+	<?php if(!empty($properties['logout_link_button_background'])) { ?>
+	background: <?php echo $properties['logout_link_button_background'] ?>;
+	<?php } ?>
+	<?php if(!empty($properties['logout_link_use_typography'])) { ?>
+		<?php if(!empty($properties['logout_link_color'])) { ?>color: <?php echo $properties['logout_link_color']  ?>; <?php } ?>
+		<?php if(!empty($properties['logout_link_font_face'])) { ?>font-family: <?php echo $properties['logout_link_font_face']  ?>; <?php } ?>
+		<?php if(!empty($properties['logout_link_font_size'])) { ?>font-size: <?php echo $properties['logout_link_font_size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['logout_link_weight'])) { ?>font-weight: <?php echo $properties['logout_link_weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['logout_link_style'])) { ?>font-style: <?php echo $properties['logout_link_style']  ?>;<?php } ?>
+		<?php if(!empty($properties['logout_link_line_height'])) { ?>line-height: <?php echo $properties['logout_link_line_height']  ?>;<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['logout_link_use_border'])) { ?>
+			<?php if(!empty($properties['logout_link_border_width']) && !empty($properties['logout_link_border_type']) && !empty($properties['logout_link_border_color'])) { ?>border: <?php echo $properties['logout_link_border_width'] ?>px <?php echo $properties['logout_link_border_type'] ?> <?php echo $properties['logout_link_border_color'] ?>;<?php } ?>
+	<?php } else { ?>
+			border: none;
+	<?php } ?>
+	<?php if(!empty($properties['logout_link_use_radius'])) { ?>
+			border-radius: <?php echo $properties['logout_link_border_radius1'] ? $properties['logout_link_border_radius1'] : 0 ?>px <?php echo $properties['logout_link_border_radius2'] ? $properties['logout_link_border_radius2'] : 0 ?>px <?php echo $properties['logout_link_border_radius4'] ? $properties['logout_link_border_radius4'] : 0 ?>px <?php echo $properties['logout_link_border_radius3'] ? $properties['logout_link_border_radius3'] : 0 ?>px;
+	<?php } else { ?>
+			border-radius: 0px;
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element a.logout_link:hover,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element a.logout_link:hover {
+	<?php if(!empty($properties['hover_use_logout_link_button_background']) && $properties['hover_use_logout_link_button_background'] == 'yes') { ?>
+			<?php if(!empty($properties['hover_logout_link_button_background'])) { ?>
+			background: <?php echo $properties['hover_logout_link_button_background'] ?>;
+			<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['hover_logout_link_use_typography']) && $properties['hover_logout_link_use_typography'] == 'yes') { ?>
+		<?php if(!empty($properties['hover_logout_link_color'])) { ?>color: <?php echo $properties['hover_logout_link_color']  ?>; <?php } ?>
+		<?php if(!empty($properties['hover_logout_link_font_face'])) { ?>font-family: <?php echo $properties['hover_logout_link_font_face']  ?>; <?php } ?>
+		<?php if(!empty($properties['hover_logout_link_font_size'])) { ?>font-size: <?php echo $properties['hover_logout_link_font_size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['hover_logout_link_weight'])) { ?>font-weight: <?php echo $properties['hover_logout_link_weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['hover_logout_link_style'])) { ?>font-style: <?php echo $properties['hover_logout_link_style']  ?>;<?php } ?>
+		<?php if(!empty($properties['hover_logout_link_line_height'])) { ?>line-height: <?php echo $properties['hover_logout_link_line_height']  ?>;<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['hover_logout_link_use_border']) && $properties['hover_logout_link_use_border'] == 'yes') { ?>
+			<?php if(!empty($properties['hover_logout_link_border_width']) && !empty($properties['hover_logout_link_border_type']) && !empty($properties['hover_logout_link_border_color'])) { ?>border: <?php echo $properties['hover_logout_link_border_width'] ?>px <?php echo $properties['hover_logout_link_border_type'] ?> <?php echo $properties['hover_logout_link_border_color'] ?>;<?php } ?>
+	<?php } else { ?>
+			<?php if(!empty($properties['logout_link_use_border'])) { ?>
+					<?php if(!empty($properties['logout_link_border_width']) && !empty($properties['logout_link_border_type']) && !empty($properties['logout_link_border_color'])) { ?>border: <?php echo $properties['logout_link_border_width'] ?>px <?php echo $properties['logout_link_border_type'] ?> <?php echo $properties['logout_link_border_color'] ?>;<?php } ?>
+			<?php } else { ?>
+					border: none;
+			<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['hover_logout_link_use_radius']) && $properties['hover_logout_link_use_radius'] == 'yes') { ?>
+			border-radius: <?php echo $properties['hover_logout_link_border_radius1'] ? $properties['hover_logout_link_border_radius1'] : 0 ?>px <?php echo $properties['hover_logout_link_border_radius2'] ? $properties['hover_logout_link_border_radius2'] : 0 ?>px <?php echo $properties['hover_logout_link_border_radius4'] ? $properties['hover_logout_link_border_radius4'] : 0 ?>px <?php echo $properties['hover_logout_link_border_radius3'] ? $properties['hover_logout_link_border_radius3'] : 0 ?>px;
+	<?php } else { ?>
+			<?php if(!empty($properties['logout_link_use_radius'])) { ?>
+					border-radius: <?php echo $properties['logout_link_border_radius1'] ? $properties['logout_link_border_radius1'] : 0 ?>px <?php echo $properties['logout_link_border_radius2'] ? $properties['logout_link_border_radius2'] : 0 ?>px <?php echo $properties['logout_link_border_radius4'] ? $properties['logout_link_border_radius4'] : 0 ?>px <?php echo $properties['logout_link_border_radius3'] ? $properties['logout_link_border_radius3'] : 0 ?>px;
+			<?php } else { ?>
+					border-radius: 0px;
+			<?php } ?>
+	<?php } ?>
+}
+#page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element a.logout_link:focus,
+#page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element a.logout_link:focus {
+	<?php if(!empty($properties['focus_use_logout_link_button_background']) && $properties['focus_use_logout_link_button_background'] == 'yes') { ?>
+			<?php if(!empty($properties['focus_logout_link_button_background'])) { ?>
+			background: <?php echo $properties['focus_logout_link_button_background'] ?>;
+			<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['focus_logout_link_use_typography']) && $properties['focus_logout_link_use_typography'] == 'yes') { ?>
+		<?php if(!empty($properties['focus_logout_link_color'])) { ?>color: <?php echo $properties['focus_logout_link_color']  ?>; <?php } ?>
+		<?php if(!empty($properties['focus_logout_link_font_face'])) { ?>font-family: <?php echo $properties['focus_logout_link_font_face']  ?>; <?php } ?>
+		<?php if(!empty($properties['focus_logout_link_font_size'])) { ?>font-size: <?php echo $properties['focus_logout_link_font_size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['focus_logout_link_weight'])) { ?>font-weight: <?php echo $properties['focus_logout_link_weight']  ?>;<?php } ?>
+		<?php if(!empty($properties['focus_logout_link_style'])) { ?>font-style: <?php echo $properties['focus_logout_link_style']  ?>;<?php } ?>
+		<?php if(!empty($properties['focus_logout_link_line_height'])) { ?>line-height: <?php echo $properties['focus_logout_link_line_height']  ?>;<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['focus_logout_link_use_border']) && $properties['focus_logout_link_use_border'] == 'yes') { ?>
+			<?php if(!empty($properties['focus_logout_link_border_width']) && !empty($properties['focus_logout_link_border_type']) && !empty($properties['focus_logout_link_border_color'])) { ?>border: <?php echo $properties['focus_logout_link_border_width'] ?>px <?php echo $properties['focus_logout_link_border_type'] ?> <?php echo $properties['focus_logout_link_border_color'] ?>;<?php } ?>
+	<?php } else { ?>
+			<?php if(!empty($properties['logout_link_use_border'])) { ?>
+					<?php if(!empty($properties['logout_link_border_width']) && !empty($properties['logout_link_border_type']) && !empty($properties['logout_link_border_color'])) { ?>border: <?php echo $properties['logout_link_border_width'] ?>px <?php echo $properties['logout_link_border_type'] ?> <?php echo $properties['logout_link_border_color'] ?>;<?php } ?>
+			<?php } else { ?>
+					border: none;
+			<?php } ?>
+	<?php } ?>
+	<?php if(!empty($properties['focus_logout_link_use_radius']) && $properties['focus_logout_link_use_radius'] == 'yes') { ?>
+			border-radius: <?php echo $properties['focus_logout_link_border_radius1'] ? $properties['focus_logout_link_border_radius1'] : 0 ?>px <?php echo $properties['focus_logout_link_border_radius2'] ? $properties['focus_logout_link_border_radius2'] : 0 ?>px <?php echo $properties['focus_logout_link_border_radius4'] ? $properties['focus_logout_link_border_radius4'] : 0 ?>px <?php echo $properties['focus_logout_link_border_radius3'] ? $properties['focus_logout_link_border_radius3'] : 0 ?>px;
+	<?php } else { ?>
+			<?php if(!empty($properties['logout_link_use_radius'])) { ?>
+					border-radius: <?php echo $properties['logout_link_border_radius1'] ? $properties['logout_link_border_radius1'] : 0 ?>px <?php echo $properties['logout_link_border_radius2'] ? $properties['logout_link_border_radius2'] : 0 ?>px <?php echo $properties['logout_link_border_radius4'] ? $properties['logout_link_border_radius4'] : 0 ?>px <?php echo $properties['logout_link_border_radius3'] ? $properties['logout_link_border_radius3'] : 0 ?>px;
+			<?php } else { ?>
+					border-radius: 0px;
+			<?php } ?>
+	<?php } ?>
+}
+
+/* Custom CSS */
 <?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>

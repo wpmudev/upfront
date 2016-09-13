@@ -19,6 +19,8 @@
 			<?php if($primaryStyle != 'notext'){ ?>
 				data-caption-selector="#uslider-<?php echo $element_id ?> .caption-<?php echo $slides[$i]['id'] ?>"
 			<?php } ?>
+			data-style="<?php echo $slides[$i]['style'] ?>"
+			data-breakpoint='<?php echo $slides[$i]['breakpoint_map'] ?>'
 			rel="<?php echo $slides[$i]['id'] ?>">
 
 			<?php if($slides[$i]['url']){ ?>
@@ -61,7 +63,8 @@
 	#uslider-<?php echo $element_id ?> {
 		width: 100%;
 	}
-	#uslider-<?php echo $element_id ?> .uslide-caption {
+	#uslider-<?php echo $element_id ?> .uslide-left .uslide-caption,
+	#uslider-<?php echo $element_id ?> .uslide-right .uslide-caption {
 		width: <?php echo $textWidth ?>;
 	}
 	#uslider-<?php echo $element_id ?> .uslide-right .uslide-caption {

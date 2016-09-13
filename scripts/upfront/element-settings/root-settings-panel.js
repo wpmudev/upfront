@@ -80,7 +80,7 @@ define([
 					if (settingOptions.triggerChange) {
 						me.listenTo(field, 'change changed', function() {
 							me.save_settings();
-							me.model.trigger('change');
+							me.model.trigger('change', me.model);
 						});
 					}
 

@@ -74,4 +74,8 @@ class Upfront_Object extends Upfront_Entity {
 
 		return '';
 	}
+	
+	public function set_preset ($preset) {
+		return $this->_set_property('preset', $preset);
+	}
 }

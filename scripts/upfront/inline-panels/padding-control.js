@@ -43,7 +43,7 @@ define([
 			this.default_padding = {
 				top: false,
 				bottom: false
-			}
+			};
 
 			this.listenTo(Upfront.Events, "upfront:paddings:updated", this.refresh);
 		},
@@ -63,7 +63,7 @@ define([
 			this.clicked(e);
 
 			this.$el.siblings('.upfront-control-dialog-open').removeClass('upfront-control-dialog-open');
-			
+
 			this.listenTo(Upfront.Events, "upfront:hide:paddingPanel", this.close);
 
 			if (this.isOpen) {
@@ -186,21 +186,21 @@ define([
 			me.paddingBottom.render();
 			$paddingBottomContainer.append(me.paddingBottom.$el);
 			$paddingControl.append($paddingBottomContainer);
-			
+
 			if ( me.model.attributes.modules === undefined && !me.model.get_property_value_by_name("code_selection_type") ) {
-			
+
 				me.advancedPadding = new Upfront.Views.Editor.Field.Button({
 					className: 'upfront-field-wrap upfront-field-wrap-button upfront-field-advanced-padding',
 					compact: true,
 					label: l10n.advanced_padding,
 					name: 'advanced-padding'
 				});
-				
+
 				me.advancedPadding.render();
 				$advancedPaddingContainer.append(me.advancedPadding.$el);
 				$paddingControl.append($advancedPaddingContainer);
-				
-			} 
+
+			}
 
 			$paddingTopContainer.on('mousedown', function() {
 				Upfront.data.currentEntity.padding_hint_locked = true;
@@ -260,7 +260,7 @@ define([
 		},
 		on_up_arrow_click: function() {
 			if(typeof this.paddingTop !== 'undefined') {
-				var padding_top_val = parseInt(this.model.get_breakpoint_property_value('top_padding_num', true)) - 5;
+				var padding_top_val = parseInt(this.model.get_breakpoint_property_value('top_padding_num', true), 10) - 5;
 
 				padding_top_val = padding_top_val < 0 ? 0 : padding_top_val;
 
@@ -268,16 +268,22 @@ define([
 				this.model.set_breakpoint_property('top_padding_num', padding_top_val);
 				this.model.set_breakpoint_property('top_padding_slider', padding_top_val);
 
+				Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
+				Upfront.Events.trigger("upfront:paddings:top:updated", this.model, Upfront.data.currentEntity);
+
 				this.refresh();
 			}
 		},
 		on_down_arrow_click: function() {
 			if(typeof this.paddingTop !== 'undefined') {
-				var padding_top_val = parseInt(this.model.get_breakpoint_property_value('top_padding_num', true)) + 5;
+				var padding_top_val = parseInt(this.model.get_breakpoint_property_value('top_padding_num', true), 10) + 5;
 
 				this.model.set_breakpoint_property('top_padding_use', 'yes');
 				this.model.set_breakpoint_property('top_padding_num', padding_top_val);
 				this.model.set_breakpoint_property('top_padding_slider', padding_top_val);
+
+				Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
+				Upfront.Events.trigger("upfront:paddings:top:updated", this.model, Upfront.data.currentEntity);
 
 				this.refresh();
 			}

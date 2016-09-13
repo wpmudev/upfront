@@ -97,7 +97,7 @@ var _partView = Backbone.View.extend({
 		}
 
 		if ( this.parent._editing ) return;
-		if ( Upfront.Application.is_builder() ) return;
+		if (true === Upfront.plugins.isForbiddenByPlugin('trigger post editor')) return;
 		if ( !this.canTriggerEdit ) return;
 		this.parent.triggerEditors();
 		this.focus();
@@ -162,7 +162,7 @@ PostContentEditor.prototype = {
 							.on('keyup', _.bind(this.keyup, this))
 							.off('keypress')
 							.on('keypress', _.bind(this.keypress, this));
-					
+
 					this.focus();
 					$("html").on('mousedown', {$title: this.$title, $partView: this }, this.mousedown );
 				}
@@ -258,7 +258,7 @@ PostContentEditor.prototype = {
 			},
 			editContent: function () {
 				if ( this.parent._editing || this.parent.isViewLoading() ) return;
-				
+
 				var me = this;
 				_partView.prototype.editContent.call(this);
 				this.$content = this.$('.upostdata-part');
@@ -276,7 +276,7 @@ PostContentEditor.prototype = {
 
 					this.$content.html(content).ueditor(editorOptions);
 					this.editor = this.$content.data('ueditor');
-					
+
 					this.$content
 						.off('blur')
 						.on('blur', _.bind(this.blur, this))
@@ -286,7 +286,7 @@ PostContentEditor.prototype = {
 						.on("stop", _.bind(this.stopEditContent, this))
 					;
 					this.parent.editorStart(); // Set necessary classes, trigger events, etc
-					
+
 					// to make Ctrl+A work on contents
 					setTimeout(function(){
 						me.$content.find('.upfront-inserted_image-wrapper').each(function(){
@@ -303,6 +303,9 @@ PostContentEditor.prototype = {
 				}
 			},
 			stopEditContent: function () {
+				if( this.editor.redactor && this.editor.redactor.code )
+					this.editor.redactor.code.startSync();
+
 				if ( this.$content.length ){
 					this.$content
 						.off('blur')
@@ -336,11 +339,11 @@ PostContentEditor.prototype = {
 							var shortcode = $.trim( $shortcode.html().replace(/(\r\n|\n|\r)/gm,"") );
 							$this.replaceWith( shortcode );
 						}
-						
+
 					});
 
 					content = $.trim( this.editor.getValue() );
-	
+
 					content = content.replace(/(\n)*?<br\s*\/?>\n*/g, "<br/>");
 					if ( isExcerpt ) {
 						this.parent.currentData.excerpt = content;
@@ -356,7 +359,7 @@ PostContentEditor.prototype = {
 				node.focus();
 				// only select all if still using the default layout
 				if ( typeof this.$content !== 'undefined' && this.$content ) {
-					if ( this.$content.text() === Upfront.Settings.l10n.global.ueditor.default_post_content ) 
+					if ( this.$content.text() === Upfront.Settings.l10n.global.ueditor.default_post_content )
 						this.parent.setSelection(node, true);
 				}
 			},
@@ -373,8 +376,8 @@ PostContentEditor.prototype = {
 			type: 'author',
 			events: function () {
 				return _.extend({}, _partView.prototype.events, {
-					'click .upostdata-part' : 'editAuthor',
-				})
+					'click .upostdata-part' : 'editAuthor'
+				});
 			},
 			init: function () {
 				this.listenTo(this.parent, 'change:author', this.authorChanged);
@@ -420,8 +423,8 @@ PostContentEditor.prototype = {
 			type: 'gravatar',
 			events: function () {
 				return _.extend({}, _partView.prototype.events, {
-					'click .upostdata-part' : 'editAuthor',
-				})
+					'click .upostdata-part' : 'editAuthor'
+				});
 			},
 			init: function () {
 				PostContentEditor.prototype.partView.author.prototype.init.call(this);
@@ -449,7 +452,7 @@ PostContentEditor.prototype = {
 					'click .upostdata-part': 'editDate',
 					'click .ueditor-action-pickercancel': 'editDateCancel',
 					'click .ueditor-action-pickerok': 'editDateOk'
-				})
+				});
 			},
 			init: function () {
 				this.listenTo(this.parent, 'change:date', this.dateChanged);
@@ -571,7 +574,7 @@ PostContentEditor.prototype = {
 					;
 					this.updateImageSize();
 				}
-				
+
 				this.parent.off('swap:image', this.openImageSelector);
 				this.parent.off('edit:image', this.editThumb);
 				this.parent.on('swap:image', this.openImageSelector, this);
@@ -581,7 +584,7 @@ PostContentEditor.prototype = {
 			events: function () {
 				return _.extend({}, _partView.prototype.events, {
 					'click .upost_thumbnail_changer': 'editThumb'
-				})
+				});
 			},
 			editContent: function () {
 				_partView.prototype.editContent.call(this);
@@ -712,7 +715,7 @@ PostContentEditor.prototype = {
 
 							// Update post meta
 							me.updatePost(imageData);
-							
+
 							if (!img.length)
 								img = newimg.appendTo(me.$('.thumbnail'));
 							else{
@@ -760,8 +763,8 @@ PostContentEditor.prototype = {
 					;
 
 					// Update post meta
-					me.updatePost(imageData)
-					
+					me.updatePost(imageData);
+
 					//post.meta.save();
 					if(!img.length)
 						img = newimg.appendTo(mask);
@@ -788,9 +791,9 @@ PostContentEditor.prototype = {
 				});
 			},
 
-			updatePost: function(imageData) {				
+			updatePost: function(imageData) {
 				var existing = this.parent.post.meta.findWhere({meta_key: '_thumbnail_data'});
-				
+
 				if(!existing) {
 					this.parent.post.meta.add([
 						{meta_key: '_thumbnail_id', meta_value: imageData.imageId},
@@ -820,7 +823,7 @@ PostContentEditor.prototype = {
 					return this.model.set_property(name, value, silent);
 				}
 				return this.model.get_property_value_by_name(name);
-			},
+			}
 		}),
 
 		tags: _partView.extend({
@@ -942,7 +945,7 @@ PostContentEditor.prototype = {
 	prepareBox: function(){
 		var self = this,
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main);
-		
+
 		if(typeof this.box !== "undefined") {
 			this.box.remove();
 		}
@@ -1012,7 +1015,7 @@ PostContentEditor.prototype = {
 	updateStatus: function(status){
 		this.postStatus = status;
 	},
-	
+
 	updateVisibility: function(visibility, password){
 		this.postVisibility = visibility;
 		this.postPassword = password;
@@ -1123,9 +1126,9 @@ PostContentEditor.prototype = {
 			range.collapse(false);//collapse the range to the end point.
 			range.select();//Select the range (make it the visible selection)
 		}
-	},
+	}
 
-}
+};
 
 
 
@@ -1177,6 +1180,8 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 		//this.prepareBox();
 	},
     title_blurred: function(){
+		if(typeof this.box === "undefined") return;
+
         if( this.post.is_new && !this.box.urlEditor.hasDefinedSlug && !_.isEmpty(this.parts.titles.html()) ){
             this.post.set("post_name",  this.parts.titles.html().toLowerCase().replace(/\ /g,'-'));
             this.box.urlEditor.render();
@@ -1478,7 +1483,7 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 	openImageEditor: function(newImage, imageInfo, postId){
 		var me = this,
 		mask = this.$('.ueditor_thumb'),
-		height = this.partOptions.featured_image && this.partOptions.featured_image.height ? this.partOptions.featured_image.height : 60
+		height = this.partOptions.featured_image && this.partOptions.featured_image.height ? this.partOptions.featured_image.height : 60,
 		editorOptions = _.extend({}, imageInfo, {
 			element_id: 'post_' + postId,
 			element_cols: Upfront.Util.grid.width_to_col(mask.width(), true),
@@ -1812,7 +1817,7 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 			this.parts.titles.off('change', this.onTitleEdited);
 
 		if(this.editors)
-			_.each(this.editors, function(e){e.stop()});
+			_.each(this.editors, function(e){e.stop();});
 
 		var draggable = this.$el.closest('.ui-draggable');
 		if(draggable.length)
@@ -1886,7 +1891,7 @@ return {
 	PostContentEditor: PostContentEditor,
 	PostContentEditorLegacy: PostContentEditorLegacy,
 	getMarkupper: function getMarkupper(){return markupper;}
-}
+};
 
 
 //End define

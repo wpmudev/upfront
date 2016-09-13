@@ -1,7 +1,7 @@
 <?php
 
 class Upfront_Admin_General extends Upfront_Admin_Page {
-	
+
     function __construct(){
 		if ($this->_can_access( Upfront_Permissions::SEE_USE_DEBUG )) {
 			add_submenu_page( Upfront_Admin::$menu_slugs['main'], __("General Settings", Upfront::TextDomain),  __("General", Upfront::TextDomain), 'manage_options', Upfront_Admin::$menu_slugs['main'], array($this, "render_page") );
@@ -9,18 +9,23 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
    }
 
 	public function render_page() {
-		$core_version = $child_version = '0';
+		$core_version = $child_version = '0.0.0';
 		$current = wp_get_theme();
 		// Deal with caches
 		if (class_exists('Upfront_Compat') && is_callable(array('Upfront_Compat', 'get_upfront_core_version')) && is_callable(array('Upfront_Compat', 'get_upfront_child_version'))) {
 			$core_version = Upfront_Compat::get_upfront_core_version();
 			$child_version = Upfront_Compat::get_upfront_child_version();
+
+			$child_version = !empty($child_version)
+				? $child_version
+				: '0.0.0'
+			;
 		}
 		?>
 		<div class="wrap upfront_admin upfront-general-settings">
             <h1><?php esc_html_e("General Settings", Upfront::TextDomain); ?><span class="upfront_logo"></span></h1>
 			<div class="upfront-col-left">
-				<div class="postbox-container">
+				<div class="postbox-container version-info">
 					<div class='postbox'>
 						<h2 class="title"><?php esc_html_e("Version Info", Upfront::TextDomain) ?></h2>
 						<div class="inside version-info">
@@ -28,33 +33,31 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 								Upfront <span>V <?php echo esc_html($core_version); ?></span>
 							</div>
 							<div class="upfront-debug-block">
-								<?php echo $current->Name; ?> (Active Theme)<span>V <?php echo esc_html($child_version); ?></span>
+								<?php echo esc_html(sprintf(__('%s (Active Theme)', Upfront::TextDomain), $current->Name)); ?>
+									<span>V <?php echo esc_html($child_version); ?></span>
 							</div>
-							<?php if (class_exists('UpfrontThemeExporter') && is_callable(array('UpfrontThemeExporter', 'upfront_exporter_version'))) { ?>
-							<div class="upfront-debug-block">
-								Builder<span>V <?php echo UpfrontThemeExporter::upfront_exporter_version(); ?></span>
-							</div>
-							<?php } ?>
+
+							<?php do_action('upfront-admin-general_settings-versions'); ?>
 						</div>
 					</div>
 				</div>
+				<?php $this->_render_api_options() ?>
 				<?php $this->_render_debug_options() ?>
 			</div>
 			<div class="upfront-col-right">
-				<div class="postbox-container">
+				<div class="postbox-container helpful-resources">
 					<div class='postbox'>
 						<h2 class="title"><?php esc_html_e("Helpful Resources", Upfront::TextDomain) ?></h2>
 						<div class="inside">
-							<!--
-							* Hide until we have documentation
+							<!-- Hide for now until documentation ready
 							<div class="upfront-debug-block">
-								<a href="#" class="documentation">Upfront Documentation</a> <a href="#" class="documentation">Building Upfront Themes</a>
+								<a target="_blank" href="https://premium.wpmudev.org/upfront-documentation/" class="documentation">Upfront Documentation</a> <a target="_blank" href="https://premium.wpmudev.org/upfront-documentation/upfront-builder/" class="documentation">Building Upfront Themes</a>
 							</div>
 							-->
 							<div class="upfront-debug-block">
 								<h4><?php esc_html_e("Online Articles", Upfront::TextDomain) ?></h4>
 								<ul>
-								
+
 									<li><a href='https://premium.wpmudev.org/blog/upfront-1-0/' target="_blank"><?php esc_html_e("Upfront 1.0", Upfront::TextDomain) ?></a></li>
 									<li><a href='https://premium.wpmudev.org/blog/upfront-basics/' target="_blank"><?php esc_html_e("Upfront Part 1: The Basics, Theme Colors and Typography", Upfront::TextDomain) ?></a></li>
 									<li><a href='https://premium.wpmudev.org/blog/upfront-regions/' target="_blank"><?php esc_html_e("Upfront Part 2: Structuring Your Site with Regions", Upfront::TextDomain) ?></a></li>
@@ -72,17 +75,50 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 						</div>
 					</div>
 				</div>
+				<?php $this->_render_changelog_box(); ?>
 			</div>
 		</div>
 		<?php
-		
+
+	}
+
+	private function _render_api_options () {
+		$admin_keys = new Upfront_Admin_ApiKeys;
+		if (!$admin_keys->can_access()) return false;
+
+		$services = $admin_keys->get_services();
+		if (empty($services)) return false;
+
+		$admin_keys->process_submissions();
+
+		?>
+<div class="postbox-container api_keys">
+	<div class='postbox'>
+		<h2 class="title"><?php esc_html_e("API Keys", Upfront::TextDomain) ?></h2>
+		<div class="inside api_keys">
+			<form method="POST">
+				<?php
+				foreach ($services as $service => $label) {
+					$admin_keys->render_key_box($service);
+				}
+				?>
+				<p>
+					<button class="upfront_button">
+						<?php esc_html_e('Save', 'upfront'); ?>
+					</button>
+				</p>
+			</form>
+		</div>
+	</div>
+</div>
+		<?php
 	}
 
 	private function _render_debug_options(){
 		if( !Upfront_Permissions::current( Upfront_Permissions::SEE_USE_DEBUG ) ) return;
 		Upfront_Layout::get_db_layouts();
 		?>
-		<div class="postbox-container">
+		<div class="postbox-container debug-options">
 			<div class='postbox'>
 				<h2 class="title"><?php esc_html_e("Debug Options", Upfront::TextDomain) ?></h2>
 				<div class="inside debug-options">
@@ -123,5 +159,129 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 			</div>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Renders the changelog box
+	 */
+	private function _render_changelog_box () {
+		$changelog = $this->_get_changelog();
+		if (empty($changelog)) return false;
+		?>
+		<div class="postbox-container changelog">
+			<div class='postbox'>
+				<h2 class="title"><?php esc_html_e("Changelog", Upfront::TextDomain) ?></h2>
+				<div class="inside changelog">
+				<?php
+					reset($changelog);
+				 	$current = each($changelog);
+				?>
+					<div class="current">
+						<dl>
+							<dt><?php echo $current['key']; ?></dt>
+							<dd><?php echo $current['value']; ?></dd>
+						</dl>
+					</div>
+
+					<div class="changelog navigation">
+						<a href="#more"><?php esc_html_e('Previous entries', 'upfront'); ?></a>
+					</div>
+
+					<div class="previous">
+						<dl>
+						<?php while (false !== ($changeset = each($changelog))) { ?>
+							<dt><?php echo $changeset['key']; ?></dt>
+							<dd><?php echo $changeset['value']; ?></dd>
+						<?php } ?>
+						</dl>
+					</div>
+				</div>
+			</div>
+		<?php
+	}
+
+	/**
+	 * Gets the raw changelog entries from the file
+	 *
+	 * @return array
+	 */
+	private function _get_raw_changelog_entries () {
+
+		$path = trailingslashit(wp_normalize_path(Upfront::get_root_dir())) . 'CHANGELOG.md';
+		$entries = array();
+		if (!file_exists($path) || !is_readable($path)) return $entries;
+
+		$fp = fopen($path, 'r');
+		$idx = '';
+		while (false !== ($line = fgets($fp, 4096))) {
+			if (preg_match('/-{3,}/', $line)) continue; // drop line junk
+			if (preg_match('/^\d\.\d.*?-\s\d{4}/', $line)) {
+				$idx = $line;
+				continue;
+			}
+			if (empty($idx)) continue; // Sanity check, header junk
+
+			if (empty($entries[$idx])) $entries[$idx] = array();
+			$entries[$idx][] = $line;
+		}
+		fclose($fp);
+
+		return $entries;
+	}
+
+	/**
+	 * Gets the changelog entries array
+	 *
+	 * @return array
+	 */
+	private function _get_changelog () {
+		$entries = $this->_get_raw_changelog_entries();
+		$changelog = array();
+		$df = get_option('date_format');
+		foreach ($entries as $version => $entry) {
+			if (empty($entry)) continue;
+
+			$tmp = explode('-', $version, 2);
+			if (empty($tmp[1])) continue;
+
+			$date = strtotime($tmp[1]);
+			if (empty($date)) continue;
+
+			$key = "" .
+				"<b>{$tmp['0']}</b>" .
+				'&nbsp;' .
+				'(' .
+					date_i18n($df, $date) .
+				')' .
+			"";
+
+			$changeset = array();
+			$separated = false;
+			$total_lines = count($entry);
+			for ($i=0; $i<$total_lines; $i++) {
+				$line = trim(ltrim($entry[$i], '- '));
+				if (empty($line)) {
+					if ($separated) continue;
+
+					$next_line = isset($entry[$i+1])
+						? trim(ltrim($entry[$i+1], '- '))
+						: false
+					;
+					if (empty($next_line)) continue;
+
+					$line = '</li></ul><div class="extra-toggle">' .
+						'<a href="#toggle" data-expanded="' . esc_attr(__('Show less', 'upfront')) . '" data-contracted="' . esc_attr(__('Show more', 'upfront')) . '">' . esc_html(__('Show more', 'upfront')) . '</a>' .
+					'</div><ul class="extra"><li>';
+					$separated = true;
+				}
+
+				$changeset[] = $line;
+			}
+
+			if (empty($changeset)) continue;
+
+			$changelog[$key] = '<ul><li>' . join('</li><li>', $changeset) . '</li></ul>';
+		}
+		return $changelog;
 	}
 }

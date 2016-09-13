@@ -3,10 +3,8 @@
 	width: 100%;
 	background: rgba(37, 58, 78, 0.8);
 	top:0;
-	z-index: 10;
-	font-family: 'Lato';
+	z-index: 10001004;
 	font-size: 24px;
-	font-weight: 200;
 	cursor: pointer;
 }
 
@@ -147,16 +145,19 @@
 }
 
 .upfront-image-starting-select {
-	box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
+	background-color:rgba(255,255,255,.9);
+	        box-sizing: border-box; 
+	   -moz-box-sizing: border-box; 
+	-webkit-box-sizing: border-box;
+	box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.50);
 	color: #273A4C;
-	font-size:18px;
-	width:100%;
-	text-align: center;
+	display: table;
+	font:200 18px/1.5 Open Sans, Helvetica Neueu, Helvetica, Arial, sans-serif;
+	overflow: hidden;
 	padding: 0;
 	position: relative;
-	overflow: hidden;
-	border: 1px solid #ddd;
-	display: table;
+	text-align: center;
+	width:100%;
 }
 
 .uimage-centered {
@@ -184,7 +185,7 @@
 	line-height: 110%;
 	padding: 0;
 	text-decoration: none;
-	font-family: Source Sans Pro, sans-serif;
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 	font-weight: 300;
 	font-style: normal;
 }
@@ -196,7 +197,6 @@
 }
 
 .upfront-image-resizethiselement {
-	font-size: 20px;
 	margin-bottom: 10px;
 }
 
@@ -250,7 +250,7 @@
 	position: absolute;
 	top: 0;
 	left: 0;
-	z-index:10001002;
+	z-index:10001003;
 	cursor: normal;
 }
 
@@ -656,7 +656,7 @@ a.image-edit-button.deactivated:hover {
 
 .upfront-ui.uimage-control-panel {
 	position: absolute;
-	min-width: 150px;
+	min-width: 152px;
 	z-index: 2001;
 	background: rgba(230,236,242,1);
 	padding: 5px;
@@ -666,7 +666,7 @@ a.image-edit-button.deactivated:hover {
 }
 
 .upfront-ui.uimage-control-panel .upfront-save_settings {
-	box-shadow: none;
+	box-shadow: 0px 3px 5px rgba(0,0,0,.3);
 	height: 36px;
 	padding:0 25px;
 }
@@ -1168,9 +1168,6 @@ div.uimage-controls i.upfront-icon:before,
 	padding: 0;
 }
 
-.upfront-output-image {
-	overflow: hidden;
-}
 
 /* front-end placeholder */
 .upfront-output-image.uimage-no-padding {
@@ -1353,7 +1350,8 @@ div.uimage-controls i.upfront-icon:before,
 	display: block;
 }
 
-.swap-image-overlay p.upfront-icon-swap-image {
+div#page .upfront-object.upfront-image .swap-image-overlay p.upfront-icon-swap-image {
+	color: #fff;
 	position: absolute;
 	display: block;
 	max-width: 230px;
@@ -1372,10 +1370,10 @@ div.uimage-controls i.upfront-icon:before,
 	width: 100%;
 	height: 100%;
 }
-.swap-image-overlay p.upfront-icon-swap-image:hover {
+div#page .upfront-object.upfront-image .swap-image-overlay p.upfront-icon-swap-image:hover {
 	background:#00DD97;
 }
-.swap-image-overlay p:before {
+div#page .upfront-object.upfront-image .swap-image-overlay p:before {
 	content: "";
 	background-image: url('../../../img/uf-core-el-sprite.svg');
 	background-position: -807px -361px;
@@ -1388,7 +1386,7 @@ div.uimage-controls i.upfront-icon:before,
 }
 
 .upfront-editable_entity .uimage-below_image .upfront-image-caption-container {
-	overflow: visible !important;
+	overflow: visible;
 }
 .crop-contols-wrapper {
 	width: 102px;

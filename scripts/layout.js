@@ -47,6 +47,7 @@ jQuery(document).ready(function($){
 			return breakpoint;
 		}
 	}
+	window.upfront_get_breakpoint = get_breakpoint; // Expose to global
 
 	/**
 	 * Get the previously used breakpoint
@@ -57,6 +58,7 @@ jQuery(document).ready(function($){
 		get_breakpoint();
 		return previous_breakpoint;
 	}
+	window.upfront_get_previous_breakpoint = get_previous_breakpoint; // Expose to global
 
 	/* Youtube API */
 	var youtube_api_loaded = false;
@@ -222,6 +224,9 @@ jQuery(document).ready(function($){
 				}
 				if ( src && before_src != src && $el.hasClass('upfront-image-lazy') ){
 					$el.removeClass('upfront-image-lazy-loaded');
+				}
+				else {
+					$el.css('background-image', 'url("' + src + '")');
 				}
 			}
 			else if ( type == 'color' ) {
@@ -854,11 +859,11 @@ jQuery(document).ready(function($){
 	$("[data-group-link]").css({'cursor': 'pointer'});
 	$(document).on("click", "[data-group-link]", function () {
 		var url = $(this).data("groupLink");
-		var target = $(this).data("groupTarget");
+		var target = $(this).data("groupTarget") || '_self';
 
 		if(url.indexOf('#') === -1) {
 			// Not an anchor, follow link
-			window.open(url, $(this).data("groupTarget"));
+			window.open(url, target);
 			return;
 		}
 
@@ -1337,20 +1342,38 @@ jQuery(document).ready(function($){
 			var $me = $(this),
 				rmap = $me.attr("data-preset_map"),
 				map = rmap ? JSON.parse(rmap) : {},
+				current_preset_class,
 				final_preset_class
 			;
 
 			// Edge case, for when we don't have a preset for this
 			// breakpoint in an element - it should retain its classes
-			if (!map[breakpoint]) return true;
+			// if (!map[breakpoint]) return true;
+			
+			// we have to provide proper fallback here, mobile -> tablet -> desktop
+			if ( breakpoint == 'mobile' ) {
+				map[breakpoint] = map[breakpoint] || map['tablet'] || map['desktop'] || 'default';
+			} else if ( breakpoint == 'tablet' ) {
+				map[breakpoint] = map[breakpoint] || map['desktop'] || 'default';
+			} else {
+				map[breakpoint] = map[breakpoint] || 'default';
+			}
 
 			$.each(map, function (bp, preset) {
-				$me.removeClass(preset);
+				if ( $me.hasClass(preset) ) {
+					current_preset_class = preset;
+					$me.removeClass(preset);
+				}
 				if (bp === breakpoint && !final_preset_class) final_preset_class = preset;
 			});
 
 			if (final_preset_class) {
 				$me.addClass(final_preset_class);
+				// find all children with such preset class, some elements do have this
+				$me.find('.' + current_preset_class).each(function(){
+					$(this).removeClass(current_preset_class);
+					$(this).addClass(final_preset_class);
+				});
 			}
 
 		});

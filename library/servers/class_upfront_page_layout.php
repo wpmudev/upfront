@@ -7,6 +7,9 @@ class Upfront_Server_PageLayout extends Upfront_Server {
 
 	private static $_instance;
 
+	/**
+	 * @var $_data  Upfront_PageLayout
+	 */
 	private $_data;
 
 	public static function get_instance () {
@@ -71,6 +74,7 @@ class Upfront_Server_PageLayout extends Upfront_Server {
 		if (empty($layout_id)) return false;
 
 		$layout = $this->_data->get_page_layout($layout_id, $load_dev);
+
 		if (empty($layout)) return false;
 
 		return $layout;
@@ -165,7 +169,7 @@ class Upfront_Server_PageLayout extends Upfront_Server {
 			if ( $layout_post_id ) {
 				$page_layout = $this->get_layout($layout_post_id, $load_dev);
 				if ( $page_layout ) {
-					$layout = Upfront_Layout::from_php($page_layout, Upfront_Layout::STORAGE_KEY);
+					$layout = Upfront_Layout::from_cpt($page_layout, Upfront_Layout::STORAGE_KEY);
 				}
 			} else {
 				// load from page template
@@ -196,13 +200,28 @@ class Upfront_Server_PageLayout extends Upfront_Server {
 		if ( $template_post_id ) {
 			$page_template = Upfront_Server_PageTemplate::get_instance()->get_template($template_post_id, $load_dev);
 			if ( $page_template ) {
-				$layout = Upfront_Layout::from_php($page_template, Upfront_Layout::STORAGE_KEY);
+				$layout = Upfront_Layout::from_cpt($page_template, Upfront_Layout::STORAGE_KEY);
 			}
 		}
 
 		return $layout;
 	}
 
+	/**
+	 * Returns layout by $slug
+	 *
+	 * @param $slug
+	 * @param $load_dev
+	 * @return array|bool
+	 */
+	public function get_layout_by_slug($slug, $load_dev){
+
+		// Dumb quick check to make sure that what we try to resolve here
+		// doesn't resemble something that's not a single page layout
+		if (preg_match('/-archive-/', $slug)) return false;
+
+		return $this->_data->get_by_slug( $slug, $load_dev );
+	}
 }
 // Upfront_Server_PageLayout::serve();
 add_action('init', array('Upfront_Server_PageLayout', 'serve'), 0);

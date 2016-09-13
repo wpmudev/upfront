@@ -11,7 +11,6 @@
 @import 'sass/partials/map-editor';
 @import 'sass/partials/bgsettings';
 @import 'sass/partials/layout-grid-module-object';
-@import 'sass/partials/sidebar-buttons-commands';
 @import 'sass/partials/modal';
 @import 'sass/partials/drag-n-drop';
 @import 'sass/partials/settings';
@@ -119,7 +118,7 @@
 .upfront-quick-swap{
 	color: #3f5870;
 	background: rgba(255, 255, 255, .9);
-	font-family: 'Source Sans Pro';
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 	text-align: center;
 	font-size: 18px;
 	width: 100%;
@@ -234,9 +233,9 @@
 	padding-left: 0;
 	padding-right: 0;
 }
-#page div.upfront-object.uposts-object {
+/*#page div.upfront-object.uposts-object {
   padding: 0;
-}
+}*/
 
 .upfront-content-marker {
 	margin: 0;

@@ -83,7 +83,7 @@ define([
 						{ label: l10n.ctrl.cover_top, value: 'topCover', icon: 'topCover' },
 						{ label: l10n.ctrl.cover_middle, value: 'middleCover', icon: 'middleCover' },
 						{ label: l10n.ctrl.cover_bottom, value: 'bottomCover', icon: 'bottomCover' },
-						{ label: l10n.ctrl.below, value: 'below', icon: 'below' },
+						{ label: l10n.ctrl.below, value: 'below', icon: 'below' }
 					],
 					change: function(value) {
 						me.model.set('caption-position-value', value);
@@ -116,7 +116,7 @@ define([
 					}
 				})
 			]);
-		},
+		}
 	});
 
 	return CaptionLocationSettingsModule;

@@ -1,4 +1,8 @@
-;(function($){define(["text!upfront/templates/post-editor/edition-box.html"], function(editionBox_tpl){
+;(function($){
+define([
+	"text!upfront/templates/post-editor/edition-box.html",
+	"upfront/post-editor/post-box-metadesc"
+], function (editionBox_tpl, Post_Box_Metadesc) {
 
 var l10n = Upfront.Settings && Upfront.Settings.l10n
 			? Upfront.Settings.l10n
@@ -46,10 +50,12 @@ var Box = Backbone.View.extend({
         Upfront.Events.off("command:layout:trash", this.trash);
         Upfront.Events.off("command:layout:save", this.publish);
         Upfront.Events.off("command:layout:save_as", this.save_as_publish);
+        Upfront.Events.off("command:post:save", this.publish);
 
         Upfront.Events.on("command:layout:trash", this.trash, this);
         Upfront.Events.on("command:layout:save", this.publish, this);
         Upfront.Events.on("command:layout:save_as", this.save_as_publish, this);
+        Upfront.Events.on("command:post:save", this.publish, this);
 
     },
 
@@ -293,7 +299,7 @@ var Box = Backbone.View.extend({
 		this.stopListening(Upfront.Events, 'command:proceed:save:post');
 		this.listenTo(Upfront.Events, 'command:proceed:save:post', this.publish);
 		Upfront.Events.trigger('command:layout:layout_changes', true);
-	
+
 		/* if ( !this.layout_modified ) {
 			// if no layout changes, then just publish directly
 			this.save_post();
@@ -391,13 +397,25 @@ var PostSectionView = Backbone.View.extend({
             $this_prev_data_toggle = $button.parent().parent().find(".ueditor-previous-data-toggle")
             ;
 
-		if($button.hasClass('ueditor-edit-post-url') || $button.hasClass('ueditor-edit-post-title')) {
+		if (
+			$button.hasClass('ueditor-edit-post-url')
+			||
+			$button.hasClass('ueditor-edit-post-title')
+			||
+			$button.hasClass('ueditor-edit-post-metadesc')
+		) {
 			$this_togglable = $button.parent().siblings(".ueditor-togglable");
 		} else {
 			$this_togglable = $button.siblings(".ueditor-togglable");
 		}
 
-		if(!$button.hasClass('ueditor-edit-post-url') || !$button.hasClass('ueditor-edit-post-title')) {
+		if (
+			!$button.hasClass('ueditor-edit-post-url')
+			||
+			!$button.hasClass('ueditor-edit-post-title')
+			||
+			!$button.hasClass('ueditor-edit-post-metadesc')
+		) {
 			$(".ueditor-box-content-wrap .ueditor-togglable").parent().removeClass('upfront-settings-toggled');
         }
 		$(".ueditor-box-content-wrap .ueditor-togglable").not($this_togglable).slideUp();
@@ -840,7 +858,13 @@ var PageTemplateEditor = PostSectionView.extend({
 			// Attach chosen select and type checkbox to template
 			this.$el.find('.upfront-page-template-chosen').html(this.templateSelect.$el);
 
-			setTimeout( function () {
+			this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
+			this.listenTo(Upfront.Events, 'entity:layout:change', this.on_layout_change);
+    },
+
+		after_append: function () {
+			var me = this;
+			setTimeout(function() {
 				// overwriting click event on chosen.jquery.min.js
 				me.$el.find('.upfront-field-multiple input').bind('click.chosen', function(e){
 					me.stop_bubble(e);
@@ -848,25 +872,27 @@ var PageTemplateEditor = PostSectionView.extend({
 				me.$el.find('.upfront-field-multiple span.upfront-field-label-text').bind('click.chosen', function(e){
 					me.stop_bubble(e);
 				});
-
-				// Hide first Update Template / Save As
-				me.trigger('initiate:no:layout:change');
-
-				// set default value
-				if ( typeof _upfront_post_data.template_slug !== 'undefined' ) me.templateSelect.set_value(_upfront_post_data.template_slug);
-				me.prev_template_name = me.$el.find('select.upfront-chosen-select option[value="'+ _upfront_post_data.template_slug +'"]').first().text();
-
-				me.spawn_template_modal();
-				me.disable_apply_template = true;
-				me.$el.find('a.apply-post-template').css({cursor: 'default', opacity: 0.6});
-
 			}, 300);
 
-			this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
-			this.listenTo(Upfront.Events, 'entity:layout:change', this.on_layout_change);
-    },
+			// toggling layout change functions
+			if ( typeof _upfront_post_data.layout_change !== 'undefined' && _upfront_post_data.layout_change === 1 ) {
+				this.on_layout_change();
+			} else {
+				this.trigger('initiate:no:layout:change');
+			}
+			// set default value
+			if ( typeof _upfront_post_data.template_slug !== 'undefined' ) this.templateSelect.set_value(_upfront_post_data.template_slug);
+			this.prev_template_name = this.$el.find('select.upfront-chosen-select option[value="'+ _upfront_post_data.template_slug +'"]').first().text();
+
+			this.spawn_template_modal();
+			this.disable_apply_template = true;
+			this.$el.find('a.apply-post-template').css({cursor: 'default', opacity: 0.6});
+		},
 
 	initiate_no_layout_change: function() {
+		// clear flag for layout change
+		_upfront_post_data.layout_change = 0;
+
 		this.$el.find('.chosen-container .chosen-single span').removeClass('dot');
 		this.$el.find('.upfront-page-template-description').hide();
 		this.$el.find('.upfront-page-template-action a.update-post-template').hide();
@@ -977,6 +1003,8 @@ var PageTemplateEditor = PostSectionView.extend({
 		;
 		_upfront_post_data.template_slug = $select.val();
 		_upfront_post_data.template_type = template_type;
+		// clear flag for layout change
+		_upfront_post_data.layout_change = 0;
 
 		Upfront.Events.trigger("command:layout:save_meta");
 	},
@@ -987,6 +1015,7 @@ var PageTemplateEditor = PostSectionView.extend({
 		if ( this.disable_update_template ) return;
 
 		_upfront_post_data.layout_action = 'update';
+		this.trigger('initiate:no:layout:change');
 
 		this.stopListening(Upfront.Events, 'page:layout:updated');
 		this.listenTo(Upfront.Events, 'page:layout:updated', this.on_page_layout_updated);
@@ -998,6 +1027,7 @@ var PageTemplateEditor = PostSectionView.extend({
 
 	reset_changes: function (e) {
 		e.preventDefault();
+		this.trigger('initiate:no:layout:change');
 		// delete current layout and load page template
 		Upfront.Events.trigger("command:layout:reset_changes");
 	},
@@ -1075,7 +1105,7 @@ var PageTemplateEditor = PostSectionView.extend({
 		_upfront_post_data.template_type = 'layout';
 		_upfront_post_data.template_slug = value;
 		_upfront_post_data.layout_action = 'save_as';
-
+		this.trigger('initiate:no:layout:change');
 		this.stopListening(Upfront.Events, 'update:page:layout:list');
 		this.listenTo(Upfront.Events, 'update:page:layout:list', this.update_template_list);
 
@@ -1116,6 +1146,8 @@ var PageTemplateEditor = PostSectionView.extend({
 			if($dot.length) return;
 
 			this.$el.find('.chosen-container .chosen-single span').addClass('dot');
+			this.$el.find('.upfront-page-template-action a.reset-post-template').hide();
+			this.$el.find('.upfront-page-template-action a.update-post-template').hide();
 
 			// show update / save as
 			var $temp_description = this.$el.find('.upfront-page-template-description'),
@@ -1134,6 +1166,18 @@ var PageTemplateEditor = PostSectionView.extend({
 			this.$el.find('.upfront-page-template-action a.delete-post-template').hide();
 			$temp_description.find('span.template_name').text(template_name);
 			$temp_description.show();
+
+			// activate flag for layout change
+			_upfront_post_data.layout_change = 1;
+		}
+		else {
+			// If layout isn't ready, let's trigger this again after it's ready
+			var me = this;
+			this.listenToOnce(Upfront.Events, "layout:after_render", function () {
+				// Don't call this if this view is not existing in DOM anymore
+				if ( !$.contains(document.documentElement, me.$el.get(0)) ) return;
+				me.on_layout_change();
+			});
 		}
 	},
 
@@ -1339,20 +1383,26 @@ var PostUrlEditor = PostSectionView.extend({
         this.post = opts.post;
 		this.listenTo(Upfront.Events, 'content:change:title', this.changeTitle);
         this.hasDefinedSlug = _.isEmpty( this.post.get("post_name") ) ? false : true;
-        this.render();
+
+		this.metadesc = new Post_Box_Metadesc({model: this.post});
+
+		this.render();
     },
+
     render: function(){
         var self = this,
             base = this.post.get("guid"),
-			postTitle = this.post.get("post_title");
+			postTitle = this.post.get("post_title")
+		;
 
         base = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
+
         this.$el.html(this.tpl({
             rootUrl: base,
 			postTitle: postTitle,
             slug: self.post.get('post_name'),
             url_label : "post" === self.post.get("post_type") ? l10n.global.content.post_url : l10n.global.content.page_url
-		}));
+		})).append(this.metadesc.render().$el);
     },
 	changeTitle: function(title) {
 		this.post.set( "post_title", title );

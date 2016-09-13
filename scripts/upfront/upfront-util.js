@@ -252,9 +252,9 @@ define(function() {
              * @param string|int|null class_size either a string of the class size like 12 or '12'
              */
             update_class :  function ($el, class_prefix, class_size) {
-				class_size = (class_prefix || '').replace( /[^\d.]/g, '');
 				var class_name;
                 if (_.isUndefined(class_size)) {
+					class_size = (class_prefix || '').replace( /[^\d.]/g, '');
                     class_name = class_prefix.replace(class_size, "");
                 } else {
                     class_name = class_prefix;
@@ -750,6 +750,17 @@ define(function() {
 					color_string = color_string.replace(pattern, theme_color );
 				}
 				return color_string;
+			},
+			/**
+			 * Removes alpha from rgba and returns rgb,
+			 * if given color is not rgba ( either hex or anything else) the exact color will be returned
+			 * @param color
+             * @returns {*}
+             */
+			rgba_to_rgb: function( color ){
+				if( !_.isString( color ) ) return color;
+
+				return color.replace(/ /g,'').replace(/^rgba\((\d+)\,(\d+)\,(\d+)\,(\d+\.?\d{0,}?)\)$/, "rgb($1, $2, $3)");
 			}
 		},
 		guessLinkType: guessLinkType,
@@ -1048,6 +1059,7 @@ define(function() {
 						}
 						_saving_flag = false;
 						Upfront.Events.trigger("preview:build:stop");
+
 						//Upfront.Util.log("we're good here");
 
 						// Notify about concurrent edits

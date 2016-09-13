@@ -8,7 +8,7 @@ define([
 	Modules.template = template;
 
 	Modules.part_featured_image = Panel.Toggleable.extend({
-		title: l10n.thumb.fimg_part_title, 
+		title: l10n.thumb.fimg_part_title,
 		data_part: 'featured_image',
 		get_fields: function () {
 			var me = this;
@@ -56,19 +56,19 @@ define([
 							me.model.set("fallback_image", url);
 						});
 					}
-				},
+				}
 			];
 		},
 		render: function () {
 			Panel.Toggleable.prototype.render.apply(this, arguments);
-			
+
 			// Let's start stuff up on first render if we're not already there
 			if (!this._fallback_selection_field || !this._fallback_color_field || !this._fallback_image_field ) {
 				var fields = this.fields.toArray();
 				this._fallback_selection_field = fields[1];
 				this._fallback_color_field = fields[2];
 				this._fallback_image_field = fields[3];
-				
+
 				if (this._fallback_selection_field) this.listenTo(this._fallback_selection_field, "changed", this.update_fields);
 			}
 
@@ -128,7 +128,7 @@ define([
 					}
 				}
 			});
-			
+
 			return modules;
 		}
 	});

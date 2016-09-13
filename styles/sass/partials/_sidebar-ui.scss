@@ -57,15 +57,15 @@
 	border-right: 1px solid #1a2d40;
 	color: #adc3d8;
 	display: none;
-	font: 16px/24px 'Source Sans Pro', sans-serif;
-	z-index:1;
+	font: 16px/24px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+	z-index:10001002;
 	/* Disable text selection */
 	-webkit-user-select: none;
 	-khtml-user-select: none;
 	-moz-user-select: none;
 	-o-user-select: none;
 	user-select: none;
-	z-index:2040;
+	/* z-index:2040; */
 	background: rgb(51,68,84); /* Old browsers */
 	background: -moz-linear-gradient(top,  rgba(51,68,84,1) 0%, rgba(61,82,102,1) 20%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(51,68,84,1)), color-stop(20%,rgba(61,82,102,1))); /* Chrome,Safari4+ */
@@ -107,6 +107,9 @@
 	background: rgb(61,82,102);
 	overflow: hidden;
 }
+#sidebar-ui .sidebar-commands-header.more-menu-open {
+	overflow: visible;
+}
 #sidebar-ui .command-logo {
 	padding: 7px 15px 7px;
 	float: left;
@@ -119,6 +122,73 @@
 	padding: 11px 15px;
 	float: right;
 	opacity:.6;
+}
+#sidebar-ui .command-more-menu {
+	float: right;
+	width: 26px;
+	height: 18px;
+	margin: 15px 16px 0 0;
+	opacity: 0.5;
+	transition: opacity;
+	position: relative;
+}
+#sidebar-ui .command-more-menu:hover {
+	opacity: 0.8;
+}
+#sidebar-ui .command-more-menu.menu-open {
+	opacity: 1;
+	overflow: visible;
+}
+#sidebar-ui .command-more-menu .upfront-icon-more-menu {
+	display: block;
+	width: 26px;
+	height: 18px;
+	background: #fff;
+	border-radius: 3px;
+	position: relative;
+	z-index: 1100;
+}
+#sidebar-ui .command-more-menu.menu-open .upfront-icon-more-menu {
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+#sidebar-ui .command-more-menu .upfront-icon-more-menu:before {
+	margin: -3px 1px 0;
+}
+#sidebar-ui .command-more-menu .command-more-menu-list {
+	display: block;
+	position: absolute;
+	top: 18px;
+	right: 0;
+	width: 140px;
+	background: #fff;
+	border-radius: 3px;
+	color: #395773;
+	padding: 3px;
+	z-index: 1000;
+	display: none;
+}
+#sidebar-ui .command-more-menu.menu-open .command-more-menu-list {
+	display: block;
+	border-top-right-radius: 0;
+	box-shadow: 0 0 10px rgba(39,58,76,.8);
+}
+#sidebar-ui .command-more-menu .command-more-menu-list li {
+	display: block;
+	height: 25px;
+	line-height: 25px;
+	font-size: 11px;
+	font-weight: bold;
+	color: #263A4D;
+	letter-spacing: 0.46px;
+	padding: 0 6px;
+	border-radius: 3px;
+	text-transform: uppercase;
+	cursor: pointer;
+}
+#sidebar-ui .command-more-menu .command-more-menu-list li:hover {
+	color: #fff;
+	background: #3aa3e3;
 }
 #sidebar-ui .sidebar-editor-mode {
 	border-top: 1px solid #3f5870;
@@ -194,9 +264,7 @@
 	padding: 15px 15px 0;
 }
 #sidebar-ui .sidebar-commands-primary .command-new-page,
-#sidebar-ui .sidebar-commands-primary .command-new-post,
-#sidebar-ui .sidebar-commands-primary .command-new-layout,
-#sidebar-ui .sidebar-commands-primary .command-browse-layout{
+#sidebar-ui .sidebar-commands-primary .command-new-post {
 	line-height: 34px;
 	padding: 0 20px;
 	font-size: 15px;
@@ -227,9 +295,7 @@
     max-width: 103px;
 }
 #sidebar-ui .sidebar-commands-primary .command-new-page:hover,
-#sidebar-ui .sidebar-commands-primary .command-new-post:hover,
-#sidebar-ui .sidebar-commands-primary .command-new-layout:hover,
-#sidebar-ui .sidebar-commands-primary .command-browse-layout:hover {
+#sidebar-ui .sidebar-commands-primary .command-new-post:hover {
 	opacity:1;
 	color: #cbe5ff;
 }
@@ -275,15 +341,6 @@
 	margin-right: 4px;
 	display: inline-block;
 	opacity:.5;
-}
-#sidebar-ui .sidebar-commands-primary .command-browse-layout {
-	line-height: 34px;
-	padding: 0 10px;
-	border: 2px solid #25394d;
-	font-size: 15px;
-	height: 40px;
-	float: right;
-    max-width: 110px;
 }
 #sidebar-ui .upfront-icon-browse-layouts:before {
 	background-position: -45px -80px;
@@ -382,7 +439,7 @@
 	height: 26px;
 }
 #sidebar-ui .sidebar-commands-control .command-redo {
-	margin-left: 8px;
+	margin-left: 4px;
 }
 #sidebar-ui .sidebar-commands-control .command-save {
 	background: #1fcd8f;
@@ -422,41 +479,13 @@
 #sidebar-ui .sidebar-commands-control .command-edit-background-area {
 	margin-bottom: 15px;
 }
-#sidebar-ui .sidebar-commands-control .command-export {
-	border: 2px solid #263a4d;
-	padding: 6px 10px 0 10px;
-	position: relative;
-	/*top: 613px;*/
-	left: 10px;
-	margin: 0;
-    float: left;
-    max-width: 230px;
-}
-#sidebar-ui .upfront-icon-export:before {
-	background-position: -42px -384px;
-	width: 19px;
-	height: 19px;
-	margin-right: 7px;
-	margin-top: 3px;
-}
-#sidebar-ui .sidebar-commands-control .command-create-responsive-layouts {
-	border: 2px solid #263a4d;
-	padding: 0 10px 0 8px;
-	line-height: 34px;
-	white-space: nowrap;
-    max-width: 230px;
-    overflow: hidden;
-}
-#sidebar-ui .sidebar-commands-control .command-create-responsive-layouts:before {
-	margin-top: 6px;
-}
 #sidebar-ui .sidebar-commands-control .command-grid {
 	border: 1px solid #6c8dac;
 	border-radius: 2px;
 	width: 26px;
 	height: 26px;
 	padding: 2px;
-	margin: 1px 12px 8px 20px;
+	margin: 0 0 8px 15px;
 }
 #sidebar-ui .sidebar-commands-control .command-trash {
 	float: left;
@@ -648,7 +677,7 @@
 	width: 65px;
 	height: 65px;
 	float: left;
-	font-family: verdana;
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 	font-weight: 200;
 	font-size: 11px;
 	line-height: 24px;
@@ -737,7 +766,7 @@ span.draggable-post-element.element-dragging
 }
 #sidebar-ui .panel-section-title {
 	color: #27394b;
-	font-family: "Source Sans Pro", sans-serif;
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 	font-size: 15px;
 	font-weight: bold;
 	line-height: 19px;

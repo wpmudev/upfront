@@ -70,6 +70,32 @@ p, h2, h3 { orphans: 3; widows: 3; }
 h2, h3 { page-break-after: avoid; }
 }
 
+/* ==|== default typography styles ========================= */
+p, h1, h2, h3, h4, h5, h6, ul, ol, pre, blockquote {
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+
+ul, ol {
+	margin-left: 15px;
+}
+ul ul, ul ol, ol ul, ol ol {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+blockquote {
+	padding: 15px;
+}
+
+del {
+	text-decoration: line-through;
+}
+
+.upfront-quote-alternative {
+	text-align: center;
+}
+
 /* ==|== grid requirements ==================== */
 
 #page {
@@ -237,6 +263,19 @@ h2, h3 { page-break-after: avoid; }
   /*max-width: 100%;*/
   padding-left: 0px !important;
   padding-right: 0px !important;
+  position: relative;
+}
+.ueditor-insert div, .ueditor-insert a, .ueditor-insert img {
+	max-width: 100%;
+}
+.ueditor-insert .ueditor-insert-remove {
+	position: absolute;
+	right: 10px;
+	top: 10px;
+	display: none;
+}
+.ueditor-insert:hover .ueditor-insert-remove {
+	display: block;
 }
 .ueditor-insert-variant-group.ueditor-insert-float-left {
   float: left;
@@ -276,7 +315,7 @@ h2, h3 { page-break-after: avoid; }
 }
 
 
-/* hack to fix empty paragraphs collapsing on each other 
+/* hack to fix empty paragraphs collapsing on each other
    note: Commented out since redactor no longer has that bug,
    so this fix is now redundant...
 
@@ -372,7 +411,7 @@ h2, h3 { page-break-after: avoid; }
 	margin-left: auto !important;
 	margin-right: auto !important;
 }
-.uf-responsive .upfront-inserted_image-wrapper .wp-caption-text, 
+.uf-responsive .upfront-inserted_image-wrapper .wp-caption-text,
 .uf-responsive .upfront-inserted_image-wrapper .uinsert-image-wrapper {
     min-height: 0 !important;
     margin-top: 0;
@@ -432,8 +471,8 @@ h2, h3 { page-break-after: avoid; }
 .flexbox-support .upfront-output-wrapper > .upfront-output-module,
 .flexbox-support .upfront-output-wrapper > .upfront-output-module-group,
 .flexbox-support .upfront-output-wrapper > .upfront-output-object {
-	-webkit-order: 0; 
-	-ms-flex-order: 0; 
+	-webkit-order: 0;
+	-ms-flex-order: 0;
 	order: 0;
 }
 /* End flexbox */
@@ -471,7 +510,7 @@ div.upfront-region-lightbox, div.upfront-region-side-lightbox,
   left: 50% !important;
 }
 .upfront-lightbox-bg {
-  position:fixed; 
+  position:fixed;
   top:0;
   left: 0;
   width: 100%;
@@ -482,7 +521,7 @@ div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-l
 	position: absolute;
 	top: 10px;
 	right: 0px;
-	cursor: pointer;	
+	cursor: pointer;
   font-family: Helvetica Neue, Helvetica,Arial, sans-serif;
   color:#fff;
   font-size:28px;
@@ -523,7 +562,7 @@ div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-l
 .upfront-navigation li { display: inline-block;  list-style:none; }
 
 .close_lightbox > .upfront-icon-popup-close {
-    
+
     font: 100 30px/16px Helvetica Neue, Helvetica, sans-serif; */
     color: #FFF;
 }
@@ -588,7 +627,7 @@ body .upfront-edit_layout a {
     z-index: 2;
 }
 /* Firefox checkboxes and radios are styled to match the rest of the browsers */
-@-moz-document url-prefix() { 
+@-moz-document url-prefix() {
   input[type=checkbox] {
     /* original check box are push outside the viexport */
     position: absolute ;
@@ -603,7 +642,7 @@ body .upfront-edit_layout a {
     margin : 0 -1em 0 0;
     background: url("../img/checkbox_firefox.png") no-repeat 0 0;
 
-  /* The following is used to adjust the position of 
+  /* The following is used to adjust the position of
      the check boxes on the text baseline */
 
     vertical-align: bottom;
@@ -611,6 +650,10 @@ body .upfront-edit_layout a {
     bottom: 0;
     right: 17px;
     cursor: pointer;
+  }
+  
+  input[type=checkbox] + label.upfront_toggle_label:before {
+	display: none;
   }
 
   input[type=checkbox]:checked + label:before {
@@ -625,25 +668,26 @@ body .upfront-edit_layout a {
     background-position: 0 0;
   }
 
-  #element-settings-sidebar .padding-lock input[type=checkbox] + label:before,
-  #element-settings-sidebar .border_radius_lock input[type=checkbox] + label:before,
-  #element-settings-sidebar .gallery-padding-lock input[type=checkbox] + label:before {
+  #element-settings-sidebar .border_radius_lock input[type=checkbox] + label:before {
     height: 15px;
     width: 15px;
     background-image: url("../img/uf-core-el-sprite.png");
     background-image: url("../img/uf-core-el-sprite.svg"), none;
     background-position: -661px -172px;
     background-color: #f7fbff;
-    left: 38px;
+    left: 30px;
     top: -6px;
     position: relative;
   }
-  #element-settings-sidebar .padding-lock input[type=checkbox]:checked + label:before,
-  #element-settings-sidebar .border_radius_lock input[type=checkbox]:checked + label:before,
-  #element-settings-sidebar .gallery-padding-lock input[type=checkbox]:checked + label:before {
+
+  #element-settings-sidebar .border_radius_lock input[type=checkbox]:checked + label:before {
     background-position: -661px -140px
   }
-
+	
+  #element-settings-sidebar .padding-lock input[type=checkbox] + label:before,
+  #element-settings-sidebar .gallery-padding-lock input[type=checkbox] + label:before {
+	display: none;
+  }
 
   input[type=radio] {
     /* original check box are push outside the viexport */
@@ -659,7 +703,7 @@ body .upfront-edit_layout a {
     margin : 0 -1em 0 0;
     background: url("../img/radio_firefox.png") no-repeat 0 0;
 
-  /* The following is used to adjust the position of 
+  /* The following is used to adjust the position of
      the check boxes on the text baseline */
 
     vertical-align: bottom;

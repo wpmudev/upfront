@@ -27,7 +27,7 @@ var ThisPageView = (function(){
 		instances = [],
 		markups = {},
 		queues = {};
-			
+
 	return Upfront.Views.ObjectView.extend({
 		markup: false,
 		loading: false,
@@ -35,7 +35,7 @@ var ThisPageView = (function(){
 		deferred: false,
 		is_new: false,
 		is_started: false,
-	
+
 		initialize: function(options){
 			var me = this;
 			if(! (this.model instanceof ThisPageModel)){
@@ -45,10 +45,10 @@ var ThisPageView = (function(){
 			this.display = this.model.get_property_value_by_name('display');
 			instances.push(this);
 			page_id = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
-			
+
 			this.listenTo(Upfront.Events, "command:layout:save_start", this.on_save);
 		},
-	
+
 		/**
 		 * Element contents markup.
 		 * @return {string} Markup to be shown.
@@ -58,48 +58,48 @@ var ThisPageView = (function(){
 				this.get_markup().done($.proxy(this.refresh_markup, this));
 				return 'Loading';
 			}
-	
+
 			return this.markup;
 		},
-		
+
 		on_render: function () {
 			this.update_editor(this.$el.find(".upfront-object-content"));
 		},
-		
+
 		on_edit: function () {
 			this.update_editor(this.$el.find(".upfront-object-content"), true, true);
 		},
-		
+
 		get_markup: function () {
 			var me = this;
 			me.deferred = new $.Deferred();
-	
+
 			if ( page_id === false )
 				return me.deferred.resolve('error');
-				
+
 			if(requesting)
 				return me.deferred.promise();
-				
+
 			if(!changed && markups.length > 0 && markups[me.display]){
 				return me.deferred.resolve(markups[me.display]);
 			}
-			
-	
+
+
 			var node = me.$el.find(".upfront-object-content"),
 				loading = !node.length ? false : new Upfront.Views.Editor.Loading({
 					loading: l10n.refreshing,
 					done: l10n.here_we_are,
 					fixed: false
-				});
+				})
 			;
-	
+
 			if(loading){
 				loading.render();
 				node.append(loading.$el);
 			}
-			
+
 			requesting = true;
-	
+
 			Upfront.Util.post({
 				action: "this_page-get_markup",
 				data: JSON.stringify({
@@ -124,10 +124,10 @@ var ThisPageView = (function(){
 			}).done(function(){
 				requesting = false;
 			});
-			;
+
 			return me.deferred.promise();
 		},
-		
+
 		get_page: function () {
 			var page,
 				_deferred = new $.Deferred();
@@ -146,8 +146,8 @@ var ThisPageView = (function(){
 			}
 			return _deferred.promise();
 		},
-		
-	
+
+
 		refresh_markup: function (markup) {
 			var me= this,
 				node = this.$el.find(".upfront-object-content"),
@@ -164,10 +164,10 @@ var ThisPageView = (function(){
 				me.update_editor(node);
 			});
 		},
-		
+
 		update_editor: function (node, start, focus) {
+			focus = typeof focus == 'undefined' ? true : focus;
 			var me = this,
-				focus = typeof focus == 'undefined' ? true : focus,
 				selector = _.findWhere(Upfront.data.ueditor.selectors, {type: this.display}).selector,
 				element = node.find(selector),
 				ueditor = element.data('ueditor'),
@@ -210,7 +210,7 @@ var ThisPageView = (function(){
 						ins.update_editor(ins.$el.find(".upfront-object-content"), true, false);
 					});
 					setTimeout(function(){element.ueditor('focus');}, 100);
-					Upfront.Events.trigger('upfront:element:edit:start', 'text');	
+					Upfront.Events.trigger('upfront:element:edit:start', 'text');
 				})
 				.on('stop', function(){
 					edit_started = false;
@@ -223,10 +223,10 @@ var ThisPageView = (function(){
 						me.markup = $(me.markup).html(queues[me.display]).get(0).outerHTML;
 					}
 				})
-				.ueditor(params);
+				.ueditor(params)
 			;
 		},
-		
+
 		on_save: function () {
 			if ( saving )
 				return;
@@ -246,7 +246,7 @@ var ThisPageView = (function(){
 				});
 			});
 		},
-		
+
 		cleanup: function(){
 			var me = this;
 			_.each(instances, function(ins, index){
@@ -254,7 +254,7 @@ var ThisPageView = (function(){
 					instances.splice(index);
 			});
 		}
-		
+
 	});
 })();
 

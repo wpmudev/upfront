@@ -711,9 +711,9 @@ var LayoutEditor = {
 		var $dialog = $("#upfront-save-dialog"),
 			$bg = $("#upfront-save-dialog-background"),
 			current = Upfront.Application.layout.get("current_layout"),
-			html = '',
-			is_archive = ( true === is_archive )
+			html = ''
 		;
+		is_archive = true === is_archive;
 
 		if ( is_archive ) {
 			html += '<p>' + Upfront.Settings.l10n.global.behaviors.this_archive_only + '</p>';
@@ -740,9 +740,11 @@ var LayoutEditor = {
 		//on_complete.apply(context, [_upfront_post_data.layout.specificity]);
 		//return false;
 
-		if(location.pathname.indexOf('create_new') > -1 || layout_changed !== true) {
+		if(
+				true === Upfront.plugins.isForbiddenByPlugin('show save as dialog') ||
+				layout_changed !== true
+		) {
 			$bg.remove(); $dialog.remove();
-			//We are in builder do not show popup
 			on_complete.apply(context, ['single-post']);
 		} else {
 			$dialog
@@ -755,10 +757,10 @@ var LayoutEditor = {
 				var selected = $(this).attr('data-save-as');
 				$bg.remove(); $dialog.remove();
 				on_complete.apply(context, [selected]);
-				
+
 				// call the listener on upfront-post-edit.js to continue saving post object
 				Upfront.Events.trigger('command:proceed:save:post');
-				
+
 				return false;
 			});
 			$("#upfront-save-dialog-background").on("click", function () {
@@ -768,23 +770,113 @@ var LayoutEditor = {
 		}
 	},
 
-	/**
-	 * We are loading theme by reloading page since lots of stuff needs
-	 * to be setup like stylesheet etc. Only way to get this right is to
-	 * load page from scratch.
-	 */
-	load_theme: function(theme_slug) {
-		var url = location.origin;
-		// Add anything before create_new
-		url += location.pathname.split('create_new')[0];
-		// Add create_new and theme slug
-		url += 'create_new/' + theme_slug;
-		// Check for dev=true
-		if (location.toString().indexOf('dev=true') > -1) url += '?dev=true';
+	/* Cleanup region CSS, running on save/export */
+	clean_region_css: function () {
+		var me = this,
+			cssEditor = Upfront.Application.cssEditor,
+            ed = Upfront.Behaviors.LayoutEditor,
+			elementTypes = [cssEditor.elementTypes.RegionContainer, cssEditor.elementTypes.Region],
+			layout = _upfront_post_data.layout,
+			layout_id = layout.specificity || layout.item || layout.type,
+			regions = Upfront.Application.layout.get('regions'),
+			styleExists = [],
+			deleteDatas = [],
+			deleteFunc = function (index) {
+				if ( ! deleteDatas[index] ) {
+					Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.behaviors.region_css_cleaned);
+					deferred.resolve();
+					return;
+				}
+				var elementType = deleteDatas[index].elementType,
+					styleName = deleteDatas[index].styleName,
+					data;
 
-		window.location = url;
+				var pluginsCallResult = Upfront.plugins.call('prepare-delete-element-styles-data', {
+					styleName: styleName,
+					elementType: elementType
+				});
+				if (pluginsCallResult.status && pluginsCallResult.status === 'called' && pluginsCallResult.result) {
+					data = pluginsCallResult.result;
+				} else {
+					data = {
+						action: 'upfront_delete_styles',
+						styleName: styleName,
+						elementType: elementType
+					};
+				}
+				Upfront.Util.post(data)
+					.done(function(){
+						var styleIndex = Upfront.data.styles[elementType].indexOf(styleName);
+
+						//Remove the styles from the available styles
+						if(styleIndex != -1)
+							Upfront.data.styles[elementType].splice(styleIndex, 1);
+
+						//Remove the styles from the dom
+						$('#upfront-style-' + styleName).remove();
+
+						//Continue deleting
+						deleteFunc(index+1);
+					})
+				;
+			},
+			deferred = new $.Deferred()
+		;
+
+		regions.each(function(region){
+			var elementType = region.is_main() ? cssEditor.elementTypes.RegionContainer.id : cssEditor.elementTypes.Region.id,
+				styleName = layout_id + '-' + region.get('name') + '-style',
+				isGlobal = ( region.get('scope') == 'global' );
+			if ( _.isArray(Upfront.data.styles[elementType]) && Upfront.data.styles[elementType].indexOf(styleName) != -1 )
+				styleExists.push(styleName);
+			// global stylename
+			styleName = elementType + '-' + region.get('name') + '-style';
+			if ( _.isArray(Upfront.data.styles[elementType]) && Upfront.data.styles[elementType].indexOf(styleName) != -1 )
+				styleExists.push(styleName);
+		});
+
+		Upfront.plugins.call('clean-region-css', {
+			elementTypes: elementTypes,
+			layout_id: layout_id,
+			styleExists: styleExists,
+			deleteDatas: deleteDatas,
+			deleteFunc: deleteFunc
+		});
+
+		return deferred.promise();
 	},
 
+	_build_query: function (data) {
+		return _.map(data, function(value, key){ return key + '=' + value; }).join('&');
+	},
+
+	clean_global_regions: function () {
+		Upfront.data.global_regions = false;
+	},
+
+	open_global_region_manager: function () {
+		var ed = Upfront.Behaviors.LayoutEditor;
+		Upfront.Popup.open(
+			function (data, $top, $bottom) {
+				var $me = $(this);
+				$me.html('<p class="upfront-popup-placeholder">' + Upfront.Settings.l10n.global.behaviors.loading_content + '</p>');
+
+				if ( !Upfront.data.global_regions ){
+					ed._refresh_global_regions().done(function(){
+						ed._render_global_region_manager($me);
+					});
+				}
+				else {
+					ed._render_global_region_manager($me);
+				}
+			},
+			{
+				width: 600
+			},
+			'global-region-manager'
+		);
+	},
+	
 	open_theme_fonts_manager: function() {
 		var me = {};
 		var textFontsManager = new Upfront.Views.Editor.Fonts.Text_Fonts_Manager({ collection: Upfront.Views.Editor.Fonts.theme_fonts_collection });
@@ -843,666 +935,6 @@ var LayoutEditor = {
 		});
 	},
 
-	/**
-	 * DEPRECATED
-	 */
-	create_layout_dialog: function() {
-		var app = Upfront.Application,
-			ed = Upfront.Behaviors.LayoutEditor,
-			fields = {
-				layout: new Upfront.Views.Editor.Field.Select({
-					name: 'layout',
-					values: [{label: Upfront.Settings.l10n.global.behaviors.loading, value: ""}],
-					change: function() {
-						var value = this.get_value();
-
-						if ( value === 'single-page' )
-							fields.$_page_name_wrap.show();
-						else
-							fields.$_page_name_wrap.hide();
-					}
-				}),
-				page_name: new Upfront.Views.Editor.Field.Text({
-					name: 'page_name',
-					label: Upfront.Settings.l10n.global.behaviors.page_layout_name
-				}),
-				inherit: new Upfront.Views.Editor.Field.Radios({
-					name: 'inherit',
-					layout: "horizontal-inline",
-					values: [
-						{label: Upfront.Settings.l10n.global.behaviors.start_fresh, value: ''},
-						{label: Upfront.Settings.l10n.global.behaviors.start_from_existing, value: 'existing'}
-					]
-				}),
-				existing: new Upfront.Views.Editor.Field.Select({
-					name: 'existing',
-					values: []
-				})
-			};
-		if ( !ed.available_layouts ) {
-			Upfront.Util.post({
-				action: 'upfront_list_available_layout'
-			}).done(function(data) {
-				ed.available_layouts = data.data;
-				fields.layout.options.values = _.map(ed.available_layouts, function(layout, layout_id){
-					return { label: layout.label, value: layout_id, disabled: layout.saved };
-				});
-				fields.layout.render();
-				fields.layout.delegateEvents();
-			});
-		} else {
-			fields.layout.options.values = _.map(ed.available_layouts, function(layout, layout_id){
-				return {label: layout.label, value: layout_id, disabled: layout.saved};
-			});
-		}
-		if (!ed.all_templates) {
-			Upfront.Util.post({
-				action: "upfront-wp-model",
-				model_action: "get_post_extra",
-				postId: "fake", // Stupid walkaround for model handler insanity
-				allTemplates: true
-			}).done(function (response) {
-				if (!response.data || !response.data.allTemplates) return false;
-				if (0 === response.data.allTemplates.length) {
-					fields.inherit.$el.hide();
-					fields.existing.$el.hide();
-					return false;
-				}
-				ed.all_templates = response.data.allTemplates;
-				fields.existing.options.values = [];
-				_.each(response.data.allTemplates, function (tpl, title) {
-					fields.existing.options.values.push({label: title, value: tpl});
-				});
-				fields.existing.render();
-			});
-		} else {
-			fields.existing.options.values = _.map(ed.all_templates, function(tpl, title){
-				return {label: title, value: tpl};
-			});
-		}
-
-		if ( !ed.layout_modal ){
-			ed.layout_modal = new Upfront.Views.Editor.Modal({to: $('body'), button: false, top: 120, width: 540});
-			ed.layout_modal.render();
-			$('body').append(ed.layout_modal.el);
-		}
-
-		ed.layout_modal.open(function($content, $modal){
-			var $button = $('<div style="clear:both"><span class="uf-button">' + Upfront.Settings.l10n.global.behaviors.create + '</span></div>'),
-				$select_wrap = $('<div class="upfront-modal-select-wrap" />');
-				$page_name_wrap = $('<div class="upfront-modal-select-wrap" />')
-			;
-			fields.$_page_name_wrap = $page_name_wrap;
-			_.each(fields, function(field) {
-				if (!field.render) return true;
-				field.render();
-				field.delegateEvents();
-			});
-			$content.html(
-				'<h1 class="upfront-modal-title">' + Upfront.Settings.l10n.global.behaviors.create_new_layout + '</h1>'
-			);
-			$select_wrap.append(fields.layout.el);
-			$content.append($select_wrap);
-
-			$page_name_wrap.hide();
-			$page_name_wrap.append(fields.page_name.el);
-			$page_name_wrap.append(fields.inherit.el);
-			$page_name_wrap.append(fields.existing.el);
-			$content.append($page_name_wrap);
-
-			$content.append($button);
-			$button.on('click', function(){
-				ed.layout_modal.close(true);
-			});
-		}, ed)
-		.done(function(){
-			var layout = fields.layout.get_value(),
-				layout_slug = app.layout.get('layout_slug'),
-				data = _.extend({}, ed.available_layouts[layout]),
-				specific_layout = fields.page_name.get_value();
-
-			// Check if user is creating single page with specific name
-			if (layout === 'single-page' && specific_layout) {
-				layout = 'single-page-' + specific_layout.replace(/\s/g, '-').toLowerCase();
-				data = {
-					layout: {
-						'type': 'single',
-						'item': 'single-page',
-						'specificity': layout
-					}
-				};
-			}
-
-			data.use_existing = layout.match(/^single-page/) && specific_layout && "existing" === fields.inherit.get_value()
-				? fields.existing.get_value()
-				: false
-			;
-/*
-// Why were we using this?
-// It was causing issues when trying to create a pre-existing layout: https://app.asana.com/0/11140166463836/36929734950095
-			if ( data.latest_post )
-				_upfront_post_data.post_id = data.latest_post;
-*/
-			app.create_layout(data.layout, {layout_slug: layout_slug, use_existing: data.use_existing}).done(function() {
-				app.layout.set('current_layout', layout);
-				// Immediately export layout to write initial state to file.
-				ed._export_layout();
-			});
-		});
-	},
-
-	/**
-	 * DEPRECATED
-	 */
-	browse_layout_dialog: function () {
-		var app = Upfront.Application,
-			ed = Upfront.Behaviors.LayoutEditor,
-			fields = {
-				layout: new Upfront.Views.Editor.Field.Select({
-					name: 'layout',
-					values: [{label: Upfront.Settings.l10n.global.behaviors.loading, value: ""}],
-					default_value: app.layout.get('current_layout')
-				})
-			};
-
-		if ( !ed.browse_modal ){
-			ed.browse_modal = new Upfront.Views.Editor.Modal({to: $('body'), button: false, top: 120, width: 540});
-			ed.browse_modal.render();
-			$('body').append(ed.browse_modal.el);
-		}
-		ed._get_saved_layout().done(function(data){
-			if ( !data || data.length == 0 ){
-				fields.layout.options.values = [{label: Upfront.Settings.l10n.global.behaviors.no_saved_layout, value: ""}];
-			}
-			else {
-				fields.layout.options.values = _.map(ed.saved_layouts, function(layout, layout_id){
-					return {label: layout.label, value: layout_id};
-				});
-			}
-			fields.layout.render();
-			fields.layout.delegateEvents();
-		});
-
-		ed.browse_modal.open(function($content, $modal){
-			var $button = $('<span class="uf-button">' + Upfront.Settings.l10n.global.behaviors.edit + '</span>'),
-				$select_wrap = $('<div class="upfront-modal-select-wrap" />');
-			_.each(fields, function(field){
-				field.render();
-				field.delegateEvents();
-			});
-			$content.html(
-				'<h1 class="upfront-modal-title">' + Upfront.Settings.l10n.global.behaviors.edit_saved_layout + '</h1>'
-			);
-			$select_wrap.append(fields.layout.el);
-			$content.append($select_wrap);
-			$content.append($button);
-			$button.on('click', function(){
-				ed.browse_modal.close(true);
-			});
-		}, ed)
-		.done(function(){
-			var layout = fields.layout.get_value(),
-				layout_slug = app.layout.get('layout_slug'),
-				data = ed.saved_layouts[layout];
-			if ( data.latest_post )
-				_upfront_post_data.post_id = data.latest_post;
-			app.layout.set('current_layout', layout);
-			app.load_layout(data.layout, {layout_slug: layout_slug});
-		});
-
-	},
-
-	is_exporter_start_page: function() {
-		return Upfront.themeExporter.currentTheme === 'upfront';
-	},
-
-	export_dialog: function () {
-		var app = Upfront.Application,
-			ed = Upfront.Behaviors.LayoutEditor,
-			fields,
-			loading;
-
-		loading = new Upfront.Views.Editor.Loading({
-			loading: Upfront.Settings.l10n.global.behaviors.checking_layouts,
-			done: Upfront.Settings.l10n.global.behaviors.layout_exported,
-			fixed: true
-		});
-
-		if (ed.is_exporter_start_page()) {
-			// Prepare export dialog
-			fields = {
-				theme: new Upfront.Views.Editor.Field.Select({
-					name: 'theme',
-					default_value: Upfront.themeExporter.currentTheme === 'upfront' ?
-						'' : Upfront.themeExporter.currentTheme,
-					label: Upfront.Settings.l10n.global.behaviors.select_theme,
-					values: [{label: Upfront.Settings.l10n.global.behaviors.new_theme, value: ""}],
-					change: function(){
-						var value = this.get_value(),
-							$fields = $([fields.name.el, fields.directory.el, fields.author.el, fields.author_uri.el]);
-						if ( value !== '' )
-							$fields.hide();
-						else
-							$fields.show();
-					}
-				}),
-				name: new Upfront.Views.Editor.Field.Text({
-					name: 'name',
-					label: Upfront.Settings.l10n.global.behaviors.theme_name
-				}),
-				directory: new Upfront.Views.Editor.Field.Text({
-					name: 'directory',
-					label: Upfront.Settings.l10n.global.behaviors.directory
-				}),
-				author: new Upfront.Views.Editor.Field.Text({
-					name: 'author',
-					label: Upfront.Settings.l10n.global.behaviors.author
-				}),
-				author_uri: new Upfront.Views.Editor.Field.Text({
-					name: 'author_uri',
-					label: Upfront.Settings.l10n.global.behaviors.author_uri
-				}),
-				activate: new Upfront.Views.Editor.Field.Checkboxes({
-					name: 'activate',
-					default_value: true,
-					multiple: false,
-					values: [{ label: Upfront.Settings.l10n.global.behaviors.activate_upon_creation, value: 1 }]
-				}),
-				with_images: new Upfront.Views.Editor.Field.Checkboxes({
-					name: 'with_images',
-					default_value: true,
-					multiple: false,
-					values: [{ label: Upfront.Settings.l10n.global.behaviors.export_theme_images, value: 1 }]
-				})
-			};
-
-			if ( !ed.export_modal ){
-				ed.export_modal = new Upfront.Views.Editor.Modal({to: $('body'), button: false, top: 120, width: 540});
-				ed.export_modal.render();
-				$('body').append(ed.export_modal.el);
-			}
-
-			ed._get_themes().done(function(data){
-				fields.theme.options.values = _.union( [{label: Upfront.Settings.l10n.global.behaviors.new_theme, value: ""}], _.map(data, function(theme, directory){
-					return {label: theme.name, value: theme.directory};
-				}) );
-				fields.theme.render();
-				fields.theme.delegateEvents();
-				fields.theme.$el.find('input').trigger('change'); // to collapse other fields if theme is set
-			});
-
-			ed.export_modal.open(function($content, $modal) {
-				var $button = $('<span class="uf-button">' + Upfront.Settings.l10n.global.behaviors.export_button + '</span>');
-				_.each(fields, function(field){
-					field.render();
-					field.delegateEvents();
-				});
-				$content.html(
-					'<h1 class="upfront-modal-title">' + Upfront.Settings.l10n.global.behaviors.export_theme + '</h1>'
-				);
-				$content.append(fields.theme.el);
-				$content.append(fields.name.el);
-				$content.append(fields.directory.el);
-				$content.append(fields.author.el);
-				$content.append(fields.author_uri.el);
-				$content.append(fields.activate.el);
-				$content.append(fields.with_images.el);
-				$content.append($button);
-				$button.on('click', function() {
-					var theme_name, create_theme, export_layout, export_layouts, do_export;
-					theme_name = fields.theme.get_value() ? fields.theme.get_value() : fields.directory.get_value();
-					create_theme = function(){
-						var data = {
-							'thx-theme-name': fields.name.get_value(),
-							'thx-theme-slug': fields.directory.get_value(),
-							'thx-author': fields.author.get_value(),
-							'thx-author-uri': fields.author_uri.get_value(),
-							'thx-theme-template': 'upfront',
-							'thx-activate_theme': fields.activate.get_value() || '',
-							'thx-export_with_images': fields.with_images.get_value() || '',
-							add_global_regions: Upfront.Application.current_subapplication.layout.get('layout_slug') !== 'blank'
-						};
-						loading.update_loading_text(Upfront.Settings.l10n.global.behaviors.creating_theme);
-						return ed._create_theme(data);
-					};
-					loading.render();
-					$('body').append(loading.el);
-					create_theme().done(function() {
-						ed.export_single_layout(loading, theme_name).done(function() {
-							ed.load_theme(theme_name);
-						});
-					});
-				});
-			}, ed);
-		} else {
-			// Just export layout
-			loading.render();
-			$('body').append(loading.el);
-			ed.export_single_layout(loading, Upfront.themeExporter.currentTheme);
-		}
-	},
-
-	export_single_layout: function(loading, theme_name) {
-		var self = this,
-            app = Upfront.Application,
-			ed = Upfront.Behaviors.LayoutEditor;
-
-		var layout_id = _upfront_post_data.layout.specificity || _upfront_post_data.layout.item || _upfront_post_data.layout.type; // Also make sure to include specificity first
-		loading.update_loading_text(Upfront.Settings.l10n.global.behaviors.exporting_layout + layout_id);
-
-		return ed._export_layout({ theme: theme_name }).done(function() {
-			loading.done(function() {
-				if (ed.export_modal) ed.export_modal.close(true);
-				ed.clean_region_css();
-			});
-		});
-
-	},
-
-	// This function can probably be deleted.
-	first_save_dialog: function (success) {
-		var app = Upfront.Application,
-			ed = Upfront.Behaviors.LayoutEditor,
-			current_layout = app.layout.get('current_layout');
-		if ( success && (!current_layout || current_layout == 'archive-home') ){
-			ed.message_dialog(Upfront.Settings.l10n.global.behaviors.excellent_start, Upfront.Settings.l10n.global.behaviors.homepage_created);
-		}
-	},
-
-	message_dialog: function (title, msg) {
-		var app = Upfront.Application,
-			ed = Upfront.Behaviors.LayoutEditor;
-		if ( !ed.message_modal ){
-			ed.message_modal = new Upfront.Views.Editor.Modal({to: $('body'), button: true, top: 120, width: 540});
-			ed.message_modal.render();
-			$('body').append(ed.message_modal.el);
-		}
-		ed.message_modal.open(function($content, $modal){
-			$modal.addClass('upfront-message-modal');
-			$content.html(
-				'<h1 class="upfront-modal-title">' + title + '</h1>'
-			);
-			$content.append(msg);
-		}, ed);
-	},
-
-	/**
-	 * DEPRECATED
-	 */
-	_get_saved_layout: function (){
-		var me = this,
-			deferred = new $.Deferred()
-		;
-
-		// The request should only ever be sent in builder mode
-		if (Upfront.Application.is_builder()) {
-			Upfront.Util.post({
-				action: 'upfront_list_theme_layouts'
-			}).success(function(response){
-				me.saved_layouts = response.data;
-				deferred.resolve(response.data);
-			}).error(function(){
-				deferred.reject();
-			});
-		} else setTimeout(deferred.reject);
-
-		return deferred.promise();
-	},
-
-	_get_themes: function () {
-		var me = this,
-			deferred = new $.Deferred()
-		;
-		// The request should only ever be sent in builder mode
-		if (Upfront.Application.is_builder()) {
-			Upfront.Util.post({
-				action: 'upfront_thx-get-themes'
-			}).success(function(response){
-				me.themes = response;
-				deferred.resolve(response);
-			}).error(function(){
-				deferred.reject();
-			});
-		} else setTimeout(deferred.reject);
-		return deferred.promise();
-	},
-
-	_create_theme: function (data) {
-		var deferred = new $.Deferred();
-
-		// The request should only ever be sent in builder mode
-		if (Upfront.Application.is_builder()) {
-			Upfront.Util.post({
-				action: 'upfront_thx-create-theme',
-				form: this._build_query(data)
-			}).success(function(response){
-				if ( response && response.error )
-					deferred.reject(response.error);
-				else
-					deferred.resolve();
-			}).error(function(){
-				deferred.reject();
-			});
-		} else setTimeout(deferred.reject);
-		return deferred.promise();
-	},
-
-	export_element_styles: function(data) {
-		// The request should only ever be sent in builder mode
-		if (!Upfront.Application.is_builder()) return false;
-
-		Upfront.Util.post({
-			action: 'upfront_thx-export-element-styles',
-			data: data
-		}).success(function(response){
-			if ( response && response.error ) {
-				Upfront.Views.Editor.notify(response.error);
-				return;
-			}
-			if(!Upfront.data.styles[data.elementType])
-				Upfront.data.styles[data.elementType] = [];
-			if(Upfront.data.styles[data.elementType].indexOf(data.stylename) === -1)
-				Upfront.data.styles[data.elementType].push(data.stylename);
-
-			Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.behaviors.style_exported);
-		}).error(function(){
-			Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.behaviors.style_export_fail);
-		});
-	},
-
-	_export_layout: function (custom_data) {
-		var typography,
-			properties,
-			layout_style,
-			deferred = new $.Deferred(),
-			data = {}
-		;
-
-		// The request should only ever be sent in builder mode
-		if (!Upfront.Application.is_builder()) {
-			setTimeout(deferred.reject);
-			return deferred.promise();
-		}
-
-		typography = _.findWhere(
-			Upfront.Application.current_subapplication.get_layout_data().properties,
-			{ 'name': 'typography' }
-		);
-
-		layout_style = _.findWhere(
-			Upfront.Application.current_subapplication.get_layout_data().properties,
-			{ 'name': 'layout_style' }
-		);
-
-
-		properties = _.extend({}, Upfront.Util.model_to_json(Upfront.Application.current_subapplication.get_layout_data().properties));
-		properties = _.reject(properties, function(property) {
-			return _.contains(['typography', 'layout_style', 'global_regions'], property.name);
-		});
-
-		data = {
-			typography: (typography ? JSON.stringify(typography.value) : ''),
-			regions: JSON.stringify(Upfront.Application.current_subapplication.get_layout_data().regions),
-			template: _upfront_post_data.layout.specificity || _upfront_post_data.layout.item || _upfront_post_data.layout.type, // Respect proper cascade ordering
-			layout_properties: JSON.stringify(properties),
-			theme: Upfront.themeExporter.currentTheme,
-			layout_style: layout_style ? layout_style.value : '',
-			theme_colors: {
-				colors: Upfront.Views.Theme_Colors.colors.toJSON(),
-				range: Upfront.Views.Theme_Colors.range
-			},
-			/*
-			 * Commented, because presets are updated in settings.php on create/edit
-			 * button_presets: Upfront.Views.Editor.Button.Presets.toJSON(),
-			 */
-			post_image_variants: Upfront.Content.ImageVariants.toJSON()
-		};
-
-		if (Upfront.themeExporter.layoutStyleDirty) {
-			data.layout_style = $('#layout-style').html();
-			Upfront.themeExporter.layoutStyleDirty = false;
-		}
-
-		if (custom_data) data = _.extend(data, custom_data);
-
-		Upfront.Util.post({
-			action: 'upfront_thx-export-layout',
-			data: data
-		}).success(function(response){
-			if ( response && response.error )
-				deferred.reject(response.error);
-			else
-				deferred.resolve();
-		}).error(function(){
-			deferred.reject();
-		});
-		return deferred.promise();
-	},
-
-	/* Cleanup region CSS, running on save/export */
-	clean_region_css: function () {
-		var me = this,
-			cssEditor = Upfront.Application.cssEditor,
-            ed = Upfront.Behaviors.LayoutEditor,
-			elementTypes = [cssEditor.elementTypes.RegionContainer, cssEditor.elementTypes.Region],
-			layout = _upfront_post_data.layout,
-			layout_id = layout.specificity || layout.item || layout.type,
-			regions = Upfront.Application.layout.get('regions'),
-			styleExists = [],
-			deleteDatas = [],
-			deleteFunc = function (index) {
-				if ( ! deleteDatas[index] ) {
-					Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.behaviors.region_css_cleaned);
-					deferred.resolve();
-					return;
-				}
-				var elementType = deleteDatas[index].elementType,
-					styleName = deleteDatas[index].styleName;
-				if ( Upfront.Application.get_current() === Upfront.Settings.Application.MODE.THEME ) {
-					data = {
-						action: 'upfront_thx-delete-element-styles',
-						data: {
-							stylename: styleName,
-							elementType: elementType
-						}
-					};
-				}
-				else {
-					data = {
-						action: 'upfront_delete_styles',
-						styleName: styleName,
-						elementType: elementType
-					};
-				}
-				Upfront.Util.post(data)
-					.done(function(){
-						var styleIndex = Upfront.data.styles[elementType].indexOf(styleName);
-
-						//Remove the styles from the available styles
-						if(styleIndex != -1)
-							Upfront.data.styles[elementType].splice(styleIndex, 1);
-
-						//Remove the styles from the dom
-						$('#upfront-style-' + styleName).remove();
-
-						//Continue deleting
-						deleteFunc(index+1);
-					})
-				;
-			},
-			deferred = new $.Deferred()
-		;
-
-		regions.each(function(region){
-			var elementType = region.is_main() ? cssEditor.elementTypes.RegionContainer.id : cssEditor.elementTypes.Region.id,
-				styleName = layout_id + '-' + region.get('name') + '-style',
-				isGlobal = ( region.get('scope') == 'global' );
-			if ( _.isArray(Upfront.data.styles[elementType]) && Upfront.data.styles[elementType].indexOf(styleName) != -1 )
-				styleExists.push(styleName);
-			// global stylename
-			styleName = elementType + '-' + region.get('name') + '-style';
-			if ( _.isArray(Upfront.data.styles[elementType]) && Upfront.data.styles[elementType].indexOf(styleName) != -1 )
-				styleExists.push(styleName);
-		});
-
-        ed._get_saved_layout().done(function(saved){
-			_.each(elementTypes, function(elementType){
-				_.each(Upfront.data.styles[elementType.id], function(styleName){
-					var onOtherLayout = false;
-					_.each(saved, function(obj, id){
-						if ( id == layout_id )
-							return;
-						var is_parent_layout = ( layout_id.match(new RegExp('^' + id + '-')) );
-						if ( styleName.match(new RegExp('^' + id)) && ( !is_parent_layout || ( is_parent_layout && !styleName.match(new RegExp('^' + layout_id)) ) ) )
-							onOtherLayout = true;
-					});
-					if ( ! _.contains(styleExists, styleName) && styleName.match(new RegExp('^' + layout_id)) && !onOtherLayout )
-						deleteDatas.push({
-							elementType: elementType.id,
-							styleName: styleName
-						});
-				});
-			});
-			if ( deleteDatas.length > 0 ) {
-				Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.behaviors.cleaning_region_css);
-				deleteFunc(0); // Start deleting
-			}
-		});
-
-		return deferred.promise();
-	},
-
-	_build_query: function (data) {
-		return _.map(data, function(value, key){ return key + '=' + value; }).join('&');
-	},
-
-	clean_global_regions: function () {
-		Upfront.data.global_regions = false;
-	},
-
-	open_global_region_manager: function () {
-		var ed = Upfront.Behaviors.LayoutEditor;
-		Upfront.Popup.open(
-			function (data, $top, $bottom) {
-				var $me = $(this);
-				$me.html('<p class="upfront-popup-placeholder">' + Upfront.Settings.l10n.global.behaviors.loading_content + '</p>');
-
-				if ( !Upfront.data.global_regions ){
-					ed._refresh_global_regions().done(function(){
-						ed._render_global_region_manager($me);
-					});
-				}
-				else {
-					ed._render_global_region_manager($me);
-				}
-			},
-			{
-				width: 600
-			},
-			'global-region-manager'
-		);
-	},
-
 	_refresh_global_regions: function () {
 		return Upfront.Util.post({
 			action: 'upfront_list_scoped_regions',
@@ -1541,7 +973,7 @@ var LayoutEditor = {
 				$title = $('<h3 class="global-region-manager-title">'+ manager.title +'</h3>'),
 				$content = $('<div class="global-region-manager-content upfront-scroll-panel"></div>');
 			$wrap.append([$title, $content]);
-			ed._render_regions(manager.data, $content);
+			ed._render_regions(manager.data, $content, manager.classname);
 			$el.append($wrap);
 			// don't propagate scroll
 			Upfront.Views.Mixins.Upfront_Scroll_Mixin.stop_scroll_propagation($content);
@@ -1579,7 +1011,7 @@ var LayoutEditor = {
 		});
 	},
 
-	_render_regions: function (regions, $el) {
+	_render_regions: function (regions, $el, type) {
 		var $lists = $('<ul class="global-region-manager-lists"></ul>');
 		_.each(regions, function(region){
 			var classes = ['global-region-manager-list'],
@@ -1599,12 +1031,163 @@ var LayoutEditor = {
 					'<span class="region-list-name">' + region.title + '</span>' +
 					'<span class="region-list-control">' +
 						//'<a href="#" class="region-list-edit" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.edit + '</a>' +
-						( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.THEME ? '<a href="#" class="region-list-trash" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.trash + '</a>' : '' ) +
+						(
+							false === Upfront.plugins.isForbiddenByPlugin('show region list trash') ?
+							'<a href="#" class="region-list-trash" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.trash + '</a>' :
+							''
+						) +
 					'</span>' +
 				'</li>'
 			);
 		});
+		// If no regions, display message.
+		if (regions.length < 1) {
+			if (type === 'lightbox') {
+				var message = Upfront.Settings.l10n.global.behaviors.no_lightboxes;
+			} else {
+				var message = Upfront.Settings.l10n.global.behaviors.no_global_regions;
+			}
+			$lists = '<span class="region-list-empty">' + message + '</span>';
+		}
 		$el.append($lists);
+	},
+
+	/**
+	 * Show import image dialog.
+	 * This will call an event that will try to populate the theme images, then check if image exists.
+	 * If there is image to be imported, show. Otherwise, just ignore.
+	 *
+	 * @author Jeffri
+	 */
+	import_image_dialog: function () {
+		var ed = Upfront.Behaviors.LayoutEditor,
+			import_each = 2,
+			image_list = [],
+			import_image_list = []
+		;
+		Upfront.Events.trigger('upfront:import_image:populate_theme_images', image_list);
+		if ( image_list.length <= 0 ) return;
+
+		Upfront.Util.post({
+			action: 'upfront_list_import_image',
+			images: image_list
+		}).done(function(response){
+			if ( parseInt(response.data.error, 10) !== 0 ) return;
+			_.each(response.data.images, function (image) {
+				if ( image.status === 'not_exists' ) import_image_list.push(image.filepath);
+				else if ( image.status === 'exists' ) Upfront.Events.trigger('upfront:import_image:imported', image);
+			});
+			if ( import_image_list.length > 0 ) ed.open_import_image_dialog(import_image_list);
+		});
+	},
+
+	/**
+	 * Handling the import image dialog
+	 *
+	 * @author Jeffri
+	 * @param image_list
+	 */
+	open_import_image_dialog: function (image_list) {
+		var ed = Upfront.Behaviors.LayoutEditor;
+		if ( !ed.import_image_modal ){
+			ed.import_image_modal = new Upfront.Views.Editor.Modal({to: $('body'), button: false, top: 120, width: 600});
+			ed.import_image_modal.render();
+			$('body').append(ed.import_image_modal.el);
+		}
+		ed.import_image_modal.open(function($content, $modal) {
+			var importing = false,
+				import_button = new Upfront.Views.Editor.Field.Button({
+					name: 'import_image',
+					label: Upfront.Settings.l10n.global.behaviors.import_image_button,
+					compact: true,
+					classname: 'upfront-import-image-button',
+					on_click: function () {
+						if ( importing ) return; // Prevent multiple click
+						// Import images
+						ed.do_import_image(image_list).done(function () {
+							// Finished, let's show success message and close the modal
+							$content.html(
+								'<p>' + Upfront.Settings.l10n.global.behaviors.import_image_done_description + '</p>'
+							);
+							setTimeout(function(){
+								ed.import_image_modal.close();
+							}, 3000);
+						});
+						importing = true;
+					}
+				}),
+				ignore_button = new Upfront.Views.Editor.Field.Button({
+					name: 'import_image_ignore',
+					label: Upfront.Settings.l10n.global.behaviors.import_image_ignore_button,
+					compact: true,
+					classname: 'upfront-import-image-button',
+					on_click: function () {
+						ed.import_image_modal.close();
+					}
+				}),
+				$image_list = $('<ul class="upfront-import-image-list upfront-scroll-panel"></ul>')
+			;
+			$modal.addClass('upfront-import-image-modal');
+			$content.html(
+				'<p>' + Upfront.Settings.l10n.global.behaviors.import_image_description + '</p>'
+			);
+			_.each(image_list, function (img, index) {
+				$image_list.append(
+					'<li class="upfront-import-image-each" id="import-image-' + index + '">' +
+						'<img src="' + img + '" alt="" />' +
+					'</li>'
+				);
+			});
+			$content.append($image_list);
+			_.each([import_button, ignore_button], function (button) {
+				button.render();
+				button.delegateEvents();
+				$content.append(button.$el);
+			});
+		}, ed);
+	},
+
+	/**
+	 * Do importing the images from import_image_dialog, a recursive function
+	 *
+	 * @author Jeffri
+	 * @param image_list
+	 */
+	do_import_image: function (image_list) {
+		var ed = Upfront.Behaviors.LayoutEditor,
+			import_each = 4,
+			each_image_list,
+			_update_image_status = function (status) {
+				for ( var i = ed._import_image_index; i < ed._import_image_index + import_each; i++ ) {
+					$('#import-image-'+i).removeClass('processing done').addClass(status);
+				}
+			}
+		;
+		if ( !ed._import_image_index ) ed._import_image_index = 0;
+		if ( !ed._import_image_deferred ) ed._import_image_deferred = new $.Deferred();
+
+		each_image_list = image_list.slice(ed._import_image_index, ed._import_image_index + import_each);
+
+		if ( each_image_list.length === 0 ) {
+			ed._import_image_deferred.resolve();
+			ed._import_image_index = false;
+			return;
+		}
+
+		_update_image_status('processing');
+
+		Upfront.Util.post({
+			action: 'upfront_import_image',
+			images: each_image_list
+		}).done(function (response) {
+			_.each(response.data.images, function (image) {
+				if ( image.status === 'import_success' ) Upfront.Events.trigger('upfront:import_image:imported', image);
+			});
+			_update_image_status('done');
+			ed._import_image_index += import_each;
+			ed.do_import_image(image_list);
+		});
+		return ed._import_image_deferred.promise();
 	}
 };
 

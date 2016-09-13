@@ -1,0 +1,1 @@
+!function(){define([],function(){return Backbone.Model.extend({initialize:function(e){this.set({presets:e})}})})}();

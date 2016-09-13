@@ -92,6 +92,7 @@ class Upfront_UwidgetView extends Upfront_Object {
 				'links_info' => __('Widget links', 'upfront'),
 			),
 			'render_error' => __('Ooops, something seems to have gone wrong with rendering the widget', 'upfront'),
+			'not_shown_to_visitors' => __('This message will not be shown to your visitors', 'upfront'),
 			'missing_admin_data' => __('We haven\'t been able to find any fields for the selected widget. Something could be wrong.', 'upfront'),
 		);
 		return !empty($key)

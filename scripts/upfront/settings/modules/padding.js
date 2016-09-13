@@ -26,7 +26,7 @@ define([
 					],
 					change: function(value) {
 						me.model.set_breakpoint_property('use_padding', value);
-						
+
 						if(typeof value === "undefined") {
 							//Disable custom padding, update to theme default padding
 							me.model.set_breakpoint_property('left_padding_num', column_padding, true);
@@ -37,7 +37,7 @@ define([
 							padding_top.get_field().val(column_padding);
 							padding_right.get_field().val(column_padding);
 							padding_bottom.get_field().val(column_padding);
-							
+
 							//Disable paddings
 							me.disable_paddings();
 						}
@@ -93,7 +93,7 @@ define([
 							stateSettings.find('.padding-bottom').hide();
 							stateSettings.find('.padding-left').hide();
 							stateSettings.find('.padding-right').hide();
-							
+
 							me.model.set_breakpoint_property('left_padding_num', padding);
 							me.model.set_breakpoint_property('top_padding_num', padding);
 							me.model.set_breakpoint_property('right_padding_num', padding);
@@ -141,16 +141,16 @@ define([
 						me.model.set_breakpoint_property('top_padding_num', value, true);
 						me.model.set_breakpoint_property('right_padding_num', value, true);
 						me.model.set_breakpoint_property('bottom_padding_num', value, true);
-						
+
 						locked_num.get_field().val(value);
 						padding_left.get_field().val(value);
 						padding_top.get_field().val(value);
 						padding_right.get_field().val(value);
 						padding_bottom.get_field().val(value);
-						
+
 						//Enable padding fields
 						me.enable_lock_padding();
-						
+
 						me.re_render_entity();
 					},
 					show: function() {
@@ -177,7 +177,7 @@ define([
 						me.model.set_breakpoint_property('padding_slider', value);
 						me.model.set_breakpoint_property('padding_number', value);
 						locked_slider.$el.find('#'+locked_slider.get_field_id()).slider('value', value);
-						
+
 						//Update all padding values
 						me.model.set_breakpoint_property('left_padding_num', value, true);
 						me.model.set_breakpoint_property('top_padding_num', value, true);
@@ -187,12 +187,12 @@ define([
 						padding_top.get_field().val(value);
 						padding_right.get_field().val(value);
 						padding_bottom.get_field().val(value);
-						
+
 						//Enable padding fields
 						me.enable_lock_padding();
-									
+
 						me.re_render_entity();
-						
+
 						//Lower opacity if value is bigger than the slider MAX_VALUE
 						if(value > 250) {
 							me.$el.find('.padding-slider').css('opacity', 0.6);
@@ -284,11 +284,11 @@ define([
 					blur: function() {
 						me.$el.find('.padding-bottom label').css('border', '1px dotted #7d99b3');
 					}
-				}),
+				})
 
 			]);
 		},
-		
+
 		refresh: function() {
 			//Check use_padding when default settings are overwriten
 			this.model.set_breakpoint_property('use_padding', 'yes');
@@ -302,21 +302,23 @@ define([
 				rightPadding     = this.model.get_breakpoint_property_value('right_padding_num')
 			;
 
-			lockPadding ? lockPaddingField.attr('checked', 'checked') : lockPaddingField.removeAttr('checked');
+			if (lockPadding) lockPaddingField.attr('checked', 'checked');
+			else lockPaddingField.removeAttr('checked');
 			lockPaddingField.trigger('change');
-			this.fields._wrapped[4].get_field().val(topPadding);
-			this.fields._wrapped[5].get_field().val(leftPadding);
-			this.fields._wrapped[6].get_field().val(rightPadding);
-			this.fields._wrapped[7].get_field().val(bottomPadding);
+			
+			if ( topPadding ) this.fields._wrapped[4].get_field().val(topPadding);
+			if ( leftPadding ) this.fields._wrapped[5].get_field().val(leftPadding);
+			if ( rightPadding ) this.fields._wrapped[6].get_field().val(rightPadding);
+			if ( bottomPadding ) this.fields._wrapped[7].get_field().val(bottomPadding);
 		},
-		
+
 		enable_padding: function(field) {
 			//Enable padding when settings is changed
 			this.model.set_breakpoint_property(field, 'yes');
-			
+
 			Upfront.Events.trigger("upfront:paddings:updated");
 		},
-		
+
 		disable_paddings: function() {
 			//Enable padding when settings is changed
 			this.model.set_breakpoint_property('top_padding_use', '');
@@ -325,10 +327,10 @@ define([
 			this.model.set_breakpoint_property('right_padding_use', '');
 			Upfront.Events.trigger("upfront:paddings:updated");
 		},
-		
+
 		enable_lock_padding: function() {
 			var is_group = this.model instanceof Upfront.Models.ModuleGroup;
-			
+
 			this.enable_padding('top_padding_use');
 			this.enable_padding('bottom_padding_use');
 			if( ! is_group ) {
@@ -337,7 +339,7 @@ define([
 			}
 		},
 
-		re_render_entity: function() {							
+		re_render_entity: function() {
 			var currentEntity = Upfront.data.currentEntity;
 			clearTimeout(this.refresh_timer);
 			this.refresh_timer = setTimeout(function() {

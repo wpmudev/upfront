@@ -10,7 +10,7 @@ class Upfront_Uwidget {
 	}
 
 	public static function get_widget_list () {
-		global $wp_registered_widget_controls, $wp_registered_widgets;		
+		global $wp_registered_widget_controls, $wp_registered_widgets;
 		$data = array();
 
 		foreach ($wp_registered_widgets as $key => $widget) {
@@ -37,7 +37,7 @@ class Upfront_Uwidget {
 		global $wp_registered_widgets;
 		$widget = $this->get_widget();
 		$result = Upfront_Permissions::current(Upfront_Permissions::BOOT)
-			? Upfront_UwidgetView::get_l10n('render_error')
+			? $this->_get_error_markup()
 			: ''
 		;
 		$args = !empty($wp_registered_widgets[$widget]['params']) ? $wp_registered_widgets[$widget]['params'] : array();
@@ -66,7 +66,7 @@ class Upfront_Uwidget {
 			'after_widget' => '</div>',
 		));
 		$args = apply_filters('upfront_widget_widget_args', $args);
-		
+
 		$instance = wp_parse_args($instance, array(
 			'title' => '',
 		));
@@ -82,13 +82,27 @@ class Upfront_Uwidget {
 		return !empty($out) ? $out : $result;
 	}
 
+	/**
+	 * Getter for rendering error string markup
+	 *
+	 * @return string
+	 */
+	private function _get_error_markup () {
+		return '' .
+			esc_html(Upfront_UwidgetView::get_l10n('render_error')) .
+			'<div class="upfront-widget-note"><small>' .
+				esc_html(Upfront_UwidgetView::get_l10n('not_shown_to_visitors')) .
+			'</small></div>' .
+		'';
+	}
+
 	private function _get_admin_fields () {
 		global $wp_registered_widget_controls;
 		$widget = $this->get_widget();
 		$result = array();
 
 		if (empty($wp_registered_widget_controls[$widget])) return $result;
-		
+
 		$callback = $wp_registered_widget_controls[$widget]['callback'];
 		if (empty($callback) || !is_callable($callback)) return $result;
 
@@ -119,30 +133,34 @@ class Upfront_Uwidget {
 
 					$base = $child->getAttribute('name');
 					if ('radio' === $child->getAttribute('type')) $base .= $child->getAttribute('value');
-					$for = md5($base);
+					if (!empty($base)) $for = md5($base); // Only do the hash if it makes sense
 				}
+				if (empty($for)) continue; // We don't know what the label is for, carry on
 
 				if (isset($fields[$for])) $fields[$for]['label'] = $node->nodeValue;
 				else $fields[$for] = array('label' => $node->nodeValue);
 			} else {
 				$exp_name = explode('[', $node->getAttribute('name'));
 				$fieldname = str_replace(']', '', array_pop($exp_name));
-				
+
 				$id = $node->getAttribute('id');
 				if (empty($id)) {
 					$base = $node->getAttribute('name');
 					if ('radio' === $node->getAttribute('type')) $base .= $node->getAttribute('value');
 					$id = md5($base);
 				}
-				
+
 				if (isset($fields[$id])) $fields[$id]['name'] = $fieldname;
 				else $fields[$id] = array('name' =>$fieldname);
 				if (strtolower($node->nodeName) == 'select') {
 					$fields[$id]['type'] = $node->nodeName;
+					$fields[$id]['value'] = '';
 					$fields[$id]['options'] = array();
 					foreach($xpath->query('./option', $node) as $option) {
 						$fields[$id]['options'][$option->getAttribute('value')] = $option->nodeValue;
+						if ( empty($fields[$id]['value']) ) $fields[$id]['value'] = $option->nodeValue;
 					}
+					
 				} elseif('textarea' === strtolower($node->nodeName)) {
 					$fields[$id]['type'] = $node->nodeName;
 					$fields[$id]['value'] = $node->nodeValue;

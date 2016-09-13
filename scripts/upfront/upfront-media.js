@@ -301,7 +301,7 @@ define([
 		has_upload: function () {
 			if ( Upfront.Settings.Application.PERMS.UPLOAD ) {
 				if (!this.themeImages) return true; // Allow when not looking into theme images
-				return Upfront.Application.is_builder(); // Otherwise, allow if in builder
+				return true === Upfront.plugins.isRequiredByPlugin('media filter upload');
 			} else {
 				return false; // disabling upload when user role has no permission
 			}
@@ -1292,6 +1292,7 @@ define([
 		},
 		switch_to_embed: function (e) {
 			return false;
+			/*
 			e.preventDefault();
 			e.stopPropagation();
 			this.$el
@@ -1299,6 +1300,7 @@ define([
 				.filter(".embed").addClass("active")
 			;
 			this.trigger("media_manager:switcher:to_embed");
+			*/
 		},
 		switch_to_upload: function (e) {
 			e.preventDefault();

@@ -1,5 +1,5 @@
 .upfront-message-modal {
-	font-family: "Source Sans Pro", sans-serif;
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 	color: #3c5266;
 }
 .upfront-modal-title {
@@ -76,5 +76,76 @@
 }
 .upfront-apply-page-modal .upfront-field-wrap-button.upfront-continue-apply-template input {
   color: #6486a6;
+}
+
+.upfront-import-image-modal {
+	text-align: center;
+	color: rgba(28, 45, 61, 1);
+	font-size: 16px;
+	background: rgba(28, 45, 61, 0.5);
+}
+.upfront-import-image-modal .upfront-inline-modal-content {
+	padding: 40px;
+}
+.upfront-import-image-button {
+	display: inline-block;
+	font-size: 14px;
+	margin: 0 20px;
+	padding: 0 20px;
+	line-height: 40px;
+	height: 40px;
+	text-align: center;
+	color: #7190af;
+	border: 1px solid #b2cbe2;
+	border-radius: 3px;
+	background: #f9fcff;
+}
+.upfront-import-image-list {
+	padding: 20px 0 0;
+	text-align: center;
+}
+.upfront-import-image-list.upfront-scroll-panel {
+	max-height: 320px;
+}
+.upfront-import-image-each {
+	width: 103px;
+	height: 75px;
+	border: 1px solid #a9cae8;
+	/* Below is image pattern for background */
+	background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+CjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0iI0U0RjNGRiI+PC9yZWN0Pgo8cmVjdCB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIGZpbGw9IiNEMkU3RjgiPjwvcmVjdD4KPHJlY3QgeD0iMTAiIHk9IjEwIiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIGZpbGw9IiNEMkU3RjgiPjwvcmVjdD4KPC9zdmc+") repeat;
+	background-position: 5px 0;
+	overflow: hidden;
+	display: inline-block;
+	vertical-align: top;
+	margin: 0 10px 20px;
+	position: relative;
+}
+.upfront-import-image-each.processing {
+	animation-duration: 1s;
+	animation-name: import-processing;
+	animation-direction: alternate;
+	animation-iteration-count: infinite;
+}
+.upfront-import-image-each.done {
+	display: none;
+}
+.upfront-import-image-each img {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+	width: 100%;
+	height: auto;
+}
+
+@keyframes import-processing {
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0.5;
+	}
 }
 

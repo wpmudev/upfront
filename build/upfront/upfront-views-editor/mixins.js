@@ -1,0 +1,1 @@
+!function(){define(["scripts/upfront/upfront-views-editor/mixins/upfront-icon-mixin","scripts/upfront/upfront-views-editor/mixins/upfront-scroll-mixin"],function(i,n){return{Upfront_Scroll_Mixin:n,Upfront_Icon_Mixin:i}})}();

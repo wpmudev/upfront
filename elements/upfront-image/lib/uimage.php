@@ -315,84 +315,10 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			upfront_add_ajax('upfront-media-image_sizes', array($this, "get_image_sizes"));
 			upfront_add_ajax('upfront-media-image-create-size', array($this, "create_image_size"));
-			upfront_add_ajax('upfront-media-image-import', array($this, "import_image"));
 		}
 		if (Upfront_Permissions::current(Upfront_Permissions::SAVE) && Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE)) {
 			upfront_add_ajax('upfront-media-save-images', array($this, "save_resizing"));
 		}
-	}
-
-	function import_image () {
-		$data = stripslashes_deep($_POST);
-
-		if(! $data['images'])
-			return $this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('no_images')));
-
-		$images = array();
-
-		$wp_upload_dir = wp_upload_dir();
-		$pfx = !empty($wp_upload_dir['path']) ? trailingslashit($wp_upload_dir['path']) : '';
-		if (!function_exists('wp_generate_attachment_metadata')) require_once(ABSPATH . 'wp-admin/includes/image.php');
-
-		foreach($data['images'] as $imageData) {
-			$imageExists = false;
-			// Check if image attachment id is valid
-			if ($imageData['id']) {
-				$filepath = get_attached_file($imageData['id']);
-				if ( $filepath && file_exists($filepath) ) {
-					$imageExists = true;
-					$images[$imageData['id']] = array('status' => 'ok');
-				}
-			}
-			// The image isn't exists, if src is provided, we try to import (only theme image)
-			if (!$imageExists && $imageData['src'] && strpos($imageData['src'], get_stylesheet_directory_uri()) === 0) {
-				$filepath = preg_replace('/^' . preg_quote(get_stylesheet_directory_uri(), '/') . '/', get_stylesheet_directory(), $imageData['src']);
-				if (!$filepath || !file_exists($filepath)) {
-					$images[$imageData['id']] = array('status' => 'fail');
-					continue;
-				}
-				$filename =  basename($filepath);
-				$id = $this->get_image_id_by_filename($filename);
-				// Check if file already exists
-				if ($id) {
-					$filepath2 = get_attached_file($id);
-					if (filesize($filepath) == filesize($filepath2) && md5_file($filepath) == md5_file($filepath2)) {
-						$images[$imageData['id']] = array(
-							'status' => 'exists',
-							'id' => $id
-						);
-						continue;
-					}
-				}
-				// Make sure no duplicate
-				while (file_exists("{$pfx}{$filename}")) {
-					$filename = rand() . $filename;
-				}
-
-				$raw_filename = $filename;
-				$filename = Upfront_UploadHandler::to_clean_file_name($filename);
-
-				if (!copy($filepath, "{$pfx}{$filename}")) continue;
-
-				$wp_filetype = wp_check_filetype(basename($filename), null);
-				$attachment = array(
-					'guid' => $wp_upload_dir['url'] . '/' . basename($filename),
-					'post_mime_type' => $wp_filetype['type'],
-					'post_title' => preg_replace('/\.[^.]+$/', '', basename($raw_filename)),
-					'post_content' => '',
-					'post_status' => 'inherit'
-				);
-				$attach_id = wp_insert_attachment($attachment, "{$pfx}{$filename}");
-				$attach_data = wp_generate_attachment_metadata( $attach_id, "{$pfx}{$filename}" );
-				wp_update_attachment_metadata( $attach_id, $attach_data );
-				$images[$imageData['id']] = array(
-					'status' => 'imported',
-					'id' => $attach_id,
-					'src' => $wp_upload_dir['url'] . '/' . basename($filename)
-				);
-			}
-		}
-		return $this->_out(new Upfront_JsonResponse_Success(array('images' => $images)));
 	}
 
 	function create_image_size(){

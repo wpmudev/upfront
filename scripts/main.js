@@ -16,7 +16,7 @@ require(['backbone'], function (Backbone) {
 		evaluate : /\{\[([\s\S]+?)\]\}/g,
 		interpolate : /\{\{([\s\S]+?)\}\}/g
 	};
-	require(['application', 'util'], function (application, util) {
+	require(['application', 'util', 'scripts/upfront/plugins'], function (application, util, Plugins) {
 		// Shims and stubs
 		_.extend(Upfront.Events, Backbone.Events);
 		Upfront.Settings = {
@@ -58,6 +58,8 @@ require(['backbone'], function (Backbone) {
 			"Content": Upfront.mainData.content,
 			"l10n": Upfront.mainData.l10n
 		};
+
+		Upfront.plugins = new Plugins();
 
 		if (window._upfront_debug_mode) {
 			Upfront.Settings.Application.DEBUG = true;

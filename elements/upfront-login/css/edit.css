@@ -30,18 +30,18 @@
 	width: 80%;
 }
 
-.upfront_login-item-display_behavior .upfront-field-multiple,
+/*.upfront_login-item-display_behavior .upfront-field-multiple,
 .upfront_login-logout_style .upfront-field-multiple {
 	max-width: 48%;
 	margin-right: 1%;
 	float: left;
-}
+}*/
 
 .upfront_login-logout_text {
 	clear:both;
 } 
 
-div.upfront_login-item-display_behavior div.upfront-settings-item-title > span {
+/*div.upfront_login-item-display_behavior div.upfront-settings-item-title > span {
   display: block;
   color: #7d99b3;
   font-size: 11px;
@@ -55,7 +55,7 @@ div.upfront_login-item-display_behavior div.upfront-settings-item-title > span {
 
 div.upfront_login-item-display_behavior div.upfront-settings-item-title:after {
   display:none;
-}
+}*/
 
 div.upfront_login-item-display_trigger div.upfront-field-wrap-text {
   margin-top:0 !important;
@@ -75,4 +75,193 @@ div.upfront-login_element-module.upfront-module-active .upfront_login.upfront_lo
 div.upfront-login_element-module .upfront_login.upfront_login-click,
 div.upfront-login_element-module.upfront-module-active .upfront_login.upfront_login-click {
   z-index: 15;
+}
+
+.upfront_login form#loginform .login-remember .redactor-box {
+	display: inline-block;
+}
+
+.upfront_login form#loginform .login-submit {
+	position: relative;
+}
+
+.upfront_login form#loginform .login-submit span.login-submit-label-container {
+	position: absolute;
+	width: 100%;
+	display: table;
+	text-align: center;
+}
+
+.upfront_login form#loginform .login-submit .redactor-box {
+	width: 100%;
+	display: table;
+}
+
+.upfront_login form#loginform .login-submit span.login-submit-label {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.upfront_login p.login-lostpassword {
+	margin: 3px;
+}
+
+.upfront_login form#loginform p input.upfront-input-labels[type="text"],
+.upfront_login p.login-lostpassword input.upfront-input-labels[type="text"] {
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	height: auto;
+	width: 100%;
+}
+
+.upfront_login form#loginform p.login-remember input.upfront-input-labels[type="text"] {
+	width: auto;
+	padding: 0;
+}
+
+.upfront_login.upfront_login-click form#loginform p.login-remember input.upfront-input-labels[type="text"],
+.upfront_login.upfront_login-hover form#loginform p.login-remember input.upfront-input-labels[type="text"] {
+	width: 80%;
+}
+
+.upfront_login form#loginform p.login-submit input.upfront-input-labels[type="text"],
+.upfront_login p.login-lostpassword input.upfront-input-labels[type="text"] {
+	text-align: center;
+}
+
+.upfront_login form#loginform p.login-submit input.upfront-input-labels[type="text"] {
+	background: #1b7bd7;
+	-webkit-box-shadow: 0 0 0px 1000px rgb(27, 123, 215) inset;
+	color: #fff;
+	-webkit-text-fill-color: rgb(255, 255, 255);
+	width: 100%;
+	text-align: center;
+	height: 40px;
+	font:16px/2.2 Arial;
+	color: #fff;
+}
+
+.upfront_login form#loginform p.login-submit input.upfront-input-labels[type="text"]:hover {
+	background-color: #1770c5;
+}
+
+.upfront_login p.login-lostpassword input.upfront-input-labels.lostpassword-link[type="text"] {
+	color: #1b7bd7;
+	-webkit-text-fill-color: rgb(27, 123, 215);
+}
+
+#element-settings-sidebar .upfront-settings-item.relative {
+	position: relative;
+}
+
+#element-settings-sidebar .upfront_login-settings-panel .upfront-field-wrap {
+	margin-top: 0;
+}
+
+#element-settings-sidebar .upfront_login-settings-panel .upfront-field-wrap.upfront_login-logout_style {
+	margin-bottom: 15px;
+}
+
+#element-settings-sidebar .upfront_login-settings-panel .upfront-field-wrap.float-right {
+	position: absolute;
+	top: 13px;
+	right: 30px;
+}
+
+#element-settings-sidebar .upfront-settings-item .login-general-settings-description {
+	color: #30475e;
+	font-size: 11px;
+	font-weight: normal;
+	font-family: verdana, sans-serif;
+	padding: 15px 15px 5px 15px;
+	opacity: .8;
+	line-height: 1.7;
+}
+
+#element-settings-sidebar .upfront-settings-item .clear-after:after {
+	content: ' ';
+	display: table;
+	clear: both;
+}
+
+#element-settings-sidebar .upfront-settings-item .login-general-settings-description span {
+	float: left;
+  width: 90%;
+}
+
+#element-settings-sidebar .upfront_toggle {
+	position: relative;
+	width: 40px;
+	display: inline-table;
+	vertical-align: middle;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	&.hide {
+			display: none;
+	}
+}
+
+#element-settings-sidebar input.upfront_toggle_checkbox {
+	display: none;
+}
+
+#element-settings-sidebar .upfront_toggle_switch {
+	display: block;
+	width: 13px;
+	height: 13px;
+	background-color: #fff;
+	border-radius: 15px;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	position: absolute;
+	top: 1px;
+	bottom: 0;
+	right: initial;
+	left: 3px;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	will-change: transform;
+	-webkit-transition: transform 0.2s;
+	transition: transform 0.2s;
+}
+
+#element-settings-sidebar .upfront_toggle_label {
+	position: relative;
+	display: block;
+	cursor: pointer;
+	border-radius: 50px;
+	border: 0;
+	width: 40px;
+	height: 15px;
+	background: #ddd;
+	margin-left: 3px;
+	margin-top: 10px;
+}
+
+#element-settings-sidebar .upfront_toggle_checkbox:checked + .upfront_toggle_label {
+	background: #1fcd8f;
+}
+
+#element-settings-sidebar .upfront_toggle_checkbox:checked + .upfront_toggle_label .upfront_toggle_switch {
+	-webkit-transform: translateX(22px);
+	transform: translateX(22px);
+	border-color: #1abc9c;
+}
+
+#element-settings-sidebar .upfront-field-wrap.offset {
+	width: 50%;
+	float: left;
+	margin-top: 10px;
+	margin-bottom: 5px;
+}
+
+#element-settings-sidebar .upfront-field-wrap.offset input {
+	max-width: 70px;
+}
+
+#element-settings-sidebar .upfront-field-wrap.offset label {
+	font-weight: 300;
 }

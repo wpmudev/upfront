@@ -86,11 +86,24 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	}
 
 	/**
+	* Inject the known API keys
+	*/
+	private function _output_api_keys () {
+		if (class_exists('Upfront_ApiKeys_Model')) {
+			$model = new Upfront_ApiKeys_Model;
+			$keys = $model->get_all();
+			echo '<script type="text/javascript">_upfront_api_keys=' . json_encode($keys) . ';</script>';
+		}
+	}
+
+	/**
 	 * Output "normal" (non-optimized) script and style dependencies.
 	 *
 	 * @param Upfront_CoreDependencies_Registry $deps Dependencies registry
 	 */
 	private function _output_normal ($deps) {
+		$this->_output_api_keys();
+
 		$styles = $deps->get_styles();
 		$link_tpl = '<link rel="stylesheet"  href="%url%" type="text/css" media="all" />';
 		foreach ($styles as $style) {
@@ -110,6 +123,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	 * @param Upfront_CoreDependencies_Registry $deps Dependencies registry
 	 */
 	private function _output_experimental ($deps) {
+		$this->_output_api_keys();
 
 		// Yeah, so we need jQuery here. If it's not done, drop it from the queue and get the default one
 		if (!wp_script_is('jquery', 'done')) {

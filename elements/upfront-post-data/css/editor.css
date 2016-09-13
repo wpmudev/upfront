@@ -41,7 +41,7 @@
     border-color: #5984ab;
 }
 .upfront-settings-item-content .postdata_parts li .name_action_wrapper {
-	clear: both; 
+	clear: both;
 	height: 22px;
     height: 20px;
     overflow: hidden;
@@ -55,16 +55,16 @@
 	margin: 4px 0;
 }
 
-.upfront-settings-item-content .postdata_parts li .options { 
+.upfront-settings-item-content .postdata_parts li .options {
 	min-height: 24px;
 	padding: 1px;
 	background: rgb(218, 231, 244);
 }
 .upfront-settings-item-content .postdata_parts li .options .option {
-	width: 65%; 
+	width: 65%;
 	padding-top: 5px;
 }
-.upfront-settings-item-content .postdata_parts li .options .edit_part { 
+.upfront-settings-item-content .postdata_parts li .options .edit_part {
 	display: block;
 	position: absolute;
 	right: 12px;
@@ -77,14 +77,14 @@
     height: 16px;
     white-space: nowrap;
 }
-.upfront-settings-item-content .postdata_parts li .options .edit_part a { 
+.upfront-settings-item-content .postdata_parts li .options .edit_part a {
 	color: white;
 }
 .upfront-settings-item-content .postdata_parts li .options  .upfront-field-wrap {
 	margin: 0 0 0 8px;
 }
 .upfront-settings-item-content .postdata_parts li .options  .upfront-field-label-inline {
-	padding-right: 4px; 
+	padding-right: 4px;
 }
 .upfront-settings-item-content .postdata_parts li .options input { max-width: 50%; }
 .upfront-settings-item-content .postdata_parts li .options.categories-options input { max-width: 25%; }
@@ -212,11 +212,21 @@ div.preset-manager-panel .upfront-post_data-part.part-module-panel .typography_s
 	width: 200px !important;
 }
 
+div.preset-manager-panel .upfront-post_data-part.part-module-panel .typography_settings_item .fontSize,
+div.preset-manager-panel .upfront-post_data-part.part-module-panel .typography_settings_item .fontSize input,
+div.preset-manager-panel .upfront-post_data-part.part-module-panel .typography_settings_item .lineHeight input {
+	font-size: 12px;
+}
+
 div.preset-manager-panel .upfront-post_data-part.part-module-panel .typography_settings_item .lineHeight.element-toggled {
-	width: 100px;
+	width: 80px;
 }
 div.preset-manager-panel .upfront-post_data-part.part-module-panel .typography_settings_item .fontColor.element-toggled {
-	margin-left: 10px;
+	margin-left: -20px;
+}
+
+div.preset-manager-panel .upfront-post_data-part.part-module-panel .state_settings_static {
+	margin-top: 10px;
 }
 
 div.preset-manager-panel .upfront-post_data-part.part-module-panel .edit_preset_label {
@@ -243,6 +253,7 @@ div.preset-manager-panel .upfront-post_data-part.part-module-panel .php_date_ref
 	text-decoration: underline;
 	color: rgb(0, 206, 141);
 	font-size: 13px;
+	/*margin-bottom: 15px;*/
 }
 
 /* Post Data - Contents */
@@ -271,4 +282,9 @@ div.preset-manager-panel .comments-pagination_warning input {
 .upostdata-part.thumbnail img {
 	position: relative;
 	z-index: 2;
+}
+
+/* Fixes post date PHP format issue */
+.preset-manager-panel.uf-settings-panel--expanded .upfront-post_data-part.part-module-panel.preset_specific .upfront-settings-item-content {
+	overflow: hidden;
 }
