@@ -90,7 +90,7 @@ class Upfront_Compat implements IUpfront_Server {
 
 		if (empty($raw) || empty($raw->response)) return $raw; // So nothing new here, carry on
 
-		$screen = get_current_screen();
+		$screen = ( function_exists('get_current_screen') ) ? get_current_screen() : '';
 		if (empty($screen)) return $raw; // If it's too early to do this, we're probably good with raw
 
 		// Now, let's attempt to match pages
