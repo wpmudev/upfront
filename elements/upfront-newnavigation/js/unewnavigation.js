@@ -487,12 +487,12 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	get_content_markup: function () {
 
 		var menu_id = this.model.get_property_value_by_name('menu_id'),
+			fallback_menu_id = menu_id,
 			me = this
 			currentBreakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active(),
 			breakpointMenuData = this.model.get_property_value_by_name('breakpoint_menu_id')
 		;
 		var menu_slug =  this.model.get_property_value_by_name('menu_slug');
-		
 		// overwriting menu to use breakpoint menu but only if element settings is not activated
 		// so that we can still change the menu on element settings
 		if ( $('#element-settings-sidebar input[name="menu_id"]').length == 0 ) {
@@ -527,15 +527,38 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					me.$el.find('.upfront-object-content').html('Please add menu items');
 					return;
 				}
-				me.property('menu_items', ret.data, true);
-				me.generate_menu();
-
+				if ( ret.data.length ) {
+					me.property('menu_items', ret.data, true);
+					me.generate_menu();
+				} else {
+					me.fallback_content_markup(fallback_menu_id);
+				}
 			})
 			.error(function (ret) {
 				Upfront.Util.log("Error loading menu");
 			})
 		;
 		return 'Loading';
+	},
+	/* when menu_id was overwritten by breakpoint_menu_id but that id no longer exists
+		for some reason after Reset Theme, let's fallback to menu_id
+	*/
+	fallback_content_markup: function(menu_id) {
+		var me = this;
+		me.property('menu_id', menu_id, true);
+		Upfront.Util.post({"action": "upfront_new_load_menu_array", "data": menu_id})
+			.success(function (ret) {
+				if(!ret.data){
+					me.$el.find('.upfront-object-content').html('Please add menu items');
+					return;
+				}
+				me.property('menu_items', ret.data, true);
+				me.generate_menu();
+			})
+			.error(function (ret) {
+				Upfront.Util.log("Error loading menu");
+			})
+		;
 	},
 	set_menu_id_from_slug: function(slug) {
 		var me = this;

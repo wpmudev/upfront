@@ -121,13 +121,15 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		}
 
 		$breakpoint_menu_id = is_array($breakpoint_menu_id) ? $breakpoint_menu_id : array();
+		$menu_html = '';
 		if ( count($breakpoint_menu_id) ) {
 			// return all menu for each breakpoint
-			$menu_html = '';
 			foreach ( $breakpoint_menu_id as $breakpoint => $breakpoint_menu ) {
 				if ( isset($breakpoint_menu['menu_id']) ) {
+					// check first if the breakpoint menu still existing, otherwise fallback to using menu_slug
+					$target_menu = ( wp_get_nav_menu_object($breakpoint_menu['menu_id']) ) ? $breakpoint_menu['menu_id'] : $menu_slug ;
 					$menu = wp_nav_menu(array(
-						'menu' => $breakpoint_menu['menu_id'],
+						'menu' => $target_menu,
 						'fallback_cb'     => false,
 						'echo' => false,
 						'walker' => new upfront_nav_walker(),
@@ -139,33 +141,36 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 					}
 				}
 			}
+		}
+		// if we do have breakpoint menu then go ahead and show it, skip the rest below
+		if ( !empty($menu_html) ) {
 			return $menu_html;
+		}
+		
+		// normal display with no other menu on each breakpoint
+		if($menu_slug) {
+			$menu = wp_get_nav_menu_object($menu_slug);
+			if($menu)
+				$menu_id = $menu->term_id;
+		}
+		if ( $menu_id ) {
+			$menu = wp_nav_menu(array(
+				'menu' => $menu_id,
+				'fallback_cb'     => false,
+				'echo' => false,
+				'walker' => new upfront_nav_walker(),
+			));
 		} else {
-			// normal display with no other menu on each breakpoint
-			if($menu_slug) {
-				$menu = wp_get_nav_menu_object($menu_slug);
-				if($menu)
-					$menu_id = $menu->term_id;
-			}
-			if ( $menu_id ) {
-				$menu = wp_nav_menu(array(
-					'menu' => $menu_id,
-					'fallback_cb'     => false,
-					'echo' => false,
-					'walker' => new upfront_nav_walker(),
-				));
-			} else {
-				if($new_appearance == 'true') {
-					return "<div class='{$preset} {$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
-				} else {
-					return "<div class='{$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
-				}
-			}
 			if($new_appearance == 'true') {
-				return "<div class='nav-preset-{$preset} {$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
+				return "<div class='{$preset} {$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
 			} else {
-				return "<div class='{$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
+				return "<div class='{$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
 			}
+		}
+		if($new_appearance == 'true') {
+			return "<div class='nav-preset-{$preset} {$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
+		} else {
+			return "<div class='{$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
 		}
 	}
 
