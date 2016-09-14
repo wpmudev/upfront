@@ -649,12 +649,12 @@ PostContentEditor.prototype = {
 							sizes = image;
 							imageId = id;
 						});
-
+						
 						deferred.resolve({
-							src: sizes.medium ? sizes.medium[0] : sizes.full[0],
-							srcFull: sizes.full[0],
-							srcOriginal: sizes.full[0],
-							fullSize: {width: sizes.full[1], height: sizes.full[2]},
+							src: sizes.medium ? sizes.medium[0] : (sizes.full ? sizes.full[0] : ''),
+							srcFull: sizes.full ? sizes.full[0] : '',
+							srcOriginal: sizes.full ? sizes.full[0]: '',
+							fullSize: {width: sizes.full ? sizes.full[1] : 0, height: sizes.full ? sizes.full[2] : 0},
 							size: {width: $img.width(), height: $img.height()},
 							position: {top: 0, left: 0},
 							rotation: 0,

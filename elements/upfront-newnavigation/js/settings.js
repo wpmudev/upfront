@@ -103,15 +103,21 @@ define([
 		setSelectedBreakpointMenu: function() {
 			var currentBreakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active(),
 				menuId = this.model.get_property_value_by_name('menu_id'),
+				slug = this.model.get_property_value_by_name('menu_slug'),
 				breakpointMenuData = this.model.get_property_value_by_name('breakpoint_menu_id')
 			;
 			
 			if ( typeof currentBreakpoint.id === 'undefined' ) return;
 			breakpointMenuData = ( breakpointMenuData ) ? breakpointMenuData : {};
 			breakpointMenuData[currentBreakpoint.id] = {
-				menu_id: menuId
+				menu_id: menuId,
+				menu_slug: slug
 			};
 			this.model.set_property('breakpoint_menu_id', breakpointMenuData, true);
+			// menu_slug should always use desktop menu slug
+			if ( breakpointMenuData['desktop'] && breakpointMenuData['desktop']['menu_slug'] ) {
+				this.model.set_property('menu_slug', breakpointMenuData['desktop']['menu_slug'], true);
+			}
 		}
 	});
 

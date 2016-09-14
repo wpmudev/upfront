@@ -5659,6 +5659,7 @@ define([
 					$container.css('min-height', '');
 				}
 				this.trigger("region_changed", this);
+				Upfront.Events.trigger("entity:region:update_position", this, this.model);
 			},
 			update_padding: function () {
 				var props = {},
@@ -6854,6 +6855,7 @@ define([
 				// this.model.bind("remove", this.on_remove, this);
 				this.listenTo(this.model, 'remove', this.on_remove);
 
+				this.listenTo(Upfront.Events, 'entity:region:update_position', this.on_region_update);
 				this.listenTo(Upfront.Events, 'entity:module:update_position', this.on_module_update);
 				this.listenTo(Upfront.Events, 'entity:modules:render_module', this.on_module_update);
 				this.listenTo(Upfront.Events, 'entity:object:update_position', this.on_object_update);
@@ -7140,6 +7142,10 @@ define([
 			},
 			on_grid_update: function () {
 				this.update_position();
+			},
+			on_region_update: function (from_view) {
+				if ( !this.parent_view || !this.parent_view.region_view || this.parent_view.region_view != from_view ) return;
+				this.toggle_wrapper_visibility();
 			},
 			on_module_update: function (from_view) {
 				if ( !from_view.wrapper_view || from_view.wrapper_view != this ) return;
