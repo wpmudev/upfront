@@ -651,7 +651,7 @@ PostContentEditor.prototype = {
 						});
 						
 						deferred.resolve({
-							src: sizes.medium ? sizes.medium[0] : sizes.full ? sizes.full[0] : '',
+							src: sizes.medium ? sizes.medium[0] : (sizes.full ? sizes.full[0] : ''),
 							srcFull: sizes.full ? sizes.full[0] : '',
 							srcOriginal: sizes.full ? sizes.full[0]: '',
 							fullSize: {width: sizes.full ? sizes.full[1] : 0, height: sizes.full ? sizes.full[2] : 0},
