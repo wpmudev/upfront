@@ -268,12 +268,25 @@ abstract class Upfront_Entity {
 			$auto = $this->_get_breakpoint_property('background_slider_rotate', $breakpoint_id);
 			$interval = $this->_get_breakpoint_property('background_slider_rotate_time', $breakpoint_id) * 1000;
 			$show_control = $this->_get_breakpoint_property('background_slider_control', $breakpoint_id);
+			$control_style = $this->_get_breakpoint_property('background_slider_control_style', $breakpoint_id);
 			$effect = $this->_get_breakpoint_property('background_slider_transition', $breakpoint_id);
 			$slide_attr = "data-slider-show-control='{$show_control}' data-slider-effect='{$effect}'";
 			if ( $auto )
 				$slide_attr .= " data-slider-auto='1' data-slider-interval='{$interval}'";
 			else
 				$slide_attr .= " data-slider-auto='0'";
+
+			if ($control_style === 'arrows') {
+				$slide_attr .= " data-control_num='0'";
+				$slide_attr .= " data-control_next_prev='1'";
+			} else if ($control_style === 'dots') {
+				$slide_attr .= " data-control_num='1'";
+				$slide_attr .= " data-control_next_prev='0'";
+			} else {
+				$slide_attr .= " data-control_num='1'";
+				$slide_attr .= " data-control_next_prev='1'";
+			}
+
 	    	foreach ( $images as $image ){
 	    		//$src = wp_get_attachment_image($image, 'full');
 	    		$src = upfront_get_attachment_image_lazy($image, 'full');

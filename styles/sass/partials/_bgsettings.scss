@@ -283,6 +283,15 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 	margin-top: 0;
 }
 
+.uf-bgsettings-slider-control, .uf-bgsettings-slider-control-style {
+	display: inline-block;
+	width: 48%;
+}
+
+.uf-bgsettings-slider-control-style {
+	float: right;
+}
+
 .upfront-bg-slider-slides {
 	margin-top: 10px;
 }

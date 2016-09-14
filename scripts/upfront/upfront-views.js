@@ -426,6 +426,7 @@ define([
 					rotate = this.model.get_breakpoint_property_value('background_slider_rotate', true),
 					rotate_time = this.model.get_breakpoint_property_value('background_slider_rotate_time', true),
 					control = this.model.get_breakpoint_property_value('background_slider_control', true),
+					control_style = this.model.get_breakpoint_property_value('background_slider_control_style', true),
 					transition = this.model.get_breakpoint_property_value('background_slider_transition', true);
 				if ( slide_images ) {
 					if ( rotate ) {
@@ -433,6 +434,16 @@ define([
 						$type.attr('data-slider-interval', rotate_time*1000);
 					} else {
 						$type.attr('data-slider-auto', 0);
+					}
+					if (control_style === 'arrows') {
+						$type.attr('data-control_num', 0);
+						$type.attr('data-control_next_prev', 1);
+					} else if (control_style === 'dots') {
+						$type.attr('data-control_num', 1);
+						$type.attr('data-control_next_prev', 0);
+					} else {
+						$type.attr('data-control_num', 1);
+						$type.attr('data-control_next_prev', 1);
 					}
 					$type.attr('data-slider-show-control', control);
 					$type.attr('data-slider-effect', transition);

@@ -81,6 +81,22 @@ define([
 						rendered: function (){
 							this.$el.addClass('uf-bgsettings-slider-control');
 						}
+					}),
+					control_style: new Upfront.Views.Editor.Field.Select({
+						model: this.model,
+						property: 'background_slider_control_style',
+						use_breakpoint_property: true,
+						default_value: 'both',
+						label: l10n.controls_style + ':',
+						values: [
+							{ label: Upfront.Settings.l10n.slider_element.dots, value: 'dots' },
+							{ label: Upfront.Settings.l10n.slider_element.arrows, value: 'arrows' },
+							{ label: Upfront.Settings.l10n.slider_element.both, value: 'both' }
+						],
+						change: set_value,
+						rendered: function (){
+							this.$el.addClass('uf-bgsettings-slider-control-style');
+						}
 					})
 				};
 			

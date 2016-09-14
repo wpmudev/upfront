@@ -647,6 +647,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'autorotate_each' => __('Auto-rotate every', 'upfront'),
 				'always' => __('Always', 'upfront'),
 				'show_ctrl' => __('Show Controls', 'upfront'),
+				'controls_style' => __('Controls Style', 'upfront'),
 				'on_hover' => __('On Hover', 'upfront'),
 				'slide_down' => __('Slide Down', 'upfront'),
 				'slide_up' => __('Slide Up', 'upfront'),
