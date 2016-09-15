@@ -15,7 +15,7 @@
                 
                 if ( !Upfront.Views.PostDataEditor ) {
                     require(['content'], function() {
-						if(self.getPostId() !== false) {
+                        if(self.getPostId() !== false) {
                             setTimeout(self.prepare_editor(self));
 							// we do not need to initialize_post_data_editor again
                             // self.initialize_post_data_editor();
@@ -41,13 +41,13 @@
                     this.render();
                 });
 				
-				this.stopListening(Upfront.Events, 'click:edit:navigate');
+                this.stopListening(Upfront.Events, 'click:edit:navigate');
                 this.listenTo(Upfront.Events, 'click:edit:navigate', function (postId) {
                     if ( typeof postId !== 'undefined' && postId ) setTimeout(self.prepare_editor(self));
                 });
 
                 if (typeof Upfront.Views.PostDataEditor !== "undefined" && Upfront.Views.PostDataEditor.contentEditor !== false) {
-					Upfront.Views.PostBox = Upfront.Views.PostDataEditor.contentEditor.prepareBox();
+                    Upfront.Views.PostBox = Upfront.Views.PostDataEditor.contentEditor.prepareBox();
                 }
 
                 if( Upfront.Views.PostDataEditor && Upfront.Views.PostBox ) {
