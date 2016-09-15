@@ -71,6 +71,22 @@ define([
 							this.$el.addClass('uf-bgsettings-video-autoplay');
 						}
 					}),
+					loop: new Upfront.Views.Editor.Field.Checkboxes({
+						model: this.model,
+						property: 'background_video_loop',
+						use_breakpoint_property: true,
+						default_value: 1,
+						layout: 'horizontal-inline',
+						multiple: false,
+						values: [ { label: l10n.loop, value: 1 } ],
+						change: function () {
+							var value = this.get_value();
+							this.model.set_breakpoint_property(this.property_name, value ? 1 : 0);
+						},
+						rendered: function (){
+							this.$el.addClass('uf-bgsettings-video-loop');
+						}
+					}),
 					style: new Upfront.Views.Editor.Field.Select({
 						model: this.model,
 						property: 'background_video_style',
