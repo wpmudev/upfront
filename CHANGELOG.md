@@ -2,6 +2,21 @@ Change Log
 ============
 
 
+1.4.2 - 2016-09-15
+-------------------------------------------------------------------------------
+- Add: ability to switch menus for breakpoints.
+- Add: button to delete a group of elements
+- Add: improved control on different region background per breakpoint
+
+- Fix: image element size when switching to responsive layout
+- Fix: resizing didn't get updated the first time
+- Fix: post content update issues
+- Fix: unable to show the elements when hidden region is toggled in responsive
+- Fix: menu issue after theme reset
+- Fix: undefined error when editing Featured image
+- Fix: menu glitch with repeated responsive change
+
+
 1.4.1 - 2016-09-13
 -------------------------------------------------------------------------------
 - Fix: scheduled scans conflict issue.
