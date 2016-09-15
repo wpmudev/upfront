@@ -30,6 +30,9 @@
 	background: #3d5266;
 	width: 260px;
 	margin-top: 46px;
+	position: fixed;
+	top: 0;
+	left: 0;
 }
 
 .upfront-bg-setting-type {
@@ -1219,6 +1222,40 @@ a.upfront-region-name-edit-trigger:hover {
 	margin: 0 0 20px;
 }
 
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior, #region-settings-sidebar .upfront-region-bg-setting-region-nav {
+	padding: 16px;
+	margin: 0;
+}
+
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-bg-setting-label, #region-settings-sidebar .upfront-region-bg-setting-region-nav .upfront-bg-setting-label {
+	font-size: 11px;
+	text-transform: uppercase;
+	line-height: normal;
+	color: #2f475f;
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+	font-weight: 700;
+	position: relative;
+	letter-spacing: 0.34px;
+}
+
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple, #region-settings-sidebar .upfront-region-bg-setting-region-nav .upfront-field-multiple {
+	margin: 0 15px 5px 0;
+}
+
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple label,
+#region-settings-sidebar .upfront-region-bg-setting-region-nav .upfront-field-multiple label {
+	color: #96acc1;
+	font-size: 11px;
+	font-family: verdana, sans-serif;
+	padding: 0;
+	font-weight: normal;
+}
+
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior {
+	padding-right: 0;
+	width: 55%;
+}
+
 .upfront-region-bg-setting-region-behavior {
 	width: 50%;
 	float: left;
@@ -1435,6 +1472,13 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 	border-top: 1px solid #cce1f4;
 	margin: 16px 0;
 	padding: 10px 0;
+	display: block;
+	clear: both;
+}
+
+#region-settings-sidebar .upfront-region-settings-responsive .upfront-region-bg-setting-region-style-container {
+	padding: 0;
+	background: none;
 }
 
 .upfront-region-bg-setting-padding .upfront-field-select-single {

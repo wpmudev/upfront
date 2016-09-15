@@ -38,6 +38,16 @@
 	margin: -30px 0 0;
 }
 
+#region-settings-sidebar .upfront-region-settings-responsive .upfront-bg-setting-tab-primary .uf-bgsettings-image-pick {
+	bottom: 49px;
+}
+
+#region-settings-sidebar .upfront-bg-setting-tab-primary .uf-bgsettings-image-pick {
+	top: auto;
+	bottom: 49px;
+	right: -70px;
+}
+
 .uf-bgsettings-image-pick {
   	display: inline-block;
   	background: #e6f3ff;
@@ -73,6 +83,7 @@
 #region-settings-sidebar .upfront-bg-setting-tab-image .upfront-bg-setting-tab-primary {
 	float: none;
 	background: none;
+	position: relative;
 	padding: 0 16px;
 }
 
@@ -187,6 +198,10 @@ div.upfront-bg-setting-tab-primary .uf-bgsettings-image-style .upfront-field-lab
 .upfront-bg-setting-tab-slider .upfront-bg-setting-tab-primary {
 	float: none;
 	width: auto;
+}
+
+#region-settings-sidebar div.upfront-bg-setting-tab-primary .upfront-field-wrap.uf-bgsettings-slider-transition .upfront-field-label-block {
+	margin-bottom: 3px;
 }
 
 div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-block {
@@ -480,6 +495,7 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 	width: 100%;
 	padding: 10px 16px;
 	background: #f7fbff;
+	clear: both;
 }
 
 #region-settings-sidebar .upfront-bg-setting-tab-video .upfront-bg-setting-tab-secondary {
