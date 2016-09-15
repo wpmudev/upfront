@@ -59,6 +59,11 @@ var Checker_Html = _.extend({}, Checker, {
 			test = this._value.replace(/\r|\n/g, "\n"), // Normalize newlines
 			$div = $("<div />")
 		;
+
+		// Normalize HTML entities before validating HTML
+		// Fixes: https://www.meistertask.com/app/task/8UUuqpmu/
+		test = test.replace(/&[^; ]+?;/g, 'HTMLENTITY');
+
 		$div.html(test);
 
 		if ($div.html().length != test.length) {
@@ -100,3 +105,4 @@ return new Syntax();
 
 });
 })(jQuery);
+

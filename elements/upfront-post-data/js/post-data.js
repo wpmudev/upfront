@@ -349,6 +349,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		if ( type != 'content' ) return;
 		var me = this,
 			ed = Upfront.Behaviors.GridEditor,
+			breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 			pos = ed.get_position(this.$el.find('> .upfront-object')),
 			left_indent = parseInt(this.object_group_view.get_preset_property('left_indent'), 10),
 			right_indent = parseInt(this.object_group_view.get_preset_property('right_indent'), 10),
@@ -372,7 +373,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 				else if ( 'right' == variant.group['float'] ) {
 					group_margin_right = ( right_indent - Math.abs(margin_right) ) * ed.col_size;
 				}
-				else if ( 'none' == variant.group['float'] ) {
+				else if ( 'none' == variant.group['float'] && ( !breakpoint || breakpoint['default'] ) ) {
 					group_margin_left = ( left_indent - Math.abs(margin_left) + Math.abs(left) ) * ed.col_size;
 					variant_max_col -= left;
 				}
@@ -763,12 +764,14 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 	checkSize: function() {
 		var imageData = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data');
-
+		
 		var maskSize = this.model.get_breakpoint_property_value('element_size', true),
 			size = imageData.imageSize;
-
-		if(size.width >= maskSize.width && size.height >= maskSize.height) {
-			return 'big';
+		
+		if ( typeof size !== 'undefined' && typeof maskSize !== 'undefined' ) {
+			if(size.width >= maskSize.width && size.height >= maskSize.height) {
+				return 'big';
+			}
 		}
 
 		return 'small';
@@ -783,7 +786,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		if ( !this.is_featured_image_set() ) return;
 		// Retrieve image data from post meta
 		var imageData = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data');
-
+		if ( typeof imageData === 'undefined' ) return;
 		// Store variables used in resize event handlers
 		this.resizingData = {
 			data: {

@@ -116,9 +116,11 @@
 #page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="password"]:hover,
 #page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form input[type="text"]:hover,
 #page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form input[type="password"]:hover {
-	<?php if(!empty($properties['hover_input_fields_background'])) { ?>
-	background: <?php echo $properties['hover_input_fields_background'] ?>;
-	-webkit-box-shadow: 0 0 0px 1000px <?php echo $properties['hover_input_fields_background'] ?> inset;
+	<?php if(!empty($properties['hover_use_input_fields_background']) && $properties['hover_use_input_fields_background'] == 'yes') { ?>
+			<?php if(!empty($properties['hover_input_fields_background'])) { ?>
+			background: <?php echo $properties['hover_input_fields_background'] ?>;
+			-webkit-box-shadow: 0 0 0px 1000px <?php echo $properties['hover_input_fields_background'] ?> inset;
+			<?php } ?>
 	<?php } ?>
 	<?php if(!empty($properties['hover_input_fields_use_typography']) && $properties['hover_input_fields_use_typography'] == 'yes') { ?>
 		<?php if(!empty($properties['hover_input_fields_color'])) { ?>color: <?php echo $properties['hover_input_fields_color']  ?>; <?php } ?>
@@ -152,9 +154,11 @@
 #page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form input[type="password"]:focus,
 #page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form input[type="text"]:focus,
 #page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form input[type="password"]:focus {
-	<?php if(!empty($properties['focus_input_fields_background'])) { ?>
-	background: <?php echo $properties['focus_input_fields_background'] ?>;
-	-webkit-box-shadow: 0 0 0px 1000px <?php echo $properties['focus_input_fields_background'] ?> inset;
+	<?php if(!empty($properties['focus_use_input_fields_background']) && $properties['focus_use_input_fields_background'] == 'yes') { ?>
+			<?php if(!empty($properties['focus_input_fields_background'])) { ?>
+			background: <?php echo $properties['focus_input_fields_background'] ?>;
+			-webkit-box-shadow: 0 0 0px 1000px <?php echo $properties['focus_input_fields_background'] ?> inset;
+			<?php } ?>
 	<?php } ?>
 	<?php if(!empty($properties['focus_input_fields_use_typography']) && $properties['focus_input_fields_use_typography'] == 'yes') { ?>
 		<?php if(!empty($properties['focus_input_fields_color'])) { ?>color: <?php echo $properties['focus_input_fields_color']  ?>; <?php } ?>
@@ -219,8 +223,10 @@
 	<?php } ?>
 }
 #page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form#loginform p.login-submit input.upfront-input-labels:hover {
-	<?php if(!empty($properties['hover_button_background'])) { ?>
-	-webkit-box-shadow: 0 0 0px 1000px <?php echo $properties['hover_button_background'] ?> inset;
+	<?php if(!empty($properties['hover_use_button_background']) && $properties['hover_use_button_background'] == 'yes') { ?>
+			<?php if(!empty($properties['hover_button_background'])) { ?>
+			-webkit-box-shadow: 0 0 0px 1000px <?php echo $properties['hover_button_background'] ?> inset;
+			<?php } ?>
 	<?php } ?>
 	<?php if(!empty($properties['hover_button_use_typography']) && $properties['hover_button_use_typography'] == 'yes') { ?>
 		<?php if(!empty($properties['hover_button_color'])) { ?>-webkit-text-fill-color: <?php echo $properties['hover_button_color']  ?>; <?php } ?>
@@ -228,8 +234,10 @@
 }
 #page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form#loginform p.login-submit input.upfront-input-labels:hover,
 #page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form#loginform input[type="submit"]:hover {
-	<?php if(!empty($properties['hover_button_background'])) { ?>
-	background: <?php echo $properties['hover_button_background'] ?>;
+	<?php if(!empty($properties['hover_use_button_background']) && $properties['hover_use_button_background'] == 'yes') { ?>
+			<?php if(!empty($properties['hover_button_background'])) { ?>
+			background: <?php echo $properties['hover_button_background'] ?>;
+			<?php } ?>
 	<?php } ?>
 	<?php if(!empty($properties['hover_button_use_typography']) && $properties['hover_button_use_typography'] == 'yes') { ?>
 		<?php if(!empty($properties['hover_button_color'])) { ?>color: <?php echo $properties['hover_button_color']  ?>; <?php } ?>
@@ -259,8 +267,10 @@
 	<?php } ?>
 }
 #page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form#loginform p.login-submit input.upfront-input-labels:focus {
-	<?php if(!empty($properties['focus_button_background'])) { ?>
-	-webkit-box-shadow: 0 0 0px 1000px <?php echo $properties['focus_button_background'] ?> inset;
+	<?php if(!empty($properties['focus_use_button_background']) && $properties['focus_use_button_background'] == 'yes') { ?>
+			<?php if(!empty($properties['focus_button_background'])) { ?>
+			-webkit-box-shadow: 0 0 0px 1000px <?php echo $properties['focus_button_background'] ?> inset;
+			<?php } ?>
 	<?php } ?>
 	<?php if(!empty($properties['focus_button_use_typography']) && $properties['focus_button_use_typography'] == 'yes') { ?>
 		<?php if(!empty($properties['focus_button_color'])) { ?>-webkit-text-fill-color: <?php echo $properties['focus_button_color']  ?>; <?php } ?>
@@ -268,8 +278,10 @@
 }
 #page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element form#loginform p.login-submit input.upfront-input-labels:focus,
 #page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element form#loginform input[type="submit"]:focus {
-	<?php if(!empty($properties['focus_button_background'])) { ?>
-	background: <?php echo $properties['focus_button_background'] ?>;
+	<?php if(!empty($properties['focus_use_button_background']) && $properties['focus_use_button_background'] == 'yes') { ?>
+			<?php if(!empty($properties['focus_button_background'])) { ?>
+			background: <?php echo $properties['focus_button_background'] ?>;
+			<?php } ?>
 	<?php } ?>
 	<?php if(!empty($properties['focus_button_use_typography']) && $properties['focus_button_use_typography'] == 'yes') { ?>
 		<?php if(!empty($properties['focus_button_color'])) { ?>color: <?php echo $properties['focus_button_color']  ?>; <?php } ?>
@@ -324,10 +336,14 @@
 	<?php } ?>
 }
 #page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword input.upfront-input-labels.lostpassword-link:hover {
-	<?php if(!empty($properties['hover_lost_password_text_link_color'])) { ?>-webkit-text-fill-color: <?php echo $properties['hover_lost_password_text_link_color']  ?>; <?php } ?>
+	<?php if(!empty($properties['hover_use_lost_password_text_link_color']) && $properties['hover_use_lost_password_text_link_color'] == 'yes') { ?>
+			<?php if(!empty($properties['hover_lost_password_text_link_color'])) { ?>-webkit-text-fill-color: <?php echo $properties['hover_lost_password_text_link_color']  ?>; <?php } ?>
+	<?php } ?>
 }
 #page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .login-lostpassword a:hover {
-	<?php if(!empty($properties['hover_lost_password_text_link_color'])) { ?>color: <?php echo $properties['hover_lost_password_text_link_color']  ?>; <?php } ?>
+	<?php if(!empty($properties['hover_use_lost_password_text_link_color']) && $properties['hover_use_lost_password_text_link_color'] == 'yes') { ?>
+			<?php if(!empty($properties['hover_lost_password_text_link_color'])) { ?>color: <?php echo $properties['hover_lost_password_text_link_color']  ?>; <?php } ?>
+	<?php } ?>
 }
 #page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword input.upfront-input-labels:hover {
 	<?php if(!empty($properties['hover_lost_password_text_use_typography']) && $properties['hover_lost_password_text_use_typography'] == 'yes') { ?>
@@ -346,10 +362,14 @@
 	<?php } ?>
 }
 #page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword input.upfront-input-labels.lostpassword-link:focus {
-	<?php if(!empty($properties['focus_lost_password_text_link_color'])) { ?>-webkit-text-fill-color: <?php echo $properties['focus_lost_password_text_link_color']  ?>; <?php } ?>
+	<?php if(!empty($properties['focus_use_lost_password_text_link_color']) && $properties['focus_use_lost_password_text_link_color'] == 'yes') { ?>
+			<?php if(!empty($properties['focus_lost_password_text_link_color'])) { ?>-webkit-text-fill-color: <?php echo $properties['focus_lost_password_text_link_color']  ?>; <?php } ?>
+	<?php } ?>
 }
 #page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .login-lostpassword a:focus {
-	<?php if(!empty($properties['focus_lost_password_text_link_color'])) { ?>color: <?php echo $properties['focus_lost_password_text_link_color']  ?>; <?php } ?>
+	<?php if(!empty($properties['focus_use_lost_password_text_link_color']) && $properties['focus_use_lost_password_text_link_color'] == 'yes') { ?>
+			<?php if(!empty($properties['focus_lost_password_text_link_color'])) { ?>color: <?php echo $properties['focus_lost_password_text_link_color']  ?>; <?php } ?>
+	<?php } ?>
 }
 #page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .login-lostpassword input.upfront-input-labels:focus {
 	<?php if(!empty($properties['focus_lost_password_text_use_typography']) && $properties['focus_lost_password_text_use_typography'] == 'yes') { ?>
@@ -395,8 +415,10 @@
 }
 #page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .upfront_login-trigger:hover,
 #page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .upfront_login-trigger:hover {
-	<?php if(!empty($properties['hover_login_trigger_button_background'])) { ?>
-	background: <?php echo $properties['hover_login_trigger_button_background'] ?>;
+	<?php if(!empty($properties['hover_use_login_trigger_button_background']) && $properties['hover_use_login_trigger_button_background'] == 'yes') { ?>
+			<?php if(!empty($properties['hover_login_trigger_button_background'])) { ?>
+			background: <?php echo $properties['hover_login_trigger_button_background'] ?>;
+			<?php } ?>
 	<?php } ?>
 	<?php if(!empty($properties['hover_login_trigger_use_typography']) && $properties['hover_login_trigger_use_typography'] == 'yes') { ?>
 		<?php if(!empty($properties['hover_login_trigger_color'])) { ?>color: <?php echo $properties['hover_login_trigger_color']  ?>; <?php } ?>
@@ -427,8 +449,10 @@
 }
 #page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element .upfront_login-trigger:focus,
 #page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element .upfront_login-trigger:focus {
-	<?php if(!empty($properties['focus_login_trigger_button_background'])) { ?>
-	background: <?php echo $properties['focus_login_trigger_button_background'] ?>;
+	<?php if(!empty($properties['focus_use_login_trigger_button_background']) && $properties['focus_use_login_trigger_button_background'] == 'yes') { ?>
+			<?php if(!empty($properties['focus_login_trigger_button_background'])) { ?>
+			background: <?php echo $properties['focus_login_trigger_button_background'] ?>;
+			<?php } ?>
 	<?php } ?>
 	<?php if(!empty($properties['focus_login_trigger_use_typography']) && $properties['focus_login_trigger_use_typography'] == 'yes') { ?>
 		<?php if(!empty($properties['focus_login_trigger_color'])) { ?>color: <?php echo $properties['focus_login_trigger_color']  ?>; <?php } ?>
@@ -485,8 +509,10 @@
 }
 #page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element a.logout_link:hover,
 #page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element a.logout_link:hover {
-	<?php if(!empty($properties['hover_logout_link_button_background'])) { ?>
-	background: <?php echo $properties['hover_logout_link_button_background'] ?>;
+	<?php if(!empty($properties['hover_use_logout_link_button_background']) && $properties['hover_use_logout_link_button_background'] == 'yes') { ?>
+			<?php if(!empty($properties['hover_logout_link_button_background'])) { ?>
+			background: <?php echo $properties['hover_logout_link_button_background'] ?>;
+			<?php } ?>
 	<?php } ?>
 	<?php if(!empty($properties['hover_logout_link_use_typography']) && $properties['hover_logout_link_use_typography'] == 'yes') { ?>
 		<?php if(!empty($properties['hover_logout_link_color'])) { ?>color: <?php echo $properties['hover_logout_link_color']  ?>; <?php } ?>
@@ -517,8 +543,10 @@
 }
 #page .<?php echo $properties['id'] ?> .upfront-output-upfront-login_element a.logout_link:focus,
 #page .<?php echo $properties['id'] ?>.upfront-output-upfront-login_element a.logout_link:focus {
-	<?php if(!empty($properties['focus_logout_link_button_background'])) { ?>
-	background: <?php echo $properties['focus_logout_link_button_background'] ?>;
+	<?php if(!empty($properties['focus_use_logout_link_button_background']) && $properties['focus_use_logout_link_button_background'] == 'yes') { ?>
+			<?php if(!empty($properties['focus_logout_link_button_background'])) { ?>
+			background: <?php echo $properties['focus_logout_link_button_background'] ?>;
+			<?php } ?>
 	<?php } ?>
 	<?php if(!empty($properties['focus_logout_link_use_typography']) && $properties['focus_logout_link_use_typography'] == 'yes') { ?>
 		<?php if(!empty($properties['focus_logout_link_color'])) { ?>color: <?php echo $properties['focus_logout_link_color']  ?>; <?php } ?>

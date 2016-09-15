@@ -12,7 +12,14 @@
 
 		return Modal.extend({
 			open: function () {
+				this._backup = {};
+				this._prompt = false;
 				return Modal.prototype.open.call(this, this.render_modal, this, true);
+			},
+
+			close: function (save) {
+				if ( this._prompt ) this.prompt_responsive_change('background_type');
+				return Modal.prototype.close.call(this, save);
 			},
 
 			render_modal: function ($content, $modal) {
@@ -52,41 +59,46 @@
 				this.render_bg_type_settings($content);
 			},
 
-			on_close_modal: function () {
-				var me = this;
-				me._active = false;
-				me.render_icon();
-			},
-
-			notify: function () {
-				Upfront.Views.Editor.notify(l10n.bg_updated);
-			},
-
 			render_bg_type_settings: function ($content) {
 				var me = this,
+					breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
+					is_responsive = ( breakpoint && !breakpoint['default'] ),
 					bg_image = this.model.get_breakpoint_property_value('background_image', true),
+					default_value = (
+						breakpoint && !breakpoint['default']
+						? ''
+						: ( !bg_image ? 'color' : 'image' )
+					),
+					bg_type_value = this.model.get_breakpoint_property_value('background_type'),
 					bg_type = new Fields.Select({
 						model: this.model,
-						property: 'background_type',
-						use_breakpoint_property: true,
-						default_value: !bg_image ? 'color' : 'image',
+						//property: 'background_type', // We have our own behavior, so let's not use the default field one
+						//use_breakpoint_property: true,
+						name: 'background_type',
+						default_value: bg_type_value ? bg_type_value : default_value,
 						icon_class: 'upfront-region-field-icon',
 						values: this.get_bg_types(),
 						change: function () {
-							var saved = this.get_saved_value(),
-								value = this.get_value()
-							;
-							this.model.set_breakpoint_property(this.property_name, value);
-							// Update which panel to display.
-							$content.find('.upfront-bg-setting-tab').not('.upfront-bg-setting-tab-'+value).hide();
-							$content.find('.upfront-bg-setting-tab-'+value).show();
-							// Replace icon with new type's icon.
-							var former_class = $content.find('.upfront-region-type-icon')[0].classList[1];
-							$content.find('.upfront-region-type-icon').addClass('upfront-region-type-icon-'+value).removeClass(former_class);
-
-							me.render_modal_tab(value, $content.find('.upfront-bg-setting-tab-'+value), $content);
-							if ( saved != value ) {
-								me.prompt_responsive_change(this.property_name);
+							var value = this.get_value();
+							if ( '' === value && is_responsive ) {
+								me.reset_breakpoint_background(breakpoint, false);
+								$content.find('.upfront-bg-setting-tab').hide();
+							}
+							else {
+								if ( is_responsive ) {
+									me.revert_breakpoint_background(breakpoint, ['background_type'], true);
+								}
+								me.model.set_breakpoint_property('background_type', value);
+								// Update which panel to display.
+								$content.find('.upfront-bg-setting-tab').not('.upfront-bg-setting-tab-'+value).hide();
+								$content.find('.upfront-bg-setting-tab-'+value).show();
+								me.render_modal_tab(value, $content.find('.upfront-bg-setting-tab-'+value), $content);
+								// Replace icon with new type's icon.
+								var former_class = $content.find('.upfront-region-type-icon')[0].classList[1];
+								$content.find('.upfront-region-type-icon').addClass('upfront-region-type-icon-'+value).removeClass(former_class);
+							}
+							if ( !is_responsive ) {
+								me._prompt = ( bg_type_value !== value );
 							}
 							// Resize Select if image.
 							if (value === 'image') {
@@ -182,7 +194,18 @@
 
 			reset_responsive_background: function () {
 				var me = this,
-					breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled(),
+					breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled()
+				;
+
+				_.each(breakpoints, function (each) {
+					var breakpoint = each.toJSON();
+					me.reset_breakpoint_background(breakpoint, true);
+				});
+			},
+
+			reset_breakpoint_background: function (breakpoint, silent) {
+				if ( breakpoint['default'] ) return;
+				var me = this,
 					properties = [
 						'background_type',
 						// Color
@@ -216,20 +239,33 @@
 						'background_show_markers',
 						'background_use_custom_map_code',
 						'background_map_location'
-					]
+					],
+					data = Upfront.Util.clone(this.model.get_property_value_by_name('breakpoint') || {})
 				;
-				_.each(breakpoints, function (each) {
-					var breakpoint = each.toJSON();
-					if ( breakpoint['default'] ) return;
-					var data = Upfront.Util.clone(me.model.get_property_value_by_name('breakpoint') || {});
-					if ( !_.isObject(data[breakpoint.id]) ) data[breakpoint.id] = {};
-					_.each(properties, function (property) {
-						if ( ! _.isUndefined(data[breakpoint.id][property]) ) {
-							delete data[breakpoint.id][property];
-						}
-					});
-					me.model.set_property('breakpoint', data, true);
+				if ( !_.isObject(data[breakpoint.id]) ) data[breakpoint.id] = {};
+				_.each(properties, function (property) {
+					if ( ! _.isUndefined(data[breakpoint.id][property]) ) {
+						// Backup this first, so we can restore them if needed
+						if ( !_.isObject(me._backup[breakpoint.id]) ) me._backup[breakpoint.id] = {};
+						me._backup[breakpoint.id][property] = data[breakpoint.id][property];
+						delete data[breakpoint.id][property];
+					}
 				});
+				this.model.set_property('breakpoint', data, ( true === silent ));
+			},
+
+			revert_breakpoint_background: function (breakpoint, exception, silent) {
+				var data = Upfront.Util.clone(this.model.get_property_value_by_name('breakpoint') || {});
+				if ( !_.isObject(this._backup) || !_.isObject(this._backup[breakpoint.id]) ) return;
+				exception = _.isArray(exception) ? exception : [];
+
+				if ( !_.isObject(data[breakpoint.id]) ) data[breakpoint.id] = {};
+				_.each(this._backup[breakpoint.id], function (value, property) {
+					if ( _.contains(exception, property) ) return;
+					data[breakpoint.id][property] = value;
+				});
+				delete this._backup[breakpoint.id];
+				this.model.set_property('breakpoint', data, ( true === silent ));
 			},
 
 			render_modal_tab: function (tab, $tab, $content) {

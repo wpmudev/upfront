@@ -1,6 +1,45 @@
 Change Log
 ============
 
+
+1.4.1 - 2016-09-13
+-------------------------------------------------------------------------------
+- Fix: scheduled scans conflict issue.
+
+
+1.4.0 - 2016-09-07
+-------------------------------------------------------------------------------
+- Add: support for meta description element for pages.
+- Add: empty global regions/lightboxes message.
+- Add: changelog review area.
+- Add: refactored login element.
+- Add: allow different style to be applied on each slide per breakpoint.
+- Add: initial Empty API Message and overlay to Map element.
+- Add: compatibility with Upfront Builder
+
+- Fix: parallax with PNG files and transparent backgrounds.
+- Fix: image inserts linking panel.
+- Fix: admin element toggling order issue.
+- Fix: issue in reverting to initial color in color picker.
+- Fix: gallery lightbox options application on frontend.
+- Fix: sync arrows padding with advanced settings.
+- Fix: remove categories data element from pages.
+- Fix: improve widget element error message rendering.
+- Fix: insert font issue in responsive mode editing.
+- Fix: javascript error on submit contact form.
+- Fix: post date PHP format issue.
+- Fix: issues in background image resolution.
+- Fix: consolidate fonts usage.
+- Fix: responsive image variant rendering.
+
+
+1.3.3 - 2016-07-19
+-------------------------------------------------------------------------------
+- Add: Google Maps API key area in admin
+- Fix: global regions issue.
+- Fix: global theme settings issue.
+
+
 1.3.2 - 2016-06-24
 -------------------------------------------------------------------------------
 - Fix: drag and drop on responsive issue.

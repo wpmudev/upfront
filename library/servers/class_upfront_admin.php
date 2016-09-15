@@ -36,7 +36,8 @@ class Upfront_Server_Admin implements IUpfront_Server {
 	}
 
 	public function pagetemplate_notice() {
-		if(($GLOBALS['pagenow'] == "post.php" && get_current_screen()->post_type == "page")|| $GLOBALS['pagenow'] == "post-new.php" ) {
+		$screen = ( function_exists('get_current_screen') ) ? get_current_screen() : false;
+		if(($GLOBALS['pagenow'] == "post.php" && $screen && $screen->post_type == "page")|| $GLOBALS['pagenow'] == "post-new.php" ) {
 			echo '<div class="error"><p>'. __('WARNING: If you change the template associated with this post then any content or changes you have made using the drag and drop Upfront editor will be lost.', 'upfront'). '</p></div>';
 		}
 	}
@@ -52,7 +53,7 @@ class Upfront_Server_Admin implements IUpfront_Server {
 	 * If someone tries to "live preview", send them back.
 	 */
 	public function refuse_customizer () {
-		$screen = get_current_screen();
+		$screen = ( function_exists('get_current_screen') ) ? get_current_screen() : false;
 		if (!($screen && !empty($screen->id) && 'customize' === $screen->id)) return false;
 
 		// We just don't do customizer.

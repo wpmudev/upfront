@@ -312,7 +312,7 @@ define([
 							s2.trigger('changed');
 						},
 						rendered: function (){
-							this.$el.addClass('uf-bgsettings-image-pos-y-num');
+							this.$el.addClass('uf-bgsettings-image-pos-y-num uf-bgsettings-origin-pos-y-num');
 						}
 					}, {
 							default_value: 50,
@@ -338,7 +338,7 @@ define([
 							s2.trigger('changed');
 						},
 						rendered: function (){
-							this.$el.addClass('uf-bgsettings-image-pos-x-num');
+							this.$el.addClass('uf-bgsettings-image-pos-x-num uf-bgsettings-origin-pos-x-num');
 						}
 					}, {
 							default_value: 50,

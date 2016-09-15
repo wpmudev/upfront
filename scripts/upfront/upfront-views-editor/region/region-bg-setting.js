@@ -48,13 +48,20 @@
 			},
 
 			get_bg_types: function () {
-				var types = [
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
+					bg_type = this.model.get_property_value_by_name('background_type'),
+					types = [
 						{ label: l10n.solid_color, value: 'color', icon: 'color' },
 						{ label: l10n.image, value: 'image', icon: 'image' },
 						{ label: l10n.video, value: 'video', icon: 'video' },
 						{ label: l10n.image_slider, value: 'slider', icon: 'slider' },
 						{ label: l10n.map, value: 'map', icon: 'map' }
-					];
+					]
+				;
+
+				if ( breakpoint && !breakpoint['default'] ) {
+					types.unshift({ label: l10n.inherit, value: '', icon: ( bg_type ? bg_type : 'color' ) });
+				}
 
 				if (
 					_upfront_post_data.post_id ||
@@ -565,6 +572,15 @@
 				$region_equal_padding = $content.find('.upfront-region-bg-setting-equal-padding');
 				$region_top_padding = $content.find('.upfront-region-bg-setting-padding-top');
 				$region_bottom_padding = $content.find('.upfront-region-bg-setting-padding-bottom');
+
+				// Hide first
+				if ( 'varied' === this.model.get_breakpoint_property_value('bg_padding_type') ) {
+					$region_equal_padding.hide();
+				}
+				else {
+					$region_top_padding.hide();
+					$region_bottom_padding.hide();
+				}
 
 				bg_padding_type.render();
 				$region_padding_type.append(bg_padding_type.$el);

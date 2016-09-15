@@ -75,6 +75,8 @@
             initialize: function() {
                 if (!$('#' + this.id).length) $('body').append(this.el);
                 Upfront.Events.on("command:region:edit_toggle", this.close, this);
+
+				Upfront.plugins.call('insert-css-editor-types', {types: this.elementTypes});
             },
             init: function(options) {
                 var me = this,
@@ -193,6 +195,11 @@
                 this.elementType.id + '_default' : this.stylename;
             },
             get_css_selector: function() {
+                var pluginsCallResult = Upfront.plugins.call('get-css-editor-selector', {object: this});
+                if (pluginsCallResult.status && pluginsCallResult.status === 'called' && pluginsCallResult.result) {
+                    return pluginsCallResult.result;
+                }
+
                 if (this.is_global_stylesheet) return '';
 
                 if (this.is_region_style()) return '.upfront-' + this.elementType.id + '-' + this.model.get('name');
@@ -268,9 +275,10 @@
                     editor = ace.edit(this.$('.upfront-css-ace')[0]),
                     session = editor.getSession(),
                     scrollerDisplayed = false,
+                    selector,
                     scope,
                     styles
-                    ;
+                ;
 
                 session.setUseWorker(false);
                 editor.setShowPrintMargin(false);
@@ -304,7 +312,8 @@
 
                 styles = Upfront.Util.colors.convert_string_color_to_ufc(this.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
                 if (this.is_global_stylesheet === false) {
-                    scope = new RegExp(this.get_css_selector() + '\\s*', 'g');
+                    selector = this.get_css_selector().replace(/[.+*\[\]]/g, '\\$&');
+                    scope = new RegExp(selector + '\\s*', 'g');
                     styles = styles.replace(scope, '');
                 }
                 editor.setValue($.trim(styles), -1);

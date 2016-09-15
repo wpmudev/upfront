@@ -105,6 +105,7 @@ D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-vi
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/region/region-bg-setting-fixed.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/region/region-bg-setting-lightbox.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/region.js
+D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/commands.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command-cancel-post-layout.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command-delete.js
@@ -153,6 +154,10 @@ D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-vi
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/content-editor/content-editor-comments.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/content-editor.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command-popup-list.js
+D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/menu/command-close.js
+D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/menu/command-wpadmin.js
+D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/menu/command-help.js
+D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command-menu.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/topbar.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/loading.js
@@ -182,6 +187,7 @@ D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-vi
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panels.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/commands/sidebar-commands-primary-post-type.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-responsive-section-typography.js
+D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command-save-post.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/presets/button/model.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/presets/button/collection.js

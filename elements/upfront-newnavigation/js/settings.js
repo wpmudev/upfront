@@ -91,9 +91,33 @@ define([
 		],
 
 		save_settings: function(){
+			this.setSelectedBreakpointMenu();
 			Upfront.Events.trigger("menu_element:settings:saving");
 			Menu_Panel.__super__.save_settings.apply(this, arguments);
 			this.model.set_property('menu_items', false, true);
+		},
+		
+		/** 
+			setting different menu for each breakpoint
+		**/
+		setSelectedBreakpointMenu: function() {
+			var currentBreakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active(),
+				menuId = this.model.get_property_value_by_name('menu_id'),
+				slug = this.model.get_property_value_by_name('menu_slug'),
+				breakpointMenuData = this.model.get_property_value_by_name('breakpoint_menu_id')
+			;
+			
+			if ( typeof currentBreakpoint.id === 'undefined' ) return;
+			breakpointMenuData = ( breakpointMenuData ) ? breakpointMenuData : {};
+			breakpointMenuData[currentBreakpoint.id] = {
+				menu_id: menuId,
+				menu_slug: slug
+			};
+			this.model.set_property('breakpoint_menu_id', breakpointMenuData, true);
+			// menu_slug should always use desktop menu slug
+			if ( breakpointMenuData['desktop'] && breakpointMenuData['desktop']['menu_slug'] ) {
+				this.model.set_property('menu_slug', breakpointMenuData['desktop']['menu_slug'], true);
+			}
 		}
 	});
 
@@ -189,8 +213,10 @@ define([
 			Appearance: AppearancePanel
 		},
 		onSaveSettings: function() {
+			var menuId = this.model.get_property_value_by_name('menu_id'),
+				themenu = _.findWhere(this.for_view.existingMenus, {term_id: menuId})
+			;
 			// Update slug because it's depending on id and has to be updated properly
-			var themenu = _.findWhere(this.for_view.existingMenus, {term_id: this.model.get_property_value_by_name('menu_id')});
 			if (themenu) {
 				this.model.set_property('menu_slug', themenu.slug, true);
 			}
