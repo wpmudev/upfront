@@ -214,7 +214,7 @@
 						}
 					}),
 					$region_name = $region_header.find('.upfront-region-bg-setting-name'),
-					$region_auto = $region_header.find('.upfront-region-bg-setting-auto-resize')
+					$region_auto = $region_header.parent().find('.upfront-region-bg-setting-auto-resize')
 				;
 
 				if ( is_responsive ) {
