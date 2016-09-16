@@ -7459,6 +7459,9 @@ define([
 				this.bg_setting.open().always(function(){
 
 				});
+				// Add unique class.
+				this.bg_setting.$el.addClass('upfront-modal-bg-settings-global');
+				// Close when Responsive mode starts.
 				this.listenTo(Upfront.Events, 'upfront:start:responsive', function() {
 					if ( me.bg_setting ) me.bg_setting.close(false);
 				});
