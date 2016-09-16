@@ -8481,7 +8481,7 @@ a.upfront-post-layout-trigger:before {
   left: 0;
   background-color: transparent;
   height: 1px;
-  z-index: 100000; }
+  z-index: 10001999; }
 
 #upfront-notice {
   width: 500px;
