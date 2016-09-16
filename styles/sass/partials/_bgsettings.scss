@@ -137,6 +137,11 @@ div.upfront-bg-setting-tab-primary .uf-bgsettings-image-style .upfront-field-lab
 	width: 40%;
 }
 
+#settings .uf-bgsettings-image-size input,
+#settings .uf-bgsettings-image-pos-x-num input, #settings .uf-bgsettings-image-pos-y-num input {
+    max-width: 50px;
+}
+
 #settings .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num {
 	top: 140px;
 }

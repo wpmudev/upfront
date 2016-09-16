@@ -283,10 +283,10 @@
 			toggle_editable_region_panels: function(make_editable) {
 				if (make_editable) {
 					// Make content editable.
-					return $('.upfront-bg-setting-type, .upfront-region-bg-setting-region-style-container, .upfront-region-bg-setting-footer, .upfront-bg-setting-tab').css({ pointerEvents: "auto", opacity: 1});
+					return $('.upfront-bg-setting-type, .upfront-region-bg-setting-region-style-container, .upfront-region-bg-setting-footer, .upfront-bg-setting-tab, .upfront-region-bg-setting-padding').css({ pointerEvents: "auto", opacity: 1});
 				} else {
 					// Make content un-editable.
-					return $('.upfront-bg-setting-type, .upfront-region-bg-setting-region-style-container, .upfront-region-bg-setting-footer, .upfront-bg-setting-tab').css({ pointerEvents: "none", opacity: 0.5});
+					return $('.upfront-bg-setting-type, .upfront-region-bg-setting-region-style-container, .upfront-region-bg-setting-footer, .upfront-bg-setting-tab, .upfront-region-bg-setting-padding').css({ pointerEvents: "none", opacity: 0.5});
 				}
 			},
 

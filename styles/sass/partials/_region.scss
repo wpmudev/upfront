@@ -1357,6 +1357,10 @@ a.upfront-region-name-edit-trigger:hover {
 	cursor: pointer;
 }
 
+.upfront-region-bg-setting-sticky .upfront-field-multiple label::before {
+    display: none;
+}
+
 .upfront-region-bg-setting-sticky label {
 	color: #8ba3bc;
 	font-weight: normal;
@@ -1486,7 +1490,7 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 	display:inline-block;
 }
 /* Hide checkbox to show as icon. */
-.upfront-region-bg-setting-padding-type .upfront-field-wrap-checkboxes input, .upfront-region-bg-setting-padding-type span:nth-child(2) {
+.upfront-region-bg-setting-padding-type .upfront-field-wrap-checkboxes input, .upfront-region-bg-setting-padding-type span:nth-child(2), div.upfront-region-bg-setting-padding-type label::before {
 	display: none;
 }
 
