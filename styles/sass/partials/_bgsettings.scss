@@ -120,9 +120,15 @@
 div.upfront-bg-setting-tab-primary .uf-bgsettings-image-style .upfront-field-label-block {
 	margin-bottom: 4px;
 }
+
 .uf-bgsettings-item.uf-bgsettings-imageitem {
 	position: relative;
 }
+
+#settings .uf-bgsettings-item.uf-bgsettings-imageitem {
+	position: static;
+}
+
 .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y {
 	padding: 0 16px;
 	margin: 0;
@@ -143,11 +149,15 @@ div.upfront-bg-setting-tab-primary .uf-bgsettings-image-style .upfront-field-lab
 }
 
 #settings .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num {
-	top: 140px;
+	top: -121px;
+	left: 30px;
+	position: relative;
 }
 
 #settings .uf-bgsettings-imageitem .uf-bgsettings-image-pos-x-num {
-	top: 183px;
+	top: -121px;
+	left: 30px;
+	position: relative;
 }
 
 .upfront-modal-bg-settings-fixed .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num:not(.uf-bgsettings-origin-pos-y-num) {
@@ -294,7 +304,9 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 }
 
 #settings .uf-bgsettings-image-size {
-	top: 108px;
+	margin-top: -238px;
+	position: static;
+	margin-left: 145px;
 }
 
 .upfront-modal-bg-settings-fixed .upfront-field-wrap.upfront-field-wrap-number.uf-bgsettings-image-size {
