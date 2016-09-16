@@ -1342,6 +1342,15 @@ span.draggable-post-element.element-dragging {
   margin-bottom: 15px;
   width: 230px; }
 
+#sidebar-ui.element-settings-activated {
+  position: static; }
+
+#sidebar-ui.element-settings-activated ul.sidebar-commands.sidebar-commands-header {
+  z-index: 10001004;
+  position: fixed;
+  top: 0;
+  width: 261px; }
+
 /* Height Media Queries Fixes
 	 ========================== */
 @media screen and (max-height: 650px) {
