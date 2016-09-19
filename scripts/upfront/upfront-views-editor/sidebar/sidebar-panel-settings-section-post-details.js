@@ -31,8 +31,8 @@
                 this.listenTo(Upfront.Views.PostDataEditor, 'loaded', function(contentEditor) {
                     if ( contentEditor && Upfront.Views.PostDataEditor ) {
 						// updating global contentEditor to use the new instance
-						Upfront.Views.PostDataEditor.contentEditor = contentEditor;
-						Upfront.Views.PostBox = Upfront.Views.PostDataEditor.contentEditor.prepareBox();
+                        Upfront.Views.PostDataEditor.contentEditor = contentEditor;
+                        Upfront.Views.PostBox = Upfront.Views.PostDataEditor.contentEditor.prepareBox();
                         self.append_box();
                     }
                 });
