@@ -203,7 +203,7 @@ class Upfront_PostDataPartView extends Upfront_Object {
 				$margin_left = intval($variant->group->margin_left);
 				$margin_right = intval($variant->group->margin_right);
 				$variant_max_col = $max_col - $margin_left - $margin_right;
-				if ( isset($variant->group->float) && 'none' == $variant->group->float ) {
+				if ( isset($variant->group->float) && 'none' == $variant->group->float && $point->is_default() ) {
 					$variant_max_col -= $left;
 				}
 				$variant_max_col = $variant_max_col > $col ? $col : $variant_max_col;

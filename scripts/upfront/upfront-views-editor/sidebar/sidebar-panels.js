@@ -60,9 +60,11 @@
                             me.$el.append(panel.el);
                         }
                     } else {
-                        if (Upfront.Application.user_can_modify_layout()) {
-                            me.$el.append(panel.el);
-                        }
+											if (Upfront.Application.user_can_save_content() && index === 'post_editor') {
+												me.$el.append(panel.el);
+											} else if (Upfront.Application.user_can_modify_layout()) {
+												me.$el.append(panel.el);
+											}
                     }
 
                     panel.delegateEvents();

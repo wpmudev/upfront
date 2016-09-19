@@ -96,6 +96,7 @@ define([
 				instance[specific_fields[key]['name']] =  this.model.get_property_value_by_name(specific_fields[key]['name']);
 			}
 
+			Upfront.Events.trigger('entity:object:refresh:start', me);
 			Upfront.Util.post({"action": "uwidget_get_widget_markup", "data": JSON.stringify({"widget": widget, "instance": instance})})
 				.success(function (ret) {
 
@@ -109,6 +110,7 @@ define([
 						me.render();
 					}
 					Upfront.Events.trigger('entity:object:refresh', me);
+
 				})
 				.error(function (ret) {
 					Upfront.Util.log("Error loading widget");

@@ -459,65 +459,88 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		return $this->_remove_page_template_meta($parsed);
 	}
 
-	function save_post($data) {
-		if(!current_user_can('edit_posts'))
-			$this->_out(new Upfront_JsonResponse_Error("You can't do this."));
+	/**
+	 * Handles post saving model requests
+	 *
+	 * JSON handler, dies at the end
+	 *
+	 * @param array $data Post hash
+	 */
+	function save_post ($data) {
+		if (empty($data) || !is_array($data)) $this->_out(new Upfront_JsonResponse_Error("Invalid data"));
 
-		if($data['post_type'] == 'page' && !current_user_can('edit_pages'))
-			$this->_out(new Upfront_JsonResponse_Error("You can't do this."));
-
-		if($data['post_status'] == 'publish'){
-			if($data['post_type'] == 'post' && !current_user_can('publish_posts') || $data['post_type'] == 'page' && !current_user_can('publish_pages'))
+		if (!current_user_can('edit_posts')) {
 			$this->_out(new Upfront_JsonResponse_Error("You can't do this."));
 		}
-		// making sure post names/slugs are sanitized
-		if ( isset($data['post_name']) ) $data['post_name'] = $this->_remove_unicodes_url($data['post_name']);
 
-		if(!$data['ID']){
+		if ('page' === $data['post_type'] && !current_user_can('edit_pages')) {
+			$this->_out(new Upfront_JsonResponse_Error("You can't do this."));
+		}
+
+		if ('publish' === $data['post_status']) {
+			if (
+				('post' === $data['post_type'] && !current_user_can('publish_posts'))
+				||
+				('page' === $data['post_type'] && !current_user_can('publish_pages'))
+			) $this->_out(new Upfront_JsonResponse_Error("You can't do this."));
+		}
+
+		// making sure post names/slugs are sanitized
+		if (isset($data['post_name'])) $data['post_name'] = $this->_remove_unicodes_url($data['post_name']);
+
+		// Sanitize post excerpt editing
+		if (!empty($data['post_excerpt'])) {
+			$data['post_excerpt'] = strip_shortcodes(wp_strip_all_tags($data['post_excerpt']));
+		}
+
+		// Re-sanitize the whole post
+		$data = sanitize_post($data, 'edit');
+
+		// Initialize data
+		$post = false;
+		$id = false;
+
+		if (!$data['ID']) {
 			unset($data['ID']);
 			$id = wp_insert_post($data);
-		}
-		else {
+		} else {
 			$post = get_post($data['ID']);
-			if($post->post_status == 'trash' && $data['post_status'] != 'trash')
+			if ('trash' === $post->post_status && 'trash' !== $data['post_status']) {
 				$post = wp_untrash_post($data['ID']);
-			else if($post->post_status != 'trash' && $data['post_status'] == 'trash')
+			} else if ('trash' !== $post->post_status && 'trash' === $data['post_status']) {
 				$post = wp_trash_post($data['ID']);
+			}
 
 			//GMT date
-			if($data['post_date']){
+			if ($data['post_date']) {
 				$data['post_date_gmt'] = get_gmt_from_date($data['post_date']);
 			}
 
 			// Update if not deleted
-			if($post)
-				$id = wp_update_post($data);
-			else
-				$id = 0;
+			if ($post) $id = wp_update_post($data);
+			else $id = 0;
 		}
 
-		if(is_wp_error($id))
-			$this->_out(new Upfront_JsonResponse_Error($id->get_error_message()));
+		// Error in processing the post
+		if (is_wp_error($id)) $this->_out(new Upfront_JsonResponse_Error($id->get_error_message()));
 
-		if(isset($data['sticky'])){
+		// Handle the sticky attribute
+		if (isset($data['sticky'])) {
 			$is_sticky = is_sticky($id);
-			if($data['sticky'] && !$is_sticky){
+			if ($data['sticky'] && !$is_sticky) {
+				// Make post sticky
 				$posts = get_option('sticky_posts');
-				if($posts)
-					$posts[] = $id;
-				else
-					$posts = array($id);
+				if ($posts) $posts[] = $id;
+				else $posts = array($id);
 				add_option('sticky_posts', $posts);
-			}
-			else if(!$data['sticky'] && $is_sticky) {
+			} else if (!$data['sticky'] && $is_sticky) {
+				// Make previously non-sticky post sticky
 				$posts = get_option('sticky_posts');
 				$index = array_search($id, $posts);
-				if($index !== FALSE){
+				if ($index !== false) {
 					array_splice($posts, $index, 1);
-					if(!sizeof($posts))
-						delete_option('sticky_posts');
-					else
-						add_option('sticky_posts', $posts);
+					if (!sizeof($posts)) delete_option('sticky_posts');
+					else add_option('sticky_posts', $posts);
 				}
 			}
 		}
@@ -652,7 +675,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		foreach ($meta as $key => $val) {
 			if (is_array($val) && sizeof($val) == 1) $meta[$key] = $val[0];
 		}
-		
+
 		$this->_out(new Upfront_JsonResponse_Success(array('results' => $meta)));
 	}
 

@@ -11,7 +11,8 @@
         'scripts/upfront/upfront-views-editor/sidebar/sidebar-panels',
         'scripts/upfront/upfront-views-editor/sidebar/commands/sidebar-commands-primary-post-type',
         'scripts/upfront/upfront-views-editor/breakpoint',
-        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-responsive-section-typography'
+        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-responsive-section-typography',
+        'scripts/upfront/upfront-views-editor/commands/command-save-post'
     ], function (
         SidebarPanel,
         DraggableElement,
@@ -20,7 +21,8 @@
         SidebarPanels,
         SidebarCommands_PrimaryPostType,
         Breakpoint,
-        SidebarPanel_Responsive_Settings_Section_Typography
+        SidebarPanel_Responsive_Settings_Section_Typography,
+				CommandSavePost
     ) {
         var SidebarCommands_Control = Commands.Commands.extend({
             className: function() {
@@ -66,6 +68,11 @@
 										Upfront.Application.user_can_modify_layout()
 								) {
                     this.commands.push(new Commands.Command_SaveLayout({"model": this.model}));
+								} else if (!Upfront.Settings.Application.NO_SAVE &&
+										false === Upfront.plugins.isForbiddenByPlugin('show save layout command') &&
+										Upfront.Application.user_can_save_content()
+								) {
+                    this.commands.push(new CommandSavePost({"model": this.model}));
                 } else if (
 										false === Upfront.plugins.isForbiddenByPlugin('show preview layout command') &&
 										Upfront.Settings.Application.PERMS.REVISIONS
@@ -96,7 +103,16 @@
                     new Commands.Command_Logo({"model": this.model})
                 ]);
                 //if ( !Upfront.Settings.Application.NO_SAVE ) this.commands.push(new Command_Exit({"model": this.model}));
-                this.commands.push(new Commands.Command_Exit({"model": this.model})); // *Always* show exit
+                //this.commands.push(new Commands.Command_Exit({"model": this.model})); // *Always* show exit
+                this.commands.push(new Commands.Command_Menu({"model": this.model}));
+                this.listenTo(Upfront.Events, 'upfront:more_menu:open', this.on_menu_open);
+                this.listenTo(Upfront.Events, 'upfront:more_menu:close', this.on_menu_close);
+            },
+            on_menu_open: function () {
+                this.$el.addClass('more-menu-open clearfix');
+            },
+            on_menu_close: function () {
+                this.$el.removeClass('more-menu-open clearfix');
             }
         });
 
@@ -241,7 +257,7 @@
                 if ( Upfront.Application.get_current() != Upfront.Settings.Application.MODE.CONTENT ){
                     Upfront.Events.on('upfront:element:edit:start', this.preventUsage, this);
                     Upfront.Events.on('upfront:element:edit:stop', this.allowUsage, this);
-					
+
 					// Make sure we hide sidebar overlay when element settings cancelled or deactivated
 					Upfront.Events.on('element:settings:deactivate', this.allowUsage, this);
 					Upfront.Events.on('element:settings:canceled', this.allowUsage, this);
@@ -261,6 +277,7 @@
                 if (!this.prevented_usage_type) this.prevented_usage_type = type; // don't stack up on prevented types, keep the original
                 $('#preventUsageOverlay span').html(preventUsageText);
                 $('#preventUsageOverlay').show();
+				$('#preventElementsUsageOverlay').show();
             },
             allowUsage: function(type) {
                 if (this.writingIsOn && type !== 'write') {
@@ -270,6 +287,7 @@
                 this.prevented_usage_type = false;
                 this.writingIsOn = false;
                 $('#preventUsageOverlay').hide();
+				$('#preventElementsUsageOverlay').hide();
             },
             render: function () {
                 var current_app = Upfront.Application.get_current();

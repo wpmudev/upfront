@@ -4,11 +4,13 @@ define([
 	var AdvancedSettings = RootModulesPanel.extend({
 		className: 'uf-settings-panel upfront-settings_panel advanced-settings',
 		modules: [
+			/* We wont use padding in sidebar anymore
 			{
 				moduleType: 'Padding'
 			},
+			*/
 			{
-			 moduleType: 'Anchor'
+				moduleType: 'Anchor'
 			}
 		],
 

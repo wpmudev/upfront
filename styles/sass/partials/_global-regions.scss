@@ -84,6 +84,7 @@
 .global-region-manager-content {
   overflow-y: scroll;
   max-height: 300px;
+  min-height: 100px;
 }
 .global-region-manager-lists {
   list-style-type: none;
@@ -94,6 +95,10 @@
   padding: 5px 20px;
   line-height: 20px;
   position: relative;
+}
+.region-list-empty {
+  padding: 0px 20px;
+  line-height: 30px;
 }
 .global-region-manager-list:hover {
   background: #c4dbef;

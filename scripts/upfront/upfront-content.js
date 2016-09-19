@@ -272,7 +272,7 @@ define("content", deps, function(postTpl, ContentTools) {
 				this.post.set('post_title', results.title);
 			}
 			if ( results.excerpt ) {
-				this.post.set('post_excerpt', results.content);
+				this.post.set('post_excerpt', results.excerpt);
 			}
 			if ( results.content ) {
 				this.post.set('post_content', results.content);

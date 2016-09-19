@@ -152,7 +152,7 @@
 .upfront-edit-responsive .upfront-object:hover .upfront-quick-swap{
     display: none;
 }
-#preventUsageOverlay {
+#preventUsageOverlay, #preventElementsUsageOverlay {
   text-align: center;
   cursor: not-allowed;
   position: absolute;
@@ -165,7 +165,7 @@
 	z-index: 10;
 }
 
-#preventUsageOverlay span {
+#preventUsageOverlay span, #preventElementsUsageOverlay span {
   padding: 2px 5px;
   margin-bottom: 14px;
   -webkit-transform: translateX(-50%);
@@ -184,7 +184,7 @@
   visibility: hidden;
 }
 
-#preventUsageOverlay:hover span {
+#preventUsageOverlay:hover span, #preventElementsUsageOverlay:hover span {
   visibility: visible;
 }
 
@@ -233,9 +233,9 @@
 	padding-left: 0;
 	padding-right: 0;
 }
-#page div.upfront-object.uposts-object {
+/*#page div.upfront-object.uposts-object {
   padding: 0;
-}
+}*/
 
 .upfront-content-marker {
 	margin: 0;
