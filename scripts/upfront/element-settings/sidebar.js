@@ -15,6 +15,10 @@ define([], function () {
 			$('#element-settings-sidebar').width(10).css('opacity', 0).html('');
 			Upfront.Events.off('element:settings:saved', destroySettings);
 			Upfront.Events.off('element:settings:cancel', resetModel);
+			
+			// removing class from #sidebar-ui that was previously added on showSettings
+			var $sidebar_ui = $('#sidebar-ui');
+			if ( $sidebar_ui.length ) $sidebar_ui.removeClass('element-settings-activated');
 		}
 	};
 
@@ -71,6 +75,10 @@ define([], function () {
 			$('#element-settings-sidebar').removeClass('collapsed');
 		}, 500);
 		Upfront.Events.trigger('element:settings:render');
+		
+		// adding class to #sidebar-ui for fixing z-index issues
+		var $sidebar_ui = $('#sidebar-ui');
+		if ( $sidebar_ui.length ) $sidebar_ui.addClass('element-settings-activated');
 	};
 
 	Upfront.Events.on('element:settings:activate', showSettings);

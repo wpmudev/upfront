@@ -92,7 +92,7 @@ define([
 
 				// Lost Password Text
 				$lost_password_text = this.$el.find('span.login-lostpassword-label');
-				$lost_password_text_input_label = $('<input type="text" size="11" class="upfront-input-labels" value="'+ $lost_password_text.text() +'"/>');
+				$lost_password_text_input_label = $('<input type="text" class="upfront-input-labels" value="'+ $lost_password_text.text() +'"/>');
 				$lost_password_text_input_label.on('change', function(){
 					var text = $(this).val();
 					if (text) me.model.set_property('lost_password_text', text, true);
@@ -101,7 +101,7 @@ define([
 
 				// Lost Password Link
 				$lost_password_link = this.$el.find('a.login-lostpassword-link');
-				$lost_password_link_input_label = $('<input type="text" size="13" class="upfront-input-labels lostpassword-link" value="'+ $lost_password_link.text() +'"/>');
+				$lost_password_link_input_label = $('<input type="text" class="upfront-input-labels lostpassword-link" value="'+ $lost_password_link.text() +'"/>');
 				$lost_password_link_input_label.on('change', function(){
 					var text = $(this).val();
 					if (text) me.model.set_property('lost_password_link', text, true);

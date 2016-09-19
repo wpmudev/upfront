@@ -49,12 +49,9 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 					<div class='postbox'>
 						<h2 class="title"><?php esc_html_e("Helpful Resources", Upfront::TextDomain) ?></h2>
 						<div class="inside">
-							<!--
-							* Hide until we have documentation
 							<div class="upfront-debug-block">
-								<a href="#" class="documentation">Upfront Documentation</a> <a href="#" class="documentation">Building Upfront Themes</a>
+								<a target="_blank" href="https://premium.wpmudev.org/upfront-documentation/" class="documentation">Upfront Documentation</a> <a target="_blank" href="https://premium.wpmudev.org/upfront-documentation/upfront-builder/" class="documentation">Building Upfront Themes</a>
 							</div>
-							-->
 							<div class="upfront-debug-block">
 								<h4><?php esc_html_e("Online Articles", Upfront::TextDomain) ?></h4>
 								<ul>

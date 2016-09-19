@@ -341,9 +341,7 @@ PostContentEditor.prototype = {
 						}
 
 					});
-
 					content = $.trim( this.editor.getValue() );
-
 					content = content.replace(/(\n)*?<br\s*\/?>\n*/g, "<br/>");
 					if ( isExcerpt ) {
 						this.parent.currentData.excerpt = content;
@@ -351,6 +349,7 @@ PostContentEditor.prototype = {
 					else {
 						this.parent.currentData.content = content;
 					}
+					
 					this.parent.currentData.inserts = this.editor.getInsertsData();
 				}
 			},
@@ -651,12 +650,12 @@ PostContentEditor.prototype = {
 							sizes = image;
 							imageId = id;
 						});
-
+						
 						deferred.resolve({
-							src: sizes.medium ? sizes.medium[0] : sizes.full[0],
-							srcFull: sizes.full[0],
-							srcOriginal: sizes.full[0],
-							fullSize: {width: sizes.full[1], height: sizes.full[2]},
+							src: sizes.medium ? sizes.medium[0] : (sizes.full ? sizes.full[0] : ''),
+							srcFull: sizes.full ? sizes.full[0] : '',
+							srcOriginal: sizes.full ? sizes.full[0]: '',
+							fullSize: {width: sizes.full ? sizes.full[1] : 0, height: sizes.full ? sizes.full[2] : 0},
 							size: {width: $img.width(), height: $img.height()},
 							position: {top: 0, left: 0},
 							rotation: 0,
@@ -945,7 +944,6 @@ PostContentEditor.prototype = {
 	prepareBox: function(){
 		var self = this,
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main);
-
 		if(typeof this.box !== "undefined") {
 			this.box.remove();
 		}
@@ -960,41 +958,22 @@ PostContentEditor.prototype = {
 		var me = this,
 			events = ['cancel', 'publish', 'draft', 'trash', 'auto-draft']
 		;
-
 		_.each(events, function(e){
 			me.listenTo(me.box, e, function(){
 				_.each(me._viewInstances, function (view) {
 					view.trigger(e);
 				});
 				var results = {};
-				if(e=='publish' || e=='draft' || e=='auto-draft'){
+				if( (e=='publish' || e=='draft' || e=='auto-draft') ){
 					results.title = me.currentData.title;
 					results.content = me.currentData.content;
 					results.excerpt = me.currentData.excerpt;
 					results.author = me.currentData.author;
 					results.date = me.currentData.date;
 					results.inserts = me.currentData.inserts;
-					// if(me.currentContent){
-						// var editor = $(me.currentContent).data('ueditor');
-//
-                        // // cleanup inserts markup
-                        // me.$el.find(".upfront-inline-panel").remove();
-                        // me.$el.find(".ueditor-insert-remove").remove();
-//
-						// results.content = $.trim( editor.getValue() );
-						// results.content = results.content.replace(/(\n)*?<br\s*\/?>\n*/g, "<br/>");
-						// results.inserts = editor.getInsertsData();
-						// results.author = me.postAuthor;
-					// }
-					// if(me.selectedDate)
-						// results.date = me.selectedDate;
-
-					if(me.postStatus)
-						results.status = me.postStatus;
-					if(me.postVisibility)
-						results.visibility = me.postVisibility;
-					if(me.postPassword)
-						results.pass = me.postPassword;
+					if(me.postStatus) results.status = me.postStatus;
+					if(me.postVisibility) results.visibility = me.postVisibility;
+					if(me.postPassword) results.pass = me.postPassword;
 				}
 				me.trigger(e, results);
 			});

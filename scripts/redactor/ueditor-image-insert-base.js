@@ -319,8 +319,8 @@
                     //
                     //controls.css('margin-left', margin + 'px');
                     this.controls.$el.css({
-                        left: 15,
-                        top:15
+                        left: -1,
+                        top: (this.controls.$el.height() + 1) * -1
                     });
                 },
 

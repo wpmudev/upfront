@@ -1,13 +1,21 @@
 .uf-bgsettings-item .upfront-field-wrap .upfront-field-label-block,
+<<<<<<< HEAD
 .upfront-region-bg-setting-tab-primary .upfront-field-wrap .upfront-field-label-block {
   font-size: 11px;
   display: block;
   font-family: verdana,sans-serif;
+=======
+.upfront-bg-setting-tab-primary .upfront-field-wrap .upfront-field-label-block {
+  color: #3f617f;
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+>>>>>>> master
   font-weight: normal;
   top: 0px;
   color: #7d99b6;
 }
-.upfront-region-bg-setting-tab-primary .upfront-field-wrap {
+.upfront-bg-setting-tab-primary .upfront-field-wrap {
   margin: 0;
 }
 .uf-bgsettings-color-pick {
@@ -21,7 +29,7 @@
   border: 1px solid rgb(163, 191, 217);
   border-radius: 3px;
 }
-.upfront-region-bg-setting-tab-primary .uf-bgsettings-image-pick {
+.upfront-bg-setting-tab-primary .uf-bgsettings-image-pick {
   float: right;
   margin: 33px 0 0;
 }
@@ -142,36 +150,36 @@
   margin-left: 5px;
 }
 
-.upfront-region-bg-slider-slides {
+.upfront-bg-slider-slides {
   margin-top: 10px;
 }
-.upfront-region-bg-slider-slides .upfront-settings-item-title {
+.upfront-bg-slider-slides .upfront-settings-item-title {
   line-height: 1;
 }
-.upfront-region-bg-slider-slides .upfront-settings-item-content,
+.upfront-bg-slider-slides .upfront-settings-item-content,
 .uf-bgsettings-slider-slidesitem .upfront-settings-item-content {
   position: relative;
   margin: 20px -7px 0;
 }
-.upfront-region-bg-slider-image-loading {
+.upfront-bg-slider-image-loading {
   min-height: 126px;
 }
-.upfront-region-bg-slider-image,
-.upfront-region-bg-slider-add-image {
+.upfront-bg-slider-image,
+.upfront-bg-slider-add-image {
   float: left;
   width: 49px;
   height: 37px;
   margin: 0 7px 15px 7px;
 }
-.upfront-region-bg-slider-image {
+.upfront-bg-slider-image {
   position: relative;
   cursor: move;
   border: 1px solid #233d54;
 }
-.upfront-region-bg-slider-image:hover {
+.upfront-bg-slider-image:hover {
   box-shadow: inset 0 0 0 1px #233d54;
 }
-.upfront-region-bg-slider-add-image {
+.upfront-bg-slider-add-image {
   color: #1f2f3e;
   font-size: 11px;
   font-family: Verdana, sans-serif;
@@ -180,12 +188,12 @@
   margin: 0 0 15px;
   cursor: pointer;
 }
-.upfront-region-bg-slider-add-image.upfront-icon:before {
+.upfront-bg-slider-add-image.upfront-icon:before {
   float: none !important;
   display: block;
   margin: 0 auto;
 }
-.upfront-region-bg-slider-image img {
+.upfront-bg-slider-image img {
   width: 100%;
   position: absolute;
   top: 50%;
@@ -196,7 +204,7 @@
   -o-transform: translateY(-50%);
   transform: translateY(-50%);
 }
-.upfront-region-bg-slider-delete-image {
+.upfront-bg-slider-delete-image {
   position: absolute;
   top: -5px;
   right: -5px;
@@ -212,7 +220,7 @@
   cursor: pointer;
   display: none;
 }
-.upfront-region-bg-slider-image:hover .upfront-region-bg-slider-delete-image {
+.upfront-bg-slider-image:hover .upfront-bg-slider-delete-image {
   display: block;
 }
 
@@ -221,47 +229,33 @@
   max-width: 140px;
 }
 
-/* Padding Settings */
-.upfront-region-bg-setting-padding {
-  background: none;
-  overflow: hidden;
-  position: relative;
-  padding: 16px 0;
-  top: 16px;
-  border-top: 1px solid #cce1f4;
+
+.upfront-bg-setting-type {
+  clear: both;
+  width: 36%;
+  float: left;
+}
+.upfront-bg-setting-tab .upfront-field-number{
+  width: 55px;
+}
+.upfront-bg-setting-tab .sp-replacer {
+  float: none;
+  width: auto;
+}
+
+.upfront-bg-setting-tab-primary {
+  width: 62%;
+  float: right;
+}
+.upfront-bg-setting-tab-secondary {
+  padding: 10px 0 0;
   clear: both;
 }
-.upfront-region-bg-setting-padding .upfront-field-select-single {
-  width: 215px;
-  display:inline-block;
+
+.upfront-bg-setting-theme-body {
+  margin: 0 0 20px;
 }
-.upfront-region-bg-setting-padding .upfront-settings-item-title span {
-  margin-top: 3px;
-  display: inline-block;
-}
-.upfront-region-bg-setting-padding .upfront-field-wrap-multiple:first-child {
-  margin-top: 0;
-}
-.upfront-region-bg-setting-padding .upfront-field-wrap-slider {
-  display: inline-block;
-  width: 63%;
-  margin: 0 5% 0 2%;
-  border-left: 2px solid #C2D5E6;
-  padding-left: 5%;
-  padding-top: 6px;
-  height: 30px;
-}
-.upfront-region-bg-setting-padding .upfront-field-wrap-number {
-  width: 30%;
-  display: inline-block;
-  padding-left: 5px;
-  margin: 0;
-  position: relative;
-  top: -10px;
-}
-.upfront-region-bg-setting-padding .upfront-field-wrap-number label {
-  margin: 0;
-}
+<<<<<<< HEAD
 .upfront-region-bg-setting-padding .upfront-field-wrap-number .upfront-field-number {
   width: 45px;
   clear: both;
@@ -298,3 +292,24 @@
 	padding: 10px 0px !important;
 	display: block;
 }
+=======
+.upfront-bg-setting-heading {
+  color: #27394b;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0 0 10px;
+}
+
+.upfront-bg-setting-label {
+  color: #3f617f;
+  font-size: 14px;
+  line-height: 20px;
+}
+.upfront-bg-setting-label-alt {
+  color: #2f475d;
+  font-family: "Verdana";
+  font-size: 11px;
+}
+
+
+>>>>>>> master

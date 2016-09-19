@@ -8,8 +8,23 @@
         "scripts/upfront/upfront-views-editor/region/region-panel-item-bg-setting",
         "scripts/upfront/upfront-views-editor/region/region-panel-item-expand-lock",
         "scripts/upfront/upfront-views-editor/region/region-fixed-edit-position",
-        "scripts/upfront/upfront-views-editor/region/region-fixed-panels"
-    ], function ( RegionPanels, RegionPanelAdd, RegionPanelItem, RegionPanelItemAddRegion, RegionPanelItemBgSetting, RegionPanelItemExpandLock, RegionFixedEditPosition, RegionFixedPanels ) {
+        "scripts/upfront/upfront-views-editor/region/region-fixed-panels",
+        "scripts/upfront/upfront-views-editor/region/region-bg-setting",
+        "scripts/upfront/upfront-views-editor/region/region-bg-setting-fixed",
+        "scripts/upfront/upfront-views-editor/region/region-bg-setting-lightbox"
+    ], function (
+        RegionPanels,
+        RegionPanelAdd,
+        RegionPanelItem,
+        RegionPanelItemAddRegion,
+        RegionPanelItemBgSetting,
+        RegionPanelItemExpandLock,
+        RegionFixedEditPosition,
+        RegionFixedPanels,
+        RegionBgSetting,
+        RegionBgSettingFixed,
+        RegionBgSettingLightbox
+    ) {
 
         return {
             RegionPanels: RegionPanels,
@@ -19,7 +34,10 @@
             RegionPanelItemBgSetting: RegionPanelItemBgSetting,
             RegionPanelItemExpandLock: RegionPanelItemExpandLock,
             RegionFixedEditPosition: RegionFixedEditPosition,
-            RegionFixedPanels: RegionFixedPanels
+            RegionFixedPanels: RegionFixedPanels,
+            RegionBgSetting: RegionBgSetting,
+            RegionBgSettingFixed: RegionBgSettingFixed,
+            RegionBgSettingLightbox: RegionBgSettingLightbox
         };
     });
 
