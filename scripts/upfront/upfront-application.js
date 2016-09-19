@@ -1484,14 +1484,23 @@ var Application = new (Backbone.Router.extend({
 			fullPath = path ? '/' + path : '/',
 			loading
 		;
+		
+		// Fixing incorrect post_id when clicking Back on browser
+		// only for posts and pages
+		if ( fullPath.indexOf('edit/post') !== -1 || fullPath.indexOf('edit/page') !== -1 ) {
+			var filter_post_id = parseInt( fullPath.replace ( /[^\d.]/g, '' ), 10 );
+			if ( !isNaN(filter_post_id) && filter_post_id !== _upfront_post_data.post_id ) {
+				_upfront_post_data.post_id = filter_post_id;
+			}
+		}
 
 		if(urlQueryParts){
 			_.each(urlParams, function(value, key){
 				urlQueryParts.push(key + '=' + value);
 			});
 			fullPath += '?' + urlQueryParts.join('&');
-		}
-
+		}	
+		
 		loading = this.set_loading(Upfront.Settings.l10n.global.application.loading_path.replace(/%s/, fullPath), Upfront.Settings.l10n.global.application.here_we_are);
 
 		if(this.urlCache[fullPath]){

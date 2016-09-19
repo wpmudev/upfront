@@ -223,9 +223,6 @@ D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/inline-pan
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/bg-settings/map-item.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/bg-settings/slider-item.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/bg-settings/video-item.js
-upfront/bg-settings/bg-settings.js
-D:/vagrant/www/html/upfront/wp-content/themes/upfront/elements/upfront-accordion/js/model.js
-D:/vagrant/www/html/upfront/wp-content/themes/upfront/elements/upfront-accordion/js/element.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/element-settings/settings-container.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/element-settings/root-panel-mixin.js
 text!elements/upfront-slider/tpl/backend.html
@@ -268,6 +265,9 @@ D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/preset-set
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/settings/root-modules-panel.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/element-settings/advanced-settings.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/element-settings/settings.js
+upfront/bg-settings/bg-settings.js
+D:/vagrant/www/html/upfront/wp-content/themes/upfront/elements/upfront-accordion/js/model.js
+D:/vagrant/www/html/upfront/wp-content/themes/upfront/elements/upfront-accordion/js/element.js
 text!elements/upfront-accordion/tpl/preset-style.html
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/elements/upfront-accordion/js/settings.js
 text!elements/upfront-accordion/tpl/uaccordion.html
