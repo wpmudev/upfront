@@ -305,11 +305,11 @@ define([
 			if (lockPadding) lockPaddingField.attr('checked', 'checked');
 			else lockPaddingField.removeAttr('checked');
 			lockPaddingField.trigger('change');
-
-			this.fields._wrapped[4].get_field().val(topPadding);
-			this.fields._wrapped[5].get_field().val(leftPadding);
-			this.fields._wrapped[6].get_field().val(rightPadding);
-			this.fields._wrapped[7].get_field().val(bottomPadding);
+			
+			if ( topPadding ) this.fields._wrapped[4].get_field().val(topPadding);
+			if ( leftPadding ) this.fields._wrapped[5].get_field().val(leftPadding);
+			if ( rightPadding ) this.fields._wrapped[6].get_field().val(rightPadding);
+			if ( bottomPadding ) this.fields._wrapped[7].get_field().val(bottomPadding);
 		},
 
 		enable_padding: function(field) {

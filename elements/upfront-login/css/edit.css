@@ -112,6 +112,7 @@ div.upfront-login_element-module.upfront-module-active .upfront_login.upfront_lo
 	border: 0;
 	border-radius: 0;
 	height: auto;
+	width: 100%;
 }
 
 .upfront_login form#loginform p.login-remember input.upfront-input-labels[type="text"] {
@@ -130,22 +131,24 @@ div.upfront-login_element-module.upfront-module-active .upfront_login.upfront_lo
 }
 
 .upfront_login form#loginform p.login-submit input.upfront-input-labels[type="text"] {
-	border: 2px solid #269a47;
-	background: #2cad4a;
-	-webkit-box-shadow: 0 0 0px 1000px rgb(44, 173, 74) inset;
+	background: #1b7bd7;
+	-webkit-box-shadow: 0 0 0px 1000px rgb(27, 123, 215) inset;
 	color: #fff;
 	-webkit-text-fill-color: rgb(255, 255, 255);
 	width: 100%;
 	text-align: center;
+	height: 40px;
+	font:16px/2.2 Arial;
+	color: #fff;
 }
 
 .upfront_login form#loginform p.login-submit input.upfront-input-labels[type="text"]:hover {
-	background-color: #269a47;
+	background-color: #1770c5;
 }
 
 .upfront_login p.login-lostpassword input.upfront-input-labels.lostpassword-link[type="text"] {
-	color: #39a678;
-	-webkit-text-fill-color: rgb(57, 166, 120);
+	color: #1b7bd7;
+	-webkit-text-fill-color: rgb(27, 123, 215);
 }
 
 #element-settings-sidebar .upfront-settings-item.relative {

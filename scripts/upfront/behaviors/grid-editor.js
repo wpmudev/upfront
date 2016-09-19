@@ -1306,25 +1306,19 @@ var GridEditor = {
 				});
 
 				if ( !breakpoint || breakpoint['default'] ){
-					model.set_property('row', rsz_row);
-					// Also resize containing object if it's only one object
+					// Resize containing object first if it's only one object
 					var objects = model.get('objects');
 					if ( objects && objects.length == 1 ){
 						objects.each(function(object){
 							object.set_property('row', rsz_row );
 						});
 					}
+
+					// Then resize the module
+					model.set_property('row', rsz_row);
 				}
 				else {
-					model_breakpoint = Upfront.Util.clone(model.get_property_value_by_name('breakpoint') || {});
-					if ( !_.isObject(model_breakpoint[breakpoint.id]) )
-						model_breakpoint[breakpoint.id] = {};
-					breakpoint_data = model_breakpoint[breakpoint.id];
-					breakpoint_data.edited = true;
-					breakpoint_data.row = rsz_row;
-
-					model.set_property('breakpoint', model_breakpoint);
-					// Also resize containing object if it's only one object
+					// Resize containing object first if it's only one object
 					var objects = model.get('objects');
 					if ( objects && objects.length == 1 ){
 						objects.each(function(object){
@@ -1335,6 +1329,16 @@ var GridEditor = {
 							object.set_property('breakpoint', obj_breakpoint);
 						});
 					}
+
+					// Then resize the module
+					model_breakpoint = Upfront.Util.clone(model.get_property_value_by_name('breakpoint') || {});
+					if ( !_.isObject(model_breakpoint[breakpoint.id]) )
+						model_breakpoint[breakpoint.id] = {};
+					breakpoint_data = model_breakpoint[breakpoint.id];
+					breakpoint_data.edited = true;
+					breakpoint_data.row = rsz_row;
+
+					model.set_property('breakpoint', model_breakpoint);
 				}
 
 				/*if ( is_parent_group )

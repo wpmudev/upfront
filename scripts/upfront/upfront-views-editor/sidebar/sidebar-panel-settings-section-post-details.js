@@ -12,12 +12,13 @@
                 this.options = opts;
                 this.settings = _([]);
                 var self = this;
-
+                
                 if ( !Upfront.Views.PostDataEditor ) {
                     require(['content'], function() {
                         if(self.getPostId() !== false) {
                             setTimeout(self.prepare_editor(self));
-                            self.initialize_post_data_editor();
+							// we do not need to initialize_post_data_editor again
+                            // self.initialize_post_data_editor();
                         }
                     });
                     return;
@@ -28,8 +29,10 @@
             initialize_post_data_editor: function() {
                 var self = this;
                 this.listenTo(Upfront.Views.PostDataEditor, 'loaded', function(contentEditor) {
-                    if ( contentEditor ) {
-                        Upfront.Views.PostBox = contentEditor.prepareBox();
+                    if ( contentEditor && Upfront.Views.PostDataEditor ) {
+						// updating global contentEditor to use the new instance
+                        Upfront.Views.PostDataEditor.contentEditor = contentEditor;
+                        Upfront.Views.PostBox = Upfront.Views.PostDataEditor.contentEditor.prepareBox();
                         self.append_box();
                     }
                 });
@@ -37,7 +40,8 @@
                 this.listenTo(Upfront.Views.PostDataEditor, 'post:saved', function() {
                     this.render();
                 });
-
+				
+                this.stopListening(Upfront.Events, 'click:edit:navigate');
                 this.listenTo(Upfront.Events, 'click:edit:navigate', function (postId) {
                     if ( typeof postId !== 'undefined' && postId ) setTimeout(self.prepare_editor(self));
                 });

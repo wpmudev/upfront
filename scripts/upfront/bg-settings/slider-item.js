@@ -121,7 +121,7 @@ define([
 		},
 		upload_slider_images: function () {
 			var me = this;
-			Upfront.Views.Editor.ImageSelector.open({multiple: true}).done(function(images){
+			Upfront.Views.Editor.ImageSelector.open({multiple: true, multiple_sizes: false}).done(function(images){
 				var image_ids = [];
 				_.each(images, function(image, id){
 					id = parseInt(id, 10);
@@ -141,10 +141,10 @@ define([
 		initialize: function (options) {
 			var me = this;
 			
-			this.$el.on('click', '.upfront-region-bg-slider-add-image', function (e) {
+			this.$el.on('click', '.upfront-bg-slider-add-image', function (e) {
 				e.preventDefault();
 				e.stopPropagation();
-				Upfront.Views.Editor.ImageSelector.open({multiple: true}).done(function(images){
+				Upfront.Views.Editor.ImageSelector.open({multiple: true, multiple_sizes: false}).done(function(images){
 					var slide_images = _.clone(me.model.get_breakpoint_property_value('background_slider_images', true) || []);
 					_.each(images, function(image, id){
 						id = parseInt(id, 10);
@@ -157,10 +157,10 @@ define([
 					me.update_slider_slides();
 				});
 			});
-			this.$el.on('click', '.upfront-region-bg-slider-delete-image', function (e) {
+			this.$el.on('click', '.upfront-bg-slider-delete-image', function (e) {
 				e.preventDefault();
 				e.stopPropagation();
-				var $image = $(this).closest('.upfront-region-bg-slider-image'),
+				var $image = $(this).closest('.upfront-bg-slider-image'),
 					image_id = $image.data('image-id'),
 					image_index = $image.index(),
 					slide_images = _.clone(me.model.get_breakpoint_property_value('background_slider_images', true) || []);
@@ -190,7 +190,7 @@ define([
 		update_slider_slides: function () {
 			var me = this,
 				slide_images = me.model.get_breakpoint_property_value('background_slider_images', true),
-				$add = $('<div class="upfront-region-bg-slider-add-image upfront-icon upfront-icon-region-add-slide">' + l10n.add_slide + '</div>'),
+				$add = $('<div class="upfront-bg-slider-add-image upfront-icon upfront-icon-region-add-slide">' + l10n.add_slide + '</div>'),
 				$wrap = this.$el.find('.upfront-settings-item-content');
 			$wrap.html('');
 			
@@ -204,7 +204,7 @@ define([
 						var image = _.isNumber(id) || id.match(/^\d+$/) ? images[id] : _.find(images, function(img){
 							return img.full[0].split(/[\\/]/).pop() == id.split(/[\\/]/).pop();
 						}),
-						$image = $('<div class="upfront-region-bg-slider-image" />');
+						$image = $('<div class="upfront-bg-slider-image" />');
 						$image.data('image-id', id);
 						if(typeof image.thumbnail !== "undefined") {
 							$image.css({
@@ -212,17 +212,17 @@ define([
 								backgroundSize: '100% auto'
 							});
 						}
-						$image.append('<span href="#" class="upfront-region-bg-slider-delete-image">&times;</span>');
+						$image.append('<span href="#" class="upfront-bg-slider-delete-image">&times;</span>');
 						$wrap.append($image);
 					});
 					if ( $wrap.hasClass('ui-sortable') )
 						$wrap.sortable('refresh');
 					else
 						$wrap.sortable({
-							items: '>  .upfront-region-bg-slider-image',
+							items: '>  .upfront-bg-slider-image',
 							update: function () {
 								var slide_images = [];
-								$wrap.find('.upfront-region-bg-slider-image').each(function(){
+								$wrap.find('.upfront-bg-slider-image').each(function(){
 									var id = $(this).data('image-id');
 									id = parseInt(id, 10);
 									if ( id ) {

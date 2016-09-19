@@ -6,3 +6,7 @@ bin
 phpunit.xml.dist
 npm-debug.log
 *.patch
+.buildpath
+.project
+.settings
+.tags*

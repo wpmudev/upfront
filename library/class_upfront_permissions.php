@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class for handling Upfront access permissions
+ */
 class Upfront_Permissions {
 
 	const BOOT = 'boot_upfront';
@@ -33,12 +36,23 @@ class Upfront_Permissions {
 	const NOT_LOAD_WP_ROLES = 'not_load_wp_default_roles'; // only load wp default roles on fresh setup
 	const RESTRICTIONS_KEY = "upfront-options-user_restrictions";
 
+	/**
+	 * Internal levels map
+	 *
+	 * @var array
+	 */
 	private $_levels_map = array();
 
+	/**
+	 * Internal restrictions cache
+	 *
+	 * @var array
+	 */
 	private $_cached_restrictions = array();
 
 	/**
 	 * Instance of Upfront_Permissions class
+	 *
 	 * @var Upfront_Permissions
 	 */
 	private static $_me;
@@ -47,7 +61,9 @@ class Upfront_Permissions {
 	/**
 	 * Checks if current user is able to do $level
 	 *
-	 * @param $level
+	 * @param string $level Upfront level to check
+	 * @param mixed $arg Optional additional argument
+	 *
 	 * @return bool
 	 */
 	public static function current ($level, $arg=false) {
@@ -57,6 +73,8 @@ class Upfront_Permissions {
 
 	/**
 	 * Checks if current user able to modify layout
+	 *
+	 * @param mixed $arg Optional additional argument
 	 *
 	 * @return bool
 	 */
@@ -100,6 +118,11 @@ class Upfront_Permissions {
 		return self::$_me->_role_can($role_id, $level);
 	}
 
+	/**
+	 * Gets created nonces for all known keys
+	 *
+	 * @return array
+	 */
 	public static function nonces () {
 		static $nonces = array();
 		if (!empty($nonces)) return $nonces;
@@ -111,6 +134,13 @@ class Upfront_Permissions {
 		return $nonces;
 	}
 
+	/**
+	 * Gets a nonce corresponding to level
+	 *
+	 * @param string $level Level
+	 *
+	 * @return mixed Nonce as string or (bool)false
+	 */
 	public static function nonce ($level) {
 		$nonces = self::nonces();
 		if (!self::current($level) && !empty($nonces[self::ANONYMOUS])) return $nonces[self::ANONYMOUS];
@@ -126,8 +156,9 @@ class Upfront_Permissions {
 	/**
 	 * Checkes if value is an upfront permission nonce
 	 *
-	 * @param $level
-	 * @param $value
+	 * @param string $level Level
+	 * @param string $value Value
+	 *
 	 * @return bool
 	 */
 	public static function is_nonce ($level, $value) {
@@ -138,54 +169,50 @@ class Upfront_Permissions {
 		return (bool)$result;
 	}
 
-
+	/**
+	 * Spawns an instance
+	 *
+	 * Never to the outside world.
+	 */
 	private function __construct () {
-		// $this->_levels_map = wp_parse_args(
-			// $this->get_restrictions(),
-			// $this->_get_default_levels_map()
-		// );
-		// no need to append the default WP roles as will cause saved restrictions to not reflect
-
 		$this->_levels_map = $this->get_restrictions();
-
 	}
 
 	/**
 	 * Sets default access levels
 	 *
-	 *
+	 * @return array
 	 */
-	private function _get_default_levels_map(){
+	private function _get_default_levels_map () {
 		return apply_filters('upfront-access-permissions-map', array(
-			self::BOOT => 'edit_theme_options',// 'edit_posts',
-			
+			self::BOOT => 'edit_theme_options',
+
 			self::OPTIONS => 'manage_options',
-			
+
 			self::CREATE_POST_PAGE => 'edit_posts',
-			self::EDIT_OWN =>  'edit_theme_options',// 'edit_posts',
-			self::EDIT =>  'edit_theme_options',// 'edit_others_posts',
-			
+			self::EDIT_OWN => 'edit_theme_options',
+			self::EDIT => 'edit_theme_options',
+
 			self::UPLOAD => 'upload_files',
-			self::EMBED => 'edit_theme_options',// 'edit_posts',
-			
+			self::EMBED => 'edit_theme_options',
+
 			self::LAYOUT_MODE => 'edit_theme_options',
 			self::RESPONSIVE_MODE => 'edit_theme_options',
 
 			self::SWITCH_ELEMENT_PRESETS => 'edit_theme_options',
 			self::MODIFY_ELEMENT_PRESETS => 'edit_theme_options',
 			self::DELETE_ELEMENT_PRESETS => 'edit_theme_options',
-			
+
 			self::SINGLEPOST_LAYOUT_MODE => 'edit_theme_options',
 			self::SINGLEPAGE_LAYOUT_MODE => 'edit_theme_options',
 			self::HOME_LAYOUT_MODE => 'edit_theme_options',
 			self::ARCHIVE_LAYOUT_MODE => 'edit_theme_options',
-			//self::POSTLAYOUT_MODE => 'edit_theme_options', // This one is for old postlayout mode from this_post element
-						
+
 			self::MODIFY_RESTRICTIONS => 'promote_users',
 			self::SEE_USE_DEBUG => "edit_themes",
 
 			self::SAVE => 'edit_theme_options',
-			self::CONTENT_MODE => 'edit_theme_options',// 'edit_posts',
+			self::CONTENT_MODE => 'edit_theme_options',
 			self::THEME_MODE => 'edit_theme_options',
 			self::DEFAULT_LEVEL => 'edit_theme_options',
 		));
@@ -196,7 +223,7 @@ class Upfront_Permissions {
 	 *
 	 * @return array
 	 */
-	function get_upfront_capability_map(){
+	function get_upfront_capability_map () {
 		$levels = $this->_get_default_levels_map();
 		if (isset($levels[self::DEFAULT_LEVEL])) unset($levels[self::DEFAULT_LEVEL]);
 		if (isset($levels[self::CONTENT_MODE])) unset($levels[self::CONTENT_MODE]);
@@ -336,14 +363,14 @@ class Upfront_Permissions {
 	/**
 	 * Checks if current user is able to perform $level
 	 *
-	 * @param $level
-	 * @param bool $arg
+	 * @param string $_level Level
+	 * @param mixed $arg Optional additional agument
+	 *
 	 * @return bool
 	 */
 	private function _current_user_can ($_level, $arg=false) {
 		if (empty($_level)) return false;
-		if( current_user_can("administrator") && !is_super_admin()  )
-			return self::role( "administrator", $_level );
+		if ( current_user_can("administrator") && !is_super_admin()  ) return self::role( "administrator", $_level );
 
 		$level = $this->_resolve_level_to_capability($_level);
 		if (empty($level)) return false;
@@ -414,7 +441,7 @@ class Upfront_Permissions {
 			} elseif ( !isset($this->_levels_map[self::NOT_LOAD_WP_ROLES]) ) {
 				$allowed = (bool)$role->has_cap('manage_options');
 			}
-			
+
 			if ($allowed) break;
 		}
 
@@ -441,7 +468,8 @@ class Upfront_Permissions {
 	/**
 	 * Converts $key to upfront permission nonce
 	 *
-	 * @param $key
+	 * @param string $key Key
+	 *
 	 * @return string
 	 */
 	private static function _to_nonce_key ($key) {
@@ -453,7 +481,7 @@ class Upfront_Permissions {
 	 *
 	 * @return mixed|void
 	 */
-	public function get_capability_labels(){
+	public function get_capability_labels () {
 
 		return apply_filters('upfront-access-permissions-labels', array(
 
@@ -474,8 +502,7 @@ class Upfront_Permissions {
 			self::EMBED => __('Can Use Embeds (Code El, Media Embeds)', Upfront::TextDomain ),
 			self::RESPONSIVE_MODE => __('Can Enter & Modify Layouts in Responsive Mode', Upfront::TextDomain ),
 			self::MODIFY_RESTRICTIONS => __('Can Modify User Restrictions', Upfront::TextDomain ),
-			self::SEE_USE_DEBUG => __('Can See / Use Debug Controls', Upfront::TextDomain )
-
+			self::SEE_USE_DEBUG => __('Can See / Use Debug Controls', Upfront::TextDomain ),
 		));
 	}
 
