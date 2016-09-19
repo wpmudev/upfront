@@ -3985,18 +3985,10 @@ a.upfront-region-name-edit-trigger:before {
   float: left; }
 
 .uf-bgsettings-item .upfront-field-wrap .upfront-field-label-block,
-<<<<<<< HEAD
 .upfront-region-bg-setting-tab-primary .upfront-field-wrap .upfront-field-label-block {
   font-size: 11px;
   display: block;
   font-family: verdana,sans-serif;
-=======
-.upfront-bg-setting-tab-primary .upfront-field-wrap .upfront-field-label-block {
-  color: #3f617f;
-  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
-  font-size: 14px;
-  line-height: 20px;
->>>>>>> master
   font-weight: normal;
   top: 0px;
   color: #7d99b6; }
@@ -4232,21 +4224,9 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-bg-setting-theme-body {
   margin: 0 0 20px; }
 
-.upfront-bg-setting-heading {
-  color: #27394b;
-  font-size: 18px;
-  font-weight: bold;
-  margin: 0 0 10px; }
-
-.upfront-bg-setting-label {
-  color: #3f617f;
-  font-size: 14px;
-  line-height: 20px; }
-
-.upfront-bg-setting-label-alt {
-  color: #2f475d;
-  font-family: "Verdana";
-  font-size: 11px; }
+.upfront-region-bg-setting-padding .upfront-field-wrap-number .upfront-field-number {
+  width: 45px;
+  clear: both; }
 
 #element-settings-sidebar .uf-bgsettings-item .upfront-field-label-inline,
 #element-settings-sidebar .uf-bgsettings-item .upfront-field-wrap .upfront-field-label-block {
