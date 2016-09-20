@@ -11,7 +11,7 @@ div.upfront-navigation ul.sub-menu {
 ul.menu {
   background-color:transparent;
 }
-.triggered-menu ul.menu {
+.triggered-menu ul.menu, .upfront-navigation[data-style="burger"] ul.menu {
   background: #333;
 }
 ul.sub-menu {
