@@ -10,6 +10,7 @@ class Upfront_MediaServer extends Upfront_Server {
 	private function _add_hooks () {
 		$this->augment_attachments();
 		$this->serve_custom_size();
+		$this->serve_extra_large_size();
 
 		// Fix WP srcset creation
 		add_filter('wp_calculate_image_srcset', array($this, 'fix_srcset'));
@@ -182,6 +183,14 @@ class Upfront_MediaServer extends Upfront_Server {
 				intval($thumbnail_size->thumbnail_height)
 			);
 		}
+	}
+	
+	/**
+	 * Serve 1920 image size when uploading 4k images
+	 */
+	public function serve_extra_large_size () {
+		if ( !in_array('upfront_extra_large', get_intermediate_image_sizes()) )
+			add_image_size('upfront_extra_large', 1920, 1920);
 	}
 
 	public function list_labels () {

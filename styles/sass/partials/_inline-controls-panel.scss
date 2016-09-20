@@ -63,19 +63,21 @@
 .upfront-element-controls .upfront-padding-container .upfront-field-wrap {
 	margin: 0px;
 }
-.upfront-element-controls .upfront-inline-panel .upfront-padding-cotainer-left,
-.upfront-element-controls .upfront-inline-panel .upfront-padding-cotainer-right {
+.upfront-element-controls .upfront-inline-panel .upfront-padding-container-left,
+.upfront-element-controls .upfront-inline-panel .upfront-padding-container-right {
 	width: 50%;
 	display: inline-block;
+	position: relative;
+	z-index: 91;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-padding-container {
 	text-align: center;
 	position: relative;
 }
-.upfront-element-controls .upfront-inline-panel .upfront-padding-cotainer-left {
+.upfront-element-controls .upfront-inline-panel .upfront-padding-container-left {
 	text-align: left;
 }
-.upfront-element-controls .upfront-inline-panel .upfront-padding-cotainer-right {
+.upfront-element-controls .upfront-inline-panel .upfront-padding-container-right {
 	text-align: right;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-padding-title {
@@ -136,7 +138,7 @@
     background-image: url('../img/uf-core-el-sprite.png');
     background-image: url('../img/uf-core-el-sprite.svg'), none;
     background-position: -658px -169px;
-    left: 45px;
+    left: 0px;
     top: 8px;
     position: relative;
 	border: 1px solid #e6ecf2;
@@ -150,7 +152,7 @@
 .upfront-element-controls .upfront-inline-panel .padding-lock {
     position: absolute;
     margin-top: -19px;
-    left: 0px;
+    left: 45px;
 	top: 22px;
 	z-index: 100;
 }

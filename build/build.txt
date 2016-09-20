@@ -68,7 +68,7 @@ C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-
 text!upfront/templates/popup.html
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/fonts.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/modal.js
-text!upfront/templates/region_edit_panel.html
+text!upfront/templates/bg_setting.html
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/modal-bg-setting.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/settings/settings-item.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/settings/settings-panel.js
@@ -100,6 +100,10 @@ C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/region/region-panel-item-expand-lock.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/region/region-fixed-edit-position.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/region/region-fixed-panels.js
+text!upfront/templates/region_edit_panel.html
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/region/region-bg-setting.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/region/region-bg-setting-fixed.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/region/region-bg-setting-lightbox.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/region.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/commands.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command.js
@@ -183,6 +187,7 @@ C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panels.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/commands/sidebar-commands-primary-post-type.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-responsive-section-typography.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command-save-post.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/presets/button/model.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/presets/button/collection.js
@@ -218,9 +223,6 @@ C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/bg-settings/map-item.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/bg-settings/slider-item.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/bg-settings/video-item.js
-upfront/bg-settings/bg-settings.js
-C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-accordion/js/model.js
-C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-accordion/js/element.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/element-settings/settings-container.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/element-settings/root-panel-mixin.js
 text!elements/upfront-slider/tpl/backend.html
@@ -238,6 +240,7 @@ C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/settings/modul
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/settings/modules/colors.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/settings/modules/element-style.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/settings/modules/padding.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/settings/modules/margin.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/settings/modules/anchor.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-newnavigation/js/menu-util.js
 text!scripts/upfront/settings/modules/menu-structure/menu-item-editor.tpl
@@ -263,6 +266,9 @@ C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/preset-setting
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/settings/root-modules-panel.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/element-settings/advanced-settings.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/element-settings/settings.js
+upfront/bg-settings/bg-settings.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-accordion/js/model.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-accordion/js/element.js
 text!elements/upfront-accordion/tpl/preset-style.html
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-accordion/js/settings.js
 text!elements/upfront-accordion/tpl/uaccordion.html
@@ -345,6 +351,8 @@ text!elements/upfront-posts/tpl/views.html
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-posts/js/post-list-views.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-posts/js/post-list-meta-views.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-posts/js/post-list-settings-parts.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-posts/js/post-list-modules-abstraction.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-posts/js/post-list-settings-modules.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-posts/js/post-list-settings-panels.js
 text!elements/upfront-widget/tpl/preset-style.html
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-posts/js/post-list-settings.js
@@ -398,6 +406,7 @@ C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-code/js/eleme
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-code/js/upfront_code.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-spacer/js/uspacer.js
 upfront/upfront-application.js
+pako/pako.min.js
 upfront/upfront-util.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/plugins.js
 main.js

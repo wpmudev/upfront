@@ -34,7 +34,9 @@ var rAFPollyfill = function(callback){
 
 
 
-define(function() {
+define([
+	"pako"
+], function ( pako ){
 	var guessLinkType = function(url) {
 		if(!$.trim(url) || $.trim(url) == '#' || $.trim(url) === '') {
 			return 'unlink';
@@ -806,6 +808,73 @@ define(function() {
 				}
 				else
 					return false;
+		},
+
+		/**
+		 * Compress passed data using pako.deflate
+		 *
+		 * @param data
+		 * @param options
+		 * @returns {string} base64 encoded string
+		 */
+		compress: function (data, options) {
+			console.time('compressing');
+			var default_options = { to: 'string', level: Upfront.mainData.save_compression_level },
+				stringified, raw, encoded
+			;
+			if ( _.isObject(options) ) {
+				options = _.extend(default_options, options);
+			}
+			else {
+				options = default_options;
+			}
+			// Stringify data to preserve types
+			stringified = JSON.stringify(data);
+			// Use deflateRaw, so wrapper isn't included
+			raw = pako.deflateRaw(stringified, options);
+			// Base64 encode it so we can work with string
+			encoded = btoa(raw);
+			console.log('compressed length:' + encoded.length, 'compressed ratio:' + Math.round(encoded.length/stringified.length*100)/100);
+			console.timeEnd('compressing');
+			return {
+				result: encoded,
+				original_length: stringified.length,
+				compressed_length: encoded.length
+			};
+		},
+
+		/**
+		 * Extract compressed data from pako.deflate, accept base64 encoded string
+		 *
+		 * @param compressed
+		 * @param options
+		 * @param compressed_length
+		 * @param original_length
+		 * @returns extracted data, with the same type before compression
+		 */
+		extract: function (compressed, options, compressed_length, original_length) {
+			console.time('extracting');
+			if ( compressed_length && compressed_length !== compressed.length ) return false;
+			var default_options = { to: 'string' },
+				decoded, inflated, parsed
+			;
+			if ( _.isObject(options) ) {
+				options = _.extend(default_options, options);
+			}
+			else {
+				options = default_options;
+			}
+			// Base64 decode first
+			decoded = atob(compressed);
+			// Use inflateRaw to extract as we deflate without wrapper
+			inflated = pako.inflateRaw(decoded, options);
+
+			if ( original_length && original_length !== inflated.length ) return false;
+
+			// Finally, parse it to get back original value
+			parsed = JSON.parse(inflated);
+			console.timeEnd('extracting');
+			return parsed;
 		}
 	};
 
@@ -947,18 +1016,21 @@ define(function() {
 
 	var PreviewUpdate = function () {
 		var _layout_data = false,
+			_layout_compressed = false,
 			_layout = false,
 			_saving_flag = false,
 			_is_dirty = false,
 			_preview_url = false,
 			_revision_idx = false,
-			run = function (layout) {
+			_tab_id = false,
+			run = function (layout, tab_id) {
 				if (!!Upfront.Settings.Application.PERMS.REVISIONS) { // Only rebind stuff when revisions listening is enabled.
 					if (Upfront.Application.mode.current === Upfront.Application.MODE.THEME) {
 						// Exporter mode
 						rebind_exporter_events();
 					} else {
 						// Normal mode
+						_tab_id = tab_id;
 						_layout = layout;
 						rebind_events();
 					}
@@ -1036,9 +1108,16 @@ define(function() {
 				if (_layout_data && _layout_data.regions) _layout_data.regions = _(_layout_data.regions).reject(function (reg) { return reg.name === "shadow"; });
 				_layout_data.layout = _upfront_post_data.layout;
 				_layout_data.preferred_layout = _layout.get("current_layout");
+				_layout_data.tab_id = _tab_id;
 
-				//_layout_data = JSON.stringify(_layout_data, undefined, 2);
-				_layout_data = JSON.stringify(_layout_data);
+				if ( Upfront.mainData.save_compression ) {
+					_layout_compressed = Upfront.Util.compress(_layout_data);
+					_layout_data = _layout_compressed.result;
+				}
+				else {
+					//_layout_data = JSON.stringify(_layout_data, undefined, 2);
+					_layout_data = JSON.stringify(_layout_data);
+				}
 			},
 			save = function () {
 				if (_saving_flag) return false;
@@ -1048,7 +1127,14 @@ define(function() {
 				set_data();
 
 				Upfront.Events.trigger("preview:build:start");
-				Upfront.Util.post({action: "upfront_build_preview", "data": _layout_data, "current_url": window.location.href})
+				Upfront.Util.post({
+						action: "upfront_build_preview",
+						"data": _layout_data,
+						"current_url": window.location.href,
+						"original_length": _layout_compressed ? _layout_compressed.original_length : 0,
+						"compressed_length": _layout_compressed ? _layout_compressed.compressed_length : 0,
+						"compression": Upfront.mainData.save_compression ? 1 : 0,
+					})
 					.success(function (response) {
 						var data = response.data || {};
 						if ("html" in data && data.html) {
@@ -1067,13 +1153,17 @@ define(function() {
 							var users = _.values(data.concurrent_users).join(', ');
 							Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.views.already_edited_nag.replace(/%s/, users), 'error');
 						}
+						// If multiple tabs are open, warn on save.
+						if (data.other_tab_open) {
+							Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.views.multiple_tabs_nag, 'error');
+						}
 					})
 					.error(function () {
 						Upfront.Util.log("error building layout preview");
 					})
 				;
 
-				run(_layout);
+				run(_layout, _tab_id);
 			},
 			clear = function () {
 				_is_dirty = false; // Clear dirty flag, we just saved changes

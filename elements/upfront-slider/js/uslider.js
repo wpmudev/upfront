@@ -635,7 +635,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				elementCols = me.get_element_columns();
 				colWidth = me.get_element_max_columns_px() / me.get_element_max_columns();
 				height = $slide.height();
-
+								
 				ui.element.parent().closest('.ui-resizable').resizable('disable');
 
 				$slide.resizable('option', {
@@ -651,11 +651,16 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			resize: function(e, ui){
 				if(!ui.element.hasClass('uslide-image'))
 					return;
-				var imageWidth = ui.helper.width(),
-					textWidth = elementWidth - imageWidth - 30,
-					textCss = {width: textWidth},
+				
+				var padding_left = parseInt( me.model.get_breakpoint_property_value("left_padding_use", true) ?  me.model.get_breakpoint_property_value('left_padding_num', true) : 0, 10 ),
+					padding_right = parseInt( me.model.get_breakpoint_property_value("right_padding_use", true) ? me.model.get_breakpoint_property_value('right_padding_num', true) : 0, 10 ),
+					newElementWidth = parseInt( elementWidth - ( padding_left + padding_right ) ),
+					imageWidth = ui.helper.width(),
+					textWidth = newElementWidth - imageWidth - 20,
+					textCss = {width: textWidth},	
 					imgCss = {width: imageWidth}
 				;
+
 				me.calculateImageResize({width: imageWidth, height: ui.element.height()}, slide);
 
 				if(style == 'right')

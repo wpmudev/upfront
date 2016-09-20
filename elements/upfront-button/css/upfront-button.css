@@ -1,4 +1,4 @@
-.upfront_cta {
+.upfront_cta, a.upfront_cta {
 	display: table-cell;
 	padding: 4px 5px;
 	text-decoration: none;

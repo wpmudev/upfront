@@ -110,11 +110,19 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			layout_change = ( typeof _upfront_post_data.layout_change !== 'undefined' ) ? _upfront_post_data.layout_change : 0,
 			save_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 ),
 			breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
-			is_responsive = breakpoint && !breakpoint['default']
+			is_responsive = breakpoint && !breakpoint['default'],
+			compressed
 		;
 		data.layout = _upfront_post_data.layout;
 		data.preferred_layout = preferred_layout;
-		data = JSON.stringify(data, undefined, 2);
+
+		if ( Upfront.mainData.save_compression ) {
+			compressed = Upfront.Util.compress(data);
+			data = compressed.result;
+		}
+		else {
+			data = JSON.stringify(data);
+		}
 
 		Upfront.Events.trigger("command:layout:save_start");
 
@@ -126,6 +134,9 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		Upfront.Util.post({
 				"action": Upfront.Application.actions.save,
 				"data": data,
+				"original_length": compressed ? compressed.original_length : 0,
+				"compressed_length": compressed ? compressed.compressed_length : 0,
+				"compression": Upfront.mainData.save_compression ? 1 : 0,
 				"storage_key": storage_key,
 				"post_id": post_id,
 				"layout_action": layout_action,
@@ -1088,7 +1099,20 @@ var Application = new (Backbone.Router.extend({
 
 		Upfront.Application.loading.done(function () {
 
-			Upfront.PreviewUpdate.run(me.layout);
+			try {
+				// Use Tab ID to warn about multiple tabs editing same layout.
+				var tab_id = sessionStorage.getItem('upfront_tab_id');
+				// If no tab_id is saved in sessionStorage, create one.
+				if (tab_id === null) {
+					// Create unique ID for current tab session.
+					tab_id = Upfront.Util.get_unique_id('tab_id');
+					sessionStorage.setItem('upfront_tab_id', tab_id);
+				}
+			} catch (exception) {
+				// If sessionStorage is disabled, still generate tab_id.
+				var tab_id = Upfront.Util.get_unique_id('tab_id');
+			}
+			Upfront.PreviewUpdate.run(me.layout, tab_id);
 
 			Upfront.Events.trigger("application:mode:after_switch");
 		});
@@ -1408,6 +1432,8 @@ var Application = new (Backbone.Router.extend({
 		cssEditor.createSelector(Upfront.Models.Region, Upfront.Views.RegionView, 'Region');
 		cssEditor.createSelector(Upfront.Models.Region, Upfront.Views.RegionLightboxView, 'RegionLightbox');
 
+		Upfront.plugins.call('insert-css-editor-selectors', {cssEditor: cssEditor});
+
 		Upfront.Events.on("upfront:layout:loaded", me.apply_region_css, me);
 		Upfront.Events.on("upfront:layout:loaded", me.ensure_layout_style, me);
 		this.cssEditor = cssEditor;
@@ -1469,14 +1495,23 @@ var Application = new (Backbone.Router.extend({
 			fullPath = path ? '/' + path : '/',
 			loading
 		;
+		
+		// Fixing incorrect post_id when clicking Back on browser
+		// only for posts and pages
+		if ( fullPath.indexOf('edit/post') !== -1 || fullPath.indexOf('edit/page') !== -1 ) {
+			var filter_post_id = parseInt( fullPath.replace ( /[^\d.]/g, '' ), 10 );
+			if ( !isNaN(filter_post_id) && filter_post_id !== _upfront_post_data.post_id ) {
+				_upfront_post_data.post_id = filter_post_id;
+			}
+		}
 
 		if(urlQueryParts){
 			_.each(urlParams, function(value, key){
 				urlQueryParts.push(key + '=' + value);
 			});
 			fullPath += '?' + urlQueryParts.join('&');
-		}
-
+		}	
+		
 		loading = this.set_loading(Upfront.Settings.l10n.global.application.loading_path.replace(/%s/, fullPath), Upfront.Settings.l10n.global.application.here_we_are);
 
 		if(this.urlCache[fullPath]){
@@ -1581,6 +1616,24 @@ var Application = new (Backbone.Router.extend({
 		if ( !is_home && is_archive && this.user_can("ARCHIVE_LAYOUT_MODE") ) return true;
 		if ( is_single_page && this.user_can("SINGLEPAGE_LAYOUT_MODE") ) return true;
 		if ( !is_single_page && is_single && this.user_can("SINGLEPOST_LAYOUT_MODE") ) return true;
+		return false;
+	},
+
+	/**
+	 * Check if user can modify post/page content (e.g. title, content, categories, tags; not layout).
+	 *
+	 * Let's keep this simple for now since in other places it is checked if user has permissions
+	 * to start editing existing or create new post/page and it's hard to get owner of current
+	 * page.
+	 * Just check if user has permission to edit own or others posts.
+	 *
+	 * Do not use this where more thourough check is needed.
+	 *
+	 * @return {Boolean}
+	 */
+	user_can_save_content: function() {
+		if ( this.is_single() && (this.user_can("EDIT_OWN") || this.user_can("EDIT") )) return true;
+
 		return false;
 	}
 

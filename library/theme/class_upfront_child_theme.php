@@ -1332,7 +1332,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
     public static function get_post_image_variants_from_settings(){
 		$settings = self::_get_theme_settings();
 		if (!$settings) return '';
-		
+
         $image_variants = $settings->get('post_image_variants');
         if( empty( $image_variants )){
             $image_variants = <<< VRT
@@ -1451,7 +1451,10 @@ VRT;
 	 * @return int
 	 */
 	public static function import_slider_image ($filepath) {
-		return self::$instance->_import_slider_image($filepath);
+		return !empty(self::$instance)
+			? self::$instance->_import_slider_image($filepath)
+			: 0
+		;
 	}
 
 }

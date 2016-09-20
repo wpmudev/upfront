@@ -1,6 +1,60 @@
 Change Log
 ============
 
+
+1.4.2 - 2016-09-15
+-------------------------------------------------------------------------------
+- Add: ability to switch menus for breakpoints.
+- Add: button to delete a group of elements
+- Add: improved control on different region background per breakpoint
+
+- Fix: image element size when switching to responsive layout
+- Fix: resizing didn't get updated the first time
+- Fix: post content update issues
+- Fix: unable to show the elements when hidden region is toggled in responsive
+- Fix: menu issue after theme reset
+- Fix: undefined error when editing Featured image
+- Fix: menu glitch with repeated responsive change
+
+
+1.4.1 - 2016-09-13
+-------------------------------------------------------------------------------
+- Fix: scheduled scans conflict issue.
+
+
+1.4.0 - 2016-09-07
+-------------------------------------------------------------------------------
+- Add: support for meta description element for pages.
+- Add: empty global regions/lightboxes message.
+- Add: changelog review area.
+- Add: refactored login element.
+- Add: allow different style to be applied on each slide per breakpoint.
+- Add: initial Empty API Message and overlay to Map element.
+- Add: compatibility with Upfront Builder
+
+- Fix: parallax with PNG files and transparent backgrounds.
+- Fix: image inserts linking panel.
+- Fix: admin element toggling order issue.
+- Fix: issue in reverting to initial color in color picker.
+- Fix: gallery lightbox options application on frontend.
+- Fix: sync arrows padding with advanced settings.
+- Fix: remove categories data element from pages.
+- Fix: improve widget element error message rendering.
+- Fix: insert font issue in responsive mode editing.
+- Fix: javascript error on submit contact form.
+- Fix: post date PHP format issue.
+- Fix: issues in background image resolution.
+- Fix: consolidate fonts usage.
+- Fix: responsive image variant rendering.
+
+
+1.3.3 - 2016-07-19
+-------------------------------------------------------------------------------
+- Add: Google Maps API key area in admin
+- Fix: global regions issue.
+- Fix: global theme settings issue.
+
+
 1.3.2 - 2016-06-24
 -------------------------------------------------------------------------------
 - Fix: drag and drop on responsive issue.
