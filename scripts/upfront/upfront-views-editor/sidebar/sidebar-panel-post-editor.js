@@ -32,6 +32,9 @@
                 Upfront.Events.off("command:layout:save_as", this.on_save, this);
                 Upfront.Events.on("command:layout:save_as", this.on_save, this);
 
+				Upfront.Events.off("command:layout:save_post_layout", this.on_save, this);
+				Upfront.Events.on("command:layout:save_post_layout", this.on_save, this);
+
                 Upfront.Events.off("command:layout:publish", this.on_save, this);
                 Upfront.Events.on("command:layout:publish", this.on_save, this);
 
