@@ -110,11 +110,19 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			layout_change = ( typeof _upfront_post_data.layout_change !== 'undefined' ) ? _upfront_post_data.layout_change : 0,
 			save_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 ),
 			breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
-			is_responsive = breakpoint && !breakpoint['default']
+			is_responsive = breakpoint && !breakpoint['default'],
+			compressed
 		;
 		data.layout = _upfront_post_data.layout;
 		data.preferred_layout = preferred_layout;
-		data = JSON.stringify(data, undefined, 2);
+
+		if ( Upfront.mainData.save_compression ) {
+			compressed = Upfront.Util.compress(data);
+			data = compressed.result;
+		}
+		else {
+			data = JSON.stringify(data);
+		}
 
 		Upfront.Events.trigger("command:layout:save_start");
 
@@ -126,6 +134,9 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		Upfront.Util.post({
 				"action": Upfront.Application.actions.save,
 				"data": data,
+				"original_length": compressed ? compressed.original_length : 0,
+				"compressed_length": compressed ? compressed.compressed_length : 0,
+				"compression": Upfront.mainData.save_compression ? 1 : 0,
 				"storage_key": storage_key,
 				"post_id": post_id,
 				"layout_action": layout_action,

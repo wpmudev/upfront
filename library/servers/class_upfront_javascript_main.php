@@ -72,7 +72,8 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"jquery-simulate" => 'scripts/jquery/jquery.simulate',
 			"ueditor" => 'scripts/redactor/ueditor',
 			"chosen" => "scripts/chosen/chosen.jquery.min",
-			"findandreplace" => "scripts/findandreplace/findAndReplaceDOMText"
+			"findandreplace" => "scripts/findandreplace/findAndReplaceDOMText",
+			"pako" => "scripts/pako/pako.min"
 		);
 		$paths = apply_filters('upfront-settings-requirement_paths', $paths + $registered);
 
@@ -386,6 +387,12 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			)
 		);
 
+
+		// Use compression or not
+		$save_compression = Upfront_Compression::is_enabled() ? 1 : 0;
+		$save_compression_level = Upfront_Compression::get_level();
+
+
 		$menus = json_encode(wp_get_nav_menus());
 		$is_rtl = (int) is_rtl();
 		$main = <<<EOMainJs
@@ -426,7 +433,9 @@ Upfront.mainData = {
 	l10n: {$l10n},
 	font_icons: {$redactor_font_icons},
 	menus: {$menus},
-	isRTL: {$is_rtl}
+	isRTL: {$is_rtl},
+	save_compression: {$save_compression},
+	save_compression_level: {$save_compression_level}
 };
 EOMainJs;
 		$this->_out(new Upfront_JavascriptResponse_Success($main));

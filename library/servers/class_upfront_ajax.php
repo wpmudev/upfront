@@ -320,7 +320,12 @@ class Upfront_Ajax extends Upfront_Server {
 		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
 		if (!Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE)) $this->_reject();
 
-		$data = !empty($_POST['data']) ? json_decode(stripslashes_deep($_POST['data']), true) : false;
+		// Try extracting from compressed request first
+		$data = Upfront_Compression::extract_from_request();
+
+		if ( false === $data ) {
+			$data = !empty($_POST['data']) ? json_decode(stripslashes_deep($_POST['data']), true) : false;
+		}
 		if (!$data) $this->_out(new Upfront_JsonResponse_Error("Unknown layout"));
 		$storage_key = $_POST['storage_key'];
 		$stylesheet = $_POST['stylesheet'] ? $_POST['stylesheet'] : get_stylesheet();
@@ -345,7 +350,12 @@ class Upfront_Ajax extends Upfront_Server {
 	}
 
 	function save_page_layout () {
-		$data = !empty($_POST['data']) ? json_decode(stripslashes_deep($_POST['data']), true) : false;
+		// Try extracting from compressed request first
+		$data = Upfront_Compression::extract_from_request();
+
+		if ( false === $data ) {
+			$data = !empty($_POST['data']) ? json_decode(stripslashes_deep($_POST['data']), true) : false;
+		}
 		if (!$data) $this->_out(new Upfront_JsonResponse_Error("Unknown layout"));
 		$stylesheet = ($_POST['stylesheet']) ? $_POST['stylesheet'] : get_stylesheet();
 		$save_dev = ( isset($_POST['save_dev']) && is_numeric($_POST['save_dev']) && $_POST['save_dev'] == 1 ) ? true : false;
@@ -354,10 +364,7 @@ class Upfront_Ajax extends Upfront_Server {
 
 		upfront_switch_stylesheet($stylesheet);
 
-		$raw_data = stripslashes_deep($_POST);
-		$json_data = !empty($raw_data['data']) ? $raw_data['data'] : '';
-
-		$layout = Upfront_Layout::from_json($json_data);
+		$layout = Upfront_Layout::from_php($data);
 		// get layout keys from layout data passed
 		$layout_ids = $layout->get('layout');
 
@@ -437,9 +444,14 @@ class Upfront_Ajax extends Upfront_Server {
 				$template_post_id = get_post_meta($post_id, $template_meta_name, true);
 			}
 			// preparing the layout data to save
-			$raw_data = stripslashes_deep($data);
-			$json_data = !empty($raw_data['data']) ? $raw_data['data'] : '';
-			$layout = Upfront_Layout::from_json($json_data);
+
+			// Try extracting from compressed request first
+			$layout_data = Upfront_Compression::extract_from_request($data);
+
+			if ( false === $layout_data ) {
+				$layout_data = !empty($data['data']) ? json_decode(stripslashes_deep($data['data']), true) : false;
+			}
+			$layout = Upfront_Layout::from_php($layout_data);
 			// create or update page template
 			$saved_template_post_id = Upfront_Server_PageTemplate::get_instance()->save_template($template_post_id, $layout, $save_dev, $template_slug);
 			if ( $saved_template_post_id ) {

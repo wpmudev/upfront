@@ -55,7 +55,8 @@
         "upfront_code": "../elements/upfront-code/js/upfront_code",
         "upfront_slider": "../elements/upfront-slider/js/uslider",
         "chosen": "chosen/chosen.jquery.min",
-        "findandreplace": "findandreplace/findAndReplaceDOMText"
+        "findandreplace": "findandreplace/findAndReplaceDOMText",
+        "pako": "pako/pako.min"
     },
     shim: {
       'underscore': {
