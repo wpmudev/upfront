@@ -13738,8 +13738,7 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-e
   margin-top: -18px;
   z-index: 11; }
 
-#element-settings-sidebar .padding-bottom label,
-#element-settings-sidebar .margin-bottom label {
+#element-settings-sidebar .padding-bottom label {
   display: block;
   width: 25px;
   height: 18px;

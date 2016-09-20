@@ -26,7 +26,7 @@ define([
 					},
 					show: function(value, $el) {
 						var stateSettings = $el.closest('.upfront-settings-item-content');
-						var lock = me.model.get('lock_margin');
+						var lock = me.model.get(me.options.fields.lock);
 						//Toggle margin fields
 						if(value == "yes") {
 							if(lock == "yes") {
@@ -38,6 +38,7 @@ define([
 								stateSettings.find('.margin-left').show();
 								stateSettings.find('.margin-right').show();
 							}
+							stateSettings.find('.margin-lock').show();
 						} else {
 							stateSettings.find('.margin-top').hide();
 							stateSettings.find('.margin-bottom').hide();
@@ -45,6 +46,7 @@ define([
 							stateSettings.find('.margin-right').hide();
 							stateSettings.find('.margin-slider').hide();
 							stateSettings.find('.margin-number').hide();
+							stateSettings.find('.margin-lock').hide();
 						}
 					}
 				}),
@@ -178,12 +180,6 @@ define([
 					min: 0,
 					change: function(value) {
 						me.model.set(me.options.fields.top_num, value);
-					},
-					focus: function() {
-						me.$el.find('.margin-bottom label').css('border-top', '3px solid #7bebc6');
-					},
-					blur: function() {
-						me.$el.find('.margin-bottom label').css('border', '1px dotted #7d99b3');
 					}
 				}),
 
@@ -196,12 +192,6 @@ define([
 					min: 0,
 					change: function(value) {
 						me.model.set(me.options.fields.left_num, value);
-					},
-					focus: function() {
-						me.$el.find('.margin-bottom label').css('border-left', '3px solid #7bebc6');
-					},
-					blur: function() {
-						me.$el.find('.margin-bottom label').css('border', '1px dotted #7d99b3');
 					}
 				}),
 
@@ -214,12 +204,6 @@ define([
 					min: 0,
 					change: function(value) {
 						me.model.set(me.options.fields.right_num, value);
-					},
-					focus: function() {
-						me.$el.find('.margin-bottom label').css('border-right', '3px solid #7bebc6');
-					},
-					blur: function() {
-						me.$el.find('.margin-bottom label').css('border', '1px dotted #7d99b3');
 					}
 				}),
 
@@ -232,12 +216,6 @@ define([
 					min: 0,
 					change: function(value) {
 						me.model.set(me.options.fields.bottom_num, value);
-					},
-					focus: function() {
-						me.$el.find('.margin-bottom label').css('border-bottom', '3px solid #7bebc6');
-					},
-					blur: function() {
-						me.$el.find('.margin-bottom label').css('border', '1px dotted #7d99b3');
 					}
 				})
 
