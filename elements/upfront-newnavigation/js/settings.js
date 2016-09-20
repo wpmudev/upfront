@@ -135,8 +135,15 @@ define([
 			this.listenTo(this.appearancePanel, 'upfront:presets:setup-items', function() {
 				var panel = me.appearancePanel;
 				var preset = panel.property('preset') ? panel.clear_preset_name(panel.property('preset')) : 'default',
-					presetModel = panel.presets.findWhere({id: preset}),
-					allBreakpoints = Upfront.Views.breakpoints_storage.get_breakpoints(),
+					presetModel = panel.presets.findWhere({id: preset});
+				
+				// If presetModel undefined we should fallback to default preset
+				if(typeof presetModel === "undefined") {
+					preset = 'default';
+					presetModel = panel.presets.findWhere({id: preset});
+				}
+				
+				var allBreakpoints = Upfront.Views.breakpoints_storage.get_breakpoints(),
 					currentBreakpoint = allBreakpoints.get_active(),
 					breakpointsData = presetModel.get('breakpoint') || {},
 					changed = false
