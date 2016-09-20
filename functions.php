@@ -21,6 +21,7 @@ require_once(dirname(__FILE__) . '/library/class_upfront_codec.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_compat.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_postpart.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_admin.php');
+require_once(dirname(__FILE__) . '/library/class_upfront_compression.php');
 
 
 Upfront_Behavior::debug()->set_baseline();
