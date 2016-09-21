@@ -85,6 +85,14 @@
 	margin-top: 12px;
 }
 
+.upfront-modal-bg-settings-global .uf-bgsettings-image-style > label {
+	color: #3f617f;
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+	font-size: 14px;
+	line-height: 20px;
+	font-weight: normal;
+}
+
 .upfront-modal-bg-settings-fixed div.upfront-bg-setting-tab-primary .uf-bgsettings-image-style .upfront-field-label-block {
 	color: #3f617f;
 	font-size: 14px;
@@ -116,6 +124,8 @@
 
 .upfront-modal-bg-settings-global .upfront-bg-setting-tab-primary .uf-bgsettings-image-pick {
 	top: 135px;
+	padding: 0 10px;
+	line-height: 26px;
 }
 
 .upfront-bg-setting-tab-primary .uf-bgsettings-image-pick {
@@ -142,6 +152,7 @@
 	font: 600 12px/16px Open Sans, Helvetica Neueu, Helvetica, Arial, sans-serif;
 }
 
+.upfront-modal-bg-settings-global .uf-bgsettings-image-tile,
 .upfront-modal-bg-settings-fixed .uf-bgsettings-imageitem .uf-bgsettings-image-tile {
 	background: none;
 	padding: 0;
@@ -216,6 +227,12 @@ div.upfront-bg-setting-tab-primary .uf-bgsettings-image-style .upfront-field-lab
 	width: 40%;
 }
 
+.upfront-modal-bg-settings-global .uf-bgsettings-imageitem .uf-bgsettings-image-pos-x {
+	width: 100px;
+	top: 6px;
+	position: relative;
+}
+
 #settings .uf-bgsettings-image-size input,
 #settings .uf-bgsettings-image-pos-x-num input, #settings .uf-bgsettings-image-pos-y-num input {
     max-width: 50px;
@@ -234,11 +251,13 @@ div.upfront-bg-setting-tab-primary .uf-bgsettings-image-style .upfront-field-lab
 }
 
 .upfront-modal-bg-settings-global .uf-bgsettings-imageitem .uf-bgsettings-image-pos-x-num {
-	top: 100px;
+	top: -25px;
+	left: -155px;
 }
 
 .upfront-modal-bg-settings-global .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num {
-	top: 60px;
+	top: -30px;
+	left: -155px;
 }
 
 .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num {
@@ -442,6 +461,7 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 
 .upfront-modal-bg-settings-global .upfront-field-wrap.upfront-field-wrap-number.uf-bgsettings-image-size {
 	right: 156px;
+	top: 5px;
 }
 
 .upfront-modal-bg-settings-fixed .upfront-field-wrap.upfront-field-wrap-number.uf-bgsettings-image-size {
