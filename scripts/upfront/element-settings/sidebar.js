@@ -15,6 +15,10 @@ define([], function () {
 			$('#element-settings-sidebar').width(10).css('opacity', 0).html('');
 			Upfront.Events.off('element:settings:saved', destroySettings);
 			Upfront.Events.off('element:settings:cancel', resetModel);
+			
+			// removing class from #sidebar-ui that was previously added on showSettings
+			var $sidebar_ui = $('#sidebar-ui');
+			if ( $sidebar_ui.length ) $sidebar_ui.removeClass('element-settings-activated');
 		}
 	};
 
@@ -25,7 +29,7 @@ define([], function () {
 		destroySettings();
 	};
 
-	var showSettings = function(view) {
+	var showSettings = function(view, settings_view) {
 		var current_object_proto, settings_obj_view;
 
 		if (the_settings_view) {
@@ -44,7 +48,12 @@ define([], function () {
 		}, false);
 
 		current_object_proto = (current_object_proto && current_object_proto.Settings ? current_object_proto : Upfront.Views.Editor.Settings);
-		settings_obj_view = current_object_proto.Settings;
+		
+		if(typeof settings_view !== "undefined") {
+			settings_obj_view = settings_view;
+		} else {
+			settings_obj_view = current_object_proto.Settings;
+		}
 
 		the_settings_view = new settings_obj_view({
 			model: view.model,
@@ -53,6 +62,7 @@ define([], function () {
 		the_settings_view.for_view = view;
 		the_settings_view.render();
 		$('#element-settings-sidebar').html(the_settings_view.el);
+		$('#element-settings-sidebar').append('<div id="preventElementsUsageOverlay"></div>');
 		$('#element-settings-sidebar').width(260).css('opacity', '');
 		$('.uf-settings-panel--expanded:not(:first)').toggleClass('uf-settings-panel--expanded').find('.uf-settings-panel__body').toggle();
 
@@ -65,6 +75,10 @@ define([], function () {
 			$('#element-settings-sidebar').removeClass('collapsed');
 		}, 500);
 		Upfront.Events.trigger('element:settings:render');
+		
+		// adding class to #sidebar-ui for fixing z-index issues
+		var $sidebar_ui = $('#sidebar-ui');
+		if ( $sidebar_ui.length ) $sidebar_ui.addClass('element-settings-activated');
 	};
 
 	Upfront.Events.on('element:settings:activate', showSettings);

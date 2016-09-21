@@ -280,7 +280,6 @@ PostContentEditor.prototype = {
 					this.$content
 						.off('blur')
 						.on('blur', _.bind(this.blur, this))
-						.off('keyup')
 						.on('keyup', _.bind(this.keyup, this))
 						.off('stop')
 						.on("stop", _.bind(this.stopEditContent, this))
@@ -349,6 +348,7 @@ PostContentEditor.prototype = {
 					else {
 						this.parent.currentData.content = content;
 					}
+					
 					this.parent.currentData.inserts = this.editor.getInsertsData();
 				}
 			},
@@ -943,7 +943,6 @@ PostContentEditor.prototype = {
 	prepareBox: function(){
 		var self = this,
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main);
-
 		if(typeof this.box !== "undefined") {
 			this.box.remove();
 		}
@@ -956,26 +955,24 @@ PostContentEditor.prototype = {
 
 	bindBarEvents: function(){
 		var me = this,
-			events = ['cancel', 'publish', 'draft', 'trash', 'auto-draft'],
-			editor = Upfront.Views.PostDataEditor.contentEditor
+			events = ['cancel', 'publish', 'draft', 'trash', 'auto-draft']
 		;
-
 		_.each(events, function(e){
 			me.listenTo(me.box, e, function(){
 				_.each(me._viewInstances, function (view) {
 					view.trigger(e);
 				});
 				var results = {};
-				if( (e=='publish' || e=='draft' || e=='auto-draft') && editor ){
-					results.title = editor.currentData.title;
-					results.content = editor.currentData.content;
-					results.excerpt = editor.currentData.excerpt;
-					results.author = editor.currentData.author;
-					results.date = editor.currentData.date;
-					results.inserts = editor.currentData.inserts;
-					if(editor.postStatus) results.status = editor.postStatus;
-					if(editor.postVisibility) results.visibility = editor.postVisibility;
-					if(editor.postPassword) results.pass = editor.postPassword;
+				if( (e=='publish' || e=='draft' || e=='auto-draft') ){
+					results.title = me.currentData.title;
+					results.content = me.currentData.content;
+					results.excerpt = me.currentData.excerpt;
+					results.author = me.currentData.author;
+					results.date = me.currentData.date;
+					results.inserts = me.currentData.inserts;
+					if(me.postStatus) results.status = me.postStatus;
+					if(me.postVisibility) results.visibility = me.postVisibility;
+					if(me.postPassword) results.pass = me.postPassword;
 				}
 				me.trigger(e, results);
 			});

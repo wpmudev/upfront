@@ -277,6 +277,7 @@
                 if (!this.prevented_usage_type) this.prevented_usage_type = type; // don't stack up on prevented types, keep the original
                 $('#preventUsageOverlay span').html(preventUsageText);
                 $('#preventUsageOverlay').show();
+				$('#preventElementsUsageOverlay').show();
             },
             allowUsage: function(type) {
                 if (this.writingIsOn && type !== 'write') {
@@ -286,6 +287,7 @@
                 this.prevented_usage_type = false;
                 this.writingIsOn = false;
                 $('#preventUsageOverlay').hide();
+				$('#preventElementsUsageOverlay').hide();
             },
             render: function () {
                 var current_app = Upfront.Application.get_current();

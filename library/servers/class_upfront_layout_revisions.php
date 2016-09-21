@@ -237,13 +237,19 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 		global $post;
 
 		$raw_data = stripslashes_deep($_POST);
-		$data = !empty($raw_data['data']) ? $raw_data['data'] : '';
+
+		// Try extracting from compressed request first
+		$data = Upfront_Compression::extract_from_request($raw_data);
+
+		if ( false === $data ) {
+			$data = !empty($raw_data['data']) ? json_decode(stripslashes_deep($raw_data['data']), true) : false;
+		}
 
 		$current_url = !empty($raw_data['current_url']) ? $raw_data['current_url'] : home_url();
 		$current_url = wp_validate_redirect(wp_sanitize_redirect($current_url), false);
 		$current_url = $current_url ? $current_url : home_url();
 
-		$layout = Upfront_Layout::from_json($data);
+		$layout = Upfront_Layout::from_php($data);
 		$layout_id_key = $this->_data->save_revision($layout);
 
 		// Check concurrent edits from other users
@@ -255,7 +261,8 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 			))
 		));
 		$concurrent_users = array();
-		$current_tab_decoded = json_decode($data, true);
+		//$current_tab_decoded = json_decode($data, true);
+		$current_tab_decoded = $data;
 		$current_tab_id = !empty($current_tab_decoded['tab_id']) ? $current_tab_decoded['tab_id'] : '';
 		if (!empty($current_revisions)) foreach ($current_revisions as $rvsn) {
 			if (empty($rvsn->post_author)) continue;

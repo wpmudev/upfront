@@ -1278,6 +1278,10 @@ a.upfront-region-name-edit-trigger:hover {
 	margin: 0;
 }
 
+#region-settings-sidebar .auto-resize-on:after {
+	content: ' ';
+}
+
 .upfront-region-bg-setting-auto-resize {
 	cursor: pointer;
 	white-space: nowrap;
@@ -1625,6 +1629,9 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 .upfront-region-container .responsive-item-controls > .responsive-item-control:hover {
 	background: #90B0D2;
 	color: #2F445D;
+}
+.upfront-region-container.upfront-last-region-margin {
+	margin-bottom: 250px;
 }
 .upfront-region-editing .upfront-region.controls-visible .responsive-item-controls {
 	display: block;
