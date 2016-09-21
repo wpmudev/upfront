@@ -41,8 +41,11 @@
 				// Render padding settings
 				this.render_padding_settings($content.find('.upfront-region-bg-setting-padding'));
 
-				// adding class to #sidebar-ui for fixing z-index issues with main dropdown.
-				$('#sidebar-ui').addClass('region-settings-activated');
+				// If region settings sidebar, fix z-index issues.
+				if (this.$el.parent().attr('id') === 'region-settings-sidebar') {
+					// adding class to #sidebar-ui for fixing z-index issues with main dropdown.
+					$('#sidebar-ui').addClass('region-settings-activated');
+				}
 			},
 
 			close: function(save) {
