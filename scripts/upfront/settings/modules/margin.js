@@ -40,12 +40,16 @@ define([
 							stateSettings.find('.margin-left').show();
 							stateSettings.find('.margin-right').show();
 							stateSettings.find('.margin-lock').show();
+							stateSettings.find('.margin-reset-posts-length').show();
+							stateSettings.find('.margin-reset-posts').show();
 						} else {
 							stateSettings.find('.margin-top').hide();
 							stateSettings.find('.margin-bottom').hide();
 							stateSettings.find('.margin-left').hide();
 							stateSettings.find('.margin-right').hide();
 							stateSettings.find('.margin-lock').hide();
+							stateSettings.find('.margin-reset-posts-length').hide();
+							stateSettings.find('.margin-reset-posts').hide();
 						}
 					}
 				}),
@@ -137,7 +141,43 @@ define([
 					change: function(value) {
 						me.model.set(me.options.fields.bottom_num, value);
 					}
-				})
+				}),
+				
+				reset_posts = new Upfront.Views.Editor.Field.Checkboxes({
+					model: this.model,
+					className: 'margin-reset-posts',
+					name: me.options.fields.reset_posts,
+					label: "",
+					values: [
+						{ label: "", value: 'yes' }
+					],
+					show: function(value) {
+						if(value == "yes") {
+							me.$el.find('.margin-reset-posts-length').find('input').prop( "disabled", false ).css('opacity', 1);
+						} else {
+							me.$el.find('.margin-reset-posts-length').find('input').prop( "disabled", true ).css('opacity', 0.4);
+						}
+					},
+					change: function(value) {
+						me.model.set(me.options.fields.reset_posts, value);
+					}
+				}),
+
+				posts_number = new Upfront.Views.Editor.Field.Number({
+					model: this.model,
+					className: 'margin-reset-posts-length',
+					name: me.options.fields.reset_posts_length,
+					label: l10n.reset_posts,
+					label_style: 'inline',
+					suffix: l10n.posts_label,
+					min: 1,
+					max: 50,
+					step: 1,
+					default_value: 1,
+					change: function(value) {
+						me.model.set(me.options.fields.reset_posts_length, value);
+					}
+				}),
 
 			]);
 		},

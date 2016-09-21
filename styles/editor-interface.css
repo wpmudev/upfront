@@ -13775,6 +13775,31 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-e
   width: 130px;
   float: left; }
 
+#element-settings-sidebar .margin-reset-posts {
+  border-left: 2px solid #dae6f2;
+  height: 50px; }
+
+#element-settings-sidebar .margin-reset-posts-length {
+  position: relative;
+  top: -20px;
+  left: 12px; }
+
+#element-settings-sidebar .margin-reset-posts input {
+  top: 20px;
+  left: 10px; }
+
+#element-settings-sidebar .margin-reset-posts-length input {
+  margin: 0px 6px;
+  font-weight: normal; }
+
+#element-settings-sidebar .margin-reset-posts-length,
+#element-settings-sidebar .margin-reset-posts-length label {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 11px;
+  color: #30475e;
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif; }
+
 #element-settings-sidebar .padding-slider .upfront-field-slider-value,
 #element-settings-sidebar .margin-slider .upfront-field-slider-value {
   display: none; }
@@ -16807,11 +16832,15 @@ div.preset-manager-panel .checkbox-title span,
   font-weight: bold;
   margin: 0px; }
 
-div.preset-manager-panel .settings_module {
+div.preset-manager-panel .settings_module,
+div.preset-manager-panel .margin-settings {
   border-bottom: 1px solid #e5ecf4;
   margin: 0px -15px;
   padding-left: 15px;
   padding-bottom: 15px; }
+
+div.preset-manager-panel .margin-settings {
+  margin-top: 10px; }
 
 div.preset-manager-panel .colors_settings_item {
   padding-bottom: 12px; }
@@ -16983,6 +17012,17 @@ div.preset-manager-panel .checkbox-tooltip {
   width: 16px;
   height: 14px;
   background: url(../img/uf-core-el-sprite.svg) no-repeat -484px -300px; }
+
+div.preset-manager-panel .margin-reset-posts {
+  z-index: 99;
+  position: relative;
+  display: inline-block; }
+
+div.preset-manager-panel .margin-reset-posts-length {
+  display: inline-block; }
+
+div.preset-manager-panel .margin-reset-posts-length label {
+  display: inline-block; }
 
 .upfront-button .upfront-inline-panel,
 .menu-item .upfront-inline-panel {
