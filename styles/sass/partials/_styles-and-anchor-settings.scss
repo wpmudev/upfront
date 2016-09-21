@@ -154,10 +154,11 @@
 #element-settings-sidebar .margin-lock .upfront-field-multiple-selected label {
     background-position: -661px -140px;
 }
-#element-settings-sidebar .padding-lock,
+#element-settings-sidebar .padding-lock {
     position: relative;
     margin-top: -19px;
-    left: 110px;
+    left: 33px;
+    top: 80px;
 }
 
 #element-settings-sidebar .margin-lock {
@@ -196,8 +197,7 @@
     left: 112px;
     z-index: 15;
 }
-#element-settings-sidebar .padding-settings .padding-bottom,
-#element-settings-sidebar .margin-settings .margin-bottom {
+#element-settings-sidebar .padding-settings .padding-bottom {
     position: relative;
     border-left: 2px solid #dae6f2;
     padding: 1px 10px;
@@ -206,8 +206,14 @@
     margin-top: -18px;
     z-index: 11;
 }
-#element-settings-sidebar .margin-settings .margin-bottom {
-	margin-top: 0px;
+#element-settings-sidebar .margin-bottom {
+    position: relative;
+    border-left: 2px solid #dae6f2;
+    padding: 1px 10px;
+    padding-bottom: 5px;
+    padding-left: 60px;
+    margin-top: 0px;
+    z-index: 99;
 }
 #element-settings-sidebar .padding-bottom label {
     display: block;
