@@ -673,6 +673,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'video_url' => __('Video URL', 'upfront'),
 				'mute_on_play' => __('Mute video on play?', 'upfront'),
 				'autoplay' => __('Play Video on Page Load', 'upfront'),
+				'loop' => __('Loop', 'upfront'),
 				'video_source' => __('Video URL (YouTube, Vimeo or Wistia)', 'upfront'),
 				'scale_and_crop' => __('Scale & crop', 'upfront'),
 				'no_crop_embed' => __('No crop embed', 'upfront'),
