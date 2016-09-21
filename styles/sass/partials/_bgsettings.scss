@@ -41,6 +41,10 @@
 
 .upfront-modal-bg-settings-fixed .uf-bgsettings-color-pick .upfront-field-label {
 	margin-bottom: 15px;
+	color: #3f617f;
+	font-size: 14px;
+	line-height: 20px;
+	font-family: "Open Sans";
 }
 
 .uf-bgsettings-color-pick {
@@ -282,6 +286,7 @@ div.upfront-bg-setting-tab-primary .uf-bgsettings-image-style .upfront-field-lab
 	position: relative;
 	top: -17px;
 	left: -125px;
+	margin-bottom: 20px;
 }
 
 #region-settings-sidebar .upfront-bg-setting-tab-slider {
