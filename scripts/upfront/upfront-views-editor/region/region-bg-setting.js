@@ -40,6 +40,15 @@
 
 				// Render padding settings
 				this.render_padding_settings($content.find('.upfront-region-bg-setting-padding'));
+
+				// adding class to #sidebar-ui for fixing z-index issues with main dropdown.
+				$('#sidebar-ui').addClass('region-settings-activated');
+			},
+
+			close: function(save) {
+				// removing class from #sidebar-ui that was previously added on showSettings
+				$('#sidebar-ui').removeClass('region-settings-activated');
+				return ModalBgSetting.prototype.close.call(this, save);
 			},
 
 			get_template: function () {
