@@ -104,7 +104,7 @@ var _alpha = "alpha",
 			} else {
 				breakpoint_preset = (model[breakpoint_id] || {}).preset;
 				// when on desktop, set `current_preset` to desktop preset
-				current = breakpoint_preset || 'default';
+				current = breakpoint_preset || current || 'default';
 			}
 			var actual = breakpoint_preset || current;
 
