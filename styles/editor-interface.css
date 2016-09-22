@@ -2231,12 +2231,7 @@ a.ueditor-action-pickercancel {
   width: 100%; }
 
 .uinsert-selector {
-  /*position: absolute;*/
-  /*left: 50px;*/
-  /*background: rgba(31, 48, 63, 0.95);*/
-  /*height: 30px;*/
-  /*padding: 0 5px;*/
-  /*z-index: 99;*/
+  left: 50px;
   display: none;
   position: absolute;
   /*margin-left: 50px;*/
@@ -2251,7 +2246,7 @@ a.ueditor-action-pickercancel {
   content: '';
   display: block;
   position: absolute;
-  left: -8px;
+  left: -10px;
   top: 35%;
   border: 5px solid transparent;
   border-right-color: rgba(31, 48, 63, 0.95); }
@@ -4778,6 +4773,9 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-entity_meta {
   position: absolute;
   z-index: 2000; }
+
+.upfront-login_element-module .upfront-entity_meta {
+  z-index: 3001; }
 
 .upfront-module-group > .upfront-entity_meta {
   top: 5px;
@@ -8528,7 +8526,7 @@ a.upfront-post-layout-trigger:before {
   left: 0;
   background-color: transparent;
   height: 1px;
-  z-index: 100000; }
+  z-index: 10001005; }
 
 #upfront-notice {
   width: 500px;
@@ -11797,7 +11795,7 @@ a.ueditor-action-trash:before {
   height: 26px;
   width: 60px;
   z-index: 1;
-  left: -45px;
+  /*left: -45px;*/
   cursor: pointer;
   transition: opacity .5s ease, left .5s ease; }
 
