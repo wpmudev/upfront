@@ -177,12 +177,22 @@
 				var me = this;
 
 				OptionsModule.prototype.render.apply(this, arguments);
+				
+				var preview_markup;
 
-				this.$el.find(".upfront-settings-item-title")
-					.empty()
-					.append('<span class="upfront-posts-preview"><span class="styles-holder">A</span></span>')
-					.append('<span class="upfront-posts-module-title">' + this.title + '</span>')
-				;
+				if(this.options.panel === 'wrapper') {
+					preview_markup = '<span class="styles-holder"></span>';
+				} else if(this.options.panel !== 'featured_image' && this.options.panel !== 'wrapper') {
+					preview_markup = '<span class="styles-holder">A</span>';
+				}
+				
+				this.$el.find(".upfront-settings-item-title").empty();
+				
+				if(typeof preview_markup !== "undefined") {
+					this.$el.find(".upfront-settings-item-title").append('<span class="upfront-posts-preview">' + preview_markup + '</span>')
+				}
+
+				this.$el.find(".upfront-settings-item-title").append('<span class="upfront-posts-module-title">' + this.title + '</span>');
 
 				if(typeof this.options.removable === "undefined" || this.options.removable === true) {
 					this.$el.find(".upfront-settings-item-title")

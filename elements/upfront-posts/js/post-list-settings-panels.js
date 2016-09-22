@@ -647,8 +647,8 @@ Panels.PostParts = PresetManager.extend({
 		}, this);
 		
 		// Add wrappers
-		var element_wrapper = new Modules['element_wrapper']({ model: this.preset_model, className: 'upfront-posts-part part-module-panel upfront-posts-wrapper', removable: false}),
-			post_wrapper = new Modules['post_wrapper']({ model: this.preset_model, className: 'upfront-posts-part part-module-panel upfront-posts-wrapper', removable: false});
+		var element_wrapper = new Modules['element_wrapper']({ model: this.preset_model, className: 'upfront-posts-part part-module-panel upfront-posts-wrapper', removable: false, panel: 'wrapper'}),
+			post_wrapper = new Modules['post_wrapper']({ model: this.preset_model, className: 'upfront-posts-part part-module-panel upfront-posts-wrapper', removable: false, panel: 'wrapper'});
 		
 		this.settings.push(element_wrapper);
 		this.settings.push(post_wrapper);
@@ -658,7 +658,8 @@ Panels.PostParts = PresetManager.extend({
 		_.each(post_parts, function (panel, idx) {
 			var pnl = new Modules['part_' + panel]({
 				model: this.preset_model,
-				className: 'upfront-posts-part part-module-panel upfront-posts-module'
+				className: 'upfront-posts-part part-module-panel upfront-posts-module',
+				panel: panel
 			});
 
 			var me = this;
