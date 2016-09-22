@@ -16887,6 +16887,9 @@ div.preset-manager-panel .colors_settings_item .element-toggled.two {
 div.preset-manager-panel .typography_settings_item .element-toggled.fontColor {
   top: 11px; }
 
+div.preset-manager-panel .upfront-settings-post-wrapper .typography_settings_item .element-toggled.fontColor {
+  top: 20px; }
+
 div.preset-manager-panel .typography_settings_item .element-toggled .upfront-field-label-inline {
   margin-top: -10px; }
 
@@ -16901,6 +16904,13 @@ div.preset-manager-panel .colors_settings_item .element-toggled.two:nth-child(ev
 div.preset-manager-panel .typography_settings_item .element-toggled.typeFace .chosen-container,
 div.preset-manager-panel .typography_settings_item .element-toggled.weightStyle .chosen-container {
   width: 213px !important; }
+
+div.preset-manager-panel .upfront-settings-post-wrapper .typography_settings_item .element-toggled.typeFace .chosen-container,
+div.preset-manager-panel .upfront-settings-post-wrapper .typography_settings_item .element-toggled.weightStyle .chosen-container {
+  width: 195px !important; }
+
+div.preset-manager-panel .upfront-settings-post-wrapper .typography_settings_item .fontColor label {
+  display: none; }
 
 div.preset-manager-panel .typography_settings_item .upfront-settings-item-content .upfront-field-label-inline {
   position: relative;
