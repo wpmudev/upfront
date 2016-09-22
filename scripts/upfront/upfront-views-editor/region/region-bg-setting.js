@@ -18,6 +18,23 @@
 				"click .uf-settings-panel__title": "toggle_advanced_settings",
 				"click .upfront-inline-modal-save": "on_click_save"
 			},
+
+			reset_model: function() {
+				if (typeof this.oldData !== 'undefined') {
+					var models = this.model.get('properties').models;
+					var oldData = this.oldData;
+					// Revert each model.
+					models.map(function(model, index) {
+						var previous = oldData[index];
+						// If previous Attribute was set, revert to it.
+						if (typeof previous.name !== 'undefined') {
+							model.set("name", previous.name)
+							model.set("value", previous.value)
+						}
+					})
+				}
+			},
+
 			render_modal: function ($content, $modal) {
 				var me = this,
 					setting_cback = this.get_template(),
@@ -41,10 +58,17 @@
 				// Render padding settings
 				this.render_padding_settings($content.find('.upfront-region-bg-setting-padding'));
 
-				// If region settings sidebar, fix z-index issues.
+				// If region settings sidebar.
 				if (this.$el.parent().attr('id') === 'region-settings-sidebar') {
 					// adding class to #sidebar-ui for fixing z-index issues with main dropdown.
 					$('#sidebar-ui').addClass('region-settings-activated');
+					var oldData = [];
+					var models = this.model.get('properties').models;
+					models.map(function(model) {
+						// Push copy of attributes to oldData.
+						oldData.push(_.clone(model.attributes));
+					})
+					this.oldData = oldData;
 				}
 			},
 
@@ -733,7 +757,8 @@
 			
 			// Close Region Settings Sidebar.
 			on_click_cancel: function() {
-				this.close(false);
+				this.reset_model();
+				return this.close(false);
 			},
 
 			adjust_grid_padding: function() {
