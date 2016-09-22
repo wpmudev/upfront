@@ -19,9 +19,13 @@
 				"click .upfront-inline-modal-save": "on_click_save"
 			},
 
-			reset_model: function() {
+			// Reset all Region Setting data to when it was opened.
+			reset_models: function() {
+				// Only reset if oldData exists.
 				if (typeof this.oldData !== 'undefined') {
+					// Get current changed models.
 					var models = this.model.get('properties').models;
+					// Get models from when Region Settings opened.
 					var oldData = this.oldData;
 					// Revert each model.
 					models.map(function(model, index) {
@@ -33,6 +37,17 @@
 						}
 					})
 				}
+			},
+
+			save_current_models: function() {
+				var oldData = [];
+				var models = this.model.get('properties').models;
+				models.map(function(model) {
+					// Push copy of attributes to oldData.
+					// Clone is used so it is not a reference that can change.
+					oldData.push(_.clone(model.attributes));
+				});
+				this.oldData = oldData;
 			},
 
 			render_modal: function ($content, $modal) {
@@ -62,13 +77,8 @@
 				if (this.$el.parent().attr('id') === 'region-settings-sidebar') {
 					// adding class to #sidebar-ui for fixing z-index issues with main dropdown.
 					$('#sidebar-ui').addClass('region-settings-activated');
-					var oldData = [];
-					var models = this.model.get('properties').models;
-					models.map(function(model) {
-						// Push copy of attributes to oldData.
-						oldData.push(_.clone(model.attributes));
-					})
-					this.oldData = oldData;
+					// Save region data for later resetting.
+					this.save_current_models();
 				}
 			},
 
@@ -757,7 +767,7 @@
 			
 			// Close Region Settings Sidebar.
 			on_click_cancel: function() {
-				this.reset_model();
+				this.reset_models();
 				return this.close(false);
 			},
 
