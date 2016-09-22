@@ -1,3 +1,12 @@
+div.upfront-navigation {
+	display: block;
+	margin: auto;
+	max-width: 760px;
+	float: none;
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+	padding: 15px 0;
+}
+
 div.upfront-navigation.upfront-editable_entity i.navigation-add-item, div.upfront-navigation i.delete_menu_item
 /*, div.upfront-navigation i.edit_link*/ {
 	display: none;
@@ -150,29 +159,36 @@ div.upfront-navigation div.existing_menu_list,  div.upfront-navigation div.new_m
 	display: inline-block;
 	vertical-align:middle;
 }
-
- div.upfront-navigation div.existing_menu_list {
-	 margin-top: 10px;
-	 margin-right:10px;
+div.upfront-navigation div.existing_menu_list {
+	margin-right: 0;
 }
 div.upfront-navigation div.new_menu_name {
-	margin-right: 10px;
-	margin-left: 10px;
+	margin-right: 0px;
+	margin-left: 0px;
+	max-width: 181px;
+	width: 60%;
 }
 
+div.upfront-navigation div.new_menu_button {
+	margin-left: 5px;
+}
 
 div.upfront-navigation div.new_menu_name input {
-	height:26px !important;
+	height: 40px;
+	font-weight: 300;
+	font-size: 15px;
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+	border: 1px #a2bfda solid;
 }
 
 div.upfront-navigation div.new_menu_button input {
-  background: transparent;
-  border:2px #818d96 solid;
-  font-size:12px;
-	padding:3px 16px;
+	background: #f5faff;
+	border: 1px #a2bfda solid;
+	border-radius: 3px;
+	font-size: 15px;
+	height: 40px;
+	padding: 0 20px;
 }
-
-
 
 #unewnavigation-tooltip {
 	position: absolute;
@@ -466,6 +482,72 @@ div.upfront-navigation li.menu-item .uimage-controls a {
 /* style adjustments */
 .upfront-navigation .upfront-field-select {
 	/*max-width:170px;*/
+	height: 40px;
+	max-height: 40px;
+	font-size: 15px;
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+	font-weight: 300;
+	box-sizing: border-box;
+	max-width: 310px;
+}
+
+.upfront-navigation .upfront-field-select:after {
+	top: 18px;
+}
+
+.upfront-navigation .upfront-field-select-options {
+	background: #f2f9ff;
+}
+
+.upfront-navigation .upfront-field-select-option label {
+	font-size: 15px;
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+	font-weight: 300;
+}
+
+.upfront-navigation .upfront-field-select-option-selected label {
+	color: #8797a7;
+}
+
+.upfront-navigation .upfront-field-select-value {
+	height: 40px;
+	line-height: 38px;
+	padding: 0 20px 0 10px;
+	box-sizing: border-box;
+}
+
+.c15 .upfront-navigation .existing_menu_list, .c14 .upfront-navigation .existing_menu_list, .c13 .upfront-navigation .existing_menu_list,
+.c12 .upfront-navigation .existing_menu_list, .c11 .upfront-navigation .existing_menu_list, .c10 .upfront-navigation .existing_menu_list,
+.c9 .upfront-navigation .existing_menu_list, .c8 .upfront-navigation .existing_menu_list {
+	display: block;
+	margin: auto;
+	max-width: 320px;
+}
+
+.upfront-navigation > span {
+	margin: 0 10px;
+	font-weight: 300;
+}
+
+.c15 .upfront-navigation > span, .c14 .upfront-navigation > span, .c13 .upfront-navigation > span,
+.c12 .upfront-navigation > span, .c11 .upfront-navigation > span, .c10 .upfront-navigation > span,
+.c9 .upfront-navigation > span, .c8 .upfront-navigation > span {
+	display: block;
+	text-align: center;
+	margin: 7px 10px;
+}
+
+.c15 .upfront_new_menu_name_and_button, .c14 .upfront_new_menu_name_and_button, .c13 .upfront_new_menu_name_and_button,
+.c12 .upfront_new_menu_name_and_button, .c11 .upfront_new_menu_name_and_button, .c10 .upfront_new_menu_name_and_button,
+.c9 .upfront_new_menu_name_and_button, .c8 .upfront_new_menu_name_and_button {
+	display: block;
+	margin: auto;
+	max-width: 100%;
+}
+
+.upfront_new_menu_name_and_button {
+	display: inline-block;
+	width: 320px;
 }
 
 .newnavigation_squished .upfront-editable_entity.upfront-navigation:hover .responsive_nav_toggler {
