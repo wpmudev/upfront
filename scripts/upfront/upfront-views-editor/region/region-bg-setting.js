@@ -26,17 +26,24 @@
 					// Get current changed models.
 					var models = this.model.get('properties').models;
 					// Get models from when Region Settings opened.
-					var oldData = this.oldData;
-					// Revert each model.
-					models.map(function(model, index) {
-						var previous = oldData[index];
-						// If previous Attribute was set, revert to it.
-						if (typeof previous.name !== 'undefined') {
-							model.set("name", previous.name)
-							model.set("value", previous.value)
-						}
-					})
+					var previous_models = this.oldData;
+					// Revert each model to previous state.
+					this.revert_models_to_previous(models, previous_models);
 				}
+			},
+
+			// Updates models to previous_models if they exist.
+			revert_models_to_previous: function(models, previous_models) {
+				// Revert each model.
+				models.map(function(model, index) {
+					// Get previous model data.
+					var previous = previous_models[index];
+					// If previous Attribute was set, revert to it.
+					if (previous && typeof previous.name !== 'undefined') {
+						model.set("name", previous.name)
+						model.set("value", previous.value)
+					}
+				});
 			},
 
 			save_current_models: function() {
