@@ -258,6 +258,8 @@ define([
 							me._bg_position_y = value;
 							this.model.set_breakpoint_property(this.property_name, value);
 							me.update_image();
+							// Trigger a change event upon the original field.
+							s.trigger('changed');
 						},
 						rendered: function (){
 							this.$el.addClass('uf-bgsettings-image-pos-y');
@@ -284,6 +286,8 @@ define([
 							me._bg_position_x = value;
 							this.model.set_breakpoint_property(this.property_name, value);
 							me.update_image();
+							// Trigger a change event upon the original field.
+							s.trigger('changed');
 						},
 						rendered: function (){
 							this.$el.addClass('uf-bgsettings-image-pos-x');
