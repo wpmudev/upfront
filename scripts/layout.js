@@ -1389,11 +1389,11 @@ jQuery(document).ready(function($){
 			
 			// we have to provide proper fallback here, mobile -> tablet -> desktop
 			if ( breakpoint == 'mobile' ) {
-				map[breakpoint] = map[breakpoint] || map['tablet'] || map['desktop'] || 'default';
+				map[breakpoint] = map[breakpoint] || map['tablet'] || map['desktop'];
 			} else if ( breakpoint == 'tablet' ) {
-				map[breakpoint] = map[breakpoint] || map['desktop'] || 'default';
+				map[breakpoint] = map[breakpoint] || map['desktop'];
 			} else {
-				map[breakpoint] = map[breakpoint] || 'default';
+				map[breakpoint] = map[breakpoint];
 			}
 
 			$.each(map, function (bp, preset) {
