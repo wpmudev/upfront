@@ -373,7 +373,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			clubbedvalues = menuItemsValues.concat(menuList);
 		}
 
-		me.$el.find('div.upfront-object-content').html('');
+		me.$el.find('div.upfront-object-content').html('').addClass('upfront_choose_menu');
 
 		if (!Upfront.Application.user_can_modify_layout()) return false;
 
