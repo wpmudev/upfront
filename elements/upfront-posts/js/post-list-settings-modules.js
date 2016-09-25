@@ -157,13 +157,9 @@ define([
 		get_fields: function () {
 			return [
 				{
-					type: 'Select',
-					label: l10n.numeric,
-					label_style: 'inline',
-					property: 'display_name',
-					values: [
-						{label: l10n.numeric, value: 'display_name'},
-					]
+					type: 'Checkboxes',
+					property: 'hide_if_no_comments',
+					values: [{ label: l10n.modules.hide_if_no_comments, value: '1' }]
 				}
 			];
 		}
@@ -244,19 +240,6 @@ define([
 	Modules.part_title = Panel.Toggleable.extend({
 		title: l10n.modules.title_title,
 		data_part: 'title',
-		get_fields: function () {
-			return [
-				{
-					type: 'Select',
-					label: l10n.numeric,
-					label_style: 'inline',
-					property: 'display_name',
-					values: [
-						{label: l10n.numeric, value: 'display_name'},
-					]
-				}
-			];
-		}
 	});
 	
 	Modules.part_categories = Panel.Toggleable.extend({
@@ -279,20 +262,7 @@ define([
 	
 	Modules.part_read_more = Panel.Toggleable.extend({
 		title: l10n.modules.read_more_title,
-		data_part: 'read_more',
-		get_fields: function () {
-			return [
-				{
-					type: 'Select',
-					label: l10n.numeric,
-					label_style: 'inline',
-					property: 'display_name',
-					values: [
-						{label: l10n.numeric, value: 'display_name'},
-					]
-				}
-			];
-		}
+		data_part: 'read_more'
 	});
 	
 	/*
