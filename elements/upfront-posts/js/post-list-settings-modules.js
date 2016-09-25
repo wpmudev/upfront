@@ -231,13 +231,41 @@ define([
 		get_fields: function () {
 			return [
 				{
-					type: 'Select',
-					label: l10n.numeric,
-					label_style: 'inline',
-					property: 'display_name',
+					type: "Select",
+					label: l10n.modules.date_format,
+					multiple: false,
+					property: "predefined_date_format",
 					values: [
-						{label: l10n.numeric, value: 'display_name'},
-					]
+						{ label: l10n.modules.wp_date, value: "wp_date" },
+						{ label: l10n.modules.dMY, value: "d M Y" },
+						{ label: l10n.modules.MdY, value: "M d Y" },
+						{ label: l10n.modules.dmY, value: "d m Y" },
+						{ label: l10n.modules.mdY, value: "m d Y" },
+						{ label: l10n.modules.custom_format, value: "0" }
+					],
+					default_value: "wp_date"
+				},
+				{
+					type: "Text",
+					label: l10n.modules.php_format,
+					className: 'php_date_format',
+					label_style: 'inline',
+					property: "date_posted_format"
+				},
+				{
+					type: "Button",
+					label: l10n.modules.reference,
+					className: 'php_date_reference',
+					compact: true,
+					on_click: function (e) {
+						if (e && e.preventDefault) e.preventDefault();
+						if (e && e.stopPropagation) e.stopPropagation();
+
+						var win = window.open('https://codex.wordpress.org/Formatting_Date_and_Time', '_blank');
+						win.focus();
+
+						return false;
+					}
 				}
 			];
 		}

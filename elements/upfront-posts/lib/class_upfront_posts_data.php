@@ -198,6 +198,15 @@ class Upfront_Posts_PostsData {
 				'hide_if_no_comments' => __('Hide if there are no comments', 'upfront'),
 				'excerpt' => __('Excerpt', 'upfront'),
 				'full_post' => __('Full Post', 'upfront'),
+				'date_format' => __('Date Format', 'upfront'),
+				'wp_date' => __('WordPress date', 'upfront'),
+				'dMY' => __('30 Jan 2015', 'upfront'),
+				'MdY' => __('Jan 30 2015', 'upfront'),
+				'dmY' => __('30 01 2015', 'upfront'),
+				'mdY' => __('01 30 2015', 'upfront'),
+				'custom_format' => __('Custom PHP Format', 'upfront'),
+				'php_format' => __('PHP Format', 'upfront'),
+				'reference' => __('Reference', 'upfront'),
 			),
 			
 			'css' => array(
