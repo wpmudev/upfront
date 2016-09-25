@@ -171,12 +171,18 @@ define([
 		get_fields: function () {
 			return [
 				{
-					type: 'Select',
-					label: l10n.numeric,
-					label_style: 'inline',
-					property: 'display_name',
+					type: 'Radios',
+					property: 'content_type',
+					layout: "horizontal",
 					values: [
-						{label: l10n.numeric, value: 'display_name'},
+						{
+							label: l10n.modules.excerpt,
+							value: 'excerpt'
+						},
+						{
+							label: l10n.modules.full_post,
+							value: 'full'
+						}
 					]
 				}
 			];

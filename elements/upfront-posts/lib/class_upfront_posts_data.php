@@ -196,6 +196,8 @@ class Upfront_Posts_PostsData {
 				'gravatar_title' => __('Gravatar', 'upfront'),
 				'bg_label' => __('Background', 'upfront'),
 				'hide_if_no_comments' => __('Hide if there are no comments', 'upfront'),
+				'excerpt' => __('Excerpt', 'upfront'),
+				'full_post' => __('Full Post', 'upfront'),
 			),
 			
 			'css' => array(
