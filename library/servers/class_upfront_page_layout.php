@@ -127,7 +127,7 @@ class Upfront_Server_PageLayout extends Upfront_Server {
 	}
 
 	public function db_layout_to_name ($item) {
-		if ( !is_array($item) && !isset($item['source']) ) return Upfront_EntityResolver::db_layout_to_name($item);
+		if ( !is_array($item) ) return Upfront_EntityResolver::db_layout_to_name($item);
 
 		return ucwords(preg_replace(array('/-layout/', '/[\-]/'), array('',' '), $item['name']));
 	}
