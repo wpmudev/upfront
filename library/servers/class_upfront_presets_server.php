@@ -117,6 +117,8 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 					$preset['preset_style'] = str_replace("\\\\\\\\\\", "\\", $preset['preset_style']);
 
 					$preset['preset_style'] = str_replace("@n", "\n", $preset['preset_style']);
+					
+					$preset['preset_style'] = str_replace("@s", "\\", $preset['preset_style']);
 				}
 
 				$new_presets[] = $preset;
