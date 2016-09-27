@@ -73,6 +73,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 						</div>
 					</div>
 				</div>
+				<?php $this->_render_under_construction_box(); ?>
 				<?php $this->_render_changelog_box(); ?>
 			</div>
 		</div>
@@ -156,6 +157,40 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 				</div>
 			</div>
 		</div>
+		<?php
+	}
+	
+	/**
+	 * Renders the site under construction box
+	 */
+	private function _render_under_construction_box () {
+		$maintenance_mode = get_option(Upfront_Server::MAINTENANCE_MODE, false);
+		$enable_maintenance_mode = ( $maintenance_mode ) ? true : false;
+		?>
+		<div class="postbox-container under-construction">
+			<div class='postbox'>
+				<h2 class="title"><?php esc_html_e("Site Maintenance", Upfront::TextDomain) ?></h2>
+				<div class="inside">
+					<p class="label"><?php esc_html_e("Enable site maintenance mode", Upfront::TextDomain) ?></p>
+					<div class="upfront_toggle">
+						<input value="1" type="checkbox" name="upfront_under_construction" class="upfront_toggle_checkbox" id="upfront_under_construction" <?php checked(true, $enable_maintenance_mode ); ?> data-current="<?php echo $enable_maintenance_mode;?>" >
+						<label class="upfront_toggle_label" for="upfront_under_construction">
+							<span class="upfront_toggle_inner"></span>
+							<span class="upfront_toggle_switch"></span>
+						</label>
+					</div>
+					<?php
+					if ( $enable_maintenance_mode ) {
+						$maintenance_mode = json_decode($maintenance_mode);
+						echo '<span class="link">' . sprintf(
+							__('You can edit the maintenance page <a href="%s" target="_blank">here</a>', 'upfront'),
+							$maintenance_mode->permalink . '?editmode=true'
+						) . '</span>';
+					}
+					?>
+					<p><button id="upfront_save_under_construction" disabled="disabled"><?php esc_html_e("Save", Upfront::TextDomain) ?></button></p>
+				</div>
+			</div>
 		<?php
 	}
 

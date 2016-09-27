@@ -40,6 +40,7 @@ class Upfront_Ajax extends Upfront_Server {
 			upfront_add_ajax('upfront_update_layout_element', array($this, "update_layout_element"));
 			upfront_add_ajax('upfront_add_custom_thumbnail_size', array($this, "add_custom_thumbnail_size"));
 			upfront_add_ajax('upfront_update_insertcount', array($this, "update_insertcount"));
+			upfront_add_ajax('upfront_site_under_construction', array($this, "site_under_construction"));
 		}
 	}
 
@@ -889,6 +890,47 @@ class Upfront_Ajax extends Upfront_Server {
 		$insertcount++;
 		update_option('ueditor_insert_count', $insertcount);
 		$this->_out(new Upfront_JsonResponse_Success("Insert count updated"));
+	}
+	
+	function site_under_construction() {
+		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+		
+		$data = !empty($_POST) ? stripslashes_deep($_POST) : false;
+		
+		if(!$data)
+			return $this->_out(new Upfront_JsonResponse_Error("No data"));
+		if( !isset($data['enable_maintenance']) )
+			return $this->_out(new Upfront_JsonResponse_Error("No mode given"));
+		
+		$maintenance_mode = ( is_numeric($data['enable_maintenance']) && $data['enable_maintenance'] == 1 ) ? true : false;
+		$maintenance_data = array();
+		
+		// delete any existing options
+		$this->_disable_under_construction();
+		
+		if ( $maintenance_mode ) {
+			// creating maintenance page
+			$maintenance_post = Upfront_PostModel::create('page','maintenance', 'Site is under construction, please try again later...');
+			if ( $maintenance_post ) {
+				$maintenance_post->post_status = 'publish';
+				Upfront_PostModel::save($maintenance_post);
+				// enable maintenance mode
+				$maintenance_data['page_id'] = $maintenance_post->ID;
+				$maintenance_data['permalink'] = get_permalink($maintenance_post->ID);
+				update_option(Upfront_Server::MAINTENANCE_MODE, json_encode($maintenance_data));
+			}
+		}
+		$this->_out(new Upfront_JsonResponse_Success("All is well"));
+	}
+	
+	private function _disable_under_construction() {
+		// deleting maintenance page and options
+		$maintenance_data = get_option(Upfront_Server::MAINTENANCE_MODE, false);
+		if ( $maintenance_data ) {
+			$maintenance_data = json_decode($maintenance_data);
+			wp_delete_post($maintenance_data->page_id);
+			delete_option(Upfront_Server::MAINTENANCE_MODE);
+		}
 	}
 
 }

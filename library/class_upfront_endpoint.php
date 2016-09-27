@@ -96,8 +96,28 @@ abstract class Upfront_VirtualSubpage {
 	abstract public function render ($request);
 }
 
-// ----- Implementations
 
+// ----- Redirecting to Maintenance Page if enabled on Admin Upfront General
+class Upfront_Maintenance_Page_Interceptor {
+	
+	public static function intercept_page () {
+		$maintenance_data = get_option(Upfront_Server::MAINTENANCE_MODE, false);
+		if ( $maintenance_data ) {
+			$maintenance_data = json_decode($maintenance_data);
+			$page_id = (int) $maintenance_data->page_id;
+			$current_page_id = is_singular() ? apply_filters('upfront-data-post_id', get_the_ID()) : false;
+			if ( !is_user_logged_in() && $page_id != $current_page_id ) {
+				wp_safe_redirect($maintenance_data->permalink);
+				die;
+			}
+		}
+		return false;
+	}
+	
+}
+add_action('template_redirect', array('Upfront_Maintenance_Page_Interceptor', 'intercept_page'));
+
+// ----- Implementations
 // --- Editors
 
 

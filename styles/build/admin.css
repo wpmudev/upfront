@@ -400,6 +400,25 @@ input.upfront_toggle_checkbox {
   cursor: pointer; }
 
 /**
+ * Under Construction
+ */
+.under-construction p.label {
+  display: inline-block;
+  padding-right: 20px; }
+
+.under-construction span.link {
+  display: block; }
+
+.under-construction span.link:before {
+  display: inline-block;
+  content: '\f348';
+  font-family: dashicons;
+  padding-right: 5px; }
+
+.under-construction button:disabled {
+  opacity: .5; }
+
+/**
  * Changelog
  */
 .postbox .inside.changelog .previous {
