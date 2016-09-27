@@ -1711,6 +1711,7 @@ define([
 				this.listenTo(Upfront.Events, 'entity:module:update', this.on_module_update);
 				this.listenTo(Upfront.Events, 'layout:after_render', this.on_after_layout_render);
 				this.listenTo(Upfront.Events, 'layout:after_render', this.checkUiOffset);
+				this.listenTo(Upfront.Events, 'element:preset:deleted', this.on_preset_deleted);
 
 				this.on('entity:resize_start', this.on_resize_start);
 				this.on('entity:resizing', this.on_resizing);
@@ -1958,6 +1959,23 @@ define([
 					this.render();
 				}
 				Upfront.Events.trigger('entity:object:update', this, this.model);
+			},
+			on_preset_deleted: function(element, preset) {
+				var elementTypes = {
+						PlainTxtModel: 'text'
+				
+					},
+					elType = this.model.get_property_value_by_name('type'),
+					elPreset = this.model.get_property_value_by_name('preset')
+				;
+
+				if(typeof elementTypes[elType] !== "undefined" && preset !== "undefined") {
+					if(elementTypes[elType] === element && preset.id === elPreset) {
+						this.model.set_property('preset', 'default', false);
+						//this.render();
+					}
+				}
+
 			},
 			handle_visual_padding_hint: function (prop) {
 				if (typeof prop === 'undefined') return;

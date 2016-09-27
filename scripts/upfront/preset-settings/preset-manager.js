@@ -494,6 +494,7 @@ define([
 
 			this.render();
 			Upfront.Events.trigger('element:preset:updated');
+			Upfront.Events.trigger('element:preset:deleted', this.ajaxActionSlug, preset);
 			this.defaultOverlay();
 		},
 
