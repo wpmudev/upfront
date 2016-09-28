@@ -112,7 +112,7 @@ define([
 			var me = this,
 				tpl_name = 'post-part-' + this.data_part,
 				template = this.model.get(tpl_name),
-				embed_object = ('meta' === this.options.part ? Meta.Embed : Inserts.inserts.embed),
+				embed_object = ('meta' === this.data_part ? Meta.Embed : Inserts.inserts.embed),
 				editor = new embed_object({data: {code: template}, model: this.model}),
 				manager = false,
 				resize_cbk = function () {
