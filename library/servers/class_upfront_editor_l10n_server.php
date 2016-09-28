@@ -42,8 +42,6 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'preparing_new_post_type' => __('Preparing new %s...', 'upfront'),
 				'here_we_are' => __('Here we are!', 'upfront'),
 				'loading_path' => __('Loading %s...', 'upfront'),
-				'home_url' => get_home_url(),
-				'site_url' => get_site_url(),
 				'navigation_confirm' => __('You have unsaved changes you\'re about to lose by navigating off this page. Do you really want to leave this page?', 'upfront'),
 				'long_loading_notice' => __('The Upfront editor may take a while to load (especially first time), please hang in there :)', 'upfront'),
 				//'please_hold_on' => __('Please, hold on for just a little bit more', 'upfront'),

@@ -24,7 +24,10 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		$root = Upfront::get_root_url();
 		$ajax = admin_url('admin-ajax.php');
+		// Home URL
 		$site = home_url();
+		// Site URL
+		$site_url = get_site_url();
 		$includes_url = includes_url();
 		$current_theme_url = get_stylesheet_directory_uri();
 		$site_path = parse_url($site, PHP_URL_PATH);
@@ -36,6 +39,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			$includes_url = preg_replace('/^https:/', 'http:', $includes_url);
 			$ajax = preg_replace('/^https:/', 'http:', $ajax);
 			$site = preg_replace('/^https:/', 'http:', $site);
+			$site_url = preg_replace('/^https:/', 'http:', $site_url);
 			$current_theme_url = preg_replace('/^https:/', 'http:', $current_theme_url);
 		}
 
@@ -406,6 +410,7 @@ Upfront.mainData = {
 	ajax: '{$ajax}',
 	admin: '{$admin}',
 	site: '{$site}',
+	siteUrl: '{$site_url}',
 	debug: {$debug},
 	layoutEditorRequirements: {$layout_editor_requirements},
 	applicationModes: {$application_modes},

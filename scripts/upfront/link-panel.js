@@ -150,9 +150,9 @@ define([
 
 		get_mapped_url: function() {
 			// Example: http://mysite.com
-			var home_url = Upfront.Settings.l10n.global.application.home_url || document.location.origin;
+			var home_url = Upfront.mainData.site || document.location.origin;
 			// Example: http://mynetwork.com/site2
-			var site_url = Upfront.Settings.l10n.global.application.site_url || document.location.origin;
+			var site_url = Upfront.mainData.siteUrl || document.location.origin;
 			// Example: site2
 			var site_path = site_url.split('/')[3];
 			var location_path = document.location.pathname;
