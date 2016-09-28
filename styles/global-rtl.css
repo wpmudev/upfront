@@ -495,7 +495,9 @@ li.activate-breakpoints-dropdown{
     left: 11px;
     right: auto;
 }
-
+#sidebar-ui .apply-post-template, #sidebar-ui .save-post-template{
+    float: left;
+}
 /*CSS Editor*/
 #upfront-csseditor, #upfront-general-csseditor{
     left: 0;
