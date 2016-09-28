@@ -1,11 +1,12 @@
 .uf-bgsettings-item .upfront-field-wrap .upfront-field-label-block,
-.upfront-region-bg-setting-tab-primary .upfront-field-wrap .upfront-field-label-block {
-  font-size: 11px;
-  display: block;
-  font-family: verdana,sans-serif;
+.upfront-bg-setting-tab-primary .upfront-field-wrap .upfront-field-label-block {
+  color: #3f617f;
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
   font-weight: normal;
   top: 0px;
-  color: #7d99b6;
+  margin-bottom: 12px;
 }
 .upfront-bg-setting-tab-primary .upfront-field-wrap {
   margin: 0;
@@ -23,7 +24,7 @@
 }
 .upfront-bg-setting-tab-primary .uf-bgsettings-image-pick {
   float: right;
-  margin: 33px 0 0;
+  margin: 32px 0 0;
 }
 .upfront-settings_panel .uf-bgsettings-image-pick {
   float: right;
@@ -282,4 +283,20 @@
 	margin: 5px 15px;
 	padding: 10px 0px !important;
 	display: block;
+}
+.upfront-bg-setting-heading {
+	color: #27394b;
+	font-size: 18px;
+	font-weight: bold;
+	margin: 0 0 10px;
+}
+.upfront-bg-setting-label {
+	color: #3f617f;
+	font-size: 14px;
+	line-height: 20px;
+}
+.upfront-bg-setting-label-alt {
+	color: #2f475d;
+	font-family: "Verdana";
+	font-size: 11px;
 }
