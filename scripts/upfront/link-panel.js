@@ -157,7 +157,11 @@ define([
 			var site_path = site_url.split('/')[3];
 			var location_path = document.location.pathname;
 			// If site url is mapped different than home url and has a site path, correct this.
-			if (home_url !== site_url && site_path && location_path.search(site_path) > -1) {
+			if (
+				home_url !== site_url
+				&& site_path && site_path !== ''
+				&& location_path.search(site_path) > -1
+			) {
 				// Strip out the site URL from pathname.
 				var new_location = location_path.split('/');
 				new_location.shift();
