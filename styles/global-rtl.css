@@ -206,6 +206,13 @@ div.preset-manager-panel .checkbox-tooltip{
     left: auto;
     right: 8px;
 }
+.upfront-element-controls .upfront-inline-panel .padding-lock{
+    left: auto;
+    right: 45px;
+}
+.upfront-element-controls .upfront-inline-panel .upfront-padding-container-left{
+    float: left;
+}
 /*-------------- End of General --------------*/
 
 /*-------------- Sidebar --------------*/
