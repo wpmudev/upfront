@@ -213,6 +213,10 @@ div.preset-manager-panel .checkbox-tooltip{
 .upfront-element-controls .upfront-inline-panel .upfront-padding-container-left{
     float: left;
 }
+.upfront-post_data-part.part-module-panel .upfront-settings-item-title .toggle{
+    right: auto;
+    left: 0;
+}
 /*-------------- End of General --------------*/
 
 /*-------------- Sidebar --------------*/
@@ -222,6 +226,8 @@ div.preset-manager-panel .checkbox-tooltip{
 #sidebar-ui{
     left: auto;
     right: 0;
+    border-left: 1px solid #1a2d40;
+    border-right: none;
 }
 #sidebar-ui .command-logo{
     float: right;
@@ -346,6 +352,14 @@ div.preset-manager-panel .checkbox-tooltip{
 #sidebar-ui .upfront-typography-fields-left{
     width: 53%;
 }
+#sidebar-ui .sidebar-panels{
+    border-left: 1px solid #324253;
+    border-right: none;
+}
+#element-settings-sidebar{
+    border-left: 1px solid #334454;
+    border-right: none;
+}
 /*-------------- End of Sidebar --------------*/
 
 /*-------------- Element Settings --------------*/
@@ -448,6 +462,12 @@ li.activate-breakpoints-dropdown{
 .upfront-field-wrap-multiple{
     margin-left: -15px;
     margin-right: auto;
+}
+.upfront-post_data-part.part-module-panel.preset_specific .upfront-settings-item-title .upfront-field-wrap-checkboxes label span{
+    padding: 0 15px 0 0;
+}
+.upfront-settings-item-title span, .upfront-global-social-settings .upfront-settings-item-title span{
+    margin-right: 0;
 }
 /*Element Setting*/
 #element-settings-sidebar .padding-settings .padding-top,
