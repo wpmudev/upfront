@@ -312,6 +312,7 @@ class Upfront_Grid {
 							$is_post_object = true;
 						}
 					}
+					$point_css .= $breakpoint->apply_paddings($module, $this->get_grid_scope(), 'element_id');
 				}
 			}
 

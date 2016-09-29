@@ -932,16 +932,17 @@ define([
 				});
 
 			},
-			show_top_padding_hint: function (value) {
+			show_top_padding_hint: function (value, $el) {
 				var me               = this,
-					top_padding_hint = this.$el.parents('.upfront-module').find('.upfront-entity-top-padding-hint')
+					$el = _.isUndefined($el) || false === $el ? this.$el.parents('.upfront-module') : $el,
+					top_padding_hint = $el.find('.upfront-entity-top-padding-hint')
 				;
 				if(!this.top_padding_hint_flag) {
 					this.top_padding_hint_flag = true;
 					return;
 				}
 				if(!top_padding_hint.length) {
-					top_padding_hint = $('<div class="upfront-ui upfront-entity-padding-hint upfront-entity-top-padding-hint"></div>').appendTo(this.$el.parents('.upfront-module'));
+					top_padding_hint = $('<div class="upfront-ui upfront-entity-padding-hint upfront-entity-top-padding-hint"></div>').appendTo($el);
 				}
 				top_padding_hint.css({
 					height: value + 'px',
@@ -949,26 +950,28 @@ define([
 				});
 				clearTimeout(this.top_padding_hint_timer);
 				this.top_padding_hint_timer = setTimeout(function() {
-					me.hide_top_padding_hint();
+					me.hide_top_padding_hint($el);
 				}, 1000);
 			},
-			hide_top_padding_hint: function () {
+			hide_top_padding_hint: function ($el) {
+				var $el = _.isUndefined($el) || false === $el ? this.$el.parents('.upfront-module') : $el;
 				if(!this.padding_hint_locked) {
-					this.$el.parents('.upfront-module').find('.upfront-entity-top-padding-hint').css({
+					$el.find('.upfront-entity-top-padding-hint').css({
 						opacity: 0
 					});
 				}
 			},
-			show_bottom_padding_hint: function (value) {
+			show_bottom_padding_hint: function (value, $el) {
 				var me                  = this,
-					bottom_padding_hint = this.$el.parents('.upfront-module').find('.upfront-entity-bottom-padding-hint')
+					$el = _.isUndefined($el) || false === $el ? this.$el.parents('.upfront-module') : $el,
+					bottom_padding_hint = $el.find('.upfront-entity-bottom-padding-hint')
 				;
 				if(!this.bottom_padding_hint_flag) {
 					this.bottom_padding_hint_flag = true;
 					return;
 				}
 				if(!bottom_padding_hint.length) {
-					bottom_padding_hint = $('<div class="upfront-ui upfront-entity-padding-hint upfront-entity-bottom-padding-hint"></div>').appendTo(this.$el.parents('.upfront-module'));
+					bottom_padding_hint = $('<div class="upfront-ui upfront-entity-padding-hint upfront-entity-bottom-padding-hint"></div>').appendTo($el);
 				}
 				bottom_padding_hint.css({
 					height: value + 'px',
@@ -976,12 +979,13 @@ define([
 				});
 				clearTimeout(this.bottom_padding_hint_timer);
 				this.bottom_padding_hint_timer = setTimeout(function() {
-					me.hide_bottom_padding_hint();
+					me.hide_bottom_padding_hint($el);
 				}, 1000);
 			},
-			hide_bottom_padding_hint: function () {
+			hide_bottom_padding_hint: function ($el) {
+				var $el = _.isUndefined($el) || false === $el ? this.$el.parents('.upfront-module') : $el;
 				if(!this.padding_hint_locked) {
-					this.$el.parents('.upfront-module').find('.upfront-entity-bottom-padding-hint').css({
+					$el.find('.upfront-entity-bottom-padding-hint').css({
 						opacity: 0
 					});
 				}
@@ -1867,8 +1871,13 @@ define([
 				this.ensure_breakpoint_change_is_listened();
 				this.ensureUiOffsetCalls();
 
-				if ( this.parent_module_view ) {
+				if ( this.object_group_view ) { // If this is in object group, it will have it's own control
+					this.$control_el = this.$el;
+				}
+				else if ( this.parent_module_view ) { // Otherwise, the control will be on module level
 					this.$control_el = this.parent_module_view.$('.upfront-module');
+				}
+				if ( this.$control_el && this.$control_el.length == 1 ) {
 					this.updateControls();
 					this.toggleControls();
 					setTimeout(function() {
@@ -1903,6 +1912,9 @@ define([
 				// var prev_value = prop._previousAttributes.value,
 				var value = prop.get('value'),
 					$me = this.$el.find('.upfront-editable_entity:first'),
+					$padding_el = this.object_group_view
+						? $me
+						: ( this.parent_module_view ? this.parent_module_view.$el.find('>.upfront-module') : false ),
 					grid = Upfront.Settings.LayoutEditor.Grid
 				;
 				if ( prop.id == 'row' ){
@@ -1934,18 +1946,18 @@ define([
 					;
 
 					if( current_property && val ) {
-						if( current_property === 'top_padding_num' ) this.show_top_padding_hint(val);
-						if( current_property === 'bottom_padding_num' ) this.show_bottom_padding_hint(val);
+						if( current_property === 'top_padding_num' ) this.show_top_padding_hint(val, $padding_el);
+						if( current_property === 'bottom_padding_num' ) this.show_bottom_padding_hint(val, $padding_el);
 					}
 
 				}
 				else if ( prop.id.match(/(top|bottom|left|right)_padding_(use|num|slider)/) ) {
 					this.apply_paddings($me);
-					this.handle_visual_padding_hint(prop);
+					this.handle_visual_padding_hint(prop, $padding_el);
 				}
 				else if ( prop.id.match(/padding_slider/) ) {
 					this.render();
-					this.handle_visual_padding_hint(prop);
+					this.handle_visual_padding_hint(prop, $padding_el);
 				}
 				else if ( prop.id == 'wrapper_id' ) {
 					// Updated wrapper, re-listen to wrapper update position
@@ -1959,22 +1971,22 @@ define([
 				}
 				Upfront.Events.trigger('entity:object:update', this, this.model);
 			},
-			handle_visual_padding_hint: function (prop) {
+			handle_visual_padding_hint: function (prop, $el) {
 				if (typeof prop === 'undefined') return;
 
 				var value = prop.get('value');
 
 				if ( prop.id.match(/(top|bottom)_padding_(num|slider)/) ) {
 					if ( prop.id.match(/top_padding_(num|slider)/) ) {
-						this.show_top_padding_hint(value);
+						this.show_top_padding_hint(value, $el);
 					}
 					if ( prop.id.match(/bottom_padding_(num|slider)/) ) {
-						this.show_bottom_padding_hint(value);
+						this.show_bottom_padding_hint(value, $el);
 					}
 				}
 				else if ( prop.id.match(/padding_slider/) ) {
-					this.show_top_padding_hint(value);
-					this.show_bottom_padding_hint(value);
+					this.show_top_padding_hint(value, $el);
+					this.show_bottom_padding_hint(value, $el);
 				}
 
 			},
@@ -2039,6 +2051,13 @@ define([
 					this.parent_module_view.$el.addClass('offset-ui-from-right-top');
 				} else {
 					this.parent_module_view.$el.removeClass('offset-ui-from-right-top');
+				}
+			},
+			on_click: function (e) {
+				_Upfront_EditableEntity.prototype.on_click.call(this, e);
+				if ( this.object_group_view && "editing" in this.object_group_view && this.object_group_view.editing ) {
+					// On object group edit, do not propagate
+					e.stopPropagation();
 				}
 			},
 			on_element_edit_start: function (edit, post) {
@@ -2204,6 +2223,10 @@ define([
 				this.parent_module_view.$el.find('>.upfront-module').removeClass('upfront-module-active');
 				if ( !this.parent_module_view.wrapper_view ) return;
 				this.parent_module_view.wrapper_view.$el.removeClass('upfront-wrapper-active upfront-inline-panel-item-open');
+				// Close padding control
+				if ( this.paddingControl ) {
+					this.paddingControl.close();
+				}
 			},
 
 			on_hide_click: function (e) {
@@ -3299,67 +3322,13 @@ define([
 
 				if ( prop.id.match(/(top|bottom)_padding_(num|slider)/) ) {
 					if ( prop.id.match(/top_padding_(num|slider)/) ) {
-						this.show_top_padding_hint(value);
+						this.show_top_padding_hint(value, this.$el);
 					}
 					if ( prop.id.match(/bottom_padding_(num|slider)/) ) {
-						this.show_bottom_padding_hint(value);
+						this.show_bottom_padding_hint(value, this.$el);
 					}
 				}
 
-			},
-			show_top_padding_hint: function (value) {
-				var me               = this,
-					top_padding_hint = this.$el.find('.upfront-entity-top-padding-hint')
-				;
-				if(!this.top_padding_hint_flag) {
-					this.top_padding_hint_flag = true;
-					return;
-				}
-				if(!top_padding_hint.length) {
-					top_padding_hint = $('<div class="upfront-ui upfront-entity-padding-hint upfront-entity-top-padding-hint"></div>').appendTo(this.$el);
-				}
-				top_padding_hint.css({
-					height: value + 'px',
-					opacity: 1
-				});
-				clearTimeout(this.top_padding_hint_timer);
-				this.top_padding_hint_timer = setTimeout(function() {
-					me.hide_top_padding_hint();
-				}, 1000);
-			},
-			hide_top_padding_hint: function () {
-				if(!this.padding_hint_locked) {
-					this.$el.find('.upfront-entity-top-padding-hint').css({
-						opacity: 0
-					});
-				}
-			},
-			show_bottom_padding_hint: function (value) {
-				var me                  = this,
-					bottom_padding_hint = this.$el.find('.upfront-entity-bottom-padding-hint')
-				;
-				if(!this.bottom_padding_hint_flag) {
-					this.bottom_padding_hint_flag = true;
-					return;
-				}
-				if(!bottom_padding_hint.length) {
-					bottom_padding_hint = $('<div class="upfront-ui upfront-entity-padding-hint upfront-entity-bottom-padding-hint"></div>').appendTo(this.$el);
-				}
-				bottom_padding_hint.css({
-					height: value + 'px',
-					opacity: 1
-				});
-				clearTimeout(this.bottom_padding_hint_timer);
-				this.bottom_padding_hint_timer = setTimeout(function() {
-					me.hide_bottom_padding_hint();
-				}, 1000);
-			},
-			hide_bottom_padding_hint: function () {
-				if(!this.padding_hint_locked) {
-					this.$el.find('.upfront-entity-bottom-padding-hint').css({
-						opacity: 0
-					});
-				}
 			},
 
 			createPaddingControl: function(){
