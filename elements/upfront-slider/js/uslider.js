@@ -305,7 +305,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			}
 
 			var props = me.imageProps[slide.id],
-				img = $rendered.find('.uslide[rel=' + slide.id + ']').height(props.size.height).find('img')
+				img = $rendered.find('.uslide[rel=' + slide.id + ']').height(props.size.height).find('img'),
+				sizeCheck = me.checkSize(props.size)
 			;
 
 			img.attr('src', slide.get('srcFull'))
@@ -316,7 +317,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 					top: 0-props.cropOffset.top,
 					left: 0-props.cropOffset.left,
 					'max-width': 'none',
-					'max-height': 'none'
+					'max-height': 'none',
+					'min-width': sizeCheck === "small" ? 'auto' : '100%'
 				})
 				.parent().css({
 					position: 'relative',
@@ -327,6 +329,16 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		});
 
 		return $rendered.html();
+	},
+	
+	checkSize: function(size) {
+		var maskSize = this.model.get_breakpoint_property_value('element_size', true);
+
+		if(size.width >= maskSize.width && size.height >= maskSize.height) {
+			return 'big';
+		}
+
+		return 'small';
 	},
 
 	on_render: function() {
