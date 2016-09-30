@@ -652,12 +652,14 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				if(!ui.element.hasClass('uslide-image'))
 					return;
 				
-				var padding_left = parseInt( me.model.get_breakpoint_property_value("left_padding_use", true) ?  me.model.get_breakpoint_property_value('left_padding_num', true) : 0, 10 ),
-					padding_right = parseInt( me.model.get_breakpoint_property_value("right_padding_use", true) ? me.model.get_breakpoint_property_value('right_padding_num', true) : 0, 10 ),
-					newElementWidth = parseInt( elementWidth - ( padding_left + padding_right ) ),
+				var padding_left = me.model.get_breakpoint_property_value("left_padding_use", true) ? me.model.get_breakpoint_property_value('left_padding_num', true)  : 0,
+					padding_left_num = _.isNumber( padding_left ) ? padding_left : 0,
+					padding_right = me.model.get_breakpoint_property_value("right_padding_use", true) ? me.model.get_breakpoint_property_value('right_padding_num', true) : 0,
+					padding_right_num = _.isNumber( padding_right ) ? padding_right : 0,
+					newElementWidth = parseInt( elementWidth - ( padding_left_num + padding_right_num ) ),
 					imageWidth = ui.helper.width(),
 					textWidth = newElementWidth - imageWidth - 20,
-					textCss = {width: textWidth},	
+					textCss = {width: textWidth},
 					imgCss = {width: imageWidth}
 				;
 
