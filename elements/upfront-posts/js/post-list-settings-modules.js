@@ -139,14 +139,12 @@ define([
 		get_fields: function () {
 			return [
 				{
-					type: 'Select',
-					label: l10n.numeric,
-					label_style: 'inline',
-					property: 'display_name',
-					values: [
-						{label: l10n.numeric, value: 'display_name'},
-					]
-				}
+					type: "Checkboxes",
+					property: "resize_featured",
+					multiple: false,
+					default_value: 0,
+					values: [{ label: l10n.modules.resize_to_fit, value: '1' }]
+				},
 			];
 		}
 	});

@@ -207,6 +207,7 @@ class Upfront_Posts_PostsData {
 				'custom_format' => __('Custom PHP Format', 'upfront'),
 				'php_format' => __('PHP Format', 'upfront'),
 				'reference' => __('Reference', 'upfront'),
+				'resize_to_fit' => __('Re-size to fit container', 'upfront'),
 			),
 			
 			'css' => array(
