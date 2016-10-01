@@ -179,6 +179,7 @@ class Upfront_Posts_PostsData {
 			'general_settings' => __('General Settings', 'upfront'),
 			'post_part_settings' => __('Post Parts Settings', 'upfront'),
 			'edit_template' => __('Edit markup', 'upfront'),
+			'px' => __('px', 'upfront'),
 			'modules' => array(
 				'element_wrapper' => __('Element Wrapper', 'upfront'),
 				'wrappers_label' => __('Wrappers:', 'upfront'),
@@ -207,6 +208,9 @@ class Upfront_Posts_PostsData {
 				'custom_format' => __('Custom PHP Format', 'upfront'),
 				'php_format' => __('PHP Format', 'upfront'),
 				'reference' => __('Reference', 'upfront'),
+				'custom_width' => __('Width', 'upfront'),
+				'custom_height' => __('Height', 'upfront'),
+				'custom_size' => __('Custom', 'upfront'),
 				'resize_to_fit' => __('Re-size to fit container', 'upfront'),
 			),
 			

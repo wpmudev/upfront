@@ -139,6 +139,31 @@ define([
 		get_fields: function () {
 			return [
 				{
+					type: 'Select',
+					label: l10n.modules.image_size,
+					label_style: 'inline',
+					property: 'image_size',
+					values: [
+						{label: l10n.modules.custom_size, value: 'custom_size'},
+					]
+				},
+				{
+					type: "Text",
+					label: l10n.modules.custom_width,
+					className: 'image-custom-width',
+					label_style: 'inline',
+					property: "custom_width",
+					suffix: l10n.px,
+				},
+				{
+					type: "Text",
+					label: l10n.modules.custom_height,
+					className: 'image-custom-height',
+					label_style: 'inline',
+					property: "custom_height",
+					suffix: l10n.px,
+				},
+				{
 					type: "Checkboxes",
 					property: "resize_featured",
 					multiple: false,
