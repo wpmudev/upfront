@@ -11,7 +11,7 @@ define([
 		title: l10n.modules.element_wrapper,
 		data_part: 'element_wrapper',
 		get_modules: function () {
-			var modules = [], // gravatar doesn't have typography
+			var modules = [],
 				me = this,
 				name = function (name) { return 'element_wrapper-' + name; }
 			;
@@ -171,6 +171,11 @@ define([
 					values: [{ label: l10n.modules.resize_to_fit, value: '1' }]
 				},
 			];
+		},
+		get_modules: function () {
+			var modules = [];
+			
+			return modules;
 		}
 	});
 	
