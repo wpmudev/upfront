@@ -1975,6 +1975,27 @@ define([
 						this.model.set_property('preset', 'default', false);
 						this.render();
 					}
+					
+					if(elementTypes[elType] === element) {
+						var breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled() || {},
+							breakpoint_presets = this.model.get_property_value_by_name("breakpoint_presets") || {}
+						;
+
+						_.each(breakpoints, function (breakpoint) {
+							if(typeof breakpoint_presets[breakpoint.id] !== "undefined" && breakpoint_presets[breakpoint.id].preset) {
+								var actualPreset =  breakpoint_presets[breakpoint.id].preset;
+								if(preset.id === actualPreset) {
+									// Overwrite current preset with default
+									actualPreset = 'default';
+								}
+								
+								// Update breakpoint value
+								breakpoint_presets[breakpoint.id] = {preset: actualPreset};
+							}
+						});
+
+						this.model.set_property('breakpoint_presets', breakpoint_presets, false);
+					}
 				}
 
 			},
