@@ -4773,11 +4773,15 @@ define([
 					type = this._get_region_type(),
 					previous_type = this._get_previous_region_type(),
 					default_breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_default().toJSON(),
-					contained_width = Upfront.Application.layout.get_property_value_by_name('contained_region_width') || (default_breakpoint.columns * grid.column_width);
-				if ( type == 'clip' )
-					this.$bg.css('max-width', contained_width + 'px');
-				else
+					default_width = (default_breakpoint.columns * grid.column_width),
+					contained_width = Upfront.Application.layout.get_property_value_by_name('contained_region_width') || default_width
+				;
+				if ( type == 'clip' ) {
+					this.$bg.css('max-width', ( contained_width > default_width ? contained_width : default_width ) + 'px');
+				}
+				else {
 					this.$bg.css('max-width', '');
+				}
 				this.update_background();
 				if ( previous_type != type ){
 					this.$el.removeClass('upfront-region-container-' + previous_type);
@@ -4813,7 +4817,7 @@ define([
 
 			},
 			on_grid_update_after: function () {
-				this.update_background();
+				this.update();
 				this.fix_height();
 			},
 			on_contained_width_change: function (width) {
