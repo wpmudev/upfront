@@ -760,6 +760,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		else {
 			this.constructor.__super__.on_element_edit_stop.call(this, edit, post, saving_draft);
 		}
+		Upfront.Events.trigger('entity:object:refresh', this);
 	},
 
 	checkSize: function() {
