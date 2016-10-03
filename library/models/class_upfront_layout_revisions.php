@@ -76,7 +76,7 @@ class Upfront_LayoutRevisions {
 			'post_type' => self::REVISION_TYPE,
 			'post_status' => self::REVISION_STATUS,
 		));
-		$args["post_title"] = self::to_string($entity_cascade);
+		$args["title"] = self::to_string($entity_cascade);
 		$query = new WP_Query($args);
 		return $query->posts;
 	}

@@ -17,8 +17,7 @@
                     require(['content'], function() {
                         if(self.getPostId() !== false) {
                             setTimeout(self.prepare_editor(self));
-							// we do not need to initialize_post_data_editor again
-                            // self.initialize_post_data_editor();
+                            self.initialize_post_data_editor();
                         }
                     });
                     return;
@@ -97,24 +96,24 @@
                 // Upfront.Events.trigger("editor:post_editor:created", Upfront.Views.PostDataEditor);
             },
 
-						getPostId: function() {
-							postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
-							if (
-									!this.postId &&
-									true === Upfront.plugins.isRequiredByPlugin('generate fake post id')
-							) {
-								postId = "fake_post";
-							}
-							else if (
-									!this.postId &&
-									true === Upfront.plugins.isRequiredByPlugin('generate fake post id') &&
-									Upfront.Application.mode.current === Upfront.Application.MODE.CONTENT_STYLE
-							){
-								postId = "fake_styled_post";
-							}
+			getPostId: function() {
+				postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
+				if (
+						!this.postId &&
+						true === Upfront.plugins.isRequiredByPlugin('generate fake post id')
+				) {
+					postId = "fake_post";
+				}
+				else if (
+						!this.postId &&
+						true === Upfront.plugins.isRequiredByPlugin('generate fake post id') &&
+						Upfront.Application.mode.current === Upfront.Application.MODE.CONTENT_STYLE
+				){
+					postId = "fake_styled_post";
+				}
 
-							return postId;
-						},
+				return postId;
+			},
 
             append_box: function () {
                 var me = this,
