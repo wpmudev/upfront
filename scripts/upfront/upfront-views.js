@@ -1971,8 +1971,9 @@ define([
 
 				if(typeof elementTypes[elType] !== "undefined" && preset !== "undefined") {
 					if(elementTypes[elType] === element && preset.id === elPreset) {
+						this.model.set_property('current_preset', 'default', false);
 						this.model.set_property('preset', 'default', false);
-						//this.render();
+						this.render();
 					}
 				}
 
