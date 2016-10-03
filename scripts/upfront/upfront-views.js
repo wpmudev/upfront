@@ -1962,8 +1962,18 @@ define([
 			},
 			on_preset_deleted: function(element, preset) {
 				var elementTypes = {
-						PlainTxtModel: 'text'
-				
+						PlainTxtModel: 'text',
+						UaccordionModel: 'accordion',
+						UcontactModel: 'contact',
+						UgalleryModel: 'gallery',
+						UimageModel: 'image',
+						LoginModel: 'login',
+						UnewnavigationModel: 'nav',
+						ButtonModel: 'button',
+						PostsModel: 'posts',
+						USliderModel: 'slider',
+						UtabsModel: 'tabs',
+						UwidgetModel: 'widget'
 					},
 					elType = this.model.get_property_value_by_name('type'),
 					elPreset = this.model.get_property_value_by_name('preset')
