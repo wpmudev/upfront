@@ -58,6 +58,10 @@ div.no-title div.upfront-settings-item-title {
   padding-bottom: 8px;
 }
 
+#settings .general_settings_item.smtp-authentication input {
+  width: 95%;
+}
+
 .general_smtp_settings {
   padding-top: 11px
 }

@@ -102,6 +102,20 @@ define([
 			}
 		]
 	});
+	
+	var PasswordField = Upfront.Views.Editor.Field.Text.extend({
+		get_label_html: function () {},
+		get_field_html: function () {
+				var attr = {
+					'type': 'password',
+					'class': 'upfront-field upfront-field-text',
+					'id': this.get_field_id(),
+					'name': this.get_field_name(),
+					'value': this.get_saved_value()
+				};
+				return '<input ' + this.get_field_attr_html(attr) + ' />';
+			}
+	});
 
 	var SMTPAuthenticationSettings = Upfront.Views.Editor.Settings.Item.extend({
 		className: 'no-title general_settings_item smtp-authentication',
@@ -124,10 +138,10 @@ define([
 				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Text({
 					model: this.model,
 					property: 'smtp_username',
-					label: l10n.smtp.username
+					label: l10n.smtp.username,
 				});
 
-				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Text({
+				this.fields._wrapped[this.fields._wrapped.length] = new PasswordField({
 					model: this.model,
 					property: 'smtp_password',
 					label: l10n.smtp.password
