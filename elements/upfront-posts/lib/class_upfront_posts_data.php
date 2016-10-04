@@ -43,7 +43,7 @@ class Upfront_Posts_PostsData {
 			// list_type===custom settings
 			'posts_list' => '', // JSON map of id/permalink pairs
 			
-			'thumbnail_size' => 'medium', // thumbnail, medium, large, uf_post_featured_image, uf_custom_thumbnail_size
+			'thumbnail_size' => 'large', // thumbnail, medium, large, uf_post_featured_image, uf_custom_thumbnail_size
 			'custom_thumbnail_width' => 200, 
 			'custom_thumbnail_height' => 200, 
 
@@ -243,7 +243,7 @@ class Upfront_Posts_PostsData {
 			'thumbnail_size_medium' => __('Medium', 'upfront'),
 			'thumbnail_size_large' => __('Large', 'upfront'),
 			'thumbnail_size_post_feature' => __('Post Feature Image', 'upfront'),
-			'thumbnail_size_custom' => __('Custom <em>(existing images not affected)</em>', 'upfront'),
+			'thumbnail_size_custom' => __('Custom <em>(existing not affected)</em>', 'upfront'),
 			'thumbnail_size_custom_width' => __('Custom Width in px', 'upfront'),
 			'thumbnail_size_custom_height' => __('Custom Height in px', 'upfront'),
 		);

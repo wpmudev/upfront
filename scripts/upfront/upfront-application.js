@@ -26,37 +26,47 @@ var Subapplication = Backbone.Router.extend({
 });
 
 var LayoutEditorSubapplication = Subapplication.extend({
-	save_layout_as: function (layout_changed) {
-		Upfront.Behaviors.LayoutEditor.save_dialog(this._save_layout, this, layout_changed);
+	save_layout_changes: function (layout_changed) {
+		Upfront.Behaviors.LayoutEditor.save_dialog(this._save_layout, this, layout_changed, false);
+	},
+
+	save_layout_as: function () {
+		if ( _upfront_post_data.layout.type == 'archive' ) {
+			Upfront.Behaviors.LayoutEditor.save_dialog(this._save_layout, this, true, true);
+		}
 	},
 
 	save_layout: function () {
 		this._save_layout(this.layout.get("current_layout"));
 	},
-	
+
+	save_post_layout: function ($post_layout_key) {
+		this._save_layout($post_layout_key);
+	},
+
 	save_layout_meta: function () {
 		this._save_layout_meta(this.layout.get("current_layout"));
 	},
-	
+
 	publish_layout: function () {
 		this._save_layout(this.layout.get("current_layout"), true);
 	},
-	
+
 	delete_layout: function () {
 		this._delete_layout();
 	},
-	
+
 	reset_changes: function () {
 		this._reset_changes();
 	},
-	
+
 	_save_layout_meta: function (preferred_layout, publish) {
 		var me = this,
 			post_id = ( typeof _upfront_post_data.post_id !== 'undefined' ) ? _upfront_post_data.post_id : '',
 			template_type = ( typeof _upfront_post_data.template_type !== 'undefined' ) ? _upfront_post_data.template_type : 'layout',
 			template_slug = ( typeof _upfront_post_data.template_slug !== 'undefined' ) ? _upfront_post_data.template_slug : '',
 			save_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 );
-		
+
 		Upfront.Events.trigger("command:layout:save_start");
 
 		if (Upfront.Settings.Application.NO_SAVE) {
@@ -72,16 +82,16 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			})
 			.success(function () {
 				Upfront.Util.log("layout applied");
-				
+
 				// remove the old cache of layouts as cache will be updated upon loading layouts
 				var url_key = '/' + Backbone.history.getFragment();
 				Upfront.Application.urlCache[url_key] = false;
-				
+
 				setTimeout(function(){
 					Upfront.Application.load_layout(_upfront_post_data.layout);
 					Upfront.Events.trigger("command:layout:save_success");
 				},100);
-				
+
 			})
 			.error(function () {
 				Upfront.Util.log("error saving layout");
@@ -97,10 +107,22 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			template_type = ( typeof _upfront_post_data.template_type !== 'undefined' ) ? _upfront_post_data.template_type : 'layout',
 			template_slug = ( typeof _upfront_post_data.template_slug !== 'undefined' ) ? _upfront_post_data.template_slug : '',
 			layout_action = ( typeof _upfront_post_data.layout_action !== 'undefined' ) ? _upfront_post_data.layout_action : '',
-			save_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 );
+			layout_change = ( typeof _upfront_post_data.layout_change !== 'undefined' ) ? _upfront_post_data.layout_change : 0,
+			save_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 ),
+			breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+			is_responsive = breakpoint && !breakpoint['default'],
+			compressed
+		;
 		data.layout = _upfront_post_data.layout;
 		data.preferred_layout = preferred_layout;
-		data = JSON.stringify(data, undefined, 2);
+
+		if ( Upfront.mainData.save_compression ) {
+			compressed = Upfront.Util.compress(data);
+			data = compressed.result;
+		}
+		else {
+			data = JSON.stringify(data);
+		}
 
 		Upfront.Events.trigger("command:layout:save_start");
 
@@ -108,13 +130,17 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			Upfront.Events.trigger("command:layout:save_success");
 			return false;
 		}
-		data = Upfront.Util.colors.update_colors_to_match_ufc(data);		
+		data = Upfront.Util.colors.update_colors_to_match_ufc(data);
 		Upfront.Util.post({
-				"action": Upfront.Application.actions.save, 
-				"data": data, 
-				"storage_key": storage_key, 
+				"action": Upfront.Application.actions.save,
+				"data": data,
+				"original_length": compressed ? compressed.original_length : 0,
+				"compressed_length": compressed ? compressed.compressed_length : 0,
+				"compression": Upfront.mainData.save_compression ? 1 : 0,
+				"storage_key": storage_key,
 				"post_id": post_id,
 				"layout_action": layout_action,
+				"layout_change": layout_change,
 				"save_dev": save_dev,
 				"template_type": template_type,
 				"template_slug": template_slug
@@ -122,7 +148,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			.success(function (resp) {
 				Upfront.Util.log("layout saved");
 				Upfront.Events.trigger("command:layout:save_success");
-				
+
 				if ( layout_action == 'save_as' ) {
 					// refresh page templates list
 					_upfront_post_data.layout_action = '';
@@ -134,11 +160,11 @@ var LayoutEditorSubapplication = Subapplication.extend({
 					_upfront_post_data.layout_action = '';
 					Upfront.Events.trigger("page:layout:updated");
 				}
-				
+
 				// remove the old cache of layouts as cache will be updated upon loading layouts
 				var url_key = '/' + Backbone.history.getFragment();
 				Upfront.Application.urlCache[url_key] = false;
-				
+
 			})
 			.error(function () {
 				Upfront.Util.log("error saving layout");
@@ -146,7 +172,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			})
 		;
 	},
-	
+
 	_delete_layout: function () {
 		var me = this,
 			template_slug = ( typeof _upfront_post_data.template_slug !== 'undefined' ) ? _upfront_post_data.template_slug : '',
@@ -154,7 +180,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		;
 		Upfront.Events.trigger("command:layout:save_start");
 		Upfront.Util.post({
-				"action": Upfront.Application.actions.delete_layout, 
+				"action": Upfront.Application.actions.delete_layout,
 				"template_slug": template_slug,
 				"is_dev": is_dev
 			})
@@ -164,7 +190,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			})
 		;
 	},
-	
+
 	_reset_changes: function () {
 		var me = this,
 			post_id = ( typeof _upfront_post_data.post_id !== 'undefined' ) ? _upfront_post_data.post_id : '',
@@ -172,7 +198,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		;
 		Upfront.Events.trigger("command:layout:save_start");
 		Upfront.Util.post({
-				"action": Upfront.Application.actions.reset_changes, 
+				"action": Upfront.Application.actions.reset_changes,
 				"post_id": post_id,
 				"is_dev": is_dev
 			})
@@ -287,6 +313,9 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			Upfront.Behaviors.GridEditor.init();
 		}
 		this.listenTo(Upfront.Events, "layout:after_render", Upfront.Behaviors.GridEditor.init);
+		if ( false === Upfront.plugins.isForbiddenByPlugin('show import image dialog') ) {
+			this.listenTo(Upfront.Events, "layout:after_render", Upfront.Behaviors.LayoutEditor.import_image_dialog);
+		}
 	},
 
 	set_up_event_plumbing_after_render: function () {
@@ -297,10 +326,12 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		// Layout manipulation
 		this.listenTo(Upfront.Events, "command:exit", this.destroy_editor);
 		this.listenTo(Upfront.Events, "command:layout:save", this.save_layout);
+		this.listenTo(Upfront.Events, "command:layout:save_post_layout", this.save_post_layout);
 		this.listenTo(Upfront.Events, "command:layout:save_meta", this.save_layout_meta);
 		this.listenTo(Upfront.Events, "command:layout:delete_layout", this.delete_layout);
 		this.listenTo(Upfront.Events, "command:layout:reset_changes", this.reset_changes);
-		this.listenTo(Upfront.Events, "command:layout:layout_changes", this.save_layout_as);
+		this.listenTo(Upfront.Events, "command:layout:layout_changes", this.save_layout_changes);
+		this.listenTo(Upfront.Events, "command:layout:save_as", this.save_layout_as);
 		this.listenTo(Upfront.Events, "command:layout:preview", this.preview_layout);
 		this.listenTo(Upfront.Events, "command:layout:publish", this.publish_layout);
 
@@ -343,6 +374,9 @@ var LayoutEditorSubapplication = Subapplication.extend({
 					fixed: true
 				});
 				loading.render();
+				// if there are any active loading overlay, remove it first
+				if ( $('.upfront-loading').length ) $('.upfront-loading').remove();
+				// append loading overlay
 				$('body').append(loading.$el);
 			},
 			stop = function (success) {
@@ -385,12 +419,13 @@ var LayoutEditorSubapplication = Subapplication.extend({
 
 		var current_object = _(this.Objects).reduce(function (obj, current) {
 				return (view instanceof current.View) ? current : obj;
-			}, false),
-			current_object = (current_object && current_object.ContextMenu ? current_object : Upfront.Views.ContextMenu);
-			if(current_object.ContextMenu === false)
-				return false;
-			else if (typeof current_object.ContextMenu == 'undefined')
-				current_object.ContextMenu = Upfront.Views.ContextMenu;
+			}, false)
+		;
+		current_object = (current_object && current_object.ContextMenu ? current_object : Upfront.Views.ContextMenu);
+		if(current_object.ContextMenu === false)
+			return false;
+		else if (typeof current_object.ContextMenu == 'undefined')
+			current_object.ContextMenu = Upfront.Views.ContextMenu;
 
         var context_menu_view = new current_object.ContextMenu({
             model: view.model,
@@ -622,13 +657,13 @@ var PostContentEditor = new (Subapplication.extend({
 			action: 'upfront_update_insertcount'
 		});
 	}
-}));
+}))();
 
 
 
 var ContentEditor = new (Subapplication.extend({
 	boot: function () {
-		Upfront.Util.log("Preparing content mode for execution")
+		Upfront.Util.log("Preparing content mode for execution");
 	},
 
 	start: function () {
@@ -644,41 +679,6 @@ var ContentEditor = new (Subapplication.extend({
 		Upfront.Util.log("Stopping the content edit mode");
 		this.stopListening(Upfront.Events);
 	}
-}))();
-
-var ThemeEditor = new (LayoutEditorSubapplication.extend({
-	boot: function () {
-
-	},
-
-	start: function () {
-		this.stop();
-		this.set_up_event_plumbing_before_render();
-		// @TODO hack to implement LayoutEditor objects
-		this.Objects = Upfront.Application.LayoutEditor.Objects;
-		this.set_up_editor_interface();
-
-		this.set_up_event_plumbing_after_render();
-		$("html").removeClass("upfront-edit-layout upfront-edit-content upfront-edit-postlayout upfront-edit-responsive").addClass("upfront-edit-theme");
-		if ( Upfront.themeExporter.currentTheme === 'upfront') {
-			this.listenToOnce(Upfront.Events, 'layout:render', function() {
-				Upfront.Events.trigger("command:layout:edit_structure");
-			});
-		}
-		this.listenToOnce(Upfront.Events, 'layout:render', Upfront.Behaviors.GridEditor.apply_grid);
-		this.listenToOnce(Upfront.Events, 'command:layout:save_done', Upfront.Behaviors.LayoutEditor.first_save_dialog);
-		this.listenTo(Upfront.Events, "command:layout:create", Upfront.Behaviors.LayoutEditor.create_layout_dialog); // DEPRECATED
-		this.listenTo(Upfront.Events, "command:themefontsmanager:open", Upfront.Behaviors.LayoutEditor.open_theme_fonts_manager);
-		this.listenTo(Upfront.Events, "command:layout:browse", Upfront.Behaviors.LayoutEditor.browse_layout_dialog); // DEPRECATED
-		this.listenTo(Upfront.Events, "command:layout:edit_structure", Upfront.Behaviors.GridEditor.edit_structure);
-		this.listenTo(Upfront.Events, "command:layout:export_theme", Upfront.Behaviors.LayoutEditor.export_dialog);
-		this.listenTo(Upfront.Events, "builder:load_theme", Upfront.Behaviors.LayoutEditor.load_theme);
-	},
-
-	stop: function () {
-		return this.stopListening(Upfront.Events);
-	}
-
 }))();
 
 var ResponsiveEditor = new (LayoutEditorSubapplication.extend({
@@ -711,7 +711,6 @@ var ResponsiveEditor = new (LayoutEditorSubapplication.extend({
 var Application = new (Backbone.Router.extend({
 	LayoutEditor: LayoutEditor,
 	ContentEditor: ContentEditor,
-	ThemeEditor: ThemeEditor,
 	PostContentEditor: PostContentEditor,
 	ResponsiveEditor: ResponsiveEditor,
 
@@ -784,8 +783,6 @@ var Application = new (Backbone.Router.extend({
 		var me = this;
 		$("body .upfront-edit_layout a").addClass('active');
 		$("body").off("click", ".upfront-edit_layout").on("click", ".upfront-edit_layout", function () {
-			//$(".upfront-editable_trigger").hide();
-			//app.go("layout");
 
 			me.start();
 			return false;
@@ -838,10 +835,18 @@ var Application = new (Backbone.Router.extend({
 		}
 
 		var app = this;
+		// Get the appropriate Loading Notice – whether builder or editor.
+		var loadingNoticeResult = Upfront.plugins.call('long-loading-notice');
+		// Editor Notice.
+		var loadingNotice = Upfront.Settings.l10n.global.application.long_loading_notice;
+		if(loadingNoticeResult.status && loadingNoticeResult.status === 'called' && loadingNoticeResult.result) {
+			// If Builder is loading, use its long_loading_notice instead.
+			loadingNotice = loadingNoticeResult.result;
+		}
 		// Start loading animation
 		app.loading = new Upfront.Views.Editor.Loading({
 			loading: Upfront.Settings.l10n.global.application.loading,
-			loading_notice: Upfront.Settings.l10n.global.application.long_loading_notice,
+			loading_notice: loadingNotice,
 			loading_type: 'upfront-boot',
 			done: Upfront.Settings.l10n.global.application.thank_you_for_waiting,
 			fixed: true,
@@ -960,9 +965,9 @@ var Application = new (Backbone.Router.extend({
 			this.loadingLayout.abort();
 
 		this.loadingLayout = Upfront.Util.post(request_data)
-			.success(function (response) {				
+			.success(function (response) {
 				app.set_layout_up(response);
-				
+
 				if(app.saveCache){
 					app.urlCache[app.currentUrl] = $.extend(true, {}, response);
 					app.saveCache = false;
@@ -1031,10 +1036,14 @@ var Application = new (Backbone.Router.extend({
 		var me = this,
 			data = $.extend(true, {}, layoutData.data.layout) || {} //Deep cloning
 		;
-		
+
 		if ( typeof layoutData.data.template_type !== 'undefined' ) _upfront_post_data.template_type = layoutData.data.template_type;
 		if ( typeof layoutData.data.template_slug !== 'undefined' ) _upfront_post_data.template_slug = layoutData.data.template_slug;
-		
+		if ( typeof layoutData.data.layout_change !== 'undefined' ) {
+			_upfront_post_data.layout_change = parseInt(layoutData.data.layout_change, 10);
+			if ( _upfront_post_data.layout_change !== 1 ) _upfront_post_data.layout_change = 0;
+		}
+
 		if (layoutData.data.post) {
 			this.post_set_up(layoutData.data.post);
 		}
@@ -1053,7 +1062,7 @@ var Application = new (Backbone.Router.extend({
 		this.current_subapplication.layout = this.layout;
 		this.sidebar.model.set(this.layout.toJSON());
 
-		if(typeof layoutData.data.post !== "undefined" && layoutData.data.post != null) {
+		if(typeof layoutData.data.post !== "undefined" && layoutData.data.post !== null) {
 			if((layoutData.data.post.ID !== "undefined" && layoutData.data.query.post_count) || (layoutData.data.post.ID !== "undefined" && layoutData.data.cascade.type === "single") || layoutData.data.query.is_singular) {
 				Upfront.Events.trigger('click:edit:navigate', layoutData.data.post.ID);
 			} else {
@@ -1090,7 +1099,20 @@ var Application = new (Backbone.Router.extend({
 
 		Upfront.Application.loading.done(function () {
 
-			Upfront.PreviewUpdate.run(me.layout);
+			try {
+				// Use Tab ID to warn about multiple tabs editing same layout.
+				var tab_id = sessionStorage.getItem('upfront_tab_id');
+				// If no tab_id is saved in sessionStorage, create one.
+				if (tab_id === null) {
+					// Create unique ID for current tab session.
+					tab_id = Upfront.Util.get_unique_id('tab_id');
+					sessionStorage.setItem('upfront_tab_id', tab_id);
+				}
+			} catch (exception) {
+				// If sessionStorage is disabled, still generate tab_id.
+				var tab_id = Upfront.Util.get_unique_id('tab_id');
+			}
+			Upfront.PreviewUpdate.run(me.layout, tab_id);
 
 			Upfront.Events.trigger("application:mode:after_switch");
 		});
@@ -1410,6 +1432,8 @@ var Application = new (Backbone.Router.extend({
 		cssEditor.createSelector(Upfront.Models.Region, Upfront.Views.RegionView, 'Region');
 		cssEditor.createSelector(Upfront.Models.Region, Upfront.Views.RegionLightboxView, 'RegionLightbox');
 
+		Upfront.plugins.call('insert-css-editor-selectors', {cssEditor: cssEditor});
+
 		Upfront.Events.on("upfront:layout:loaded", me.apply_region_css, me);
 		Upfront.Events.on("upfront:layout:loaded", me.ensure_layout_style, me);
 		this.cssEditor = cssEditor;
@@ -1448,9 +1472,10 @@ var Application = new (Backbone.Router.extend({
 
 	adjust_grid_padding_settings: function(region) {
 		//Handle region top/bottom padding and move grid rulers
-		$region = $(region).parent(),
-			padding_top = parseInt($region.css('padding-top')),
-			padding_bottom = parseInt($region.css('padding-bottom'));
+		var $region = $(region).parent(),
+			padding_top = parseInt($region.css('padding-top'), 10),
+			padding_bottom = parseInt($region.css('padding-bottom'), 10)
+		;
 
 		if(padding_top > 0) {
 			$region.find('.upfront-overlay-grid').css("top", padding_top * -1);
@@ -1470,14 +1495,23 @@ var Application = new (Backbone.Router.extend({
 			fullPath = path ? '/' + path : '/',
 			loading
 		;
+		
+		// Fixing incorrect post_id when clicking Back on browser
+		// only for posts and pages
+		if ( fullPath.indexOf('edit/post') !== -1 || fullPath.indexOf('edit/page') !== -1 ) {
+			var filter_post_id = parseInt( fullPath.replace ( /[^\d.]/g, '' ), 10 );
+			if ( !isNaN(filter_post_id) && filter_post_id !== _upfront_post_data.post_id ) {
+				_upfront_post_data.post_id = filter_post_id;
+			}
+		}
 
 		if(urlQueryParts){
 			_.each(urlParams, function(value, key){
 				urlQueryParts.push(key + '=' + value);
 			});
 			fullPath += '?' + urlQueryParts.join('&');
-		}
-
+		}	
+		
 		loading = this.set_loading(Upfront.Settings.l10n.global.application.loading_path.replace(/%s/, fullPath), Upfront.Settings.l10n.global.application.here_we_are);
 
 		if(this.urlCache[fullPath]){
@@ -1583,12 +1617,31 @@ var Application = new (Backbone.Router.extend({
 		if ( is_single_page && this.user_can("SINGLEPAGE_LAYOUT_MODE") ) return true;
 		if ( !is_single_page && is_single && this.user_can("SINGLEPOST_LAYOUT_MODE") ) return true;
 		return false;
+	},
+
+	/**
+	 * Check if user can modify post/page content (e.g. title, content, categories, tags; not layout).
+	 *
+	 * Let's keep this simple for now since in other places it is checked if user has permissions
+	 * to start editing existing or create new post/page and it's hard to get owner of current
+	 * page.
+	 * Just check if user has permission to edit own or others posts.
+	 *
+	 * Do not use this where more thourough check is needed.
+	 *
+	 * @return {Boolean}
+	 */
+	user_can_save_content: function() {
+		if ( this.is_single() && (this.user_can("EDIT_OWN") || this.user_can("EDIT") )) return true;
+
+		return false;
 	}
 
 }))();
 
 return {
-	"Application": Application
+	Application: Application,
+	Subapplication: LayoutEditorSubapplication
 };
 });
 

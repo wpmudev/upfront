@@ -28,7 +28,7 @@ define([
 		setOptions: function(url, type) {
 			var theType = type ? type : Upfront.Util.guessLinkType(url);
 			this.url = url;
-			this.icon = 'visit-link-' + theType,
+			this.icon = 'visit-link-' + theType;
 			this.label = this.getTextByLinkType(theType);
 		},
 
@@ -55,7 +55,7 @@ define([
 
 		getTextByLinkType: function(linktype) {
 			return this.linkLabel[linktype];
-		},
+		}
 
 	});
 

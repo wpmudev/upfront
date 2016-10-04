@@ -59,31 +59,39 @@
     color: #284662;
     font-size: 11px;
     text-decoration: none;
-	font-family: Source Sans Pro, sans-serif;
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 	font-weight: 300;
 	font-style: normal;
 }
 
 /* --- Custom posts list --- */
-.upfront-settings-item-content .custom_posts ol {
-    border-top: 1px solid #c6dbef;
-    margin: 10px 0 0;
-    padding: 10px 0 0 20px;
+.upfront-settings-item-content .custom_posts ul {
+    margin: 10px 0px 0px 0px;
+    padding: 0px;
 }
-.upfront-settings-item-content .custom_posts ol li {
+.upfront-settings-item-content .custom_posts ul li {
     color: #a7bfde;
+	height: 20px;
+	line-height: 20px;
+	margin: 0px -15px;
+	padding: 0px 15px;
 }
-.upfront-settings-item-content .custom_posts ol li .permalink {
+.upfront-settings-item-content .custom_posts ul li .post-count {
+	color: #44698d;
+	font-weight: bold;
+	padding-right: 6px;
+}
+.upfront-settings-item-content .custom_posts ul li .permalink {
     color: #30475e;
 }
-.upfront-settings-item-content .custom_posts ol li a {
+.upfront-settings-item-content .custom_posts ul li a {
 	display: none;
 	border-bottom: none;
 }
-.upfront-settings-item-content .custom_posts ol li:hover a {
+.upfront-settings-item-content .custom_posts ul li:hover a {
 	display: inline;
 }
-.upfront-settings-item-content .custom_posts ol li a i {
+.upfront-settings-item-content .custom_posts ul li a i {
 	display: inline-block;
 	color: white;
 	background: red;
@@ -94,13 +102,52 @@
 	border-radius: 7px;
 	margin-left: 1em;
 	text-align: center;
+	float: right;
+	position: relative;
+	top: 3px;
 }
-.upfront-settings-item-content .custom_posts a {
-	color: #00a167;
-	border-bottom: 1px solid #00a167;
-	text-decoration: none;
+.upfront-settings-item-content .custom_posts a.upfront-add-posts {
+	background-image: linear-gradient(-179deg, #fafdff 0%, #f3faff 100%);
+    border: 1px solid #b7c9d9;
+    border-radius: 3px;
+    font: 600 12px/16px Open Sans, Helvetica Neueu, Helvetica, Arial, sans-serif;
+    color: #6486A6;
+    text-shadow: 0px 1px 0px #FFFFFF;
+    padding: 0px 10px;
+	height: 26px;
+	line-height: 26px;
+	display: inline-block;
+    position: relative;
+	margin: 10px 0px;
+}
+.upfront-settings-item-content .custom_posts a.upfront-add-posts:hover {
+	border: 1px solid #607f99;
 }
 
+/* --- Post settings styles --- */
+
+#sidebar-scroll-wrapper .upfront-display-type-section {
+	border-bottom: 1px solid #e5ecf4;
+	padding-bottom: 5px;
+}
+
+#sidebar-scroll-wrapper .upfront-display-type-section .upfront-settings-item-content .upfront-field-wrap,
+#sidebar-scroll-wrapper .upfront-list-type-section .upfront-settings-item-content .upfront-field-wrap {
+	margin: 0px;
+}
+
+#sidebar-scroll-wrapper .upfront-display-type-section label,
+#sidebar-scroll-wrapper .upfront-post-settings label.upfront-field-label {
+	font-size: 11px;
+    display: block;
+    font-family: verdana, sans-serif;
+	color: #7d99b6;
+	font-weight: normal;
+}
+
+#sidebar-scroll-wrapper .custom_posts li:hover {
+	background: #e6edf2;
+}
 
 /* --- Post parts list --- */
 .uposts-parts-picker-setting {
@@ -217,7 +264,60 @@
 	background-position: -728px -74px;
 	height: 14px;
 	width: 18px;
+	display: none;
+}
+
+.upfront-display-type-section .upfront-posts-display-type {
+	margin-top: -7px;
+}
+
+.upfront-display-type-single .upfront-settings-item-content .upfront-post-term,
+.upfront-display-type-single .upfront-settings-item-content .upfront-post-type,
+.upfront-display-type-single .upfront-settings-item-content .upfront-post-taxonomy {
+	margin-top: 10px;
+}
+
+.upfront-display-type-list .upfront-settings-item-content .upfront-post-term {
+	margin-top: 5px;
+}
+
+.upfront-display-type-list .upfront-settings-item-content .upfront-post-limit,
+.upfront-display-type-list .upfront-settings-item-content .upfront-post-type {
+	margin-top: 15px;
+}
+
+.upfront-settings-item-content .upfront-post-limit,
+.upfront-settings-item-content .upfront-post-type,
+.upfront-display-type-list .upfront-settings-item-content .upfront-offset-number,
+.upfront-display-type-list .upfront-settings-item-content .upfront-post-taxonomy {
 	display: inline-block;
+}
+
+.upfront-post-limit .upfront-field-label-block,
+.upfront-post-type .upfront-field-label-block,
+.upfront-offset-number .upfront-field-label-block,
+.upfront-post-taxonomy .upfront-field-label-block,
+.upfront-post-term .upfront-field-label-block {
+	margin-bottom: 3px !important;
+}
+
+.upfront-settings-item-content .upfront-post-limit input,
+.upfront-display-type-list .upfront-settings-item-content .upfront-offset-number input {
+	font-size: 12px;
+	height: 26px;
+}
+
+.upfront-settings-item-content .upfront-post-limit,
+.upfront-display-type-list .upfront-settings-item-content .upfront-offset-number {
+	width: 65px;
+	position: relative;
+	top: -8px;
+}
+
+.upfront-settings-item-content .upfront-post-type,
+.upfront-display-type-list .upfront-settings-item-content .upfront-post-taxonomy {
+	width: 160px;
+	margin-top: 5px;
 }
 
 .upfront-settings-item-content .post_parts.ui-sortable li .part_action:after {

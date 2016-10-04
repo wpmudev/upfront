@@ -1,5 +1,5 @@
 (function($) {
-	
+
 var l10n = Upfront.Settings && Upfront.Settings.l10n
 	? Upfront.Settings.l10n.global.views
 	: Upfront.mainData.l10n.global.views
@@ -8,7 +8,7 @@ var l10n = Upfront.Settings && Upfront.Settings.l10n
 define([
 	'scripts/upfront/bg-settings/mixins'
 ], function(Mixins) {
-	
+
 	var VideoItem = Upfront.Views.Editor.Settings.Item.extend(_.extend({}, Mixins, {
 		group: false,
 		initialize: function (options) {
@@ -44,6 +44,22 @@ define([
 						},
 						rendered: function (){
 							this.$el.addClass('uf-bgsettings-video-autoplay');
+						}
+					}),
+					loop: new Upfront.Views.Editor.Field.Checkboxes({
+						model: this.model,
+						property: 'background_video_loop',
+						use_breakpoint_property: true,
+						default_value: 1,
+						layout: 'horizontal-inline',
+						multiple: false,
+						values: [ { label: l10n.loop, value: 1 } ],
+						change: function () {
+							var value = this.get_value();
+							this.model.set_breakpoint_property(this.property_name, value ? 1 : 0);
+						},
+						rendered: function (){
+							this.$el.addClass('uf-bgsettings-video-loop');
 						}
 					}),
 					style: new Upfront.Views.Editor.Field.Radios({
@@ -117,15 +133,15 @@ define([
 						}
 					})
 				};
-				
+
 			this.$el.addClass('uf-bgsettings-item uf-bgsettings-videoitem');
-				
+
 			options.fields = _.map(fields, function(field){ return field; });
-			
+
 			this.on('show', function(){
 				fields.style.trigger('changed');
-			})
-			
+			});
+
 			this.bind_toggles();
 			this.constructor.__super__.initialize.call(this, options);
 		},

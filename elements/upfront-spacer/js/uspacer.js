@@ -39,7 +39,8 @@ define([
 			});
 		},
 		render: function () {
-			var grid = Upfront.Settings.LayoutEditor.Grid,
+			var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				grid = Upfront.Settings.LayoutEditor.Grid,
 				props = {},
 				me = this,
 				column_padding = grid.column_padding,
@@ -80,17 +81,21 @@ define([
 				this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:drop');
 				this.listenTo(this.parent_module_view, 'entity:drop', this.on_element_drop);
 
-				module_col = Upfront.Behaviors.GridEditor.get_class_num(this.parent_module_view.model.get_property_value_by_name('class'), grid.class);
+				module_col = Upfront.Behaviors.GridEditor.get_class_num(this.parent_module_view.model.get_property_value_by_name('class'), grid['class']);
 
 				// Make sure module class is added
 				this.parent_module_view.$el.find('> .upfront-module').addClass('upfront-module-spacer');
 				this.parent_module_view.model.add_class('upfront-module-spacer');
-
+			}
+			// Listen to wrapper update position
+			if ( this.wrapper_view ) {
+				this.stopListening(this.wrapper_view, 'update_position');
+				this.listenTo(this.wrapper_view, 'update_position', this.on_wrapper_update);
 			}
 
 			this.$el.html(template);
 
-			col = Upfront.Behaviors.GridEditor.get_class_num(props.class, grid.class);
+			col = Upfront.Behaviors.GridEditor.get_class_num(props['class'], grid['class']);
 			col = col > module_col ? module_col : col;
 
 			$object = this.$el.find('.upfront-editable_entity:first');
@@ -98,6 +103,10 @@ define([
 			$object.data('current_col', col);
 
 			Upfront.Events.trigger("entity:object:after_render", this, this.model);
+
+			if ( breakpoint && !breakpoint['default'] ) {
+				this.update_position();
+			}
 		},
 		// Don't have any controls
 		getControlItems: function () {
@@ -107,6 +116,9 @@ define([
 			return false;
 		},
 		apply_paddings: function () {
+			return false;
+		},
+		retain_current_preset: function () {
 			return false;
 		},
 		_is_applying: function (from_view) {
@@ -150,7 +162,7 @@ define([
 		},
 		on_content_style_edit_stop: function () {
 			return;
-		},
+		}
 	});
 
 	Upfront.Models.UspacerModel = UspacerModel;

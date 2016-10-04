@@ -80,8 +80,6 @@ define([
 			var currentBreakpoint,
 				breakpointsData;
 
-			this.removePreviewClasses();
-
 			// Setup model so that it saves breakpoint values to breakpoint property
 			if (this.hasBreakpointSettings === true && this.breakpointSpecificSettings) {
 				currentBreakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active();
@@ -102,10 +100,10 @@ define([
 			this.model.get("properties").trigger('change');
 			Upfront.Events.trigger("element:settings:saved");
 			Upfront.Events.trigger("element:settings:deactivate");
-			if(Upfront.Application.is_builder()) {
-				Upfront.Events.trigger("command:layout:export_theme");
-			} 
-			else {
+
+			var pluginsCallResult = Upfront.plugins.call('save-settings');
+
+			if (!pluginsCallResult.status || pluginsCallResult.status !== 'called') {
 				if ( _upfront_post_data.layout.specificity && _upfront_post_data.layout.item && !_upfront_post_data.layout.item.match(/-page/) )
 					Upfront.Events.trigger("command:layout:save_as");
 				else
@@ -113,6 +111,8 @@ define([
 			}
 
 			if (this.onSaveSettings) this.onSaveSettings();
+
+			this.removePreviewClasses();
 		},
 
 		cancelSettings: function() {
@@ -177,7 +177,7 @@ define([
 				titleHeight = this.$el.find('>.upfront-settings-title').outerHeight(true),
 				buttonHeight = this.$el.find('>.upfront-settings-button_panel').outerHeight(true)
 			;
-			this.$el.find('#sidebar-scroll-wrapper').css('max-height', (height-titleHeight-buttonHeight) + 'px')
+			this.$el.find('#sidebar-scroll-wrapper').css('max-height', (height-titleHeight-buttonHeight) + 'px');
 		},
 
 		cleanUp: function(){

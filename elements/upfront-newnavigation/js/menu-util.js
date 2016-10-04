@@ -15,8 +15,8 @@ define([], function () {
 				id_int = parseInt(id_str, 10),
 				menu = _.findWhere(wpMenus, {term_id: id_int})
 			;
-			if (_.isUndefined(menu)) 
-				menu = _.findWhere(wpMenus, {term_id: id_str})
+			if (_.isUndefined(menu))
+				menu = _.findWhere(wpMenus, {term_id: id_str});
 			return menu;
 		};
 

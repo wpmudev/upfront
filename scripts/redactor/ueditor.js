@@ -50,18 +50,18 @@ $.fn.ueditor = function(options){
 };
 
 var hackRedactor = function(){
-    
+
     /*
     // Deprecated, moved to override methods
     var clean = $.Redactor.prototype.clean();
-    
+
     clean.savePreFormatting = function(html) {
         return html;
     };
 
    $.Redactor.prototype.clean = function () { return clean };
    */
-    
+
 	// Make click consistent
 	$.Redactor.prototype.airBindHide = function () {
 		if (!this.opts.air || !this.$toolbar) return;
@@ -168,7 +168,7 @@ var hackRedactor = function(){
             this.$air.width(width);
         }
         if(bounds.right < bounds.left || bounds.right > winRight){
-            var parent = this.$editor.find('#selection-marker-' + bounds.i).parent();
+            parent = this.$editor.find('#selection-marker-' + bounds.i).parent();
             bounds.right =  Math.min(winRight, parent.offset().left + parent.width());
         }
 
@@ -345,7 +345,7 @@ var hackRedactor = function(){
                 },
                 setNodesMarker: function(range, node, type)
                 {
-                    var range = range.cloneRange();
+                    range = range.cloneRange();
 
                     try {
                         range.collapse(type);
@@ -444,7 +444,7 @@ var hackRedactor = function(){
             isEndOfElement: function(element){
                 if (typeof element == 'undefined')
                 {
-                    var element = this.$element;
+                    element = this.$element;
                     if (!element) return false;
                 }
 
@@ -779,7 +779,7 @@ var hackRedactor = function(){
     var l10n = Upfront.Settings && Upfront.Settings.l10n
         ? Upfront.Settings.l10n.global.ueditor
         : Upfront.mainData.l10n.global.ueditor
-    ; 
+    ;
 
     /**
      * Proxy the Redactor l10n
@@ -834,7 +834,6 @@ var Ueditor = function($el, options) {
             replaceDivs: false,
             pastePlainText: false,
 			imageEditable: false,
-            replaceDivs: false,
             //cleanStyleOnEnter: false,
             //removeDataAttr: false,
             removeEmpty: false,
@@ -922,25 +921,26 @@ var Ueditor = function($el, options) {
 
 
 
-    // Enter callback inside lists 
-    this.options.enterCallback = function (e) { 
+    // Enter callback inside lists
+    this.options.enterCallback = function (e) {
         // Current Block is a list item
         if(this.keydown.block.tagName === 'LI') {
             var current = this.selection.getCurrent(),
                 $parent = $(current).closest('li'),
                 $list = $parent.parent('ul,ol'),
                 $listlist = $list.parent('li').parent('ul,ol'),
-                emptyList = '<li>&#x200b;</li>'
+                emptyList = '<li>&#x200b;</li>',
+				node
             ;
 
             // Sublist to list
             if (
-                $parent.length !== 0 && 
+                $parent.length !== 0 &&
                 $listlist.length !== 0 &&
-                this.utils.isEmpty($parent.html()) && 
+                this.utils.isEmpty($parent.html()) &&
                 $list.next().length === 0
             ) {
-                var node = $(emptyList);
+                node = $(emptyList);
                 $listlist.append(node);
                 this.caret.setStart(node);
                 $parent.remove();
@@ -949,18 +949,18 @@ var Ueditor = function($el, options) {
             }
             // List to paragraph
             else if (
-                $parent.length !== 0 && 
-                this.utils.isEmpty($parent.html()) && 
+                $parent.length !== 0 &&
+                this.utils.isEmpty($parent.html()) &&
                 $list.next().length === 0
             ) {
-                var node = $(this.opts.emptyHtml);
+                node = $(this.opts.emptyHtml);
                 $list.after(node);
                 this.caret.setStart(node);
                 $parent.remove();
 
                 return false;
             }
-            // List 
+            // List
             else {
                 UeditorEvents.trigger("ueditor:enter", this, e);
             }
@@ -971,7 +971,6 @@ var Ueditor = function($el, options) {
              */
             if( this.utils.isEmpty( this.keydown.block.innerText ) ){
                 $(this.selection.getBlock()).remove();
-                var node;
                 if( $list.next().is("p") && this.utils.isEmpty( $list.next().text() ) ){
                     node = $list.next("p");
                 }else{
@@ -982,7 +981,7 @@ var Ueditor = function($el, options) {
             }
         }
         // Default
-        else {        
+        else {
             UeditorEvents.trigger("ueditor:enter", this, e);
         }
 
@@ -1140,7 +1139,7 @@ Ueditor.prototype = {
 
         caret = redactor.caret.getOffsetOfElement(node);
         if (!caret) return;
-        
+
         $el = $(node).clone();
         check = $el.text().substr(0, caret);
 
@@ -1151,8 +1150,13 @@ Ueditor.prototype = {
 
             var $node = $(node),
                 rx = new RegExp('^' + src.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1") + ' ?'),
-                text = $node.html().replace(rx, '')
+                text = $node.html().replace(rx, ''),
+				new_caret
             ;
+
+			// Since we're using `.html()`, we want to make sure
+			// the converted entities are properly replaced
+			if ('>' === src) text = text.replace(/&gt;/, ''); // No "g" modifier, so we replace the first instance
 
             // Let's not do nested lists
             // or expansion within lists in general
@@ -1163,31 +1167,33 @@ Ueditor.prototype = {
             if ("nest" in target && target.nest) {
                 $node.html(
                     '<' + target.tag + '><' + target.nest + '>' +
-                        text + 
+                        text +
                     '</' + target.nest + '></' + target.tag + '>'
                 );
+
+				new_caret = $node.find(target.nest).last().get();
             } else {
                 var _node = document.createElement(target.tag);
                 _node.innerHTML = text;
-                $node.replaceWith( _node );
+                $node.replaceWith(_node);
 
+				new_caret = _node;
             }
 
-            // Set caret position to end of the target
-            redactor.caret.setEnd(
-                "nest" in target && target.nest
-                    ? $node.find(target.nest).last().get()
-                    : _node
-            );
-
+			// Set caret position to end of the target and sync
+			redactor.caret.setEnd(new_caret);
             redactor.code.sync();
+
             /**
              * Make sure the created node doesn't contain the space created by the spacebar!
              */
             _.delay( function(){
                $(redactor.selection.getBlock()).html(text);
-            }, 3 );
 
+			   // Re-set caret position to end of the target and re-sync
+			   redactor.caret.setEnd(new_caret);
+               redactor.code.sync();
+            }, 3 );
 
             return false;
         });
@@ -1329,7 +1335,7 @@ Ueditor.prototype = {
 	},
 	get_anchors: function () {
 		var regions = Upfront.Application.layout.get("regions"),
-			anchors = [];
+			anchors = []
 		;
 		regions.each(function (r) {
 			r.get("modules").each(function (module) {
@@ -1346,7 +1352,7 @@ Ueditor.prototype = {
 	getUrlanchor: function(url) {
 		// this does almost the opposite of the above function
 
-		if(typeof(url) == 'undefined') var url = $(location).attr('href');
+		if(typeof(url) == 'undefined') url = $(location).attr('href');
 
 		if(url.indexOf('#') >=0) {
 			var tempurl = url.split('#');
@@ -1430,7 +1436,7 @@ Ueditor.prototype = {
 				|| $(e.target).parents().hasClass("redactor-dropdown"))
 			&& $(e.target).parents("#upfront-popup.upfront-postselector-popup").length === 0)
 		{
-            if(e.data.ueditor.$el.closest('a.menu_item').length > 0) { // blur on the menu item, dont stop the editor yet 
+            if(e.data.ueditor.$el.closest('a.menu_item').length > 0) { // blur on the menu item, dont stop the editor yet
                 e.data.ueditor.$el.trigger('blur');
             }
             else {
@@ -1526,7 +1532,7 @@ Ueditor.prototype = {
 			me.clickcount = me.clickcount+1;
 			me.lastmousedown = {x: e.pageX, y: e.pageY};
 			if(me.clickcount > 0)
-				setTimeout(function() { me.clickcount = 0 }, 400);
+				setTimeout(function() { me.clickcount = 0; }, 400);
 		});
 
 		$(document).one('mouseup', function(e){
@@ -1554,9 +1560,10 @@ Ueditor.prototype = {
 	},
 	getValue: function(is_simple_element){
 		var html = this.redactor.$element.html();
-		if(this.insertManager)
-			html = this.insertManager.insertExport(html, is_simple_element),
+		if(this.insertManager) {
+			html = this.insertManager.insertExport(html, is_simple_element);
             $html =  $("<div>").html( html );
+		}
 
         $html.find(".redactor-selection-marker").remove();
         /**
@@ -1614,11 +1621,11 @@ var InsertManagerInserts = Backbone.View.extend({
     className: "ueditor-post-insert-manager",
     $block: false,
     initialize: function(options){
-		
+
         if ( options.inserts && options.inserts.constructor === Array && !Upfront.Settings.Application.PERMS.EMBED ) {
 					options.inserts = _.without(options.inserts, "embed");
         }
-		
+
         this.insertsData = options.insertsData || {};
         this.inserts = options.inserts || {};
         this.redactor = options.redactor;
@@ -1658,20 +1665,19 @@ var InsertManagerInserts = Backbone.View.extend({
         this.__insert = insert;
         insert.start( this.$el, this.redactor.$editor )
             .done(function(args, resolved_insert){
+				var popup, results, insert;
 
                 /**
                  * Allows to get resolved insert from inserts with insert managers
                  */
                 if(_.isArray(args) ){
-                    var popup = args[0],
-                        results = args[0],
-                        insert = resolved_insert;
+                    popup = args[0];
+                    results = args[0];
+                    insert = resolved_insert;
                 }else{
-                    var popup = args,
-                        results = resolved_insert,
-                        insert = insert || self.__insert
-                    ;
-
+                    popup = args;
+                    results = resolved_insert;
+                    insert = insert || self.__insert;
                 }
 
                 // if(!results) Let's allow promises without result for now!
@@ -1688,18 +1694,18 @@ var InsertManagerInserts = Backbone.View.extend({
 
                     if(self.redactor.$element.find(self.$block).length < 1) {
 /*                        if(self.redactor.$element.hasClass('redactor-placeholder')) {
-                    
+
                             var f = jQuery.Event("keydown");
                             f.which = 65;
                             f.keyCode = 65;// # Some key code value
-                              
-                            
-                            
+
+
+
                             self.redactor.$element.trigger(f);
 
                         }
 */
-                        self.redactor.$element.append(self.$block);  
+                        self.redactor.$element.append(self.$block);
                     }
 
                     self.$block.replaceWith(insert.$el);
@@ -1770,10 +1776,12 @@ var InsertManager = Backbone.View.extend({
     position_tooltips: function(redactor){
         if( !this.$tooltips ) return;
 
-        var $current = $( redactor.selection.getCurrent());
+        var $current = $( redactor.selection.getCurrent() ),
+			$position = $( redactor.selection.getBlock() ).position();
+
         if( this.show_tooltip_in_this_location( redactor ) ){
-			if( typeof $current[0] === "undefined" || !_.isElement($current[0]) ) return;
-            var css = _.extend( $current.position(), { marginLeft: _.isArray($current) && _.isElement($current[0]) ?   $current.css("padding-left") : 0 } );
+			if( typeof $current[0] === "undefined" ) return;
+            var css = _.extend( $position, { marginLeft: _.isArray($current)  ?   $current.css("padding-left") : 0 } );
             this.$tooltips.css( css );
             this.$tooltips.show();
             UeditorEvents.trigger("ueditor:insert:relocate", $current);
@@ -1968,13 +1976,19 @@ var InsertManager = Backbone.View.extend({
 	},
 	show_tooltip_in_this_location: function(redactor){
 		var current = redactor.selection.getCurrent(),
-            $block = $( current );
+            $block = $( current ),
+			$prevBlock = $block.parent().prev(),
+			indexPosition = redactor.range.startOffset;
 
 		if( !current || _.isEmpty( $block ) ) return false;
+		
 
 		var $image_embed_insert_wrappers = $(".upfront-inserted_image-wrapper, .upfront-inserted_embed-wrapper"),
 			block_top = $block.offset().top,
+			block_html = $.trim( $block.html() ) || '',
+			prevblock_html = $.trim( $prevBlock.html() ) || '',
 			show_tooltip = true;
+			
 		$image_embed_insert_wrappers.each(function(){
 			var $this = $(this),
 				height = $this.find(".ueditor-insert-variant-group").height(),
@@ -1986,7 +2000,7 @@ var InsertManager = Backbone.View.extend({
 
 		return 	show_tooltip
 				&& 	$block.closest(".ueditor-insert").length === 0
-				&&  ( $.trim( $block.html() ) === "<br>" || ( typeof $block.closest("p.nosortable").html() !== "undefined" &&  $.trim( $block.closest("p.nosortable").html() ) === "" ) ) ;
+				&&  ( block_html.match(/<br>/g) || ( indexPosition < 1 && prevblock_html.match(/<br>/g) ) || ( typeof $block.closest("p.nosortable").html() !== "undefined" &&  $.trim( $block.closest("p.nosortable").html() ) === "" ) ) ;
 	}
 });
 
@@ -2130,7 +2144,7 @@ var ImagesHelper = {
 		Align: {
 			_apply: function ($img, data) {
 				data = $.extend({
-					float: "",
+					"float": "",
 					"text-align": "",
 					"width": ""
 				}, data);
@@ -2139,7 +2153,7 @@ var ImagesHelper = {
 			left: function (e) {
 				var $wrap = e.data.get_target(e.target),
 					$img = $wrap.find('img');
-				e.data.Align._apply($wrap, {float: "left"});
+				e.data.Align._apply($wrap, {"float": "left"});
 				e.data.Align._apply($img, {});
 				e.data.show_dialog($wrap);
 				Upfront.Events.trigger("upfront:editor:image_align", $wrap.get(), 'left');
@@ -2161,7 +2175,7 @@ var ImagesHelper = {
 			right: function (e) {
 				var $wrap = e.data.get_target(e.target),
 					$img = $wrap.find('img');
-				e.data.Align._apply($wrap, {float: "right"});
+				e.data.Align._apply($wrap, {"float": "right"});
 				e.data.Align._apply($img, {});
 				e.data.show_dialog($wrap);
 				Upfront.Events.trigger("upfront:editor:image_align", $wrap.get(), 'right');
@@ -2227,7 +2241,7 @@ var ImagesHelper = {
 				});
 				$("body").append($details);
 				$details.css({
-					left: $button.offset().left + 46 - ($details.width()/2),
+					left: $button.offset().left + 46 - ($details.width()/2)
 				});
 				$button.addClass('upfront-image-action-details-active');
 

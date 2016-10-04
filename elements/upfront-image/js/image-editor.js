@@ -1,7 +1,7 @@
 (function ($) {
 define([
 	'text!elements/upfront-image/tpl/image_editor.html',
-	'elements/upfront-image/js/crop-controls',
+	'elements/upfront-image/js/crop-controls'
 ], function(editorTpl, CropControls) {
 	var l10n = Upfront.Settings.l10n.image_element;
 	var breakpointColumnPadding = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().get('column_padding');
@@ -63,7 +63,7 @@ define([
 			'click .image-align-point': 'pointAlignment',
 			'click #image-edit-button-align': 'selectAlign',
 			// 'click .image-edit-rotate': 'rotate',
-			'click .image-fit-element-button': 'fillImage',
+			'click .image-fit-element-button': 'fillImage'
 		},
 
 		initialize: function(){
@@ -116,7 +116,7 @@ define([
 				left: - (imageSize.width - maskSize.width) / 2
 			};
 		},
-		
+
 		createImageControl: function(options) {
 			var control = new Upfront.Views.Editor.InlinePanels.ImageControl(),
 				me = this,
@@ -129,21 +129,21 @@ define([
 			this.listenTo(cropControls, 'crop:swap:image', this.changeImage);
 			this.listenTo(cropControls, 'crop:reset:image', this.image100);
 			this.listenTo(cropControls, 'crop:fit:image', this.fitImage);
-			this.listenTo(cropControls, 'crop:fill:image', this.fillImage);	
-			
+			this.listenTo(cropControls, 'crop:fill:image', this.fillImage);
+
 			control.view = cropControls;
-			
+
 			control.tooltip = l10n.btn.image_tooltip;
 
 			control.render();
-			
+
 			setTimeout(function() {
 
 				if(cols < 5) {
 					me.$el.find('.image-edit-button').css({
-						width: 50,
+						width: 50
 					});
-					
+
 					me.$el.find('.image-ok-button').css({
 						left: options.maskOffset.left + (options.maskSize.width - 50)
 					});
@@ -169,7 +169,7 @@ define([
 					});
 
 					var dots = me.$el.find('.image-align-points');
-					
+
 					dots.css({
 						left: (options.maskOffset.left - (dots.width() / 2)) + (options.maskSize.width / 2)
 					});
@@ -178,9 +178,9 @@ define([
 						top: options.maskOffset.top,
 						left: options.maskOffset.left + (options.maskSize.width + 35)
 					});
-					
+
 					me.$el.find('.image-ok-button').prepend('<div class="image-edit-size-buttons"><span class="image-increase-size">+</span><span class="image-decrease-size">-</span></div>');
-				
+
 					var sizeButtons = me.$el.find('.image-edit-size-buttons'),
 						size = me.options.size,
 						ratio = size.width / size.height;
@@ -189,44 +189,44 @@ define([
 						sizeButtons.find('.image-increase-size').click(function(e) {
 							e.preventDefault();
 							var step = 1;
-							
+
 							if(typeof e.shiftKey !== "undefined" && e.shiftKey === true) {
 								step = 5;
 							}
-							
+
 							me.buttonIncreaseSize(step, ratio);
 						});
-						
+
 						sizeButtons.find('.image-decrease-size').click(function(e) {
 							e.preventDefault();
 							var step = 1;
-							
+
 							if(typeof e.shiftKey !== "undefined" && e.shiftKey === true) {
 								step = 5;
 							}
-							
+
 							me.buttonDecreaseSize(step, ratio);
 						});
 					}
-					
+
 					me.$el.find('.image-edit-resize').hide();
 				}
-			
+
 			}, 100);
 
 			return control;
 		},
-		
+
 		buttonIncreaseSize: function(step, ratio) {
 			var me = this,
 				canvas = this.$('#uimage-canvas'),
 				handler = this.$('#uimage-drag-handle')
 			;
-			
+
 			var size = this.options.size,
 				newWidth = this.invert ? size.height + step : size.width + step,
 				newHeight = this.invert ? size.width + step : size.height + step;
- 
+
 			canvasSize = {
 				width: (newWidth),
 				height: (newWidth / ratio)
@@ -238,22 +238,22 @@ define([
 			this.selectMode(canvasSize, true);
 			this.setImageSize(canvasSize);
 		},
-		
+
 		buttonDecreaseSize: function(step, ratio) {
 			var me = this,
 				canvas = this.$('#uimage-canvas'),
 				handler = this.$('#uimage-drag-handle')
 			;
-			
+
 			var size = this.options.size,
 				newWidth = this.invert ? size.height - step : size.width - step,
 				newHeight = this.invert ? size.width - step : size.height - step;
- 
+
 			canvasSize = {
 				width: (newWidth),
 				height: (newWidth / ratio)
 			};
-			
+
 			this.options.size = canvasSize;
 			canvas.css(canvasSize);
 			handler.css(canvasSize);
@@ -267,28 +267,28 @@ define([
 
 			this.$el.find('.image-align-point').removeClass('active-alignment-point');
 			element.addClass('active-alignment-point');
-			
+
 			var pos_array = position.split('-');
 
 			this.setAlign(pos_array[1], pos_array[0]);
-			
+
 			this.isDotAlign = true;
 		},
-		
+
 		setDotAlignment: function() {
 			this.higlighActiveDot();
-			
-			if(this.isDotAlign === true) {
+
+			if(!!this.isDotAlign === true) {
 				this.setAlign(this.align, this.valign);
 			}
 		},
-		
+
 		higlighActiveDot: function() {
 			//First remove all highlights
 			this.$el.find('.image-align-point').removeClass('active-alignment-point');
-			
+
 			//Highlight the active dot if isDotAlign true
-			if(typeof this.isDotAlign !== "undefined" && this.isDotAlign === true) {
+			if(typeof this.isDotAlign !== "undefined" && !!this.isDotAlign === true) {
 				var activeDot = this.$el.find('.'+ this.valign +'-'+ this.align +'-point');
 
 				if(activeDot.length) {
@@ -307,7 +307,7 @@ define([
 				options.maskSize.width = options.editElement.elementSize.width + 2;
 				options.maskSize.height = options.editElement.elementSize.height;
 			}
-			
+
 			this.resetDefaults();
 			this.options = options;
 			this.src = options.src;
@@ -365,11 +365,11 @@ define([
 			if(options.align) {
 				this.align = options.align;
 			}
-			
+
 			if(options.valign) {
 				this.valign = options.valign;
 			}
-			
+
 			if(options.isDotAlign) {
 				this.isDotAlign = options.isDotAlign;
 			}
@@ -416,7 +416,7 @@ define([
 			this.selectMode(canvasSize, true);
 
 			this.setImageSize(canvasSize);
-			
+
 			this.setDotAlignment();
 
 			//this.setAlign(this.align);
@@ -471,7 +471,7 @@ define([
 				//Make sure we have size for natural size
 				fullWidth = full;
 			}
-			
+
 			if(fullWidth.width === canvas.width() && fullWidth.height === canvas.height()) {
 				button.find('input').prop('disabled', true);
 				button.addClass('image-reset-disabled');
@@ -488,7 +488,7 @@ define([
 			if(!options.editElement) {
 				return false;
 			}
-			
+
 			var elementView = options.editElement,
 				elementSize = {
 					maxColumns: elementView.get_element_max_columns(),
@@ -496,7 +496,7 @@ define([
 					rowHeight: breakpointColumnPadding
 				}
 			;
-			
+
 			if(!elementSize.maxRows) {
 				elementSize.maxRows = elementView.get_element_rows();
 			}
@@ -507,7 +507,7 @@ define([
 			elementSize.columns = Math.ceil(options.maskSize.width / elementSize.columnWidth);
 
 			this.elementSize = elementSize;
-			
+
 			// If the image is not new we are done
 			if(!options.setImageSize) {
 				return false;
@@ -520,7 +520,7 @@ define([
 					height: (current.rows - 2) * this.elementSize.rowHeight
 				}
 			;
-			
+
 			if(current.columns > elementSize.columns || current.rows > elementSize.rows) {
 				return false;
 			}
@@ -619,7 +619,7 @@ define([
 				src = img.attr('src'),
 				halfBorder = this.bordersWidth / 2
 			;
-			
+
 			return {
 				imageSize: {width: Math.round(this.invert ? img.height() : img.width()), height: Math.round(this.invert ? img.width() : img.height())},
 				imageOffset: {
@@ -780,7 +780,7 @@ define([
 
 						//Update dots when we drag the image
 						me.isDotAlign = false;
-						
+
 						me.higlighActiveDot();
 					},
 					drag: function(e, ui){
@@ -804,35 +804,38 @@ define([
 			me.setResizingLimits();
 
 		},
-		
+
 		setAlignDotsOnDrag: function(top, left) {
-			limits = this.getContainment(),
-			limitRight = limits[0],
-			limitBottom = limits[1],
-			limitLeft = limits[2],
+			limits = this.getContainment();
+			limitRight = limits[0];
+			limitBottom = limits[1];
+			limitLeft = limits[2];
 			limitTop = limits[3];
-			
+
+			// If image cant be dragged return
+			if(limitRight === limitLeft && limitBottom === limitTop) return;
+
 			// Image is top left
 			if(limitLeft === left && limitTop === top) {
 				this.setDotAlignPosition('top', 'left');
 			}
-			
+
 			// Image is top right
 			if(limitRight === left && limitTop === top) {
 				this.setDotAlignPosition('top', 'right');
 			}
-			
+
 			// Image is bottom left
 			if(limitLeft === left && limitBottom === top) {
 				this.setDotAlignPosition('bottom', 'left');
 			}
-			
+
 			// Image is bottom right
 			if(limitRight === left && limitBottom === top) {
 				this.setDotAlignPosition('bottom', 'right');
 			}
 		},
-		
+
 		setDotAlignPosition: function(valign, align) {
 			// Make sure we call it only once
 			if(this.align !== align || this.valign !== valign) {
@@ -999,7 +1002,7 @@ define([
 				fullWidth = this.options.fullSize,
 				maskSize = current
 			;
-			
+
 			//if(this.elementSize.maxColumns < current.columns){
 				var maskHeight = fullGrid.height;
 				maskSize = {columns: this.elementSize.maxColumns, rows: Math.ceil(maskHeight / this.elementSize.rowHeight) + 2};
@@ -1007,7 +1010,7 @@ define([
 
 			// Don't allow changing width mask size anymore
 			maskSize.columns = this.elementSize.maxColumns;
-			
+
 			if(typeof this.options.fullSize === "undefined" || !this.options.fullSize) {
 				//Make sure we have size for natural size
 				fullWidth = fullGrid;
@@ -1034,14 +1037,14 @@ define([
 			if(maskSize.columns !== 22 && current.columns > maskSize.columns) {
 				this.showExpandAlert();
 			}
-			
+
 			//We should set dots to center
 			this.align = this.valign = 'center';
 			this.higlighActiveDot();
 
 			//Set image centered on Natural
 			this.setAlign('center', 'center');
-			
+
 			this.check100ButtonActivation();
 		},
 
@@ -1094,7 +1097,7 @@ define([
 
 			this.open(options);
 		},
-		
+
 		clearDotAlign: function(center) {
 			this.isDotAlign = false;
 			this.$el.find('.image-align-point').removeClass('active-alignment-point');
@@ -1129,7 +1132,7 @@ define([
 			this.centerImage(true);
 
 			this.setResizingLimits();
-			
+
 			this.clearDotAlign(true);
 
 			$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
@@ -1193,7 +1196,7 @@ define([
 			this.centerImage(true);
 
 			this.setResizingLimits();
-			
+
 			this.clearDotAlign(true);
 
 			$('#uimage-drag-handle').draggable('option', 'containment', this.getContainment());
@@ -1263,7 +1266,7 @@ define([
 				gridWidth = grid.width() - (2 * breakpointColumnPadding),
 				size = fullSize || this.fullSize
 			;
-			
+
 			// to avoid using upfront-grid-layout with no content
 			if ( this.options ) {
                 if ( this.options.editElement ) {
@@ -1271,7 +1274,7 @@ define([
                     grid = objectView.parents('.upfront-grid-layout');
                     gridWidth = grid.width() - (2 * breakpointColumnPadding);
                 }
-            } 
+            }
 
 			if(size.width > gridWidth) {
 				size = {width: gridWidth, height: Math.round(size.height / (size.width / gridWidth))};
@@ -1388,13 +1391,13 @@ define([
 			if(direction_h !== 'left' && direction_h !== 'center' && direction_h !== 'right') {
 				return false;
 			}
-			
+
 			if(direction_v !== 'top' && direction_v !== 'center' && direction_v !== 'bottom') {
 				return false;
 			}
-			
+
 			this.align = direction_h;
-			
+
 			if(this.align === 'center') {
 				position.left = mask.offset().left - ((canvas.width() -  mask.width()) / 2);
 			} else if(this.align === 'left') {
@@ -1402,9 +1405,9 @@ define([
 			} else {
 				position.left = mask.offset().left + mask.width() - canvas.width();
 			}
-			
+
 			this.valign = direction_v;
-			
+
 			if(typeof direction_v !== "undefined") {
 				if(direction_v === 'center') {
 					position.top = mask.offset().top - ((canvas.height() -  mask.height()) / 2);

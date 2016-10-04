@@ -40,6 +40,7 @@ function upfront_login_initialize () {
 	upfront_add_layout_editor_entity('upfront_login', upfront_relative_element_url('js/upfront_login', __FILE__));
 
 	require_once (dirname(__FILE__) . '/lib/upfront_login_server.php');
+	require_once (dirname(__FILE__) . '/lib/class_upfront_login_presets_server.php');
 	Upfront_LoginAjax::serve();
 }
 // Initialize the entity when Upfront is good and ready

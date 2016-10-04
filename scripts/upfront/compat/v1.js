@@ -9,7 +9,7 @@ var _start;
 /**
  * This holds a reference to pre-start processing
  */
-var _callback = function () {}
+var _callback = function () {};
 
 /**
  * Return backup notice popup string
@@ -26,7 +26,7 @@ function get_backup_notice () {
 		return $.post(Upfront.Settings.ajax_url, {action: "upfront-notices-dismiss"});
 	};
 
-	return '' + 
+	return '' +
 		'<div class="upfront-version_compatibility-nag">' +
 			'<p>' + notice + '</p>' +
 			'<div>' +
@@ -46,7 +46,7 @@ function get_theme_notice () {
 	var theme = ((Upfront.data || {}).Compat || {}).theme || 'your current theme',
 		url = ((Upfront.data || {}).Compat || {}).theme_url
 	;
-	return '' + 
+	return '' +
 		'<div class="upfront-version_compatibility-nag">' +
 			'<p>A new version of <b>' + theme + '</b> is available. We recommend you Update <b>' + theme + '</b> before making any edits.</p>' +
 			'<div>' +
@@ -75,11 +75,11 @@ function get_popup_markup () {
  * @return {Boolean}
  */
 function application_override () {
-	
+
 	_nag = $.magnificPopup.open({
 		items: {
 	    	src: get_popup_markup(),
-	    	type: 'inline',
+	    	type: 'inline'
 	  	},
 	    mainClass: 'uf-upgrade-notice'
 	});
@@ -89,7 +89,7 @@ function application_override () {
 			.on('click', function (e) {
 				if (e.preventDefault) e.preventDefault();
 				if (e.stopPropagation) e.stopPropagation();
-				
+
 				$.magnificPopup.close();
 				// Shim the start method back in
 				Upfront.Application.start = _start;
@@ -99,7 +99,7 @@ function application_override () {
 
 				// Apply pre-boot callback
 				if (_callback && 'function' === typeof _callback) _callback.apply(this);
-				
+
 				return false;
 			})
 		.end()

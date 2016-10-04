@@ -65,6 +65,12 @@ var PostImageInsert = base.ImageInsertBase.extend({
         this.updateControlsPosition();
         $tools_el.append('<a href="#" contenteditable="false" class="upfront-icon-button upfront-icon-button-delete ueditor-insert-remove"></a>');
 
+        // After rendering, let's sync the redactor if exists
+        var ueditor;
+        if ( this.$editor && this.$editor.data('ueditor') ) {
+            ueditor = this.$editor.data('ueditor');
+            ueditor.redactor.code.sync();
+        }
     },
     prepare_data: function(){
         var data = _.extend( {}, this.defaultData, this.data.toJSON() ),
@@ -82,45 +88,61 @@ var PostImageInsert = base.ImageInsertBase.extend({
         if( data.show_caption == 0 ){
             data.style.image.width_cls = Upfront.Settings.LayoutEditor.Grid.class + 24;
         }
+        else {
+            data.style.image.width_cls = Upfront.Settings.LayoutEditor.Grid.class + data.style.image.col;
+        }
         var $group = this.$el.find(".ueditor-insert-variant-group"),
             ge = Upfront.Behaviors.GridEditor,
             $parent = $('.upfront-content-marker-contents'),
             padding_left = parseFloat( $(".upfront-content-marker-contents>*").css("padding-left")) / ge.col_size ,
             padding_right = parseFloat( $(".upfront-content-marker-contents>*").css("padding-right")) / ge.col_size,
             parent_col = Upfront.Util.grid.width_to_col( $parent.width(), true ),
-            max_col =   parent_col  - padding_left - padding_right,
+            max_col = parent_col  - padding_left - padding_right,
             col_size = $(".upfront-content-marker-contents>*").width()/max_col,
             $object = this.$editor.closest('.upfront-object'),
             object_padding_left = parseInt($object.css('padding-left'), 10),
-            object_padding_right = parseInt($object.css('padding-right'), 10)
+            object_padding_right = parseInt($object.css('padding-right'), 10),
+            group_left = 0,
+            group_margin_left = 0,
+            group_margin_right = 0,
+            group_max_col = max_col
         ;
         if ( this.$editor.hasClass('upfront-indented_content') ) {
             $parent = this.$editor;
             padding_left = parseFloat( $parent.css("padding-left")) / ge.col_size;
             padding_right = parseFloat( $parent.css("padding-right")) / ge.col_size;
-            parent_col = Upfront.Util.grid.width_to_col( $parent.width(), true );
+            parent_col = Upfront.Util.grid.width_to_col( $parent.outerWidth(), true );
             max_col =   parent_col  - padding_left - padding_right;
             col_size = ge.col_size;
             this.$el.attr('style', 'margin-left: ' + (( padding_left * col_size * -1 ) - object_padding_left) + 'px; margin-right: ' + (( padding_right * col_size * -1 ) - object_padding_right) + 'px;');
         }
 
-
+        group_max_col = max_col;
         padding_left = padding_left ? parseInt(padding_left, 10) : 0;
         padding_right = padding_right ? parseInt(padding_right, 10) : 0;
 
         if (style_variant && style_variant.group && style_variant.group.float) {
-            if ( style_variant.group.float == 'left' && padding_left > 0 ){
+            group_left = parseInt(style_variant.group.left, 10);
+            group_margin_left = parseInt(style_variant.group.margin_left, 10);
+            group_margin_right = parseInt(style_variant.group.margin_right, 10);
+            group_max_col = max_col - group_margin_left - group_margin_right;
+
+            if ( style_variant.group.float == 'left' ){
                 data.style.group.marginLeft = ( padding_left - Math.abs(style_variant.group.margin_left) ) * col_size;
                 data.style.group.marginRight = 0;
             }
-            else if ( style_variant.group.float == 'right' && padding_right > 0 ){
+            else if ( style_variant.group.float == 'right' ){
                 data.style.group.marginRight = ( padding_right - Math.abs(style_variant.group.margin_right) ) * col_size;
                 data.style.group.marginLeft = 0;
             }
-            else if ( style_variant.group.float == 'none' && padding_left > 0 ){
+            else if ( style_variant.group.float == 'none' ){
                 data.style.group.marginLeft = ( padding_left - Math.abs(style_variant.group.margin_left) + Math.abs(style_variant.group.left) ) * col_size;
                 data.style.group.marginRight = 0;
+                group_max_col -= group_left;
             }
+
+            group_max_col = group_max_col > parent_col ? parent_col : group_max_col;
+            data.style.group.maxWidth = ((group_max_col/parent_col) * 100) + '%';
         }
         return data;
     },

@@ -47,6 +47,7 @@ jQuery(document).ready(function($){
 			return breakpoint;
 		}
 	}
+	window.upfront_get_breakpoint = get_breakpoint; // Expose to global
 
 	/**
 	 * Get the previously used breakpoint
@@ -57,13 +58,14 @@ jQuery(document).ready(function($){
 		get_breakpoint();
 		return previous_breakpoint;
 	}
+	window.upfront_get_previous_breakpoint = get_previous_breakpoint; // Expose to global
 
 	/* Youtube API */
 	var youtube_api_loaded = false;
 	var youtube_api_ready = false;
 	var youtube_player_ids = [];
 
-	function mute_youtube_video (id) {
+	function change_youtube_video (id, type) {
 		youtube_player_ids.push(id);
 		if ( !youtube_api_loaded ){
 			var tag = document.createElement('script');
@@ -72,37 +74,60 @@ jQuery(document).ready(function($){
 			firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 			window.onYouTubeIframeAPIReady = function () {
 				youtube_api_ready = true;
-				create_youtube_players();
+				create_youtube_players(type);
 			}
 			youtube_api_loaded = true;
 			return;
 		}
-		if ( youtube_api_ready )
-			create_youtube_players();
+		if ( youtube_api_ready ) {
+			create_youtube_players(type);
+		}
 	}
 
-	function create_youtube_players () {
+	function create_youtube_players (type) {
 		for ( var i = 0; i < youtube_player_ids.length; i++ )
-			var player = new YT.Player(youtube_player_ids[i], {
-				events: {
-					'onReady': on_mute_youtube_ready
-				}
-			});
+			// Only Loop video.
+			if (type === 'loop') {
+				var player = new YT.Player(youtube_player_ids[i], {
+					events: {
+						'onReady': on_loop_youtube_ready
+					}
+				});
+			} else if (type === 'loopAndMute') {
+				// Loop and mute video.
+				var player = new YT.Player(youtube_player_ids[i], {
+					events: {
+						'onReady': function(e) {
+							on_loop_youtube_ready(e);
+							on_mute_youtube_ready(e);
+						}
+					}
+				});
+			// Only mute:
+			} else {
+				var player = new YT.Player(youtube_player_ids[i], {
+					events: {
+						'onReady': on_mute_youtube_ready
+					}
+				});
+			}
 		youtube_player_ids = [];
 	}
 
 	function on_mute_youtube_ready (event) {
-		event.target.mute();
+		return event.target.mute();
+	}
 
+	function on_loop_youtube_ready (event) {
 		var time, duration;
-		setInterval(function(){
+		return setInterval(function(){
 			time = event.target.getCurrentTime();
 			duration = event.target.getDuration();
 			if(time > duration - 0.5) {
 				event.target.seekTo(0);
 				event.target.playVideo();
 			}
-		},200);
+		}, 200);
 	}
 
 	/* Vimeo API */
@@ -173,6 +198,7 @@ jQuery(document).ready(function($){
 							prev_type = $prev_bg.attr('data-bg-type-' + breakpoint),
 							has_alpha = function (color) {
 								if (!color) return false;
+								if ("transparent" == color) return true;
 								var matches = color.match(/(rgba|hsla)\(.*?,.*?,.*?,.*?([\d.]+).*?\)/);
 								if (matches && matches[2] && parseFloat(matches[2]) < 1) return true;
 								return false;
@@ -223,6 +249,9 @@ jQuery(document).ready(function($){
 				if ( src && before_src != src && $el.hasClass('upfront-image-lazy') ){
 					$el.removeClass('upfront-image-lazy-loaded');
 				}
+				else {
+					$el.css('background-image', 'url("' + src + '")');
+				}
 			}
 			else if ( type == 'color' ) {
 				$(this).css('background-image', 'none');
@@ -234,12 +263,26 @@ jQuery(document).ready(function($){
 						var $iframe = $($(this).children('script.video-embed-code').html()),
 							id = $iframe.attr('id');
 						$(this).append($iframe);
-						if ( $(this).attr('data-bg-video-mute') == 1 ){
+						// If mute is enabled:
+						if ( $(this).attr('data-bg-video-mute') == 1 ) {
 							var src = $iframe.attr('src');
-							if ( src.match(/youtube\.com/i) )
-								mute_youtube_video(id);
-							else if ( src.match(/vimeo\./i) )
+							if ( src.match(/youtube\.com/i) ) {
+								// If loop is enabled too.
+								if ( $(this).attr('data-bg-video-loop') == 1 ) {
+									change_youtube_video(id, 'loopAndMute');
+								} else {
+									change_youtube_video(id, 'mute');
+								}
+							} else if ( src.match(/vimeo\./i) ) {
 								mute_vimeo_video(id);
+							}
+						// If only loop is enabled:
+						} else if ( $(this).attr('data-bg-video-loop') == 1 ) {
+							var src = $iframe.attr('src');
+							// Only loop via this method if youtube video.
+							if ( src.match(/youtube\.com/i) ) {
+								change_youtube_video(id, 'loop');
+							}
 						}
 					}
 				});
@@ -528,6 +571,84 @@ jQuery(document).ready(function($){
 				}
 			}
 		});
+		$('.upfront-output-object .upfront-featured-image-smaller').each(function() {
+			var $img = $(this),
+				$container = $img.parent(),
+				data = $img.data('featured-image'),
+				align = $img.data('featured-align'),
+				valign = $img.data('featured-valign'),
+				dotalign = $img.data('featured-dotalign'),
+				mode = $img.data('featured-mode'),
+				imgHeight = $img.height(),
+				imgWidth = $img.width(),
+				breakpoint = get_breakpoint()
+			;
+
+			// If table or mobile breakpoint, image is smaller than container and dotAlign is true make it inline
+			if((breakpoint === "tablet" || breakpoint === "mobile") && 
+					((mode === "small" || mode === "vertical" ) && dotalign === true)) {
+
+				// Set text-align for parent container
+				$container.css({
+					'textAlign': align,
+					'maxWidth': '100%'
+				});
+				
+				// Make image inline
+				$img.css({
+					'position': 'static',
+					'display': 'inline-block'
+				});
+				
+				// Update margin to position image top or bottom
+				/*if(valign === "center") {
+					$img.css({
+						'marginTop': (data.offsetHeight / 2) - (imgHeight / 2),
+					});
+				} else if (valign === "bottom") {
+					$img.css({
+						'marginTop': (data.offsetHeight - imgHeight),
+					});
+				}*/
+			} else {
+				if((breakpoint === "tablet" || breakpoint === "mobile") && mode === "small") {
+					// Null above
+					$container.css({
+						'textAlign': 'center',
+						'maxWidth': '100%',
+						'width': '100%'
+					});
+					
+					$img.css({
+						'position': 'static',
+						'display': 'inline-block'
+					});
+				} else if ((breakpoint === "tablet" || breakpoint === "mobile") && mode !== "small") {
+					// Set image 100% width
+					$container.css({
+						'width': '100%',
+						'height': 'auto'
+					});
+					$img.css({
+						'width': '100%',
+						'height': 'auto',
+						'left': 0
+					});
+				} else {
+					// Null above and position image into parent container
+					$img.css({ 
+						'top': data.offsetTop, 
+						'left': data.offsetLeft,
+						'position': 'relative',
+						'display': 'block',
+						'marginTop': 0,
+						'width': 'initial'
+					});
+					
+					$container.css({ 'width': data.offsetWidth, 'height': data.offsetHeight});
+				}
+			}
+		});
 		$('.upfront-output-object .uf-post .thumbnail, .uf-post-data .upostdata-part.thumbnail').each(function(){
 			var is_upostdata = $(this).hasClass('upostdata-part'),
 				$object = $(this).closest('.upfront-output-object'),
@@ -536,10 +657,35 @@ jQuery(document).ready(function($){
 				padding_top = parseInt($object.css('padding-top'), 10),
 				padding_bottom = parseInt($object.css('padding-bottom'), 10),
 				$img = $(this).find('img'),
+				$container = $(this),
+				imgHeight = $img.height(),
+				imgWidth = $img.width(),
+				breakpoint = get_breakpoint(),
 				img = new Image,
 				img_h, img_w
 			;
 			if ( is_upostdata ) {
+				if(breakpoint === "tablet" || breakpoint === "mobile") {
+					// Set image 100% width
+					$container.css({
+						'width': '100%',
+						'height': 'auto'
+					});
+					$img.css({
+						'width': '100%',
+						'height': 'auto'
+					});
+					// Set height to image
+					height = imgHeight;
+					$object.css('min-height', height);
+					$object.closest('.upfront-output-object-group').css('min-height', height);
+				}
+				else {
+					$object.css('min-height', '');
+					$object.closest('.upfront-output-object-group').css('min-height', '');
+				}
+				
+				if ( !$img.hasClass('upfront-featured-image-fit-wrapper') ) return; // No fit for this
 				height -= padding_top + padding_bottom;
 				$(this).css('height', height);
 			}
@@ -751,11 +897,11 @@ jQuery(document).ready(function($){
 	$("[data-group-link]").css({'cursor': 'pointer'});
 	$(document).on("click", "[data-group-link]", function () {
 		var url = $(this).data("groupLink");
-		var target = $(this).data("groupTarget");
+		var target = $(this).data("groupTarget") || '_self';
 
 		if(url.indexOf('#') === -1) {
 			// Not an anchor, follow link
-			window.open(url, $(this).data("groupTarget"));
+			window.open(url, target);
 			return;
 		}
 
@@ -1234,20 +1380,38 @@ jQuery(document).ready(function($){
 			var $me = $(this),
 				rmap = $me.attr("data-preset_map"),
 				map = rmap ? JSON.parse(rmap) : {},
+				current_preset_class,
 				final_preset_class
 			;
 
 			// Edge case, for when we don't have a preset for this
 			// breakpoint in an element - it should retain its classes
-			if (!map[breakpoint]) return true;
+			// if (!map[breakpoint]) return true;
+			
+			// we have to provide proper fallback here, mobile -> tablet -> desktop
+			if ( breakpoint == 'mobile' ) {
+				map[breakpoint] = map[breakpoint] || map['tablet'] || map['desktop'];
+			} else if ( breakpoint == 'tablet' ) {
+				map[breakpoint] = map[breakpoint] || map['desktop'];
+			} else {
+				map[breakpoint] = map[breakpoint];
+			}
 
 			$.each(map, function (bp, preset) {
-				$me.removeClass(preset);
+				if ( $me.hasClass(preset) ) {
+					current_preset_class = preset;
+					$me.removeClass(preset);
+				}
 				if (bp === breakpoint && !final_preset_class) final_preset_class = preset;
 			});
 
 			if (final_preset_class) {
 				$me.addClass(final_preset_class);
+				// find all children with such preset class, some elements do have this
+				$me.find('.' + current_preset_class).each(function(){
+					$(this).removeClass(current_preset_class);
+					$(this).addClass(final_preset_class);
+				});
 			}
 
 		});

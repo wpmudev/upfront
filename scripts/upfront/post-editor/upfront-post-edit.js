@@ -1,5 +1,9 @@
-;(function($){define(["text!upfront/templates/post-editor/edition-box.html"], function(editionBox_tpl){
-	
+;(function($){
+define([
+	"text!upfront/templates/post-editor/edition-box.html",
+	"upfront/post-editor/post-box-metadesc"
+], function (editionBox_tpl, Post_Box_Metadesc) {
+
 var l10n = Upfront.Settings && Upfront.Settings.l10n
 			? Upfront.Settings.l10n
 			: Upfront.mainData.l10n
@@ -19,7 +23,7 @@ var Box = Backbone.View.extend({
         'click .ueditor-action-preview': 'navigate_to_preview',
         'click .ueditor-button-cancel-edit': 'cancel',
         'click .ueditor-action-publish': 'publish',
-        'click .ueditor-action-draft': 'saveDraft',
+        'click .ueditor-action-draft': 'saveAsDraft',
         'click .ueditor-action-trash': 'trash',
         'click .ueditor-box-title': 'toggle_section',
         'click .ueditor-save-post-data': 'save_post_data'
@@ -41,17 +45,20 @@ var Box = Backbone.View.extend({
 
         // this.listenTo(Upfront.Events, 'upfront:element:edit:stop', this.element_stop_prop);
         this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
-				
+        this.listenTo(Upfront.Events, 'entity:layout:change', this.on_layout_change);
+
         Upfront.Events.off("command:layout:trash", this.trash);
         Upfront.Events.off("command:layout:save", this.publish);
-        Upfront.Events.off("command:layout:save_as", this.publish);
+        Upfront.Events.off("command:layout:save_as", this.save_as_publish);
+        Upfront.Events.off("command:post:save", this.publish);
 
         Upfront.Events.on("command:layout:trash", this.trash, this);
         Upfront.Events.on("command:layout:save", this.publish, this);
         Upfront.Events.on("command:layout:save_as", this.save_as_publish, this);
+        Upfront.Events.on("command:post:save", this.publish, this);
 
     },
-	
+
 	rebindEvents: function () {
 		//Rebind events for whole box
 		this.render();
@@ -123,11 +130,11 @@ var Box = Backbone.View.extend({
 			;
 		extraData.url_label = "post" === me.post.get("post_type") ? l10n.global.content.post_url : l10n.global.content.page_url;
 		this.$el.html(this.tpl(_.extend({}, postData, extraData) ));
-		
+
 		if(postData.postStatus === "publish") {
 			this.$el.find('.ueditor-action-draft, .ueditor-action-preview').hide();
 		}
-		
+
 		this.populateSections();
 		return this;
 	},
@@ -146,8 +153,8 @@ var Box = Backbone.View.extend({
     },
 
     renderTaxonomyEditor: function($el, tax){
+		tax = typeof tax === "undefined" ? "category" : tax;
         var self = this,
-            tax = typeof tax === "undefined" ? "category" : tax,
             termsList = new Upfront.Collections.TermList([], {postId: this.post.id, taxonomy: tax})
         ;
 
@@ -168,7 +175,7 @@ var Box = Backbone.View.extend({
         });
 
     },
-	
+
 	on_layout_change: function() {
 		if ( Upfront.Application.layout_ready ) {
 			this.layout_modified = true;
@@ -181,7 +188,7 @@ var Box = Backbone.View.extend({
         this.$('.misc-pub-schedule').html(this.scheduleSection.$el);
 
         this.$(".misc-pub-section.misc-pub-post-url").html( this.urlEditor.$el  );
-		
+
 		// We dont need this as we have another tab for them
         //this.renderTaxonomyEditor(this.$(".misc-pub-post-category"), "category");
         //this.renderTaxonomyEditor(this.$(".misc-pub-post-tags"), "post_tag");
@@ -213,7 +220,7 @@ var Box = Backbone.View.extend({
 
         // Check the initial status value and deal with it appropriately
         if (!initial && this.post && this.post.get) {
-            initial = this.post.get("post_status")
+            initial = this.post.get("post_status");
         }
 
         if(now < date) {
@@ -288,8 +295,25 @@ var Box = Backbone.View.extend({
         $(".ueditor-display-block").removeClass("ueditor-display-block");
     },
 	save_as_publish: function() {
-		Upfront.Events.trigger('command:layout:layout_changes', this.layout_modified);
+		// so we have decided to always show the dialog and later improve this
+		this.stopListening(Upfront.Events, 'command:proceed:save:post');
+		this.listenTo(Upfront.Events, 'command:proceed:save:post', this.publish);
+		Upfront.Events.trigger('command:layout:layout_changes', true);
+
+		/* if ( !this.layout_modified ) {
+			// if no layout changes, then just publish directly
+			this.save_post();
+		} else {
+			// instead of publishing here directly, wait for User's action on Save As Dialog via "command:proceed:save:post" Upfront Events
+			this.stopListening(Upfront.Events, 'command:proceed:save:post');
+			this.listenTo(Upfront.Events, 'command:proceed:save:post', this.publish);
+			Upfront.Events.trigger('command:layout:layout_changes', this.layout_modified);
+		} */
+	},
+	save_post: function () {
 		this.publish();
+		$layout_key = 'single-post-' + this.post.get("ID");
+		Upfront.Events.trigger('command:layout:save_post_layout', $layout_key);
 	},
     publish: function(){
         var me = this;
@@ -297,9 +321,9 @@ var Box = Backbone.View.extend({
             _upfront_post_data.skip_publish = 0;
             return;
         }
-				
-        // resetting up post_status upon publishing as this function does not only publish 
-        // but it saves post status according to selected status on sidebar 
+
+        // resetting up post_status upon publishing as this function does not only publish
+        // but it saves post status according to selected status on sidebar
         if ( typeof _upfront_post_data.post_status !== 'undefined' && _upfront_post_data.post_status.length > 0 ) {
             this.post.set("post_status", _upfront_post_data.post_status);
             _upfront_post_data.post_status = '';
@@ -308,11 +332,16 @@ var Box = Backbone.View.extend({
                 return;
             }
         } else {
-            // assume to publish if no selected status on sidebar
-            this.post.set("post_status", 'publish');
-            Upfront.Events.trigger("global:status:change", 'publish');
+			// assume to publish if no selected status on sidebar
+			// but also account for private
+			var visibility = (this.post || {}).getVisibility && 'private' === this.post.getVisibility()
+				? 'private'
+				: 'publish'
+			;
+            this.post.set("post_status", visibility);
+            Upfront.Events.trigger("global:status:change", visibility);
         }
-				
+
         me.post.trigger('editor:publish');
         me.trigger('publish');
         Upfront.Events.trigger('upfront:element:edit:stop', 'write', me.post);
@@ -320,9 +349,15 @@ var Box = Backbone.View.extend({
         me.fadein_other_elements();
         me._stop_overlay();
     },
-
-    saveDraft: function(e){
-        if ( typeof e !== 'undefined' ) e.preventDefault();
+    saveAsDraft: function (e) {
+        e.preventDefault();
+        this.saveDraft();
+        // saveAsDraft() was triggered from Save Draft button which does not include saving layout
+        // so needs to fire global event to save it
+        $layout_key = 'single-' + this.post.get("post_type") + '-' + this.post.get("ID");
+        Upfront.Events.trigger('command:layout:save_post_layout', $layout_key);
+    },
+    saveDraft: function(){
         this.post.trigger('editor:draft');
         this.trigger('draft');
         Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post, true);// last true means 'saving draft'
@@ -362,13 +397,25 @@ var PostSectionView = Backbone.View.extend({
             $this_prev_data_toggle = $button.parent().parent().find(".ueditor-previous-data-toggle")
             ;
 
-		if($button.hasClass('ueditor-edit-post-url') || $button.hasClass('ueditor-edit-post-title')) {
+		if (
+			$button.hasClass('ueditor-edit-post-url')
+			||
+			$button.hasClass('ueditor-edit-post-title')
+			||
+			$button.hasClass('ueditor-edit-post-metadesc')
+		) {
 			$this_togglable = $button.parent().siblings(".ueditor-togglable");
 		} else {
 			$this_togglable = $button.siblings(".ueditor-togglable");
 		}
 
-		if(!$button.hasClass('ueditor-edit-post-url') || !$button.hasClass('ueditor-edit-post-title')) {
+		if (
+			!$button.hasClass('ueditor-edit-post-url')
+			||
+			!$button.hasClass('ueditor-edit-post-title')
+			||
+			!$button.hasClass('ueditor-edit-post-metadesc')
+		) {
 			$(".ueditor-box-content-wrap .ueditor-togglable").parent().removeClass('upfront-settings-toggled');
         }
 		$(".ueditor-box-content-wrap .ueditor-togglable").not($this_togglable).slideUp();
@@ -417,7 +464,7 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
         "keydown #upfront-add_term": "handle_enter_new_term",
         "change .upfront-taxonomy_item": "handle_terms_update",
         'keydown #upfront-new_term': 'handle_enter_new_term',
-		"click .upfront-taxonomy-tab": "on_click",
+		"click .upfront-taxonomy-tab": "on_click"
     }),
     updateTimer: false,
     allTerms: false,
@@ -434,8 +481,8 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
             }),
 			mostUsed = this.allTerms.sortBy(function(term){
 				return term.get("count");
-			});
-            ;
+			})
+		;
 
         this.$el.html(
             this.termListingTpl(_.extend({}, this.defaults, {
@@ -445,12 +492,12 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
                 labels: this.collection.taxonomyObject.labels
             }))
         );
-		
+
 		this.$el.find('.most-used-categories').html(
 			this.termTopListingTpl(_.extend({}, this.defaults, {
                 mostUsed: mostUsed.reverse(),
 				termTemplate: this.termTopSingleTpl,
-				postTerms: this.collection,
+				postTerms: this.collection
             }))
 		);
 
@@ -459,7 +506,7 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
 		// Get chosen select
 		var selectAddTaxonomy = this.chosen_field();
 		var termsChosen = this.normalize_tax_object(this.allTerms);
-		
+
 		// Init chosen select
 		this.taxonomySelect = new selectAddTaxonomy({
 			model: this.model,
@@ -471,7 +518,7 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
 			}
 		});
 		this.taxonomySelect.render();
-		
+
 		this.listenTo(this.taxonomySelect, 'taxonomy:new', this.handle_new_term);
 		this.listenTo(this.taxonomySelect, 'taxonomy:changed', this.handle_choose_term);
 
@@ -479,7 +526,7 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
 		this.$el.find('.upfront-taxonomy-chosen').html(this.taxonomySelect.$el);
 
     },
-	
+
 	on_click: function (e) {
 		var tab = "#" + $(e.target).data("target");
 		// Set current tab active
@@ -489,28 +536,28 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
 		this.$el.find(".taxonomy-panel-content").hide();
 		this.$el.find(tab).show();
 	},
-	
+
 	normalize_tax_object: function(otherTerms) {
 		var termsChosen = {};
 		otherTerms.each(function (term, idx) {
-			termsChosen[term.get('term_id')] = { label: term.get('name'), value: term.get('term_id') }
+			termsChosen[term.get('term_id')] = { label: term.get('name'), value: term.get('term_id') };
 		});
-		
+
 		return termsChosen;
 	},
-	
+
 	chosen_field: function() {
 		var chosenField = Upfront.Views.Editor.Field.Chosen_Select.extend({
 			className: 'select-taxonomy-chosen',
 			render: function() {
 				Upfront.Views.Editor.Field.Chosen_Select.prototype.render.call(this);
 				var me = this;
-				var selectWidth = '230px';
+				var selectWidth = '100%';
 
 				this.$el.find('.upfront-chosen-select').chosen({
 					search_contains: true,
 					width: selectWidth,
-					disable_search: false,
+					disable_search: false
 				});
 
 				var html = ['<a href="#" title="'+ l10n.global.content.add_label +'" class="upfront-taxonomy-add">'+ l10n.global.content.add_label +'</a>'];
@@ -528,9 +575,9 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
 				this.$el.find('.chosen-drop').css('display', 'none');
 				this.trigger('changed');
 				this.trigger('taxonomy:changed', this.get_value());
-			},
+			}
 		});
-		
+
 		return chosenField;
 	},
 
@@ -545,7 +592,7 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
             return false;
 
         if ($("#upfront-taxonomy-parents").length)
-            parentId = parseInt($("#upfront-taxonomy-parents").val());
+            parentId = parseInt($("#upfront-taxonomy-parents").val(), 10);
 
         term = new Upfront.Models.Term({
             taxonomy: this.collection.taxonomy,
@@ -558,10 +605,10 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
             me.collection.add(term);
 			setTimeout( function () {
 				me.update();
-				me.render();
+				// me.render(); // avoid double render, update() already call render()
 			}, 100 );
         });
-		
+
 		// Hide new category after added
 		$term_name.val("");
 		this.$el.find(".add-new-taxonomies-btn").removeClass('upfront-add-active');
@@ -574,14 +621,13 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
             $target = $(e.target),
             termId = $target.val()
             ;
-
         if(!$target.is(':checked')){
             this.collection.remove(this.allTerms.get(termId));
-        }
-        else
+        } else {
             this.collection.add(this.allTerms.get(termId));
-		
-		this.update();
+        }
+        this.collection.save();
+        Upfront.Events.trigger("editor:post:tax:updated", this.collection, this.tax);
 
     },
 
@@ -598,7 +644,7 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
     toggle_add_new: function(e){
 		e.preventDefault();
 		$target = $(e.currentTarget);
-		
+
 		if($target.hasClass('upfront-add-active')) {
 			$target.removeClass('upfront-add-active');
 		} else {
@@ -645,11 +691,11 @@ var ContentEditorTaxonomy_Flat = PostSectionView.extend({
             termTemplate: this.termSingleTpl,
             labels: this.collection.taxonomyObject.labels
         }));
-		
+
 		// Get chosen select
 		var selectAddTaxonomy = this.chosen_field();
 		var termsChosen = this.normalize_tax_object(otherTerms);
-		
+
 		// Init chosen select
 		this.taxonomySelect = new selectAddTaxonomy({
 			model: this.model,
@@ -661,35 +707,35 @@ var ContentEditorTaxonomy_Flat = PostSectionView.extend({
 			}
 		});
 		this.taxonomySelect.render();
-		
+
 		this.listenTo(this.taxonomySelect, 'taxonomy:new', this.handle_new_term);
 		this.listenTo(this.taxonomySelect, 'taxonomy:changed', this.handle_choose_term);
 
 		// Attach chosen select to template
 		this.$el.find('.upfront-taxonomy-chosen').html(this.taxonomySelect.$el);
     },
-	
+
 	normalize_tax_object: function(otherTerms) {
 		var termsChosen = { label: '', value: ''};
 		otherTerms.each(function (term, idx) {
-			termsChosen[term.get('term_id')] = { label: term.get('name'), value: term.get('term_id') }
+			termsChosen[term.get('term_id')] = { label: term.get('name'), value: term.get('term_id') };
 		});
-		
+
 		return termsChosen;
 	},
-	
+
 	chosen_field: function() {
 		var chosenField = Upfront.Views.Editor.Field.Chosen_Select.extend({
 			className: 'select-taxonomy-chosen',
 			render: function() {
 				Upfront.Views.Editor.Field.Chosen_Select.prototype.render.call(this);
 				var me = this;
-				var selectWidth = '230px';
+				var selectWidth = '100%';
 
 				this.$el.find('.upfront-chosen-select').chosen({
 					search_contains: true,
 					width: selectWidth,
-					disable_search: false,
+					disable_search: false
 				});
 
 				var html = ['<a href="#" title="'+ l10n.global.content.add_label +'" class="upfront-taxonomy-add">'+ l10n.global.content.add_label +'</a>'];
@@ -707,9 +753,9 @@ var ContentEditorTaxonomy_Flat = PostSectionView.extend({
 				this.$el.find('.chosen-drop').css('display', 'none');
 				this.trigger('changed');
 				this.trigger('taxonomy:changed', this.get_value());
-			},
+			}
 		});
-		
+
 		return chosenField;
 	},
 
@@ -723,7 +769,7 @@ var ContentEditorTaxonomy_Flat = PostSectionView.extend({
         else
             this.collection.add(this.allTerms.get(termId));
     },
-	
+
 	handle_choose_term: function(termId) {
 		this.collection.add(this.allTerms.get(termId));
 	},
@@ -778,24 +824,24 @@ var PageTemplateEditor = PostSectionView.extend({
 		"click .apply-post-template": "show_apply_template_modal",
 		"click .update-post-template": "update_template",
 		"click .reset-post-template": "reset_changes",
-		"click .delete-post-template": "show_delete_template_modal",
+		"click .delete-post-template": "show_delete_template_modal"
     }),
     initialize: function(options){
 			var me = this;
 			this.label = options.label;
-			
+
 			this.off('initiate:no:layout:change', this.initiate_no_layout_change);
 			this.on('initiate:no:layout:change', this.initiate_no_layout_change);
     },
     render: function () {
       var me = this;
-	
+
 			this.$el.html(this.pageTemplateListTpl({
 					label: me.label
 			}));
-			
+
 			this.$el.find('.upfront-page-template-action').html(_.template($(editionBox_tpl).find('#upfront-page-action').html()));
-			
+
 			// Get chosen select and type checkbox
 			var selectTemplate = this.chosen_field();
 			var templateOptions = this.get_options();
@@ -806,13 +852,19 @@ var PageTemplateEditor = PostSectionView.extend({
 				label: '',
 				values: templateOptions
 			});
-			
+
 			this.templateSelect.render();
 
 			// Attach chosen select and type checkbox to template
 			this.$el.find('.upfront-page-template-chosen').html(this.templateSelect.$el);
-			
-			setTimeout( function () {
+
+			this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
+			this.listenTo(Upfront.Events, 'entity:layout:change', this.on_layout_change);
+    },
+
+		after_append: function () {
+			var me = this;
+			setTimeout(function() {
 				// overwriting click event on chosen.jquery.min.js
 				me.$el.find('.upfront-field-multiple input').bind('click.chosen', function(e){
 					me.stop_bubble(e);
@@ -820,54 +872,57 @@ var PageTemplateEditor = PostSectionView.extend({
 				me.$el.find('.upfront-field-multiple span.upfront-field-label-text').bind('click.chosen', function(e){
 					me.stop_bubble(e);
 				});
-				
-				// Hide first Update Template / Save As
-				me.trigger('initiate:no:layout:change');
-				
-				// set default value
-				if ( typeof _upfront_post_data.template_slug !== 'undefined' ) me.templateSelect.set_value(_upfront_post_data.template_slug);
-				me.prev_template_name = me.$el.find('select.upfront-chosen-select option[value="'+ _upfront_post_data.template_slug +'"]').first().text(),
-				
-				me.spawn_template_modal();
-				me.disable_apply_template = true;
-				me.$el.find('a.apply-post-template').css({cursor: 'default', opacity: 0.6});
-				
 			}, 300);
-			
-			this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
-    },
-		
+
+			// toggling layout change functions
+			if ( typeof _upfront_post_data.layout_change !== 'undefined' && _upfront_post_data.layout_change === 1 ) {
+				this.on_layout_change();
+			} else {
+				this.trigger('initiate:no:layout:change');
+			}
+			// set default value
+			if ( typeof _upfront_post_data.template_slug !== 'undefined' ) this.templateSelect.set_value(_upfront_post_data.template_slug);
+			this.prev_template_name = this.$el.find('select.upfront-chosen-select option[value="'+ _upfront_post_data.template_slug +'"]').first().text();
+
+			this.spawn_template_modal();
+			this.disable_apply_template = true;
+			this.$el.find('a.apply-post-template').css({cursor: 'default', opacity: 0.6});
+		},
+
 	initiate_no_layout_change: function() {
+		// clear flag for layout change
+		_upfront_post_data.layout_change = 0;
+
 		this.$el.find('.chosen-container .chosen-single span').removeClass('dot');
 		this.$el.find('.upfront-page-template-description').hide();
 		this.$el.find('.upfront-page-template-action a.update-post-template').hide();
 		this.$el.find('.upfront-page-template-action a.reset-post-template').hide();
 		this.$el.find('.upfront-page-template-action a.save-post-template').hide();
-		
+
 		if ( typeof _upfront_post_data.template_type !== 'undefined' && _upfront_post_data.template_type === 'page' ) {
 			this.$el.find('.upfront-page-template-action a.delete-post-template').hide();
 		} else {
 			this.$el.find('.upfront-page-template-action a.delete-post-template').show();
 		}
 	},
-	
+
 	spawn_template_modal: function () {
 		if ( this.template_modal ) return;
-		
+
 		var me = this;
-		
+
 		this.template_modal = new Upfront.Views.Editor.Modal({to: $('body'), button: false, top: 120, width: 540});
 		this.template_modal.render();
 		this.template_modal.on('modal:close', this.reset_cancel_button_data, this);
 		this.template_modal.delegateEvents();
 		$('body').append(this.template_modal.el);
-		
+
 		var $content = me.template_modal.$el.find('.upfront-inline-modal-content');
 		$content
 			.empty()
 			.append(_.template($(editionBox_tpl).find('#upfront-apply-page-action').html()))
 		;
-		
+
 		var cancel_button = new Upfront.Views.Editor.Field.Button({
 			label: l10n.global.views.cancel,
 			classname: 'upfront-cancel-apply-template',
@@ -880,9 +935,9 @@ var PageTemplateEditor = PostSectionView.extend({
 		cancel_button.render();
 		cancel_button.delegateEvents();
 		$content.find('.upfront-apply-page-modal').append(cancel_button.$el);
-		
+
 		var continue_button = new Upfront.Views.Editor.Field.Button({
-			label: l10n.global.content.continue,
+			label: l10n.global.content['continue'],
 			classname: 'upfront-continue-apply-template',
 			compact: true,
 			on_click: function(e) {
@@ -893,9 +948,9 @@ var PageTemplateEditor = PostSectionView.extend({
 		continue_button.render();
 		continue_button.delegateEvents();
 		$content.find('.upfront-apply-page-modal').append(continue_button.$el);
-		
+
 		var delete_button = new Upfront.Views.Editor.Field.Button({
-			label: l10n.global.content.continue,
+			label: l10n.global.content['continue'],
 			classname: 'upfront-delete-selected-template',
 			compact: true,
 			on_click: function(e) {
@@ -908,35 +963,35 @@ var PageTemplateEditor = PostSectionView.extend({
 		delete_button.delegateEvents();
 		$content.find('.upfront-apply-page-modal').append(delete_button.$el);
 	},
-	
+
 	reset_cancel_button_data: function () {
 		this.template_modal.$el.find('.upfront-cancel-apply-template').css('margin-right','');
 		this.template_modal.$el.find('.upfront-cancel-apply-template').attr('title',l10n.global.views.cancel);
 		this.template_modal.$el.find('.upfront-cancel-apply-template input').val(l10n.global.views.cancel);
 		this.template_modal.$el.find('.upfront-cancel-apply-template input').attr('placeholder',l10n.global.views.cancel);
 	},
-	
-	show_apply_template_modal: function(e) {	
+
+	show_apply_template_modal: function(e) {
 		e.preventDefault();
-		
+
 		if ( this.disable_apply_template ) return;
-		
+
 		var me = this,
 			$content = this.template_modal.$el.find('.upfront-inline-modal-content'),
 			new_template_name = this.$el.find('select.upfront-chosen-select option:selected').text()
 		;
-		
+
 		this.template_modal.$el.find('.upfront-continue-apply-template').show();
 		this.template_modal.$el.find('.upfront-delete-selected-template').hide();
 		this.template_modal.$el.find('.upfront-apply-page-modal p').html(l10n.global.content.apply_template_warning);
-		
+
 		this.template_modal.open(function () {
 			// update description template name for old and new
 			$content.find('span.old_template_name').text(me.prev_template_name);
 			$content.find('span.new_template_name').text(new_template_name);
 		});
 	},
-	
+
 	apply_template: function (e) {
 		e.preventDefault();
 		var $select = this.$el.find('.upfront-chosen-select'),
@@ -948,39 +1003,43 @@ var PageTemplateEditor = PostSectionView.extend({
 		;
 		_upfront_post_data.template_slug = $select.val();
 		_upfront_post_data.template_type = template_type;
-		
+		// clear flag for layout change
+		_upfront_post_data.layout_change = 0;
+
 		Upfront.Events.trigger("command:layout:save_meta");
 	},
-	
-	update_template: function (e) {	
+
+	update_template: function (e) {
 		e.preventDefault();
-		
+
 		if ( this.disable_update_template ) return;
-		
+
 		_upfront_post_data.layout_action = 'update';
-		
+		this.trigger('initiate:no:layout:change');
+
 		this.stopListening(Upfront.Events, 'page:layout:updated');
 		this.listenTo(Upfront.Events, 'page:layout:updated', this.on_page_layout_updated);
-		
+
 		// save selected layout but not published
 		_upfront_post_data.skip_publish = 1;
 		Upfront.Events.trigger("command:layout:save");
 	},
-	
+
 	reset_changes: function (e) {
 		e.preventDefault();
+		this.trigger('initiate:no:layout:change');
 		// delete current layout and load page template
 		Upfront.Events.trigger("command:layout:reset_changes");
 	},
-	
+
 	on_page_layout_updated: function () {
 		var me = this;
-		
+
 		this.trigger('initiate:no:layout:change');
-		
+
 		this.template_modal.$el.find('.upfront-continue-apply-template').hide();
 		this.template_modal.$el.find('.upfront-delete-selected-template').hide();
-		
+
 		this.template_modal.open(function () {
 			me.template_modal.$el.find('.upfront-apply-page-modal p').html(l10n.global.content.update_template_notification);
 			me.template_modal.$el.find('.upfront-cancel-apply-template').css('margin-right','0');
@@ -989,40 +1048,40 @@ var PageTemplateEditor = PostSectionView.extend({
 			me.template_modal.$el.find('.upfront-cancel-apply-template input').attr('placeholder',l10n.global.content.ok);
 		});
 	},
-	
-	show_delete_template_modal: function(e) {	
+
+	show_delete_template_modal: function(e) {
 		e.preventDefault();
-		
+
 		var me = this,
 			new_template_name = this.$el.find('select.upfront-chosen-select option:selected').text()
 		;
-		
+
 		this.template_modal.$el.find('.upfront-continue-apply-template').hide();
 		this.template_modal.$el.find('.upfront-delete-selected-template').show();
 		this.template_modal.$el.find('.upfront-apply-page-modal p').html(l10n.global.content.delete_template_warning);
 		this.template_modal.$el.find('.upfront-apply-page-modal p span.template_name').text(new_template_name);
-		
+
 		this.template_modal.open(function () {
 			me.template_modal.$el.find('.upfront-apply-page-modal p span.template_name').text(new_template_name);
 		});
 	},
-	
+
 	stop_bubble: function(e) {
 		e.stopImmediatePropagation();
 		return true;
 	},
-	
+
 	filter_list: function(selected) {
 		// disable all first
 		this.$el.find('optgroup').attr('disabled','disabled');
 		// enable selected
-		for ( key in selected ) {
+		for ( var key in selected ) {
 			this.$el.find('optgroup[label="'+ selected[key] +'"]').removeAttr('disabled');
 		}
 		// trigger chosen update
 		this.$el.find('.upfront-chosen-select').trigger("chosen:updated");
 	},
-	
+
 	handle_save_as: function(e) {
 		var me = this;
 		e.preventDefault();
@@ -1030,11 +1089,11 @@ var PageTemplateEditor = PostSectionView.extend({
 		this.save_fields.render();
 		this.$el.find('.upfront-page-template-action').html(this.save_fields.$el);
 		this.add_overlay();
-		
+
 		this.listenTo(this.save_fields, 'click:cancel', this.cancel_save);
 		this.listenTo(this.save_fields, 'click:save', this.save);
 	},
-	
+
 	cancel_save: function() {
 		this.$el.find('.upfront-page-template-action').html(_.template($(editionBox_tpl).find('#upfront-page-action').html()));
 		this.$el.find('.upfront-page-template-action a.delete-post-template').hide();
@@ -1046,18 +1105,18 @@ var PageTemplateEditor = PostSectionView.extend({
 		_upfront_post_data.template_type = 'layout';
 		_upfront_post_data.template_slug = value;
 		_upfront_post_data.layout_action = 'save_as';
-		
+		this.trigger('initiate:no:layout:change');
 		this.stopListening(Upfront.Events, 'update:page:layout:list');
 		this.listenTo(Upfront.Events, 'update:page:layout:list', this.update_template_list);
-		
+
 		// save selected layout but not published
 		_upfront_post_data.skip_publish = 1;
 		Upfront.Events.trigger("command:layout:save");
-		
+
 		// hide overlay
 		this.cancel_save();
 	},
-	
+
 	update_template_list: function(value) {
 		// rehiding options related to layout change
 		this.trigger('initiate:no:layout:change');
@@ -1070,29 +1129,31 @@ var PageTemplateEditor = PostSectionView.extend({
 		this.$el.find('.upfront-chosen-select optgroup[label="layouts"]').append(option);
 		this.$el.find('.upfront-chosen-select').val(_upfront_post_data.template_slug).trigger("chosen:updated");
 	},
-	
+
 	add_overlay: function() {
 		this.$el.find('.upfront-page-template-dropdown, .upfront-page-template-description').append('<div class="upfront-templates-overlay"></div>').css({opacity: 0.6});
 	},
-	
+
 	remove_overlay: function() {
 		this.$el.find('.upfront-page-template-dropdown .upfront-templates-overlay, .upfront-page-template-description .upfront-templates-overlay').remove();
 		this.$el.find('.upfront-page-template-dropdown, .upfront-page-template-description').css({opacity: 1});
 	},
-	
+
 	on_layout_change: function() {
 		if ( Upfront.Application.layout_ready ) {
 			// show dot icon
 			var $dot = this.$el.find('.chosen-container .chosen-single span.dot');
 			if($dot.length) return;
-			
+
 			this.$el.find('.chosen-container .chosen-single span').addClass('dot');
-			
+			this.$el.find('.upfront-page-template-action a.reset-post-template').hide();
+			this.$el.find('.upfront-page-template-action a.update-post-template').hide();
+
 			// show update / save as
 			var $temp_description = this.$el.find('.upfront-page-template-description'),
-				template_name = this.$el.find('select.upfront-chosen-select option[value="'+ _upfront_post_data.template_slug +'"]').text();
+				template_name = this.$el.find('select.upfront-chosen-select option[value="'+ _upfront_post_data.template_slug +'"]').text()
 			;
-			
+
 			if ( typeof _upfront_post_data.template_type !== 'undefined' && _upfront_post_data.template_type === 'page' ) {
 				this.$el.find('.upfront-page-template-action a.reset-post-template').show();
 				$temp_description.html(l10n.global.content.reset_changes_nag);
@@ -1100,22 +1161,34 @@ var PageTemplateEditor = PostSectionView.extend({
 				$temp_description.html(l10n.global.content.template_nag);
 				this.$el.find('.upfront-page-template-action a.update-post-template').show();
 			}
-			
+
 			this.$el.find('.upfront-page-template-action a.save-post-template').show();
 			this.$el.find('.upfront-page-template-action a.delete-post-template').hide();
 			$temp_description.find('span.template_name').text(template_name);
 			$temp_description.show();
+
+			// activate flag for layout change
+			_upfront_post_data.layout_change = 1;
+		}
+		else {
+			// If layout isn't ready, let's trigger this again after it's ready
+			var me = this;
+			this.listenToOnce(Upfront.Events, "layout:after_render", function () {
+				// Don't call this if this view is not existing in DOM anymore
+				if ( !$.contains(document.documentElement, me.$el.get(0)) ) return;
+				me.on_layout_change();
+			});
 		}
 	},
-	
+
 	get_options: function () {
 		var options = {
 			templates: this.normalize_template_object(this.allPageTemplates),
 			layouts: this.normalize_template_object(this.allPageLayouts)
-		}
+		};
 		return options;
 	},
-	
+
 	normalize_template_object: function(templates) {
 		var templateOptions = [];
 		templates.each(function (template, idx) {
@@ -1125,7 +1198,7 @@ var PageTemplateEditor = PostSectionView.extend({
 				templateOptions[idx] = { label: template.get('name'), value: template.get('slug') };
 			}
 		});
-		
+
 		return templateOptions;
 	},
 
@@ -1142,7 +1215,7 @@ var PageTemplateEditor = PostSectionView.extend({
 				Upfront.Views.Editor.Field.Chosen_Select.prototype.render.call(this);
 				var me = this;
 				var selectWidth = '155px';
-				
+
 				this.typeCheckbox = this.type_field();
 				this.typeCheckbox.render();
 
@@ -1156,34 +1229,34 @@ var PageTemplateEditor = PostSectionView.extend({
 					disable_search: true,
 					display_disabled_options: false
 				});
-				
+
 				this.$el.find('.upfront-chosen-select').on('chosen:hiding_dropdown', function() {
 					me.allowMouseWheel();
 				});
-				
+
 				return this;
 			},
 			on_change: function() {
 				this.allowMouseWheel();
 				this.$el.find('.chosen-drop').css('display', 'none');
 				this.trigger('changed');
-				
+
 				if ( typeof _upfront_post_data.template_slug !== 'undefined' && this.get_value() == _upfront_post_data.template_slug ) {
 					template_editor.disable_apply_template = true;
-					template_editor.$el.find('a.apply-post-template').css({cursor: 'default', opacity: .6});
+					template_editor.$el.find('a.apply-post-template').css({cursor: 'default', opacity: 0.6});
 					template_editor.disable_update_template = false;
 					template_editor.$el.find('a.update-post-template').css({cursor: '', opacity: 1});
 				} else {
 					template_editor.disable_apply_template = false;
 					template_editor.$el.find('a.apply-post-template').css({cursor: '', opacity: 1});
 					template_editor.disable_update_template = true;
-					template_editor.$el.find('a.update-post-template').css({cursor: 'default', opacity: .6});
+					template_editor.$el.find('a.update-post-template').css({cursor: 'default', opacity: 0.6});
 				}
 			},
 			get_value_html: function (value, index) {
 				var selected = '',
 					string = '';
-				
+
 				string += '<optgroup label="'+ index +'">';
 				_.each(value,  function(option){
 					string += '<option value="'+ option.value +'">'+ option.label +'</option>';
@@ -1210,7 +1283,7 @@ var PageTemplateEditor = PostSectionView.extend({
 			},
 			openOptions: function(e) {
 				var me = this;
-				
+
 				//Disable scroll when chosen is opened
 				$('.sidebar-panel-content .sidebar-tab-content').bind('mousewheel', function() {
 					return false;
@@ -1253,7 +1326,7 @@ var PageTemplateEditor = PostSectionView.extend({
 				$('.sidebar-panel-content .sidebar-tab-content').unbind('mousewheel');
 			}
 		});
-		
+
 		return chosenField;
 	}
 });
@@ -1277,7 +1350,7 @@ var SaveLayoutFields = Backbone.View.extend({
 			new Upfront.Views.Editor.Field.Text({
 				className: 'save-form-name',
 				model: this.model,
-				compact: true,
+				compact: true
 			}),
 			new Upfront.Views.Editor.Field.Button({
 				className: 'save-form-save',
@@ -1300,7 +1373,7 @@ var SaveLayoutFields = Backbone.View.extend({
 
 		return this;
 	}
-});	
+});
 
 var PostUrlEditor = PostSectionView.extend({
     hasDefinedSlug : false,
@@ -1310,20 +1383,26 @@ var PostUrlEditor = PostSectionView.extend({
         this.post = opts.post;
 		this.listenTo(Upfront.Events, 'content:change:title', this.changeTitle);
         this.hasDefinedSlug = _.isEmpty( this.post.get("post_name") ) ? false : true;
-        this.render();
+
+		this.metadesc = new Post_Box_Metadesc({model: this.post});
+
+		this.render();
     },
+
     render: function(){
         var self = this,
             base = this.post.get("guid"),
-			postTitle = this.post.get("post_title");
+			postTitle = this.post.get("post_title")
+		;
 
         base = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
+
         this.$el.html(this.tpl({
             rootUrl: base,
 			postTitle: postTitle,
             slug: self.post.get('post_name'),
             url_label : "post" === self.post.get("post_type") ? l10n.global.content.post_url : l10n.global.content.page_url
-		}));
+		})).append(this.metadesc.render().$el);
     },
 	changeTitle: function(title) {
 		this.post.set( "post_title", title );
@@ -1337,19 +1416,22 @@ var PostUrlEditor = PostSectionView.extend({
 			var slug = val.toLowerCase().replace(/ /g, '-'),
 			rootUrl = this.post.get("guid")
 			;
-			
+
 			// Update Preview button href
 			$('.ueditor-action-preview').attr("href", rootUrl + "?preview=true");
+
+            // added flag to be used on upfront-content.js
+            _upfront_post_data.post_name_updated = true;
 
             this.post.set( "post_name", slug );
             this.hasDefinedSlug = true;
         }
-		
+
 		if( title.length > 1 ){
 			this.post.set( "post_title", title );
 			Upfront.Events.trigger('change:title', title);
 		}
-		
+
 		if( val.length > 1 || title.length > 1 ){
 			this.render();
 		}
@@ -1396,7 +1478,7 @@ var PostStatusView = PostSectionView.extend({
         ops.push(this.statusOptions.draft);
 
         if(status == 'private'){
-            ops = [ this.statusOptions.private ];
+            ops = [ this.statusOptions['private'] ];
         }
 
         return ops;
@@ -1461,9 +1543,9 @@ var PostVisibilityView = PostSectionView.extend({
         if(now == 'password')
             return [
                 {value: 'password', name: l10n.global.content.edit_pwd},
-                ops.public,
+                ops['public'],
                 ops.sticky,
-                ops.private
+                ops['private']
             ]
                 ;
         return _.values(ops);
@@ -1497,7 +1579,7 @@ var PostVisibilityView = PostSectionView.extend({
                 this.trigger("visibility:change", this.postVisibility, "");
                 break;
         }
-		
+
 		$(".ueditor-box-content-wrap .ueditor-togglable").parent().removeClass('upfront-settings-toggled');
 
         this.render();
@@ -1514,32 +1596,32 @@ var PostScheduleView = PostSectionView.extend({
     render: function(){
 		this.initialDate = this.post.get("post_date");
 
-        var date = new Object(),
+        var date = {},
 			objDate = new Date(this.initialDate),
 			locale = "en-us",
 			month = objDate.toLocaleString(locale, { month: "short" });
 			me = this;
-       
+
 		date.date = month + " " +this.initialDate.getDate() + ", " + this.initialDate.getFullYear();
         date.currentHour = this.initialDate.getHours();
         date.currentMinute = this.initialDate.getMinutes();
         this.schedule = this.getSchedule();
 		Upfront.Events.trigger('upfront:save:label', this.getButtonText());
         this.$el.html( this.tpl(_.extend( {}, this.post, date, {schedule: this.schedule }) ) );
-		
+
 		this.$('#upfront-schedule-datepicker').datepicker({
 			dateFormat: "M d, yy"
 		});
-		
+
 		this.validateDate();
-		
+
         return this;
     },
 	validateDate: function () {
 		this.$('.schedule-hours, .schedule-minutes').change(function() {
-			var max = parseInt($(this).attr('max'));
-			var min = parseInt($(this).attr('min'));     
-			
+			var max = parseInt($(this).attr('max'), 10);
+			var min = parseInt($(this).attr('min'), 10);
+
 			if ($(this).val() > max) {
 				$(this).val(max);
 			} else if ($(this).val() < min) {
@@ -1547,7 +1629,7 @@ var PostScheduleView = PostSectionView.extend({
 			} else if (isNaN($(this).val())) {
 				$(this).val('0');
 			}
-		}); 
+		});
 	},
 	getButtonText: function(){
         var initial = this.initialStatus,
@@ -1560,7 +1642,7 @@ var PostScheduleView = PostSectionView.extend({
 
         // Check the initial status value and deal with it appropriately
         if (!initial && this.post && this.post.get) {
-            initial = this.post.get("post_status")
+            initial = this.post.get("post_status");
         }
 
         if(now < date) {
@@ -1581,7 +1663,7 @@ var PostScheduleView = PostSectionView.extend({
 			status = this.post.get('post_status'),
             formatDate = Upfront.Util.format_date
             ;
-			
+
         if((!date && !this.initialDate) || (formatDate(date, true) === formatDate(current, true) && status !== "publish"))
             return {
                 key: l10n.global.content.publish,
@@ -1621,7 +1703,7 @@ var PostScheduleView = PostSectionView.extend({
 		}
     },
     update: function(){
-		
+
 		var dateField = this.$('#upfront-schedule-datepicker').datepicker( 'getDate' ),
 			date = new Date(),
             year = dateField.getFullYear(),
@@ -1635,7 +1717,7 @@ var PostScheduleView = PostSectionView.extend({
         date.setDate(day);
         date.setHours(hour);
         date.setMinutes(minute);
-		
+
 		$(".ueditor-box-content-wrap .ueditor-togglable").parent().removeClass('upfront-settings-toggled');
 
         this.post.set("post_date", date);
@@ -1651,6 +1733,6 @@ return {
 	ContentEditorTaxonomy_Hierarchical: ContentEditorTaxonomy_Hierarchical,
 	ContentEditorTaxonomy_Flat: ContentEditorTaxonomy_Flat,
 	PageTemplateEditor: PageTemplateEditor
-}
+};
 
 });})(jQuery);

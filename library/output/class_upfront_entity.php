@@ -61,6 +61,10 @@ abstract class Upfront_Entity {
 		return upfront_get_property_value($prop, $this->_data);
 	}
 
+	protected function _set_property ($prop, $value) {
+		return upfront_set_property_value($prop, $value, $this->_data);
+	}
+
 	/**
 	 * Retrieves translated property
 	 *
@@ -150,7 +154,7 @@ abstract class Upfront_Entity {
 			}
 			if (!$this->_is_background_overlay($breakpoint_id)) {
 				if ('featured' == $type && has_post_thumbnail(Upfront_Output::get_post_id())) {
-					$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'single-post-thumbnail' );
+					$featured_image = wp_get_attachment_image_src( get_post_thumbnail_id( Upfront_Output::get_post_id() ), 'single-post-thumbnail' );
 					$background_image = $featured_image[0];
 				} else {
 					$background_image = $this->_get_breakpoint_property('background_image', $breakpoint_id);
@@ -285,6 +289,7 @@ abstract class Upfront_Entity {
 			$style = $this->_get_breakpoint_property('background_video_style', $breakpoint_id);
 			$mute = $this->_get_breakpoint_property('background_video_mute', $breakpoint_id);
             $autoplay = $this->_get_breakpoint_property('background_video_autoplay', $breakpoint_id);
+            $loop = $this->_get_breakpoint_property('background_video_loop', $breakpoint_id);
 			if ( $video && $embed ){
 			    self::$_video_index++;
                 $video_id = 'bg_video_' . self::$_video_index;
@@ -293,12 +298,13 @@ abstract class Upfront_Entity {
 				$attr = 'data-bg-video-ratio="' . round($height/$width, 2) . '" ';
 				$attr .= 'data-bg-video-style="' . $style . '" ';
 				$attr .= 'data-bg-video-mute="' . $mute . '"';
+				$attr .= 'data-bg-video-loop="' . $loop . '"';
 				$autoplay_attr = '&amp;autoplay=' . $autoplay;
 				// hack additional attributes
 				$vid_attrs = array(
-					'.*?vimeo\.' => 'loop=1' . $autoplay_attr . ( $mute == 1 ? '&amp;api=1&amp;player_id=' . $video_id : '' ),
-					'.*?youtube\.com\/(v|embed)\/(.+?)(\/|\?).*?$' =>  '&amp;controls=0&amp;showinfo=0&amp;rel=0&amp;wmode=transparent&amp;html5=1&amp;loop=1&amp;modestbranding=1&amp;' . $autoplay_attr . ( $mute == 1 ? '&amp;enablejsapi=1' /*. '&amp;origin=' . site_url()*/ : '' ),
-					'.*?wistia\.' => 'endVideoBehavior=loop' . ( $autoplay == 1 ? '&amp;autoPlay=true' : '' ) . ( $mute == 1 ? '&amp;volume=0' : '' )
+					'.*?vimeo\.' => ($loop === 1 ? '&amp;loop=1' : 'loop=0') . $autoplay_attr . ( $mute == 1 ? '&amp;api=1&amp;player_id=' . $video_id : '' ),
+					'.*?youtube\.com\/(v|embed)\/(.+?)(\/|\?).*?$' =>  '&amp;controls=0&amp;showinfo=0&amp;rel=0&amp;wmode=transparent&amp;html5=1&amp;modestbranding=1' . ($loop === 1 ? '&amp;loop=1&amp;enablejsapi=1' : 'loop=0') . $autoplay_attr . ( $mute == 1 ? '&amp;enablejsapi=1' /*. '&amp;origin=' . site_url()*/ : '' ),
+					'.*?wistia\.' => ($loop === 1 ? 'endVideoBehavior=loop' : '') . ( $autoplay == 1 ? '&amp;autoPlay=true' : '' ) . ( $mute == 1 ? '&amp;volume=0' : '' )
 				);
 				$vid_attr = '';
 				$embed_attr = ' id="' . $video_id . '"';

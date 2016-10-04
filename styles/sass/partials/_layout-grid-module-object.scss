@@ -252,7 +252,7 @@
 	box-shadow: 0 1px 0 #192d3f;
 	color: #d8ecff;
 	font-size: 16px;
-	font-family: "Source Sans Pro", sans-serif;
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 	line-height: 24px;
 	padding: 5px 10px;
 	margin: 0 5px 10px;
@@ -352,7 +352,7 @@
 	padding: 0;
 	margin: 0 -160px 2px 0;
 	position: relative;
-	top: -9px;
+	top: 5px;
 	left: 0;
 }
 .upfront-region-hidden-toggle:before {
@@ -443,6 +443,12 @@
   max-height: 100%;
 }
 
+.upfront-editable_entity.upfront-post-data-part.part-featured_image img {
+  max-width: none;
+  max-height: none;
+  overflow: hidden;
+}
+
 .ui-draggable {
 	cursor: move;
 }
@@ -528,6 +534,9 @@
 .upfront-entity_meta {
 	position: absolute;
 	z-index: 2000;
+}
+.upfront-login_element-module .upfront-entity_meta {
+	z-index: 3001;
 }
 .upfront-module-group > .upfront-entity_meta {
   top: 5px;
@@ -768,7 +777,7 @@
 .upfront-module-group > .upfront-module-group-controls .upfront-inline-panel .upfront-inline-panel-item-label {
   display: inline-block;
   width: auto!important;
-  font: 16px/24px 'Source Sans Pro', sans-serif;
+  font: 16px/24px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 }
 .upfront-module-group > .upfront-module-group-controls {
   display: block;

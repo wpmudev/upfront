@@ -1,5 +1,5 @@
 (function($) {
-	
+
 var l10n = Upfront.Settings && Upfront.Settings.l10n
 	? Upfront.Settings.l10n.global.views
 	: Upfront.mainData.l10n.global.views
@@ -9,7 +9,7 @@ define([
 	'scripts/upfront/bg-settings/mixins',
 	'scripts/upfront/inline-panels/map-editor'
 ], function(Mixins, MapEditorView) {
-	
+
 	var MapItem = Upfront.Views.Editor.Settings.Item.extend(_.extend({}, Mixins, {
 		events: {
 			"click .open-map-code-panel-button": "init_code_panel"
@@ -22,7 +22,7 @@ define([
 					var value = this.get_value();
 					this.model.set_breakpoint_property(this.property_name, value);
 				};
-				
+
 			if ( ! map_center ){
 				this.model.init_property('background_map_center', [-37.8180, 144.9760]);
 				this.model.init_property('background_map_zoom', 10);
@@ -31,7 +31,7 @@ define([
 				this.model.init_property('background_show_markers', "");
 				this.model.init_property('background_use_custom_map_code', "");
 			}
-			
+
 			var fields = {
 					location: new Upfront.Views.Editor.Field.Text({
 						model: this.model,
@@ -151,16 +151,16 @@ define([
 						model: me.model,
 						label: l10n.open_map_code_panel,
 						className: "open-map-code-panel-button",
-						compact: true,
-					}),
+						compact: true
+					})
 				};
-			
+
 			this.$el.addClass('uf-bgsettings-item uf-bgsettings-mapitem');
-			
+
 			options.fields = _.map(fields, function(field){ return field; });
-			
+
 			this._location = fields.location.get_value();
-			
+
 			this.$el.on('keypress', 'input[name="background_map_location"]', function (e) {
 				if( e.keyCode === 13 ){
 					me._location = $(this).val();
@@ -168,7 +168,7 @@ define([
 					me.geocode_location();
 				}
 			});
-			
+
 			this.bind_toggles();
 			this.constructor.__super__.initialize.call(this, options);
 		},
@@ -177,6 +177,8 @@ define([
 			$('[name="background_use_custom_map_code"]', this.$el).trigger('change');
 		},
 		geocode_location: function () {
+			// Do not geocode if no API Key has been set.
+			if (!(window._upfront_api_keys || {})['gmaps']) return false;
 			if ( this._geocoding == true || !this._location_changed ) return;
 			var me = this,
 				location = this._location,

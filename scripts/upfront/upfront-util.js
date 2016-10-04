@@ -20,7 +20,7 @@ _.template = function (tpl, data) {
 	if (typeof undefined === typeof data) return _tpl(tpl);
 	var tmp = _tpl(tpl);
 	return tmp(data);
-}
+};
 
 //requestFrameAnimation polyfill
 var rAFPollyfill = function(callback){
@@ -34,16 +34,18 @@ var rAFPollyfill = function(callback){
 
 
 
-define(function() {
+define([
+	"pako"
+], function ( pako ){
 	var guessLinkType = function(url) {
-		if(!$.trim(url) || $.trim(url) == '#' || $.trim(url) == '') {
+		if(!$.trim(url) || $.trim(url) == '#' || $.trim(url) === '') {
 			return 'unlink';
 		}
 
 		if(url.length && url[0] == '#') {
 			return url.indexOf('#ltb-') > -1 ? 'lightbox' : 'anchor';
 		}
-		
+
 		if(typeof window.location.origin !== "undefined") {
 			if(url.substring(0, window.location.origin.length) == window.location.origin) {
 				if(
@@ -87,7 +89,7 @@ define(function() {
 		get_unique_id: function (pfx) {
 			return _.template("{{prefix}}-{{stamp}}-{{numeric}}", {
 				prefix: pfx || "entity",
-				stamp: (new Date).getTime(),
+				stamp: (new Date()).getTime(),
 				numeric: Math.floor((Math.random()*999)+1000)
 			});
 		},
@@ -107,7 +109,7 @@ define(function() {
 		clone: function (obj) {
 			return jQuery.extend(true, {}, obj);
 		},
-		
+
 		/**
 		 * Escape RegEx string
 		 * https://github.com/sindresorhus/escape-string-regexp/blob/master/index.js
@@ -129,7 +131,7 @@ define(function() {
 			var div = document.createElement('div'),
 				reg = new RegExp("(khtml|moz|ms|webkit|)"+property, "i")
 			;
-			for ( s in div.style ) {
+			for ( var s in div.style ) {
 				if ( s.match(reg) ) return true;
 			}
 			return false;
@@ -152,7 +154,7 @@ define(function() {
 
 			// Was request made from dev mode
 			request.dev = location.search.indexOf('dev=true') > -1;
-			
+
 			// Was request made from the builder
 			request.isbuilder = Upfront.Application.is_builder();
 
@@ -252,10 +254,11 @@ define(function() {
              * @param string|int|null class_size either a string of the class size like 12 or '12'
              */
             update_class :  function ($el, class_prefix, class_size) {
-                if(  _.isUndefined( class_size ) ){
-                    var class_size = class_prefix.replace( /[^\d.]/g, ''),
-                        class_name = class_prefix.replace(class_size, "");
-                }else{
+				var class_name;
+                if (_.isUndefined(class_size)) {
+					class_size = (class_prefix || '').replace( /[^\d.]/g, '');
+                    class_name = class_prefix.replace(class_size, "");
+                } else {
                     class_name = class_prefix;
                 }
                 var rx = new RegExp('\\b' + class_name + '\\d+');
@@ -270,7 +273,8 @@ define(function() {
             	if(!col_cls) return 0;
 
                  var column_width = Upfront.Settings.LayoutEditor.Grid.column_width,
-                	col_class = Upfront.Settings.LayoutEditor.Grid.class;
+                	col_class = Upfront.Settings.LayoutEditor.Grid['class']
+				;
                 return parseInt(col_cls.replace(col_class, ""), 10) * column_width;
             },
             width_to_col: function (width, ceil) {
@@ -329,9 +333,9 @@ define(function() {
 
 			Upfront.data.region_views[region.cid].show();
 		},
-		
+
 		/**
-		 * Sorted find 
+		 * Sorted find
 		 */
 		find_sorted: function ($el, selector) {
 			return $el.find(selector)
@@ -528,8 +532,8 @@ define(function() {
 				escaping = false;
 				for( var i = 0; i < php_format.length; i++)
 				{
-					char = php_format[i];
-					if(char === '\\') // PHP date format escaping character
+					var chr = php_format[i];
+					if(chr === '\\') // PHP date format escaping character
 					{
 						i++;
 						if(escaping) jqueryui_format += php_format[i];
@@ -539,10 +543,10 @@ define(function() {
 					else
 					{
 						if(escaping) { jqueryui_format += "'"; escaping = false; }
-						if( _.isUndefined(SYMBOLS_MATCHING[char])){
-								jqueryui_format += char;
+						if( _.isUndefined(SYMBOLS_MATCHING[chr])){
+								jqueryui_format += chr;
 						}else{
-								jqueryui_format += SYMBOLS_MATCHING[char];
+								jqueryui_format += SYMBOLS_MATCHING[chr];
 						}
 
 					}
@@ -591,8 +595,8 @@ define(function() {
 				escaping = false;
 				for( var i = 0; i < php_format.length; i++)
 				{
-					char = php_format[i];
-					if(char === '\\') // PHP date format escaping character
+					var chr = php_format[i];
+					if(chr === '\\') // PHP date format escaping character
 					{
 						i++;
 						if(escaping) jqueryui_format += php_format[i];
@@ -602,10 +606,10 @@ define(function() {
 					else
 					{
 						if(escaping) { jqueryui_format += "'"; escaping = false; }
-						if( _.isUndefined(SYMBOLS_MATCHING[char])){
-								jqueryui_format += char;
+						if( _.isUndefined(SYMBOLS_MATCHING[chr])){
+								jqueryui_format += chr;
 						}else{
-								jqueryui_format += SYMBOLS_MATCHING[char];
+								jqueryui_format += SYMBOLS_MATCHING[chr];
 						}
 
 					}
@@ -660,7 +664,7 @@ define(function() {
 				// lets clean up any existing commented out ufcs with their color specs
 				var pattern_existing = new RegExp('/\\*[^,;\\n]*#ufc(\\d*)\\*/[^,;\\n]*([\\*/]*((#[A-Fa-f0-9]+)+|(rgb[a]?[^\\)]*\\))))+', 'g');
 				string = string.replace(pattern_existing, "#ufc"+'$1');
-				
+
 				for(var _i in theme_colors){
 
 					var theme_color = theme_colors[_i] === '#000000' && theme_alphas[_i] === 0 ? 'inherit' : theme_colors[_i];
@@ -748,6 +752,17 @@ define(function() {
 					color_string = color_string.replace(pattern, theme_color );
 				}
 				return color_string;
+			},
+			/**
+			 * Removes alpha from rgba and returns rgb,
+			 * if given color is not rgba ( either hex or anything else) the exact color will be returned
+			 * @param color
+             * @returns {*}
+             */
+			rgba_to_rgb: function( color ){
+				if( !_.isString( color ) ) return color;
+
+				return color.replace(/ /g,'').replace(/^rgba\((\d+)\,(\d+)\,(\d+)\,(\d+\.?\d{0,}?)\)$/, "rgb($1, $2, $3)");
 			}
 		},
 		guessLinkType: guessLinkType,
@@ -793,6 +808,73 @@ define(function() {
 				}
 				else
 					return false;
+		},
+
+		/**
+		 * Compress passed data using pako.deflate
+		 *
+		 * @param data
+		 * @param options
+		 * @returns {string} base64 encoded string
+		 */
+		compress: function (data, options) {
+			console.time('compressing');
+			var default_options = { to: 'string', level: Upfront.mainData.save_compression_level },
+				stringified, raw, encoded
+			;
+			if ( _.isObject(options) ) {
+				options = _.extend(default_options, options);
+			}
+			else {
+				options = default_options;
+			}
+			// Stringify data to preserve types
+			stringified = JSON.stringify(data);
+			// Use deflateRaw, so wrapper isn't included
+			raw = pako.deflateRaw(stringified, options);
+			// Base64 encode it so we can work with string
+			encoded = btoa(raw);
+			console.log('compressed length:' + encoded.length, 'compressed ratio:' + Math.round(encoded.length/stringified.length*100)/100);
+			console.timeEnd('compressing');
+			return {
+				result: encoded,
+				original_length: stringified.length,
+				compressed_length: encoded.length
+			};
+		},
+
+		/**
+		 * Extract compressed data from pako.deflate, accept base64 encoded string
+		 *
+		 * @param compressed
+		 * @param options
+		 * @param compressed_length
+		 * @param original_length
+		 * @returns extracted data, with the same type before compression
+		 */
+		extract: function (compressed, options, compressed_length, original_length) {
+			console.time('extracting');
+			if ( compressed_length && compressed_length !== compressed.length ) return false;
+			var default_options = { to: 'string' },
+				decoded, inflated, parsed
+			;
+			if ( _.isObject(options) ) {
+				options = _.extend(default_options, options);
+			}
+			else {
+				options = default_options;
+			}
+			// Base64 decode first
+			decoded = atob(compressed);
+			// Use inflateRaw to extract as we deflate without wrapper
+			inflated = pako.inflateRaw(decoded, options);
+
+			if ( original_length && original_length !== inflated.length ) return false;
+
+			// Finally, parse it to get back original value
+			parsed = JSON.parse(inflated);
+			console.timeEnd('extracting');
+			return parsed;
 		}
 	};
 
@@ -827,6 +909,7 @@ define(function() {
 		open: function (callback, data, classname) {
 				data = data || {};
 				this.data = data;
+				this.disable_esc = data.disable_esc || false;
 				classname = classname || 'default-popup';
 				this.init();
 				var me = this,
@@ -842,10 +925,11 @@ define(function() {
 						}
 				;
 				
-				$('body').bind( 'keyup', function( event ) {
-					if ( event.keyCode === 27 )
-						me.close();
-				});
+				if ( !this.disable_esc ) {
+					$('body').bind( 'keyup', function( event ) {
+						if ( event.keyCode === 27 ) me.close();
+					});
+				}
 
 				// data.width = width, data.height = height;
 				this.$background
@@ -926,7 +1010,7 @@ define(function() {
 			}
 
 			Upfront.Events.trigger('popup:closed');
-			
+
 			this._deferred.resolve(this.$popup, result);
 		}
 
@@ -934,18 +1018,21 @@ define(function() {
 
 	var PreviewUpdate = function () {
 		var _layout_data = false,
+			_layout_compressed = false,
 			_layout = false,
 			_saving_flag = false,
 			_is_dirty = false,
 			_preview_url = false,
 			_revision_idx = false,
-			run = function (layout) {
+			_tab_id = false,
+			run = function (layout, tab_id) {
 				if (!!Upfront.Settings.Application.PERMS.REVISIONS) { // Only rebind stuff when revisions listening is enabled.
 					if (Upfront.Application.mode.current === Upfront.Application.MODE.THEME) {
 						// Exporter mode
 						rebind_exporter_events();
 					} else {
 						// Normal mode
+						_tab_id = tab_id;
 						_layout = layout;
 						rebind_events();
 					}
@@ -980,7 +1067,7 @@ define(function() {
 			},
 			exporter_set_dirty = function () {
 				_is_dirty = true;
-			}
+			},
 			rebind_events = function(){
 				var me = this;
 				Upfront.PreviewUpdate.__deferred_save_callback = Upfront.PreviewUpdate.__deferred_save_callback || _.debounce(save, 200);
@@ -1011,7 +1098,7 @@ define(function() {
 
 				Upfront.Events.off("entity:region:deactivated", Upfront.PreviewUpdate.__deferred_save_callback, this);
 				Upfront.Events.on("entity:region:deactivated", Upfront.PreviewUpdate.__deferred_save_callback, this);
-				
+
 				//Upfront.Events.off("model:property:remove", save);
 				//Upfront.Events.on("model:property:remove", save, this);
 
@@ -1023,9 +1110,16 @@ define(function() {
 				if (_layout_data && _layout_data.regions) _layout_data.regions = _(_layout_data.regions).reject(function (reg) { return reg.name === "shadow"; });
 				_layout_data.layout = _upfront_post_data.layout;
 				_layout_data.preferred_layout = _layout.get("current_layout");
+				_layout_data.tab_id = _tab_id;
 
-				//_layout_data = JSON.stringify(_layout_data, undefined, 2);
-				_layout_data = JSON.stringify(_layout_data);
+				if ( Upfront.mainData.save_compression ) {
+					_layout_compressed = Upfront.Util.compress(_layout_data);
+					_layout_data = _layout_compressed.result;
+				}
+				else {
+					//_layout_data = JSON.stringify(_layout_data, undefined, 2);
+					_layout_data = JSON.stringify(_layout_data);
+				}
 			},
 			save = function () {
 				if (_saving_flag) return false;
@@ -1035,7 +1129,14 @@ define(function() {
 				set_data();
 
 				Upfront.Events.trigger("preview:build:start");
-				Upfront.Util.post({action: "upfront_build_preview", "data": _layout_data, "current_url": window.location.href})
+				Upfront.Util.post({
+						action: "upfront_build_preview",
+						"data": _layout_data,
+						"current_url": window.location.href,
+						"original_length": _layout_compressed ? _layout_compressed.original_length : 0,
+						"compressed_length": _layout_compressed ? _layout_compressed.compressed_length : 0,
+						"compression": Upfront.mainData.save_compression ? 1 : 0,
+					})
 					.success(function (response) {
 						var data = response.data || {};
 						if ("html" in data && data.html) {
@@ -1046,6 +1147,7 @@ define(function() {
 						}
 						_saving_flag = false;
 						Upfront.Events.trigger("preview:build:stop");
+
 						//Upfront.Util.log("we're good here");
 
 						// Notify about concurrent edits
@@ -1053,21 +1155,24 @@ define(function() {
 							var users = _.values(data.concurrent_users).join(', ');
 							Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.views.already_edited_nag.replace(/%s/, users), 'error');
 						}
+						// If multiple tabs are open, warn on save.
+						if (data.other_tab_open) {
+							Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.views.multiple_tabs_nag, 'error');
+						}
 					})
 					.error(function () {
 						Upfront.Util.log("error building layout preview");
 					})
 				;
 
-				run(_layout);
+				run(_layout, _tab_id);
 			},
 			clear = function () {
 				_is_dirty = false; // Clear dirty flag, we just saved changes
 			},
 			warn = function (e) {
-				var e = e || window.event,
-					going = Upfront.Settings.l10n.global.views.unsaved_changes_nag
-				;
+				e = e || window.event;
+				var going = Upfront.Settings.l10n.global.views.unsaved_changes_nag;
 				if (!_saving_flag && !_is_dirty) return; // No changes
 				if (e) e.returnValue = going;
 				return going;
@@ -1088,7 +1193,7 @@ define(function() {
 			preview_url: get_preview_url,
 			get_revision: get_revision,
 			rebind_events: rebind_events
-		}
+		};
 
 	};
 

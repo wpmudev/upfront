@@ -61,13 +61,8 @@ a.ueditor-action-pickercancel{
     width: 100%;
 }
 .uinsert-selector {
-	/*position: absolute;*/
-	/*left: 50px;*/
-	/*background: rgba(31, 48, 63, 0.95);*/
-	/*height: 30px;*/
-	/*padding: 0 5px;*/
-    /*z-index: 99;*/
-    display: none;
+	left: 50px;
+	display: none;
 	position: absolute;
     /*margin-left: 50px;*/
 	background: rgba(31, 48, 63, 0.95);
@@ -82,7 +77,7 @@ a.ueditor-action-pickercancel{
 	content: '';
 	display: block;
 	position: absolute;
-	left: -8px;
+	left: -10px;
 	top: 35%;
 	border: 5px solid transparent;
 	border-right-color: rgba(31, 48, 63, 0.95);
@@ -299,6 +294,10 @@ div.uinsert-selector a:hover {
     width: auto;
     text-align: center;
 }
+#page.responsive-breakpoint .ueditor-insert-variant-group.ueditor-image-style-center {
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
 #page.responsive-breakpoint .upfront-inserted_image-wrapper .wp-caption-text,
 #page.responsive-breakpoint .upfront-inserted_image-wrapper .uinsert-image-wrapper {
     min-height: 0 !important;
@@ -361,12 +360,15 @@ div.uinsert-selector a:hover {
   margin: 0;
 }
 .upfront-field-wrap-image-style-variant{
-  min-width: 180px;
+  //min-width: 180px;
 }
 .upfront-field-wrap-image-style-variant label.upfront-field-label-block{
-  color:#a7c4e1;
+  color: #3d5266;
   font-size: 13px;
   font-weight: normal;
+}
+.upfront-ui.uimage-control-panel {
+	box-shadow: 0px 3px 5px rgba(0,0,0,.3);
 }
 .upfront-wp-image-style-variants{
   width: 55px;

@@ -106,12 +106,26 @@ define([
 			this.$el.addClass('upfront-control-dialog-open');
 			this.trigger('panel:open');
 			Upfront.Events.trigger('dialog-control:open', this);
+			
+			// add class if last region to allocate clearance for link panel so will not get cut
+			if ( this.$el.is('#link') ) {
+				var $region = this.$el.closest('.upfront-region-container'),
+					$lastRegion = $('.upfront-region-container').not('.upfront-region-container-shadow').last()
+				;
+				if ( $lastRegion.get(0) == $region.get(0) ) $region.addClass('upfront-last-region-margin');
+			}
+			
 			return this;
 		},
 		close: function() {
+			if ( !this.isopen ) return this; // Not opened, don't need to trigger close
 			this.isopen = false;
 			this.$el.removeClass('upfront-control-dialog-open');
 			this.trigger('panel:close');
+			
+			// remove class that was previously added on last region
+			this.$el.closest('.upfront-region-container').removeClass('upfront-last-region-margin');
+			
 			return this;
 		}
 	});

@@ -62,7 +62,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_get_post_image_variants', array($this, 'getPostImageVariants'), 10, 2);
 		add_filter('upfront_get_prev_post_image_variants', array($this, 'get_prev_post_image_variants'), 10, 2);
 		add_filter('upfront_get_other_post_image_variants', array($this, 'get_all_other_theme_variants'), 10, 2);
-		
+
 		add_filter('upfront_get_button_presets', array($this, 'getButtonPresets'), 10, 2);
 		add_filter('upfront_get_tab_presets', array($this, 'getTabPresets'), 10, 2);
 		add_filter('upfront_get_accordion_presets', array($this, 'getAccordionPresets'), 10, 2);
@@ -76,6 +76,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_get_posts_presets', array($this, 'getPostsPresets'), 10, 2);
 		add_filter('upfront_get_thispost_presets', array($this, 'getPostPresets'), 10, 2);
 		add_filter('upfront_get_ucomment_presets', array($this, 'getCommentPresets'), 10, 2);
+		add_filter('upfront_get_login_presets', array($this, 'getLoginPresets'), 10, 2);
 
 		add_filter('upfront_get_post_data_element_presets', array($this, 'get_post_data_presets'), 10, 2);
 		add_filter('upfront_get_author_element_presets', array($this, 'get_author_presets'), 10, 2);
@@ -165,6 +166,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		foreach ($pages as $page) {
 			$data['post_title'] = $page['name'];
+			$data['page_slug'] = $page['slug'];
 			$this->add_required_page($page['slug'], $page['layout'], $data, false);
 		}
 	}
@@ -437,8 +439,14 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	}
 
 	public function getGlobalRegions($global_regions = array())  {
-		if (empty($global_regions) === false) return $global_regions;
-
+		$is_builder = (
+			(function_exists('upfront_exporter_is_exporter_referer') && upfront_exporter_is_exporter_referer()) ||
+			(function_exists('upfront_exporter_is_exporter_uri') && upfront_exporter_is_exporter_uri())
+		);
+		if ( !$is_builder ) {
+			if (empty($global_regions) === false) return $global_regions;
+		}
+		// on builder always use the global region layout files below not from DB
 		// A bit reasoning about this. In global regions layout templates i.e. header & footer
 		// there can be more than one region since if there is element in header/footer region
 		// that links to lightbox, that lightbox is also included in layout template thus
@@ -704,6 +712,20 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		return json_decode($presets, $as_array);
 	}
 
+	public function getLoginPresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('login_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		return json_decode($presets, $as_array);
+	}
+
 	public function get_post_data_presets ($presets, $args) {
 		if (empty($presets) === false) return $presets;
 		return $this->_get_prepared_presets('post_data_element_presets', $args);
@@ -718,7 +740,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		if (empty($presets) === false) return $presets;
 		return $this->_get_prepared_presets('featured_image_element_presets', $args);
 	}
-	
+
 	public function get_taxonomy_presets ($presets, $args) {
 		if (empty($presets) === false) return $presets;
 		return $this->_get_prepared_presets('taxonomy_element_presets', $args);
@@ -751,7 +773,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			$as_array = true;
 		}
 
-		return json_decode($presets, $as_array);	
+		return json_decode($presets, $as_array);
 	}
 
 	public function getAccordionPresets($presets, $args) {
@@ -1116,38 +1138,11 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	/**
 	 * Called from the implementing theme,
 	 * this method will actually import the background slider images.
+	 *
+	 * @param $filepath
 	 */
 	protected function _import_slider_image ($filepath) {
-        $key = $this->get_prefix() . '-slider-images';
-        $images = get_option($key, array());
-        if (!empty($images[$filepath])) return $images[$filepath];
-
-        // else import image
-        $wp_upload_dir = wp_upload_dir();
-        $pfx = !empty($wp_upload_dir['path']) ? trailingslashit($wp_upload_dir['path']) : '';
-        if (!function_exists('wp_generate_attachment_metadata')) require_once(ABSPATH . 'wp-admin/includes/image.php');
-        $filename = basename($filepath);
-        while (file_exists("{$pfx}{$filename}")) {
-            $filename = rand() . $filename;
-        }
-        $full_img_path = get_stylesheet_directory() . DIRECTORY_SEPARATOR . ltrim($filepath, '/');
-        @copy($full_img_path, "{$pfx}{$filename}");
-        $wp_filetype = wp_check_filetype(basename($filename), null);
-        $attachment = array(
-            'guid' => $wp_upload_dir['url'] . '/' . basename($filename),
-            'post_mime_type' => $wp_filetype['type'],
-            'post_title' => preg_replace('/\.[^.]+$/', '', basename($filename)),
-            'post_content' => '',
-            'post_status' => 'inherit'
-        );
-        $attach_id = wp_insert_attachment($attachment, "{$pfx}{$filename}");
-        $attach_data = wp_generate_attachment_metadata( $attach_id, "{$pfx}{$filename}" );
-        wp_update_attachment_metadata( $attach_id, $attach_data );
-
-        $images[$filepath] = $attach_id;
-        update_option($key, $images);
-
-        return $attach_id;
+		return Upfront_ImageServer::get_instance()->maybe_import_image($filepath);
     }
 
 
@@ -1335,7 +1330,10 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
      * @return string
      */
     public static function get_post_image_variants_from_settings(){
-        $image_variants = self::_get_theme_settings()->get('post_image_variants');
+		$settings = self::_get_theme_settings();
+		if (!$settings) return '';
+
+        $image_variants = $settings->get('post_image_variants');
         if( empty( $image_variants )){
             $image_variants = <<< VRT
 		[
@@ -1453,7 +1451,10 @@ VRT;
 	 * @return int
 	 */
 	public static function import_slider_image ($filepath) {
-		return self::$instance->_import_slider_image($filepath);
+		return !empty(self::$instance)
+			? self::$instance->_import_slider_image($filepath)
+			: 0
+		;
 	}
 
 }

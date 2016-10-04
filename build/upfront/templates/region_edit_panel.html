@@ -6,69 +6,31 @@
 <script type="text/template" id="upfront-region-bg-setting">
 	<div class="upfront-region-bg-setting-header clearfix">
 		<div class="upfront-region-bg-setting-auto-resize"></div>
-		
-		<div class="upfront-region-bg-setting-name">
-			<div class="upfront-region-bg-setting-name-wrap">
-				<span class="upfront-region-name-edit-value"></span>
-				<span class="upfront-region-bg-setting-is-global">{{Upfront.Settings.l10n.global.views.global}}</span>
-				<a href="#" class="upfront-region-name-edit-trigger">{{Upfront.Settings.l10n.global.views.edit}}</a>
-			</div>
-			<div class="upfront-region-bg-setting-name-edit"></div>
-		</div>
+		<div class="upfront-region-bg-setting-name"></div>
 	</div>
-	
-	<div class="upfront-region-bg-setting-fixed-region clearfix">
-		<div class="upfront-region-bg-setting-label">{{Upfront.Settings.l10n.global.views.floating_region_settings}}:</div>
-
-	</div>
-
-	<div class="upfront-region-bg-setting-lightbox-region clearfix">
-
-	</div>
-
-	<div class="upfront-region-bg-setting-theme-body">
-		<div class="upfront-region-bg-setting-heading">{{Upfront.Settings.l10n.global.views.global_bg_settings}}</div>
-
-	</div>
-
-	<div class="upfront-region-bg-setting-region-global"></div>
-	<div class="upfront-region-bg-setting-add-global-region"></div>
 
 	<div class="upfront-region-bg-setting-region-type">
-		<!-- <div class="upfront-region-bg-setting-label">{{Upfront.Settings.l10n.global.views.area_type}}</div> -->
+		<!-- <div class="upfront-bg-setting-label">{{Upfront.Settings.l10n.global.views.area_type}}</div> -->
 	</div>
 	<div class="upfront-region-bg-setting-region-behavior">
-		<div class="upfront-region-bg-setting-label">{{Upfront.Settings.l10n.global.views.element_behavior}}</div>
+		<div class="upfront-bg-setting-label">{{Upfront.Settings.l10n.global.views.element_behavior}}</div>
 	</div>
 	<div class="upfront-region-bg-setting-region-nav">
-		<div class="upfront-region-bg-setting-label">{{Upfront.Settings.l10n.global.views.add_sub_region}}</div>
+		<div class="upfront-bg-setting-label">{{Upfront.Settings.l10n.global.views.add_sub_region}}</div>
 	</div>
-	<div class="upfront-region-bg-setting-type">
-		<div class="upfront-region-bg-setting-label">{{Upfront.Settings.l10n.global.views.bg_type}}</div>
+
+	<div class="upfront-bg-setting-type">
+		<div class="upfront-bg-setting-label">{{Upfront.Settings.l10n.global.views.bg_type}}</div>
 	</div>
-	<div class="upfront-region-bg-setting-tab upfront-region-bg-setting-tab-color"></div>
-	<div class="upfront-region-bg-setting-tab upfront-region-bg-setting-tab-image"></div>
-	<div class="upfront-region-bg-setting-tab upfront-region-bg-setting-tab-featured"></div>
-	<div class="upfront-region-bg-setting-tab upfront-region-bg-setting-tab-slider"></div>
-	<div class="upfront-region-bg-setting-tab upfront-region-bg-setting-tab-map"></div>
-	<div class="upfront-region-bg-setting-tab upfront-region-bg-setting-tab-video"></div>
-	<div class="upfront-region-bg-setting-padding">
-		<div class="upfront-region-bg-setting-padding-type"></div>
-		<div class="upfront-region-bg-setting-equal-padding"></div>
-		<div class="upfront-region-bg-setting-varied-padding">
-			<div class="upfront-region-bg-setting-padding-top">
-				<div class="upfront-region-bg-setting-label">{{Upfront.Settings.l10n.global.views.top_padding}}</div>
-			</div>
-			<div class="upfront-region-bg-setting-padding-bottom">
-				<div class="upfront-region-bg-setting-label">{{Upfront.Settings.l10n.global.views.bottom_padding}}</div>
-			</div>
-		</div>
-	</div>
+	<div class="upfront-bg-setting-tab upfront-bg-setting-tab-color"></div>
+	<div class="upfront-bg-setting-tab upfront-bg-setting-tab-image"></div>
+	<div class="upfront-bg-setting-tab upfront-bg-setting-tab-featured"></div>
+	<div class="upfront-bg-setting-tab upfront-bg-setting-tab-slider"></div>
+	<div class="upfront-bg-setting-tab upfront-bg-setting-tab-map"></div>
+	<div class="upfront-bg-setting-tab upfront-bg-setting-tab-video"></div>
+
+	<div class="upfront-region-bg-setting-padding"></div>
 	<div class="upfront-region-bg-setting-footer clearfix">
-		<!-- <div class="upfront-region-bg-setting-change-image">
-			{{Upfront.Settings.l10n.global.views.change_image}}
-		</div> -->
-		<div class="upfront-region-bg-setting-floating-restrict"></div>
 		<div class="upfront-region-bg-setting-sticky"></div>
 		<div class="upfront-region-bg-setting-edit-css upfront-icon upfront-icon-edit-css">
 			<span>{{Upfront.Settings.l10n.global.views.edit_region_css}}</span>
@@ -76,46 +38,72 @@
 	</div>
 </script>
 
-<script type="text/template" id="upfront-region-bg-setting-tab">
-	<div class="upfront-region-bg-setting-tab-primary"></div>
-	<div class="upfront-region-bg-setting-tab-secondary"></div>
-</script>
-
-<script type="text/template" id="upfront-region-bg-setting-tab-color">
-	<div class="upfront-region-bg-setting-tab-primary">
-		<div class="upfront-region-bg-setting-label">{{Upfront.Settings.l10n.global.views.pick_color}}</div>
+<script type="text/template" id="upfront-region-bg-setting-fixed">
+	<div class="upfront-region-bg-setting-header clearfix">
+		<div class="upfront-region-bg-setting-name"></div>
 	</div>
-	<div class="upfront-region-bg-setting-tab-secondary"></div>
-</script>
 
-<script type="text/template" id="upfront-region-bg-setting-tab-image">
-	<div class="upfront-region-bg-setting-tab-primary">
-		<div class="upfront-region-bg-setting-label">{{Upfront.Settings.l10n.global.views.image_variation}}</div>
+	<div class="upfront-region-bg-setting-fixed-region clearfix">
+		<div class="upfront-bg-setting-label">{{Upfront.Settings.l10n.global.views.floating_region_settings}}:</div>
 	</div>
-	<div class="upfront-region-bg-setting-tab-secondary"></div>
-</script>
 
-<script type="text/template" id="upfront-region-bg-setting-tab-featured">
-	<div class="upfront-region-bg-setting-tab-primary">
-		<div class="upfront-region-bg-setting-label">{{Upfront.Settings.l10n.global.views.image_variation}}</div>
+	<div class="upfront-bg-setting-type">
+		<div class="upfront-bg-setting-label">{{Upfront.Settings.l10n.global.views.bg_type}}</div>
 	</div>
-	<div class="upfront-region-bg-setting-tab-secondary"></div>
-</script>
+	<div class="upfront-bg-setting-tab upfront-bg-setting-tab-color"></div>
+	<div class="upfront-bg-setting-tab upfront-bg-setting-tab-image"></div>
+	<div class="upfront-bg-setting-tab upfront-bg-setting-tab-featured"></div>
+	<div class="upfront-bg-setting-tab upfront-bg-setting-tab-slider"></div>
+	<div class="upfront-bg-setting-tab upfront-bg-setting-tab-map"></div>
+	<div class="upfront-bg-setting-tab upfront-bg-setting-tab-video"></div>
 
-<script type="text/template" id="upfront-region-bg-setting-tab-slider">
-	<div class="upfront-region-bg-setting-tab-primary">
-		<div class="upfront-region-bg-setting-label">{{Upfront.Settings.l10n.global.views.slider_transition}}</div>
+	<div class="upfront-region-bg-setting-padding"></div>
+	<div class="upfront-region-bg-setting-footer clearfix">
+		<div class="upfront-region-bg-setting-floating-restrict"></div>
+		<div class="upfront-region-bg-setting-edit-css upfront-icon upfront-icon-edit-css">
+			<span>{{Upfront.Settings.l10n.global.views.edit_region_css}}</span>
+		</div>
 	</div>
-	<div class="upfront-region-bg-setting-tab-secondary"></div>
 </script>
 
-
-<script type="text/template" id="upfront-region-bg-setting-tab-video">
-	<div class="upfront-region-bg-setting-tab-primary">
-		<div class="upfront-region-bg-setting-label">&nbsp;</div>
+<script type="text/template" id="upfront-region-bg-setting-lightbox">
+	<div class="upfront-region-bg-setting-header clearfix">
+		<div class="upfront-region-bg-setting-name"></div>
 	</div>
-	<div class="upfront-region-bg-setting-tab-secondary"></div>
+
+	<div class="upfront-region-bg-setting-lightbox-region clearfix"></div>
+
+	<div class="upfront-region-bg-setting-padding"></div>
+	<div class="upfront-region-bg-setting-footer clearfix">
+		<div class="upfront-region-bg-setting-edit-css upfront-icon upfront-icon-edit-css">
+			<span>{{Upfront.Settings.l10n.global.views.edit_region_css}}</span>
+		</div>
+	</div>
 </script>
+
+
+<script type="text/template" id="upfront-region-bg-setting-name">
+	<div class="upfront-region-bg-setting-name-wrap">
+		<span class="upfront-region-name-edit-value"></span>
+		<span class="upfront-region-bg-setting-is-global">{{Upfront.Settings.l10n.global.views.global}}</span>
+		<a href="#" class="upfront-region-name-edit-trigger">{{Upfront.Settings.l10n.global.views.edit}}</a>
+	</div>
+	<div class="upfront-region-bg-setting-name-edit"></div>
+</script>
+
+<script type="text/template" id="upfront-region-bg-setting-padding">
+	<div class="upfront-region-bg-setting-padding-type"></div>
+	<div class="upfront-region-bg-setting-equal-padding"></div>
+	<div class="upfront-region-bg-setting-varied-padding">
+		<div class="upfront-region-bg-setting-padding-top">
+			<div class="upfront-bg-setting-label">{{Upfront.Settings.l10n.global.views.top_padding}}</div>
+		</div>
+		<div class="upfront-region-bg-setting-padding-bottom">
+			<div class="upfront-bg-setting-label">{{Upfront.Settings.l10n.global.views.bottom_padding}}</div>
+		</div>
+	</div>
+</script>
+
 
 
 </div>

@@ -110,6 +110,12 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		if(!empty($presets)) {
 			foreach($presets as $preset) {
 				if(isset($preset['preset_style']) && !empty($preset['preset_style'])) {
+					
+					// WARNING!!! This is added to prevent enourmos amount of slashes in preset_style
+					$preset['preset_style'] = str_replace("\\\\\\\\\\", "\\", $preset['preset_style']);
+					// Do it twice just in case we have multiple slashes
+					$preset['preset_style'] = str_replace("\\\\\\\\\\", "\\", $preset['preset_style']);
+
 					$preset['preset_style'] = str_replace("@n", "\n", $preset['preset_style']);
 				}
 
@@ -259,11 +265,11 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				} else {
 					$preset['preset_style'] = str_replace('#page', 'div#page .upfront-output-region-container .upfront-output-module', $preset['preset_style']);
 				}
-				
+
 				if($this->isThisPostServer) {
 					$preset['preset_style'] = str_replace('.default', '.default.upfront-this_post', $preset['preset_style']);
 				}
-				
+
 				if($this->isCommentServer) {
 					$preset['preset_style'] = str_replace('.default', '.default.upfront-comment', $preset['preset_style']);
 				}
@@ -370,6 +376,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	public function properties_columns($array, $column) {
         $result = array();
         foreach ($array as $item) {
+			if (!is_array($item)) continue; // Not an array, nothing to do here
             if (array_key_exists($column, $item)) {
                 $result[] = $item[$column];
 			}
@@ -386,7 +393,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				'json' => false,
 				'as_array' => true
 			)
-    );
+		);
 
 		if(!is_array($presets)) {
 			$presets = json_decode($presets, true);
@@ -423,17 +430,17 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		return $updatedPresets;
 	}
-	
+
 	public function get_typography_values_by_tag($tag) {
 		$tag_typography = array();
-		
+
 		//Get breakpoints typography
 		$grid = Upfront_Grid::get_grid();
 		$breakpoint = $grid->get_default_breakpoint();
 		$typography = $breakpoint->get_typography();
-		
+
 		$theme_typography_array = array();
-		
+
 		if(!is_null(Upfront_ChildTheme::get_instance())) {
 			//We load this in case typography is empty or specific tag is empty
 			$layout_properties = Upfront_ChildTheme::get_instance()->getLayoutProperties();
@@ -449,11 +456,11 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		if(empty($typography)) {
 			$typography = $theme_typography_array;
 		}
-		
+
 		if(isset($typography[$tag]) && !empty($typography[$tag])) {
 			//Breakpoint typography exist
 			$tag_typography = $typography[$tag];
-			
+
 			//If tag is A we should inherit size and line-height from P
 			if($tag == "a") {
 				if(isset($typography['p']['size'])) {
@@ -474,13 +481,13 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		return $tag_typography;
 	}
-	
+
 	public function get_typography_defaults_array($defaults, $part) {
 		//Make sure we use array
 		if (is_object($defaults)) {
 			$defaults = get_object_vars($defaults);
 		}
-		
+
 		if (!is_array($defaults)) $defaults = array();
 		$defaults = wp_parse_args($defaults, array(
 			'font_face' => '',
@@ -560,6 +567,28 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			'ease_in' => __('ease-in', 'upfront'),
 			'ease_out' => __('ease-out', 'upfront'),
 			'ease_in_out' => __('ease-in-out', 'upfront'),
+			'accordion' => __('Accordion', 'upfront'),
+			'comments' => __('Comments', 'upfront'),
+			'contact_form' => __('Contact Form', 'upfront'),
+			'gallery' => __('Gallery', 'upfront'),
+			'image' => __('Image', 'upfront'),
+			'login' => __('Login', 'upfront'),
+			'like_box' => __('Like Box', 'upfront'),
+			'map' => __('Map', 'upfront'),
+			'navigation' => __('Navigation', 'upfront'),
+			'button' => __('Button', 'upfront'),
+			'posts' => __('Posts', 'upfront'),
+			'search' => __('Search', 'upfront'),
+			'slider' => __('Slider', 'upfront'),
+			'social' => __('Social', 'upfront'),
+			'tabs' => __('Tabs', 'upfront'),
+			'page' => __('Page', 'upfront'),
+			'post' => __('Post', 'upfront'),
+			'widget' => __('Widget', 'upfront'),
+			'youtube' => __('YouTube', 'upfront'),
+			'text' => __('Text', 'upfront'),
+			'code' => __('Code', 'upfront'),
+			'default_label' => __('Default', 'upfront'),
 			'edit_preset_css' => __('Edit Preset CSS', 'upfront'),
 			'edit_preset_label' => __('Custom CSS', 'upfront'),
 			'convert_style_to_preset' => __('Save as Preset', 'upfront'),

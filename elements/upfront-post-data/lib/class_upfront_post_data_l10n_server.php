@@ -28,7 +28,7 @@ class Upfront_PostData_L10n_Server implements IUpfront_Server {
 				'url_part_title' => __('URL', 'upfront'),
 				'bio_part_title' => __('Biography', 'upfront'),
 				'gravatar_part_title' => __('Gravatar', 'upfront'),
-				
+
 				'display' => __('Display', 'upfront'),
 				'display_name' => __('Display name', 'upfront'),
 				'first_last' => __('First &amp; Last Name', 'upfront'),
@@ -38,11 +38,11 @@ class Upfront_PostData_L10n_Server implements IUpfront_Server {
 				'link_to' => __('Link To', 'upfront'),
 				'website' => __('Website', 'upfront'),
 				'author_page' => __('Author page', 'upfront'),
-				
+
 				'email_text_label' => __('Email Text Label', 'upfront'),
-				
+
 				'link_text' => __('Link Text', 'upfront'),
-				
+
 				'gravatar_size' => __('Size in px', 'upfront'),
 			),
 			'comments' => array(
@@ -52,7 +52,7 @@ class Upfront_PostData_L10n_Server implements IUpfront_Server {
 				'comments_part_title' => __('Comments', 'upfront'),
 
 				'warning_pagination' => __('Comments pagination is disabled in admin. Toggling this part will have no effect.', 'upfront'),
-				
+
 				'disable_for_post' => __('For this post:', 'upfront'),
 				'disable_comments' => __('Disable comments', 'upfront'),
 				'disable_trackbacks' => __('Disable trackbacks', 'upfront'),
@@ -80,13 +80,13 @@ class Upfront_PostData_L10n_Server implements IUpfront_Server {
 				'fallback_image' => __('Choose', 'upfront'),
 			),
 			'meta' => array(
-				'meta_part_title' => __('Feature Image', 'upfront'),
+				'meta_part_title' => __('Post Meta', 'upfront'),
 			),
 			'post' => array(
 				'date_part_title' => __('Date posted', 'upfront'),
 				'title_part_title' => __('Title', 'upfront'),
 				'content_part_title' => __('Contents', 'upfront'),
-				
+
 				'date_format' => __('Date Format', 'upfront'),
 				'wp_date' => __('WordPress date', 'upfront'),
 				'dMY' => __('30 Jan 2015', 'upfront'),
@@ -96,7 +96,7 @@ class Upfront_PostData_L10n_Server implements IUpfront_Server {
 				'custom_format' => __('Custom PHP Format', 'upfront'),
 				'php_format' => __('PHP Format', 'upfront'),
 				'reference' => __('Reference', 'upfront'),
-				
+
 				'left_indent' => __('Left indent', 'upfront'),
 				'right_indent' => __('Right indent', 'upfront'),
 				'returns_into_dividers' => __('Convert 3 Returns into Divider', 'upfront'),
@@ -104,13 +104,13 @@ class Upfront_PostData_L10n_Server implements IUpfront_Server {
 				'content_part' => __('Content part', 'upfront'),
 			),
 			'tax' => array(
-				'cats_part_title' => __('Categories', 'upfront'),
+				'cats_part_title' => __('Cats & Tags', 'upfront'),
 				'tags_part_title' => __('Tags', 'upfront'),
-				
+
 				'max_limit' => __('Show max:', 'upfront'),
 				'separator' => __('Separate with', 'upfront'),
 			),
-			
+
 			'new_tab' => __('New Tab', 'upfront'),
 
 			// --- Legacy ---
@@ -263,8 +263,10 @@ class Upfront_PostData_L10n_Server implements IUpfront_Server {
 			'part_content' => __('Content', 'upfront'),
 			'part_read_more' => __('Read More', 'upfront'),
 			'part_tags' => __('Tags', 'upfront'),
-			'part_categories' => __('Categories', 'upfront'),
+			'part_categories' => __('Cats & Tags', 'upfront'),
 			'part_meta' => __('Meta', 'upfront'),
+			'part_cats_and_tags' => __("Cats & Tags", 'upfront'),
+			'part_post_data' => __("Post Data", 'upfront'),
 			'image_options' => __('Image Options'),
 			'lock_image' => __('Lock Image'),
 			'swap_image' => __('Swap Image', 'upfront'),

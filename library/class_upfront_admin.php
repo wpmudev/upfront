@@ -3,6 +3,7 @@ include_once "admin/class_upfront_admin_page.php";
 include_once "admin/class_upfront_admin_general.php";
 include_once "admin/class_upfront_admin_restrictions.php";
 include_once "admin/class_upfront_admin_experimental.php";
+include_once "admin/class_upfront_admin_api_keys.php";
 
 /**
  * Constructs Upfront admin pages
@@ -55,13 +56,10 @@ class Upfront_Admin
      *
      */
     function add_menus(){
-		
+
 		global $menu, $submenu;
-		
-		if (!Upfront_Permissions::current( Upfront_Permissions::SEE_USE_DEBUG ) && Upfront_Permissions::current( Upfront_Permissions::MODIFY_RESTRICTIONS )) {
-			//Here we simulate page with fake capability
-			add_menu_page( __("General Settings", Upfront::TextDomain), __("Upfront", Upfront::TextDomain), "see_use_debug_hide_restrictions",  self::$menu_slugs['main'], null, "", 58);
-		} elseif (Upfront_Permissions::current( Upfront_Permissions::SEE_USE_DEBUG ) || Upfront_Permissions::current( Upfront_Permissions::MODIFY_RESTRICTIONS )) {
+
+		if (Upfront_Permissions::current( Upfront_Permissions::SEE_USE_DEBUG ) || Upfront_Permissions::current( Upfront_Permissions::MODIFY_RESTRICTIONS )) {
 			add_menu_page( __("General Settings", Upfront::TextDomain), __("Upfront", Upfront::TextDomain), "manage_options",  self::$menu_slugs['main'], null, "", 58);
 		}
 
@@ -89,4 +87,3 @@ class Upfront_Admin
 }
 
 new Upfront_Admin;
-

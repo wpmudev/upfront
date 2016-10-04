@@ -63,7 +63,7 @@ define([
 
 		focusNameField: function() {
 			var $addlabels = this.$el.find('.ugallery-addlabels');
-			if ( $addlabels.val() == '' )
+			if ( $addlabels.val() === '' )
 				$addlabels.focus();
 			else
 				this.addLabel($addlabels);

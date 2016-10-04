@@ -27,6 +27,9 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$site = home_url();
 		$includes_url = includes_url();
 		$current_theme_url = get_stylesheet_directory_uri();
+		$site_path = parse_url($site, PHP_URL_PATH);
+		$current_theme_path = parse_url($current_theme_url, PHP_URL_PATH);
+		$current_theme_path = preg_replace('/^' . preg_quote($site_path, '/') . '/i', '', $current_theme_path);
 
 		if (empty($is_ssl) && is_ssl()) {
 			$root = preg_replace('/^https:/', 'http:', $root);
@@ -69,7 +72,8 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"jquery-simulate" => 'scripts/jquery/jquery.simulate',
 			"ueditor" => 'scripts/redactor/ueditor',
 			"chosen" => "scripts/chosen/chosen.jquery.min",
-			"findandreplace" => "scripts/findandreplace/findAndReplaceDOMText"
+			"findandreplace" => "scripts/findandreplace/findAndReplaceDOMText",
+			"pako" => "scripts/pako/pako.min"
 		);
 		$paths = apply_filters('upfront-settings-requirement_paths', $paths + $registered);
 
@@ -284,6 +288,12 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			'type' => __('All posts'),
 		));
 
+		$archive_specificity = json_encode(array(
+			'specificity' => __('This archive only'),
+			'item' => __('All archives of this type'),
+			'type' => __('All archives'),
+		));
+
 		$content = json_encode(array(
 			'create' => array (
 				'page' => Upfront_VirtualPage::get_url('create/page'),
@@ -377,6 +387,12 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			)
 		);
 
+
+		// Use compression or not
+		$save_compression = Upfront_Compression::is_enabled() ? 1 : 0;
+		$save_compression_level = Upfront_Compression::get_level();
+
+
 		$menus = json_encode(wp_get_nav_menus());
 		$is_rtl = (int) is_rtl();
 		$main = <<<EOMainJs
@@ -386,6 +402,7 @@ Upfront.mainData = {
 	requireConfig: $require_config,
 	root: '{$root}',
 	currentThemeUrl: '{$current_theme_url}',
+	currentThemePath: '{$current_theme_path}',
 	ajax: '{$ajax}',
 	admin: '{$admin}',
 	site: '{$site}',
@@ -398,6 +415,7 @@ Upfront.mainData = {
 	PERMS: {$permissions},
 
 	specificity: {$specificity},
+	archiveSpecificity: {$archive_specificity},
 	gridInfo: {$grid_info},
 	themeInfo: {$theme_info},
 	themeFonts: {$theme_fonts},
@@ -415,7 +433,9 @@ Upfront.mainData = {
 	l10n: {$l10n},
 	font_icons: {$redactor_font_icons},
 	menus: {$menus},
-	isRTL: {$is_rtl}
+	isRTL: {$is_rtl},
+	save_compression: {$save_compression},
+	save_compression_level: {$save_compression_level}
 };
 EOMainJs;
 		$this->_out(new Upfront_JavascriptResponse_Success($main));

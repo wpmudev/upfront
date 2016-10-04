@@ -88,7 +88,8 @@ var PostImageInsert_Manager = base.ImageInsertBase.extend({
      */
     importFromShortcode_UF: function( shortcode_data ){
         var imageData = _.extend({}, this.defaultData ),
-            realSize = this.calculateRealSize( imageData.imageThumb.src)
+            realSize = this.calculateRealSize( imageData.imageThumb.src),
+            $div = $("<div>")
         ;
 
         imageData.imageThumb.src = this.get_shortcode_image_src( shortcode_data.content );
@@ -104,7 +105,8 @@ var PostImageInsert_Manager = base.ImageInsertBase.extend({
 
         imageData.style = this._findVariant(shortcode_data.get("uf_variant")).toJSON();
 
-        imageData.style.caption.show =  shortcode_data.get("uf_show_caption");
+        imageData.show_caption = parseInt(shortcode_data.get("uf_show_caption"), 10);
+        imageData.style.caption.show =  parseInt(shortcode_data.get("uf_show_caption"), 10);
 
 
         imageData.variant_id = imageData.style.vid;
@@ -238,18 +240,17 @@ var PostImageInsert_Manager = base.ImageInsertBase.extend({
      * @returns {string}
      */
     get_shortcode_caption_text: function( parsed_content ){
-        var html = "";
+        var html = "",
+            $div = $("<div>");
+
         _.each(parsed_content, function( el, i ){
             if( !$(el).is("img") )
-                html += $("<div>").html(el).html();
-            //if( el.innerHtml )
-                //html += el.innerHtml;
-            //
-            //if( el.textContent )
-            //    html += el.textContent;
+                html += $div.html(el).html();
+
         });
 
-        return html;
+        $div.html( html ).find("img").remove(); // make sure there is no image in caption
+        return $div.html();
     },
 
     get_shortcode_content_image_size_class: function( content ){

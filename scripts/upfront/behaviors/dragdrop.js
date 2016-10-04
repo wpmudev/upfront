@@ -1,16 +1,16 @@
 (function ($) {
 
 define(function(){
-	
+
 var DragDrop = function (view, model) {
 	this.initialize(view, model);
-}
+};
 
 DragDrop.prototype = {
 	module_selector: '> .upfront-module-view > .upfront-module, > .upfront-module-group',
 	object_selector: '> .upfront-object-view > .upfront-object',
 	el_selector: '',
-	
+
 	view: false,
 	model: false,
 	$me: false,
@@ -24,16 +24,16 @@ DragDrop.prototype = {
 	current_region: false,
 	$container: false,
 	$current_container: false,
-	
+
 	region_model: false,
 	current_region_model: false,
 	current_wrappers: false,
-	
+
 	is_group: false,
 	is_object: false,
 	is_parent_group: false,
 	is_disabled: false,
-	
+
 	$helper: false,
 	event: false,
 	ui: false,
@@ -55,6 +55,11 @@ DragDrop.prototype = {
 	wrap_only: false,
 	new_wrap_view: false,
 	move_region: false,
+	has_siblings: false,
+	sibling_index: -1,
+
+	move_siblings: false,
+	$wrap_move: false,
 
 	current_grid: false,
 	current_grid_pos: false,
@@ -67,10 +72,10 @@ DragDrop.prototype = {
 	_last_coord: false,
 	_t: false,
 	_focus_t: false,
-	
+
 	focus: false,
 	focus_coord: false,
-	
+
 	initialize: function (view, model) {
 		this.view = view;
 		this.model = model;
@@ -91,7 +96,7 @@ DragDrop.prototype = {
 
 		this.setup();
 	},
-	
+
 	setup: function () {
 		this.is_group = this.view.$el.hasClass('upfront-module-group');
 		this.is_object = this.view.$el.hasClass('upfront-object-view');
@@ -102,7 +107,10 @@ DragDrop.prototype = {
 		this.$layout = this.$main.find('.upfront-layout');
 		this.el_selector = this.is_object ? this.object_selector : this.module_selector;
 
-		if ( this.app.mode.current !== this.app.MODE.THEME && this.model.get_property_value_by_name('disable_drag') ) {
+		if (
+				false === Upfront.plugins.isRequiredByPlugin('setup drag and drop') &&
+				this.model.get_property_value_by_name('disable_drag')
+		) {
 			return false;
 		}
 		// No draggable for spacer
@@ -129,7 +137,7 @@ DragDrop.prototype = {
 
 			return false;
 		}
-		
+
 		this.$me.draggable({
 			revert: true,
 			revertDuration: 0,
@@ -145,14 +153,14 @@ DragDrop.prototype = {
 			stop: $.proxy(this.on_stop, this)
 		});
 	},
-	
+
 	on_start: function (e, ui) {
 		this.ed.time_start('drag start');
 		this.event = e;
 		this.ui = ui;
 		this.breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
 		this.is_parent_group = ( typeof this.view.group_view != 'undefined' );
-		
+
 		this.prepare_drag();
 
 		this.ed.time_end('drag start');
@@ -160,12 +168,12 @@ DragDrop.prototype = {
 		Upfront.Events.trigger("entity:drag_start", this.view, this.model);
 		this.ed.time_end('drag start');
 	},
-	
+
 	on_drag: function (e, ui) {
 		var that = this;
 		this.event = e;
 		this.ui = ui;
-		
+
 		//this.ed.time_start('dragging');
 
 		// change drop point on timeout
@@ -173,26 +181,27 @@ DragDrop.prototype = {
 		this._t = setTimeout(function(){ that.update_drop_timeout(); }, this.ed.timeout);
 
 		this.update_drop_position();
+		this.update_siblings_position();
 
 		if ( this.ed.show_debug_element ){
 			this.$helper.find(".upfront-debug-info").text(
 				'grid: '+this.current_grid.x+','+this.current_grid.y+' | ' +
-				'current: ('+this.current_grid_pos.left+','+this.current_grid_pos.top+'),('+this.current_grid_pos.right+','+this.current_grid_pos.bottom+') | ' + 
+				'current: ('+this.current_grid_pos.left+','+this.current_grid_pos.top+'),('+this.current_grid_pos.right+','+this.current_grid_pos.bottom+') | ' +
 				'margin size: '+this.drop_top+'/'+this.drop_left
 			);
 		}
 		//this.ed.time_end('dragging');
 	},
-	
+
 	on_stop: function (e, ui) {
 		var that = this;
 		this.ed.time_start('drag stop');
 		this.event = e;
 		this.ui = ui;
-		
+
 		clearTimeout(this._t);
 		clearTimeout(this._focus_t);
-		
+
 		if ( !this.drop.is_me ) {
 			this.render_drop();
 		}
@@ -200,7 +209,7 @@ DragDrop.prototype = {
 		this.update_models();
 		this.update_views();
 		this.reset();
-		
+
 		// Add drop animation
 		var $me = this.is_group ? this.view.$el : this.view.$el.find('.upfront-editable_entity:first');
 		var ani_event_end = 'animationend.drop_ani webkitAnimationEnd.drop_ani MSAnimationEnd.drop_ani oAnimationEnd.drop_ani';
@@ -209,19 +218,19 @@ DragDrop.prototype = {
 			Upfront.Events.trigger("entity:drag_animate_stop", that.view, that.model);
 			$me.off(ani_event_end); // Make sure to remove any remaining unfired event
 		}).addClass('upfront-dropped');
-		
-		
+
+
 		Upfront.Events.trigger("entity:drag_stop", this.view, this.model);
 		this.view.trigger("entity:drop", {
-			col: this.drop_col, 
-			left: this.drop_left, 
+			col: this.drop_col,
+			left: this.drop_left,
 			top: this.drop_top
 		}, this.view, this.model);
 		this.view.trigger("entity:self:drag_stop");
-		
+
 		this.ed.time_end('drag stop');
 	},
-	
+
 	update_vars: function () {
 		var regions = this.app.layout.get("regions");
 		this.$helper = $('.ui-draggable-dragging');
@@ -233,14 +242,14 @@ DragDrop.prototype = {
 		this.region_model = regions.get_by_name(this.region.region);
 		this.$container = this.$region.find('.upfront-modules_container > .upfront-editable_entities_container:first');
 	},
-	
+
 	/**
 	 * Create droppable points
 	 */
 	create_drop_point: function () {
 		var ed = this.ed;
 		ed.time_start('fn create_drop_point');
-		
+
 		var breakpoint = this.breakpoint,
 			that = this,
 			me = this.me,
@@ -250,12 +259,10 @@ DragDrop.prototype = {
 			min_col = me.$el.hasClass('upfront-image_module') ? 1 : (col > ed.min_col ? ed.min_col : col),
 			row = me.row > ed.max_row ? ed.max_row : me.row,
 			is_spacer = ( me.$el.hasClass('upfront-module-spacer') || me.$el.hasClass('upfront-object-spacer') ),
-			regions = this.app.layout.get("regions")
+			regions = this.app.layout.get("regions"),
+			has_siblings = this.has_siblings,
+			sibling_index = this.sibling_index
 		;
-
-		var $sibling_els = Upfront.Util.find_sorted(me.$el.closest('.upfront-wrapper')),
-			has_siblings = $sibling_els.length > 1,
-			sibling_index = $sibling_els.index(me.$el);
 
 		_.each(this.drop_areas, function(area, area_index){
 			if ( _.contains(me.drop_areas_created, area) ) return; // Don't run this over created area
@@ -268,8 +275,12 @@ DragDrop.prototype = {
 				region_name = $region.data('name'),
 				region = is_region ? area : ed.get_region($region),
 				region_model = regions.get_by_name(region_name),
-				area_model = is_region ? region_model : ( area.view ? area.view.model : region_model.get('modules').get_by_element_id(area.$el.attr('id')) ),
-				modules = area_model.get('modules') || area_model.get('objects'),
+				area_model = is_region ? region_model : ( area.view ? area.view.model : region_model.get('modules').get_by_element_id(area.$el.attr('id')) )
+			;
+
+			if ( !area_model ) return;
+
+			var modules = area_model.get('modules') || area_model.get('objects'),
 				wrappers = area_model.get('wrappers'),
 				lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint.id, area.col),
 				/*$wraps = Upfront.Util.find_sorted($area, '> .upfront-wrapper:visible').filter(function(){
@@ -325,10 +336,14 @@ DragDrop.prototype = {
 						next_wrap_el_left = next_wrap ? ed.get_wrap_el_min(next_wrap) : false,
 						next_clr_el_top = next_clr ? ed.get_wrap_el_min(next_clr, false, true) : false,
 						row_wraps = _.map(line.wrappers, map_wrappers),
-						max_row_wrap = _.max(row_wraps, function(row_wrap){ return ( me_wrap && me_wrap._id == row_wrap._id ) ? -1 : row_wrap.grid.bottom; }),
-						min_row_wrap = _.min(row_wraps, function(row_wrap){ return ed.get_wrap_el_min(row_wrap, false, true).grid.top; }),
+						row_wraps_no_spacer = _.map(_.filter(line.wrappers, function(row_wrap){ return !row_wrap.spacer; }), map_wrappers),
+						row_wraps_sort_bottom = _.sortBy(row_wraps_no_spacer, function(row_wrap){ return ed.get_wrap_el_max(row_wrap, false, true).grid.bottom; }),
+						row_wraps_sort_top = _.sortBy(row_wraps_no_spacer, function(row_wrap){ return ed.get_wrap_el_min(row_wrap, false, true).grid.top; }),
+						max_row_wrap = _.last(row_wraps_sort_bottom),
+						min_row_wrap = _.first(row_wraps_sort_top),
 						min_row_el = ed.get_wrap_el_min(min_row_wrap, false, true),
-						wrap_me_in_row = _.find(row_wraps, function(row_wrap){ return me_wrap && me_wrap._id == row_wrap._id })
+						max_row_el = ed.get_wrap_el_max(max_row_wrap, false, true),
+						wrap_me_in_row = _.find(row_wraps, function(row_wrap){ return me_wrap && me_wrap._id == row_wrap._id; })
 					;
 
 					if ( wrap_me_in_row && that.current_row_wraps === false ) {
@@ -342,20 +357,27 @@ DragDrop.prototype = {
 						&&
 						(
 							(
-								( !breakpoint || breakpoint.default ) && wrap.col >= min_col &&
+								( !breakpoint || breakpoint['default'] )
+								&&
+								wrap.col >= min_col
+								&&
 								(
-									( next_wrap && !next_wrap_clr && !wrap_me_only && ( $next_wrap.find(that.el_selector).size() > 1 || !is_next_me ) ) ||
-									( prev_wrap && !wrap_clr && !wrap_me_only && ( $prev_wrap.find(that.el_selector).size() > 1 || !is_prev_me ) ) ||
-									( next_wrap && prev_wrap && !next_wrap_clr && !wrap_clr ) ||
-									( !prev_wrap && !next_wrap && is_wrap_me && $wrap.find(that.el_selector).size() > 1 )
+									( next_wrap && !next_wrap_clr && !wrap_me_only )
+									||
+									( prev_wrap && !wrap_clr && !wrap_me_only )
+									||
+									( next_wrap && prev_wrap && !next_wrap_clr && !wrap_clr )
+									||
+									( !prev_wrap && !next_wrap && is_wrap_me && has_siblings )
 								)
 							)
 							||
-							( breakpoint && !breakpoint.default && is_wrap_me && $wrap.find(that.el_selector).size() > 1 )
+							( breakpoint && !breakpoint['default'] && is_wrap_me && has_siblings )
 						)
 					){
 						var current_el_top = wrap.grid.top,
-							wrap_right = ( next_wrap && !next_wrap_clr && next_wrap_el_left ) ? next_wrap_el_left.grid.left-1 : area.grid.right;
+							wrap_right = ( next_wrap && !next_wrap_clr && next_wrap_el_left ) ? next_wrap_el_left.grid.left-1 : area.grid.right
+						;
 						$els = Upfront.Util.find_sorted($wrap, that.el_selector);
 						$els.each(function(i){
 							if ( $(this).get(0) == me.$el.get(0) ) return;
@@ -365,7 +387,8 @@ DragDrop.prototype = {
 								bottom = Math.ceil(el.grid_center.y),
 								$prev = $els[i-1] ? $els.eq(i-1) : false,
 								prev = $prev ? ed.get_el($prev) : false,
-								prev_me = ( prev && prev._id == me._id );
+								prev_me = ( prev && prev._id == me._id )
+							;
 							that.drops.push({
 								_id: ed._new_id(),
 								top: top,
@@ -396,7 +419,8 @@ DragDrop.prototype = {
 						var $last = $els.last(),
 							last = $last.size() > 0 ? ed.get_el($last) : false,
 							last_me = ( last && last._id == me._id ),
-							wrap_bottom = ( breakpoint && !breakpoint.default && next_clr_el_top ) ? Math.ceil(next_clr_el_top.grid_center.y) : max_row_wrap.grid.bottom;
+							wrap_bottom = ( breakpoint && !breakpoint['default'] && next_clr_el_top ) ? Math.ceil(next_clr_el_top.grid_center.y) : max_row_wrap.grid.bottom
+						;
 						// Don't add dropping below the most bottom wrap in a row
 						//if ( last_me || !max_row_wrap || max_row_wrap != wrap || ( breakpoint && !breakpoint.default ) ){
 						that.drops.push({
@@ -407,7 +431,7 @@ DragDrop.prototype = {
 							right: wrap_right,
 							priority: {
 								top: ( last_me ? last.outer_grid.top : wrap.grid.bottom ),
-								bottom: ( breakpoint && !breakpoint.default && next_clr_el_top ) ? next_clr_el_top.grid.top : wrap_bottom,
+								bottom: ( breakpoint && !breakpoint['default'] && next_clr_el_top ) ? next_clr_el_top.grid.top : wrap_bottom,
 								left: wrap.grid.left,
 								right: wrap_right,
 								index: ( last_me ? 3 : 5 )
@@ -427,42 +451,78 @@ DragDrop.prototype = {
 						//}
 					}
 					// Don't add another droppable if this is not the first el from wrapper, only on responsive
-					if ( breakpoint && !breakpoint.default && has_siblings && sibling_index > 0 )
-						return;
+					if ( breakpoint && !breakpoint['default'] && has_siblings && sibling_index > 0 ) return;
+
 					// Add droppable before each wrapper that start in new line
 					if ( !is_spacer && wrap_clr && !( is_wrap_me && ( !next_wrap || next_wrap_clr ) ) ){
 						var top = ( wrap.grid.top == area.grid.top ) ? area.grid.top - 5 : current_full_top,
 							el_top = ed.get_wrap_el_min(wrap, false, true),
 							bottom = Math.ceil(el_top.grid_center.y),
 							is_drop_me = ( prev_wrap_clr && is_prev_me && !has_siblings ),
-							me_top = ( is_drop_me ? prev_wrap.grid.top : wrap.grid.top );
+							me_top = ( is_drop_me ? prev_wrap.grid.top : wrap.grid.top ),
+							last_row_wraps = _.last(row_wraps_sort_bottom, 2)
+						;
 						if ( can_drop(me_top, el_top.grid.top-1) ){
-							that.drops.push({
-								_id: ed._new_id(),
-								top: top,
-								bottom: bottom,
-								left: area.grid.left,
-								right: area.grid.right,
-								priority: {
-									top: me_top,
-									bottom: min_row_el.grid.top-1,
+							if ( breakpoint && !breakpoint['default'] && ( is_wrap_me || ( prev_wrap_clr && is_prev_me ) ) && has_siblings ) {
+								// On responsive, don't add full drop on the current wrap
+								current_full_top = bottom+1;
+							}
+							else {
+								that.drops.push({
+									_id: ed._new_id(),
+									top: top,
+									bottom: bottom,
 									left: area.grid.left,
 									right: area.grid.right,
-									index: ( is_drop_me ? 2 : 3 )
-								},
-								priority_index: 8,
-								type: 'full',
-								insert: ['before', wrap.$el],
-								region: region,
-								is_me: is_drop_me,
-								is_clear: true,
-								is_use: false,
-								is_switch: false,
-								switch_dir: false,
-								row_wraps: false,
-								me_in_row: false
-							});
-							current_full_top = bottom+1;
+									priority: {
+										top: me_top,
+										bottom: min_row_el.grid.top-1,
+										left: area.grid.left,
+										right: area.grid.right,
+										index: ( is_drop_me ? 2 : 3 )
+									},
+									priority_index: 8,
+									type: 'full',
+									insert: ['before', wrap.$el],
+									region: region,
+									is_me: is_drop_me,
+									is_clear: true,
+									is_use: false,
+									is_switch: false,
+									switch_dir: false,
+									row_wraps: false,
+									me_in_row: false
+								});
+								if ( last_row_wraps.length === 2 ) {
+									// To allow all drop position to be selectable, we calculate the most bottom 2 elements in a row and get the middle position between both
+									_.each(last_row_wraps, function (each, l) {
+										var sort_els = _.sortBy(ed.get_wrap_els(each), function (el) {
+												return el.grid.bottom;
+											}),
+											last_els = _.last(sort_els, 2),
+											last_el = _.last(last_els),
+											bottom = last_el.grid.bottom
+										;
+										if ( l === 0 ) {
+											current_full_top = bottom;
+										}
+										else {
+											// Special cases to handle last element if the position didn't allow it to be selected
+											if (
+												( last_els.length === 2 && current_full_top < last_els[0].grid.bottom )
+												||
+												( last_el.grid_center.y > current_full_top )
+											) {
+												current_full_top = last_el.grid_center.y;
+											}
+											current_full_top += Math.ceil( (bottom - current_full_top) / 2 );
+										}
+									});
+								}
+								else {
+									current_full_top = Math.ceil( max_row_el.grid_center.y + Math.ceil( (max_row_el.grid.bottom - max_row_el.grid_center.y) / 2 ) ) + 1;
+								}
+							}
 						}
 					}
 					// Check to see if the right side on wrapper has enough column to add droppable
@@ -484,19 +544,18 @@ DragDrop.prototype = {
 						( !next_wrap || next_wrap_clr )
 						&&
 						( !wrap_me_only || !wrap_clr )
-					/*&&
-					 (
-					 ( !is_wrap_me && area.grid.right-wrap.grid.right >= min_col )
-					 ||
-					 ( wrap_me_only && !wrap_clr )
-					 ||
-					 ( prev_me_only && !wrap_clr && wrap_only )
-					 )*/
-					){ // @TODO Experiment: always allow right side drop
+						&&
+						( // Check if on responsive
+							( !breakpoint || breakpoint['default'] )
+							||
+							( !breakpoint['default'] && ( !has_siblings || !is_wrap_me ) )
+						)
+					){
 						var is_switch = false,
 							left = Math.ceil(wrap.grid_center.x)+1,
 							right = ( !next_wrap || next_wrap_clr ) ? area.grid.right : wrap.grid.right,
-							bottom = ( is_wrap_me && wrap.grid.bottom > max_row_wrap.grid.bottom ? wrap.grid.bottom : max_row_wrap.grid.bottom );
+							bottom = ( is_wrap_me && wrap.grid.bottom > max_row_wrap.grid.bottom ? wrap.grid.bottom : max_row_wrap.grid.bottom )
+						;
 						if ( can_drop(wrap.grid.top, bottom) ){
 							that.drops.push({
 								_id: ed._new_id(),
@@ -544,28 +603,19 @@ DragDrop.prototype = {
 						( !wrap_me_only || ( next_wrap && !next_wrap_clr ) )
 						&&
 						( wrap_clr || !prev_me_only )
-					/*&&
-					 (
-					 (
-					 //wrap_el_left.grid.left-wrap.grid.left >= min_col
-					 //&&
-					 (!is_prev_me || wrap_clr)
-					 &&
-					 !is_wrap_me
-					 )
-					 ||
-					 ( is_wrap_me && next_wrap && !next_wrap_clr )
-					 ||
-					 ( is_prev_me && !wrap_clr && next_wrap && !next_wrap_clr )
-					 ||
-					 ( is_next_me && !next_wrap_clr )
-					 )*/
-					){ // @TODO Experiment: always allow left side drop
+						&&
+						( // Check if on responsive
+							( !breakpoint || breakpoint['default'] )
+							||
+							( !breakpoint['default'] && !( has_siblings && ( is_wrap_me || is_prev_me ) ) )
+						)
+					){
 						var is_switch_left = false,
 							is_switch_right = false,
 							left = ( prev_wrap && !wrap_clr ? Math.ceil(prev_wrap.grid_center.x)+1 : wrap.grid.left ),
 							right = Math.ceil(wrap.grid_center.x),
-							bottom = ( is_wrap_me && wrap.grid.bottom > max_row_wrap.grid.bottom ? wrap.grid.bottom : max_row_wrap.grid.bottom );
+							bottom = ( is_wrap_me && wrap.grid.bottom > max_row_wrap.grid.bottom ? wrap.grid.bottom : max_row_wrap.grid.bottom )
+						;
 						if ( can_drop(wrap.grid.top, bottom) ){
 							that.drops.push({
 								_id: ed._new_id(),
@@ -598,7 +648,7 @@ DragDrop.prototype = {
 			});
 
 			// Don't add another droppable if this is not the first el from wrapper, only on responsive
-			if ( breakpoint && !breakpoint.default && has_siblings && sibling_index > 0 ){
+			if ( breakpoint && !breakpoint['default'] && has_siblings && sibling_index > 0 ){
 				return;
 			}
 
@@ -617,13 +667,13 @@ DragDrop.prototype = {
 					bottom = ( expand_lock ? area.grid.bottom : ( area.grid.bottom-current_full_top > row ? area.grid.bottom + 5 : current_full_top + row ) ),
 					last_wrappers = _.map(last_line.wrappers, map_wrappers),
 					bottom_wrap = _.max(last_wrappers, function(each){
-						if ( me_wrap && me_wrap._id == each._id )
-							return 0;
+						if ( me_wrap && me_wrap._id == each._id ) return 0;
 						return each.grid.bottom;
 					}),
 					top = bottom_wrap.grid.bottom+1,
 					bottom_not_me = ( !me_wrap || ( bottom_wrap && me_wrap && bottom_wrap._id != me_wrap._id ) ),
-					priority_top = ( bottom_not_me && top > current_full_top ? top : current_full_top );
+					priority_top = ( bottom_not_me && top > current_full_top ? top : current_full_top )
+				;
 				if ( can_drop(priority_top, bottom) || is_drop_me ){
 					that.drops.push({
 						_id: ed._new_id(),
@@ -679,7 +729,7 @@ DragDrop.prototype = {
 		});
 		ed.time_end('fn create_drop_point');
 	},
-	
+
 	select_drop_point: function (drop) {
 		var ed = this.ed;
 		if ( !drop || drop.is_use ){
@@ -697,7 +747,7 @@ DragDrop.prototype = {
 			$('#drop-view-'+drop._id).addClass('upfront-drop-view-current');
 		}
 		$('.upfront-drop').remove();
-		
+
 		var that = this,
 			me = this.me,
 			$drop = $('<div class="upfront-drop upfront-drop-use"></div>'),
@@ -722,7 +772,7 @@ DragDrop.prototype = {
 				break;
 		}
 		$drop.css('order', insert_order);
-		
+
 		if ( drop.type == 'full' || drop.type == 'inside' ) {
 			$drop.css('width', (drop.right-drop.left+1)*ed.col_size);
 			// Add height too in case of full region drop
@@ -756,9 +806,59 @@ DragDrop.prototype = {
 		else if ( drop_move ) {
 			drop_change();
 		}
+
+		this.setup_moving_siblings();
 		ed.time_end('fn select_drop');
 	},
-	
+
+	setup_moving_siblings: function () {
+		if ( !this.breakpoint || this.breakpoint['default'] ) return;
+		if ( !this.has_siblings || this.sibling_index !== 0 ) return;
+		if ( this.move_siblings ) {
+			// Siblings is moving, check if it goes back to inside drop and remove moving siblings if it does
+			if ( this.drop.type == 'inside' ) {
+				this.$wrap_move.remove();
+				this.$wrap.css({
+					visibility: '',
+					opacity: ''
+				});
+				this.move_siblings = false;
+			}
+		}
+		else {
+			// Siblings hasn't been moved, check if it goes to other drops that isn't inside, move siblings if it does
+			if ( this.drop.type != 'inside' ) {
+				var position = this.$helper.position();
+				this.$wrap_move = this.$wrap.clone();
+				this.$wrap_move.css({
+					position: 'absolute',
+					top: position.top,
+					left: position.left,
+					width: this.$wrap.width(),
+					height: this.$wrap.height(),
+					zIndex: 100
+				});
+				this.$wrap_move.addClass('upfront-wrapper-moving');
+				this.$wrap_move.appendTo(this.$main);
+				this.$wrap.css({
+					visibility: 'hidden',
+					opacity: 0
+				});
+				this.move_siblings = true;
+			}
+		}
+	},
+
+	update_siblings_position: function () {
+		if ( this.move_siblings && this.$wrap_move ) {
+			var position = this.$helper.position();
+			this.$wrap_move.css({
+				top: position.top,
+				left: position.left
+			});
+		}
+	},
+
 	prepare_drag: function () {
 		var ed = this.ed,
 			breakpoint = this.breakpoint
@@ -766,13 +866,13 @@ DragDrop.prototype = {
 		this.$main.addClass('upfront-dragging');
 		// remove position which might be set to the module view
 		this.view.$el.css("position", "");
-		
+
 		ed.start(this.view, this.model);
 		ed.normalize(ed.els, ed.wraps);
 		ed.update_position_data(ed.containment.$el);
 		this.update_vars();
 		this.set_current_region(this.region);
-		
+
 		var $me = this.$me,
 			me = this.me,
 			$helper = this.$helper,
@@ -783,8 +883,12 @@ DragDrop.prototype = {
 			area = this.is_parent_group
 				? ed.get_position(this.view.group_view.$el)
 				: ( this.is_object ? ed.get_position(this.view.object_group_view.$el) : ed.get_region(this.$region) ),
-			drop_areas = false
+			drop_areas = false,
+			$sibling_els = Upfront.Util.find_sorted(me.$el.closest('.upfront-wrapper'), this.el_selector)
 		;
+
+		this.has_siblings = $sibling_els.length > 1;
+		this.sibling_index = $sibling_els.index(me.$el);
 
 		// hack the cursor position
 		if ( cursor_top > max_height/2 ) {
@@ -809,7 +913,7 @@ DragDrop.prototype = {
 			this.drop_areas = [ area ];
 			this.current_area_col = area.col;
 		}
-		else if ( breakpoint && !breakpoint.default ) {
+		else if ( breakpoint && !breakpoint['default'] ) {
 			this.drop_areas = [ area ];
 		}
 		else {
@@ -851,13 +955,13 @@ DragDrop.prototype = {
 		this.select_drop_point( _.find(this.drops, function(each){ return each.is_me; }) );
 		this.$region.addClass('upfront-region-drag-active');
 	},
-	
+
 	update_drop_timeout: function () {
 		var breakpoint = this.breakpoint;
 		this.update_compare_area();
 		this.update_focus_state();
-		
-		if ( ( !breakpoint || breakpoint.default ) && !this.is_parent_group && !this.is_object ) {
+
+		if ( ( !breakpoint || breakpoint['default'] ) && !this.is_parent_group && !this.is_object ) {
 			this.update_current_region();
 		}
 		else {
@@ -865,11 +969,11 @@ DragDrop.prototype = {
 		}
 		this.update_current_drop_point();
 	},
-	
+
 	update_compare_area: function () {
 		var ed = this.ed,
 			$helper = this.$helper,
-			
+
 			height = Math.ceil($helper.outerHeight()/ed.baseline)*ed.baseline,
 			width = $helper.outerWidth(),
 
@@ -890,7 +994,7 @@ DragDrop.prototype = {
 
 			grid = ed.get_grid(this.event.pageX, this.event.pageY),
 			col = this.me.col,
-			
+
 			compare_col = this.focus ? ed.focus_compare_col : ed.compare_col,
 			compare_row = this.focus ? ed.focus_compare_row : ed.compare_row,
 
@@ -918,10 +1022,10 @@ DragDrop.prototype = {
 			left: compare_area_left,
 			right: compare_area_right,
 			bottom: compare_area_bottom
-		}
+		};
 		this.compare_area_position = compare_area_position;
 	},
-	
+
 	update_focus_state: function () {
 		var that = this,
 			ed = this.ed,
@@ -955,7 +1059,7 @@ DragDrop.prototype = {
 		this._last_coord.x = this.event.pageX;
 		this._last_coord.y = this.event.pageY;
 		this._last_drag_time = time;
-		
+
 		// If focused, try to see if we need to out focus it
 		if ( this.focus ) {
 			var focus_distance = Math.sqrt(Math.pow(this.event.pageX-this.focus_coord.x, 2) + Math.pow(this.event.pageY-this.focus_coord.y, 2));
@@ -964,7 +1068,7 @@ DragDrop.prototype = {
 			}
 		}
 	},
-	
+
 	update_current_drop_point: function () {
 		var that = this,
 			drops_area = _.map(this.drops, function(each){
@@ -995,15 +1099,19 @@ DragDrop.prototype = {
 			var drop = _.find(this.drops, function(each){
 				return each.is_me;
 			});
+			if ( this.region._id != this.current_region._id ) {
+				this.set_current_region();
+			}
 		}
 		this.select_drop_point(drop);
 		this.update_drop_position();
 	},
-	
+
 	update_drop_position: function () {
 		if ( !this.drop ) return;
 		var ed = this.ed,
 			drop = this.drop,
+			breakpoint = this.breakpoint,
 			col = this.current_region ? this.current_region.col : this.me.col,
 			is_spacer = ( this.$me.hasClass('upfront-module-spacer') || this.$me.hasClass('upfront-object-spacer') ),
 			wrap_only = this.$wrap.find(this.el_selector).length == 1,
@@ -1013,6 +1121,9 @@ DragDrop.prototype = {
 			drop_row = ( drop.priority ? drop.priority.bottom-drop.priority.top+1 : drop.bottom-drop.top+1 );
 		this.drop_top = 0;
 		this.drop_left = 0;
+		if ( breakpoint && !breakpoint['default'] ) {
+			wrap_only = ( drop.type != 'inside' );
+		}
 		// drop_col is calculated based of it's position
 		if ( drop.is_me || ( drop.me_in_row && wrap_only ) || is_spacer ){
 			this.drop_col = this.me.col;
@@ -1050,7 +1161,7 @@ DragDrop.prototype = {
 			);
 		}
 	},
-	
+
 	/**
 	 * Finding the region we currently on
 	 */
@@ -1099,7 +1210,7 @@ DragDrop.prototype = {
 			});
 		}
 	},
-	
+
 	set_current_region: function (region) {
 		var regions = this.app.layout.get("regions");
 		this.current_region = region && region.$el ? region : this.ed.get_region(this.$region);
@@ -1108,15 +1219,21 @@ DragDrop.prototype = {
 			this.current_region.$el.addClass('upfront-region-drag-active');
 		}
 		this.current_region_model = regions.get_by_name(this.current_region.region);
-		this.current_wrappers = this.is_parent_group 
-			? this.view.group_view.model.get('wrappers') 
+
+		var current_region_model_wrapper = ( this.current_region_model )
+			? this.current_region_model.get('wrappers')
+			: false
+		;
+
+		this.current_wrappers = this.is_parent_group
+			? this.view.group_view.model.get('wrappers')
 			: ( this.is_object
 				? this.view.object_group_view.model.get('wrappers')
-				: this.current_region_model.get('wrappers')
+				: current_region_model_wrapper
 			)
 		;
-		this.$current_container = this.is_parent_group 
-			? this.view.group_view.$el.find('.upfront-editable_entities_container:first') 
+		this.$current_container = this.is_parent_group
+			? this.view.group_view.$el.find('.upfront-editable_entities_container:first')
 			: ( this.is_object
 				? this.view.object_group_view.$el.find('.upfront-editable_entities_container:first')
 				: this.current_region.$el.find('.upfront-modules_container > .upfront-editable_entities_container:first')
@@ -1127,7 +1244,7 @@ DragDrop.prototype = {
 			this.current_area_col = this.current_region.col;
 		}
 	},
-	
+
 	get_area_compared: function (compare) {
 		var compare_area = this.compare_area,
 			top, bottom, left, right, area;
@@ -1167,21 +1284,22 @@ DragDrop.prototype = {
 			area = 0;
 		return area ? area : 0;
 	},
-	
+
 	render_drop: function () {
 		var ed = this.ed,
 			breakpoint = this.breakpoint,
 			$drop = $('.upfront-drop-use')
 		;
-		this.wrap_only = ( breakpoint && !breakpoint.default ? true : false );
-		if ( !breakpoint || breakpoint.default ) {
+		this.wrap_only = false;
+		Upfront.Events.trigger("entity:drop:before_render", this, this.region.$el.closest(".upfront-region-container") );
+		if ( !breakpoint || breakpoint['default'] ) {
 			if ( this.drop.type != 'inside' ){
-				var wrapper_id = Upfront.Util.get_unique_id("wrapper");
+				var wrapper_id = Upfront.Util.get_unique_id("wrapper"),
 					wrap_model = new Upfront.Models.Wrapper({
 						"name": "",
 						"properties": [
 							{"name": "wrapper_id", "value": wrapper_id},
-							{"name": "class", "value": ed.grid.class+this.drop_col}
+							{"name": "class", "value": ed.grid['class'] + this.drop_col}
 						]
 					}),
 					wrap_view = new Upfront.Views.Wrapper({model: wrap_model})
@@ -1210,11 +1328,17 @@ DragDrop.prototype = {
 			}
 			else {
 				var $drop_wrap = $drop.closest('.upfront-wrapper'),
-					wrapper_id = $drop_wrap.attr('id');
+					wrapper_id = $drop_wrap.attr('id'),
+					wrap_model = this.current_wrappers.get_by_wrapper_id(wrapper_id),
+					wrap_view = Upfront.data.wrapper_views[wrap_model.cid]
+				;
 				$drop.before(this.view.$el);
+				if ( wrap_view ) {
+					this.view.wrapper_view = wrap_view;
+				}
 			}
 			this.wrapper_id = wrapper_id;
-			this.model.set_property('wrapper_id', this.wrapper_id, true);
+			this.model.set_property('wrapper_id', this.wrapper_id);
 
 			if ( this.$wrap.find(this.el_selector).length == 0 ){
 				if ( this.wrap && this.wrap.grid.left == this.current_region.grid.left ) {
@@ -1224,8 +1348,12 @@ DragDrop.prototype = {
 				this.wrap_only = true;
 			}
 		}
+		else {
+			// On responsive, if drop is to inside, means that it is not alone
+			this.wrap_only = ( this.drop.type != 'inside' );
+		}
 	},
-	
+
 	update_models: function () {
 		var that = this,
 			ed = this.ed,
@@ -1233,42 +1361,72 @@ DragDrop.prototype = {
 			wrappers = this.current_wrappers,
 			$me = this.$me,
 			$wrap = this.$wrap,
-			region_view = Upfront.data.region_views[this.current_region_model.cid]
+			region_view = Upfront.data.region_views[this.current_region_model.cid],
+			breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled()
 		;
 		// normalize clear
 		_.each(ed.wraps, function(each){
-			var breakpoint_clear = ( !breakpoint || breakpoint.default ) ? each.$el.hasClass('clr') : each.$el.data('breakpoint_clear');
+			var breakpoint_clear = ( !breakpoint || breakpoint['default'] ) ? each.$el.hasClass('clr') : each.$el.data('breakpoint_clear');
 			each.$el.data('clear', breakpoint_clear ? 'clear' : 'none');
 		});
 		if ( !this.drop.is_me && this.drop.type == 'side-before' ) {
 			var $next_wrap = this.drop.insert[1];
 			if ( $next_wrap.size() > 0 ){
 				var next_wrap = ed.get_wrap($next_wrap),
-					next_wrap_clr = ( !breakpoint || breakpoint.default ) ? $next_wrap.hasClass('clr') : $next_wrap.data('breakpoint_clear');
+					next_wrap_clr = ( !breakpoint || breakpoint['default'] ) ? $next_wrap.hasClass('clr') : $next_wrap.data('breakpoint_clear');
 				if ( ! next_wrap_clr || this.drop.is_clear ){
 					$next_wrap.data('clear', 'none');
 				}
 			}
 		}
-		
-		ed.update_model_margin_classes( $me, [ed.grid.class + this.drop_col] );
 
-		// Remove breakpoint value if dropped to inside/move to other region
-		if ( this.drop.type == 'inside' || this.move_region ) {
-			var wrap_model = this.current_wrappers.get_by_wrapper_id($wrap.attr('id'));
+		ed.update_model_margin_classes( $me, [ed.grid['class'] + this.drop_col] );
+		if ( breakpoint && !breakpoint['default'] && this.drop.type != 'inside' ) {
+			this.$wrap.find(this.el_selector).not($me).each(function(){
+				ed.update_model_margin_classes( $(this), [ed.grid['class'] + that.drop_col] );
+			});
+		}
+
+		// Remove breakpoint value if dropped to other region
+		if ( this.move_region ) {
+			var wrap_model = wrappers.get_by_wrapper_id($wrap.attr('id'));
 			if ( wrap_model ) {
 				wrap_model.remove_property('breakpoint', true);
 			}
 			this.model.remove_property('breakpoint', true);
 		}
-		
+		// Update breakpoint value if dropped to inside
+		if ( (!breakpoint || breakpoint['default']) && this.drop.type == 'inside' ) {
+			var wrap_model = wrappers.get_by_wrapper_id(this.wrapper_id);
+			if ( wrap_model ) {
+				var wrap_breakpoint = wrap_model.get_property_value_by_name('breakpoint') || {},
+					this_breakpoint = this.model.get_property_value_by_name('breakpoint') || {}
+				;
+				_.each(breakpoints, function(each){
+					var breakpoint = each.toJSON();
+					if ( breakpoint['default'] ) return;
+					if ( wrap_breakpoint && wrap_breakpoint[breakpoint.id] && wrap_breakpoint[breakpoint.id].edited ) {
+						if ( ! _.isObject(this_breakpoint[breakpoint.id]) ) {
+							this_breakpoint[breakpoint.id] = { edited: false };
+						}
+						// Wrapper is edited in this breakpoint, let's apply columns from wrapper for this breakpoint
+						if ( !this_breakpoint[breakpoint.id].edited && _.isNumber(wrap_breakpoint[breakpoint.id].col) ) {
+							this_breakpoint[breakpoint.id].col = wrap_breakpoint[breakpoint.id].col;
+							this_breakpoint[breakpoint.id].edited = true;
+							that.model.set_property('breakpoint', Upfront.Util.clone(this_breakpoint));
+						}
+					}
+				});
+			}
+		}
+
 		// If the drop is to side, also update the elements on the same row
-		if ( 
-			!this.drop.is_me 
-			&& 
-			( !this.drop.me_in_row || !this.wrap_only ) 
-			&& 
-			( this.drop.type == 'side-before' || this.drop.type == 'side-after' ) 
+		if (
+			!this.drop.is_me
+			&&
+			( !this.drop.me_in_row || !this.wrap_only )
+			&&
+			( this.drop.type == 'side-before' || this.drop.type == 'side-after' )
 		) {
 			var distribute = this.find_column_distribution(this.drop.row_wraps, false, true, this.current_area_col, false),
 				remaining_col = distribute.remaining_col - (this.drop_col-distribute.apply_col),
@@ -1298,7 +1456,7 @@ DragDrop.prototype = {
 							apply_col += 1;
 							remaining_col -= 1;
 						}
-						ed.update_model_margin_classes( $(this), [ed.grid.class + apply_col] );
+						ed.update_model_margin_classes( $(this), [ed.grid['class'] + apply_col] );
 						if ( apply_index == 1 && first_is_spacer ) {
 							if ( that.drop.type == 'side-before' && that.drop.insert[1].get(0) == row_wrap.$el.get(0) ) {
 								// First is removed spacer and we drop before the first element, means we now drop to the first
@@ -1322,7 +1480,7 @@ DragDrop.prototype = {
 				}
 			}
 		}
-		
+
 		// Also try to distribute columns if the element was moved away and leave empty spaces in previous place
 		if ( !this.drop.is_me && !this.drop.me_in_row && this.wrap_only ) {
 			if ( this.current_row_wraps && !_.isEqual(this.drop.row_wraps, this.current_row_wraps) ) {
@@ -1340,7 +1498,7 @@ DragDrop.prototype = {
 								apply_col += 1;
 								remaining_col -= 1;
 							}
-							ed.update_model_margin_classes( $(this), [ed.grid.class + apply_col] );	
+							ed.update_model_margin_classes( $(this), [ed.grid['class'] + apply_col] );
 						});
 					});
 				}
@@ -1359,7 +1517,7 @@ DragDrop.prototype = {
 				}
 			}
 		}
-		
+
 		if ( this.is_parent_group ) {
 			ed.update_wrappers(this.view.group_view.model, this.view.group_view.$el);
 		}
@@ -1375,7 +1533,7 @@ DragDrop.prototype = {
 			ed.update_wrappers(this.region_model, this.region.$el);
 		}
 
-		if ( !breakpoint || breakpoint.default ){
+		if ( !breakpoint || breakpoint['default'] ){
 			if ( !this.move_region ){
 				// Preserve breakpoint order to prevent element shifting due to changing position in collection
 				this.view.parent_view.preserve_wrappers_breakpoint_order();
@@ -1416,10 +1574,10 @@ DragDrop.prototype = {
 			var orders = [],
 				index = 0,
 				is_drop_wrapper = ( this.drop.type != 'inside' ),
-				$els = is_drop_wrapper
+				$els = (is_drop_wrapper
 					? Upfront.Util.find_sorted(this.$current_container, '> .upfront-wrapper')
 					: Upfront.Util.find_sorted($me.closest('.upfront-wrapper'), this.el_selector)
-				,
+				),
 				inside_length = !is_drop_wrapper ? $me.closest('.upfront-wrapper').find(this.el_selector).length : 0,
 				insert_index = false
 			;
@@ -1472,10 +1630,10 @@ DragDrop.prototype = {
 					model_breakpoint, model_breakpoint_data
 				;
 				if ( !each_model ) return;
-				if ( 
-					( is_drop_wrapper && each_el.$el.get(0) == $wrap.get(0) ) 
-					|| 
-					( !is_drop_wrapper && each_el.$el.get(0) == $me.get(0) ) 
+				if (
+					( is_drop_wrapper && each_el.$el.get(0) == $wrap.get(0) )
+					||
+					( !is_drop_wrapper && each_el.$el.get(0) == $me.get(0) )
 				){
 					each_el.order = insert_index !== false ? insert_index : each_el.order;
 					each_el.clear = that.drop.is_clear;
@@ -1498,7 +1656,7 @@ DragDrop.prototype = {
 		ed.update_position_data(this.$current_container);
 		ed.normalize(ed.els, ed.wraps);
 	},
-	
+
 	update_views: function () {
 		var view = this.view,
 			model = this.model
@@ -1522,11 +1680,12 @@ DragDrop.prototype = {
 			view.trigger('region:updated');
 		}
 	},
-	
+
 	clean_elements: function () {
 		$('.upfront-drop').remove();
 		$('.upfront-drop-view').remove();
 		$('#upfront-compare-area').remove();
+		if ( this.$wrap_move && this.$wrap_move.length > 0 ) this.$wrap_move.remove();
 
 		this.$me.css({
 			'position': '',
@@ -1535,19 +1694,23 @@ DragDrop.prototype = {
 			'z-index': '',
 			'visibility': 'visible'
 		});
-		
-		this.$wrap.css('min-height', '');
+
+		this.$wrap.css({
+			'min-height': '',
+			'visibility': '',
+			'opacity': ''
+		});
 		this.$current_container.find('.upfront-wrapper').find(this.el_selector).css('max-height', '');
 		$('.upfront-region-drag-active').removeClass('upfront-region-drag-active');
 		this.$main.removeClass('upfront-dragging');
 	},
-	
+
 	reset: function () {
 		this.drop_areas_created = [];
 		this.drops = [];
 		this.drop = false;
 	},
-	
+
 	find_column_distribution: function (row_wraps, me_in_row, add, area_col, count_spacer) {
 		var add = ( add !== false ),
 			spacers = _.filter(row_wraps, function (row_wrap) {
@@ -1579,10 +1742,10 @@ DragDrop.prototype = {
 			spacers_col: spacers_col,
 			total: row_wraps_total,
 			spacer_total: spacers.length
-		}
+		};
 	},
-	
-	
+
+
 	show_debug_data: function () {
 		if ( !this.ed.show_debug_element ) return;
 		var ed = this.ed,
@@ -1628,12 +1791,12 @@ DragDrop.prototype = {
 		$layout.append('<div id="upfront-compare-area"></div>');
 		$helper.find(".upfront-debug-info").size() || $helper.append('<div class="upfront-debug-info"></div>');
 	}
-}
+};
 
 
 return DragDrop;
 
 });
-	
+
 })(jQuery);
 //# sourceURL=dragdrop.js

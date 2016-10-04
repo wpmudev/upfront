@@ -26,7 +26,7 @@ define([
 		featured_image: Modules_FeaturedImage.template,
 		taxonomy: Modules_Taxonomies.template,
 		comments: Modules_Comments.template,
-		meta: Modules_Meta.template,
+		meta: Modules_Meta.template
 	};
 
 
@@ -53,7 +53,7 @@ define([
 			_(_.omit(Upfront.data[data_type_idx], ['class', 'data_type', 'has_settings', 'id_slug', 'type', 'type_parts', 'view_class'])).each(function (property, key) {
 				data_type_defaults[key] = property;
 			});
-			
+
 			// Include default settings from Upfront.mainData
 			if(typeof Upfront.mainData.presetDefaults[this.data_type + '_element'] !== "undefined") {
 				elementDefaults = _.extend(data_type_defaults, Upfront.mainData.presetDefaults[this.data_type + '_element']);
@@ -144,13 +144,12 @@ define([
 			_.each(parts, function (part) {
 				me.update_object(part, hidden_parts.indexOf(part) < 0);
 			});
-			if  ( active_breakpoint.default ) {
+			if  ( active_breakpoint['default'] ) {
 				// Also update the responsive part
 				_.each(breakpoints, function (breakpoint) {
-					var breakpoint = breakpoint.toJSON(),
-						breakpoint_presets = me.property("breakpoint_presets")
-					;
-					if ( breakpoint.default ) return;
+					breakpoint = breakpoint.toJSON();
+					var breakpoint_presets = me.property("breakpoint_presets");
+					if ( breakpoint['default'] ) return;
 					if ( !breakpoint_presets ) return;
 					if ( !(breakpoint.id in breakpoint_presets) || !('preset' in breakpoint_presets[breakpoint.id]) ) return;
 					var preset = breakpoint_presets[breakpoint.id].preset,
@@ -184,13 +183,13 @@ define([
 			return wrappers.get_by_wrapper_id(wrapper_id);
 		},
 		update_object: function (type, enable, breakpoint) {
-			var enable = ( enable == 1 ),
-				breakpoint = breakpoint ? breakpoint : Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
-				objects = this.model.get('objects'),
+			enable = !!enable;
+			breakpoint = breakpoint ? breakpoint : Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
+			var objects = this.model.get('objects'),
 				wrappers = this.model.get('wrappers'),
 				object = this.find_object(type)
 			;
-			if ( breakpoint.default ) {
+			if ( breakpoint['default'] ) {
 				// Default breakpoint, actually add/remove objects
 				if ( !object && enable ) {
 					var wrapper_id = Upfront.Util.get_unique_id("wrapper"),
@@ -199,17 +198,17 @@ define([
 								{ name: 'wrapper_id', value: wrapper_id },
 								{ name: 'class', value: 'c24 clr' }
 							]
-						}),
-						object = new Upfront.Models.PostDataPartModel({
-							properties: [
-								{ name: 'view_class', value: 'PostDataPartView' },
-								{ name: 'part_type', value: type },
-								{ name: 'has_settings', value: 0 },
-								{ name: 'class', value: 'c24 upfront-post-data-part' },
-								{ name: 'wrapper_id', value: wrapper_id }
-							]
 						})
 					;
+					object = new Upfront.Models.PostDataPartModel({
+						properties: [
+							{ name: 'view_class', value: 'PostDataPartView' },
+							{ name: 'part_type', value: type },
+							{ name: 'has_settings', value: 0 },
+							{ name: 'class', value: 'c24 upfront-post-data-part' },
+							{ name: 'wrapper_id', value: wrapper_id }
+						]
+					});
 					wrappers.add(wrapper, {silent: true});
 					objects.add(object);
 				}
@@ -249,6 +248,6 @@ define([
 
 			return {stuff: overall};
 		}
-	}
+	};
 
 });
