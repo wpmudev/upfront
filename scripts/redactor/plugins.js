@@ -657,7 +657,8 @@ RedactorPlugins.upfrontIcons = function() {
                 'click .ueditor-font-icon': 'insert_icon',
                 'open': 'open',
                 'toolbarClosed': "close",
-                'change .upfront-font-icons-controlls input': "input_change"
+                'change .upfront-font-icons-controlls input': "input_change",
+                'keydown .upfront-font-icons-controlls input': "input_key_down"
             },
             render: function (options) {
                 this.$el.html(this.tpl({icons: Upfront.mainData.font_icons }));
@@ -702,6 +703,7 @@ RedactorPlugins.upfrontIcons = function() {
 
                 this.closeToolbar();
             },
+
             input_change: function(e){
                 var $sel = this.$sel;
                 e.stopPropagation();
@@ -718,6 +720,17 @@ RedactorPlugins.upfrontIcons = function() {
                 }
                 this.redactor.code.sync();
             },
+
+						input_key_down: function(e) {
+							// If key is not return, ignore.
+							if (e.which !== 13) return;
+
+							// Close Panel and Toolbar on Enter.
+							this.closePanel();
+							this.closeToolbar();
+							this.redactor.dropdown.hideAll();
+						},
+
             set_current_icon: function () {
                 var $sel = $(this.redactor.selection.getCurrent()).last(),
                     self = this;
@@ -731,9 +744,8 @@ RedactorPlugins.upfrontIcons = function() {
                     this.$(".font-icons-top").val(parseFloat($sel.css("top")));
                 }
             }
-
         }))
-    }
+    };
 };
 
 /*--------------------
