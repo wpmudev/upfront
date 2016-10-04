@@ -909,6 +909,7 @@ define([
 		open: function (callback, data, classname) {
 				data = data || {};
 				this.data = data;
+				this.disable_esc = data.disable_esc || false;
 				classname = classname || 'default-popup';
 				this.init();
 				var me = this,
@@ -923,11 +924,12 @@ define([
 							return false;
 						}
 				;
-
-				$('body').bind( 'keyup', function( event ) {
-					if ( event.keyCode === 27 )
-						me.close();
-				});
+				
+				if ( !this.disable_esc ) {
+					$('body').bind( 'keyup', function( event ) {
+						if ( event.keyCode === 27 ) me.close();
+					});
+				}
 
 				// data.width = width, data.height = height;
 				this.$background

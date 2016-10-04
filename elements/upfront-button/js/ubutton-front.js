@@ -20,17 +20,17 @@
 			;
 			// we have to provide proper fallback here, mobile -> tablet -> desktop
 			if ( breakpoint == 'mobile' ) {
-				map[breakpoint] = map[breakpoint] || map['tablet'] || map['desktop'] || 'default';
+				map[breakpoint] = map[breakpoint] || map['tablet'] || map['desktop'];
 			} else if ( breakpoint == 'tablet' ) {
-				map[breakpoint] = map[breakpoint] || map['desktop'] || 'default';
+				map[breakpoint] = map[breakpoint] || map['desktop'];
 			} else {
-				map[breakpoint] = map[breakpoint] || 'default';
+				map[breakpoint] = map[breakpoint];
 			}
 
 			$items = $root.find(".upfront_cta");
 			$.each(map, function (bp, preset) {
 				$items.removeClass('button-preset-' + preset);
-				if (bp === breakpoint) $items.addClass('button-preset-' + preset);
+				if (bp === breakpoint && typeof preset !== "undefined") $items.addClass('button-preset-' + preset);
 			});
 
 		});
