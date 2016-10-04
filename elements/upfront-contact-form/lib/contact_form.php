@@ -255,16 +255,13 @@ class Upfront_UcontactView extends Upfront_Object {
 
 				// Do the SMTP magic here
 				$smtp_enable = $this->_get_property_t('smtp_enable') == 'yes' ? true : false;
-				
 
-				
-				if($smtp_enable)
+				if($smtp_enable) {
 					add_action('phpmailer_init', array($this, 'kick_in_smtp'));					
-
+				}
 
 				// ... then send email
 				if (!wp_mail($emailto, $subject, $message, $headers)) {
-					
 					$this->msg = self::_get_l10n('error_sending');
 					$this->msg_class = 'error';
 				} else $this->msg = self::_get_l10n('mail_sent');
@@ -287,7 +284,8 @@ class Upfront_UcontactView extends Upfront_Object {
 		if( !is_email($smtp_from_email) || empty($smtp_host) ){
 			return;
 		}
-
+		
+		$phpmailer->isSMTP();   
 		$phpmailer->Mailer = "smtp";
 		$phpmailer->From = $this->_get_property_t('smtp_from_email');
 		$phpmailer->FromName = $this->_get_property_t('smtp_from_name');
