@@ -711,11 +711,11 @@ RedactorPlugins.upfrontIcons = function() {
                 var $input = $(e.target),
                     val = $input.val() + "px";
 
-                if ($input.hasClass("font-icons-size")) {
+                if ($input.hasClass("font-icons-size") && $sel) {
                     $sel.css("font-size", val);
                 }
 
-                if ($input.hasClass("font-icons-top")) {
+                if ($input.hasClass("font-icons-top") && $sel) {
                     $sel.css("top", val);
                 }
                 this.redactor.code.sync();
