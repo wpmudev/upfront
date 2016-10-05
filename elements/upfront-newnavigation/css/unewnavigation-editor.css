@@ -191,6 +191,10 @@ div.upfront-navigation div.new_menu_button input {
 	color: #6486a6;
 }
 
+div.upfront-navigation div.new_menu_button input[disabled] {
+	opacity: 0.5;
+}
+
 #unewnavigation-tooltip {
 	position: absolute;
 	width:250px;
