@@ -297,7 +297,7 @@ li.wrap_burger_nav_close {
   text-align:right;
 }
 
-i.burger_nav_close {
+.burger_nav_close {
   z-index:2001;
   width:28px;
   height: 28px;
@@ -309,9 +309,10 @@ i.burger_nav_close {
   font-style: normal;
   cursor: pointer;
   color:#fff;
+  position: relative;
 }
 
-i.burger_nav_close:before {
+.burger_nav_close:before {
   content: '\00d7';
 }
 

@@ -984,7 +984,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			this.showMenu($menu);
 			var offset = $menu.position();
 
-			var close_icon = $('<i class="burger_nav_close"></i>');
+			var close_icon = $('<button class="burger_nav_close"></button>');
 			$menu.prepend($('<li>').addClass('wrap_burger_nav_close').append(close_icon));
 
 			close_icon.bind('touchstart click', function() {
@@ -1015,7 +1015,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			Upfront.Events.trigger("entity:navigation:responsive_open", $nav);
 		} else {
 			this.hideMenu($menu);
-			this.$el.find('i.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
+			this.$el.find('.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
 
 			$nav.removeAttr('data-burger_open');
 
@@ -1312,7 +1312,7 @@ Upfront.Application.LayoutEditor.add_object("Unewnavigation", {
 		"[data-style='burger'] ul.menu": {label: l10n.css.responsive_bar_label, info: l10n.css.bar_info},
 		"[data-style='burger'] .responsive_nav_toggler": {label: l10n.css.responsive_trigger, info: l10n.css.hover_info},
 		"[data-style='burger'] .responsive_nav_toggler > div": {label: l10n.css.responsive_trigger_bars, info: l10n.css.hover_info},
-		"[data-style='burger'] i.burger_nav_close": {label: l10n.css.responsive_nav_close, info: l10n.css.close_info},
+		"[data-style='burger'] .burger_nav_close": {label: l10n.css.responsive_nav_close, info: l10n.css.close_info},
 		"[data-style='burger'] ul.menu > li.menu-item a": {label: l10n.css.responsive_item_label, info: l10n.css.item_info},
 		"[data-style='burger'] ul.menu > li.menu-item:hover a": {label: l10n.css.responsive_hover_label, info: l10n.css.hover_info},
 		"[data-style='burger'] ul.sub-menu > li.menu-item > a": {label: l10n.css.responsive_subitem_label, info: l10n.css.subitem_info},

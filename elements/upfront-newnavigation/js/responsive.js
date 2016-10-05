@@ -180,7 +180,7 @@ jQuery(document).ready(function($) {
 
 			//$(e.target).closest('.responsive_nav_toggler').css({position: 'fixed', left: offset.left, top: offset.top+(($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block')?$('div#wpadminbar').outerHeight():0)});
 			//$(this).parent().find('ul.menu').css('padding-top', '60px');
-			var close_icon = $('<i class="burger_nav_close"></i>');
+			var close_icon = $('<button class="burger_nav_close"></button>');
 
 			$(this).parent().find('ul.menu').prepend($('<li>').addClass('wrap_burger_nav_close').append(close_icon));
 
@@ -228,7 +228,7 @@ jQuery(document).ready(function($) {
 				width: ''
 			});
 
-			$('i.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
+			$('.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
 
 			$(this).closest('div.upfront-output-wrapper').removeClass('on_the_top');
 
