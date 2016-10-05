@@ -410,13 +410,14 @@ define([
 		update_position: function() {
 			// Get number of elements before padding
 			var elementsNumber = this.$el.prevAll().length,
-				leftPosition = elementsNumber * 38;
+				leftPosition = elementsNumber * 38,
+				dir = Upfront.Util.isRTL() ? "right" : "left";
 			
 			// Set container position
-			this.$el.find('.upfront-padding-control').css('left', -leftPosition);
+			this.$el.find('.upfront-padding-control').css(dir, -leftPosition);
 			
 			// Update arrow position under padding button
-			this.$el.find('.upfront-padding-arrow').css('left', leftPosition);
+			this.$el.find('.upfront-padding-arrow').css(dir, leftPosition);
 		}
 	});
 

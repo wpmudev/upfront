@@ -365,7 +365,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	display_menu_list: function () {
 		var me = this,
 			menuItemsValues = [{label:l10n.choose_existing_menu, value: 0}],
-			menuList = MenuUtil.getSelectMenuOptions()
+			menuList = MenuUtil.getSelectMenuOptions(),
+			$parent_container = this.$el.closest('.upfront-editable_entity.upfront-module')
 		;
 		var clubbedvalues = [];
 		if(typeof(menuList) != 'undefined'){
@@ -376,76 +377,75 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		me.$el.find('div.upfront-object-content').html('').addClass('upfront_choose_menu');
 
 		if (!Upfront.Application.user_can_modify_layout()) return false;
-
+		
+		// NEW MENU LIST
 		var menuItems = new Upfront.Views.Editor.Field.Select({
 			model: me.model,
 			label: "",
 			className: "existing_menu_list",
 			values: clubbedvalues
 		});
-
 		menuItems.render();
-
-		me.$el.find('div.upfront-object-content').append(menuItems.el).append('<span> or </span>');
-
+		// attaching events first before appending
+		menuItems.$el.on('mouseover', function() {
+			$parent_container.draggable('disable');
+		}).on('mouseout', function(){
+			$parent_container.draggable('enable');
+		});
+		menuItems.$el.find('> div').on('click', function() {
+			me.parent_module_view.$el.parent().trigger('mouseup');
+		});
+		menuItems.$el.find('input').on('change', function() {
+			$parent_container.draggable('enable');
+			var id = me.$el.find('.existing_menu_list input:checked').val();
+			if(id != 0) {
+				me.property('menu_id', id, true);
+				me.property('menu_slug', MenuUtil.getMenuSlugById(id));
+				me.save_breakpoint_menu(id);
+			}
+		});
+		// appending the new menu list
+		me.$el.find('div.upfront-object-content').append(menuItems.$el).append('<span> or </span>');
+		
+		// NEW MENU NAME TEXTBOX
 		var newMenuName = new Upfront.Views.Editor.Field.Text({
 			model: me.model,
 			label: l10n.new_menu_name,
 			className: "new_menu_name",
 			compact: true
 		});
-
 		newMenuName.render();
-
 		me.$el.find('div.upfront-object-content').append('<div class="upfront_new_menu_name_and_button"></div>');
-		me.$el.find('div.upfront-object-content .upfront_new_menu_name_and_button').append(newMenuName.el);
-
+		// attaching events first before appending
+		newMenuName.$el.on('mouseover', function() {
+			$parent_container.draggable('disable');
+		}).on('mouseout', function() {
+			$parent_container.draggable('enable');
+		}).on('keydown', function(e) {
+			var $menu_button = me.$el.find('.new_menu_button > input.upfront-field-button');
+			if(e.which == 13) $menu_button.trigger('click');
+		});
+		// appending the new menu name textbox
+		me.$el.find('div.upfront-object-content .upfront_new_menu_name_and_button').append(newMenuName.$el);
+		
+		// NEW MENU BUTTON
 		var newMenuButton = new Upfront.Views.Editor.Field.Button({
 			model: me.model,
 			label: l10n.create_new,
 			className: "new_menu_button",
 			compact: true
 		});
-
 		newMenuButton.render();
-		me.$el.find('div.upfront-object-content .upfront_new_menu_name_and_button').append(newMenuButton.el);
-
-		me.$el.find('div.upfront-object-content > div.new_menu_name').on('mouseover', function() {
-			me.$el.parent().parent().parent().draggable('disable');
-		}).on('keydown', function(e) {if(e.which == 13) me.$el.find('div.upfront-object-content > div.new_menu_button > input').trigger('click');});
-
-		me.$el.find('div.upfront-object-content > div.new_menu_name').on('mouseout', function() {
-			me.$el.parent().parent().parent().draggable('enable');
-		});
-
-		me.$el.find('div.upfront-object-content > div.existing_menu_list').on('mouseover', function() {
-			me.$el.parent().parent().parent().draggable('disable');
-		});
-
-		me.$el.find('div.upfront-object-content > div.existing_menu_list').on('mouseout', function() {
-			me.$el.parent().parent().parent().draggable('enable');
-		});
-
-		me.$el.find('div.upfront-object-content > div.existing_menu_list > div').on('click', function() {
-			me.parent_module_view.$el.parent().trigger('mouseup');
-		});
-
-		me.$el.find('div.upfront-object-content > div.new_menu_button > input').on('click', function() {
-			if(me.$el.find('div.upfront-object-content > div.new_menu_name input').val() !== '') {
-				me.create_new_menu(me.$el.find('div.upfront-object-content > div.new_menu_name input').val());
+		// attaching events first before appending
+		newMenuButton.$el.find('input.upfront-field-button').on('click', function(e) {
+			e.stopPropagation();
+			var $menu_name = me.$el.find('.new_menu_name > input');
+			if($menu_name.val() !== '') {
+				me.create_new_menu($menu_name.val());
 			}
 		});
-
-		me.$el.find('div.upfront-object-content > div.existing_menu_list input').on('change', function() {
-			me.$el.parent().parent().parent().draggable('enable');
-			if(me.$el.find('div.upfront-object-content > div.existing_menu_list input:checked').val() != 0) {
-				var id = me.$el.find('div.upfront-object-content > div.existing_menu_list input:checked').val();
-				me.property('menu_id', id, true);
-				me.property('menu_slug', MenuUtil.getMenuSlugById(id));
-				me.save_breakpoint_menu(id);
-			}
-			
-		});
+		// appending the new button
+		me.$el.find('div.upfront-object-content .upfront_new_menu_name_and_button').append(newMenuButton.$el);
 	},
 	/** 
 		setting default menu for desktop breakpoint
@@ -458,10 +458,10 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		};
 		this.property('breakpoint_menu_id', breakpointMenuData, true);
 	},
-	create_new_menu: function(MenuName) {
+	create_new_menu: function(menu_name) {
 		var me = this;
 		// Ajax call for creating menu
-		var newMenu = Upfront.Util.post({"action": "upfront_new_create_menu", "menu_name": MenuName})
+		var newMenu = Upfront.Util.post({"action": "upfront_new_create_menu", "menu_name": menu_name})
 			.success(function (ret) {
 				me.property('menu_slug', ret.data.slug, true);
 				me.property('menu_id', ret.data.term_id);

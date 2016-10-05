@@ -424,6 +424,10 @@ var GridEditor = {
 			find_model = function (modules) {
 				if ( !modules )
 					return false;
+				
+				if ( !modules.get_by_element_id && typeof modules.get_by_element_id !== 'function')
+					return false;
+				
 				var module_model = modules.get_by_element_id(element_id),
 					found_model;
 				if ( module_model )
@@ -443,6 +447,10 @@ var GridEditor = {
 			find_object = function (objects) {
 				if ( !objects )
 					return false;
+				
+				if ( !objects.get_by_element_id && typeof objects.get_by_element_id !== 'function')
+					return false;
+				
 				var object_model = objects.get_by_element_id(element_id),
 					found_object;
 				if ( object_model )
