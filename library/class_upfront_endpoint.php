@@ -110,9 +110,19 @@ class Upfront_Maintenance_Page_Interceptor {
 				wp_safe_redirect($maintenance_data->permalink);
 				die;
 			}
+			// if maintenance page add robot
+			if ( $page_id == $current_page_id ) {
+				add_action('wp_head', array('Upfront_Maintenance_Page_Interceptor', 'meta_robot_noindex'), 0);
+			}
 		}
 		return false;
 	}
+	
+	public static function meta_robot_noindex () {
+		echo '<meta name="robots" content="noindex,nofollow">';
+	}
+	
+	
 	
 }
 add_action('template_redirect', array('Upfront_Maintenance_Page_Interceptor', 'intercept_page'));
