@@ -158,10 +158,10 @@ jQuery(document).ready(function($) {
 	hasNavInit();
 
 	$('body').on('touchstart click', '.burger_nav_close, .burger_overlay', null, function() {
-		$(this).closest('.upfront-navigation').find('div.responsive_nav_toggler').trigger('click');
+		$(this).closest('.upfront-navigation').find('.responsive_nav_toggler').trigger('click');
 	});
 
-	$('body').on('touchstart click', '.upfront-navigation .upfront-navigation div.responsive_nav_toggler', null, function(e) {
+	$('body').on('touchstart click', '.upfront-navigation .upfront-navigation .responsive_nav_toggler', null, function(e) {
 		e.preventDefault();
 		if($(this).parent().find('ul.menu').css('display') == 'none') {
 			$(this).closest('div.upfront-output-wrapper').addClass('on_the_top');
@@ -355,8 +355,8 @@ jQuery(document).ready(function($) {
 					$(this).attr('data-burger_over', preset.burger_over);
 
 					// Add responsive nav toggler
-					if(!$(this).find('div.responsive_nav_toggler').length)
-						$(this).prepend($('<div class="responsive_nav_toggler"><div></div><div></div><div></div></div>'));
+					if(!$(this).find('.responsive_nav_toggler').length)
+						$(this).prepend($('<button class="responsive_nav_toggler"><div></div><div></div><div></div></button>'));
 
 					//offset a bit if admin bar or side bar is present
 					if($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block') {
@@ -395,7 +395,7 @@ jQuery(document).ready(function($) {
 					$(this).removeAttr('data-burger_over', '');
 
 					// Remove responsive nav toggler
-					$(this).find('div.responsive_nav_toggler').remove();
+					$(this).find('.responsive_nav_toggler').remove();
 					$(this).find('ul.menu').show();
 
 					//remove any display:block|none specifications from the sub-menus
@@ -444,8 +444,8 @@ jQuery(document).ready(function($) {
 							$(this).attr('data-burger_over', bparray[key]['burger_over']);
 
 							// Add responsive nav toggler
-							if(!$(this).find('div.responsive_nav_toggler').length)
-								$(this).prepend($('<div class="responsive_nav_toggler"><div></div><div></div><div></div></div>'));
+							if(!$(this).find('.responsive_nav_toggler').length)
+								$(this).prepend($('<button class="responsive_nav_toggler"><div></div><div></div><div></div></button>'));
 
 							//offset a bit if admin bar or side bar is present
 							if($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block') {
@@ -478,7 +478,7 @@ jQuery(document).ready(function($) {
 							$(this).removeAttr('data-burger_over', '');
 
 							// Remove responsive nav toggler
-							$(this).find('div.responsive_nav_toggler').remove();
+							$(this).find('.responsive_nav_toggler').remove();
 							$(this).find('ul.menu').show();
 
 							//remove any display:block|none specifications from the sub-menus

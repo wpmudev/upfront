@@ -738,8 +738,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			selector.attr('data-alignment', breakpoint.menu_alignment);
 
 			// Add responsive nav toggler
-			if(!selector.find('div.responsive_nav_toggler').length)
-				selector.prepend($('<div class="responsive_nav_toggler"><div></div><div></div><div></div></div>').data('view', me));
+			if(!selector.find('.responsive_nav_toggler').length)
+				selector.prepend($('<button class="responsive_nav_toggler"><div></div><div></div><div></div></button>').data('view', me));
 
 			// clone sub-menu's parent's link (if any) on top of the sub-menu's items, and make the parent clickable to toggle the appearance of sub-menu. Only on front end.
 			selector.find('li.menu-item-has-children').each(function() {
@@ -776,7 +776,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			selector.removeAttr('data-burger_over');
 
 			// Remove responsive nav toggler
-			selector.find('div.responsive_nav_toggler').remove();
+			selector.find('.responsive_nav_toggler').remove();
 			me.showMenu(selector.find('ul.menu'));
 
 			//remove any sub-menu item's parent's clones
@@ -880,8 +880,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 							bparray[key]['menu_alignment'] : selector.data('alignmentbk') ));
 
 					// Add responsive nav toggler
-					if(!selector.find('div.responsive_nav_toggler').length)
-						selector.prepend($('<div class="responsive_nav_toggler"><div></div><div></div><div></div></div>').data('view', me));
+					if(!selector.find('.responsive_nav_toggler').length)
+						selector.prepend($('<button class="responsive_nav_toggler"><div></div><div></div><div></div></button>').data('view', me));
 
 					// clone sub-menu's parent's link (if any) on top of the sub-menu's items, and make the parent clickable to toggle the appearance of sub-menu. Only on front end.
 					selector.find('li.menu-item-has-children').each(function() {
@@ -918,7 +918,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					selector.removeAttr('data-burger_over', '');
 
 					// Remove responsive nav toggler
-					selector.find('div.responsive_nav_toggler').remove();
+					selector.find('.responsive_nav_toggler').remove();
 					me.showMenu(selector.find('ul.menu'));
 
 					//remove any sub-menu item's parent's clones
@@ -1096,7 +1096,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				this.$el.find('.upfront-object-content').append($('<div class="burger_overlay"></div>'));
 			}
 			if (((presetProperties.breakpoint || {}).desktop || {}).menu_style === 'burger') {
-				container.prepend($('<div>').addClass("responsive_nav_toggler").data('view', me).append('<div></div><div></div><div></div>'));
+				container.prepend($('<button>').addClass("responsive_nav_toggler").data('view', me).append('<div></div><div></div><div></div>'));
 				me.hideMenu(this.$el.find('ul.menu'));
 			}
 		} else {
@@ -1113,7 +1113,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				this.$el.find('.upfront-object-content').append($('<div class="burger_overlay"></div>'));
 			}
 			if(menu_style === 'burger') {
-				container.prepend($('<div>').addClass("responsive_nav_toggler").data('view', me).append('<div></div><div></div><div></div>'));
+				container.prepend($('<button>').addClass("responsive_nav_toggler").data('view', me).append('<div></div><div></div><div></div>'));
 				me.hideMenu(this.$el.find('ul.menu'));
 			}
 		}
@@ -1311,7 +1311,7 @@ Upfront.Application.LayoutEditor.add_object("Unewnavigation", {
 
 		"[data-style='burger'] ul.menu": {label: l10n.css.responsive_bar_label, info: l10n.css.bar_info},
 		"[data-style='burger'] .responsive_nav_toggler": {label: l10n.css.responsive_trigger, info: l10n.css.hover_info},
-		"[data-style='burger'] div.responsive_nav_toggler > div": {label: l10n.css.responsive_trigger_bars, info: l10n.css.hover_info},
+		"[data-style='burger'] .responsive_nav_toggler > div": {label: l10n.css.responsive_trigger_bars, info: l10n.css.hover_info},
 		"[data-style='burger'] i.burger_nav_close": {label: l10n.css.responsive_nav_close, info: l10n.css.close_info},
 		"[data-style='burger'] ul.menu > li.menu-item a": {label: l10n.css.responsive_item_label, info: l10n.css.item_info},
 		"[data-style='burger'] ul.menu > li.menu-item:hover a": {label: l10n.css.responsive_hover_label, info: l10n.css.hover_info},

@@ -186,7 +186,7 @@ div.upfront-navigation div[data-style="burger"][ data-burger_alignment="right"] 
   right:0;
 }
 
-div.upfront-newnavigation_module:hover  div[data-style="burger"] div.responsive_nav_toggler {
+div.upfront-newnavigation_module:hover  div[data-style="burger"] .responsive_nav_toggler {
 	margin-right:20px;
 }
 
