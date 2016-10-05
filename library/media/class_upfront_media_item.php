@@ -37,6 +37,7 @@ class Upfront_MediaItem extends Upfront_Media {
 			'parent' => $this->_post->post_parent ? get_the_title($this->_post->post_parent) : false,
 			'post_content' => $this->_post->post_content ? $this->_post->post_content : false,
 			'post_excerpt' => $this->_post->post_excerpt ? $this->_post->post_excerpt : false,
+			'alt' => get_post_meta($this->_post->ID, '_wp_attachment_image_alt', true),
 			'original_url' => get_post_meta($this->_post->ID, 'original_url', true),
 			'document_url' => esc_url(wp_get_attachment_url($this->_post->ID)),
 			'labels' => $labels,

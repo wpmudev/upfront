@@ -84,6 +84,7 @@ class Upfront_MediaServer extends Upfront_Server {
 			'item_in_use_nag' => __("The selected media file is already in use. Are you sure?", 'upfront'),
 			'files_selected' => __('%d files selected', 'upfront'),
 			'media_title' => __("Media Title", 'upfront'),
+			'media_alt' => __("Alt Text", 'upfront'),
 			'natural_size' => __("Natural Size", 'upfront'),
 			'px_label' => __("px", 'upfront'),
 			'width_label' => __("W", 'upfront'),
@@ -555,8 +556,14 @@ class Upfront_MediaServer extends Upfront_Server {
 
 		$id = !empty($data['ID']) ? $data['ID'] : false;
 		if (!$id) $this->_out(new Upfront_JsonResponse_Error("Invalid item ID"));
+		
+		$alt = !empty($data['alt']) ? $data['alt'] : false;
 
 		$updated = wp_update_post($data);
+		
+		// Now, update the attachment alt
+		update_post_meta($id, '_wp_attachment_image_alt', $alt);
+		
 		if (!empty($updated)) $this->_out(new Upfront_JsonResponse_Success($updated));
 		else $this->_out(new Upfront_JsonResponse_Error("Error updating the media item"));
 	}
