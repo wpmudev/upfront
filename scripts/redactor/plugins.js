@@ -722,13 +722,15 @@ RedactorPlugins.upfrontIcons = function() {
             },
 
 						input_key_down: function(e) {
-							// If key is not return, ignore.
-							if (e.which !== 13) return;
-
-							// Close Panel and Toolbar on Enter.
-							this.closePanel();
-							this.closeToolbar();
-							this.redactor.dropdown.hideAll();
+							// If key is return close panel.
+							if (e.which === 13) {
+								// Keep from entering return symbol.
+								e.preventDefault();
+								// Close Panel and Toolbar on Enter.
+								this.closePanel();
+								this.closeToolbar();
+								this.redactor.dropdown.hideAll();
+							}
 						},
 
             set_current_icon: function () {
