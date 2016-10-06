@@ -212,7 +212,8 @@ div.uslide-image img {
 }
 
 .uslider-resize-handler {
-	z-index: -10;
+	/* overriding inline css */
+	z-index: -10 !important;
 }
 
 .uslide-caption {
