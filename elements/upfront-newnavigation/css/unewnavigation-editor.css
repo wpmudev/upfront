@@ -1,11 +1,11 @@
-div.upfront-navigation {
+/*div.upfront-navigation {
 	display: block;
 	margin: auto;
 	max-width: 760px;
 	float: none;
 	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 	padding: 15px 0;
-}
+}*/
 
 div.upfront-navigation.upfront-editable_entity i.navigation-add-item, div.upfront-navigation i.delete_menu_item
 /*, div.upfront-navigation i.edit_link*/ {

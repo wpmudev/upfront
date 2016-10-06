@@ -1,11 +1,12 @@
 .uf-bgsettings-item .upfront-field-wrap .upfront-field-label-block,
-.upfront-region-bg-setting-tab-primary .upfront-field-wrap .upfront-field-label-block {
-  font-size: 11px;
-  display: block;
-  font-family: verdana,sans-serif;
+.upfront-bg-setting-tab-primary .upfront-field-wrap .upfront-field-label-block {
+  color: #3f617f;
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
   font-weight: normal;
   top: 0px;
-  color: #7d99b6;
+  margin-bottom: 12px;
 }
 
 #region-settings-sidebar .upfront-bg-setting-tab-primary .upfront-field-wrap .upfront-field-label-block {
@@ -133,14 +134,17 @@
 	top: 138px;
 	right: 15px;
 }
+
 .upfront-settings_panel .uf-bgsettings-image-pick {
 	float: right;
 	margin: -34px 0 0;
 }
+
 #region-settings-sidebar .uf-bgsettings-image-pick .upfront-field-button {
 	height: 26px;
 	padding: 0 10px;
 }
+
 .uf-bgsettings-imageitem .uf-bgsettings-image-tile {
 	height: 24px;
 	padding: 0 10px;
@@ -817,6 +821,7 @@ span.upfront-settings-item-title:after {
 
 .upfront-bg-setting-label:after {
 }
+
 .upfront-bg-setting-label-alt {
 	color: #2f475d;
 	font-family: "Verdana";
@@ -878,21 +883,26 @@ span.upfront-settings-item-title:after {
 	top: -3px;
 	padding-left: 5px;
 }
+
 #element-settings-sidebar .uf-bgsettings-item  .sp-replacer {
 	float: left;
 }
+
 #element-settings-sidebar .background-type-field i,
 #element-settings-sidebar .uf-bgsettings-image-style i {
 	top: 0px;
 }
+
 #element-settings-sidebar .uf-bgsettings-imageitem {
 	position: relative;
 }
+
 #element-settings-sidebar .uf-bgsettings-imageitem .uf-bgsettings-image-pick {
 	position: absolute;
 	right: 10px;
 	top: -41px;
 }
+
 #element-settings-sidebar .padding-bg-checkbox-field {
 	border-top: 2px solid #dce7f4;
 	margin: 5px 15px;
@@ -900,3 +910,19 @@ span.upfront-settings-item-title:after {
 	display: block;
 }
 
+.upfront-bg-setting-heading {
+	color: #27394b;
+	font-size: 18px;
+	font-weight: bold;
+	margin: 0 0 10px;
+}
+.upfront-bg-setting-label {
+	color: #3f617f;
+	font-size: 14px;
+	line-height: 20px;
+}
+.upfront-bg-setting-label-alt {
+	color: #2f475d;
+	font-family: "Verdana";
+	font-size: 11px;
+}

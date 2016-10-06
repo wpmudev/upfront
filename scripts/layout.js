@@ -198,6 +198,7 @@ jQuery(document).ready(function($){
 							prev_type = $prev_bg.attr('data-bg-type-' + breakpoint),
 							has_alpha = function (color) {
 								if (!color) return false;
+								if ("transparent" == color) return true;
 								var matches = color.match(/(rgba|hsla)\(.*?,.*?,.*?,.*?([\d.]+).*?\)/);
 								if (matches && matches[2] && parseFloat(matches[2]) < 1) return true;
 								return false;

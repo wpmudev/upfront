@@ -1188,11 +1188,19 @@ span.draggable-post-element.element-dragging
 }
 
 #sidebar-ui.element-settings-activated ul.sidebar-commands.sidebar-commands-header,
-#sidebar-ui.region-settings-activated ul.sidebar-commands.sidebar-commands-header {
+#sidebar-ui.region-settings-activated ul.sidebar-commands.sidebar-commands-header,
+#sidebar-ui.element-settings-activated {
 	z-index: 10001004;
-    position: fixed;
-    top: 0;
-    width: 261px;
+	height: 46px;
+}
+
+#sidebar-ui.element-settings-activated .sidebar-commands,
+#sidebar-ui.element-settings-activated .sidebar-panels,
+#sidebar-ui.element-settings-activated .sidebar-profile {
+	display: none;
+}
+#sidebar-ui.element-settings-activated .sidebar-commands-header {
+	display: block;
 }
 /* Height Media Queries Fixes
 	 ========================== */
