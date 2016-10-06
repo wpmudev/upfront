@@ -136,9 +136,9 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 						'walker' => new upfront_nav_walker(),
 					));
 					if($new_appearance == 'true') {
-						$menu_html .= "<div class='nav-preset-{$preset} {$float_class} upfront-output-unewnavigation upfront-navigation upfront-breakpoint-navigation upfront-{$breakpoint}-breakpoint-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
+						$menu_html .= "<div class='nav-preset-{$preset} {$float_class} upfront-output-unewnavigation upfront-navigation upfront-breakpoint-navigation upfront-{$breakpoint}-breakpoint-navigation' role='navigation' aria-label='nav-". $menu_slug ."' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
 					} else {
-						$menu_html .= "<div class='{$float_class} upfront-output-unewnavigation upfront-navigation upfront-breakpoint-navigation upfront-{$breakpoint}-breakpoint-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
+						$menu_html .= "<div class='{$float_class} upfront-output-unewnavigation upfront-navigation upfront-breakpoint-navigation upfront-{$breakpoint}-breakpoint-navigation' role='navigation' aria-label='nav-". $menu_slug ."' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation} >" . $menu . "</div>";
 					}
 				}
 			}
@@ -163,15 +163,15 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 			));
 		} else {
 			if($new_appearance == 'true') {
-				return "<div class='{$preset} {$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
+				return "<div class='{$preset} {$float_class} upfront-output-unewnavigation upfront-navigation' role='navigation' aria-label='nav-". $menu_slug ."' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
 			} else {
-				return "<div class='{$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
+				return "<div class='{$float_class} upfront-output-unewnavigation upfront-navigation' role='navigation' aria-label='nav-". $menu_slug ."' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
 			}
 		}
 		if($new_appearance == 'true') {
-			return "<div class='nav-preset-{$preset} {$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
+			return "<div class='nav-preset-{$preset} {$float_class} upfront-output-unewnavigation upfront-navigation' role='navigation' aria-label='nav-". $menu_slug ."' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
 		} else {
-			return "<div class='{$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
+			return "<div class='{$float_class} upfront-output-unewnavigation upfront-navigation' role='navigation' aria-label='nav-". $menu_slug ."' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
 		}
 	}
 
