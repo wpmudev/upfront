@@ -18,28 +18,34 @@ var Views = {
 			'click [href="#continue"]': "dispatch"
 		},
 		render: function () {
-			var opts = new Upfront.Views.Editor.Field.Radios({
-					model: this.model,
-					property: 'display_type',
-					label: l10n.display_type_label_initial,
-					layout: 'horizontal-inline',
-					icon_class: 'upfront-posts-display_type',
-					values: [
-						{label: l10n.single_post, value: 'single', icon: 'upfront-posts-single'},
-						{label: l10n.post_list, value: 'list', icon: 'upfront-posts-list'}
-					]
+			var single = new Upfront.Views.Editor.Field.Button({
+				model: this.model,
+					label: l10n.single_post,
+					compact: true,
+					on_click: function(){
+						this.model.set_property('display_type', 'single', true);
+					}
 				}),
+				list = new Upfront.Views.Editor.Field.Button({
+					model: this.model,
+					label: l10n.post_list,
+					compact: true,
+					on_click: function(){
+						this.model.set_property('display_type', 'list', true);
+					}
+				}),
+
 				row = this.element.parent_module_view.model.get_property_value_by_name('row'),
 				height = row ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0;
-			opts.on("changed", function (value) {
-				this.model.set_property(this.options.property, value, true);
-			}, opts);
-			opts.render();
+			
+			// Render Buttons
+			single.render();
+			list.render();
 
 			if (Upfront.Application.user_can_modify_layout()) {
 				this.$el.empty().append(this.tpl({l10n: l10n}));
 				this.$el.css('min-height', ( height > 150 ? height : 150 ));
-				this.$el.find(".options").empty().append(opts.$el);
+				this.$el.find('.upfront_posts-initial-content').empty().append(single.$el).append(list.$el);
 			} else {
 				this.$el.empty();
 				this.$el.removeClass('upfront-initial-overlay-wrapper');
