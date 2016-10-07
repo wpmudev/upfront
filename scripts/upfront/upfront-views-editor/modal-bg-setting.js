@@ -111,7 +111,7 @@
 							// Resize Select if image.
 							if (value === 'image') {
 								this.$el.addClass('upfront-bg-setting-type-image');
-								this.el.querySelector('div').style.minWidth = '140px'
+								this.$el.find('.upfront-field-select').css({'min-width': '140px'});
 							} else {
 								this.$el.removeClass('upfront-bg-setting-type-image');
 							}
