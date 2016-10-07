@@ -903,27 +903,36 @@ class Upfront_Ajax extends Upfront_Server {
 			return $this->_out(new Upfront_JsonResponse_Error("No mode given"));
 		
 		$maintenance_mode = ( is_numeric($data['enable_maintenance']) && $data['enable_maintenance'] == 1 ) ? true : false;
-		$maintenance_data = array();
-		
-		// delete any existing options
-		$this->_disable_under_construction();
-		
-		if ( $maintenance_mode ) {
-			// creating maintenance page
-			$maintenance_post = Upfront_PostModel::create('page','maintenance', 'Site is under construction, please try again later...');
-			if ( $maintenance_post ) {
-				$maintenance_post->post_status = 'publish';
-				Upfront_PostModel::save($maintenance_post);
-				// enable maintenance mode
-				$maintenance_data['page_id'] = $maintenance_post->ID;
-				$maintenance_data['permalink'] = get_permalink($maintenance_post->ID);
-				update_option(Upfront_Server::MAINTENANCE_MODE, json_encode($maintenance_data));
-			}
+		$maintenance_data = get_option(Upfront_Server::MAINTENANCE_MODE, array());
+		if ( empty($maintenance_data) ) {
+			$maintenance_post = (array)$this->_create_maintenance_page();
+		} else {
+			$maintenance_data_obj = json_decode($maintenance_data);
+			$maintenance_post = (array)Upfront_PostModel::get($maintenance_data_obj->page_id);
+			if ( empty($maintenance_post) ) $maintenance_post = (array)$this->_create_maintenance_page();
+			$maintenance_data = (array)$maintenance_data_obj;
 		}
+		if ( $maintenance_post && !empty($maintenance_post) ) {
+			$maintenance_data['page_id'] = $maintenance_post['ID'];
+			$maintenance_data['permalink'] = get_permalink($maintenance_post['ID']);
+		}		
+		$maintenance_data['enabled'] = ( $maintenance_mode ) ? 1 : 0 ;
+		update_option(Upfront_Server::MAINTENANCE_MODE, json_encode($maintenance_data));
+		
 		$this->_out(new Upfront_JsonResponse_Success("All is well"));
 	}
 	
-	private function _disable_under_construction() {
+	private function _create_maintenance_page () {
+		// creating maintenance page
+		$maintenance_post = Upfront_PostModel::create('page','maintenance', 'Site is under construction, please try again later...');
+		if ( $maintenance_post ) {
+			$maintenance_post->post_status = 'publish';
+			Upfront_PostModel::save($maintenance_post);
+		}
+		return $maintenance_post;
+	}
+	
+	private function _delete_under_construction() {
 		// deleting maintenance page and options
 		$maintenance_data = get_option(Upfront_Server::MAINTENANCE_MODE, false);
 		if ( $maintenance_data ) {

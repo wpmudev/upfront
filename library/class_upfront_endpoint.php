@@ -106,7 +106,8 @@ class Upfront_Maintenance_Page_Interceptor {
 			$maintenance_data = json_decode($maintenance_data);
 			$page_id = (int) $maintenance_data->page_id;
 			$current_page_id = is_singular() ? apply_filters('upfront-data-post_id', get_the_ID()) : false;
-			if ( !is_user_logged_in() && $page_id != $current_page_id ) {
+			$enabled = (isset($maintenance_data->enabled)) ? (int)$maintenance_data->enabled : 0;
+			if ( !is_user_logged_in() && $page_id != $current_page_id && $enabled == 1 ) {
 				wp_safe_redirect($maintenance_data->permalink);
 				die;
 			}

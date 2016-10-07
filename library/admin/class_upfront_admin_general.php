@@ -41,8 +41,9 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 						</div>
 					</div>
 				</div>
-				<?php $this->_render_api_options() ?>
-				<?php $this->_render_debug_options() ?>
+				<?php $this->_render_under_construction_box(); ?>
+				<?php $this->_render_api_options(); ?>
+				<?php $this->_render_debug_options(); ?>
 			</div>
 			<div class="upfront-col-right">
 				<div class="postbox-container helpful-resources">
@@ -73,7 +74,6 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 						</div>
 					</div>
 				</div>
-				<?php $this->_render_under_construction_box(); ?>
 				<?php $this->_render_changelog_box(); ?>
 			</div>
 		</div>
@@ -165,7 +165,12 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 	 */
 	private function _render_under_construction_box () {
 		$maintenance_mode = get_option(Upfront_Server::MAINTENANCE_MODE, false);
-		$enable_maintenance_mode = ( $maintenance_mode ) ? true : false;
+		$enable_maintenance_mode = false;
+		if ( $maintenance_mode ) {
+			$maintenance_mode = json_decode($maintenance_mode);
+			$enabled = (isset($maintenance_mode->enabled)) ? (int)$maintenance_mode->enabled : 0;
+			$enable_maintenance_mode = ( $enabled == 1 ) ? true : false;
+		}
 		?>
 		<div class="postbox-container under-construction">
 			<div class='postbox'>
@@ -180,8 +185,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 						</label>
 					</div>
 					<?php
-					if ( $enable_maintenance_mode ) {
-						$maintenance_mode = json_decode($maintenance_mode);
+					if ( $maintenance_mode && isset($maintenance_mode->permalink) ) {
 						echo '<span class="link">' . sprintf(
 							__('You can edit the maintenance page <a href="%s" target="_blank">here</a>', 'upfront'),
 							$maintenance_mode->permalink . '?editmode=true'
@@ -191,6 +195,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 					<p><button id="upfront_save_under_construction" disabled="disabled"><?php esc_html_e("Save", Upfront::TextDomain) ?></button></p>
 				</div>
 			</div>
+		</div>
 		<?php
 	}
 
