@@ -164,12 +164,8 @@ define([
 						range: false,
 						change: function () {
 							// Update fixed and parallax sliders on change.
-							var value = this.get_value(),
-								s = fields.origin_position_y;
-							s.$el.find('#'+s.get_field_id()).slider('value', value);
-							s.get_field().val(value);
+							var value = this.get_value();
 							fields.bg_position_y_num.get_field().val(value);
-							fields.origin_position_y_num.get_field().val(value);
 							me._bg_position_y = value;
 							this.model.set_breakpoint_property(this.property_name, value);
 							me.update_image();
@@ -185,12 +181,8 @@ define([
 						range: false,
 						change: function () {
 							// Update fixed and parallax sliders on change.
-							var value = this.get_value(),
-								s = fields.origin_position_x;
-							s.$el.find('#'+s.get_field_id()).slider('value', value);
-							s.get_field().val(value);
+							var value = this.get_value();
 							fields.bg_position_x_num.get_field().val(value);
-							fields.origin_position_x_num.get_field().val(value);
 							me._bg_position_x = value;
 							this.model.set_breakpoint_property(this.property_name, value);
 							me.update_image();
@@ -206,14 +198,10 @@ define([
 						suffix: '%',
 						change: function () {
 							var value = this.get_value(),
-								s = fields.bg_position_y,
-								s2 = fields.origin_position_y;
+								s = fields.bg_position_y;
 							s.$el.find('#'+s.get_field_id()).slider('value', value);
-							s2.$el.find('#'+s.get_field_id()).slider('value', value);
 							s.get_field().val(value);
-							s2.get_field().val(value);
 							s.trigger('changed');
-							s2.trigger('changed');
 						},
 						rendered: function (){
 							this.$el.addClass('uf-bgsettings-image-pos-y-num');
@@ -227,14 +215,10 @@ define([
 						change: function () {
 							// Update fixed and parallax sliders on change.
 							var value = this.get_value(),
-								s = fields.bg_position_x,
-								s2 = fields.origin_position_x;
+								s = fields.bg_position_x;
 							s.$el.find('#'+s.get_field_id()).slider('value', value);
-							s2.$el.find('#'+s.get_field_id()).slider('value', value);
 							s.get_field().val(value);
-							s2.get_field().val(value);
 							s.trigger('changed');
-							s2.trigger('changed');
 						},
 						rendered: function (){
 							this.$el.addClass('uf-bgsettings-image-pos-x-num');
@@ -244,22 +228,16 @@ define([
 						model: this.model,
 						label: l10n.origin_position,
 						orientation: 'vertical',
-						property: 'bg_position_y',
+						property: 'origin_position_y',
 						use_breakpoint_property: true,
 						range: false,
 						change: function () {
 							// Update fixed and parallax sliders on change.
-							var value = this.get_value(),
-								s = fields.bg_position_y;
-							s.$el.find('#'+s.get_field_id()).slider('value', value);
-							s.get_field().val(value);
+							var value = this.get_value();
 							fields.origin_position_y_num.get_field().val(value);
-							fields.bg_position_y_num.get_field().val(value);
-							me._bg_position_y = value;
+							me._origin_position_y = value;
 							this.model.set_breakpoint_property(this.property_name, value);
 							me.update_image();
-							// Trigger a change event upon the original field.
-							s.trigger('changed');
 						},
 						rendered: function (){
 							this.$el.addClass('uf-bgsettings-image-pos-y');
@@ -272,22 +250,16 @@ define([
 						})),
 					origin_position_x: new Upfront.Views.Editor.Field.Slider(_.extend({
 						model: this.model,
-						property: 'bg_position_x',
+						property: 'origin_position_x',
 						use_breakpoint_property: true,
 						range: false,
 						change: function () {
 							// Update fixed and parallax sliders on change.
-							var value = this.get_value(),
-								s = fields.bg_position_x;
-							s.$el.find('#'+s.get_field_id()).slider('value', value);
-							s.get_field().val(value);
+							var value = this.get_value();
 							fields.origin_position_x_num.get_field().val(value);
-							fields.bg_position_x_num.get_field().val(value);
-							me._bg_position_x = value;
+							me._origin_position_x = value;
 							this.model.set_breakpoint_property(this.property_name, value);
 							me.update_image();
-							// Trigger a change event upon the original field.
-							s.trigger('changed');
 						},
 						rendered: function (){
 							this.$el.addClass('uf-bgsettings-image-pos-x');
@@ -306,14 +278,10 @@ define([
 						change: function () {
 							// Update fixed and parallax sliders on change.
 							var value = this.get_value(),
-								s = fields.origin_position_y,
-								s2 = fields.bg_position_y;
+								s = fields.origin_position_y;
 							s.$el.find('#'+s.get_field_id()).slider('value', value);
-							s2.$el.find('#'+s.get_field_id()).slider('value', value);
 							s.get_field().val(value);
-							s2.get_field().val(value);
 							s.trigger('changed');
-							s2.trigger('changed');
 						},
 						rendered: function (){
 							this.$el.addClass('uf-bgsettings-image-pos-y-num uf-bgsettings-origin-pos-y-num');
@@ -332,14 +300,10 @@ define([
 						change: function () {
 							// Update fixed and parallax sliders on change.
 							var value = this.get_value(),
-								s = fields.origin_position_x,
-								s2 = fields.bg_position_x;
+								s = fields.origin_position_x;
 							s.$el.find('#'+s.get_field_id()).slider('value', value);
-							s2.$el.find('#'+s.get_field_id()).slider('value', value);
 							s.get_field().val(value);
-							s2.get_field().val(value);
 							s.trigger('changed');
-							s2.trigger('changed');
 						},
 						rendered: function (){
 							this.$el.addClass('uf-bgsettings-image-pos-x-num uf-bgsettings-origin-pos-x-num');
@@ -389,8 +353,12 @@ define([
 				fields.bg_size.trigger('changed');
 				me._bg_position_y = fields.bg_position_y.get_value();
 				fields.bg_position_y.trigger('changed');
+				me._origin_position_y = fields.origin_position_y.get_value();
+				fields.origin_position_y.trigger('changed');
 				me._bg_position_x = fields.bg_position_x.get_value();
 				fields.bg_position_x.trigger('changed');
+				me._origin_position_x = fields.origin_position_y.get_value();
+				fields.origin_position_x.trigger('changed');
 				//me._default_color = fields.bg_color.get_value();
 				fields.bg_style.trigger('changed');
 				if ( bg_type == 'featured' ) {
@@ -440,7 +408,7 @@ define([
 					this.model.set_breakpoint_property('background_size', bg_size + '%');
 				} else if (style === 'parallax') {
 					this.model.set_breakpoint_property('background_style', 'parallax');
-					this.model.set_breakpoint_property('background_position', pos_x + '% ' + pos_y + '%');
+					this.model.set_breakpoint_property('background_position', this._origin_position_x + '% ' + this._origin_position_y + '%');
 					this.model.set_breakpoint_property('background_size', bg_size + '%');
 				} else {
 					this.model.set_breakpoint_property('background_style', style);
