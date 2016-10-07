@@ -139,12 +139,40 @@ define([
 			}
 
 			// Rewrite anchor url to new style (to include full url)
-			var pageUrl = document.location.origin + document.location.pathname;
+			var pageUrl = this.get_mapped_url();
+
 			if (this.model.get('type') === 'anchor' && this.model.get('url').match(/^#/) !== null) {
 				this.model.set({'url' : pageUrl + this.model.get('url')}, {silent:true});
 			}
 
 			this.listenTo(this.model, 'change:type', this.handleTypeChange);
+		},
+
+		get_mapped_url: function() {
+			// Example: http://mysite.com
+			var home_url = Upfront.mainData.site || document.location.origin;
+			// Example: http://mynetwork.com/site2
+			var site_url = Upfront.mainData.siteUrl || document.location.origin;
+			// Example: site2
+			var site_path = site_url.split('/')[3];
+			var location_path = document.location.pathname;
+			// If site url is mapped different than home url and has a site path, correct this.
+			if (
+				home_url !== site_url
+				&& site_path && site_path !== ''
+				&& location_path.search(site_path) > -1
+			) {
+				// Strip out the site URL from pathname.
+				var new_location = location_path.split('/');
+				new_location.shift();
+				new_location.shift();
+				location_path = '/' + new_location.join('/');
+			}
+			// If URL has edit in it, use relative Anchor.
+			if (location_path.search('edit') > -1) {
+				return '';
+			}
+			return home_url + location_path;
 		},
 
 		onOkClick: function() {
@@ -379,7 +407,7 @@ define([
 
 		renderAnchorSelect: function() {
 			var model = this.model,
-				pageUrl = document.location.origin + document.location.pathname;
+				pageUrl = this.get_mapped_url();
 
 			var anchorValues = [{label: 'Choose Anchor...', value: ''}];
 			_.each(getAnchors(), function(anchor) {
