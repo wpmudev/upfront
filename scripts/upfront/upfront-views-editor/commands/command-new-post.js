@@ -45,6 +45,7 @@
                     if(_upfront_post_data) _upfront_post_data.post_id = resp.data.post_id;
                     Upfront.Application.navigate('/edit/post/' + resp.data.post_id, {trigger: true});
                     Upfront.Events.trigger("click:edit:navigate", resp.data.post_id);
+										// Remove initial loader.
 										return loading.remove();
                 });
             },
