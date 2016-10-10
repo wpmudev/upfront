@@ -131,7 +131,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 						<p class="left">
 							<small><?php esc_html_e("Resets layout to default look, be careful", Upfront::TextDomain) ?></small>
 						</p>
-						<p class="left">
+						<div class="upfront-layout-reset">
 							<?php
 							$db_layouts = Upfront_Server_PageLayout::get_instance()->parse_theme_layouts(Upfront_Debug::get_debugger()->is_dev());
 							if( $db_layouts ): ?>
@@ -141,11 +141,20 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 										<option value="<?php echo (is_array($item)) ? esc_attr($item['name']) : esc_attr($item); ?>"><?php echo esc_html(Upfront_Server_PageLayout::get_instance()->db_layout_to_name($item)); ?></option>
 									<?php endforeach; ?>
 								</select>
+								<div class="upfront-reset-global-option">
+									<div class="upfront_toggle">
+										<input value="1" type="checkbox" name="upfront_reset_include_global" class="upfront_toggle_checkbox" id="upfront_reset_include_global" >
+										<label class="upfront_toggle_label" for="upfront_reset_include_global">
+											<span class="upfront_toggle_inner"></span>
+											<span class="upfront_toggle_switch"></span>
+										</label>
+									</div>
+									<small><?php esc_html_e("Include Global Regions", Upfront::TextDomain); ?></small>
+								</div>
 							<?php else: ?>
 								<h4><?php esc_html_e("You have no saved layout to reset", Upfront::TextDomain); ?></h4>
 							<?php endif; ?>
-
-						</p>
+						</div>
 						<button id="upfront_reset_layout" disabled="disabled" data-dev="<?php echo (int)Upfront_Debug::get_debugger()->is_dev();?>"><?php esc_html_e("Reset Layout", Upfront::TextDomain) ?></button>
 					</div>
 					<div class="upfront-debug-block">
