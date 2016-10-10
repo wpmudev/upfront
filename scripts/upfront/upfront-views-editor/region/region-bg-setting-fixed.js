@@ -38,6 +38,7 @@
 				this.render_fixed_settings($content.find('.upfront-region-bg-setting-fixed-region'));
 				region_restrict.render();
 				$content.find('.upfront-region-bg-setting-floating-restrict').append(region_restrict.$el);
+				this.$el.addClass('upfront-modal-bg-settings-fixed')
 			},
 
 			render_fixed_settings: function ($content) {

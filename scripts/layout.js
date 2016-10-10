@@ -493,6 +493,12 @@ jQuery(document).ready(function($){
 				width = is_layout ? $(window).width() : $(this).outerWidth(),
 				height = is_layout ? $(window).height() : ( is_full_screen ? $(window).height()-body_off.top : $(this).outerHeight() ),
 				ratio = parseFloat($(this).attr('data-bg-image-ratio'));
+
+			// If Parallax, do not change background size/position.
+			if (this.parentNode.getAttribute('data-bg-parallax')) {
+				return;
+			}
+
 			if ( Math.round(height/width*100)/100 > ratio ) {
 				$(this).data('bg-position-y', 0);
 				$(this).data('bg-position-x', '50%');
@@ -500,8 +506,7 @@ jQuery(document).ready(function($){
 					'background-position': '50% 0',
 					'background-size': Math.round(height/ratio) + "px " + height + "px" /*"auto 100%"*/
 				});
-			}
-			else {
+			} else {
 				$(this).data('bg-position-y', Math.round( ( height - (width*ratio) ) / 2 ));
 				$(this).data('bg-position-x', '0');
 				$(this).css({

@@ -306,11 +306,11 @@ a.upfront-css-edit, a.upfront-preset-edit {
 	opacity: .8;
 }
 
-a.upfront-css-edit:hover, a.upfront-preset-edit:hover, a.upfront-region-name-edit-trigger:hover {
+a.upfront-css-edit:hover, a.upfront-preset-edit:hover {
 	opacity: 1;
 }
 
-a.upfront-css-edit:before, a.upfront-preset-edit:before, a.upfront-region-name-edit-trigger:before {
+a.upfront-css-edit:before, a.upfront-preset-edit:before {
 	display: inline-block;
 	content: '';
 	width: 20px;
