@@ -420,7 +420,7 @@ define([
 		update_position: function() {
 			// Get number of elements before padding
 			var elementsNumber = this.$el.prevAll().length,
-				leftPosition = elementsNumber * 38,
+				leftPosition = elementsNumber * 28,
 				dir = Upfront.Util.isRTL() ? "right" : "left";
 			
 			// Set container position
