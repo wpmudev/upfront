@@ -2,7 +2,7 @@ define([], function () {
 	var Panel = Backbone.View.extend({
 		className: 'upfront-inline-panel upfront-no-select',
 		position_v: 'top',
-		position_h: 'center',
+		position_h: 'left',
 
 		initialize: function () {
 			this.items = _([]);

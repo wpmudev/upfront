@@ -3284,7 +3284,7 @@ div#page.upfront-layout-view.upfront-layout-view .upfront-editable_entity.upfron
   opacity: 1; }
 
 .upfront-inline-panel-top {
-  top: 0;
+  top: 5px;
   -webkit-transform: scale(1);
   -webkit-transform-origin: 50% 0;
   transform: scale(1);
@@ -3298,10 +3298,10 @@ div#page.upfront-layout-view.upfront-layout-view .upfront-editable_entity.upfron
   right: 0; }
 
 .upfront-inline-panel-top-left {
-  left: 8.3%; }
+  left: 5px; }
 
 .upfront-region-fixed-panels .upfront-inline-panel-top-left {
-  left: 0;
+  left: 5px;
   -webkit-transform: scale(0, 0);
   -webkit-transform-origin: 0 0;
   transform: scale(0, 0);
