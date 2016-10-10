@@ -300,6 +300,8 @@
                 // Header
                 this.sidebar_commands.header.render();
                 output.append(this.sidebar_commands.header.el);
+
+								// Shrink Sidebar on Low Resolution Screens.
 								this.addHoverSidebarClasses();
 
                 // Editor Mode
