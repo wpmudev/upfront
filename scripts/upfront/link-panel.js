@@ -29,6 +29,11 @@ define([
 		};
 
 		regions.each(function(r) {
+			var regionTitle = r.attributes.title;
+			var id = '#upfront-region-container-' + r.attributes.name;
+			// Add Anchors for each region.
+			anchors.push({id: id, label: regionTitle})
+			// Get Modules.
 			find(r.get("modules"));
 		});
 

@@ -660,14 +660,17 @@ class Upfront_Ajax extends Upfront_Server {
 			? (bool) $data['is_dev']
 			: false
 		;
+		$include_global = ( isset($data['include_global']) && is_numeric($data['include_global']) && $data['include_global'] == 1 ) ? true : false;
 		$store_key = strtolower(str_replace('_dev','',Upfront_Layout::get_storage_key()));
 		$layout_change_meta_name = strtolower($store_key . '-layout-change-flag');
 		
 		if ( empty($layout) ) $this->_out(new Upfront_JsonResponse_Error("Please specify layout to reset"));
-
+		
 		if ( is_array($layout) && $post_id ) {
 			$layout_slug = $store_key . '-single-page-' . $post_id;
 			$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $is_dev);
+			// delete global layout
+			if ( $include_global ) $this->_reset_global_layout($layout_post_id, $is_dev);
 			// delete layout change flag
 			delete_post_meta($layout_post_id, $layout_change_meta_name);
 			// delete layout
@@ -679,6 +682,8 @@ class Upfront_Ajax extends Upfront_Server {
 			// delete layouts from CPT
 			$layout_slug = $store_key . '-' . $layout;
 			$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $is_dev);
+			// delete global layout
+			if ( $include_global ) $this->_reset_global_layout($layout_post_id, $is_dev);
 			// delete layout change flag
 			delete_post_meta($layout_post_id, $layout_change_meta_name);
 			// delete layout
@@ -691,16 +696,53 @@ class Upfront_Ajax extends Upfront_Server {
 			if( $stylesheet_dev ){
 				$layout_key = $stylesheet_dev . "-" . $layout;
 				$alternative_layout_key = wp_get_theme($stylesheet)->get("Name") . "_dev-" . $layout;
-				delete_option( $layout_key );
-				delete_option( $alternative_layout_key );
 			}else{
 				$layout_key = $store_key . "-" . $layout;
 				$alternative_layout_key = wp_get_theme($stylesheet)->get("Name") . "-" . $layout;
-				delete_option( $layout_key );
-				delete_option( $alternative_layout_key );
 			}
-
+			if ( $include_global ) {
+				$this->_reset_global_layout_from_options($layout_key);
+				$this->_reset_global_layout_from_options($alternative_layout_key);
+			}
+			delete_option( $layout_key );
+			delete_option( $alternative_layout_key );
 			$this->_out(new Upfront_JsonResponse_Success("Layout {$layout} reset"));
+		}
+	}
+	
+	private function _reset_global_layout ($layout_post_id, $is_dev) {
+		if ( $layout_post_id ) {
+			$save_storage_key = apply_filters('upfront-data-storage-key', Upfront_Layout::STORAGE_KEY);
+			if (Upfront_Behavior::debug()->is_dev() && current_user_can('switch_themes') && apply_filters('upfront-enable-dev-saving', true)) {
+				$save_storage_key .= '_dev';
+			}
+			$page_layout = Upfront_Server_PageLayout::get_instance()->get_layout($layout_post_id, $is_dev);
+			if ( isset($page_layout['regions']) ) {
+				foreach ( $page_layout['regions'] as $region ) {
+					if ( isset( $region['scope'] ) && $region['scope'] != 'local' ) {
+						$regions = Upfront_Layout::delete_scoped_regions($region['name'], 'global', $save_storage_key);
+					}
+				}
+			}
+		}
+	}
+	
+	private function _reset_global_layout_from_options ($layout_key) {
+		$save_storage_key = apply_filters('upfront-data-storage-key', Upfront_Layout::STORAGE_KEY);
+		if (Upfront_Behavior::debug()->is_dev() && current_user_can('switch_themes') && apply_filters('upfront-enable-dev-saving', true)) {
+			$save_storage_key .= '_dev';
+		}
+		$layout_data = get_option($layout_key, false);
+		if ( $layout_data ) {
+			$layout_data = json_decode($layout_data);
+			$regions_added = array();
+			if ( isset($layout_data->regions) ) {
+				foreach ( $layout_data->regions as $region ) {
+					if ( isset( $region->scope ) && $region->scope != 'local' ){
+						$regions = Upfront_Layout::delete_scoped_regions($region->name, 'global', $save_storage_key);
+					}
+				}
+			}
 		}
 	}
 
