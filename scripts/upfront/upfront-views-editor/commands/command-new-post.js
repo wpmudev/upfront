@@ -28,6 +28,14 @@
                     return Upfront.Views.Editor.notify(l10n.already_creating_post.replace(/%s/, this.postType), 'warning');
 
                 //return Upfront.Application.navigate('/create_new/post' + location.search, {trigger: true}); // DROP THIS INSANITY
+								// Display loader immediately.
+								var loading = new Upfront.Views.Editor.Loading({
+									loading: l10n.loading
+								});
+								loading.render();
+								$('body').append(loading.$el);
+
+								// Create post via AJAX.
                 Upfront.Util
                     .post({
                         action: "upfront-create-post_type",
@@ -37,8 +45,8 @@
                     if(_upfront_post_data) _upfront_post_data.post_id = resp.data.post_id;
                     Upfront.Application.navigate('/edit/post/' + resp.data.post_id, {trigger: true});
                     Upfront.Events.trigger("click:edit:navigate", resp.data.post_id);
-                })
-                ;
+										return loading.remove();
+                });
             },
             on_post_loaded: function(view) {
                 if(!this.postView){
