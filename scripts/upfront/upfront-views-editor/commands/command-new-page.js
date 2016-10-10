@@ -39,10 +39,10 @@
                         data: _.extend({post_type: me.postType, title: me._default_label}, {})
                     }).done(function (resp) {
                     if(_upfront_post_data) _upfront_post_data.post_id = resp.data.post_id;
+										// Remove initial loader.
+										loading.remove();
                     Upfront.Application.navigate('/edit/page/' + resp.data.post_id, {trigger: true});
                     Upfront.Events.trigger("click:edit:navigate", resp.data.post_id);
-										// Remove initial loader.
-										return loading.remove();
                 });
             },
             render_modal: function () {

@@ -41,12 +41,12 @@
                         action: "upfront-create-post_type",
                         data: _.extend({post_type: this.postType}, {})
                     }).done(function (resp) {
+										// Remove initial loader.
+										loading.remove();
                     //Upfront.Util.log(resp.data);
                     if(_upfront_post_data) _upfront_post_data.post_id = resp.data.post_id;
                     Upfront.Application.navigate('/edit/post/' + resp.data.post_id, {trigger: true});
                     Upfront.Events.trigger("click:edit:navigate", resp.data.post_id);
-										// Remove initial loader.
-										return loading.remove();
                 });
             },
             on_post_loaded: function(view) {
