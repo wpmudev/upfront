@@ -18,7 +18,7 @@
     box-shadow: 0 0 3px 0 rgba(36,57,77,0.3);
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item {
-    background: #F5F5F5;
+    background: #FFFFFF;
     border-bottom: 0;
     cursor: default;
 }
@@ -259,12 +259,18 @@
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-inline-panel-item,
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open {
-    background: #E6ECF2;
+    background: #72848d;
 }
+
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .inline-panel-sub-control-dialog .upfront-inline-panel-item,
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .inline-panel-sub-control-dialog {
+  background: #FFFFFF;
+}
+
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .slider-caption-second-level .upfront-inline-panel-item,
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .slider-caption-second-level {
-	background: #DAE0E6;
+	background: #FFFFFF;
 }
 
 .upfront-element-controls .control-panel-overlay {
