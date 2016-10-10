@@ -10956,16 +10956,19 @@ div.sp-replacer:before {
   position: relative;
   top: 9px; }
 
-.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-padding-arrow {
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-control-arrow {
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 0 5px 5px 5px;
-  border-color: transparent transparent #e7ecf2 transparent;
+  border-width: 0 7px 7px 7px;
+  border-color: transparent transparent #fff transparent;
   position: absolute;
-  top: -5px;
+  top: -6px;
   margin-left: 15px;
   content: ''; }
+
+.image-sub-control {
+  border: 2px solid #cccccc; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-padding-container .upfront-field-number[type=number] {
   width: 50px; }
@@ -11144,6 +11147,10 @@ div.sp-replacer:before {
 
 .upfront-icon-region-more {
   height: 28px; }
+
+.inline-panel-sub-control-dialog {
+  position: relative;
+  top: 9px; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-more:before {
   background-position: -291px -460px;
