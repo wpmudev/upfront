@@ -300,6 +300,7 @@
                 // Header
                 this.sidebar_commands.header.render();
                 output.append(this.sidebar_commands.header.el);
+								this.addHoverSidebarClasses();
 
                 // Editor Mode
                 //this.editor_mode.render();
@@ -437,6 +438,17 @@
                 var height = $(window).height();
                 this.$('#sidebar-ui-toggler').height(height);
             },
+
+						// On hover, add classes allowing sidebar to shrink on low resolutions.
+						addHoverSidebarClasses: function() {
+							// On Mouse Enter.
+							$('#sidebar-ui, #element-settings-sidebar, #region-settings-sidebar').hover(function() {
+								$('#sidebar-ui, #element-settings-sidebar, #region-settings-sidebar').addClass('upfront-sidebar-hover');
+							// On Mouse Leave.
+							}, function() {
+								$('#sidebar-ui, #element-settings-sidebar, #region-settings-sidebar').removeClass('upfront-sidebar-hover');
+							});
+						},
 
             toggleSidebar: function(instant){
                 var me = this,
