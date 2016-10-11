@@ -36,6 +36,11 @@ var Views = {
 		_do_cache: true,
 
 		render: function (only_objects) {
+			var pluginLayout = Upfront.Application.is_plugin_layout();
+			if (pluginLayout) {
+				this.$el.empty().append('<div>This content is handled by ' + pluginLayout.pluginName + '.</div>');
+				return;
+			}
 			var me = this,
 				model = Upfront.Util.model_to_json(this.model),
 				props = model.properties || {},

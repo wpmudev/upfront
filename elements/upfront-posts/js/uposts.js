@@ -58,6 +58,11 @@ define(function() {
 		},
 
 		get_content_markup: function () {
+			var pluginLayout = Upfront.Application.is_plugin_layout();
+			if (pluginLayout) {
+				this.$el.find(".upfront-object-content").empty().append('<div>This content is handled by ' + pluginLayout.pluginName + '.</div>');
+				return;
+			}
 			if(this.changed || !this.markup){
 				//Is it shadow?
 				if(this.parent_module_view.region.get("name") != 'shadow')

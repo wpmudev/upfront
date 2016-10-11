@@ -29,6 +29,12 @@ var PostsView = Upfront.Views.ObjectView.extend({
 	},
 
 	on_render: function () {
+		var pluginLayout = Upfront.Application.is_plugin_layout();
+		if (pluginLayout) {
+			this.$el.find(".upfront-object-content").empty().append('<div>This content is handled by ' + pluginLayout.pluginName + '.</div>');
+			return;
+		}
+
 		var type = this.model.get_property_value_by_name("display_type");
 		this.render_type_view(type);
 		// Let's not render min-height (remove it)

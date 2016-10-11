@@ -1635,8 +1635,29 @@ var Application = new (Backbone.Router.extend({
 		if ( this.is_single() && (this.user_can("EDIT_OWN") || this.user_can("EDIT") )) return true;
 
 		return false;
-	}
+	},
 
+	/**
+	 * Checks if current layout is layout handled by plugin and return plugin data.
+	 */
+	is_plugin_layout: function() {
+		var currentLayout = Upfront.Application.current_subapplication.get_layout_data().layout;
+		var result;
+		_.each(Upfront.mainData.pluginsLayouts, function(data, plugin) {
+			_.each(data.layouts, function(layout) {
+				if (layout.specificity && currentLayout.specificity && _.isNull(currentLayout.specificity.match(layout.specificity)) === false) {
+					result = {
+						pluginName: data.pluginName
+					};
+				} else if (layout.item === currentLayout.item) {
+					result = {
+						pluginName: data.pluginName
+					};
+				}
+			});
+		});
+		return result;
+	}
 }))();
 
 return {
