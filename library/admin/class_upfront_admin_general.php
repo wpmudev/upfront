@@ -168,6 +168,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 		$enable_maintenance_mode = false;
 		if ( $maintenance_mode ) {
 			$maintenance_mode = json_decode($maintenance_mode);
+			$maintenance_mode = ( $maintenance_mode && is_object($maintenance_mode) ) ? $maintenance_mode : new stdClass();
 			$enabled = (isset($maintenance_mode->enabled)) ? (int)$maintenance_mode->enabled : 0;
 			$enable_maintenance_mode = ( $enabled == 1 ) ? true : false;
 		}

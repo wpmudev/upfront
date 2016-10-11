@@ -104,16 +104,20 @@ class Upfront_Maintenance_Page_Interceptor {
 		$maintenance_data = get_option(Upfront_Server::MAINTENANCE_MODE, false);
 		if ( $maintenance_data ) {
 			$maintenance_data = json_decode($maintenance_data);
-			$page_id = (int) $maintenance_data->page_id;
-			$current_page_id = is_singular() ? apply_filters('upfront-data-post_id', get_the_ID()) : false;
-			$enabled = (isset($maintenance_data->enabled)) ? (int)$maintenance_data->enabled : 0;
-			if ( !is_user_logged_in() && $page_id != $current_page_id && $enabled == 1 ) {
-				wp_safe_redirect($maintenance_data->permalink);
-				die;
-			}
-			// if maintenance page add robot
-			if ( $page_id == $current_page_id ) {
-				add_action('wp_head', array('Upfront_Maintenance_Page_Interceptor', 'meta_robot_noindex'), 0);
+			if ( $maintenance_data && is_object($maintenance_data) ) {
+				$page_id = (isset($maintenance_data->page_id)) ? (int)$maintenance_data->page_id : 0;
+				$current_page_id = is_singular() ? apply_filters('upfront-data-post_id', get_the_ID()) : false;
+				$enabled = (isset($maintenance_data->enabled)) ? (int)$maintenance_data->enabled : 0;
+				if ( !is_user_logged_in() && $page_id != $current_page_id && $enabled == 1 ) {
+					if ( isset($maintenance_data->permalink) ) {
+						wp_safe_redirect($maintenance_data->permalink);
+						die;
+					}
+				}
+				// if maintenance page add robot
+				if ( $page_id == $current_page_id ) {
+					add_action('wp_head', array('Upfront_Maintenance_Page_Interceptor', 'meta_robot_noindex'), 0);
+				}
 			}
 		}
 		return false;
