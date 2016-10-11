@@ -165,6 +165,35 @@
 	top: 22px;
 	z-index: 100;
 }
+/* chrome input[type=number] styling */
+.upfront-padding-control .upfront-field-number[type=number]::-webkit-inner-spin-button {
+	-webkit-appearance:none;
+	width:12px;
+	padding:0;
+	margin:0;
+	height:27px;
+	background-color:#ffffff;
+	display:inline-block;
+	position:relative;
+	border-left:1px solid #e8e8e8;
+	cursor: pointer;
+	background-image: url('../img/uf-ui-sprite.svg');
+	background-position: -346px -242px;
+}
+.upfront-padding-control .upfront-field-number[type=number]::-webkit-inner-spin-button {
+	-webkit-appearance:none;
+	width:12px;
+	padding:0;
+	margin:0;
+	height:23px;
+	background-color:#ffffff;
+	display:inline-block;
+	position:relative;
+	border-left:1px solid #e8e8e8;
+	cursor: pointer;
+	background-image: url('../img/uf-ui-sprite.svg');
+	background-position: -346px -244px;
+}
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-padding-control span.upfront-padding-value {
     color: #00afec;
     font-weight: bold;
