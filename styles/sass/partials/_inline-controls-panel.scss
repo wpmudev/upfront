@@ -16,6 +16,7 @@
 .upfront-element-controls .upfront-inline-panel {
 	z-index: 2000;
     box-shadow: 0 0 3px 0 rgba(36,57,77,0.3);
+    border: 1px solid #cccccc;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item {
     background: #FFFFFF;
@@ -47,15 +48,21 @@
 	top: 9px;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-control-arrow {
-	width: 0;
-	height: 0;
-	border-style: solid;
-	border-width: 0 7px 7px 7px;
-	border-color: transparent transparent #fff transparent;
+	width: 8px;
+	height: 8px;
+    transform: rotate(45deg);
+    background: #ffffff;
+    border-left: 1px solid #cccccc;
+    border-top: 1px solid #cccccc;
 	position: absolute;
-	top: -6px;
+	top: -5px;
 	margin-left: 15px;
 	content: '';
+}
+.upfront-element-controls .upfront-inline-panel .image-sub-control {
+    border: 1px solid #cccccc;
+    height: 30px;
+    box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3);
 }
 .upfront-element-controls .upfront-inline-panel .upfront-padding-container .upfront-field-number[type=number] {
 	width: 50px;
