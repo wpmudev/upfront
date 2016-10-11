@@ -10973,7 +10973,9 @@ div.sp-replacer:before {
 .upfront-element-controls .upfront-inline-panel .image-sub-control {
   border: 1px solid #cccccc;
   height: 30px;
-  box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3); }
+  box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3);
+  position: relative;
+  left: -5px; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-padding-container .upfront-field-number[type=number] {
   width: 43px;

@@ -424,7 +424,7 @@ define([
 				dir = Upfront.Util.isRTL() ? "right" : "left";
 			
 			// Set container position
-			this.$el.find('.upfront-padding-control').css(dir, -leftPosition);
+			this.$el.find('.upfront-padding-control').css(dir, -(leftPosition + 5));
 			
 			// Update arrow position under padding button
 			this.$el.find('.upfront-control-arrow').css(dir, leftPosition);
