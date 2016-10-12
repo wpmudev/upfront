@@ -7216,7 +7216,9 @@ span.upfront-settings-item-title:after {
 .upfront-ui .upfront-icon.upfront-icon-region-add:before,
 .upfront-ui .upfront-icon.upfront-icon-more-menu:before {
   content: " ";
-  background-image: url("../img/uf-core-el-sprite.svg?v=20131127");
+  /* background-image: url('../img/uf-core-el-sprite.svg?v=20131127'); */
+  background-image: url("../img/uf-core-el-sprite_new.png");
+  background-image: url("../img/uf-core-el-sprite_new.svg");
   background-repeat: no-repeat;
   float: left;
   display: block; }

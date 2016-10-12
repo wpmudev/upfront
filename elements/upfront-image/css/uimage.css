@@ -744,20 +744,20 @@ a.image-edit-button.deactivated:hover {
 	background-position: -700px -455px!important;
 }
 .upfront-field-icon-topOver:before {
-	background-position: -699px -520px!important;
+	background-position: -288px -308px;
 }
 .upfront-field-icon-showCaption:before,
 .upfront-field-icon-bottomOver:before {
-	background-position: -699px -488px!important;
+	background-position: -318px -308px;
 }
 .upfront-field-icon-topCover:before {
-	background-position: -699px -552px!important;
+	background-position: -349px -308px;
 }
 .upfront-field-icon-middleCover:before {
-	background-position: -699px -584px!important;
+	background-position: -379px -308px;
 }
 .upfront-field-icon-bottomCover:before {
-	background-position: -699px -616px!important;
+	background-position: -409px -308px;
 }
 
 div.preset-manager-panel .caption_location {
