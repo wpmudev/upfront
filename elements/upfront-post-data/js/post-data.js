@@ -131,10 +131,12 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	},
 
 	/**
-	 * Part objects do *NOT* get individual control items - parent group does
+	 * Part objects has only padding control
 	 */
 	getControlItems: function () {
-		return _([]);
+		var controls = [];
+		controls.push(this.createPaddingControl());
+		return _(controls);
 	},
 
 	/**
@@ -760,6 +762,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		else {
 			this.constructor.__super__.on_element_edit_stop.call(this, edit, post, saving_draft);
 		}
+		Upfront.Events.trigger('entity:object:refresh', this);
 	},
 
 	checkSize: function() {
