@@ -91,7 +91,9 @@
 }
 .upfront-module-spacer > .upfront-resize-handle-s,
 .upfront-inline-panel-item-open .upfront-module-view > .upfront-module-active > .upfront-resize-handle-s,
-.upfront-inline-panel-item-open .upfront-module-view > .upfront-module-active:hover > .upfront-resize-handle-s {
+.upfront-inline-panel-item-open .upfront-module-view > .upfront-module-active:hover > .upfront-resize-handle-s,
+.upfront-module-object-group-on-edit.upfront-module-view > .upfront-module-active > .upfront-resize-handle-s,
+.upfront-module-object-group-on-edit.upfront-module-view > .upfront-module-active:hover > .upfront-resize-handle-s {
   display: none !important;
 }
 
