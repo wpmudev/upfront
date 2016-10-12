@@ -13,8 +13,12 @@ div#page .upfront-object.upfront-image .swap-image-overlay p:before,
 .image-edit-control-panel-item.upfront-control-dialog-open,
 .image-crop-edit-button:before {
 
+	/* 
 	background-image: url(../../../img/uf-core-el-sprite.png);
 	background-image: url('../../../img/uf-core-el-sprite.svg');
+	*/
+	background-image: url(../../../img/uf-core-el-sprite_new.png);
+	background-image: url('../../../img/uf-core-el-sprite_new.svg');
 	background-repeat: no-repeat;	
 }
 
