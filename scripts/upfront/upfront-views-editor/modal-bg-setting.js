@@ -60,8 +60,13 @@
 			},
 
 			render_bg_type_settings: function ($content) {
+				// Add Class for Responsive BG Settings.
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
+				if (!breakpoint['default']) {
+					this.$el.addClass('upfront-region-settings-responsive');
+				}
+
 				var me = this,
-					breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					is_responsive = ( breakpoint && !breakpoint['default'] ),
 					bg_image = this.model.get_breakpoint_property_value('background_image', true),
 					default_value = (
@@ -89,12 +94,26 @@
 									me.revert_breakpoint_background(breakpoint, ['background_type'], true);
 								}
 								me.model.set_breakpoint_property('background_type', value);
+								// Update which panel to display.
 								$content.find('.upfront-bg-setting-tab').not('.upfront-bg-setting-tab-'+value).hide();
 								$content.find('.upfront-bg-setting-tab-'+value).show();
 								me.render_modal_tab(value, $content.find('.upfront-bg-setting-tab-'+value), $content);
+								// Replace icon with new type's icon.
+								var former_class = $content.find('.upfront-region-type-icon')[0];
+								if (former_class) {
+									former_class = former_class.classList[1];
+									$content.find('.upfront-region-type-icon').addClass('upfront-region-type-icon-'+value).removeClass(former_class);
+								}
 							}
 							if ( !is_responsive ) {
 								me._prompt = ( bg_type_value !== value );
+							}
+							// Resize Select if image.
+							if (value === 'image') {
+								this.$el.addClass('upfront-bg-setting-type-image');
+								this.$el.find('.upfront-field-select').css({'min-width': '140px'});
+							} else {
+								this.$el.removeClass('upfront-bg-setting-type-image');
 							}
 						}
 					})

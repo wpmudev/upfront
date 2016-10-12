@@ -185,6 +185,7 @@ define([
 				var is_layout = ( this instanceof Layout ),
 					repeat = this.model.get_breakpoint_property_value('background_repeat', true),
 					position = this.model.get_breakpoint_property_value('background_position', true),
+					size = this.model.get_breakpoint_property_value('background_size', true),
 					style = this.model.get_breakpoint_property_value('background_style', true)
 				;
 				if ( data.image ){
@@ -197,7 +198,7 @@ define([
 							overflowBottom: 0
 						});
 					}
-					if ( style == 'full' || style == 'parallax' ){
+					if ( style == 'full') {
 						var size = this._get_full_size_el((is_layout ? $(window) : $type), data.ratio, false);
 						$type.data('bg-position-y', size[3]);
 						$type.data('bg-position-x', size[2]);
@@ -208,7 +209,7 @@ define([
 						});
 					} else {
 						$type.css({
-							backgroundSize: "auto auto",
+							backgroundSize: size,
 							backgroundRepeat: repeat,
 							backgroundPosition: position
 						});
@@ -431,6 +432,7 @@ define([
 					rotate = this.model.get_breakpoint_property_value('background_slider_rotate', true),
 					rotate_time = this.model.get_breakpoint_property_value('background_slider_rotate_time', true),
 					control = this.model.get_breakpoint_property_value('background_slider_control', true),
+					control_style = this.model.get_breakpoint_property_value('background_slider_control_style', true),
 					transition = this.model.get_breakpoint_property_value('background_slider_transition', true)
 				;
 				this.remove_api_key_overlay();
@@ -440,6 +442,16 @@ define([
 						$type.attr('data-slider-interval', rotate_time*1000);
 					} else {
 						$type.attr('data-slider-auto', 0);
+					}
+					if (control_style === 'arrows') {
+						$type.attr('data-control_num', 0);
+						$type.attr('data-control_next_prev', 1);
+					} else if (control_style === 'dots') {
+						$type.attr('data-control_num', 1);
+						$type.attr('data-control_next_prev', 0);
+					} else {
+						$type.attr('data-control_num', 1);
+						$type.attr('data-control_next_prev', 1);
 					}
 					$type.attr('data-slider-show-control', control);
 					$type.attr('data-slider-effect', transition);
@@ -559,7 +571,7 @@ define([
 						if ( $overlay.data('uparallax') ) $overlay.uparallax('refresh');
 					}, 2000);
 				}
-				if ( style == 'full' || style == 'parallax' ) {
+				if ( style == 'full') {
 					var size = this._get_full_size_el($type, data.ratio, false);
 					$type.data('bg-position-y', size[3]);
 					$type.data('bg-position-x', size[2]);
@@ -4799,9 +4811,6 @@ define([
 				this.listenTo(Upfront.Events, "command:newpage:start", this.close_edit);
 				this.listenTo(Upfront.Events, "command:newpost:start", this.close_edit);
 				this.$el.find('.upfront-region-edit-fixed-trigger').show();
-				if ( Upfront.Application.sidebar.visible )
-					Upfront.Application.sidebar.toggleSidebar();
-				e.stopPropagation();
 			},
 			finish_edit: function (e) {
 				Upfront.Events.trigger("entity:region:deactivated");
@@ -5490,16 +5499,24 @@ define([
 					opts = {
 						model: this.model,
 						to: this.$el,
-						width: 420,
-						top: 52,
-						right:43,
+						width: 260,
+						top: 0,
+						left: 0,
 						keep_position: false
-					};
+					},
+					region_settings_sidebar = $('#region-settings-sidebar');
 				this.bg_setting = new Upfront.Views.Editor.RegionBgSetting(opts);
 				this.bg_setting.for_view = this;
 				this.bg_setting.render();
-				this.$el.append(this.bg_setting.el);
-				this.listenTo(this.bg_setting, "modal:open", this.on_modal_open);
+				// Causes color picker not to work
+				//Upfront.Events.trigger('region:settings:activate', this.bg_setting);
+				// Replace contents of region_settings_sidebar.
+				region_settings_sidebar.html(this.bg_setting.el);
+
+				this.listenTo(this.bg_setting, "modal:open", function() {
+					region_settings_sidebar.css('opacity', '');
+					this.on_modal_open();
+				});
 				this.listenTo(this.bg_setting, "modal:close", this.on_modal_close);
 			},
 			update: function () {
@@ -7410,6 +7427,9 @@ define([
 				this.bg_setting.open().always(function(){
 
 				});
+				// Add unique class.
+				this.bg_setting.$el.addClass('upfront-modal-bg-settings-global');
+				// Close when Responsive mode starts.
 				this.listenTo(Upfront.Events, 'upfront:start:responsive', function() {
 					if ( me.bg_setting ) me.bg_setting.close(false);
 				});
