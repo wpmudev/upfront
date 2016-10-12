@@ -71,11 +71,7 @@ class Upfront_Compat_WooCommerce {
 		$post = get_post();
 		if (empty($post->post_type) || 'product' !== $post->post_type) return $status;
 
-		ob_start();
-		woocommerce_content();
-		$content = ob_get_clean();
-		wp_reset_postdata();
-		return $content;
+		return $this->get_woo_content();
 	}
 
 	/**
@@ -90,11 +86,7 @@ class Upfront_Compat_WooCommerce {
 		$post = get_post();
 		if (empty($post->post_type) || 'product' !== $post->post_type) return $status;
 
-		ob_start();
-		woocommerce_content();
-		$content = ob_get_clean();
-		wp_reset_postdata();
-		return $content;
+		return $this->get_woo_content();
 	}
 
 	// List WC layouts to match againts current layout in editor
@@ -137,10 +129,7 @@ class Upfront_Compat_WooCommerce {
 	 */
 	public function override_postdata_content($content, $post_type) {
 		if ($post_type === 'product') {
-			ob_start();
-			woocommerce_content();
-			$content = ob_get_clean();
-			wp_reset_postdata();
+			$content = $this->get_woo_content();
 		}
 		return $content;
 	}
@@ -151,5 +140,13 @@ class Upfront_Compat_WooCommerce {
 			$parts = array('content');
 		}
 		return $parts;
+	}
+
+	private function get_woo_content() {
+		ob_start();
+		woocommerce_content();
+		$content = ob_get_clean();
+		wp_reset_postdata();
+		return '<div class="woocommerce">' . $content . '</div>';
 	}
 }
