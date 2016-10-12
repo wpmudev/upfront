@@ -3422,7 +3422,6 @@ div#page.upfront-layout-view.upfront-layout-view .upfront-editable_entity.upfron
   width: 30px;
   height: 30px;
   background: rgba(31, 48, 63, 0.8);
-  border-bottom: 1px solid #162433;
   cursor: pointer;
   float: left;
   position: relative;
@@ -7990,19 +7989,19 @@ i.upfront-field-icon-burger-trigger {
   background-position: -1360px -330px; }
 
 .upfront-field-icon-gallery-crop-theme:before {
-  background-position: -1688px -136px; }
+  background-position: -320px -368px; }
 
 .upfront-field-icon-gallery-crop-1_1:before {
-  background-position: -1688px -168px; }
+  background-position: -350px -368px; }
 
 .upfront-field-icon-gallery-crop-2_3:before {
   background-position: -1688px -198px; }
 
 .upfront-field-icon-gallery-crop-4_3:before {
-  background-position: -1688px -228px; }
+  background-position: -378px -368px; }
 
 .upfront-field-icon-refresh:before {
-  background-position: -480px -40px; }
+  background-position: -408px -368px; }
 
 .upfront-field-icon-refresh-2:before {
   background-position: -480px -72px; }
@@ -10916,7 +10915,8 @@ div.sp-replacer:before {
     ================================= */
 .upfront-element-controls .upfront-inline-panel .upfront-padding-keyboard,
 .upfront-element-controls .upfront-inline-panel .upfront-checkbox-info:before,
-.upfront-element-controls .upfront-inline-panel .padding-lock label {
+.upfront-element-controls .upfront-inline-panel .padding-lock label,
+div.ugallery-controls i.upfront-icon:before {
   /* 
     background-image: url('../img/uf-core-el-sprite.png');
     background-image: url('../img/uf-core-el-sprite.svg');
