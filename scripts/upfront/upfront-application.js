@@ -1646,6 +1646,17 @@ var Application = new (Backbone.Router.extend({
 	 */
 	is_plugin_layout: function(postId) {
 		var currentLayout = Upfront.Application.current_subapplication.get_layout_data().layout;
+
+		if (typeof postId === 'undefined') {
+			// Try to get post id from layout
+			if (currentLayout.item && currentLayout.item === 'single-page' && currentLayout.specificity && currentLayout.specificity.match('single-page-')) {
+				var pageNumber = currentLayout.specificity.match(/\d+/);
+				if (_.isNull(pageNumber) === false && pageNumber.length === 1) {
+					postId = pageNumber[0];
+				}
+			}
+		}
+
 		var result;
 		_.each(Upfront.mainData.pluginsLayouts, function(data, plugin) {
 			if (result) return; // save cycles

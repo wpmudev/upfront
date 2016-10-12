@@ -53,7 +53,8 @@ var Views = {
 
 			var pluginLayout = Upfront.Application.is_plugin_layout(data.post_id);
 			if (pluginLayout)  {
-				this.$el.empty().append('<div>This content is handled by ' + pluginLayout.pluginName + '.</div>');
+				var content = '<div>This content is handled by ' + pluginLayout.pluginName + '.</div>';
+				this.$el.empty().append(content);
 				return;
 			}
 
