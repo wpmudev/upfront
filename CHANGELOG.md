@@ -1,6 +1,34 @@
 Change Log
 ============
 
+1.4.3 - 2016-10-05
+-------------------------------------------------------------------------------
+- Add: compress data when saving
+- Add: loop option for youtube element and video region
+- Add: streamlined group settings to sidebar
+- Add: improved element padding controls
+- Add: improved image insert trigger behavior
+
+- Fix: default bg for triggered menu not rendered
+- Fix: menu element inline link panel hidden when on bottom of page
+- Fix: sidebar more menu overlapped with element settings panel
+- Fix: esc key issue on builder getting started dialog
+- Fix: overlapping issue with the inline image button
+- Fix: only warn users when multiple tabs are open for the current layout
+- Fix: issue with notifications/warnings being hidden behind the media overlay
+- Fix: restyle initial state of the menu element
+- Fix: error when preset is deleted on different breakpoint
+- Fix: slider element with side caption resizing issue
+- Fix: can't delete login element after editing default appearance
+- Fix: post/page setting not displayed first time
+- Fix: parallax background issue on firefox
+- Fix: layout naming issue in admin list
+- Fix: post data meta element issue
+- Fix: rtl position issues
+- Fix: gallery image controls overlapped issue
+- Fix: can't create new menu in menu element
+- Fix: prevent save as draft to include shadow region
+
 
 1.4.2 - 2016-09-15
 -------------------------------------------------------------------------------
