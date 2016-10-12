@@ -1,3 +1,18 @@
+/*  Selectors using uf-core-el-sprite 
+    ================================= */
+
+.upfront-element-controls .upfront-inline-panel .upfront-padding-keyboard,
+.upfront-element-controls .upfront-inline-panel .upfront-checkbox-info:before,
+.upfront-element-controls .upfront-inline-panel .padding-lock label {
+    /* 
+    background-image: url('../img/uf-core-el-sprite.png');
+    background-image: url('../img/uf-core-el-sprite.svg');
+    */
+    background-image: url('../img/uf-core-el-sprite_new.png');
+    background-image: url('../img/uf-core-el-sprite_new.svg');
+    background-repeat: no-repeat;
+}
+
 .upfront-wrapper:not(.ui-resizable-resizing) .upfront-module.upfront-module-active:not(.ui-resizable-resizing):not(.upfront-module-editing) > .upfront-element-controls,
 .upfront-wrapper:not(.ui-resizable-resizing) .upfront-module-group.upfront-module-group-active:not(.ui-resizable-resizing):not(.upfront-module-group-on-edit) > .upfront-element-controls,
 .upfront-wrapper:not(.ui-resizable-resizing) .upfront-module.upfront-module-active:not(.ui-resizable-resizing):not(.upfront-module-editing) .upfront-object-group-view > .upfront-element-controls
@@ -91,11 +106,9 @@
     letter-spacing: 0.34px;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-padding-keyboard {
-	background-position: -290px -284px;
+	background-position: -290px -254px;
     width: 20px;
     height: 11px;
-    /* background-image: url("../img/uf-core-el-sprite.svg"); */
-    background-image: url("../img/uf-core-el-sprite_new.svg");
 	position: absolute;
 	top: 47px;
 	left: 30px;
@@ -113,8 +126,6 @@
 	content: "";
 	width: 15px;
 	height: 15px;
-	/* background-image: url('../img/uf-core-el-sprite.svg'); */
-    background-image: url("../img/uf-core-el-sprite_new.svg");
 	background-position: -483px -141px;
 	margin-left: 5px;
 	margin-right: 5px;
@@ -137,10 +148,6 @@
     display: block;
     height: 25px;
     width: 25px;
-    /* background-image: url('../img/uf-core-el-sprite.png');
-    background-image: url('../img/uf-core-el-sprite.svg'), none; */
-    background-image: url('../img/uf-core-el-sprite_new.svg');
-    background-image: url('../img/uf-core-el-sprite_new.svg'), none;
     background-position: -658px -169px;
     left: 0px;
     top: 8px;
@@ -191,13 +198,13 @@
     opacity: 1;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-settings:before {
-    background-position: -261px -371px;
+    background-position: -350px -40px;
     width: 18px;
     height: 18px;
     opacity: 0.75;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-settings:hover:before {
-    background-position: -231px -371px;
+    background-position: -350px -40px;
     width: 18px;
     height: 18px;
     opacity: 0.75;
@@ -209,18 +216,18 @@
     opacity: 1;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-padding:before {
-    background-position: -261px -341px;
+    background-position: -320px -40px;
     width: 18px;
     height: 18px;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-padding:hover:before {
-    background-position: -231px -341px;
+    background-position: -320px -40px;
     width: 18px;
     height: 18px;
 	opacity: 0.75;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-control-dialog-open.upfront-inline-panel-item .upfront-icon-region-padding:before {
-    background-position: -231px -341px !important;
+    background-position: -320px -40px !important;
     width: 18px;
     height: 18px;
 	opacity: 1;
@@ -240,7 +247,7 @@
 	height: 38px;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-more:before {
-    background-position: -291px -460px;
+    background-position: -290px -40px;
     width: 24px;
     height: 24px;
     opacity: 0.75;
