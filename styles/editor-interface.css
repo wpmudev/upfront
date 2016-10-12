@@ -11014,7 +11014,7 @@ div.sp-replacer:before {
   letter-spacing: 0.34px; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-padding-keyboard {
-  background-position: -290px -284px;
+  background-position: -290px -254px;
   width: 20px;
   height: 11px;
   position: absolute;
@@ -11034,7 +11034,7 @@ div.sp-replacer:before {
   content: "";
   width: 15px;
   height: 15px;
-  background-position: -483px -141px;
+  background-position: -484px -140px;
   margin-left: 5px;
   margin-right: 5px;
   margin-bottom: -4px; }
@@ -11056,7 +11056,7 @@ div.sp-replacer:before {
   display: block;
   height: 25px;
   width: 25px;
-  background-position: -658px -169px;
+  background-position: -657px -168px;
   left: 0px;
   top: 8px;
   position: relative;
@@ -11064,7 +11064,7 @@ div.sp-replacer:before {
   cursor: pointer; }
 
 .upfront-element-controls .upfront-inline-panel .padding-lock .upfront-field-multiple-selected label {
-  background-position: -658px -137px;
+  background-position: -657px -136px;
   border: 1px solid #cdd8e2;
   border-radius: 50%; }
 

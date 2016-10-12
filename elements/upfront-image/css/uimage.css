@@ -795,15 +795,15 @@ div.preset-manager-panel .caption_select .upfront-field-label {
 /* Controls */
 
 .upfront-ui .upfront-icon-region-crop:before {
-	background-position: -261px -221px;
+	background-position: -410px -100px;
 }
 
 .upfront-ui .upfront-icon-region-link:before {
-	background-position: -260px -249px;
+	background-position: -380px -40px;
 }
 
 .upfront-ui .upfront-icon-region-swap:before {
-	background-position: -291px -342px;
+	background-position: -380px -100px;
 }
 
 .upfront-ui .upfront-icon-region-lock-unlocked:before {
