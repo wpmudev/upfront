@@ -1,3 +1,23 @@
+/*  Selectors using uf-core-el-sprite 
+	================================= */
+
+#upfront-image-overlay .select-files:before,
+#upfront-image-overlay .icon-picture,
+.image-edit-control>i,
+.image-edit-button:before,
+div.uimage-controls i.upfront-icon:before,
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item i.upfront-icon:before,
+.upfront-ui .uimage-fullwidth-info,
+div#page .upfront-object.upfront-image .swap-image-overlay p:before,
+.image-edit-control-panel-item,
+.image-edit-control-panel-item.upfront-control-dialog-open,
+.image-crop-edit-button:before {
+
+	background-image: url(../../../img/uf-core-el-sprite.png);
+	background-image: url('../../../img/uf-core-el-sprite.svg');
+	background-repeat: no-repeat;	
+}
+
 #upfront-image-overlay {
 	position:fixed;
 	width: 100%;
@@ -91,8 +111,6 @@
 #upfront-image-overlay .select-files:before {
 	background-position: -702px -872px;
 	content: " ";
-	background-image: url('../../../img/uf-core-el-sprite.svg');
-	background-repeat: no-repeat;
 	float: left;
 	display: block;
 	width: 28px;
@@ -126,8 +144,8 @@
 	left: 12%;
 }
 
-#upfront-image-overlay .icon-picture{
-	background: url(../../../img/uf-core-el-sprite.svg) no-repeat -806px -322px;
+#upfront-image-overlay .icon-picture {
+	background-position:-806px -322px;
 	padding: 0 15px;
 }
 
@@ -316,7 +334,6 @@
 
 .image-edit-control>i {
 	color: #DAEDFE;
-	background: rgba(255, 255, 255, .9) url(../../../img/uf-core-el-sprite.svg) no-repeat;
 	position: relative;
 	z-index:12;
 	width: 35px;
@@ -396,8 +413,6 @@ a.image-edit-button:hover {
 	content: '';
 	display: inline-block;
 	vertical-align: middle;
-	background: url(../../../img/uf-core-el-sprite.png);
-	background: url(../../../img/uf-core-el-sprite.svg), none;
 }
 
 a.image-edit-button.deactivated {
@@ -774,10 +789,6 @@ div.preset-manager-panel .caption_select .upfront-field-label {
 }
 
 /* Controls */
-div.uimage-controls i.upfront-icon:before,
-.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item i.upfront-icon:before {
-	background-image: url(../../../img/uf-core-el-sprite.svg);
-}
 
 .upfront-ui .upfront-icon-region-crop:before {
 	background-position: -261px -221px;
@@ -1056,7 +1067,6 @@ div.uimage-controls i.upfront-icon:before,
 	height: 90px;
 	float: left;
 	margin-right: 5%;
-	background-image: url(../../../img/uf-core-el-sprite.svg);
 }
 
 .upfront-ui .uimage-fullwidth-info-1{
@@ -1375,7 +1385,6 @@ div#page .upfront-object.upfront-image .swap-image-overlay p.upfront-icon-swap-i
 }
 div#page .upfront-object.upfront-image .swap-image-overlay p:before {
 	content: "";
-	background-image: url('../../../img/uf-core-el-sprite.svg');
 	background-position: -807px -361px;
 	display: inline-block;
 	width: 24px;
@@ -1393,7 +1402,6 @@ div#page .upfront-object.upfront-image .swap-image-overlay p:before {
 }
 .image-edit-control-panel-item {
 	border-radius: 3px;
-	background-image: url(../../../img/uf-core-el-sprite.svg);
 	background-position: -287px -491px;
 	background-color: rgba(242,249,255,1);
 	z-index: initial;
@@ -1401,7 +1409,6 @@ div#page .upfront-object.upfront-image .swap-image-overlay p:before {
 }
 .image-edit-control-panel-item.upfront-control-dialog-open {
 	border-radius: 3px;
-	background-image: url(../../../img/uf-core-el-sprite.svg);
 	background-position: -287px -522px;
 	background-color: rgba(242,249,255,1);
 	z-index: initial;
@@ -1494,8 +1501,6 @@ div#page .upfront-object.upfront-image .swap-image-overlay p:before {
 	position: absolute;
 	top: 4px;
 	left: 3px;
-	background: url(../../../img/uf-core-el-sprite.png);
-	background: url(../../../img/uf-core-el-sprite.svg), none;
 }
 
 #image-edit-button-swap:before{
