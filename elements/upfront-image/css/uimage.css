@@ -807,11 +807,11 @@ div.preset-manager-panel .caption_select .upfront-field-label {
 }
 
 .upfront-ui .upfront-icon-region-lock-unlocked:before {
-	background-position: -261px -430px;
+	background-position: -290px -160px;
 }
 
 .upfront-ui .upfront-icon-region-lock-locked:before {
-	background-position: -261px -460px;
+	background-position: -290px -130px;
 }
 
 .upfront-ui .upfront-icon-region-nocaption:before {
