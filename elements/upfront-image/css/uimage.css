@@ -1508,49 +1508,49 @@ div#page .upfront-object.upfront-image .swap-image-overlay p:before {
 }
 
 #image-edit-button-swap:before{
-	background-position: -291px -342px;
+	background-position: -382px -102px;
 	width: 18px;
 	height: 16px;
 	opacity: 0.7;
 }
 #image-edit-button-swap:hover:before{
-	background-position: -291px -342px;
+	background-position: -382px -102px;
 	width: 18px;
 	height: 16px;
 	opacity: 1;
 }
 #image-edit-button-reset:before{
-	background-position: -291px -368px;
+	background-position: -291px -398px;
 	width: 18px;
 	height: 20px;
 	opacity: 0.7;
 }
 #image-edit-button-reset:hover:before{
-	background-position: -291px -368px;
+	background-position: -291px -398px
 	width: 18px;
 	height: 20px;
 	opacity: 1;
 }
 #image-edit-button-fit:before{
-	background-position: -291px -398px;
+	background-position: -291px -428px;
 	width: 18px;
 	height: 18px;
 	opacity: 0.7;
 }
 #image-edit-button-fit:hover:before{
-	background-position: -291px -398px;
+	background-position: -291px -428px;
 	width: 18px;
 	height: 18px;
 	opacity: 1;
 }
 #image-edit-button-fill:before{
-	background-position: -291px -431px;
+	background-position: -291px -461px;
 	width: 18px;
 	height: 18px;
 	opacity: 0.7;
 }
 #image-edit-button-fill:hover:before{
-	background-position: -291px -431px;
+	background-position: -291px -461px;
 	width: 18px;
 	height: 18px;
 	opacity: 1;
