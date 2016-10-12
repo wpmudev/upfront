@@ -2,6 +2,7 @@
 
 require_once('compat/class_upfront_compat_converter.php');
 require_once('compat/class_upfront_compat_parser.php');
+require_once('compat/class_upfront_compat_woocommerce.php');
 
 class Upfront_Compat implements IUpfront_Server {
 
@@ -76,6 +77,9 @@ class Upfront_Compat implements IUpfront_Server {
 		add_filter('wphb_minification_display_enqueued_file', array($this, 'is_upfront_resource_skippable_with_hummingbird'), 10, 3);
 		add_filter('wphb_combine_resource', array($this, 'is_upfront_resource_skippable_with_hummingbird'), 10, 3);
 		add_filter('wphb_minify_resource', array($this, 'is_upfront_resource_skippable_with_hummingbird'), 10, 3);
+
+		// WooCommerce compat
+		$this->enable_wc_compat();
 	}
 
 	/**
@@ -306,7 +310,11 @@ class Upfront_Compat implements IUpfront_Server {
 		die;
 	}
 
-
-
+	private function enable_wc_compat() {
+		if (class_exists('Upfront_Compat_WooCommerce')) {
+			new Upfront_Compat_WooCommerce();
+		}
+	}
 }
+
 add_action('init', array('Upfront_Compat', 'serve'));

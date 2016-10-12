@@ -12,10 +12,6 @@ define([
 
 	var RootSettingsPanel = SettingsContainer.extend(_.extend({}, RootPanelMixin, {
 		initialize: function (options) {
-			var pluginLayout = Upfront.Application.is_plugin_layout();
-			if (pluginLayout) {
-				return;
-			}
 			var me = this,
 				settings = [];
 
@@ -107,14 +103,6 @@ define([
 		getBody: function () {
 			var $body = $('<div />'),
 				me = this;
-
-			// This would probably be better to handle on case by case basis in implementations
-			// depending on how specs go about this
-			var pluginLayout = Upfront.Application.is_plugin_layout();
-			if (pluginLayout) {
-				$body.append('<div>This content is handled by ' + pluginLayout.pluginName + '.</div>');
-				return $body;
-			}
 
 			this.settings.each(function (setting) {
 				if ( ! setting.panel ) setting.panel = me;

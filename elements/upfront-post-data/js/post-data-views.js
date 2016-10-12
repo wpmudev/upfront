@@ -36,11 +36,6 @@ var Views = {
 		_do_cache: true,
 
 		render: function (only_objects) {
-			var pluginLayout = Upfront.Application.is_plugin_layout();
-			if (pluginLayout) {
-				this.$el.empty().append('<div>This content is handled by ' + pluginLayout.pluginName + '.</div>');
-				return;
-			}
 			var me = this,
 				model = Upfront.Util.model_to_json(this.model),
 				props = model.properties || {},
@@ -55,6 +50,12 @@ var Views = {
 					post_id: this.element.postId
 				}
 			;
+
+			var pluginLayout = Upfront.Application.is_plugin_layout(data.post_id);
+			if (pluginLayout)  {
+				this.$el.empty().append('<div>This content is handled by ' + pluginLayout.pluginName + '.</div>');
+				return;
+			}
 
 			if (false === data.post_id && Upfront.Application.is_builder) {
 				data.post_id = 'fake_post';

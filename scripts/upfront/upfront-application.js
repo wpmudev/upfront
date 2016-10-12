@@ -1495,7 +1495,7 @@ var Application = new (Backbone.Router.extend({
 			fullPath = path ? '/' + path : '/',
 			loading
 		;
-		
+
 		// Fixing incorrect post_id when clicking Back on browser
 		// only for posts and pages
 		if ( fullPath.indexOf('edit/post') !== -1 || fullPath.indexOf('edit/page') !== -1 ) {
@@ -1510,8 +1510,8 @@ var Application = new (Backbone.Router.extend({
 				urlQueryParts.push(key + '=' + value);
 			});
 			fullPath += '?' + urlQueryParts.join('&');
-		}	
-		
+		}
+
 		loading = this.set_loading(Upfront.Settings.l10n.global.application.loading_path.replace(/%s/, fullPath), Upfront.Settings.l10n.global.application.here_we_are);
 
 		if(this.urlCache[fullPath]){
@@ -1639,12 +1639,26 @@ var Application = new (Backbone.Router.extend({
 
 	/**
 	 * Checks if current layout is layout handled by plugin and return plugin data.
+	 *
+	 * @params {mixed} postId - id of current post, can be number or string
+	 *
+	 * @return {String} plugin name if found
 	 */
-	is_plugin_layout: function() {
+	is_plugin_layout: function(postId) {
 		var currentLayout = Upfront.Application.current_subapplication.get_layout_data().layout;
 		var result;
 		_.each(Upfront.mainData.pluginsLayouts, function(data, plugin) {
+			if (result) return; // save cycles
+			_.each(data.pageIds, function(pageId) {
+				if (parseInt(pageId, 10) === parseInt(postId, 10)) {
+					result = {
+						pluginName: data.pluginName
+					};
+				}
+			});
+			if (result) return; // save cycles
 			_.each(data.layouts, function(layout) {
+				if (result) return; // save cycles
 				if (layout.specificity && currentLayout.specificity && _.isNull(currentLayout.specificity.match(layout.specificity)) === false) {
 					result = {
 						pluginName: data.pluginName

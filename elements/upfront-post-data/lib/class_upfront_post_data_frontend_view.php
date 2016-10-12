@@ -137,7 +137,7 @@ class Upfront_PostDataPartView extends Upfront_Object {
 		if (empty($this->_markup)) {
 			$post = $this->_parent->get_post();
 			// Try to get content from plugins compatibility
-			$content = apply_filters('upfront_postdata_get_markup_before', false, $post->post_type);
+			$content = apply_filters('upfront-postdata_get_markup_before', false, $post->post_type);
 			if (!empty($content)) {
 				// Show only content part and insert plugins rendering to it
 				$this->_markup['content'] = $content;
