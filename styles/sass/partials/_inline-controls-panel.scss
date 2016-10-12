@@ -94,7 +94,8 @@
 	background-position: -290px -284px;
     width: 20px;
     height: 11px;
-    background-image: url("../img/uf-core-el-sprite.svg");
+    /* background-image: url("../img/uf-core-el-sprite.svg"); */
+    background-image: url("../img/uf-core-el-sprite_new.svg");
 	position: absolute;
 	top: 47px;
 	left: 30px;
@@ -112,7 +113,8 @@
 	content: "";
 	width: 15px;
 	height: 15px;
-	background-image: url('../img/uf-core-el-sprite.svg');
+	/* background-image: url('../img/uf-core-el-sprite.svg'); */
+    background-image: url("../img/uf-core-el-sprite_new.svg");
 	background-position: -483px -141px;
 	margin-left: 5px;
 	margin-right: 5px;
@@ -135,8 +137,10 @@
     display: block;
     height: 25px;
     width: 25px;
-    background-image: url('../img/uf-core-el-sprite.png');
-    background-image: url('../img/uf-core-el-sprite.svg'), none;
+    /* background-image: url('../img/uf-core-el-sprite.png');
+    background-image: url('../img/uf-core-el-sprite.svg'), none; */
+    background-image: url('../img/uf-core-el-sprite_new.svg');
+    background-image: url('../img/uf-core-el-sprite_new.svg'), none;
     background-position: -658px -169px;
     left: 0px;
     top: 8px;
