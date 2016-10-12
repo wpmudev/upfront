@@ -5337,6 +5337,9 @@ span.upfront-settings-item-title:after {
   box-shadow: none;
   outline: none; }
 
+.upfront-module-object-group-on-edit .upfront-module {
+  box-shadow: none; }
+
 .upfront-module-disabled-all .upfront-entity_meta,
 .upfront-module-editing .upfront-entity_meta {
   display: none; }
@@ -5424,6 +5427,9 @@ span.upfront-settings-item-title:after {
 .show-debug .upfront-object {
   /*border: 1px solid #bada55;
 	background: rgba(255, 255, 255, 0.4);*/ }
+
+.upfront-object-group-on-edit .upfront-active_entity > .upfront-object {
+  box-shadow: inset 0px 0px 0px 2px #6fbcf8; }
 
 .upfront-object-content {
   min-height: 15px; }
@@ -6185,7 +6191,9 @@ span.upfront-settings-item-title:after {
 
 .upfront-module-spacer > .upfront-resize-handle-s,
 .upfront-inline-panel-item-open .upfront-module-view > .upfront-module-active > .upfront-resize-handle-s,
-.upfront-inline-panel-item-open .upfront-module-view > .upfront-module-active:hover > .upfront-resize-handle-s {
+.upfront-inline-panel-item-open .upfront-module-view > .upfront-module-active:hover > .upfront-resize-handle-s,
+.upfront-module-object-group-on-edit.upfront-module-view > .upfront-module-active > .upfront-resize-handle-s,
+.upfront-module-object-group-on-edit.upfront-module-view > .upfront-module-active:hover > .upfront-resize-handle-s {
   display: none !important; }
 
 .upfront-resize-handle-e,
@@ -10912,19 +10920,22 @@ div.sp-replacer:before {
 
 .upfront-wrapper:not(.ui-resizable-resizing) .upfront-module.upfront-module-active:not(.ui-resizable-resizing):not(.upfront-module-editing) > .upfront-element-controls,
 .upfront-wrapper:not(.ui-resizable-resizing) .upfront-module-group.upfront-module-group-active:not(.ui-resizable-resizing):not(.upfront-module-group-on-edit) > .upfront-element-controls,
-.upfront-wrapper:not(.ui-resizable-resizing) .upfront-module.upfront-module-active:not(.ui-resizable-resizing):not(.upfront-module-editing) .upfront-object-group-view > .upfront-element-controls {
+.upfront-wrapper:not(.ui-resizable-resizing) .upfront-module.upfront-module-active:not(.ui-resizable-resizing):not(.upfront-module-editing) .upfront-object-group-view > .upfront-element-controls,
+.upfront-wrapper:not(.ui-resizable-resizing) .upfront-object-view.upfront-active_entity:not(.ui-resizable-resizing) > .upfront-element-controls {
   display: block; }
 
 .upfront-module > .upfront-element-controls,
 .upfront-module-group > .upfront-element-controls,
-.upfront-object-group-view > .upfront-element-controls {
+.upfront-object-group-view > .upfront-element-controls,
+.upfront-object-view > .upfront-element-controls {
   display: none; }
 
+.upfront-module-object-group-on-edit > .upfront-module > .upfront-element-controls,
 .upfront-object-group-on-edit > .upfront-element-controls {
   display: none !important; }
 
 .upfront-element-controls .upfront-inline-panel {
-  z-index: 2000;
+  z-index: 3000;
   box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3); }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item {

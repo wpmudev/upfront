@@ -131,10 +131,12 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	},
 
 	/**
-	 * Part objects do *NOT* get individual control items - parent group does
+	 * Part objects has only padding control
 	 */
 	getControlItems: function () {
-		return _([]);
+		var controls = [];
+		controls.push(this.createPaddingControl());
+		return _(controls);
 	},
 
 	/**
