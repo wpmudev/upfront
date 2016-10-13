@@ -4581,7 +4581,7 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 .upfront-modal-bg-settings-global .uf-bgsettings-image-color {
   width: 73px;
   margin-top: 0;
-  margin-bottom: 5px; }
+  margin-bottom: 0; }
 
 .upfront-modal-bg-settings-fixed .uf-bgsettings-image-color {
   width: 75px;
@@ -4865,9 +4865,14 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
   background: #f7fbff; }
 
 .upfront-modal-bg-settings-global .upfront-bg-setting-tab-color {
-  display: block;
-  clear: both;
-  padding-top: 13px; }
+  display: inline-block;
+  padding-top: 0;
+  clear: none;
+  width: 105px;
+  margin: 0 15px; }
+
+.upfront-modal-bg-settings-global .uf-bgsettings-color-pick label:after {
+  content: ":"; }
 
 .upfront-region-modal-bg span.upfront-settings-item-title {
   border: none;
