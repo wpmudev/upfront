@@ -53,8 +53,17 @@ var Views = {
 
 			var pluginLayout = Upfront.Application.is_plugin_layout(data.post_id);
 			if (pluginLayout)  {
-				var content = '<div>This content is handled by ' + pluginLayout.pluginName + '.</div>';
-				this.$el.empty().append(content);
+				var showContent;
+				this.model.get('objects').each(function(object) {
+					if (object.get_property_value_by_name('part_type') === 'content') showContent = true;
+				});
+				if (showContent) {
+					var content = '<div>This content is handled by ' + pluginLayout.pluginName + '.</div>' + pluginLayout.content;
+					// For some reason this.$el is not working when Settings are opened and canceled, use this.element instead
+					setTimeout( function() {
+						me.element.$el.find('.upfront-object-content').first().empty().append(content);
+					}, 100);
+				}
 				return;
 			}
 

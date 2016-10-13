@@ -1660,10 +1660,11 @@ var Application = new (Backbone.Router.extend({
 		var result;
 		_.each(Upfront.mainData.pluginsLayouts, function(data, plugin) {
 			if (result) return; // save cycles
-			_.each(data.pageIds, function(pageId) {
-				if (parseInt(pageId, 10) === parseInt(postId, 10)) {
+			_.each(data.pagesById, function(page) {
+				if (parseInt(page.pageId, 10) === parseInt(postId, 10)) {
 					result = {
-						pluginName: data.pluginName
+						pluginName: data.pluginName,
+						content: data.sampleContents[page.content] ? data.sampleContents[page.content] : ''
 					};
 				}
 			});
@@ -1672,11 +1673,13 @@ var Application = new (Backbone.Router.extend({
 				if (result) return; // save cycles
 				if (layout.specificity && currentLayout.specificity && _.isNull(currentLayout.specificity.match(layout.specificity)) === false) {
 					result = {
-						pluginName: data.pluginName
+						pluginName: data.pluginName,
+						content: data.sampleContents[layout.content] ? data.sampleContents[layout.content] : ''
 					};
 				} else if (layout.item === currentLayout.item) {
 					result = {
-						pluginName: data.pluginName
+						pluginName: data.pluginName,
+						content: data.sampleContents[layout.content] ? data.sampleContents[layout.content] : ''
 					};
 				}
 			});
