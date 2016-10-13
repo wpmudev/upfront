@@ -7,6 +7,8 @@ class Upfront_Compat_WooCommerce {
 	}
 
 	public function add_hooks() {
+		if (class_exists('woocommerce') === false) return;
+
 		add_action('after_setup_theme', array($this, 'add_woocommerce_support'));
 		add_filter('template_include', array($this, 'override_single_product_tpl'), 99, 3);
 		add_filter('upfront-entity_resolver-entity_ids', array($this, 'override_entity_ids'));
@@ -91,7 +93,6 @@ class Upfront_Compat_WooCommerce {
 
 	// List WC layouts to match againts current layout in editor
 	function add_woocommerce_layouts($layouts) {
-		if (!function_exists('wc_get_page_id')) return $layouts; // Whoops!
 		$layouts['woo-commerce'] = array(
 			'pluginName' => 'WooCommerce',
 			'pageIds' => array(
