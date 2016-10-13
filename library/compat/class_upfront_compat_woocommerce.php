@@ -91,6 +91,7 @@ class Upfront_Compat_WooCommerce {
 
 	// List WC layouts to match againts current layout in editor
 	function add_woocommerce_layouts($layouts) {
+		if (!function_exists('wc_get_page_id')) return $layouts; // Whoops!
 		$layouts['woo-commerce'] = array(
 			'pluginName' => 'WooCommerce',
 			'pageIds' => array(
