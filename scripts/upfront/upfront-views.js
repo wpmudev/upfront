@@ -3953,6 +3953,7 @@ define([
 				// We don't want to activate the Group when Settings sidebar is open
 				if($('#element-settings-sidebar').html() !== '' || $('#settings').html() !== '') return false;
 				if ( this.$el.hasClass('upfront-module-group-on-edit') || this.$el.hasClass('upfront-module-group-disabled') ) return;
+				if ( this.wrapper_view && this.wrapper_view.$el.hasClass('upfront-inline-panel-item-open') ) return;
 				this.closeControlPanel(false);
 				if ( !breakpoint || breakpoint['default'] ) {
 					this.on_edit();
