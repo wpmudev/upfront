@@ -313,6 +313,9 @@
 	box-shadow: none;
 	outline: none;
 }
+.upfront-module-object-group-on-edit .upfront-module {
+	box-shadow: none;
+}
 .upfront-module-disabled-all .upfront-entity_meta,
 .upfront-module-editing .upfront-entity_meta {
 	display: none;
@@ -403,6 +406,9 @@
 .show-debug .upfront-object {
 	/*border: 1px solid #bada55;
 	background: rgba(255, 255, 255, 0.4);*/
+}
+.upfront-object-group-on-edit .upfront-active_entity > .upfront-object {
+	box-shadow: inset 0px 0px 0px 2px #6fbcf8;
 }
 .upfront-object-content {
 	min-height: 15px;

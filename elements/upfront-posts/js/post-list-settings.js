@@ -42,9 +42,13 @@ var PostsSettings = ElementSettings.extend({
 
 		this.options = opts;
 		var me = this,
-			general = new Panels.General({model: this.model}),
-			post_parts = new Panels.PostParts({model: this.model})
-		;
+			general,
+			post_parts;
+
+		if (typeof Upfront.Application.is_plugin_layout() !== 'undefined') return;
+
+		general = new Panels.General({model: this.model});
+		post_parts = new Panels.PostParts({model: this.model}) ;
 		general.on("settings:dispatched", this.rerender, this);
 		general.on("post:removed", this.rerender, this);
 		general.on("post:added", this.rerender, this);
@@ -56,9 +60,7 @@ var PostsSettings = ElementSettings.extend({
 	rerender: function () {
 		var active_panel = -1,
 			panels = _(this.panels),
-			me = this,
-			general = new Panels.General({model: this.model}),
-			post_parts = new Panels.PostParts({model: this.model})
+			me = this
 		;
 
 		panels.each(function (pl, idx) {
