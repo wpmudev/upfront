@@ -1608,7 +1608,7 @@ input.upfront-field-text:hover,
 
 .upfront-field-select .upfront-field-select-value {
   margin: 0;
-  padding: 1px 20px 1px 10px;
+  padding: 0px 20px 0px 10px;
   height: 24px;
   box-shadow: inset 0 2px 0 #f2f9ff;
   overflow: hidden;
@@ -1617,7 +1617,7 @@ input.upfront-field-text:hover,
 
 .upfront-field-select .upfront-field-select-value .upfront-field-icon,
 .upfront-field-select-option label .upfront-field-icon {
-  margin-left: -10px; }
+  margin-left: -5px; }
 
 .upfront-field-select-options {
   list-style: none;
@@ -1831,7 +1831,9 @@ input.upfront-field-text:hover,
 .upfront-field-icon {
   display: inline-block;
   vertical-align: middle;
-  margin: 1px 5px 0 5px; }
+  margin: 2px 5px 0 5px;
+  width: 20px;
+  height: 20px; }
 
 .upfront-field-multiple-vertical .upfront-field-icon {
   margin: 0 auto; }
@@ -2163,8 +2165,9 @@ div.upfront-date_picker td a {
   content: "";
   width: 15px;
   height: 15px;
-  background-image: url("../img/uf-core-el-sprite.svg");
-  background-position: -483px -141px;
+  background-image: url("../img/uf-core-el-sprite_new.png");
+  background-image: url("../img/uf-core-el-sprite_new.svg");
+  background-position: -483px -140px;
   margin-left: 5px;
   margin-right: 5px;
   margin-bottom: -4px; }
@@ -3422,7 +3425,6 @@ div#page.upfront-layout-view.upfront-layout-view .upfront-editable_entity.upfron
   width: 30px;
   height: 30px;
   background: rgba(31, 48, 63, 0.8);
-  border-bottom: 1px solid #162433;
   cursor: pointer;
   float: left;
   position: relative;
@@ -6753,7 +6755,8 @@ span.upfront-settings-item-title:after {
 #element-settings-sidebar .upfront-settings-item .login-general-settings-description:before {
   content: ' ';
   display: block;
-  background: url("../img/uf-core-el-sprite.svg") no-repeat -484px -141px;
+  background: url("../img/uf-core-el-sprite_new.png") no-repeat -484px -142px;
+  background: url("../img/uf-core-el-sprite_new.svg") no-repeat -484px -142px;
   width: 15px;
   height: 14px;
   margin-right: 5px;
@@ -7216,7 +7219,9 @@ span.upfront-settings-item-title:after {
 .upfront-ui .upfront-icon.upfront-icon-region-add:before,
 .upfront-ui .upfront-icon.upfront-icon-more-menu:before {
   content: " ";
-  background-image: url("../img/uf-core-el-sprite.svg?v=20131127");
+  /* background-image: url('../img/uf-core-el-sprite.svg?v=20131127'); */
+  background-image: url("../img/uf-core-el-sprite_new.png");
+  background-image: url("../img/uf-core-el-sprite_new.svg");
   background-repeat: no-repeat;
   float: left;
   display: block; }
@@ -7904,24 +7909,24 @@ span.upfront-settings-item-title:after {
   background-position: -1028px -207px; }
 
 .upfront-field-icon-burger-left:before {
-  background-position: -920px -268px;
+  background-position: -320px -488px;
   width: 22px;
-  height: 14px; }
+  height: 22px; }
 
 .upfront-field-icon-burger-right:before {
-  background-position: -920px -300px;
+  background-position: -350px -488px;
   width: 22px;
-  height: 14px; }
+  height: 22px; }
 
 .upfront-field-icon-burger-top:before {
-  background-position: -1027px -268px;
+  background-position: -380px -488px;
   width: 22px;
-  height: 14px; }
+  height: 22px; }
 
 .upfront-field-icon-burger-whole:before {
-  background-position: -1027px -300px;
+  background-position: -410px -488px;
   width: 22px;
-  height: 14px; }
+  height: 22px; }
 
 .upfront-field-icon-burger-trigger:before {
   background-position: -920px -330px;
@@ -7932,17 +7937,17 @@ i.upfront-field-icon-burger-trigger {
   vertical-align: bottom; }
 
 .upfront-field-icon-contact-above-field:before {
-  background-position: -1140px -40px; }
+  background-position: -320px -458px; }
 
 .upfront-field-icon-contact-over-field:before {
-  background-position: -1248px -40px; }
+  background-position: -350px -458px; }
 
 .upfront-field-icon-contact-inline-field:before {
-  background-position: -1140px -72px; }
+  background-position: -380px -458px; }
 
 .upfront-field-icon-social-like:before {
   width: 40px;
-  background-position: -1360px -40px; }
+  background-position: -380px -458px; }
 
 .upfront-field-icon-social-count:before {
   width: 45px;
@@ -7988,19 +7993,19 @@ i.upfront-field-icon-burger-trigger {
   background-position: -1360px -330px; }
 
 .upfront-field-icon-gallery-crop-theme:before {
-  background-position: -1688px -136px; }
+  background-position: -320px -368px; }
 
 .upfront-field-icon-gallery-crop-1_1:before {
-  background-position: -1688px -168px; }
+  background-position: -350px -368px; }
 
 .upfront-field-icon-gallery-crop-2_3:before {
-  background-position: -1688px -198px; }
+  background-position: -410px -368px; }
 
 .upfront-field-icon-gallery-crop-4_3:before {
-  background-position: -1688px -228px; }
+  background-position: -378px -368px; }
 
 .upfront-field-icon-refresh:before {
-  background-position: -480px -40px; }
+  background-position: -408px -368px; }
 
 .upfront-field-icon-refresh-2:before {
   background-position: -480px -72px; }
@@ -10910,6 +10915,20 @@ div.sp-replacer:before {
   opacity: 1;
   z-index: 0; }
 
+/*  Selectors using uf-core-el-sprite 
+    ================================= */
+.upfront-element-controls .upfront-inline-panel .upfront-padding-keyboard,
+.upfront-element-controls .upfront-inline-panel .upfront-checkbox-info:before,
+.upfront-element-controls .upfront-inline-panel .padding-lock label,
+div.ugallery-controls i.upfront-icon:before {
+  /* 
+    background-image: url('../img/uf-core-el-sprite.png');
+    background-image: url('../img/uf-core-el-sprite.svg');
+    */
+  background-image: url("../img/uf-core-el-sprite_new.png");
+  background-image: url("../img/uf-core-el-sprite_new.svg");
+  background-repeat: no-repeat; }
+
 .upfront-wrapper:not(.ui-resizable-resizing) .upfront-module.upfront-module-active:not(.ui-resizable-resizing):not(.upfront-module-editing) > .upfront-element-controls,
 .upfront-wrapper:not(.ui-resizable-resizing) .upfront-module-group.upfront-module-group-active:not(.ui-resizable-resizing):not(.upfront-module-group-on-edit) > .upfront-element-controls,
 .upfront-wrapper:not(.ui-resizable-resizing) .upfront-module.upfront-module-active:not(.ui-resizable-resizing):not(.upfront-module-editing) .upfront-object-group-view > .upfront-element-controls {
@@ -11014,10 +11033,9 @@ div.sp-replacer:before {
   letter-spacing: 0.34px; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-padding-keyboard {
-  background-position: -290px -284px;
+  background-position: -290px -254px;
   width: 20px;
   height: 11px;
-  background-image: url("../img/uf-core-el-sprite.svg");
   position: absolute;
   top: 45px;
   left: 25px;
@@ -11035,8 +11053,7 @@ div.sp-replacer:before {
   content: "";
   width: 15px;
   height: 15px;
-  background-image: url("../img/uf-core-el-sprite.svg");
-  background-position: -483px -141px;
+  background-position: -484px -140px;
   margin-left: 5px;
   margin-right: 5px;
   margin-bottom: -4px; }
@@ -11137,13 +11154,13 @@ div.sp-replacer:before {
   opacity: 1; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-settings:before {
-  background-position: -261px -371px;
+  background-position: -350px -40px;
   width: 18px;
   height: 18px;
   opacity: 0.75; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-settings:hover:before {
-  background-position: -231px -371px;
+  background-position: -350px -40px;
   width: 18px;
   height: 18px;
   opacity: 0.75; }
@@ -11155,18 +11172,18 @@ div.sp-replacer:before {
   opacity: 1; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-padding:before {
-  background-position: -261px -341px;
+  background-position: -320px -40px;
   width: 18px;
   height: 18px; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-padding:hover:before {
-  background-position: -231px -341px;
+  background-position: -320px -40px;
   width: 18px;
   height: 18px;
   opacity: 0.75; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-control-dialog-open.upfront-inline-panel-item .upfront-icon-region-padding:before {
-  background-position: -231px -341px !important;
+  background-position: -320px -40px !important;
   width: 18px;
   height: 18px;
   opacity: 1; }
@@ -11190,19 +11207,19 @@ div.sp-replacer:before {
   top: 9px; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-more:before {
-  background-position: -291px -460px;
+  background-position: -290px -40px;
   width: 24px;
   height: 24px;
   opacity: 0.75; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-more:hover:before {
-  background-position: -291px -490px;
+  background-position: -290px -40px;
   width: 24px;
   height: 24px;
   opacity: 0.75; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-icon-region-more:before {
-  background-position: -291px -490px;
+  background-position: -290px -40px;
   width: 24px;
   height: 24px;
   opacity: 1 !important; }
