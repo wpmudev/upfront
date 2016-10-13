@@ -461,3 +461,11 @@ function uf_admin_bar_styles() {
 	wp_enqueue_style( 'uf-font-icons', get_template_directory_uri() . '/styles/font-icons.css');
 }
 add_action( 'admin_enqueue_scripts', 'uf_admin_bar_styles' );
+
+/**
+ * Gets rid of the admin notice and declares support for Woo
+ */
+	function uf_add_woocommerce_support() {
+		add_theme_support('woocommerce');
+	}
+add_action('after_setup_theme', 'uf_add_woocommerce_support');

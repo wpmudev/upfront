@@ -1,13 +1,5 @@
 <?php
 
-/**
- * Gets rid of the admin notice and declares support for Woo
- */
-function uf_add_woocommerce_support() {
-	add_theme_support('woocommerce');
-}
-add_action('after_setup_theme', 'uf_add_woocommerce_support');
-
 class Upfront_Compat_WooCommerce {
 
 	public function __construct() {
@@ -17,12 +9,21 @@ class Upfront_Compat_WooCommerce {
 	public function add_hooks() {
 		if (class_exists('woocommerce') === false) return;
 
+		add_action('after_setup_theme', array($this, 'add_woocommerce_support'));
+		add_filter('template_include', array($this, 'override_single_product_tpl'), 99, 3);
 		add_filter('upfront-entity_resolver-entity_ids', array($this, 'override_entity_ids'));
 		add_filter('upfront-post_data-get_content-before', array($this, 'override_single_product_filter'));
 		add_filter('upfront-posts-get_markup-before', array($this, 'override_posts_markup_filter'));
 		add_filter('upfront-plugins_layouts', array($this, 'add_woocommerce_layouts'));
 		add_filter('upfront-postdata_get_markup_before', array($this, 'override_postdata_content'), 10, 2);
 		add_filter('upfront-override_post_parts', array($this, 'override_post_parts'), 10, 2);
+	}
+
+/**
+ * Gets rid of the admin notice and declares support for Woo
+ */
+	public function add_woocommerce_support() {
+		add_theme_support('woocommerce');
 	}
 
 	/**
