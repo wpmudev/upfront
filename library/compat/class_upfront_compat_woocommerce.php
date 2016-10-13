@@ -20,7 +20,7 @@ class Upfront_Compat_WooCommerce {
 /**
  * Gets rid of the admin notice and declares support for Woo
  */
-	public function add_woocommerce_supports() {
+	public function add_woocommerce_support() {
 		add_theme_support('woocommerce');
 	}
 
