@@ -17823,6 +17823,41 @@ div.preset-manager-panel .checkbox-tooltip {
 .upfront-inline-panel-item.group-link-control {
   z-index: 51; }
 
+.upfront-field-icon-link-homepage:before {
+  background-position: -414px -284px; }
+
+.upfront-field-icon-link-external:before {
+  background-position: -264px -284px; }
+
+.upfront-field-icon-link-email:before {
+  background-position: -354px -284px; }
+
+.upfront-field-icon-link-phone:before {
+  background-position: -385px -284px; }
+
+.upfront-field-icon-link-entry:before {
+  background-position: -294px -284px; }
+
+.upfront-field-icon-link-anchor:before {
+  background-position: -324px -284px; }
+
+.upfront-field-icon-link-image:before {
+  background-position: -324px -284px; }
+
+.upfront-field-icon-link-lightbox:before {
+  background-position: -445px -284px; }
+
+.upfront-field-icon-link-unlink:before {
+  background-position: -293px -104px; }
+
+.ulinkpanel-dark .upfront-link-back:before {
+  background-position: -293px -104px; }
+
+.ulinkpanel-dark .upfront-link-back {
+  width: 25px;
+  height: 22px;
+  position: relative; }
+
 /**
  * Compatibility issue nag popup, v1 check
  */
