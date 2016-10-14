@@ -31,7 +31,7 @@ var PostsView = Upfront.Views.ObjectView.extend({
 	on_render: function () {
 		var pluginLayout = Upfront.Application.is_plugin_layout();
 		if (pluginLayout) {
-			this.$el.find(".upfront-object-content").empty().append('<div>This content is handled by ' + pluginLayout.pluginName + '.</div>' + pluginLayout.content);
+			this.$el.find(".upfront-object-content").empty().append('<div>Below is sample content for ' + pluginLayout.pluginName + '. Use it as a reference for styling.</div>' + pluginLayout.content);
 			return;
 		}
 
