@@ -1,0 +1,13 @@
+/* Custom Styling of Perfect Scrollbar */
+.ps-container {
+	position: relative;
+}
+.ps-container > .ps-scrollbar-y-rail {
+	z-index: 10001004;
+}
+.ps-container > .ps-scrollbar-y-rail > .ps-scrollbar-y {
+	background-color: rgba(52,71,88,0.4);
+}
+.ps-container.ps-in-scrolling.ps-y > .ps-scrollbar-y-rail > .ps-scrollbar-y {
+	background-color: rgba(52,71,88,0.6);
+}

@@ -26,13 +26,19 @@
 
                 this.stop_scroll_propagation(this.$el.find('.sidebar-panel-content'));
 
-                if( this.sections){
-                    me.$el.find('.sidebar-panel-title').after("<ul class='sidebar-panel-tabspane'></ul>");
-                    this.sections.each(function (section) {
-                        section.render();
-                        me.$el.find('.sidebar-panel-tabspane').append( "<li data-target='" + section.cid +  "' class='sidebar-panel-tab'>" +  section.get_title() +  "</li>");
-                        me.$el.find('.sidebar-panel-content').append("<div class='sidebar-tab-content' id='" + section.cid +"'></div>");
-                        me.$el.find(".sidebar-panel-content").find(".sidebar-tab-content").last().html(section.el);
+								if (this.sections) {
+									me.$el.find('.sidebar-panel-title').after("<ul class='sidebar-panel-tabspane'></ul>");
+									this.sections.each(function (section) {
+										section.render();
+										me.$el.find('.sidebar-panel-tabspane').append( "<li data-target='" + section.cid +  "' class='sidebar-panel-tab'>" +  section.get_title() +  "</li>");
+										me.$el.find('.sidebar-panel-content').append("<div class='sidebar-tab-content' id='" + section.cid +"'></div>");
+										me.$el.find(".sidebar-panel-content").find(".sidebar-tab-content").last().html(section.el);
+										// Add JS Scrollbar.
+										me.$el.find('.sidebar-panel-content').perfectScrollbar({
+											// Ignore X Axis scrolling.
+											suppressScrollX: true
+										});
+
                     });
                 }
 

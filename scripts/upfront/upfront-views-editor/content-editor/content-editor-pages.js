@@ -39,6 +39,10 @@
                         canEditOwn: Upfront.Application.user_can("EDIT_OWN")
                     })
                 );
+								// Add JS Scrollbar.
+								this.$el.find('.upfront-scroll-panel').perfectScrollbar({
+									suppressScrollX: true
+								});
             },
 
             renderPreview: function (page) {

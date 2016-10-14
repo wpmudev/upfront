@@ -161,6 +161,10 @@ define([
 				panel.render();
 				panel.parent_view = me;
 				me.$el.find('#sidebar-scroll-wrapper').append(panel.el);
+				// Add JS Scrollbar (ignore X axis scrolling).
+				me.$el.find('#sidebar-scroll-wrapper').perfectScrollbar({
+					suppressScrollX: true
+				});
 			});
 
 			this.$el.addClass('upfront-ui');

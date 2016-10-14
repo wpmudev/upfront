@@ -34,6 +34,7 @@
                 return className;
             },
             initialize: function () {
+							//console.log(perfect_scrollbar)
                 if (Upfront.Application.user_can_modify_layout()) {
 										if ( false === Upfront.plugins.isForbiddenByPlugin('show undo redo and responsive commands') ) {
                         this.commands = _([

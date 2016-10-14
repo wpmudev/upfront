@@ -881,6 +881,7 @@ var Application = new (Backbone.Router.extend({
 				'responsive',
 				"uaccordion",
 				'redactor',
+				'perfect_scrollbar',
 				'ueditor',
 				'utext',
 				"ucomment",

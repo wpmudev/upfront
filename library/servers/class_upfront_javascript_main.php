@@ -77,7 +77,8 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"ueditor" => 'scripts/redactor/ueditor',
 			"chosen" => "scripts/chosen/chosen.jquery.min",
 			"findandreplace" => "scripts/findandreplace/findAndReplaceDOMText",
-			"pako" => "scripts/pako/pako.min"
+			"pako" => "scripts/pako/pako.min",
+			"perfect_scrollbar" => "scripts/perfect-scrollbar/perfect-scrollbar.min"
 		);
 		$paths = apply_filters('upfront-settings-requirement_paths', $paths + $registered);
 
@@ -113,7 +114,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 
 		$layout_editor_requirements = array(
-			"core" => array('models', 'views', 'editor_views', 'behaviors', $upfront_data_url, 'media', 'content', 'spectrum', 'responsive', 'redactor', 'ueditor' ),
+			"core" => array('models', 'views', 'editor_views', 'behaviors', $upfront_data_url, 'media', 'content', 'spectrum', 'responsive', 'redactor', 'ueditor', 'perfect_scrollbar' ),
 			"entities" => array_merge(array('objects'), array_keys($registered)),
 		);
 		$layout_editor_requirements = json_encode(

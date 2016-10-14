@@ -2006,6 +2006,11 @@ define([
 				// running change event to apply persistent list
 				var selected_model = new MediaCollection_Selection(ActiveFilters.current_models);
 				Upfront.Events.trigger("media:item:selection_changed", selected_model);
+
+				// Add JS Scrollbar.
+				this.$el.perfectScrollbar({
+					suppressScrollX: true
+				});
 			}
 		},
 		update: function () {

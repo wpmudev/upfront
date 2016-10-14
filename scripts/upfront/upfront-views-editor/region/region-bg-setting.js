@@ -80,6 +80,11 @@
 				// Render padding settings
 				this.render_padding_settings($content.find('.upfront-region-bg-setting-padding'));
 
+				// Add JS Scrollbar.
+				this.$el.perfectScrollbar({
+					suppressScrollX: true
+				});
+
 				// If region settings sidebar.
 				if (this.$el.parent().attr('id') === 'region-settings-sidebar') {
 					// adding class to #sidebar-ui for fixing z-index issues with main dropdown.
