@@ -379,6 +379,7 @@ define([
 
 			this.typeSelect = new Upfront.Views.Editor.Field.Select({
 				label: '',
+				className: 'upfront-link-select',
 				values: typeSelectValues,
 				default_value: this.model.get('type'),
 				change: function () {

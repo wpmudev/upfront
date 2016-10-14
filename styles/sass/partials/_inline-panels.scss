@@ -59,8 +59,30 @@
 	background-position: -293px -104px; 
 }
 
-.ulinkpanel-dark .upfront-link-back {
+.ulinkpanel-dark {
+	background: #ffffff;
+}
+
+.link-control-panel-content {
+	position: relative;
+}
+
+.link-control-panel-content .upfront-link-select {
+	width: 42px;
+}
+
+.link-control-panel-content .upfront-link-select label span,
+.link-control-panel-content .upfront-field-select-value span {
+	display: none;
+}
+
+.ulinkpanel-dark .upfront-link-back,
+.ulinkpanel-dark .upfront-apply {
 	width: 25px;
 	height: 22px;
 	position: relative;
+}
+
+.ulinkpanel-dark .icon-apply:before {
+	background-position: -325px -106px; 
 }

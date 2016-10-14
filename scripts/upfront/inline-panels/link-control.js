@@ -11,7 +11,7 @@ define([
 
 		events: {
 			'click': 'onClickControl',
-			'click button': 'onClickOk'
+			'click .upfront-apply': 'onClickOk'
 		},
 
 		initialize: function(options) {
@@ -52,6 +52,11 @@ define([
 				this.panel = panel;
 				$(document).on('click.dialog-control.'+me.cid, me, me.onDocumentClick);
 			}
+			
+			// Prepend arrow, it is not set like pseudo element because we cant update its styles with jQuery
+			var panelArrow = '<span class="upfront-control-arrow"></span>';
+			this.$el
+				.find('.link-control-panel').prepend(panelArrow);
 
 			return this;
 		},
@@ -107,6 +112,9 @@ define([
 			this.trigger('panel:open');
 			Upfront.Events.trigger('dialog-control:open', this);
 			
+			// Set position of padding container
+			this.update_position();
+			
 			// add class if last region to allocate clearance for link panel so will not get cut
 			if ( this.$el.is('#link') ) {
 				var $region = this.$el.closest('.upfront-region-container'),
@@ -114,7 +122,7 @@ define([
 				;
 				if ( $lastRegion.get(0) == $region.get(0) ) $region.addClass('upfront-last-region-padding');
 			}
-			
+
 			return this;
 		},
 		close: function() {
@@ -127,6 +135,18 @@ define([
 			this.$el.closest('.upfront-region-container').removeClass('upfront-last-region-padding');
 			
 			return this;
+		},
+		update_position: function() {
+			// Get number of elements before padding
+			var elementsNumber = this.$el.prevAll().length,
+				leftPosition = elementsNumber * 28,
+				dir = Upfront.Util.isRTL() ? "right" : "left";
+
+			// Set container position
+			this.$el.find('.link-control-panel-content').css(dir, -leftPosition);
+			
+			// Update arrow position under padding button
+			this.$el.find('.upfront-control-arrow').css(dir, leftPosition);
 		}
 	});
 
