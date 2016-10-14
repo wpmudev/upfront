@@ -240,23 +240,23 @@ define([
 			var contentL10n = Upfront.Settings.l10n.global.content;
 			switch(type) {
 				case 'homepage':
-					return { value: 'homepage', label: contentL10n.homepage };
+					return { value: 'homepage', label: contentL10n.homepage, icon: 'link-homepage' };
 				case 'unlink':
-					return { value: 'unlink', label: contentL10n.no_link };
+					return { value: 'unlink', label: contentL10n.no_link, icon: 'link-unlink' };
 				case 'external':
-					return { value: 'external', label: contentL10n.url };
+					return { value: 'external', label: contentL10n.url, icon: 'link-external' };
 				case 'email':
-					return { value: 'email', label: contentL10n.email };
+					return { value: 'email', label: contentL10n.email, icon: 'link-email' };
 				case 'phone':
-					return { value: 'phone', label: contentL10n.phone };
+					return { value: 'phone', label: contentL10n.phone, icon: 'link-phone' };
 				case 'entry':
-					return { value: 'entry', label: contentL10n.post_or_page };
+					return { value: 'entry', label: contentL10n.post_or_page, icon: 'link-entry' };
 				case 'anchor':
-					return { value: 'anchor', label: contentL10n.anchor };
+					return { value: 'anchor', label: contentL10n.anchor, icon: 'link-anchor' };
 				case 'image':
-					return { value: 'image', label: contentL10n.larger_image };
+					return { value: 'image', label: contentL10n.larger_image, icon: 'link-image' };
 				case 'lightbox':
-					return { value: 'lightbox', label: contentL10n.lightbox };
+					return { value: 'lightbox', label: contentL10n.lightbox, icon: 'link-lightbox' };
 			}
 		},
 
