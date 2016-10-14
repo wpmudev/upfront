@@ -9,7 +9,7 @@ define([
 		multiControl: true,
 
 		events: {
-			'click': 'onClickControl',
+			'click .upfront-icon': 'onClickControl',
 			'click .upfront-inline-panel-item': 'selectItem'
 		},
 

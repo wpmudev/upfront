@@ -10,8 +10,9 @@ define([
 		hideOnClick: true,
 
 		events: {
-			'click': 'onClickControl',
-			'click .upfront-apply': 'onClickOk'
+			'click .upfront-icon': 'onClickControl',
+			'click .upfront-apply': 'onClickOk',
+			'click .upfront-link-back': 'onClickOk'
 		},
 
 		initialize: function(options) {
@@ -138,7 +139,7 @@ define([
 		},
 		update_position: function() {
 			// Get number of elements before padding
-			var elementsNumber = this.$el.prevAll().length,
+			var elementsNumber = this.$el.prevAll().length - 1,
 				leftPosition = elementsNumber * 28,
 				dir = Upfront.Util.isRTL() ? "right" : "left";
 
@@ -146,7 +147,7 @@ define([
 			this.$el.find('.link-control-panel-content').css(dir, -leftPosition);
 			
 			// Update arrow position under padding button
-			this.$el.find('.upfront-control-arrow').css(dir, leftPosition);
+			this.$el.find('.upfront-control-arrow').css(dir, -leftPosition);
 		}
 	});
 
