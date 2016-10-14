@@ -13,7 +13,7 @@ define([
 		height: 18,
 
 		events: {
-			'click': 'onClickControl',
+			'click .upfront-icon': 'onClickControl',
 			'click button': 'onClickOk'
 		},
 

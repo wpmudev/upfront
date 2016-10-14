@@ -10,9 +10,9 @@ define([
 		hideOnClick: true,
 
 		events: {
-			'click .upfront-icon': 'onClickControl',
-			'click .upfront-apply': 'onClickOk',
-			'click .upfront-link-back': 'onClickOk'
+			'click': 'onClickControl',
+			'click .upfront-apply': 'close',
+			'click .upfront-link-back': 'close'
 		},
 
 		initialize: function(options) {
