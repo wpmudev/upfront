@@ -1777,11 +1777,23 @@ var InsertManager = Backbone.View.extend({
         if( !this.$tooltips ) return;
 
         var $current = $( redactor.selection.getCurrent() ),
-			$position = $( redactor.selection.getBlock() ).position();
+			$position = $( redactor.selection.getBlock() ).position(),
+			$block = $( $current ),
+			$prevBlock = $block.parent().prev(),
+			$prevBlockPosition = $prevBlock.position(),
+			prevblock_html = $.trim( $prevBlock.html() ) || '',
+			indexPosition = redactor.range.startOffset,
+			css;
 
         if( this.show_tooltip_in_this_location( redactor ) ){
 			if( typeof $current[0] === "undefined" ) return;
-            var css = _.extend( $position, { marginLeft: _.isArray($current)  ?   $current.css("padding-left") : 0 } );
+
+			if(indexPosition < 1 && prevblock_html.match(/<br>/g)) {
+				css = _.extend( $prevBlockPosition, { marginLeft: _.isArray($current)  ?   $current.css("padding-left") : 0 } );
+			} else {
+				css = _.extend( $position, { marginLeft: _.isArray($current)  ?   $current.css("padding-left") : 0 } );
+			}
+
             this.$tooltips.css( css );
             this.$tooltips.show();
             UeditorEvents.trigger("ueditor:insert:relocate", $current);
