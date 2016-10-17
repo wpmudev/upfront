@@ -78,7 +78,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"chosen" => "scripts/chosen/chosen.jquery.min",
 			"findandreplace" => "scripts/findandreplace/findAndReplaceDOMText",
 			"pako" => "scripts/pako/pako.min",
-			"perfect_scrollbar" => "scripts/perfect-scrollbar/perfect-scrollbar.min"
+			"perfect_scrollbar" => "scripts/perfect-scrollbar/perfect-scrollbar"
 		);
 		$paths = apply_filters('upfront-settings-requirement_paths', $paths + $registered);
 
