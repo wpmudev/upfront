@@ -398,3 +398,23 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 .link-control-panel .upfront-settings-link-field {
 	width: 150px;
 }
+.link-control-panel .uf-link-target-select {
+	width: 38px;
+}
+.link-control-panel .uf-link-target-select .upfront-field-select {
+	background: #4e4e4e;
+	color: #fff;
+	width: 38px;
+	height: 16px;
+	border: none;
+}
+.link-control-panel .uf-link-target-select .upfront-field-select:after {
+	background: none;
+	display: none;
+}
+.link-control-panel .uf-link-target-select .upfront-field-select-value {
+	line-height: 1;
+	padding: 3px;
+	text-align: center;
+	font-size: 10px;
+}

@@ -394,10 +394,10 @@ define([
 		renderTargetRadio: function() {
 			var me = this;
 
-			this.targetRadio = new Upfront.Views.Editor.Field.Radios({
-				label: Upfront.Settings.l10n.global.content.target,
+			this.targetRadio = new Upfront.Views.Editor.Field.Select({
+				label: '',
+				className: 'uf-link-target-select',
 				default_value: this.model.get('target') || '_self',
-				layout: 'horizontal-inline',
 				values: [
 					{ label: Upfront.Settings.l10n.global.content.blank, value: '_blank' },
 					{ label: Upfront.Settings.l10n.global.content.self, value: '_self' }
