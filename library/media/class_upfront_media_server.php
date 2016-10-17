@@ -589,7 +589,9 @@ class Upfront_MediaServer extends Upfront_Server {
 	}
 
 	public function upload_media () {
-		if (!$this->_check_valid_request_level(Upfront_Permissions::UPLOAD)) $this->_out(new Upfront_JsonResponse_Error("You can't do this."));
+		if (!$this->_check_valid_request_level(Upfront_Permissions::UPLOAD)) {
+			$this->_out(new Upfront_JsonResponse_Error(sprintf(__("The image you are trying to upload exceed the upload limit (%s). Please try a smaller image", 'upfront'), upfront_max_upload_size_human())));
+		}
 		$upload = new Upfront_UploadHandler;
 		$result = $upload->handle();
 		if (empty($result['media'])) $this->_out(new Upfront_JsonResponse_Error(__("Error uploading the media item", 'upfront')));
