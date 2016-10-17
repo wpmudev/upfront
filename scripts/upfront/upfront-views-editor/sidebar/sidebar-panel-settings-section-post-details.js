@@ -60,9 +60,7 @@
                 return 'post_details';
             },
             get_title: function () {
-                if ( Upfront.Application.is_single( "post" ) ) {
-                    return l10n.post_settings;
-                } else if ( Upfront.Application.is_single( "page" ) ) {
+				if ( Upfront.Application.is_single( "page" ) ) {
                     return l10n.page_settings;
                 }
 				return l10n.post_settings;
