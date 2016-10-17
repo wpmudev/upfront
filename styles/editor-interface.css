@@ -5020,7 +5020,7 @@ span.upfront-settings-item-title:after {
   top: -41px; }
 
 #element-settings-sidebar .padding-bg-checkbox-field {
-  border-top: 2px solid #dce7f4;
+  border-top: 1px solid #dce7f4;
   margin: 5px 15px;
   padding: 10px 0px !important;
   display: block; }
