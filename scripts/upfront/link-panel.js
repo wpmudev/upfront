@@ -388,7 +388,7 @@ define([
 			});
 
 			this.typeSelect.render();
-			this.$el.find('form').prepend(this.typeSelect.el);
+			this.$el.find('.upfront-settings-link-select').prepend(this.typeSelect.el);
 		},
 
 		renderTargetRadio: function() {
@@ -408,7 +408,7 @@ define([
 			});
 
 			this.targetRadio.render();
-			this.$el.find('form').append(this.targetRadio.el);
+			this.$el.find('.upfront-settings-link-target').append(this.targetRadio.el);
 		},
 
 		renderAnchorSelect: function() {
