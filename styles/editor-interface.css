@@ -17825,34 +17825,34 @@ div.preset-manager-panel .checkbox-tooltip {
   z-index: 51; }
 
 .upfront-field-icon-link-homepage:before {
-  background-position: -414px -284px; }
+  background-position: -412px -282px; }
 
 .upfront-field-icon-link-external:before {
-  background-position: -264px -284px; }
+  background-position: -262px -281px; }
 
 .upfront-field-icon-link-email:before {
-  background-position: -354px -284px; }
+  background-position: -352px -281px; }
 
 .upfront-field-icon-link-phone:before {
-  background-position: -385px -284px; }
+  background-position: -383px -281px; }
 
 .upfront-field-icon-link-entry:before {
-  background-position: -294px -284px; }
+  background-position: -292px -281px; }
 
 .upfront-field-icon-link-anchor:before {
-  background-position: -324px -284px; }
+  background-position: -322px -281px; }
 
 .upfront-field-icon-link-image:before {
-  background-position: -324px -284px; }
+  background-position: -322px -281px; }
 
 .upfront-field-icon-link-lightbox:before {
-  background-position: -445px -284px; }
+  background-position: -443px -281px; }
 
 .upfront-field-icon-link-unlink:before {
-  background-position: -293px -104px; }
+  background-position: -291px -102px; }
 
 .ulinkpanel-dark .upfront-link-back:before {
-  background-position: -293px -104px; }
+  background-position: -291px -102px; }
 
 .ulinkpanel-dark {
   background: #ffffff; }
@@ -17863,8 +17863,8 @@ div.preset-manager-panel .checkbox-tooltip {
 .link-control-panel-content .upfront-link-select {
   width: 42px; }
 
-.link-control-panel-content .upfront-link-select label span,
-.link-control-panel-content .upfront-field-select-value span {
+.link-control-panel-content .upfront-settings-link-select label span,
+.link-control-panel-content .upfront-settings-link-select .upfront-field-select-value span {
   display: none; }
 
 .ulinkpanel-dark .upfront-link-back,
@@ -17887,6 +17887,58 @@ div.preset-manager-panel .checkbox-tooltip {
 .link-control-panel .upfront-control-arrow {
   top: -39px;
   z-index: 99; }
+
+.link-control-panel .upfront-link-back, .link-control-panel .ulinkpanel-back {
+  width: 30px;
+  height: 24px;
+  display: inline-block; }
+
+.link-control-panel .upfront-settings-link-select {
+  width: 42px;
+  height: 24px;
+  display: inline-block; }
+
+.link-control-panel .upfront-field-select {
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  margin-top: 1px; }
+
+.link-control-panel .upfront-field-select .upfront-field-select-value {
+  box-shadow: none; }
+
+.link-control-panel .upfront-field-select:after {
+  content: " ";
+  /* background-image: url('../img/uf-core-el-sprite.svg?v=20131127'); */
+  background-image: url("../img/uf-core-el-sprite_new.png");
+  background-image: url("../img/uf-core-el-sprite_new.svg");
+  background-repeat: no-repeat;
+  float: left;
+  display: block;
+  background-position: -350px -109px;
+  width: 15px;
+  height: 3px;
+  border: none;
+  right: 6px; }
+
+.link-control-panel .upfront-field-select-option:hover {
+  background: #e5e5e5;
+  color: #000; }
+
+.link-control-panel .upfront-field-select-options {
+  border: 1px solid #d9d9d9;
+  background: #fff;
+  max-height: 250px;
+  top: 25px;
+  box-shadow: none;
+  border-top: none; }
+
+.link-control-panel .upfront-field-select-options:before {
+  content: " ";
+  width: 80%;
+  border-top: 1px solid #e5e5e5;
+  position: absolute;
+  left: 5px;
+  margin-top: -4px; }
 
 /**
  * Compatibility issue nag popup, v1 check
