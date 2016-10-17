@@ -13,6 +13,7 @@ define([
 	var UaccordionView = Upfront.Views.ObjectView.extend({
 		model: UaccordionModel,
 		currentEditItem: '',
+		currentPanelId: false,
 		accordionTpl: Upfront.Util.template(accordionTpl),
 		elementSize: {width: 0, height: 0},
 
@@ -178,7 +179,8 @@ define([
 			;
 			try { content = content_ed.getValue(true); } catch (e) { content = ''; }
 			try { title = title_ed.getValue(true); } catch (e) { title = ''; }
-
+			
+			this.currentPanelId = $title.attr('id');
 			this.property('accordion')[panelId].content = content || $content.html();
 			this.property('accordion')[panelId].title = title || $title.html();
 		},
@@ -217,6 +219,7 @@ define([
 							linebreaks: false,
 							disableLineBreak: true,
 							airButtons: false,
+							autostart: false,
 							placeholder: 'Panel '+count
 						})
 						.on('start', function () {
@@ -232,10 +235,10 @@ define([
 							// ... so apparently, `linebreaks` argument above wreaks havoc on everything when set to `true`,
 							// and `disableLineBreak` does nothing.
 							// Very well then, do it ourselves.
-							if (13 === e.which) return false;
-							if (e.which === 9) {
+							if (e.which === 9 || e.which === 13 ) {
 								e.preventDefault();
-								self.editContent();
+								e.stopImmediatePropagation();
+								return false;
 							}
 						})
 						.addClass('uf-click-to-edit-text')
@@ -271,6 +274,8 @@ define([
 			} else {
 				this.$el.find('.accordion-panel i').remove();
 			}
+			
+			this.$el.find('div#'+ this.currentPanelId).parent().addClass('accordion-panel-active').siblings().removeClass('accordion-panel-active');
 			this.$el.find('.accordion-panel:not(.accordion-panel-active) .accordion-panel-content').hide();
 
 			Upfront.Events.trigger('entity:object:refresh', this);
