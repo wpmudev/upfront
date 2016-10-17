@@ -131,6 +131,26 @@ class Upfront_Theme {
 		;
 	}
 
+	/**
+	 * Gets a specific, ready made layout for a slug
+	 *
+	 * @param string $layout_slug Layout slug to check for
+	 *
+	 * @return string Layout name - empty if nothing found
+	 */
+	public function get_theme_layout ($layout_slug='') {
+		if (empty($layout_slug)) return '';
+
+		$filenames = array(
+			'layouts/index-' . $layout_slug . '.php',
+			'layouts/' . $layout_slug . '.php',
+		);
+		return function_exists('upfront_locate_template')
+			? upfront_locate_template($filenames)
+			: locate_template($filenames)
+		;
+	}
+
 	public function has_region ($name) {
 		foreach ( $this->regions as $region ){
 			if ( $region['name'] == $name )
