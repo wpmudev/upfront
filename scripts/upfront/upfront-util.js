@@ -15,13 +15,6 @@ _.mixin({
 	}
 });
 
-var _tpl = _.template;
-_.template = function (tpl, data) {
-	if (typeof undefined === typeof data) return _tpl(tpl);
-	var tmp = _tpl(tpl);
-	return tmp(data);
-};
-
 //requestFrameAnimation polyfill
 var rAFPollyfill = function(callback){
 		var currTime = new Date().getTime(),
@@ -924,7 +917,7 @@ define([
 							return false;
 						}
 				;
-				
+
 				if ( !this.disable_esc ) {
 					$('body').bind( 'keyup', function( event ) {
 						if ( event.keyCode === 27 ) me.close();

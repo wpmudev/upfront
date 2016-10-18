@@ -245,7 +245,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
 		if (empty($prev_post_image_variants)) $prev_post_image_variants = json_encode(array());
 		if (is_array($prev_post_image_variants)) $prev_post_image_variants = json_encode($prev_post_image_variants);
-		
+
 		$other_post_image_variants = apply_filters(
 			'upfront_get_other_post_image_variants',
 			array(
@@ -399,6 +399,12 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		$menus = json_encode(wp_get_nav_menus());
 		$is_rtl = (int) is_rtl();
+
+		$plugins_layouts = array();
+		$plugins_layouts = json_encode(
+			apply_filters('upfront-plugins_layouts', $plugins_layouts)
+		);
+
 		$main = <<<EOMainJs
 // Set up the global namespace
 var Upfront = window.Upfront || {};
@@ -440,7 +446,8 @@ Upfront.mainData = {
 	menus: {$menus},
 	isRTL: {$is_rtl},
 	save_compression: {$save_compression},
-	save_compression_level: {$save_compression_level}
+	save_compression_level: {$save_compression_level},
+	pluginsLayouts: {$plugins_layouts}
 };
 EOMainJs;
 		$this->_out(new Upfront_JavascriptResponse_Success($main));

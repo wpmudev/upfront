@@ -24,7 +24,7 @@ function _manually_load_theme() {
  */
 function _manually_load_child_theme() {
 	$child = getenv('WP_UPFRONT_CHILD');
-	$child = $child ? $child : 'uf-spirit';
+	$child = $child ? $child : 'upfront';
 	return $child;
 }
 tests_add_filter( 'stylesheet', '_manually_load_child_theme' );
@@ -34,7 +34,7 @@ tests_add_filter( 'template', '_manually_load_theme' );
  * Register Upfront theme as valid theme directory
  */
 function _manually_register_theme() {
-	register_theme_directory( dirname(dirname(dirname(dirname(dirname(__FILE__))))) );
+	require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/functions.php');
 }
 tests_add_filter( 'muplugins_loaded', '_manually_register_theme' );
 

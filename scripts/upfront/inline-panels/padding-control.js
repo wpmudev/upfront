@@ -257,7 +257,7 @@ define([
 						me.update_locked_values(padding)
 					}
 					
-					this.model.set_breakpoint_property('lock_padding', value);
+					this.model.set_breakpoint_property('lock_padding', value, true); // Shouldn't trigger changes
 				},
 
 			}),
