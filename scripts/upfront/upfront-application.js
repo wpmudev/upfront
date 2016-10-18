@@ -783,6 +783,13 @@ var Application = new (Backbone.Router.extend({
 		var me = this;
 		$("body .upfront-edit_layout a").addClass('active');
 		$("body").off("click", ".upfront-edit_layout").on("click", ".upfront-edit_layout", function () {
+			// Replace _.template only when we actually boot Upfront, otherwise some other scripts using it might break
+			var _tpl = _.template;
+			_.template = function (tpl, data) {
+				if (typeof undefined === typeof data) return _tpl(tpl);
+				var tmp = _tpl(tpl);
+				return tmp(data);
+			};
 
 			me.start();
 			return false;

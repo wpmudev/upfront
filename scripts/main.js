@@ -17,6 +17,7 @@ require(['backbone'], function (Backbone) {
 		interpolate : /\{\{([\s\S]+?)\}\}/g
 	};
 	require(['application', 'util', 'scripts/upfront/plugins'], function (application, util, Plugins) {
+
 		// Shims and stubs
 		_.extend(Upfront.Events, Backbone.Events);
 		Upfront.Settings = {
