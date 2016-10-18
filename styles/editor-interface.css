@@ -4400,9 +4400,6 @@ div.upfront-bg-setting-tab-primary .uf-bgsettings-image-style .upfront-field-lab
 .uf-bgsettings-item.uf-bgsettings-imageitem {
   position: relative; }
 
-#settings .uf-bgsettings-item.uf-bgsettings-imageitem {
-  position: static; }
-
 .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y {
   float: left;
   width: 45%; }
@@ -5019,6 +5016,16 @@ span.upfront-settings-item-title:after {
   right: 10px;
   top: -41px; }
 
+#element-settings-sidebar .ugroup-settings .uf-bgsettings-imageitem .uf-bgsettings-image-pick {
+  position: absolute;
+  right: 10px;
+  top: 2px;
+  padding: 0px 10px; }
+
+#element-settings-sidebar .ugroup-settings .uf-bgsettings-imageitem .uf-bgsettings-image-pick input {
+  width: 100%;
+  height: 100%; }
+
 #element-settings-sidebar .padding-bg-checkbox-field {
   border-top: 1px solid #dce7f4;
   margin: 5px 15px;
@@ -5040,6 +5047,33 @@ span.upfront-settings-item-title:after {
   color: #2f475d;
   font-family: "Verdana";
   font-size: 11px; }
+
+#settings .ugroup-settings .uf-bgsettings-image-color {
+  float: right;
+  width: 28%;
+  position: absolute;
+  top: -5px;
+  right: 16px; }
+
+#settings .ugroup-settings .uf-bgsettings-image-color .upfront-field-label {
+  top: 33px;
+  left: 5px; }
+
+#settings .ugroup-settings .uf-bgsettings-image-size {
+  margin-top: -155px;
+  margin-bottom: 110px;
+  left: 0px; }
+
+#settings .ugroup-settings .uf-bgsettings-image-size .upfront-field-label {
+  width: 100px !important;
+  position: relative;
+  display: block;
+  left: -5px;
+  margin-bottom: 0px; }
+
+#settings .ugroup-settings .uf-bgsettings-image-pos-y .upfront-field-label {
+  position: relative;
+  top: 7px; }
 
 #settings {
   position: fixed;
