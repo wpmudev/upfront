@@ -17,6 +17,7 @@ class Upfront_Compat_WooCommerce {
 		add_filter('upfront-plugins_layouts', array($this, 'add_woocommerce_layouts'));
 		add_filter('upfront-postdata_get_markup_before', array($this, 'override_postdata_content'), 10, 2);
 		add_filter('upfront-override_post_parts', array($this, 'override_post_parts'), 10, 2);
+		add_filter('upfront-widget_plugins_widgets', array($this, 'declare_plugins_widgets'));
 	}
 
 /**
@@ -176,5 +177,35 @@ class Upfront_Compat_WooCommerce {
 		$content = ob_get_clean();
 		wp_reset_postdata();
 		return '<div class="woocommerce">' . $content . '</div>';
+	}
+
+	public function declare_plugins_widgets($pw) {
+		return array_merge($pw, array(
+				array(
+					'class' => 'WC_Widget_Layered_Nav',
+					'text' => 'WooCommerce Layered Navigation Widget'
+				),
+				array(
+					'class' => 'WC_Widget_Layered_Nav_Filters',
+					'text' => 'WooCommerce Layered Navigation Filters Widget'
+				),
+				array(
+					'class' => 'WC_Widget_Price_Filter',
+					'text' => 'WooCommerce Price Filter Widget'
+				),
+				array(
+					'class' => 'WC_Widget_Rating_Filter',
+					'text' => 'WooCommerce Rating Filter Widget'
+				),
+				array(
+					'class' => 'WC_Widget_Recent_Reviews',
+					'text' => 'WooCommerce Recent Reivews Widget'
+				),
+				array(
+					'class' => 'WC_Widget_Recently_Viewed',
+					'text' => 'WooCommerce Recently Viewed Widget'
+				),
+			)
+		);
 	}
 }
