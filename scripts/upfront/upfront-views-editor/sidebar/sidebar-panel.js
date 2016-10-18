@@ -4,8 +4,9 @@
             : Upfront.mainData.l10n.global.views
         ;
     define([
-        'scripts/upfront/upfront-views-editor/mixins'
-    ], function (Mixins) {
+      'scripts/upfront/upfront-views-editor/mixins',
+			'scripts/perfect-scrollbar/perfect-scrollbar'
+    ], function (Mixins, perfectScrollbar) {
         return Backbone.View.extend(_.extend({}, Mixins.Upfront_Scroll_Mixin, {
             "tagName": "li",
             "className": "sidebar-panel",
@@ -34,12 +35,10 @@
 										me.$el.find('.sidebar-panel-content').append("<div class='sidebar-tab-content' id='" + section.cid +"'></div>");
 										me.$el.find(".sidebar-panel-content").find(".sidebar-tab-content").last().html(section.el);
 										// Add JS Scrollbar.
-										me.$el.find('.sidebar-panel-content').perfectScrollbar({
-											// Ignore X Axis scrolling.
+										perfectScrollbar.initialize(me.$el.find('.sidebar-panel-content')[0], {
 											suppressScrollX: true
 										});
-
-                    });
+                  });
                 }
 
                 if ( this.on_render ) this.on_render();

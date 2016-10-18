@@ -4,8 +4,9 @@
             : Upfront.mainData.l10n.global.views
         ;
     define([
-        "text!upfront/templates/popup.html"
-    ], function ( popup_tpl ) {
+        "text!upfront/templates/popup.html",
+				'scripts/perfect-scrollbar/perfect-scrollbar'
+    ], function ( popup_tpl, perfectScrollbar ) {
 
         return Backbone.View.extend({
             events: {
@@ -40,9 +41,9 @@
                     })
                 );
 								// Add JS Scrollbar.
-								this.$el.find('.upfront-scroll-panel').perfectScrollbar({
-									suppressScrollX: true
-								});
+							perfectScrollbar.initialize(this.$el.find('.upfront-scroll-panel')[0], {
+								suppressScrollX: true
+							});
             },
 
             renderPreview: function (page) {
