@@ -353,6 +353,9 @@
 .upfront-region-fixed-editing .upfront-region-container-active .upfront-module {
 	opacity: 0.5;
 }
+.upfront-add-region-container-active .upfront-icon-control-region-resize-s {
+	display: none;
+}
 .upfront-region-resize-handle {
 	position: absolute;
 	bottom: -14px;
