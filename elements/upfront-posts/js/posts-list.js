@@ -29,10 +29,13 @@ var PostsView = Upfront.Views.ObjectView.extend({
 	},
 
 	on_render: function () {
-		var pluginLayout = Upfront.Application.is_plugin_layout();
-		if (pluginLayout) {
-			this.$el.find(".upfront-object-content").empty().append('<div>Below is sample content for ' + pluginLayout.pluginName + '. Use it as a reference for styling.</div>' + pluginLayout.content);
-			return;
+		// Query plugin output only if single page is loading
+		if (Upfront.Application.is_single() === false) {
+			var pluginLayout = Upfront.Application.is_plugin_layout();
+			if (pluginLayout) {
+				this.$el.find(".upfront-object-content").empty().append('<div>Below is sample content for ' + pluginLayout.pluginName + '. Use it as a reference for styling.</div>' + pluginLayout.content);
+				return;
+			}
 		}
 
 		var type = this.model.get_property_value_by_name("display_type");
