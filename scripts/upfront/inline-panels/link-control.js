@@ -116,6 +116,8 @@ define([
 			// Set position of padding container
 			this.update_position();
 			
+			this.updateWrapperSize();
+			
 			// add class if last region to allocate clearance for link panel so will not get cut
 			if ( this.$el.is('#link') ) {
 				var $region = this.$el.closest('.upfront-region-container'),
@@ -146,8 +148,19 @@ define([
 			// Set container position
 			this.$el.find('.link-control-panel-content').css(dir, -leftPosition);
 			
+			this.$el.find('.ulinkpanel-dark').css('minWidth', this.$el.parent().width());
+			
 			// Update arrow position under padding button
 			this.$el.find('.upfront-control-arrow').css(dir, -leftPosition);
+		},
+		updateWrapperSize: function() {
+			var totalWidth = 0;
+
+			this.$el.find('.ulinkpanel-dark').children().each(function(i, element) {
+				totalWidth = totalWidth + parseInt($(element).width());
+			});
+
+			this.$el.find('.ulinkpanel-dark').css('width', totalWidth + 20);
 		}
 	});
 

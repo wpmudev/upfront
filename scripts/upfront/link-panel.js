@@ -362,10 +362,22 @@ define([
 			if (_.contains(['external'], this.model.get('type'))) {
 				this.renderTargetRadio();
 			}
+			
+			this.updateWrapperSize();
 
 			this.delegateEvents();
 		},
+		
+		updateWrapperSize: function() {
+			var totalWidth = 0;
 
+			this.$el.children().each(function(i, element) {
+				totalWidth = totalWidth + parseInt($(element).width());
+			});
+			
+			this.$el.css('width', totalWidth + 20);
+		},
+		
 		renderTypeSelect: function() {
 			var me = this;
 
