@@ -91,6 +91,9 @@ class Upfront_Compat_WooCommerce {
 	 * @return bool|string
 	 */
 	public function override_posts_markup_filter ($status) {
+		// The scope of the issue this addresses stays with archive page
+		if (is_singular()) return $status; // ... so don't do this on singular pages
+
 		$post = get_post();
 		if (empty($post->post_type) || 'product' !== $post->post_type) return $status;
 
