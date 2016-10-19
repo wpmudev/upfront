@@ -392,15 +392,15 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 	height: 24px;
 }
 .link-control-panel .upfront-settings-link-target {
-	top: -5px;
-    position: relative;
+	top: 5px;
+    position: absolute;
 }
 .link-control-panel .upfront-settings-link-target,
 .link-control-panel .upfront-settings-link-field {
 	display: inline-block;
 }
 .link-control-panel .upfront-settings-link-field {
-	width: 150px;
+	width: 198px;
 }
 .link-control-panel .uf-link-target-select {
 	width: 38px;
@@ -454,4 +454,13 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 }
 .link-control-panel .uf-link-target-select .upfront-field-select-option:hover {
 	background: #333333;
+}
+.link-control-panel input.upfront-field-text {
+	background: #f7f7f7;
+	border: 1px solid #e7e7e7;
+	position: relative;
+	top: -9px;
+}
+.link-control-panel .ulinkpanel-external-wrap input {
+	padding-right: 55px;
 }

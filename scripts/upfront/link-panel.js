@@ -372,7 +372,8 @@ define([
 			var totalWidth = 0;
 
 			this.$el.children().each(function(i, element) {
-				totalWidth = totalWidth + parseInt($(element).width());
+				var elementWidth = $(element).hasClass('upfront-settings-link-target') ? 0 : parseInt($(element).width());
+				totalWidth = totalWidth + elementWidth;
 			});
 			
 			this.$el.css('width', totalWidth + 20);
