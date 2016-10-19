@@ -136,6 +136,7 @@ class Upfront_Compat_WooCommerce {
 					'content' => 'archive-product'
 				),
 				array(
+					'item' => 'single-product',
 					'specificity' => 'single-product',
 					'type' => 'single',
 					'content' => 'single-product'
@@ -181,6 +182,7 @@ class Upfront_Compat_WooCommerce {
 		woocommerce_content();
 		$content = ob_get_clean();
 		wp_reset_postdata();
+		if ($content === '') return '';
 		return '<div class="woocommerce">' . $content . '</div>';
 	}
 
