@@ -17,6 +17,7 @@ class Upfront_Compat_WooCommerce {
 		add_filter('upfront-plugins_layouts', array($this, 'add_woocommerce_layouts'));
 		add_filter('upfront-postdata_get_markup_before', array($this, 'override_postdata_content'), 10, 2);
 		add_filter('upfront-override_post_parts', array($this, 'override_post_parts'), 10, 2);
+		add_filter('upfront-widget_plugins_widgets', array($this, 'declare_plugins_widgets'));
 	}
 
 /**
@@ -57,7 +58,12 @@ class Upfront_Compat_WooCommerce {
 	 */
 	public function override_entity_ids ($cascade) {
 		if (!empty($cascade['item']) && 'single-product' === $cascade['item']) {
-			$cascade['item'] = 'single-page';
+			// Let's test if a theme supports Woo product layouts.
+			// As in, does this theme have single-product ready-made layouts?
+			$theme = Upfront_Theme::get_instance();
+
+			// If it doesn't, let's emulate - we'll be single pages here
+			if (!$theme->has_theme_layout('single-product')) $cascade['item'] = 'single-page';
 		}
 		return $cascade;
 	}
@@ -85,6 +91,9 @@ class Upfront_Compat_WooCommerce {
 	 * @return bool|string
 	 */
 	public function override_posts_markup_filter ($status) {
+		// The scope of the issue this addresses stays with archive page
+		if (is_singular()) return $status; // ... so don't do this on singular pages
+
 		$post = get_post();
 		if (empty($post->post_type) || 'product' !== $post->post_type) return $status;
 
@@ -130,6 +139,7 @@ class Upfront_Compat_WooCommerce {
 					'content' => 'archive-product'
 				),
 				array(
+					'item' => 'single-product',
 					'specificity' => 'single-product',
 					'type' => 'single',
 					'content' => 'single-product'
@@ -175,6 +185,37 @@ class Upfront_Compat_WooCommerce {
 		woocommerce_content();
 		$content = ob_get_clean();
 		wp_reset_postdata();
+		if ($content === '') return '';
 		return '<div class="woocommerce">' . $content . '</div>';
+	}
+
+	public function declare_plugins_widgets($pw) {
+		return array_merge($pw, array(
+				array(
+					'class' => 'WC_Widget_Layered_Nav',
+					'text' => 'WooCommerce Layered Navigation Widget'
+				),
+				array(
+					'class' => 'WC_Widget_Layered_Nav_Filters',
+					'text' => 'WooCommerce Layered Navigation Filters Widget'
+				),
+				array(
+					'class' => 'WC_Widget_Price_Filter',
+					'text' => 'WooCommerce Price Filter Widget'
+				),
+				array(
+					'class' => 'WC_Widget_Rating_Filter',
+					'text' => 'WooCommerce Rating Filter Widget'
+				),
+				array(
+					'class' => 'WC_Widget_Recent_Reviews',
+					'text' => 'WooCommerce Recent Reivews Widget'
+				),
+				array(
+					'class' => 'WC_Widget_Recently_Viewed',
+					'text' => 'WooCommerce Recently Viewed Widget'
+				),
+			)
+		);
 	}
 }
