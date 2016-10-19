@@ -359,7 +359,7 @@ define([
 				this.renderLightBoxesSelect();
 			}
 
-			if (_.contains(['external', 'entry', 'homepage'], this.model.get('type'))) {
+			if (_.contains(['external'], this.model.get('type'))) {
 				this.renderTargetRadio();
 			}
 
