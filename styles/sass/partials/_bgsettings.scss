@@ -298,7 +298,7 @@ div.upfront-bg-setting-tab-primary .uf-bgsettings-image-style .upfront-field-lab
 
 #region-settings-sidebar .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num {
 	position: absolute;
-	top: 31px;
+	top: 45px;
 	left: 30px;
 	margin: 0;
 }
@@ -322,7 +322,7 @@ div.upfront-bg-setting-tab-primary .uf-bgsettings-image-style .upfront-field-lab
 
 #region-settings-sidebar .uf-bgsettings-imageitem .uf-bgsettings-image-pos-x-num {
 	position: absolute;
-	top: 75px;
+	top: 85px;
 	left: 30px;
 	margin: 0;
 }
@@ -448,6 +448,11 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 	position: absolute;
 	top: -49px;
 	right: 16px;
+}
+
+#region-settings-sidebar .upfront-bg-setting-tab-featured .uf-bgsettings-image-color {
+	width: auto;
+	right: 0;
 }
 
 .upfront-modal-bg-settings-global .uf-bgsettings-image-color {
