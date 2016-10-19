@@ -11612,11 +11612,11 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
   border: none;
   right: 6px; }
 
-.link-control-panel .upfront-field-select-option:hover {
+.link-control-panel .upfront-link-select .upfront-field-select-option:hover {
   background: #e5e5e5;
   color: #000; }
 
-.link-control-panel .upfront-field-select-options {
+.link-control-panel .upfront-link-select .upfront-field-select-options {
   border: 1px solid #d9d9d9;
   background: #fff;
   max-height: 250px;
@@ -11624,7 +11624,7 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
   box-shadow: none;
   border-top: none; }
 
-.link-control-panel .upfront-field-select-options:before {
+.link-control-panel .upfront-link-select .upfront-field-select-options:before {
   content: " ";
   width: 80%;
   border-top: 1px solid #e5e5e5;
@@ -11641,6 +11641,10 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
   background-position: -318px -98px;
   width: 25px;
   height: 24px; }
+
+.link-control-panel .upfront-settings-link-target {
+  top: -5px;
+  position: relative; }
 
 .link-control-panel .upfront-settings-link-target,
 .link-control-panel .upfront-settings-link-field {
@@ -11668,6 +11672,39 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
   padding: 3px;
   text-align: center;
   font-size: 10px; }
+
+.link-control-panel .uf-link-target-select .upfront-field-select-options {
+  border: none;
+  background: #5e5e5e;
+  color: #fff;
+  line-height: 1;
+  padding: 0px !important;
+  text-align: center;
+  font-size: 10px;
+  top: 1px;
+  box-shadow: none;
+  border-top: none; }
+
+.link-control-panel .uf-link-target-select .upfront-field-select-options label,
+.link-control-panel .uf-link-target-select .upfront-field-select-option-selected label {
+  text-align: center;
+  font-size: 10px;
+  padding: 2px;
+  height: 16px;
+  color: #fff;
+  line-height: 1; }
+
+.link-control-panel .uf-link-target-select .upfront-field-select-option-selected {
+  background: #000; }
+
+.link-control-panel .uf-link-target-select .upfront-field-select-value {
+  height: 16px; }
+
+.link-control-panel .uf-link-target-select .upfront-field-select-options::-webkit-scrollbar {
+  width: 0px; }
+
+.link-control-panel .uf-link-target-select .upfront-field-select-option:hover {
+  background: #333333; }
 
 /* ----- New Editor bar ----- */
 .upfront-postcontent-editor {
