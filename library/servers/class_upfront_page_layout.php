@@ -127,6 +127,17 @@ class Upfront_Server_PageLayout extends Upfront_Server {
 	}
 
 	public function db_layout_to_name ($item) {
+		
+		// bypass layout name if maintenance page
+		if ( is_array($item) && isset($item['name']) && isset($item['source']) && $item['source'] == 'cpt' ) {
+			// extract page id
+			preg_match_all('!\d+!', $item['name'], $matches);
+			$page_id = ( isset($matches[0]) ) ? (int) implode('',$matches[0]) : false;
+			if ( upfront_is_maintenance_page($page_id) ) {
+				return Upfront_EntityResolver::layout_to_name(Upfront_Layout::get_maintenance_mode_layout_cascade());
+			}
+		}
+		
 		if ( !is_array($item) && !isset($item['source']) ) return Upfront_EntityResolver::db_layout_to_name($item);
 
 		return ucwords(preg_replace(array('/-layout/', '/[\-]/'), array('',' '), $item['name']));

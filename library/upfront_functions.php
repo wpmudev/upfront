@@ -345,6 +345,9 @@ function upfront_ajax_url ($action, $args = '') {
 	$args = wp_parse_args($args);
 	$args['action'] = $action;
 	$entity_ids = Upfront_EntityResolver::get_entity_ids();
+	
+	// if maintenance page, bypass the layout
+	if ( upfront_is_maintenance_page() ) $entity_ids = Upfront_Layout::get_maintenance_mode_layout_cascade(); 
 
 	// if page was still draft and viewed on FE, we should show 404 layout
 	if ( !Upfront_Output::get_post_id() && isset($entity_ids['specificity']) && preg_match('/single-page/i', $entity_ids['specificity']) ) {
@@ -563,6 +566,27 @@ function upfront_left_shift32 ($number, $steps) {
 	// otherwise return the 2's complement
 	return ($binary{0} == "0" ? bindec($binary) :
 		-(pow(2, 31) - bindec(substr($binary, 1))));
+}
+
+/**
+ * Check if current page is the maintenance page
+ * 
+ * @param int $current_page_id page id to check, default is false
+ * @return bool
+ */
+function upfront_is_maintenance_page ($current_page_id = false) {
+	if ( !$current_page_id ) {
+		$current_page_id = is_singular() ? apply_filters('upfront-data-post_id', get_the_ID()) : false;
+	}
+	$maintenance_data = get_option(Upfront_Server::MAINTENANCE_MODE, false);
+	if ( $maintenance_data ) {
+		$maintenance_data = json_decode($maintenance_data);
+		if ( $maintenance_data && is_object($maintenance_data) ) {
+			$page_id = (isset($maintenance_data->page_id)) ? (int)$maintenance_data->page_id : 0;
+			if ( $page_id == $current_page_id ) return true;
+		}
+	}
+	return false;
 }
 
 /**

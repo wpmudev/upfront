@@ -173,6 +173,9 @@ class Upfront_Ajax extends Upfront_Server {
 		}
 		// if still empty then load it from `options` table or from tpl file
 		if ( !$layout || $layout->is_empty() ) {
+			
+			// if maintenance page, bypass the layout
+			if ( upfront_is_maintenance_page($post_id) ) $layout_ids = Upfront_Layout::get_maintenance_mode_layout_cascade();
 			$layout = Upfront_Layout::from_entity_ids($layout_ids, $storage_key, $load_dev);
 			if ($layout->is_empty()){
 				// Instead of whining, create a stub layout and load that
@@ -368,7 +371,7 @@ class Upfront_Ajax extends Upfront_Server {
 		$layout = Upfront_Layout::from_php($data);
 		// get layout keys from layout data passed
 		$layout_ids = $layout->get('layout');
-
+		
 		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
 		// for all non-virtual page use post_id passed not the one from layout data
 		$layout_slug = ( $post_id )
@@ -381,6 +384,12 @@ class Upfront_Ajax extends Upfront_Server {
 		
 		// we need to save global regions to DB, so can be reused to other page
 		$layout->save_global_region();
+		
+		// if saving maintenance page, save it with key like 'single-page-id' not 'single-maintenance-mode_page' to avoid double entry on UF Admin - Reset Layout 
+		if ( upfront_is_maintenance_page($post_id) ) {
+			$layout_ids['specificity'] = 'single-page-' . $post_id;
+			$layout->set('layout', $layout_ids);
+		}
 		
 		// We need to save global layout options
 		$layout->save();
@@ -924,7 +933,7 @@ class Upfront_Ajax extends Upfront_Server {
 	
 	private function _create_maintenance_page () {
 		// creating maintenance page
-		$maintenance_post = Upfront_PostModel::create('page','maintenance', 'Site is under construction, please try again later...');
+		$maintenance_post = Upfront_PostModel::create('page','maintenance', ' ');
 		if ( $maintenance_post ) {
 			$maintenance_post->post_status = 'publish';
 			Upfront_PostModel::save($maintenance_post);
@@ -941,5 +950,4 @@ class Upfront_Ajax extends Upfront_Server {
 			delete_option(Upfront_Server::MAINTENANCE_MODE);
 		}
 	}
-
 }

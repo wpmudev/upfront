@@ -345,6 +345,9 @@ class Upfront_Layout extends Upfront_JsonModel {
 	 */
 	public static function get_default_layouts () {
 		$layouts = array(
+			'maintenance-mode' => array(
+				'layout' => self::get_maintenance_mode_layout_cascade()
+			),
 			'archive-home' => array(
 				'layout' => array(
 					'item' => 'archive-home',
@@ -377,6 +380,19 @@ class Upfront_Layout extends Upfront_JsonModel {
 		);
 
 		return apply_filters('upfront-core-default_layouts', $layouts);
+	}
+	
+	/**
+	 * Returns the default mainteanance page layout cascade
+	 *
+	 * @return (array) maintenance page layout cascade
+	 */
+	public static function get_maintenance_mode_layout_cascade () {
+		return array(
+			'specificity' => 'single-maintenance-mode_page',
+			'item' => 'single-page',
+			'type' => 'single',
+		);
 	}
 
 	/**

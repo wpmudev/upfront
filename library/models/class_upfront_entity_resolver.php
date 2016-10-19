@@ -174,6 +174,10 @@ abstract class Upfront_EntityResolver {
 				// 404 page layout
 				return __('404 Page', 'upfront');
 			}
+			if ('maintenance' === $item || 'single-maintenance-mode_page' === $specificity) {
+				// maintenance mode page layout
+				return __('Maintenance Mode', 'upfront');
+			}
 
 			if (empty($item) && empty($specificity)) return __('Single Generic', 'upfront');
 
