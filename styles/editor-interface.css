@@ -11654,6 +11654,9 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
 .link-control-panel .upfront-settings-link-field {
   width: 198px; }
 
+.link-control-panel .anchor-selector {
+  margin-top: -5px; }
+
 .link-control-panel .uf-link-target-select {
   width: 38px; }
 
