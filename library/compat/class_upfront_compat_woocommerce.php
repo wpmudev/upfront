@@ -58,7 +58,12 @@ class Upfront_Compat_WooCommerce {
 	 */
 	public function override_entity_ids ($cascade) {
 		if (!empty($cascade['item']) && 'single-product' === $cascade['item']) {
-			$cascade['item'] = 'single-page';
+			// Let's test if a theme supports Woo product layouts.
+			// As in, does this theme have single-product ready-made layouts?
+			$theme = Upfront_Theme::get_instance();
+
+			// If it doesn't, let's emulate - we'll be single pages here
+			if (!$theme->has_theme_layout('single-product')) $cascade['item'] = 'single-page';
 		}
 		return $cascade;
 	}
