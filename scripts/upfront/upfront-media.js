@@ -138,6 +138,22 @@ define([
 				})
 			;
 		},
+		// Same as delete_media_items except for theme/UI images.
+		delete_theme_items: function () {
+			var me = this,
+				data = {
+					"action": "upfront-media-remove_theme_item",
+					// Theme images use file names rather than post IDs.
+					"post_ids": this.invoke("get", "post_title")
+				}
+			;
+			Upfront.Util.post(data)
+				.success(function (response) {
+					me.reset([]);
+					Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+				})
+			;
+		},
 		global_labels_loaded: function () {
 			this.trigger("change");
 		}
@@ -483,7 +499,12 @@ define([
 					if (!show_nag || (show_nag && confirm(l10n.item_in_use_nag))) {
 						ActiveFilters.current_keys = [];
 						ActiveFilters.current_models = [];
-						this.model.delete_media_items();
+						// If theme image, delete via proper deletion method.
+						if (ActiveFilters.themeImages) {
+							return this.model.delete_theme_items();
+						}
+						// Otherwise delete media item.
+						return this.model.delete_media_items();
 					}
 				}
 			}
@@ -1447,11 +1468,21 @@ define([
 					data.submit();
 					new_media[count].on("upload:abort", function () {
 						data.abort();
-						if (new_media[count].get("ID")) {
+						// If normal Media.
+						if (new_media[count].get("ID") && !ActiveFilters.themeImages) {
 							// Already uploaded this file, remove on the server side
 							Upfront.Util.post({
 								action: "upfront-media-remove_item",
 								item_id: new_media[count].get("ID")
+							}).always(function () {
+								media_library_view.model.trigger("change");
+							});
+						// If theme/UI images.
+						} else if (new_media[count].get("ID") && ActiveFilters.themeImages) {
+							Upfront.Util.post({
+								action: "upfront-media-remove_theme_item",
+								// Theme images use file names rather than post IDs.
+								item_id: new_media[count].get("post_title")
 							}).always(function () {
 								media_library_view.model.trigger("change");
 							});
