@@ -18,6 +18,7 @@ class Upfront_Compat_WooCommerce {
 		add_filter('upfront-postdata_get_markup_before', array($this, 'override_postdata_content'), 10, 2);
 		add_filter('upfront-override_post_parts', array($this, 'override_post_parts'), 10, 2);
 		add_filter('upfront-widget_plugins_widgets', array($this, 'declare_plugins_widgets'));
+		add_filter('upfront-layout_to_name', array($this, 'layout_to_name'), 10, 4);
 	}
 
 /**
@@ -217,5 +218,16 @@ class Upfront_Compat_WooCommerce {
 				),
 			)
 		);
+	}
+
+	public function layout_to_name($layout_name, $type, $item, $specificity) {
+		error_log('layout_to_name ' . $type . ' ' . $item . ' ' . $specificity);
+		if ($type !== 'archive') return $layout_name;
+
+		if ($specificity === 'archive-product' && $item === 'product') {
+			return __('Product Archive', 'upfront');
+		}
+
+		return $layout_name;
 	}
 }
