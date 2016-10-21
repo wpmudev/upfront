@@ -171,6 +171,10 @@ abstract class Upfront_EntityResolver {
 		$item = !empty($layout_ids['item']) ? preg_replace("/^{$type}-/", "", $layout_ids['item']) : "";
 		$specificity = !empty($layout_ids['specificity']) ? preg_replace("/^{$type}-{$item}-/", "", $layout_ids['specificity']) : "";
 
+
+		$layout_name = apply_filters('upfront-layout_to_name', '', $type, $item, $specificity);
+		if ($layout_name !== '') return $layout_name;
+
 		if ('single' === $type) {
 			if ('404_page' === $item || 'single-404_page' === $specificity) {
 				// 404 page layout
