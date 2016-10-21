@@ -48,10 +48,6 @@ div.ugallery-controls i.upfront-icon:before {
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon {
     cursor: pointer;
 }
-.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-control-dialog-open,
-.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item:hover {
-    background: #E6ECF2;
-}
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-padding-control {
     min-width: 150px;
     width:100%;
@@ -245,36 +241,36 @@ div.ugallery-controls i.upfront-icon:before {
     opacity: 1;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-settings:before {
-    background-position: -350px -40px;
+    background-position: -351px -41px;
     width: 18px;
     height: 18px;
     opacity: 0.75;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-settings:hover:before {
-    background-position: -350px -40px;
+    background-position: -351px -41px;
     width: 18px;
     height: 18px;
     opacity: 0.75;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-control-dialog-open .upfront-icon-region-settings:before {
-    background-position: -231px -371px;
+    background-position: -351px -71px;
     width: 18px;
     height: 18px;
     opacity: 1;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-padding:before {
-    background-position: -320px -40px;
+    background-position: -321px -41px;
     width: 18px;
     height: 18px;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-padding:hover:before {
-    background-position: -320px -40px;
+    background-position: -321px -41px;
     width: 18px;
     height: 18px;
 	opacity: 0.75;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-control-dialog-open.upfront-inline-panel-item .upfront-icon-region-padding:before {
-    background-position: -320px -40px !important;
+    background-position: -321px -71px !important;
     width: 18px;
     height: 18px;
 	opacity: 1;
@@ -298,24 +294,25 @@ div.ugallery-controls i.upfront-icon:before {
     top: 9px;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-more:before {
-    background-position: -290px -40px;
+    background-position: -291px -40px;
     width: 24px;
     height: 24px;
     opacity: 0.75;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-more:hover:before {
-    background-position: -290px -40px;
+    background-position: -291px -40px;
     width: 24px;
     height: 24px;
-    opacity: 0.75;
+    opacity: 1;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-icon-region-more:before {
-    background-position: -290px -40px;
+    background-position: -291px -70px;
     width: 24px;
     height: 24px;
     opacity: 1 !important;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-inline-panel-item,
+.upfront-element-controls .upfront-inline-panel .upfront-control-dialog-open.upfront-inline-panel-item,
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open {
     background: #72848d;
 }
