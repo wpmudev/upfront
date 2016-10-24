@@ -1,6 +1,25 @@
 Change Log
 ============
 
+1.5 - 2016-10-24
+-------------------------------------------------------------------------------
+- Add: WooCommerce support
+- Add: padding setting to individual post part on post data elements
+- Add: region settings moved to the sidebar
+- Add: global region reset toggle to reset options area in admin
+
+- Fix: prevent double clicking on padding control to open group editing
+- Fix: region bg issue if total grid width is more than the screen width
+- Fix: improve layout rendering by change finite timeouts to pubsub
+- Fix: improve compatibility with anchoring with the Domain Mapping plugin
+- Fix: keyboard controlled padding is broken
+- Fix: slider side caption bug
+- Fix: remove upfront template admin notice on post types
+- Fix: element padding panel gets cut when on bottom of page
+- Fix: Upfront notifier z-index
+- Fix: redactor inline panel over post select popup
+- Fix: accordion editor exit issue
+
 1.4.3 - 2016-10-05
 -------------------------------------------------------------------------------
 - Add: compress data when saving
