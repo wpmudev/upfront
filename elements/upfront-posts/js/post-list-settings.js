@@ -45,7 +45,7 @@ var PostsSettings = ElementSettings.extend({
 			general,
 			post_parts;
 
-		if (typeof Upfront.Application.is_plugin_layout() !== 'undefined') return;
+		if (Upfront.Application.is_single() === false && typeof Upfront.Application.is_plugin_layout() !== 'undefined') return;
 
 		general = new Panels.General({model: this.model});
 		post_parts = new Panels.PostParts({model: this.model}) ;

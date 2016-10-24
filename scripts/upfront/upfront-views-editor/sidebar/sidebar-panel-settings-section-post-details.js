@@ -12,7 +12,7 @@
                 this.options = opts;
                 this.settings = _([]);
                 var self = this;
-                
+
                 if ( !Upfront.Views.PostDataEditor ) {
                     require(['content'], function() {
                         if(self.getPostId() !== false) {
@@ -39,7 +39,7 @@
                 this.listenTo(Upfront.Views.PostDataEditor, 'post:saved', function() {
                     this.render();
                 });
-				
+
                 this.stopListening(Upfront.Events, 'click:edit:navigate');
                 this.listenTo(Upfront.Events, 'click:edit:navigate', function (postId) {
                     if ( typeof postId !== 'undefined' && postId ) setTimeout(self.prepare_editor(self));
@@ -60,11 +60,10 @@
                 return 'post_details';
             },
             get_title: function () {
-                if ( Upfront.Application.is_single( "post" ) ) {
-                    return l10n.post_settings;
-                } else if ( Upfront.Application.is_single( "page" ) ) {
+				if ( Upfront.Application.is_single( "page" ) ) {
                     return l10n.page_settings;
                 }
+				return l10n.post_settings;
             },
 
             on_render: function () {
