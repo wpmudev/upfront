@@ -240,23 +240,23 @@ define([
 			var contentL10n = Upfront.Settings.l10n.global.content;
 			switch(type) {
 				case 'homepage':
-					return { value: 'homepage', label: contentL10n.homepage };
+					return { value: 'homepage', label: contentL10n.homepage, icon: 'link-homepage' };
 				case 'unlink':
-					return { value: 'unlink', label: contentL10n.no_link };
+					return { value: 'unlink', label: contentL10n.no_link, icon: 'link-unlink' };
 				case 'external':
-					return { value: 'external', label: contentL10n.url };
+					return { value: 'external', label: contentL10n.url, icon: 'link-external' };
 				case 'email':
-					return { value: 'email', label: contentL10n.email };
+					return { value: 'email', label: contentL10n.email, icon: 'link-email' };
 				case 'phone':
-					return { value: 'phone', label: contentL10n.phone };
+					return { value: 'phone', label: contentL10n.phone, icon: 'link-phone' };
 				case 'entry':
-					return { value: 'entry', label: contentL10n.post_or_page };
+					return { value: 'entry', label: contentL10n.post_or_page, icon: 'link-entry' };
 				case 'anchor':
-					return { value: 'anchor', label: contentL10n.anchor };
+					return { value: 'anchor', label: contentL10n.anchor, icon: 'link-anchor' };
 				case 'image':
-					return { value: 'image', label: contentL10n.larger_image };
+					return { value: 'image', label: contentL10n.larger_image, icon: 'link-image' };
 				case 'lightbox':
-					return { value: 'lightbox', label: contentL10n.lightbox };
+					return { value: 'lightbox', label: contentL10n.lightbox, icon: 'link-lightbox' };
 			}
 		},
 
@@ -359,13 +359,26 @@ define([
 				this.renderLightBoxesSelect();
 			}
 
-			if (_.contains(['external', 'entry', 'homepage'], this.model.get('type'))) {
+			if (_.contains(['external'], this.model.get('type'))) {
 				this.renderTargetRadio();
 			}
+			
+			this.updateWrapperSize();
 
 			this.delegateEvents();
 		},
+		
+		updateWrapperSize: function() {
+			var totalWidth = 0;
 
+			this.$el.children().each(function(i, element) {
+				var elementWidth = $(element).hasClass('upfront-settings-link-target') ? 0 : parseInt($(element).width());
+				totalWidth = totalWidth + elementWidth;
+			});
+			
+			this.$el.css('width', totalWidth + 20);
+		},
+		
 		renderTypeSelect: function() {
 			var me = this;
 
@@ -379,6 +392,7 @@ define([
 
 			this.typeSelect = new Upfront.Views.Editor.Field.Select({
 				label: '',
+				className: 'upfront-link-select',
 				values: typeSelectValues,
 				default_value: this.model.get('type'),
 				change: function () {
@@ -387,16 +401,16 @@ define([
 			});
 
 			this.typeSelect.render();
-			this.$el.find('form').prepend(this.typeSelect.el);
+			this.$el.find('.upfront-settings-link-select').prepend(this.typeSelect.el);
 		},
 
 		renderTargetRadio: function() {
 			var me = this;
 
-			this.targetRadio = new Upfront.Views.Editor.Field.Radios({
-				label: Upfront.Settings.l10n.global.content.target,
+			this.targetRadio = new Upfront.Views.Editor.Field.Select({
+				label: '',
+				className: 'uf-link-target-select',
 				default_value: this.model.get('target') || '_self',
-				layout: 'horizontal-inline',
 				values: [
 					{ label: Upfront.Settings.l10n.global.content.blank, value: '_blank' },
 					{ label: Upfront.Settings.l10n.global.content.self, value: '_self' }
@@ -407,7 +421,7 @@ define([
 			});
 
 			this.targetRadio.render();
-			this.$el.find('form').append(this.targetRadio.el);
+			this.$el.find('.upfront-settings-link-target').append(this.targetRadio.el);
 		},
 
 		renderAnchorSelect: function() {

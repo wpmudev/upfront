@@ -80,9 +80,14 @@ define([
 				item_count++;
 			});
 
+			// Prepend arrow, it is not set like pseudo element because we cant update its styles with jQuery
+			var panelArrow = '<span class="upfront-control-arrow"></span>';
+			this.$el
+				.find('.image-sub-control').prepend(panelArrow);
+
 			//Set width depending of items
 			this.$el
-				.find('.image-sub-control').css('width', 38 * item_count);
+				.find('.image-sub-control').css('width', (28 * item_count) + 2);
 		},
 
 		get_selected_item: function () {

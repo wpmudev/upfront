@@ -9,7 +9,9 @@
 .upfront-ui .upfront-icon.upfront-icon-region-add:before,
 .upfront-ui .upfront-icon.upfront-icon-more-menu:before {
 	content: " ";
-	background-image: url('../img/uf-core-el-sprite.svg?v=20131127');
+	/* background-image: url('../img/uf-core-el-sprite.svg?v=20131127'); */
+	background-image: url('../img/uf-core-el-sprite_new.png');
+    background-image: url('../img/uf-core-el-sprite_new.svg');
 	background-repeat: no-repeat;
 	float: left;
 	display: block;
@@ -719,24 +721,24 @@
     background-position: -1028px -207px;
 }
 .upfront-field-icon-burger-left:before {
-    background-position: -920px -268px;
+    background-position: -320px -488px;
     width: 22px;
-    height: 14px;
+    height: 22px;
 }
 .upfront-field-icon-burger-right:before {
-    background-position: -920px -300px;
+    background-position: -350px -488px;
     width: 22px;
-    height: 14px;
+    height: 22px;
 }
 .upfront-field-icon-burger-top:before {
-    background-position: -1027px -268px;
+    background-position: -380px -488px;
     width: 22px;
-    height: 14px;
+    height: 22px;
 }
 .upfront-field-icon-burger-whole:before {
-    background-position: -1027px -300px;
+    background-position: -410px -488px;
     width: 22px;
-    height: 14px;
+    height: 22px;
 }
 .upfront-field-icon-burger-trigger:before {
 	background-position: -920px -330px;
@@ -747,17 +749,17 @@ i.upfront-field-icon-burger-trigger {
 	vertical-align:bottom;
 }
 .upfront-field-icon-contact-above-field:before {
-	background-position: -1140px -40px;
+	background-position: -320px -458px;
 }
 .upfront-field-icon-contact-over-field:before {
-	background-position: -1248px -40px;
+	background-position: -350px -458px;
 }
 .upfront-field-icon-contact-inline-field:before {
-	background-position: -1140px -72px;
+	background-position: -380px -458px;
 }
 .upfront-field-icon-social-like:before {
 	width: 40px;
-	background-position: -1360px -40px;
+	background-position: -380px -458px;
 }
 .upfront-field-icon-social-count:before {
 	width: 45px;
@@ -805,20 +807,20 @@ i.upfront-field-icon-burger-trigger {
 }
 
 .upfront-field-icon-gallery-crop-theme:before {
-	background-position: -1688px -136px;
+	background-position: -320px -368px;
 }
 .upfront-field-icon-gallery-crop-1_1:before {
-	background-position: -1688px -168px;
+	background-position: -350px -368px;
 }
 .upfront-field-icon-gallery-crop-2_3:before {
-	background-position: -1688px -198px;
+	background-position: -410px -368px;
 }
 .upfront-field-icon-gallery-crop-4_3:before {
-	background-position: -1688px -228px;
+	background-position: -378px -368px;
 }
 
 .upfront-field-icon-refresh:before {
-	background-position: -480px -40px;
+	background-position: -408px -368px
 }
 .upfront-field-icon-refresh-2:before {
 	background-position: -480px -72px;

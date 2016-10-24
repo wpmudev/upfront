@@ -27,7 +27,14 @@
 .ugallery_item a {
 	display: block;
 }
-
+.ugallery .upfront-inline-panel-item {
+	background:transparent;
+}
+.ugallery-controls .upfront-inline-panel {
+	background:#fff;
+	/*border:1px solid #CCCCCC;*/
+	box-shadow:0 0 0 1px #ccc;
+}
 .even_padding .ugallery_item {
 	margin-bottom: 0;
 }
@@ -390,13 +397,13 @@ div.ugallery-label-selector {
 	display: none;
 }
 
-div.ugallery-controls i.upfront-icon:before {
+/*div.ugallery-controls i.upfront-icon:before {
 	background-image: url(../../../img/uf-core-el-sprite.svg);
-}
+}*/
 
 .upfront-ui .upfront-field-icon-over:before,
 .upfront-ui .upfront-icon-region-over:before {
-	background-position: -699px -486px;
+	background-position: -318px -308px;
 }
 .upfront-ui .upfront-icon-region-over:hover:before {
 	background-position: -807px -486px;
@@ -413,14 +420,14 @@ div.ugallery-controls i.upfront-icon:before {
 }
 
 .upfront-ui .upfront-field-icon-below:before {
-	background-position: -699px -646px;
+	background-position: -319px -338px;
 }
 
 .upfront-ui .upfront-icon-region-fullscreen:before {
-	background-position: -700px -775px;
+	background-position: -440px -100px;
 }
 .upfront-ui .upfront-icon-region-fullscreen:hover:before {
-	background-position: -808px -775px;
+	background-position: -440px -100px;
 }
 .upfront-ui .upfront-icon-region-fullscreen-active:before {
 	background-position: -700px -775px;
@@ -434,7 +441,7 @@ div.ugallery-controls i.upfront-icon:before {
 }*/
 
 .upfront-ui .upfront-icon-region-remove:before {
-	background-position: -261px -282px;
+	background-position: -348px -130px;
 }
 .upfront-ui .upfront-icon-region-remove-active:before {
 	background-position: -1229px -154px;
@@ -451,10 +458,10 @@ div.ugallery-controls i.upfront-icon:before {
 }
 
 .upfront-icon-region-toggle-sorting:before {
-	background-position: -261px -311px;
+	background-position: -410px -40px;
 }
 .upfront-icon-region-toggle-sorting.upfront-icon-region-sorting-active:before {
-	background-position: -291px -311px;
+	background-position: -410px -70px;
 }
 
 div.preset-manager-panel .field-caption-height {

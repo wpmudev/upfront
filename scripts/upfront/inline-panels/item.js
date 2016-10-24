@@ -1,8 +1,8 @@
 define([], function () {
 	var Item = Backbone.View.extend({
 		className: 'upfront-inline-panel-item',
-		width: 38,
-		height: 38,
+		width: 28,
+		height: 28,
 		icon_class: 'upfront-icon-region',
 
 		initialize: function(options) {

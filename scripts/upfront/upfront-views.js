@@ -685,12 +685,6 @@ define([
 				_offset = _current_el.$el.offset();
 				var $top_panel = _$control_el.find(".upfront-inline-panel-top").first();
 				if( $top_panel.find(".upfront-control-dialog-open").length ) return; // return if panel is open
-				// if top padding is less than 30 and element has at least 30px margin from top of window
-				if(  parseInt( _model.get_breakpoint_property_value("top_padding_num", false, 0), 10 ) < 30 && _offset.top-_main_offset.top >=30 ){
-					$top_panel.css("top", "-30px");
-				}else{
-					$top_panel.css("top", "0px");
-				}
 			}
 		})),
 

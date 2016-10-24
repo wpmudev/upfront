@@ -779,7 +779,7 @@
 	//transition: visibility 0s linear 0.6s, transform 0.6s, opacity 0.6s;
 }
 .upfront-inline-panel-top {
-	top: 0;
+	top: 5px;
 	-webkit-transform: scale(1);
 	-webkit-transform-origin: 50% 0;
 	transform: scale(1);
@@ -793,10 +793,10 @@
 	right: 0;
 }
 .upfront-inline-panel-top-left {
-	left: 8.3%;
+	left: 5px;
 }
 .upfront-region-fixed-panels .upfront-inline-panel-top-left {
-	left: 0;
+	left: 5px;
 	-webkit-transform: scale(0, 0);
 	-webkit-transform-origin: 0 0;
 	transform: scale(0, 0);
@@ -917,7 +917,6 @@
 	width: 30px;
 	height: 30px;
 	background: rgba(31, 48, 63, 0.8);
-	border-bottom: 1px solid #162433;
 	cursor: pointer;
 	float: left;
 	position: relative;
@@ -973,7 +972,7 @@
 }
 .upfront-inline-panel-item .upfront-icon {
 	display: block;
-	padding: 10px 6px 10px 10px;
+	padding: 5px 6px 5px 5px;
 }
 .upfront-inline-panel-item.labeled{
 	line-height: 40px !important;

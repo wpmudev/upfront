@@ -1,3 +1,27 @@
+/*  Selectors using uf-core-el-sprite 
+	================================= */
+
+#upfront-image-overlay .select-files:before,
+#upfront-image-overlay .icon-picture,
+.image-edit-control>i,
+.image-edit-button:before,
+div.uimage-controls i.upfront-icon:before,
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item i.upfront-icon:before,
+.upfront-ui .uimage-fullwidth-info,
+div#page .upfront-object.upfront-image .swap-image-overlay p:before,
+.image-edit-control-panel-item,
+.image-edit-control-panel-item.upfront-control-dialog-open,
+.image-crop-edit-button:before {
+
+	/* 
+	background-image: url(../../../img/uf-core-el-sprite.png);
+	background-image: url('../../../img/uf-core-el-sprite.svg');
+	*/
+	background-image: url(../../../img/uf-core-el-sprite_new.png);
+	background-image: url('../../../img/uf-core-el-sprite_new.svg');
+	background-repeat: no-repeat;	
+}
+
 #upfront-image-overlay {
 	position:fixed;
 	width: 100%;
@@ -91,8 +115,6 @@
 #upfront-image-overlay .select-files:before {
 	background-position: -702px -872px;
 	content: " ";
-	background-image: url('../../../img/uf-core-el-sprite.svg');
-	background-repeat: no-repeat;
 	float: left;
 	display: block;
 	width: 28px;
@@ -126,8 +148,8 @@
 	left: 12%;
 }
 
-#upfront-image-overlay .icon-picture{
-	background: url(../../../img/uf-core-el-sprite.svg) no-repeat -806px -322px;
+#upfront-image-overlay .icon-picture {
+	background-position:-806px -322px;
 	padding: 0 15px;
 }
 
@@ -316,7 +338,6 @@
 
 .image-edit-control>i {
 	color: #DAEDFE;
-	background: rgba(255, 255, 255, .9) url(../../../img/uf-core-el-sprite.svg) no-repeat;
 	position: relative;
 	z-index:12;
 	width: 35px;
@@ -396,8 +417,6 @@ a.image-edit-button:hover {
 	content: '';
 	display: inline-block;
 	vertical-align: middle;
-	background: url(../../../img/uf-core-el-sprite.png);
-	background: url(../../../img/uf-core-el-sprite.svg), none;
 }
 
 a.image-edit-button.deactivated {
@@ -722,23 +741,23 @@ a.image-edit-button.deactivated:hover {
 
 /* Select box icons */
 .upfront-field-icon-nocaption:before {
-	background-position: -700px -455px!important;
+	background-position: -700px -455px;
 }
 .upfront-field-icon-topOver:before {
-	background-position: -699px -520px!important;
+	background-position: -288px -308px;
 }
 .upfront-field-icon-showCaption:before,
 .upfront-field-icon-bottomOver:before {
-	background-position: -699px -488px!important;
+	background-position: -318px -308px;
 }
 .upfront-field-icon-topCover:before {
-	background-position: -699px -552px!important;
+	background-position: -349px -308px;
 }
 .upfront-field-icon-middleCover:before {
-	background-position: -699px -584px!important;
+	background-position: -379px -308px;
 }
 .upfront-field-icon-bottomCover:before {
-	background-position: -699px -616px!important;
+	background-position: -409px -308px;
 }
 
 div.preset-manager-panel .caption_location {
@@ -774,36 +793,32 @@ div.preset-manager-panel .caption_select .upfront-field-label {
 }
 
 /* Controls */
-div.uimage-controls i.upfront-icon:before,
-.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item i.upfront-icon:before {
-	background-image: url(../../../img/uf-core-el-sprite.svg);
-}
 
 .upfront-ui .upfront-icon-region-crop:before {
-	background-position: -261px -221px;
+	background-position: -410px -100px;
 }
 
 .upfront-ui .upfront-icon-region-link:before {
-	background-position: -260px -249px;
+	background-position: -380px -40px;
 }
 
 .upfront-ui .upfront-icon-region-swap:before {
-	background-position: -291px -342px;
+	background-position: -380px -100px;
 }
 
 .upfront-ui .upfront-icon-region-lock-unlocked:before {
-	background-position: -261px -430px;
+	background-position: -290px -160px;
 }
 
 .upfront-ui .upfront-icon-region-lock-locked:before {
-	background-position: -261px -460px;
+	background-position: -290px -130px;
 }
 
 .upfront-ui .upfront-icon-region-nocaption:before {
-	background-position: -701px -458px!important;
+	background-position: -260px -310px!important;
 }
 .upfront-ui .upfront-icon-region-nocaption:hover:before {
-	background-position: -809px -458px!important;
+	background-position: -260px -310px!important;
 }
 .upfront-ui .upfront-icon-region-nocaption-active:before {
 	background-position: -700px -455px!important;
@@ -813,10 +828,10 @@ div.uimage-controls i.upfront-icon:before,
 }
 
 .upfront-ui .upfront-icon-region-topOver:before {
-	background-position: -699px -520px!important;
+	background-position: -290px -310px!important;
 }
 .upfront-ui .upfront-icon-region-topOver:hover:before {
-	background-position: -807px -520px!important;
+	background-position: -290px -310px!important;
 }
 .upfront-ui .upfront-icon-region-topOver-active:before {
 	background-position: -699px -520px!important;
@@ -826,10 +841,10 @@ div.uimage-controls i.upfront-icon:before,
 }
 
 .upfront-ui .upfront-icon-region-bottomOver:before {
-	background-position: -699px -490px!important;
+	background-position: -320px -310px!important;
 }
 .upfront-ui .upfront-icon-region-bottomOver:hover:before {
-	background-position: -807px -490px!important;
+	background-position: -320px -310px!important;
 }
 .upfront-ui .upfront-icon-region-bottomOver-active:before {
 	background-position: -699px -487px!important;
@@ -839,10 +854,10 @@ div.uimage-controls i.upfront-icon:before,
 }
 
 .upfront-ui .upfront-icon-region-topCover:before {
-	background-position: -699px -554px!important;
+	background-position: -350px -310px!important;
 }
 .upfront-ui .upfront-icon-region-topCover:hover:before {
-	background-position: -807px -554px!important;
+	background-position: -350px -310px!important;
 }
 .upfront-ui .upfront-icon-region-topCover-active:before {
 	background-position: -699px -552px!important;
@@ -852,10 +867,10 @@ div.uimage-controls i.upfront-icon:before,
 }
 
 .upfront-ui .upfront-icon-region-middleCover:before {
-	background-position: -699px -586px!important;
+	background-position: -380px -310px!important;
 }
 .upfront-ui .upfront-icon-region-middleCover:hover:before {
-	background-position: -807px -586px!important;
+	background-position: -380px -310px!important;
 }
 .upfront-ui .upfront-icon-region-middleCover-active:before {
 	background-position: -699px -584px!important;
@@ -865,10 +880,10 @@ div.uimage-controls i.upfront-icon:before,
 }
 
 .upfront-ui .upfront-icon-region-bottomCover:before {
-	background-position: -699px -618px!important;
+	background-position: -410px -310px!important;
 }
 .upfront-ui .upfront-icon-region-bottomCover:hover:before {
-	background-position: -807px -618px!important;
+	background-position: -410px -310px!important;
 }
 .upfront-ui .upfront-icon-region-bottomCover-active:before {
 	background-position: -699px -616px!important;
@@ -878,10 +893,10 @@ div.uimage-controls i.upfront-icon:before,
 }
 
 .upfront-ui .upfront-icon-region-above:before {
-	background-position: -702px -682px!important;
+	background-position: -350px -340px!important;
 }
 .upfront-ui .upfront-icon-region-above:hover:before {
-	background-position: -810px -682px!important;
+	background-position: -350px -340px!important;
 }
 .upfront-ui .upfront-icon-region-above-active:before {
 	background-position: -699px -680px!important;
@@ -891,10 +906,10 @@ div.uimage-controls i.upfront-icon:before,
 }
 
 .upfront-ui .upfront-icon-region-below:before {
-	background-position: -702px -650px!important;
+	background-position: -320px -340px!important;
 }
 .upfront-ui .upfront-icon-region-below:hover:before {
-	background-position: -810px -650px!important;
+	background-position: -320px -340px!important;
 }
 .upfront-ui .upfront-icon-region-below-active:before {
 	background-position: -699px -646px!important;
@@ -1056,7 +1071,6 @@ div.uimage-controls i.upfront-icon:before,
 	height: 90px;
 	float: left;
 	margin-right: 5%;
-	background-image: url(../../../img/uf-core-el-sprite.svg);
 }
 
 .upfront-ui .uimage-fullwidth-info-1{
@@ -1375,7 +1389,6 @@ div#page .upfront-object.upfront-image .swap-image-overlay p.upfront-icon-swap-i
 }
 div#page .upfront-object.upfront-image .swap-image-overlay p:before {
 	content: "";
-	background-image: url('../../../img/uf-core-el-sprite.svg');
 	background-position: -807px -361px;
 	display: inline-block;
 	width: 24px;
@@ -1393,7 +1406,6 @@ div#page .upfront-object.upfront-image .swap-image-overlay p:before {
 }
 .image-edit-control-panel-item {
 	border-radius: 3px;
-	background-image: url(../../../img/uf-core-el-sprite.svg);
 	background-position: -287px -491px;
 	background-color: rgba(242,249,255,1);
 	z-index: initial;
@@ -1401,7 +1413,6 @@ div#page .upfront-object.upfront-image .swap-image-overlay p:before {
 }
 .image-edit-control-panel-item.upfront-control-dialog-open {
 	border-radius: 3px;
-	background-image: url(../../../img/uf-core-el-sprite.svg);
 	background-position: -287px -522px;
 	background-color: rgba(242,249,255,1);
 	z-index: initial;
@@ -1494,54 +1505,52 @@ div#page .upfront-object.upfront-image .swap-image-overlay p:before {
 	position: absolute;
 	top: 4px;
 	left: 3px;
-	background: url(../../../img/uf-core-el-sprite.png);
-	background: url(../../../img/uf-core-el-sprite.svg), none;
 }
 
 #image-edit-button-swap:before{
-	background-position: -291px -342px;
+	background-position: -382px -102px;
 	width: 18px;
 	height: 16px;
 	opacity: 0.7;
 }
 #image-edit-button-swap:hover:before{
-	background-position: -291px -342px;
+	background-position: -382px -102px;
 	width: 18px;
 	height: 16px;
 	opacity: 1;
 }
 #image-edit-button-reset:before{
-	background-position: -291px -368px;
+	background-position: -291px -398px;
 	width: 18px;
 	height: 20px;
 	opacity: 0.7;
 }
 #image-edit-button-reset:hover:before{
-	background-position: -291px -368px;
+	background-position: -291px -398px
 	width: 18px;
 	height: 20px;
 	opacity: 1;
 }
 #image-edit-button-fit:before{
-	background-position: -291px -398px;
+	background-position: -291px -428px;
 	width: 18px;
 	height: 18px;
 	opacity: 0.7;
 }
 #image-edit-button-fit:hover:before{
-	background-position: -291px -398px;
+	background-position: -291px -428px;
 	width: 18px;
 	height: 18px;
 	opacity: 1;
 }
 #image-edit-button-fill:before{
-	background-position: -291px -431px;
+	background-position: -291px -461px;
 	width: 18px;
 	height: 18px;
 	opacity: 0.7;
 }
 #image-edit-button-fill:hover:before{
-	background-position: -291px -431px;
+	background-position: -291px -461px;
 	width: 18px;
 	height: 18px;
 	opacity: 1;
