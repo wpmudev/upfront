@@ -544,7 +544,7 @@
             on_spectrum_move: function(color, e){
                 if( !_.isEmpty( color ) ){
                     this.color = color;
-                    var rgb = color.toHexString();
+                    var rgb = color.toRgbString();
                     $('.sp-dragger').css({
                         'border-top-color': rgb,
                         'border-right-color': rgb
@@ -571,7 +571,7 @@
 
                 if( !_.isEmpty( color ) ){
                     this.color = color;
-                    var rgb = color.toHexString();
+                    var rgb = color.toRgbString();
                     this.rgba = _.extend(this.rgba, color.toRgb());
                     this.update_input_border_color( color.toRgbString() );
                     this.render_sidebar_rgba(this.rgba);
@@ -579,7 +579,7 @@
                 }
                 if( !_.isEmpty( input_val) && !this.is_hex( input_val )){
                     var t_color = tinycolor( input_val );
-                    $input.val(t_color.toHexString());
+                    $input.val(t_color.toRgbString());
                 }
                 //this.spectrumOptions = spectrumOptions;
 
@@ -723,7 +723,7 @@
                 // Set the new color
                 this.$spectrum.spectrum("set", color.toRgbString());
                 this.update_input_border_color( color.toRgbString() );
-                this.update_input_val( color.toHexString() );
+                this.update_input_val( color.toRgbString() );
                 this.render_sidebar_rgba(  color.toRgb() );
                 // Trigger move event
                 if(this.options.spectrum && typeof this.options.spectrum.move === "function"){

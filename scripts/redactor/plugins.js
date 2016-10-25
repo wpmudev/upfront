@@ -1090,7 +1090,7 @@ RedactorPlugins.upfrontColor = function() {
                         "border-left-color": self.current_color
                     });
                     foreground_picker.render_sidebar_rgba(color.toRgb());
-                    foreground_picker.update_input_val(color.toHexString());
+                    foreground_picker.update_input_val(color.toRgbString());
                 }
                 else {
                     var color = tinycolor("#000000");
@@ -1100,7 +1100,7 @@ RedactorPlugins.upfrontColor = function() {
                         "border-left-color": "#000000"
                     });
                     foreground_picker.render_sidebar_rgba(color.toRgb());
-                    foreground_picker.update_input_val(color.toHexString());
+                    foreground_picker.update_input_val(color.toRgbString());
                 }
 
                 if (this.current_bg) {
@@ -1111,7 +1111,7 @@ RedactorPlugins.upfrontColor = function() {
                         "border-left-color": self.current_bg
                     });
                     background_picker.render_sidebar_rgba(color.toRgb());
-                    background_picker.update_input_val(color.toHexString());
+                    background_picker.update_input_val(color.toRgbString());
                 }
                 else {
                     var color = tinycolor("rgba(0, 0, 0, 0)");
@@ -1121,7 +1121,7 @@ RedactorPlugins.upfrontColor = function() {
                         "border-left-color": "rgba(0, 0, 0, 0)"
                     });
                     background_picker.render_sidebar_rgba(color.toRgb());
-                    background_picker.update_input_val(color.toHexString());
+                    background_picker.update_input_val(color.toRgbString());
                 }
 
 
@@ -1515,6 +1515,7 @@ RedactorPlugins.upfrontFormatting = function() {
             },
             open: function (e, redactor) {
                 this.redactor = redactor;
+				this.set_position();
                 this.set_previously_selected_tag();
                 this.set_previously_selected_class();
             },
@@ -1524,6 +1525,14 @@ RedactorPlugins.upfrontFormatting = function() {
                     this.$sel = false;
                 }
             },
+			set_position: function() {
+				var $container = this.$el.closest('.redactor_air'),
+					offset = $container.offset();
+
+					if(offset.top < 100) {
+						//this.$el.closest('.redactor-dropdown-box-upfrontFormatting').css('top', offset.top);
+					}
+			},
             set_previously_selected_tag: function(){
                 var tag = $(this.redactor.selection.getBlock()).length ? $(this.redactor.selection.getBlock())[0].tagName : false;
                 if (tag) {
