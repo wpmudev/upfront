@@ -818,7 +818,7 @@ define([
 					vPadding = parseInt( (this.model.get_breakpoint_property_value('top_padding_num') || column_padding), 10 ) + parseInt( (this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding), 10 ),
 					width = width ? width - hPadding : this.$el.width() - hPadding,
 					height = height ? height : this.$el.outerHeight(),
-					hint = '<b>w:</b>' + width + 'px <b>h:</b>' + height + 'px';
+					hint = width + ' &#215; ' + height;
 
 				this.$el.find('.upfront-entity-size-hint').html(hint);
 
@@ -5714,7 +5714,7 @@ define([
 				this.update_size_hint(parseInt(this.$el.css('width'), 10), parseInt(this.$el.css('height'), 10));
 			},
 			update_size_hint: function (width, height, $helper) {
-				var hint = '<b>w:</b>' + width + 'px <b>h:</b>' + height + 'px';
+				var hint = width + ' &#215; ' + height;
 				( $helper ? $helper : this.$el ).find('.upfront-region-size-hint').html(hint);
 			},
 			region_resize: function (col) {
