@@ -13027,13 +13027,16 @@ body .redactor_air.at-right:after {
 
 body .redactor_air.under:after {
   box-sizing: border-box;
-  height: 14px;
-  width: 14px;
-  border: 7px solid transparent;
-  border-bottom-color: rgba(30, 47, 63, 0.95);
+  width: 8px;
+  height: 8px;
+  transform: rotate(45deg);
+  background: #ffffff;
+  border-left: 1px solid #cccccc;
+  border-top: 1px solid #cccccc;
   position: absolute;
-  top: -14px;
-  left: 47%;
+  bottom: -5px;
+  left: 48%;
+  z-index: 8;
   content: ' '; }
 
 body .redactor_air.under.at-right:after {
