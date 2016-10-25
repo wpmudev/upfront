@@ -307,6 +307,13 @@
 			this.percent_x = parseInt(position[0], 10) * 0.01;
 			this.percent_y = parseInt(position[1], 10) * 0.01;
 
+			// Check if scaling is NaN, if it is, we set default parameter
+			if ( isNaN(this.size_percentage) ) {
+				this.size_percentage = 1;
+				this.percent_x = 0.5;
+				this.percent_y = 0.5;
+			}
+
 			if (src != 'none') {
 				this.cache.img = img;
 				this.cache.background_color = this.$parent.css("background-color") || "#fff";
@@ -362,6 +369,8 @@
 			if ( this.is_image_png() ) {
 				this.fillCanvas(width, parallaxHeight);
 			}
+
+			console.log(scale)
 
 			this.imgContext.drawImage(this.cache.img, drawX, drawY, drawWidth, drawHeight, position_x, position_y, (width * scale), (parallaxHeight * scale));
 
