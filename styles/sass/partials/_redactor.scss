@@ -683,14 +683,15 @@ a.ueditor-unlink {
 
 // upfrontFormatting
 .redactor-dropdown-box-upfrontFormatting{
-  min-width: 0;
-  width: 200px;
-  height: 180px;
-  background-color: #f2f9ff;
-  border: 1px solid #2a465f;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  padding: 0;
+	min-width: 0;
+	width: 150px;
+	height: 140px;
+	background-color: #FFFFFF;
+	border: 1px solid #cccccc;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	border-radius: 2px;
+	padding: 0;
 }
 
 .ufront-air-formatting ul{
