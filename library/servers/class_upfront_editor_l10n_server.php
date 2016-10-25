@@ -502,6 +502,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'element_css_styles' => __('Element CSS Styles', 'upfront'),
 				'anchor_settings' => __('Anchor Settings', 'upfront'),
 				'settings' => __('Settings', 'upfront'),
+				'more_options' => __('More...', 'upfront'),
 				'anchor_nag' => __('Please, use letters only, eg. <b>myAnchor</b><br />No spaces or special characters.', 'upfront'),
 				'default_str' => __('Default', 'upfront'),
 				'add_new_style' => __('add new style', 'upfront'),

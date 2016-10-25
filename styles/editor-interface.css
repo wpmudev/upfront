@@ -11195,8 +11195,8 @@ div.ugallery-controls i.upfront-icon:before {
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon {
   opacity: 0.70; }
 
-.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-control-dialog-open .upfront-icon:first-child,
-.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-icon:first-child,
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-control-dialog-open .upfront-icon,
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-icon,
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon:hover {
   opacity: 1; }
 
@@ -18073,6 +18073,13 @@ div.preset-manager-panel .checkbox-tooltip {
 
 .upfront-inline-panel-item.group-link-control {
   z-index: 51; }
+
+/* Group inline panel */
+.upfront-module-group .upfront-icon.upfront-icon-region-edit_elements:before {
+  background-position: -442px -42px; }
+
+.upfront-module-group .upfront-icon.upfront-icon-region-ungroup:before {
+  background-position: -442px -73px; }
 
 /**
  * Compatibility issue nag popup, v1 check

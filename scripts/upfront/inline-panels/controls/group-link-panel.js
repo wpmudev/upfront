@@ -42,10 +42,6 @@ define([
 			});
 		},
 
-		label: function () {
-			return ( this.link.get('type') != 'unlink' ? l10n.edit_link : l10n.not_linked );
-		},
-
 		onClickControl: function(e){
 			this.$el.siblings('.upfront-control-dialog-open').removeClass('upfront-control-dialog-open');
 

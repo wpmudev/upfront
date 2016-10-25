@@ -15,3 +15,11 @@
 .upfront-inline-panel-item.group-link-control {
 	z-index: 51;
 }
+
+/* Group inline panel */
+.upfront-module-group .upfront-icon.upfront-icon-region-edit_elements:before {
+	background-position: -442px -42px;
+}
+.upfront-module-group .upfront-icon.upfront-icon-region-ungroup:before {
+	background-position: -442px -73px;
+}
