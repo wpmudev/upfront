@@ -13771,6 +13771,12 @@ a.ueditor-unlink {
   margin: 0 auto;
   display: block; }
 
+.redactor-dropdown-box-upfrontFormatting {
+  top: -100px;
+  left: -10px !important;
+  margin-top: 0px;
+  box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3); }
+
 /* New Color Picker CSS override */
 .sp-container {
   background-color: #2b3c4b;
