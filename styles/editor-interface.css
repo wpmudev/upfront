@@ -13839,10 +13839,10 @@ li#tabbackground-content .sp-palette-row-selection span.sp-thumb-el:last-child >
   height: 14px;
   left: 50%;
   cursor: pointer;
-  border: 1px solid #a2c5e4;
+  border: none;
   background: rgba(255, 255, 255, 0.7);
   opacity: 1;
-  box-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 2px 0 rgba(36, 57, 77, 0.3);
   margin-left: -1px; }
 
 .sp-alpha {
@@ -14103,21 +14103,24 @@ ul.upfront_color_picker_rgba {
 
 .sp-alpha-handle:before {
   content: '';
-  border-top: 4px solid #abb2b8;
-  border-left: 3px solid transparent;
-  border-right: 3px solid transparent;
+  border-left: 1px solid #ffffff;
+  box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3);
   position: absolute;
-  left: 0;
-  top: -5px; }
+  z-index: 999;
+  left: 2px;
+  height: 10px;
+  top: -2px; }
 
 .sp-alpha-handle:after {
   content: '';
-  border-bottom: 4px solid #abb2b8;
-  border-left: 3px solid transparent;
-  border-right: 3px solid transparent;
   position: absolute;
-  top: 13px;
-  left: 0; }
+  top: 10px;
+  left: 0;
+  box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3);
+  background: #212121;
+  width: 5px;
+  height: 5px;
+  border: 1px solid #fff; }
 
 div.sp-val:active .sp-dragger:after {
   display: block; }
