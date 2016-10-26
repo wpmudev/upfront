@@ -725,19 +725,20 @@
 }
 
 .upfront-entity-size-hint {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  background: #3d5266;
-  color: #dcebf8;
-  font-size: 13px;
-  line-height: 17px;
-  padding: 5px;
-  z-index: 10;
-  display: none;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	background: rgb(37, 58, 78);
+	color: #dcebf8;
+	font: normal 11px/13px Verdana, sans-serif;
+	font-size: 13px;
+	line-height: 17px;
+	padding: 5px;
+	z-index: 10;
+	display: none;
 }
 .upfront-entity-size-hint b {
-  color: #ADC3D8;
+	color: #ADC3D8;
 }
 .upfront-entity-size-hint-color {
 	background: rgba(111, 188, 248, 1);
@@ -749,8 +750,12 @@
 .upfront-module-group .upfront-entity-size-hint-color {
 	background: rgba(248, 210, 111, 1);
 }
-.upost-data-object .upfront-entity-size-hint-color {
+.upost-data-object ~ .upfront-entity-size-hint .upfront-entity-size-hint-color {
 	background: rgba(111, 248, 148, 1);
+}
+.upfront-entity-size-hint .upfront-entity-type {
+	display: inline-block;
+	margin: 0 0.5rem;
 }
 /* .upfront-editable_entity:hover > .upfront-entity-size-hint, */
 .upfront-editable_entity.ui-resizable-resizing > .upfront-entity-size-hint,

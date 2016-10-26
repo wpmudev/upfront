@@ -807,6 +807,47 @@ define([
 				}
 				setTimeout(function(){ me.update_size_hint(); }, 500);
 			},
+			get_selection_type: function(selection) {
+				if (selection.hasClass('upfront-module-group')) {
+					return Upfront.Settings.l10n.global.behaviors.group;
+				} else if (selection.hasClass('upfront-button')) {
+					return l10n.button;
+				} else if (selection.children('div').hasClass('upfront-navigation')) {
+					return l10n.navigation;
+				} else if (selection.children('div').hasClass('upfront-plain_txt')) {
+					return l10n.text;
+				} else if (selection.children('div').hasClass('upfront-gallery')) {
+					return l10n.gallery;
+				} else if (selection.children('div').hasClass('upfront-image')) {
+					return l10n.image;
+				} else if (selection.children('div').hasClass('upfront-uslider')) {
+					return l10n.slider;
+				} else if (selection.children('div').hasClass('upfront-map_element-object')) {
+					return l10n.map;
+				} else if (selection.children('div').hasClass('upfront-widget')) {
+					return l10n.widget;
+				} else if (selection.children('div').hasClass('upfront-youtube')) {
+					return l10n.youtube;
+				} else if (selection.children('div').hasClass('upfront-like-box')) {
+					return l10n.like_box;
+				} else if (selection.children('div').hasClass('upfront-contact-form')) {
+					return l10n.contact_form;
+				} else if (selection.parents('div').hasClass('upfront-code_element-module')) {
+					return l10n.code;
+				} else if (selection.children('div').hasClass('upfront-tabs')) {
+					return l10n.tabs;
+				} else if (selection.children('div').hasClass('upfront-accordion')) {
+					return l10n.accordion;
+				} else if (selection.children('div').hasClass('upfront-login_element-object')) {
+					return l10n.login;
+				} else if (selection.children('div').hasClass('uposts-object')) {
+					return l10n.posts;
+				} else if (selection.children('div').hasClass('upost-data-object')) {
+					return l10n.post_data;
+				} else {
+					return l10n.element;
+				}
+			},
 			update_size_hint: function (width, height) {
 
 				if ( !this.$size_hint ) {
@@ -818,7 +859,10 @@ define([
 					vPadding = parseInt( (this.model.get_breakpoint_property_value('top_padding_num') || column_padding), 10 ) + parseInt( (this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding), 10 ),
 					width = width ? width - hPadding : this.$el.width() - hPadding,
 					height = height ? height : this.$el.outerHeight(),
-					hint = '<div class="upfront-entity-size-hint-color"></div>' + width + ' &#215; ' + height;
+					type = this.get_selection_type(this.$el),
+					hint = '<div class="upfront-entity-size-hint-color"></div><span class="upfront-entity-type">' + type + ',</span>'
+						+ width + ' &#215; ' + height
+					;
 
 				this.$el.find('.upfront-entity-size-hint').html(hint);
 

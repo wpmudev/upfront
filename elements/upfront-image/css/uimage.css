@@ -1026,13 +1026,20 @@ div.preset-manager-panel .caption_select .upfront-field-label {
 
 .upfront-ui.uimage-resize-hint {
 	position: absolute;
-	top: 15px;
+	bottom: 15px;
 	left: 15px;
-	background: #3d5266;
-	padding:2px 5px;
-	font:normal 11px/13px Verdana, sans-serif;
+	background: rgb(37, 58, 78);
+	padding: 5px;
+	font: normal 11px/13px Verdana, sans-serif;
+	font-size: 13px;
+	line-height: 17px;
 	color: #DCEBF8;
-  min-height: 16px;
+	min-height: 16px;
+}
+
+.upfront-ui.uimage-resize-hint .upfront-entity-type {
+	display: inline-block;
+	margin: 0 0.3rem;
 }
 
 .upfront-ui.uimage-resize-hint b {
