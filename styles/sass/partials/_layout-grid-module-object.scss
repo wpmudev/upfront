@@ -732,12 +732,25 @@
   color: #dcebf8;
   font-size: 13px;
   line-height: 17px;
-  padding: 0 5px;
+  padding: 5px;
   z-index: 10;
   display: none;
 }
 .upfront-entity-size-hint b {
   color: #ADC3D8;
+}
+.upfront-entity-size-hint-color {
+	background: rgba(111, 188, 248, 1);
+	width: 10px;
+	height: 10px;
+	display: inline-block;
+	border-radius: 50%;
+}
+.upfront-module-group .upfront-entity-size-hint-color {
+	background: rgba(248, 210, 111, 1);
+}
+.upost-data-object .upfront-entity-size-hint-color {
+	background: rgba(111, 248, 148, 1);
 }
 /* .upfront-editable_entity:hover > .upfront-entity-size-hint, */
 .upfront-editable_entity.ui-resizable-resizing > .upfront-entity-size-hint,

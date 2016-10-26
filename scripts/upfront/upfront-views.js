@@ -818,7 +818,7 @@ define([
 					vPadding = parseInt( (this.model.get_breakpoint_property_value('top_padding_num') || column_padding), 10 ) + parseInt( (this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding), 10 ),
 					width = width ? width - hPadding : this.$el.width() - hPadding,
 					height = height ? height : this.$el.outerHeight(),
-					hint = width + ' &#215; ' + height;
+					hint = '<div class="upfront-entity-size-hint-color"></div>' + width + ' &#215; ' + height;
 
 				this.$el.find('.upfront-entity-size-hint').html(hint);
 
