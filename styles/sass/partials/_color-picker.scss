@@ -289,7 +289,7 @@ License: MIT
 }
 .sp-color, .sp-hue
 {
-    border: solid 2px #465D73;
+    border: 1px solid #e0e0e0;
 }
 
 /* Input */
@@ -543,7 +543,7 @@ div.sp-replacer:before {
 }
 
 .sp-alpha-overlay:before {
-    display: inline-block;
+	display: inline-block;
     content: "";
     width: 15px;
     height: 15px;
