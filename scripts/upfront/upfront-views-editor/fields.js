@@ -430,8 +430,7 @@
                 hideOnOuterClick: true
             },
             spectrumDefaults: {
-                clickoutFiresChange: false,
-                chooseText: 'OK',
+                clickoutFiresChange: true,
                 showSelectionPalette: true,
                 showAlpha: true,
                 showPalette: true,
@@ -439,6 +438,7 @@
                 palette: Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : [],
                 maxSelectionSize: 10,
                 preferredFormat: "hex",
+				showButtons: false,
                 showInput: true,
                 allowEmpty:true,
                 appendTo : "parent"
