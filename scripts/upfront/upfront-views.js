@@ -369,10 +369,13 @@ define([
 				this.$el.find('#upfront_map-api_key_overlay-wrapper').remove();
 			},
 			update_background_map: function ($type, $overlay) {
+
 				// If background type is map and is missing API Key, show notice.
 				if (
 					!(window._upfront_api_keys || {})['gmaps']
 					&& Upfront.Application.user_can_modify_layout()
+					// Warn if invalid API Key.
+					|| typeof google_maps_auth_error !== 'undefined'
 				) {
 					this.add_api_key_overlay();
 				}
