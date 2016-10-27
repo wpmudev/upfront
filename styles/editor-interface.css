@@ -13848,7 +13848,7 @@ li#tabbackground-content .sp-palette-row-selection span.sp-thumb-el:last-child >
 .sp-alpha {
   position: absolute;
   left: 0;
-  bottom: -25px;
+  bottom: -5px;
   height: 6px;
   width: 111px;
   border-radius: 2px;
@@ -13872,7 +13872,7 @@ li#tabbackground-content .sp-palette-row-selection span.sp-thumb-el:last-child >
 .sp-picker-container {
   width: 150px;
   position: relative;
-  top: -90px;
+  top: -65px;
   left: 100px; }
 
 .sp-palette-container {
@@ -13905,16 +13905,18 @@ input[type=text].sp-input {
   color: #a2a2a2;
   width: 225px;
   height: 24px;
-  line-heigth: 24px;
+  line-height: 24px;
   border: 1px solid #e0e0e0;
   background-color: #f5f5f5;
   border-radius: 0px;
-  padding-left: 16px; }
+  padding-left: 16px;
+  position: relative;
+  top: -5px; }
 
 .sp-input-container {
   position: absolute;
-  top: -50px;
-  left: -85px; }
+  top: -40px;
+  left: -90px; }
 
 .sp-palette-container {
   margin-bottom: 0;
@@ -13922,7 +13924,7 @@ input[type=text].sp-input {
   border-right: none; }
 
 .sp-palette-container {
-  top: 40px; }
+  top: 50px; }
 
 .sp-palette-container:before {
   /*
@@ -14006,8 +14008,8 @@ ul.upfront_color_picker_rgba {
 .upfront_color_picker_reset {
   position: absolute;
   text-indent: 999px;
-  right: 57px;
-  bottom: 8px;
+  right: 10px;
+  bottom: 10px;
   cursor: pointer; }
 
 .noColor {
@@ -14118,8 +14120,8 @@ ul.upfront_color_picker_rgba {
   left: 0;
   box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3);
   background: #212121;
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   border: 1px solid #fff; }
 
 div.sp-val:active .sp-dragger:after {
