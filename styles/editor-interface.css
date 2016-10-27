@@ -13848,7 +13848,7 @@ li#tabbackground-content .sp-palette-row-selection span.sp-thumb-el:last-child >
 .sp-alpha {
   position: absolute;
   left: 0;
-  bottom: -5px;
+  bottom: -15px;
   height: 6px;
   width: 111px;
   border-radius: 2px;
@@ -13917,6 +13917,29 @@ input[type=text].sp-input {
   position: absolute;
   top: -40px;
   left: -90px; }
+
+.upfront_color_picker_rgb_preview {
+  width: 10px;
+  position: absolute;
+  left: 11px;
+  top: 26px;
+  height: 22px;
+  /* magic happens below */
+  background-color: #DFE9F2;
+  background-image: -webkit-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -webkit-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+  background-image: -moz-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -moz-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+  background-image: -o-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -o-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+  background-image: linear-gradient(to top right, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), linear-gradient(to top right, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+  -webkit-background-size: 8px 8px;
+  -moz-background-size: 8px 8px;
+  background-size: 8px 8px;
+  background-position: 2px 0px, 6px 4px; }
+
+.upfront_color_picker_rgb_main {
+  width: 10px;
+  height: 24px;
+  position: relative;
+  display: block; }
 
 .sp-palette-container {
   margin-bottom: 0;

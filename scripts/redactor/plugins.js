@@ -1086,8 +1086,8 @@ RedactorPlugins.upfrontColor = function() {
                     var color = tinycolor(self.current_color);
                     foreground_picker.$(".upfront-field-color").spectrum("option", "color", self.current_color);
                     foreground_picker.$(".upfront-field-color").spectrum("set", color);
-                    foreground_picker.$(".sp-input").css({
-                        "border-left-color": self.current_color
+                    foreground_picker.$(".upfront_color_picker_rgb_main").css({
+                        "background": self.current_color
                     });
                     foreground_picker.render_sidebar_rgba(color.toRgb());
                     foreground_picker.update_input_val(color.toRgbString());
@@ -1096,8 +1096,8 @@ RedactorPlugins.upfrontColor = function() {
                     var color = tinycolor("#000000");
                     foreground_picker.$(".upfront-field-color").spectrum("option", "color", "#000000");
                     foreground_picker.$(".upfront-field-color").spectrum("set", color);
-                    background_picker.$(".sp-input").css({
-                        "border-left-color": "#000000"
+                    background_picker.$(".upfront_color_picker_rgb_main").css({
+                        "background": "#000000"
                     });
                     foreground_picker.render_sidebar_rgba(color.toRgb());
                     foreground_picker.update_input_val(color.toRgbString());
@@ -1107,8 +1107,8 @@ RedactorPlugins.upfrontColor = function() {
                     var color = tinycolor(self.current_bg);
                     background_picker.$(".upfront-field-color").spectrum("option", "color", self.current_bg);
                     background_picker.$(".upfront-field-color").spectrum("set", color);
-                    background_picker.$(".sp-input").css({
-                        "border-left-color": self.current_bg
+                    background_picker.$(".upfront_color_picker_rgb_main").css({
+                        "background": self.current_bg
                     });
                     background_picker.render_sidebar_rgba(color.toRgb());
                     background_picker.update_input_val(color.toRgbString());
@@ -1117,8 +1117,8 @@ RedactorPlugins.upfrontColor = function() {
                     var color = tinycolor("rgba(0, 0, 0, 0)");
                     background_picker.$(".upfront-field-color").spectrum("option", "color", "rgba(0, 0, 0, 0)");
                     background_picker.$(".upfront-field-color").spectrum("set", color);
-                    background_picker.$(".sp-input").css({
-                        "border-left-color": "rgba(0, 0, 0, 0)"
+                    background_picker.$(".upfront_color_picker_rgb_main").css({
+                        "background": "rgba(0, 0, 0, 0)"
                     });
                     background_picker.render_sidebar_rgba(color.toRgb());
                     background_picker.update_input_val(color.toRgbString());

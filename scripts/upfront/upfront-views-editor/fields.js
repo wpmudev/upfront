@@ -685,10 +685,14 @@
                 return this.default_value;
             },
             update_input_border_color : function(rgb){
-                var spPreview = this.$el.find(".sp-preview");
-                $(".sp-input").css({
-                    borderColor : rgb
-                });
+                var spPreview = this.$el.find(".sp-preview"),
+					me = this;
+				
+				setTimeout( function() {
+					me.$el.find(".upfront_color_picker_rgb_main").css({
+						backgroundColor: rgb
+					});
+				}, 10);
 
                 spPreview.css({
                     backgroundColor: rgb
