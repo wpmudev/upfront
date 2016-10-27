@@ -13877,7 +13877,8 @@ li#tabbackground-content .sp-palette-row-selection span.sp-thumb-el:last-child >
 
 .sp-palette-container {
   width: 114px;
-  left: 0px; }
+  left: 0px;
+  height: 110px; }
 
 .sp-hue {
   margin-left: 4px; }
@@ -13936,11 +13937,10 @@ input[type=text].sp-input {
   margin-top: 4px; }
 
 .sp-palette-row.sp-palette-row-selection:before {
-  /*
-	content: "Recent colors:";
-*/
+  content: "Recent colors:";
   content: attr(data-label);
-  margin-bottom: 4px; }
+  margin-bottom: 4px;
+  height: 15px; }
 
 .sp-palette .sp-thumb-el {
   border-radius: 2px;
