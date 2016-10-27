@@ -13845,7 +13845,7 @@ li#tabbackground-content .sp-palette-row-selection span.sp-thumb-el:last-child >
   background: rgba(255, 255, 255, 0.7);
   opacity: 1;
   box-shadow: 0 0 2px 0 rgba(36, 57, 77, 0.3);
-  margin-left: -1px; }
+  margin-left: 1px; }
 
 .sp-alpha {
   position: absolute;
@@ -14044,10 +14044,12 @@ ul.upfront_color_picker_rgba {
   -moz-background-size: 14px 14px;
   background-size: 14px 14px;
   background-position: 0 0, 6px 6px;
-  width: 13px;
-  height: 13px;
+  width: 12px;
+  height: 12px;
   display: block;
-  overflow: hidden; }
+  overflow: hidden;
+  box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3);
+  border-radius: 2px; }
 
 .noColor:after {
   content: '';
