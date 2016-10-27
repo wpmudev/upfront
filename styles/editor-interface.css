@@ -14109,7 +14109,6 @@ ul.upfront_color_picker_rgba {
 
 .sp-slider {
   position: absolute;
-  top: 2px !important;
   cursor: pointer;
   height: 5px;
   left: -3px;
