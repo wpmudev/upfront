@@ -13874,7 +13874,7 @@ li#tabbackground-content .sp-palette-row-selection span.sp-thumb-el:last-child >
 .sp-picker-container {
   width: 150px;
   position: relative;
-  top: -65px;
+  top: -70px;
   left: 100px; }
 
 .sp-palette-container {
@@ -13917,14 +13917,14 @@ input[type=text].sp-input {
 
 .sp-input-container {
   position: absolute;
-  top: -40px;
+  top: -38px;
   left: -90px; }
 
 .upfront_color_picker_rgb_preview {
   width: 10px;
   position: absolute;
   left: 11px;
-  top: 26px;
+  top: 23px;
   height: 22px;
   /* magic happens below */
   background-color: #DFE9F2;
@@ -14030,20 +14030,37 @@ ul.upfront_color_picker_rgba {
   padding: 0;
   text-align: center; }
 
+.sp-alpha, .sp-thumb-el {
+  position: relative;
+  /* magic happens below */
+  background-color: #DFE9F2;
+  background-image: -webkit-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -webkit-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+  background-image: -moz-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -moz-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+  background-image: -o-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -o-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+  background-image: linear-gradient(to top right, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), linear-gradient(to top right, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+  -webkit-background-size: 8px 8px;
+  -moz-background-size: 8px 8px;
+  background-size: 8px 8px;
+  background-position: 2px 0px, 6px 4px; }
+
 .upfront_color_picker_reset {
   position: absolute;
   text-indent: 999px;
-  right: 10px;
+  right: 13px;
   bottom: 10px;
   cursor: pointer; }
 
 .noColor {
-  background-color: #ccc;
-  background-image: -webkit-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -webkit-linear-gradient(45deg, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
-  -webkit-background-size: 14px 14px;
-  -moz-background-size: 14px 14px;
-  background-size: 14px 14px;
-  background-position: 0 0, 6px 6px;
+  /* magic happens below */
+  background-color: #DFE9F2;
+  background-image: -webkit-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -webkit-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+  background-image: -moz-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -moz-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+  background-image: -o-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), -o-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+  background-image: linear-gradient(to top right, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), linear-gradient(to top right, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+  -webkit-background-size: 8px 8px;
+  -moz-background-size: 8px 8px;
+  background-size: 8px 8px;
+  background-position: 2px 0px, 6px 4px;
   width: 12px;
   height: 12px;
   display: block;
