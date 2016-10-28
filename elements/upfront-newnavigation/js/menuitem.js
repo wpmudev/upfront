@@ -225,7 +225,9 @@ return (function ($) {
 		render: function (event) {
 			var me = this,
 				content = '<a class="menu_item uf-click-to-edit-text',
-				menu_set_url = this.model.link['url'].replace(Upfront.Settings.site_url, '').replace('/',''),
+				menu_set_url = ( typeof this.model.link['url'] !== undefined )
+					? this.model.link['url'].replace(Upfront.Settings.site_url, '').replace('/','')
+					: '',
 				current_url = Backbone.history.fragment
 			;
 
