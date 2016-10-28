@@ -5,6 +5,7 @@
 	height: 200px;
 	overflow: visible;
 	padding-top: 4px;
+	border: 1px solid #ccc;
 }
 .sp-input-container {
 	position:absolute;
@@ -377,20 +378,52 @@ border:none;
 	padding:0;
 }
 
+.redactor-dropdown-box-upfrontColor ul.tablist {
+	position: absolute;
+	z-index: 999;
+}
+
+.redactor-dropdown-box-upfrontColor .top-left {
+	top: -1px;
+	left: -28px;
+	border: 1px solid #cccccc;
+	border-right: none;
+}
+
+.redactor-dropdown-box-upfrontColor .bottom-left {
+	bottom: 7px;
+	left: -28px;
+	border: 1px solid #cccccc;
+	border-right: none;
+}
+
+.redactor-dropdown-box-upfrontColor .top-right {
+	top: -1px;
+	right: -28px;
+	border: 1px solid #cccccc;
+	border-left: none;
+}
+
+.redactor-dropdown-box-upfrontColor .bottom-right {
+	bottom: 7px;
+	right: -28px;
+	border: 1px solid #cccccc;
+	border-left: none;
+}
+
 .redactor-dropdown-box-upfrontColor ul.tablist > li {
-	background-color: #1e2f3f;
-	color:#6c87a2;
+	background-color: #dbe0e2;
 	line-height: 1.5;
 	font-size: 11px;
-	margin-right: 2px !important;
-	padding: 4px 16px;
-	margin-bottom: -1px !important;
 	cursor: pointer;
-	border-radius: 3px 3px 0 0;
+	border-radius: 2px;
+	width: 28px;
+	height: 28px;
+	overflow: hidden;
+	float: none;
 }
 .redactor-dropdown-box-upfrontColor ul.tablist > li.active {
-	background-color: #314252;
-	color: #97b8da;
+	background-color: #fff;
 }
 .redactor-dropdown-box-upfrontColor ul.tabs > li {
 	display:none;
