@@ -244,6 +244,11 @@ define([
 				pnls[part] = option;
 			});
 
+			// Do not show any post parts if we are doing compat display
+			if (Upfront.Application.is_plugin_layout())  {
+				pnls = {};
+			}
+
 			var overall = Main.extend({part_panels: pnls, data_type: data_type});
 
 			return {stuff: overall};

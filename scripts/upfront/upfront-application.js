@@ -783,7 +783,6 @@ var Application = new (Backbone.Router.extend({
 		var me = this;
 		$("body .upfront-edit_layout a").addClass('active');
 		$("body").off("click", ".upfront-edit_layout").on("click", ".upfront-edit_layout", function () {
-
 			me.start();
 			return false;
 		});
@@ -791,6 +790,14 @@ var Application = new (Backbone.Router.extend({
 	},
 
 	start: function (mode) {
+		// Replace _.template only when we actually boot Upfront, otherwise some other scripts using it might break
+		var _tpl = _.template;
+		_.template = function (tpl, data) {
+			if (typeof undefined === typeof data) return _tpl(tpl);
+			var tmp = _tpl(tpl);
+			return tmp(data);
+		};
+
 		// Main stylesheet needs to be loaded without element styles
 		// which will be edited in upfront.
 		Upfront.Util.post({
@@ -1495,7 +1502,7 @@ var Application = new (Backbone.Router.extend({
 			fullPath = path ? '/' + path : '/',
 			loading
 		;
-		
+
 		// Fixing incorrect post_id when clicking Back on browser
 		// only for posts and pages
 		if ( fullPath.indexOf('edit/post') !== -1 || fullPath.indexOf('edit/page') !== -1 ) {
@@ -1510,8 +1517,8 @@ var Application = new (Backbone.Router.extend({
 				urlQueryParts.push(key + '=' + value);
 			});
 			fullPath += '?' + urlQueryParts.join('&');
-		}	
-		
+		}
+
 		loading = this.set_loading(Upfront.Settings.l10n.global.application.loading_path.replace(/%s/, fullPath), Upfront.Settings.l10n.global.application.here_we_are);
 
 		if(this.urlCache[fullPath]){
@@ -1635,8 +1642,57 @@ var Application = new (Backbone.Router.extend({
 		if ( this.is_single() && (this.user_can("EDIT_OWN") || this.user_can("EDIT") )) return true;
 
 		return false;
-	}
+	},
 
+	/**
+	 * Checks if current layout is layout handled by plugin and return plugin data.
+	 *
+	 * @params {mixed} postId - id of current post, can be number or string
+	 *
+	 * @return {String} plugin name if found
+	 */
+	is_plugin_layout: function(postId) {
+		var currentLayout = Upfront.Application.current_subapplication.get_layout_data().layout;
+
+		if (typeof postId === 'undefined') {
+			// Try to get post id from layout
+			if (currentLayout.item && currentLayout.item === 'single-page' && currentLayout.specificity && currentLayout.specificity.match('single-page-')) {
+				var pageNumber = currentLayout.specificity.match(/\d+/);
+				if (_.isNull(pageNumber) === false && pageNumber.length === 1) {
+					postId = pageNumber[0];
+				}
+			}
+		}
+
+		var result;
+		_.each(Upfront.mainData.pluginsLayouts, function(data, plugin) {
+			if (result) return; // save cycles
+			_.each(data.pagesById, function(page) {
+				if (parseInt(page.pageId, 10) === parseInt(postId, 10)) {
+					result = {
+						pluginName: data.pluginName,
+						content: data.sampleContents[page.content] ? data.sampleContents[page.content] : ''
+					};
+				}
+			});
+			if (result) return; // save cycles
+			_.each(data.layouts, function(layout) {
+				if (result) return; // save cycles
+				if (layout.specificity && currentLayout.specificity && _.isNull(currentLayout.specificity.match(layout.specificity)) === false) {
+					result = {
+						pluginName: data.pluginName,
+						content: data.sampleContents[layout.content] ? data.sampleContents[layout.content] : ''
+					};
+				} else if (layout.item === currentLayout.item) {
+					result = {
+						pluginName: data.pluginName,
+						content: data.sampleContents[layout.content] ? data.sampleContents[layout.content] : ''
+					};
+				}
+			});
+		});
+		return result;
+	}
 }))();
 
 return {

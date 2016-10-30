@@ -16,6 +16,8 @@ var PostsSettings = ElementSettings.extend({
 		
 		this.constructor.__super__.initialize.call(this, opts);
 
+		if (Upfront.Application.is_single() === false && typeof Upfront.Application.is_plugin_layout() !== 'undefined') return;
+
 		this.panels = _.extend({ General: Panels.General, Parts: Panels.PostParts }, this.panels);
 		
 		this.stopListening(Upfront.Events, 'posts:settings:dispatched');

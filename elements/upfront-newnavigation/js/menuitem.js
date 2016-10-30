@@ -269,12 +269,23 @@ return (function ($) {
 					currentcontext.addClass('time_being_display');
 					currentcontext = currentcontext.parent().parent('ul');
 				}
+				
+				// add class if last region to allocate clearance
+				var $region = this.$el.closest('.upfront-region-container'),
+					$lastRegion = $('.upfront-region-container').not(
+					'.upfront-region-container-shadow').last()
+				;
+				if ( $lastRegion.get(0) == $region.get(0) ) $region.addClass('upfront-last-region-padding');
+				
 
 			} else {
 				this.controlsVisible = false;
 				if (this.$el.parents('.menu').find('.controls-visible').length === 0) {
 					this.$el.parents('.menu').sortable('enable');
 				}
+				
+				// remove class that was previously added on last region
+				this.$el.closest('.upfront-region-container').removeClass('upfront-last-region-padding');
 			}
 		},
 

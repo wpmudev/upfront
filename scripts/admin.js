@@ -46,6 +46,7 @@
 			layout = $dropdown.val(),
 			label = $(".upfront-layouts-list option[value='"+  layout +"']").html(),
 			is_dev = $(this).data('dev'),
+			reset_global = ( $('#upfront_reset_include_global').is(':checked') ) ? 1 : 0,
 			confirm = window.confirm( Upfront_Data.l10n.sure_to_reset_layout.replace("{layout}", label) );
 
 		if( confirm !== true ) return;
@@ -55,7 +56,8 @@
 		Upfront.post(  {
 			action: "upfront_reset_layout",
 			layout: layout,
-			is_dev: is_dev
+			is_dev: is_dev,
+			include_global: reset_global
 		}).done(function(res){
 			$this.removeClass("loading");
 			if( $dropdown.find("option").length >= 2 ){
