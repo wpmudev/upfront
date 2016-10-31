@@ -73,21 +73,23 @@ class Upfront_PostsView extends Upfront_Object_Group {
 			'objects' => $data['objects'],
 			'properties' => $data['properties']
 		);
-		foreach ( $new_object['wrappers'] as $w => $wrapper ) {
-			$wrapper_id = upfront_get_property_value('wrapper_id', $wrapper);
-			$new_wrapper_id = $wrapper_id . '-' . $id . '-' . $w;
-			upfront_set_property_value('wrapper_id', $new_wrapper_id, $new_object['wrappers'][$w]);
-			upfront_set_property_value('ref_wrapper_id', $wrapper_id, $new_object['wrappers'][$w]);
+		if( !empty($new_object['wrappers']) ) {
+			foreach ( $new_object['wrappers'] as $w => $wrapper ) {
+				$wrapper_id = upfront_get_property_value('wrapper_id', $wrapper);
+				$new_wrapper_id = $wrapper_id . '-' . $id . '-' . $w;
+				upfront_set_property_value('wrapper_id', $new_wrapper_id, $new_object['wrappers'][$w]);
+				upfront_set_property_value('ref_wrapper_id', $wrapper_id, $new_object['wrappers'][$w]);
 
-			$objects = $this->find_objects_by_wrapper_id($wrapper_id, $new_object);
+				$objects = $this->find_objects_by_wrapper_id($wrapper_id, $new_object);
 
-			if ( !empty($objects) ) {
-				foreach ( $objects as $o => $object ) {
-					$object_id = upfront_get_property_value('element_id', $object);
-					$new_object_id = $object_id . '-' . $id . '-' . $w;
-					upfront_set_property_value('wrapper_id', $new_wrapper_id, $new_object['objects'][$o]);
-					upfront_set_property_value('element_id', $new_object_id, $new_object['objects'][$o]);
-					upfront_set_property_value('ref_element_id', $object_id, $new_object['objects'][$o]);
+				if ( !empty($objects) ) {
+					foreach ( $objects as $o => $object ) {
+						$object_id = upfront_get_property_value('element_id', $object);
+						$new_object_id = $object_id . '-' . $id . '-' . $w;
+						upfront_set_property_value('wrapper_id', $new_wrapper_id, $new_object['objects'][$o]);
+						upfront_set_property_value('element_id', $new_object_id, $new_object['objects'][$o]);
+						upfront_set_property_value('ref_element_id', $object_id, $new_object['objects'][$o]);
+					}
 				}
 			}
 		}
