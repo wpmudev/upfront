@@ -209,6 +209,14 @@ abstract class Upfront_Container extends Upfront_Entity {
 		return Upfront_Wrapper::get_instance($wrapper_id);
 	}
 
+	public function get_child_data () {
+		return isset($this->_data[$this->_children]) ? $this->_data[$this->_children] : array();
+	}
+
+	public function get_wrappers_data () {
+		return isset($this->_data['wrappers']) ? $this->_data['wrappers'] : array();
+	}
+
 
 	/**
 	 * Returns additional classes

@@ -19,7 +19,7 @@ class Upfront_Posts_PostsView {
 		$view = new Upfront_Posts_PostView($data);
 
 		foreach($posts as $idx => $post) {
-			$posts_markup[$idx] = $view->get_markup($post);
+			$posts_markup[$post->ID] = $view->get_markup($post);
 		}
 
 		return $posts_markup;
@@ -28,18 +28,21 @@ class Upfront_Posts_PostsView {
 	/**
 	 * Fetches final posts markup, wrapped as string.
 	 * @param array $data The properties data array
+	 * @param bool $editor Whether on editor or not
 	 * @return string Final posts element markup.
 	 */
-	public static function get_markup ($data) {
+	public static function get_markup ($data, $editor = false) {
 		$posts = self::get_posts_markup($data);
 
-		if (!empty($posts)) {
+		return $posts;
+
+		/*if (!empty($posts)) {
 			return '' .
 				'<ul class="uf-posts">' . join('', $posts) . '</ul>' .
 				self::get_pagination($data) .
 			'';
 
-		}
+		}*/
 
 		return '';
 	}

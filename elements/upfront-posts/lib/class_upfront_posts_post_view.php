@@ -80,16 +80,21 @@ class Upfront_Posts_PostView {
 		$post_parts = self::get_post_parts($this->_data);
 
 		$out = '';
+		$parts = array();
 		foreach ($post_parts as $part) {
 			$method = "expand_{$part}_template";
-			if (method_exists($this, $method)) $out .= $this->$method();
-			else $out .= apply_filters('upfront_posts-' . $method, '', $post);
+			if (method_exists($this, $method)) $parts[$part] = $this->$method();
+			else $parts[$part] = apply_filters('upfront_posts-' . $method, '', $post);
 		}
 
 		// Also expand postmeta codes outside the meta element
-		$out = Upfront_Codec::get('postmeta')->expand_all($out, $post);
+		foreach ( $parts as $part => $value ) {
+			$parts[$part] = Upfront_Codec::get('postmeta')->expand_all($value, $post);
+		}
 
-		return $this->_wrap_post($out, $post);
+		return $parts;
+
+		//return $this->_wrap_post($out, $post);
 	}
 
 	/**

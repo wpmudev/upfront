@@ -707,18 +707,22 @@ Panels.PostParts = PresetManager.extend({
 				
 			},
 			change: function(value) {
-				var enabled_post_parts = me.preset_model.get('enabled_post_parts') || [];
-				enabled_post_parts.push(value);
-				me.preset_model.set('enabled_post_parts', enabled_post_parts);
-				
-				me.updatePreset(me.preset_model.toJSON());
-				
+				me.add_post_part(value);
 				me.render();
 			}
 		});
 
 		add_button.render();
 		this.$el.find( ".upfront-post-wrappers" ).prepend(add_button.$el);
+	},
+
+	add_post_part: function (part) {
+		var enabled_post_parts = this.preset_model.get('enabled_post_parts') || [];
+		enabled_post_parts.push(part);
+		this.preset_model.set('enabled_post_parts', enabled_post_parts);
+		this.update_parts();
+
+		this.updatePreset(this.preset_model.toJSON());
 	},
 	
 	get_unused_modules: function(preset) {
@@ -738,6 +742,101 @@ Panels.PostParts = PresetManager.extend({
 	getTitle: function() {
 		return 'Presets';
 	},
+
+	update_parts: function () {
+		var me = this,
+			preset_model = this.preset_model,
+			enabled_parts = preset_model.get("enabled_post_parts") || [],
+			parts = this.model.get_property_value_by_name("post_parts") || [],
+			breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled(),
+			active_breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON()
+		;
+		_.each(parts, function (part) {
+			me.update_object(part, enabled_parts.indexOf(part) >= 0);
+		});
+		if  ( active_breakpoint['default'] ) {
+			// Also update the responsive part
+			_.each(breakpoints, function (breakpoint) {
+				breakpoint = breakpoint.toJSON();
+				var breakpoint_presets = me.property("breakpoint_presets");
+				if ( breakpoint['default'] ) return;
+				if ( !breakpoint_presets ) return;
+				if ( !(breakpoint.id in breakpoint_presets) || !('preset' in breakpoint_presets[breakpoint.id]) ) return;
+				var preset = breakpoint_presets[breakpoint.id].preset,
+					preset_model = me.presets.findWhere({id: preset}),
+					enabled_parts = preset_model.get("enabled_parts") || []
+				;
+				_.each(parts, function (part) {
+					me.update_object(part, enabled_parts.indexOf(part) >= 0, breakpoint);
+				});
+			});
+		}
+		this.model.get("objects").trigger("change");
+	},
+
+	has_object: function (type) {
+		return ( this.find_object(type) ? true : false );
+	},
+
+	find_object: function (type) {
+		var objects = this.model.get('objects');
+		if ( !objects ) return false;
+		return objects.find(function(object){
+			var part_type = object.get_property_value_by_name('part_type');
+			if ( type == part_type ) return true;
+			return false;
+		});
+	},
+
+	find_wrapper: function (object) {
+		var wrappers = this.model.get('wrappers'),
+			wrapper_id = object.get_wrapper_id()
+		;
+		return wrappers.get_by_wrapper_id(wrapper_id);
+	},
+
+	update_object: function (type, enable, breakpoint) {
+		enable = !!enable;
+		breakpoint = breakpoint ? breakpoint : Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
+		var objects = this.model.get('objects'),
+			wrappers = this.model.get('wrappers'),
+			object = this.find_object(type)
+		;
+		if ( breakpoint['default'] ) {
+			// Default breakpoint, actually add/remove objects
+			if ( !object && enable ) {
+				var wrapper_id = Upfront.Util.get_unique_id("wrapper"),
+					wrapper = new Upfront.Models.Wrapper({
+						properties: [
+							{ name: 'wrapper_id', value: wrapper_id },
+							{ name: 'class', value: 'c24 clr' }
+						]
+					})
+				;
+				object = new Upfront.Models.PostsPartModel({
+					properties: [
+						{ name: 'view_class', value: 'PostsPartView' },
+						{ name: 'part_type', value: type },
+						{ name: 'has_settings', value: 0 },
+						{ name: 'class', value: 'c24 upfront-post-data-part' },
+						{ name: 'wrapper_id', value: wrapper_id }
+					]
+				});
+				wrappers.add(wrapper, {silent: true});
+				objects.add(object);
+			}
+			else if ( object && !enable ) {
+				var object_view = Upfront.data.object_views[object.cid];
+				object_view.parent_view.on_entity_remove(null, object_view);
+			}
+		}
+		else {
+			// On responsive, just hide/show available object
+			if ( object ) {
+				object.set_breakpoint_property('hide', (enable ? 0 : 1), false, breakpoint);
+			}
+		}
+	}
 });
 
 return Panels;

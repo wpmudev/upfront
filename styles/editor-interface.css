@@ -2834,7 +2834,8 @@ div#page.upfront-layout-view.upfront-layout-view .upfront-editable_entity.upfron
   display: block; }
 
 .upfront-module-group-nav-open.upfront-module-group-on-edit .upfront-module-group-finish-edit,
-.upfront-module-group-element-editing .upfront-module-group-finish-edit {
+.upfront-module-group-element-editing .upfront-module-group-finish-edit,
+.upfront-object-group-on-edit .upfront-object-group-uneditable .upfront-object-group-finish-edit {
   display: none; }
 
 .upfront-region-title {
@@ -5425,7 +5426,9 @@ span.upfront-settings-item-title:after {
   box-shadow: none;
   outline: none; }
 
-.upfront-module-object-group-on-edit .upfront-module {
+.upfront-module-object-group-on-edit .upfront-module,
+.upfront-object-group-on-edit .upfront-object-group-uneditable .upfront-object:hover {
+  background-color: none;
   box-shadow: none; }
 
 .upfront-module-disabled-all .upfront-entity_meta,
@@ -5447,6 +5450,9 @@ span.upfront-settings-item-title:after {
 .upfront-module-object-group-on-edit .upfront-module.upfront-module-disabled-edit {
   outline: 1px dotted #7f7f7f;
   z-index: 10; }
+
+.upfront-object-group-on-edit.upfront-object-group-editable > .upfront-object-group {
+  outline: 1px dotted #7f7f7f; }
 
 .upfront-objects_container {
   width: 100%;
@@ -5625,7 +5631,8 @@ span.upfront-settings-item-title:after {
 .upfront-module-group-on-edit > .upfront-entity_meta > .upfront-icon-button,
 .upfront-module-group.controls-visible > .upfront-entity_meta > .upfront-icon-button,
 .upfront-object-group-on-edit > .upfront-object-group > .ui-resizable-handle,
-.upfront-object-group-on-edit > .upfront-object-group > .upfront-entity_meta > .upfront-icon-button {
+.upfront-object-group-on-edit > .upfront-object-group > .upfront-entity_meta > .upfront-icon-button,
+.upfront-object-group-on-edit .upfront-object-group-uneditable .ui-resizable-handle {
   visibility: hidden !important; }
 
 .upfront-module-group-on-edit .upfront-modules_container > .upfront-editable_entities_container > .upfront-wrapper > .ui-resizable-handle,
@@ -5781,7 +5788,8 @@ span.upfront-settings-item-title:after {
 .upfront-module-group-editing .upfront-wrapper.upfront-wrapper-module-group-on-edit > .upfront-wrapper-meta,
 .upfront-module-group-editing .upfront-wrapper:hover > .upfront-wrapper-meta,
 .upfront-object-group-editing .upfront-wrapper.upfront-wrapper-object-group-on-edit > .upfront-wrapper-meta,
-.upfront-object-group-editing .upfront-wrapper:hover > .upfront-wrapper-meta {
+.upfront-object-group-editing .upfront-wrapper:hover > .upfront-wrapper-meta,
+.upfront-object-group-editing .upfront-object-group-on-edit .upfront-object-group-uneditable .upfront-wrapper:hover > .upfront-wrapper-meta {
   display: none !important; }
 
 .upfront-module-group-editing .upfront-module-group-on-edit .upfront-wrapper:hover > .upfront-wrapper-meta,
@@ -5846,13 +5854,17 @@ span.upfront-settings-item-title:after {
 .upfront-module-group.upfront-module-group-element-editing:hover > .upfront-entity-size-hint,
 .upfront-module-group.upfront-module-group-no-edit > .upfront-entity-size-hint,
 .upfront-module-group.upfront-module-group-no-edit:hover > .upfront-entity-size-hint,
-.upfront-module:hover .upfront-object-group .upfront-object-view .upfront-entity-size-hint {
+.upfront-module:hover .upfront-object-group .upfront-object-view .upfront-entity-size-hint,
+.upfront-module:hover .upfront-object-group.uposts-object .upfront-entity-size-hint {
   display: none; }
 
 .upfront-object-group-on-edit .upfront-object-group .upfront-object-view:hover > .upfront-entity-size-hint,
 .upfront-object-group-on-edit .upfront-object-group .upfront-object.ui-resizable-resizing ~ .upfront-entity-size-hint,
 .upfront-object-group-on-edit .upfront-object-group .upfront-wrapper.ui-resizable-resizing > .upfront-object-view > .upfront-entity-size-hint {
   display: block; }
+
+.upfront-object-group-on-edit .upfront-object-group-uneditable .upfront-object-view:hover > .upfront-entity-size-hint {
+  display: none; }
 
 /* Group Element Link Panel Style */
 .upfront-module-group > .upfront-module-group-controls .upfront-inline-panel .upfront-inline-panel-item {
@@ -15312,6 +15324,7 @@ li#new-custom-breakpoint {
 .flexbox-support .upfront-editable_entities_container > .upfront-module-view,
 .flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-object-view,
 .flexbox-support .upfront-editable_entities_container > .upfront-object-view,
+.flexbox-support .upfront-editable_entities_container > .upfront-wrapper > .upfront-object-group-view,
 .flexbox-support .upfront-editable_entities_container > .upfront-object-group-view,
 .flexbox-support .upfront-wrapper-moving > .upfront-module-view,
 .flexbox-support .upfront-wrapper-moving > .upfront-object-view {

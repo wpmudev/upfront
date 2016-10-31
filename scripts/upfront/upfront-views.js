@@ -2730,7 +2730,10 @@ define([
 				var $el = this.$el,
 					index = options && typeof options.index != 'undefined' ? options.index-1 : -2,
 					$el_index = index >= 0 ? $el.find('> .upfront-wrapper > .upfront-object-view, > .upfront-wrapper > .upfront-object-group').eq(index) : false,
-					wrappers = this.object_group_view && this.object_group_view.model ? this.object_group_view.model.get('wrappers') : false,
+					wrappers = this.wrappers_collection
+						? this.wrappers_collection
+						: ( this.object_group_view && this.object_group_view.model ? this.object_group_view.model.get('wrappers') : false )
+					,
 					view_class_prop = obj.get("properties").where({"name": "view_class"}),
 					is_obj_group = obj.get("objects") ? true : false,
 					default_view_class = is_obj_group ? "ObjectGroup" : "ObjectView",
@@ -2763,7 +2766,7 @@ define([
 						else {
 							$el_index.parent().after(local_view.el);
 						}
-						local_view.render();
+						local_view.render(options);
 					}
 					else {
 						if ( this.current_wrapper_id == wrapper_id ){
@@ -2815,7 +2818,7 @@ define([
 						else {
 							$(wrapper_el).append(local_view.el);
 						}
-						local_view.render();
+						local_view.render(options);
 					}
 					if ( ! Upfront.data.object_views[obj.cid] ){
 						this.listenTo(local_view, 'upfront:entity:activate', this.on_activate);
@@ -7489,8 +7492,10 @@ define([
 	return {
 		"Views": {
 			"ObjectView": ObjectView,
+			"Objects": Objects,
 			"ObjectGroup": ObjectGroup,
 			"Module": Module,
+			"Modules": Modules,
 			"ModuleGroup": ModuleGroup,
 			"Wrapper": Wrapper,
 			"Layout": Layout,

@@ -76,6 +76,66 @@ class Upfront_Posts_PostsData {
 	}
 
 	/**
+	 * Fetch all default values for post part properties.
+	 * @return array Default post part properties
+	 */
+	public static function get_part_defaults () {
+		static $part_defaults;
+		if (!empty($part_defaults)) return $part_defaults;
+
+		$part_defaults = array(
+			'type' => 'PostsPartModel',
+			'view_class' => 'PostsPartView',
+			'has_settings' => 0,
+			'class' => 'c24 uposts-part-object',
+			'id_slug' => 'posts-part',
+
+			'part_type' => ''
+		);
+
+		return $part_defaults;
+	}
+
+	/**
+	 * Preset ID getter
+	 *
+	 * @param array $data Data to parse for preset
+	 *
+	 * @return string Preset ID, or default
+	 */
+	public static function get_preset_id ($data) {
+		if (empty($data['preset'])) $data['preset'] = 'default';
+		return $data['preset'];
+	}
+
+	/**
+	 * Augment parsed data with preset info
+	 *
+	 * @param array $data Data hash
+	 *
+	 * @return array Augmented data
+	 */
+	public static function apply_preset ($data) {
+		$data['preset'] = self::get_preset_id($data);
+
+		if (!empty($data['preset'])) {
+			$pserver = Upfront_Posts_Presets_Server::get_instance();
+			$preset = !empty($pserver)
+				? $pserver->get_preset_by_id($data['preset'])
+				: false
+			;
+			if (!empty($preset)) {
+				foreach ($preset as $idx => $value) {
+					if ("name" === $idx || "id" === $idx) continue;
+					$data[$idx] = $value;
+				}
+			}
+		}
+
+		return $data;
+	}
+
+	/**
 	 * Slug sanitization utility method
 	 * @param  string $slug Raw slug
 	 * @return string Normalized slug
@@ -130,6 +190,7 @@ class Upfront_Posts_PostsData {
 		if (!empty($data['upfront_posts'])) return $data;
 
 		$data['upfront_posts'] = self::get_defaults();
+		$data['upfront_posts_part'] = self::get_part_defaults();
 
 		return $data;
 	}

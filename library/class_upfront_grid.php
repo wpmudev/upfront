@@ -256,10 +256,11 @@ class Upfront_Grid {
 			}
 			else {
 				if ( isset($module['objects']) && is_array($module['objects']) ) {
-					foreach ($module['objects'] as $object) {
+					$objects = $parent_view !== false ? $parent_view->get_child_data() : $module['objects'];
+					foreach ($objects as $object) {
 						// See if this is posts/this post element, then add 'row' to exceptions list and disable height rendering
 						$type = upfront_get_property_value('type', $object);
-						if ( preg_match("/(PostsModel|ThisPostModel|PostDataPartModel|PostDataModel)/", $type) ) {
+						if ( preg_match("/(PostsModel|ThisPostModel|PostDataPartModel|PostDataModel|PostsPartModel)/", $type) ) {
 							if ( 'PostDataPartModel' == $type ) {
 								$part_type = upfront_get_property_value('part_type', $object);
 								if ( 'content' == $part_type || 'comments' == $part_type ) {
@@ -293,9 +294,10 @@ class Upfront_Grid {
 						}
 						if ( !$is_spacer ) {
 							$object_view = $this->_get_object_view($object, $breakpoint);
-
-							if ( isset($object['objects']) && is_array($object['objects']) ){ // rendering object group
-								$point_css .= $this->_apply_modules($object['objects'], $object['wrappers'], $module_col, false, $object_view);
+							if ( $object_view instanceof Upfront_Object_Group ) {
+								$child_objects = $object_view->get_child_data();
+								$child_wrappers = $object_view->get_wrappers_data();
+								$point_css .= $this->_apply_modules($child_objects, $child_wrappers, $module_col, false, $object_view);
 							}
 							$point_css .= $breakpoint->apply($object, $this->get_grid_scope(), 'element_id', $module_col, false, ($is_post_object ? $this->_exceptions : array()));
 							$point_css .= $breakpoint->apply_paddings($object, $this->get_grid_scope(), 'element_id', '#' . $module_id);

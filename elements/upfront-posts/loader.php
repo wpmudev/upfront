@@ -106,7 +106,7 @@ class Upfront_Posts extends Upfront_Server {
 		if (!empty($request['query'])) $data['query'] = $request['query'];
 
 		$this->_out(new Upfront_JsonResponse_Success(array(
-			'posts' => Upfront_Posts_PostsView::get_posts_markup($data),
+			'posts' => Upfront_Posts_PostsView::get_posts_markup($data, true),
 			'pagination' => Upfront_Posts_PostsView::get_pagination($data),
 		)));
 	}

@@ -64,8 +64,9 @@ var Views = {
 
 
 	_view: Backbone.View.extend({
+		_do_cache: true,
 
-		render: function () {
+		render: function (silent) {
 			var me = this,
 				model = Upfront.Util.model_to_json(this.model),
 				props = model.properties || {},
@@ -73,6 +74,7 @@ var Views = {
 			;
 			if (window._upfront_get_current_query) query = window._upfront_get_current_query();
 			//console.log(query);
+			silent = _.isUndefined(silent) ? false : silent;
 			this._posts_load = Upfront.Util
 				.post({
 					action: "upfront_posts-load",
@@ -83,7 +85,7 @@ var Views = {
 				})
 				.success(function (response) {
 					if (response.data && response.data.posts) {
-						var posts = '';
+						/*var posts = '';
 						_.each(response.data.posts, function (post) {
 							posts += post;
 						});
@@ -91,7 +93,14 @@ var Views = {
 							posts: posts,
 							pagination: response.data.pagination,
 							l10n: l10n
-						}));
+						}));*/
+
+						me.render_objects_view(response.data.posts, silent);
+
+						if ( me._do_cache ) {
+							me._cached_data = response.data.posts;
+						}
+
 						// Unbind pagination clicks
 						me.$el.find(".uf-pagination a")
 							.off("click")
@@ -120,14 +129,42 @@ var Views = {
 								}
 							})
 						;
+						me.$el.empty();
 					}
-					else me.$el.empty().append(me.tpl.error({l10n: l10n}));
+					else {
+						if ( !silent ) me.$el.empty().append(me.tpl.error({l10n: l10n}));
+					}
 				})
 				.error(function () {
-					me.$el.empty().append(me.tpl.error({l10n: l10n}));
+					if ( !silent ) me.$el.empty().append(me.tpl.error({l10n: l10n}));
 				})
 			;
-			this.$el.empty().append(this.tpl.load({l10n: l10n}));
+			if ( !silent ) this.$el.empty().append(this.tpl.load({l10n: l10n}));
+		},
+
+		/**
+		 * Re-render with the same cached data
+		 * @param {Array} only_objects
+		 */
+		rerender: function (only_objects) {
+			if ( this._cached_data ) {
+				this.render_objects_view(this._cached_data);
+			}
+			else {
+				this.render();
+			}
+		},
+
+		/**
+		 * Render the posts object view
+		 * @param {Object} posts
+		 */
+		render_objects_view: function (posts, silent) {
+			var me = this;
+			_.each(posts, function (data, post_id) {
+				me.element.render_post_view(post_id, data, silent);
+			});
+			Upfront.Events.trigger('entity:object:refresh', me);
 		}
 	})
 

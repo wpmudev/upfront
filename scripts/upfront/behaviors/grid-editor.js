@@ -420,7 +420,7 @@ var GridEditor = {
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
 			regions = app.layout.get('regions'),
-			element_id = $el.attr('id'),
+			element_id = $el.attr('ref-id') || $el.attr('id'),
 			find_model = function (modules) {
 				if ( !modules )
 					return false;
@@ -1015,7 +1015,7 @@ var GridEditor = {
 		;
 		($parent ? $parent : $layout).find('.upfront-wrapper:visible').each(function(){
 			var $wrap = $(this),
-				wrap_id = $wrap.attr('id'),
+				wrap_id = $wrap.attr('ref-id') || $wrap.attr('id'),
 				wrap_model = wraps.get_by_wrapper_id(wrap_id),
 				clear = $wrap.data('clear'),
 				children = _.map($wrap.find(ed.el_selector_direct), function (each) {
@@ -1077,7 +1077,12 @@ var GridEditor = {
 		});
 		var wrapsToRemove = [];
 		wraps.each(function(wrap){
-			if ( $('#'+wrap.get_wrapper_id()).size() == 0 ) {
+			var wrapper_id = wrap.get_wrapper_id();
+			if (
+				($parent ? $parent : $layout).find('[ref-id='+wrapper_id+']').size() == 0
+				&&
+				($parent ? $parent : $layout).find('#'+wrapper_id).size() == 0
+			) {
 				wrapsToRemove.push(wrap);
 			}
 		});
