@@ -206,6 +206,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'no_link' => __('No link', 'upfront'),
 				'not_linked' => __('Not Linked', 'upfront'),
 				'open_lightbox' => __('Open Lightbox', 'upfront'),
+				'home_link' => __('Homepage', 'upfront'),
 				'scroll_to_anchor' => __('Scroll to Anchor', 'upfront'),
 				'go_to_post' => __('Go To Post / Page', 'upfront'),
 				'open_ext_link' => __('Open Ext. Link', 'upfront'),
