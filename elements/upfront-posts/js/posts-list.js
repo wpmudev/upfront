@@ -91,6 +91,21 @@ var PostsPartView = Upfront.Views.ObjectView.extend({
 		//this.adjust_featured_image();
 		//this.adjust_inserted_image();
 	},
+
+	getControlItems: function () {
+		var controls = [];
+		controls.push(this.createPaddingControl());
+		controls.push(this.createControl('settings', l10n.settings, 'on_child_settings_click'));
+		return _(controls);
+	},
+	
+	on_child_settings_click: function () {
+		if( typeof e !== "undefined" ){
+			e.preventDefault();
+		}
+
+		Upfront.Events.trigger("element:settings:activate", this, this.settings);
+	},
 	
 	update_height: function () {
 		var type = this.model.get_property_value_by_name('part_type');
