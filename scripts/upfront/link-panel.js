@@ -275,7 +275,7 @@ define([
 				};
 
 			Upfront.Views.Editor.PostSelector.open(selectorOptions).done(function(post){
-				me.model.set({url: post.get('permalink'), object: post.get('post_type'), object_id: post.get('ID')});
+				me.model.set({title: post.get('post_title'), url: post.get('permalink'), object: post.get('post_type'), object_id: post.get('ID')});
 				me.render();
 			});
 		},

@@ -16,8 +16,9 @@
 </div>
 {[ } ]}
 {[if(type == 'entry') { ]}
+{[if(link.title) { linkLabel = link.title } else { linkLabel = link.url }]}
 <div class="upfront-settings-link-field upfront-field-wrap ulinkpanel-entry-wrap">
-	<a title="{{Upfront.Settings.l10n.global.content.change_link}}" class="ulinkpanel-entry-url js-ulinkpanel-input-url js-ulinkpanel-input-entry" href="#">{{(!link.url || link.url=='' || link.url=='http://')? Upfront.Settings.l10n.global.content.select :link.url}}</a>
+	<a title="{{Upfront.Settings.l10n.global.content.change_link}}" class="ulinkpanel-entry-url js-ulinkpanel-input-url js-ulinkpanel-input-entry" href="#">{{(!link.url || link.url=='' || link.url=='http://')? Upfront.Settings.l10n.global.content.select : linkLabel}}</a>
 </div>
 {[ } ]}
 {[if(type == 'anchor') { ]}
