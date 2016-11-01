@@ -228,7 +228,7 @@ define([
 
 		createLinkControl: function(){
 			var me = this,
-				control = new Upfront.Views.Editor.InlinePanels.DialogControl(),
+				control = new Upfront.Views.Editor.InlinePanels.LinkControl(),
 				linkPanel;
 
 			control.view = linkPanel = new Upfront.Views.Editor.LinkPanel({

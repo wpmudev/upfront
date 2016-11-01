@@ -474,7 +474,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	createLinkControl: function(image){
 		var me = this,
-			linkControl = new Upfront.Views.Editor.InlinePanels.DialogControl(),
+			linkControl = new Upfront.Views.Editor.InlinePanels.LinkControl(),
 			imageLink = new LinkModel(image.get('imageLink'));
 
 		linkControl.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
