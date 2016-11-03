@@ -643,7 +643,7 @@ Panels.PostParts = PresetManager.extend({
 		
 		// Make sure we update hidden objects on preset change
 		if (this.selectPresetModule) this.listenTo(this.selectPresetModule, 'upfront:presets:change', function () {
-			this.model.get("objects").trigger("change");
+			this.update_parts();
 		}, this);
 		
 		// Add wrappers
@@ -664,6 +664,7 @@ Panels.PostParts = PresetManager.extend({
 
 			var me = this;
 			this.listenTo(pnl, "update:preset", function (part_type, enable) {
+				this.update_parts();
 				this.updatePreset(this.preset_model.toJSON()); // Update: actually *still* needed, because presets aren't necessarily being saved on preset save...
 				this.render();
 			}, this);

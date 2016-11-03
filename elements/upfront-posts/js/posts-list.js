@@ -360,7 +360,8 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 				return parseInt(obj.get_property_value_by_name('post_id'), 10) === parseInt(post_id, 10);
 			}),
 			is_editable = ( objects.length === 0 || (object && objects.indexOf(object) === 0) ), // Only the first object is editable
-			model = is_editable ? this.clone_model(this.model, false) : this.clone_model(this.model, true)
+			model = is_editable ? this.clone_model(this.model, false) : this.clone_model(this.model, true),
+			obj_view = object ? Upfront.data.object_views[object.cid] : false
 		;
 		if ( !object ) {
 			var wrapper_id = Upfront.Util.get_unique_id("wrapper"),
@@ -376,13 +377,12 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 			model.set_property('wrapper_id', wrapper_id);
 			objects.add(model, {post_id: post_id, data: data, editable: is_editable});
 		}
-		else {
-			if ( !is_editable && !silent ) { // Reset the objects and wrappers to new updated model
+		else if ( !silent ) {
+			if ( !is_editable ) { // Reset the objects and wrappers to new updated model
 				var obj_wrappers = object.get('wrappers'),
 					obj_objects = object.get('objects'),
 					obj_wrappers_arr = obj_wrappers.map(function(wrap){ return wrap; }),
-					obj_objects_arr = obj_objects.map(function(obj){ return obj; }),
-					obj_view = Upfront.data.object_views[object.cid]
+					obj_objects_arr = obj_objects.map(function(obj){ return obj; })
 				;
 				_.each(obj_objects_arr, function(object){
 					obj_objects.remove(object);
@@ -396,8 +396,8 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 				model.get('objects').each(function(obj){
 					obj_objects.add(obj);
 				});
-				if ( obj_view ) obj_view.render_object_view(data);
 			}
+			if ( obj_view ) obj_view.render_object_view(data);
 		}
 	},
 

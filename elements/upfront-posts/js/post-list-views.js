@@ -143,19 +143,6 @@ var Views = {
 		},
 
 		/**
-		 * Re-render with the same cached data
-		 * @param {Array} only_objects
-		 */
-		rerender: function (only_objects) {
-			if ( this._cached_data ) {
-				this.render_objects_view(this._cached_data);
-			}
-			else {
-				this.render();
-			}
-		},
-
-		/**
 		 * Render the posts object view
 		 * @param {Object} posts
 		 */
