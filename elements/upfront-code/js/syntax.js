@@ -83,11 +83,13 @@ var Checker_Js = _.extend({}, Checker, {
 	validate: function () {
 		var ret = true;
 		try {
-			JSON.parse(this._value);
+			var f = new Function(this.wrap(this._value));
+			f.apply();
 		} catch (e) {
 			this._message = e.message;
 			ret = false;
 		}
+
 		return ret;
 	},
 	wrap: function (what) {
