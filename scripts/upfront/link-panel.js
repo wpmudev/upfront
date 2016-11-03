@@ -376,7 +376,7 @@ define([
 				totalWidth = totalWidth + elementWidth;
 			});
 			
-			this.$el.css('width', totalWidth + 20);
+			this.$el.css('width', totalWidth + 10);
 		},
 		
 		renderTypeSelect: function() {

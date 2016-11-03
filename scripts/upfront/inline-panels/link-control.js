@@ -161,7 +161,7 @@ define([
 				totalWidth = totalWidth + elementWidth;
 			});
 
-			this.$el.find('.ulinkpanel-dark').css('width', totalWidth + 20);
+			this.$el.find('.ulinkpanel-dark').css('width', totalWidth + 10);
 		}
 	});
 
