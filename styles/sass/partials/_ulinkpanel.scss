@@ -177,6 +177,39 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 	line-height: 24px;
 }
 
+.ulinkpanel-dark .ulinkpanel-entry-browse:hover {
+	background: initial !important;
+	padding: 2px 15px !important;
+	text-transform: initial !important;
+	margin: initial;
+	margin-top: 2px;
+	font: normal 13px/16px Verdana, sans-serif !important;
+	color: rgb(0, 0, 0) !important;
+	border: 1px solid #e5e5e5;
+	border-radius: 2px;
+	height: 24px;
+	line-height: 24px;
+}
+
+.ulinkpanel-dark a.ulinkpanel-entry-url {
+	color: #3ea !important;
+	padding: 3px 5px;
+	padding-right: 25px;
+	height: 24px;
+	line-height: 24px;
+	margin-top: 2px;
+	font: normal 13px/16px Verdana, sans-serif !important;
+	color: rgb(0, 0, 0) !important;
+}
+
+.ulinkpanel-dark .upfront-home-link {
+	font-size: 12px;
+    text-transform: uppercase;
+    width: 120px !important;
+    padding: 2px 0px;
+	text-indent: 10px;
+}
+
 .ulinkpanel-dark a.ulinkpanel-entry-url:hover {
 	color: #3ea !important;
 }
