@@ -299,7 +299,8 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 				button: false,
 				icon: 'link',
 				tooltip: l10n.edit_link,
-				id: 'link'
+				id: 'link',
+				firstLevel: true
 			})
 		;
 
