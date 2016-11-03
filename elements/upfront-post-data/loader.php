@@ -67,7 +67,13 @@ class Upfront_Post_Data extends Upfront_Server {
 
 	public function load_post () {
 		$request = !empty($_POST['data']) ? stripslashes_deep($_POST['data']) : array();
+		$layout = !empty($_POST['layout']) ? stripslashes_deep($_POST['layout']) : array();
 		$data = !empty($request['props']) ? $this->to_data_array($request['props']) : array();
+
+		if ($request['post_id'] === 'fake_post') {
+			$request['post_id'] = apply_filters('upfront-load_post_fake_post_id', $request['post_id'], $layout);
+		}
+
 		if (!empty($request['post_id'])) $data['post_id'] = $request['post_id'];
 		if (!empty($request['author_id'])) $data['author_id'] = $request['author_id'];
 		if (!empty($request['post_date'])) $data['post_date'] = $request['post_date'];
@@ -80,6 +86,7 @@ class Upfront_Post_Data extends Upfront_Server {
 				$data[$idx] = $value;
 			}
 		}
+
 
 		$post = Upfront_Post_Data_Model::spawn_post($data);
 		$view_class = Upfront_Post_Data_PartView::_get_view_class($data);
