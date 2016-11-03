@@ -11320,7 +11320,7 @@ div.ugallery-controls i.upfront-icon:before {
   float: left; }
 
 .ulinkpanel-dark .upfront-field-wrap {
-  margin: 5px 0px 5px 0px !important; }
+  margin: 0px !important; }
 
 .ulinkpanel .ulinkpanel-external-wrap {
   margin: 0; }
@@ -11429,13 +11429,18 @@ a.ulinkpanel-entry-url:hover {
 div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
   color: #cbe5ff; }
 
-.ulinkpanel-dark a.ulinkpanel-entry-url, .ulinkpanel-dark a.ulinkpanel-entry-url:link {
+.ulinkpanel-dark .ulinkpanel-entry-browse {
   background: initial !important;
-  padding: initial !important;
+  padding: 2px 15px !important;
   text-transform: initial !important;
-  margin: initial !important;
+  margin: initial;
+  margin-top: 2px;
   font: normal 13px/16px Verdana, sans-serif !important;
-  color: #00db8f !important; }
+  color: black !important;
+  border: 1px solid #e5e5e5;
+  border-radius: 2px;
+  height: 24px;
+  line-height: 24px; }
 
 .ulinkpanel-dark a.ulinkpanel-entry-url:hover {
   color: #3ea !important; }
@@ -11579,13 +11584,15 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
 
 .link-control-panel .upfront-link-back, .link-control-panel .ulinkpanel-back {
   width: 30px;
-  height: 24px;
-  display: inline-block; }
+  height: 28px;
+  display: block;
+  float: left; }
 
 .link-control-panel .upfront-settings-link-select {
   width: 42px;
   height: 24px;
-  display: inline-block; }
+  display: block;
+  float: left; }
 
 .link-control-panel .upfront-field-select {
   background: #fff;
@@ -11631,8 +11638,9 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
 
 .link-control-panel .upfront-apply {
   width: 25px;
-  height: 24px;
-  display: inline-block; }
+  height: 28px;
+  display: block;
+  float: left; }
 
 .link-control-panel .upfront-apply:before {
   background-position: -318px -98px;
@@ -11646,13 +11654,18 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
 
 .link-control-panel .upfront-settings-link-target,
 .link-control-panel .upfront-settings-link-field {
-  display: inline-block; }
+  display: block;
+  float: left; }
 
 .link-control-panel .upfront-settings-link-field {
-  width: 198px; }
+  width: 198px;
+  padding-left: 5px; }
+
+.link-control-panel .ulinkpanel-entry-wrap {
+  width: auto; }
 
 .link-control-panel .anchor-selector {
-  margin-top: -5px; }
+  margin-top: 0px; }
 
 .link-control-panel .uf-link-target-select {
   width: 38px; }
@@ -11711,7 +11724,7 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
   background: #f7f7f7;
   border: 1px solid #e7e7e7;
   position: relative;
-  top: -9px; }
+  top: -1px; }
 
 .link-control-panel .ulinkpanel-external-wrap input {
   padding-right: 55px; }
