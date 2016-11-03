@@ -331,7 +331,7 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 	background-position: -442px -310px;
 }
 .ulinkpanel-dark .upfront-link-back:before {
-	background-position: -291px -102px; 
+	background-position: -294px -102px; 
 }
 .ulinkpanel-dark {
 	background: #ffffff;
@@ -359,6 +359,19 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 	left: 0px;
 	top: -35px;
 }
+.upfront-element-controls .link-control-panel-first-level .link-control-panel {
+	position: relative;
+	top: 6px;
+}
+.upfront-element-controls .link-control-panel-first-level .ulinkpanel-dark {
+	top: -2px;
+}
+.upfront-element-controls .link-control-panel-first-level .upfront-control-arrow {
+	left: -3px !important;
+}
+.upfront-element-controls .link-control-panel-first-level .link-control-panel-content {
+	left: 0px !important;
+}
 .upfront-element-controls .link-control-panel-item {
 	position: relative;
 	z-index: 99;
@@ -368,8 +381,9 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 	z-index: 99;
 }
 .link-control-panel .upfront-link-back, .link-control-panel .ulinkpanel-back {
-	width: 30px;
-	height: 28px;
+	/* We need !important here because for some elements UF automatically add width and height to the element id */
+	width: 35px !important;
+	height: 28px !important;
 	display: block;
 	float: left;
 }
