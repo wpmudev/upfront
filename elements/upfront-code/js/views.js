@@ -52,7 +52,8 @@ define([
 			get_content_markup: function () {
 				var markup = this.fallback('markup'),
 					raw_style = this.fallback('style'),
-					script = '(function($){' + this.fallback('script') + '})(jQuery)',
+					raw_script = this.fallback('script'),
+					script = Syntax.checker("script").wrap(raw_script),
 					element_id = this.property('element_id'),
 					style = ''
 				;
@@ -65,7 +66,7 @@ define([
 				style = Upfront.Util.colors.convert_string_ufc_to_color(style); // Allow for theme colors.
 
 				// Check initial scripts
-				if (!Syntax.checker("script").check(script)) {
+				if (!Syntax.checker("script").check(raw_script)) {
 					script = '';
 				}
 
