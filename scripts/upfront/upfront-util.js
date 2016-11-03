@@ -138,6 +138,10 @@ define([
 				//request.upfront_layout = Upfront.Application.layout.get('layout');
 				request.layout = Upfront.Application.current_subapplication.layout.get('layout');
 			}
+			if ( Upfront.layout_data_from_create_layout && request.data.post_id === 'fake_post' && !request.layout ) {
+				request.layout = Upfront.layout_data_from_create_layout;
+				Upfront.layout_data_from_create_layout = false;
+			}
 			if ( !request.storage_key ) request.storage_key = _upfront_storage_key;
 			request.stylesheet = _upfront_stylesheet;
 
