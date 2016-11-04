@@ -11758,7 +11758,8 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
 .link-control-panel .uf-link-target-select .upfront-field-select-value {
   height: 16px; }
 
-.link-control-panel .uf-link-target-select .upfront-field-select-options::-webkit-scrollbar {
+.link-control-panel .uf-link-target-select .upfront-field-select-options::-webkit-scrollbar,
+.link-control-panel .upfront-link-select .upfront-field-select-options::-webkit-scrollbar {
   width: 0px; }
 
 .link-control-panel .uf-link-target-select .upfront-field-select-option:hover {
