@@ -519,6 +519,7 @@ div.sp-val:active .sp-dragger:after { display:block;}
 	position:relative;
 	border-radius: 3px;
 	color: #000;
+	opacity: 1 !important;
 }
 
 .sp-picker-container .sp-choose {
@@ -534,21 +535,22 @@ div.sp-val:active .sp-dragger:after { display:block;}
 	width:0;
 	border: 12px solid;
 	border-color: inherit;
-	font-size: 20px;
+	font-size: 12px;
 	top: 6px;
 	left: 8px;
 	position: absolute;
 	text-indent: -6px;
-	font-family:georgia;
+	font-family: arial;
+	font-weight: bold;
 	border-radius: 3px;
 }
 
 .re-icon.re-upfrontColor.transparent:after {
 	border: none;
-	height: 24px;
-	width: 24px;
+	height: 16px;
+	width: 16px;
 	line-height: 24px;
-	background-color: #aeb6be;
+	background-color: rgba(204,204,204,0.5);
 	text-align:center;
 	text-indent: 0;
 	background-image: -webkit-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -webkit-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
@@ -558,11 +560,13 @@ div.sp-val:active .sp-dragger:after { display:block;}
 	background-image: linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0),
 	linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
 
-  -webkit-background-size:8px 8px;
-  -moz-background-size:8px 8px;
-  background-size:8px 8px;
+	-webkit-background-size:8px 8px;
+	-moz-background-size:8px 8px;
+	background-size:8px 8px;
 
-  background-position:0 0, 4px 4px;
+	background-position:0 0, 4px 4px;
+	color: #1691fb;
+	border-radius: 2px;
 }
 
 .sp-thumb-inner {

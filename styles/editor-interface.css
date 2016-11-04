@@ -13308,22 +13308,23 @@ body .redactor_air .redactor-toolbar {
 
 .redactor-toolbar li a {
   display: block;
-  background-image: url("../img/uf-ui-sprite.png");
-  background-image: url("../img/uf-ui-sprite.svg"), none;
+  background-image: url("../img/uf-core-el-sprite_new.png");
+  background-image: url("../img/uf-core-el-sprite_new.svg"), none;
   background-position: 0;
   background-repeat: no-repeat;
-  text-indent: -9999px; }
+  text-indent: -9999px;
+  opacity: 0.5; }
 
 .redactor-toolbar li a:hover {
   outline: none;
-  background-color: rgba(26, 39, 51, 0.9); }
+  opacity: 1; }
 
 .redactor-toolbar li a:active,
 .redactor-toolbar li a.redactor-act {
   outline: none; }
 
 .redactor-toolbar li a.dropact {
-  background-color: #1e2f3f; }
+  opacity: 1; }
 
 .redactor_button_disabled {
   opacity: .3; }
@@ -13345,16 +13346,18 @@ body .redactor-toolbar li a.redactor_btn_formatting {
   background-position: -25px; }
 
 body .redactor-toolbar li a.re-bold {
-  background-position: -510px -41px; }
+  background-position: -345px -186px; }
 
 body .redactor-toolbar li a.re-bold.redactor-act {
-  background-position: -552px -41px; }
+  background-position: -345px -186px;
+  opacity: 1; }
 
 body .redactor-toolbar li a.re-italic {
-  background-position: -594px -42px; }
+  background-position: -347px -216px; }
 
 body .redactor-toolbar li a.re-italic.redactor-act {
-  background-position: -636px -42px; }
+  background-position: -347px -216px;
+  opacity: 1; }
 
 body .redactor-toolbar li a.redactor_btn_deleted {
   background-position: -500px; }
@@ -13454,47 +13457,44 @@ body .redactor-toolbar li a.redactor_btn_h3 {
 
 body .redactor-toolbar li a.ueditor-noquote,
 body .redactor-toolbar li a.redactor_btn_quote {
-  background-position: -510px -208px; }
+  background-position: -376px -245px; }
 
 body .redactor-toolbar li a.ueditor-quote,
 body .redactor-toolbar li a.redactor_btn_quote.redactor-act {
-  background-position: -552px -208px; }
+  background-position: -376px -245px; }
 
 body .redactor-toolbar li a.ueditor-quote-alternative {
-  background-position: -594px -208px; }
+  background-position: -376px -215px; }
 
 body .redactor-toolbar li a.redactor_btn_pre {
   background-position: -875px; }
 
 body .redactor-toolbar li a.re-upfrontIcons {
-  background-position: -593px -252px; }
-
-body .redactor-toolbar li a.re-upfrontIcons:hover {
-  background-position: -635px -252px; }
+  background-position: -376px -156px; }
 
 ul.redactor-toolbar li a.ueditor-justify {
-  background-position: -636px -82px; }
+  background-position: -436px -155px; }
 
 ul.redactor-toolbar li a.ueditor-center {
-  background-position: -552px -82px; }
+  background-position: -436px -215px; }
 
 ul.redactor-toolbar li a.ueditor-left {
-  background-position: -510px -82px; }
+  background-position: -436px -245px; }
 
 ul.redactor-toolbar li a.ueditor-right {
-  background-position: -594px -82px; }
+  background-position: -436px -185px; }
 
 ul.redactor-toolbar li a.re-stateLists {
-  background-position: -510px -124px; }
+  background-position: -406px -245px; }
 
 ul.redactor-toolbar li a.ueditor-orderedlist {
-  background-position: -594px -124px; }
+  background-position: -406px -185px; }
 
 ul.redactor-toolbar li a.ueditor-unorderedlist {
-  background-position: -552px -124px; }
+  background-position: -406px -215px; }
 
 ul.redactor-toolbar li a.re-upfrontLink, ul.redactor-toolbar li a.re-upfrontLinkCTA {
-  background-position: -510px -167px; }
+  background-position: -347px -246px; }
 
 ul.redactor-toolbar li a.redactor_btn_upfrontSink {
   background-position: -594px -167px; }
@@ -13624,16 +13624,7 @@ a.ueditor-format-pre {
   font-weight: bold; }
 
 .redactor-toolbar li a.re-upfrontFormatting {
-  text-indent: 0;
-  font-family: Georgia, serif;
-  color: #97b8da;
-  font-size: 21px;
-  line-height: 36px;
-  text-align: center; }
-
-.redactor-toolbar li a.re-upfrontFormatting:after {
-  /*content : "¶";*/
-  content: "\00b6"; }
+  background-position: -347px -156px; }
 
 /* MODAL */
 /* 300 lines deleted here, not using modals */
@@ -14282,7 +14273,8 @@ div.sp-val:active .sp-dragger:after {
   text-indent: 0;
   position: relative;
   border-radius: 3px;
-  color: #000; }
+  color: #000;
+  opacity: 1 !important; }
 
 .sp-picker-container .sp-choose {
   width: 103px;
@@ -14296,20 +14288,21 @@ div.sp-val:active .sp-dragger:after {
   width: 0;
   border: 12px solid;
   border-color: inherit;
-  font-size: 20px;
+  font-size: 12px;
   top: 6px;
   left: 8px;
   position: absolute;
   text-indent: -6px;
-  font-family: georgia;
+  font-family: arial;
+  font-weight: bold;
   border-radius: 3px; }
 
 .re-icon.re-upfrontColor.transparent:after {
   border: none;
-  height: 24px;
-  width: 24px;
+  height: 16px;
+  width: 16px;
   line-height: 24px;
-  background-color: #aeb6be;
+  background-color: rgba(204, 204, 204, 0.5);
   text-align: center;
   text-indent: 0;
   background-image: -webkit-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -webkit-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
@@ -14320,7 +14313,9 @@ div.sp-val:active .sp-dragger:after {
   -webkit-background-size: 8px 8px;
   -moz-background-size: 8px 8px;
   background-size: 8px 8px;
-  background-position: 0 0, 4px 4px; }
+  background-position: 0 0, 4px 4px;
+  color: #1691fb;
+  border-radius: 2px; }
 
 .sp-thumb-inner {
   border-radius: 2px;
