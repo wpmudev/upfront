@@ -760,6 +760,7 @@ RedactorPlugins.upfrontLink = function() {
 
 			initialize: function () {
 				UeditorPanel.prototype.initialize.apply(this, arguments);
+				this.$el.addClass('link-control-panel link-control-panel-content');
 			},
 
 			open: function (e, redactor) {
@@ -846,6 +847,19 @@ RedactorPlugins.upfrontLink = function() {
 				this.linkPanel.render();
 				this.$el.html(this.linkPanel.el);
 				this.linkPanel.delegateEvents();
+				
+				this.updateWrapperSize();
+			},
+			
+			updateWrapperSize: function() {
+				var totalWidth = 0;
+
+				this.$el.find('.ulinkpanel-dark').children().each(function(i, element) {
+					var elementWidth = $(element).hasClass('upfront-settings-link-target') ? 0 : parseInt($(element).width());
+					totalWidth = totalWidth + elementWidth;
+				});
+				
+				this.$el.find('.ulinkpanel-dark').css('width', totalWidth + 10);
 			},
 
 			close: function (e, redactor) {
