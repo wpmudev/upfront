@@ -339,7 +339,7 @@ define([
 				return;
 			}
 			
-			if (!this.model.get('url')) {
+			if (!this.model.get('url') && (!this.model.get('type') || this.model.get('type') === "unlink")) {
 				// If not URL set type to external
 				this.model.set({'type': 'external'}, {silent: true});
 			}
