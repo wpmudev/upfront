@@ -14280,6 +14280,9 @@ div.sp-val:active .sp-dragger:after {
   width: 103px;
   /*box-shadow: 0 3px 0 rgba(0,0,0,0.1);*/ }
 
+#tabbackground, #tabforeground {
+  position: relative; }
+
 .re-icon.re-upfrontColor:after {
   content: 'T';
   color: inherit;
@@ -14295,6 +14298,7 @@ div.sp-val:active .sp-dragger:after {
   text-indent: -6px;
   font-family: arial;
   font-weight: bold;
+  color: #1691fb;
   border-radius: 3px; }
 
 .re-icon.re-upfrontColor.transparent:after {
@@ -14314,7 +14318,47 @@ div.sp-val:active .sp-dragger:after {
   -moz-background-size: 8px 8px;
   background-size: 8px 8px;
   background-position: 0 0, 4px 4px;
-  color: #1691fb;
+  border-radius: 2px; }
+
+#tabforeground:after {
+  content: 'T';
+  color: inherit;
+  display: block;
+  height: 0;
+  width: 0;
+  border-color: inherit;
+  font-size: 12px;
+  top: 6px;
+  left: 15px;
+  position: absolute;
+  text-indent: -6px;
+  font-family: arial;
+  font-weight: bold;
+  border-radius: 3px;
+  color: #1691fb; }
+
+#tabbackground:after {
+  content: ' ';
+  display: block;
+  border: none;
+  height: 16px;
+  width: 16px;
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  line-height: 24px;
+  background-color: rgba(204, 204, 204, 0.5);
+  text-align: center;
+  text-indent: 0;
+  background-image: -webkit-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -webkit-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
+  background-image: -moz-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -moz-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
+  background-image: -o-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -o-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
+  background-image: -ms-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -ms-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
+  background-image: linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
+  -webkit-background-size: 8px 8px;
+  -moz-background-size: 8px 8px;
+  background-size: 8px 8px;
+  background-position: 0 0, 4px 4px;
   border-radius: 2px; }
 
 .sp-thumb-inner {

@@ -1004,11 +1004,11 @@ RedactorPlugins.upfrontColor = function() {
                 'open': 'open'
             },
             init: function(){
-              this.listenTo( UeditorEvents, "ueditor:air:show", this.on_air_show );
-							var me = this;
-							this.listenTo( UeditorEvents, 'cleanUpListeners', function() {
-								me.stopListening();
-							});
+				this.listenTo( UeditorEvents, "ueditor:air:show", this.on_air_show );
+				var me = this;
+				this.listenTo( UeditorEvents, 'cleanUpListeners', function() {
+					me.stopListening();
+				});
             },
             on_air_show: function(e){
                 this.redactor.selection.save();
@@ -1034,6 +1034,7 @@ RedactorPlugins.upfrontColor = function() {
             open: function (e, redactor) {
                 this.updateIcon();
                 this.redactor.selection.save();
+				
                 var self = this,
                     theme_colors = Upfront.Views.Theme_Colors.colors.pluck("color").length ? Upfront.Views.Theme_Colors.colors.pluck("color") : [],
                     foreground_picker = new Upfront.Views.Editor.Field.Color({
@@ -1146,12 +1147,26 @@ RedactorPlugins.upfrontColor = function() {
                     self.closeToolbar();
                     self.redactor.dropdown.hideAll();
                 });
+				
+				this.positionColorPicker();
             },
+			positionColorPicker: function() {
+				var $redactorContainer = this.$el.closest('.redactor-toolbar'),
+					$containerOffset = $redactorContainer.offset(),
+					$positionClass = 'bottom-right';
+				;
+				
+				if($containerOffset.top < this.$el.find('.sp-container').height()) {
+					$positionClass = 'top-right';
+				}
+				
+				this.$el.addClass($positionClass).find('.tablist').addClass($positionClass);
+			},
             render: function () {
 
                 var tabforeground = $('<li id="tabforeground" class="active">').html('');
                 var tabbackground = $('<li id="tabbackground">').html('');
-                var tablist = $('<ul class="tablist">').append(tabforeground).append(tabbackground);
+                var tablist = $('<ul class="tablist">').append(tabbackground).append(tabforeground);
 
                 var tabs = $('<ul class="tabs">').append($('<li id="tabforeground-content" class="active">').html('<input class="foreground" type="text">')).append($('<li id="tabbackground-content">').html('<input class="background" type="text">'));
 
