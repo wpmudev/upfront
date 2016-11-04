@@ -170,19 +170,19 @@ input[type=text].sp-input {
     top: 23px;
     height: 22px;
 	/* magic happens below */    
-	background-color: #DFE9F2;
+	background-color: #d2d2d2;
 	background-image: 
-	-webkit-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), 
-	-webkit-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+	-webkit-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
+	-webkit-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
 	background-image: 
-	-moz-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), 
-	-moz-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+	-moz-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
+	-moz-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
 	background-image: 
-	-o-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), 
-	-o-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+	-o-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
+	-o-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
 	background-image: 
-	linear-gradient(to top right, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), 
-	linear-gradient(to top right, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+	linear-gradient(to top right, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
+	linear-gradient(to top right, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
 
 	-webkit-background-size: 8px 8px;
 	-moz-background-size: 8px 8px;
@@ -292,29 +292,33 @@ ul.upfront_color_picker_rgba{
 	padding: 0;
 	text-align: center;
 }
-.sp-alpha, .sp-thumb-el
-{
+.sp-alpha, .sp-thumb-el {
     position:relative;
 	/* magic happens below */    
-	background-color: #DFE9F2;
+	background-color: #d2d2d2;
 	background-image: 
-	-webkit-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), 
-	-webkit-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+	-webkit-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
+	-webkit-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
 	background-image: 
-	-moz-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), 
-	-moz-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+	-moz-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
+	-moz-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
 	background-image: 
-	-o-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), 
-	-o-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+	-o-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
+	-o-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
 	background-image: 
-	linear-gradient(to top right, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), 
-	linear-gradient(to top right, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+	linear-gradient(to top right, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
+	linear-gradient(to top right, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
 
 	-webkit-background-size: 8px 8px;
-	-moz-background-size: 8px 8px;
-	background-size: 8px 8px;
-	background-position: 2px 0px, 6px 4px;  
+	   -moz-background-size: 8px 8px;
+			background-size: 8px 8px;
+
+	background-position: 4px 4px, 8px 8px;  
 }
+.sp-alpha {
+	background-position: 4px 3px, 8px 7px;
+}
+
 .upfront_color_picker_reset{
 	position: absolute;
 	text-indent: 999px;
@@ -324,24 +328,25 @@ ul.upfront_color_picker_rgba{
 }
 .noColor {
 	/* magic happens below */    
-	background-color: #DFE9F2;
+	background-color: #d2d2d2;
 	background-image: 
-	-webkit-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), 
-	-webkit-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+	-webkit-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
+	-webkit-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
 	background-image: 
-	-moz-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), 
-	-moz-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+	-moz-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
+	-moz-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
 	background-image: 
-	-o-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), 
-	-o-linear-gradient(bottom left, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+	-o-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
+	-o-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
 	background-image: 
-	linear-gradient(to top right, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff), 
-	linear-gradient(to top right, #fff 25%, transparent 25%, transparent 75%, #fff 75%, #fff);
+	linear-gradient(to top right, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
+	linear-gradient(to top right, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
 
 	-webkit-background-size: 8px 8px;
-	-moz-background-size: 8px 8px;
-	background-size: 8px 8px;
-	background-position: 2px 0px, 6px 4px;  
+	   -moz-background-size: 8px 8px;
+			background-size: 8px 8px;
+
+	background-position: 4px 4px, 8px 8px;
 	width:12px;
 	height:12px;
 	display:block;
@@ -352,12 +357,12 @@ ul.upfront_color_picker_rgba{
 
 .noColor:after{
 	  content: '';
-	  width:300%;
-	  height:3px;
+	  width:150%;
+	  height:2px;
 	  display:block;
 	  position:relative;
-	  top:10px;
-	  left:-18px;
+	  top:4px;
+	  left:-2px;
 	  background-color:#ff0000;
 	       -moz-transform: rotate(-45deg);
 	       -o-transform: rotate(-45deg);
