@@ -338,6 +338,12 @@ define([
 			this.$el.html('Error occurred, link panel switch to new style.');
 				return;
 			}
+			
+			if (!this.model.get('url')) {
+				// If not URL set type to external
+				this.model.set({'type': 'external'}, {silent: true});
+			}
+			
 			var tplData = {
 				title: this.title,
 				link: this.model.toJSON(),
@@ -387,6 +393,11 @@ define([
 				if (!use) {
 					return;
 				}
+				
+				if(!me.model.get('url') && type === "unlink") {
+					return;
+				}
+
 				typeSelectValues.push(this.getLinkTypeValue(type));
 			}, this);
 
