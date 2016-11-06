@@ -1153,12 +1153,14 @@ RedactorPlugins.upfrontColor = function() {
 			positionColorPicker: function() {
 				var $redactorContainer = this.$el.closest('.redactor-toolbar'),
 					$containerOffset = $redactorContainer.offset(),
-					$positionClass = 'bottom-right';
+					$positionClass = 'uf-bottom-right';
 				;
 				
 				if($containerOffset.top < this.$el.find('.sp-container').height()) {
-					$positionClass = 'top-right';
+					$positionClass = 'uf-top-right';
 				}
+				
+				this.$el.addClass('uf-color-picker-wrapper');
 				
 				this.$el.addClass($positionClass).find('.tablist').addClass($positionClass);
 			},

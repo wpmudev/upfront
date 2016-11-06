@@ -14150,26 +14150,38 @@ ul.upfront_color_picker_rgba {
   position: absolute;
   z-index: 999; }
 
-.redactor-dropdown-box-upfrontColor .top-left {
+.redactor-dropdown-box-upfrontColor .uf-color-picker-wrapper {
+  height: 200px;
+  position: relative; }
+
+.redactor-dropdown-box-upfrontColor .uf-color-picker-wrapper.uf-bottom-right {
+  top: -205px;
+  left: -240px; }
+
+.redactor-dropdown-box-upfrontColor .uf-color-picker-wrapper.uf-top-right {
+  top: -65px;
+  left: -240px; }
+
+.redactor-dropdown-box-upfrontColor .tablist.uf-top-left {
   top: -1px;
   left: -28px;
   border: 1px solid #cccccc;
   border-right: none; }
 
-.redactor-dropdown-box-upfrontColor .bottom-left {
-  bottom: 7px;
+.redactor-dropdown-box-upfrontColor .tablist.uf-bottom-left {
+  bottom: 0px;
   left: -28px;
   border: 1px solid #cccccc;
   border-right: none; }
 
-.redactor-dropdown-box-upfrontColor .top-right {
+.redactor-dropdown-box-upfrontColor .tablist.uf-top-right {
   top: -1px;
   right: -28px;
   border: 1px solid #cccccc;
   border-left: none; }
 
-.redactor-dropdown-box-upfrontColor .bottom-right {
-  bottom: 7px;
+.redactor-dropdown-box-upfrontColor .tablist.uf-bottom-right {
+  bottom: 0px;
   right: -28px;
   border: 1px solid #cccccc;
   border-left: none; }
@@ -14305,7 +14317,7 @@ div.sp-val:active .sp-dragger:after {
   border: none;
   height: 16px;
   width: 16px;
-  line-height: 24px;
+  line-height: 16px;
   background-color: rgba(204, 204, 204, 0.5);
   text-align: center;
   text-indent: 0;
