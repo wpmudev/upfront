@@ -755,7 +755,9 @@ RedactorPlugins.upfrontLink = function() {
 		panel: UeditorPanel.extend({
 			tpl: _.template($(tpl).find('#link-tpl').html()),
 			events: {
-				open: 'open'
+				open: 'open',
+				'click .upfront-apply': 'closeLinkPanel',
+				'click .upfront-link-back': 'closeLinkPanel'
 			},
 
 			initialize: function () {
@@ -848,7 +850,28 @@ RedactorPlugins.upfrontLink = function() {
 				this.$el.html(this.linkPanel.el);
 				this.linkPanel.delegateEvents();
 				
+				this.hideSibblings();
 				this.updateWrapperSize();
+			},
+			
+			closeLinkPanel: function() {
+				var $buttons = this.$el.parent().siblings('li'),
+					totalWidth = 0
+				;
+
+				$buttons.each(function(i, element) {
+					totalWidth = totalWidth + parseInt($(element).width());
+				});
+
+				this.$el.closest('.redactor_air').css('width', totalWidth + 5);
+				
+				$('a.re-upfrontLink').click().removeClass('dropact redactor_act');
+				
+				$buttons.show();
+			},
+			
+			hideSibblings: function() {
+				this.$el.parent().siblings('li').hide();
 			},
 			
 			updateWrapperSize: function() {
@@ -860,6 +883,7 @@ RedactorPlugins.upfrontLink = function() {
 				});
 				
 				this.$el.find('.ulinkpanel-dark').css('width', totalWidth + 10);
+				this.$el.closest('.redactor_air').css('width', totalWidth + 10);
 			},
 
 			close: function (e, redactor) {
