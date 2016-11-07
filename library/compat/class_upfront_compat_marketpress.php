@@ -184,14 +184,24 @@ class Upfront_Compat_MarketPress {
 		include(get_theme_root() . DIRECTORY_SEPARATOR . 'upfront'. DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'compat' . DIRECTORY_SEPARATOR . 'marketpress' . DIRECTORY_SEPARATOR . 'category.php');
 		$archive =  ob_get_clean();
 
+		ob_start();
+		include(get_theme_root() . DIRECTORY_SEPARATOR . 'upfront'. DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'compat' . DIRECTORY_SEPARATOR . 'marketpress' . DIRECTORY_SEPARATOR . 'single-product.php');
+		$single =  ob_get_clean();
+
 		$sampleContents = array(
-			'archive' => $archive
+			'archive' => $archive,
+			'single' => $single
 		);
 
 		$layouts['marketpress'] = array(
 			'pluginName' => 'MarketPress',
 			'sampleContents' => $sampleContents,
 			'layouts' => array(
+				array(
+					'item' => 'single-mpproduct',
+					'type' => 'single',
+					'content' => 'single'
+				),
 				array(
 					'item' => 'archive-mpproduct_category',
 					'type' => 'archive',
