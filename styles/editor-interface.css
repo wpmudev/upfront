@@ -10573,14 +10573,14 @@ License: MIT
   width: 100%; }
 
 .sp-input {
-  font-size: 12px !important;
+  font-size: 11px !important;
   border: 1px inset;
   padding: 4px 5px;
   margin: 0;
   width: 100%;
   background: transparent;
   border-radius: 3px;
-  color: #222; }
+  color: #909090; }
 
 .sp-input:focus {
   border: 1px solid orange; }
@@ -13958,7 +13958,7 @@ li#tabbackground-content .sp-palette-row-selection span.sp-thumb-el:last-child >
   margin-bottom: 8px; }
 
 input[type=text].sp-input {
-  color: #a2a2a2;
+  color: #909090;
   width: 225px;
   height: 24px;
   line-height: 24px;
@@ -14237,25 +14237,26 @@ ul.upfront_color_picker_rgba {
 .sp-slider:before {
   content: '';
   border-top: 1px solid #fff;
-  box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3);
+  box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.3);
   position: absolute;
   z-index: 999;
   display: block;
   left: 2px;
-  height: 2px;
+  height: 1px;
   width: 10px;
   top: 2px; }
 
 .sp-slider:after {
   content: '';
   position: absolute;
-  top: 0px;
-  right: -8px;
-  box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3);
+  top: -1px;
+  right: -7px;
+  box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.3);
   background: #212121;
-  width: 6px;
-  height: 6px;
-  border: 1px solid #fff; }
+  width: 7px;
+  height: 7px;
+  border: 1px solid #fff;
+  z-index: 999; }
 
 .sp-alpha-handle {
   background: transparent;
@@ -14265,12 +14266,12 @@ ul.upfront_color_picker_rgba {
 .sp-alpha-handle:before {
   content: '';
   border-left: 1px solid #ffffff;
-  box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3);
+  box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.3);
   position: absolute;
   z-index: 999;
   left: 2px;
   height: 10px;
-  top: -2px; }
+  top: 1px; }
 
 .sp-palette .sp-thumb-dark.sp-thumb-active .sp-thumb-inner,
 .sp-palette .sp-thumb-light.sp-thumb-active .sp-thumb-inner {
@@ -14280,13 +14281,14 @@ ul.upfront_color_picker_rgba {
 .sp-alpha-handle:after {
   content: '';
   position: absolute;
-  top: 10px;
-  left: 0;
-  box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3);
+  top: 9px;
+  left: -1px;
+  box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.3);
   background: #212121;
-  width: 6px;
-  height: 6px;
-  border: 1px solid #fff; }
+  width: 7px;
+  height: 7px;
+  border: 1px solid #fff;
+  z-index: 999; }
 
 div.sp-val:active .sp-dragger:after {
   display: block; }
