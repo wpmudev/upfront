@@ -89,6 +89,12 @@ class Upfront_Compat_MarketPress {
 		if (!empty($cascade['specificity']) && $cascade['specificity'] === 'single-page-' . mp_get_setting('pages->cart')) {
 			if ($theme->has_theme_layout('single-page-mpcart')) $cascade['specificity'] = 'single-page-mpcart';
 		}
+		if (!empty($cascade['specificity']) && $cascade['specificity'] === 'single-page-' . mp_get_setting('pages->store')) {
+			if ($theme->has_theme_layout('single-page-mpstore')) $cascade['specificity'] = 'single-page-mpstore';
+		}
+		if (!empty($cascade['specificity']) && $cascade['specificity'] === 'single-page-' . mp_get_setting('pages->checkout')) {
+			if ($theme->has_theme_layout('single-page-mpcheckout')) $cascade['specificity'] = 'single-page-mpcheckout';
+		}
 		return $cascade;
 	}
 
@@ -188,9 +194,19 @@ class Upfront_Compat_MarketPress {
 		include(get_theme_root() . DIRECTORY_SEPARATOR . 'upfront'. DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'compat' . DIRECTORY_SEPARATOR . 'marketpress' . DIRECTORY_SEPARATOR . 'single-product.php');
 		$single =  ob_get_clean();
 
+		ob_start();
+		include(get_theme_root() . DIRECTORY_SEPARATOR . 'upfront'. DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'compat' . DIRECTORY_SEPARATOR . 'marketpress' . DIRECTORY_SEPARATOR . 'store.php');
+		$store =  ob_get_clean();
+
+		ob_start();
+		include(get_theme_root() . DIRECTORY_SEPARATOR . 'upfront'. DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'compat' . DIRECTORY_SEPARATOR . 'marketpress' . DIRECTORY_SEPARATOR . 'checkout.php');
+		$checkout =  ob_get_clean();
+
 		$sampleContents = array(
 			'archive' => $archive,
-			'single' => $single
+			'single' => $single,
+			'store' => $store,
+			'checkout' => $checkout
 		);
 
 		$layouts['marketpress'] = array(
@@ -211,6 +227,16 @@ class Upfront_Compat_MarketPress {
 					'item' => 'archive-mpproduct_tag',
 					'type' => 'archive',
 					'content' => 'archive'
+				),
+				array(
+					'item' => 'single-page-mpstore',
+					'type' => 'single',
+					'content' => 'store'
+				),
+				array(
+					'item' => 'single-page-mpcheckout',
+					'type' => 'single',
+					'content' => 'checkout'
 				)
 			)
 		);
