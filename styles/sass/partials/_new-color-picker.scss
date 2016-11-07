@@ -48,7 +48,7 @@ li#tabbackground-content .sp-palette-row-selection span.sp-thumb-el:last-child >
 .sp-hue {
 	width: 6px;
 	border-radius: 3px;
-    box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3);
+    box-shadow: -1px 0 2px 0 rgba(36, 57, 77, 0.35);
 }
 
 .sp-alpha-inner {
@@ -82,6 +82,9 @@ li#tabbackground-content .sp-palette-row-selection span.sp-thumb-el:last-child >
 	width: 111px;
 	border-radius: 2px;
 	box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3);
+}
+.sp-alpha-enabled .sp-alpha {
+	box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.20);
 }
 
 .sp-alpha-inner{
@@ -127,9 +130,9 @@ li#tabbackground-content .sp-palette-row-selection span.sp-thumb-el:last-child >
 .sp-palette-container:before,
 .sp-palette-row.sp-palette-row-selection:before,
 {
-	font-family: Verdana, sans-serif!important;
-	font-size:11px;
-	color:#97b8da;
+	font-family: Open Sans, Verdana, sans-serif;
+    font-size: 11px;
+    color: #909090;
 }
 
 .sp-input-container:before {
@@ -167,22 +170,13 @@ input[type=text].sp-input {
 	width: 10px;
 	position: absolute;
     left: 11px;
-    top: 23px;
+    top: 25px;
     height: 22px;
 	/* magic happens below */    
 	background-color: #d2d2d2;
 	background-image: 
-	-webkit-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
-	-webkit-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
-	background-image: 
-	-moz-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
-	-moz-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
-	background-image: 
-	-o-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
-	-o-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
-	background-image: 
-	linear-gradient(to top right, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
-	linear-gradient(to top right, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
+		linear-gradient(to top right, #F7F7F7 25%, transparent 25%, transparent 75%, #F7F7F7 75%, #F7F7F7), 
+		linear-gradient(to top right, #F7F7F7 25%, transparent 25%, transparent 75%, #F7F7F7 75%, #F7F7F7);
 
 	-webkit-background-size: 8px 8px;
 	-moz-background-size: 8px 8px;
@@ -234,6 +228,7 @@ input[type=text].sp-input {
 	height: 12px;
 	margin: 2px 2px;
 	border: none;
+	box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.20);
 }
 
 .sp-picker-container .sp-cancel {
@@ -297,17 +292,8 @@ ul.upfront_color_picker_rgba{
 	/* magic happens below */    
 	background-color: #d2d2d2;
 	background-image: 
-	-webkit-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
-	-webkit-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
-	background-image: 
-	-moz-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
-	-moz-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
-	background-image: 
-	-o-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
-	-o-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
-	background-image: 
-	linear-gradient(to top right, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
-	linear-gradient(to top right, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
+		linear-gradient(to top right, #F7F7F7 25%, transparent 25%, transparent 75%, #F7F7F7 75%, #F7F7F7), 
+		linear-gradient(to top right, #F7F7F7 25%, transparent 25%, transparent 75%, #F7F7F7 75%, #F7F7F7);
 
 	-webkit-background-size: 8px 8px;
 	   -moz-background-size: 8px 8px;
@@ -330,17 +316,8 @@ ul.upfront_color_picker_rgba{
 	/* magic happens below */    
 	background-color: #d2d2d2;
 	background-image: 
-	-webkit-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
-	-webkit-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
-	background-image: 
-	-moz-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
-	-moz-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
-	background-image: 
-	-o-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
-	-o-linear-gradient(bottom left, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
-	background-image: 
-	linear-gradient(to top right, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7), 
-	linear-gradient(to top right, #e7e7e7 25%, transparent 25%, transparent 75%, #e7e7e7 75%, #e7e7e7);
+		linear-gradient(to top right, #F7F7F7 25%, transparent 25%, transparent 75%, #F7F7F7 75%, #F7F7F7), 
+		linear-gradient(to top right, #F7F7F7 25%, transparent 25%, transparent 75%, #F7F7F7 75%, #F7F7F7);
 
 	-webkit-background-size: 8px 8px;
 	   -moz-background-size: 8px 8px;
@@ -364,7 +341,7 @@ ul.upfront_color_picker_rgba{
 	  top:4px;
 	  left:-2px;
 	  background-color:#ff0000;
-	       -moz-transform: rotate(-45deg);
+	     -moz-transform: rotate(-45deg);
 	       -o-transform: rotate(-45deg);
 	  -webkit-transform: rotate(-45deg);
 	      -ms-transform: rotate(-45deg);
@@ -375,7 +352,9 @@ line-height:0;
 }
 
 .redactor-dropdown.redactor-dropdown-box-upfrontColor .sp-container {
-border:none;
+	border-radius: 2px;
+    border: 1px solid #ccc;
+    border-bottom-right-radius: 0;
 }
 
 .redactor-dropdown-box-upfrontColor ul.tabs, .redactor-dropdown-box-upfrontColor ul.tablist {
@@ -436,7 +415,7 @@ border:none;
 	line-height: 1.5;
 	font-size: 11px;
 	cursor: pointer;
-	border-radius: 2px;
+	border-radius: 0px;
 	width: 28px;
 	height: 28px;
 	overflow: hidden;
@@ -522,6 +501,12 @@ border:none;
     height: 10px;
     top: -2px;
 }
+.sp-palette .sp-thumb-dark.sp-thumb-active .sp-thumb-inner,
+.sp-palette .sp-thumb-light.sp-thumb-active .sp-thumb-inner {
+	background-image: none;
+	box-shadow: 0px 0px 0px 1px rgba(255,255,255,0.80), 0px 0px 0px 2px #40A6FF;
+}
+
  .sp-alpha-handle:after {
 	content: '';
 	position: absolute;
@@ -579,10 +564,6 @@ div.sp-val:active .sp-dragger:after { display:block;}
 	background-color: rgba(204,204,204,0.5);
 	text-align:center;
 	text-indent: 0;
-	background-image: -webkit-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -webkit-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
-	background-image: -moz-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -moz-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
-	background-image: -o-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -o-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
-	background-image: -ms-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -ms-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
 	background-image: linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0),
 	linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
 
@@ -625,10 +606,6 @@ div.sp-val:active .sp-dragger:after { display:block;}
 	background-color: rgba(204,204,204,0.5);
 	text-align:center;
 	text-indent: 0;
-	background-image: -webkit-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -webkit-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
-	background-image: -moz-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -moz-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
-	background-image: -o-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -o-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
-	background-image: -ms-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0), -ms-linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
 	background-image: linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0),
 	linear-gradient(45deg, #9098a0 25%, transparent 25%, transparent 75%, #9098a0 75%, #9098a0);
 
@@ -637,7 +614,7 @@ div.sp-val:active .sp-dragger:after { display:block;}
 	background-size:8px 8px;
 
 	background-position:0 0, 4px 4px;
-	border-radius: 2px;
+	border-radius: 3px;
 }
 
 .sp-thumb-inner {

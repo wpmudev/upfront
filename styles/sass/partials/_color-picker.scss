@@ -207,14 +207,10 @@ License: MIT
    height: 0;
    width: 0;
 
-
-					transform:	rotate(-45deg);
-			-ms-transform: 	rotate(-45deg); /* IE 9 */
+			transform:	rotate(-45deg);
+		-ms-transform: 	rotate(-45deg); /* IE 9 */
 	-webkit-transform: 	rotate(-45deg); /* Safari and Chrome */
-
-	webkit-box-shadow: 	0px 0px 1px 1px #a2c5e4;
-	  -moz-box-shadow: 	0px 0px 1px 1px #a2c5e4;
-	       box-shadow:  0px 0px 1px 1px #a2c5e4;
+	       box-shadow:  0px 0px 0px 1px #fff, 0 0 5px 1px rgba(0,0,0,.5);
 
    margin: 1px 0 0 1px;
 
@@ -227,13 +223,14 @@ License: MIT
 
 .sp-dragger:before {
 	content: '';
-	border: 1px #ccc solid;
+	border: 1px #fff solid;
 	width: 12px;
 	height: 12px;
 	position: absolute;
 	border-radius: 50%;
 	left: -6px;
 	top: -6px;
+    box-shadow: 0 0 2px 0px rgba(0,0,0,0.3), inset 0 0 2px 0px rgba(0,0,0,0.3);
 }
 
 .sp-dragger:after {
@@ -273,7 +270,7 @@ License: MIT
     background-color: #f2f9ff;
     border: solid 1px #a2c5e4;
     padding: 0;
-    box-shadow: 0 2px 7px rgba(0,0,0,.3);
+    box-shadow: 0px 1px 2px 0px rgba(0,0,0,0.10);
 }
 .sp-container,.sp-palette-container, .sp-picker-container, .sp-container button, .sp-container input, .sp-color, .sp-hue
 {
