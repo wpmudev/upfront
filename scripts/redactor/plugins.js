@@ -31,6 +31,8 @@ var UeditorPanel = Backbone.View.extend({
         if( typeof this.init === "function" ){
             this.init();
         }
+		
+		this.listenTo( UeditorEvents, "ueditor:air:show", this.fadeOutToolbar );
 
         this.render();
     },
@@ -794,6 +796,8 @@ RedactorPlugins.upfrontLink = function() {
 			initialize: function () {
 				UeditorPanel.prototype.initialize.apply(this, arguments);
 				this.$el.addClass('link-control-panel link-control-panel-content');
+				
+				this.listenTo( UeditorEvents, "ueditor:air:show", this.showSiblings );
 			},
 
 			open: function (e, redactor) {
@@ -881,10 +885,10 @@ RedactorPlugins.upfrontLink = function() {
 				this.$el.html(this.linkPanel.el);
 				this.linkPanel.delegateEvents();
 				
-				this.hideSibblings();
-				this.updateWrapperSize();
+				this.hideSiblings();
+				
 			},
-			
+
 			closeLinkPanel: function() {
 				var $buttons = this.$el.parent().siblings('li'),
 					totalWidth = 0
@@ -901,8 +905,20 @@ RedactorPlugins.upfrontLink = function() {
 				$buttons.show();
 			},
 			
-			hideSibblings: function() {
+			hideSiblings: function() {
+				this.updateWrapperSize();
 				this.$el.parent().siblings('li').hide();
+			},
+			
+			showSiblings: function() {
+				var totalWidth = 0;
+				this.$el.parent().siblings('li').show();
+				
+				this.$el.parent().siblings('li').each(function(i, element) {
+					totalWidth = totalWidth + parseInt($(element).width());
+				});
+				
+				this.$el.closest('.redactor_air').css('width', totalWidth + 10);
 			},
 			
 			updateWrapperSize: function() {
