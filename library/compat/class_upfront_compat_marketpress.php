@@ -16,6 +16,19 @@ class Upfront_Compat_MarketPress {
 		add_filter('upfront-builder_fake_content', array($this, 'generate_fake_content'), 10, 2);
 		add_filter('upfront-layout_to_name', array($this, 'layout_to_name'), 10, 4);
 		add_filter('upfront-load_post_fake_post_id', array($this, 'load_post_fake_post_id'), 10, 2);
+		add_filter('upfront-posts-get_markup-before', array($this, 'override_posts_markup_filter'));
+		add_filter('upfront-plugins_layouts', array($this, 'add_layouts'));
+	}
+
+	public function override_posts_markup_filter ($status) {
+		// The scope of the issue this addresses stays with archive page
+		if (is_singular()) return $status; // ... so don't do this on singular pages
+
+		$post = get_post();
+		if (empty($post->post_type) || 'product' !== $post->post_type) return $status;
+
+		$content = mp_list_products(array('echo' => false));
+		return $content;
 	}
 
 	public function generate_fake_content($content, $post_id) {
@@ -166,7 +179,34 @@ class Upfront_Compat_MarketPress {
 		return $layouts;
 	}
 
+	function add_layouts($layouts) {
+		ob_start();
+		include(get_theme_root() . DIRECTORY_SEPARATOR . 'upfront'. DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'compat' . DIRECTORY_SEPARATOR . 'marketpress' . DIRECTORY_SEPARATOR . 'category.php');
+		$archive =  ob_get_clean();
 
+		$sampleContents = array(
+			'archive' => $archive
+		);
+
+		$layouts['marketpress'] = array(
+			'pluginName' => 'MarketPress',
+			'sampleContents' => $sampleContents,
+			'layouts' => array(
+				array(
+					'item' => 'archive-mpproduct_category',
+					'type' => 'archive',
+					'content' => 'archive'
+				),
+				array(
+					'item' => 'archive-mpproduct_tag',
+					'type' => 'archive',
+					'content' => 'archive'
+				)
+			)
+		);
+
+		return $layouts;
+	}
 
 	public function forbidden_post_data_types($types) {
 		$post = get_post();
