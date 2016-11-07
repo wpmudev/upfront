@@ -45,6 +45,37 @@ var UeditorPanel = Backbone.View.extend({
         //    }, 300);
         //}
     },
+	
+		
+	fadeInToolbar: function () {
+		var $buttons = this.$el.parent().siblings('li'),
+			$wrapper = this.$el.closest('.redactor_air')
+		;
+		
+		$buttons.each(function(i, element) {
+			$(element).css('opacity', 0.4);
+		});
+		
+		$($wrapper).css({
+			background: 'rgba(255, 255, 255, 0.4)',
+			borderColor: 'rgba(204, 204, 204, 0.4)',
+		});
+	},
+	
+	fadeOutToolbar: function () {
+		var $buttons = this.$el.parent().siblings('li'),
+			$wrapper = this.$el.closest('.redactor_air')
+		;
+		
+		$buttons.each(function(i, element) {
+			$(element).css('opacity', 1);
+		});
+		
+		$($wrapper).css({
+			background: 'rgba(255, 255, 255, 1)',
+			borderColor: 'rgba(204, 204, 204, 1)',
+		});
+	},
 
     closeToolbar: function(){
         this.redactor.$air.fadeOut(100);
@@ -1173,6 +1204,7 @@ RedactorPlugins.upfrontColor = function() {
                 });
 				
 				this.positionColorPicker();
+				this.fadeInToolbar();
             },
 			positionColorPicker: function() {
 				var $redactorContainer = this.$el.closest('.redactor-toolbar'),
@@ -1573,6 +1605,7 @@ RedactorPlugins.upfrontFormatting = function() {
 				this.set_position();
                 this.set_previously_selected_tag();
                 this.set_previously_selected_class();
+				this.fadeInToolbar();
             },
             close: function () {
                 if (this.redactor) {
@@ -1645,6 +1678,7 @@ RedactorPlugins.upfrontFormatting = function() {
                 this.redactor.code.sync();
                 this.close();
                 this.redactor.dropdown.hideAll();
+				this.fadeOutToolbar();
             },
             change_custom_class: function(e){
                 var self = this,
