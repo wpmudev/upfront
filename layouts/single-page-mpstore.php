@@ -14,7 +14,7 @@ $main = upfront_create_region(
 			array (
   'row' => 140,
   'background_type' => 'color',
-  'background_color' => 'rgba(248,252,213,1)',
+  'background_color' => '#c5d0db',
   'version' => '1.0.0',
   'breakpoint' =>
   (array)(array(
@@ -29,14 +29,6 @@ $main = upfront_create_region(
        'col' => 24,
     )),
   )),
-  'sub_regions' =>
-  array (
-    0 => false,
-  ),
-  'bg_padding_type' => 'equal',
-  'top_bg_padding_num' => 0,
-  'bottom_bg_padding_num' => 0,
-  'bg_padding_num' => 0,
 )
 			);
 
@@ -56,7 +48,7 @@ $main->add_element("PostData", array (
     'class' => 'c24 upost-data-object upost-data-object-post_data',
     'id_slug' => 'post-data',
     'data_type' => 'post_data',
-    'preset' => '',
+    'preset' => 'default',
     'row' => 40,
     'type_parts' =>
     array (
@@ -83,15 +75,6 @@ $main->add_element("PostData", array (
     'left_padding_num' => 15,
     'right_padding_num' => 15,
     'lock_padding' => 0,
-    'anchor' => '',
-    'current_preset' => '',
-    'breakpoint_presets' =>
-    (array)(array(
-       'desktop' =>
-      (array)(array(
-         'preset' => '',
-      )),
-    )),
   ),
   'row' => 6,
   'sticky' => false,
@@ -143,19 +126,14 @@ $main->add_element("PostData", array (
       'margin_right' => '0',
       'margin_top' => '0',
       'margin_bottom' => '0',
-      'class' => 'upfront-post-data-part',
+      'class' => 'upfront-post-data-part part-date_posted',
       'view_class' => 'PostDataPartView',
-      'part_type' => 'title',
-      'wrapper_id' => 'wrapper-1478133859020-1319',
+      'part_type' => 'date_posted',
+      'wrapper_id' => 'wrapper-1467787537269-1141',
       'type' => 'PostDataPartModel',
       'id_slug' => 'post-data-part',
-      'element_id' => 'post-data-part-object-1478133846931-1138',
+      'element_id' => 'post-data-part-object-1467787537270-1276',
       'padding_slider' => 15,
-      'top_padding_num' => 15,
-      'left_padding_num' => 15,
-      'right_padding_num' => 15,
-      'bottom_padding_num' => 15,
-      'lock_padding' => 0,
       'use_padding' => 'yes',
       'wrapper_breakpoint' =>
       array (
@@ -168,24 +146,46 @@ $main->add_element("PostData", array (
           'col' => 7,
         ),
       ),
-      'new_line' => true,
-      'breakpoint' =>
+      'top_padding_num' => 15,
+      'left_padding_num' => 15,
+      'right_padding_num' => 15,
+      'bottom_padding_num' => 15,
+      'lock_padding' => 0,
+    ),
+    1 =>
+    array (
+      'columns' => '24',
+      'margin_left' => '0',
+      'margin_right' => '0',
+      'margin_top' => '0',
+      'margin_bottom' => '0',
+      'class' => 'upfront-post-data-part part-title',
+      'view_class' => 'PostDataPartView',
+      'part_type' => 'title',
+      'wrapper_id' => 'wrapper-1467787537270-1335',
+      'type' => 'PostDataPartModel',
+      'id_slug' => 'post-data-part',
+      'element_id' => 'post-data-part-object-1467787537270-1762',
+      'padding_slider' => 15,
+      'use_padding' => 'yes',
+      'wrapper_breakpoint' =>
       array (
         'tablet' =>
         array (
           'col' => 12,
-        ),
-        'current_property' =>
-        array (
-          0 => 'col',
         ),
         'mobile' =>
         array (
           'col' => 7,
         ),
       ),
+      'top_padding_num' => 15,
+      'left_padding_num' => 15,
+      'right_padding_num' => 15,
+      'bottom_padding_num' => 15,
+      'lock_padding' => 0,
     ),
-    1 =>
+    2 =>
     array (
       'columns' => '24',
       'margin_left' => '0',
@@ -216,23 +216,7 @@ $main->add_element("PostData", array (
       'left_padding_num' => 15,
       'right_padding_num' => 15,
       'bottom_padding_num' => 15,
-      'lock_padding' => '',
-      'new_line' => true,
-      'breakpoint' =>
-      array (
-        'tablet' =>
-        array (
-          'col' => 12,
-        ),
-        'current_property' =>
-        array (
-          0 => 'col',
-        ),
-        'mobile' =>
-        array (
-          'col' => 7,
-        ),
-      ),
+      'lock_padding' => 0,
     ),
   ),
 ));

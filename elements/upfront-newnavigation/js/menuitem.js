@@ -223,8 +223,13 @@ return (function ($) {
 		},
 
 		render: function (event) {
-			var me = this;
-			var content = '<a class="menu_item uf-click-to-edit-text';
+			var me = this,
+				content = '<a class="menu_item uf-click-to-edit-text',
+				menu_set_url = ( typeof this.model.link['url'] !== undefined )
+					? this.model.link['url'].replace(Upfront.Settings.site_url, '').replace('/','')
+					: '',
+				current_url = Backbone.history.fragment
+			;
 
 			if(me.newitem) content = content + ' new_menu_item menu_item_placeholder';
 
@@ -237,6 +242,8 @@ return (function ($) {
 					content = content + '<span class="missing-lightbox-warning"></span>';
 
 			$(this.el).html(content).addClass('menu-item-depth-'+me.level);
+			if ( menu_set_url === current_url ) $(this.el).addClass('current-menu-item');
+			
 			$(this.el).data('depth', me.level);
 			this.createInlineControlPanel();
 

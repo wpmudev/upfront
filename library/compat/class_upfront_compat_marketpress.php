@@ -16,6 +16,19 @@ class Upfront_Compat_MarketPress {
 		add_filter('upfront-builder_fake_content', array($this, 'generate_fake_content'), 10, 2);
 		add_filter('upfront-layout_to_name', array($this, 'layout_to_name'), 10, 4);
 		add_filter('upfront-load_post_fake_post_id', array($this, 'load_post_fake_post_id'), 10, 2);
+		add_filter('upfront-posts-get_markup-before', array($this, 'override_posts_markup_filter'));
+		add_filter('upfront-plugins_layouts', array($this, 'add_layouts'));
+	}
+
+	public function override_posts_markup_filter ($status) {
+		// The scope of the issue this addresses stays with archive page
+		if (is_singular()) return $status; // ... so don't do this on singular pages
+
+		$post = get_post();
+		if (empty($post->post_type) || 'product' !== $post->post_type) return $status;
+
+		$content = mp_list_products(array('echo' => false));
+		return $content;
 	}
 
 	public function generate_fake_content($content, $post_id) {
@@ -75,6 +88,12 @@ class Upfront_Compat_MarketPress {
 		}
 		if (!empty($cascade['specificity']) && $cascade['specificity'] === 'single-page-' . mp_get_setting('pages->cart')) {
 			if ($theme->has_theme_layout('single-page-mpcart')) $cascade['specificity'] = 'single-page-mpcart';
+		}
+		if (!empty($cascade['specificity']) && $cascade['specificity'] === 'single-page-' . mp_get_setting('pages->store')) {
+			if ($theme->has_theme_layout('single-page-mpstore')) $cascade['specificity'] = 'single-page-mpstore';
+		}
+		if (!empty($cascade['specificity']) && $cascade['specificity'] === 'single-page-' . mp_get_setting('pages->checkout')) {
+			if ($theme->has_theme_layout('single-page-mpcheckout')) $cascade['specificity'] = 'single-page-mpcheckout';
 		}
 		return $cascade;
 	}
@@ -166,7 +185,64 @@ class Upfront_Compat_MarketPress {
 		return $layouts;
 	}
 
+	function add_layouts($layouts) {
+		ob_start();
+		include(get_theme_root() . DIRECTORY_SEPARATOR . 'upfront'. DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'compat' . DIRECTORY_SEPARATOR . 'marketpress' . DIRECTORY_SEPARATOR . 'category.php');
+		$archive =  ob_get_clean();
 
+		ob_start();
+		include(get_theme_root() . DIRECTORY_SEPARATOR . 'upfront'. DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'compat' . DIRECTORY_SEPARATOR . 'marketpress' . DIRECTORY_SEPARATOR . 'single-product.php');
+		$single =  ob_get_clean();
+
+		ob_start();
+		include(get_theme_root() . DIRECTORY_SEPARATOR . 'upfront'. DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'compat' . DIRECTORY_SEPARATOR . 'marketpress' . DIRECTORY_SEPARATOR . 'store.php');
+		$store =  ob_get_clean();
+
+		ob_start();
+		include(get_theme_root() . DIRECTORY_SEPARATOR . 'upfront'. DIRECTORY_SEPARATOR . 'library' . DIRECTORY_SEPARATOR . 'compat' . DIRECTORY_SEPARATOR . 'marketpress' . DIRECTORY_SEPARATOR . 'checkout.php');
+		$checkout =  ob_get_clean();
+
+		$sampleContents = array(
+			'archive' => $archive,
+			'single' => $single,
+			'store' => $store,
+			'checkout' => $checkout
+		);
+
+		$layouts['marketpress'] = array(
+			'pluginName' => 'MarketPress',
+			'sampleContents' => $sampleContents,
+			'layouts' => array(
+				array(
+					'item' => 'single-mpproduct',
+					'type' => 'single',
+					'content' => 'single'
+				),
+				array(
+					'item' => 'archive-mpproduct_category',
+					'type' => 'archive',
+					'content' => 'archive'
+				),
+				array(
+					'item' => 'archive-mpproduct_tag',
+					'type' => 'archive',
+					'content' => 'archive'
+				),
+				array(
+					'item' => 'single-page-mpstore',
+					'type' => 'single',
+					'content' => 'store'
+				),
+				array(
+					'item' => 'single-page-mpcheckout',
+					'type' => 'single',
+					'content' => 'checkout'
+				)
+			)
+		);
+
+		return $layouts;
+	}
 
 	public function forbidden_post_data_types($types) {
 		$post = get_post();
