@@ -13055,7 +13055,7 @@ body .redactor_air {
   position: absolute;
   z-index: 99999999;
   border-radius: 2px;
-  min-height: 28px;
+  min-height: 30px;
   -moz-background-clip: padding;
   -webkit-background-clip: padding-box;
   background-clip: padding-box;
@@ -13294,7 +13294,7 @@ body .redactor_air .redactor-toolbar {
 .redactor-toolbar li a {
   display: block;
   width: 28px;
-  height: 28px;
+  height: 30px;
   outline: none;
   text-decoration: none;
   font-size: 0;
@@ -13347,17 +13347,17 @@ body .redactor-toolbar li a.redactor_btn_formatting {
   background-position: -25px; }
 
 body .redactor-toolbar li a.re-bold {
-  background-position: -345px -186px; }
+  background-position: -345px -185px; }
 
 body .redactor-toolbar li a.re-bold.redactor-act {
-  background-position: -345px -186px;
+  background-position: -345px -185px;
   opacity: 1; }
 
 body .redactor-toolbar li a.re-italic {
-  background-position: -347px -216px; }
+  background-position: -347px -215px; }
 
 body .redactor-toolbar li a.re-italic.redactor-act {
-  background-position: -347px -216px;
+  background-position: -347px -215px;
   opacity: 1; }
 
 body .redactor-toolbar li a.redactor_btn_deleted {
@@ -13458,11 +13458,11 @@ body .redactor-toolbar li a.redactor_btn_h3 {
 
 body .redactor-toolbar li a.ueditor-noquote,
 body .redactor-toolbar li a.redactor_btn_quote {
-  background-position: -376px -245px; }
+  background-position: -376px -244px; }
 
 body .redactor-toolbar li a.ueditor-quote,
 body .redactor-toolbar li a.redactor_btn_quote.redactor-act {
-  background-position: -376px -245px; }
+  background-position: -376px -244px; }
 
 body .redactor-toolbar li a.ueditor-quote-alternative {
   background-position: -376px -215px; }
@@ -13471,31 +13471,31 @@ body .redactor-toolbar li a.redactor_btn_pre {
   background-position: -875px; }
 
 body .redactor-toolbar li a.re-upfrontIcons {
-  background-position: -376px -156px; }
+  background-position: -376px -155px; }
 
 ul.redactor-toolbar li a.ueditor-justify {
-  background-position: -436px -155px; }
+  background-position: -436px -154px; }
 
 ul.redactor-toolbar li a.ueditor-center {
-  background-position: -436px -215px; }
+  background-position: -436px -214px; }
 
 ul.redactor-toolbar li a.ueditor-left {
-  background-position: -436px -245px; }
+  background-position: -436px -244px; }
 
 ul.redactor-toolbar li a.ueditor-right {
-  background-position: -436px -185px; }
+  background-position: -436px -184px; }
 
 ul.redactor-toolbar li a.re-stateLists {
-  background-position: -406px -245px; }
+  background-position: -406px -244px; }
 
 ul.redactor-toolbar li a.ueditor-orderedlist {
-  background-position: -406px -185px; }
+  background-position: -406px -184px; }
 
 ul.redactor-toolbar li a.ueditor-unorderedlist {
-  background-position: -406px -215px; }
+  background-position: -406px -214px; }
 
 ul.redactor-toolbar li a.re-upfrontLink, ul.redactor-toolbar li a.re-upfrontLinkCTA {
-  background-position: -347px -246px; }
+  background-position: -347px -244px; }
 
 ul.redactor-toolbar li a.redactor_btn_upfrontSink {
   background-position: -594px -167px; }
@@ -13561,6 +13561,9 @@ body .redactor-toolbar li a.re-upfrontLink.redactor-act {
   line-height: 21px;
   margin-top: 5px;
   color: #97b8da; }
+
+.redactor-dropdown-box-upfrontLink {
+  margin-top: 0px; }
 
 .redactor-dropdown .upfront-save_settings {
   box-shadow: none; }
@@ -14316,8 +14319,8 @@ div.sp-val:active .sp-dragger:after {
   border: 12px solid;
   border-color: inherit;
   font-size: 12px;
-  top: 6px;
-  left: 8px;
+  top: 7px;
+  left: 6px;
   position: absolute;
   text-indent: -6px;
   font-family: arial;
