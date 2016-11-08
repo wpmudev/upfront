@@ -880,6 +880,10 @@ RedactorPlugins.upfrontLink = function() {
 					me.redactor.selection.remove();
 					me.redactor.caret.setOffset(caretOffset);
 				});
+				
+				this.listenTo(this.linkModel, 'change:type', function() {
+					me.updateWrapperSize();
+				});
 
 				this.linkPanel.render();
 				this.$el.html(this.linkPanel.el);

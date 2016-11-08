@@ -383,6 +383,9 @@ define([
 			});
 			
 			this.$el.css('width', totalWidth + 10);
+			
+			// If redactor link update the container width
+			this.$el.closest('.redactor_air').css('width', totalWidth + 10);
 		},
 		
 		renderTypeSelect: function() {
