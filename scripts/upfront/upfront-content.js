@@ -168,14 +168,14 @@ define("content", deps, function(postTpl, ContentTools) {
 			var post = Upfront.data.posts[this.postId];
     // Disabled due to a bug where the post name and title
     // did not update properly when editing again without refresh.
-      /*
-			 *if(post){
-			 *  this.post = post;
-			 *  deferred.resolve(post);
-			 *  this.loadingPost = deferred.promise();
-			 *  return this.loadingPost;
-			 *}
-       */
+    /*
+     *  if(post){
+     *    this.post = post;
+     *    deferred.resolve(post);
+     *    this.loadingPost = deferred.promise();
+     *    return this.loadingPost;
+     *  }
+     */
 
 			return this.fetchPost();
 		},
