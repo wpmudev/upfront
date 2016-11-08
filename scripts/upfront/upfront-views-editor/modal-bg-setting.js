@@ -109,7 +109,7 @@
 								me._prompt = ( bg_type_value !== value );
 							}
 							// Resize Select if image.
-							if (value === 'image') {
+							if (value === 'image' || value === 'featured') {
 								this.$el.addClass('upfront-bg-setting-type-image');
 								this.$el.find('.upfront-field-select').css({'min-width': '140px'});
 							} else {
