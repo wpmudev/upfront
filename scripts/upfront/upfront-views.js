@@ -3346,7 +3346,8 @@ define([
 						linkType: Upfront.Util.guessLinkType(property_url),
 						linkTarget: this.model.get_property_value_by_name("linkTarget"),
 						button: false,
-						icon: 'link'
+						icon: 'link',
+						tooltip: l10n.link_group_to
 					})
 				;
 				
