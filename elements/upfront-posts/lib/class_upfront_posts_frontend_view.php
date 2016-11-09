@@ -51,11 +51,23 @@ class Upfront_PostsView extends Upfront_Object_Group {
 	}
 
 	protected function create_post_object ($id) {
+		$classes = $this->_get_property('class');
+		$column = upfront_get_class_num('c', $classes);
+		$post_col = $this->_get_property('post_col');
+		if ( !is_numeric($post_col) || $post_col == 0 ) {
+			$post_col = 24;
+		}
+		$post_class = 'c' .  $post_col;
+		$index = count($this->_data['post_objects']);
+		$post_per_row = $column >= $post_col ? floor($column/$post_col) : 1;
+		if ( $index === 0 || $index % $post_per_row === 0 ) {
+			$post_class .= ' clr';
+		}
 		$wrapper_id = $this->_get_property('element_id') . '-wrapper-' . $id;
 		$wrapper = array(
 			'properties' => array(
 				array( 'name' => 'wrapper_id', 'value' => $wrapper_id ),
-				array( 'name' => 'class', 'value' => 'c24 clr' )
+				array( 'name' => 'class', 'value' => $post_class )
 			)
 		);
 		$this->_data['post_wrappers'][] = $wrapper;
@@ -63,6 +75,7 @@ class Upfront_PostsView extends Upfront_Object_Group {
 		// Copying post part layouts with all new ids
 		$object = $this->clone_object($this->_data, $id);
 		upfront_set_property_value('post_id', $id, $object);
+		upfront_set_property_value('class', $post_class, $object);
 		upfront_set_property_value('wrapper_id', $wrapper_id, $object);
 		$this->_data['post_objects'][] = $object;
 	}

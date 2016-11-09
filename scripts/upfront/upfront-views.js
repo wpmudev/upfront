@@ -2683,7 +2683,10 @@ define([
 					me = this
 				;
 				if ( wrapper_id && this.object_group_view ){
-					var wrappers = this.object_group_view.model.get('wrappers'),
+					var wrappers = this.wrappers_collection
+							? this.wrappers_collection
+							: this.object_group_view.model.get('wrappers')
+						,
 						wrapper = wrappers.get_by_wrapper_id(wrapper_id),
 						wrapper_module = 0
 					;
@@ -2729,7 +2732,7 @@ define([
 			render_object: function (obj, options) {
 				var $el = this.$el,
 					index = options && typeof options.index != 'undefined' ? options.index-1 : -2,
-					$el_index = index >= 0 ? $el.find('> .upfront-wrapper > .upfront-object-view, > .upfront-wrapper > .upfront-object-group').eq(index) : false,
+					$el_index = index >= 0 ? $el.find('> .upfront-wrapper > .upfront-object-view, > .upfront-wrapper > .upfront-object-group-view').eq(index) : false,
 					wrappers = this.wrappers_collection
 						? this.wrappers_collection
 						: ( this.object_group_view && this.object_group_view.model ? this.object_group_view.model.get('wrappers') : false )
@@ -2853,7 +2856,10 @@ define([
 				if ( module_view.region_view && module_view.region_view.model.get('name') == 'shadow' ) return;
 				var ed = Upfront.Behaviors.GridEditor,
 					breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
-					wrappers = this.object_group_view.model.get('wrappers'),
+					wrappers = this.wrappers_collection
+						? this.wrappers_collection
+						: this.object_group_view.model.get('wrappers')
+					,
 					col = breakpoint['default']
 						? ed.get_class_num(module_view.$el.find('>.upfront-module'), ed.grid['class'])
 						: module_view.model.get_breakpoint_property_value('col')
@@ -2870,7 +2876,10 @@ define([
 				if ( module_view.region_view && module_view.region_view.model.get('name') == 'shadow' ) return;
 				var me = this,
 					ed = Upfront.Behaviors.GridEditor,
-					wrappers = this.object_group_view.model.get('wrappers'),
+					wrappers = this.wrappers_collection
+						? this.wrappers_collection
+						: this.object_group_view.model.get('wrappers')
+					,
 					breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled()
 				;
 				_.each(breakpoints, function(each){
@@ -7028,14 +7037,15 @@ define([
 					}),
 					$child = this.$el.find(ed.el_selector_direct),
 					$target_child = ( position == 'right' ? $child.last() : $child.first() ),
-					target_model = ed.get_el_model($target_child),
-					index = target_model.collection.indexOf(target_model)
+					target_collection = this.parent_view.model,
+					target_model = target_collection.get_by_element_id($target_child.attr('id')),
+					index = target_collection.indexOf(target_model)
 				;
 				if ( !rsz_model ) return;
 
 				// Change the columns of current/closest wrapper and the containing models
 				$rsz_wrapper.find(ed.el_selector_direct).each(function () {
-					var child = ed.get_el_model($(this));
+					var child = target_collection.get_by_element_id($(this).attr('id'));
 					if ( breakpoint && !breakpoint['default'] ) {
 						child.set_breakpoint_property('edited', true, true);
 						child.set_breakpoint_property('col', new_col);
@@ -7082,10 +7092,10 @@ define([
 				}
 				this.model.collection.add(wrapper);
 				if ( is_object ) {
-					object.add_to(target_model.collection, ( position == 'right' ? index+1 : index ));
+					object.add_to(target_collection, ( position == 'right' ? index+1 : index ));
 				}
 				else {
-					module.add_to(target_model.collection, ( position == 'right' ? index+1 : index ));
+					module.add_to(target_collection, ( position == 'right' ? index+1 : index ));
 				}
 			},
 			_find_closest_wrapper: function (reverse, min_col) {

@@ -533,6 +533,7 @@ class Upfront_Grid {
 
 	protected function _is_module_spacer ($module) {
 		if( ! empty( $module['objects'] ) ) {
+			if ( count($module['objects']) > 1 ) return false;
 			foreach ($module['objects'] as $obj) {
 				$type = upfront_get_property_value('type', $obj);
 				if ( 'UspacerModel' == $type ) return true;

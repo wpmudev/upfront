@@ -48,8 +48,8 @@ var GridEditor = {
 	el_selector_direct: '',
 	module_selector: '.upfront-module-view > .upfront-module, .upfront-module-group',
 	module_selector_direct: '> .upfront-module-view > .upfront-module, > .upfront-module-group',
-	object_selector: '.upfront-object-view > .upfront-object',
-	object_selector_direct: '> .upfront-object-view > .upfront-object',
+	object_selector: '.upfront-object-view > .upfront-object, .upfront-object-group-view > .upfront-object-group',
+	object_selector_direct: '> .upfront-object-view > .upfront-object, > .upfront-object-group-view > .upfront-object-group',
 
 	_id: 0,
 
@@ -645,7 +645,7 @@ var GridEditor = {
 	/**
 	 * Normalize elements and wrappers
 	 */
-	normalize: function (els, wraps) {
+	normalize: function (els, wraps, collection) {
 		this.time_start('fn normalize');
 		var app = Upfront.Application,
 			ed = Upfront.Behaviors.GridEditor,
@@ -655,7 +655,8 @@ var GridEditor = {
 			groups_need_update = [],
 			object_groups_need_update = [],
 			models_need_move = [],
-			is_responsive = ( breakpoint && !breakpoint['default'] );
+			is_responsive = ( breakpoint && !breakpoint['default'] )
+		;
 		// Remove unneeded wraps from processing
 		wraps = _.filter(wraps, function(wrap){
 			return ( wrap.$el.is(':visible') || wrap.height > 0 );
@@ -688,89 +689,6 @@ var GridEditor = {
 				}
 			});
 
-			// Clear the wrapper when wrapper is rendered side-by-side, but the elements is not conflicting each other
-			$wrap_els.each(function(index){
-				var wrap_el = ed.get_el($(this)),
-					aff_wraps = ed.get_affected_els(wrap_el, wraps, [], false),
-					margin = wrap_el.$el.data('margin');
-				if ( index == 0 && ( aff_wraps.left.length > 0 || aff_wraps.right.length > 0 ) ){
-					var bottom_wrap = _.max(_.union(aff_wraps.left, aff_wraps.right), function(each){ return each.outer_grid.bottom; });
-					if ( bottom_wrap.outer_grid.bottom < wrap_el.grid.top ){
-						var model = ed.get_el_model(wrap_el.$el),
-							collection = model.collection,
-							model_index = collection.indexOf(model),
-							last_wrap = _.max(_.union(aff_wraps.left, aff_wraps.right), function(each){ return each.outer_grid.left; }),
-							last_wrap_index = !is_responsive ? last_wrap.$el.index('.upfront-wrapper') : last_wrap.$el.data('breakpoint_order'),
-							last_wrap_el = _.last(ed.get_wrap_els(last_wrap)),
-							last_model = ed.get_el_model(last_wrap_el.$el),
-							last_index = collection.indexOf(last_model),
-							margin_top = wrap_el.grid.top - bottom_wrap.outer_grid.bottom;
-
-						wrap_top = wrap_el.grid.top - margin_top + 1;
-						wrap_left = region.grid.left;
-						wrap_cleared = true;
-						wrap_el.outer_grid.top = wrap_top;
-						// Check if we also need to move the position in model, or reorder in responsive
-						if ( ( !is_responsive && last_index > model_index ) || ( is_responsive && last_wrap_index > wrap_index ) ) {
-							if ( !is_responsive ){
-								insert_index = last_index;
-								wrap.$el.insertAfter(last_wrap.$el);
-								models_need_move.push({collection: collection, model: model, index: insert_index});
-							}
-							else {
-								var wrappers = is_parent_group ? ed.get_el_model($parent_group).get('wrappers') : regions.get_by_name(wrap_el.region).get('wrappers'),
-									$wraps = wrap.$el.parent().find('> .upfront-wrapper').each(Upfront.Util.normalize_sort_elements_cb).sort(Upfront.Util.sort_elements_cb),
-									shift = false;
-								$wraps.each(function(i){
-									var wrap_model = wrappers.get_by_wrapper_id($(this).attr('id'));
-									if ( this == wrap.$el.get(0) ) {
-										shift = true;
-										wrap_model.set_breakpoint_property('order', last_wrap_index);
-									}
-									else {
-										wrap_model.set_breakpoint_property('order', i-1);
-										if ( this == last_wrap.$el.get(0) )
-											shift = false;
-									}
-								});
-							}
-							/*if ( aff_wraps.right.length > 0 ) {
-								var right_wrap = _.min(aff_wraps.right, function(each){ return each.outer_grid.left; }),
-									right_wrap_els = ed.get_wrap_els(right_wrap);
-								_.each(right_wrap_els, function(each){
-									var each_margin = each.$el.data('margin');
-									each_margin.current.left = each.grid.left-wrap_el.outer_grid.left;
-									ed.update_model_margin_classes(each.$el);
-								});
-							}*/
-						}
-						if ( is_parent_group ){
-							groups_need_update.push($parent_group);
-						}
-						else if ( is_object ) {
-							object_groups_need_update.push($object_group);
-						}
-						else {
-							regions_need_update.push(wrap_el.region);
-						}
-					}
-				}
-				else if ( wrap_cleared ){
-					if ( !is_responsive && insert_index !== false ){
-						var model = ed.get_el_model(wrap_el.$el),
-							collection = model.collection
-						;
-						models_need_move.push({collection: collection, model: model, index: insert_index});
-					}
-				}
-			});
-			if ( wrap_cleared ) {
-				wrap.outer_grid.top = wrap_top;
-				wrap.grid.top = wrap_top;
-				wrap.outer_grid.left = wrap_left;
-				wrap.$el.data('clear', 'clear');
-			}
-
 			// Don't allow separating wrapper on responsive
 			if ( is_responsive )
 				return;
@@ -779,7 +697,8 @@ var GridEditor = {
 			if ( $wrap_els.size() > 1 ){
 				$wrap_els.each(function(){
 					var wrap_el = ed.get_el($(this)),
-						aff_wraps = ed.get_affected_els(wrap, wraps, [], false);
+						aff_wraps = ed.get_affected_els(wrap, wraps, [], false)
+					;
 					if ( aff_wraps.left.length == 0 && aff_wraps.right.length == 0 ){
 						// Separate the wrapper
 						var wrap_el_model = ed.get_el_model(wrap_el.$el),
@@ -812,10 +731,16 @@ var GridEditor = {
 						Upfront.data.wrapper_views[wrap_model.cid] = wrap_view;
 						ed.init_margin(wrap_el);
 						if ( is_parent_group ) {
-							groups_need_update.push($parent_group);
+							groups_need_update.push({
+								$el: $parent_group,
+								view: parent_view
+							});
 						}
 						else if ( is_object ){
-							object_groups_need_update.push($object_group);
+							object_groups_need_update.push({
+								$el: $object_group,
+								view: parent_view
+							});
 						}
 						else {
 							regions_need_update.push(wrap_el.region);
@@ -826,25 +751,22 @@ var GridEditor = {
 		});
 		_.each(wraps, function(wrap){
 			var region = ed.get_region(wrap.$el.closest('.upfront-region'));
-			if ( !region )
-				return;
-			if ( !is_responsive && wrap.outer_grid.left == region.grid.left && !wrap.$el.hasClass('clr') )
+			if ( !region ) return;
+			if ( !is_responsive && wrap.outer_grid.left == region.grid.left && !wrap.$el.hasClass('clr') ) {
 				wrap.$el.addClass('clr');
+			}
 		});
 		_.each(_.uniq(regions_need_update), function(region){
 			var region_model = regions.get_by_name(region),
-				region_view = Upfront.data.region_views[region_model.cid];
+				region_view = Upfront.data.region_views[region_model.cid]
+			;
 			ed.update_wrappers(region_model, region_view.$el);
 		});
-		_.each(_.uniq(groups_need_update), function($group){
-			var group_model = ed.get_el_model($group),
-				group_view = Upfront.data.module_views[group_model.cid];
-			ed.update_wrappers(group_model, group_view.$el);
+		_.each(_.uniq(groups_need_update), function(group){
+			ed.update_wrappers(group.view.model, group.$el);
 		});
-		_.each(_.uniq(object_groups_need_update), function($object_group){
-			var object_model = ed.get_el_model($object_group),
-				object_view = Upfront.data.object_views[object_model.cid];
-			ed.update_wrappers(object_model, object_view.$el);
+		_.each(_.uniq(object_groups_need_update), function(group){
+			ed.update_wrappers(group.view.model, group.$el);
 		});
 		if ( !is_responsive ) {
 			_.each(models_need_move, function(move){
@@ -908,9 +830,11 @@ var GridEditor = {
 			main_pos = ed.main.$el.offset(),
 			$layout = ed.main.$el.find('.upfront-layout'),
 			layout_pos = $layout.offset(),
-			is_object = view.$el.find(".upfront-editable_entity").eq(0).is(".upfront-object"),
+			$el = view.$el.find(".upfront-editable_entity").eq(0),
+			is_object = ( $el.is(".upfront-object") || $el.is(".upfront-object-group") ),
 			$containment = $cont || view.$el.closest(".upfront-editable_entities_container"),
-			containment_pos = $containment.offset();
+			containment_pos = $containment.offset()
+		;
 		// Set variables
 		ed.col_size = ed.grid.column_width;
 		ed.el_selector = is_object ? ed.object_selector : ed.module_selector;
@@ -1491,6 +1415,8 @@ var GridEditor = {
 			is_group,
 			container_view,
 			container,
+			modules,
+			wrappers,
 			has_group,
 			also_has_group,
 			$resize,
@@ -1558,14 +1484,17 @@ var GridEditor = {
 					container_view = is_group ? view.parent_view.group_view : view.parent_view.region_view;
 					container = is_group ? ed.get_position(container_view.$el) : ed.get_region(container_view.$el);
 				}
+				modules = view.parent_view.model;
+				wrappers = view.parent_view.wrappers_collection
+					? view.parent_view.wrappers_collection
+					: container_view.model.get('wrappers')
+				;
 
 				var me = ed.get_wrap($me),
 					//margin = $me.data('margin'),
 					data = $(this).data('ui-resizable'),
-					$wrappers = Upfront.Util.find_sorted($me.parent(), '> .upfront-wrapper'),
+					//$wrappers = Upfront.Util.find_sorted($me.parent(), '> .upfront-wrapper'),
 					aff_els = ed.get_affected_els(me, ed.wraps, [], true),
-					wrappers = container_view.model.get('wrappers'),
-					modules = is_object ? container_view.model.get('objects') : container_view.model.get('modules'),
 					lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint.id, container.col),
 					also_resize
 				;
@@ -1608,7 +1537,7 @@ var GridEditor = {
 
 				child_els = [];
 				$me.find(ed.el_selector_direct).each(function () {
-					var child_model = ed.get_el_model($(this)),
+					var child_model = modules.get_by_element_id($(this).attr('id')),
 						child_view = is_object ? Upfront.data.object_views[child_model.cid] : Upfront.data.module_views[child_model.cid]
 					;
 					if ( !child_view ) return;
@@ -1652,7 +1581,7 @@ var GridEditor = {
 					also_has_group = ( $also_resize.find('> .upfront-module-group').length > 0 );
 
 					$also_resize.find(ed.el_selector_direct).each(function () {
-						var child_model = ed.get_el_model($(this)),
+						var child_model = modules.get_by_element_id($(this).attr('id')),
 							child_view = is_object ? Upfront.data.object_views[child_model.cid] : Upfront.data.module_views[child_model.cid]
 						;
 						if ( !child_view ) return;
@@ -1933,17 +1862,10 @@ var GridEditor = {
 				}
 
 				// Make sure everything has breakpoint property edited true in this region now that element is resized
-				if ( is_object ) {
-					container_view.model.get('objects').each(function (each) {
-						each.set_breakpoint_property('edited', true, true);
-					});
-				}
-				else {
-					container_view.model.get('modules').each(function (each) {
-						each.set_breakpoint_property('edited', true, true);
-					});
-				}
-				container_view.model.get('wrappers').each(function (each) {
+				modules.each(function (each) {
+					each.set_breakpoint_property('edited', true, true);
+				});
+				wrappers.each(function (each) {
 					each.set_breakpoint_property('edited', true, true);
 				});
 
