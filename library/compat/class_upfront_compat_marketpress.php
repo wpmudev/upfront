@@ -18,16 +18,16 @@ class Upfront_Compat_MarketPress {
 		add_filter('upfront-load_post_fake_post_id', array($this, 'load_post_fake_post_id'), 10, 2);
 		add_filter('upfront-posts-get_markup-before', array($this, 'override_posts_markup_filter'));
 		add_filter('upfront-plugins_layouts', array($this, 'add_layouts'));
-		add_filter('upfront-post_data_view_classes', array($this, 'add_class'), 10, 2);
+		add_filter('upfront-postdata_get_markup_after', array($this, 'add_class'), 10, 2);
 	}
 
-	public function add_class($classes, $post) {
+	public function add_class($markup, $post) {
 		if (in_array($post->ID, array(mp_get_setting('pages->products'), mp_get_setting('pages->cart'), mp_get_setting('pages->store'), mp_get_setting('pages->checkout'), mp_get_setting('pages->order_status')))) {
-			return $classes . ' mp-content';
+			return $this->wrap_with_plugin_class($markup);
 		}
-		if ($post->post_type === 'product') return $classes . ' mp-content';
+		if ($post->post_type === 'product') return $this->wrap_with_plugin_class($markup);
 
-		return $classes;
+		return $markup;
 	}
 
 	public function override_posts_markup_filter ($status) {

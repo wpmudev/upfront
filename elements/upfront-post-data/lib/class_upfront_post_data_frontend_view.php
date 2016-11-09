@@ -27,8 +27,6 @@ class Upfront_PostDataView extends Upfront_Object_Group {
 			$classes .= ' no-feature-image';
 		}
 
-		$classes = apply_filters('upfront-post_data_view_classes', $classes, $this->_post);
-
 		return $classes;
 	}
 
