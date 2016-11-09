@@ -383,7 +383,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 		if (Upfront.Application.user_can_modify_layout()) {
 			panel.items = _([
-				this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask', 30, 30),
+				this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask', 28, 28),
 				this.createLinkControl(image)
 			]);
 		} else {
@@ -393,13 +393,13 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		}
 
 		if (Upfront.Application.user_can_modify_layout()) {
-		if (this.property('labelFilters') === 'true') {
-			panel.items.push(this.createLabelControl(image));
-		}
+			if (this.property('labelFilters') === 'true') {
+				panel.items.push(this.createLabelControl(image));
+			}
 
-		if (image.get('imageLink').type === 'image' || image.get('imageLink').type === 'lightbox' || -1 !== ['image', 'lightbox'].indexOf( this.property( "linkTo" ) ) ) {
-			panel.items.push(this.createControl('fullscreen', l10n.ctrl.show_image, 'openImageLightbox', 30, 30));
-		}
+			if (image.get('imageLink').type === 'image' || image.get('imageLink').type === 'lightbox' || -1 !== ['image', 'lightbox'].indexOf( this.property( "linkTo" ) ) ) {
+				panel.items.push(this.createControl('fullscreen', l10n.ctrl.show_image, 'openImageLightbox', 28, 28));
+			}
 		}
 
 		return panel;
@@ -445,8 +445,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		control.id = 'edit_labels';
 
 		//Set icon width & height
-		control.width = 30;
-		control.height = 30;
+		control.width = 28;
+		control.height = 28;
 
 		me.listenTo(control, 'panel:open', function(){
 			me.lastOpenedControl = control;
@@ -544,8 +544,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		linkControl.id = 'link';
 
 		//Set icon width & height
-		linkControl.width = 30;
-		linkControl.height = 30;
+		linkControl.width = 28;
+		linkControl.height = 28;
 
 		return linkControl;
 	},
@@ -1781,13 +1781,13 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		moreOptions.tooltip = l10n.ctrl.caption_position;
 
 		moreOptions.sub_items = {};
-		moreOptions.sub_items['add'] = this.createControl('add', l10n.template.add_img, 'openImageSelector', 38, 38);
-		moreOptions.sub_items['toggle-sorting'] = this.createControl('toggle-sorting', l10n.toggle_dnd, 'toggleSorting', 38, 38);
+		moreOptions.sub_items['add'] = this.createControl('add', l10n.template.add_img, 'openImageSelector', 28, 28);
+		moreOptions.sub_items['toggle-sorting'] = this.createControl('toggle-sorting', l10n.toggle_dnd, 'toggleSorting', 28, 28);
 
 		return _([
 			moreOptions,
 			this.createPaddingControl(),
-			this.createControl('settings', l10n.settings, 'on_settings_click', 38, 38)
+			this.createControl('settings', l10n.settings, 'on_settings_click', 28, 28)
 		]);
 	},
 	/**
