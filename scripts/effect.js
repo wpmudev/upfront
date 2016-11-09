@@ -370,8 +370,6 @@
 				this.fillCanvas(width, parallaxHeight);
 			}
 
-			console.log(scale)
-
 			this.imgContext.drawImage(this.cache.img, drawX, drawY, drawWidth, drawHeight, position_x, position_y, (width * scale), (parallaxHeight * scale));
 
 		},
