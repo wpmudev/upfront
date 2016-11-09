@@ -84,6 +84,7 @@ define([
 
 		events: {
 			'click .js-ulinkpanel-input-entry': 'openPostSelector',
+			'click .upfront-create-new-lightbox': 'newLightbox',
 			'keydown .js-ulinkpanel-lightbox-input': 'onLightboxNameInputChange',
 			'blur .js-ulinkpanel-input-external': 'onUrlInputBlur',
 			//'click .js-ulinkpanel-ok': 'onOkClick',
@@ -361,8 +362,13 @@ define([
 				this.renderAnchorSelect();
 			}
 
-			if (this.model.get('type') == 'lightbox' && getLightBoxes()) {
-				this.renderLightBoxesSelect();
+			if (this.model.get('type') == 'lightbox') {
+				if (getLightBoxes().length) {
+					this.renderLightBoxesSelect();
+					this.$el.find('.js-ulinkpanel-new-lightbox').hide();
+				} else {
+					this.$el.find('.js-ulinkpanel-new-lightbox').show();
+				}
 			}
 
 			if (_.contains(['external'], this.model.get('type'))) {
@@ -373,8 +379,13 @@ define([
 
 			this.delegateEvents();
 		},
+
+		newLightbox: function () {
+			this.$el.find('.lightbox-selector').hide();
+			this.$el.find('.js-ulinkpanel-new-lightbox').show();
+		},
 		
-		updateWrapperSize: function() {
+		updateWrapperSize: function () {
 			var totalWidth = 0;
 
 			this.$el.children().each(function(i, element) {
@@ -475,7 +486,7 @@ define([
 
 		renderLightBoxesSelect: function() {
 			var model = this.model;
-			var lightboxValues = [{label: 'Choose Lightbox...', value: ''}];
+			var lightboxValues = [];
 			_.each(getLightBoxes() || [], function(lightbox) {
 				lightboxValues.push({label: lightbox.label, value: lightbox.id});
 			});
@@ -486,6 +497,7 @@ define([
 
 			this.lightboxSelect = new Upfront.Views.Editor.Field.Select({
 				label: '',
+				className: 'upfront-lightbox-select',
 				values: lightboxValues,
 				default_value: lightboxValue,
 				change: function () {
@@ -495,6 +507,7 @@ define([
 			});
 			this.lightboxSelect.render();
 			this.$el.find('.lightbox-selector').append(this.lightboxSelect.el);
+			this.$el.find('.upfront-lightbox-select ul').prepend('<li class="upfront-field-select-option upfront-create-new-lightbox"><label>' + Upfront.Settings.l10n.global.content.new_lightbox + '</label></li>')
 		},
 
 		delegateEvents: function(events) {

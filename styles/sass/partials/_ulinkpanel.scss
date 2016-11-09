@@ -129,7 +129,7 @@ a.ulinkpanel-entry-url:hover {
 
 .ulinkpanel-new-lightbox,
 .ulinkpanel-lightbox-selector {
-	margin-top: 5px;
+	margin-top: 1px;
 }
 
 .ulinkpanel-lightbox-selector {
@@ -397,6 +397,24 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 	background: #fff;
 	border: 1px solid #e5e5e5;
 	margin-top: 1px;
+}
+.link-control-panel .upfront-settings-link-field .upfront-field-select-options {
+	background: #fff;
+	color: #000;
+	border-color: #cccccc;
+}
+.link-control-panel .upfront-create-new-lightbox {
+    position: relative;
+    width: 100%;
+	background: #f9f9f9;
+	border-bottom: 1px solid #e5e5e5;
+}
+.link-control-panel .upfront-lightbox-select .upfront-field-select-options {
+	padding-top: 0px;
+}
+.link-control-panel .upfront-settings-link-field .upfront-field-select-option:hover {
+	background: #eaedee;
+	color: #000;
 }
 .link-control-panel .upfront-field-select .upfront-field-select-value {
 	box-shadow: none;
