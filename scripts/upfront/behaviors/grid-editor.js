@@ -2037,15 +2037,28 @@ var GridEditor = {
 		var ed = Upfront.Behaviors.GridEditor,
 			is_group = !_.isUndefined(view.group_view),
 			is_object = !_.isUndefined(view.object_group_view),
-			container_breakpoint = ( is_group ? view.group_view : ( is_object ? view.object_group_view.parent_module_view : view.region_view ) ).model.get_property_value_by_name('breakpoint'),
-			container_breakpoint_data = ( container_breakpoint && breakpoint.id in container_breakpoint ) ? container_breakpoint[breakpoint.id] : {},
-			$container = is_object
-				? view.object_group_view.parent_module_view.$el.find('> .upfront-module')
-				: ( is_group ? view.group_view : view.region_view ).$el,
+			container_view = is_group
+				? view.group_view
+				: ( is_object ? view.object_group_view : view.region_view ),
+			container_breakpoint = container_view.model.get_property_value_by_name('breakpoint'),
+			container_breakpoint_data = ( container_breakpoint && breakpoint['id'] in container_breakpoint ) ? container_breakpoint[breakpoint['id']] : {},
+			$container = is_object ? container_view.$el.find('> .upfront-object-group') : container_view.$el,
 			container_col = breakpoint['default']
 				? ed.get_class_num($container, ed.grid['class'])
-				: ( _.isNumber(container_breakpoint_data.col) ? container_breakpoint_data.col : breakpoint.columns )
+				: ( _.isNumber(container_breakpoint_data.col) ? container_breakpoint_data.col : breakpoint.columns ),
+			module_view, module_breakpoint, module_breakpoint_data, $module, module_col
 		;
+		if ( is_object ) { // If object inside object group, try getting module col to compare
+			module_view = view.object_group_view.parent_module_view;
+			module_breakpoint = module_view.model.get_property_value_by_name('breakpoint');
+			module_breakpoint_data = ( module_breakpoint && breakpoint.id in module_breakpoint ) ? module_breakpoint[breakpoint.id] : {};
+			$module = module_view.$el.find('> .upfront-module');
+			module_col = breakpoint['default']
+				? ed.get_class_num($module, ed.grid['class'])
+				: ( _.isNumber(module_breakpoint_data.col) ? module_breakpoint_data.col : breakpoint.columns )
+			;
+			container_col = module_col < container_col ? module_col : container_col;
+		}
 		return container_col > breakpoint.columns ? breakpoint.columns : container_col;
 	},
 

@@ -499,6 +499,7 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 			if ( !obj_view.editable ) return;
 			if ( !wrapper_view ) return;
 			if ( col-post_col <= 0 ) return;
+			ed.start(obj_view, object);
 			wrapper_view.add_spacer('right', col-post_col, col, true);
 		});
 
