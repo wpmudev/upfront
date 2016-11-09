@@ -286,7 +286,9 @@ class Upfront_Compat_MarketPress {
 	public function forbidden_post_data_types($types) {
 		$post = get_post();
 		if (is_null($post)) return $types;
-		if ($post->post_type === 'product') {
+
+		$is_mp_page = in_array($post->ID, array(mp_get_setting('pages->products'), mp_get_setting('pages->cart'), mp_get_setting('pages->store'), mp_get_setting('pages->checkout'), mp_get_setting('pages->order_status')));
+		if ($post->post_type === 'product' || $is_mp_page) {
 			$types = array('title', 'date_posted', 'comment_form', 'comment_count', 'comments', 'comments_pagination');
 		}
 		return $types;
