@@ -379,28 +379,33 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	},
 
 	createControlsEach: function(image) {
-		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel();
+		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
+			moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl();
+			
+		moreOptions.icon = 'more';
+		moreOptions.tooltip = l10n.ctrl.caption_position;	
+		moreOptions.sub_items = {};
 
 		if (Upfront.Application.user_can_modify_layout()) {
-			panel.items = _([
-				this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask', 28, 28),
-				this.createLinkControl(image)
-			]);
+			moreOptions.sub_items['crop'] = this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask', 28, 28);
+			moreOptions.sub_items['link'] = this.createLinkControl(image);
 		} else {
-			panel.items = _([
-				this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask')
-			]);
+			moreOptions.sub_items['crop'] = this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask');
 		}
 
 		if (Upfront.Application.user_can_modify_layout()) {
 			if (this.property('labelFilters') === 'true') {
-				panel.items.push(this.createLabelControl(image));
+				moreOptions.sub_items['label'] = this.createLabelControl(image);
 			}
 
 			if (image.get('imageLink').type === 'image' || image.get('imageLink').type === 'lightbox' || -1 !== ['image', 'lightbox'].indexOf( this.property( "linkTo" ) ) ) {
-				panel.items.push(this.createControl('fullscreen', l10n.ctrl.show_image, 'openImageLightbox', 28, 28));
+				moreOptions.sub_items['fullscreen'] = this.createControl('fullscreen', l10n.ctrl.show_image, 'openImageLightbox', 28, 28);
 			}
+			
+			moreOptions.sub_items['remove'] = this.createControl('remove', l10n.ctrl.remove, 'removeImage', 28, 28);
 		}
+		
+		panel.items.push(moreOptions);
 
 		return panel;
 	},
@@ -909,11 +914,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	on_render: function() {
 		var me = this,
 			resizingFunction;
-
-		// Hide delete icon
-		if (!Upfront.Application.user_can_modify_layout()) {
-			this.$el.find('.remove-image').remove();
-		}
 
 		//Bind resizing events
 		if ( me.parent_module_view && !me.parent_module_view.$el.data('resizeHandling') ) {
