@@ -24,6 +24,7 @@
 	/* Override inline modal styles. */
 	top: 0 !important;
 	left: 0 !important;
+	box-shadow: none;
 }
 
 #region-settings-sidebar .upfront-region-modal-bg {
@@ -34,8 +35,6 @@
 	top: 0;
 	left: 0;
 	z-index: 10001003;
-	/* Fix cut off issue for small screens. */
-	overflow: auto;
 }
 
 .upfront-bg-setting-type {
