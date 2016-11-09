@@ -622,7 +622,8 @@ class Upfront_MediaServer extends Upfront_Server {
 				? (int)$media->size
 				: 0
 			;
-			if ($space_allowed && $file_size && $file_size + $space_used > $space_allowed) {
+			// If upload space is restricted and upload is too large, display an error.
+			if ($space_allowed && $file_size && $file_size + $space_used > $space_allowed && !get_site_option('upload_space_check_disabled')) {
 				// Upload quota exceeded
 				@unlink("{$pfx}{$filename}");
 				$this->_out(new Upfront_JsonResponse_Error(__("Error uploading the media item: allocated space quota exceeded", 'upfront')));

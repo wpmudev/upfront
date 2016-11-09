@@ -24,6 +24,7 @@
 	/* Override inline modal styles. */
 	top: 0 !important;
 	left: 0 !important;
+	box-shadow: none;
 }
 
 #region-settings-sidebar .upfront-region-modal-bg {
@@ -352,6 +353,9 @@
 .upfront-region-editing .upfront-region-container-active .upfront-module,
 .upfront-region-fixed-editing .upfront-region-container-active .upfront-module {
 	opacity: 0.5;
+}
+.upfront-add-region-container-active .upfront-icon-control-region-resize-s {
+	display: none;
 }
 .upfront-region-resize-handle {
 	position: absolute;
@@ -1124,6 +1128,9 @@
 .upfront-region-type-icon.upfront-region-type-icon-slider {
 	background-position: -39px -541px;
 }
+.upfront-region-type-icon.upfront-region-type-icon-featured {
+	background-position: -287px -507px;
+}
 
 .upfront-region-bg-setting-name-wrap {
 	padding: 0;
@@ -1268,6 +1275,7 @@ a.upfront-region-name-edit-trigger:hover {
 	font-size: 11px;
 	padding: 10px 16px;
 	border-top: 1px solid #eaeff5;
+	border: none;
 }
 
 .upfront-region-bg-setting-sticky > div {

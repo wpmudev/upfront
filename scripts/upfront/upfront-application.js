@@ -783,14 +783,6 @@ var Application = new (Backbone.Router.extend({
 		var me = this;
 		$("body .upfront-edit_layout a").addClass('active');
 		$("body").off("click", ".upfront-edit_layout").on("click", ".upfront-edit_layout", function () {
-			// Replace _.template only when we actually boot Upfront, otherwise some other scripts using it might break
-			var _tpl = _.template;
-			_.template = function (tpl, data) {
-				if (typeof undefined === typeof data) return _tpl(tpl);
-				var tmp = _tpl(tpl);
-				return tmp(data);
-			};
-
 			me.start();
 			return false;
 		});
@@ -798,6 +790,14 @@ var Application = new (Backbone.Router.extend({
 	},
 
 	start: function (mode) {
+		// Replace _.template only when we actually boot Upfront, otherwise some other scripts using it might break
+		var _tpl = _.template;
+		_.template = function (tpl, data) {
+			if (typeof undefined === typeof data) return _tpl(tpl);
+			var tmp = _tpl(tpl);
+			return tmp(data);
+		};
+
 		// Main stylesheet needs to be loaded without element styles
 		// which will be edited in upfront.
 		Upfront.Util.post({
@@ -1018,6 +1018,8 @@ var Application = new (Backbone.Router.extend({
 
 		this.loadingLayout = Upfront.Util.post(request_data)
 			.success(function (response) {
+				// Temporary, until find better solution
+				Upfront.layout_data_from_create_layout = layout_ids;
 				app.set_layout_up(response);
 				if(app.saveCache){
 					app.urlCache[app.currentUrl] = $.extend(true, {}, response);

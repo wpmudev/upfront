@@ -25,16 +25,25 @@
                 e.preventDefault();
                 var me = this;
 
+								// Display loader immediately.
+								var loading = new Upfront.Views.Editor.Loading({
+									loading: l10n.loading
+								});
+								loading.render();
+								$('body').append(loading.$el);
+
+								// Create post via AJAX.
                 Upfront.Util
                     .post({
                         action: "upfront-create-post_type",
                         data: _.extend({post_type: me.postType, title: me._default_label}, {})
                     }).done(function (resp) {
                     if(_upfront_post_data) _upfront_post_data.post_id = resp.data.post_id;
+										// Remove initial loader.
+										loading.remove();
                     Upfront.Application.navigate('/edit/page/' + resp.data.post_id, {trigger: true});
                     Upfront.Events.trigger("click:edit:navigate", resp.data.post_id);
-                })
-                ;
+                });
             },
             render_modal: function () {
                 var me = this,

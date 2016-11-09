@@ -90,6 +90,14 @@ define([
 			var $tab = $(event.currentTarget);
 			var contentId;
 			
+			// And make tab active
+			$tab
+				.siblings().removeClass('tabs-tab-active').end()
+				.addClass('tabs-tab-active');
+			$('#' + $tab.data('content-id'))
+				.siblings().removeClass('utab-content-active').end()
+				.addClass('utab-content-active');
+			
 			if (Upfront.Application.user_can_modify_layout()) {
 				// Stop tab content editor on switching tabs, always
 				this.$el.find('.utab-content').each(function () {
@@ -98,33 +106,26 @@ define([
 						ed.stop();
 					}
 				});
-
+				
+				// Avoid doing this, let the Double Click editor functionality do it's thing
 				// If tab is already active start editor if not started already
-				if ($tab.hasClass('tabs-tab-active')) {
-					var ed = $tab.find('.inner-box').data('ueditor');
-					if(ed && !ed.active) {
-						ed.start();
-					}
+				// if ($tab.hasClass('tabs-tab-active')) {
+					// var ed = $tab.find('.inner-box').data('ueditor');
+					// if(ed && !ed.active) {
+						// ed.start();
+					// }
 
-					return;
-				}
+					// return;
+				// }
 
 				// Otherwise stop all tab editors just in case
-				this.$el.find('.tabs-tab .inner-box').each(function() {
+				this.$el.find('.tabs-tab:not(.tabs-tab-active) .inner-box').each(function() {
 					var ed = $(this).data('ueditor');
 					if(ed && ed.active) {
 						$(this).trigger('blur');
 					}
 				});
 			}
-
-			// And make tab active
-			$tab
-				.siblings().removeClass('tabs-tab-active').end()
-				.addClass('tabs-tab-active');
-			$('#' + $tab.data('content-id'))
-				.siblings().removeClass('utab-content-active').end()
-				.addClass('utab-content-active');
 		},
 
 		saveTabContent: function($content) {
@@ -206,41 +207,7 @@ define([
 				$tabs;
 				
 			if (Upfront.Application.user_can_modify_layout()) {	
-
-				$tabtitles.each(function () {
-					var $content = $(this);
-					count++;
-
-					$content.ueditor({
-						//linebreaks: true,
-						//disableLineBreak: true,
-						//airButtons: false,
-						//autostart: false,
-						//allowedTags: ['h5'],
-						//placeholder: false
-						//airButtons : ["upfrontFormatting"],
-						linebreaks: false,
-						autostart: false,
-						paragraphize: false,
-						focus: false,
-						placeholder: false
-					}).on('start', function() {
-						Upfront.Events.trigger('upfront:element:edit:start', 'text');
-						$(this).focus();
-					}).on('stop', function () {
-						var id = $content.parent().parent().data('content-id').split('-').pop();
-						var editor = $content.data('ueditor');
-						if (editor.getValue(true).trim() === '') {
-						 me.property('tabs')[id].title =  l10n.tab_label + ' ' + count;
-						 setTimeout( function() {
-							 $content.text(l10n.tab_label + ' ' + count);
-						 }, 50);
-						} else {
-						 me.property('tabs')[id].title =  editor.getValue(true).trim();
-						}
-						Upfront.Events.trigger('upfront:element:edit:stop');
-					});
-				});
+				me.initializeTabTitleEditor($tabtitles);
 			} else {
 				this.$el.find('.tabs-tab i').remove();
 			}
@@ -265,10 +232,50 @@ define([
 
 			Upfront.Events.trigger('entity:object:refresh', this);
 		},
+		
+		initializeTabTitleEditor: function($tabtitles) {
+			var me = this;
+			$tabtitles.each(function () {
+				var $content = $(this);
+				count++;
+
+				$content.ueditor({
+					linebreaks: false,
+					disableLineBreak: true,
+					placeholder: false,
+					autostart: false,
+					focus: false
+				}).on('start', function() {
+					Upfront.Events.trigger('upfront:element:edit:start', 'text');
+					$(this).focus();
+				}).on('stop', function () {
+					var id = $content.parent().parent().data('content-id').split('-').pop();
+					var editor = $content.data('ueditor');
+					if (editor.getValue(true).trim() === '') {
+					 me.property('tabs')[id].title =  l10n.tab_label + ' ' + count;
+					 setTimeout( function() {
+						 $content.text(l10n.tab_label + ' ' + count);
+					 }, 50);
+					} else {
+					 me.property('tabs')[id].title =  editor.getValue(true).trim();
+					}
+					Upfront.Events.trigger('upfront:element:edit:stop');
+					me.currentTabId = $content.closest('.tabs-tab-active').data('content-id');
+					me.render();
+				}).on('keydown', function(e){
+					if ( 9 === e.which || 13 === e.which ) {
+						e.preventDefault();
+						e.stopImmediatePropagation();
+						return false;
+					}
+				});
+			});
+		},
 
 		startContentEditor: function(event) {
 			if (!Upfront.Application.user_can_modify_layout()) return false;
-			$(event.currentTarget).data('ueditor').start();
+			var ed = $(event.currentTarget).data('ueditor');
+			if( ed && !ed.active ) ed.start();
 		},
 
 		initializeContentEditor: function($content) {

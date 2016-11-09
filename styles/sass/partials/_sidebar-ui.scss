@@ -1258,3 +1258,16 @@ span.draggable-post-element.element-dragging
 		top: 634px;
 	}
 }
+
+/* Shrink Sidebar for Low Resolutions */
+@media screen and (max-width: 1366px) {
+	#sidebar-ui.upfront-sidebar-hover, #element-settings-sidebar.upfront-sidebar-hover, #region-settings-sidebar.upfront-sidebar-hover .upfront-region-modal-bg {
+		transform: translateX(0);
+	}
+	#sidebar-ui, #element-settings-sidebar, #region-settings-sidebar .upfront-region-modal-bg {
+		transform: translateX(-130px);
+	}
+	.upfront-edit-layout #page {
+		margin: 0 0 0 130px;
+	}
+}

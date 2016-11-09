@@ -17,11 +17,20 @@
 {[ } ]}
 {[if(type == 'entry') { ]}
 <div class="upfront-settings-link-field upfront-field-wrap ulinkpanel-entry-wrap">
-	<a title="{{Upfront.Settings.l10n.global.content.change_link}}" class="ulinkpanel-entry-url js-ulinkpanel-input-url js-ulinkpanel-input-entry" href="#">{{(!link.url || link.url=='' || link.url=='http://')? Upfront.Settings.l10n.global.content.select :link.url}}</a>
+	{[if(!link.url || link.url=='' || link.url=='http://') { ]}
+		<a title="{{Upfront.Settings.l10n.global.content.change_link}}" class="ulinkpanel-entry-url ulinkpanel-entry-browse js-ulinkpanel-input-entry" href="#">{{Upfront.Settings.l10n.global.views.browse}}</a>
+	{[ } else { ]}
+		<a title="{{Upfront.Settings.l10n.global.content.change_link}}" class="ulinkpanel-entry-url js-ulinkpanel-input-url js-ulinkpanel-input-entry" href="#">{{(link.title) ? link.title : link.url}}</a>
+	{[ } ]}
 </div>
 {[ } ]}
 {[if(type == 'anchor') { ]}
 <div class="upfront-settings-link-field anchor-selector">
+</div>
+{[ } ]}
+{[if(type == 'homepage') { ]}
+<div class="upfront-settings-link-field upfront-home-link">
+	{{Upfront.Settings.l10n.global.content.home_link}}
 </div>
 {[ } ]}
 {[if(type == 'lightbox') { ]}
@@ -29,15 +38,10 @@
 	{[ if(lightboxes.length) { ]}
 		<div class="lightbox-selector">
 		</div>
-		<a href="{{link.url}}" class="link-panel-lightbox-trigger">{{Upfront.Settings.l10n.global.content.open_lightbox}}</a>
-	{[ } else { ]}
-
 	{[ } ]}
-
-    <div class="js-ulinkpanel-new-lightbox ulinkpanel-new-lightbox">
-        <div class="ulinkpanel-title">{{Upfront.Settings.l10n.global.content.create_lightbox}}</div>
-        <input type="text" name="new_lightbox" class="upfront-field upfront-field-text upfront-field-empty ulinkpanel-lightbox-input js-ulinkpanel-lightbox-input" value="" placeholder="{{Upfront.Settings.l10n.global.content.lightbox_name}}" />
-    </div>
+	<div class="js-ulinkpanel-new-lightbox ulinkpanel-new-lightbox">
+		<input type="text" name="new_lightbox" class="upfront-field upfront-field-text upfront-field-empty ulinkpanel-lightbox-input js-ulinkpanel-lightbox-input" value="" placeholder="{{Upfront.Settings.l10n.global.content.lightbox_name}}" />
+	</div>
 </div>
 {[ } ]}
 <div class="upfront-settings-link-target"></div>

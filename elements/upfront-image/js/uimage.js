@@ -257,6 +257,11 @@ define([
 				me.$el.closest('.ui-draggable').draggable('enable');
 			});
 
+			// Close panel when event is triggered (enter key is hit).
+			me.listenTo(linkPanel, 'linkpanel:close', function() {
+				control.close();
+			});
+
 			control.icon = 'link';
 			control.tooltip = l10n.ctrl.image_link;
 			control.id = 'link';

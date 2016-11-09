@@ -18,10 +18,15 @@ abstract class Upfront_Container extends Upfront_Entity {
 	public function get_markup () {
 		$html='';
 		$wrap='';
+		// Allow compat to forbid post data types (some wreck up output from plugins)
+		$forbidden_post_data_types = apply_filters('upfront-forbidden_post_data_types', array());
 
 		if (!empty($this->_data[$this->_children])) {
 
 			foreach ($this->_data[$this->_children] as $idx => $child) {
+				if (upfront_get_property_value('view_class', $child) === 'PostDataPartView' &&
+				 	in_array(upfront_get_property_value('part_type', $child), $forbidden_post_data_types)) continue;
+
 				$this->_child_views[] = $child_view  = $this->instantiate_child($child, $idx);
 				if ($child_view instanceof Upfront_Entity) {
 					// Have wrapper? If so, then add wrappers
