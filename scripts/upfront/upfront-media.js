@@ -1,8 +1,9 @@
 (function ($, undefined) {
 
 define([
-    'scripts/upfront/upfront-media/insert-options-item-control'
-],function(InsertOptions) {
+    'scripts/upfront/upfront-media/insert-options-item-control',
+		'scripts/perfect-scrollbar/perfect-scrollbar'
+],function(InsertOptions, perfectScrollbar) {
 
 	var MEDIA_SIZES = {
 		FULL: "full",
@@ -2006,6 +2007,11 @@ define([
 				// running change event to apply persistent list
 				var selected_model = new MediaCollection_Selection(ActiveFilters.current_models);
 				Upfront.Events.trigger("media:item:selection_changed", selected_model);
+
+				// Add JS Scrollbar.
+				perfectScrollbar.initialize(this.el, {
+					suppressScrollX: true
+				});
 			}
 		},
 		update: function () {

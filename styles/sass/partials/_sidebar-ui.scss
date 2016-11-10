@@ -586,6 +586,7 @@
 	border-top: 1px solid #accae6;
 	/* border-bottom: 1px solid #accae6; */
 	opacity: 1;
+	position: relative;
 }
 #sidebar-ui .sidebar-panel-elements.expanded .sidebar-panel-content {
   height: 262px;
@@ -1001,7 +1002,11 @@ span.draggable-post-element.element-dragging
 .upfront_code-editor-complex-wrapper .ace_scrollbar,
 .upfront_map-editor-complex-wrapper .ace_scrollbar
 {
-	width: 5px! important;
+	width: 12px! important;
+}
+#upfront-csseditor .ace_scrollbar.ps-container > .ps-scrollbar-y-rail {
+	display: block;
+	opacity: 1;
 }
 #upfront-csseditor .ace_scrollbar {
 	z-index: 9;

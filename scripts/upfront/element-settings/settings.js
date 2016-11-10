@@ -1,8 +1,9 @@
 (function ($) {
 define([
 	'scripts/upfront/preset-settings/preset-manager',
-	'scripts/upfront/element-settings/advanced-settings'
-], function (PresetManager, AdvancedSettings) {
+	'scripts/upfront/element-settings/advanced-settings',
+	'scripts/perfect-scrollbar/perfect-scrollbar'
+], function (PresetManager, AdvancedSettings, perfectScrollbar) {
 	var l10n = Upfront.Settings && Upfront.Settings.l10n
 		? Upfront.Settings.l10n.global.views
 		: Upfront.mainData.l10n.global.views
@@ -161,6 +162,10 @@ define([
 				panel.render();
 				panel.parent_view = me;
 				me.$el.find('#sidebar-scroll-wrapper').append(panel.el);
+				// Add JS Scrollbar (ignore X axis scrolling).
+				perfectScrollbar.initialize(me.$el.find('#sidebar-scroll-wrapper')[0], {
+					suppressScrollX: true
+				});
 			});
 
 			this.$el.addClass('upfront-ui');
