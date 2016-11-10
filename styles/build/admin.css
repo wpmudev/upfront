@@ -412,6 +412,15 @@ input.upfront_toggle_checkbox {
   max-height: 400px;
   overflow-y: auto; }
 
+/**
+* Upfront Reset Layout
+*/
+.postbox .upfront-layout-reset {
+  width: 70%; }
+  .postbox .upfront-layout-reset .upfront-reset-global-option {
+    display: inline-block;
+    padding-top: 5px; }
+
 #upfront_user_restrictions_listing {
   display: table;
   table-layout: fixed;

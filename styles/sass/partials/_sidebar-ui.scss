@@ -1169,27 +1169,39 @@ span.draggable-post-element.element-dragging
 #sidebar-ui .upfront-post-trash a:hover{
 	color: #E3474A;
 }
+
 #sidebar-ui [class^=command-],
 #sidebar-ui [class^=sidebar-command-]{
   overflow: hidden;
   white-space:nowrap;
   max-width: 230px;
 }
+
 #sidebar-ui .sidebar-commands li.themes-dropdown{
   float: left;
   margin-bottom: 15px;
   width: 230px;
 }
-#sidebar-ui.element-settings-activated {
+
+#sidebar-ui.element-settings-activated ul.sidebar-commands.sidebar-commands-header,
+#sidebar-ui.region-settings-activated ul.sidebar-commands.sidebar-commands-header,
+#sidebar-ui.element-settings-activated,
+#sidebar-ui.region-settings-activated {
 	z-index: 10001004;
 	height: 46px;
 }
+
 #sidebar-ui.element-settings-activated .sidebar-commands,
 #sidebar-ui.element-settings-activated .sidebar-panels,
-#sidebar-ui.element-settings-activated .sidebar-profile {
+#sidebar-ui.element-settings-activated .sidebar-profile,
+#sidebar-ui.region-settings-activated .sidebar-commands,
+#sidebar-ui.region-settings-activated .sidebar-panels,
+#sidebar-ui.region-settings-activated .sidebar-profile {
 	display: none;
 }
-#sidebar-ui.element-settings-activated .sidebar-commands-header {
+
+#sidebar-ui.element-settings-activated .sidebar-commands-header,
+#sidebar-ui.region-settings-activated .sidebar-commands-header {
 	display: block;
 }
 /* Height Media Queries Fixes
@@ -1244,5 +1256,18 @@ span.draggable-post-element.element-dragging
 	#sidebar-ui .sidebar-commands-control .command-save,
 	#sidebar-ui .sidebar-commands-control .command-start-responsive {
 		top: 634px;
+	}
+}
+
+/* Shrink Sidebar for Low Resolutions */
+@media screen and (max-width: 1366px) {
+	#sidebar-ui.upfront-sidebar-hover, #element-settings-sidebar.upfront-sidebar-hover, #region-settings-sidebar.upfront-sidebar-hover .upfront-region-modal-bg {
+		transform: translateX(0);
+	}
+	#sidebar-ui, #element-settings-sidebar, #region-settings-sidebar .upfront-region-modal-bg {
+		transform: translateX(-130px);
+	}
+	.upfront-edit-layout #page {
+		margin: 0 0 0 130px;
 	}
 }

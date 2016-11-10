@@ -20,10 +20,11 @@ define([
 					step: 1
 				},
 				tile_fields = ['bg_tile'],
-				fixed_fields = ['bg_color', 'bg_position_x', 'bg_position_y', 'bg_position_x_num', 'bg_position_y_num'],
+				fixed_fields = ['bg_color', 'bg_position_x', 'bg_position_y', 'bg_position_x_num', 'bg_position_y_num', 'bg_size'],
+				parallax_fields = ['origin_position_x', 'origin_position_y', 'origin_position_x_num', 'origin_position_y_num', 'bg_size'],
 				fields = {
 					pick_image: new Upfront.Views.Editor.Field.Button({
-						label: l10n.pick_image,
+						label: l10n.browse,
 						compact: true,
 						classname: 'uf-button-alt uf-bgsettings-image-pick',
 						on_click: function(){
@@ -41,17 +42,22 @@ define([
 						values: this.get_bg_style_values(),
 						change: function () {
 							var value = this.get_value();
-							if ( value == 'tile' ){
+							if ( value === 'tile' ){
 								_.each(tile_fields, function(key){ fields[key].$el.show(); });
 								_.each(fixed_fields, function(key){ fields[key].$el.hide(); });
-							}
-							else if ( value == 'fixed' ){
+								_.each(parallax_fields, function(key){ fields[key].$el.hide(); });
+							} else if ( value === 'fixed' ){
 								_.each(tile_fields, function(key){ fields[key].$el.hide(); });
+								_.each(parallax_fields, function(key){ fields[key].$el.hide(); });
 								_.each(fixed_fields, function(key){ fields[key].$el.show(); });
-							}
-							else {
+							} else if (value === 'parallax') {
 								_.each(tile_fields, function(key){ fields[key].$el.hide(); });
 								_.each(fixed_fields, function(key){ fields[key].$el.hide(); });
+								_.each(parallax_fields, function(key){ fields[key].$el.show(); });
+							} else {
+								_.each(tile_fields, function(key){ fields[key].$el.hide(); });
+								_.each(fixed_fields, function(key){ fields[key].$el.hide(); });
+								_.each(parallax_fields, function(key){ fields[key].$el.hide(); });
 							}
 							me._bg_style = value;
 							me.update_image();
@@ -83,11 +89,14 @@ define([
 								fields.bg_color.$el.hide();
 								this.$el.addClass('uf-bgsettings-image-default-image');
 								if ( !bg_image ) me.upload_image();
-							}
-							else if ( value == 'color' ) {
+							} else if ( value == 'color' ) {
 								fields.pick_image.$el.hide();
 								fields.bg_color.$el.show();
 								this.$el.addClass('uf-bgsettings-image-default-color');
+							} else if ( value == 'featured' ) {
+								fields.pick_image.$el.show();
+								fields.bg_color.$el.hide();
+								this.$el.addClass('uf-bgsettings-image-default-image');
 							}
 							else {
 								fields.pick_image.$el.hide();
@@ -157,6 +166,7 @@ define([
 						use_breakpoint_property: true,
 						range: false,
 						change: function () {
+							// Update fixed and parallax sliders on change.
 							var value = this.get_value();
 							fields.bg_position_y_num.get_field().val(value);
 							me._bg_position_y = value;
@@ -173,6 +183,7 @@ define([
 						use_breakpoint_property: true,
 						range: false,
 						change: function () {
+							// Update fixed and parallax sliders on change.
 							var value = this.get_value();
 							fields.bg_position_x_num.get_field().val(value);
 							me._bg_position_x = value;
@@ -205,6 +216,7 @@ define([
 						label_style: 'inline',
 						suffix: '%',
 						change: function () {
+							// Update fixed and parallax sliders on change.
 							var value = this.get_value(),
 								s = fields.bg_position_x;
 							s.$el.find('#'+s.get_field_id()).slider('value', value);
@@ -214,7 +226,121 @@ define([
 						rendered: function (){
 							this.$el.addClass('uf-bgsettings-image-pos-x-num');
 						}
-					}, pos_option))
+					}, pos_option)),
+					origin_position_y: new Upfront.Views.Editor.Field.Slider(_.extend({
+						model: this.model,
+						label: l10n.origin_position,
+						orientation: 'vertical',
+						property: 'origin_position_y',
+						use_breakpoint_property: true,
+						range: false,
+						change: function () {
+							// Update fixed and parallax sliders on change.
+							var value = this.get_value();
+							fields.origin_position_y_num.get_field().val(value);
+							me._origin_position_y = value;
+							this.model.set_breakpoint_property(this.property_name, value);
+							me.update_image();
+						},
+						rendered: function (){
+							this.$el.addClass('uf-bgsettings-image-pos-y');
+						}
+					}, {
+							default_value: 50,
+							min: -50,
+							max: 150,
+							step: 1
+						})),
+					origin_position_x: new Upfront.Views.Editor.Field.Slider(_.extend({
+						model: this.model,
+						property: 'origin_position_x',
+						use_breakpoint_property: true,
+						range: false,
+						change: function () {
+							// Update fixed and parallax sliders on change.
+							var value = this.get_value();
+							fields.origin_position_x_num.get_field().val(value);
+							me._origin_position_x = value;
+							this.model.set_breakpoint_property(this.property_name, value);
+							me.update_image();
+						},
+						rendered: function (){
+							this.$el.addClass('uf-bgsettings-image-pos-x');
+						}
+					}, {
+							default_value: 50,
+							min: -50,
+							max: 150,
+							step: 1
+						})),
+					origin_position_y_num: new Upfront.Views.Editor.Field.Number(_.extend({
+						model: this.model,
+						label: "Y:",
+						label_style: 'inline',
+						suffix: '%',
+						change: function () {
+							// Update fixed and parallax sliders on change.
+							var value = this.get_value(),
+								s = fields.origin_position_y;
+							s.$el.find('#'+s.get_field_id()).slider('value', value);
+							s.get_field().val(value);
+							s.trigger('changed');
+						},
+						rendered: function (){
+							this.$el.addClass('uf-bgsettings-image-pos-y-num uf-bgsettings-origin-pos-y-num');
+						}
+					}, {
+							default_value: 50,
+							min: -50,
+							max: 150,
+							step: 1
+						})),
+					origin_position_x_num: new Upfront.Views.Editor.Field.Number(_.extend({
+						model: this.model,
+						label: "X:",
+						label_style: 'inline',
+						suffix: '%',
+						change: function () {
+							// Update fixed and parallax sliders on change.
+							var value = this.get_value(),
+								s = fields.origin_position_x;
+							s.$el.find('#'+s.get_field_id()).slider('value', value);
+							s.get_field().val(value);
+							s.trigger('changed');
+						},
+						rendered: function (){
+							this.$el.addClass('uf-bgsettings-image-pos-x-num uf-bgsettings-origin-pos-x-num');
+						}
+					}, {
+							default_value: 50,
+							min: -50,
+							max: 150,
+							step: 1
+						})),
+					bg_size: new Upfront.Views.Editor.Field.Number(_.extend({
+						model: this.model,
+						property: 'background_size_percent',
+						label: l10n.image_size,
+						label_style: 'block',
+						use_breakpoint_property: true,
+						suffix: '%',
+						change: function () {
+							var value = this.get_value();
+							me._bg_size = value;
+							// Value separate from 'background_size' without percent suffix for populating input.
+							this.model.set_breakpoint_property(this.property_name, value);
+							me.update_image();
+						},
+						rendered: function (){
+							this.$el.addClass('uf-bgsettings-image-size');
+						}
+					}, {
+							default_value: 100,
+							min: 0,
+							max: 1000,
+							step: 1
+						}
+					))
 				};
 			this.$el.addClass('uf-bgsettings-item uf-bgsettings-imageitem');
 			options.fields = _.map(fields, function(field){ return field; });
@@ -226,10 +352,16 @@ define([
 				;
 				me._bg_style = fields.bg_style.get_value();
 				me._bg_tile = fields.bg_tile.get_value();
+				me._bg_size = fields.bg_size.get_value();
+				fields.bg_size.trigger('changed');
 				me._bg_position_y = fields.bg_position_y.get_value();
 				fields.bg_position_y.trigger('changed');
+				me._origin_position_y = fields.origin_position_y.get_value();
+				fields.origin_position_y.trigger('changed');
 				me._bg_position_x = fields.bg_position_x.get_value();
 				fields.bg_position_x.trigger('changed');
+				me._origin_position_x = fields.origin_position_y.get_value();
+				fields.origin_position_x.trigger('changed');
 				//me._default_color = fields.bg_color.get_value();
 				fields.bg_style.trigger('changed');
 				if ( bg_type == 'featured' ) {
@@ -251,13 +383,14 @@ define([
 				is_repeat_y = _.contains(tile, 'y'),
 				is_repeat_x = _.contains(tile, 'x'),
 				pos_y = this._bg_position_y,
-				pos_x = this._bg_position_x
+				pos_x = this._bg_position_x,
+				bg_size = this._bg_size
 			;
 			if ( style == 'full' ) {
 				this.model.set_breakpoint_property('background_style', 'full');
 			}
 			else {
-				if ( style == 'tile' ){
+				if ( style == 'tile' ) {
 					this.model.set_breakpoint_property('background_style', 'tile');
 					if ( is_repeat_x && is_repeat_y ) {
 						this.model.set_breakpoint_property('background_repeat', 'repeat');
@@ -271,13 +404,16 @@ define([
 					else {
 						this.model.set_breakpoint_property('background_repeat', 'no-repeat');
 					}
-				}
-				else if ( style == 'fixed' ){
+				} else if ( style == 'fixed' ) {
 					this.model.set_breakpoint_property('background_style', 'fixed');
 					this.model.set_breakpoint_property('background_repeat', 'no-repeat');
 					this.model.set_breakpoint_property('background_position', pos_x + '% ' + pos_y + '%');
-				}
-				else {
+					this.model.set_breakpoint_property('background_size', bg_size + '%');
+				} else if (style === 'parallax') {
+					this.model.set_breakpoint_property('background_style', 'parallax');
+					this.model.set_breakpoint_property('background_position', this._origin_position_x + '% ' + this._origin_position_y + '%');
+					this.model.set_breakpoint_property('background_size', bg_size + '%');
+				} else {
 					this.model.set_breakpoint_property('background_style', style);
 				}
 			}

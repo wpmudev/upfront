@@ -15,13 +15,6 @@ _.mixin({
 	}
 });
 
-var _tpl = _.template;
-_.template = function (tpl, data) {
-	if (typeof undefined === typeof data) return _tpl(tpl);
-	var tmp = _tpl(tpl);
-	return tmp(data);
-};
-
 //requestFrameAnimation polyfill
 var rAFPollyfill = function(callback){
 		var currTime = new Date().getTime(),
@@ -144,6 +137,10 @@ define([
 			if ( Upfront.Application.current_subapplication.layout ) {
 				//request.upfront_layout = Upfront.Application.layout.get('layout');
 				request.layout = Upfront.Application.current_subapplication.layout.get('layout');
+			}
+			if ( Upfront.layout_data_from_create_layout && request.data && request.data.post_id === 'fake_post' && !request.layout ) {
+				request.layout = Upfront.layout_data_from_create_layout;
+				Upfront.layout_data_from_create_layout = false;
 			}
 			if ( !request.storage_key ) request.storage_key = _upfront_storage_key;
 			request.stylesheet = _upfront_stylesheet;
@@ -924,7 +921,7 @@ define([
 							return false;
 						}
 				;
-				
+
 				if ( !this.disable_esc ) {
 					$('body').bind( 'keyup', function( event ) {
 						if ( event.keyCode === 27 ) me.close();

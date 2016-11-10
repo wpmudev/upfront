@@ -90,6 +90,8 @@ abstract class Upfront_EntityResolver {
 				$term = !empty($tax_query['terms']) ? $tax_query['terms'] : false;
 			}
 			if ($taxonomy && $term) $wp_entity = self::_to_entity($taxonomy, $term);
+		} else if (!empty($query->tax_query) && $query->query['post_type'] === 'product') {
+			$wp_entity['item'] = 'product';
 		}
 
 		$wp_entity['type'] = 'archive';
@@ -168,6 +170,10 @@ abstract class Upfront_EntityResolver {
 		$type = $layout_ids['type'];
 		$item = !empty($layout_ids['item']) ? preg_replace("/^{$type}-/", "", $layout_ids['item']) : "";
 		$specificity = !empty($layout_ids['specificity']) ? preg_replace("/^{$type}-{$item}-/", "", $layout_ids['specificity']) : "";
+
+
+		$layout_name = apply_filters('upfront-layout_to_name', '', $type, $item, $specificity);
+		if ($layout_name !== '') return $layout_name;
 
 		if ('single' === $type) {
 			if ('404_page' === $item || 'single-404_page' === $specificity) {

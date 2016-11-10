@@ -92,7 +92,7 @@ function load_google_maps () {
 	try { protocol = document.location.protocol; } catch (e) { protocol = 'http:'; }
 	key = key ? '&key=' + key : '';
 	script.type = "text/javascript";
-	script.src = protocol + "//maps.google.com/maps/api/js?v=3" + key + "&libraries=places&sensor=false&callback=upfront_maps_loaded";
+	script.src = protocol + "//maps.google.com/maps/api/js?v=4" + key + "&libraries=places&sensor=false&callback=upfront_maps_loaded";
 	document.body.appendChild(script);
 }
 function upfront_maps_public_init () {
