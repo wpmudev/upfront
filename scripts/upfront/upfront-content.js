@@ -18,14 +18,18 @@ define("content", deps, function(postTpl, ContentTools) {
 		_.extend(this, Backbone.Events);
 
 		//If the post is in the cache, prepare it!
-		if(Upfront.data.posts[this.postId]){
-			this.post = Upfront.data.posts[this.postId];
-			if(!this.post.meta.length)
-				this.post.meta.fetch();
-
-			this.loadingPost = new $.Deferred();
-			this.loadingPost.resolve(this.post);
-		}
+    // Disabled due to a bug where the post name and title
+    // did not update properly when editing again without refresh.
+    /*
+     *    if(Upfront.data.posts[this.postId]){
+     *      this.post = Upfront.data.posts[this.postId];
+     *      if(!this.post.meta.length)
+     *        this.post.meta.fetch();
+     *
+     *      this.loadingPost = new $.Deferred();
+     *      this.loadingPost.resolve(this.post);
+     *    }
+     */
 
 		//this.postView = opts.view;
 		this.contentEditor = false;
@@ -162,12 +166,16 @@ define("content", deps, function(postTpl, ContentTools) {
 			}
 
 			var post = Upfront.data.posts[this.postId];
-			if(post){
-				this.post = post;
-				deferred.resolve(post);
-				this.loadingPost = deferred.promise();
-				return this.loadingPost;
-			}
+    // Disabled due to a bug where the post name and title
+    // did not update properly when editing again without refresh.
+    /*
+     *  if(post){
+     *    this.post = post;
+     *    deferred.resolve(post);
+     *    this.loadingPost = deferred.promise();
+     *    return this.loadingPost;
+     *  }
+     */
 
 			return this.fetchPost();
 		},
