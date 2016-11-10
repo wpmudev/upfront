@@ -19,6 +19,7 @@ class Upfront_Compat_MarketPress {
 		add_filter('upfront-posts-get_markup-before', array($this, 'override_posts_markup_filter'));
 		add_filter('upfront-plugins_layouts', array($this, 'add_layouts'));
 		add_filter('upfront-postdata_get_markup_after', array($this, 'add_class'), 10, 2);
+		add_filter('mp-do_grid_with_js', array($this, 'disable_mp_js_grid'), 10, 2);
 	}
 
 	public function add_class($markup, $post) {
@@ -80,6 +81,14 @@ class Upfront_Compat_MarketPress {
 			$fake_id = 'mporderstatus';
 		}
 		return $fake_id;
+	}
+	
+	/**
+	 * Overrides MP equal height filter
+	 */
+	
+	public function disable_mp_js_grid () {
+		return true;
 	}
 
 	/**
