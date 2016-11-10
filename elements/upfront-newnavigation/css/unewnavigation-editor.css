@@ -405,6 +405,9 @@ li.menu-item .uimage-controls.image-element-controls .upfront-inline-panel .upfr
 	width: auto;
 	line-height: 36px;
 }
+li.menu-item a {
+	min-height: 30px;
+}
 li.menu-item .uimage-controls.image-element-controls {
 	display: block;
 	visibility: hidden;
@@ -584,6 +587,20 @@ div.preset-manager-panel .menustyle_settings_item  .burger_alignment {
 	margin-top: 5px;
 	width: 215px;
 }
+
 .upfront-navigation .upfront-ui .upfront-icon-region-link:before{
-	background-position: -256px -245px;
+	background-position: -381px -41px;
+}
+
+.umenu-controls {
+	display: none;
+}
+
+.menu-item:hover .umenu-controls {
+    display: block;
+}
+
+.menu-item .upfront-inline-panel {
+	top: 0px;
+	right: 0px;
 }

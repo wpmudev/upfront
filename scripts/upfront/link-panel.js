@@ -84,6 +84,7 @@ define([
 
 		events: {
 			'click .js-ulinkpanel-input-entry': 'openPostSelector',
+			'click .upfront-create-new-lightbox': 'newLightbox',
 			'keydown .js-ulinkpanel-lightbox-input': 'onLightboxNameInputChange',
 			'blur .js-ulinkpanel-input-external': 'onUrlInputBlur',
 			//'click .js-ulinkpanel-ok': 'onOkClick',
@@ -181,7 +182,7 @@ define([
 		},
 
 		onOkClick: function() {
-			if (this.model.get('type') == 'lightbox' && this.$el.find('.js-ulinkpanel-lightbox-input').val() !== '') {
+			if (this.model.get('type') === 'lightbox' && this.$el.find('.js-ulinkpanel-lightbox-input').val() !== '') {
 				this.createLightBox();
 			} else {
 				this.close();
@@ -275,7 +276,7 @@ define([
 				};
 
 			Upfront.Views.Editor.PostSelector.open(selectorOptions).done(function(post){
-				me.model.set({url: post.get('permalink'), object: post.get('post_type'), object_id: post.get('ID')});
+				me.model.set({title: post.get('post_title'), url: post.get('permalink'), object: post.get('post_type'), object_id: post.get('ID')});
 				me.render();
 			});
 		},
@@ -285,7 +286,7 @@ define([
 		 * Check input for lightbox name for enter key.
 		 */
 		onLightboxNameInputChange: function(event) {
-			if (event.which == 13) {
+			if (event.which === 13) {
 				event.preventDefault();
 				this.createLightBox();
 			}
@@ -338,6 +339,12 @@ define([
 			this.$el.html('Error occurred, link panel switch to new style.');
 				return;
 			}
+			
+			if (!this.model.get('url') && (!this.model.get('type') || this.model.get('type') === "unlink")) {
+				// If not URL set type to external
+				this.model.set({'type': 'external'}, {silent: true});
+			}
+			
 			var tplData = {
 				title: this.title,
 				link: this.model.toJSON(),
@@ -355,8 +362,13 @@ define([
 				this.renderAnchorSelect();
 			}
 
-			if (this.model.get('type') == 'lightbox' && getLightBoxes()) {
-				this.renderLightBoxesSelect();
+			if (this.model.get('type') == 'lightbox') {
+				if (getLightBoxes().length) {
+					this.renderLightBoxesSelect();
+					this.$el.find('.js-ulinkpanel-new-lightbox').hide();
+				} else {
+					this.$el.find('.js-ulinkpanel-new-lightbox').show();
+				}
 			}
 
 			if (_.contains(['external'], this.model.get('type'))) {
@@ -367,8 +379,13 @@ define([
 
 			this.delegateEvents();
 		},
+
+		newLightbox: function () {
+			this.$el.find('.lightbox-selector').hide();
+			this.$el.find('.js-ulinkpanel-new-lightbox').show();
+		},
 		
-		updateWrapperSize: function() {
+		updateWrapperSize: function () {
 			var totalWidth = 0;
 
 			this.$el.children().each(function(i, element) {
@@ -376,7 +393,10 @@ define([
 				totalWidth = totalWidth + elementWidth;
 			});
 			
-			this.$el.css('width', totalWidth + 20);
+			this.$el.css('width', totalWidth + 10);
+			
+			// If redactor link update the container width
+			this.$el.closest('.redactor_air').css('width', totalWidth + 10);
 		},
 		
 		renderTypeSelect: function() {
@@ -387,6 +407,11 @@ define([
 				if (!use) {
 					return;
 				}
+				
+				if(!me.model.get('url') && type === "unlink") {
+					return;
+				}
+
 				typeSelectValues.push(this.getLinkTypeValue(type));
 			}, this);
 
@@ -461,7 +486,7 @@ define([
 
 		renderLightBoxesSelect: function() {
 			var model = this.model;
-			var lightboxValues = [{label: 'Choose Lightbox...', value: ''}];
+			var lightboxValues = [];
 			_.each(getLightBoxes() || [], function(lightbox) {
 				lightboxValues.push({label: lightbox.label, value: lightbox.id});
 			});
@@ -472,6 +497,7 @@ define([
 
 			this.lightboxSelect = new Upfront.Views.Editor.Field.Select({
 				label: '',
+				className: 'upfront-lightbox-select',
 				values: lightboxValues,
 				default_value: lightboxValue,
 				change: function () {
@@ -481,6 +507,7 @@ define([
 			});
 			this.lightboxSelect.render();
 			this.$el.find('.lightbox-selector').append(this.lightboxSelect.el);
+			this.$el.find('.upfront-lightbox-select ul').prepend('<li class="upfront-field-select-option upfront-create-new-lightbox"><label>' + Upfront.Settings.l10n.global.content.new_lightbox + '</label></li>')
 		},
 
 		delegateEvents: function(events) {

@@ -228,7 +228,7 @@ define([
 
 		createLinkControl: function(){
 			var me = this,
-				control = new Upfront.Views.Editor.InlinePanels.DialogControl(),
+				control = new Upfront.Views.Editor.InlinePanels.LinkControl(),
 				linkPanel;
 
 			control.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
@@ -255,6 +255,11 @@ define([
 			me.listenTo(control, 'panel:close', function(){
 				me.controls.$el.parent().parent().removeClass('upfront-control-visible');
 				me.$el.closest('.ui-draggable').draggable('enable');
+			});
+
+			// Close panel when event is triggered (enter key is hit).
+			me.listenTo(linkPanel, 'linkpanel:close', function() {
+				control.close();
 			});
 
 			control.icon = 'link';

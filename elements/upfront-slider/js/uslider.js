@@ -824,7 +824,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	createLinkControl: function() {
 		var me = this,
 			slide = this.model.slideCollection.at(this.getCurrentSlide()),
-			control = new Upfront.Views.Editor.InlinePanels.DialogControl(),
+			control = new Upfront.Views.Editor.InlinePanels.LinkControl(),
 			link;
 
 		if (this.currentSlideLink) {

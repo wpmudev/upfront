@@ -38,6 +38,10 @@ define([
 				this.$el.addClass('link-control-panel-item');
 			}
 
+			if(this.options.firstLevel === true && !this.$el.hasClass('link-control-panel-first-level')) {
+				this.$el.addClass('link-control-panel-first-level');
+			}
+
 			if(this.view){
 				this.view.render();
 				this.view.delegateEvents();
@@ -161,7 +165,7 @@ define([
 				totalWidth = totalWidth + elementWidth;
 			});
 
-			this.$el.find('.ulinkpanel-dark').css('width', totalWidth + 20);
+			this.$el.find('.ulinkpanel-dark').css('width', totalWidth + 10);
 		}
 	});
 

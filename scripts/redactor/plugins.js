@@ -31,6 +31,8 @@ var UeditorPanel = Backbone.View.extend({
         if( typeof this.init === "function" ){
             this.init();
         }
+		
+		this.listenTo( UeditorEvents, "ueditor:air:show", this.fadeOutToolbar );
 
         this.render();
     },
@@ -45,6 +47,37 @@ var UeditorPanel = Backbone.View.extend({
         //    }, 300);
         //}
     },
+	
+		
+	fadeInToolbar: function () {
+		var $buttons = this.$el.parent().siblings('li'),
+			$wrapper = this.$el.closest('.redactor_air')
+		;
+		
+		$buttons.each(function(i, element) {
+			$(element).css('opacity', 0.4);
+		});
+		
+		$($wrapper).css({
+			background: 'rgba(255, 255, 255, 0.4)',
+			borderColor: 'rgba(204, 204, 204, 0.4)',
+		});
+	},
+	
+	fadeOutToolbar: function () {
+		var $buttons = this.$el.parent().siblings('li'),
+			$wrapper = this.$el.closest('.redactor_air')
+		;
+		
+		$buttons.each(function(i, element) {
+			$(element).css('opacity', 1);
+		});
+		
+		$($wrapper).css({
+			background: 'rgba(255, 255, 255, 1)',
+			borderColor: 'rgba(204, 204, 204, 1)',
+		});
+	},
 
     closeToolbar: function(){
         this.redactor.$air.fadeOut(100);
@@ -657,7 +690,8 @@ RedactorPlugins.upfrontIcons = function() {
                 'click .ueditor-font-icon': 'insert_icon',
                 'open': 'open',
                 'toolbarClosed': "close",
-                'change .upfront-font-icons-controlls input': "input_change"
+                'change .upfront-font-icons-controlls input': "input_change",
+                'keydown .upfront-font-icons-controlls input': "input_key_down"
             },
             render: function (options) {
                 this.$el.html(this.tpl({icons: Upfront.mainData.font_icons }));
@@ -702,6 +736,7 @@ RedactorPlugins.upfrontIcons = function() {
 
                 this.closeToolbar();
             },
+
             input_change: function(e){
                 var $sel = this.$sel;
                 e.stopPropagation();
@@ -709,15 +744,28 @@ RedactorPlugins.upfrontIcons = function() {
                 var $input = $(e.target),
                     val = $input.val() + "px";
 
-                if ($input.hasClass("font-icons-size")) {
+                if ($input.hasClass("font-icons-size") && $sel) {
                     $sel.css("font-size", val);
                 }
 
-                if ($input.hasClass("font-icons-top")) {
+                if ($input.hasClass("font-icons-top") && $sel) {
                     $sel.css("top", val);
                 }
                 this.redactor.code.sync();
             },
+
+						input_key_down: function(e) {
+							// If key is return close panel.
+							if (e.which === 13) {
+								// Keep from entering return symbol.
+								e.preventDefault();
+								// Close Panel and Toolbar on Enter.
+								this.closePanel();
+								this.closeToolbar();
+								this.redactor.dropdown.hideAll();
+							}
+						},
+
             set_current_icon: function () {
                 var $sel = $(this.redactor.selection.getCurrent()).last(),
                     self = this;
@@ -731,9 +779,8 @@ RedactorPlugins.upfrontIcons = function() {
                     this.$(".font-icons-top").val(parseFloat($sel.css("top")));
                 }
             }
-
         }))
-    }
+    };
 };
 
 /*--------------------
@@ -755,11 +802,16 @@ RedactorPlugins.upfrontLink = function() {
 		panel: UeditorPanel.extend({
 			tpl: _.template($(tpl).find('#link-tpl').html()),
 			events: {
-				open: 'open'
+				open: 'open',
+				'click .upfront-apply': 'closeLinkPanel',
+				'click .upfront-link-back': 'closeLinkPanel'
 			},
 
 			initialize: function () {
 				UeditorPanel.prototype.initialize.apply(this, arguments);
+				this.$el.addClass('link-control-panel link-control-panel-content');
+				
+				this.listenTo( UeditorEvents, "ueditor:air:show", this.showSiblings );
 			},
 
 			open: function (e, redactor) {
@@ -842,10 +894,61 @@ RedactorPlugins.upfrontLink = function() {
 					me.redactor.selection.remove();
 					me.redactor.caret.setOffset(caretOffset);
 				});
+				
+				this.listenTo(this.linkModel, 'change:type', function() {
+					me.updateWrapperSize();
+				});
 
 				this.linkPanel.render();
 				this.$el.html(this.linkPanel.el);
 				this.linkPanel.delegateEvents();
+				
+				this.hideSiblings();
+				
+			},
+
+			closeLinkPanel: function() {
+				var $buttons = this.$el.parent().siblings('li'),
+					totalWidth = 0
+				;
+
+				$buttons.each(function(i, element) {
+					totalWidth = totalWidth + parseInt($(element).width());
+				});
+
+				this.$el.closest('.redactor_air').css('width', totalWidth + 5);
+				
+				$('a.re-upfrontLink').click().removeClass('dropact redactor_act');
+				
+				$buttons.show();
+			},
+			
+			hideSiblings: function() {
+				this.updateWrapperSize();
+				this.$el.parent().siblings('li').hide();
+			},
+			
+			showSiblings: function() {
+				var totalWidth = 0;
+				this.$el.parent().siblings('li').show();
+				
+				this.$el.parent().siblings('li').each(function(i, element) {
+					totalWidth = totalWidth + parseInt($(element).width());
+				});
+				
+				this.$el.closest('.redactor_air').css('width', totalWidth + 10);
+			},
+			
+			updateWrapperSize: function() {
+				var totalWidth = 0;
+
+				this.$el.find('.ulinkpanel-dark').children().each(function(i, element) {
+					var elementWidth = $(element).hasClass('upfront-settings-link-target') ? 0 : parseInt($(element).width());
+					totalWidth = totalWidth + elementWidth;
+				});
+				
+				this.$el.find('.ulinkpanel-dark').css('width', totalWidth + 10);
+				this.$el.closest('.redactor_air').css('width', totalWidth + 10);
 			},
 
 			close: function (e, redactor) {
@@ -990,11 +1093,11 @@ RedactorPlugins.upfrontColor = function() {
                 'open': 'open'
             },
             init: function(){
-              this.listenTo( UeditorEvents, "ueditor:air:show", this.on_air_show );
-							var me = this;
-							this.listenTo( UeditorEvents, 'cleanUpListeners', function() {
-								me.stopListening();
-							});
+				this.listenTo( UeditorEvents, "ueditor:air:show", this.on_air_show );
+				var me = this;
+				this.listenTo( UeditorEvents, 'cleanUpListeners', function() {
+					me.stopListening();
+				});
             },
             on_air_show: function(e){
                 this.redactor.selection.save();
@@ -1020,6 +1123,7 @@ RedactorPlugins.upfrontColor = function() {
             open: function (e, redactor) {
                 this.updateIcon();
                 this.redactor.selection.save();
+				
                 var self = this,
                     theme_colors = Upfront.Views.Theme_Colors.colors.pluck("color").length ? Upfront.Views.Theme_Colors.colors.pluck("color") : [],
                     foreground_picker = new Upfront.Views.Editor.Field.Color({
@@ -1086,42 +1190,42 @@ RedactorPlugins.upfrontColor = function() {
                     var color = tinycolor(self.current_color);
                     foreground_picker.$(".upfront-field-color").spectrum("option", "color", self.current_color);
                     foreground_picker.$(".upfront-field-color").spectrum("set", color);
-                    foreground_picker.$(".sp-input").css({
-                        "border-left-color": self.current_color
+                    foreground_picker.$(".upfront_color_picker_rgb_main").css({
+                        "background": self.current_color
                     });
                     foreground_picker.render_sidebar_rgba(color.toRgb());
-                    foreground_picker.update_input_val(color.toHexString());
+                    foreground_picker.update_input_val(color.toRgbString());
                 }
                 else {
                     var color = tinycolor("#000000");
                     foreground_picker.$(".upfront-field-color").spectrum("option", "color", "#000000");
                     foreground_picker.$(".upfront-field-color").spectrum("set", color);
-                    background_picker.$(".sp-input").css({
-                        "border-left-color": "#000000"
+                    background_picker.$(".upfront_color_picker_rgb_main").css({
+                        "background": "#000000"
                     });
                     foreground_picker.render_sidebar_rgba(color.toRgb());
-                    foreground_picker.update_input_val(color.toHexString());
+                    foreground_picker.update_input_val(color.toRgbString());
                 }
 
                 if (this.current_bg) {
                     var color = tinycolor(self.current_bg);
                     background_picker.$(".upfront-field-color").spectrum("option", "color", self.current_bg);
                     background_picker.$(".upfront-field-color").spectrum("set", color);
-                    background_picker.$(".sp-input").css({
-                        "border-left-color": self.current_bg
+                    background_picker.$(".upfront_color_picker_rgb_main").css({
+                        "background": self.current_bg
                     });
                     background_picker.render_sidebar_rgba(color.toRgb());
-                    background_picker.update_input_val(color.toHexString());
+                    background_picker.update_input_val(color.toRgbString());
                 }
                 else {
                     var color = tinycolor("rgba(0, 0, 0, 0)");
                     background_picker.$(".upfront-field-color").spectrum("option", "color", "rgba(0, 0, 0, 0)");
                     background_picker.$(".upfront-field-color").spectrum("set", color);
-                    background_picker.$(".sp-input").css({
-                        "border-left-color": "rgba(0, 0, 0, 0)"
+                    background_picker.$(".upfront_color_picker_rgb_main").css({
+                        "background": "rgba(0, 0, 0, 0)"
                     });
                     background_picker.render_sidebar_rgba(color.toRgb());
-                    background_picker.update_input_val(color.toHexString());
+                    background_picker.update_input_val(color.toRgbString());
                 }
 
 
@@ -1132,12 +1236,29 @@ RedactorPlugins.upfrontColor = function() {
                     self.closeToolbar();
                     self.redactor.dropdown.hideAll();
                 });
+				
+				this.positionColorPicker();
+				this.fadeInToolbar();
             },
+			positionColorPicker: function() {
+				var $redactorContainer = this.$el.closest('.redactor-toolbar'),
+					$containerOffset = $redactorContainer.offset(),
+					$positionClass = 'uf-bottom-right';
+				;
+				
+				if($containerOffset.top < this.$el.find('.sp-container').height()) {
+					$positionClass = 'uf-top-right';
+				}
+				
+				this.$el.addClass('uf-color-picker-wrapper');
+				
+				this.$el.addClass($positionClass).find('.tablist').addClass($positionClass);
+			},
             render: function () {
 
-                var tabforeground = $('<li id="tabforeground" class="active">').html(l10n.text_color);
-                var tabbackground = $('<li id="tabbackground">').html(l10n.text_background);
-                var tablist = $('<ul class="tablist">').append(tabforeground).append(tabbackground);
+                var tabforeground = $('<li id="tabforeground" class="active">').html('');
+                var tabbackground = $('<li id="tabbackground">').html('');
+                var tablist = $('<ul class="tablist">').append(tabbackground).append(tabforeground);
 
                 var tabs = $('<ul class="tabs">').append($('<li id="tabforeground-content" class="active">').html('<input class="foreground" type="text">')).append($('<li id="tabbackground-content">').html('<input class="background" type="text">'));
 
@@ -1515,8 +1636,10 @@ RedactorPlugins.upfrontFormatting = function() {
             },
             open: function (e, redactor) {
                 this.redactor = redactor;
+				this.set_position();
                 this.set_previously_selected_tag();
                 this.set_previously_selected_class();
+				this.fadeInToolbar();
             },
             close: function () {
                 if (this.redactor) {
@@ -1524,6 +1647,14 @@ RedactorPlugins.upfrontFormatting = function() {
                     this.$sel = false;
                 }
             },
+			set_position: function() {
+				var $container = this.$el.closest('.redactor_air'),
+					offset = $container.offset();
+
+					if(offset.top < 100) {
+						//this.$el.closest('.redactor-dropdown-box-upfrontFormatting').css('top', offset.top);
+					}
+			},
             set_previously_selected_tag: function(){
                 var tag = $(this.redactor.selection.getBlock()).length ? $(this.redactor.selection.getBlock())[0].tagName : false;
                 if (tag) {
@@ -1581,6 +1712,7 @@ RedactorPlugins.upfrontFormatting = function() {
                 this.redactor.code.sync();
                 this.close();
                 this.redactor.dropdown.hideAll();
+				this.fadeOutToolbar();
             },
             change_custom_class: function(e){
                 var self = this,

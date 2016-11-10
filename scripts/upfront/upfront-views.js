@@ -369,10 +369,13 @@ define([
 				this.$el.find('#upfront_map-api_key_overlay-wrapper').remove();
 			},
 			update_background_map: function ($type, $overlay) {
+
 				// If background type is map and is missing API Key, show notice.
 				if (
 					!(window._upfront_api_keys || {})['gmaps']
 					&& Upfront.Application.user_can_modify_layout()
+					// Warn if invalid API Key.
+					|| typeof google_maps_auth_error !== 'undefined'
 				) {
 					this.add_api_key_overlay();
 				}
@@ -3331,15 +3334,10 @@ define([
 			},
 			events: {
 				"click > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
-				"click > .upfront-module-group-toggle-container > .upfront-module-group-ungroup": "on_ungroup",
 				"click > .upfront-module-group-toggle-container > .upfront-module-group-reorder": "on_reorder",
-				"click > .upfront-module-group-toggle-container > .upfront-module-group-edit": "on_edit",
 				"click > .upfront-entity_meta > a.upfront-entity-hide_trigger": "on_hide_click",
 				"click > .upfront-module-hidden-toggle > a.upfront-entity-hide_trigger": "on_hide_click",
 				"click > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
-				//"click a.redactor_act": "onOpenPanelClick",
-				//"click .upfront-save_settings": "onOpenPanelClick",
-				"click .open-item-controls": "onOpenItemControlsClick",
 				"click > .upfront-module-group-finish-edit": "on_finish",
 				"click": "on_click",
 				"dblclick": "on_dblclick"
@@ -3357,7 +3355,6 @@ define([
 
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
 				this.listenTo(Upfront.Events, "upfront:grid:updated", this.on_grid_update);
-				//this.listenTo(Upfront.Events, "entity:wrapper:update_position", this.on_wrapper_update);
 				this.listenTo(Upfront.Events, "command:module_group:finish_edit", this.on_finish);
 				this.listenTo(Upfront.Events, "command:module_group:close_panel", this.closeControlPanel);
 
@@ -3384,7 +3381,53 @@ define([
 				}
 
 			},
+			
+			createGroupLinkControl: function() {
+				var property_url = this.model.get_property_value_by_name('href');
 
+				if( !property_url ) property_url = "";
+				
+				var me = this,
+					linkPanelControl = new Upfront.Views.Editor.InlinePanels.Controls.GroupLinkPanel({
+						linkUrl: property_url,
+						linkType: Upfront.Util.guessLinkType(property_url),
+						linkTarget: this.model.get_property_value_by_name("linkTarget"),
+						button: false,
+						icon: 'link',
+						tooltip: l10n.link_group_to
+					})
+				;
+				
+				this.listenTo(linkPanelControl, 'change change:target', function(data) {
+					this.model.set_property('href', data.url);
+					this.model.set_property('linkTarget', data.target);
+				});
+				this.listenTo(linkPanelControl, 'panel:open panel:close', function() {
+					me.toggleLinkPanel();
+				});
+				this.listenTo(linkPanelControl, 'panel:close', function() {
+					me.closeControlPanel();
+				});
+				
+				return linkPanelControl; 
+			},
+			
+			createMoreOptionsControl: function() {
+				var me = this,
+					moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl()
+				;
+				
+				moreOptions.icon = 'more';
+				moreOptions.tooltip = l10n.more_options;
+				
+				moreOptions.sub_items = {};
+				moreOptions.sub_items['link'] = this.createGroupLinkControl();
+				moreOptions.sub_items['edit_elements'] = this.createControl('edit_elements', l10n.edit_elements, 'on_edit');
+				moreOptions.sub_items['ungroup'] = this.createControl('ungroup', l10n.ungroup, 'on_ungroup');
+				
+				return moreOptions;
+			},
+			
 			createPaddingControl: function(){
 				this.paddingControl = new Upfront.Views.Editor.InlinePanels.PaddingControl({
 					model: this.model
@@ -3403,14 +3446,6 @@ define([
 				this.toggleLinkPanel();
 			},
 
-			onOpenItemControlsClick: function() {
-				if (this.$el.hasClass('controls-visible')) {
-					this.closeControlPanel();
-				} else {
-					this.openControlPanel();
-				}
-			},
-
 			openControlPanel: function () {
 				this.$el.addClass('controls-visible');
 				this.controlsVisible = true;
@@ -3426,75 +3461,16 @@ define([
 				}
 			},
 
-			createInlineControlPanel: function() {
-				var property_url = this.model.get_property_value_by_name('href');
-
-				if(!property_url) {
-					property_url = "";
-				}
-
-				var me = this,
-					panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
-					visitLinkControl = new Upfront.Views.Editor.InlinePanels.Controls.VisitLink({
-						url: property_url,
-						hideIfUnlink: true,
-						linkLabel: {
-							external: l10n.visit_link
-						}
-					}),
-					linkPanelControl = new Upfront.Views.Editor.InlinePanels.Controls.GroupLinkPanel({
-						linkUrl: property_url,
-						linkType: Upfront.Util.guessLinkType(property_url),
-						linkTarget: this.model.get_property_value_by_name("linkTarget"),
-						button: false
-					}),
-					ungroupControl = new Upfront.Views.Editor.InlinePanels.Control({
-						label: l10n.ungroup,
-						className: 'upfront-inline-panel-item ungroup-control'
-					}),
-					editControl = new Upfront.Views.Editor.InlinePanels.Control({
-						label: l10n.edit_elements,
-						className: 'upfront-inline-panel-item edit-elements-control'
-					})
-				;
-
-				this.listenTo(linkPanelControl, 'change change:target', function(data) {
-					visitLinkControl.setLink(data.url);
-					this.model.set_property('href', data.url);
-					this.model.set_property('linkTarget', data.target);
-				});
-				this.listenTo(linkPanelControl, 'panel:open panel:close', function() {
-					me.toggleLinkPanel();
-				});
-				this.listenTo(linkPanelControl, 'panel:close', function() {
-					me.closeControlPanel();
-				});
-				this.listenTo(ungroupControl, 'click', function (e) {
-					me.on_ungroup();
-				});
-				this.listenTo(editControl, 'click', function (e) {
-					me.closeControlPanel(false);
-					me.on_edit();
-				});
-
-				panel.items = _([
-					linkPanelControl,
-					visitLinkControl,
-					editControl,
-					ungroupControl
-				]);
-
-				var $imageControlsTpl = $('<div class="upfront-module-group-controls upfront-ui"></div>');
-				this.$el.append($imageControlsTpl);
-				panel.render();
-				$imageControlsTpl.append(panel.el);
-				panel.delegateEvents();
-
-				this.panel = panel;
-			},
-
 			toggleLinkPanel: function() {
 				this.$el.toggleClass('control-dialog-open');
+			},
+			
+			getControlItems: function(){
+				return _([
+					this.createMoreOptionsControl(),
+					this.createPaddingControl(),
+					this.createControl('settings', l10n.settings, 'on_settings_click')
+				]);
 			},
 
 			render: function () {
@@ -3527,12 +3503,8 @@ define([
 					this.stopListening(this.wrapper_view, 'update_position');
 					this.listenTo(this.wrapper_view, 'update_position', this.on_wrapper_update);
 				}
-
-				if (Upfront.Application.user_can_modify_layout()) {
-				this.$el.html(template + '<span class="open-item-controls"></span>');
-				} else {
-					this.$el.html(template);
-				}
+				
+				this.$el.html(template);
 
 				this.$bg = this.$el.find('.upfront-module-group-bg');
 				this.update();
@@ -3552,8 +3524,6 @@ define([
 				}
 
 				if (!Upfront.Application.user_can_modify_layout()) this.$el.addClass('upfront-module-group-no-edit');
-
-				this.createInlineControlPanel();
 
 				this.create_size_hint(this.$el);
 				this.$control_el = this.$el;

@@ -89,11 +89,14 @@ define([
 								fields.bg_color.$el.hide();
 								this.$el.addClass('uf-bgsettings-image-default-image');
 								if ( !bg_image ) me.upload_image();
-							}
-							else if ( value == 'color' ) {
+							} else if ( value == 'color' ) {
 								fields.pick_image.$el.hide();
 								fields.bg_color.$el.show();
 								this.$el.addClass('uf-bgsettings-image-default-color');
+							} else if ( value == 'featured' ) {
+								fields.pick_image.$el.show();
+								fields.bg_color.$el.hide();
+								this.$el.addClass('uf-bgsettings-image-default-image');
 							}
 							else {
 								fields.pick_image.$el.hide();
