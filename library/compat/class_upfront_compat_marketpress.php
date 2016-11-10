@@ -88,7 +88,7 @@ class Upfront_Compat_MarketPress {
 	 */
 	
 	public function disable_mp_js_grid () {
-		return true;
+		return false;
 	}
 
 	/**
