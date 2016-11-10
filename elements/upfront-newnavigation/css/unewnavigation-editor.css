@@ -584,6 +584,15 @@ div.preset-manager-panel .menustyle_settings_item  .burger_alignment {
 	margin-top: 5px;
 	width: 215px;
 }
+
 .upfront-navigation .upfront-ui .upfront-icon-region-link:before{
-	background-position: -256px -245px;
+	background-position: -381px -41px;
+}
+
+.umenu-controls {
+	display: none;
+}
+
+.menu-item:hover .umenu-controls {
+    display: block;
 }
