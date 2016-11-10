@@ -7,6 +7,5 @@
 .bitbucket-pipelines.yml export-ignore
 package.json export-ignore
 Gruntfile.js export-ignore
-Gruntfile.js export-ignore
 test/ export-ignore
 styles/sass/ export-ignore
