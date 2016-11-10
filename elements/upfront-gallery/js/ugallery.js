@@ -380,8 +380,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	createControlsEach: function(image) {
 		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
-			moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl();
-			
+			moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl()
+		;
+
 		moreOptions.icon = 'more';
 		moreOptions.tooltip = l10n.ctrl.caption_position;	
 		moreOptions.sub_items = {};
@@ -1801,7 +1802,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		var controls = this.createControlsEach(image);
 		controls.render();
 		$item.find('.ugallery-controls').remove();
-		$item.append($('<div class="ugallery-controls upfront-ui"></div>').append(controls.$el));
+		$item.append($('<div class="ugallery-controls upfront-element-controls upfront-ui"></div>').append(controls.$el));
 
 		return controls;
 	}
