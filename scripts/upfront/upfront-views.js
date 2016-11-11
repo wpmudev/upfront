@@ -6235,7 +6235,7 @@ define([
 						}
 						else {
 							if ( container_height > win_height && scroll_bottom <= ( container_offset.top + win_height ) )
-								css.bottom =	container_height - win_height + bottom;
+								css.bottom = container_height - win_height + bottom;
 							else
 								css.bottom = bottom;
 						}
@@ -6308,7 +6308,7 @@ define([
 			}
 		}),
 
-/*	Lightbox is extended from Region */
+		/* Lightbox is extended from Region */
 		RegionLightbox = Region.extend({
 			cssSelectors: {
 				'.upfront-region-side-lightbox': {label: l10n.ltbox_area_label, info: l10n.ltbox_area_info},
