@@ -544,6 +544,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'body' => __('Body', 'upfront'),
 				'post_data' => __('Post Data', 'upfront'),
 				'author' => __('Author', 'upfront'),
+				'element' => __('Element', 'upfront'),
 				'featured_image' => __('Featured Image', 'upfront'),
 				'taxonomy' => __('Categories', 'upfront'),
 				'comments' => __('Comments', 'upfront'),
