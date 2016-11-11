@@ -4851,7 +4851,7 @@ define([
 					right: ''
 				});
 			},
-			trigger_edit_lightbox: function(e) {
+			trigger_edit_lightbox: function() {
 				if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.CONTENT )
 					return false;
 				var me = this,
@@ -5920,7 +5920,7 @@ define([
 					this.bg_setting.top = setting_offset.top;
 
 					var container_view = this.parent_view.get_container_view(this.model);
-					container_view.trigger_edit_lightbox(e);
+					container_view.trigger_edit_lightbox();
 				}
 				else {
 					if ( this.bg_setting.width < setting_offset.left - 10 ) {
@@ -6276,7 +6276,9 @@ define([
 			close_edit: function (e) {
 				var container_view = this.parent_view.get_container_view(this.model);
 				container_view.close_edit();
-				e.stopPropagation();
+				if (typeof e !== 'undefined') {
+					e.stopPropagation();
+				}
 			},
 			check_modules: function () {
 				var total = this.$el.find('> .upfront-region-wrapper > .upfront-modules_container > .upfront-editable_entities_container').find('.upfront-module').size();
