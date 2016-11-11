@@ -374,7 +374,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			clubbedvalues = menuItemsValues.concat(menuList);
 		}
 
-		me.$el.find('div.upfront-object-content').html('');
+		me.$el.find('div.upfront-object-content').html('').addClass('upfront_choose_menu');
 
 		if (!Upfront.Application.user_can_modify_layout()) return false;
 		
@@ -423,7 +423,14 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			$parent_container.draggable('enable');
 		}).on('keydown', function(e) {
 			var $menu_button = me.$el.find('.new_menu_button > input.upfront-field-button');
-			if(e.which == 13) $menu_button.trigger('click');
+			// If value is not empty, enable create button.
+			if (e.target.value !== '' && e.target.value !== ' ') {
+				$menu_button[0].disabled = false;
+			} else {
+				$menu_button[0].disabled = true;
+			}
+			// On Enter key, hit create button.
+			if (e.which == 13) $menu_button.trigger('click');
 		});
 		// appending the new menu name textbox
 		me.$el.find('div.upfront-object-content .upfront_new_menu_name_and_button').append(newMenuName.$el);
@@ -436,6 +443,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			compact: true
 		});
 		newMenuButton.render();
+		// Disable Creating New Menus until name is entered.
+		newMenuButton.el.querySelector('input.upfront-field-button').disabled = true;
 		// attaching events first before appending
 		newMenuButton.$el.find('input.upfront-field-button').on('click', function(e) {
 			e.stopPropagation();
