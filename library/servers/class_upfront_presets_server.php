@@ -116,6 +116,8 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 					// Do it twice just in case we have multiple slashes
 					$preset['preset_style'] = str_replace("\\\\\\\\\\", "\\", $preset['preset_style']);
 					$preset['preset_style'] = str_replace("@n", "\n", $preset['preset_style']);
+					// Replace @s with slash
+					$preset['preset_style'] = str_replace("@s", "\\", $preset['preset_style']);
 					$preset['preset_style'] = html_entity_decode($preset['preset_style'], ENT_NOQUOTES, "UTF-8");
 				}
 
