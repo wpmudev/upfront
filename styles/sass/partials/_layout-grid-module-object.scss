@@ -493,7 +493,7 @@
 	z-index: 10;
 }
 .upfront-module-group-active > .upfront-selected-border {
-	box-shadow: inset 0 0 0 1px rgba(248, 210, 111, 1);
+	box-shadow: inset 0 0 0 2px rgba(248, 210, 111, 1);
 }
 .upfront-ui-selected .upfront-selected-border,
 .ui-selecting .upfront-selected-border,
@@ -736,6 +736,7 @@
 	padding: 5px;
 	z-index: 10;
 	display: none;
+	margin: 2px;
 }
 .upfront-entity-size-hint b {
 	color: #ADC3D8;
