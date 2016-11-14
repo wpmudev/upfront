@@ -173,11 +173,6 @@ del {
 	width: 100%;
 }
 
-/* default style for Maintenance Mode Region */
-.upfront-region-container-maintenance-mode .upfront-region-container-bg {
-	border-top: 5px solid #2a2a2a;
-}
-
 .upfront-output-region-container {
 	position: relative;
 }
