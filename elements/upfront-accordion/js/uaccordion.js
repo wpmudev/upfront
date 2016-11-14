@@ -233,7 +233,15 @@ define([
 						})
 						.addClass('uf-click-to-edit-text')
 					;
-
+					
+					// bypass and hide redactor air buttons because we don't need it here
+					$air_buttons = $title.data('ueditor').$air || false;
+					if ( $air_buttons ) {
+						$air_buttons.on('show', function(){
+							$(this).hide();
+						});
+					}
+					
 					$title.data('ueditor').stop();
 					count++;
 				});

@@ -243,6 +243,7 @@ define([
 					linebreaks: false,
 					disableLineBreak: true,
 					placeholder: false,
+					airButtons: false,
 					autostart: false,
 					focus: false
 				}).on('start', function() {
@@ -269,6 +270,14 @@ define([
 						return false;
 					}
 				});
+				
+				// bypass and hide redactor air buttons because we don't need it here
+				$air_buttons = $content.data('ueditor').$air || false;
+				if ( $air_buttons ) {
+					$air_buttons.on('show', function(){
+						$(this).hide();
+					});
+				}
 			});
 		},
 
