@@ -18430,6 +18430,15 @@ div.preset-manager-panel .checkbox-tooltip {
 .upfront-inline-panel-item.group-link-control {
   z-index: 51; }
 
+.upfront-element-controls .upfront-inline-panel .image-sub-control.inline-panel-sub-control-no-dropdown {
+  top: -1px;
+  right: -2px;
+  position: absolute;
+  left: auto; }
+
+.upfront-element-controls .upfront-inline-panel .image-sub-control.inline-panel-sub-control-no-dropdown .upfront-control-arrow {
+  display: none; }
+
 /* Group inline panel */
 .upfront-module-group .upfront-icon.upfront-icon-region-edit_elements:before {
   background-position: -442px -42px; }

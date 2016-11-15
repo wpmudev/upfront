@@ -384,6 +384,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		;
 
 		moreOptions.icon = 'more';
+		moreOptions.inline = true;
 		moreOptions.tooltip = l10n.ctrl.caption_position;	
 		moreOptions.sub_items = {};
 
