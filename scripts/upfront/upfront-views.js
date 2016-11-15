@@ -2438,6 +2438,12 @@ define([
 					module_col = Upfront.Behaviors.GridEditor.get_class_num(this.parent_module_view.model.get_property_value_by_name('class'), grid['class']);
 				}
 
+				// Listen to wrapper update position
+				if ( this.wrapper_view ) {
+					this.stopListening(this.wrapper_view, 'update_position');
+					this.listenTo(this.wrapper_view, 'update_position', this.on_wrapper_update);
+				}
+
 				// Detach to preserve DOM
 				objects_view.$el.detach();
 
@@ -2880,17 +2886,19 @@ define([
 						? this.wrappers_collection
 						: this.object_group_view.model.get('wrappers')
 					,
-					breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled()
+					breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled(),
+					parent_view = this.object_group_view
 				;
 				_.each(breakpoints, function(each){
 					var breakpoint = each.toJSON();
 					if ( breakpoint['default'] ) return;
-					var col = ed.get_class_num(module_view.$el.find('> .upfront-module'), ed.grid['class']),
-						breakpoint_data = module_view.model.get_property_value_by_name('breakpoint')
+					var module_col = ed.get_class_num(module_view.$el.find('> .upfront-module'), ed.grid['class']),
+						parent_col = ed.get_class_num(parent_view.$el.find('> .upfront-object-group'), ed.grid['class']),
+						col
 					;
-					if ( _.isObject(breakpoint_data) && _.isObject(breakpoint_data[breakpoint.id]) && !_.isUndefined(breakpoint_data[breakpoint.id].col) ) {
-						col = breakpoint_data[breakpoint.id].col;
-					}
+					module_col = module_view.model.get_breakpoint_property_value('col', false, module_col, breakpoint);
+					parent_col = parent_view.model.get_breakpoint_property_value('col', false, parent_col, breakpoint);
+					col = module_col < parent_col ? module_col : parent_col;
 					ed.adapt_to_breakpoint(me.model, wrappers, breakpoint.id, col, true);
 				});
 			},
@@ -6937,15 +6945,22 @@ define([
 						: ( is_object ? this.parent_view.object_group_view : this.parent_view.region_view ),
 					parent_pos = is_group
 						? ed.get_position(parent_view.$el)
-						: ( is_object ? ed.get_position(parent_view.parent_module_view.$el.find('> .upfront-module')) : ed.get_region_position(parent_view.$el) ),
-					parent_col = parent_pos.col
+						: ( is_object ? ed.get_position(parent_view.$el.find('> .upfront-object-group')) : ed.get_region_position(parent_view.$el) ),
+					parent_col = parent_pos.col,
+					module_pos, module_col
 				;
+				if ( is_object ) { // If object inside object group, try getting module col to compare
+					module_pos = ed.get_position(parent_view.parent_module_view.$el.find('> .upfront-module'));
+					module_col = module_pos.col;
+					parent_col = module_col < parent_col ? module_col : parent_col;
+				}
+
 				this.$el.css({
 					minHeight: '',
 					marginRight: 0
 				});
 				if ( breakpoint_data && typeof breakpoint_data.col == 'number' ){
-					this.$el.css('width', (breakpoint_data.col/parent_col*100) + '%');
+					this.$el.css('width', ( breakpoint_data.col <= parent_col ? breakpoint_data.col/parent_col*100 : 100 ) + '%');
 					this.$el.data('breakpoint_col', breakpoint_data.col);
 					this.$el.data('current_col', breakpoint_data.col);
 				}

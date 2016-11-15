@@ -819,7 +819,7 @@ Panels.PostParts = PresetManager.extend({
 						{ name: 'view_class', value: 'PostsPartView' },
 						{ name: 'part_type', value: type },
 						{ name: 'has_settings', value: 0 },
-						{ name: 'class', value: 'c24 upfront-post-data-part' },
+						{ name: 'class', value: 'c24 upfront-posts-part' },
 						{ name: 'wrapper_id', value: wrapper_id }
 					]
 				});

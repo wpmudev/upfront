@@ -70,13 +70,26 @@ class Upfront_PostsView extends Upfront_Object_Group {
 				array( 'name' => 'class', 'value' => $post_class )
 			)
 		);
-		$this->_data['post_wrappers'][] = $wrapper;
 
 		// Copying post part layouts with all new ids
 		$object = $this->clone_object($this->_data, $id);
 		upfront_set_property_value('post_id', $id, $object);
 		upfront_set_property_value('class', $post_class, $object);
 		upfront_set_property_value('wrapper_id', $wrapper_id, $object);
+
+		// Set breakpoint values if needed
+		if ( $this->_breakpoint ) {
+			$breakpoint_id = $this->_breakpoint->get_id();
+			$breakpoint_columns = $this->_breakpoint->get_columns();
+			$bp_post_col = $this->_get_breakpoint_property('post_col', $breakpoint_id);
+			if ( !is_numeric($bp_post_col) || $bp_post_col == 0 || $bp_post_col > $breakpoint_columns ) {
+				$bp_post_col = $breakpoint_columns;
+			}
+			upfront_set_breakpoint_property_value('col', $bp_post_col, $wrapper, $this->_breakpoint);
+			upfront_set_breakpoint_property_value('col', $bp_post_col, $object, $this->_breakpoint);
+		}
+
+		$this->_data['post_wrappers'][] = $wrapper;
 		$this->_data['post_objects'][] = $object;
 	}
 

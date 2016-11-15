@@ -34,7 +34,10 @@ var PostsModel = Upfront.Models.ObjectGroup.extend({
 
 var PostsPartView = Upfront.Views.ObjectView.extend({
 	init: function () {
-
+		this.events = _.extend({}, this.events, {
+			'click a' : 'disable_default',
+		});
+		this.delegateEvents();
 	},
 	
 	on_render: function () {
@@ -129,6 +132,14 @@ var PostsPartView = Upfront.Views.ObjectView.extend({
 		var type = this.model.get_property_value_by_name('part_type');
 		this.remove_region_class('upfront-region-container-has-' + type, true);
 	},
+
+	disable_default: function (e) {
+		if (Upfront.Application.user_can_modify_layout()) {
+			e.preventDefault();
+			e.stopPropagation();
+		}
+	},
+
 	/**
 	 * Sets previous region container when element is moved to a new region
 	 *
@@ -167,33 +178,19 @@ var PostsEachView = Upfront.Views.ObjectGroup.extend({
 	},
 
 	update: function (prop) {
+		Upfront.Views.ObjectGroup.prototype.update.call(this, prop);
 		var ed = Upfront.Behaviors.GridEditor,
 			breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 			value = prop.get('value'),
-			prev_value = prop.previous('value'),
-			prev_col, col;
-		Upfront.Views.ObjectGroup.prototype.update.call(this, prop);
+			prev_value = prop.previous('value')
+		;
 		if ( prop.id == 'class' ) {
-			prev_col = prev_value ? ed.get_class_num(prev_value, ed.grid.class) : false;
-			col = ed.get_class_num(value, ed.grid.class);
-			if ( prev_col !== false && prev_col != col ) {
-				this.normalize_child_modules(prev_col);
-				if ( this.object_group_view ) {
-					this.object_group_view.model.set_breakpoint_property('post_col', col);
-				}
-			}
+			this._prev_col = prev_value ? ed.get_class_num(prev_value, ed.grid.class) : false;
+			this._current_col = ed.get_class_num(value, ed.grid.class);
 		}
 		else if ( prop.id == 'breakpoint' ) {
-			if ( value.current_property && value.current_property === 'col' ) {
-				prev_col = prev_value[breakpoint.id] && prev_value[breakpoint.id]['col'] ? parseInt(prev_value[breakpoint.id]['col'], 10) : false;
-				col = value[breakpoint.id] && value[breakpoint.id]['col'] ? parseInt(value[breakpoint.id]['col'], 10) : false;
-				if ( prev_col !== false && prev_col != col ) {
-					this.normalize_child_modules(prev_col);
-					if ( this.object_group_view ) {
-						this.object_group_view.model.set_breakpoint_property('post_col', col);
-					}
-				}
-			}
+			this._prev_col = prev_value[breakpoint.id] && prev_value[breakpoint.id]['col'] ? parseInt(prev_value[breakpoint.id]['col'], 10) : false;
+			this._current_col = value[breakpoint.id] && value[breakpoint.id]['col'] ? parseInt(value[breakpoint.id]['col'], 10) : false;
 		}
 	},
 
@@ -205,6 +202,16 @@ var PostsEachView = Upfront.Views.ObjectGroup.extend({
 			col = ( !breakpoint || breakpoint['default'] ) ? ed.get_class_num($obj, ed.grid['class']) : $obj.data('breakpoint_col')
 		;
 		this._objects_view.normalize_child_modules(col, prev_col, this.model.get('wrappers'));
+		this._objects_view.lazy_apply_wrapper_height();
+	},
+
+	on_resize: function () {
+		if ( _.isNumber(this._prev_col) && _.isNumber(this._current_col) && this._prev_col != this._current_col ) {
+			this.normalize_child_modules(this._prev_col);
+			if ( this.object_group_view ) {
+				this.object_group_view.model.set_breakpoint_property('post_col', this._current_col);
+			}
+		}
 	},
 
 	/**
@@ -395,7 +402,9 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 	},
 
 	render_post_view: function (post_id, data, silent) {
-		var wrappers = this._posts_model.get('wrappers'),
+		var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
+			breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled(),
+			wrappers = this._posts_model.get('wrappers'),
 			objects = this._posts_model.get('objects'),
 			object = objects.find(function(obj){
 				return parseInt(obj.get_property_value_by_name('post_id'), 10) === parseInt(post_id, 10);
@@ -403,10 +412,10 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 			is_editable = ( objects.length === 0 || (object && objects.indexOf(object) === 0) ), // Only the first object is editable
 			model = is_editable ? this.clone_model(this.model, false) : this.clone_model(this.model, true),
 			obj_view = object ? Upfront.data.object_views[object.cid] : false,
-			post_col = this.model.get_breakpoint_property_value('post_col') || 24,
+			post_col = this.model.get_breakpoint_property_value('post_col', true) || breakpoint['columns'],
 			post_class = Upfront.Settings.LayoutEditor.Grid.class + post_col
 		;
-		if ( !object ) {
+		if ( !object && breakpoint['default'] ) {
 			var wrapper_id = Upfront.Util.get_unique_id("wrapper"),
 				wrapper = new Upfront.Models.Wrapper({
 					properties: [
@@ -415,15 +424,34 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 					]
 				})
 			;
-			wrappers.add(wrapper, {silent: true});
+			// Set breakpoint columns
+			_.each(breakpoints, function(each){
+				var each_bp = each.toJSON();
+				if ( each_bp['default'] ) return;
+				var bp_post_col = this.model.get_breakpoint_property_value('post_col', false, post_col, each_bp);
+				bp_post_col = bp_post_col <= each_bp['columns'] ? bp_post_col : each_bp['columns'];
+				model.set_breakpoint_property('col', bp_post_col, true, each_bp);
+				model.set_breakpoint_property('edited', true, true, each_bp); // Set edited to true to prevent adaptation
+				wrapper.set_breakpoint_property('col', bp_post_col, true, each_bp);
+				wrapper.set_breakpoint_property('edited', true, true, each_bp); // Set edited to true to prevent adaptation
+			}, this);
+			model.set_property('class', post_class);
 			model.set_property('post_id', post_id);
 			model.set_property('wrapper_id', wrapper_id);
 			model.set_property('element_id', Upfront.Util.get_unique_id(Upfront.data.upfront_posts.id_slug + '-object'));
-			model.set_property('class', post_class);
+			wrappers.add(wrapper, {silent: true});
 			objects.add(model, {post_id: post_id, data: data, editable: is_editable});
 		}
-		else if ( !silent ) {
+		else if ( object && !silent ) {
 			var wrapper = wrappers.get_by_wrapper_id(object.get_wrapper_id());
+			if ( breakpoint['default'] ) {
+				object.replace_class(post_class);
+				wrapper.replace_class(post_class);
+			}
+			else {
+				object.set_breakpoint_property('col', post_col);
+				wrapper.set_breakpoint_property('col', post_col);
+			}
 			if ( !is_editable ) { // Reset the objects and wrappers to new updated model
 				var obj_wrappers = object.get('wrappers'),
 					obj_objects = object.get('objects'),
@@ -443,8 +471,6 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 					obj_objects.add(obj);
 				});
 			}
-			object.replace_class(post_class);
-			wrapper.replace_class(post_class);
 			if ( obj_view ) {
 				obj_view.render_object_view(data);
 			}
@@ -487,7 +513,7 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 			objects = this._posts_model.get('objects'),
 			$module = this.parent_module_view.$el.find('> .upfront-module'),
 			col = ( !breakpoint || breakpoint['default'] ) ? ed.get_class_num($module, ed.grid['class']) : $module.data('breakpoint_col'),
-			post_col = this.model.get_breakpoint_property_value('post_col') || col
+			post_col = this.model.get_breakpoint_property_value('post_col', true) || col
 		;
 
 		// Create spacer to simulate resizing experience
@@ -531,6 +557,12 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 
 		this.on_finish();
 		// Also update all posts object
+		var type = this.model.get_property_value_by_name("display_type");
+		this.render_view(type);
+	},
+
+	after_breakpoint_change: function () {
+		// Re-render all posts object
 		var type = this.model.get_property_value_by_name("display_type");
 		this.render_view(type);
 	},
