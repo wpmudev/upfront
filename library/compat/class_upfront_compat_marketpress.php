@@ -22,6 +22,69 @@ class Upfront_Compat_MarketPress {
 		add_filter('mp-do_grid_with_js', array($this, 'disable_mp_js_grid'), 10, 2);
 	}
 
+	/**
+	 * Checks whether we're dealing with a MP product
+	 * 
+	 * The check is done according to the post argument's post_type
+	 *
+	 * @param WP_Post|int $post Post type to check
+	 *
+	 * @return bool
+	 */
+	public static function is_product ($post) {
+		if (!class_exists('WP_Post')) return false; // Basic sanity check
+		
+		// Ensure we have an actual post here
+		if (!($post instanceof WP_Post)) $post = get_post($post);
+		if (!($post instanceof WP_Post)) return false;
+		
+		return self::get_product_post_type() === $post->post_type;
+	}
+
+	/**
+	 * MarketPress product post type getter
+	 *
+	 * @return string|bool Currently configured MP post type, or (bool)false on failure
+	 */
+	public static function get_product_post_type () {
+		return function_exists('mp_get_setting')
+			? mp_get_setting('product_post_type')
+			: false
+		;
+	}
+
+	/**
+	 * Checks if a post is actually a known MP page
+	 *
+	 * @param WP_Post|int $post Post to check
+	 *
+	 * @return bool
+	 */
+	public static function is_mp_page ($post) {
+		if (!class_exists('WP_Post')) return false; // Basic sanity check
+
+		// Ensure we have an actual post here
+		if (!($post instanceof WP_Post)) $post = get_post($post);
+		if (!($post instanceof WP_Post)) return false;
+
+		return in_array($post->ID, self::get_mp_page_ids());
+	}
+
+	/**
+	 * Returns a list of known MP pages as a list of post IDs
+	 *
+	 * @return array List of post IDs
+	 */
+	public static function get_mp_page_ids () {
+		return $pages = array(
+			mp_get_setting('pages->products'), 
+			mp_get_setting('pages->cart'), 
+			mp_get_setting('pages->store'), 
+			mp_get_setting('pages->checkout'), 
+			mp_get_setting('pages->order_status')
+		);
+	}
+
 	public function add_class($markup, $post) {
 		if (in_array($post->ID, array(mp_get_setting('pages->products'), mp_get_setting('pages->cart'), mp_get_setting('pages->store'), mp_get_setting('pages->checkout'), mp_get_setting('pages->order_status')))) {
 			return $this->wrap_with_plugin_class($markup);
