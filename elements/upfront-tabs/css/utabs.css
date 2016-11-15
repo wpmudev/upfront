@@ -10,6 +10,10 @@
 	font-weight: bold;
 }
 
+.tabs-tab-active p {
+	font-weight: inherit;
+}
+
 .tabs-tab .inner-box {
 	padding: 0 15px;
 	line-height: 30px;

@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Main entry point for Upfront core
+ *
+ * This is where we set up Upfront main class
+ * which handles core bootstrap and execution context.
+ */
+
 require_once(dirname(__FILE__) . '/library/upfront_functions.php');
 require_once(dirname(__FILE__) . '/library/upfront_functions_theme.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_permissions.php');
@@ -38,6 +45,13 @@ class Upfront {
 	 */
 	const TextDomain = "upfront";
 
+	/**
+	 * List of files to exclude in scanning
+	 *
+	 * @TODO refactor var name and location
+	 * 
+	 * @var array
+	 */
 	public static $Excluded_Files = array(".", "..", ".DS_Store");
 
 	/**

@@ -79,6 +79,7 @@ D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-vi
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/settings/settings-labeled-lightbox-trigger.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/settings.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/notifier.js
+D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/perfect-scrollbar/perfect-scrollbar.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/css/css-editor.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/css/general-css-editor.js
 D:/vagrant/www/html/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/css.js

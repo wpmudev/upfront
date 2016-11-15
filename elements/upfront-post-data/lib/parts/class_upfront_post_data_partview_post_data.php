@@ -1,11 +1,11 @@
 <?php
 
 class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
-	
+
 	public $pre_set_title = '',
 		$pre_set_content = ''
 	;
-	
+
 	protected static $_parts = array(
 		0 => 'date_posted',
 		1 => 'title',
@@ -68,7 +68,7 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 
 		return $out;
 	}
-	
+
 	/**
 	 * Converts the title part of the main post data part into markup.
 	 *
@@ -77,26 +77,26 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 	 * @return string
 	 */
 	public function expand_title_template () {
-		
+
 		$set_title = $this->get_pre_post_title();
 		$title = ( empty($set_title) )
 			? $this->_post->post_title
 			: $this->get_pre_post_title()
 		;
-	
+
 		$out = $this->_get_template('title');
 		$out = Upfront_Codec::get()->expand($out, "title", $title);
 
 		return $out;
 	}
-	
+
 	/**
 	 * Sets post title for real-time change.
 	 */
 	public function set_pre_post_title ($title) {
 		$this->pre_set_title = $title;
 	}
-	
+
 	/**
 	 * Gets real-time value for title.
 	 */
@@ -128,11 +128,11 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
         // @NOTE: no more length detection
         $length = false;
         // @NOTE: also see the JS part in js/modules-post_data.js
-        
+
 		$this->_data['content'] = !empty($length) ? 'excerpt' : 'content';
-		
+
 		$set_content = $this->get_pre_content();
-		
+
 		$content = ( $set_content )
 			? $set_content
 			: $this->_get_content_value($length)
@@ -162,6 +162,8 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 				$content = $this->_get_content_part($part, $content);
 			}
 		}
+
+		$content = apply_filters('upfront-postdata_get_markup_after', $content, $this->_post);
 /*
 		$left_indent = !empty($this->_data['left_indent']) && is_numeric($this->_data['left_indent'])
 			? (int)$this->_data['left_indent']
@@ -173,7 +175,7 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 			: 0
 		;
 		if ($right_indent < 0) $right_indent = 0;
-		
+
 		$grid = Upfront_Grid::get_grid();
 		$breakpoint = $grid->get_default_breakpoint();
 		$col_size = $breakpoint->get_column_width();
@@ -198,14 +200,14 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 
 		return $out;
 	}
-	
+
 	/**
 	 * Sets post content for real-time change.
 	 */
 	public function set_pre_content ($content) {
 		$this->pre_set_content = $content;
 	}
-	
+
 	/**
 	 * Gets real-time value for content.
 	 */
@@ -247,7 +249,7 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 		return isset($parts[$part]) ? $parts[$part] : '';
 
 	}
-	
+
 	/**
 	 * Split the content into parts and return all parts
 	 *
@@ -259,7 +261,7 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 		$separator = $this->_get_content_part_separator();
 		$parts = preg_split(
 			'/(<p>\s*)?' . // Optional paragraph start, potentially added by `wpautop`
-			preg_quote($separator, '/') . 
+			preg_quote($separator, '/') .
 			'(\s*<\/p>)?/', // Match optional paragraph end
 		$content);
 		return array_values(array_filter(array_map('trim', $parts)));

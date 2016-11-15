@@ -65,6 +65,13 @@
 	right: -70px;
 }
 
+#region-settings-sidebar .upfront-bg-setting-tab-featured .upfront-bg-setting-tab-primary .uf-bgsettings-image-pick {
+	top: -36px;
+	bottom: auto;
+	right: -76px;
+	width: 75px;
+}
+
 .uf-bgsettings-image-pick {
   	display: inline-block;
   	background: #e6f3ff;
@@ -811,6 +818,7 @@ span.upfront-settings-item-title:after {
 
 #region-settings-sidebar .upfront-bg-setting-tab-featured .upfront-bg-setting-tab-primary {
 	float: none;
+	position: relative;
 }
 
 #region-settings-sidebar .upfront-bg-setting-tab-featured {

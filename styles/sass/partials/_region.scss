@@ -24,6 +24,7 @@
 	/* Override inline modal styles. */
 	top: 0 !important;
 	left: 0 !important;
+	box-shadow: none;
 }
 
 #region-settings-sidebar .upfront-region-modal-bg {
@@ -1127,6 +1128,9 @@
 }
 .upfront-region-type-icon.upfront-region-type-icon-slider {
 	background-position: -39px -541px;
+}
+.upfront-region-type-icon.upfront-region-type-icon-featured {
+	background-position: -287px -507px;
 }
 
 .upfront-region-bg-setting-name-wrap {

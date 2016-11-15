@@ -195,6 +195,7 @@ define([
 					e.stopPropagation();
 				}
 			});
+
 			if ("undefined" !== typeof window.google) {
 				this.map = new google.maps.Map($el.get(0), {
 					center: new google.maps.LatLng(props.center[0], props.center[1]),
@@ -216,7 +217,8 @@ define([
 				// overlay is not there, show location overlay.
 				if (
 					!this.model.get_property_value_by_name("map_center")
-					&& (window._upfront_api_keys || {})['gmaps']) {
+					&& (window._upfront_api_keys || {})['gmaps']
+				) {
 					this.add_location_overlay();
 				}
 
@@ -224,6 +226,8 @@ define([
 				if (
 					!(window._upfront_api_keys || {})['gmaps']
 					&& Upfront.Application.user_can_modify_layout()
+					// Warn if invalid API Key.
+					|| typeof google_maps_auth_error !== 'undefined'
 				) {
 					this.add_api_key_overlay();
 				}
