@@ -86,10 +86,10 @@ class Upfront_Compat_MarketPress {
 	}
 
 	public function add_class($markup, $post) {
-		if (in_array($post->ID, array(mp_get_setting('pages->products'), mp_get_setting('pages->cart'), mp_get_setting('pages->store'), mp_get_setting('pages->checkout'), mp_get_setting('pages->order_status')))) {
+		if (self::is_mp_page($post)) {
 			return $this->wrap_with_plugin_class($markup);
 		}
-		if ($post->post_type === 'product') return $this->wrap_with_plugin_class($markup);
+		if (self::is_product($post)) return $this->wrap_with_plugin_class($markup);
 
 		return $markup;
 	}
@@ -99,7 +99,8 @@ class Upfront_Compat_MarketPress {
 		if (is_singular()) return $status; // ... so don't do this on singular pages
 
 		$post = get_post();
-		if (empty($post->post_type) || 'product' !== $post->post_type) return $status;
+		//if (empty($post->post_type) || 'product' !== $post->post_type) return $status;
+		if (!self::is_product($post)) return $status;
 
 		$content = mp_list_products(array('echo' => false));
 		return $this->wrap_with_plugin_class($content);
@@ -359,8 +360,8 @@ class Upfront_Compat_MarketPress {
 		$post = get_post();
 		if (is_null($post)) return $types;
 
-		$is_mp_page = in_array($post->ID, array(mp_get_setting('pages->products'), mp_get_setting('pages->cart'), mp_get_setting('pages->store'), mp_get_setting('pages->checkout'), mp_get_setting('pages->order_status')));
-		if ($post->post_type === 'product' || $is_mp_page) {
+		//if ($post->post_type === 'product' || $is_mp_page) {
+		if (self::is_product($post) || self::is_mp_page($post)) {
 			$types = array('title', 'date_posted', 'comment_form', 'comment_count', 'comments', 'comments_pagination');
 		}
 		return $types;
