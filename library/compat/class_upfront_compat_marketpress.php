@@ -168,7 +168,8 @@ class Upfront_Compat_MarketPress {
 		// Let's test if a theme supports MarketPress product layouts.
 		$theme = Upfront_Theme::get_instance();
 
-		if (!empty($cascade['item']) && 'single-product' === $cascade['item']) {
+		$mp_item_name = 'single-' . self::get_product_post_type();
+		if (!empty($cascade['item']) && $mp_item_name === $cascade['item']) {
 			// If it doesn't, let's emulate - we'll be single pages here
 			if (!$theme->has_theme_layout('single-mpproduct')) $cascade['item'] = 'single-page';
 			else $cascade['item'] = 'single-mpproduct';
