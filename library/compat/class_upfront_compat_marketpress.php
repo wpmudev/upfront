@@ -156,7 +156,7 @@ class Upfront_Compat_MarketPress {
 	}
 
 	/**
-	 * Overrides the entity IDs when we're dealing with Woo output
+	 * Overrides the entity IDs when we're dealing with MarketPress output
 	 *
 	 * This will force using the appropriate layout
 	 *
