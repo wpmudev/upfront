@@ -22,11 +22,74 @@ class Upfront_Compat_MarketPress {
 		add_filter('mp-do_grid_with_js', array($this, 'disable_mp_js_grid'), 10, 2);
 	}
 
+	/**
+	 * Checks whether we're dealing with a MP product
+	 * 
+	 * The check is done according to the post argument's post_type
+	 *
+	 * @param WP_Post|int $post Post type to check
+	 *
+	 * @return bool
+	 */
+	public static function is_product ($post) {
+		if (!class_exists('WP_Post')) return false; // Basic sanity check
+		
+		// Ensure we have an actual post here
+		if (!($post instanceof WP_Post)) $post = get_post($post);
+		if (!($post instanceof WP_Post)) return false;
+		
+		return self::get_product_post_type() === $post->post_type;
+	}
+
+	/**
+	 * MarketPress product post type getter
+	 *
+	 * @return string|bool Currently configured MP post type, or (bool)false on failure
+	 */
+	public static function get_product_post_type () {
+		return function_exists('mp_get_setting')
+			? mp_get_setting('product_post_type')
+			: false
+		;
+	}
+
+	/**
+	 * Checks if a post is actually a known MP page
+	 *
+	 * @param WP_Post|int $post Post to check
+	 *
+	 * @return bool
+	 */
+	public static function is_mp_page ($post) {
+		if (!class_exists('WP_Post')) return false; // Basic sanity check
+
+		// Ensure we have an actual post here
+		if (!($post instanceof WP_Post)) $post = get_post($post);
+		if (!($post instanceof WP_Post)) return false;
+
+		return in_array($post->ID, self::get_mp_page_ids());
+	}
+
+	/**
+	 * Returns a list of known MP pages as a list of post IDs
+	 *
+	 * @return array List of post IDs
+	 */
+	public static function get_mp_page_ids () {
+		return $pages = array(
+			mp_get_setting('pages->products'), 
+			mp_get_setting('pages->cart'), 
+			mp_get_setting('pages->store'), 
+			mp_get_setting('pages->checkout'), 
+			mp_get_setting('pages->order_status')
+		);
+	}
+
 	public function add_class($markup, $post) {
-		if (in_array($post->ID, array(mp_get_setting('pages->products'), mp_get_setting('pages->cart'), mp_get_setting('pages->store'), mp_get_setting('pages->checkout'), mp_get_setting('pages->order_status')))) {
+		if (self::is_mp_page($post)) {
 			return $this->wrap_with_plugin_class($markup);
 		}
-		if ($post->post_type === 'product') return $this->wrap_with_plugin_class($markup);
+		if (self::is_product($post)) return $this->wrap_with_plugin_class($markup);
 
 		return $markup;
 	}
@@ -36,7 +99,8 @@ class Upfront_Compat_MarketPress {
 		if (is_singular()) return $status; // ... so don't do this on singular pages
 
 		$post = get_post();
-		if (empty($post->post_type) || 'product' !== $post->post_type) return $status;
+		//if (empty($post->post_type) || 'product' !== $post->post_type) return $status;
+		if (!self::is_product($post)) return $status;
 
 		$content = mp_list_products(array('echo' => false));
 		return $this->wrap_with_plugin_class($content);
@@ -92,7 +156,7 @@ class Upfront_Compat_MarketPress {
 	}
 
 	/**
-	 * Overrides the entity IDs when we're dealing with Woo output
+	 * Overrides the entity IDs when we're dealing with MarketPress output
 	 *
 	 * This will force using the appropriate layout
 	 *
@@ -104,7 +168,8 @@ class Upfront_Compat_MarketPress {
 		// Let's test if a theme supports MarketPress product layouts.
 		$theme = Upfront_Theme::get_instance();
 
-		if (!empty($cascade['item']) && 'single-product' === $cascade['item']) {
+		$mp_item_name = 'single-' . self::get_product_post_type();
+		if (!empty($cascade['item']) && $mp_item_name === $cascade['item']) {
 			// If it doesn't, let's emulate - we'll be single pages here
 			if (!$theme->has_theme_layout('single-mpproduct')) $cascade['item'] = 'single-page';
 			else $cascade['item'] = 'single-mpproduct';
@@ -296,8 +361,8 @@ class Upfront_Compat_MarketPress {
 		$post = get_post();
 		if (is_null($post)) return $types;
 
-		$is_mp_page = in_array($post->ID, array(mp_get_setting('pages->products'), mp_get_setting('pages->cart'), mp_get_setting('pages->store'), mp_get_setting('pages->checkout'), mp_get_setting('pages->order_status')));
-		if ($post->post_type === 'product' || $is_mp_page) {
+		//if ($post->post_type === 'product' || $is_mp_page) {
+		if (self::is_product($post) || self::is_mp_page($post)) {
 			$types = array('title', 'date_posted', 'comment_form', 'comment_count', 'comments', 'comments_pagination');
 		}
 		return $types;
