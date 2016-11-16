@@ -459,10 +459,10 @@ div.ugallery-label-selector {
 }
 
 .upfront-icon-region-toggle-sorting:before {
-	background-position: -410px -40px;
+	background-position: -411px -41px;
 }
 .upfront-icon-region-toggle-sorting.upfront-icon-region-sorting-active:before {
-	background-position: -410px -70px;
+	background-position: -411px -41px;
 }
 
 div.preset-manager-panel .field-caption-height {
