@@ -595,6 +595,7 @@ div.preset-manager-panel .menustyle_settings_item  .burger_alignment {
 
 .umenu-controls {
 	display: none;
+	border-radius: 2px;
 }
 
 .menu-item:hover .umenu-controls {

@@ -336,6 +336,7 @@ div.ugallery-label-selector {
 
 .ugallery_item:hover .ugallery-controls {
 	display: block;
+	border-radius: 2px;
 }
 .ugallery-controls .upfront-inline-panel {
 	opacity: 1;
@@ -765,15 +766,22 @@ figure.gallery-labels-figure img.mfp-img {
 }
 
 .ugallery-controls {
-	top:0;
-	bottom: auto;
+	top: auto;
+	bottom: 2px;
+	right: 2px;
 	width: auto;
 }
+
+.ugallery-controls .upfront-inline-panel {
+	width: 28px !important;
+	height: 28px !important;
+}
+
 .ugallery-controls > .upfront-inline-panel {
 	position: relative;
 }
 .ugallery-controls .upfront-inline-panel-item .upfront-icon {
-	padding: 4px 4px 2px;
+	padding: 5px 6px 5px 5px;
 }
 .ugallery-caption-over {
 	box-sizing: border-box;
