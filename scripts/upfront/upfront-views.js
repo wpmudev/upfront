@@ -4058,6 +4058,7 @@ define([
 				if($('#element-settings-sidebar').html() !== '' || $('#settings').html() !== '') return false;
 				Upfront.data.prevEntity = false;
 				this.$el.closest('.upfront-region-container').removeClass('upfront-region-module-activated');
+				this.$el.parent().removeClass("upfront-wrapper-active");
 				this.$el.removeClass("upfront-module-group-active");
 				this.check_deactivated();
 				this.trigger("upfront:entity:deactivate", this);
@@ -4089,6 +4090,7 @@ define([
 				this.listenToOnce(this, 'deactivated', this.deactivate);
 				$('.upfront-region-module-activated').removeClass('.upfront-region-module-activated');
 				this.$el.closest('.upfront-region-container').addClass('upfront-region-module-activated');
+				this.$el.parent().addClass("upfront-wrapper-active");
 				this.$el.addClass("upfront-module-group-active");
 			},
 			remove: function(){
