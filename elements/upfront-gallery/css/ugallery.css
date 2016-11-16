@@ -402,68 +402,7 @@ div.ugallery-label-selector {
 	background-image: url(../../../img/uf-core-el-sprite.svg);
 }*/
 
-.upfront-ui .upfront-field-icon-over:before,
-.upfront-ui .upfront-icon-region-over:before {
-	background-position: -318px -308px;
-}
-.upfront-ui .upfront-icon-region-over:hover:before {
-	background-position: -807px -486px;
-}
-.upfront-ui .upfront-icon-region-over-active:before {
-	background-position: -699px -486px;
-}
-.upfront-ui .upfront-icon-region-over-active:hover:before {
-	background-position: -807px -486px;
-}
 
-.upfront-field-icon-none:before {
-	background-position: -700px -455px!important;
-}
-
-.upfront-ui .upfront-field-icon-below:before {
-	background-position: -319px -338px;
-}
-
-.upfront-ui .upfront-icon-region-fullscreen:before {
-	background-position: -440px -100px;
-}
-.upfront-ui .upfront-icon-region-fullscreen:hover:before {
-	background-position: -440px -100px;
-}
-.upfront-ui .upfront-icon-region-fullscreen-active:before {
-	background-position: -700px -775px;
-}
-.upfront-ui .upfront-icon-region-fullscreen-active:hover:before {
-	background-position: -808px -775px;
-}
-
-/*.upfront-inline-panel div.upfront-inline-panel-item i.upfront-icon.upfront-icon-region-remove:before {
-	background-image: url(../../../img/uf-ui-sprite.svg);
-}*/
-
-.upfront-ui .upfront-icon-region-remove:before {
-	background-position: -348px -130px;
-}
-.upfront-ui .upfront-icon-region-remove-active:before {
-	background-position: -1229px -154px;
-}
-.upfront-ui .upfront-icon-region-remove-active:hover:before {
-	background-position: -731px -231px;
-}
-
-.upfront-ui .upfront-icon-region-edit-labels:before {
-	background-position: -482px -231px;
-}
-.upfront-ui .upfront-icon-region-edit-labels-no-labels:before {
-	background-position: -479px -201px;
-}
-
-.upfront-icon-region-toggle-sorting:before {
-	background-position: -411px -41px;
-}
-.upfront-icon-region-toggle-sorting.upfront-icon-region-sorting-active:before {
-	background-position: -411px -41px;
-}
 
 div.preset-manager-panel .field-caption-height {
 	border-left: 2px solid #dae6f2;

@@ -117,40 +117,6 @@
 	background: #145064 linear-gradient(135deg, rgba(51, 91, 128,1) 0%,rgba(51, 91, 128,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* W3C */
 }
 
-.upfront-ui .upfront-icon-region-right:before {
-	background-position: -260px -340px!important;
-}
-.upfront-ui .upfront-icon-region-right:hover:before {
-	background-position: -260px -340px!important;
-}
-.upfront-ui .upfront-icon-region-right-active:before {
-	background-position: -699px -39px!important;
-}
-.upfront-ui .upfront-icon-region-right-active:hover:before {
-	background-position: -807px -39px!important;
-}
-
-.upfront-ui .upfront-icon-region-left:before {
-	background-position: -290px -340px!important;
-}
-.upfront-ui .upfront-icon-region-left:hover:before {
-	background-position: -290px -340px!important;
-}
-.upfront-ui .upfront-icon-region-left-active:before {
-	background-position: -698px -807px!important;
-}
-.upfront-ui .upfront-icon-region-left-active:hover:before {
-	background-position: -806px -807px!important;
-}
-
-.upfront-ui .upfront-icon-prev:before {
-	background-position: -291px -133px;
-}
-
-.upfront-ui .upfront-icon-next:before {
-	background-position: -290px -103px;
-}
-
 .uslider-settings .upfront-settings-item{
 	padding-bottom: 0;
 }
