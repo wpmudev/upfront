@@ -279,7 +279,7 @@ return (function ($) {
 			
 			moreOptions.sub_items['link'] = this.createLinkControl();
 
-			moreOptions.sub_items['remove'] = this.createControl('remove', '', 'removeImage', 28, 28);
+			moreOptions.sub_items['remove'] = this.createControl('remove', '', 'deleteMenuItem', 28, 28);
 
 			panel.items.push(moreOptions);
 
