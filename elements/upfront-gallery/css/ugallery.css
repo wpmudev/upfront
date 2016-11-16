@@ -334,7 +334,8 @@ div.ugallery-label-selector {
 	z-index: auto;
 }
 
-.ugallery_item:hover .ugallery-controls {
+.ugallery_item:hover .ugallery-controls,
+.ugallery_item.stayOpen .ugallery-controls {
 	display: block;
 	border-radius: 2px;
 }

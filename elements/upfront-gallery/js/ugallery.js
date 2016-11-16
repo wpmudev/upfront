@@ -378,7 +378,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		e.gallerySelected = true;
 	},
 
-	createControlsEach: function(image) {
+	createControlsEach: function(image, $item) {
 		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
 			moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl()
 		;
@@ -408,6 +408,15 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		}
 		
 		panel.items.push(moreOptions);
+
+		this.listenTo(moreOptions, 'panel:close', function(){
+			$item.removeClass('stayOpen');
+		});
+		
+		this.listenTo(moreOptions, 'panel:open', function() {
+			console.log($item);
+			$item.addClass('stayOpen controls-visible');
+		});
 
 		return panel;
 	},
@@ -1800,7 +1809,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	 * @returns controls of of the single image
 	 */
 	add_controls_to_item: function(image, $item){
-		var controls = this.createControlsEach(image);
+		var controls = this.createControlsEach(image, $item);
 		controls.render();
 		$item.find('.ugallery-controls').remove();
 		$item.append($('<div class="ugallery-controls upfront-element-controls upfront-ui"></div>').append(controls.$el));
