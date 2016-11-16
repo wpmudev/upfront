@@ -314,10 +314,12 @@ return (function ($) {
 
 			this.listenTo(moreOptions, 'panel:close', function(){
 				me.$el.closest('.ui-sortable').sortable('enable');
+				me.$el.removeClass('stayOpen');
 			});
 			
 			this.listenTo(moreOptions, 'panel:open', function() {
 				me.$el.closest('.ui-sortable').sortable('disable');
+				me.$el.addClass('stayOpen controls-visible');
 			});
 
 			return panel;

@@ -384,6 +384,7 @@ div.upfront-navigation li.menu-item .redactor_air {
 	display: none;
 }
 div.upfront-navigation li.menu-item.stayOpen .redactor_air,
+div.upfront-navigation li.menu-item.stayOpen .umenu-controls,
 div.upfront-navigation li.menu-item:hover .redactor_air {
 	display: block!important;
 }
