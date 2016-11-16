@@ -259,6 +259,11 @@ return (function ($) {
 			}
 		},
 		
+		editLabel: function() {
+			this.parent_view.model.trigger('menuitem:edit', this.$el.find('a'));
+			Upfront.Events.trigger('upfront:hide:subControl');
+		},
+		
 		createControlsEach: function() {
 			var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
 				moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl(),
@@ -270,7 +275,7 @@ return (function ($) {
 			//moreOptions.tooltip = l10n.ctrl.caption_position;	
 			moreOptions.sub_items = {};
 			
-			moreOptions.sub_items['edit'] = this.createControl('edit', '', 'editLabel', 28, 28);
+			moreOptions.sub_items['edit'] = this.createControl('labelEdit', '', 'editLabel', 28, 28);
 			
 			moreOptions.sub_items['link'] = this.createLinkControl();
 

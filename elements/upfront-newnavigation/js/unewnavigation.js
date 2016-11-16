@@ -34,14 +34,13 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		this.events = _.extend({}, this.events, {
 			'click a.menu_item' : 'exitEditMode',
-			'dblclick a.menu_item' : 'editMenuItem'/*,
-			'click a.newnavigation-add-item': 'addPrimaryMenuItem'*/
 		});
 
 		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
 		this.listenTo(Upfront.Events, "menu_element:delete", this.delete_menu, this);
 
 		this.listenTo(this.model, "preset:updated", this.preset_updated);
+		this.listenTo(this.model, "menuitem:edit", this.editMenuItem);
 
 		// get all menus
 		var menu_id = this.model.get_property_value_by_name('menu_id');

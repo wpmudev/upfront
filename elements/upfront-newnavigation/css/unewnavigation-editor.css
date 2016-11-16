@@ -605,3 +605,11 @@ div.preset-manager-panel .menustyle_settings_item  .burger_alignment {
 	top: 0px;
 	right: 0px;
 }
+
+.upfront-ui .upfront-icon-region-labelEdit:before {
+    background-position: -380px -131px;
+}
+
+.upfront-ui .upfront-icon-region-remove:before {
+    background-position: -351px -131px;
+}
