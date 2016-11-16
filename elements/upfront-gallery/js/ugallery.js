@@ -410,7 +410,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		panel.items.push(moreOptions);
 
 		this.listenTo(moreOptions, 'panel:close', function(){
-			$item.removeClass('stayOpen');
+			$item.removeClass('stayOpen controls-visible');
 		});
 		
 		this.listenTo(moreOptions, 'panel:open', function() {
