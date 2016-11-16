@@ -48,11 +48,13 @@ define([
 			this.isOpen = true;
 			this.$el.addClass('upfront-sub-control-dialog-open');
 			Upfront.Events.trigger('upfront:hide:paddingPanel');
+			this.trigger('panel:open');
 		},
 
 		close: function() {
 			this.isOpen = false;
 			this.$el.removeClass('upfront-sub-control-dialog-open');
+			this.trigger('panel:close');
 		},
 
 		render: function() {

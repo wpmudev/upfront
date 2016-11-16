@@ -295,7 +295,8 @@ return (function ($) {
 		
 		createControlsEach: function() {
 			var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
-				moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl()
+				moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl(),
+				me = this
 			;
 
 			moreOptions.icon = 'more';
@@ -310,6 +311,14 @@ return (function ($) {
 			moreOptions.sub_items['remove'] = this.createControl('remove', '', 'removeImage', 28, 28);
 
 			panel.items.push(moreOptions);
+
+			this.listenTo(moreOptions, 'panel:close', function(){
+				me.$el.closest('.ui-sortable').sortable('enable');
+			});
+			
+			this.listenTo(moreOptions, 'panel:open', function() {
+				me.$el.closest('.ui-sortable').sortable('disable');
+			});
 
 			return panel;
 		},
