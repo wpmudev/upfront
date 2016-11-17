@@ -18735,6 +18735,9 @@ div#page .upfront-object.upfront-image .swap-image-overlay p:before,
   bottom: auto;
   margin: 100% 0 0; }
 
+.upfront-inline-panel, .image-sub-control, .ulinkpanel-dark, uimage-caption-control {
+  border-radius: 2px; }
+
 /**
  * Compatibility issue nag popup, v1 check
  */
