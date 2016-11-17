@@ -49,6 +49,7 @@ define([
 			this.$el.addClass('upfront-sub-control-dialog-open');
 			Upfront.Events.trigger('upfront:hide:paddingPanel');
 			this.trigger('panel:open');
+			this.updateWidth();
 		},
 
 		close: function() {
@@ -61,9 +62,10 @@ define([
 			Item.prototype.render.call(this, arguments);
 			var captionControl = this.$('.image-sub-control'),
 				me = this,
-				selectedItem,
-				item_count = 0
+				selectedItem
 			;
+			
+			this.item_count = 0;
 
 			if(!captionControl.length){
 				if(this.inline === true) {
@@ -83,17 +85,23 @@ define([
 				item.render();
 				item.delegateEvents();
 				captionControl.append(item.$el);
-				item_count++;
+				me.item_count++;
 			});
 
 			// Prepend arrow, it is not set like pseudo element because we cant update its styles with jQuery
 			var panelArrow = '<span class="upfront-control-arrow"></span>';
 			this.$el
 				.find('.image-sub-control').prepend(panelArrow);
-
+		},
+		
+		updateWidth: function () {
 			//Set width depending of items
 			this.$el
-				.find('.image-sub-control').css('width', (28 * item_count) + 2);
+				.find('.image-sub-control').css('width', (28 * this.item_count) + 2);
+
+			//Show sub controls on each open
+			this.$el
+				.find('.upfront-inline-panel-item').show();
 		},
 
 		get_selected_item: function () {

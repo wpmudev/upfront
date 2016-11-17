@@ -182,6 +182,7 @@ class Upfront_UsliderView extends Upfront_Object {
 			'slider_behaviour' => __('Slider Behaviour', 'upfront'),
 			'image_caption_position' => __('Image &amp; Caption Position:', 'upfront'),
 			'slider_transition' => __('Slider Transition:', 'upfront'),
+			'back_button' => __('Back', 'upfront'),
 			'no_text' => __('No text', 'upfront'),
 			'over_top' => __('Over image, top', 'upfront'),
 			'over_bottom' => __('Over image, bottom', 'upfront'),

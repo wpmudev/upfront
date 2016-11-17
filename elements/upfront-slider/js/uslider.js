@@ -1430,28 +1430,31 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl(),
 			slideCollection = this.model.slideCollection,
 			multiBelow = {
+				back: ['back', l10n.back_button],
 				above: ['above', l10n.above_img],
 				below: ['below', l10n.below_img],
 				nocaption: ['nocaption', l10n.no_text]
 			},
-				multiOver = {
-					topOver: ['topOver', l10n.over_top],
-					bottomOver: ['bottomOver', l10n.over_bottom],
-					topCover: ['topCover', l10n.cover_top],
-					middleCover: ['middleCover', l10n.cover_mid],
-					bottomCover: ['bottomCover', l10n.cover_bottom],
-					nocaption: ['nocaption', l10n.no_text]
-				},
-				multiSide = {
-					right: ['right', l10n.at_right],
-					left: ['left', l10n.at_left],
-					nocaption: ['nocaption', l10n.no_text]
-				},
-				primaryStyle = this.get_preset_property('primaryStyle'),
-				multiControls = {},
-				captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl(),
-				slide = slideCollection.at(this.getCurrentSlide())
-			;
+			multiOver = {
+				back: ['back', l10n.back_button],
+				topOver: ['topOver', l10n.over_top],
+				bottomOver: ['bottomOver', l10n.over_bottom],
+				topCover: ['topCover', l10n.cover_top],
+				middleCover: ['middleCover', l10n.cover_mid],
+				bottomCover: ['bottomCover', l10n.cover_bottom],
+				nocaption: ['nocaption', l10n.no_text]
+			},
+			multiSide = {
+				back: ['back', l10n.back_button],
+				right: ['right', l10n.at_right],
+				left: ['left', l10n.at_left],
+				nocaption: ['nocaption', l10n.no_text]
+			},
+			primaryStyle = this.get_preset_property('primaryStyle'),
+			multiControls = {},
+			captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl(),
+			slide = slideCollection.at(this.getCurrentSlide())
+		;
 
 
 		captionControl.sub_items = {};
@@ -1473,7 +1476,10 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			captionControl.icon = 'caption';
 			captionControl.tooltip = l10n.cap_position;
 			captionControl.selected = multiControls[slide.get('style')] ? slide.get('style') : 'nocaption';
-			this.listenTo(captionControl, 'select', function(item){
+			this.listenTo(captionControl, 'select', function(item) {
+				if(item === "back") {
+					return;
+				}
 				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					previousStyle = breakpoint['default'] ? slide.get('style') : slide.get_breakpoint_attr('style', breakpoint.id)
 				;
