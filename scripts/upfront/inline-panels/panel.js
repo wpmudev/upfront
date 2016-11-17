@@ -1,6 +1,6 @@
 define([], function () {
 	var Panel = Backbone.View.extend({
-		className: 'upfront-inline-panel upfront-no-select',
+		className: 'upfront-inline-panel upfront-panels-shadow upfront-no-select',
 		position_v: 'top',
 		position_h: 'left',
 

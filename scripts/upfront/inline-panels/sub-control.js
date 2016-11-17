@@ -69,9 +69,9 @@ define([
 
 			if(!captionControl.length){
 				if(this.inline === true) {
-					captionControl = $('<div class="image-sub-control inline-panel-sub-control-no-dropdown inline-panel-sub-control-dialog"></div>');
+					captionControl = $('<div class="image-sub-control upfront-panels-shadow inline-panel-sub-control-no-dropdown inline-panel-sub-control-dialog"></div>');
 				} else {
-					captionControl = $('<div class="image-sub-control inline-panel-sub-control-dialog"></div>');
+					captionControl = $('<div class="image-sub-control upfront-panels-shadow inline-panel-sub-control-dialog"></div>');
 				}
 				this.$el.append(captionControl);
 			}

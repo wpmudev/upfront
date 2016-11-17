@@ -34,7 +34,6 @@ div.ugallery-controls i.upfront-icon:before {
 }
 .upfront-element-controls .upfront-inline-panel {
 	z-index: 3000;
-    box-shadow: 0 0 3px 0 rgba(36,57,77,0.3);
     border: 1px solid #cccccc;
 }
 .upfront-element-controls.ugallery-controls .upfront-inline-panel {
@@ -82,7 +81,6 @@ div.ugallery-controls i.upfront-icon:before {
 .upfront-element-controls .upfront-inline-panel .ulinkpanel-dark {
     border: 1px solid #cccccc;
     height: 30px;
-    box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3);
   	position: relative;
   	left: -5px;
 }
@@ -330,4 +328,8 @@ div.ugallery-controls i.upfront-icon:before {
 	position: absolute;
 	z-index: 99;
 	opacity: 0;
+}
+
+.upfront-panels-shadow {
+	box-shadow: 0 0 3px 0 rgba(36,57,77,0.3);
 }

@@ -801,7 +801,7 @@ var Ueditor = function($el, options) {
         self = this,
         unique_id = Upfront.Util.get_unique_id("redactor");
     this.$el = $el;
-    this.$air = $("<div class='redactor_air upfront-ui'></div>").attr("id", unique_id ).hide();
+    this.$air = $("<div class='redactor_air upfront-panels-shadow upfront-ui'></div>").attr("id", unique_id ).hide();
     $("body").append(this.$air);
     if( !_.isEmpty(options.airButtons) ){
         options.buttons = options.airButtons;

@@ -93,7 +93,7 @@ define([
 			'click .link-panel-lightbox-trigger': 'visit_lightbox'
 		},
 
-		className: 'ulinkpanel-dark',
+		className: 'ulinkpanel-dark upfront-panels-shadow',
 
 		visit_lightbox: function(e) {
 			e.preventDefault();

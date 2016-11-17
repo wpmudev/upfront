@@ -11092,7 +11092,6 @@ div.ugallery-controls i.upfront-icon:before {
 
 .upfront-element-controls .upfront-inline-panel {
   z-index: 3000;
-  box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3);
   border: 1px solid #cccccc; }
 
 .upfront-element-controls.ugallery-controls .upfront-inline-panel {
@@ -11140,7 +11139,6 @@ div.ugallery-controls i.upfront-icon:before {
 .upfront-element-controls .upfront-inline-panel .ulinkpanel-dark {
   border: 1px solid #cccccc;
   height: 30px;
-  box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3);
   position: relative;
   left: -5px; }
 
@@ -11384,6 +11382,9 @@ div.ugallery-controls i.upfront-icon:before {
   position: absolute;
   z-index: 99;
   opacity: 0; }
+
+.upfront-panels-shadow {
+  box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3); }
 
 #upfront-inline-slider-nav {
   position: absolute;
@@ -13175,8 +13176,7 @@ body .redactor_air {
   -webkit-background-clip: padding-box;
   background-clip: padding-box;
   background-color: #ffffff;
-  border: 1px solid #cccccc;
-  box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3); }
+  border: 1px solid #cccccc; }
 
 body .redactor_air:after {
   box-sizing: border-box;
@@ -18735,7 +18735,7 @@ div#page .upfront-object.upfront-image .swap-image-overlay p:before,
   bottom: auto;
   margin: 100% 0 0; }
 
-.upfront-inline-panel, .image-sub-control, .ulinkpanel-dark, uimage-caption-control {
+.upfront-inline-panel, .image-sub-control, .ulinkpanel-dark, .uimage-caption-control {
   border-radius: 2px; }
 
 /**
