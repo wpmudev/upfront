@@ -120,6 +120,9 @@ define([
 			// Set position of padding container
 			this.update_position();
 			
+			var parent = this.$el.closest('.image-sub-control');
+			parent.removeClass('upfront-panels-shadow');
+
 			this.updateWrapperSize();
 			
 			// add class if last region to allocate clearance for link panel so will not get cut
@@ -140,6 +143,12 @@ define([
 			
 			// remove class that was previously added on last region
 			this.$el.closest('.upfront-region-container').removeClass('upfront-last-region-padding');
+			
+			var parent = this.$el.closest('.image-sub-control');
+			
+			if(!parent.hasClass('upfront-panels-shadow')) {
+				parent.addClass('upfront-panels-shadow');
+			}
 			
 			return this;
 		},

@@ -49,6 +49,13 @@ define([
 			this.$el.addClass('upfront-sub-control-dialog-open');
 			Upfront.Events.trigger('upfront:hide:paddingPanel');
 			this.trigger('panel:open');
+			
+			var parent = this.$el.closest('.upfront-inline-panel');
+			
+			if(this.inline === true) {
+				parent.removeClass('upfront-panels-shadow');
+			}
+			
 			this.updateWidth();
 		},
 
@@ -56,6 +63,14 @@ define([
 			this.isOpen = false;
 			this.$el.removeClass('upfront-sub-control-dialog-open');
 			this.trigger('panel:close');
+			
+			var parent = this.$el.closest('.upfront-inline-panel');
+			
+			if(this.inline === true) {
+				if(!parent.hasClass('upfront-panels-shadow')) {
+					parent.addClass('upfront-panels-shadow');
+				}
+			}
 		},
 
 		render: function() {
