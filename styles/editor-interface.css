@@ -11286,38 +11286,35 @@ div.ugallery-controls i.upfront-icon:before {
   border: 1px solid #6889a9;
   border-radius: 2px;
   padding: 5px 7px;
-  font-family: 'Open Sans';
-  opacity: 0.75; }
+  font-family: 'Open Sans'; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-padding-control .upfront-field-advanced-padding input:hover {
-  opacity: 1;
   background: #fff; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon {
-  opacity: 0.70; }
+  opacity: 0.80; }
 
+/*
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-control-dialog-open .upfront-icon,
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-icon,
+*/
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon:hover {
   opacity: 1; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-settings:before {
   background-position: -351px -41px;
   width: 18px;
-  height: 18px;
-  opacity: 0.75; }
+  height: 18px; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-settings:hover:before {
   background-position: -351px -41px;
   width: 18px;
-  height: 18px;
-  opacity: 0.75; }
+  height: 18px; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-control-dialog-open .upfront-icon-region-settings:before {
   background-position: -351px -71px;
   width: 18px;
-  height: 18px;
-  opacity: 1; }
+  height: 18px; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-padding:before {
   background-position: -321px -41px;
@@ -11327,14 +11324,12 @@ div.ugallery-controls i.upfront-icon:before {
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-padding:hover:before {
   background-position: -321px -41px;
   width: 18px;
-  height: 18px;
-  opacity: 0.75; }
+  height: 18px; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-control-dialog-open.upfront-inline-panel-item .upfront-icon-region-padding:before {
   background-position: -321px -71px !important;
   width: 18px;
-  height: 18px;
-  opacity: 1; }
+  height: 18px; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-reorder:before {
   background-position: -261px -521px;
@@ -11357,14 +11352,12 @@ div.ugallery-controls i.upfront-icon:before {
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-more:before {
   background-position: -291px -40px;
   width: 24px;
-  height: 24px;
-  opacity: 0.75; }
+  height: 24px; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-more:hover:before {
   background-position: -291px -40px;
   width: 24px;
-  height: 24px;
-  opacity: 1; }
+  height: 24px; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-icon-region-more:before {
   background-position: -291px -70px;
