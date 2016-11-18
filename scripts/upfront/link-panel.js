@@ -376,6 +376,16 @@ define([
 			}
 			
 			this.updateWrapperSize();
+			
+			this.$el.find('.upfront-link-select .upfront-field-select').on('click', function(e) {
+				var $target = $(e.target),
+					$select = $target.closest('.upfront-field-select')
+				;
+				
+				if($select.hasClass('upfront-field-select-expanded')) {
+					$select.removeClass('upfront-field-select-expanded');
+				}
+			});
 
 			this.delegateEvents();
 		},
@@ -398,7 +408,7 @@ define([
 			// If redactor link update the container width
 			this.$el.closest('.redactor_air').css('width', totalWidth + 10);
 		},
-		
+
 		renderTypeSelect: function() {
 			var me = this;
 
