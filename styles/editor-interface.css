@@ -1704,7 +1704,6 @@ input.upfront-field-text:hover,
   margin: 0; }
 
 .upfront-field-select-option-selected label {
-  padding-right: 4px;
   color: #99b5cc; }
 
 .upfront-field-select-option label .upfront-field-icon {
@@ -11786,7 +11785,7 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
   border: 1px solid #d9d9d9;
   background: #fff;
   max-height: 250px;
-  top: 25px;
+  top: 24px;
   box-shadow: none;
   border-top: none; }
 
