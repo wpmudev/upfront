@@ -24,7 +24,7 @@ class Upfront_Compat_MarketPress {
 
 	/**
 	 * Checks whether we're dealing with a MP product
-	 * 
+	 *
 	 * The check is done according to the post argument's post_type
 	 *
 	 * @param WP_Post|int $post Post type to check
@@ -33,11 +33,11 @@ class Upfront_Compat_MarketPress {
 	 */
 	public static function is_product ($post) {
 		if (!class_exists('WP_Post')) return false; // Basic sanity check
-		
+
 		// Ensure we have an actual post here
 		if (!($post instanceof WP_Post)) $post = get_post($post);
 		if (!($post instanceof WP_Post)) return false;
-		
+
 		return self::get_product_post_type() === $post->post_type;
 	}
 
@@ -77,10 +77,10 @@ class Upfront_Compat_MarketPress {
 	 */
 	public static function get_mp_page_ids () {
 		return $pages = array(
-			mp_get_setting('pages->products'), 
-			mp_get_setting('pages->cart'), 
-			mp_get_setting('pages->store'), 
-			mp_get_setting('pages->checkout'), 
+			mp_get_setting('pages->products'),
+			mp_get_setting('pages->cart'),
+			mp_get_setting('pages->store'),
+			mp_get_setting('pages->checkout'),
 			mp_get_setting('pages->order_status')
 		);
 	}
@@ -146,11 +146,11 @@ class Upfront_Compat_MarketPress {
 		}
 		return $fake_id;
 	}
-	
+
 	/**
 	 * Overrides MP equal height filter
 	 */
-	
+
 	public function disable_mp_js_grid () {
 		return false;
 	}
