@@ -482,44 +482,6 @@ div.upfront-navigation li.menu-item .uimage-controls a {
   font-size: 13px;
   margin-bottom: 2px;
 }
-
-/* style adjustments */
-.upfront-navigation .upfront-field-select {
-	/*max-width:170px;*/
-	height: 40px;
-	max-height: 40px;
-	font-size: 15px;
-	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
-	font-weight: 300;
-	box-sizing: border-box;
-	max-width: 310px;
-}
-
-.upfront-navigation .upfront-field-select:after {
-	top: 18px;
-}
-
-.upfront-navigation .upfront-field-select-options {
-	background: #f2f9ff;
-}
-
-.upfront-navigation .upfront-field-select-option label {
-	font-size: 15px;
-	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
-	font-weight: 300;
-}
-
-.upfront-navigation .upfront-field-select-option-selected label {
-	color: #8797a7;
-}
-
-.upfront-navigation .upfront-field-select-value {
-	height: 40px;
-	line-height: 38px;
-	padding: 0 20px 0 10px;
-	box-sizing: border-box;
-}
-
 .c15 .upfront-navigation .existing_menu_list, .c14 .upfront-navigation .existing_menu_list, .c13 .upfront-navigation .existing_menu_list,
 .c12 .upfront-navigation .existing_menu_list, .c11 .upfront-navigation .existing_menu_list, .c10 .upfront-navigation .existing_menu_list,
 .c9 .upfront-navigation .existing_menu_list, .c8 .upfront-navigation .existing_menu_list {
