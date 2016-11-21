@@ -57,11 +57,15 @@ class Upfront_Posts_PostView {
 				? $preset_server->get_preset_by_id($preset_id)
 				: false
 			;
-			
 			if (!empty($preset) && isset($preset['enabled_post_parts'])) {
 				return $preset['enabled_post_parts'];
 			}
 		}
+
+		$post_parts = $data['post_parts'];
+		$enabled_post_parts = $data['enabled_post_parts'];
+		if (!is_array($post_parts)) $post_parts = $enabled_post_parts;
+		if ( is_array($post_parts) ) return $post_parts;
 
 		return array();
 	}
@@ -74,12 +78,29 @@ class Upfront_Posts_PostView {
 	 * @return string Rendered post markup
 	 */
 	public function get_markup ($post) {
-		if (empty($post)) return false;
-		$this->_post = $post;
-		
-		$post_parts = self::get_post_parts($this->_data);
+		$parts = $this->get_parts_markup($post);
 
 		$out = '';
+		foreach ($parts as $part) {
+			$out .= $part;
+		}
+
+		return $this->_wrap_post($out, $post);
+	}
+
+	/**
+	 * Get individual parts markup separately
+	 * Expands each part of the post parts and constructs markup string,
+	 * return it in array of markup string for each parts
+	 * @param object WP_Post object instance
+	 * @return array|bool Array of rendered parts markup
+	 */
+	public function get_parts_markup ($post) {
+		if (empty($post)) return false;
+		$this->_post = $post;
+
+		$post_parts = self::get_post_parts($this->_data);
+
 		$parts = array();
 		foreach ($post_parts as $part) {
 			$method = "expand_{$part}_template";
@@ -93,8 +114,6 @@ class Upfront_Posts_PostView {
 		}
 
 		return $parts;
-
-		//return $this->_wrap_post($out, $post);
 	}
 
 	/**

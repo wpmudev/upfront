@@ -299,8 +299,8 @@ class Upfront_Grid {
 								$child_wrappers = $object_view->get_wrappers_data();
 								$point_css .= $this->_apply_modules($child_objects, $child_wrappers, $module_col, false, $object_view);
 							}
-							$point_css .= $breakpoint->apply($object, $this->get_grid_scope(), 'element_id', $module_col, false, ($is_post_object ? $this->_exceptions : array()));
-							$point_css .= $breakpoint->apply_paddings($object, $this->get_grid_scope(), 'element_id', '#' . $module_id);
+							$point_css .= $breakpoint->apply($object_view->get_data(), $this->get_grid_scope(), 'element_id', $module_col, false, ($is_post_object ? $this->_exceptions : array()));
+							$point_css .= $breakpoint->apply_paddings($object_view->get_data(), $this->get_grid_scope(), 'element_id', '#' . $module_id);
 
 							$point_css .= $object_view->get_style_for($module_col, $breakpoint, $this->get_grid_scope());
 						}

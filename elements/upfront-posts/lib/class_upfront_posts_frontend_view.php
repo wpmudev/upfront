@@ -11,30 +11,93 @@ class Upfront_PostsView extends Upfront_Object_Group {
 	protected $_child_instances = array();
 	protected $_breakpoint = false;
 	protected $_markup = array();
+	protected $_is_compat = false;
 
 	public function __construct ($data, $breakpoint = false) {
 		$this->_breakpoint = $breakpoint;
 		parent::__construct($data);
 
-		$data = $this->_properties_to_array();
-		if (empty($data)) $data = Upfront_Posts_PostsData::get_defaults();
+		$props = $this->_properties_to_array();
+		if (empty($props)) $props = Upfront_Posts_PostsData::get_defaults();
 
-		if (empty($data['display_type'])) return ''; // Force no render for unselected display type.
+		if (empty($props['display_type'])) return ''; // Force no render for unselected display type.
+
+		$this->_is_compat = empty($this->_data['objects']); // No objects means return to compat mode
+
+		$props['preset'] = $this->get_preset(); // Set preset properly
 
 		$markup = apply_filters('upfront-posts-get_markup-before', false);
 		if (!empty($markup)) {
+			$this->_is_compat = true;
 			$this->_markup = $markup;
 		}
-		else {
-			$this->_markup = Upfront_Posts_PostsView::get_markup($data);
+		else if ( !$this->_is_compat ) {
+			$this->_markup = Upfront_Posts_PostsView::get_posts_part_markup($props);
 		}
 
 		// Create layout data for each posts
 		$this->_data['post_objects'] = array();
 		$this->_data['post_wrappers'] = array();
-		foreach ( $this->_markup as $id => $markup ) {
-			$this->create_post_object($id);
+		if ( !$this->_is_compat ) {
+			foreach ( $this->_markup as $id => $markup ) {
+				$this->create_post_object($id);
+			}
 		}
+		else {
+			$this->create_compat_object();
+			$this->reset_props_for_compat();
+		}
+	}
+
+	public function wrap ($out) {
+		if ( !$this->_is_compat ) return parent::wrap($out);
+
+		// If compat render, we don't render preset as we delegate that to the child object
+		$class = $this->get_css_class();
+		$style = $this->get_css_inline();
+		$attr = $this->get_attr();
+		$element_id = $this->get_id();
+
+		if ($this->_debugger->is_active(Upfront_Debug::MARKUP)) {
+			$name = $this->get_name();
+			$pre = "\n\t<!-- Upfront {$this->_type} [{$name} - #{$element_id}] -->\n";
+			$post = "\n<!-- End {$this->_type} [{$name} - #{$element_id}] --> \n";
+		}
+		else {
+			$pre = "";
+			$post = "";
+		}
+
+		$style = $style ? "style='{$style}'" : '';
+		$element_id = $element_id ? "id='{$element_id}'" : '';
+		return "{$pre}<{$this->_tag} class='{$class}' {$style} {$element_id} {$attr}>{$out}</{$this->_tag}>{$post}";
+	}
+
+
+	public function get_css_class () {
+		if ( !$this->_is_compat ) return parent::get_css_class();
+
+		$classes = Upfront_Container::get_css_class();
+		$classes .= ' upfront-object-group';
+		$propagated = $this->get_propagated_classes();
+		if (!empty($propagated)) $classes .= ' ' . join(' ', $propagated);
+
+		return $classes;
+	}
+
+
+	public function get_attr () {
+		if ( !$this->_is_compat ) return parent::get_attr();
+
+		$link_attributes = '';
+		if(!empty($link)) {
+			$link_attributes = "data-group-link='".$link."'";
+			if(!empty($linkTarget)) {
+				$link_attributes .= "data-group-target='".$linkTarget."'";
+			}
+		}
+
+		return $link_attributes;
 	}
 
 	private function _properties_to_array(){
@@ -75,6 +138,7 @@ class Upfront_PostsView extends Upfront_Object_Group {
 		$object = $this->clone_object($this->_data, $id);
 		upfront_set_property_value('post_id', $id, $object);
 		upfront_set_property_value('class', $post_class, $object);
+		upfront_set_property_value('element_id', $this->_get_property('element_id') . '-each-' . $id, $object);
 		upfront_set_property_value('wrapper_id', $wrapper_id, $object);
 
 		// Set breakpoint values if needed
@@ -144,6 +208,60 @@ class Upfront_PostsView extends Upfront_Object_Group {
 		return $found;
 	}
 
+	protected function create_compat_object () {
+		$classes = $this->_get_property('class');
+		$column = upfront_get_class_num('c', $classes);
+		$post_class = 'c' .  $column;
+
+		$wrapper_id = $this->_get_property('element_id') . '-wrapper';
+		$wrapper = array(
+			'properties' => array(
+				array( 'name' => 'wrapper_id', 'value' => $wrapper_id ),
+				array( 'name' => 'class', 'value' => $post_class )
+			)
+		);
+
+		// Copying post part layouts with all new ids
+		$object = $this->_data;
+		upfront_set_property_value('view_class', 'PostsCompatView', $object);
+		upfront_set_property_value('class', $classes, $object);
+		upfront_set_property_value('element_id', $this->_get_property('element_id') . '-compat', $object);
+		upfront_set_property_value('wrapper_id', $wrapper_id, $object);
+		if ( !empty($this->_markup) ) {
+			upfront_set_property_value('_markup', $this->_markup, $object);
+		}
+
+		$this->_data['post_wrappers'][] = $wrapper;
+		$this->_data['post_objects'][] = $object;
+	}
+
+	protected function reset_props_for_compat () {
+		// Remove paddings
+		$this->_set_property('top_padding_use', false);
+		$this->_set_property('top_padding_num', 0);
+		$this->_set_property('bottom_padding_use', false);
+		$this->_set_property('bottom_padding_num', 0);
+		$this->_set_property('left_padding_use', false);
+		$this->_set_property('left_padding_num', 0);
+		$this->_set_property('right_padding_use', false);
+		$this->_set_property('right_padding_num', 0);
+
+		// Reset breakpoint values if available
+		if ( $this->_breakpoint ) {
+			$breakpoint_id = $this->_breakpoint->get_id();
+			// Remove paddings
+			$this->_set_breakpoint_property('top_padding_use', false, $breakpoint_id);
+			$this->_set_breakpoint_property('top_padding_num', 0, $breakpoint_id);
+			$this->_set_breakpoint_property('bottom_padding_use', false, $breakpoint_id);
+			$this->_set_breakpoint_property('bottom_padding_num', 0, $breakpoint_id);
+			$this->_set_breakpoint_property('left_padding_use', false, $breakpoint_id);
+			$this->_set_breakpoint_property('left_padding_num', 0, $breakpoint_id);
+			$this->_set_breakpoint_property('right_padding_use', false, $breakpoint_id);
+			$this->_set_breakpoint_property('right_padding_num', 0, $breakpoint_id);
+
+		}
+	}
+
 	public function instantiate_child ($child_data, $idx) {
 		$key = md5(serialize($child_data));
 		if (!empty($this->_child_instances[$key])) return $this->_child_instances[$key];
@@ -156,7 +274,7 @@ class Upfront_PostsView extends Upfront_Object_Group {
 		if (!class_exists($view)) $view = $this->_child_view_class;
 
 		$post_id = upfront_get_property_value('post_id', $child_data);
-		$markup = isset($this->_markup[$post_id]) ? $this->_markup[$post_id] : array();
+		$markup = is_array($this->_markup) && isset($this->_markup[$post_id]) ? $this->_markup[$post_id] : array();
 
 		$this->_child_instances[$key] = new $view($child_data, $post_id, $markup, $this);
 		return $this->_child_instances[$key];
@@ -349,3 +467,48 @@ class Upfront_PostsPartView extends Upfront_Object {
 		return $css;
 	}
 }
+
+
+
+class Upfront_PostsCompatView extends Upfront_Object {
+
+	public function __construct ($data, $post_id, $markup, $parent_obj = false, $breakpoint = false) {
+		$this->_breakpoint = $breakpoint;
+		$this->_post_id = $post_id;
+		$this->_markup = $markup;
+		if ($parent_obj !== false) {
+			$this->_parent = $parent_obj;
+		}
+
+		parent::__construct($data);
+	}
+
+	public function get_markup () {
+		$data = $this->_properties_to_array();
+		if (empty($data)) $data = Upfront_Posts_PostsData::get_defaults();
+
+		if (empty($data['display_type'])) return ''; // Force no render for unselected display type.
+
+		$markup = isset($data['_markup']) ? $data['_markup'] : '';
+		if (!empty($markup)) return $markup;
+
+		return Upfront_Posts_PostsView::get_markup($data);
+	}
+
+	private function _properties_to_array(){
+		$out = array();
+		foreach($this->_data['properties'] as $prop) {
+			if (!isset($prop['value'])) continue;
+			$out[$prop['name']] = $prop['value'];
+		}
+		return $out;
+	}
+
+	public function get_wrapper () {
+		$wrapper_id = $this->_get_property('wrapper_id');
+		$wrapper_data = $this->_parent ? $this->_parent->find_post_wrapper($wrapper_id) : false;
+		return $wrapper_data !== false ? new Upfront_Wrapper($wrapper_data) : false;
+	}
+
+}
+

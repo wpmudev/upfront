@@ -76,10 +76,15 @@ abstract class Upfront_Entity {
 	}
 
 	protected function _get_breakpoint_property ($prop, $id) {
-		$breakpoint = $this->_get_property('breakpoint');
-		if ( !empty($breakpoint[$id]) && isset($breakpoint[$id][$prop]) )
-			return $breakpoint[$id][$prop];
-		return $this->_get_property($prop);
+		return upfront_get_breakpoint_property_value($prop, $this->_data, $id, true);
+	}
+
+	protected function _set_breakpoint_property ($prop, $value, $id) {
+		return upfront_set_breakpoint_property_value($prop, $value, $this->_data, $id);
+	}
+
+	public function get_data() {
+		return $this->_data;
 	}
 
 	public function get_name () {

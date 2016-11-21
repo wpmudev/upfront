@@ -380,14 +380,16 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 	},
 	
 	render_view: function (type) {
-		var preset = this.model.get_property_value_by_name('preset'),
-			me = this
-		;
+		var me = this;
 
 		if ( this.child_view ) {
 			this.child_view.render(this.editing);
 			return;
 		}
+
+		// Decode preset to make sure desktop one is applied properly before render
+		this.model.decode_preset();
+
 		type = type || Views.DEFAULT;
 		var view = Views[type]
 			? new Views[type]({model: this.model})
