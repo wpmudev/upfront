@@ -33,7 +33,7 @@ class Upfront_Compat_MarketPress {
 	 */
 	public static function is_product ($post) {
 		if (!class_exists('WP_Post')) return false; // Basic sanity check
-
+		
 		// Ensure we have an actual post here
 		if (!($post instanceof WP_Post)) $post = get_post($post);
 		if (!($post instanceof WP_Post)) return false;
@@ -47,9 +47,13 @@ class Upfront_Compat_MarketPress {
 	 * @return string|bool Currently configured MP post type, or (bool)false on failure
 	 */
 	public static function get_product_post_type () {
-		return function_exists('mp_get_setting')
+		$type = function_exists('mp_get_setting')
 			? mp_get_setting('product_post_type')
-			: 'product' 
+			: false 
+		;
+		return !empty($type)
+			? $type
+			: 'product'
 		;
 	}
 
@@ -97,11 +101,11 @@ class Upfront_Compat_MarketPress {
 	public function override_posts_markup_filter ($status) {
 		// The scope of the issue this addresses stays with archive page
 		if (is_singular()) return $status; // ... so don't do this on singular pages
-
+		
 		$post = get_post();
 		//if (empty($post->post_type) || 'product' !== $post->post_type) return $status;
 		if (!self::is_product($post)) return $status;
-
+		
 		$content = mp_list_products(array('echo' => false));
 		return $this->wrap_with_plugin_class($content);
 	}
