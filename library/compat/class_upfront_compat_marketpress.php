@@ -49,7 +49,7 @@ class Upfront_Compat_MarketPress {
 	public static function get_product_post_type () {
 		return function_exists('mp_get_setting')
 			? mp_get_setting('product_post_type')
-			: false
+			: 'product' 
 		;
 	}
 
