@@ -262,7 +262,6 @@ class Upfront_Compat_MarketPress {
 			'products' => $this->wrap_with_plugin_class($this->get_sample_content('products'))
 		);
 
-		// if (in_array($post_id, array( 'mpproduct', 'mporderstatus'))) return true;
 		$layouts['marketpress'] = array(
 			'pluginName' => 'MarketPress',
 			'sampleContents' => $sampleContents,
