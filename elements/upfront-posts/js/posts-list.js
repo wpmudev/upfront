@@ -153,6 +153,8 @@ var PostsPartView = Upfront.Views.ObjectView.extend({
 });
 
 var PostsEachView = Upfront.Views.ObjectGroup.extend({
+
+	tagName: "article",
 	className: "upfront-object-group-view upfront-posts-each",
 	editable: false,
 
@@ -248,6 +250,9 @@ var PostsEachView = Upfront.Views.ObjectGroup.extend({
 
 var PostsObjectsView = Upfront.Views.Objects.extend({
 
+	tagName: "ul",
+	className: "upfront-editable_entities_container uf-posts",
+
 	render: function () {
 		this.wrappers_collection = ( this.object_group_view && this.object_group_view._posts_model )
 			? this.object_group_view._posts_model.get('wrappers')
@@ -255,6 +260,25 @@ var PostsObjectsView = Upfront.Views.Objects.extend({
 		;
 
 		Upfront.Views.Objects.prototype.render.call(this);
+	},
+
+	create_wrapper_view: function (wrapper) {
+		return new PostsEachWrapper({ model: wrapper });
+	}
+
+});
+
+var PostsEachWrapper = Upfront.Views.Wrapper.extend({
+
+	tagName: "li",
+	attributes: function(){
+		var cls = "upfront-wrapper uf-post",
+			model_cls = this.model.get_property_value_by_name('class')
+			;
+		return {
+			"class": cls + " " + model_cls,
+			"id": this.model.get_wrapper_id()
+		};
 	}
 
 });
@@ -263,6 +287,7 @@ var PostsObjectsView = Upfront.Views.Objects.extend({
 var PostsView = Upfront.Views.ObjectGroup.extend({
 
 	_posts_model: false,
+	_is_compat: false,
 
 	init: function () {
 		this.listenTo(this.model.get('objects'), 'change', this.on_render);
@@ -273,9 +298,22 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 		this.listenTo(Upfront.Events, 'csseditor:closed', this.on_csseditor_closed);
 
 		this.on('posts:layout:edited', this.on_posts_layout_edit);
+
+		if ( this.model.get('objects').length === 0 ) {
+			this._is_compat = true;
+		}
+	},
+
+	is_compat: function () {
+		return this._is_compat;
 	},
 
 	render: function () {
+		if ( this.is_compat() ) {
+			Upfront.Views.ObjectGroup.prototype.render.call(this);
+			return;
+		}
+
 		// Setup views and models that will render individual posts, this model won't be saved as it only serve to render posts
 		this._posts_model = new Upfront.Models.ObjectGroup();
 		this._objects_view = new PostsObjectsView({model: this._posts_model.get('objects')});
@@ -360,30 +398,13 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 			else return ( include_spacer === true );
 		});
 	},
-
-	render_type_view: function (type) {
-		type = type || Views.DEFAULT;
-		var me = this,
-			view = Views[type]
-			? new Views[type]({model: this.model})
-			: new Views[Views.DEFAULT]({model: this.model})
-		;
-		view.element = this;
-		view.render();
-		this.$el.find(".upfront-object-content").empty().append(view.$el);
-		if ( view._posts_load ){
-			view._posts_load.success(function(){
-				me.adjust_featured_images();
-				Upfront.Events.trigger('entity:object:refresh', me);
-			});
-		}
-	},
 	
 	render_view: function (type) {
 		var me = this;
 
 		if ( this.child_view ) {
 			this.child_view.render(this.editing);
+			this.render_view_after();
 			return;
 		}
 
@@ -399,8 +420,25 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 		view.render();
 
 		this.child_view = view;
+		this.render_view_after();
 
 		this.$el.find(".upfront-object-group-default").append(view.$el);
+
+		// Hide objects container if compat mode
+		if ( this.is_compat() ) {
+			this.$el.find(".upfront-objects_container").hide();
+		}
+	},
+
+	render_view_after: function () {
+		var me = this;
+
+		if ( this.child_view._posts_load ){
+			this.child_view._posts_load.success(function(){
+				me.adjust_featured_images();
+				Upfront.Events.trigger('entity:object:refresh', me);
+			});
+		}
 	},
 
 	render_post_view: function (post_id, data, silent) {

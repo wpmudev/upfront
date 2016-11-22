@@ -80,56 +80,63 @@ var Views = {
 					action: "upfront_posts-load",
 					data: {
 						props: props,
-						query: query
+						query: query,
+						compat: this.element.is_compat() ? 1 : 0
 					}
 				})
 				.success(function (response) {
 					if (response.data && response.data.posts) {
-						/*var posts = '';
-						_.each(response.data.posts, function (post) {
-							posts += post;
-						});
-						me.$el.empty().append(me.tpl.main({
-							posts: posts,
-							pagination: response.data.pagination,
-							l10n: l10n
-						}));*/
+						if ( me.element.is_compat() ) {
+							// Compat mode
+							var posts = '';
+							_.each(response.data.order, function (post_id) {
+								posts += response.data.posts[post_id];
+							});
+							me.$el.empty().append(me.tpl.main({
+								posts: posts,
+								pagination: response.data.pagination,
+								l10n: l10n
+							}));
 
-						me.render_objects_view(response.data.posts, silent);
-
-						if ( me._do_cache ) {
-							me._cached_data = response.data.posts;
-						}
-
-						// Unbind pagination clicks
-						me.$el.find(".uf-pagination a")
-							.off("click")
-							.on("click", function (e) {
-								e.preventDefault();
-								e.stopPropagation();
-								return false;
-							})
-						;
-						// Unbind title clicks
-						me.$el.find(".uposts-part.title a")
-							.off("click")
-							.on("click", function (e) {
-
-								var $me = $(this),
-									href = $me.attr("href")
-								;
-								// Only if it's an absolute URL
-								if (href.match(/^https?\:/)) {
+							// Unbind pagination clicks
+							me.$el.find(".uf-pagination a")
+								.off("click")
+								.on("click", function (e) {
 									e.preventDefault();
 									e.stopPropagation();
-
-									window.location = href;
-
 									return false;
-								}
-							})
-						;
-						me.$el.empty();
+								})
+							;
+							// Unbind title clicks
+							me.$el.find(".uposts-part.title a")
+								.off("click")
+								.on("click", function (e) {
+
+									var $me = $(this),
+										href = $me.attr("href")
+										;
+									// Only if it's an absolute URL
+									if (href.match(/^https?\:/)) {
+										e.preventDefault();
+										e.stopPropagation();
+
+										window.location = href;
+
+										return false;
+									}
+								})
+							;
+						}
+						else {
+							// Object rendering
+							me.render_objects_view(response.data.posts, response.data.order, silent);
+
+							if ( me._do_cache ) {
+								me._cached_data = response.data.posts;
+								me._cached_order = response.data.order;
+							}
+							me.$el.empty();
+						}
 					}
 					else {
 						if ( !silent ) me.$el.empty().append(me.tpl.error({l10n: l10n}));
@@ -146,9 +153,10 @@ var Views = {
 		 * Render the posts object view
 		 * @param {Object} posts
 		 */
-		render_objects_view: function (posts, silent) {
+		render_objects_view: function (posts, order, silent) {
 			var me = this;
-			_.each(posts, function (data, post_id) {
+			_.each(order, function (post_id) {
+				var data = posts[post_id];
 				me.element.render_post_view(post_id, data, silent);
 			});
 			Upfront.Events.trigger('entity:object:refresh', me);

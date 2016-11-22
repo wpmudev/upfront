@@ -103,11 +103,16 @@ class Upfront_Posts extends Upfront_Server {
 	public function load_posts () {
 		$request = !empty($_POST['data']) ? stripslashes_deep($_POST['data']) : array();
 		$data = !empty($request['props']) ? $this->to_data_array($request['props']) : array();
+		$compat = !empty($request['compat']) ? ($request['compat'] == 1) : false;
 		if (!empty($request['query'])) $data['query'] = $request['query'];
 
+		$posts = $compat ? Upfront_Posts_PostsView::get_posts_markup($data) : Upfront_Posts_PostsView::get_posts_part_markup($data, true);
+		$order = array_keys($posts);
+
 		$this->_out(new Upfront_JsonResponse_Success(array(
-			'posts' => Upfront_Posts_PostsView::get_posts_part_markup($data, true),
+			'posts' => $compat ? Upfront_Posts_PostsView::get_posts_markup($data) : Upfront_Posts_PostsView::get_posts_part_markup($data, true),
 			'pagination' => Upfront_Posts_PostsView::get_pagination($data),
+			'order' => $order
 		)));
 	}
 

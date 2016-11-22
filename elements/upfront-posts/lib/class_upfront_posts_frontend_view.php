@@ -50,7 +50,9 @@ class Upfront_PostsView extends Upfront_Object_Group {
 	}
 
 	public function wrap ($out) {
-		if ( !$this->_is_compat ) return parent::wrap($out);
+		if ( !$this->_is_compat ) {
+			return parent::wrap( $this->wrap_posts($out) );
+		}
 
 		// If compat render, we don't render preset as we delegate that to the child object
 		$class = $this->get_css_class();
@@ -111,6 +113,10 @@ class Upfront_PostsView extends Upfront_Object_Group {
 
 	public static function default_properties () {
 		return Upfront_Posts_PostsData::get_defaults();
+	}
+
+	protected function wrap_posts ($out) {
+		return "<ul class='uf-posts'>" . $out . "</ul>";
 	}
 
 	protected function create_post_object ($id) {
@@ -291,14 +297,34 @@ class Upfront_PostsView extends Upfront_Object_Group {
 	}
 }
 
+class Upfront_PostsEachWrapper extends Upfront_Wrapper {
+
+	private $_object;
+	protected $_tag = "li";
+
+	public function __construct ($data, $object) {
+		parent::__construct($data);
+		$this->_object = $object;
+	}
+
+	public function get_css_class () {
+		$classes = parent::get_css_class();
+		$object_classes = $this->_object->get_wrapper_css_class();
+		return $classes . " " . $object_classes;
+	}
+
+}
+
 
 class Upfront_PostsEachView extends Upfront_Object_Group {
 
 	private $_parent;
 	private $_post_id;
 	private $_markup;
+	protected $_tag = 'article';
 	protected $_child_instances = array();
 	protected $_breakpoint = false;
+	protected $_wrapper_obj = false;
 
 	public function __construct ($data, $post_id, $markup, $parent_obj = false, $breakpoint = false) {
 		$this->_breakpoint = $breakpoint;
@@ -326,23 +352,21 @@ class Upfront_PostsEachView extends Upfront_Object_Group {
 	public function get_wrapper () {
 		$wrapper_id = $this->_get_property('wrapper_id');
 		$wrapper_data = $this->_parent ? $this->_parent->find_post_wrapper($wrapper_id) : false;
-		return $wrapper_data !== false ? new Upfront_Wrapper($wrapper_data) : false;
+		$this->_wrapper_obj = $wrapper_data !== false ? new Upfront_PostsEachWrapper($wrapper_data, $this) : false;
+		return $this->_wrapper_obj;
 	}
 
 	public function get_post_markup () {
 		return $this->_markup;
 	}
 
-	public function get_css_class () {
-		$classes = parent::get_css_class();
-
-		$classes .= !empty($this->_post_id) && is_sticky( $this->_post_id ) ? " uf-post uf-post-sticky" : " uf-post";
+	public function get_wrapper_css_class () {
+		$classes = !empty($this->_post_id) && is_sticky( $this->_post_id ) ? "uf-post uf-post-sticky" : "uf-post";
 
 		// if the post does not have a theme image, assign a class to denote that
 		if(!empty($this->_post_id) && !has_post_thumbnail($this->_post_id)) {
 			$classes .= ' no-feature-image';
 		}
-
 		return $classes;
 	}
 

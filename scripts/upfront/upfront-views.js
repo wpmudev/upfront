@@ -2784,7 +2784,7 @@ define([
 						else {
 							wrapper_view = Upfront.data.wrapper_views[wrapper.cid];
 							if ( !wrapper_view ) {
-								wrapper_view = new Upfront.Views.Wrapper({model: wrapper});
+								wrapper_view = this.create_wrapper_view(wrapper);
 								wrapper_view.parent_view = this;
 								wrapper_view.render();
 							}
@@ -2842,6 +2842,9 @@ define([
 					}
 				}
 				Upfront.Events.trigger('entity:objects:render_object', local_view, local_view.model, this, this.model);
+			},
+			create_wrapper_view: function (wrapper) {
+				return new Upfront.Views.Wrapper({model: wrapper});
 			},
 			rerender_objects: function () {
 				this.model.each(function (obj) {
