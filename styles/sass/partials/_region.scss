@@ -1498,6 +1498,58 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 	background: none;
 }
 
+/* Region BG settings */
+#region-settings-sidebar .uf-region-bg-settings-panel-content {
+	max-height: 320px;
+	position: initial;
+}
+
+#region-settings-sidebar .uf-region-bg-settings-panel-content .uf-bgsettings-imageitem {
+	position: static;
+	
+	&:after {
+		content: '';
+		display: table;
+		clear: both;
+	}
+	
+	.uf-bgsettings-image-pos-y-num {
+		margin-top: -115px;
+		margin-left: 32px;
+		position: static;
+		float: left;
+	}
+	
+	.uf-bgsettings-image-pos-x-num {
+		margin-top: -75px;
+		margin-left: 30px;
+		position: static;
+		float: left;
+	}
+	
+	.upfront-field-wrap-number.uf-bgsettings-image-size {
+		position: static;
+		float: right;
+		margin-top: -155px;
+		margin-right: 40px;
+	}
+	
+	.uf-bgsettings-image-color {
+		position: static;
+		margin-top: -36px;
+		margin-right: 20px;
+		
+		.sp-replacer.sp-light {
+			display: block;
+			margin-top: 2px;
+		}
+	}
+	
+	.sp-container.sp-light.sp-alpha-enabled {
+		z-index: 99999999;
+	}
+}
+
 .upfront-region-bg-setting-padding .upfront-field-select-single {
 	width: 215px;
 	display:inline-block;

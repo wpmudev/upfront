@@ -66,7 +66,7 @@
 
 				// Preserve background settings element event binding by detaching them before resetting html
 				$content.find('.upfront-region-bg-setting-tab-primary, .upfront-region-bg-setting-tab-secondary').children().detach();
-
+				
 				$content.html(setting);
 				$modal.addClass('upfront-region-modal-bg');
 
@@ -82,9 +82,14 @@
 				this.render_padding_settings($content.find('.upfront-region-bg-setting-padding'));
 
 				// Add JS Scrollbar.
-				perfectScrollbar.initialize(this.el, {
-					suppressScrollX: true
-				});
+				var $bg_settings_content = this.$el.find('.uf-region-bg-settings-panel-content');
+				$bg_settings_content = $bg_settings_content[0] || false;
+				if ( $bg_settings_content ) {
+					perfectScrollbar.initialize($bg_settings_content, {
+						suppressScrollX: true
+					});
+				}
+				
 				// If region settings sidebar.
 				if (this.$el.parent().attr('id') === 'region-settings-sidebar') {
 					// adding class to #sidebar-ui for fixing z-index issues with main dropdown.
