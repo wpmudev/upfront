@@ -1498,6 +1498,11 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 	background: none;
 }
 
+/* Region BG settings */
+#region-settings-sidebar .uf-region-bg-settings-panel-content {
+	max-height: 260px;
+}
+
 .upfront-region-bg-setting-padding .upfront-field-select-single {
 	width: 215px;
 	display:inline-block;

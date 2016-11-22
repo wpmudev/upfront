@@ -2534,6 +2534,9 @@ div.uinsert-selector a:hover {
 .upfront-content-marker.redactor-editor .wp-caption img {
   margin: 0; }
 
+.wp-caption p.wp-caption-text {
+  text-align: center; }
+
 .upfront-field-wrap-image-style-variant label.upfront-field-label-block {
   color: #3d5266;
   font-size: 13px;
@@ -3975,6 +3978,10 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 #region-settings-sidebar .upfront-region-settings-responsive .upfront-region-bg-setting-region-style-container {
   padding: 0;
   background: none; }
+
+/* Region BG settings */
+#region-settings-sidebar .uf-region-bg-settings-panel-content {
+  max-height: 260px; }
 
 .upfront-region-bg-setting-padding .upfront-field-select-single {
   width: 215px;
