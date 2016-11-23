@@ -85,9 +85,19 @@
 				var $bg_settings_content = this.$el.find('.uf-region-bg-settings-panel-content');
 				$bg_settings_content = $bg_settings_content[0] || false;
 				if ( $bg_settings_content ) {
+					// Okay, so let's first set up a debounced update call
+					var _debounced_update = _.debounce(function () {
+						perfectScrollbar.update($bg_settings_content);
+					}, 500, true); // Once in 500ms, but *do* the first call
+
 					perfectScrollbar.initialize($bg_settings_content, {
 						suppressScrollX: true
 					});
+					
+					// Let's wait for the type change to re-apply update
+					Upfront.Events.on("region:background:type:changed", _debounced_update);
+					// Also, do one right now, just off-stack
+					setTimeout(_debounced_update);	
 				}
 				
 				// If region settings sidebar.
