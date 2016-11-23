@@ -13904,15 +13904,22 @@ body .redactor-toolbar li a.re-upfrontLink.redactor-act {
   z-index: 2004;
   padding: 10px;
   min-width: 200px;
-  background-color: rgba(42, 70, 95, 0.95);
+  background-color: #FFFFFF;
   font-size: 13px;
   font-family: Helvetica, Arial, Verdana, Tahoma, sans-serif;
   line-height: 21px;
   margin-top: 5px;
-  color: #97b8da; }
+  color: #97b8da;
+  border: 1px solid #cccccc;
+  border-radius: 2px;
+  box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3); }
 
 .redactor-dropdown-box-upfrontLink {
   margin-top: 0px; }
+
+.redactor-dropdown-box-upfrontIcons {
+  top: -100px;
+  right: -10px !important; }
 
 .redactor-dropdown .upfront-save_settings {
   box-shadow: none; }
