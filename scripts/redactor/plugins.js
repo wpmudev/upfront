@@ -703,6 +703,7 @@ RedactorPlugins.upfrontIcons = function() {
                 this.redactor.buffer.set();
                 this.redactor.selection.save();
                 this.set_current_icon();
+				this.fadeInToolbar();
                 this.$el.parent().css({
                     left: 193
                 });
@@ -733,6 +734,8 @@ RedactorPlugins.upfrontIcons = function() {
 
 
                 this.redactor.selection.restore();
+				
+				this.fadeOutToolbar();
 
                 this.closeToolbar();
             },
@@ -754,17 +757,17 @@ RedactorPlugins.upfrontIcons = function() {
                 this.redactor.code.sync();
             },
 
-						input_key_down: function(e) {
-							// If key is return close panel.
-							if (e.which === 13) {
-								// Keep from entering return symbol.
-								e.preventDefault();
-								// Close Panel and Toolbar on Enter.
-								this.closePanel();
-								this.closeToolbar();
-								this.redactor.dropdown.hideAll();
-							}
-						},
+			input_key_down: function(e) {
+				// If key is return close panel.
+				if (e.which === 13) {
+					// Keep from entering return symbol.
+					e.preventDefault();
+					// Close Panel and Toolbar on Enter.
+					this.closePanel();
+					this.closeToolbar();
+					this.redactor.dropdown.hideAll();
+				}
+			},
 
             set_current_icon: function () {
                 var $sel = $(this.redactor.selection.getCurrent()).last(),
