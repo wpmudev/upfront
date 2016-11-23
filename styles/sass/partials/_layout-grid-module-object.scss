@@ -647,7 +647,7 @@
 }
 
 
-.upfront-wrapper-meta {
+.upfront-wrapper-meta.upfront-resize-handle-wrapper {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -657,7 +657,7 @@
   z-index: 70;
   display: none !important;
 }
-.upfront-wrapper-meta:before {
+.upfront-wrapper-meta.upfront-resize-handle-wrapper:before {
   content: "";
   position: absolute;
   top: 5px;
@@ -686,10 +686,10 @@
 .upfront-object-group-editing .upfront-object-group-on-edit .upfront-wrapper:hover > .upfront-wrapper-meta {
   display: block !important;
 }
-.upfront-wrapper-meta-left {
+.upfront-wrapper-meta-left.upfront-wrapper-meta {
   left: -7px;
 }
-.upfront-wrapper-meta-right {
+.upfront-wrapper-meta-right.upfront-wrapper-meta {
   right: -7px;
 }
 .upfront-wrapper-meta > .upfront-icon-button {

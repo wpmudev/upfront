@@ -5817,7 +5817,7 @@ span.upfront-settings-item-title:after {
   background: #f2b530 linear-gradient(135deg, #ffbe33 0%, #ffbe33 50%, transparent 51%, transparent 100%);
   /* W3C */ }
 
-.upfront-wrapper-meta {
+.upfront-wrapper-meta.upfront-resize-handle-wrapper {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -5827,7 +5827,7 @@ span.upfront-settings-item-title:after {
   z-index: 70;
   display: none !important; }
 
-.upfront-wrapper-meta:before {
+.upfront-wrapper-meta.upfront-resize-handle-wrapper:before {
   content: "";
   position: absolute;
   top: 5px;
@@ -5855,10 +5855,10 @@ span.upfront-settings-item-title:after {
 .upfront-object-group-editing .upfront-object-group-on-edit .upfront-wrapper:hover > .upfront-wrapper-meta {
   display: block !important; }
 
-.upfront-wrapper-meta-left {
+.upfront-wrapper-meta-left.upfront-wrapper-meta {
   left: -7px; }
 
-.upfront-wrapper-meta-right {
+.upfront-wrapper-meta-right.upfront-wrapper-meta {
   right: -7px; }
 
 .upfront-wrapper-meta > .upfront-icon-button {
@@ -6313,7 +6313,7 @@ span.upfront-settings-item-title:after {
   right: auto;
   cursor: sw-resize; }
 
-.upfront-resize-handle-s {
+.upfront-resize-handle-s.ui-resizable-handle {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -6359,7 +6359,7 @@ span.upfront-settings-item-title:after {
   top: 48%;
   display: none !important; }
 
-.upfront-resize-handle-wrapper {
+.upfront-resize-handle-wrapper.ui-resizable-handle {
   cursor: ew-resize; }
 
 .upfront-drop {
