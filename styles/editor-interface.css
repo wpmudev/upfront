@@ -11200,11 +11200,16 @@ div.ugallery-controls i.upfront-icon:before {
   position: relative;
   left: -5px; }
 
-.upfront-element-controls .upfront-inline-panel .upfront-padding-container .upfront-field-number[type=number] {
+.upfront-element-controls .upfront-inline-panel .upfront-padding-container .upfront-field-number[type=number],
+.redactor-dropdown-box-upfrontIcons .upfront-font-icons-controlls .upfront-field-number[type=number] {
   width: 43px;
   height: 25px;
   background: #fbfbfb;
   border: 1px solid #e8e8e8; }
+
+.redactor-dropdown-box-upfrontIcons .upfront-font-icons-controlls .upfront-field-number[type=number] {
+  width: 35px;
+  margin-left: 5px; }
 
 .upfront-element-controls .upfront-padding-container .upfront-field-wrap {
   margin: 0px; }
@@ -11299,7 +11304,8 @@ div.ugallery-controls i.upfront-icon:before {
   z-index: 100; }
 
 /* chrome input[type=number] styling */
-.upfront-padding-control .upfront-field-number[type=number]::-webkit-inner-spin-button {
+.upfront-padding-control .upfront-field-number[type=number]::-webkit-inner-spin-button,
+.redactor-dropdown-box-upfrontIcons .upfront-font-icons-controlls .upfront-field-number[type=number]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   width: 12px;
   padding: 0;
@@ -15944,7 +15950,7 @@ li#new-custom-breakpoint {
 .upfront-font-icons-controlls li {
   display: inline-block;
   height: 38px;
-  padding-left: 2px; }
+  padding: 0px 5px; }
 
 .upfront-font-icons-controlls li input {
   width: 40px;
@@ -15968,7 +15974,7 @@ li#new-custom-breakpoint {
   font-size: 12px; }
 
 .upfront-font-icons-controlls li.font-icons-top-li {
-  padding-right: 3px;
+  padding: 0px 5px;
   float: right; }
 
 .upfront-font-icons-controlls .upfront-field-number {
