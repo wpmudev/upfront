@@ -93,6 +93,11 @@
 					perfectScrollbar.initialize($bg_settings_content, {
 						suppressScrollX: true
 					});
+					
+					// Let's wait for the type change to re-apply update
+					Upfront.Events.on("region:background:type:changed", _debounced_update);
+					// Also, do one right now, just off-stack
+					setTimeout(_debounced_update);	
 				}
 				
 				// If region settings sidebar.
