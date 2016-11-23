@@ -243,6 +243,7 @@ define([
 					linebreaks: false,
 					disableLineBreak: true,
 					placeholder: false,
+					air: false,
 					autostart: false,
 					focus: false
 				}).on('start', function() {

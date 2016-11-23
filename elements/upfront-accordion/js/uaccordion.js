@@ -208,7 +208,7 @@ define([
 						.ueditor({
 							linebreaks: false,
 							disableLineBreak: true,
-							airButtons: false,
+							air: false,
 							autostart: false,
 							placeholder: 'Panel '+count
 						})
@@ -233,7 +233,7 @@ define([
 						})
 						.addClass('uf-click-to-edit-text')
 					;
-
+					
 					$title.data('ueditor').stop();
 					count++;
 				});

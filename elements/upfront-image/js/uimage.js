@@ -103,6 +103,9 @@ define([
 					this.unsetMobileMode();
 				}
 			});
+			this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+			this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint:after", this.on_change_breakpoint_after);
+			this.listenTo(Upfront.Events, "upfront:grid:updated", this.on_grid_update);
 
 			if (this.property('link') === false) {
 				this.link = new LinkModel({

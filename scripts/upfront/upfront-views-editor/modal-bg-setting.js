@@ -88,8 +88,7 @@
 							if ( '' === value && is_responsive ) {
 								me.reset_breakpoint_background(breakpoint, false);
 								$content.find('.upfront-bg-setting-tab').hide();
-							}
-							else {
+							} else {
 								if ( is_responsive ) {
 									me.revert_breakpoint_background(breakpoint, ['background_type'], true);
 								}
@@ -115,6 +114,7 @@
 							} else {
 								this.$el.removeClass('upfront-bg-setting-type-image');
 							}
+							Upfront.Events.trigger("region:background:type:changed");
 						}
 					})
 				;

@@ -271,8 +271,22 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		props.slidesLength = props.slides.length;
 
-		props.imageWidth = props.primaryStyle == 'side' ?  Math.round(props.rightImageWidth / props.rightWidth * 100) + '%' : '100%';
-		props.textWidth =  props.primaryStyle == 'side' ? Math.round((props.rightWidth - props.rightImageWidth) / props.rightWidth * 100) + '%' : '100%';
+		props.imageWidth = '100%';
+		props.textWidth = '100%';		
+		
+		if(props.primaryStyle == 'side') {
+			var imgPercent = Math.round(props.rightImageWidth / props.rightWidth * 100)
+				textPercent = Math.round((props.rightWidth - props.rightImageWidth) / props.rightWidth * 100)
+			;
+			
+			props.imageWidth = imgPercent + '%';
+			props.textWidth = textPercent + '%';
+			
+			// If total is 101 because of the round we decrease textWidth with 1%
+			if((imgPercent + textPercent) > 100) {
+				props.textWidth = (textPercent - 1) + '%';
+			}
+		}
 
 		props.imageHeight = '100%';
 		if (props.slides.length) {

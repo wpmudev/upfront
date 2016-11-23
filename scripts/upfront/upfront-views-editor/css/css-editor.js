@@ -7,8 +7,9 @@
         "text!upfront/templates/popup.html",
         'scripts/upfront/upfront-views-editor/fields',
         'scripts/upfront/upfront-views-editor/fonts',
-        'scripts/upfront/upfront-views-editor/notifier'
-    ], function (popup_tpl, Fields, Fonts, notifier) {
+      'scripts/upfront/upfront-views-editor/notifier',
+			'scripts/perfect-scrollbar/perfect-scrollbar'
+    ], function (popup_tpl, Fields, Fonts, notifier, perfectScrollbar) {
         return Backbone.View.extend({
             className: 'upfront-ui',
             id: 'upfront-csseditor',
@@ -321,6 +322,11 @@
                 // Set up the proper vscroller width to go along with new change.
                 editor.renderer.scrollBar.width = 5;
                 editor.renderer.scroller.style.right = "5px";
+
+								// Add JS Scrollbar.
+								perfectScrollbar.initialize(this.$el.find('.ace_scrollbar')[0], {
+									suppressScrollX: true
+								});
 
                 editor.focus();
                 this.editor = editor;

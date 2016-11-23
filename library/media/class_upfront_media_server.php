@@ -28,6 +28,7 @@ class Upfront_MediaServer extends Upfront_Server {
 
 		if (Upfront_Permissions::current(Upfront_Permissions::UPLOAD)) {
 			upfront_add_ajax('upfront-media-remove_item', array($this, "remove_item"));
+			upfront_add_ajax('upfront-media-remove_theme_item', array($this, "remove_theme_item"));
 			upfront_add_ajax('upfront-media-update_media_item', array($this, "update_media_item"));
 			upfront_add_ajax('upfront-media-upload', array($this, "upload_media"));
 			upfront_add_ajax('upfront-upload-icon-font', array($this, "upload_icon_font"));
@@ -544,6 +545,44 @@ class Upfront_MediaServer extends Upfront_Server {
 		foreach ($post_ids as $post_id) {
 			if (!current_user_can('delete_post', $post_id)) $this->_out(new Upfront_JsonResponse_Error("You can't do this"));
 			if (!wp_delete_attachment($post_id)) $this->_out(new Upfront_JsonResponse_Error("Error deleting media"));
+		}
+		$this->_out(new Upfront_JsonResponse_Success("All good, media removed"));
+	}
+
+	// Same as remove_item but for theme/UI images.
+	public function remove_theme_item () {
+		$data = stripslashes_deep($_POST);
+
+		$post_id = !empty($data['item_id']) ? $data['item_id'] : false;
+		$post_ids = !empty($data['post_ids']) ? $data['post_ids'] : array();
+		if (!$post_id && !$post_ids) $this->_out(new Upfront_JsonResponse_Error("No post_id"));
+
+		if (!empty($post_id)) {
+			$post_ids[] = $post_id;
+		}
+
+		// Paths for theme images.
+		$supported_relpaths = array('ui');
+		foreach ($supported_relpaths as $testpath) {
+			if (!is_dir(trailingslashit(get_stylesheet_directory()) . $testpath)) continue;
+			$relpath = $testpath;
+			break;
+		}
+		if (empty($relpath)) $this->_out(new Upfront_JsonResponse_Error("No theme images directory"));
+
+		$dirPath = trailingslashit(trailingslashit(get_stylesheet_directory()) . $relpath);
+
+		foreach ($post_ids as $post_id) {
+			// Check permissions before allowing to delete file.
+			if (!current_user_can('upload_files')) $this->_out(new Upfront_JsonResponse_Error("You can't do this"));
+
+			// Clean up the file name
+			$filename = Upfront_UploadHandler::to_clean_file_name($post_id);
+
+			// Full path to file to delete.
+			$destination = $dirPath . $filename;
+			// Delete file.
+			@unlink($destination);
 		}
 		$this->_out(new Upfront_JsonResponse_Success("All good, media removed"));
 	}

@@ -135,12 +135,17 @@
                 make_caption_editable: function(){
                     var self = this,
                         data = this.data.get("style"),
-                        $caption = this.$('.wp-caption-text')
-                        ;
-
-                    if (!data) return false;
-                    if( !data.caption || !this.data.get("show_caption") || this.$('.wp-caption-text').length === 0) return;
-
+                        $caption = this.$('.wp-caption-text'),
+						show_caption = this.data.get("show_caption") || false
+                    ;
+					
+					// let's try checking if WP Default show caption style
+					// show_caption = ( !show_caption && data.caption ) ? data.caption.show : false;
+					if ( show_caption === false && data.caption ) show_caption = data.caption.show; 
+					
+					if (!data) return false;
+                    if( !data.caption || !show_caption || this.$('.wp-caption-text').length === 0) return;
+					
 
                     //.attr('contenteditable', true)
                     $caption.off('keyup')

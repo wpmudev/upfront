@@ -180,6 +180,10 @@ abstract class Upfront_EntityResolver {
 				// 404 page layout
 				return __('404 Page', 'upfront');
 			}
+			if ('maintenance' === $item || 'single-maintenance-mode_page' === $specificity) {
+				// maintenance mode page layout
+				return __('Maintenance Mode', 'upfront');
+			}
 
 			if (empty($item) && empty($specificity)) return __('Single Generic', 'upfront');
 
@@ -223,7 +227,12 @@ abstract class Upfront_EntityResolver {
 			} else {
 				// means this is taxonomy
 				$taxonomy = get_taxonomy($item);
-				$name = is_object($taxonomy->labels) ? $taxonomy->labels->singular_name : $taxonomy->labels['singular_name'];
+				if ($taxonomy) { // This can be (bool)false, so let's make sure it's not
+					$name = is_object($taxonomy->labels)
+						? $taxonomy->labels->singular_name
+						: $taxonomy->labels['singular_name']
+					;
+				} else return false; // We don't know what that is, don't lie
 				return !empty($specificity)
 					? sprintf("%s: %s", $name, $specificity)
 					: $name

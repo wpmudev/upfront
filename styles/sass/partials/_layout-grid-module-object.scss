@@ -653,7 +653,7 @@
 }
 
 
-.upfront-wrapper-meta {
+.upfront-wrapper-meta.upfront-resize-handle-wrapper {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -677,6 +677,19 @@
 	height: 7px;
 	width: 7px;
 }
+
+.upfront-wrapper-meta.upfront-resize-handle-wrapper:before {
+  content: "";
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 5px;
+  right: 5px;
+  background: #fff;
+  border-radius:3px;
+  box-shadow: 0 0 5px 0 rgba(36,57,77,.5);
+  z-index: -1;
+}
 .upfront-wrapper:not(.upfront-inline-panel-item-open):hover > .upfront-wrapper-meta,
 .upfront-wrapper-active > .upfront-wrapper-meta,
 .upfront-wrapper.ui-resizable-resizing > .upfront-wrapper-meta,
@@ -695,10 +708,10 @@
 .upfront-object-group-editing .upfront-object-group-on-edit .upfront-wrapper:hover > .upfront-wrapper-meta {
   display: block !important;
 }
-.upfront-wrapper-meta-left {
+.upfront-wrapper-meta-left.upfront-wrapper-meta {
   left: -7px;
 }
-.upfront-wrapper-meta-right {
+.upfront-wrapper-meta-right.upfront-wrapper-meta {
   right: -7px;
 }
 .upfront-wrapper-meta > .upfront-icon-button {

@@ -6,8 +6,9 @@
     define([
         "text!upfront/templates/popup.html",
         'scripts/upfront/upfront-views-editor/theme-colors',
-        'scripts/upfront/upfront-views-editor/fonts'
-    ], function (popup_tpl, Theme_Colors, Fonts) {
+        'scripts/upfront/upfront-views-editor/fonts',
+				'scripts/perfect-scrollbar/perfect-scrollbar'
+    ], function (popup_tpl, Theme_Colors, Fonts, perfectScrollbar) {
         /**
          * Like css editor but does not do saving and managing of styles.
          * Takes initial css from models "styles" property and fires change
@@ -151,6 +152,11 @@
                 // Set up the proper vscroller width to go along with new change.
                 editor.renderer.scrollBar.width = 5;
                 editor.renderer.scroller.style.right = "5px";
+
+								// Add JS Scrollbar.
+								perfectScrollbar.initialize(this.$el.find('.ace_scrollbar')[0], {
+									suppressScrollX: true
+								});
 
                 editor.focus();
                 this.editor = editor;
