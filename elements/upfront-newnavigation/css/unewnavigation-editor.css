@@ -616,7 +616,7 @@ div.preset-manager-panel .menustyle_settings_item  .burger_alignment {
 	border-radius: 2px;
 }
 
-.menu-item:hover .umenu-controls {
+.menu-item:not(.edit_mode):hover .umenu-controls {
     display: block;
 }
 
