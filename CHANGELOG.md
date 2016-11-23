@@ -1,6 +1,22 @@
 Change Log
 ============
 
+1.6 - 2016-11-23
+-------------------------------------------------------------------------------
+- Add: Maintenance mode
+- Add: MarketPress compatibility
+- Add: Region settings moved to sidebars
+- Add: better dynamic scrollbars
+
+- Fix: tabs element header issue
+- Fix: current menu item issue in editor mode
+- Fix: issue with region background parallax
+- Fix: check for space limiting enabled state before enforcing
+- Fix: issue with incorrect Google Maps API key
+- Fix: image inserts captions issue
+- Fix: code element validity check
+- Fix: issue with fixed position global background image
+
 1.5 - 2016-10-24
 -------------------------------------------------------------------------------
 - Add: WooCommerce support
