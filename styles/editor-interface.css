@@ -13914,7 +13914,9 @@ body .redactor-toolbar li a.re-upfrontLink.redactor-act {
   font-size: 13px;
   font-family: Helvetica, Arial, Verdana, Tahoma, sans-serif;
   line-height: 21px;
-  margin-top: 5px;
+  margin-top: 5px; }
+
+.redactor-dropdown-box-upfrontIcons {
   color: #97b8da;
   border: 1px solid #cccccc;
   border-radius: 2px;
