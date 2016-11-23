@@ -58,7 +58,7 @@
   cursor: sw-resize;
 }
 
-.upfront-resize-handle-s {
+.upfront-resize-handle-s.ui-resizable-handle {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -106,7 +106,7 @@
   display: none !important;
 }
 
-.upfront-resize-handle-wrapper {
+.upfront-resize-handle-wrapper.ui-resizable-handle {
   cursor: ew-resize;
 }
 
