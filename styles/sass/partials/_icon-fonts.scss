@@ -8,31 +8,31 @@
 	margin-right: 1px;
 }
 .redactor-dropdown.redactor-dropdown-box-upfrontIcons{
-	min-width: 153px;
-	width: 153px;
+	min-width: 155px;
+	width: 155px;
 	line-height: 38px;
 	padding: 0;
-	opacity: 0.9;
+	opacity: 1;
 }
 .redactor-dropdown.redactor-dropdown-box-upfrontIcons a,
 .redactor-dropdown.redactor-dropdown-box-upfrontIcons a:link{
-    color: #97b8da !important;
+    color: #898989 !important;
 	text-decoration: none;
     display: inline-block;
     width: 28px;
     text-align: center;
 }
 .redactor-dropdown.redactor-dropdown-box-upfrontIcons a:hover{
-    color: rgb(64, 166, 255) !important;
+    color: #000000 !important;
 }
 .upfront-font-icons-controlls{
 	display: block;
 	width: 100%;
 	padding: 2px 0 0 0;
 	margin: 0;
-	background: #1d2b38;
+	background: #ffffff;
 	height: 40px;
-	position: absolute;
+	border-top: 1px solid #cccccc;
 }
 .upfront-font-icons-controlls li{
 	display: inline-block;
@@ -55,7 +55,7 @@
 	float: left;
 	line-height: 38px;
 	padding-right: 1px;
-	color: #a5c2df;
+	color: #000;
 	font-size: 12px;
 }
 .upfront-font-icons-controlls li.font-icons-top-li{
