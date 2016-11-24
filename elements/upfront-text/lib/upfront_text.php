@@ -57,12 +57,17 @@ class Upfront_PlainTxtView extends Upfront_Object {
 				$style[] = 'border: '.Upfront_UFC::init()->process_colors($this->_get_property('border'));
 			}
 
-			return (sizeof($style)>0 ? "<div class='plaintxt_padding' style='".implode(';', $style)."'>": ''). $content .(sizeof($style)>0 ? "</div>": '');
+			return (sizeof($style)>0 
+				? "<div class='plaintxt_padding' style='".implode(';', $style)."'>": ''). $content .(sizeof($style)>0 ? "</div>": '');
 		}
 
 		// Render new appearance
 		$return_content = "<div class='plain-text-container'>";
-		if(isset($preset_props['additional_padding']) && $preset_props['additional_padding'] == "yes") {
+		if (
+			isset($preset_props['additional_padding']) 
+			&& 
+			$preset_props['additional_padding'] == "yes"
+		) {
 			$return_content .= "<div class='plaintxt_padding'>" . $content . "</div>";
 		} else {
 			$return_content .= $content;
