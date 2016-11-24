@@ -3982,7 +3982,9 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 /* Region BG settings */
 #region-settings-sidebar .uf-region-bg-settings-panel-content {
   max-height: 320px;
-  position: initial; }
+  /*position: initial;*/ }
+  #region-settings-sidebar .uf-region-bg-settings-panel-content .sp-container.sp-light.sp-alpha-enabled {
+    z-index: 99999999; }
 
 #region-settings-sidebar .uf-region-bg-settings-panel-content .uf-bgsettings-imageitem {
   position: static; }
@@ -4012,8 +4014,28 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
     #region-settings-sidebar .uf-region-bg-settings-panel-content .uf-bgsettings-imageitem .uf-bgsettings-image-color .sp-replacer.sp-light {
       display: block;
       margin-top: 2px; }
-  #region-settings-sidebar .uf-region-bg-settings-panel-content .uf-bgsettings-imageitem .sp-container.sp-light.sp-alpha-enabled {
-    z-index: 99999999; }
+
+#region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num {
+  margin-top: -100px;
+  margin-left: 15px; }
+
+#region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-image-pos-x-num {
+  margin-left: 13px;
+  margin-top: -60px; }
+
+#region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .upfront-field-wrap-number.uf-bgsettings-image-size {
+  margin-top: -131px;
+  margin-right: 25px; }
+  #region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .upfront-field-wrap-number.uf-bgsettings-image-size input.upfront-field.upfront-field-number {
+    margin-top: 17px; }
+
+#region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-image-color {
+  position: static;
+  margin-top: -36px;
+  margin-right: 0; }
+  #region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-image-color .sp-replacer.sp-light {
+    width: 18px;
+    float: left; }
 
 .upfront-region-bg-setting-padding .upfront-field-select-single {
   width: 215px;

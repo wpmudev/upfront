@@ -79,7 +79,7 @@ abstract class Upfront_Debug {
 	public function set_baseline () {
 		if (defined('UPFRONT_DEBUG_LEVELS')) return true; // Already set up
 		$levels = $this->is_dev() ? self::ALL : 'none';
-		define('UPFRONT_DEBUG_LEVELS', $levels, true);
+		define('UPFRONT_DEBUG_LEVELS', $levels);
 	}
 
 	public function is_allowed_to_debug(){
