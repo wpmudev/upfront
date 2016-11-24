@@ -82,6 +82,9 @@ class Upfront_Compat implements IUpfront_Server {
 		// WooCommerce compat
 		$this->enable_wc_compat();
 		$this->enable_mp_compat();
+
+		// Delegate A+ compat loading
+		$this->_delegate_aplus_compat();
 	}
 
 	/**
@@ -322,6 +325,21 @@ class Upfront_Compat implements IUpfront_Server {
 		if (class_exists('Upfront_Compat_MarketPress')) {
 			new Upfront_Compat_MarketPress();
 		}
+	}
+
+	/**
+	 * Delegate the A+ compat layer loading
+	 *
+	 * Only load the compat layer if we actually need to
+	 * (i.e. the plugin is present).
+	 */
+	private function _delegate_aplus_compat () {
+		if (!class_exists('Appointments')) return false; // No such thing, carry on
+
+		if (!class_exists('Upfront_Compat_Appointments')) {
+			require_once('compat/class_upfront_compat_appointments.php');
+		}
+		return Upfront_Compat_Appointments::serve();
 	}
 }
 
