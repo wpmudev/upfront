@@ -424,6 +424,10 @@ var GridEditor = {
 			find_model = function (modules) {
 				if ( !modules )
 					return false;
+				
+				if ( !modules.get_by_element_id && typeof modules.get_by_element_id !== 'function')
+					return false;
+				
 				var module_model = modules.get_by_element_id(element_id),
 					found_model;
 				if ( module_model )
@@ -443,6 +447,10 @@ var GridEditor = {
 			find_object = function (objects) {
 				if ( !objects )
 					return false;
+				
+				if ( !objects.get_by_element_id && typeof objects.get_by_element_id !== 'function')
+					return false;
+				
 				var object_model = objects.get_by_element_id(element_id),
 					found_object;
 				if ( object_model )
@@ -1306,25 +1314,19 @@ var GridEditor = {
 				});
 
 				if ( !breakpoint || breakpoint['default'] ){
-					model.set_property('row', rsz_row);
-					// Also resize containing object if it's only one object
+					// Resize containing object first if it's only one object
 					var objects = model.get('objects');
 					if ( objects && objects.length == 1 ){
 						objects.each(function(object){
 							object.set_property('row', rsz_row );
 						});
 					}
+
+					// Then resize the module
+					model.set_property('row', rsz_row);
 				}
 				else {
-					model_breakpoint = Upfront.Util.clone(model.get_property_value_by_name('breakpoint') || {});
-					if ( !_.isObject(model_breakpoint[breakpoint.id]) )
-						model_breakpoint[breakpoint.id] = {};
-					breakpoint_data = model_breakpoint[breakpoint.id];
-					breakpoint_data.edited = true;
-					breakpoint_data.row = rsz_row;
-
-					model.set_property('breakpoint', model_breakpoint);
-					// Also resize containing object if it's only one object
+					// Resize containing object first if it's only one object
 					var objects = model.get('objects');
 					if ( objects && objects.length == 1 ){
 						objects.each(function(object){
@@ -1335,6 +1337,16 @@ var GridEditor = {
 							object.set_property('breakpoint', obj_breakpoint);
 						});
 					}
+
+					// Then resize the module
+					model_breakpoint = Upfront.Util.clone(model.get_property_value_by_name('breakpoint') || {});
+					if ( !_.isObject(model_breakpoint[breakpoint.id]) )
+						model_breakpoint[breakpoint.id] = {};
+					breakpoint_data = model_breakpoint[breakpoint.id];
+					breakpoint_data.edited = true;
+					breakpoint_data.row = rsz_row;
+
+					model.set_property('breakpoint', model_breakpoint);
 				}
 
 				/*if ( is_parent_group )
@@ -3214,6 +3226,8 @@ var GridEditor = {
 		if ( app.layout_ready ) {
 			// Trigger updated event if it is changed after layout finished rendering
 			Upfront.Events.trigger('upfront:grid:updated');
+			// Second event for stuff that happen afterward
+			Upfront.Events.trigger('upfront:grid:updated:after');
 		}
 
 		if (

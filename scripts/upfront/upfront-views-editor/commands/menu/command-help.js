@@ -12,7 +12,10 @@
 				this.$el.html(l10n.help_and_support);
 			},
 			on_click: function () {
-				//window.location.href = '#';
+				var url = 'https://premium.wpmudev.org/upfront-documentation',
+					win = window.open(url, "_blank")
+				;
+				win.focus();
 			}
 		});
 

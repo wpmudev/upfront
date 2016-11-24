@@ -103,6 +103,9 @@ define([
 					this.unsetMobileMode();
 				}
 			});
+			this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+			this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint:after", this.on_change_breakpoint_after);
+			this.listenTo(Upfront.Events, "upfront:grid:updated", this.on_grid_update);
 
 			if (this.property('link') === false) {
 				this.link = new LinkModel({
@@ -255,6 +258,11 @@ define([
 			me.listenTo(control, 'panel:close', function(){
 				me.controls.$el.parent().parent().removeClass('upfront-control-visible');
 				me.$el.closest('.ui-draggable').draggable('enable');
+			});
+
+			// Close panel when event is triggered (enter key is hit).
+			me.listenTo(linkPanel, 'linkpanel:close', function() {
+				control.close();
 			});
 
 			control.icon = 'link';
@@ -661,7 +669,7 @@ define([
 			// Show full image if we are in mobile mode
 			if (this.mobileMode) {
 				this.$('.uimage').addClass('uimage-mobile-mode');
-				this.setMobileMode();
+				this.once('update_position', this.setMobileMode); // Run setMobileMode after positioning finished
 			}
 
 			this.setStuckToTop();
@@ -792,7 +800,9 @@ define([
 		},
 
 		setMobileMode: function(){
-			var props = this.extract_properties();
+			var props = this.extract_properties(),
+				row = this.model.get_breakpoint_property_value('row', false)
+			;
 			this.mobileMode = true;
 			this.$el
 				.find('.uimage-resize-hint').hide().end()
@@ -808,6 +818,12 @@ define([
 					})
 					.attr('src', this.property('src'))
 			;
+			if ( false === row ) { // No row defined in this element breakpoint, remove defined height
+				this.$el.find('> .upfront-object').css('min-height', '');
+				if ( this.parent_module_view ) {
+					this.parent_module_view.$el.find('> .upfront-module').css('min-height', '');
+				}
+			}
 		},
 
 		unsetMobileMode: function(){
@@ -998,6 +1014,10 @@ define([
 					this.property('marginTop', -margin);
 					this.property('position', {top: margin, left: current_position.left});
 
+				}
+				
+				if(sizeCheck === "small" && isDotAlign !== true) {
+					this.property('marginTop', 0);
 				}
 			}
 

@@ -58,7 +58,7 @@
   cursor: sw-resize;
 }
 
-.upfront-resize-handle-s {
+.upfront-resize-handle-s.ui-resizable-handle {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -91,7 +91,9 @@
 }
 .upfront-module-spacer > .upfront-resize-handle-s,
 .upfront-inline-panel-item-open .upfront-module-view > .upfront-module-active > .upfront-resize-handle-s,
-.upfront-inline-panel-item-open .upfront-module-view > .upfront-module-active:hover > .upfront-resize-handle-s {
+.upfront-inline-panel-item-open .upfront-module-view > .upfront-module-active:hover > .upfront-resize-handle-s,
+.upfront-module-object-group-on-edit.upfront-module-view > .upfront-module-active > .upfront-resize-handle-s,
+.upfront-module-object-group-on-edit.upfront-module-view > .upfront-module-active:hover > .upfront-resize-handle-s {
   display: none !important;
 }
 
@@ -104,7 +106,7 @@
   display: none !important;
 }
 
-.upfront-resize-handle-wrapper {
+.upfront-resize-handle-wrapper.ui-resizable-handle {
   cursor: ew-resize;
 }
 

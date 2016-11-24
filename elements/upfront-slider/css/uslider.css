@@ -70,9 +70,27 @@ div.uslide-text-current {
 	/*z-index: 3;*/
 }
 
+.upfront-region-bg-slider .upfront-default-slider-nav,
+.upfront-bg-slider .upfront-default-slider-nav {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
 .upfront-editing .upfront-default-slider-nav,
 .upfront-editing .upfront-default-slider-nav-prev,
 .upfront-editing .upfront-default-slider-nav-next {
+	display: none;
+}
+
+/* Show only specified controls. */
+.upfront-bg-slider[data-control_num="0"] .upfront-default-slider-nav,
+.upfront-region-bg-slider[data-control_num="0"] .upfront-default-slider-nav,
+.upfront-bg-slider[data-control_next_prev="0"] .upfront-default-slider-nav-prev,
+.upfront-region-bg-slider[data-control_next_prev="0"] .upfront-default-slider-nav-prev,
+.upfront-bg-slider[data-control_next_prev="0"] .upfront-default-slider-nav-next,
+.upfront-region-bg-slider[data-control_next_prev="0"] .upfront-default-slider-nav-next {
 	display: none;
 }
 
@@ -212,7 +230,8 @@ div.uslide-image img {
 }
 
 .uslider-resize-handler {
-	z-index: -10;
+	/* overriding inline css */
+	z-index: -10 !important;
 }
 
 .uslide-caption {

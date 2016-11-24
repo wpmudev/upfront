@@ -28,8 +28,10 @@
             initialize_post_data_editor: function() {
                 var self = this;
                 this.listenTo(Upfront.Views.PostDataEditor, 'loaded', function(contentEditor) {
-                    if ( contentEditor ) {
-                        Upfront.Views.PostBox = contentEditor.prepareBox();
+                    if ( contentEditor && Upfront.Views.PostDataEditor ) {
+						// updating global contentEditor to use the new instance
+                        Upfront.Views.PostDataEditor.contentEditor = contentEditor;
+                        Upfront.Views.PostBox = Upfront.Views.PostDataEditor.contentEditor.prepareBox();
                         self.append_box();
                     }
                 });
@@ -38,6 +40,7 @@
                     this.render();
                 });
 
+                this.stopListening(Upfront.Events, 'click:edit:navigate');
                 this.listenTo(Upfront.Events, 'click:edit:navigate', function (postId) {
                     if ( typeof postId !== 'undefined' && postId ) setTimeout(self.prepare_editor(self));
                 });
@@ -57,11 +60,10 @@
                 return 'post_details';
             },
             get_title: function () {
-                if ( Upfront.Application.is_single( "post" ) ) {
-                    return l10n.post_settings;
-                } else if ( Upfront.Application.is_single( "page" ) ) {
+				if ( Upfront.Application.is_single( "page" ) ) {
                     return l10n.page_settings;
                 }
+				return l10n.post_settings;
             },
 
             on_render: function () {
@@ -93,24 +95,24 @@
                 // Upfront.Events.trigger("editor:post_editor:created", Upfront.Views.PostDataEditor);
             },
 
-						getPostId: function() {
-							postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
-							if (
-									!this.postId &&
-									true === Upfront.plugins.isRequiredByPlugin('generate fake post id')
-							) {
-								postId = "fake_post";
-							}
-							else if (
-									!this.postId &&
-									true === Upfront.plugins.isRequiredByPlugin('generate fake post id') &&
-									Upfront.Application.mode.current === Upfront.Application.MODE.CONTENT_STYLE
-							){
-								postId = "fake_styled_post";
-							}
+			getPostId: function() {
+				postId = _upfront_post_data.post_id ? _upfront_post_data.post_id : Upfront.Settings.LayoutEditor.newpostType ? 0 : false;
+				if (
+						!this.postId &&
+						true === Upfront.plugins.isRequiredByPlugin('generate fake post id')
+				) {
+					postId = "fake_post";
+				}
+				else if (
+						!this.postId &&
+						true === Upfront.plugins.isRequiredByPlugin('generate fake post id') &&
+						Upfront.Application.mode.current === Upfront.Application.MODE.CONTENT_STYLE
+				){
+					postId = "fake_styled_post";
+				}
 
-							return postId;
-						},
+				return postId;
+			},
 
             append_box: function () {
                 var me = this,

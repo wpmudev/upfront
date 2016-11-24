@@ -40,6 +40,7 @@ class Upfront_Ajax extends Upfront_Server {
 			upfront_add_ajax('upfront_update_layout_element', array($this, "update_layout_element"));
 			upfront_add_ajax('upfront_add_custom_thumbnail_size', array($this, "add_custom_thumbnail_size"));
 			upfront_add_ajax('upfront_update_insertcount', array($this, "update_insertcount"));
+			upfront_add_ajax('upfront_site_under_construction', array($this, "site_under_construction"));
 		}
 	}
 
@@ -172,6 +173,9 @@ class Upfront_Ajax extends Upfront_Server {
 		}
 		// if still empty then load it from `options` table or from tpl file
 		if ( !$layout || $layout->is_empty() ) {
+			
+			// if maintenance page, bypass the layout
+			if ( upfront_is_maintenance_page($post_id) ) $layout_ids = Upfront_Layout::get_maintenance_mode_layout_cascade();
 			$layout = Upfront_Layout::from_entity_ids($layout_ids, $storage_key, $load_dev);
 			if ($layout->is_empty()){
 				// Instead of whining, create a stub layout and load that
@@ -320,7 +324,12 @@ class Upfront_Ajax extends Upfront_Server {
 		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
 		if (!Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE)) $this->_reject();
 
-		$data = !empty($_POST['data']) ? json_decode(stripslashes_deep($_POST['data']), true) : false;
+		// Try extracting from compressed request first
+		$data = Upfront_Compression::extract_from_request();
+
+		if ( false === $data ) {
+			$data = !empty($_POST['data']) ? json_decode(stripslashes_deep($_POST['data']), true) : false;
+		}
 		if (!$data) $this->_out(new Upfront_JsonResponse_Error("Unknown layout"));
 		$storage_key = $_POST['storage_key'];
 		$stylesheet = $_POST['stylesheet'] ? $_POST['stylesheet'] : get_stylesheet();
@@ -345,7 +354,12 @@ class Upfront_Ajax extends Upfront_Server {
 	}
 
 	function save_page_layout () {
-		$data = !empty($_POST['data']) ? json_decode(stripslashes_deep($_POST['data']), true) : false;
+		// Try extracting from compressed request first
+		$data = Upfront_Compression::extract_from_request();
+
+		if ( false === $data ) {
+			$data = !empty($_POST['data']) ? json_decode(stripslashes_deep($_POST['data']), true) : false;
+		}
 		if (!$data) $this->_out(new Upfront_JsonResponse_Error("Unknown layout"));
 		$stylesheet = ($_POST['stylesheet']) ? $_POST['stylesheet'] : get_stylesheet();
 		$save_dev = ( isset($_POST['save_dev']) && is_numeric($_POST['save_dev']) && $_POST['save_dev'] == 1 ) ? true : false;
@@ -354,13 +368,10 @@ class Upfront_Ajax extends Upfront_Server {
 
 		upfront_switch_stylesheet($stylesheet);
 
-		$raw_data = stripslashes_deep($_POST);
-		$json_data = !empty($raw_data['data']) ? $raw_data['data'] : '';
-
-		$layout = Upfront_Layout::from_json($json_data);
+		$layout = Upfront_Layout::from_php($data);
 		// get layout keys from layout data passed
 		$layout_ids = $layout->get('layout');
-
+		
 		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
 		// for all non-virtual page use post_id passed not the one from layout data
 		$layout_slug = ( $post_id )
@@ -373,6 +384,12 @@ class Upfront_Ajax extends Upfront_Server {
 		
 		// we need to save global regions to DB, so can be reused to other page
 		$layout->save_global_region();
+		
+		// if saving maintenance page, save it with key like 'single-page-id' not 'single-maintenance-mode_page' to avoid double entry on UF Admin - Reset Layout 
+		if ( upfront_is_maintenance_page($post_id) ) {
+			$layout_ids['specificity'] = 'single-page-' . $post_id;
+			$layout->set('layout', $layout_ids);
+		}
 		
 		// We need to save global layout options
 		$layout->save();
@@ -437,9 +454,14 @@ class Upfront_Ajax extends Upfront_Server {
 				$template_post_id = get_post_meta($post_id, $template_meta_name, true);
 			}
 			// preparing the layout data to save
-			$raw_data = stripslashes_deep($data);
-			$json_data = !empty($raw_data['data']) ? $raw_data['data'] : '';
-			$layout = Upfront_Layout::from_json($json_data);
+
+			// Try extracting from compressed request first
+			$layout_data = Upfront_Compression::extract_from_request($data);
+
+			if ( false === $layout_data ) {
+				$layout_data = !empty($data['data']) ? json_decode(stripslashes_deep($data['data']), true) : false;
+			}
+			$layout = Upfront_Layout::from_php($layout_data);
 			// create or update page template
 			$saved_template_post_id = Upfront_Server_PageTemplate::get_instance()->save_template($template_post_id, $layout, $save_dev, $template_slug);
 			if ( $saved_template_post_id ) {
@@ -648,14 +670,17 @@ class Upfront_Ajax extends Upfront_Server {
 			? (bool) $data['is_dev']
 			: false
 		;
+		$include_global = ( isset($data['include_global']) && is_numeric($data['include_global']) && $data['include_global'] == 1 ) ? true : false;
 		$store_key = strtolower(str_replace('_dev','',Upfront_Layout::get_storage_key()));
 		$layout_change_meta_name = strtolower($store_key . '-layout-change-flag');
 		
 		if ( empty($layout) ) $this->_out(new Upfront_JsonResponse_Error("Please specify layout to reset"));
-
+		
 		if ( is_array($layout) && $post_id ) {
 			$layout_slug = $store_key . '-single-page-' . $post_id;
 			$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $is_dev);
+			// delete global layout
+			if ( $include_global ) $this->_reset_global_layout($layout_post_id, $is_dev);
 			// delete layout change flag
 			delete_post_meta($layout_post_id, $layout_change_meta_name);
 			// delete layout
@@ -667,6 +692,8 @@ class Upfront_Ajax extends Upfront_Server {
 			// delete layouts from CPT
 			$layout_slug = $store_key . '-' . $layout;
 			$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $is_dev);
+			// delete global layout
+			if ( $include_global ) $this->_reset_global_layout($layout_post_id, $is_dev);
 			// delete layout change flag
 			delete_post_meta($layout_post_id, $layout_change_meta_name);
 			// delete layout
@@ -679,16 +706,53 @@ class Upfront_Ajax extends Upfront_Server {
 			if( $stylesheet_dev ){
 				$layout_key = $stylesheet_dev . "-" . $layout;
 				$alternative_layout_key = wp_get_theme($stylesheet)->get("Name") . "_dev-" . $layout;
-				delete_option( $layout_key );
-				delete_option( $alternative_layout_key );
 			}else{
 				$layout_key = $store_key . "-" . $layout;
 				$alternative_layout_key = wp_get_theme($stylesheet)->get("Name") . "-" . $layout;
-				delete_option( $layout_key );
-				delete_option( $alternative_layout_key );
 			}
-
+			if ( $include_global ) {
+				$this->_reset_global_layout_from_options($layout_key);
+				$this->_reset_global_layout_from_options($alternative_layout_key);
+			}
+			delete_option( $layout_key );
+			delete_option( $alternative_layout_key );
 			$this->_out(new Upfront_JsonResponse_Success("Layout {$layout} reset"));
+		}
+	}
+	
+	private function _reset_global_layout ($layout_post_id, $is_dev) {
+		if ( $layout_post_id ) {
+			$save_storage_key = apply_filters('upfront-data-storage-key', Upfront_Layout::STORAGE_KEY);
+			if (Upfront_Behavior::debug()->is_dev() && current_user_can('switch_themes') && apply_filters('upfront-enable-dev-saving', true)) {
+				$save_storage_key .= '_dev';
+			}
+			$page_layout = Upfront_Server_PageLayout::get_instance()->get_layout($layout_post_id, $is_dev);
+			if ( isset($page_layout['regions']) ) {
+				foreach ( $page_layout['regions'] as $region ) {
+					if ( isset( $region['scope'] ) && $region['scope'] != 'local' ) {
+						$regions = Upfront_Layout::delete_scoped_regions($region['name'], 'global', $save_storage_key);
+					}
+				}
+			}
+		}
+	}
+	
+	private function _reset_global_layout_from_options ($layout_key) {
+		$save_storage_key = apply_filters('upfront-data-storage-key', Upfront_Layout::STORAGE_KEY);
+		if (Upfront_Behavior::debug()->is_dev() && current_user_can('switch_themes') && apply_filters('upfront-enable-dev-saving', true)) {
+			$save_storage_key .= '_dev';
+		}
+		$layout_data = get_option($layout_key, false);
+		if ( $layout_data ) {
+			$layout_data = json_decode($layout_data);
+			$regions_added = array();
+			if ( isset($layout_data->regions) ) {
+				foreach ( $layout_data->regions as $region ) {
+					if ( isset( $region->scope ) && $region->scope != 'local' ){
+						$regions = Upfront_Layout::delete_scoped_regions($region->name, 'global', $save_storage_key);
+					}
+				}
+			}
 		}
 	}
 
@@ -878,5 +942,54 @@ class Upfront_Ajax extends Upfront_Server {
 		update_option('ueditor_insert_count', $insertcount);
 		$this->_out(new Upfront_JsonResponse_Success("Insert count updated"));
 	}
-
+	
+	function site_under_construction() {
+		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+		
+		$data = !empty($_POST) ? stripslashes_deep($_POST) : false;
+		
+		if(!$data)
+			return $this->_out(new Upfront_JsonResponse_Error("No data"));
+		if( !isset($data['enable_maintenance']) )
+			return $this->_out(new Upfront_JsonResponse_Error("No mode given"));
+		
+		$maintenance_mode = ( is_numeric($data['enable_maintenance']) && $data['enable_maintenance'] == 1 ) ? true : false;
+		$maintenance_data = get_option(Upfront_Server::MAINTENANCE_MODE, array());
+		if ( empty($maintenance_data) ) {
+			$maintenance_post = (array)$this->_create_maintenance_page();
+		} else {
+			$maintenance_data_obj = json_decode($maintenance_data);
+			$maintenance_post = (array)Upfront_PostModel::get($maintenance_data_obj->page_id);
+			if ( empty($maintenance_post) ) $maintenance_post = (array)$this->_create_maintenance_page();
+			$maintenance_data = (array)$maintenance_data_obj;
+		}
+		if ( $maintenance_post && !empty($maintenance_post) ) {
+			$maintenance_data['page_id'] = $maintenance_post['ID'];
+			$maintenance_data['permalink'] = get_permalink($maintenance_post['ID']);
+		}		
+		$maintenance_data['enabled'] = ( $maintenance_mode ) ? 1 : 0 ;
+		update_option(Upfront_Server::MAINTENANCE_MODE, json_encode($maintenance_data));
+		
+		$this->_out(new Upfront_JsonResponse_Success("All is well"));
+	}
+	
+	private function _create_maintenance_page () {
+		// creating maintenance page
+		$maintenance_post = Upfront_PostModel::create('page','maintenance', ' ');
+		if ( $maintenance_post ) {
+			$maintenance_post->post_status = 'publish';
+			Upfront_PostModel::save($maintenance_post);
+		}
+		return $maintenance_post;
+	}
+	
+	private function _delete_under_construction() {
+		// deleting maintenance page and options
+		$maintenance_data = get_option(Upfront_Server::MAINTENANCE_MODE, false);
+		if ( $maintenance_data ) {
+			$maintenance_data = json_decode($maintenance_data);
+			wp_delete_post($maintenance_data->page_id);
+			delete_option(Upfront_Server::MAINTENANCE_MODE);
+		}
+	}
 }

@@ -65,7 +65,7 @@ jQuery(document).ready(function($){
 	var youtube_api_ready = false;
 	var youtube_player_ids = [];
 
-	function mute_youtube_video (id) {
+	function change_youtube_video (id, type) {
 		youtube_player_ids.push(id);
 		if ( !youtube_api_loaded ){
 			var tag = document.createElement('script');
@@ -74,37 +74,60 @@ jQuery(document).ready(function($){
 			firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 			window.onYouTubeIframeAPIReady = function () {
 				youtube_api_ready = true;
-				create_youtube_players();
+				create_youtube_players(type);
 			}
 			youtube_api_loaded = true;
 			return;
 		}
-		if ( youtube_api_ready )
-			create_youtube_players();
+		if ( youtube_api_ready ) {
+			create_youtube_players(type);
+		}
 	}
 
-	function create_youtube_players () {
+	function create_youtube_players (type) {
 		for ( var i = 0; i < youtube_player_ids.length; i++ )
-			var player = new YT.Player(youtube_player_ids[i], {
-				events: {
-					'onReady': on_mute_youtube_ready
-				}
-			});
+			// Only Loop video.
+			if (type === 'loop') {
+				var player = new YT.Player(youtube_player_ids[i], {
+					events: {
+						'onReady': on_loop_youtube_ready
+					}
+				});
+			} else if (type === 'loopAndMute') {
+				// Loop and mute video.
+				var player = new YT.Player(youtube_player_ids[i], {
+					events: {
+						'onReady': function(e) {
+							on_loop_youtube_ready(e);
+							on_mute_youtube_ready(e);
+						}
+					}
+				});
+			// Only mute:
+			} else {
+				var player = new YT.Player(youtube_player_ids[i], {
+					events: {
+						'onReady': on_mute_youtube_ready
+					}
+				});
+			}
 		youtube_player_ids = [];
 	}
 
 	function on_mute_youtube_ready (event) {
-		event.target.mute();
+		return event.target.mute();
+	}
 
+	function on_loop_youtube_ready (event) {
 		var time, duration;
-		setInterval(function(){
+		return setInterval(function(){
 			time = event.target.getCurrentTime();
 			duration = event.target.getDuration();
 			if(time > duration - 0.5) {
 				event.target.seekTo(0);
 				event.target.playVideo();
 			}
-		},200);
+		}, 200);
 	}
 
 	/* Vimeo API */
@@ -175,6 +198,7 @@ jQuery(document).ready(function($){
 							prev_type = $prev_bg.attr('data-bg-type-' + breakpoint),
 							has_alpha = function (color) {
 								if (!color) return false;
+								if ("transparent" == color) return true;
 								var matches = color.match(/(rgba|hsla)\(.*?,.*?,.*?,.*?([\d.]+).*?\)/);
 								if (matches && matches[2] && parseFloat(matches[2]) < 1) return true;
 								return false;
@@ -239,12 +263,26 @@ jQuery(document).ready(function($){
 						var $iframe = $($(this).children('script.video-embed-code').html()),
 							id = $iframe.attr('id');
 						$(this).append($iframe);
-						if ( $(this).attr('data-bg-video-mute') == 1 ){
+						// If mute is enabled:
+						if ( $(this).attr('data-bg-video-mute') == 1 ) {
 							var src = $iframe.attr('src');
-							if ( src.match(/youtube\.com/i) )
-								mute_youtube_video(id);
-							else if ( src.match(/vimeo\./i) )
+							if ( src.match(/youtube\.com/i) ) {
+								// If loop is enabled too.
+								if ( $(this).attr('data-bg-video-loop') == 1 ) {
+									change_youtube_video(id, 'loopAndMute');
+								} else {
+									change_youtube_video(id, 'mute');
+								}
+							} else if ( src.match(/vimeo\./i) ) {
 								mute_vimeo_video(id);
+							}
+						// If only loop is enabled:
+						} else if ( $(this).attr('data-bg-video-loop') == 1 ) {
+							var src = $iframe.attr('src');
+							// Only loop via this method if youtube video.
+							if ( src.match(/youtube\.com/i) ) {
+								change_youtube_video(id, 'loop');
+							}
 						}
 					}
 				});
@@ -455,6 +493,12 @@ jQuery(document).ready(function($){
 				width = is_layout ? $(window).width() : $(this).outerWidth(),
 				height = is_layout ? $(window).height() : ( is_full_screen ? $(window).height()-body_off.top : $(this).outerHeight() ),
 				ratio = parseFloat($(this).attr('data-bg-image-ratio'));
+
+			// If Parallax, do not change background size/position.
+			if (this.parentNode.getAttribute('data-bg-parallax')) {
+				return;
+			}
+
 			if ( Math.round(height/width*100)/100 > ratio ) {
 				$(this).data('bg-position-y', 0);
 				$(this).data('bg-position-x', '50%');
@@ -462,8 +506,7 @@ jQuery(document).ready(function($){
 					'background-position': '50% 0',
 					'background-size': Math.round(height/ratio) + "px " + height + "px" /*"auto 100%"*/
 				});
-			}
-			else {
+			} else {
 				$(this).data('bg-position-y', Math.round( ( height - (width*ratio) ) / 2 ));
 				$(this).data('bg-position-x', '0');
 				$(this).css({
@@ -1352,11 +1395,11 @@ jQuery(document).ready(function($){
 			
 			// we have to provide proper fallback here, mobile -> tablet -> desktop
 			if ( breakpoint == 'mobile' ) {
-				map[breakpoint] = map[breakpoint] || map['tablet'] || map['desktop'] || 'default';
+				map[breakpoint] = map[breakpoint] || map['tablet'] || map['desktop'];
 			} else if ( breakpoint == 'tablet' ) {
-				map[breakpoint] = map[breakpoint] || map['desktop'] || 'default';
+				map[breakpoint] = map[breakpoint] || map['desktop'];
 			} else {
-				map[breakpoint] = map[breakpoint] || 'default';
+				map[breakpoint] = map[breakpoint];
 			}
 
 			$.each(map, function (bp, preset) {

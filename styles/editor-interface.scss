@@ -84,7 +84,7 @@
 	height: 26px;
 	width: 60px;
 	z-index: 1;
-	left: -45px;
+	/*left: -45px;*/
 	cursor: pointer;
 	transition: opacity .5s ease, left .5s ease;
 }
@@ -152,7 +152,7 @@
 .upfront-edit-responsive .upfront-object:hover .upfront-quick-swap{
     display: none;
 }
-#preventUsageOverlay {
+#preventUsageOverlay, #preventElementsUsageOverlay {
   text-align: center;
   cursor: not-allowed;
   position: absolute;
@@ -162,10 +162,10 @@
   right: 0;
   background: rgba(38,58,77,0.8);
   display: none;
-	z-index: 10;
+  z-index: 1000;
 }
 
-#preventUsageOverlay span {
+#preventUsageOverlay span, #preventElementsUsageOverlay span {
   padding: 2px 5px;
   margin-bottom: 14px;
   -webkit-transform: translateX(-50%);
@@ -184,7 +184,7 @@
   visibility: hidden;
 }
 
-#preventUsageOverlay:hover span {
+#preventUsageOverlay:hover span, #preventElementsUsageOverlay:hover span {
   visibility: visible;
 }
 
@@ -194,7 +194,8 @@
 }
 
 
-
+@import 'sass/partials/perfect-scrollbar';
+@import 'sass/partials/new-perfect-scrollbar';
 @import 'sass/partials/redactor';
 @import 'sass/partials/new-color-picker';
 @import 'sass/partials/plaintext';

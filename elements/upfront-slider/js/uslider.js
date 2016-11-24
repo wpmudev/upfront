@@ -271,8 +271,22 @@ var USliderView = Upfront.Views.ObjectView.extend({
 
 		props.slidesLength = props.slides.length;
 
-		props.imageWidth = props.primaryStyle == 'side' ?  Math.round(props.rightImageWidth / props.rightWidth * 100) + '%' : '100%';
-		props.textWidth =  props.primaryStyle == 'side' ? Math.round((props.rightWidth - props.rightImageWidth) / props.rightWidth * 100) + '%' : '100%';
+		props.imageWidth = '100%';
+		props.textWidth = '100%';		
+		
+		if(props.primaryStyle == 'side') {
+			var imgPercent = Math.round(props.rightImageWidth / props.rightWidth * 100)
+				textPercent = Math.round((props.rightWidth - props.rightImageWidth) / props.rightWidth * 100)
+			;
+			
+			props.imageWidth = imgPercent + '%';
+			props.textWidth = textPercent + '%';
+			
+			// If total is 101 because of the round we decrease textWidth with 1%
+			if((imgPercent + textPercent) > 100) {
+				props.textWidth = (textPercent - 1) + '%';
+			}
+		}
 
 		props.imageHeight = '100%';
 		if (props.slides.length) {
@@ -635,7 +649,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				elementCols = me.get_element_columns();
 				colWidth = me.get_element_max_columns_px() / me.get_element_max_columns();
 				height = $slide.height();
-
+								
 				ui.element.parent().closest('.ui-resizable').resizable('disable');
 
 				$slide.resizable('option', {
@@ -651,11 +665,16 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			resize: function(e, ui){
 				if(!ui.element.hasClass('uslide-image'))
 					return;
-				var imageWidth = ui.helper.width(),
-					textWidth = elementWidth - imageWidth - 30,
-					textCss = {width: textWidth},
+				
+				var padding_left = parseInt( me.model.get_breakpoint_property_value("left_padding_use", true) ?  me.model.get_breakpoint_property_value('left_padding_num', true) : 0, 10 ),
+					padding_right = parseInt( me.model.get_breakpoint_property_value("right_padding_use", true) ? me.model.get_breakpoint_property_value('right_padding_num', true) : 0, 10 ),
+					newElementWidth = parseInt( elementWidth - ( padding_left + padding_right ) ),
+					imageWidth = ui.helper.width(),
+					textWidth = newElementWidth - imageWidth - 20,
+					textCss = {width: textWidth},	
 					imgCss = {width: imageWidth}
 				;
+
 				me.calculateImageResize({width: imageWidth, height: ui.element.height()}, slide);
 
 				if(style == 'right')

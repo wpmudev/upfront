@@ -75,6 +75,25 @@ class Upfront_Uwidget {
 			Upfront_Uwidget_WP_Defaults::increment_calendar_widget_instance( $callback[0] );
 		}
 
+
+		// Allows plugins to define widgets that just need to be passed through i.e.
+		// those that will not work in upfront editor context making them broken
+		// All aaded widgets should be in form:
+		// array( 'class' => 'Widget_Class', 'text' => 'Text that will be displayed in editor')
+		$plugins_widgets = apply_filters('upfront-widget_plugins_widgets', array());
+
+
+		foreach ($plugins_widgets as $pw) {
+			if( defined( "DOING_AJAX" ) && DOING_AJAX && is_a($callback[0], $pw['class'])) {
+				return $pw['text'];
+			} elseif (is_a($callback[0], $pw['class'])) {
+				ob_start();
+				the_widget($pw['class'], $instance, $args);
+				$out = ob_get_clean();
+				return $out;
+			}
+		}
+
 		ob_start();
 		call_user_func_array($callback, array($args, $instance));
 		$out = ob_get_clean();
@@ -160,7 +179,7 @@ class Upfront_Uwidget {
 						$fields[$id]['options'][$option->getAttribute('value')] = $option->nodeValue;
 						if ( empty($fields[$id]['value']) ) $fields[$id]['value'] = $option->nodeValue;
 					}
-					
+
 				} elseif('textarea' === strtolower($node->nodeName)) {
 					$fields[$id]['type'] = $node->nodeName;
 					$fields[$id]['value'] = $node->nodeValue;

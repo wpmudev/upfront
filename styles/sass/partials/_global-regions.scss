@@ -22,16 +22,12 @@
 	margin-bottom: 20px;
 }
 
-
-.upfront-add-region-modal .upfront-inline-modal-content {
-  background: -webkit-linear-gradient(left, transparent 50%, #c8e1f6 0);
-  background: -moz-linear-gradient(left, transparent 50%, #c8e1f6 0);
-  background: -ms-linear-gradient(left, transparent 50%, #c8e1f6 0);
-  background: -o-linear-gradient(left, transparent 50%, #c8e1f6 0);
-  background: linear-gradient(to right, transparent 50%, #c8e1f6 0);
+.upfront-add-region-modal .upfront-inline-modal-wrap .upfront-inline-modal-content {
+	padding: 30px;
 }
+
 .upfront-add-region-choice {
-  padding: 15px 0 0;
+  padding: 25px 0 0;
 }
 .upfront-add-region-choice .upfront-field-wrap-multiple {
   margin: 0 -20px;
@@ -42,26 +38,57 @@
   float: left;
   margin: 0;
   padding-left: 37px;
+  font-weight: normal;
 }
 .upfront-add-region-choice .upfront-field-multiple .upfront-field-radio {
   left: 20px;
 }
 .upfront-add-region-new {
-  clear: both;
-  width: 50%;
-  float: left;
-  padding-right: 20px;
+	clear: both;
+	width: 50%;
+	float: left;
+	padding-right: 20px;
+	margin-bottom: 25px;
 }
 .upfront-add-region-global {
-  width: 50%;
-  float: right;
-  padding-left: 20px;
+	width: 50%;
+	float: right;
+	padding-left: 20px;
+}
+
+.upfront-add-region-modal * {
+	font-weight: normal;
+}
+
+.upfront-add-region-title.upfront-settings-title {
+	font-weight: 300;
+	color: rgb(47, 71, 95);
 }
 
 #upfront-popup.global-region-manager {
-  max-width: 600px;
-  max-height: 400px;
+	max-width: 600px;
+	max-height: 400px;
 }
+
+.upfront-add-region-modal .upfront-inline-modal-save {
+	position: static;
+	display: block;
+	margin: auto;
+	border: 1px solid #a2bfda;
+	border-radius: 2px;
+	font-size: 14px;
+	color: #7c86a6;
+	width: 150px;
+	height: 38px;
+	background: #fff;
+	clear: both;
+	color: #6486a6;
+}
+
+.upfront-add-region-modal .upfront-inline-modal-save:hover {
+	border: 1px solid #607f99;
+}
+
 #upfront-popup.global-region-manager #upfront-popup-content {
   overflow: hidden;
   background: -webkit-linear-gradient(left, #e2f3ff 50%, #c8e1f6 0);

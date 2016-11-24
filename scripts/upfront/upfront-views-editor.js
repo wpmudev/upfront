@@ -18,6 +18,7 @@
 		"scripts/upfront/upfront-views-editor/css",
 		"scripts/upfront/upfront-views-editor/breakpoint",
 		"scripts/upfront/upfront-views-editor/region",
+		"scripts/upfront/upfront-views-editor/region/region-settings-sidebar",
 		"scripts/upfront/upfront-views-editor/commands",
 		"scripts/upfront/upfront-views-editor/topbar",
 		"scripts/upfront/upfront-views-editor/notifier",
@@ -58,6 +59,7 @@
 			CSS,
 			BreakPoint,
 			Region,
+			RegionSettingsSidebar,
 			Commands,
 			Topbar,
 			notifier,
@@ -84,7 +86,7 @@
 		];
 
 		// Auto-assign the template contents to internal variable
-		var _template_args = _.rest(arguments, 26),
+		var _template_args = _.rest(arguments, 27),
 			_Upfront_Templates = {}
 			;
 		_(_template_files).each(function (file, idx) {
@@ -130,6 +132,9 @@
 				"RegionPanelsAddRegion": Region.RegionPanelItemAddRegion,
 				"RegionFixedPanels": Region.RegionFixedPanels,
 				"RegionFixedEditPosition" : Region.RegionFixedEditPosition,
+				"RegionBgSetting": Region.RegionBgSetting,
+				"RegionBgSettingFixed": Region.RegionBgSettingFixed,
+				"RegionBgSettingLightbox": Region.RegionBgSettingLightbox,
 				"CSSEditor": CSS.CSSEditor,
 				"Insert_Font_Widget": Fonts.Insert_Font_Widget,
 				"GeneralCSSEditor": CSS.GeneralCSSEditor,

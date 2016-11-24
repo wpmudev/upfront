@@ -13,6 +13,7 @@ define([
 	var UaccordionView = Upfront.Views.ObjectView.extend({
 		model: UaccordionModel,
 		currentEditItem: '',
+		currentPanelId: false,
 		accordionTpl: Upfront.Util.template(accordionTpl),
 		elementSize: {width: 0, height: 0},
 
@@ -32,7 +33,7 @@ define([
 			this.model.get('properties').bind('add', this.render, this);
 			this.model.get('properties').bind('remove', this.render, this);
 
-			//Upfront.Events.on('entity:deactivated', this.stopEdit, this);
+			Upfront.Events.on('entity:deactivated', this.stopEdit, this);
 
 			this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
 		},
@@ -51,17 +52,7 @@ define([
 		/**
 		 * Stops content editing for the active panel
 		 */
-		/*stopEdit: function() {
-			var $panelcontent = this.$el.find('.accordion-panel-active .accordion-panel-content');
-			$panelcontent.each(function () {
-				var $me = $(this),
-					editor = $me.data('ueditor');
-
-				if (editor && editor.stop) {
-					editor.stop();
-				}
-			});
-
+		stopEdit: function() {
 			var $paneltitle = this.$el.find('.accordion-panel .accordion-panel-title');
 			$paneltitle.each(function () {
 				var $me = $(this),
@@ -74,7 +65,7 @@ define([
 
 			Upfront.Events.trigger('upfront:element:edit:stop');
 
-		},*/
+		},
 		addPanel: function(event) {
 			event.preventDefault();
 			this.property('accordion').push({
@@ -178,7 +169,8 @@ define([
 			;
 			try { content = content_ed.getValue(true); } catch (e) { content = ''; }
 			try { title = title_ed.getValue(true); } catch (e) { title = ''; }
-
+			
+			this.currentPanelId = $title.attr('id');
 			this.property('accordion')[panelId].content = content || $content.html();
 			this.property('accordion')[panelId].title = title || $title.html();
 		},
@@ -216,7 +208,8 @@ define([
 						.ueditor({
 							linebreaks: false,
 							disableLineBreak: true,
-							airButtons: false,
+							air: false,
+							autostart: false,
 							placeholder: 'Panel '+count
 						})
 						.on('start', function () {
@@ -232,15 +225,15 @@ define([
 							// ... so apparently, `linebreaks` argument above wreaks havoc on everything when set to `true`,
 							// and `disableLineBreak` does nothing.
 							// Very well then, do it ourselves.
-							if (13 === e.which) return false;
-							if (e.which === 9) {
+							if (e.which === 9 || e.which === 13 ) {
 								e.preventDefault();
-								self.editContent();
+								e.stopImmediatePropagation();
+								return false;
 							}
 						})
 						.addClass('uf-click-to-edit-text')
 					;
-
+					
 					$title.data('ueditor').stop();
 					count++;
 				});
@@ -271,6 +264,8 @@ define([
 			} else {
 				this.$el.find('.accordion-panel i').remove();
 			}
+			
+			this.$el.find('div#'+ this.currentPanelId).parent().addClass('accordion-panel-active').siblings().removeClass('accordion-panel-active');
 			this.$el.find('.accordion-panel:not(.accordion-panel-active) .accordion-panel-content').hide();
 
 			Upfront.Events.trigger('entity:object:refresh', this);

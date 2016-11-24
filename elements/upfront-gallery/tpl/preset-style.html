@@ -1,18 +1,14 @@
-#page .<?php echo $properties['id'] ?> .ugallery_item {
-	 <?php if(!empty($properties['useborder'])) { ?>
-        <?php if(!empty($properties['borderwidth']) && !empty($properties['bordertype']) && !empty($properties['bordercolor'])) { ?>border: <?php echo $properties['borderwidth'] ?>px <?php echo $properties['bordertype'] ?> <?php echo $properties['bordercolor'] ?>;<?php } ?>
-    <?php } else { ?>
-        border: none;
-    <?php } ?>
-}
-
-#page .<?php echo $properties['id'] ?> .ugallery_item {
+#page .<?php echo $properties['id'] ?> .ugallery_item .ugallery_border {
+	<?php if(!empty($properties['useborder'])) { ?>
+		<?php if(!empty($properties['borderwidth']) && !empty($properties['bordertype']) && !empty($properties['bordercolor'])) { ?>border: <?php echo $properties['borderwidth'] ?>px <?php echo $properties['bordertype'] ?> <?php echo $properties['bordercolor'] ?>;<?php } ?>
+	<?php } else { ?>
+		border: none;
+	<?php } ?>
 	<?php if(!empty($properties['useradius'])) { ?>
         border-radius: <?php echo $properties['borderradius1'] ? $properties['borderradius1'] : 0 ?>px <?php echo $properties['borderradius2'] ? $properties['borderradius2'] : 0 ?>px <?php echo $properties['borderradius4'] ? $properties['borderradius4'] : 0 ?>px <?php echo $properties['borderradius3'] ? $properties['borderradius3'] : 0 ?>px;
     <?php } else { ?>
         border-radius: 0px;
     <?php } ?>
-	overflow: visible;
 }
 
 #page .upfront-output-ugallery.<?php echo $properties['id'] ?> .ugallery-thumb-title p,

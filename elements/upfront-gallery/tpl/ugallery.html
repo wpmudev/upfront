@@ -27,10 +27,9 @@
 		  <?php if ($images[$i]['imageLinkType'] !== 'unlink') { ?>
 			<a class="ugallery_link ugallery_link<?php echo !empty($images[$i]['imageLinkType']) && $images[$i]['imageLinkType'] == 'image' ? ' ugallery_lightbox_link' : $images[$i]['imageLinkType'] ?>" href="<?php echo $images[$i]['imageLinkUrl'] ?>" target="<?php echo $images[$i]['imageLinkTarget'] ?>" title="">
 			<?php } ?>
-				<img src="<?php echo $images[$i]['src'] ?>" alt="" class="ugallery-image" style="<?php echo !empty($images[$i]['loading']) && $images[$i]['loading'] ? 'display:none;' : '' ?> margin-left:<?php echo $images[$i]['margin']['left'] ?>px;  margin-top:<?php echo $images[$i]['margin']['top'] ?>px;width:<?php echo $thumbWidth ?>px; height:<?php echo $thumbHeight ?>px">
-				<?php if(!empty($in_editor)) { ?>
-				<i class="remove-image"></i>
-				<?php } ?>
+				<span class="ugallery_border">
+					<img src="<?php echo $images[$i]['src'] ?>" alt="" class="ugallery-image" style="<?php echo !empty($images[$i]['loading']) && $images[$i]['loading'] ? 'display:none;' : '' ?> margin-left:<?php echo $images[$i]['margin']['left'] ?>px;  margin-top:<?php echo $images[$i]['margin']['top'] ?>px;width:<?php echo $thumbWidth ?>px; height:<?php echo $thumbHeight ?>px">
+				</span>
 
 				<?php if ($usingNewAppearance === false) { ?>
 					<?php if($captionType != 'none' || !empty($in_editor)) { ?>
@@ -48,6 +47,11 @@
 			<?php if ($images[$i]['imageLinkType'] !== 'unlink') { ?>
 			</a>
 			<?php } ?>
+
+			<?php if(!empty($in_editor)) { ?>
+			<i class="remove-image"></i>
+			<?php } ?>
+
 		</div><?php } ?>
 	</div>
 <?php } else { ?>
