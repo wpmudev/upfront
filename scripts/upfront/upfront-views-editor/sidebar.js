@@ -277,6 +277,7 @@
                 if (!this.prevented_usage_type) this.prevented_usage_type = type; // don't stack up on prevented types, keep the original
                 $('#preventUsageOverlay span').html(preventUsageText);
                 $('#preventUsageOverlay').show();
+                $('#preventElementsUsageOverlay span').html(preventUsageText);
 				$('#preventElementsUsageOverlay').show();
             },
             allowUsage: function(type) {
@@ -299,6 +300,9 @@
                 // Header
                 this.sidebar_commands.header.render();
                 output.append(this.sidebar_commands.header.el);
+
+								// Shrink Sidebar on Low Resolution Screens.
+								this.addHoverSidebarClasses();
 
                 // Editor Mode
                 //this.editor_mode.render();
@@ -436,6 +440,17 @@
                 var height = $(window).height();
                 this.$('#sidebar-ui-toggler').height(height);
             },
+
+						// On hover, add classes allowing sidebar to shrink on low resolutions.
+						addHoverSidebarClasses: function() {
+							// On Mouse Enter.
+							$('#sidebar-ui, #element-settings-sidebar, #region-settings-sidebar').hover(function() {
+								$('#sidebar-ui, #element-settings-sidebar, #region-settings-sidebar').addClass('upfront-sidebar-hover');
+							// On Mouse Leave.
+							}, function() {
+								$('#sidebar-ui, #element-settings-sidebar, #region-settings-sidebar').removeClass('upfront-sidebar-hover');
+							});
+						},
 
             toggleSidebar: function(instant){
                 var me = this,

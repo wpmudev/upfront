@@ -206,6 +206,17 @@ div.preset-manager-panel .checkbox-tooltip{
     left: auto;
     right: 8px;
 }
+.upfront-element-controls .upfront-inline-panel .padding-lock{
+    left: auto;
+    right: 45px;
+}
+.upfront-element-controls .upfront-inline-panel .upfront-padding-container-left{
+    float: left;
+}
+.upfront-post_data-part.part-module-panel .upfront-settings-item-title .toggle{
+    right: auto;
+    left: 0;
+}
 /*-------------- End of General --------------*/
 
 /*-------------- Sidebar --------------*/
@@ -215,6 +226,8 @@ div.preset-manager-panel .checkbox-tooltip{
 #sidebar-ui{
     left: auto;
     right: 0;
+    border-left: 1px solid #1a2d40;
+    border-right: none;
 }
 #sidebar-ui .command-logo{
     float: right;
@@ -300,8 +313,9 @@ div.preset-manager-panel .checkbox-tooltip{
 #upfront-entity_list-pagination{
     float: right;
 }
-#upfront-search_action, #upfront-search_container{
-    float: left;
+#upfront-search_action, 
+#upfront-search_container{
+    float: left !important;
 }
 .upfront-pagination_navigation .upfront-pagination_page-item{
     margin-right:5px;
@@ -338,6 +352,14 @@ div.preset-manager-panel .checkbox-tooltip{
 }
 #sidebar-ui .upfront-typography-fields-left{
     width: 53%;
+}
+#sidebar-ui .sidebar-panels{
+    border-left: 1px solid #324253;
+    border-right: none;
+}
+#element-settings-sidebar{
+    border-left: 1px solid #334454;
+    border-right: none;
 }
 /*-------------- End of Sidebar --------------*/
 
@@ -442,6 +464,12 @@ li.activate-breakpoints-dropdown{
     margin-left: -15px;
     margin-right: auto;
 }
+.upfront-post_data-part.part-module-panel.preset_specific .upfront-settings-item-title .upfront-field-wrap-checkboxes label span{
+    padding: 0 15px 0 0;
+}
+.upfront-settings-item-title span, .upfront-global-social-settings .upfront-settings-item-title span{
+    margin-right: 0;
+}
 /*Element Setting*/
 #element-settings-sidebar .padding-settings .padding-top,
 #element-settings-sidebar .padding-settings .padding-bottom{
@@ -468,7 +496,9 @@ li.activate-breakpoints-dropdown{
     left: 11px;
     right: auto;
 }
-
+#sidebar-ui .apply-post-template, #sidebar-ui .save-post-template{
+    float: left;
+}
 /*CSS Editor*/
 #upfront-csseditor, #upfront-general-csseditor{
     left: 0;

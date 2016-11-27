@@ -346,6 +346,9 @@ abstract class Upfront_PostPart_View {
 	 * @return string Final post full content.
 	 */
 	protected function _get_content () {
+		$content = apply_filters('upfront-post_data-get_content-before', false);
+		if (!empty($content)) return $content;
+
 		global $post;
 		$post = $this->_post;
 		setup_postdata($post);

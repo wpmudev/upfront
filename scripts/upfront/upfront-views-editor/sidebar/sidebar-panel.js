@@ -4,8 +4,9 @@
             : Upfront.mainData.l10n.global.views
         ;
     define([
-        'scripts/upfront/upfront-views-editor/mixins'
-    ], function (Mixins) {
+      'scripts/upfront/upfront-views-editor/mixins',
+			'scripts/perfect-scrollbar/perfect-scrollbar'
+    ], function (Mixins, perfectScrollbar) {
         return Backbone.View.extend(_.extend({}, Mixins.Upfront_Scroll_Mixin, {
             "tagName": "li",
             "className": "sidebar-panel",
@@ -26,14 +27,18 @@
 
                 this.stop_scroll_propagation(this.$el.find('.sidebar-panel-content'));
 
-                if( this.sections){
-                    me.$el.find('.sidebar-panel-title').after("<ul class='sidebar-panel-tabspane'></ul>");
-                    this.sections.each(function (section) {
-                        section.render();
-                        me.$el.find('.sidebar-panel-tabspane').append( "<li data-target='" + section.cid +  "' class='sidebar-panel-tab'>" +  section.get_title() +  "</li>");
-                        me.$el.find('.sidebar-panel-content').append("<div class='sidebar-tab-content' id='" + section.cid +"'></div>");
-                        me.$el.find(".sidebar-panel-content").find(".sidebar-tab-content").last().html(section.el);
-                    });
+								if (this.sections) {
+									me.$el.find('.sidebar-panel-title').after("<ul class='sidebar-panel-tabspane'></ul>");
+									this.sections.each(function (section) {
+										section.render();
+										me.$el.find('.sidebar-panel-tabspane').append( "<li data-target='" + section.cid +  "' class='sidebar-panel-tab'>" +  section.get_title() +  "</li>");
+										me.$el.find('.sidebar-panel-content').append("<div class='sidebar-tab-content' id='" + section.cid +"'></div>");
+										me.$el.find(".sidebar-panel-content").find(".sidebar-tab-content").last().html(section.el);
+										// Add JS Scrollbar.
+										perfectScrollbar.initialize(me.$el.find('.sidebar-panel-content')[0], {
+											suppressScrollX: true
+										});
+                  });
                 }
 
                 if ( this.on_render ) this.on_render();

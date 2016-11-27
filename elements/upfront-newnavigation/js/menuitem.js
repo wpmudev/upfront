@@ -223,8 +223,13 @@ return (function ($) {
 		},
 
 		render: function (event) {
-			var me = this;
-			var content = '<a class="menu_item uf-click-to-edit-text';
+			var me = this,
+				content = '<a class="menu_item uf-click-to-edit-text',
+				menu_set_url = ( typeof this.model.link['url'] !== undefined )
+					? this.model.link['url'].replace(Upfront.Settings.site_url, '').replace('/','')
+					: '',
+				current_url = Backbone.history.fragment
+			;
 
 			if(me.newitem) content = content + ' new_menu_item menu_item_placeholder';
 
@@ -237,6 +242,8 @@ return (function ($) {
 					content = content + '<span class="missing-lightbox-warning"></span>';
 
 			$(this.el).html(content).addClass('menu-item-depth-'+me.level);
+			if ( menu_set_url === current_url ) $(this.el).addClass('current-menu-item');
+			
 			$(this.el).data('depth', me.level);
 			this.createInlineControlPanel();
 
@@ -269,12 +276,23 @@ return (function ($) {
 					currentcontext.addClass('time_being_display');
 					currentcontext = currentcontext.parent().parent('ul');
 				}
+				
+				// add class if last region to allocate clearance
+				var $region = this.$el.closest('.upfront-region-container'),
+					$lastRegion = $('.upfront-region-container').not(
+					'.upfront-region-container-shadow').last()
+				;
+				if ( $lastRegion.get(0) == $region.get(0) ) $region.addClass('upfront-last-region-padding');
+				
 
 			} else {
 				this.controlsVisible = false;
 				if (this.$el.parents('.menu').find('.controls-visible').length === 0) {
 					this.$el.parents('.menu').sortable('enable');
 				}
+				
+				// remove class that was previously added on last region
+				this.$el.closest('.upfront-region-container').removeClass('upfront-last-region-padding');
 			}
 		},
 

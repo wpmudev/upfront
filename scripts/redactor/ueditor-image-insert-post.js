@@ -210,7 +210,7 @@ var WP_PostImageInsert = base.ImageInsertBase.extend({
             image = this.getSelectedImage(imagePost),
             imageData = _.extend( {}, this.wp_defaults, {
                 attachment_id: imagePost.ID,
-                caption: imagePost.post_excerpt ?  imagePost.post_excerpt : "" ,
+                caption: imagePost.post_excerpt ?  imagePost.post_excerpt : this.wp_defaults.caption ,
                 link_url: "",
                 image: image,
                 style: {
@@ -230,7 +230,7 @@ var WP_PostImageInsert = base.ImageInsertBase.extend({
     },
     render: function(){
         var data = this.data.toJSON();
-
+		
         // Set alignment to style
         if( data.variant_id )
             data.style.wrapper.alignment = data.variant_id;
@@ -252,7 +252,24 @@ var WP_PostImageInsert = base.ImageInsertBase.extend({
         this.make_caption_editable();
         this.updateControlsPosition();
         $tools_el.append('<a href="#" contenteditable="false" class="upfront-icon-button upfront-icon-button-delete ueditor-insert-remove"></a>');
-
+		
+		// After rendering, let's sync the redactor if exists
+		var ueditor;
+		if ( this.$editor && this.$editor.data('ueditor') ) {
+			ueditor = this.$editor.data('ueditor');
+			ueditor.redactor.code.sync();
+		}
+		
+		// add "wp-caption-text" class
+		var caption_ueditor = this.caption_ueditor;
+		if ( typeof caption_ueditor !== undefined && caption_ueditor && typeof caption_ueditor.redactor !== undefined ) {
+			caption_ueditor.redactor.events.on('ueditor:change', function(e){
+				caption_ueditor.$el.find('p').each(function(){
+					var $p = $(this); 
+					if ( !$p.hasClass('wp-caption-text') ) $p.addClass('wp-caption-text');
+				});
+			});
+		}
     },
     getStyleView: function(){
         if(this.styleView)

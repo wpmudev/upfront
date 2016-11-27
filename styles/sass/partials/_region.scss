@@ -14,6 +14,48 @@
 	width: 100%;
 }
 
+#region-settings-sidebar .upfront-inline-modal-content {
+	padding: 0;
+	background: #f7fbff;
+}
+
+#region-settings-sidebar .upfront-inline-modal-wrap {
+	border: none;
+	/* Override inline modal styles. */
+	top: 0 !important;
+	left: 0 !important;
+	box-shadow: none;
+}
+
+#region-settings-sidebar .upfront-region-modal-bg {
+	background: #3d5266;
+	width: 260px;
+	margin-top: 46px;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 10001003;
+}
+
+.upfront-bg-setting-type {
+	float: left;
+	width: 36%;
+}
+
+#region-settings-sidebar .upfront-bg-setting-type {
+	float: none;
+	width: auto;
+}
+
+#region-settings-sidebar .upfront-bg-setting-type > div:first-of-type {
+	height: 11px;
+}
+
+#region-settings-sidebar .upfront-bg-setting-type .upfront-bg-setting-label {
+	float: left;
+	margin: 0 10px 3px 0;
+}
+
 /* Fix bug where if opacity is set on upfront-region-container-bg, controls become unaccessible (or even invisible) */
 .upfront-region-container-active .upfront-region-container-bg,
 .upfront-region-container-active .upfront-region {
@@ -24,7 +66,7 @@
 .upfront-region-container-has-this_post .upfront-region,
 .upfront-region-container-has-content .upfront-region,
 .upfront-region-container-has-comments .upfront-region {
-  min-height: 0 !important;
+	min-height: 0 !important;
 }
 
 .upfront-region-current {
@@ -36,13 +78,13 @@
 	z-index: 12;
 }
 .upfront-region {
-  /*background-color: rgba(127, 127, 127, .5);*/
-  padding: 0;
-  float: left;
-  /*width: 100%;*/
-  position: relative;
-  min-height: 90px;
-  /*z-index: 1;*/
+  	/*background-color: rgba(127, 127, 127, .5);*/
+	padding: 0;
+	float: left;
+	/*width: 100%;*/
+	position: relative;
+	min-height: 90px;
+	/*z-index: 1;*/
 }
 .upfront-region-side-fixed,
 .upfront-region-side-lightbox {
@@ -94,7 +136,7 @@
 	bottom: 0;
 }
 .upfront-region-bg-overlay {
-  overflow: hidden;
+	overflow: hidden;
 }
 .upfront-region-bg-map {
 	position: absolute !important;
@@ -312,6 +354,9 @@
 .upfront-region-fixed-editing .upfront-region-container-active .upfront-module {
 	opacity: 0.5;
 }
+.upfront-add-region-container-active .upfront-icon-control-region-resize-s {
+	display: none;
+}
 .upfront-region-resize-handle {
 	position: absolute;
 	bottom: -14px;
@@ -325,9 +370,9 @@
 	visibility: hidden;
 }
 .upfront-region-resize-handle-n {
-  top: -14px;
-  bottom: auto;
-  cursor: ns-resize;
+	top: -14px;
+	bottom: auto;
+	cursor: ns-resize;
 }
 .upfront-region-resize-handle-e {
 	top: 0;
@@ -393,10 +438,10 @@
 	z-index: 9997;
 }
 .upfront-region-editing .upfront-region-container-active div.upfront-grid-layout {
-    z-index: 9998;
+	z-index: 9998;
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region-sub-container-active {
-    z-index: 9999;
+	z-index: 9999;
 }
 
 .upfront-region-editing-modal {
@@ -410,6 +455,11 @@
 .upfront-region-editing-modal .upfront-entity_meta{
 	display: none !important;
 }
+
+.upfront-add-region-title.upfront-settings-title {
+	text-align: center;
+}
+
 .upfront-region-editing .upfront-region-container-active .upfront-region-active-overlay,
 .upfront-region-editing .upfront-region-active .upfront-region-active-overlay,
 .upfront-region-side-left.upfront-add-region-ani:after,
@@ -435,7 +485,7 @@
 	background: rgba(175, 185, 195, 0.5);
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region-sub-container .upfront-region-side {
-  background: none;
+	background: none;
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region:after {
 	content: " ";
@@ -930,17 +980,17 @@
 	padding: 10px 6px 10px 10px;
 }
 .upfront-inline-panel-item.labeled{
-    line-height: 40px !important;
-    color:#fff;
-    min-width: 200px !important;
-    padding: 0 10px;
+	line-height: 40px !important;
+	color:#fff;
+	min-width: 200px !important;
+	padding: 0 10px;
 }
 .upfront-inline-panel-item .upfront-inline-panel-item-label{
-    display: block;
-    width: 100%;
-    height: 100%;
-		overflow: hidden;
-		font:normal 11px/2.7 Verdana, sans serif;
+	display: block;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	font:normal 11px/2.7 Verdana, sans serif;
 }
 .upfront-region-panel-item-add-region .upfront-icon {
 	padding: 2px;
@@ -1038,130 +1088,233 @@
 	display: inline-block;
 	width: 40px;
 }
-.upfront-region-bg-setting-header {
-  margin: -16px -16px 0;
-  padding: 0 16px 12px;
-  border-bottom: 1px solid #cce1f4;
-  position: relative;
+#region-settings-sidebar .upfront-region-bg-setting-header {
+	margin: 0;
+	padding: 10px;
+	border-bottom: 1px solid #cce1f4;
+	position: relative;
+	background: white;
 }
 .upfront-region-bg-setting-name {
-	color: #6a8eb5;
+	color: #54708c;
 }
+
+.upfront-region-name-edit-value {
+	font-size: 15px;
+}
+
+.upfront-region-type-icon {
+	width: 24px;
+	height: 24px;
+	display: block;
+	float: left;
+	margin-right: 5px;
+	background-image: url("../img/uf-ui-sprite.svg?v=20131127");
+	background-repeat: no-repeat;
+}
+.upfront-region-type-icon.upfront-region-type-icon-color {
+	background-position: -40px -508px
+	/*border: 1px solid #A2BFDA;
+	 *box-shadow: inset 0 0 0 1px #fff;*/
+}
+.upfront-region-type-icon.upfront-region-type-icon-image {
+	background-position: -163px -508px;
+}
+.upfront-region-type-icon.upfront-region-type-icon-video {
+	background-position: -411px -508px;
+}
+.upfront-region-type-icon.upfront-region-type-icon-map {
+	background-position: -162px -542px;
+}
+.upfront-region-type-icon.upfront-region-type-icon-slider {
+	background-position: -39px -541px;
+}
+.upfront-region-type-icon.upfront-region-type-icon-featured {
+	background-position: -287px -507px;
+}
+
 .upfront-region-bg-setting-name-wrap {
-	padding: 16px 0 0;
+	padding: 0;
 }
+
 .upfront-region-bg-setting-is-global {
-  display: inline-block;
-  background: #20394f;
-  color: #e2f3ff;
-  border-radius: 3px;
-  font: 10px/10px Verdana, sans-serif;
-  padding: 2px 3px;
-  margin: 0 0 0 5px;
+	color: #96adc2;
+	font: 10px/10px Verdana, sans-serif;
+	padding: 7px 0;
+	margin: 0;
+	float: right;
 }
+
+.upfront-region-bg-setting-header:hover .upfront-region-name-edit-trigger {
+	display: block;
+}
+
 a.upfront-region-name-edit-trigger {
-	font-size: 11px;
-	font-family: verdana, sans-serif;
-	color: #243877;
-	text-decoration: none;
-	position: relative;
-	margin: 0 0 0 25px;
-	display: inline-block;
-	height: 18px;
-	line-height: 20px;
-}
-a.upfront-region-name-edit-trigger:hover {
-	border-bottom: 1px solid #00cf8b;
-	color: #243877;
-	text-decoration: none;
-}
-a.upfront-region-name-edit-trigger:before {
+	display: none;
+	border: 1px solid #a2bfda;
+	border-radius: 2px;
+	width: 52px;
+	height: 20px;
+	background: #f6fbff;
+	color: #6486a6;
+	font-size: 13px;
+	text-align: center;
+	line-height: 19px;
+	box-sizing: border-box;
 	position: absolute;
-	top: 0;
-	left: -20px;
+	right: 10px;
+	top: 12px;
+}
+
+a.upfront-region-name-edit-trigger:hover {
+	border: 1px solid #a2bfda;
 }
 .upfront-region-bg-setting-name-edit .upfront-field-wrap-text {
-	width: 170px;
+	width: 100px;
 	margin-right: 10px;
 }
 .upfront-region-bg-setting-name-edit .upfront-field-wrap {
-  float: left;
+	float: left;
+	margin-top: 0;
 }
 .upfront-region-bg-setting-name-edit .upfront-field-wrap-checkboxes {
-  position: relative;
-  top: 7px;
+	position: relative;
+	top: 7px;
 }
-.upfront-region-bg-setting-name-edit .upfront-region-bg-setting-localize {
-  position: relative;
-  top: 4px;
-  border-bottom: 1px solid #00d78b;
+.upfront-region-bg-setting-name-edit .upfront-region-bg-setting-localize, .upfront-region-bg-setting-name-edit .upfront-region-bg-setting-globalize {
+	position: relative;
+	top: 4px;
+	border-bottom: 1px solid #00d78b;
 }
 .upfront-region-bg-setting-name-edit .upfront-region-bg-setting-localize:before {
-  display: inline-block;
-  content: "";
-  width: 15px;
-  height: 15px;
-  background-image: url('../img/uf-core-el-sprite.svg');
-  background-position: -483px -141px;
-  position: absolute;
-  top: 2px;
-  right: -20px;
+	display: inline-block;
+	content: "";
+	width: 15px;
+	height: 15px;
+	background-image: url('../img/uf-core-el-sprite.svg');
+	background-position: -483px -141px;
+	position: absolute;
+	top: 2px;
+	right: -20px;
 }
 .upfront-region-bg-setting-name-edit .upfront-region-bg-setting-name-save {
-  float: right;
-  background: #e6f3ff;
-  height: 26px;
-  line-height: 26px;
-  border: 1px solid rgb(163, 191, 217);
-  border-radius: 3px;
-  padding: 0 10px;
+	float: right;
+	background: #e6f3ff;
+	height: 26px;
+	line-height: 26px;
+	border: 1px solid #a2bfda;
+	border-radius: 3px;
+	padding: 0 10px;
+	color: #6486a6;
+	text-transform: capitalize;
+}
+.upfront-region-bg-setting-region-style-container {
+	background: #e7ecf2;
+	padding: 16px 16px 5px;
+}
+.upfront-region-bg-setting-region-style-container .upfront-field-label, .upfront-region-bg-setting-auto-resize span {
+	color: #96acc1;
+	font-weight: 300;
+	margin-bottom: 8px;
+}
+.upfront-region-bg-setting-region-style-container .upfront-field-label:after, .upfront-region-bg-setting-auto-resize span:after {
+	content: ':';
 }
 .upfront-region-bg-setting-region-type {
-	margin: 0 0 20px;
+	width: 139px;
+	display: inline-block;
 }
 .upfront-region-bg-setting-region-nav {
 	width: 45%;
 	float: right;
 	margin: 0 0 20px;
 }
+
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior, #region-settings-sidebar .upfront-region-bg-setting-region-nav {
+	padding: 16px;
+	margin: 0;
+}
+
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-bg-setting-label, #region-settings-sidebar .upfront-region-bg-setting-region-nav .upfront-bg-setting-label {
+	font-size: 11px;
+	text-transform: uppercase;
+	line-height: normal;
+	color: #2f475f;
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+	font-weight: 700;
+	position: relative;
+	letter-spacing: 0.34px;
+}
+
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple, #region-settings-sidebar .upfront-region-bg-setting-region-nav .upfront-field-multiple {
+	margin: 0 15px 5px 0;
+}
+
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple label,
+#region-settings-sidebar .upfront-region-bg-setting-region-nav .upfront-field-multiple label {
+	color: #96acc1;
+	font-size: 11px;
+	font-family: verdana, sans-serif;
+	padding: 0;
+	font-weight: normal;
+}
+
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior {
+	padding-right: 0;
+	width: 55%;
+}
+
 .upfront-region-bg-setting-region-behavior {
 	width: 50%;
 	float: left;
   margin: 0 0 20px;
 }
-.upfront-region-bg-setting-footer {
+
+#region-settings-sidebar .upfront-region-bg-setting-footer {
 	color: #1f2f3f;
 	font-family: "Verdana";
 	font-size: 11px;
-	padding: 0 24px;
-	background: #cee1f2;
-	margin: 0 -16px;
-	position: relative;
-	top: 16px;
-	clear: both;
+	padding: 10px 16px;
+	border-top: 1px solid #eaeff5;
+	border: none;
+}
+
+.upfront-region-bg-setting-sticky > div {
+	margin: 0;
+}
+
+.upfront-region-bg-setting-region-type > div {
+	margin: 0;
+}
+
+#region-settings-sidebar .auto-resize-on:after {
+	content: ' ';
 }
 
 .upfront-region-bg-setting-auto-resize {
 	cursor: pointer;
-	float: right;
 	white-space: nowrap;
 	color: #513a4e;
 	font-family: "Verdana";
 	font-size: 11px;
 	line-height: 16px;
-	margin: 20px 0 0;
+	margin: 0;
+	vertical-align: top;
+	display: inline-block;
+	margin-left: 14px;
 }
-.upfront-region-bg-setting-auto-resize-disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
+
+.upfront-region-bg-setting-auto-resize span {
+	display: block;
 }
+
 .auto-resize-off, .auto-resize-on {
 	display: inline-block;
-	float: right;
+	float: none;
 	width: 40px;
 	height: 16px;
 	padding: 3px 4px;
-	margin: 0 0 0 10px;
+	margin: 5px 0 0;
 	border-radius: 8px;
 	background: #98a8b8;
 }
@@ -1181,48 +1334,286 @@ a.upfront-region-name-edit-trigger:before {
 	float: right;
 }
 
+.upfront-region-bg-setting-edit-css:before {
+	clear: both;
+}
+
 .upfront-region-bg-setting-edit-css {
+	display: block;
+	width: 8.4rem;
+	margin: 0;
+}
+
+#region-settings-sidebar .upfront-region-bg-setting-edit-css {
 	display: inline-block;
 	vertical-align: top;
-	padding: 10px 0;
+	padding: 0 10px;
+	margin: 10px 0;
+	border: 1px solid #b0c8e0;
+	border-radius: 3px;
+	width: auto;
 }
 .upfront-region-bg-setting-edit-css.upfront-icon:before {
 	background-position: -660px -44px;
 	width: 18px;
 	height: 15px;
 	margin-right: 5px;
-	margin-top: 6px;
+	margin-top: 4px;
 }
+
 .upfront-region-bg-setting-edit-css span {
 	display: inline-block;
-	color: #513a4e;
+	color: #6a8cab;
 	font-family: "Verdana";
 	font-size: 11px;
-  	border-bottom: 1px solid #1fcd8f;
-  	line-height: 1;
+	line-height: 1;
 	cursor: pointer;
 }
+
+.upfront-region-bg-setting-sticky .upfront-field-multiple label::before {
+    display: none;
+}
+
+.upfront-region-bg-setting-sticky label {
+	color: #8ba3bc;
+	font-weight: normal;
+	font-family: verdana, sans-serif;
+	cursor: pointer;
+}
+
 .upfront-region-bg-setting-floating-restrict,
 .upfront-region-bg-setting-sticky {
 	float: right;
 	margin: 4px 0 10px;
 }
 
+.upfront-region-bg-setting-sticky span.upfront-field-multiple {
+	padding-left: 0;
+}
+
+/* Make Sticky a toggle instead of checkbox */
+.upfront-region-bg-setting-sticky .upfront-field-multiple input {
+	display: none;
+}
+div.upfront-region-bg-setting-footer .upfront-field-multiple-selected .upfront-bg-setting-sticky-toggle {
+	background: #00ce8d;
+}
+
+.upfront-field-multiple.upfront-field-multiple-selected .upfront-bg-setting-sticky-toggle:after {
+	float: right;
+}
+
+.upfront-field-multiple .upfront-bg-setting-sticky-toggle:after {
+	content: " ";
+	display: block;
+	float: left;
+	width: 10px;
+	height: 10px;
+	border-radius: 5px;
+	background: #f5f5f5;
+}
+
+.upfront-bg-setting-sticky-toggle {
+	display: inline-block;
+	float: none;
+	width: 40px;
+	height: 16px;
+	padding: 3px 4px;
+	margin: 4px 0 0 7px;
+	border-radius: 8px;
+	background: #98a8b8;
+}
+
+.upfront-modal-bg-settings-fixed div.upfront-region-bg-setting-floating-restrict {
+	clear: both;
+	padding-top: 1px;
+}
+
+div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-sticky {
+	float: none;
+	margin: 0;
+}
 
 /* Padding Settings */
-.upfront-region-bg-setting-padding {
-	background: none;
-	overflow: hidden;
+#region-settings-sidebar .uf-settings-panel.upfront-settings_panel.advanced-settings.uf-settings-panel {
+	border-top: 1px solid #c4d5e5;
+}
+#region-settings-sidebar .uf-settings-panel.upfront-settings_panel.advanced-settings .uf-settings-panel__title:after {
+	content: '';
+	width: 0;
+	height: 0;
+	display: block;
+	position: absolute;
+	z-index: 1;
+	top: 14px;
+	right: 16px;
+	border-top: 4px solid transparent;
+	border-bottom: 4px solid transparent;
+	border-left: 4px solid #6a8db4;
+}
+
+#region-settings-sidebar .uf-settings-panel.upfront-settings_panel.advanced-settings.uf-settings-panel--expanded .uf-settings-panel__title:after {
+	top: 17px;
+	right: 15px;
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 4px solid #6a8db4;
+	border-bottom: 0 none;
+}
+
+#region-settings-sidebar .uf-settings-panel.upfront-settings_panel.advanced-settings.uf-settings-panel--expanded .uf-settings-panel__title {
+	background: #dae6f2;
+}
+
+#region-settings-sidebar .uf-settings-panel__title {
+	height: 38px;
+	background-color: #e6f2ff;
+	line-height: 37px;
+	padding-left: 15px;
+	border-bottom: 1px solid #c3d5e6;
+	cursor: pointer;
+	color: #2f476f;
+	font-size: 15px;
+	margin: 0;
 	position: relative;
-	padding: 16px 0;
-	top: 16px;
+}
+
+#region-settings-sidebar .upfront-region-bg-setting-padding {
+	background: #f7fbff;
+	overflow: hidden;
 	border-top: 1px solid #cce1f4;
+	padding: 16px;
+}
+
+.upfront-modal-bg-settings-fixed .upfront-region-bg-setting-padding {
+	border-top: 1px solid #cce1f4;
+	margin: 16px 0;
+	padding: 10px 0;
+	display: block;
 	clear: both;
 }
+
+#region-settings-sidebar .upfront-region-settings-responsive .upfront-region-bg-setting-region-style-container {
+	padding: 0;
+	background: none;
+}
+
+/* Region BG settings */
+#region-settings-sidebar .uf-region-bg-settings-panel-content {
+	max-height: 320px;
+	/*position: initial;*/
+	
+	.sp-container.sp-light.sp-alpha-enabled {
+		z-index: 99999999;
+	}
+}
+
+#region-settings-sidebar .uf-region-bg-settings-panel-content .uf-bgsettings-imageitem {
+	position: static;
+	
+	&:after {
+		content: '';
+		display: table;
+		clear: both;
+	}
+	
+	.uf-bgsettings-image-pos-y-num {
+		margin-top: -115px;
+		margin-left: 32px;
+		position: static;
+		float: left;
+	}
+	
+	.uf-bgsettings-image-pos-x-num {
+		margin-top: -75px;
+		margin-left: 30px;
+		position: static;
+		float: left;
+	}
+	
+	.upfront-field-wrap-number.uf-bgsettings-image-size {
+		position: static;
+		float: right;
+		margin-top: -155px;
+		margin-right: 40px;
+	}
+	
+	.uf-bgsettings-image-color {
+		position: static;
+		margin-top: -36px;
+		margin-right: 20px;
+		
+		.sp-replacer.sp-light {
+			display: block;
+			margin-top: 2px;
+		}
+	}
+}
+
+#region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem {
+
+	.uf-bgsettings-image-pos-y-num {
+		margin-top: -100px;
+		margin-left: 15px;
+	}
+	
+	.uf-bgsettings-image-pos-x-num {
+		margin-left: 13px;
+		margin-top: -60px;
+	}
+	
+	.upfront-field-wrap-number.uf-bgsettings-image-size {
+		margin-top: -131px;
+		margin-right: 25px;
+		
+		input.upfront-field.upfront-field-number {
+			margin-top: 17px;
+		}
+	}
+	
+	.uf-bgsettings-image-color {
+		position: static;
+		margin-top: -36px;
+		margin-right: 0;
+		
+		.sp-replacer.sp-light {
+			width: 18px;
+			float: left;
+		}
+	}
+}
+
 .upfront-region-bg-setting-padding .upfront-field-select-single {
 	width: 215px;
 	display:inline-block;
 }
+/* Hide checkbox to show as icon. */
+.upfront-region-bg-setting-padding-type .upfront-field-wrap-checkboxes input, .upfront-region-bg-setting-padding-type span:nth-child(2), div.upfront-region-bg-setting-padding-type label::before {
+	display: none;
+}
+
+.upfront-region-bg-setting-padding-type {
+	display: inline-block;
+	vertical-align: top;
+	height: 24px;
+	margin-left: -16px;
+	margin-bottom: 10px;
+}
+
+.upfront-region-bg-setting-padding .upfront-field-multiple span {
+	width: 24px;
+	height: 24px;
+	display: block;
+	background-image: url("../img/uf-core-el-sprite.svg");
+	/* Locked Lock Icon */
+	background-position: -258px -458px;
+	opacity: 0.5;
+}
+.upfront-region-bg-setting-padding .upfront-field-multiple-selected span {
+	/* Unlocked Lock Icon */
+	background-position: -258px -428px;
+}
+
 .upfront-region-bg-setting-padding .upfront-settings-item-title span {
 	margin-top: 3px;
 	display: inline-block;
@@ -1240,12 +1631,13 @@ a.upfront-region-name-edit-trigger:before {
 	height: 30px;
 }
 .upfront-region-bg-setting-padding .upfront-field-wrap-number {
-	width: 30%;
-	display: inline-block;
-	padding-left: 5px;
-	margin: 0;
-	position: relative;
-	top: -10px;
+	margin: 5px 0;
+}
+.upfront-region-bg-setting-padding-bottom {
+	float: right;
+}
+.upfront-region-bg-setting-padding-top {
+	float: left;
 }
 .upfront-region-bg-setting-padding .upfront-field-wrap-number label {
 	margin: 0;
@@ -1270,12 +1662,12 @@ a.upfront-region-name-edit-trigger:before {
 .upfront-region-bg-setting-lightbox-region .upfront-field-wrap-number,
 .upfront-region-bg-setting-lightbox-region .sp-cf,
 .upfront-region-bg-setting-lightbox-region .sp-cf label {
-  display: inline-block;
+	display: inline-block;
 }
 
 .upfront-region-bg-setting-lightbox-region .sp-cf.overlay_color,
 .upfront-region-bg-setting-lightbox-region .upfront-field-wrap-number.width_cols {
-  margin-right:40px;
+	margin-right:40px;
 }
 
 .upfront-region-container .open-responsive-item-controls {
@@ -1334,6 +1726,9 @@ a.upfront-region-name-edit-trigger:before {
 }
 .upfront-region-container.upfront-last-region-margin {
 	margin-bottom: 250px;
+}
+.upfront-region-container.upfront-last-region-padding {
+	padding-bottom: 250px;
 }
 .upfront-region-editing .upfront-region.controls-visible .responsive-item-controls {
 	display: block;

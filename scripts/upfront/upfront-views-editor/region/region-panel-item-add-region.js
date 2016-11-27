@@ -86,7 +86,12 @@
             add_region_modal: function (e) {
                 var to = this.options.to,
                     me = this,
-                    modal = new Modal({to: this.panel_view.panels_view.$el, button: true, width: 422}),
+                    modal = new Modal({
+											to: this.panel_view.panels_view.$el,
+											width: 500,
+											button: true,
+											button_text: l10n.add_region
+										}),
                     disable_global = ( ( to == 'left' || to == 'right' ) && me.model.get('scope') == 'global' );
                 var parentContainer = me.$el.parents('.upfront-region-center');
                 parentContainer.addClass('upfront-region-editing-modal');
@@ -202,6 +207,7 @@
                         if (!disable_global)
                             $content.find('.upfront-add-region-new').append(fields.make_global.$el);
                         $content.find('.upfront-add-region-global').append(fields.from_region.$el);
+												this.hide_or_show_resize_controls(true);
                     }, this)
                     .done(function (modal_view) {
                         if (me.from == 'new' || !me.from_region) {
@@ -212,6 +218,7 @@
                         }
                     })
                     .always(function (modal_view) {
+												me.hide_or_show_resize_controls(false);
                         parentContainer.removeClass('upfront-region-editing-modal');
                         parentContainer.next().find('.upfront-icon-control-region-resize').show();
                         modal_view.remove();
@@ -219,6 +226,14 @@
 
                 e.stopPropagation();
             },
+						hide_or_show_resize_controls: function(hide) {
+							if (hide) {
+								// Hide resize controls when add Region modal is open.
+								return this.$el.parents('.upfront-region-container-active').addClass('upfront-add-region-container-active');
+							}
+							// Show resize controls when add Region modal is closed.
+							return this.$el.parents('.upfront-region-container-active').removeClass('upfront-add-region-container-active');
+						},
             add_region: function () {
                 var to = this.options.to,
                     collection = this.model.collection,

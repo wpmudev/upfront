@@ -80,12 +80,7 @@ class Upfront_UtabsView extends Upfront_Object {
 	}
 
 	protected function _do_shortcode ($content) {
-		$do_processing = apply_filters(
-			'upfront-shortcode-enable_in_layout', 
-			(defined('UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES') && UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES ? false : true)
-		);
-		if ($do_processing) $content = do_shortcode($content);
-		return $content;
+		return Upfront_Codec::get('wordpress')->do_shortcode($content);
 	}
 
 	public function add_js_defaults($data){

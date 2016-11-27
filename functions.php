@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * Main entry point for Upfront core
+ *
+ * This is where we set up Upfront main class
+ * which handles core bootstrap and execution context.
+ */
+
 require_once(dirname(__FILE__) . '/library/upfront_functions.php');
 require_once(dirname(__FILE__) . '/library/upfront_functions_theme.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_permissions.php');
@@ -38,6 +45,13 @@ class Upfront {
 	 */
 	const TextDomain = "upfront";
 
+	/**
+	 * List of files to exclude in scanning
+	 *
+	 * @TODO refactor var name and location
+	 * 
+	 * @var array
+	 */
 	public static $Excluded_Files = array(".", "..", ".DS_Store");
 
 	/**
@@ -461,3 +475,11 @@ function uf_admin_bar_styles() {
 	wp_enqueue_style( 'uf-font-icons', get_template_directory_uri() . '/styles/font-icons.css');
 }
 add_action( 'admin_enqueue_scripts', 'uf_admin_bar_styles' );
+
+/**
+ * Gets rid of the admin notice and declares support for Woo
+ */
+	function uf_add_woocommerce_support() {
+		add_theme_support('woocommerce');
+	}
+add_action('after_setup_theme', 'uf_add_woocommerce_support');

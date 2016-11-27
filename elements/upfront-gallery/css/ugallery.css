@@ -18,6 +18,11 @@
 	overflow: visible;
 }
 
+.ugallery_border {
+	overflow: hidden;
+	display: block;
+}
+
 .ugallery_item img,
 .ugallery_item a {
 	display: block;
