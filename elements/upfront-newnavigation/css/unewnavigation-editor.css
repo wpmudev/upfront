@@ -506,6 +506,10 @@ div.upfront-navigation li.menu-item .uimage-controls a {
 	top: 18px;
 }
 
+.upfront-navigation .upfront-link-select .upfront-field-select:after {
+	top: 11px;
+}
+
 .upfront-navigation .upfront-field-select-options {
 	background: #f2f9ff;
 }
@@ -525,6 +529,11 @@ div.upfront-navigation li.menu-item .uimage-controls a {
 	line-height: 38px;
 	padding: 0 20px 0 10px;
 	box-sizing: border-box;
+}
+
+.upfront-navigation .upfront-link-select .upfront-field-select-value {
+	height: 24px;
+	line-height: 21px;
 }
 
 .c16 .upfront-navigation .upfront_new_menu_name_and_button, .c15 .upfront-navigation .upfront_new_menu_name_and_button, .c14 .upfront-navigation .upfront_new_menu_name_and_button, .c13 .upfront-navigation .upfront_new_menu_name_and_button,
