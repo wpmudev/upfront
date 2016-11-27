@@ -97,7 +97,16 @@
 					// Let's wait for the type change to re-apply update
 					Upfront.Events.on("region:background:type:changed", _debounced_update);
 					// Also, do one right now, just off-stack
-					setTimeout(_debounced_update);	
+					setTimeout(_debounced_update);
+					
+					// When color spectrum is shown, set position of $bg_settings_content to initial for fixing z-index issue
+					Upfront.Events.on("color:spectrum:show", function() {
+						$($bg_settings_content).css('position', 'initial');
+					});
+					// When color spectrum is hidden, remove position added above
+					Upfront.Events.on("color:spectrum:hide", function() {
+						$($bg_settings_content).removeAttr('style');
+					});
 				}
 				
 				// If region settings sidebar.
