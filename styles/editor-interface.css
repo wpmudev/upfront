@@ -3980,11 +3980,64 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
   background: none; }
 
 /* Region BG settings */
-#region-settings-sidebar .uf-region-bg-settings-panel-content {
-  max-height: 320px;
-  /*position: initial;*/ }
-  #region-settings-sidebar .uf-region-bg-settings-panel-content .sp-container.sp-light.sp-alpha-enabled {
-    z-index: 99999999; }
+#region-settings-sidebar .uf-region-bg-settings-panel-content .sp-container.sp-light.sp-alpha-enabled {
+  z-index: 99999999; }
+
+#region-settings-sidebar .uf-region-bg-settings-panel-content .upfront_toggle {
+  position: relative;
+  padding-left: 0;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none; }
+  #region-settings-sidebar .uf-region-bg-settings-panel-content .upfront_toggle.hide {
+    display: none; }
+  #region-settings-sidebar .uf-region-bg-settings-panel-content .upfront_toggle .upfront-field-label-text {
+    position: absolute;
+    left: 55px;
+    top: 2px; }
+
+#region-settings-sidebar .uf-region-bg-settings-panel-content input.upfront_toggle_checkbox {
+  display: none; }
+
+#region-settings-sidebar .uf-region-bg-settings-panel-content .upfront_toggle_switch {
+  display: block;
+  width: 13px;
+  height: 13px;
+  background-color: #fff;
+  border-radius: 15px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: 1px;
+  bottom: 0;
+  right: initial;
+  left: 3px;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  will-change: transform;
+  -webkit-transition: transform 0.2s;
+  transition: transform 0.2s; }
+
+#region-settings-sidebar .uf-region-bg-settings-panel-content .upfront_toggle_label {
+  position: relative;
+  display: block;
+  cursor: pointer;
+  border-radius: 50px;
+  border: 0;
+  width: 40px;
+  height: 15px;
+  background: #ddd;
+  margin-left: 3px;
+  margin-top: 10px; }
+
+#region-settings-sidebar .uf-region-bg-settings-panel-content .upfront_toggle_checkbox:checked + .upfront_toggle_label {
+  background: #1fcd8f; }
+
+#region-settings-sidebar .uf-region-bg-settings-panel-content .upfront_toggle_checkbox:checked + .upfront_toggle_label .upfront_toggle_switch {
+  -webkit-transform: translateX(22px);
+  transform: translateX(22px);
+  border-color: #1abc9c; }
 
 #region-settings-sidebar .uf-region-bg-settings-panel-content .uf-bgsettings-imageitem {
   position: static; }
@@ -4002,11 +4055,14 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
     margin-left: 30px;
     position: static;
     float: left; }
+  #region-settings-sidebar .uf-region-bg-settings-panel-content .uf-bgsettings-imageitem .uf-bgsettings-use-image-size {
+    margin-right: 0px;
+    padding-left: 10px; }
   #region-settings-sidebar .uf-region-bg-settings-panel-content .uf-bgsettings-imageitem .upfront-field-wrap-number.uf-bgsettings-image-size {
     position: static;
-    float: right;
-    margin-top: -155px;
-    margin-right: 40px; }
+    padding-left: 15px; }
+    #region-settings-sidebar .uf-region-bg-settings-panel-content .uf-bgsettings-imageitem .upfront-field-wrap-number.uf-bgsettings-image-size label.upfront-field-label:after {
+      content: none; }
   #region-settings-sidebar .uf-region-bg-settings-panel-content .uf-bgsettings-imageitem .uf-bgsettings-image-color {
     position: static;
     margin-top: -36px;
@@ -4017,17 +4073,18 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 
 #region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num {
   margin-top: -100px;
-  margin-left: 15px; }
+  margin-left: 20px; }
 
 #region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-image-pos-x-num {
-  margin-left: 13px;
+  margin-left: 17px;
   margin-top: -60px; }
 
+#region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-use-image-size {
+  padding-left: 0;
+  margin: 15px 0; }
+
 #region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .upfront-field-wrap-number.uf-bgsettings-image-size {
-  margin-top: -131px;
-  margin-right: 25px; }
-  #region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .upfront-field-wrap-number.uf-bgsettings-image-size input.upfront-field.upfront-field-number {
-    margin-top: 17px; }
+  padding-left: 5px; }
 
 #region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-image-color {
   position: static;
@@ -4036,6 +4093,34 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
   #region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-image-color .sp-replacer.sp-light {
     width: 18px;
     float: left; }
+
+#region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-image-tile {
+  padding-left: 0;
+  padding-right: 0; }
+
+#region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-image-default:before {
+  width: 260px;
+  content: '';
+  border-top: 1px solid #cce1f4;
+  display: block;
+  padding-bottom: 15px;
+  margin-top: 5px;
+  margin-left: -15px;
+  margin-right: -15px; }
+
+#region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-featured-fallback-image-color {
+  width: 75px; }
+  #region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-featured-fallback-image-color label.upfront-field-label-block {
+    float: right;
+    margin-top: 7px; }
+
+#region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-featured-fallback-image-pick input.upfront-field-button {
+  padding: 0 10px;
+  background: #e6f3ff;
+  height: 26px;
+  max-height: 26px;
+  border: 1px solid #a3bfd9;
+  border-radius: 3px; }
 
 .upfront-region-bg-setting-padding .upfront-field-select-single {
   width: 215px;
