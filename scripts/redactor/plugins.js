@@ -939,7 +939,7 @@ RedactorPlugins.upfrontLink = function() {
 					totalWidth = totalWidth + parseInt($(element).width());
 				});
 				
-				this.$el.closest('.redactor_air').css('width', totalWidth + 10);
+				this.$el.closest('.redactor_air').css('width', totalWidth + 5);
 			},
 			
 			updateWrapperSize: function() {
