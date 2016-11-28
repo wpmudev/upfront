@@ -54,7 +54,7 @@ define([
 				return;
 			}
 			
-			this.$el.attr('title', tooltip);
+			//this.$el.attr('title', tooltip);
 			
 			var tooltip = new InlineTooltip({
 				element: me.$el,
