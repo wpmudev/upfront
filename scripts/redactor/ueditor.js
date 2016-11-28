@@ -2,8 +2,9 @@
 define("ueditor", [ // For require to include scripts in build and not load them separately they must be passes as an array and not variable that points to array
 	'text!scripts/redactor/ueditor-templates.html',
 	'scripts/redactor/ueditor-inserts',
-    'redactor_plugins'
-], function(tpl, Inserts, redactor_plugins){
+    'redactor_plugins',
+	'scripts/upfront/inline-panels/inline-tooltip'
+], function(tpl, Inserts, redactor_plugins, InlineTooltip){
 var hackedRedactor = false;
 var UeditorEvents = redactor_plugins.UeditorEvents;
 $.fn.ueditor = function(options){
@@ -185,14 +186,22 @@ var hackRedactor = function(){
             bounds.left = center - Math.floor((width + 1) / 2);
         }
 
-
-
-
         this.$air.css({
             left: bounds.left  + 'px',
             top: bounds.top + 'px'
         }).show();
 
+		var buttons = this.$air.find('.redactor-toolbar > li');
+		
+		_.each(buttons, function(button) {
+			var content = $(button).find('a').attr('title');
+			var tooltip = new InlineTooltip({
+				element: button,
+				content: content,
+				panel: 'redactor'
+			});
+		});
+		
         /**
          * If redactor is to high for the user to see it, show it under the selected text
          */
@@ -919,8 +928,6 @@ var Ueditor = function($el, options) {
 		return html;
 	};
 
-
-
     // Enter callback inside lists
     this.options.enterCallback = function (e) {
         // Current Block is a list item
@@ -1233,8 +1240,6 @@ Ueditor.prototype = {
 					me.start(e);
 			})
 		;
-
-
 
 		if(me.$el.prop('tagName') == 'DIV') {
 			me.$el.on('click', 'i.visit_link', function() {

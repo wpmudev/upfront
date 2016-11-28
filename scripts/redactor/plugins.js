@@ -6,8 +6,9 @@ var l10n = Upfront.Settings && Upfront.Settings.l10n
 
 define("redactor_plugins", [
 	'text!scripts/redactor/ueditor-templates.html',
-	"scripts/upfront/link-model"
-], function(tpl, LinkModel) {
+	"scripts/upfront/link-model",
+	"scripts/upfront/inline-panels/inline-tooltip"
+], function(tpl, LinkModel, InlineTooltip) {
 
 var UeditorEvents = _.extend({}, Backbone.Events);
     /* Panel helper
@@ -118,7 +119,6 @@ var UeditorPanel = Backbone.View.extend({
      -------------------------------*/
 
 if (!RedactorPlugins) var RedactorPlugins = {};
-
 
 /*
  STATE BUTTONS PLUGIN

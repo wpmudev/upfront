@@ -10,6 +10,10 @@ define([], function () {
 			
 			this.options = options;
 			
+			if(typeof this.options.panel !== "undefined" && this.options.panel === 'redactor') {
+				$element = $(options.element).find('.re-icon');
+			}
+			
 			if(typeof this.options.panel !== "undefined" && (this.options.panel === 'side' || this.options.panel === 'normal')) {
 				$element = $(options.element).find('label');
 			}
@@ -33,6 +37,10 @@ define([], function () {
 				element = $(e.currentTarget).closest('.image-sub-control');
 			}
 			
+			if(typeof this.options.panel !== "undefined" && this.options.panel === 'redactor') {
+				element = $(e.currentTarget).closest('.redactor_air');
+			}
+
 			var elementPosition = element.offset(),
 				tooltipPosition = {
 					top: elementPosition.top - element.outerHeight() + 7,
