@@ -17,10 +17,6 @@ define([], function () {
 			.on("mouseleave", function (e) {
 				me.closeTooltip();
 			});
-			
-			if(this.options.panel === 'tooltip') {
-				console.log(this.options);
-			}
 		},
 
 		openTooltip: function(e, content) {
