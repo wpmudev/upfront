@@ -11166,6 +11166,17 @@ div.ugallery-controls i.upfront-icon:before {
 .upfront-object-view > .upfront-element-controls {
   display: none; }
 
+#upfront-inline-tooltip {
+  position: absolute;
+  width: auto;
+  z-index: 10;
+  background: black;
+  height: 19px;
+  line-height: 20px;
+  color: #fff;
+  font-size: 11px;
+  padding: 0px 5px; }
+
 .upfront-module-object-group-on-edit > .upfront-module > .upfront-element-controls,
 .upfront-object-group-on-edit > .upfront-element-controls {
   display: none !important; }

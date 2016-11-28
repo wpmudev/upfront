@@ -28,6 +28,17 @@ div.ugallery-controls i.upfront-icon:before {
 {
     display: none;
 }
+#upfront-inline-tooltip {
+	position: absolute;
+	width: auto;
+	z-index: 10;
+	background: rgb(0, 0, 0);
+	height: 19px;
+	line-height: 20px;
+	color: #fff;
+	font-size: 11px;
+	padding: 0px 5px;
+}
 .upfront-module-object-group-on-edit > .upfront-module > .upfront-element-controls,
 .upfront-object-group-on-edit > .upfront-element-controls {
     display: none !important;
