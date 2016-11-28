@@ -289,6 +289,10 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'apply_template_warning' => __('You have made changes to your Layout using <span class="old_template_name">Default Template</span>. Setting this page to use <span class="new_template_name">Our Staff</span> template will lose those changes. Are you sure you want to continue?', 'upfront'),
 				'delete_template_warning' => __('Are you sure you want to delete <span class="template_name">Default Template</span> template?', 'upfront'),
 				'update_template_notification' => __('Template has been Updated. All new pages created with this template will use the Updated design.', 'upfront'),
+				'external' => __('External link', 'upfront'),
+				'unlink' => __('Unlink', 'upfront'),
+				'blank_label' => __('Open in new tab'),
+				'self_label' => __('Open in same tab'),
 			),
 			'ueditor' => array(
 				'default_post_content' => __('Please type your content here...', 'upfront'),
@@ -716,7 +720,6 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'number_of_columns' => __('Number of columns', 'upfront'),
 				'edit_breakpoint' => __('Edit breakpoint', 'upfront'),
 				'back_to_top' => __('Back to Top', 'upfront'),
-				'link_back' => __('Back', 'upfront'),
 				'ltbox_empty_name_nag' => __('Could not create a lightbox with an empty name.', 'upfront'),
 				'edit' => __('Edit', 'upfront'),
 				'remove' => __('Remove', 'upfront'),

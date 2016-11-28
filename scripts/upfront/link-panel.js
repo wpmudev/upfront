@@ -241,23 +241,23 @@ define([
 			var contentL10n = Upfront.Settings.l10n.global.content;
 			switch(type) {
 				case 'homepage':
-					return { value: 'homepage', label: contentL10n.homepage, icon: 'link-homepage' };
+					return { value: 'homepage', label: contentL10n.homepage, icon: 'link-homepage', tooltip: contentL10n.homepage };
 				case 'unlink':
-					return { value: 'unlink', label: contentL10n.no_link, icon: 'link-unlink' };
+					return { value: 'unlink', label: contentL10n.no_link, icon: 'link-unlink', tooltip: contentL10n.unlink };
 				case 'external':
-					return { value: 'external', label: contentL10n.url, icon: 'link-external' };
+					return { value: 'external', label: contentL10n.url, icon: 'link-external', tooltip: contentL10n.external };
 				case 'email':
-					return { value: 'email', label: contentL10n.email, icon: 'link-email' };
+					return { value: 'email', label: contentL10n.email, icon: 'link-email', tooltip: contentL10n.email };
 				case 'phone':
-					return { value: 'phone', label: contentL10n.phone, icon: 'link-phone' };
+					return { value: 'phone', label: contentL10n.phone, icon: 'link-phone', tooltip: contentL10n.phone };
 				case 'entry':
-					return { value: 'entry', label: contentL10n.post_or_page, icon: 'link-entry' };
+					return { value: 'entry', label: contentL10n.post_or_page, icon: 'link-entry', tooltip: contentL10n.post_or_page };
 				case 'anchor':
-					return { value: 'anchor', label: contentL10n.anchor, icon: 'link-anchor' };
+					return { value: 'anchor', label: contentL10n.anchor, icon: 'link-anchor', tooltip: contentL10n.anchor };
 				case 'image':
-					return { value: 'image', label: contentL10n.larger_image, icon: 'link-image' };
+					return { value: 'image', label: contentL10n.larger_image, icon: 'link-image', tooltip: contentL10n.larger_image };
 				case 'lightbox':
-					return { value: 'lightbox', label: contentL10n.lightbox, icon: 'link-lightbox' };
+					return { value: 'lightbox', label: contentL10n.lightbox, icon: 'link-lightbox', tooltip: contentL10n.lightbox };
 			}
 		},
 
@@ -420,7 +420,7 @@ define([
 						
 						_.each(this.options.values, function(value) {
 							var element = element = self.$el.find('[value="'+value.value+'"]').parent();
-							me.addTooltip(element, value.label, panel);
+							me.addTooltip(element, value.tooltip ? value.tooltip : value.label, panel);
 						});
 					}
 				})
@@ -482,8 +482,8 @@ define([
 				className: 'uf-link-target-select',
 				default_value: this.model.get('target') || '_self',
 				values: [
-					{ label: Upfront.Settings.l10n.global.content.blank, value: '_blank' },
-					{ label: Upfront.Settings.l10n.global.content.self, value: '_self' }
+					{ label: Upfront.Settings.l10n.global.content.blank, value: '_blank', tooltip: Upfront.Settings.l10n.global.content.blank_label },
+					{ label: Upfront.Settings.l10n.global.content.self, value: '_self', tooltip: Upfront.Settings.l10n.global.content.self_label }
 				],
 				change: function () {
 					me.model.set({'target': this.get_value()});
