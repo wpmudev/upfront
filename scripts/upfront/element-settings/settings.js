@@ -166,6 +166,17 @@ define([
 				perfectScrollbar.initialize(me.$el.find('#sidebar-scroll-wrapper')[0], {
 					suppressScrollX: true
 				});
+
+				// Okay, so let's first set up a debounced update call
+				var _debounced_update = _.debounce(function () {
+					perfectScrollbar.update(me.$el.find('#sidebar-scroll-wrapper')[0]);
+				}, 500, true); // Once in 500ms, but *do* the first call
+				setTimeout(_debounced_update);
+
+
+										Upfront.Events.on("entity:object:refresh", _debounced_update);
+
+
 			});
 
 			this.$el.addClass('upfront-ui');

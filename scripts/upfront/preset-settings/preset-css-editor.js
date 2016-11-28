@@ -220,6 +220,12 @@ define([
 				suppressScrollX: true
 			});
 
+			var me = this;
+			var _debounced_update = _.debounce(function () {
+				perfectScrollbar.update(me.$el.find('.ace_scrollbar')[0]);
+			}, 500, true); // Once in 500ms, but *do* the first call
+			setTimeout(_debounced_update);
+
 			editor.focus();
 			this.editor = editor;
 		},

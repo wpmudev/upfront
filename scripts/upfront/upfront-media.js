@@ -2034,6 +2034,13 @@ define([
 				perfectScrollbar.initialize(this.el, {
 					suppressScrollX: true
 				});
+
+				var me = this;
+				var _debounced_update = _.debounce(function () {
+					perfectScrollbar.update(me.el);
+				}, 500, true); // Once in 500ms, but *do* the first call
+				setTimeout(_debounced_update);
+
 			}
 		},
 		update: function () {

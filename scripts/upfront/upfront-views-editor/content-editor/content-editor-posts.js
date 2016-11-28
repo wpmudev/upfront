@@ -35,10 +35,20 @@
                         canEditOwn: Upfront.Application.user_can("EDIT_OWN")
                     })
                 );
-								// Add JS Scrollbar.
+							//
+							// Okay, so let's first set up a debounced update call
+							var me = this;
+							var _debounced_update = _.debounce(function () {
+								perfectScrollbar.update(me.$el.find('.upfront-scroll-panel')[0]);
+							}, 500, true); // Once in 500ms, but *do* the first call
+
+							// Add JS Scrollbar.
 							perfectScrollbar.initialize(this.$el.find('.upfront-scroll-panel')[0], {
 								suppressScrollX: true
 							});
+
+							setTimeout(_debounced_update);
+
                 //this.mark_sort_order();
             },
 
