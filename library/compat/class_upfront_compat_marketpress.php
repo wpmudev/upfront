@@ -9,6 +9,9 @@ class Upfront_Compat_MarketPress {
 	public function add_hooks() {
 		if (class_exists('MarketPress') === false) return;
 
+		// Just-in-time check for content filter rebinding
+		add_filter('upfront-post_data-get_content-before', array($this, 'ensure_mp_product_filtering'));
+
 		add_filter('upfront-forbidden_post_data_types', array($this, 'forbidden_post_data_types'));
 		add_filter('upfront-entity_resolver-entity_ids', array($this, 'override_entity_ids'));
 		add_filter('upfront-builder_available_layouts', array($this, 'builder_available_layouts'));
@@ -17,6 +20,34 @@ class Upfront_Compat_MarketPress {
 		add_filter('upfront-plugins_layouts', array($this, 'add_layouts'));
 		add_filter('upfront-postdata_get_markup_after', array($this, 'add_class'), 10, 2);
 		add_filter('mp-do_grid_with_js', array($this, 'disable_mp_js_grid'), 10, 2);
+	}
+
+	/**
+	 * Checks and re-binds MP product filtering
+	 *
+	 * This is needed for other plugin conflicts resolution,
+	 * as MP will remove its content filtering once they're
+	 * first applied (which is sane, but can cause issues).
+	 *
+	 * Also, this is a fake filter - we're not changing the
+	 * parameter, but re-setting the filtering (consequence).
+	 *
+	 * @param string $str Passthrough param
+	 *
+	 * @return string Passthrough param
+	 */
+	public function ensure_mp_product_filtering ($str) {
+		if (!class_exists('MP_Public')) return $str;
+		if (!self::is_product(get_post())) return $str;
+		
+		$callback = array(MP_Public::get_instance(), 'single_product_content');
+		if (has_filter('the_content', $callback)) return $str; // We're good here
+
+		// Whoops, something triggered MP content filtering ahead of time.
+		// So, let's just re-negotiate the processing and be done with it.
+		add_filter('the_content', $callback);
+
+		return $str;
 	}
 
 	/**
