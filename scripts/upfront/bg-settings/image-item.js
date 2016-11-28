@@ -19,9 +19,10 @@ define([
 					max: 100,
 					step: 1
 				},
+				toggle_bg_size = this.toggle_bg_size_field(),
 				tile_fields = ['bg_tile'],
-				fixed_fields = ['bg_color', 'bg_position_x', 'bg_position_y', 'bg_position_x_num', 'bg_position_y_num', 'bg_size'],
-				parallax_fields = ['origin_position_x', 'origin_position_y', 'origin_position_x_num', 'origin_position_y_num', 'bg_size'],
+				fixed_fields = ['bg_color', 'bg_position_x', 'bg_position_y', 'bg_position_x_num', 'bg_position_y_num', 'use_bg_size', 'bg_size'],
+				parallax_fields = ['origin_position_x', 'origin_position_y', 'origin_position_x_num', 'origin_position_y_num', 'use_bg_size', 'bg_size'],
 				fields = {
 					pick_image: new Upfront.Views.Editor.Field.Button({
 						label: l10n.browse,
@@ -49,11 +50,25 @@ define([
 							} else if ( value === 'fixed' ){
 								_.each(tile_fields, function(key){ fields[key].$el.hide(); });
 								_.each(parallax_fields, function(key){ fields[key].$el.hide(); });
-								_.each(fixed_fields, function(key){ fields[key].$el.show(); });
+								_.each(fixed_fields, function(key){
+										if ( fields[key].property_name == 'background_size_percent' ) {
+											var use_bg_size_value = me.model.get_breakpoint_property_value('use_background_size_percent', true) || false;
+											if ( use_bg_size_value !== false ) fields[key].$el.show(); 
+										} else {
+											fields[key].$el.show(); 
+										}
+								});
 							} else if (value === 'parallax') {
 								_.each(tile_fields, function(key){ fields[key].$el.hide(); });
 								_.each(fixed_fields, function(key){ fields[key].$el.hide(); });
-								_.each(parallax_fields, function(key){ fields[key].$el.show(); });
+								_.each(parallax_fields, function(key){
+									if ( fields[key].property_name == 'background_size_percent' ) {
+										var use_bg_size_value = me.model.get_breakpoint_property_value('use_background_size_percent', true) || false;
+										if ( use_bg_size_value !== false ) fields[key].$el.show(); 
+									} else {
+										fields[key].$el.show(); 
+									}
+								});
 							} else {
 								_.each(tile_fields, function(key){ fields[key].$el.hide(); });
 								_.each(fixed_fields, function(key){ fields[key].$el.hide(); });
@@ -64,60 +79,6 @@ define([
 						},
 						rendered: function (){
 							this.$el.addClass('uf-bgsettings-image-style');
-						}
-					}),
-					bg_default: new Upfront.Views.Editor.Field.Select({
-						model: this.model,
-						label: l10n.featured_default,
-						className: 'upfront-field-wrap upfront-field-wrap-select background-image-field',
-						property: 'background_default',
-						use_breakpoint_property: true,
-						default_value: 'hide',
-						icon_class: 'upfront-region-field-icon',
-						values: [
-							{ label: l10n.featured_default_hide, value: 'hide' },
-							{ label: l10n.featured_default_color, value: 'color' },
-							{ label: l10n.featured_default_image, value: 'image' }
-						],
-						change: function () {
-							var value = this.get_value(),
-								bg_image = me.model.get_breakpoint_property_value('background_image', true)
-							;
-							this.$el.removeClass('uf-bgsettings-image-default-image uf-bgsettings-image-default-color uf-bgsettings-image-default-hide');
-							if ( value == 'image' ){
-								fields.pick_image.$el.show();
-								fields.bg_color.$el.hide();
-								this.$el.addClass('uf-bgsettings-image-default-image');
-								if ( !bg_image ) me.upload_image();
-							} else if ( value == 'color' ) {
-								fields.pick_image.$el.hide();
-								fields.bg_color.$el.show();
-								this.$el.addClass('uf-bgsettings-image-default-color');
-							} else if ( value == 'featured' ) {
-								fields.pick_image.$el.show();
-								fields.bg_color.$el.hide();
-								this.$el.addClass('uf-bgsettings-image-default-image');
-							}
-							else {
-								fields.pick_image.$el.hide();
-								fields.bg_color.$el.hide();
-								this.$el.addClass('uf-bgsettings-image-default-hide');
-							}
-							this.model.set_breakpoint_property(this.property_name, value);
-							me.update_image();
-						},
-						rendered: function (){
-							var value = this.get_saved_value();
-							this.$el.addClass('uf-bgsettings-image-default');
-							if ( value == 'image' ) {
-								this.$el.addClass('uf-bgsettings-image-default-image');
-							}
-							else if ( value == 'color' ) {
-								this.$el.addClass('uf-bgsettings-image-default-color');
-							}
-							else {
-								this.$el.addClass('uf-bgsettings-image-default-hide');
-							}
 						}
 					}),
 					bg_tile: new Upfront.Views.Editor.Field.Checkboxes({
@@ -317,13 +278,42 @@ define([
 							max: 150,
 							step: 1
 						})),
+					use_bg_size: new toggle_bg_size({
+						model: this.model,
+						property: 'use_background_size_percent',
+						label: '',
+						multiple: false,
+						use_breakpoint_property: true,
+						values: [
+							{ label: l10n.resize_image, value: 'yes' }
+						],
+						change: function() {
+							var value = this.get_value(),
+								$bg_image_size = me.$el.find('.uf-bgsettings-image-size'),
+								use_bg_size = value || false
+							;
+							this.model.set_breakpoint_property(this.property_name, value);
+							if ( use_bg_size === false ) {
+								$bg_image_size.hide();
+								// update image to 100%
+								$bg_image_size.find('input[name="background_size_percent"]').val(100);
+								me._bg_size = 100;
+								me.model.set_breakpoint_property('background_size_percent', 100);
+								me.update_image();
+							} else {
+								$bg_image_size.show();
+							}
+						},
+						rendered: function (){
+							this.$el.addClass('uf-bgsettings-use-image-size');
+						}
+					}),
 					bg_size: new Upfront.Views.Editor.Field.Number(_.extend({
 						model: this.model,
 						property: 'background_size_percent',
-						label: l10n.image_size,
-						label_style: 'block',
+						label: '',
 						use_breakpoint_property: true,
-						suffix: '%',
+						suffix: l10n.resize_image_percent,
 						change: function () {
 							var value = this.get_value();
 							me._bg_size = value;
@@ -340,8 +330,107 @@ define([
 							max: 1000,
 							step: 1
 						}
-					))
+					)),
+					bg_default: new Upfront.Views.Editor.Field.Select({
+						model: this.model,
+						label: l10n.featured_default,
+						className: 'upfront-field-wrap upfront-field-wrap-select background-image-field',
+						property: 'background_default',
+						use_breakpoint_property: true,
+						default_value: 'hide',
+						icon_class: 'upfront-region-field-icon',
+						values: [
+							{ label: l10n.featured_default_hide, value: 'hide' },
+							{ label: l10n.featured_default_color, value: 'color' },
+							{ label: l10n.featured_default_image, value: 'image' }
+						],
+						change: function () {
+							var value = this.get_value(),
+								bg_image = me.model.get_breakpoint_property_value('background_image', true)
+							;
+							this.$el.removeClass('uf-bgsettings-image-default-image uf-bgsettings-image-default-color uf-bgsettings-image-default-hide');
+							if ( value == 'image' ){
+								// fields.pick_image.$el.show();
+								fields.featured_fallback_pick_image.$el.show();
+								fields.featured_fallback_bg_color.$el.hide();
+								this.$el.addClass('uf-bgsettings-image-default-image');
+								if ( !bg_image ) me.upload_image();
+							} else if ( value == 'color' ) {
+								// fields.pick_image.$el.hide();
+								fields.featured_fallback_bg_color.$el.show();
+								fields.featured_fallback_pick_image.$el.hide();
+								this.$el.addClass('uf-bgsettings-image-default-color');
+							} else if ( value == 'featured' ) {
+								// fields.pick_image.$el.show();
+								fields.featured_fallback_bg_color.$el.hide();
+								this.$el.addClass('uf-bgsettings-image-default-image');
+							}
+							else {
+								// fields.pick_image.$el.hide();
+								fields.featured_fallback_bg_color.$el.hide();
+								fields.featured_fallback_pick_image.$el.hide();
+								this.$el.addClass('uf-bgsettings-image-default-hide');
+							}
+							this.model.set_breakpoint_property(this.property_name, value);
+							me.update_image();
+						},
+						rendered: function (){
+							var value = this.get_saved_value();
+							this.$el.addClass('uf-bgsettings-image-default');
+							if ( value == 'image' ) {
+								this.$el.addClass('uf-bgsettings-image-default-image');
+							}
+							else if ( value == 'color' ) {
+								this.$el.addClass('uf-bgsettings-image-default-color');
+							}
+							else {
+								this.$el.addClass('uf-bgsettings-image-default-hide');
+							}
+						}
+					}),
+					featured_fallback_bg_color: new Upfront.Views.Editor.Field.Color({
+						model: this.model,
+						label: l10n.bg_color_short,
+						property: 'featured_fallback_background_color',
+						use_breakpoint_property: true,
+						default_value: '#ffffff',
+						spectrum: {
+							move: function (color) {
+								// notify that we are editing featured fallback bg color
+								me.is_featured_fallback_bg_color = true;
+								me.preview_color(color);
+								// reset
+								me.is_featured_fallback_bg_color = false;
+							},
+							change: function (color) {
+								// notify that we are editing featured fallback bg color
+								me.is_featured_fallback_bg_color = true;
+								me.update_color(color);
+								// reset
+								me.is_featured_fallback_bg_color = false;
+							},
+							hide: function (color) {
+								// notify that we are editing featured fallback bg color
+								me.is_featured_fallback_bg_color = true;
+								me.reset_color();
+								// reset
+								me.is_featured_fallback_bg_color = false;
+							}
+						},
+						rendered: function (){
+							this.$el.addClass('uf-bgsettings-featured-fallback-image-color');
+						}
+					}),
+					featured_fallback_pick_image: new Upfront.Views.Editor.Field.Button({
+						label: l10n.browse,
+						compact: true,
+						classname: 'uf-button-alt uf-bgsettings-featured-fallback-image-pick',
+						on_click: function(){
+							me.upload_image();
+						}
+					})
 				};
+			
 			this.$el.addClass('uf-bgsettings-item uf-bgsettings-imageitem');
 			options.fields = _.map(fields, function(field){ return field; });
 
@@ -365,17 +454,53 @@ define([
 				//me._default_color = fields.bg_color.get_value();
 				fields.bg_style.trigger('changed');
 				if ( bg_type == 'featured' ) {
+					fields.pick_image.$el.hide();
 					fields.bg_default.$el.show();
 					fields.bg_default.trigger('changed');
-				}
-				else {
+				} else {
+					if ( bg_type == 'image' ) fields.pick_image.$el.show();
 					fields.bg_default.$el.hide();
+					fields.featured_fallback_bg_color.$el.hide();
+					fields.featured_fallback_pick_image.$el.hide();
 					if ( !bg_image ) me.upload_image();
 				}
 			});
 
 			this.bind_toggles();
 			this.constructor.__super__.initialize.call(this, options);
+		},
+		toggle_bg_size_field: function () {
+			var toggleField = Upfront.Views.Editor.Field.Checkboxes.extend({
+				get_value_html: function (value, index) {
+					var id = this.get_field_id() + '-' + index;
+					var classes = "upfront-field-multiple";
+					var attr = {
+						'type': this.type,
+						'id': id,
+						'name': this.get_field_name(),
+						'value': value.value,
+						'class': 'upfront_toggle_checkbox upfront-field-' + this.type
+					};
+					var saved_value = this.get_saved_value();
+					var icon_class = this.options.icon_class ? this.options.icon_class : null;
+					if ( this.options.layout ) classes += ' upfront-field-multiple-'+this.options.layout;
+					if ( value.disabled ) {
+						attr.disabled = 'disabled';
+						classes += ' upfront-field-multiple-disabled';
+					}
+					if ( this.multiple && _.contains(saved_value, value.value) ) {
+						attr.checked = 'checked';
+					} else if ( ! this.multiple && saved_value == value.value ) {
+						attr.checked = 'checked';
+					}
+					if (value.checked) attr.checked = 'checked';
+					if ( attr.checked ) {
+						classes += ' upfront-field-multiple-selected';
+					}
+					return '<div class="' + classes + ' upfront_toggle"><span class="upfront-field-label-text">' + value.label + '</span><input ' + this.get_field_attr_html(attr) + ' />' + '<label for="' + id + '" class="upfront_toggle_label"><span class="upfront_toggle_switch"></span></label></div>';
+				}
+			});
+			return toggleField;
 		},
 		update_image: function () {
 			var style = this._bg_style,

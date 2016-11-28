@@ -149,8 +149,12 @@ abstract class Upfront_Entity {
 		$default_type = $this->get_background_type();
 		$css = array();
 		$background_color = $this->_get_breakpoint_property('background_color', $breakpoint_id);
+		$featured_fallback_background_color = $this->_get_breakpoint_property('featured_fallback_background_color', $breakpoint_id);
 		if ( !$type || in_array($type, array('image', 'color', 'featured')) ){
-			if ($background_color) {
+			// if featured and no featured image, set to fallback color
+			if ($featured_fallback_background_color && 'featured' == $type && !has_post_thumbnail(Upfront_Output::get_post_id())) {
+				$css[] = 'background-color: ' . $featured_fallback_background_color;
+			} else if ($background_color) {
 				$css[] = 'background-color: ' . $background_color;
 			}
 			if (!$this->_is_background_overlay($breakpoint_id)) {
