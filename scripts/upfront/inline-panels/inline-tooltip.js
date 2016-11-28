@@ -4,7 +4,7 @@ define([], function () {
 		className: 'upfront-inline-tooltip',
 
 		initialize: function (options) {			
-			var $element = $(options.element),
+			var $element = $(options.element).find('.upfront-icon'),
 				me = this
 			;
 			
