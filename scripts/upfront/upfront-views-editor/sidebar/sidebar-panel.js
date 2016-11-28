@@ -73,15 +73,12 @@
 								this.$el.find(".sidebar-panel-tabspane").not(".sidebar-panel-tabspane-hidden").show();
 
 								var me = this;
-											// Okay, so let's first set up a debounced update call
-										var _debounced_update = _.debounce(function () {
-											perfectScrollbar.update(me.$el.find('.sidebar-panel-content')[0]);
-										}, 500); // Once in 500ms, but *do* the first call
+								// Okay, so let's first set up a debounced update call
+								var _debounced_update = _.debounce(function () {
+									perfectScrollbar.update(me.$el.find('.sidebar-panel-content')[0]);
+								}, 500); // Once in 500ms, but *do* the first call
 
-
-										setTimeout(_debounced_update);
-						console.log(me.$el.find('.sidebar-panel-content')[0])
-
+								setTimeout(_debounced_update);
 						},
 						show_tab : function( e ){
 								var tab = "#" + $(e.target).data("target");
