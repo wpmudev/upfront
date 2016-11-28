@@ -67,7 +67,6 @@ define([
 		return lightboxes;
 	};
 
-
 	var LinkPanel = Backbone.View.extend({
 		tpl: _.template(linkPanelTpl),
 
@@ -409,6 +408,26 @@ define([
 			// If redactor link update the container width
 			this.$el.closest('.redactor_air').css('width', totalWidth + 10);
 		},
+		
+		getTooltipSelect: function(panel) {
+			var me = this,
+				select = Upfront.Views.Editor.Field.Select.extend({
+					className: 'upfront-field-wrap upfront-field-wrap-select',
+					render: function() {
+						select.__super__.render.apply(this, arguments);
+						
+						var self = this;
+						
+						_.each(this.options.values, function(value) {
+							var element = element = self.$el.find('[value="'+value.value+'"]').parent();
+							me.addTooltip(element, value.label, panel);
+						});
+					}
+				})
+			;
+			
+			return select;
+		},
 
 		renderTypeSelect: function() {
 			var me = this;
@@ -425,8 +444,10 @@ define([
 
 				typeSelectValues.push(this.getLinkTypeValue(type));
 			}, this);
+			
+			var tooltipSelect = this.getTooltipSelect('side');
 
-			this.typeSelect = new Upfront.Views.Editor.Field.Select({
+			this.typeSelect = new tooltipSelect({
 				label: '',
 				className: 'upfront-link-select',
 				values: typeSelectValues,
@@ -442,19 +463,21 @@ define([
 			this.addTooltip(this.$el.find('.ulinkpanel-back'), Upfront.Settings.l10n.global.views.link_back);
 		},
 		
-		addTooltip: function(element, content) {
+		addTooltip: function(element, content, panel) {
 			var tooltip = new InlineTooltip({
 				element: element,
 				content: content,
+				panel: panel
 			});
 			
 			return tooltip;
 		},
 
 		renderTargetRadio: function() {
-			var me = this;
+			var me = this,
+				tooltipSelect = this.getTooltipSelect('normal');
 
-			this.targetRadio = new Upfront.Views.Editor.Field.Select({
+			this.targetRadio = new tooltipSelect({
 				label: '',
 				className: 'uf-link-target-select',
 				default_value: this.model.get('target') || '_self',

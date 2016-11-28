@@ -9,6 +9,10 @@ define([], function () {
 			;
 			
 			this.options = options;
+			
+			if(typeof this.options.panel !== "undefined" && (this.options.panel === 'side' || this.options.panel === 'normal')) {
+				$element = $(options.element).find('label');
+			}
 
 			$element
 			.on("mouseenter", function ($element) {
@@ -35,6 +39,17 @@ define([], function () {
 					left: elementPosition.left
 				}
 			;
+			
+			if(typeof this.options.panel !== "undefined" && this.options.panel === 'side') {
+				element = $(e.currentTarget).closest('li');
+				
+				elementPosition = element.offset();
+				
+				tooltipPosition = {
+					top: elementPosition.top + 4,
+					left: elementPosition.left + element.outerWidth() + 5
+				}
+			}
 
 			if(!tooltip.length){
 				tooltip = $('<div id="upfront-inline-tooltip" class="upfront-ui"></div>');
