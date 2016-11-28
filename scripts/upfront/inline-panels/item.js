@@ -1,4 +1,6 @@
-define([], function () {
+define([
+	'scripts/upfront/inline-panels/inline-tooltip'
+], function (InlineTooltip) {
 	var Item = Backbone.View.extend({
 		className: 'upfront-inline-panel-item',
 		width: 28,
@@ -44,11 +46,20 @@ define([], function () {
 		},
 
 		render_tooltip: function () {
-			var tooltip = typeof this.tooltip === 'function' ? this.tooltip() : this.tooltip;
+			var tooltip = typeof this.tooltip === 'function' ? this.tooltip() : this.tooltip,
+				me = this
+			;
+			
 			if ( ! tooltip ) {
 				return;
 			}
+			
 			this.$el.attr('title', tooltip);
+			
+			var tooltip = new InlineTooltip({
+				element: me.$el,
+				content: tooltip
+			});
 		},
 
 		render: function () {
