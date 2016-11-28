@@ -7451,7 +7451,7 @@ span.upfront-settings-item-title:after {
   display: block; }
 
 .upfront-logo,
-.upfront-ui .upfront-icon:before,
+.upfront-ui .upfront-icon:not(.upfront-icon-button):before,
 .region-lock-switch:before,
 .upfront-icon-control-region:before,
 .panel-setting-dialog-region:before, .panel-setting-dialog-info:before,

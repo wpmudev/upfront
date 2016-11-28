@@ -716,6 +716,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'number_of_columns' => __('Number of columns', 'upfront'),
 				'edit_breakpoint' => __('Edit breakpoint', 'upfront'),
 				'back_to_top' => __('Back to Top', 'upfront'),
+				'link_back' => __('Back', 'upfront'),
 				'ltbox_empty_name_nag' => __('Could not create a lightbox with an empty name.', 'upfront'),
 				'edit' => __('Edit', 'upfront'),
 				'remove' => __('Remove', 'upfront'),

@@ -1,8 +1,9 @@
 (function ($) {
 define([
 	"scripts/upfront/link-model",
-	"text!scripts/upfront/templates/link-panel.html"
-], function(LinkModel, linkPanelTpl) {
+	"text!scripts/upfront/templates/link-panel.html",
+	"scripts/upfront/inline-panels/inline-tooltip"
+], function(LinkModel, linkPanelTpl, InlineTooltip) {
 
 	var getAnchors = function() {
 		var regions = Upfront.Application.layout.get("regions"),
@@ -437,6 +438,17 @@ define([
 
 			this.typeSelect.render();
 			this.$el.find('.upfront-settings-link-select').prepend(this.typeSelect.el);
+			
+			this.addTooltip(this.$el.find('.ulinkpanel-back'), Upfront.Settings.l10n.global.views.link_back);
+		},
+		
+		addTooltip: function(element, content) {
+			var tooltip = new InlineTooltip({
+				element: element,
+				content: content,
+			});
+			
+			return tooltip;
 		},
 
 		renderTargetRadio: function() {
