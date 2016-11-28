@@ -96,7 +96,11 @@ define([
 				} else {
 					item.setIsSelected(false);
 				}
-
+				
+				if(me.inline === true) {
+					item.panel_type = 'tooltip';
+				}
+				
 				item.render();
 				item.delegateEvents();
 				captionControl.append(item.$el);

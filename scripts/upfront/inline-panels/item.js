@@ -53,12 +53,13 @@ define([
 			if ( ! tooltip ) {
 				return;
 			}
-			
+
 			//this.$el.attr('title', tooltip);
-			
+
 			var tooltip = new InlineTooltip({
 				element: me.$el,
-				content: tooltip
+				content: tooltip,
+				panel: this.panel_type
 			});
 		},
 

@@ -3,11 +3,12 @@ define([], function () {
 	var InlineTooltip = Backbone.View.extend({
 		className: 'upfront-inline-tooltip',
 
-		initialize: function (options) {
-			
+		initialize: function (options) {			
 			var $element = $(options.element),
 				me = this
 			;
+			
+			this.options = options;
 
 			$element
 			.on("mouseenter", function ($element) {
@@ -16,17 +17,27 @@ define([], function () {
 			.on("mouseleave", function (e) {
 				me.closeTooltip();
 			});
+			
+			if(this.options.panel === 'tooltip') {
+				console.log(this.options);
+			}
 		},
 
 		openTooltip: function(e, content) {
 			var tooltip = $('#upfront-inline-tooltip'),
 				element = $(e.currentTarget).closest('.upfront-inline-panel'),
-				elementPosition = element.offset(),
+				me = this
+			;
+
+			if(typeof this.options.panel !== "undefined" && this.options.panel === 'tooltip') {
+				element = $(e.currentTarget).closest('.image-sub-control');
+			}
+			
+			var elementPosition = element.offset(),
 				tooltipPosition = {
 					top: elementPosition.top - element.outerHeight() + 7,
 					left: elementPosition.left
-				},
-				me = this
+				}
 			;
 
 			if(!tooltip.length){

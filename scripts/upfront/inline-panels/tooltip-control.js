@@ -112,13 +112,13 @@ define([
 			});
 
 			selectedItem = this.sub_items[this.selected];
-					if(selectedItem){
-							if( typeof selectedItem.icon !== 'undefined' ){
-									this.$el.children('i').addClass('upfront-icon-region-' + selectedItem.icon);
-							}else if( typeof selectedItem.label !== 'undefined' ){
-									this.$el.find('.tooltip-content').append( ': ' +  selectedItem.label );
-							}
-					}
+			if(selectedItem){
+				if( typeof selectedItem.icon !== 'undefined' ){
+					this.$el.children('i').addClass('upfront-icon-region-' + selectedItem.icon);
+				} else if( typeof selectedItem.label !== 'undefined' ){
+					this.$el.find('.tooltip-content').append( ': ' +  selectedItem.label );
+				}
+			}
 		},
 
 		get_selected_item: function () {
