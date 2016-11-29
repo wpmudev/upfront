@@ -350,11 +350,12 @@ class Upfront_UgalleryView extends Upfront_Object {
 				'lightbox_image_count' => __('Image counter', 'upfront'),
 			),
 			'ctrl' => array(
-				'show_image' => __('Show image', 'upfront'),
-				'edit_image' => __('Edit image', 'upfront'),
-				'rm_image' => __('Remove image', 'upfront'),
-				'image_link' => __('Image link', 'upfront'),
+				'show_image' => __('View lightbox', 'upfront'),
+				'edit_image' => __('Crop thumbnail', 'upfront'),
+				'rm_image' => __('Delete thumbnail', 'upfront'),
+				'image_link' => __('Link thumbnail', 'upfront'),
 				'edit_labels' => __('Edit labels', 'upfront'),
+				'thumbnail_options' => __('Thumbnail options', 'upfront')
 			),
 			'desc_update_success' => __('Image description has been successfully updated.', 'upfront'),
 			'loading' => __('Loading...', 'upfront'),

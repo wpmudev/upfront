@@ -1516,18 +1516,22 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		}
 
 		moreOptions.icon = 'more';
-		moreOptions.tooltip = l10n.cap_position;
+		moreOptions.tooltip = Upfront.Settings.l10n.global.views.more_options;
 		moreOptions.sub_items = {};
 
-		moreOptions.sub_items['add'] = this.createControl('add', l10n.add_slide, 'openImageSelector');
+		
 		moreOptions.sub_items['crop'] = this.createControl('crop', l10n.edit_img, 'imageEditMask');
-		moreOptions.sub_items['remove'] = this.createControl('remove', l10n.remove_slide, 'onRemoveSlide');
+		
 
 		if( multiControls ) {
 			moreOptions.sub_items['caption'] = captionControl;
 		}
 
 		moreOptions.sub_items['link'] = this.createLinkControl();
+		
+		moreOptions.sub_items['add'] = this.createControl('add', l10n.add_slide, 'openImageSelector');
+		
+		moreOptions.sub_items['remove'] = this.createControl('remove', l10n.remove_slide, 'onRemoveSlide');
 
 		var controls = _([
 			//this.createControl('next', l10n.css.next_label, 'nextSlide'),

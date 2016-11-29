@@ -495,7 +495,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'add' => __('Add', 'upfront'),
 				'back_to_posts' => __('&laquo; Back to posts', 'upfront'),
 				'add_new' => __('Add New', 'upfront'),
-				'padding_settings' => __('Element Padding', 'upfront'),
+				'padding_settings' => __('Adjust Padding', 'upfront'),
 				'varied_padding' => __('Varied Top & Bottom Padding', 'upfront'),
 				'equal_padding' => __('Equal Top & Bottom Padding', 'upfront'),
 				'top_padding' => __('Top Padding', 'upfront'),

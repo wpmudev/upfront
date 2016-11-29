@@ -1766,23 +1766,26 @@ define([
 				moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl(),
 				is_locked = this.property('is_locked'),
 				controls = [],
-				lock_icon
+				lock_icon,
+				lock_tooltip
 			;
 			if ( !this.mobileMode ) {
 				if(typeof is_locked !== "undefined" && is_locked === true) {
 					lock_icon = 'lock-locked';
+					lock_tooltip = l10n.ctrl.lock_image;
 				} else {
 					lock_icon = 'lock-unlocked';
+					lock_tooltip = l10n.ctrl.unlock_image;
 				}
 
 				moreOptions.icon = 'more';
-				moreOptions.tooltip = l10n.ctrl.caption_position;
+				moreOptions.tooltip = Upfront.Settings.l10n.global.views.more_options;
 
 				moreOptions.sub_items = {};
 				moreOptions.sub_items['swap'] = this.createControl('swap', l10n.btn.swap_image, 'openImageSelector');
 				moreOptions.sub_items['crop'] = this.createControl('crop', l10n.ctrl.edit_image, 'editRequest');
 				moreOptions.sub_items['link'] = this.createLinkControl();
-				moreOptions.sub_items['lock'] = this.createControl(lock_icon, l10n.ctrl.lock_image, 'lockImage');
+				moreOptions.sub_items['lock'] = this.createControl(lock_icon, lock_tooltip, 'lockImage');
 
 				controls.push(moreOptions);
 			}

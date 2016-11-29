@@ -385,7 +385,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 		moreOptions.icon = 'more';
 		moreOptions.inline = true;
-		moreOptions.tooltip = l10n.ctrl.caption_position;	
+		moreOptions.tooltip = l10n.ctrl.thumbnail_options;	
 		moreOptions.sub_items = {};
 
 		if (Upfront.Application.user_can_modify_layout()) {
@@ -404,7 +404,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 				moreOptions.sub_items['fullscreen'] = this.createControl('fullscreen', l10n.ctrl.show_image, 'openImageLightbox', 28, 28);
 			}
 			
-			moreOptions.sub_items['remove'] = this.createControl('remove', l10n.ctrl.remove, 'removeImage', 28, 28);
+			moreOptions.sub_items['remove'] = this.createControl('remove', l10n.ctrl.rm_image, 'removeImage', 28, 28);
 		}
 		
 		panel.items.push(moreOptions);
@@ -1789,7 +1789,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl();
 
 		moreOptions.icon = 'more';
-		moreOptions.tooltip = l10n.ctrl.caption_position;
+		moreOptions.tooltip = Upfront.Settings.l10n.global.views.more_options;
 
 		moreOptions.sub_items = {};
 		moreOptions.sub_items['add'] = this.createControl('add', l10n.template.add_img, 'openImageSelector', 28, 28);

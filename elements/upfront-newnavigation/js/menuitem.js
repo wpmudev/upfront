@@ -275,11 +275,11 @@ return (function ($) {
 			//moreOptions.tooltip = l10n.ctrl.caption_position;	
 			moreOptions.sub_items = {};
 			
-			moreOptions.sub_items['edit'] = this.createControl('labelEdit', '', 'editLabel', 28, 28);
+			moreOptions.sub_items['edit'] = this.createControl('labelEdit', l10n.edit_label, 'editLabel', 28, 28);
 			
 			moreOptions.sub_items['link'] = this.createLinkControl();
 
-			moreOptions.sub_items['remove'] = this.createControl('remove', '', 'deleteMenuItem', 28, 28);
+			moreOptions.sub_items['remove'] = this.createControl('remove', l10n.remove_link, 'deleteMenuItem', 28, 28);
 
 			panel.items.push(moreOptions);
 
@@ -315,47 +315,9 @@ return (function ($) {
 				me.model['menu-item-target'] = me.model.link.target;
 				me.saveLink();
 			});
-			
-			/*
-			this.listenTo(linkControl, 'panel:ok', function(){
-				linkControl.close();
-			});
-
-			me.listenTo(linkControl, 'panel:open', function(){
-				linkControl.$el
-					.parents('.ugallery_item')
-						.addClass('upfront-control-visible').end()
-					.closest('.ugallery_link')
-						.removeAttr('href') //Deactivate link when the panel is open
-				;
-
-				me.$el.closest('.ui-draggable').draggable('disable');
-			});
-
-			me.listenTo(linkControl, 'panel:ok', function(){
-				linkControl.$el
-					.parents('.ugallery_item')
-						.removeClass('upfront-control-visible');
-
-				setTimeout(function() {
-					linkControl.$el.closest('.ugallery-controls').siblings('.ugallery_link')
-						.attr('href', imageLink.get('url'))
-						.attr('target', imageLink.get('target'))
-						.attr('class', 'ugallery_link ugallery_link' + imageLink.get('type'));
-
-						var $item = linkControl.$el.closest(".ugallery_item");
-
-
-						me.add_controls_to_item( image, $item );
-				}, 50);
-
-				me.$el.closest('.ui-draggable').draggable('enable');
-			});
-			
-			*/
 
 			linkControl.icon = 'link';
-			//linkControl.tooltip = l10n.ctrl.image_link;
+			linkControl.tooltip = l10n.link_label;
 			linkControl.id = 'link';
 
 			//Set icon width & height
