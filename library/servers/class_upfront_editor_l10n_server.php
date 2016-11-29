@@ -292,8 +292,11 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'external' => __('External link', 'upfront'),
 				'unlink' => __('Unlink', 'upfront'),
 				'link_back' => __('Back', 'upfront'),
-				'blank_label' => __('Open in new tab'),
-				'self_label' => __('Open in same tab'),
+				'blank_label' => __('Open in new tab', 'upfront'),
+				'self_label' => __('Open in same tab', 'upfront'),
+				'browse_post_page' => __('Browse Posts / Pages', 'upfront'),
+				'edit_post_page' => __('Edit Post / Page link', 'upfront'),
+				'select_anchor' => __('Select anchor', 'upfront'),
 			),
 			'ueditor' => array(
 				'default_post_content' => __('Please type your content here...', 'upfront'),

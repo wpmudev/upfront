@@ -358,8 +358,6 @@ define([
 
 			this.renderTypeSelect();
 			
-			this.renderTooltips();
-
 			if (this.model.get('type') == 'anchor') {
 				this.renderAnchorSelect();
 			}
@@ -390,6 +388,8 @@ define([
 			});
 
 			this.delegateEvents();
+			
+			this.renderTooltips();
 		},
 
 		newLightbox: function () {
@@ -464,7 +464,7 @@ define([
 		},
 		
 		renderTooltips: function() {
-			this.$el.find('.upfront-link-back').utooltip({
+			this.$el.find('.upfront-link-back, .js-ulinkpanel-input-external, .js-ulinkpanel-input-url, .ulinkpanel-entry-browse, .js-ulinkpanel-input-phone, .upfront-home-link, .js-ulinkpanel-input-url, .anchor-selector, .js-ulinkpanel-input-email').utooltip({
 				fromTitle: true
 			});
 			
@@ -474,6 +474,19 @@ define([
 			this.$el.find('.upfront-link-select .upfront-field-select').utooltip({
 				fromTitle: false,
 				content: linkTitle.tooltip
+			});
+			
+			var targetType = this.model.get('target'),
+				targetContent
+			if(targetType === '_blank') {
+				targetContent = Upfront.Settings.l10n.global.content.blank_label;
+			} else {
+				targetContent = Upfront.Settings.l10n.global.content.self_label
+			}
+			
+			this.$el.find('.uf-link-target-select .upfront-field-select').utooltip({
+				fromTitle: false,
+				content: targetContent
 			});
 		},
 		
