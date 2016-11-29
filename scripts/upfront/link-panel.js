@@ -460,7 +460,7 @@ define([
 			this.typeSelect.render();
 			this.$el.find('.upfront-settings-link-select').prepend(this.typeSelect.el);
 			
-			this.addTooltip(this.$el.find('.ulinkpanel-back'), Upfront.Settings.l10n.global.views.link_back);
+			this.addTooltip(this.$el.find('.ulinkpanel-back'), Upfront.Settings.l10n.global.content.link_back);
 		},
 		
 		addTooltip: function(element, content, panel) {

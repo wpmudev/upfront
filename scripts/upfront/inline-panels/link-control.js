@@ -12,7 +12,7 @@ define([
 		events: {
 			'click': 'onClickControl',
 			'click .upfront-apply': 'close',
-			'click .upfront-link-back': 'close'
+			'click .upfront-link-back': 'onClickControl'
 		},
 
 		initialize: function(options) {
@@ -83,7 +83,7 @@ define([
 			
 			this.$el.siblings('.upfront-control-dialog-open').removeClass('upfront-control-dialog-open');
 
-			if(!$(e.target).closest('.upfront-icon').length || $(e.target).closest('upfront-icon-media-label-delete').length) {
+			if((!$(e.target).hasClass('upfront-link-back') && !$(e.target).closest('.upfront-icon').length) || $(e.target).closest('upfront-icon-media-label-delete').length) {
 				e.stopPropagation();
 				return;
 			}
@@ -135,12 +135,13 @@ define([
 
 			return this;
 		},
-		close: function() {
+		close: function() {			
 			if ( !this.isopen ) return this; // Not opened, don't need to trigger close
+			
 			this.isopen = false;
 			this.$el.removeClass('upfront-control-dialog-open');
 			this.trigger('panel:close');
-			
+
 			// remove class that was previously added on last region
 			this.$el.closest('.upfront-region-container').removeClass('upfront-last-region-padding');
 			

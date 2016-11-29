@@ -291,6 +291,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'update_template_notification' => __('Template has been Updated. All new pages created with this template will use the Updated design.', 'upfront'),
 				'external' => __('External link', 'upfront'),
 				'unlink' => __('Unlink', 'upfront'),
+				'link_back' => __('Back', 'upfront'),
 				'blank_label' => __('Open in new tab'),
 				'self_label' => __('Open in same tab'),
 			),
