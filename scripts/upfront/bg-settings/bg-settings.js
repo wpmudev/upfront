@@ -194,7 +194,6 @@ define([
 			perfectScrollbar.initialize(parent[0], {
 				suppressScrollX: true
 			});
-			console.log(parent[0]);
 		},
 		
 		settings_opened: function() {
