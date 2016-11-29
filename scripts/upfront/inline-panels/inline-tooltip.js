@@ -25,6 +25,8 @@ define([], function () {
 			.on("mouseleave", function (e) {
 				me.closeTooltip();
 			});
+			
+			this.listenTo(Upfront.Events, 'crop:inteface:activated', this.closeTooltip);
 		},
 
 		openTooltip: function(e, content) {

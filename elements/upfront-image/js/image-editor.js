@@ -328,6 +328,8 @@ define([
 
 				return this.open(options);
 			}
+			
+			Upfront.Events.trigger("crop:inteface:activated");
 
 			if(!this.options.editElement) {
 				this.buttons = [{id: 'image-edit-button-ok', text: l10n.btn.save_label, tooltip: l10n.btn.save_info}];
