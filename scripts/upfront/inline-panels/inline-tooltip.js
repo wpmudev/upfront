@@ -1,5 +1,27 @@
 (function ($) {
 define([], function () {
+	
+	$.fn.utooltip = function (args) {
+		this.each(function (id, item) {		
+			var content, 
+				panel = args.panel;
+
+			if(args.fromTitle === true) {
+				content = $(item).attr('title');
+			} else {
+				content = args.content;
+			}
+
+			tooltip = new InlineTooltip({
+				element: $(item),
+				content: content,
+				panel: panel,
+				wrapper: false
+			});
+			
+		});
+	}
+	
 	var InlineTooltip = Backbone.View.extend({
 		className: 'upfront-inline-tooltip',
 
@@ -9,6 +31,10 @@ define([], function () {
 			;
 			
 			this.options = options;
+			
+			if(typeof this.options.wrapper !== "undefined" && this.options.wrapper === false) {
+				$element = $(options.element);
+			}
 			
 			if(typeof this.options.panel !== "undefined" && this.options.panel === 'redactor') {
 				$element = $(options.element).find('.re-icon');
