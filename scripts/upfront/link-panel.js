@@ -357,6 +357,8 @@ define([
 			this.$el.html(this.tpl(tplData));
 
 			this.renderTypeSelect();
+			
+			this.renderTooltips();
 
 			if (this.model.get('type') == 'anchor') {
 				this.renderAnchorSelect();
@@ -459,9 +461,19 @@ define([
 
 			this.typeSelect.render();
 			this.$el.find('.upfront-settings-link-select').prepend(this.typeSelect.el);
-
+		},
+		
+		renderTooltips: function() {
 			this.$el.find('.upfront-link-back').utooltip({
 				fromTitle: true
+			});
+			
+			var linkType = this.model.get('type'),
+				linkTitle = this.getLinkTypeValue(linkType)
+			
+			this.$el.find('.upfront-link-select .upfront-field-select').utooltip({
+				fromTitle: false,
+				content: linkTitle.tooltip
 			});
 		},
 		
