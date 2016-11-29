@@ -56,7 +56,7 @@ define([], function () {
 				element = $(e.currentTarget).closest('.upfront-inline-panel'),
 				me = this
 			;
-
+		
 			if(typeof this.options.panel !== "undefined" && this.options.panel === 'tooltip') {
 				element = $(e.currentTarget).closest('.image-sub-control');
 			}
@@ -68,6 +68,7 @@ define([], function () {
 			var elementPosition, tooltipPosition;
 			
 			if(typeof this.options.panel !== "undefined" && this.options.panel === 'side') {
+				// Dropdown side tooltips
 				element = $(e.currentTarget).closest('li');
 				elementPosition = element.offset();
 				tooltipPosition = {
@@ -75,6 +76,7 @@ define([], function () {
 					left: elementPosition.left + element.outerWidth() + 5
 				}
 			} else if(typeof this.options.panel !== "undefined" && this.options.panel === 'colorPicker') {
+				// Color Picker Tooltips
 				element = $(e.currentTarget).closest('.uf-color-picker-wrapper');
 				elementPosition = element.offset();
 				tooltipPosition = {
@@ -82,6 +84,10 @@ define([], function () {
 					left: elementPosition.left + 1
 				}
 			} else {
+				// Link panel tooltips attached to redactor
+				if(!element.length) {
+					element = $(e.currentTarget).closest('.redactor_air');
+				}
 				elementPosition = element.offset(),
 				tooltipPosition = {
 					top: elementPosition.top - element.outerHeight() + 7,
