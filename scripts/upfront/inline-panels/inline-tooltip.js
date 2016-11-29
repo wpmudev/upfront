@@ -48,7 +48,7 @@ define([], function () {
 				me.closeTooltip();
 			});
 			
-			this.listenTo(Upfront.Events, 'crop:inteface:activated', this.closeTooltip);
+			this.listenTo(Upfront.Events, 'tooltip:close', this.closeTooltip);
 		},
 
 		openTooltip: function(e, content) {

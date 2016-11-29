@@ -456,6 +456,7 @@ define([
 				default_value: this.model.get('type'),
 				change: function () {
 					me.model.set({'type': this.get_value()});
+					Upfront.Events.trigger("tooltip:close");
 				}
 			});
 
