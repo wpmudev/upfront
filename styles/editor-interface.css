@@ -11197,7 +11197,8 @@ div.ugallery-controls i.upfront-icon:before {
   background: #E6ECF2; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon {
-  cursor: pointer; }
+  cursor: pointer;
+  height: 28px; }
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-padding-control {
   min-width: 150px;
@@ -11798,7 +11799,7 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
 
 .upfront-element-controls .upfront-inline-panel .ulinkpanel-dark {
   left: 0px;
-  top: -35px; }
+  top: -29px; }
 
 .upfront-element-controls .link-control-panel-first-level .link-control-panel {
   position: relative;
