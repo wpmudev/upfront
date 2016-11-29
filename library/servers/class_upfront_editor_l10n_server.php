@@ -297,6 +297,8 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'browse_post_page' => __('Browse Posts / Pages', 'upfront'),
 				'edit_post_page' => __('Edit Post / Page link', 'upfront'),
 				'select_anchor' => __('Select anchor', 'upfront'),
+				'text_color' => __('Text color', 'upfront'),
+				'text_background' => __('Text background color', 'upfront')
 			),
 			'ueditor' => array(
 				'default_post_content' => __('Please type your content here...', 'upfront'),

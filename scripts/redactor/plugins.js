@@ -1259,8 +1259,8 @@ RedactorPlugins.upfrontColor = function() {
 			},
             render: function () {
 
-                var tabforeground = $('<li id="tabforeground" class="active">').html('');
-                var tabbackground = $('<li id="tabbackground">').html('');
+                var tabforeground = $('<li id="tabforeground" class="active" title="'+ Upfront.Settings.l10n.global.content.text_color +'">').html('');
+                var tabbackground = $('<li id="tabbackground" title="'+ Upfront.Settings.l10n.global.content.text_background +'">').html('');
                 var tablist = $('<ul class="tablist">').append(tabbackground).append(tabforeground);
 
                 var tabs = $('<ul class="tabs">').append($('<li id="tabforeground-content" class="active">').html('<input class="foreground" type="text">')).append($('<li id="tabbackground-content">').html('<input class="background" type="text">'));

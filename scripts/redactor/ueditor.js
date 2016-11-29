@@ -200,6 +200,17 @@ var hackRedactor = function(){
 			});
 		});
 		
+		this.$air.find('.redactor-dropdown-box-upfrontIcons').utooltip({
+			fromTitle: false,
+			content: Upfront.Settings.l10n.global.ueditor.icons_label,
+			panel: 'redactor'
+		});
+		
+		this.$air.find('.tablist li').utooltip({
+			fromTitle: true,
+			panel: 'colorPicker'
+		});
+		
         /**
          * If redactor is to high for the user to see it, show it under the selected text
          */

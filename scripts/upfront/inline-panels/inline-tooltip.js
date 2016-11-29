@@ -64,25 +64,31 @@ define([], function () {
 			if(typeof this.options.panel !== "undefined" && this.options.panel === 'redactor') {
 				element = $(e.currentTarget).closest('.redactor_air');
 			}
-
-			var elementPosition = element.offset(),
-				tooltipPosition = {
-					top: elementPosition.top - element.outerHeight() + 7,
-					left: elementPosition.left
-				}
-			;
+			
+			var elementPosition, tooltipPosition;
 			
 			if(typeof this.options.panel !== "undefined" && this.options.panel === 'side') {
 				element = $(e.currentTarget).closest('li');
-				
 				elementPosition = element.offset();
-				
 				tooltipPosition = {
 					top: elementPosition.top + 4,
 					left: elementPosition.left + element.outerWidth() + 5
 				}
+			} else if(typeof this.options.panel !== "undefined" && this.options.panel === 'colorPicker') {
+				element = $(e.currentTarget).closest('.uf-color-picker-wrapper');
+				elementPosition = element.offset();
+				tooltipPosition = {
+					top: elementPosition.top - 24,
+					left: elementPosition.left + 1
+				}
+			} else {
+				elementPosition = element.offset(),
+				tooltipPosition = {
+					top: elementPosition.top - element.outerHeight() + 7,
+					left: elementPosition.left
+				}
 			}
-
+			
 			if(!tooltip.length){
 				tooltip = $('<div id="upfront-inline-tooltip" class="upfront-ui"></div>');
 				$('body').append(tooltip);
