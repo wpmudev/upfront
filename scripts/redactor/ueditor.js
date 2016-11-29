@@ -194,10 +194,8 @@ var hackRedactor = function(){
 		var buttons = this.$air.find('.redactor-toolbar > li');
 		
 		_.each(buttons, function(button) {
-			var content = $(button).find('a').attr('title');
-			var tooltip = new InlineTooltip({
-				element: button,
-				content: content,
+			$(button).find('a').utooltip({
+				fromTitle: true,
 				panel: 'redactor'
 			});
 		});

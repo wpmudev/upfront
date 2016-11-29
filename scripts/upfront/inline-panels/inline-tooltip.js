@@ -35,11 +35,7 @@ define([], function () {
 			if(typeof this.options.wrapper !== "undefined" && this.options.wrapper === false) {
 				$element = $(options.element);
 			}
-			
-			if(typeof this.options.panel !== "undefined" && this.options.panel === 'redactor') {
-				$element = $(options.element).find('.re-icon');
-			}
-			
+
 			if(typeof this.options.panel !== "undefined" && (this.options.panel === 'side' || this.options.panel === 'normal')) {
 				$element = $(options.element).find('label');
 			}
