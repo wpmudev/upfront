@@ -459,18 +459,18 @@ define([
 
 			this.typeSelect.render();
 			this.$el.find('.upfront-settings-link-select').prepend(this.typeSelect.el);
-			
-			this.addTooltip(this.$el.find('.ulinkpanel-back'), Upfront.Settings.l10n.global.content.link_back);
+
+			this.$el.find('.upfront-link-back').utooltip({
+				fromTitle: true
+			});
 		},
 		
 		addTooltip: function(element, content, panel) {
-			var tooltip = new InlineTooltip({
-				element: element,
+			$(element).utooltip({
+				fromTitle: false,
 				content: content,
 				panel: panel
 			});
-			
-			return tooltip;
 		},
 
 		renderTargetRadio: function() {
