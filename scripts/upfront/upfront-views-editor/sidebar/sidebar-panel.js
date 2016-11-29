@@ -76,7 +76,7 @@
 								// Okay, so let's first set up a debounced update call
 								var _debounced_update = _.debounce(function () {
 									perfectScrollbar.update(me.$el.find('.sidebar-panel-content')[0]);
-								}, 500); // Once in 500ms, but *do* the first call
+								}, 500); // Once in 500ms
 
 								setTimeout(_debounced_update);
 						},
