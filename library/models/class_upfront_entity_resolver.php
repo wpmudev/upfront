@@ -90,7 +90,7 @@ abstract class Upfront_EntityResolver {
 				$term = !empty($tax_query['terms']) ? $tax_query['terms'] : false;
 			}
 			if ($taxonomy && $term) $wp_entity = self::_to_entity($taxonomy, $term);
-		} else if (!empty($query->tax_query) && $query->query['post_type'] === 'product') {
+		} else if (!empty($query->tax_query) && isset($query->query['post_type']) && $query->query['post_type'] === 'product') {
 			$wp_entity['item'] = 'product';
 		}
 
