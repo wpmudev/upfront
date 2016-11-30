@@ -5283,9 +5283,11 @@ span.upfront-settings-item-title:after {
   left: 5px; }
 
 #settings .ugroup-settings .uf-bgsettings-image-size {
-  margin-top: -155px;
-  margin-bottom: 110px;
-  left: 0px; }
+  left: 0;
+  margin: 0;
+  padding: 5px 0 10px 0; }
+  #settings .ugroup-settings .uf-bgsettings-image-size label.upfront-field-label.upfront-field-label-block {
+    display: none; }
 
 #settings .ugroup-settings .uf-bgsettings-image-size .upfront-field-label {
   width: 100px !important;
@@ -5297,6 +5299,22 @@ span.upfront-settings-item-title:after {
 #settings .ugroup-settings .uf-bgsettings-image-pos-y .upfront-field-label {
   position: relative;
   top: 7px; }
+
+#settings .ugroup-settings .upfront_toggle {
+  width: 100%;
+  padding-left: 0; }
+  #settings .ugroup-settings .upfront_toggle span.upfront-field-label-text {
+    position: absolute;
+    left: 50px;
+    top: 2px; }
+  #settings .ugroup-settings .upfront_toggle label.upfront_toggle_label {
+    margin: 0; }
+
+#settings .ugroup-settings .uf-bgsettings-imageitem .uf-bgsettings-image-pos-x-num {
+  left: -7px; }
+
+#settings .ugroup-settings .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num {
+  left: -78px; }
 
 #settings {
   position: fixed;
@@ -15244,6 +15262,12 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before {
 #sidebar-ui .sidebar-commands-responsive .sidebar-panel.expanded .sidebar-panel-content {
   height: 330px; }
 
+#sidebar-ui .sidebar-commands-responsive .sidebar-panel.expanded .sidebar-panel-content.ps-container {
+  height: 300px; }
+
+#sidebar-ui .sidebar-commands-responsive .sidebar-panel.expanded .sidebar-panel-content .sp-container.sp-light.sp-alpha-enabled {
+  z-index: 99999999; }
+
 #sidebar-ui .sidebar-commands-responsive-control .exit-responsive {
   margin-top: 10px;
   padding: 2px 5px;
@@ -15857,6 +15881,9 @@ li#new-custom-breakpoint {
 #sidebar-ui #theme-colors-swatches .upfront-field-wrap {
   margin: 0; }
 
+#sidebar-ui #theme-colors-swatches .sp-container.sp-light.sp-alpha-enabled {
+  z-index: 99999999; }
+
 .panel-setting-theme-colors-meta {
   margin-top: 15px;
   line-height: 13px; }
@@ -15911,6 +15938,9 @@ li#new-custom-breakpoint {
 
 #sidebar-ui .typography-section-content {
   width: 230px; }
+
+#sidebar-ui .typography-section-content .sp-container.sp-light.sp-alpha-enabled {
+  z-index: 99999999; }
 
 /* Chosen */
 #insert-font-widget .chosen-container-single .chosen-single,
