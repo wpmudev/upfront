@@ -376,16 +376,6 @@ define([
 			}
 			
 			this.updateWrapperSize();
-			
-			this.$el.find('.upfront-link-select .upfront-field-select').on('click', function(e) {
-				var $target = $(e.target),
-					$select = $target.closest('.upfront-field-select')
-				;
-				
-				if($select.hasClass('upfront-field-select-expanded')) {
-					$select.removeClass('upfront-field-select-expanded');
-				}
-			});
 
 			this.delegateEvents();
 			
@@ -424,7 +414,50 @@ define([
 							var element = element = self.$el.find('[value="'+value.value+'"]').parent();
 							me.addTooltip(element, value.tooltip ? value.tooltip : value.label, panel);
 						});
-					}
+					},
+					openOptions: function(e) {
+						if(e)
+							e.stopPropagation();
+						
+						console.log(e);
+
+						if(this.$el.find('.upfront-field-select').hasClass('upfront-field-select-expanded')) {
+							$('.upfront-field-select-expanded').removeClass('upfront-field-select-expanded');
+							return;
+						}
+						
+						$('.upfront-field-select-expanded').removeClass('upfront-field-select-expanded');
+						this.$el.find('.upfront-field-select').css('min-width', '').css('min-width', this.$el.find('.upfront-field-select').width());
+						this.$el.find('.upfront-field-select').addClass('upfront-field-select-expanded');
+
+						// Make sure all select options are visible in scroll panel i.e. scroll scroll panel as needed
+						var me = this;
+						_.delay(function() { // Delay because opening animation causes wrong outerHeight results
+							var in_sidebar = me.$el.parents('#sidebar-ui').length,
+								in_settings = me.$el.parents('#element-settings-sidebar').length,
+								settingsTitleHeight = 46;
+
+							// Apply if select field is in sidebar or settings sidebar
+							if(in_sidebar == 1 || in_settings == 1) {
+								var select_dropdown = me.$el.find('.upfront-field-select-options'),
+									select = select_dropdown.parent(),
+									dropDownTop = select.offset().top - $('#element-settings-sidebar').offset().top;
+								dropDownTop = dropDownTop + settingsTitleHeight;
+
+								select_dropdown.css("width", select.width() + 3);
+								select_dropdown.css('top', dropDownTop + "px");
+								if( Upfront.Util.isRTL() )
+									select_dropdown.css('right',  ( $(window).width() - select.offset().left - select.width() ) + "px");
+								else
+									select_dropdown.css('left',  select.offset().left + "px");
+								select_dropdown.css('display', 'block');
+							}
+						}, 10);
+
+						$('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, this.on_scroll);
+
+						this.trigger('focus');
+					},
 				})
 			;
 			
