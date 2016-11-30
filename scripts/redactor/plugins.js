@@ -1144,9 +1144,11 @@ RedactorPlugins.upfrontColor = function() {
                             allowEmpty: true,
                             change: function (color) {
                                 self.current_color = color;
+								self.updateColors();
                             },
                             move: function (color) {
                                 self.current_color = color;
+								self.updateColors();
                             }
                         }
                     }),
@@ -1166,9 +1168,11 @@ RedactorPlugins.upfrontColor = function() {
                             allowEmpty: true,
                             change: function (color) {
                                 self.current_bg = color;
+								self.updateColors();
                             },
                             move: function (color) {
                                 self.current_bg = color;
+								self.updateColors();
                             }
                         }
                     });
