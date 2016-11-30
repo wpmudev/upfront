@@ -293,14 +293,17 @@ define([
 								use_bg_size = value || false
 							;
 							this.model.set_breakpoint_property(this.property_name, value);
+							// update size percent to 100
+							$bg_image_size.find('input[name="background_size_percent"]').val(100);
+							me.model.set_breakpoint_property('background_size_percent', 100);
 							if ( use_bg_size === false ) {
 								$bg_image_size.hide();
-								// update image to 100%
-								$bg_image_size.find('input[name="background_size_percent"]').val(100);
-								me._bg_size = 100;
-								me.model.set_breakpoint_property('background_size_percent', 100);
+								// update image to auto
+								me._bg_size = 'auto';
 								me.update_image();
 							} else {
+								me._bg_size = 100;
+								me.update_image();
 								$bg_image_size.show();
 							}
 						},
@@ -509,7 +512,8 @@ define([
 				is_repeat_x = _.contains(tile, 'x'),
 				pos_y = this._bg_position_y,
 				pos_x = this._bg_position_x,
-				bg_size = this._bg_size
+				use_bg_size_value = this.model.get_breakpoint_property_value('use_background_size_percent', true) || false,
+				bg_size = ( use_bg_size_value === false && this._bg_size !== 'auto' ) ? 'auto' : this._bg_size
 			;
 			if ( style == 'full' ) {
 				this.model.set_breakpoint_property('background_style', 'full');
@@ -533,11 +537,11 @@ define([
 					this.model.set_breakpoint_property('background_style', 'fixed');
 					this.model.set_breakpoint_property('background_repeat', 'no-repeat');
 					this.model.set_breakpoint_property('background_position', pos_x + '% ' + pos_y + '%');
-					this.model.set_breakpoint_property('background_size', bg_size + '%');
+					this.model.set_breakpoint_property('background_size', ( bg_size == 'auto' ) ? bg_size : (bg_size + '%') );
 				} else if (style === 'parallax') {
 					this.model.set_breakpoint_property('background_style', 'parallax');
 					this.model.set_breakpoint_property('background_position', this._origin_position_x + '% ' + this._origin_position_y + '%');
-					this.model.set_breakpoint_property('background_size', bg_size + '%');
+					this.model.set_breakpoint_property('background_size', ( bg_size == 'auto' ) ? bg_size : (bg_size + '%') );
 				} else {
 					this.model.set_breakpoint_property('background_style', style);
 				}
