@@ -346,9 +346,21 @@ define([
 				this.model.set({'type': 'external'}, {silent: true});
 			}
 			
+			var linkModel = this.model,
+				linkTitle = linkModel.get('title'),
+				linkUrl = linkModel.get('url');
+			
+			if(typeof linkTitle !== "undefined" && linkTitle.length > 25) {
+				linkModel.set('title', linkTitle.substr(0, 25) + '...');
+			}
+			
+			if(typeof linkUrl !== "undefined" && linkUrl.length > 25) {
+				linkModel.set('url', linkUrl.substr(0, 25) + '...');
+			}
+			
 			var tplData = {
 				title: this.title,
-				link: this.model.toJSON(),
+				link: linkModel.toJSON(),
 				checked: 'checked="checked"',
 				lightboxes: getLightBoxes(),
 				button: this.button,
