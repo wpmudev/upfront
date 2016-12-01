@@ -487,54 +487,6 @@ div.upfront-navigation li.menu-item .uimage-controls a {
   font-size: 13px;
   margin-bottom: 2px;
 }
-<<<<<<< HEAD
-=======
-
-/* style adjustments */
-.upfront-navigation .upfront-field-select {
-	/*max-width:170px;*/
-	height: 40px;
-	max-height: 40px;
-	font-size: 15px;
-	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
-	font-weight: 300;
-	box-sizing: border-box;
-	max-width: 310px;
-}
-
-.upfront-navigation .upfront-field-select:after {
-	top: 18px;
-}
-
-.upfront-navigation .upfront-link-select .upfront-field-select:after {
-	top: 11px;
-}
-
-.upfront-navigation .upfront-field-select-options {
-	background: #f2f9ff;
-}
-
-.upfront-navigation .upfront-field-select-option label {
-	font-size: 15px;
-	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
-	font-weight: 300;
-}
-
-.upfront-navigation .upfront-field-select-option-selected label {
-	color: #8797a7;
-}
-
-.upfront-navigation .upfront-field-select-value {
-	height: 40px;
-	line-height: 38px;
-	padding: 0 20px 0 10px;
-	box-sizing: border-box;
-}
-
-.upfront-navigation .upfront-link-select .upfront-field-select-value {
-	height: 24px;
-	line-height: 21px;
-}
 
 .c16 .upfront-navigation .upfront_new_menu_name_and_button, .c15 .upfront-navigation .upfront_new_menu_name_and_button, .c14 .upfront-navigation .upfront_new_menu_name_and_button, .c13 .upfront-navigation .upfront_new_menu_name_and_button,
 .c12 .upfront-navigation .upfront_new_menu_name_and_button, .c11 .upfront-navigation .upfront_new_menu_name_and_button, .c10 .upfront-navigation .upfront_new_menu_name_and_button,
@@ -548,8 +500,6 @@ div.upfront-navigation li.menu-item .uimage-controls a {
 	max-width: 181px;
 }
 
-
->>>>>>> master
 .c15 .upfront-navigation .existing_menu_list, .c14 .upfront-navigation .existing_menu_list, .c13 .upfront-navigation .existing_menu_list,
 .c12 .upfront-navigation .existing_menu_list, .c11 .upfront-navigation .existing_menu_list, .c10 .upfront-navigation .existing_menu_list,
 .c9 .upfront-navigation .existing_menu_list, .c8 .upfront-navigation .existing_menu_list {
