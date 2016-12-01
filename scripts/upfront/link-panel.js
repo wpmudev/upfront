@@ -84,8 +84,8 @@ define([
 
 		events: {
 			'click .js-ulinkpanel-input-entry': 'openPostSelector',
-			'click .upfront-create-new-lightbox': 'newLightbox',
 			'keydown .js-ulinkpanel-lightbox-input': 'onLightboxNameInputChange',
+			'click .upfront-apply': 'saveControls',
 			'blur .js-ulinkpanel-input-external': 'onUrlInputBlur',
 			//'click .js-ulinkpanel-ok': 'onOkClick',
 			'click .upfront-save_settings': 'onOkClick',
@@ -289,6 +289,7 @@ define([
 			if (event.which === 13) {
 				event.preventDefault();
 				this.createLightBox();
+				this.saveControls();
 			}
 		},
 
@@ -381,6 +382,11 @@ define([
 			
 			this.renderTooltips();
 		},
+		
+		saveControls: function () {
+			this.$el.find('.lightbox-selector').show();
+			this.$el.find('.js-ulinkpanel-new-lightbox').hide();
+		},
 
 		newLightbox: function () {
 			this.$el.find('.lightbox-selector').hide();
@@ -418,8 +424,6 @@ define([
 					openOptions: function(e) {
 						if(e)
 							e.stopPropagation();
-						
-						console.log(e);
 
 						if(this.$el.find('.upfront-field-select').hasClass('upfront-field-select-expanded')) {
 							$('.upfront-field-select-expanded').removeClass('upfront-field-select-expanded');
@@ -589,8 +593,11 @@ define([
 		},
 
 		renderLightBoxesSelect: function() {
-			var model = this.model;
-			var lightboxValues = [];
+			var model = this.model,
+				me = this,
+				lightboxValues = []
+			;
+			
 			_.each(getLightBoxes() || [], function(lightbox) {
 				lightboxValues.push({label: lightbox.label, value: lightbox.id});
 			});
@@ -612,6 +619,10 @@ define([
 			this.lightboxSelect.render();
 			this.$el.find('.lightbox-selector').append(this.lightboxSelect.el);
 			this.$el.find('.upfront-lightbox-select ul').prepend('<li class="upfront-field-select-option upfront-create-new-lightbox"><label>' + Upfront.Settings.l10n.global.content.new_lightbox + '</label></li>')
+		
+			this.$el.find('.upfront-create-new-lightbox').on("click", function(e) {
+				me.newLightbox();
+			});
 		},
 
 		delegateEvents: function(events) {
