@@ -1,6 +1,7 @@
 {
   "name": "upfront",
   "description": "Tools for Upfront",
+  "version": "1.0.0",
   "devDependencies": {
     "grunt": "~0.4.5",
     "grunt-cli": "~0.1.13",
@@ -22,6 +23,7 @@
   "scripts": {
     "test-php": "phpunit -c test/php/lib/phpunit.xml",
     "test-js": "node_modules/.bin/mocha test/js",
-    "test": "npm run test-php && npm run test-js"
+    "test": "npm run test-php && npm run test-js",
+    "jshint": "./node_modules/.bin/jshint ./ --exclude node_modules/,build/,scripts/chosen,scripts/file_upload,scripts/findandreplace,scripts/jquery,scripts/magnific-popup,scripts/realperson,scripts/spectrum"
   }
 }

@@ -193,7 +193,7 @@ function upfront_get_page_template_slug ($layout) {
 function upfront_boot_editor_trigger ($mode = '') {
 	if (class_exists('Upfront_Server_LayoutRevisions') && Upfront_Server_LayoutRevisions::is_preview()) return false; // Never auto-boot when in preview mode
 	if (defined("UPFRONT_INTERNAL_FLAG_EDITOR_BOOT_REQUESTED")) return false; // Already done this
-	define("UPFRONT_INTERNAL_FLAG_EDITOR_BOOT_REQUESTED", true, true);
+	define("UPFRONT_INTERNAL_FLAG_EDITOR_BOOT_REQUESTED", true);
 	return '<script>' .
 		'(function ($) { $(document).data("upfront-auto_start", true); $(document).on("upfront-load", function () { Upfront.Application.start(' . ( $mode ? '"' . $mode . '"' : '' ) . '); }); })(jQuery);' .
 	'</script>';

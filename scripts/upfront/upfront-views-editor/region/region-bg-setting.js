@@ -85,6 +85,9 @@
 				var $bg_settings_content = this.$el.find('.uf-region-bg-settings-panel-content');
 				$bg_settings_content = $bg_settings_content[0] || false;
 				if ( $bg_settings_content ) {
+					// Set max height
+					this.set_settings_content_max_height();
+					
 					// Okay, so let's first set up a debounced update call
 					var _debounced_update = _.debounce(function () {
 						perfectScrollbar.update($bg_settings_content);
@@ -97,7 +100,16 @@
 					// Let's wait for the type change to re-apply update
 					Upfront.Events.on("region:background:type:changed", _debounced_update);
 					// Also, do one right now, just off-stack
-					setTimeout(_debounced_update);	
+					setTimeout(_debounced_update);
+					
+					// When color spectrum is shown, set position of $bg_settings_content to initial for fixing z-index issue
+					Upfront.Events.on("color:spectrum:show", function() {
+						$($bg_settings_content).css('position', 'initial');
+					});
+					// When color spectrum is hidden, set position back to relative
+					Upfront.Events.on("color:spectrum:hide", function() {
+						$($bg_settings_content).css('position', 'relative');
+					});
 				}
 				
 				// If region settings sidebar.
@@ -107,6 +119,14 @@
 					// Save region data for later resetting.
 					this.save_current_models();
 				}
+			},
+			
+			set_settings_content_max_height: function() {
+				var height = this.$el.height(),
+					titleHeight = this.$el.find('.upfront-region-bg-setting-header').first().outerHeight(true),
+					advancedSettingsHeight = this.$el.find('.upfront-settings_panel.advanced-settings').first().outerHeight(true)
+				;
+				this.$el.find('.uf-region-bg-settings-panel-content').css('max-height', (height-titleHeight-advancedSettingsHeight-70) + 'px');
 			},
 
 			close: function(save) {
@@ -783,6 +803,7 @@
 				this.listenTo(Upfront.Application.cssEditor, 'updateStyles', this.adjust_grid_padding);
 			},
 			toggle_advanced_settings: function() {
+				// toggle advanced settings content
 				if (this.$el.find('.advanced-settings').hasClass('uf-settings-panel--expanded')) {
 					this.$el.find('.advanced-settings').removeClass('uf-settings-panel--expanded')
 						.find('.uf-settings-panel__body').hide();
@@ -790,6 +811,8 @@
 					this.$el.find('.advanced-settings').addClass('uf-settings-panel--expanded')
 						.find('.uf-settings-panel__body').show();
 				}
+				// resize settings content
+				this.set_settings_content_max_height();
 			},
 			
 			// Close Region Settings Sidebar.

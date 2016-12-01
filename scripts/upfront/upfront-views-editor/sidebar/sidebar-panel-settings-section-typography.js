@@ -52,6 +52,18 @@
                 this.edit_global_regions.render();
                 this.edit_global_regions.delegateEvents();
                 this.$el.find('.panel-section-content').append(this.edit_global_regions.el);
+				
+				var me = this;
+				// When color spectrum is shown, set positions
+				Upfront.Events.on("color:spectrum:show", function() {
+					me.$el.closest('.sidebar-panel-content.ps-theme-default').css('position', 'static');
+					me.$el.closest('.sidebar-panel-settings').css('position', 'relative');
+				});
+				// When color spectrum is hidden, reset positions
+				Upfront.Events.on("color:spectrum:hide", function() {
+					me.$el.closest('.sidebar-panel-content.ps-theme-default').css('position', 'relative');
+					me.$el.closest('.sidebar-panel-settings').css('position', 'static');
+				});
             }
         });
     });
