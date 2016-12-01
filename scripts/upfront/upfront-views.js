@@ -20,16 +20,16 @@ define([
 	"text!upfront/templates/layout.html",
 	"text!upfront/templates/api_key_overlay_region.html"
 ], function (RenderQueue, RenderQueueReporter) {
-	var _template_files = [
-		"text!upfront/templates/object.html",
-		"text!upfront/templates/object_group.html",
-		"text!upfront/templates/module.html",
-		"text!upfront/templates/module_group.html",
-		"text!upfront/templates/region_container.html",
-		"text!upfront/templates/region.html",
-		"text!upfront/templates/wrapper.html",
-		"text!upfront/templates/layout.html",
-		"text!upfront/templates/api_key_overlay_region.html"
+  var _template_files = [
+    "text!upfront/templates/object.html",
+    "text!upfront/templates/object_group.html",
+    "text!upfront/templates/module.html",
+    "text!upfront/templates/module_group.html",
+    "text!upfront/templates/region_container.html",
+    "text!upfront/templates/region.html",
+    "text!upfront/templates/wrapper.html",
+    "text!upfront/templates/layout.html",
+    "text!upfront/templates/api_key_overlay_region.html"
 ];
 
 	// Auto-assign the template contents to internal variable
@@ -672,10 +672,10 @@ define([
 			 * Makes sure the top control panel is always visible and is not covering smaller elements
 			 *
 			 * @param model, either passed or existing in 'this'
-						 * @param current_el, either passed or existing in 'this'
+             * @param current_el, either passed or existing in 'this'
 			 *
 			 * @return void
-						 */
+             */
 			adjust_top_settings_panel_position: function( model, current_el ){
 				var _model = model && ( model instanceof Backbone.Model ) ? model : this.model,
 					_current_el = current_el ? current_el : this,
@@ -755,7 +755,6 @@ define([
 				this.$el.closest('.upfront-region-container').removeClass('upfront-region-module-activated');
 
 				this.$el.trigger("upfront:entity:remove", [this]);
-				Upfront.Events.trigger("entity:region:deactivated");
 
 				// check if on group
 				if ( this.group_view ) {
@@ -979,7 +978,7 @@ define([
 				}
 			},
 			show_bottom_padding_hint: function (value, $el) {
-				var me									= this,
+				var me                  = this,
 					$el = _.isUndefined($el) || false === $el ? this.$el.parents('.upfront-module') : $el,
 					bottom_padding_hint = $el.find('.upfront-entity-bottom-padding-hint')
 				;
@@ -1128,7 +1127,7 @@ define([
 				}
 				return false;
 			}
-				}),
+        }),
 
 		_Upfront_PluralEditor = Backbone.View.extend(_.extend({}, _Upfront_ViewMixin, {
 			initialize: function () {
@@ -1621,10 +1620,10 @@ define([
 						});
 
 						// Simulate and mousedown and actually trigger drag
-							$new_module.simulate("mousedown", {
-									clientX: e.clientX,
-									clientY: e.clientY
-							});
+					    $new_module.simulate("mousedown", {
+					        clientX: e.clientX,
+					        clientY: e.clientY
+					    });
 
 					}
 				}));
@@ -1819,7 +1818,7 @@ define([
 					"extra_buttons": extra_buttons
 				});
 
-				if (typeof model.properties.usingNewAppearance === 'undefined') model.properties.preset = '';
+        if (typeof model.properties.usingNewAppearance === 'undefined') model.properties.preset = '';
 
 				template = _.template(_Upfront_Templates["object"], model);
 
@@ -2380,7 +2379,7 @@ define([
 			className: "upfront-object-group-view",
 			events: {
 				"click .upfront-object-group > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
-								"click .upfront-object-group > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
+                "click .upfront-object-group > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
 				"click .upfront-object-group > .upfront-entity_meta": "on_meta_click",
 				"click > .upfront-object-group-finish-edit": "on_finish",
 				"click": "on_click",
@@ -4583,36 +4582,36 @@ define([
 					initialize: function() {
 
 						this.menuitems = _([
-							new Upfront.Views.ContextMenuItem({
-								get_label: function() {
-									var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
-									if($main.hasClass('upfront-region-editing'))
-										return l10n.finish_editing;
-									else
-										return l10n.edit_background;
-								},
-								action: function() {
-										var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
-									if($main.hasClass('upfront-region-editing'))
-										me.close_edit();
-									else
-										me.trigger_edit(me.event);
+						  new Upfront.Views.ContextMenuItem({
+							  get_label: function() {
+								  var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
+				 				  if($main.hasClass('upfront-region-editing'))
+								  	return l10n.finish_editing;
+								  else
+								  	return l10n.edit_background;
+							  },
+							  action: function() {
+							  		var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
+				 				  if($main.hasClass('upfront-region-editing'))
+								  	me.close_edit();
+								  else
+								  	me.trigger_edit(me.event);
 
-								}
-							}),
+							  }
+						  }),
 
-							new Upfront.Views.ContextMenuItem({
-								get_label: function() {
-										return l10n.add_floating_region;
-								},
-								action: function(view, e) {
-										var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
-											collection = me.model.collection,
-											index = collection.indexOf(me.model),
-											fixed = me.model.get_sub_region('fixed'),
-											title = me.model.get('title') + " Floating " + (fixed.length+1),
-											name = title.toLowerCase().replace(/\s/g, '-'),
-											new_region = new Upfront.Models.Region(_.extend(_.clone(Upfront.data.region_default_args), {
+						  new Upfront.Views.ContextMenuItem({
+							  get_label: function() {
+								  	return l10n.add_floating_region;
+							  },
+							  action: function(view, e) {
+							  		var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
+							  			collection = me.model.collection,
+							  			index = collection.indexOf(me.model),
+							  			fixed = me.model.get_sub_region('fixed'),
+							  			title = me.model.get('title') + " Floating " + (fixed.length+1),
+							  			name = title.toLowerCase().replace(/\s/g, '-'),
+								  		new_region = new Upfront.Models.Region(_.extend(_.clone(Upfront.data.region_default_args), {
 											"name": name,
 											"container": me.model.get('name'),
 											"title": title,
@@ -4620,12 +4619,12 @@ define([
 											"sub": 'fixed',
 											"scope": me.model.get('scope')
 										})),
-											offset = me.$el.offset(),
-											width = me.$el.width(),
-											height = me.$el.height(),
-											window_h = $(window).height(),
-											new_region_w = 225,
-											new_region_h = 225,
+							  			offset = me.$el.offset(),
+							  			width = me.$el.width(),
+							  			height = me.$el.height(),
+							  			window_h = $(window).height(),
+							  			new_region_w = 225,
+							  			new_region_h = 225,
 										end_t, pos_x, pos_y, prop_x, prop_y;
 									new_region.set_property('width', new_region_w);
 									new_region.set_property('height', new_region_h);
@@ -4653,24 +4652,24 @@ define([
 									new_region.set_property('background_color', '#aeb8c2');
 									Upfront.Events.once('entity:region:added', run_animation, this);
 									new_region.add_to(collection, index+1, {sub: 'fixed'});
-									if(!$main.hasClass('upfront-region-fixed-editing'))
-											me.trigger_edit_fixed(me.event);
-										function run_animation(view, model){
+				 				 	if(!$main.hasClass('upfront-region-fixed-editing'))
+								  		me.trigger_edit_fixed(me.event);
+								  	function run_animation(view, model){
 										var ani_event_end = 'animationend.fixed_region_ani webkitAnimationEnd.fixed_region_ani MSAnimationEnd.fixed_region_ani oAnimationEnd.fixed_region_ani';
-											end_t = setTimeout(end, 2000);
-											view.$el.addClass("upfront-add-region-ani upfront-add-region-ani-" + prop_y + '-' + prop_x);
+								  		end_t = setTimeout(end, 2000);
+								  		view.$el.addClass("upfront-add-region-ani upfront-add-region-ani-" + prop_y + '-' + prop_x);
 										view.$el.one(ani_event_end, function () {
 											end(view);
 											clearTimeout(end_t);
 											view.$el.off(ani_event_end); // Make sure to remove any remaining unfired event
 										});
-										}
+								  	}
 									function end (view) {
 										view.$el.removeClass("upfront-add-region-ani upfront-add-region-ani-" + prop_y + '-' + prop_x);
 										Upfront.Events.trigger('command:region:fixed_edit_toggle', true);
 									}
-								}
-							})
+							  }
+						  })
 						]);
 					}
 				});
@@ -4678,7 +4677,7 @@ define([
 				this.ContextMenu = Upfront.Views.ContextMenu.extend({
 					initialize: function() {
 						this.menulists = _([
-							new ContextMenuList()
+						  new ContextMenuList()
 						]);
 					}
 				});
@@ -4824,7 +4823,6 @@ define([
 				$main.addClass('upfront-region-editing');
 				this.update_overlay();
 				Upfront.Events.trigger("command:region:edit_toggle", true);
-				Upfront.Events.trigger("command:region:show_settings", this);
 				this.trigger("activate_region", this);
 				this.listenTo(Upfront.Events, "command:newpage:start", this.close_edit);
 				this.listenTo(Upfront.Events, "command:newpost:start", this.close_edit);
@@ -4855,7 +4853,7 @@ define([
 					right: ''
 				});
 			},
-			trigger_edit_lightbox: function() {
+			trigger_edit_lightbox: function(e) {
 				if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.CONTENT )
 					return false;
 				var me = this,
@@ -5435,20 +5433,13 @@ define([
 				this.listenTo(Upfront.Events, "upfront:grid:updated", this.on_grid_update);
 				this.listenTo(Upfront.Events, "entity:region:hide_toggle", this.update_hide_toggle);
 				this.listenTo(Upfront.Events, "command:region:edit_toggle", this.update_buttons);
-				this.listenTo(Upfront.Events, "command:region:show_settings", this.region_edit_triggered);
 				this.listenTo(Upfront.Events, "entity:region:removed", this.update_buttons);
 				$(window).on('resize.region_' + this.model.get('name'), this, this.on_window_resize);
 
-				this.listenTo(Upfront.Events, 'upfront:renderingqueue:finished', this.display_region_hint);
+        this.listenTo(Upfront.Events, 'upfront:renderingqueue:finished', this.display_region_hint);
 			},
 			on_click: function (e) {
 
-			},
-			region_edit_triggered: function(container) {
-				// Only show settings for the correct region.
-				if ($.contains(container.el, this.el)) {
-					this.on_settings_click();
-				}
 			},
 			on_mouse_up: function () {
 				this.trigger("activate_region", this);
@@ -5832,7 +5823,7 @@ define([
 					}
 
 
-					if( 'fixed' === this.model.get('type')	){ //  If it's a floating region!
+					if( 'fixed' === this.model.get('type')  ){ //  If it's a floating region!
 						this.parent_view.get_container_view(this.model).close_edit();
 						this.collection.remove(this.model);
 						//this.remove();
@@ -5882,15 +5873,19 @@ define([
 				// run layout change event
 				Upfront.Events.trigger('entity:layout:change');
 			},
-			on_settings_click: function () {
+			on_settings_click: function (e) {
+
+				if(typeof(e) != 'undefined') {
+					e.preventDefault();
+					e.stopPropagation();
+				}
 
 				var me = this,
 					container_view = this.parent_view.get_container_view(this.model)
 				;
 
-				// Close Region Settings.
 				this.listenToOnce(Upfront.Events, "entity:region:deactivated", function(deac){
-					if (me.bg_setting) {
+					if(e && !this.$el.is($(e.target).closest('div.upfront-region')) && me.bg_setting) {
 						me.bg_setting.close(false);
 					}
 				});
@@ -5924,7 +5919,7 @@ define([
 					this.bg_setting.top = setting_offset.top;
 
 					var container_view = this.parent_view.get_container_view(this.model);
-					container_view.trigger_edit_lightbox();
+					container_view.trigger_edit_lightbox(e);
 				}
 				else {
 					if ( this.bg_setting.width < setting_offset.left - 10 ) {
@@ -5938,7 +5933,10 @@ define([
 					this.bg_setting.top = setting_offset.top - offset.top;
 				}
 
-				this.bg_setting.open()
+				container_view.$el.addClass('upfront-region-bg-setting-open');
+				this.bg_setting.open().always(function(){
+					container_view.$el.removeClass('upfront-region-bg-setting-open');
+				});
 			},
 			on_hide_click: function (e) {
 				e.preventDefault();
@@ -5966,9 +5964,10 @@ define([
 				container_view.trigger_edit(e);
 				e.stopPropagation();
 			},
-			close_edit: function () {
+			close_edit: function (e) {
 				var container_view = this.parent_view.get_container_view(this.model);
 				container_view.close_edit();
+				e.stopPropagation();
 			},
 			on_modal_open: function () {
 				var container_view = this.parent_view.get_container_view(this.model);
@@ -5976,10 +5975,9 @@ define([
 			},
 			on_modal_close: function () {
 				var container_view = this.parent_view.get_container_view(this.model);
+				container_view.$el.find('.upfront-region-finish-edit').css('display', ''); // reset hide finish edit button
 				this.bg_setting.remove(); // removing it here, i'll be re-rendered before opening
 				this.bg_setting = false;
-				// Close editing the region.
-				this.close_edit();
 			},
 			on_change_breakpoint: function (breakpoint) {
 				var $delete = this.$el.find('> .upfront-entity_meta > a.upfront-entity-delete_trigger'),
@@ -6239,7 +6237,7 @@ define([
 						}
 						else {
 							if ( container_height > win_height && scroll_bottom <= ( container_offset.top + win_height ) )
-								css.bottom = container_height - win_height + bottom;
+								css.bottom =  container_height - win_height + bottom;
 							else
 								css.bottom = bottom;
 						}
@@ -6280,9 +6278,7 @@ define([
 			close_edit: function (e) {
 				var container_view = this.parent_view.get_container_view(this.model);
 				container_view.close_edit();
-				if (typeof e !== 'undefined') {
-					e.stopPropagation();
-				}
+				e.stopPropagation();
 			},
 			check_modules: function () {
 				var total = this.$el.find('> .upfront-region-wrapper > .upfront-modules_container > .upfront-editable_entities_container').find('.upfront-module').size();
@@ -6312,7 +6308,7 @@ define([
 			}
 		}),
 
-		/* Lightbox is extended from Region */
+/*  Lightbox is extended from Region */
 		RegionLightbox = Region.extend({
 			cssSelectors: {
 				'.upfront-region-side-lightbox': {label: l10n.ltbox_area_label, info: l10n.ltbox_area_info},
