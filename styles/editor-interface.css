@@ -11851,8 +11851,18 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
   background: #f9f9f9;
   border-bottom: 1px solid #e5e5e5; }
 
+.link-control-panel .upfront-create-new-lightbox label {
+  cursor: pointer; }
+
 .link-control-panel .upfront-lightbox-select .upfront-field-select-options {
-  padding-top: 0px; }
+  padding: 0px !important; }
+
+.link-control-panel .upfront-lightbox-select .upfront-field-select-options::-webkit-scrollbar {
+  width: 0; }
+
+.link-control-panel .upfront-lightbox-select .upfront-field-select-options.upfront-field-select-options-scrollbar::-webkit-scrollbar {
+  background: none;
+  width: 5px; }
 
 .link-control-panel .upfront-settings-link-field .upfront-field-select-option:hover {
   background: #eaedee;

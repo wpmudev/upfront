@@ -269,7 +269,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'items' => __('items', 'upfront'),
 				'ok' => __('Ok', 'upfront'),
 				'open_lightbox' => __('Open lightbox', 'upfront'),
-				'create_lightbox' => __('Create lightbox', 'upfront'),
+				'create_lightbox' => __('Create new lightbox', 'upfront'),
 				'select' => __('Select', 'upfront'),
 				'type_link_url' => __('Type link URL:', 'upfront'),
 				'link_opens_in' => __('Link Opens In:', 'upfront'),
