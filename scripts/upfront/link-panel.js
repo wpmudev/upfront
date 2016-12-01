@@ -207,6 +207,7 @@ define([
 
 			this.onOkClick(e); // Take care of the regular flow
 			this.trigger("url:changed"); // Take care of inline dialog
+			Upfront.Events.trigger("tooltip:close"); // Close tooltip
 
 			return false;
 		},
@@ -290,6 +291,7 @@ define([
 				event.preventDefault();
 				this.createLightBox();
 				this.saveControls();
+				Upfront.Events.trigger("tooltip:close"); // Close tooltip
 			}
 		},
 
