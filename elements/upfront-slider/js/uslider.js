@@ -888,6 +888,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		});
 
 		me.listenTo(link, 'change', function(data) {
+			// If we have boolean type return
+			if(data === true) return;
+			
 			slide.set({link: data.toJSON()}, {silent:true});
 			// Rather than changing template rendering set properties that tempalte uses also
 			slide.set({
