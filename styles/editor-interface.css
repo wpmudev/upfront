@@ -14089,7 +14089,6 @@ body .redactor-toolbar li a.re-upfrontLink.redactor-act {
   margin-top: 0px; }
 
 .redactor-dropdown-box-upfrontIcons {
-  top: -140px;
   right: -10px !important; }
 
 .redactor-dropdown .upfront-save_settings {
@@ -14359,6 +14358,15 @@ a.ueditor-unlink {
   left: -10px !important;
   margin-top: 0px;
   box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3); }
+
+.uf-redactor-top {
+  top: -140px; }
+
+.redactor-dropdown-box-upfrontFormatting.uf-redactor-top {
+  top: -100px; }
+
+.uf-redactor-bottom {
+  top: -10px; }
 
 /* New Color Picker CSS override */
 .sp-container {
@@ -16094,6 +16102,8 @@ li#new-custom-breakpoint {
 .redactor-dropdown.redactor-dropdown-box-upfrontIcons {
   min-width: 155px;
   width: 155px;
+  margin-left: 15px;
+  margin-top: 0px;
   line-height: 38px;
   padding: 0;
   opacity: 1; }

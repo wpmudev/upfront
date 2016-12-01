@@ -707,6 +707,7 @@ RedactorPlugins.upfrontIcons = function() {
                 this.$el.parent().css({
                     left: 193
                 });
+				this.position_icons_panel();
             },
             close: function () {
                 if (this.redactor) {
@@ -767,6 +768,19 @@ RedactorPlugins.upfrontIcons = function() {
 					this.closeToolbar();
 					this.redactor.dropdown.hideAll();
 				}
+			},
+			
+			position_icons_panel: function() {
+				var $redactorContainer = this.$el.closest('.redactor-toolbar'),
+					$containerOffset = $redactorContainer.offset(),
+					$positionClass = 'uf-redactor-top';
+				;
+				
+				if($containerOffset.top < this.$el.height()) {
+					$positionClass = 'uf-redactor-bottom';
+				}
+
+				this.$el.closest('.redactor-dropdown-box-upfrontIcons').addClass($positionClass);
 			},
 
             set_current_icon: function () {
@@ -1643,7 +1657,7 @@ RedactorPlugins.upfrontFormatting = function() {
             },
             open: function (e, redactor) {
                 this.redactor = redactor;
-				this.set_position();
+				this.position_icons_panel();
                 this.set_previously_selected_tag();
                 this.set_previously_selected_class();
 				this.fadeInToolbar();
@@ -1654,13 +1668,17 @@ RedactorPlugins.upfrontFormatting = function() {
                     this.$sel = false;
                 }
             },
-			set_position: function() {
-				var $container = this.$el.closest('.redactor_air'),
-					offset = $container.offset();
+			position_icons_panel: function() {
+				var $redactorContainer = this.$el.closest('.redactor-toolbar'),
+					$containerOffset = $redactorContainer.offset(),
+					$positionClass = 'uf-redactor-top';
+				;
+				
+				if($containerOffset.top < this.$el.height()) {
+					$positionClass = 'uf-redactor-bottom';
+				}
 
-					if(offset.top < 100) {
-						//this.$el.closest('.redactor-dropdown-box-upfrontFormatting').css('top', offset.top);
-					}
+				this.$el.closest('.redactor-dropdown-box-upfrontFormatting').addClass($positionClass);
 			},
             set_previously_selected_tag: function(){
                 var tag = $(this.redactor.selection.getBlock()).length ? $(this.redactor.selection.getBlock())[0].tagName : false;

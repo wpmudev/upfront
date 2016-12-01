@@ -491,7 +491,6 @@ body .redactor-toolbar li a.re-upfrontLink.redactor-act	{ background-position: -
 }
 
 .redactor-dropdown-box-upfrontIcons {
-	top: -140px;
     right: -10px !important;
 }
 
@@ -799,4 +798,13 @@ a.ueditor-unlink {
 	left: -10px !important;
 	margin-top: 0px;
 	box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3);
+}
+.uf-redactor-top {
+	top: -140px;
+}
+.redactor-dropdown-box-upfrontFormatting.uf-redactor-top {
+	top: -100px;
+}
+.uf-redactor-bottom {
+	top: -10px;
 }
