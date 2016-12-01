@@ -30,3 +30,6 @@
 #sidebar-ui .typography-section-content {
 	width: 230px;
 }
+#sidebar-ui .typography-section-content .sp-container.sp-light.sp-alpha-enabled {
+	z-index: 99999999;
+}

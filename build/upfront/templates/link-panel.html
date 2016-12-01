@@ -1,40 +1,40 @@
-<div class="ulinkpanel-back"><button class="upfront-icon-button upfront-link-back" title="{{Upfront.Settings.l10n.global.content.link_back}}"></button></div>
+<div class="ulinkpanel-back"><button class="upfront-icon upfront-icon-button upfront-link-back" title="{{Upfront.Settings.l10n.global.content.link_back}}"></button></div>
 <div class="upfront-settings-link-select"></div>
 {[if(type == 'external') { ]}
 <div class="upfront-settings-link-field upfront-field-wrap ulinkpanel-external-wrap">
-	<input type="text" value="{{link.url}}" placeholder="http://example.com" class="upfront-field-text js-ulinkpanel-input-url js-ulinkpanel-input-external">
+	<input type="text" value="{{link.url}}" placeholder="http://example.com" class="upfront-field-text js-ulinkpanel-input-url js-ulinkpanel-input-external" title="{{Upfront.Settings.l10n.global.content.external}}">
 </div>
 {[ } ]}
 {[if(type == 'phone') { ]}
 <div class="upfront-settings-link-field upfront-field-wrap ulinkpanel-external-wrap">
-	<input type="text" value="{{link.url}}" placeholder="{{Upfront.Settings.l10n.global.ueditor.type_link_phone}}" class="upfront-field-text js-ulinkpanel-input-url js-ulinkpanel-input-external">
+	<input type="text" value="{{link.url}}" placeholder="{{Upfront.Settings.l10n.global.ueditor.type_link_phone}}" class="upfront-field-text js-ulinkpanel-input-url js-ulinkpanel-input-external js-ulinkpanel-input-phone" title="{{Upfront.Settings.l10n.global.content.phone}}">
 </div>
 {[ } ]}
 {[if(type == 'email') { ]}
 <div class="upfront-settings-link-field upfront-field-wrap ulinkpanel-external-wrap">
-	<input type="text" value="{{link.url}}" placeholder="johnsmith@example.com" class="upfront-field-text js-ulinkpanel-input-url js-ulinkpanel-input-external">
+	<input type="text" value="{{link.url}}" placeholder="johnsmith@example.com" class="upfront-field-text js-ulinkpanel-input-url js-ulinkpanel-input-external js-ulinkpanel-input-email" title="{{Upfront.Settings.l10n.global.content.email}}">
 </div>
 {[ } ]}
 {[if(type == 'entry') { ]}
-<div class="upfront-settings-link-field upfront-field-wrap ulinkpanel-entry-wrap">
+<div class="upfront-settings-link-field upfront-field-wrap ulinkpanel-entry-wrap upfront-field-post-pages">
 	{[if(!link.url || link.url=='' || link.url=='http://') { ]}
-		<a title="{{Upfront.Settings.l10n.global.content.change_link}}" class="ulinkpanel-entry-url ulinkpanel-entry-browse js-ulinkpanel-input-entry" href="#">{{Upfront.Settings.l10n.global.views.browse}}</a>
+		<a class="ulinkpanel-entry-url ulinkpanel-entry-browse js-ulinkpanel-input-entry" href="#" title="{{Upfront.Settings.l10n.global.content.browse_post_page}}">{{Upfront.Settings.l10n.global.views.browse}}</a>
 	{[ } else { ]}
-		<a title="{{Upfront.Settings.l10n.global.content.change_link}}" class="ulinkpanel-entry-url js-ulinkpanel-input-url js-ulinkpanel-input-entry" href="#">{{(link.title) ? link.title : link.url}}</a>
+		<a class="ulinkpanel-entry-url js-ulinkpanel-input-url js-ulinkpanel-input-entry" href="#" title="{{Upfront.Settings.l10n.global.content.edit_post_page}}">{{(link.title) ? link.title : link.url}}</a>
 	{[ } ]}
 </div>
 {[ } ]}
 {[if(type == 'anchor') { ]}
-<div class="upfront-settings-link-field anchor-selector">
+<div class="upfront-settings-link-field anchor-selector" title="{{Upfront.Settings.l10n.global.content.select_anchor}}">
 </div>
 {[ } ]}
 {[if(type == 'homepage') { ]}
-<div class="upfront-settings-link-field upfront-home-link">
+<div class="upfront-settings-link-field upfront-home-link" title="{{Upfront.Settings.l10n.global.content.home_link}}">
 	{{Upfront.Settings.l10n.global.content.home_link}}
 </div>
 {[ } ]}
 {[if(type == 'lightbox') { ]}
-<div class="upfront-settings-link-field js-ulinkpanel-input-url js-ulinkpanel-input-lightbox clearfix">
+<div class="upfront-settings-link-field js-ulinkpanel-input-url js-ulinkpanel-input-lightbox clearfix" title="{{Upfront.Settings.l10n.global.content.lightbox}}">
 	{[ if(lightboxes.length) { ]}
 		<div class="lightbox-selector">
 		</div>

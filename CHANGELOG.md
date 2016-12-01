@@ -1,6 +1,15 @@
 Change Log
 ============
 
+1.6.1 - 2016-12-01
+-------------------------------------------------------------------------------
+- Fix: region settings bug fixes and improvements
+- Fix: color picker cutoff in sidebar settings
+- Fix: define switches case sensitivity and HHVM issue
+- Fix: refactor shortcode expansion to WordPress codec implementation
+- Fix: drag and drop error when no elements is in layout
+- Fix: MarketPress compatibility issue with third party plugin
+
 1.6 - 2016-11-23
 -------------------------------------------------------------------------------
 - Add: Maintenance mode

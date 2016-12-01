@@ -33,6 +33,7 @@ chosen/chosen.jquery.min.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/global-event-handlers.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/panels.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/panel.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/inline-tooltip.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/item.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/item-multi.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/control.js
