@@ -37,18 +37,16 @@
 
 
 										// Add JS Scrollbar.
-										perfectScrollbar.initialize(me.$el.find('.sidebar-panel-content')[0], {
-											suppressScrollX: true
-										});
-
-										// Okay, so let's first set up a debounced update call
-										var _debounced_update = _.debounce(function () {
-											perfectScrollbar.update(me.$el.find('.sidebar-panel-content')[0]);
-										}, 500, true); // Once in 500ms, but *do* the first call
-
-
-										Upfront.Events.on("entity:object:refresh", _debounced_update);
-										setTimeout(_debounced_update);
+										perfectScrollbar.withDebounceUpdate(
+											// Element.
+											me.$el.find('.sidebar-panel-content')[0],
+											// Run First.
+											true,
+											// Event.
+											"entity:object:refresh",
+											// Initialize.
+											true
+										);
 
 									});
 								}
@@ -72,13 +70,17 @@
 								$('.sidebar-panel').not(this.$el).find(".sidebar-panel-tabspane").hide();
 								this.$el.find(".sidebar-panel-tabspane").not(".sidebar-panel-tabspane-hidden").show();
 
-								var me = this;
-								// Okay, so let's first set up a debounced update call
-								var _debounced_update = _.debounce(function () {
-									perfectScrollbar.update(me.$el.find('.sidebar-panel-content')[0]);
-								}, 500); // Once in 500ms
-
-								setTimeout(_debounced_update);
+									// Update JS Scrollbar.
+									perfectScrollbar.withDebounceUpdate(
+										// Element.
+										this.$el.find('.sidebar-panel-content')[0],
+										// Run First.
+										false,
+										// Event.
+										false,
+										// Initialize.
+										false
+									);
 						},
 						show_tab : function( e ){
 								var tab = "#" + $(e.target).data("target");
@@ -88,14 +90,6 @@
 								//Show current tab's content
 								this.$el.find(".sidebar-tab-content").hide();
 								this.$el.find(tab).show();
-
-								var me = this;
-								// Okay, so let's first set up a debounced update call
-								var _debounced_update = _.debounce(function () {
-									perfectScrollbar.update(me.$el.find('.sidebar-panel-content')[0]);
-								}, 500, true); // Once in 500ms, but *do* the first call
-
-								return setTimeout(_debounced_update);
 
 						}
 				}));

@@ -2031,16 +2031,16 @@ define([
 				Upfront.Events.trigger("media:item:selection_changed", selected_model);
 
 				// Add JS Scrollbar.
-				perfectScrollbar.initialize(this.el, {
-					suppressScrollX: true
-				});
-
-				var me = this;
-				var _debounced_update = _.debounce(function () {
-					perfectScrollbar.update(me.el);
-				}, 500, true); // Once in 500ms, but *do* the first call
-				setTimeout(_debounced_update);
-
+				perfectScrollbar.withDebounceUpdate(
+					// Element.
+					this.el,
+					// Run First.
+					true,
+					// Event.
+					false,
+					// Initialize.
+					true
+				);
 			}
 		},
 		update: function () {

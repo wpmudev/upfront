@@ -88,20 +88,18 @@
 					// Set max height
 					this.set_settings_content_max_height();
 					
-					// Okay, so let's first set up a debounced update call
-					var _debounced_update = _.debounce(function () {
-						perfectScrollbar.update($bg_settings_content);
-					}, 500, true); // Once in 500ms, but *do* the first call
+					// Add JS Scrollbar.
+					perfectScrollbar.withDebounceUpdate(
+						// Element.
+						$bg_settings_content,
+						// Run First.
+						true,
+						// Event.
+						"region:background:type:changed",
+						// Initialize.
+						true
+					);
 
-					perfectScrollbar.initialize($bg_settings_content, {
-						suppressScrollX: true
-					});
-					
-					// Let's wait for the type change to re-apply update
-					Upfront.Events.on("region:background:type:changed", _debounced_update);
-					// Also, do one right now, just off-stack
-					setTimeout(_debounced_update);
-					
 					// When color spectrum is shown, set position of $bg_settings_content to initial for fixing z-index issue
 					Upfront.Events.on("color:spectrum:show", function() {
 						$($bg_settings_content).css('position', 'initial');

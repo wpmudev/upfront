@@ -162,21 +162,18 @@ define([
 				panel.render();
 				panel.parent_view = me;
 				me.$el.find('#sidebar-scroll-wrapper').append(panel.el);
-				// Add JS Scrollbar (ignore X axis scrolling).
-				perfectScrollbar.initialize(me.$el.find('#sidebar-scroll-wrapper')[0], {
-					suppressScrollX: true
-				});
 
-				// Okay, so let's first set up a debounced update call
-				var _debounced_update = _.debounce(function () {
-					perfectScrollbar.update(me.$el.find('#sidebar-scroll-wrapper')[0]);
-				}, 500); // Once in 500ms
-				setTimeout(_debounced_update);
-
-
-				Upfront.Events.on("menu_element:settings:rendered", _debounced_update);
-
-
+				// Add JS Scrollbar.
+				perfectScrollbar.withDebounceUpdate(
+					// Element.
+					me.$el.find('#sidebar-scroll-wrapper')[0],
+					// Run First.
+					false,
+					// Event.
+					"menu_element:settings:rendered",
+					// Initialize.
+					true
+				);
 			});
 
 			this.$el.addClass('upfront-ui');
