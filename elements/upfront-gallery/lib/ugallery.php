@@ -368,7 +368,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 			'go_to_linked' => __('go to linked page', 'upfront'),
 			'regenerating' => __('Regenerating images...', 'upfront'),
 			'regenerating_done' => __('Wow, those are cool!', 'upfront'),
-			'settings' => __('Gallery settings', 'upfront'),
+			'settings' => __('Settings', 'upfront'),
 			'toggle_dnd' => __('Toggle drag\'n\'drop sorting of images', 'upfront'),
 			'panel' => array(
 				'sort' => __('Enable label sorting', 'upfront'),

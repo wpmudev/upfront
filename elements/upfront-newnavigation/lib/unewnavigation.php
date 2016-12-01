@@ -301,7 +301,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				'background_label' => __('Background', 'upfront'),
 				'item_background_label' => __('Item Background', 'upfront'),
 			),
-			'settings' => __('Navigation settings', 'upfront'),
+			'settings' => __('Settings', 'upfront'),
 			'add_item' => __('Add a menu item', 'upfront'),
 		);
 		return !empty($key)
