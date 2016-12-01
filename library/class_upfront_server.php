@@ -21,6 +21,7 @@ interface IUpfront_Server {
 abstract class Upfront_Server implements IUpfront_Server {
 
 	const REJECT_NOT_ALLOWED = "not allowed";
+	const MAINTENANCE_MODE = "upfront_maintenance_mode";
 
 	/**
 	 * Debugger instance

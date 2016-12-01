@@ -88,8 +88,7 @@
 							if ( '' === value && is_responsive ) {
 								me.reset_breakpoint_background(breakpoint, false);
 								$content.find('.upfront-bg-setting-tab').hide();
-							}
-							else {
+							} else {
 								if ( is_responsive ) {
 									me.revert_breakpoint_background(breakpoint, ['background_type'], true);
 								}
@@ -109,12 +108,13 @@
 								me._prompt = ( bg_type_value !== value );
 							}
 							// Resize Select if image.
-							if (value === 'image') {
+							if (value === 'image' || value === 'featured') {
 								this.$el.addClass('upfront-bg-setting-type-image');
 								this.$el.find('.upfront-field-select').css({'min-width': '140px'});
 							} else {
 								this.$el.removeClass('upfront-bg-setting-type-image');
 							}
+							Upfront.Events.trigger("region:background:type:changed");
 						}
 					})
 				;

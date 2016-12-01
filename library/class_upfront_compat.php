@@ -3,6 +3,7 @@
 require_once('compat/class_upfront_compat_converter.php');
 require_once('compat/class_upfront_compat_parser.php');
 require_once('compat/class_upfront_compat_woocommerce.php');
+require_once('compat/class_upfront_compat_marketpress.php');
 
 class Upfront_Compat implements IUpfront_Server {
 
@@ -80,6 +81,7 @@ class Upfront_Compat implements IUpfront_Server {
 
 		// WooCommerce compat
 		$this->enable_wc_compat();
+		$this->enable_mp_compat();
 	}
 
 	/**
@@ -313,6 +315,12 @@ class Upfront_Compat implements IUpfront_Server {
 	private function enable_wc_compat() {
 		if (class_exists('Upfront_Compat_WooCommerce')) {
 			new Upfront_Compat_WooCommerce();
+		}
+	}
+
+	private function enable_mp_compat() {
+		if (class_exists('Upfront_Compat_MarketPress')) {
+			new Upfront_Compat_MarketPress();
 		}
 	}
 }

@@ -239,6 +239,7 @@ class Upfront_ImageServer extends Upfront_Server
 	 * @return bool|string
 	 */
 	protected function _get_file_hash ($filepath) {
+		if ( !is_file($filepath) ) return false; // Don't even bother if this is a dir
 		if ( !is_readable($filepath) ) return false;
 		return hash_file('md5', $filepath);
 	}

@@ -12,7 +12,8 @@
         'scripts/upfront/upfront-views-editor/sidebar/commands/sidebar-commands-primary-post-type',
         'scripts/upfront/upfront-views-editor/breakpoint',
         'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-responsive-section-typography',
-        'scripts/upfront/upfront-views-editor/commands/command-save-post'
+        'scripts/upfront/upfront-views-editor/commands/command-save-post',
+        'scripts/perfect-scrollbar/perfect-scrollbar'
     ], function (
         SidebarPanel,
         DraggableElement,
@@ -22,7 +23,8 @@
         SidebarCommands_PrimaryPostType,
         Breakpoint,
         SidebarPanel_Responsive_Settings_Section_Typography,
-				CommandSavePost
+		CommandSavePost,
+		perfectScrollbar
     ) {
         var SidebarCommands_Control = Commands.Commands.extend({
             className: function() {
@@ -140,6 +142,24 @@
 
                 this.$el.html(this.template);
                 this.$el.find('.sidebar-panel-content').html(typography_section.el);
+				
+				var $sidebar_panel_content = this.$el.find('.sidebar-panel-content');
+				// Add JS Scrollbar.
+				perfectScrollbar.initialize($sidebar_panel_content[0], {
+					suppressScrollX: true
+				});
+				
+				var me = this;
+				// When color spectrum is shown, set positions
+				Upfront.Events.on("color:spectrum:show", function() {
+					$sidebar_panel_content.css('position', 'static');
+					$sidebar_panel_content.closest('li.sidebar-panel-settings').css('position', 'relative');
+				});
+				// When color spectrum is hidden, reset positions
+				Upfront.Events.on("color:spectrum:hide", function() {
+					$sidebar_panel_content.css('position', 'relative');
+					$sidebar_panel_content.closest('li.sidebar-panel-settings').css('position', 'static');
+				});
             }
         });
 
@@ -301,6 +321,9 @@
                 this.sidebar_commands.header.render();
                 output.append(this.sidebar_commands.header.el);
 
+								// Shrink Sidebar on Low Resolution Screens.
+								this.addHoverSidebarClasses();
+
                 // Editor Mode
                 //this.editor_mode.render();
                 //this.$el.append(this.editor_mode.el);
@@ -437,6 +460,17 @@
                 var height = $(window).height();
                 this.$('#sidebar-ui-toggler').height(height);
             },
+
+						// On hover, add classes allowing sidebar to shrink on low resolutions.
+						addHoverSidebarClasses: function() {
+							// On Mouse Enter.
+							$('#sidebar-ui, #element-settings-sidebar, #region-settings-sidebar').hover(function() {
+								$('#sidebar-ui, #element-settings-sidebar, #region-settings-sidebar').addClass('upfront-sidebar-hover');
+							// On Mouse Leave.
+							}, function() {
+								$('#sidebar-ui, #element-settings-sidebar, #region-settings-sidebar').removeClass('upfront-sidebar-hover');
+							});
+						},
 
             toggleSidebar: function(instant){
                 var me = this,

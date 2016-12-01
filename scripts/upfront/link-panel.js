@@ -181,7 +181,7 @@ define([
 		},
 
 		onOkClick: function() {
-			if (this.model.get('type') == 'lightbox' && this.$el.find('.js-ulinkpanel-lightbox-input').val() !== '') {
+			if (this.model.get('type') === 'lightbox' && this.$el.find('.js-ulinkpanel-lightbox-input').val() !== '') {
 				this.createLightBox();
 			} else {
 				this.close();
@@ -285,7 +285,7 @@ define([
 		 * Check input for lightbox name for enter key.
 		 */
 		onLightboxNameInputChange: function(event) {
-			if (event.which == 13) {
+			if (event.which === 13) {
 				event.preventDefault();
 				this.createLightBox();
 			}

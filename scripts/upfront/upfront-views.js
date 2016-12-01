@@ -243,6 +243,8 @@ define([
 				var me = this;
 				var $bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
 					bg_default = this.model.get_breakpoint_property_value('background_default', true),
+					featured_fallback_background_color = this.model.get_breakpoint_property_value('featured_fallback_background_color', true),
+					bg_type = this.model.get_breakpoint_property_value('background_type', true),
 					_update_default = function () {
 						if ( bg_default == 'image' ) {
 							me.update_background_image($type, $overlay);
@@ -257,12 +259,7 @@ define([
 				;
 				this.remove_api_key_overlay();
 				$bg.addClass('no-featured_image');
-				if ( bg_default == 'hide' ) {
-					$bg.css('background-color', '');
-				}
-				else {
-					this.update_background_color();
-				}
+				this.update_background_color();
 
 				var post = Upfront.data.posts[_upfront_post_data.post_id];
 				if (
@@ -317,13 +314,17 @@ define([
 				Upfront.Util.post({action: 'this_post-get_thumbnail', post_id: _upfront_post_data.post_id})
 					.done(function(response){
 						if(typeof(response.data.featured_image) != 'undefined') {
-
 							if (response.data.featured_image !== '') {
 								me.$el.children('.feature_image_selector')
 									.addClass('change_feature_image')
 									.text(l10n.change_featured_image)
 								;
 							} else {
+								// fallback to set color
+								if ( bg_type == 'featured' && bg_default == 'color' && $bg.hasClass('no-featured_image') ) {
+									$bg.css('background-color', featured_fallback_background_color);
+								}
+								
 								me.$el.children('.feature_image_selector')
 									.removeClass('change_feature_image')
 									.text(l10n.add_featured_image)
@@ -369,10 +370,13 @@ define([
 				this.$el.find('#upfront_map-api_key_overlay-wrapper').remove();
 			},
 			update_background_map: function ($type, $overlay) {
+
 				// If background type is map and is missing API Key, show notice.
 				if (
 					!(window._upfront_api_keys || {})['gmaps']
 					&& Upfront.Application.user_can_modify_layout()
+					// Warn if invalid API Key.
+					|| typeof google_maps_auth_error !== 'undefined'
 				) {
 					this.add_api_key_overlay();
 				}

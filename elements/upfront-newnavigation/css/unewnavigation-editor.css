@@ -1,11 +1,11 @@
-/*div.upfront-navigation {
+.upfront_choose_menu {
 	display: block;
 	margin: auto;
 	max-width: 760px;
 	float: none;
 	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 	padding: 15px 0;
-}*/
+}
 
 div.upfront-navigation.upfront-editable_entity i.navigation-add-item, div.upfront-navigation i.delete_menu_item
 /*, div.upfront-navigation i.edit_link*/ {
@@ -161,12 +161,12 @@ div.upfront-navigation div.existing_menu_list,  div.upfront-navigation div.new_m
 }
 div.upfront-navigation div.existing_menu_list {
 	margin-right: 0;
+	width: 40%;
 }
 div.upfront-navigation div.new_menu_name {
 	margin-right: 0px;
 	margin-left: 0px;
-	max-width: 181px;
-	width: 60%;
+	width: 65%;
 }
 
 div.upfront-navigation div.new_menu_button {
@@ -188,6 +188,11 @@ div.upfront-navigation div.new_menu_button input {
 	font-size: 15px;
 	height: 40px;
 	padding: 0 20px;
+	color: #6486a6;
+}
+
+div.upfront-navigation div.new_menu_button input[disabled] {
+	opacity: 0.5;
 }
 
 #unewnavigation-tooltip {
@@ -516,12 +521,26 @@ div.upfront-navigation li.menu-item .uimage-controls a {
 	box-sizing: border-box;
 }
 
+.c16 .upfront-navigation .upfront_new_menu_name_and_button, .c15 .upfront-navigation .upfront_new_menu_name_and_button, .c14 .upfront-navigation .upfront_new_menu_name_and_button, .c13 .upfront-navigation .upfront_new_menu_name_and_button,
+.c12 .upfront-navigation .upfront_new_menu_name_and_button, .c11 .upfront-navigation .upfront_new_menu_name_and_button, .c10 .upfront-navigation .upfront_new_menu_name_and_button,
+.c9 .upfront-navigation .upfront_new_menu_name_and_button, .c8 .upfront-navigation .upfront_new_menu_name_and_button {
+	width: 320px;
+}
+
+.c16 div.upfront-navigation div.new_menu_name, .c15 div.upfront-navigation div.new_menu_name, .c14 div.upfront-navigation div.new_menu_name, .c13 div.upfront-navigation div.new_menu_name,
+.c12 div.upfront-navigation div.new_menu_name, .c11 div.upfront-navigation div.new_menu_name, .c10 div.upfront-navigation div.new_menu_name,
+.c9 div.upfront-navigation div.new_menu_name, .c8 div.upfront-navigation div.new_menu_name {
+	max-width: 181px;
+}
+
+
 .c15 .upfront-navigation .existing_menu_list, .c14 .upfront-navigation .existing_menu_list, .c13 .upfront-navigation .existing_menu_list,
 .c12 .upfront-navigation .existing_menu_list, .c11 .upfront-navigation .existing_menu_list, .c10 .upfront-navigation .existing_menu_list,
 .c9 .upfront-navigation .existing_menu_list, .c8 .upfront-navigation .existing_menu_list {
 	display: block;
 	margin: auto;
 	max-width: 320px;
+	width: auto;
 }
 
 .upfront-navigation > span {
@@ -547,7 +566,7 @@ div.upfront-navigation li.menu-item .uimage-controls a {
 
 .upfront_new_menu_name_and_button {
 	display: inline-block;
-	width: 320px;
+	width: 54%;
 }
 
 .newnavigation_squished .upfront-editable_entity.upfront-navigation:hover .responsive_nav_toggler {

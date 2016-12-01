@@ -19,6 +19,10 @@ define([], function() {
 			renderingQueue.push(function(next) {
 				callback();
 				Upfront.Events.trigger('upfront:renderingqueue:progress');
+				// If the callback add a new queue and next is false, we'll continue running the queue
+				if (!next && renderingQueue.length > 0) {
+					next = renderingQueue.shift();
+				}
 				setTimeout(function() {
 					if (next) {
 						if (renderingQueue.length > 0) {

@@ -1018,6 +1018,8 @@ var Application = new (Backbone.Router.extend({
 
 		this.loadingLayout = Upfront.Util.post(request_data)
 			.success(function (response) {
+				// Temporary, until find better solution
+				Upfront.layout_data_from_create_layout = layout_ids;
 				app.set_layout_up(response);
 				if(app.saveCache){
 					app.urlCache[app.currentUrl] = $.extend(true, {}, response);

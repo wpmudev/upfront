@@ -1,6 +1,31 @@
 Change Log
 ============
 
+1.6.1 - 2016-12-01
+-------------------------------------------------------------------------------
+- Fix: region settings bug fixes and improvements
+- Fix: color picker cutoff in sidebar settings
+- Fix: define switches case sensitivity and HHVM issue
+- Fix: refactor shortcode expansion to WordPress codec implementation
+- Fix: drag and drop error when no elements is in layout
+- Fix: MarketPress compatibility issue with third party plugin
+
+1.6 - 2016-11-23
+-------------------------------------------------------------------------------
+- Add: Maintenance mode
+- Add: MarketPress compatibility
+- Add: Region settings moved to sidebars
+- Add: better dynamic scrollbars
+
+- Fix: tabs element header issue
+- Fix: current menu item issue in editor mode
+- Fix: issue with region background parallax
+- Fix: check for space limiting enabled state before enforcing
+- Fix: issue with incorrect Google Maps API key
+- Fix: image inserts captions issue
+- Fix: code element validity check
+- Fix: issue with fixed position global background image
+
 1.5 - 2016-10-24
 -------------------------------------------------------------------------------
 - Add: WooCommerce support

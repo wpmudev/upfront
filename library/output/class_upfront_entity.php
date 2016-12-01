@@ -154,8 +154,12 @@ abstract class Upfront_Entity {
 		$default_type = $this->get_background_type();
 		$css = array();
 		$background_color = $this->_get_breakpoint_property('background_color', $breakpoint_id);
+		$featured_fallback_background_color = $this->_get_breakpoint_property('featured_fallback_background_color', $breakpoint_id);
 		if ( !$type || in_array($type, array('image', 'color', 'featured')) ){
-			if ($background_color) {
+			// if featured and no featured image, set to fallback color
+			if ($featured_fallback_background_color && 'featured' == $type && !has_post_thumbnail(Upfront_Output::get_post_id())) {
+				$css[] = 'background-color: ' . $featured_fallback_background_color;
+			} else if ($background_color) {
 				$css[] = 'background-color: ' . $background_color;
 			}
 			if (!$this->_is_background_overlay($breakpoint_id)) {
@@ -253,6 +257,21 @@ abstract class Upfront_Entity {
 			if ('parallax' == $background_style) {
 				$attr .= 'data-bg-parallax=".upfront-bg-image"';
 			}
+
+			// What a mess!
+			// Okay, so now let's check if we're dealing with a "fixed" image
+			// "fixed" meaning fixed in position and size constraints.
+			// Apparently, same deal for "tile"...
+			if ('fixed' === $background_style || 'tile' === $background_style) {
+				// We do? Nice!
+				// Okay, so with that in mind, let's throw in some attributes,
+				// so that the background loading routine in layout.js
+				// stops breaking our carefully crafted inline CSS re:size and position
+				$ratio_kw = esc_attr($background_style);
+				$image_attr .= " data-bg-image-ratio-{$breakpoint_id}='{$ratio_kw}'";
+			}
+			// Okay, let's get on with our lives now...
+			
 			$markup = "<div class='upfront-bg-image upfront-image-lazy upfront-image-lazy-bg' style='{$image_css}' {$image_attr}></div>";
 		}
 		else if ('map' == $type) {
