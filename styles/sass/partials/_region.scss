@@ -35,6 +35,18 @@
 	top: 0;
 	left: 0;
 	z-index: 10001003;
+	
+	&:before {
+		content: '';
+		display: block;
+		position: fixed;
+		top: 0;
+		left: 259px;
+		border-right: 1px solid #1a2d40;
+		z-index: 10001005;
+		width: 1px;
+		height: 100%;
+	}
 }
 
 .upfront-bg-setting-type {
