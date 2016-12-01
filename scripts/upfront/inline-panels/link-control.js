@@ -122,9 +122,9 @@ define([
 			
 			var parent = this.$el.closest('.image-sub-control');
 			parent.removeClass('upfront-panels-shadow');
-
-			this.updateWrapperSize();
 			
+			this.updateWrapperSize();
+
 			// add class if last region to allocate clearance for link panel so will not get cut
 			if ( this.$el.is('#link') ) {
 				var $region = this.$el.closest('.upfront-region-container'),

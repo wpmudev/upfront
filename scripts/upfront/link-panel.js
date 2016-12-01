@@ -409,12 +409,20 @@ define([
 			var totalWidth = 0;
 
 			this.$el.children().each(function(i, element) {
-				var elementWidth = $(element).hasClass('upfront-settings-link-target') ? 0 : parseInt($(element).width());
+				var elementWidth = 0;
+				if($(element).hasClass('upfront-field-post-pages')) {
+					elementWidth = parseInt($(element).find('.js-ulinkpanel-input-entry').width());
+				} else {
+					elementWidth = $(element).hasClass('upfront-settings-link-target') ? 0 : parseInt($(element).width());
+				}
+
 				totalWidth = totalWidth + elementWidth;
 			});
 			
 			this.$el.css('width', totalWidth + 10);
-			
+
+			this.$el.closest('.ulinkpanel-dark').css('width', totalWidth + 10);
+
 			// If redactor link update the container width
 			this.$el.closest('.redactor_air').css('width', totalWidth + 10);
 		},
