@@ -1783,7 +1783,16 @@ var InsertManager = Backbone.View.extend({
             onRemoveInsert: this.onRemoveInsert
         });
         tooltips.render();
-        this.ueditor.$el.after( tooltips.$el );
+
+		// This listener is here to ensure that the
+		// newly added insert actually gets properly parsed
+		// on redactor sync. This affects images, added via
+		// media manager dialog (see `InsertManagerInserts.on_insert_click`
+		tooltips.on("insert:before-add", function (insert) {
+			self._inserts[insert.data.id] = insert;
+		});
+        
+		this.ueditor.$el.after( tooltips.$el );
         this.$tooltips = tooltips.$el;
     },
     position_tooltips: function(redactor){
