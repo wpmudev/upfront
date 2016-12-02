@@ -861,10 +861,6 @@ div.preset-manager-panel .caption_select .upfront-field-label {
 	bottom: auto;
 }
 
-.upfront-ui.uimage-resize-hint.featured-image-sizehint{
-    top: 0;
-}
-
 .uimage-resize-hint {
 	display: none;
 }
