@@ -182,6 +182,14 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 		if (!empty($query['tax_query']['queries'])) {
 			$args['tax_query'] = $query['tax_query']['queries'];
 		}
+		
+		// Now let's safeguard the posts per page setting
+		if (!empty($query['posts_per_page']) && is_numeric($query['posts_per_page'])) {
+			$per_page = (int)$query['posts_per_page'];
+			$old_limit = self::get_limit($data);
+			$data['limit'] = $per_page;
+			$args['posts_per_page'] = self::get_limit($data, $old_limit);
+		}
 
 		return self::_spawn_query($args, $data);
 	}
