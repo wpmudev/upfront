@@ -10,7 +10,9 @@ class Upfront_Posts_Model {
 	/**
 	 * Fetch a list of post instances, according to parameters in data.
 	 * Will delegate to appropriate model implementation.
+	 *
 	 * @param  array $data Raw data (element properties)
+	 *
 	 * @return array List of posts
 	 */
 	public static function get_posts ($data) {
@@ -21,7 +23,9 @@ class Upfront_Posts_Model {
 	/**
 	 * Fetch a list of available meta fields
 	 * Will delegate to post list fetching, which is then inspected for common meta fields.
+	 *
 	 * @param  array $data Raw data (element properties)
+	 *
 	 * @return array List of meta fields
 	 */
 	public static function get_meta_fields ($data) {
@@ -31,7 +35,9 @@ class Upfront_Posts_Model {
 
 	/**
 	 * Spawns a new WP_Query instance, according to parameters in data.
+	 *
 	 * @param  array $data Raw data (element properties)
+	 *
 	 * @return object A new WP_Query instance
 	 */
 	public static function spawn_query ($data) {
@@ -41,7 +47,9 @@ class Upfront_Posts_Model {
 
 	/**
 	 * Utility method for selecting the appropriate posts model implementation class from raw data.
+	 *
 	 * @param  array $data Raw data (element properties)
+	 *
 	 * @return string Final model class name.
 	 */
 	private static function _get_model_class ($data) {
@@ -53,7 +61,9 @@ class Upfront_Posts_Model {
 
 	/**
 	 * Are we to show one post (single)? Or multiple ones (list)?
+	 *
 	 * @param array $data The properties data array
+	 *
 	 * @return bool If we're showing a single item
 	 */
 	public static function is_single ($data) {
@@ -88,7 +98,9 @@ class Upfront_Posts_Model {
 	/**
 	 * Gets the post list offset (ie. how many posts to skip off the top of the list)
 	 * taking into account the pagination, as offset breaks pagination.
+	 *
 	 * @param array $data The properties data array
+	 *
 	 * @return int Number of posts to skip.
 	 */
 	public static function get_offset ($data) {
