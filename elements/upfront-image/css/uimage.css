@@ -856,29 +856,6 @@ div.preset-manager-panel .caption_select .upfront-field-label {
 /* Image Element - Dimensions Corner Hint
 	 ====================================== */
 
-.upfront-ui.uimage-resize-hint {
-	position: absolute;
-	bottom: 15px;
-	left: 15px;
-	background: rgb(37, 58, 78);
-	padding: 5px;
-	font: normal 11px/13px Verdana, sans-serif;
-	font-size: 13px;
-	line-height: 17px;
-	color: #DCEBF8;
-	min-height: 16px;
-}
-
-.upfront-ui.uimage-resize-hint .upfront-entity-type {
-	display: inline-block;
-	margin: 0 0.3rem;
-}
-
-.upfront-ui.uimage-resize-hint b {
-	color: #ADC3D8;
-	font-weight: bold;
-}
-
 .uimage-resize-hint.sizehint-top {
 	top: 15px;
 	bottom: auto;
