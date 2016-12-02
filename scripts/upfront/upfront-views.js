@@ -3408,6 +3408,7 @@ define([
 				});
 				this.listenTo(linkPanelControl, 'panel:close', function() {
 					me.closeControlPanel();
+					me.$el.closest('.upfront-inline-panel-item-open').removeClass('upfront-inline-panel-item-open');
 				});
 				
 				return linkPanelControl; 
