@@ -681,13 +681,9 @@
 .upfront-wrapper-meta.upfront-resize-handle-wrapper:before {
   content: "";
   position: absolute;
-  top: 5px;
-  bottom: 5px;
-  left: 5px;
-  right: 5px;
+  left: 3px;
   background: #fff;
-  border-radius:3px;
-  box-shadow: 0 0 5px 0 rgba(36,57,77,.5);
+  box-shadow: none;
   z-index: -1;
 }
 .upfront-wrapper:not(.upfront-inline-panel-item-open):hover > .upfront-wrapper-meta,
@@ -737,7 +733,7 @@
   display: none !important;
 }
 
-.upfront-entity-size-hint {
+.upfront-entity-size-hint, .uimage-resize-hint {
 	position: absolute;
 	bottom: 0;
 	left: 0;
