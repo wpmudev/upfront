@@ -1692,56 +1692,40 @@ var InsertManagerInserts = Backbone.View.extend({
          * Todo Sam: remove __insert and try to find why sometimes insert doesn't get found inside the done event
          */
         this.__insert = insert;
-        insert.start( this.$el, this.redactor.$editor )
+        insert.start(this.$el, this.redactor.$editor)
             .done(function(args, resolved_insert){
 				var popup, results, insert;
 
-                /**
-                 * Allows to get resolved insert from inserts with insert managers
-                 */
-                if(_.isArray(args) ){
+                // Allows to get resolved insert from inserts with insert managers
+                if (_.isArray(args)) {
                     popup = args[0];
                     results = args[0];
                     insert = resolved_insert;
-                }else{
+                } else {
                     popup = args;
                     results = resolved_insert;
                     insert = insert || self.__insert;
                 }
 
-                // if(!results) Let's allow promises without result for now!
-                //	return;
                 self.inserts[insert.cid] = insert;
-                //Allow to undo
-                //this.trigger('insert:prechange'); // "this" is the embedded image object
-                //self.trigger('insert:prechange'); // "self" is the view
-                //Create the insert
-                //insert.render();
-                if( self.is_last_p() ){
+
+				if (self.is_last_p()) {
 					self.$block.before(insert.$el);
-                }else{
-
+                } else {
                     if(self.redactor.$element.find(self.$block).length < 1) {
-/*                        if(self.redactor.$element.hasClass('redactor-placeholder')) {
-
-                            var f = jQuery.Event("keydown");
-                            f.which = 65;
-                            f.keyCode = 65;// # Some key code value
-
-
-
-                            self.redactor.$element.trigger(f);
-
-                        }
-*/
                         self.redactor.$element.append(self.$block);
                     }
-
                     self.$block.replaceWith(insert.$el);
 				}
 
+				// Trigger a local event that the parent manager
+				// will be listening to, in order to update its
+				// cached inserts. This is to ensure that the
+				// inserts queue is properly populated, before the
+				// redactor sync attempt.
+				self.trigger("insert:before-add", insert);
+
                 self.$block.prev("br").remove();
-                //self.trigger('insert:added', insert);
                 self.insertsData[insert.data.id] = insert.data.toJSON();
                 self.listenTo(insert.data, 'change add remove update', function(){
                     self.insertsData[insert.data.id] = insert.data.toJSON();
