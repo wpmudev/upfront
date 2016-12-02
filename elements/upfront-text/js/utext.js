@@ -20,7 +20,8 @@
 				}
 
 				/**
-				 * Commenting the following because it caused the ueditor to restore draggablity while it was still editable
+				 * Commenting the following because it caused the ueditor to 
+				 * restore draggablity while it was still editable
 				 */
 				//this.on('deactivated', function() {
 				//	console.log('deactivating the text element editor');
@@ -64,11 +65,19 @@
 					content = $content.html();
 				}
 
-				if (this.model.get_property_value_by_name('usingNewAppearance') !== true && this.model.get_property_value_by_name('usingNewAppearance') !== 'true') {
+				if (
+						this.model.get_property_value_by_name('usingNewAppearance') !== true 
+						&& 
+						this.model.get_property_value_by_name('usingNewAppearance') !== 'true'
+				) {
 					data = {
 						"content" : content,
-						"background_color" : Upfront.Util.colors.convert_string_ufc_to_color(this.model.get_property_value_by_name("background_color")),
-						"border" : Upfront.Util.colors.convert_string_ufc_to_color(this.model.get_property_value_by_name("border")),
+						"background_color" : Upfront.Util.colors.convert_string_ufc_to_color(
+							this.model.get_property_value_by_name("background_color")
+						),
+						"border" : Upfront.Util.colors.convert_string_ufc_to_color(
+							this.model.get_property_value_by_name("border")
+						),
 						"usingNewAppearance": false
 					};
 				} else {
@@ -98,7 +107,6 @@
 
 				if (Upfront.Application.user_can_modify_layout()) {
 					this.$el.find('.upfront-object-content')
-						// .addClass('upfront-plain_txt') // WHY DO THIS, IT MESSES UP THE CSS LOGIC SINCE THAN WE HAVE DUPLICATED CLASS
 						.ueditor({
 							linebreaks: false,
 							//airButtons : ["upfrontFormatting"],
@@ -115,19 +123,25 @@
 							me.model.set_property('is_edited', true, true);
 							Upfront.Events.trigger('upfront:element:edit:start', 'text');
 						})
-						.on('stop', function(){
+						.on('stop', function () {
+							var arg_el = arguments[0] && arguments[0].currentTarget
+								? arguments[0].currentTarget
+								: false
+							;
 							var ed = me.$el.find('.upfront-object-content').data("ueditor"),
 								tag = ed.redactor.$element[0].firstChild.tagName,
-								text = '';
-
-							if(tag === "PRE") {
+								text = ''
+							;
+							if (tag === "PRE") {
 								//Remove markers markup leaking in PRE element
 								ed.redactor.selection.removeMarkers();
 							}
 
 							text = ed.getValue(true);
 
-							if (text === '' && arguments[0] && arguments[0].currentTarget) text = arguments[0].currentTarget.innerHTML;
+							if (text === '' && arg_el) {
+								text = arg_el.innerHTML;
+							}
 							me.model.set_content(text);
 
 							Upfront.Events.trigger('upfront:element:edit:stop');
@@ -138,7 +152,12 @@
 							var ed = me.$el.find('.upfront-object-content').data("ueditor"),
 								text = ed.getValue(true)
 							;
-							if (text === '' && typeof arguments[1] === 'string' && arguments[1] !== '') text = arguments[1];
+							if (
+								text === '' 
+								&& typeof arguments[1] === 'string' 
+								&& arguments[1] !== ''
+							) text = arguments[1];
+
 							if (!text.match(/[<>]/)) {
 								text = ed.redactor.paragraphize.load(text);
 								ed.redactor.code.set(text);
@@ -155,7 +174,10 @@
 								// done
 							}
 
-							me.model.set_content(ed.getValue(true) || text, {silent: true});
+							me.model.set_content(
+								(ed.getValue(true) || text), 
+								{silent: true}
+							);
 						})
 					;
 				}
@@ -163,9 +185,14 @@
 				me.update_colors();
 
 				if (this.model.get_property_value_by_name('preset')) {
-          // for some unknown reason there are two versions of text rendering, so cover both just in case
-					this.$el.find('.upfront-output-plaintxt').addClass(this.model.get_property_value_by_name('preset'));
-					this.$el.find('.upfront-output-plain_text').addClass(this.model.get_property_value_by_name('preset'));
+          			// for some unknown reason there are two versions of text rendering
+					// so cover both just in case
+					this.$el.find('.upfront-output-plaintxt')
+						.addClass(this.model.get_property_value_by_name('preset'))
+					;
+					this.$el.find('.upfront-output-plain_text')
+						.addClass(this.model.get_property_value_by_name('preset'))
+					;
 				}
 			},
 			get_preset_property: function(prop_name) {

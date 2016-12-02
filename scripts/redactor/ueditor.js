@@ -1536,62 +1536,91 @@ Ueditor.prototype = {
 		});
 
 		$(document).one('mouseup', function(e){
-            if(!me.redactor)
-                return;
-			//var is_selection = ((Math.abs(e.pageX-me.lastmousedown.x) + Math.abs(e.pageY-me.lastmousedown.y)) > 2);
-            var is_selection = !!me.redactor.selection.getText();
+            if (!me.redactor) return;
 
-			if((is_selection || me.clickcount > 1) && me.redactor && me.redactor.waitForMouseUp && me.redactor.selection.getText()){
+			var is_selection = !!me.redactor.selection.getText();
+
+			if (
+				(is_selection || me.clickcount > 1) 
+				&& me.redactor 
+				&& me.redactor.waitForMouseUp 
+				&& me.redactor.selection.getText()
+			) {
 				me.redactor.airShow(e);
 				me.redactor.$element.trigger('mouseup.redactor');
-			}
-			else
+			} else {
 				$('.redactor_air').hide();
-
-			if($(e.target).hasClass('uf_font_icon')) {
-                // Todo Gagan: had to comment the following to allow the font icon to be selected, hope this doesn't brean anything
-				//if(e.pageX < ($(e.target).offset().left + $(e.target).width()/2))
-				//	me.redactor.caret.setBefore($(e.target));
-				//else
-				//	me.redactor.caret.setAfter($(e.target));
 			}
+
+			// Todo Gagan: had to comment the following to allow 
+			// the font icon to be selected, hope this doesn't brean anything
+			//if ($(e.target).hasClass('uf_font_icon')) {
+			//	if(e.pageX < ($(e.target).offset().left + $(e.target).width()/2))
+			//		me.redactor.caret.setBefore($(e.target));
+			//	else
+			//		me.redactor.caret.setAfter($(e.target));
+			//}
 		});
 
 	},
-	getValue: function(is_simple_element){
-		var html = this.redactor.$element.html();
-		if(this.insertManager) {
+
+	/**
+	 * Gets the current editor content
+	 *
+	 * Also cleans up markers, parses inserts and
+	 * generally makes the output sane.
+	 *
+	 * @param {Boolean} is_simple_element Whether we're dealing with post or layout el
+	 *
+	 * @return {String} Content
+	 */
+	getValue: function (is_simple_element) {
+		var html = this.redactor.$element.html(),
+			value = ''
+		;
+
+		if (this.insertManager) {
 			html = this.insertManager.insertExport(html, is_simple_element);
-            $html =  $("<div>").html( html );
+            $html =  $("<div>").html(html);
 		}
 
         $html.find(".redactor-selection-marker").remove();
-        /**
+        
+		/**
          * Make sure the wrapping .plain-text-container is not being returned as html
          */
-        return $.trim(
+        value = $.trim(
             // Conditionally nuke the wrapper - only if we actually have it
             $html.find(".plain-text-container").length
                 ? $html.find(".plain-text-container").last().html()
                 : $html.html()
         );
+		
+		return value;
 	},
-	getInsertsData: function(){
-		var insertsData = {};
-		if(!this.insertManager)
-			return {};
 
-		_.each(this.insertManager._inserts, function(insert){
+	getInsertsData: function () {
+		var insertsData = {};
+	
+		if (!this.insertManager) return {};
+
+		_.each(this.insertManager._inserts, function (insert) {
 			insertsData[insert.data.id] = insert.data.toJSON();
 		});
 
 		return insertsData;
 	},
-	onCopy: function(e){
+
+	onCopy: function (e) {
 		var sel = window.getSelection(),
-			self = this;
+			self = this
+		;
 		self.font_icon = false;
-		if(!_.isUndefined(  sel.anchorNode ) && sel.anchorNode.className === "uf_font_icon" ){
+		if (
+			!_.isUndefined(  sel.anchorNode ) 
+			&& 
+			sel.anchorNode.className === "uf_font_icon" 
+		) {
 			var icon = document.createElement("span");
 			icon.className = "uf_font_icon";
 			icon.style.cssText = sel.anchorNode.style.cssText;
@@ -1604,13 +1633,13 @@ Ueditor.prototype = {
 
 			icon.innerHTML = html;
 
-			setTimeout( function(){
+			setTimeout(function () {
 				if( self.redactor.$pasteBox === false ){
 					self.redactor.paste.createPasteBox();
 				}
 				self.redactor.$pasteBox.html(icon);
 				self.font_icon = icon.outerHTML;
-			}, 1 );
+			}, 1);
 
 		}
 	}
@@ -1643,15 +1672,15 @@ var InsertManagerInserts = Backbone.View.extend({
     render: function(){
       this.$el.html( this.tpl( { inserts: _.pick(Inserts.inserts, this.inserts), names: Inserts.NAMES } ) );
     },
-    insert_relocate: function( $current ){
+    insert_relocate: function ($current) {
       this.$block = $current;
     },
-    toggle_inserts: function(e){
+    toggle_inserts: function (e) {
         e.preventDefault();
         e.stopPropagation();
         this.$el.find(".uinsert-selector").toggle();
     },
-    on_insert_click: function( e ){
+    on_insert_click: function(e) {
         e.preventDefault();
         e.stopPropagation();
         var type = $(e.target).data('insert'),
@@ -1728,7 +1757,7 @@ var InsertManagerInserts = Backbone.View.extend({
             })
         ;
     },
-	is_last_p: function(  ){
+	is_last_p: function () {
 		var $ps = this.redactor.$element.find("p");
 		return _.indexOf( $ps, this.$block[0] ) === ( $ps.length - 1 );
 	}
@@ -1968,7 +1997,6 @@ var InsertManager = Backbone.View.extend({
 		var me = this;
 		me.$el.sortable({cancel: '.nosortable', helper: 'clone', handle: '.uinsert-drag-handle'})
 			.on('sortstart', function(e, ui){
-				console.log('Sort start');
 				ui.placeholder.width(ui.helper.width());
 				if(ui.item.css('float') != 'none')
 					ui.helper.css({marginTop: e.offsetY});
