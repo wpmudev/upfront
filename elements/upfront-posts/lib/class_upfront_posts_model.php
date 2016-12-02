@@ -62,14 +62,23 @@ class Upfront_Posts_Model {
 
 	/**
 	 * Get the posts limit, also taking into account the display type
+	 *
 	 * @param array $data The properties data array
+	 * @param int $default Default fallback limit value
+	 *
 	 * @return int Posts limit
 	 */
-	public static function get_limit ($data) {
-		$limit = !empty($data['limit']) && is_numeric($data['limit'])
-			? (int)$data['limit']
+	public static function get_limit ($data, $default=false) {
+		$default = !empty($default) && is_numeric($default) 
+			? (int)$default 
 			: 5
 		;
+		$limit = !empty($data['limit']) && is_numeric($data['limit'])
+			? (int)$data['limit']
+			: $default
+		;
+		if (empty($limit)) $limit = $default;
+
 		return self::is_single($data)
 			? 1
 			: $limit
