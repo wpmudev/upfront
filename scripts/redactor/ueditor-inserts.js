@@ -1,20 +1,22 @@
-;(function($){
+;(function ($) {
 define([
-    "scripts/redactor/ueditor-insert",
-    "scripts/redactor/ueditor-image-insert",
-    "scripts/redactor/ueditor-image-insert-post",
-    "scripts/redactor/ueditor-embed-insert",
-    "scripts/redactor/ueditor-post-image-insert-manager"
-], function(Insert, ImageInsert, ImageInsertPost, EmbedInsert, PostImageInsertManager){
+	"scripts/redactor/ueditor-insert",
+	"scripts/redactor/ueditor-image-insert",
+	"scripts/redactor/ueditor-image-insert-post",
+	"scripts/redactor/ueditor-embed-insert",
+	"scripts/redactor/ueditor-post-image-insert-manager"
+], function (Insert, ImageInsert, ImageInsertPost, EmbedInsert, PostImageInsertManager) {
 
 var TYPES = {
 	IMAGE: 'image',
-    POSTIMAGE: 'postImage',
-    EMBED : 'embed'
+	POSTIMAGE: 'postImage',
+	EMBED : 'embed'
 };
 
-var insertObjects = {};
-var insertNames = {};
+var insertObjects = {},
+	insertNames = {}
+;
+
 insertObjects[TYPES.POSTIMAGE] = PostImageInsertManager.PostImageInsert_Manager;
 insertObjects[TYPES.IMAGE] = ImageInsert.ImageInsert;
 insertObjects[TYPES.EMBED] = EmbedInsert.EmbedInsert;
@@ -31,4 +33,5 @@ return {
 };
 
 //End Define
-});})(jQuery);
+});
+})(jQuery);
