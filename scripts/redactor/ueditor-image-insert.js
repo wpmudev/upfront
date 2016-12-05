@@ -167,6 +167,21 @@ var ImageInsert = base.ImageInsertBase.extend({
 			control.close();
 		});
 
+		this.listenTo(this.controls, 'control:ok:link', function (view, control) {
+			var type = view.$('input[type=radio]:checked').val() || 'do_nothing',
+				url = type === "do_nothing" ? "" :  view.$('input[type=text]').val()
+			;
+
+			if (type == "show_larger_image") {
+				url = (this.data.get("imageFull") || {}).src;
+			}
+
+			this.data.set('linkUrl', url);
+			view.model.set('linkUrl', url);
+
+			control.close();
+		});
+
 	},
 
 	get_group_width_cls: function (image) {
@@ -227,8 +242,23 @@ var ImageInsert = base.ImageInsertBase.extend({
 		var parent = image.parent();
 
 		if (parent.is('a')) {
+			var link_type = 'do_nothing',
+				parsed = document.createElement('a'),
+				parent_href = parent.attr("href")
+			;
+			parsed.href = parent_href;
+
+			if (parsed.origin != window.location.origin) {
+				link_type = 'external';
+			} else if (parsed.origin == window.location.origin) {
+				link_type = imageSpecs.src == parent_href
+					? 'show_larger_image'
+					: 'post'
+				;
+			}
+
 			imageData.linkUrl = parent.attr('href') ;
-			imageData.linkType = 'external';
+			imageData.linkType = link_type;
 		}
 
 		var attachmentId = image.attr('class');
