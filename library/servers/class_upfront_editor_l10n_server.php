@@ -336,8 +336,6 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'link_image' => __('Link image', 'upfront'),
 				'toggle_caption' => __('Toggle Caption', 'upfront'),
 				'alignment' => __('Alignment', 'upfront'),
-				'' => __('', 'upfront'),
-				'' => __('', 'upfront'),
 			),
 			'views' => array(
 				'close_upfront' => __('Close Upfront', 'upfront'),
