@@ -524,20 +524,26 @@ div.upfront-navigation li.menu-item .uimage-controls a {
 
 .c16 .upfront-navigation .upfront_new_menu_name_and_button, .c15 .upfront-navigation .upfront_new_menu_name_and_button, .c14 .upfront-navigation .upfront_new_menu_name_and_button, .c13 .upfront-navigation .upfront_new_menu_name_and_button,
 .c12 .upfront-navigation .upfront_new_menu_name_and_button, .c11 .upfront-navigation .upfront_new_menu_name_and_button, .c10 .upfront-navigation .upfront_new_menu_name_and_button,
-.c9 .upfront-navigation .upfront_new_menu_name_and_button, .c8 .upfront-navigation .upfront_new_menu_name_and_button {
+.c9 .upfront-navigation .upfront_new_menu_name_and_button, .c8 .upfront-navigation .upfront_new_menu_name_and_button, .c7 .upfront-navigation .upfront_new_menu_name_and_button,
+.c6 .upfront-navigation .upfront_new_menu_name_and_button, .c5 .upfront-navigation .upfront_new_menu_name_and_button, .c4 .upfront-navigation .upfront_new_menu_name_and_button,
+.c3 .upfront-navigation .upfront_new_menu_name_and_button, .c2 .upfront-navigation .upfront_new_menu_name_and_button, .c1 .upfront-navigation .upfront_new_menu_name_and_button {
 	width: 320px;
 }
 
 .c16 div.upfront-navigation div.new_menu_name, .c15 div.upfront-navigation div.new_menu_name, .c14 div.upfront-navigation div.new_menu_name, .c13 div.upfront-navigation div.new_menu_name,
 .c12 div.upfront-navigation div.new_menu_name, .c11 div.upfront-navigation div.new_menu_name, .c10 div.upfront-navigation div.new_menu_name,
-.c9 div.upfront-navigation div.new_menu_name, .c8 div.upfront-navigation div.new_menu_name {
+.c9 div.upfront-navigation div.new_menu_name, .c8 div.upfront-navigation div.new_menu_name, .c7 div.upfront-navigation div.new_menu_name,
+.c6 div.upfront-navigation div.new_menu_name, .c5 div.upfront-navigation div.new_menu_name, .c4 div.upfront-navigation div.new_menu_name,
+.c3 div.upfront-navigation div.new_menu_name, .c2 div.upfront-navigation div.new_menu_name, .c1 div.upfront-navigation div.new_menu_name {
 	max-width: 181px;
 }
 
 
 .c15 .upfront-navigation .existing_menu_list, .c14 .upfront-navigation .existing_menu_list, .c13 .upfront-navigation .existing_menu_list,
 .c12 .upfront-navigation .existing_menu_list, .c11 .upfront-navigation .existing_menu_list, .c10 .upfront-navigation .existing_menu_list,
-.c9 .upfront-navigation .existing_menu_list, .c8 .upfront-navigation .existing_menu_list {
+.c9 .upfront-navigation .existing_menu_list, .c8 .upfront-navigation .existing_menu_list, .c7 .upfront-navigation .existing_menu_list,
+.c6 .upfront-navigation .existing_menu_list, .c5 .upfront-navigation .existing_menu_list, .c4 .upfront-navigation .existing_menu_list,
+.c3 .upfront-navigation .existing_menu_list, .c2 .upfront-navigation .existing_menu_list, .c1 .upfront-navigation .existing_menu_list {
 	display: block;
 	margin: auto;
 	max-width: 320px;
@@ -551,7 +557,9 @@ div.upfront-navigation li.menu-item .uimage-controls a {
 
 .c15 .upfront-navigation > span, .c14 .upfront-navigation > span, .c13 .upfront-navigation > span,
 .c12 .upfront-navigation > span, .c11 .upfront-navigation > span, .c10 .upfront-navigation > span,
-.c9 .upfront-navigation > span, .c8 .upfront-navigation > span {
+.c9 .upfront-navigation > span, .c8 .upfront-navigation > span, .c7 .upfront-navigation > span,
+.c6 .upfront-navigation > span, .c5 .upfront-navigation > span, .c4 .upfront-navigation > span,
+.c3 .upfront-navigation > span, .c2 .upfront-navigation > span, .c1 .upfront-navigation > span {
 	display: block;
 	text-align: center;
 	margin: 7px 10px;
@@ -559,7 +567,9 @@ div.upfront-navigation li.menu-item .uimage-controls a {
 
 .c15 .upfront_new_menu_name_and_button, .c14 .upfront_new_menu_name_and_button, .c13 .upfront_new_menu_name_and_button,
 .c12 .upfront_new_menu_name_and_button, .c11 .upfront_new_menu_name_and_button, .c10 .upfront_new_menu_name_and_button,
-.c9 .upfront_new_menu_name_and_button, .c8 .upfront_new_menu_name_and_button {
+.c9 .upfront_new_menu_name_and_button, .c8 .upfront_new_menu_name_and_button, .c7 .upfront_new_menu_name_and_button,
+.c6 .upfront_new_menu_name_and_button, .c5 .upfront_new_menu_name_and_button, .c4 .upfront_new_menu_name_and_button,
+.c3 .upfront_new_menu_name_and_button, .c2 .upfront_new_menu_name_and_button, .c1 .upfront_new_menu_name_and_button {
 	display: block;
 	margin: auto;
 	max-width: 100%;
