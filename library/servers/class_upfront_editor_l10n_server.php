@@ -331,7 +331,13 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				),
 				'open_lightbox' => __('Open lightbox', Upfront::TextDomain),
 				'type_link_url' => __('Type link URL', Upfront::TextDomain),
-				'type_link_phone' => __('Type Phone Number', Upfront::TextDomain)
+				'type_link_phone' => __('Type Phone Number', Upfront::TextDomain),
+
+				'link_image' => __('Link image', 'upfront'),
+				'toggle_caption' => __('Toggle Caption', 'upfront'),
+				'alignment' => __('Alignment', 'upfront'),
+				'' => __('', 'upfront'),
+				'' => __('', 'upfront'),
 			),
 			'views' => array(
 				'close_upfront' => __('Close Upfront', 'upfront'),
