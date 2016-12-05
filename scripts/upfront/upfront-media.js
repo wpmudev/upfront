@@ -2031,9 +2031,16 @@ define([
 				Upfront.Events.trigger("media:item:selection_changed", selected_model);
 
 				// Add JS Scrollbar.
-				perfectScrollbar.initialize(this.el, {
-					suppressScrollX: true
-				});
+				perfectScrollbar.withDebounceUpdate(
+					// Element.
+					this.el,
+					// Run First.
+					true,
+					// Event.
+					false,
+					// Initialize.
+					true
+				);
 			}
 		},
 		update: function () {
