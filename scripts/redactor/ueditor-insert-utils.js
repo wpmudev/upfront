@@ -41,7 +41,7 @@ var ImageStylesView = Backbone.View.extend({
 	on_click: function (e) {
 		e.stopPropagation();
 	},
-	
+
 	update_data: function (e) {
 		e.stopPropagation();
 		this.variant_id = $(e.target).val();
@@ -50,20 +50,20 @@ var ImageStylesView = Backbone.View.extend({
 });
 
 var LinkView = Backbone.View.extend({
-	
+
 	tpl: _.template($(tpls).find('#image-link-tpl').html()),
-	
+
 	events: {
 		'change input[type=radio]': 'update_data'
 	},
-	
+
 	initialize: function (opts) {
-		if(opts.data){
+		if (opts.data) {
 			this.model = new Backbone.Model(opts.data);
 			this.listenTo(this.model, 'change', this.render);
 		}
 	},
-	
+
 	render: function () {
 		this.$el.width('200px');
 
@@ -71,7 +71,7 @@ var LinkView = Backbone.View.extend({
 		data.checked = 'checked="checked"';
 		this.$el.html(this.tpl(data));
 	},
-	
+
 	update_data: function (e) {
 		var me = this,
 			type = this.$('input:checked').val(),
@@ -80,7 +80,7 @@ var LinkView = Backbone.View.extend({
 
 		if (type == 'post') {
 			var selectorOptions = {postTypes: this.post_types()};
-			Upfront.Views.Editor.PostSelector.open(selectorOptions).done(function(post){
+			Upfront.Views.Editor.PostSelector.open(selectorOptions).done(function (post){
 				me.model.set({linkType: 'post', linkUrl: post.get('permalink')});
 			});
 		} else {
@@ -91,8 +91,9 @@ var LinkView = Backbone.View.extend({
 	post_types: function () {
 		var types = [];
 		_.each(Upfront.data.ugallery.postTypes, function(type){
-			if(type.name != 'attachment')
+			if (type.name != 'attachment') {
 				types.push({name: type.name, label: type.label});
+			}
 		});
 		return types;
 	}
@@ -116,11 +117,11 @@ var PostImageStylesView = Backbone.View.extend({
 			values = []
 		;
 		_.each(this.data.get("variants"), function(val, index){
-			values.push(  { value: val.vid, label: val.label } );
+			values.push({ value: val.vid, label: val.label });
 		});
 		return values;
 	},
-	
+
 	get_default_value: function () {
 		return this.data.get("selected");
 	},
@@ -136,13 +137,14 @@ var PostImageStylesView = Backbone.View.extend({
 				values: this.prepare_values(),
 				change: function(variant_id){
 					self._style = Upfront.Content.ImageVariants.findWhere({vid : variant_id});
-					self.data.set( "selected", variant_id );
+					self.data.set("selected", variant_id);
 				}
 			})
 		;
 
 		select.render();
 		this.$el.html(select.$el);
+
 		return this;
 	},
 
@@ -154,7 +156,7 @@ var PostImageStylesView = Backbone.View.extend({
 var WP_PostImageStylesView = Backbone.View.extend({
 
 	className: "upfront-wp-image-style-variants",
-	
+
 	tpl: _.template(
 		$(tpls).find('#wp-image-style-tpl').html()
 	),
