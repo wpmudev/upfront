@@ -1719,7 +1719,7 @@ define([
 				// checking on all models on current page
 				for ( var key in selected.models ) {
 					var model = selected.models[key];
-					var index = ActiveFilters.current_keys.indexOf(model.attributes.ID);
+					var index = ActiveFilters.current_keys.indexOf(((model || {}).attributes || {}).ID);
 					if( index == -1 ) {
 						// inserting selected media models on the list
 						if( model.attributes.selected ) {
@@ -2018,7 +2018,7 @@ define([
 
 					// preserving selected media
 					if( ActiveFilters.current_keys.length ) {
-						var target_index = ActiveFilters.current_keys.indexOf(model.attributes.ID);
+						var target_index = ActiveFilters.current_keys.indexOf(((model || {}).attributes || {}).ID);
 						if( target_index != -1 ) {
 							model.set({selected: true}, {silent: true});
 							model.trigger("appearance:update");
