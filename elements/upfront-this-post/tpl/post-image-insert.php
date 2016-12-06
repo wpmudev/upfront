@@ -1,5 +1,5 @@
 <div class="ueditor-insert upfront-inserted_image-wrapper ueditor-insert-variant ueditor-post-image-insert nosortable" id="<?php echo $data->id; ?>">
-	<div data-variant="<?php echo $data->uf_variant ?>" class="ueditor-insert ueditor-insert-variant-group <?php echo $style->label_id; ?> ueditor-insert-float-<?php echo $style->group->float; ?> <?php echo $style->group->width_cls ?>" style="min-height: <?php echo $style->group->height; ?>px;float:<?php echo $style->group->float; ?>; <?php if( $style->group->marginRight > 0 ) { ?>margin-right:<?php echo $style->group->marginRight; ?>px;<?php } ?> <?php if( $style->group->marginLeft > 0 ){ ?>margin-left:<?php echo $style->group->marginLeft ?>px;<?php } ?>" >
+	<div data-variant="<?php echo $data->uf_variant ?>" class="ueditor-insert ueditor-insert-variant-group <?php echo $style->label_id; ?> ueditor-insert-float-<?php echo $style->group->float; ?> <?php echo $style->group->width_cls ?>" style="min-height: <?php echo $style->group->height; ?>px;float:<?php echo $style->group->float; ?>" >
 
 		<?php  if( $style->caption->order == 0 && $data->uf_show_caption): ?>
 		<div class="upfront-wrapper wp-caption-text <?php echo $style->caption->width_cls; ?>" style="min-height:<?php echo $style->caption->height; ?>px"><?php echo $data->caption ?></div>

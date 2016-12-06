@@ -1,5 +1,5 @@
 (function($) {
-	
+
 define(function(){
 	return {
 		bind_toggles: function () {
@@ -8,24 +8,38 @@ define(function(){
 			});
 			this.on('hide', function(){
 				this.$el.hide();
-			})
+			});
 		},
 		save_fields: function () {
 			// changes are auto saved, no need to invoke this, so blank it out
 		},
 		preview_color: function (color) {
+			if( !_.isObject( color ) ) return;
 			var rgb = color.toRgb(),
-				rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')';
+				rgba_string = 'rgba('+rgb.r+','+rgb.g+','+rgb.b+','+color.alpha+')'
+			;
 
 			rgba_string = color.get_is_theme_color() !== false ?  color.theme_color : rgba_string;
-			this.model.set_breakpoint_property('background_color', rgba_string);
+			if ( typeof this.is_featured_fallback_bg_color !== 'undefined' && this.is_featured_fallback_bg_color ) {
+				this.model.set_breakpoint_property('featured_fallback_background_color', rgba_string);
+			} else {
+				this.model.set_breakpoint_property('background_color', rgba_string);
+			}
 		},
 		update_color: function (color) {
 			this.preview_color(color);
-			this._default_color = this.model.get_breakpoint_property_value('background_color', true);
+			if ( typeof this.is_featured_fallback_bg_color !== 'undefined' && this.is_featured_fallback_bg_color ) {
+				this._default_color = this.model.get_breakpoint_property_value('featured_fallback_background_color', true);
+			} else {
+				this._default_color = this.model.get_breakpoint_property_value('background_color', true);
+			}
 		},
 		reset_color: function () {
-			this.model.set_breakpoint_property('background_color', this._default_color);
+			if ( typeof this.is_featured_fallback_bg_color !== 'undefined' && this.is_featured_fallback_bg_color ) {
+				this.model.set_breakpoint_property('featured_fallback_background_color', this._default_color);
+			} else {
+				this.model.set_breakpoint_property('background_color', this._default_color);
+			}
 		},
 		upload_image: function () {
 			var me = this;

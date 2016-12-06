@@ -54,6 +54,9 @@ define([
 						Upfront.mainData[this.mainDataCollection] : [];
 
 				Upfront.mainData[this.mainDataCollection].unshift(this.getPresetDefaults('default'));
+
+				// Generate presets styles to page
+				Util.generatePresetsToPage(this.ajaxActionSlug, this.styleTpl);
 			}
 
 
@@ -68,6 +71,13 @@ define([
 				me.model.trigger("preset:updated", properties.id);
 				Upfront.Application.presetSaver.queuePresetSave(properties, me.ajaxActionSlug);
 
+				//TODO re-work after merge
+				// Upfront.Util.post({
+					// action: 'upfront_save_' + this.ajaxActionSlug + '_preset',
+					// data: properties
+				// }).done( function() {
+					// me.model.trigger("preset:updated", properties.id);
+				// });
 			};
 
 			// Let's not flood server on some nuber property firing changes like crazy
@@ -438,6 +448,7 @@ define([
 			Upfront.Views.Editor.notify(l10n.preset_created.replace(/%s/, presetName));
 
 			this.render();
+			Upfront.Events.trigger('element:preset:updated');
 		},
 
 		createPreset: function(presetName) {
@@ -462,6 +473,7 @@ define([
 			Upfront.Views.Editor.notify(l10n.preset_created.replace(/%s/, presetName));
 
 			this.render();
+			Upfront.Events.trigger('element:preset:updated');
 		},
 
 		deletePreset: function(preset) {
@@ -485,7 +497,7 @@ define([
 			this.presets.remove(preset);
 
 			this.render();
-
+			Upfront.Events.trigger('element:preset:updated');
 			this.defaultOverlay();
 		},
 
@@ -514,6 +526,7 @@ define([
 
 				me.$el.empty();
 				me.render();
+				Upfront.Events.trigger('element:preset:updated');
 			}).error(function (ret) {
 				//Notify error
 				Upfront.Views.Editor.notify(ret);
@@ -545,6 +558,10 @@ define([
 
 			this.defaultOverlay();
 
+			// run layout change event
+			Upfront.Events.trigger('entity:layout:change');
+
+			Upfront.Events.trigger('element:preset:updated');
 			//Display notification
 			Upfront.Views.Editor.notify(l10n.preset_changed.replace(/%s/, preset));
 		},
@@ -687,7 +704,7 @@ define([
 				if (!(setting || {}).render) return true;
 				if ( ! setting.panel ) setting.panel = me;
 				setting.render();
-				$body.append(setting.el)
+				$body.append(setting.el);
 			});
 
 

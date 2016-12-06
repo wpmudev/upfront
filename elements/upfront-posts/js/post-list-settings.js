@@ -18,7 +18,7 @@ var PostsSettings = ElementSettings.extend({
 			panelTitle: l10n.settings,
 			presetDefaults: Upfront.mainData.presetDefaults.posts,
 			styleTpl: styleTpl,
-			
+
 			migrateDefaultStyle: function(styles) {
 					//replace image wrapper class
 					styles = styles.replace(/(div)?\.uposts-object\s/g, '');
@@ -26,25 +26,29 @@ var PostsSettings = ElementSettings.extend({
 
 					return styles;
 			},
-			
+
 			migrateElementStyle: function(styles, selector) {
 				//replace posts container which is one line with preset
 				styles = styles.replace(/\.uposts-object/g, '');
-				
+
 				return styles;
-			},
-		},
+			}
+		}
 	},
 
 	initialize: function (opts) {
 		// Call the super constructor here, so that the appearance panel is instantiated
 		this.constructor.__super__.initialize.call(this, opts);
-		
+
 		this.options = opts;
 		var me = this,
-			general = new Panels.General({model: this.model}),
-			post_parts = new Panels.PostParts({model: this.model})
-		;
+			general,
+			post_parts;
+
+		if (Upfront.Application.is_single() === false && typeof Upfront.Application.is_plugin_layout() !== 'undefined') return;
+
+		general = new Panels.General({model: this.model});
+		post_parts = new Panels.PostParts({model: this.model}) ;
 		general.on("settings:dispatched", this.rerender, this);
 		general.on("post:removed", this.rerender, this);
 		general.on("post:added", this.rerender, this);
@@ -55,23 +59,21 @@ var PostsSettings = ElementSettings.extend({
 
 	rerender: function () {
 		var active_panel = -1,
-			panels = _(this.panels);
-			me = this,
-			general = new Panels.General({model: this.model}),
-			post_parts = new Panels.PostParts({model: this.model})
+			panels = _(this.panels),
+			me = this
 		;
-		
+
 		panels.each(function (pl, idx) {
 			if (pl && pl.is_active && pl.is_active()) active_panel = idx;
 		});
 
 		this.$el.empty();
-		
+
 		this.initialize(this.options);
 
 		this.render();
 
-		if (active_panel.length >= 0 && this.toggle_panel) this.toggle_panel(active_panel);		
+		if (active_panel.length >= 0 && this.toggle_panel) this.toggle_panel(active_panel);
 	},
 
 	/**
@@ -86,7 +88,7 @@ var PostsSettings = ElementSettings.extend({
 			else if ((panel || {}).hideBody) panel.hideBody();
 		});
 	},
-	
+
 	title: l10n.posts_settings,
 
 	get_title: function () {

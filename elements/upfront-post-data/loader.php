@@ -60,27 +60,20 @@ class Upfront_Post_Data extends Upfront_Server {
 
 		upfront_add_ajax('upfront-post_data-post-specific', array($this, "json_get_post_specific_settings"));
 		upfront_add_ajax('upfront-post_data-comments-disable', array($this, "json_set_comment_settings"));
-		
-		//upfront_add_ajax('upfront_posts-data', array($this, "load_data"));
-		//upfront_add_ajax('upfront_posts-terms', array($this, "load_terms"));
-
-		//upfront_add_ajax('upfront_posts-list_meta', array($this, "load_meta"));
-
-		// Handle legacy element parsing
-		//add_filter('upfront-virtual_region-object_defaults-fallback', array($this, 'handle_legacy_data'), 10, 2);
-		//add_filter('upfront-output-get_markup-fallback', array($this, 'handle_legacy_output'), 10, 2);
-
-
 	}
 
-	public function handle_legacy_data ($data, $type) {
-	}
-	public function handle_legacy_output ($msg, $view_class) {
-	}
+	public function handle_legacy_data ($data, $type) {}
+	public function handle_legacy_output ($msg, $view_class) {}
 
 	public function load_post () {
 		$request = !empty($_POST['data']) ? stripslashes_deep($_POST['data']) : array();
+		$layout = !empty($_POST['layout']) ? stripslashes_deep($_POST['layout']) : array();
 		$data = !empty($request['props']) ? $this->to_data_array($request['props']) : array();
+
+		if ($request['post_id'] === 'fake_post') {
+			$request['post_id'] = apply_filters('upfront-load_post_fake_post_id', $request['post_id'], $layout);
+		}
+
 		if (!empty($request['post_id'])) $data['post_id'] = $request['post_id'];
 		if (!empty($request['author_id'])) $data['author_id'] = $request['author_id'];
 		if (!empty($request['post_date'])) $data['post_date'] = $request['post_date'];
@@ -94,20 +87,21 @@ class Upfront_Post_Data extends Upfront_Server {
 			}
 		}
 
+
 		$post = Upfront_Post_Data_Model::spawn_post($data);
 		$view_class = Upfront_Post_Data_PartView::_get_view_class($data);
 		$view = new $view_class($data);
-		
+
 		// for setting real-time value of featured_image
 		if ( !empty($request['selected_featured_image']) && $data['data_type'] == 'featured_image' ) {
 			$view->set_pre_selected($request['selected_featured_image']);
 		}
-		
+
 		// for setting real-time value of post title
 		if ( !empty($request['set_post_title']) && $data['data_type'] == 'post_data' ) {
 			$view->set_pre_post_title($request['set_post_title']);
 		}
-		
+
 		// for setting real-time value of post content
 		if ( !empty($request['set_post_content']) && $data['data_type'] == 'post_data' ) {
 			$view->set_pre_content($request['set_post_content']);
@@ -124,7 +118,7 @@ class Upfront_Post_Data extends Upfront_Server {
 	public function json_get_post_specific_settings () {
 		$data = stripslashes_deep($_POST);
 		$response = array();
-		
+
 		if (!empty($data['post_id']) && is_numeric($data['post_id'])) {
 			$post = get_post($data['post_id']);
 
@@ -145,7 +139,7 @@ class Upfront_Post_Data extends Upfront_Server {
 	public function json_set_comment_settings () {
 		$data = stripslashes_deep($_POST);
 		$response = array();
-		
+
 		$post_id = !empty($data['post_id']) && is_numeric($data['post_id']) ? $data['post_id'] : false;
 		$disable = !empty($data['disable']) ? $data['disable'] : array();
 
@@ -154,7 +148,7 @@ class Upfront_Post_Data extends Upfront_Server {
 
 			$post->comment_status = in_array('comments', $disable) ? 'closed' : 'open';
 			$post->ping_status = in_array('trackbacks', $disable) ? 'closed' : 'open';
-			
+
 			wp_update_post($post);
 			$response['comments'] = $post->comment_status;
 			$response['trackbacks'] = $post->ping_status;
@@ -184,7 +178,7 @@ class Upfront_Post_Data extends Upfront_Server {
 		}
 		return $result;
 	}
-	
+
 
 }
 Upfront_Post_Data::serve();

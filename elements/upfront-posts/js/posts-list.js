@@ -29,6 +29,15 @@ var PostsView = Upfront.Views.ObjectView.extend({
 	},
 
 	on_render: function () {
+		// Query plugin output only if single page is loading
+		if (Upfront.Application.is_single() === false) {
+			var pluginLayout = Upfront.Application.is_plugin_layout();
+			if (pluginLayout) {
+				this.$el.find(".upfront-object-content").empty().append('<div>Below is sample content for ' + pluginLayout.pluginName + '. Use it as a reference for styling.</div>' + pluginLayout.content);
+				return;
+			}
+		}
+
 		var type = this.model.get_property_value_by_name("display_type");
 		this.render_type_view(type);
 		// Let's not render min-height (remove it)
@@ -89,7 +98,7 @@ var PostsView = Upfront.Views.ObjectView.extend({
 			}
 		});
 	},
-	
+
 	cleanup: function () {
 		this.remove_region_class('upfront-region-container-has-posts', true);
 	}
@@ -139,7 +148,7 @@ Upfront.Application.LayoutEditor.add_object("Uposts", {
 		'.uposts-object li .read_more': {label: l10n.css.read_more_label, info: l10n.css.read_more_info},
 		'.uposts-object li .post_tags': {label: l10n.css.post_tags_label, info: l10n.css.post_tags_info},
 		'.uposts-object li .thumbnail': {label: l10n.css.thumbnail_label, info: l10n.css.thumbnail_info},
-		'.uposts-object li .title': {label: l10n.css.title_label, info: l10n.css.title_info},
+		'.uposts-object li .title': {label: l10n.css.title_label, info: l10n.css.title_info}
 	},
 	cssSelectorsId: Upfront.data.upfront_posts.type
 });

@@ -46,6 +46,7 @@
 			layout = $dropdown.val(),
 			label = $(".upfront-layouts-list option[value='"+  layout +"']").html(),
 			is_dev = $(this).data('dev'),
+			reset_global = ( $('#upfront_reset_include_global').is(':checked') ) ? 1 : 0,
 			confirm = window.confirm( Upfront_Data.l10n.sure_to_reset_layout.replace("{layout}", label) );
 
 		if( confirm !== true ) return;
@@ -55,7 +56,8 @@
 		Upfront.post(  {
 			action: "upfront_reset_layout",
 			layout: layout,
-			is_dev: is_dev
+			is_dev: is_dev,
+			include_global: reset_global
 		}).done(function(res){
 			$this.removeClass("loading");
 			if( $dropdown.find("option").length >= 2 ){
@@ -90,7 +92,46 @@
 			$this.removeClass("loading");
 		} );
 
-	})
+	});
+	
+	
+	/**
+	 * Site Maintenance
+	 */
+	$(document).on("click", "#upfront_save_under_construction", function(e){
+		e.preventDefault();
+		
+		var $this = $(this),
+			$maintenance_mode = $("#upfront_under_construction").is(':checked'),
+			enable_maintenance = ($maintenance_mode) ? 1 : 0;
+		
+		$this.addClass("loading");
+
+		Upfront.post(  {
+			action: "upfront_site_under_construction",
+			enable_maintenance: enable_maintenance
+		}).done(function(res){
+			$this.removeClass("loading");
+			window.location.reload();
+		}).fail( function(res){
+			$this.removeClass("loading");
+		} );
+		
+	});
+	
+	$(document).on("change", "#upfront_under_construction", function(e){
+		var $this = $(this),
+			current = ( parseInt($this.data('current'),10) == 1 ) ? true : false,
+			changed = $this.is(':checked');
+			
+			if ( current !== changed ) {
+				$('#upfront_save_under_construction').removeAttr('disabled');
+			} else {
+				$('#upfront_save_under_construction').attr('disabled','disabled');
+			}
+	});
+	
+	
 }(jQuery));
 
 
@@ -177,9 +218,9 @@
 			if (!(role || {}).role) return true; // Unknown role, who knows what
 			if ((role || {}).able) return true; // Role can modify, we're good
 
-			var $roots = $('[data-capability_id="modify_element_presets"] [data-role_id="' + role.role + '"]')
-					.add('[data-capability_id="delete_element_presets"] [data-role_id="' + role.role + '"]')
-				,
+			var
+				$roots = $('[data-capability_id="modify_element_presets"] [data-role_id="' + role.role + '"]')
+					.add('[data-capability_id="delete_element_presets"] [data-role_id="' + role.role + '"]'),
 				$checks = $roots.find(':checkbox')
 			;
 			$checks.each(function () {
@@ -236,7 +277,7 @@
 			});
 		});
 	}
-	
+
 	/**
 	 * Process the checkbox states based on the edit posts capability
 	 */
@@ -328,7 +369,7 @@
 		}
 		process_toggles_state();
 	}
-	
+
 	function handle_edit_content_change () {
 		var $check = $(this),
 			role = $check.closest('[data-role_id]').attr("data-role_id"),
@@ -358,6 +399,53 @@
 		process_toggles_state();
 		boot_event_listeners();
 	}
+	$(init);
+
+})(jQuery);
+
+
+
+/**
+ * Changelog toggles
+ */
+;(function ($) {
+
+	function init () {
+		if (!$("body").is(".wp-admin")) return false;
+		if (!($(".inside.changelog").length)) return false;
+
+		$('.changelog .navigation a[href="#more"]').on('click', function (e) {
+			if (e && e.preventDefault) e.preventDefault();
+			if (e && e.stopPropagation) e.stopPropagation();
+
+			$('.changelog .previous').toggle();
+
+			return false;
+		});
+
+		$('.changelog a[href="#toggle"]').on('click', function (e) {
+			if (e && e.preventDefault) e.preventDefault();
+			if (e && e.stopPropagation) e.stopPropagation();
+
+			var $me = $(this),
+				$target = $me.parent().next('ul.extra'),
+				text
+			;
+			if (!$target.length) return false;
+
+			if ($target.is(":visible")) {
+				text = $me.attr("data-contracted");
+				$target.hide();
+			} else {
+				text = $me.attr("data-expanded");
+				$target.show();
+			}
+			$me.text(text);
+
+			return false;
+		});
+	}
+
 	$(init);
 
 })(jQuery);

@@ -1,3 +1,5 @@
+// If Google Maps has Authentication error (must be global function).
+function gm_authFailure() {return google_maps_auth_error = true};
 (function($){
 	var throttle = function(a,b,c){var d,e,f,g=null,h=0;c||(c={});var i=function(){h=c.leading===!1?0:new Date().getTime(),g=null,f=a.apply(d,e),g||(d=e=null)};return function(){var j=new Date().getTime();h||c.leading!==!1||(h=j);var k=b-(j-h);return d=this,e=arguments,0>=k||k>b?(clearTimeout(g),g=null,h=j,f=a.apply(d,e),g||(d=e=null)):g||c.trailing===!1||(g=setTimeout(i,k)),f}};
 
@@ -35,11 +37,13 @@
 		$(document).data("upfront-google_maps-loading", true);
 		if (typeof google === 'object' && typeof google.maps === 'object' && typeof google.maps.Map === 'object') return upfront_bg_map_init();
 		var protocol = '',
+			key = (window._upfront_api_keys || {})['gmaps'] || false,
 			script = document.createElement("script")
 		;
 		try { protocol = document.location.protocol; } catch (e) { protocol = 'http:'; }
+		key = key ? '&key=' + key : '';
 		script.type = "text/javascript";
-		script.src = protocol + "//maps.google.com/maps/api/js?v=3&libraries=places&sensor=false&callback=upfront_maps_loaded";
+		script.src = protocol + "//maps.google.com/maps/api/js?v=4" + key + "&libraries=places&sensor=false&callback=upfront_maps_loaded";
 		document.body.appendChild(script);
 	}
 

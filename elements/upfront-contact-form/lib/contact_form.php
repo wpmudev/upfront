@@ -323,15 +323,40 @@ class Upfront_UcontactView extends Upfront_Object {
 			$storage_key = $entity_ids['storage_key'];
 			unset($entity_ids['storage_key']);
 		}
-		$layout = Upfront_Layout::from_entity_ids($entity_ids, $storage_key);
 
-		if ($layout instanceof Upfront_Layout) {
-			$layout = $layout->to_php();
-		} else {
-			return false;
+		if( isset( $entity_ids['item'] )  && 'single-page' ===  $entity_ids['item'] ){
+			$is_dev = Upfront_Debug::get_debugger()->is_dev();
+
+			/**
+			 * If $is_dev is false, then try to see if dev=true exists in the page url
+			 */
+			if( !$is_dev ){
+				$parsed_ref = parse_url( wp_get_raw_referer() );
+				$is_dev = isset( $parsed_ref['query'] ) && false !== strpos(  $parsed_ref['query'], "dev=true" ) ;
+			}
+
+			$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
+
+			// loading from Page Layout CPT
+			$layout_cpt_slug = ( isset($entity_ids['specificity']) )
+					? strtolower($store_key . '-' . $entity_ids['specificity'])
+					: strtolower($store_key . '-' . $entity_ids['item'])
+			;
+
+			$layout = Upfront_Server_PageLayout::get_instance()->get_layout_by_slug( $layout_cpt_slug, $is_dev );
+
+			if( empty($layout) )
+				return new Exception("Unknown layout for slug: $layout_cpt_slug and is_dev: $is_dev");
+
+		}else{
+			$layout = Upfront_Layout::from_entity_ids($entity_ids, $storage_key);
+
+			if ($layout instanceof Upfront_Layout) {
+				$layout = $layout->to_php();
+			} else {
+				return false;
+			}
 		}
-
-		$settings = array();
 
 		if (is_array($layout['regions'])) {
 			foreach ($layout['regions'] as $region) {
@@ -467,8 +492,8 @@ class Ucontact_Server extends Upfront_Server {
 	}
 
 	private function _add_hooks () {
-		add_action('wp_ajax_upfront_contact-form',  array($this, 'on_ajax_send'));
-		add_action('wp_ajax_nopriv_upfront_contact-form',  array($this, 'on_ajax_send'));
+		upfront_add_ajax('upfront_contact-form',  array($this, 'on_ajax_send'));
+		upfront_add_ajax_nopriv('upfront_contact-form',  array($this, 'on_ajax_send'));
 	}
 
 	public function on_settings_store () {

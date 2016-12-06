@@ -8,6 +8,12 @@ class Upfront_PostDataView extends Upfront_Object_Group {
 
 	private $_post;
 	protected $_child_instances = array();
+	protected $_breakpoint = false;
+
+	public function __construct ($data, $breakpoint = false) {
+		$this->_breakpoint = $breakpoint;
+		parent::__construct($data);
+	}
 
 	public function get_css_class () {
 		$classes = parent::get_css_class();
@@ -82,6 +88,12 @@ class Upfront_PostDataView extends Upfront_Object_Group {
 			: join(' ', $propagated) . ' '
 		;
 	}
+
+	public function get_preset() {
+		$preset_map = $this->_get_preset_map($this->_data);
+		$preset = $this->_get_preset($this->_data, $preset_map, $this->_breakpoint);
+		return $preset;
+	}
 }
 
 
@@ -108,6 +120,8 @@ class Upfront_PostDataPartView extends Upfront_Object {
 			: Upfront_Post_Data_Data::get_defaults()
 		;
 
+		$props['preset'] = $this->_parent->get_preset();
+
 		$props = Upfront_Post_Data_Data::apply_preset($props);
 		$this->_preset_id = Upfront_Post_Data_Data::get_preset_id($props);
 
@@ -122,7 +136,16 @@ class Upfront_PostDataPartView extends Upfront_Object {
 	public function get_markup () {
 		if (empty($this->_markup)) {
 			$post = $this->_parent->get_post();
-			$this->_markup = $this->_part_view->get_markup($post);
+			// Try to get content from plugins compatibility
+			$content = apply_filters('upfront-postdata_get_markup_before', false, $post->post_type);
+			if (!empty($content)) {
+				// Show only content part and insert plugins rendering to it
+				$this->_markup['content'] = $content;
+			}
+
+			if (empty($this->_markup)) {
+				$this->_markup = $this->_part_view->get_markup($post);
+			}
 		}
 		return isset($this->_markup[$this->get_part_type()])
 			? $this->_markup[$this->get_part_type()]
@@ -174,6 +197,36 @@ class Upfront_PostDataPartView extends Upfront_Object {
 			? $this->_part_view->get_propagated_attr()
 			: ''
 		;
+	}
+
+	public function get_style_for($point, $scope, $col = false) {
+		$part_type = $this->_get_property('part_type');
+		$css = '';
+		if ( 'content' == $part_type && $col !== false ) {
+			$left_indent = $this->_part_view->get_property('left_indent');
+			$right_indent = $this->_part_view->get_property('right_indent');
+			$max_col = $col - intval($left_indent) - intval($right_indent);
+			$variants = Upfront_ChildTheme::getPostImageVariants();
+			if (is_array($variants)) foreach ( $variants as $variant ) {
+				$left = intval($variant->group->left);
+				$margin_left = intval($variant->group->margin_left);
+				$margin_right = intval($variant->group->margin_right);
+				$variant_max_col = $max_col - $margin_left - $margin_right;
+				if ( isset($variant->group->float) && 'none' == $variant->group->float && $point->is_default() ) {
+					$variant_max_col -= $left;
+				}
+				$variant_max_col = $variant_max_col > $col ? $col : $variant_max_col;
+				if (0 === $col) $col = 1;
+				$max_width = sprintf('%.3f%%', floor(($variant_max_col/$col*100)*1000)/1000);
+				$css .= sprintf('%s #%s %s {%s}',
+						'.' . ltrim($scope, '. '),
+						$this->get_id(),
+						'[data-variant="' . $variant->vid . '"]',
+						'max-width: ' . $max_width . ';'
+					) . "\n";
+			}
+		}
+		return $css;
 	}
 
 }

@@ -1,6 +1,6 @@
 define([
 	'elements/upfront-post-data/js/panel-abstractions',
-	'text!elements/upfront-post-data/tpl/preset-styles/author.html',
+	'text!elements/upfront-post-data/tpl/preset-styles/author.html'
 ], function (Panel, template) {
 	var l10n = Upfront.Settings.l10n.post_data_element;
 
@@ -22,7 +22,7 @@ define([
 						{label: l10n.author.first_last, value: 'first_last'},
 						{label: l10n.author.last_first, value: 'last_first'},
 						{label: l10n.author.nickname, value: 'nickname'},
-						{label: l10n.author.username, value: 'username'},
+						{label: l10n.author.username, value: 'username'}
 					]
 				},
 				{
@@ -61,9 +61,9 @@ define([
 			];
 		}
 	});
-	
+
 	Modules.part_author_url = Panel.Toggleable.extend({
-		title: l10n.author.url_part_title, 
+		title: l10n.author.url_part_title,
 		data_part: 'author_url',
 		get_fields: function () {
 			return [
@@ -96,7 +96,7 @@ define([
 				label: l10n.author.gravatar_size,
 				label_style: 'inline',
 				property: "gravatar_size"
-			}]
+			}];
 		},
 		get_modules: function () {
 			var modules = [], // gravatar doesn't have typography
@@ -135,7 +135,7 @@ define([
 					}
 				}
 			});
-			
+
 			return modules;
 		}
 	});

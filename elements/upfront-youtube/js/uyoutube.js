@@ -27,7 +27,7 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 			this.model = new UyoutubeModel({properties: this.model.get('properties')});
 		}
 
-		var parent = this.parent_module_view, me = this;
+		var parent = this.parent_module_view;
 
 		this.delegateEvents();
 
@@ -39,27 +39,35 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 		this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.onResizeStop);
 
 	},
-	
+
 	on_element_resize_start: function (attr) {
 		//Append overlay div to prevent Iframe hijack drag event
 		this.$el.find('.upfront-object-content').append('<div class="object-view-overlay" />');
 	},
-	
+
 	on_element_resize: function (attr) {
 		//Remove overlay div
 		this.$el.find('.object-view-overlay').remove();
-		
+
 		//Update player size on resize
 		this.onResizeStop(this);
 	},
-	
+
 	get_content_markup: function () {
 		var rendered,
 		props = this.extract_properties();
 
 		this.trimListTitle();
 
-		rendered = this.youtubeTpl(this.extract_properties());
+		var multiple_videos = this.model.get_property_value_by_name('multiple_videos');
+		var video_id = multiple_videos.length > 0 ? multiple_videos[0]['id'] : '';
+		var loop = this.model.get_property_value_by_name('loop').length > 0 ? true : false;
+		var autoplay = this.model.get_property_value_by_name('autoplay').length > 0 ? true : false;
+		// Enable or Disable Looping/Autoplay.
+		props.loop_string = loop ? '&loop=1&playlist=' + video_id : '';
+		props.autoplay_string = autoplay ? '&autoplay=1' : '';
+
+		rendered = this.youtubeTpl(props);
 
 		if(this.property('youtube_status') === 'starting' && !props.multiple_videos && Upfront.Application.user_can_modify_layout()){
 		rendered += '<div class="upfront-youtube-starting-select upfront-initial-overlay-wrapper">' +
@@ -103,7 +111,7 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 			this.property('player_width', width, false);
 		}
 	},
-	
+
 	addVideo: function(videoInput) {
 		me.property('youtube_status', 'ok');
 		//Add first video
@@ -113,14 +121,13 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 
 		//Call resize function to match player width with object width
 		me.onResizeStop();
-
-		//Delay events else values are empty
-		setTimeout(function(){
+		
+		// wait for the video to be added before showing the settings
+		this.listenTo(Upfront.Events, "upfront:youtube:added:done", function(){
 			me.on_settings_click();
-			//Trigger event for adding videos to array
-			Upfront.Events.trigger("upfront:youtube:added");
-
-		}, 50);
+			me.stopListening(Upfront.Events, "upfront:youtube:added:done");
+		});
+		Upfront.Events.trigger("upfront:youtube:added");
 	},
 
 	on_render: function() {
@@ -129,7 +136,7 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 		this.$el.find('.upfront-youtube-button').on('click', function(e) {
 
 			var videoInput = $(this).parents().find('input.upfront-youtube-url').val();
-			
+
 			//Check if video is valid
 			if(videoInput) {
 				if (videoInput.match(/youtu\.be/)) {
@@ -237,114 +244,143 @@ var BehaviorPanel = RootSettingsPanel.extend({
 		this.model.on('doit', render_all, this);
 
 		this.settings = _([
-		new SettingsItem({
-			className: 'optional-field align-center general_settings_item',
-			title: l10n.apperance_title,
-			fields: [
-				new Fields.Radios({
-					model: this.model,
-					property: 'display_style',
-					layout: "horizontal",
-					label: l10n.display_style,
-					className: 'field-display_style upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
-					values: [
-						{
-							label: l10n.gallery_label,
-							value: 'gallery',
-						},
-						{
-							label: l10n.list_label,
-							value: 'list',
+			new SettingsItem({
+				className: 'optional-field align-center general_settings_item',
+				title: l10n.apperance_title,
+				fields: [
+					new Fields.Radios({
+						model: this.model,
+						property: 'display_style',
+						layout: "horizontal",
+						label: l10n.display_style,
+						className: 'field-display_style upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
+						values: [
+							{
+								label: l10n.gallery_label,
+								value: 'gallery'
+							},
+							{
+								label: l10n.list_label,
+								value: 'list'
+							}
+						]
+					}),
+
+					new Fields.Checkboxes({
+						model: this.model,
+						property: 'first_to_thumbnails',
+						className: 'first-video-to-thumbnails',
+						default_value: ['1'],
+						values: [
+							{ label: l10n.first_to_thumbnails, value: '1' }
+						],
+						change: function(value) {
+							this.model.set_property('first_to_thumbnails', value);
 						}
-					]
-				}),
+					}),
 
-				new Fields.Checkboxes({
-					model: this.model,
-					property: 'first_to_thumbnails',
-					className: 'first-video-to-thumbnails',
-					default_value: ['1'],
-					values: [
-						{ label: l10n.first_to_thumbnails, value: '1' },
-					],
-					change: function(value) {
-						this.model.set_property('first_to_thumbnails', value);
-					}
-				}),
+					new Fields.Checkboxes({
+						model: this.model,
+						property: 'multiple_show_title',
+						label: "",
+						values: [
+							{ label: "", value: 'multiple_show_title' }
+						],
+						change: function(value) {
+							this.model.set_property('multiple_show_title', value);
+						}
+					}),
+					new Fields.Number({
+						model: this.model,
+						property: 'multiple_title_length',
+						label: l10n.title_limit,
+						label_style: 'inline',
+						suffix: l10n.characters_label,
+						min: 50,
+						max: 100,
+						step: 1,
+						default_value: 100,
+						change: function(value) {
+							this.model.set_property('multiple_title_length', value);
+						}
+					}),
 
-				new Fields.Checkboxes({
-					model: this.model,
-					property: 'multiple_show_title',
-					label: "",
-					values: [
-						{ label: "", value: 'multiple_show_title' },
-					],
-					change: function(value) {
-						this.model.set_property('multiple_show_title', value);
-					}
-				}),
-				new Fields.Number({
-					model: this.model,
-					property: 'multiple_title_length',
-					label: l10n.title_limit,
-					label_style: 'inline',
-					suffix: l10n.characters_label,
-					min: 50,
-					max: 100,
-					step: 1,
-					default_value: 100,
-					change: function(value) {
-						this.model.set_property('multiple_title_length', value);
-					}
-				}),
-
-				new Fields.Slider({
-					model: this.model,
-					property: 'thumbWidth',
-					className: 'thumbnails-width',
-					min: 100,
-					max: 250,
-					step: 5,
-					label: l10n.thumbnail_size,
-					valueTextFilter: function(value){
-						return '(' + value + 'px x ' + me.model.get_property_value_by_name('thumbHeight') + 'px)';
-					}
-				}),
-				new Fields.Hidden({
-					model: this.model,
-					property: 'thumbHeight'
-				})
-			]
-		}),
-		new SettingsItem({
-			model: this.model,
-			title: l10n.videos_title,
-			className: 'multiple_video_section general_settings_item',
-			fields: [
-				new Fields.Text({
-					model: this.model,
-					label: l10n.default_video,
-					className: 'multiple_sources yt_first_video',
-					property: 'multiple_source_1',
-					placeholder: l10n.video_placeholder
-				}),
-			],
-		}),
-		new SettingsItem({
-			model: this.model,
-			className: 'upfront-add-another-wrapper',
-			fields: [
-			new Fields.Button({
-				className: 'upfront-add-another',
-				label: l10n.add_video,
-				compact: true,
-				on_click: function(){
-					me.cloneMultipleVideo();
-				}
+					new Fields.Slider({
+						model: this.model,
+						property: 'thumbWidth',
+						className: 'thumbnails-width',
+						min: 100,
+						max: 250,
+						step: 5,
+						label: l10n.thumbnail_size,
+						valueTextFilter: function(value){
+							return '(' + value + 'px x ' + me.model.get_property_value_by_name('thumbHeight') + 'px)';
+						}
+					}),
+					new Fields.Hidden({
+						model: this.model,
+						property: 'thumbHeight'
+					})
+				]
 			}),
-			]
-		}),
-		new Upfront.Views.Editor.Settings.Settings_CSS({model: this.model }),
+			new SettingsItem({
+				model: this.model,
+				title: l10n.playback,
+				className: 'loop-video general_settings_item',
+				fields: [
+					new Fields.Checkboxes({
+						model: this.model,
+							property: 'autoplay',
+							className: 'autoplay upfront-field-wrap',
+							values: [
+								{ label: l10n.autoplay, value: 'autoplay' }
+							],
+							change: function(value) {
+								this.model.set_property('autoplay', value);
+							}
+					}),
+					new Fields.Checkboxes({
+						model: this.model,
+							property: 'loop',
+							className: 'loop upfront-field-wrap',
+							values: [
+								{ label: l10n.loop, value: 'loop' }
+							],
+							change: function(value) {
+								this.model.set_property('loop', value);
+							}
+					}),
+				]
+			}),
+			new SettingsItem({
+				model: this.model,
+				title: l10n.videos_title,
+				className: 'multiple_video_section general_settings_item',
+				fields: [
+					new Fields.Text({
+						model: this.model,
+						label: l10n.default_video,
+						className: 'multiple_sources yt_first_video',
+						property: 'multiple_source_1',
+						placeholder: l10n.video_placeholder
+					})
+				]
+			}),
+			new SettingsItem({
+				model: this.model,
+				className: 'upfront-add-another-wrapper',
+				fields: [
+				new Fields.Button({
+					className: 'upfront-add-another',
+					label: l10n.add_video,
+					compact: true,
+					on_click: function(){
+						me.cloneMultipleVideo();
+					}
+				})
+				]
+			}),
+			new Upfront.Views.Editor.Settings.Settings_CSS({model: this.model })
 		]);
 
 		this.$el
@@ -485,17 +521,17 @@ var YoutubeSettings = ElementSettings.extend({
 	events: {
 		'click .upfront-save_settings' : 'saveSettings',
 		'click .upfront-cancel_settings' : 'cancelSettings',
-		'change .multiple_sources': 'multipleVideos',
+		'change .multiple_sources': 'multipleVideos'
 	},
 
 	initialize: function (options) {
 		this.constructor.__super__.initialize.call(this, options);
-
+		
 		this.listenTo(Upfront.Events, "upfront:youtube:added", this.multipleVideos);
 	},
 
 	actions: {
-		'single': 'upfront_youtube_single',
+		'single': 'upfront_youtube_single'
 	},
 
 	multipleVideos: function(event) {
@@ -547,6 +583,7 @@ var YoutubeSettings = ElementSettings.extend({
 						if(videoCounter == videoFields.length) {
 							multiple_videos_array.sort(function(a,b) { return a.order - b.order; });
 							me.for_view.model.set_property('multiple_videos', multiple_videos_array, false);
+							Upfront.Events.trigger("upfront:youtube:added:done");
 						}
 					})
 					;

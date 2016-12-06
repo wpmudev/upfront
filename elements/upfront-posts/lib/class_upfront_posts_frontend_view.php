@@ -11,6 +11,9 @@ class Upfront_PostsView extends Upfront_Object {
 
 		if (empty($data['display_type'])) return ''; // Force no render for unselected display type.
 
+		$markup = apply_filters('upfront-posts-get_markup-before', false);
+		if (!empty($markup)) return $markup;
+
 		return Upfront_Posts_PostsView::get_markup($data);
 	}
 

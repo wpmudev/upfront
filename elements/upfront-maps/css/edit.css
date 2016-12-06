@@ -162,16 +162,56 @@ border-width: 11px;
 }
 
 /* initial experience layout */
+#upfront_map-location_overlay-wrapper, .upfront_map-api_key_element {
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.50);
+}
 
 #upfront_map-location_overlay-wrapper,
 .uf_el_map_initial-overlay {
-	font-weight: 300;
+	font-weight: 200;
 	font-size:20px;
 }
 
 .uf_el_map_initial-overlay {
-	height: 150px;
-	padding:15px;
+	height: 125px;
+	padding: 15px;
+	margin: auto;
+}
+
+/* api key warning */
+
+.upfront_map-api_key_region {
+    margin: auto;
+	box-shadow: none;
+	background-color: #fff;
+}
+
+.upfront_map-api_key_region #upfront_map-api_key_overlay {
+    height: 145px;
+}
+
+#upfront_map-api_key_overlay {
+    max-width: 530px;
+	line-height: 1.5;
+	background: transparent;
+	height: 115px;
+	font-family: "Open Sans", "Helvetica Neueu", Helvetica, Arial, sans-serif;
+}
+.upfront-icon-map-warning:before {
+	content: ' ';
+	background-position: -480px -202px;
+}
+.upfront-ui .upfront-icon-map-warning {
+    position: relative;
+    top: -10px;
+    margin: auto;
+}
+#upfront_map-api_key_overlay-instruction {
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+#upfront_map-location_overlay-instruction {
+    margin-top: 5px;
 }
 
 /* address input */
@@ -183,15 +223,17 @@ border-width: 11px;
 .uf_el_map_initial-overlay input[type="text"]:focus {
 	background:rgb(255,255,255);
 	color:rgb(100,100,100);
+	font: 1px solid #d0d0d0;
 }
 
 /* refresh button */
 .uf_el_map_initial-overlay button {
 	position: absolute;
-	top: 0;
+	top: 4px;
 	right: 0;
 	background-color: transparent;
 	padding: 10px;
+	color: rgba(218,224,230,1);
 }
 
 .uf_el_map_initial-overlay button ,
@@ -200,10 +242,14 @@ border-width: 11px;
 }
 
 .uf_el_map_initial-overlay .uf-address  {
-	margin:0 auto;
-	max-width:500px;
+	margin: 1rem auto;
+	max-width: 520px;
 	position: relative;
-	margin-bottom: 10px;
+}
+
+.upfront-ui.uf-address input {
+    height: 50px;
+	background: rgba(237,240,242,1);
 }
 
 .uf-current-location {
@@ -211,12 +257,14 @@ border-width: 11px;
 	margin-top:10px;
 }
 /* Use My Location */
+#upfront_map-api_key_overlay a,
 .uf-current-location a {
 	background:transparent;
-	color:#395269;
+	color: rgba(31,205,143,1);
 	text-decoration: underline;
 	padding:0;
 	margin:0;
+	font-weight: 400;
 }
 .uf-current-location a:hover { cursor: pointer; }
 

@@ -29,7 +29,7 @@ var Util = {
 };
 
 var Views = {
-	
+
 	DEFAULT: 'post_data',
 
 	_view: Backbone.View.extend({
@@ -51,6 +51,26 @@ var Views = {
 				}
 			;
 
+			var pluginLayout = Upfront.Application.is_plugin_layout(data.post_id);
+			if (pluginLayout)  {
+				var showContent;
+				this.model.get('objects').each(function(object) {
+					if (object.get_property_value_by_name('part_type') === 'content') showContent = true;
+				});
+				if (showContent) {
+					var content = '<div>Below is sample content for ' + pluginLayout.pluginName + '. Use it as a reference for styling.</div>' + pluginLayout.content;
+					// For some reason this.$el is not working when Settings are opened and canceled, use this.element instead
+					setTimeout( function() {
+						me.element.$el.find('.upfront-object-content').first().empty().append(content);
+					}, 100);
+				}
+				return;
+			}
+
+			if (false === data.post_id && Upfront.Application.is_builder) {
+				data.post_id = 'fake_post';
+			}
+
 			if ( this.element.authorId ) {
 				data.author_id = this.element.authorId;
 			}
@@ -66,7 +86,11 @@ var Views = {
 			if ( data_type == 'post_data' && this.element.set_post_content ) {
 				data.set_post_content = this.element.set_post_content;
 			}
-			
+
+			// Let's notify all part views that we are currently loading
+			// This will disable editing until all part views is updated
+			this.element.toggle_child_objects_loading(true);
+
 			this._post_data_load = Upfront.Util
 				.post({
 					action: "upfront_post-data-load",
@@ -82,18 +106,22 @@ var Views = {
 							.empty()
 							.removeClass('upfront_post-data-loading');
 					}
-					else { 
+					else {
 						me.$el
 							.empty()
 							.append(me.tpl.error({l10n: l10n}))
 							.removeClass('upfront_post-data-loading');
 					}
+					// Notify all part views that we have finished loading
+					me.element.toggle_child_objects_loading(false);
 				})
 				.error(function () {
 					me.$el
 						.empty()
 						.append(me.tpl.error({l10n: l10n}))
 						.removeClass('upfront_post-data-loading');
+					// Notify all part views that we have finished loading
+					me.element.toggle_child_objects_loading(false);
 				})
 			;
 			this.$el
@@ -101,7 +129,7 @@ var Views = {
 				.append(this.tpl.load({l10n: l10n}))
 				.addClass('upfront_post-data-loading');
 		},
-		
+
 		/**
 		 * Re-render with the same cached data
 		 * @param {Array} only_objects
@@ -114,7 +142,7 @@ var Views = {
 				this.render();
 			}
 		},
-		
+
 		/**
 		 * Render the child object view
 		 * @param {Object} data
@@ -133,13 +161,13 @@ var Views = {
 				Upfront.Events.trigger('entity:object:refresh', view);
 			});
 		},
-		
+
 		tpl: {
 			main: _.template($template.filter("#post-data").html()),
 			error: _.template($template.filter("#error").html()),
 			load: _.template($template.filter("#loading").html())
 		}
-	}),
+	})
 
 };
 

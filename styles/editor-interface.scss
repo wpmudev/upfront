@@ -11,7 +11,6 @@
 @import 'sass/partials/map-editor';
 @import 'sass/partials/bgsettings';
 @import 'sass/partials/layout-grid-module-object';
-@import 'sass/partials/sidebar-buttons-commands';
 @import 'sass/partials/modal';
 @import 'sass/partials/drag-n-drop';
 @import 'sass/partials/settings';
@@ -85,7 +84,7 @@
 	height: 26px;
 	width: 60px;
 	z-index: 1;
-	left: -45px;
+	/*left: -45px;*/
 	cursor: pointer;
 	transition: opacity .5s ease, left .5s ease;
 }
@@ -119,7 +118,7 @@
 .upfront-quick-swap{
 	color: #3f5870;
 	background: rgba(255, 255, 255, .9);
-	font-family: 'Source Sans Pro';
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 	text-align: center;
 	font-size: 18px;
 	width: 100%;
@@ -153,7 +152,7 @@
 .upfront-edit-responsive .upfront-object:hover .upfront-quick-swap{
     display: none;
 }
-#preventUsageOverlay {
+#preventUsageOverlay, #preventElementsUsageOverlay {
   text-align: center;
   cursor: not-allowed;
   position: absolute;
@@ -163,10 +162,10 @@
   right: 0;
   background: rgba(38,58,77,0.8);
   display: none;
-	z-index: 10;
+  z-index: 1000;
 }
 
-#preventUsageOverlay span {
+#preventUsageOverlay span, #preventElementsUsageOverlay span {
   padding: 2px 5px;
   margin-bottom: 14px;
   -webkit-transform: translateX(-50%);
@@ -185,7 +184,7 @@
   visibility: hidden;
 }
 
-#preventUsageOverlay:hover span {
+#preventUsageOverlay:hover span, #preventElementsUsageOverlay:hover span {
   visibility: visible;
 }
 
@@ -195,7 +194,8 @@
 }
 
 
-
+@import 'sass/partials/perfect-scrollbar';
+@import 'sass/partials/new-perfect-scrollbar';
 @import 'sass/partials/redactor';
 @import 'sass/partials/new-color-picker';
 @import 'sass/partials/plaintext';
@@ -234,9 +234,9 @@
 	padding-left: 0;
 	padding-right: 0;
 }
-#page div.upfront-object.uposts-object {
+/*#page div.upfront-object.uposts-object {
   padding: 0;
-}
+}*/
 
 .upfront-content-marker {
 	margin: 0;

@@ -252,7 +252,7 @@
 	box-shadow: 0 1px 0 #192d3f;
 	color: #d8ecff;
 	font-size: 16px;
-	font-family: "Source Sans Pro", sans-serif;
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 	line-height: 24px;
 	padding: 5px 10px;
 	margin: 0 5px 10px;
@@ -313,6 +313,9 @@
 	box-shadow: none;
 	outline: none;
 }
+.upfront-module-object-group-on-edit .upfront-module {
+	box-shadow: none;
+}
 .upfront-module-disabled-all .upfront-entity_meta,
 .upfront-module-editing .upfront-entity_meta {
 	display: none;
@@ -352,7 +355,7 @@
 	padding: 0;
 	margin: 0 -160px 2px 0;
 	position: relative;
-	top: -9px;
+	top: 5px;
 	left: 0;
 }
 .upfront-region-hidden-toggle:before {
@@ -404,6 +407,9 @@
 	/*border: 1px solid #bada55;
 	background: rgba(255, 255, 255, 0.4);*/
 }
+.upfront-object-group-on-edit .upfront-active_entity > .upfront-object {
+	box-shadow: inset 0px 0px 0px 2px #6fbcf8;
+}
 .upfront-object-content {
 	min-height: 15px;
 }
@@ -441,6 +447,12 @@
 .upfront-editable_entity img {
   max-width: 100%;
   max-height: 100%;
+}
+
+.upfront-editable_entity.upfront-post-data-part.part-featured_image img {
+  max-width: none;
+  max-height: none;
+  overflow: hidden;
 }
 
 .ui-draggable {
@@ -528,6 +540,9 @@
 .upfront-entity_meta {
 	position: absolute;
 	z-index: 2000;
+}
+.upfront-login_element-module .upfront-entity_meta {
+	z-index: 3001;
 }
 .upfront-module-group > .upfront-entity_meta {
   top: 5px;
@@ -632,7 +647,7 @@
 }
 
 
-.upfront-wrapper-meta {
+.upfront-wrapper-meta.upfront-resize-handle-wrapper {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -642,7 +657,7 @@
   z-index: 70;
   display: none !important;
 }
-.upfront-wrapper-meta:before {
+.upfront-wrapper-meta.upfront-resize-handle-wrapper:before {
   content: "";
   position: absolute;
   top: 5px;
@@ -671,10 +686,10 @@
 .upfront-object-group-editing .upfront-object-group-on-edit .upfront-wrapper:hover > .upfront-wrapper-meta {
   display: block !important;
 }
-.upfront-wrapper-meta-left {
+.upfront-wrapper-meta-left.upfront-wrapper-meta {
   left: -7px;
 }
-.upfront-wrapper-meta-right {
+.upfront-wrapper-meta-right.upfront-wrapper-meta {
   right: -7px;
 }
 .upfront-wrapper-meta > .upfront-icon-button {
@@ -768,7 +783,7 @@
 .upfront-module-group > .upfront-module-group-controls .upfront-inline-panel .upfront-inline-panel-item-label {
   display: inline-block;
   width: auto!important;
-  font: 16px/24px 'Source Sans Pro', sans-serif;
+  font: 16px/24px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 }
 .upfront-module-group > .upfront-module-group-controls {
   display: block;

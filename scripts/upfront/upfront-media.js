@@ -1,8 +1,9 @@
 (function ($, undefined) {
 
 define([
-    'scripts/upfront/upfront-media/insert-options-item-control'
-],function(InsertOptions) {
+    'scripts/upfront/upfront-media/insert-options-item-control',
+		'scripts/perfect-scrollbar/perfect-scrollbar'
+],function(InsertOptions, perfectScrollbar) {
 
 	var MEDIA_SIZES = {
 		FULL: "full",
@@ -23,7 +24,7 @@ define([
             insert_option: "image_insert"
 		}
 	});
-	
+
 	var MediaCollection_Model = Backbone.Collection.extend({
 		defaults:{
 			thumbnail: '',
@@ -138,6 +139,22 @@ define([
 				})
 			;
 		},
+		// Same as delete_media_items except for theme/UI images.
+		delete_theme_items: function () {
+			var me = this,
+				data = {
+					"action": "upfront-media-remove_theme_item",
+					// Theme images use file names rather than post IDs.
+					"post_ids": this.invoke("get", "post_title")
+				}
+			;
+			Upfront.Util.post(data)
+				.success(function (response) {
+					me.reset([]);
+					Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+				})
+			;
+		},
 		global_labels_loaded: function () {
 			this.trigger("change");
 		}
@@ -153,15 +170,15 @@ define([
 	var ActiveMediaFilter_Collection = Backbone.Model.extend({
 		CONST: {
 			CUTOFF_SIZE: 8,
-			CUTOFF_BIT: 3,
+			CUTOFF_BIT: 3
 		},
 		labels_cache: false,
 		default_media_types: ['images', 'videos', 'audios', 'other'],
 		allowed_media_types: [],
 		image_sizes: true,
 		showing_titles: true,
-		current_keys: new Array(),
-		current_models: new Array(),
+		current_keys: [],
+		current_models: [],
 		current_page: 1,
 		max_pages: 1,
 		max_items: 1,
@@ -301,7 +318,7 @@ define([
 		has_upload: function () {
 			if ( Upfront.Settings.Application.PERMS.UPLOAD ) {
 				if (!this.themeImages) return true; // Allow when not looking into theme images
-				return Upfront.Application.is_builder(); // Otherwise, allow if in builder
+				return true === Upfront.plugins.isRequiredByPlugin('media filter upload');
 			} else {
 				return false; // disabling upload when user role has no permission
 			}
@@ -410,7 +427,7 @@ define([
 			render: function () {
 				var me = this;
 				me.$el.empty().append(l10n.select + ' <a href="#all" class="all">' + l10n.all + '</a>&nbsp;|&nbsp;<a href="#none" class="none">' + l10n.none + '</a>');
-				
+
 				me.select_display_field = new Upfront.Views.Editor.Field.Select({
 					label: l10n.display+":",
 					className: "upfront-field-wrap upfront-field-wrap-select upfront-filter_display_control",
@@ -433,7 +450,7 @@ define([
 			select_none: function (e) {
 				e.preventDefault();
 				e.stopPropagation();
-				
+
 				var positive = this.model.where({selected: true});
 				if ( positive.length ) {
 					this.model.each(function (item) {
@@ -441,7 +458,7 @@ define([
 					});
 					this.model.trigger("change");
 					Upfront.Events.trigger("media:item:selection_changed", this.model);
-					
+
 					// run again to apply the new list
 					var selected_model = new MediaCollection_Selection(ActiveFilters.current_models);
 					Upfront.Events.trigger("media:item:selection_changed", selected_model);
@@ -457,7 +474,7 @@ define([
 				});
 				this.model.trigger("change");
 				Upfront.Events.trigger("media:item:selection_changed", this.model);
-				
+
 				// run again to apply the new list
 				var selected_model = new MediaCollection_Selection(ActiveFilters.current_models);
 				Upfront.Events.trigger("media:item:selection_changed", selected_model);
@@ -474,7 +491,7 @@ define([
 			delete_selection: function (e) {
 				e.preventDefault();
 				e.stopPropagation();
-				
+
 				if ( confirm(l10n.confirm_delete_items) ) {
 					var show_nag = false;
 					this.model.each(function (item) {
@@ -483,7 +500,12 @@ define([
 					if (!show_nag || (show_nag && confirm(l10n.item_in_use_nag))) {
 						ActiveFilters.current_keys = [];
 						ActiveFilters.current_models = [];
-						this.model.delete_media_items();
+						// If theme image, delete via proper deletion method.
+						if (ActiveFilters.themeImages) {
+							return this.model.delete_theme_items();
+						}
+						// Otherwise delete media item.
+						return this.model.delete_media_items();
 					}
 				}
 			}
@@ -502,7 +524,7 @@ define([
 			},
 			events: {
 				//"change .change_title :text": "change_title",
-				"click .existing_labels a": "drop_label",
+				"click .existing_labels a": "drop_label"//,
 				//"change .additional_sizes select": "select_size"
 			},
 			initialize: function ( opts ) {
@@ -546,7 +568,7 @@ define([
 
                 // add sections
                 sections.each(function(section){
-                    self.$el.append( '<div class="' + section +  '" />' )
+                    self.$el.append( '<div class="' + section +  '" />' );
                 });
 
                 // render sections
@@ -560,9 +582,9 @@ define([
 					$hub = this.$el.find('.size_hints'),
 					sizeWidth,
 					sizeHeight;
-					
+
 				$hub.empty();
-				
+
 				if(this.model.length === 1) {
 					var image = this.model.at(0).get('image'),
 						$container = $('<div class="upfront-size-hints upfront-field-wrap upfront-field-wrap-text"><label class="upfront-field-label upfront-field-label-block">'+ l10n.natural_size +'</label></div>');
@@ -857,7 +879,7 @@ define([
 			},
 			stop_prop: function (e) {
 				e.stopPropagation();
-				if (this.filter_selection) this.filter_selection.trigger("filters:outside_click")
+				if (this.filter_selection) this.filter_selection.trigger("filters:outside_click");
 			},
 			initialize: function () {
 				this.filter_selection = new MediaManager_FiltersSelectionControl();
@@ -1253,7 +1275,7 @@ define([
 			//"click .embed": "switch_to_embed",
 			"click .upload": "switch_to_upload",
 			"click .shortcode": "switch_to_shortcode",
-			"click .markup": "switch_to_markup",
+			"click .markup": "switch_to_markup"
 		},
 		switch_template: _.template(
 			'<ul class="upfront-tabs upfront-media_manager-tabs"> <li class="library">' + l10n.library + '</li> <li class="embed">' + l10n.embed + '</li> </ul> '
@@ -1292,6 +1314,7 @@ define([
 		},
 		switch_to_embed: function (e) {
 			return false;
+			/*
 			e.preventDefault();
 			e.stopPropagation();
 			this.$el
@@ -1299,6 +1322,7 @@ define([
 				.filter(".embed").addClass("active")
 			;
 			this.trigger("media_manager:switcher:to_embed");
+			*/
 		},
 		switch_to_upload: function (e) {
 			e.preventDefault();
@@ -1429,9 +1453,9 @@ define([
 				uploadUrl = ActiveFilters.themeImages ? _upfront_media_upload.theme : _upfront_media_upload.normal
 			;
 
-            this.$("#fileupload").remove();
-            this.$el.append('<input id="fileupload" type="file" style="display:none" name="media" data-url="' + uploadUrl + '" multiple >');
-            this.$("#fileupload").off("click").on("click", function (e) { e.stopPropagation(); }).fileupload({
+			this.$("#fileupload").remove();
+			this.$el.append('<input id="fileupload" type="file" style="display:none" name="media" data-url="' + uploadUrl + '" multiple >');
+			this.$("#fileupload").off("click").on("click", function (e) { e.stopPropagation(); }).fileupload({
 				dataType: 'json',
 				add: function (e, data) {
 					var media = data.files[0],
@@ -1445,7 +1469,8 @@ define([
 					data.submit();
 					new_media[count].on("upload:abort", function () {
 						data.abort();
-						if (new_media[count].get("ID")) {
+						// If normal Media.
+						if (new_media[count].get("ID") && !ActiveFilters.themeImages) {
 							// Already uploaded this file, remove on the server side
 							Upfront.Util.post({
 								action: "upfront-media-remove_item",
@@ -1453,7 +1478,7 @@ define([
 							}).always(function () {
 								media_library_view.model.trigger("change");
 							});
-						}
+						} 
 						media_library_view.model.remove(new_media[count]);
 						media_library_view.model.trigger("change");
 					});
@@ -1563,7 +1588,7 @@ define([
 				"click .upfront-pagination_item-next": "next_page",
 				"click .upfront-pagination_page-item": "set_page",
 				"click .upfront-pagination_page-current": "stop_prop",
-				"keypress .upfront-pagination_page-current": "set_page_keypress",
+				"keypress .upfront-pagination_page-current": "set_page_keypress"
 			},
 			stop_prop: function (e) { e.stopPropagation(); },
 			render: function () {
@@ -1605,10 +1630,8 @@ define([
 			set_page_keypress: function (e) {
 				e.stopPropagation();
 				//e.preventDefault();
-				var string = String.fromCharCode(e.which),
-					num = parseInt(string, 10)
-				;
 				if (13 !== e.which) return true;
+
 				var string = $.trim($(e.target).val()),
 					num = parseInt(string, 10)
 				;
@@ -1660,7 +1683,7 @@ define([
 				Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
 				Upfront.Events.trigger("media:search:requested", search);
 				this.render();
-				
+
 				var selected_model = new MediaCollection_Selection(ActiveFilters.current_models);
 				Upfront.Events.trigger("media:item:selection_changed", selected_model);
 			},
@@ -1694,9 +1717,9 @@ define([
 			},
 			update_model: function (selected) {
 				// checking on all models on current page
-				for ( key in selected.models ) {
+				for ( var key in selected.models ) {
 					var model = selected.models[key];
-					var index = ActiveFilters.current_keys.indexOf(model.attributes.ID);
+					var index = ActiveFilters.current_keys.indexOf(((model || {}).attributes || {}).ID);
 					if( index == -1 ) {
 						// inserting selected media models on the list
 						if( model.attributes.selected ) {
@@ -1705,7 +1728,7 @@ define([
 						}
 					} else {
 						// removing media models on the list
-						if( !model.attributes.selected || model.attributes.selected == undefined ) {
+						if( !model.attributes.selected || model.attributes.selected === undefined ) {
 							ActiveFilters.current_keys.splice(index, 1);
 							ActiveFilters.current_models.splice(index, 1);
 						}
@@ -1715,7 +1738,7 @@ define([
 			use_selection: function (e) {
 				e.preventDefault();
 				e.stopPropagation();
-				
+
 				// using the persistent list instead of current page media collection
 				var model = new MediaCollection_Selection(ActiveFilters.current_models);
 				Upfront.Popup.close(model);
@@ -1929,12 +1952,12 @@ define([
 				this._subviews.media = new MediaCollection_View({model: this.media_collection});
 			}
 			var media = this._subviews.media;
-			
+
 			if (!this._subviews.aux) {
 				this._subviews.aux = new MediaManager_AuxControls_View({model: this.media_collection});
 			}
 			var aux = this._subviews.aux;
-			
+
 			if (!this._subviews.controls) {
 				this._subviews.controls = new MediaManager_Controls_View({model: this.media_collection, options: this.options });
 			}
@@ -1992,20 +2015,32 @@ define([
 					view.parent_view = me;
 					view.render();
 					me.$el.append(view.$el);
-					
+
 					// preserving selected media
 					if( ActiveFilters.current_keys.length ) {
-						var target_index = ActiveFilters.current_keys.indexOf(model.attributes.ID);
+						var target_index = ActiveFilters.current_keys.indexOf(((model || {}).attributes || {}).ID);
 						if( target_index != -1 ) {
 							model.set({selected: true}, {silent: true});
 							model.trigger("appearance:update");
 						}
 					}
 				});
-				
+
 				// running change event to apply persistent list
 				var selected_model = new MediaCollection_Selection(ActiveFilters.current_models);
 				Upfront.Events.trigger("media:item:selection_changed", selected_model);
+
+				// Add JS Scrollbar.
+				perfectScrollbar.withDebounceUpdate(
+					// Element.
+					this.el,
+					// Run First.
+					true,
+					// Event.
+					false,
+					// Initialize.
+					true
+				);
 			}
 		},
 		update: function () {
@@ -2041,7 +2076,7 @@ define([
 				model.trigger("appearance:update");
 			}
 			Upfront.Events.trigger("media:item:selection_changed", this.model);
-			
+
 			// running again change event to apply persistent list
 			var selected_model = new MediaCollection_Selection(ActiveFilters.current_models);
 			Upfront.Events.trigger("media:item:selection_changed", selected_model);
@@ -2117,13 +2152,16 @@ define([
 			upload_finish: function (manager) {
 				this.$el.find(".thumbnail .upfront-image-upload-placeholder").replaceWith(this.model.get("thumbnail"));
 				this.$el.find('.upfront-media-progress-bar').remove();
-				
+
 				// adding it on persistent list
-				ActiveFilters.current_keys.push(this.model.attributes.ID);
 				ActiveFilters.current_models.push(this.model);
-				// redraw media gallery
-				manager.render_library();
-				
+				// Only do if regular media.
+				if (!ActiveFilters.themeImages) {
+					// Add as current keys so uploads are selected.
+					ActiveFilters.current_keys.push(this.model.attributes.ID);
+					// redraw media gallery
+					manager.render_library();
+				}
 			},
 			remove: function() {
 				Upfront.Events.off("media_manager:media:toggle_titles", this.toggle_title);
@@ -2388,7 +2426,7 @@ define([
 				multiple_selection: true,
 				button_text: l10n.ok,
 				ck_insert: false,
-				hold_editor: false,
+				hold_editor: false
 			}, options);
 
 			var me = this,
@@ -2427,7 +2465,6 @@ define([
 			ActiveFilters.allowed_media_types = [];
 			ActiveFilters.current_keys = [];
 			ActiveFilters.current_models = [];
-			ActiveFilters.media_limit = 20;
 			this.cleanup_manager_view();
 		},
 		cleanup_manager_view: function () {
@@ -2474,7 +2511,7 @@ define([
 				if ( result.type == 'gallery' )
 					data.link = {
 						href: '#',
-						class: 'popup'
+						"class": 'popup'
 					};
 				data.type = result.type;
 				html += _.template( (data.link ? Upfront.Media.Templates.image_link : Upfront.Media.Templates.image), data);

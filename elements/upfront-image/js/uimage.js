@@ -85,6 +85,9 @@ define([
 				this.property('has_settings', 1);
 			}
 
+			this.listenTo(Upfront.Events, 'upfront:import_image:populate_theme_images', this.populate_theme_images);
+			this.listenTo(Upfront.Events, 'upfront:import_image:imported', this.imported_theme_image);
+
 			this.listenTo(Upfront.Events, 'upfront:element:edit:start', this.on_element_edit_start);
 			this.listenTo(Upfront.Events, 'upfront:element:edit:stop', this.on_element_edit_stop);
 
@@ -100,12 +103,15 @@ define([
 					this.unsetMobileMode();
 				}
 			});
+			this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+			this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint:after", this.on_change_breakpoint_after);
+			this.listenTo(Upfront.Events, "upfront:grid:updated", this.on_grid_update);
 
 			if (this.property('link') === false) {
 				this.link = new LinkModel({
 					type: this.property('when_clicked'),
 					url: this.property('image_link'),
-					target: this.property('link_target'),
+					target: this.property('link_target')
 				});
 				this.property('link', this.link.toJSON());
 			} else {
@@ -118,9 +124,6 @@ define([
 
 			this.listenTo(Upfront.Events, 'entity:module:update', this.on_uimage_update);
 			this.listenTo(this.model, "preset:updated", this.preset_updated);
-
-			this.on_element_resizing_debounced = _.debounce(this.on_element_resizing_private, 3000, {leading: false});
-			this.apply_element_size_debounced = _.debounce(this.applyElementSize, 3000, {leading: false});
 		},
 
 		get_preset_properties: function() {
@@ -156,6 +159,19 @@ define([
 
 			PresetUtil.updatePresetStyle('gallery', props, settingsStyleTpl);
 
+		},
+
+		populate_theme_images: function (image_list) {
+			if ( this.isThemeImage() ) image_list.push(this.property('srcFull'));
+		},
+
+		imported_theme_image: function (image) {
+			var src = this.property('srcFull');
+			if ( this.isThemeImage() && image.fullpath == src ) {
+				this.property('image_id', image.id);
+				this.property('srcFull', image.src);
+				this.property('srcOriginal', image.src);
+			}
 		},
 
 		setDefaults: function(){
@@ -206,7 +222,7 @@ define([
 		},
 
 		isThemeImage: function() {
-			return this.property('srcFull') && this.property('srcFull').match('wp-content/themes/');
+			return this.property('srcFull') && this.property('srcFull').match(Upfront.mainData.currentThemePath);
 		},
 
 		replaceImage: function() {
@@ -225,7 +241,7 @@ define([
 			});
 
 			this.listenTo(control, 'panel:ok', function() {
-				if(linkPanel.model.get('type') == 'lightbox' && linkPanel.$el.find('.js-ulinkpanel-lightbox-input').val() != '') {
+				if(linkPanel.model.get('type') == 'lightbox' && linkPanel.$el.find('.js-ulinkpanel-lightbox-input').val() !== '') {
 					linkPanel.createLightBox();
 				}
 				control.close();
@@ -242,6 +258,11 @@ define([
 			me.listenTo(control, 'panel:close', function(){
 				me.controls.$el.parent().parent().removeClass('upfront-control-visible');
 				me.$el.closest('.ui-draggable').draggable('enable');
+			});
+
+			// Close panel when event is triggered (enter key is hit).
+			me.listenTo(linkPanel, 'linkpanel:close', function() {
+				control.close();
 			});
 
 			control.icon = 'link';
@@ -505,7 +526,7 @@ define([
 					overflow: 'hidden',
 					position: 'relative',
 					width: Math.min(elementSize.width, size.width),
-					height: Math.min(elementSize.height, size.height)
+					height: Math.min(elementSize.height, size.height),
 				});
 
 				img.attr('src', me.property('srcFull'))
@@ -620,9 +641,8 @@ define([
 			} else {
 				var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint' + onTop);
 				this.$el.append(resizeHint);
-				// this.applyElementSize(elementSize.width, elementSize.height)
 				setTimeout( function () {
-					me.apply_element_size_debounced();
+					me.applyElementSize(false, false, false); // don't update property here
 				}, 300 );
 			}
 
@@ -649,7 +669,7 @@ define([
 			// Show full image if we are in mobile mode
 			if (this.mobileMode) {
 				this.$('.uimage').addClass('uimage-mobile-mode');
-				this.setMobileMode();
+				this.once('update_position', this.setMobileMode); // Run setMobileMode after positioning finished
 			}
 
 			this.setStuckToTop();
@@ -693,21 +713,23 @@ define([
 
 			if(this.paddingControl && typeof this.paddingControl.isOpen !== 'undefined' && this.paddingControl.isOpen)	return;
 
-			// if (!this.controls) {
-				this.controls = this.createControls(); // It seems to be needed for image only so caption item shows up when it should
-			// }
+			if (!this.$control_el || this.$control_el.length === 0) {
+				this.$control_el = this.$el;
+			}
+			if ( this.controls ) {
+				this.controls.remove();
+				this.controls = false;
+				this.$control_el.find('>.upfront-element-controls').remove();
+			}
+			this.controls = this.createControls();
 
 			if (this.controls === false) return;
 
 			this.controls.render();
-			if (!this.$control_el || this.$control_el.length === 0) {
-				this.$control_el = this.$el;
-			}
 			if (this.$control_el.find('>.upfront-element-controls').length === 0) {
 				this.$control_el.append(elementControlsTpl);
-				// this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el);
+				this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el);
 			}
-			this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el); // we need to refresh controls because caption item has to be activated or deactivate depending on the `show caption`
 			this.updateAdvancedPadding();
 			this.controls.delegateEvents();
 		},
@@ -778,7 +800,9 @@ define([
 		},
 
 		setMobileMode: function(){
-			var props = this.extract_properties();
+			var props = this.extract_properties(),
+				row = this.model.get_breakpoint_property_value('row', false)
+			;
 			this.mobileMode = true;
 			this.$el
 				.find('.uimage-resize-hint').hide().end()
@@ -794,6 +818,12 @@ define([
 					})
 					.attr('src', this.property('src'))
 			;
+			if ( false === row ) { // No row defined in this element breakpoint, remove defined height
+				this.$el.find('> .upfront-object').css('min-height', '');
+				if ( this.parent_module_view ) {
+					this.parent_module_view.$el.find('> .upfront-module').css('min-height', '');
+				}
+			}
 		},
 
 		unsetMobileMode: function(){
@@ -814,9 +844,9 @@ define([
 
 			this.originalDesktopElementSize = this.property('element_size');
 
-			if(this.mobileMode) {
-				this.render();
-			}
+			//if(this.mobileMode) {
+				this.render(); // @TODO prefer not to re-render on breakpoint change
+			//}
 		},
 
 		/***************************************************************************/
@@ -870,10 +900,6 @@ define([
 		},
 
 		on_element_resizing: function(attr) {
-			this.on_element_resizing_debounced(attr);
-		},
-
-		on_element_resizing_private: function(attr) {
 			if(this.mobileMode) {
 				return;
 			}
@@ -884,33 +910,29 @@ define([
 				captionHeight = this.get_preset_property("caption-position") === 'below_image' ? this.$('.wp-caption').outerHeight() : 0,
 				// padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
 				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
-				elementWidth = parseInt(attr.width),
-				elementHeight = parseInt(attr.height) - captionHeight,
-				hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
-				vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
+				elementWidth = parseInt(attr.width, 10),
+				elementHeight = parseInt(attr.height, 10) - captionHeight,
+				hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding, 10 ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding, 10 ),
+				vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding, 10 ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding, 10 ),
 				ratio,
 				newSize;
 
 			// data.elementSize = {width: attr.width - (2 * padding), height: attr.height - (2 * padding) - captionHeight};
 			data.elementSize = {width: elementWidth < 0 ? 10 : elementWidth, height: elementHeight < 0 ? 10 : elementHeight};
 
-			if(attr.axis === "e" || attr.axis === "w") {
-				data.elementSize.height = data.elementSize.height - vPadding;
-			}
-
 			newSize = this.getElementShapeSize(data.elementSize);
 			if ( false !== newSize ) {
 				data.elementSize = newSize;
 			}
 
-			this.applyElementSize();
+			this.applyElementSize(data.elementSize.width, data.elementSize.height, false); // This won't update element_size property
 
 			if(starting.length){
 				return starting.outerHeight(data.elementSize.height);
 			}
 
 			//Wonderful stuff from here down
-			this.$('.uimage').css('height', data.elementSize.height);
+			this.$('.uimage').css('height', data.elementSize.height - vPadding);
 
 			var is_locked = this.property('is_locked');
 
@@ -958,13 +980,13 @@ define([
 
 				if(typeof imageView.width !== "undefined") {
 					if(data.elementSize.width > imageView.width) {
-						img.css({left: imgPosition.left + (maskSize.width - imageView.width)});
+						img.css({left: imgPosition.left + (data.elementSize.width - imageView.width)});
 					}
 				}
 
 				if(typeof imageView.height !== "undefined") {
 					if(data.elementSize.height > imageView.height) {
-						img.css({top: imgPosition.top + (maskSize.height - imageView.height)});
+						img.css({top: imgPosition.top + (data.elementSize.height - imageView.height)});
 					}
 				}
 
@@ -981,17 +1003,21 @@ define([
 						if(data.size.height < data.elementSize.height) {
 							margin = (data.size.height - data.elementSize.height);
 						} else {
-							margin = -(data.elementSize.height - containerHeight)
+							margin = -(data.elementSize.height - containerHeight);
 						}
 					}
 
 					this.$('.upfront-image-caption-container').css({
-						'marginTop': -margin,
+						'marginTop': -margin
 					});
 
 					this.property('marginTop', -margin);
 					this.property('position', {top: margin, left: current_position.left});
 
+				}
+				
+				if(sizeCheck === "small" && isDotAlign !== true) {
+					this.property('marginTop', 0);
 				}
 			}
 
@@ -1012,7 +1038,7 @@ define([
 				img = this.resizingData.img,
 				imgSize = {width: img.width(), height: img.height()},
 				imgPosition = img.position(),
-				padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding);
+				padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
 				sizeCheck = this.checkSize(),
 				isDotAlign = this.property('isDotAlign');
 
@@ -1045,7 +1071,10 @@ define([
 				position: imgPosition
 			};
 
-			this.model.set_breakpoint_property('element_size', this.resizingData.data.elementSize);
+			var elementSize = this.resizingData.data.elementSize;
+
+			//this.model.set_breakpoint_property('element_size', this.resizingData.data.elementSize);
+			this.applyElementSize(elementSize.width, ('default_height' in elementSize ? elementSize.default_height : elementSize.height), true);
 
 			this.cropTimer = setTimeout(function(){
 				me.saveTemporaryResizing();
@@ -1093,6 +1122,8 @@ define([
 
 		on_uimage_update: function (view) {
 			if ( !this.parent_module_view || this.parent_module_view != view ) return;
+			// Don't apply element size if on resizing
+			if ( !_.isUndefined(this.resizingData) && 'starting' in this.resizingData && this.resizingData.starting ) return;
 
 			this.applyElementSize();
 		},
@@ -1243,7 +1274,7 @@ define([
 				).done(function(results){
 					var imageData = results.data.images[imageId];
 
-					if(imageData.error && !me.isThemeImage){
+					if(imageData.error && !me.isThemeImage()){
 						Upfront.Views.Editor.notify(l10n.process_error, 'error');
 						return;
 					}
@@ -1261,7 +1292,7 @@ define([
 				});
 			});
 
-			if ( this.isThemeImage && 'themeExporter' in Upfront ) {
+			if ( this.isThemeImage() && 'themeExporter' in Upfront ) {
 				this.importImage().always(function(){
 					import_deferred.resolve();
 				});
@@ -1282,7 +1313,7 @@ define([
 
 			var me = this,
 				post_id = ( typeof _upfront_post_data.post_id !== 'undefined' ) ? _upfront_post_data.post_id : false,
-				$layout_ids = ( typeof _upfront_post_data.layout !== 'undefined' ) ? _upfront_post_data.layout : '',
+				layout_ids = ( typeof _upfront_post_data.layout !== 'undefined' ) ? _upfront_post_data.layout : '',
 				load_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 )
 			;
 
@@ -1379,7 +1410,7 @@ define([
 			}
 
 		},
-		applyElementSize: function (width, height) {
+		applyElementSize: function (width, height, set_property) {
 			if ( this.parent_module_view ) {
 				var me = this,
 					parent = this.parent_module_view.$el.find('.upfront-editable_entity:first'),
@@ -1388,18 +1419,31 @@ define([
 					// padding = this.property('no_padding') == 1 ? 0 : this.updateBreakpointPadding(breakpointColumnPadding),
 					borderWidth = parseInt(this.$el.find('.upfront-image-caption-container').css('borderWidth') || 0, 10), // || 0 part is needed because parseInt empty sting returns NaN and breaks element height
 					column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
-					hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding ),
-					vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding ),
+					hPadding = parseInt( this.model.get_breakpoint_property_value('left_padding_num') || column_padding, 10 ) + parseInt( this.model.get_breakpoint_property_value('right_padding_num') || column_padding, 10 ),
+					vPadding = parseInt( this.model.get_breakpoint_property_value('top_padding_num') || column_padding, 10 ) + parseInt( this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding, 10 ),
 					// elementSize = {width: resizer.width() - (2 * padding), height: resizer.height() - (2 * padding) - captionHeight}
-					elementSize = {width: ( width && !isNaN(width) ? width : resizer.width() ) - hPadding, height: ( height && !isNaN(height) ? height : resizer.height() ) - vPadding - captionHeight - (2 * borderWidth)}
+					elementSize = {width: ( width && !isNaN(width) ? width : resizer.width() ) - hPadding, height: ( height && !isNaN(height) ? height : resizer.height() ) - vPadding - captionHeight - (2 * borderWidth)},
+					newSize = this.getElementShapeSize(elementSize)
 				;
-				this.model.set_breakpoint_property('element_size', elementSize);
+				if ( false !== newSize ) {
+					elementSize = newSize;
+				}
+				if ( _.isUndefined(set_property) || set_property ) {
+					this.model.set_breakpoint_property('row', Upfront.Util.height_to_row(elementSize.height + vPadding), true);
+					if ( this.parent_module_view ) {
+						this.parent_module_view.model.set_breakpoint_property('row', Upfront.Util.height_to_row(elementSize.height + vPadding), true);
+					}
+					this.model.set_breakpoint_property('element_size', elementSize);
+				}
 				this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
 						width: elementSize.width,
 						height: elementSize.height,
 						l10n: l10n.template
 					})
 				);
+				// Let's override the min-height set to element
+				this.$el.find('> .upfront-object').css('min-height', (elementSize.height + vPadding) + 'px');
+				this.$el.closest('.upfront-module').css('min-height', (elementSize.height + vPadding) + 'px');
 			}
 		},
 
@@ -1408,7 +1452,7 @@ define([
 			if (e && e.preventDefault) e.preventDefault();
 
 			Upfront.Views.Editor.ImageSelector.open({
-				multiple_sizes: false,
+				multiple_sizes: false
 			}).done(function(images){
 				var sizes = {};
 				_.each(images, function(image, id){
@@ -1458,7 +1502,7 @@ define([
 
 			this.property('align', result.align, true);
 			this.property('valign', result.valign, true);
-			this.property('isDotAlign', result.isDotAlign, true)
+			this.property('isDotAlign', result.isDotAlign, true);
 			this.property('stretch', result.stretch, true);
 			this.property('vstretch', result.vstretch, true);
 			this.property('quick_swap', false, true);
@@ -1555,7 +1599,7 @@ define([
 
 			this.$('.upfront-image-wrapper').css({
 				height: maskSize.height
-			})
+			});
 		},
 
 		checkSize: function() {
@@ -1665,36 +1709,32 @@ define([
 		importImage: function () {
 			var me = this,
 				image_id = this.property('image_id'),
+				src = this.property('srcFull'),
 				opts = {
-					action: 'upfront-media-image-import',
-					images: [{
-						element_id: this.property('element_id'),
-						id: image_id,
-						src: this.property('srcFull')
-					}]
+					action: 'upfront_import_image',
+					images: [src]
 				},
 				deferred = $.Deferred()
 			;
 			Upfront.Util.post(opts).done(function(response){
 				var images = response.data.images;
-				if ( image_id in images ) {
-					var status = images[image_id].status;
-					if ( status == 'imported') {
-						me.property('image_id', images[image_id].id);
-						me.property('srcFull', images[image_id].src);
-						me.property('srcOriginal', images[image_id].src);
+				if ( parseInt(response.data.error, 10) !== 0 ) {
+					deferred.reject();
+					return;
+				}
+				_.each(images, function (image) {
+					var status = image.status;
+					if ( status === 'import_success' || status === 'exists') {
+						me.property('image_id', image.id);
+						me.property('srcFull', image.src);
+						me.property('srcOriginal', image.src);
 					}
-					else if ( status == 'exists' ) {
-						me.property('image_id', images[image_id].id);
-					}
-					else if ( status == 'fail' ) {
+					else {
 						deferred.reject();
 						return;
 					}
 					deferred.resolve(me.property('image_id'));
-					return;
-				}
-				deferred.reject();
+				});
 			});
 			return deferred.promise();
 		},
@@ -1724,31 +1764,33 @@ define([
 			var me = this,
 				panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
 				moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl(),
-				is_locked = this.property('is_locked')
+				is_locked = this.property('is_locked'),
+				controls = [],
+				lock_icon
 			;
+			if ( !this.mobileMode ) {
+				if(typeof is_locked !== "undefined" && is_locked === true) {
+					lock_icon = 'lock-locked';
+				} else {
+					lock_icon = 'lock-unlocked';
+				}
 
-			if(typeof is_locked !== "undefined" && is_locked === true) {
-				var lock_icon = 'lock-locked';
-			} else {
-				var lock_icon = 'lock-unlocked';
+				moreOptions.icon = 'more';
+				moreOptions.tooltip = l10n.ctrl.caption_position;
+
+				moreOptions.sub_items = {};
+				moreOptions.sub_items['swap'] = this.createControl('swap', l10n.btn.swap_image, 'openImageSelector');
+				moreOptions.sub_items['crop'] = this.createControl('crop', l10n.ctrl.edit_image, 'editRequest');
+				moreOptions.sub_items['link'] = this.createLinkControl();
+				moreOptions.sub_items['lock'] = this.createControl(lock_icon, l10n.ctrl.lock_image, 'lockImage');
+
+				controls.push(moreOptions);
 			}
 
-			moreOptions.icon = 'more';
-			moreOptions.tooltip = l10n.ctrl.caption_position;
+			controls.push(this.createPaddingControl());
+			controls.push(this.createControl('settings', Upfront.Settings.l10n.global.views.settings, 'on_settings_click'));
 
-			moreOptions.sub_items = {}
-			moreOptions.sub_items['swap'] = this.createControl('swap', l10n.btn.swap_image, 'openImageSelector');
-			moreOptions.sub_items['crop'] = this.createControl('crop', l10n.ctrl.edit_image, 'editRequest');
-			moreOptions.sub_items['link'] = this.createLinkControl();
-			moreOptions.sub_items['lock'] = this.createControl(lock_icon, l10n.ctrl.lock_image, 'lockImage');
-
-			var controlls =  _([
-				moreOptions,
-				this.createPaddingControl(),
-				this.createControl('settings', Upfront.Settings.l10n.global.views.settings, 'on_settings_click')
-			]);
-
-		return controlls;
+			return _(controls);
 		}
 	});
 

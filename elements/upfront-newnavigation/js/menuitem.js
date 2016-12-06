@@ -223,11 +223,16 @@ return (function ($) {
 		},
 
 		render: function (event) {
-			var me = this;
-			var content = '<a class="menu_item uf-click-to-edit-text';
+			var me = this,
+				content = '<a class="menu_item uf-click-to-edit-text',
+				menu_set_url = ( typeof this.model.link['url'] !== undefined )
+					? this.model.link['url'].replace(Upfront.Settings.site_url, '').replace('/','')
+					: '',
+				current_url = Backbone.history.fragment
+			;
 
 			if(me.newitem) content = content + ' new_menu_item menu_item_placeholder';
-			
+
 			if (Upfront.Application.user_can_modify_layout()) {
 				content = content+'" ><span class="menu_item-ueditor">'+this.model['menu-item-title']+'</span></a><i class="delete_menu_item">x</i><span class="open-item-controls"></span>';
 			} else {
@@ -237,6 +242,8 @@ return (function ($) {
 					content = content + '<span class="missing-lightbox-warning"></span>';
 
 			$(this.el).html(content).addClass('menu-item-depth-'+me.level);
+			if ( menu_set_url === current_url ) $(this.el).addClass('current-menu-item');
+			
 			$(this.el).data('depth', me.level);
 			this.createInlineControlPanel();
 
@@ -269,12 +276,23 @@ return (function ($) {
 					currentcontext.addClass('time_being_display');
 					currentcontext = currentcontext.parent().parent('ul');
 				}
+				
+				// add class if last region to allocate clearance
+				var $region = this.$el.closest('.upfront-region-container'),
+					$lastRegion = $('.upfront-region-container').not(
+					'.upfront-region-container-shadow').last()
+				;
+				if ( $lastRegion.get(0) == $region.get(0) ) $region.addClass('upfront-last-region-padding');
+				
 
 			} else {
 				this.controlsVisible = false;
 				if (this.$el.parents('.menu').find('.controls-visible').length === 0) {
 					this.$el.parents('.menu').sortable('enable');
 				}
+				
+				// remove class that was previously added on last region
+				this.$el.closest('.upfront-region-container').removeClass('upfront-last-region-padding');
 			}
 		},
 
@@ -383,7 +401,7 @@ return (function ($) {
 
 			urlParts = url.split('#');
 
-			if(urlParts[0].trim() != '')
+			if(urlParts[0].trim() !== '')
 				return urlParts[0];
 			else
 				return location.href.replace('?dev=true', '');
@@ -415,7 +433,7 @@ return (function ($) {
 				menu_item.blur();
 			}
 
-			if (me.model['menu-item-title'].trim() == '') {
+			if (me.model['menu-item-title'].trim() === '') {
 				if (typeof(keep) != 'undefined' && keep) {
 					var title_text = menu_item.next('a.ueditor-placeholder').text() || (menu_item.is("a.menu_item_placeholder") ? menu_item.text() : '');
 					me.model['menu-item-title'] = title_text;
@@ -429,7 +447,7 @@ return (function ($) {
 				'action': "upfront_new_update_menu_item",
 				'menu': me.parent_view.model.get_property_value_by_name('menu_id') ,
 				'menu-item': this.model
-			}
+			};
 
 			if (typeof this.model['menu-item-db-id'] != 'undefined') {
 				postdata['menu-item-id'] = me.model['menu-item-db-id'];

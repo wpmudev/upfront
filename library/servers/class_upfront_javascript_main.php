@@ -24,15 +24,22 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		$root = Upfront::get_root_url();
 		$ajax = admin_url('admin-ajax.php');
+		// Home URL
 		$site = home_url();
+		// Site URL
+		$site_url = get_site_url();
 		$includes_url = includes_url();
 		$current_theme_url = get_stylesheet_directory_uri();
+		$site_path = parse_url($site, PHP_URL_PATH);
+		$current_theme_path = parse_url($current_theme_url, PHP_URL_PATH);
+		$current_theme_path = preg_replace('/^' . preg_quote($site_path, '/') . '/i', '', $current_theme_path);
 
 		if (empty($is_ssl) && is_ssl()) {
 			$root = preg_replace('/^https:/', 'http:', $root);
 			$includes_url = preg_replace('/^https:/', 'http:', $includes_url);
 			$ajax = preg_replace('/^https:/', 'http:', $ajax);
 			$site = preg_replace('/^https:/', 'http:', $site);
+			$site_url = preg_replace('/^https:/', 'http:', $site_url);
 			$current_theme_url = preg_replace('/^https:/', 'http:', $current_theme_url);
 		}
 
@@ -69,7 +76,8 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"jquery-simulate" => 'scripts/jquery/jquery.simulate',
 			"ueditor" => 'scripts/redactor/ueditor',
 			"chosen" => "scripts/chosen/chosen.jquery.min",
-			"findandreplace" => "scripts/findandreplace/findAndReplaceDOMText"
+			"findandreplace" => "scripts/findandreplace/findAndReplaceDOMText",
+			"pako" => "scripts/pako/pako.min"
 		);
 		$paths = apply_filters('upfront-settings-requirement_paths', $paths + $registered);
 
@@ -237,7 +245,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
 		if (empty($prev_post_image_variants)) $prev_post_image_variants = json_encode(array());
 		if (is_array($prev_post_image_variants)) $prev_post_image_variants = json_encode($prev_post_image_variants);
-		
+
 		$other_post_image_variants = apply_filters(
 			'upfront_get_other_post_image_variants',
 			array(
@@ -282,6 +290,12 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			'specificity' => __('This post only'),
 			'item' => __('All posts of this type'),
 			'type' => __('All posts'),
+		));
+
+		$archive_specificity = json_encode(array(
+			'specificity' => __('This archive only'),
+			'item' => __('All archives of this type'),
+			'type' => __('All archives'),
 		));
 
 		$content = json_encode(array(
@@ -377,8 +391,20 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			)
 		);
 
+
+		// Use compression or not
+		$save_compression = Upfront_Compression::is_enabled() ? 1 : 0;
+		$save_compression_level = Upfront_Compression::get_level();
+
+
 		$menus = json_encode(wp_get_nav_menus());
 		$is_rtl = (int) is_rtl();
+
+		$plugins_layouts = array();
+		$plugins_layouts = json_encode(
+			apply_filters('upfront-plugins_layouts', $plugins_layouts)
+		);
+
 		$main = <<<EOMainJs
 // Set up the global namespace
 var Upfront = window.Upfront || {};
@@ -386,9 +412,11 @@ Upfront.mainData = {
 	requireConfig: $require_config,
 	root: '{$root}',
 	currentThemeUrl: '{$current_theme_url}',
+	currentThemePath: '{$current_theme_path}',
 	ajax: '{$ajax}',
 	admin: '{$admin}',
 	site: '{$site}',
+	siteUrl: '{$site_url}',
 	debug: {$debug},
 	layoutEditorRequirements: {$layout_editor_requirements},
 	applicationModes: {$application_modes},
@@ -398,6 +426,7 @@ Upfront.mainData = {
 	PERMS: {$permissions},
 
 	specificity: {$specificity},
+	archiveSpecificity: {$archive_specificity},
 	gridInfo: {$grid_info},
 	themeInfo: {$theme_info},
 	themeFonts: {$theme_fonts},
@@ -415,7 +444,10 @@ Upfront.mainData = {
 	l10n: {$l10n},
 	font_icons: {$redactor_font_icons},
 	menus: {$menus},
-	isRTL: {$is_rtl}
+	isRTL: {$is_rtl},
+	save_compression: {$save_compression},
+	save_compression_level: {$save_compression_level},
+	pluginsLayouts: {$plugins_layouts}
 };
 EOMainJs;
 		$this->_out(new Upfront_JavascriptResponse_Success($main));

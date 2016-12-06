@@ -10,13 +10,13 @@ class Upfront_Server_Admin implements IUpfront_Server {
 	}
 
 	private function _add_hooks () {
-		
+
 		// Adding fonts
 		$this->_inject_admin_fonts();
-		
+
 		// Dispatch all notices
 		add_action('admin_notices', array($this, 'dispatch_notices'));
-		
+
 		add_action('admin_notices', array($this, 'pagetemplate_notice'));
 
 		// Deal with parent deletion attempts
@@ -34,13 +34,14 @@ class Upfront_Server_Admin implements IUpfront_Server {
 
 		$this->dashboard_notice();
 	}
-	
+
 	public function pagetemplate_notice() {
-		if(($GLOBALS['pagenow'] == "post.php" && get_current_screen()->post_type == "page")|| $GLOBALS['pagenow'] == "post-new.php" ) {
+		$screen = ( function_exists('get_current_screen') ) ? get_current_screen() : false;
+		if( ($GLOBALS['pagenow'] == "post.php" || $GLOBALS['pagenow'] == "post-new.php") && $screen && $screen->post_type == "page" && post_type_supports($screen->post_type,'page-attributes') ) {
 			echo '<div class="error"><p>'. __('WARNING: If you change the template associated with this post then any content or changes you have made using the drag and drop Upfront editor will be lost.', 'upfront'). '</p></div>';
 		}
 	}
-	
+
 	public function dashboard_notice () {
 		$path = wp_normalize_path(Upfront::get_root_dir() . '/library/external/dashboard-notice/wpmudev-dash-notification.php');
 		if (!file_exists($path)) return false;
@@ -52,9 +53,9 @@ class Upfront_Server_Admin implements IUpfront_Server {
 	 * If someone tries to "live preview", send them back.
 	 */
 	public function refuse_customizer () {
-		$screen = get_current_screen();
+		$screen = ( function_exists('get_current_screen') ) ? get_current_screen() : false;
 		if (!($screen && !empty($screen->id) && 'customize' === $screen->id)) return false;
-		
+
 		// We just don't do customizer.
 		wp_safe_redirect(admin_url('themes.php'));
 		die;
@@ -80,7 +81,7 @@ class Upfront_Server_Admin implements IUpfront_Server {
 	public function nasty_hack_themes_page () {
 		echo '<style>.theme-overlay.active .button[href^="themes.php?page=http"] { display: none !important; } </style>';
 	}
-	
+
 	/**
 	 * Preparing each of the theme's info for themes list in admin area.
 	 */
@@ -101,19 +102,19 @@ class Upfront_Server_Admin implements IUpfront_Server {
 	 */
 	public function dispatch_notices () {
 		$notices = array_filter(apply_filters('upfront-admin-admin_notices', array(
-			$this->_notify_about_parent_deletion_attempt(),
-			$this->_permalink_setup_check_notice(),
-			$this->_direct_core_activation_notice(),
-			$this->_widgets_area_notice(),
+			'parent_deletion' => $this->_notify_about_parent_deletion_attempt(),
+			'permalink_setup' => $this->_permalink_setup_check_notice(),
+			'core_activation' =>$this->_direct_core_activation_notice(),
+			'widgets_area' => $this->_widgets_area_notice(),
 		)));
 		if (empty($notices)) return false;
 		echo '<div class="error"><p>' .
-			join('</p><p>', $notices) .
+			join('</p><p>', array_values($notices)) .
 		'</p></div>';
 	}
 
 	/**
-	 * So, we can't deal with parent theme deletion because, apparently, 
+	 * So, we can't deal with parent theme deletion because, apparently,
 	 * that's voodoo: https://core.trac.wordpress.org/ticket/14955#comment:16
 	 */
 	public function detect_parent_theme_deletion () {
@@ -123,7 +124,7 @@ class Upfront_Server_Admin implements IUpfront_Server {
 			: false
 		;
 		if ('upfront' !== $stylesheet) return false; // Not deleting Upfront core, no reason to stick around
-		
+
 		$current = wp_get_theme();
 		$parent = $current->parent();
 		if (empty($parent)) return false; // Current theme is not a child theme, carry on...
@@ -133,7 +134,7 @@ class Upfront_Server_Admin implements IUpfront_Server {
 		wp_safe_redirect(admin_url('themes.php?upfront-delete=refused'));
 		die;
 	}
-	
+
 	/**
 	 * Adding fonts for admin side
 	 */
@@ -196,7 +197,7 @@ class Upfront_Server_Admin implements IUpfront_Server {
 
 		$parent = $current->parent();
 		if (!empty($parent)) return false; // Don't deal with child themes.
-		
+
 		return __('Please, activate one of the Upfront child themes.', 'upfront');
 	}
 
@@ -206,7 +207,7 @@ class Upfront_Server_Admin implements IUpfront_Server {
 	 */
 	public function add_widgets_page() {
 		add_theme_support('widgets');
-		
+
 		$active_widgets = array();
 		//Theme Tester Plugin
 		$original_theme = get_option( 'tt_orig_stylesheet' );
@@ -225,7 +226,7 @@ class Upfront_Server_Admin implements IUpfront_Server {
 							'after_widget'  => ''
 						)
 					);
-					
+
 					foreach($widget as $wid) {
 						$active_widgets[ $id ][] = $wid;
 					}
@@ -233,17 +234,17 @@ class Upfront_Server_Admin implements IUpfront_Server {
 				update_option( 'sidebars_widgets', $active_widgets );
 			}
 		}
-		
+
 		//A/B Theme Testing
 		$theme_testing = get_option('ab_theme_testing');
 		if(isset($theme_testing['testing_enable']) && $theme_testing['testing_enable'] == 1) {
 			if(!isset($theme_testing['tracking_themes']) && empty($theme_testing['tracking_themes'])) { return; }
-			
+
 			foreach($theme_testing['tracking_themes'] as $themes) {
 				$explode_theme_name = explode('|', $themes);
 				if(isset($explode_theme_name[0]) && !empty($explode_theme_name[0])) {
 					$original_widgets = get_option('theme_mods_'.$explode_theme_name[0]);
-					
+
 					if(isset($original_widgets['sidebars_widgets']['data'])) {
 						foreach($original_widgets['sidebars_widgets']['data'] as $id=>$widget) {
 							if (strpos($id,'orphaned') !== false || $id == "wp_inactive_widgets") {
@@ -257,7 +258,7 @@ class Upfront_Server_Admin implements IUpfront_Server {
 									'after_widget'  => ''
 								)
 							);
-							
+
 							foreach($widget as $wid) {
 								$active_widgets[ $id ][] = $wid;
 							}

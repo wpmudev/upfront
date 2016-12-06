@@ -2,7 +2,8 @@
 	position: fixed;
 	top: 46px;
 	left: 0;
-	z-index: 10000000;
+	/* z-index: 10000000; */
+	z-index: 10001003;
 	bottom: 0;
 	background-color: #334454;
 	border-right: 1px solid #334454;
@@ -57,6 +58,7 @@
 	bottom: 65px;
 	top: 44px;*/
 	background: #f7fbff;
+	max-height: 100%;
 }
 
 #element-settings-sidebar #settings .upfront-settings_panel_scroll {
@@ -135,6 +137,17 @@
 
 #element-settings-sidebar .upfront-settings-item-title:after {
 	display: none;
+}
+
+#element-settings-sidebar .upfront-settings-item .login-general-settings-description:before {
+	content: ' ';
+	display: block;
+	background: url('../img/uf-core-el-sprite.svg') no-repeat -484px -141px;
+	width: 15px;
+	height: 14px;
+	margin-right: 5px;
+	margin-top: 2px;
+	float: left;
 }
 
 #element-settings-sidebar .upfront-settings-css .upfront-settings-item-title,

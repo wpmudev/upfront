@@ -10,6 +10,7 @@ class Upfront_MediaServer extends Upfront_Server {
 	private function _add_hooks () {
 		$this->augment_attachments();
 		$this->serve_custom_size();
+		$this->serve_extra_large_size();
 
 		// Fix WP srcset creation
 		add_filter('wp_calculate_image_srcset', array($this, 'fix_srcset'));
@@ -27,10 +28,12 @@ class Upfront_MediaServer extends Upfront_Server {
 
 		if (Upfront_Permissions::current(Upfront_Permissions::UPLOAD)) {
 			upfront_add_ajax('upfront-media-remove_item', array($this, "remove_item"));
+			upfront_add_ajax('upfront-media-remove_theme_item', array($this, "remove_theme_item"));
 			upfront_add_ajax('upfront-media-update_media_item', array($this, "update_media_item"));
 			upfront_add_ajax('upfront-media-upload', array($this, "upload_media"));
 			upfront_add_ajax('upfront-upload-icon-font', array($this, "upload_icon_font"));
 			upfront_add_ajax('upfront_update_active_icon_font', array($this, "update_active_icon_font"));
+			upfront_add_ajax('upfront_remove_icon_font_file', array($this, "remove_icon_font_file"));
 
 			upfront_add_ajax('upfront-media-list_theme_images', array($this, "list_theme_images"));
 			upfront_add_ajax('upfront-media-upload-theme-image', array($this, "upload_theme_image"));
@@ -165,22 +168,30 @@ class Upfront_MediaServer extends Upfront_Server {
 			)
 		);
 	}
-	
+
 	/**
 	 * Serve thumbnail custom sizes if was set on Uposts element
 	 */
 	public function serve_custom_size () {
 		$custom_size = get_option('upfront_custom_thumbnail_size', array());
-		
+
 		if ( !empty($custom_size) ) {
 			$thumbnail_size = json_decode($custom_size);
-			
+
 			add_image_size(
 				$thumbnail_size->name,
-				intval($thumbnail_size->thumbnail_width), 
+				intval($thumbnail_size->thumbnail_width),
 				intval($thumbnail_size->thumbnail_height)
 			);
 		}
+	}
+	
+	/**
+	 * Serve 1920 image size when uploading 4k images
+	 */
+	public function serve_extra_large_size () {
+		if ( !in_array('upfront_extra_large', get_intermediate_image_sizes()) )
+			add_image_size('upfront_extra_large', 1920, 1920);
 	}
 
 	public function list_labels () {
@@ -538,6 +549,44 @@ class Upfront_MediaServer extends Upfront_Server {
 		$this->_out(new Upfront_JsonResponse_Success("All good, media removed"));
 	}
 
+	// Same as remove_item but for theme/UI images.
+	public function remove_theme_item () {
+		$data = stripslashes_deep($_POST);
+
+		$post_id = !empty($data['item_id']) ? $data['item_id'] : false;
+		$post_ids = !empty($data['post_ids']) ? $data['post_ids'] : array();
+		if (!$post_id && !$post_ids) $this->_out(new Upfront_JsonResponse_Error("No post_id"));
+
+		if (!empty($post_id)) {
+			$post_ids[] = $post_id;
+		}
+
+		// Paths for theme images.
+		$supported_relpaths = array('ui');
+		foreach ($supported_relpaths as $testpath) {
+			if (!is_dir(trailingslashit(get_stylesheet_directory()) . $testpath)) continue;
+			$relpath = $testpath;
+			break;
+		}
+		if (empty($relpath)) $this->_out(new Upfront_JsonResponse_Error("No theme images directory"));
+
+		$dirPath = trailingslashit(trailingslashit(get_stylesheet_directory()) . $relpath);
+
+		foreach ($post_ids as $post_id) {
+			// Check permissions before allowing to delete file.
+			if (!current_user_can('upload_files')) $this->_out(new Upfront_JsonResponse_Error("You can't do this"));
+
+			// Clean up the file name
+			$filename = Upfront_UploadHandler::to_clean_file_name($post_id);
+
+			// Full path to file to delete.
+			$destination = $dirPath . $filename;
+			// Delete file.
+			@unlink($destination);
+		}
+		$this->_out(new Upfront_JsonResponse_Success("All good, media removed"));
+	}
+
 	public function update_media_item () {
 		$request = stripslashes_deep($_POST);
 		$data = !empty($request['data']) ? $request['data'] : false;
@@ -562,8 +611,20 @@ class Upfront_MediaServer extends Upfront_Server {
 		// allow end user to upload more icon fonts
 	}
 
+	/**
+	 * AJAX media handler to dispatch the icon font activation action
+	 */
 	public function update_active_icon_font() {
 		do_action('upfront_update_active_icon_font');
+		die;
+	}
+
+	/**
+	 * AJAX handler to dispatch the icon font file removal action
+	 */
+	public function remove_icon_font_file() {
+		do_action('upfront_remove_icon_font_file');
+		die;
 	}
 
 	public function upload_media () {
@@ -593,19 +654,20 @@ class Upfront_MediaServer extends Upfront_Server {
 				@unlink("{$pfx}{$filename}");
 				$this->_out(new Upfront_JsonResponse_Error(sprintf(__("Error uploading the media item: %s", 'upfront'), $media->error)));
 			}
-			
+
 			$filename = $media->name;
-			
+
 			$file_size = !empty($media->size)
 				? (int)$media->size
 				: 0
 			;
-			if ($space_allowed && $file_size && $file_size + $space_used > $space_allowed) {
+			// If upload space is restricted and upload is too large, display an error.
+			if ($space_allowed && $file_size && $file_size + $space_used > $space_allowed && !get_site_option('upload_space_check_disabled')) {
 				// Upload quota exceeded
 				@unlink("{$pfx}{$filename}");
 				$this->_out(new Upfront_JsonResponse_Error(__("Error uploading the media item: allocated space quota exceeded", 'upfront')));
 			}
-			
+
 			if(!preg_match('/\.(jpg|jpeg|gif|svg|png)$/i', $filename)) {
 				// We have an error happening!
 				@unlink("{$pfx}{$filename}");
@@ -662,7 +724,7 @@ function upfront_media_file_upload () {
 		$deps->add_script("{$base_url}/build/file_upload/jquery.iframe-transport.js");
 	}
 
-	
+
 	echo '<script>var _upfront_media_upload=' . json_encode(array(
 		'normal' => Upfront_UploadHandler::get_action_url('upfront-media-upload'),
 		'theme' => Upfront_UploadHandler::get_action_url('upfront-media-upload-theme-image'),
@@ -671,4 +733,3 @@ function upfront_media_file_upload () {
 	)) . ';</script>';
 }
 add_action('wp_head', 'upfront_media_file_upload', 99);
-

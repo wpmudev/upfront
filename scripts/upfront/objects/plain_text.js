@@ -37,12 +37,12 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 			content = $(content).html();
 		}
 
-		$(content).find('div.plaintxt_padding')
+		$(content).find('div.plaintxt_padding');
 		var data = {
 			"content" : content,
 			"background_color" : this.model.get_property_value_by_name("background_color"),
 			"border" : this.model.get_property_value_by_name("border")
-		}
+		};
 		var rendered = '';
 		rendered = _.template(template, data);
 		return rendered;
@@ -78,7 +78,7 @@ var PlainTxtView = Upfront.Views.ObjectView.extend({
 			})
 		;
 
-	},
+	}
 });
 
 
@@ -192,7 +192,7 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 					spectrum: {
 					  preferredFormat: "hex",
 					  change: this.onBgColor,
-					  move: this.onBgColor,
+					  move: this.onBgColor
 					}
 				  })
 				]
@@ -222,11 +222,11 @@ var AppearancePanel = Upfront.Views.Editor.Settings.Panel.extend({
 	onBgColor: function(color) {
         this.property('bg_color', color.toRgbString(), false);
 		this.processBg();
-	}/*,
+	},/*,
 	onBorderEnabled: function(event) {
         this.property('border_enabled', $(event.currentTarget).prop('checked'), false);
 		this.processBorder();
-	}*/,
+	}*/
 	onBorderWidth: function(event) {
         this.property('border_width', $(event.currentTarget).val(), false);
 		this.processBorder();

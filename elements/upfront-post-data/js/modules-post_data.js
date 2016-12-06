@@ -1,7 +1,7 @@
 define([
 	'elements/upfront-post-data/js/panel-abstractions',
 	'text!elements/upfront-post-data/tpl/preset-styles/post_data.html',
-	'scripts/upfront/preset-settings/util',
+	'scripts/upfront/preset-settings/util'
 ], function (Panel, template, Util) {
 	var l10n = Upfront.Settings.l10n.post_data_element;
 
@@ -24,7 +24,7 @@ define([
 						{ label: l10n.post.MdY, value: "M d Y" },
 						{ label: l10n.post.dmY, value: "d m Y" },
 						{ label: l10n.post.mdY, value: "m d Y" },
-						{ label: l10n.post.custom_format, value: "0" },
+						{ label: l10n.post.custom_format, value: "0" }
 					],
 					default_value: "wp_date"
 				},
@@ -49,7 +49,7 @@ define([
 
 						return false;
 					}
-				},
+				}
 			];
 		},
 		render: function () {
@@ -81,13 +81,13 @@ define([
 	});
 
 	Modules.part_title = Panel.Toggleable.extend({ title: l10n.post.title_part_title, data_part: 'title' });
-	
+
 	Modules.part_content = Panel.Toggleable.extend({
 		title: l10n.post.content_part_title,
 		data_part: 'content',
 		get_fields: function () {
 			var grid_size = Upfront.Settings.LayoutEditor.Grid.size || 24,
-				half_grid = parseInt((grid_size-1)/2)
+				half_grid = parseInt((grid_size-1)/2, 10)
 			;
 			return [
 /*
@@ -143,12 +143,14 @@ define([
 		render: function () {
 			Panel.Toggleable.prototype.render.apply(this);
 
+			var fields;
+
 			// Let's start stuff up on first render if we're not already there
 			if (!this._allow_splitting_field || !this._content_part_field) {
-				var fields = this.fields.toArray();
+				fields = this.fields.toArray();
 				this._allow_splitting_field = fields[3];
 				this._content_part_field = fields[4];
-				
+
 				if (this._allow_splitting_field) this.listenTo(this._allow_splitting_field, "changed", this.update_fields);
 			}
 
@@ -156,9 +158,8 @@ define([
 			this.update_fields();
 
 			if (!(this._padding_fields || {}).left || !!(this._padding_fields || {}).right) {
-				var fields = this.fields.toArray(),
-					padding = {}
-				;
+				fields = this.fields.toArray();
+				var padding = {};
 				padding.left = fields[0];
 				padding.right = fields[1];
 
@@ -203,7 +204,7 @@ define([
 			// This is so the preset content paddings propagate properly on pad change
 			Util.generatePresetsToPage('post_data_element', template);
 		},
-		
+
 		/**
 		 * Normalizes both content padding values
 		 *
@@ -220,18 +221,18 @@ define([
 			value = parseInt(value, 10) || -1;
 			var field = this._padding_fields[type] || {},
 				grid_size = Upfront.Settings.LayoutEditor.Grid.size || 24,
-				half_grid = parseInt((grid_size-1)/2),
+				half_grid = parseInt((grid_size-1)/2, 10),
 				options = field.options || {},
 				min = parseInt(options.min, 10) || 0,
 				max = parseInt(options.max, 10) || half_grid
 			;
 			if (value < min) {
 				field.set_value(min);
-				this.update_object(min, options.property)
+				this.update_object(min, options.property);
 			}
 			if (value > max) {
 				field.set_value(max);
-				this.update_object(max, options.property)
+				this.update_object(max, options.property);
 			}
 
 			// AND NOW! Recalculate indents and rebuild presets

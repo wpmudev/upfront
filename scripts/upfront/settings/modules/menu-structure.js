@@ -13,7 +13,7 @@ define([
 		events: {
 			'mouseenter .menu-item-header': 'enableSorting',
 			'mouseleave .menu-item-header': 'disableSortingOnHeaderLeave',
-			'click .add-menu-item': 'addItem',
+			'click .add-menu-item': 'addItem'
 		},
 
 		initialize: function(options) {
@@ -113,7 +113,7 @@ define([
 						me.menuItemViews.push(menuStructureItem);
 						me.listenTo(menuStructureItem, 'change', function(data) {
 							me.menuItems[index] = data;
-							me.model.trigger('change');
+							me.model.trigger('change', me.model);
 						});
 					});
 					me.model.set_property('menu_items', response.data, true);
@@ -158,6 +158,9 @@ define([
 				scrollDown = false;
 
 			}
+
+
+			return Upfront.Events.trigger("menu_element:settings:rendered");
 		},
 
 		enableSorting: function(event) {
@@ -209,7 +212,7 @@ define([
 					me.stopWatchingItemDepth(ui.item);
 					me.updateItemsPosition(ui.item);
 					me.sortingInProggres = false;
-				},
+				}
 			});
 		},
 

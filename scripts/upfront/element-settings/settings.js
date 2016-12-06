@@ -1,8 +1,9 @@
 (function ($) {
 define([
 	'scripts/upfront/preset-settings/preset-manager',
-	'scripts/upfront/element-settings/advanced-settings'
-], function (PresetManager, AdvancedSettings) {
+	'scripts/upfront/element-settings/advanced-settings',
+	'scripts/perfect-scrollbar/perfect-scrollbar'
+], function (PresetManager, AdvancedSettings, perfectScrollbar) {
 	var l10n = Upfront.Settings && Upfront.Settings.l10n
 		? Upfront.Settings.l10n.global.views
 		: Upfront.mainData.l10n.global.views
@@ -80,8 +81,6 @@ define([
 			var currentBreakpoint,
 				breakpointsData;
 
-			this.removePreviewClasses();
-
 			// Setup model so that it saves breakpoint values to breakpoint property
 			if (this.hasBreakpointSettings === true && this.breakpointSpecificSettings) {
 				currentBreakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active();
@@ -113,7 +112,19 @@ define([
 					// Upfront.Events.trigger("command:layout:save");
 			// }
 
+			//TODO re-work this after merge
+			// var pluginsCallResult = Upfront.plugins.call('save-settings');
+
+			// if (!pluginsCallResult.status || pluginsCallResult.status !== 'called') {
+				// if ( _upfront_post_data.layout.specificity && _upfront_post_data.layout.item && !_upfront_post_data.layout.item.match(/-page/) )
+					// Upfront.Events.trigger("command:layout:save_as");
+				// else
+					// Upfront.Events.trigger("command:layout:save");
+			// }
+
 			if (this.onSaveSettings) this.onSaveSettings();
+
+			this.removePreviewClasses();
 		},
 
 		cancelSettings: function() {
@@ -162,6 +173,18 @@ define([
 				panel.render();
 				panel.parent_view = me;
 				me.$el.find('#sidebar-scroll-wrapper').append(panel.el);
+
+				// Add JS Scrollbar.
+				perfectScrollbar.withDebounceUpdate(
+					// Element.
+					me.$el.find('#sidebar-scroll-wrapper')[0],
+					// Run First.
+					false,
+					// Event.
+					"menu_element:settings:rendered",
+					// Initialize.
+					true
+				);
 			});
 
 			this.$el.addClass('upfront-ui');
@@ -178,7 +201,7 @@ define([
 				titleHeight = this.$el.find('>.upfront-settings-title').outerHeight(true),
 				buttonHeight = this.$el.find('>.upfront-settings-button_panel').outerHeight(true)
 			;
-			this.$el.find('#sidebar-scroll-wrapper').css('max-height', (height-titleHeight-buttonHeight) + 'px')
+			this.$el.find('#sidebar-scroll-wrapper').css('max-height', (height-titleHeight-buttonHeight) + 'px');
 		},
 
 		cleanUp: function(){

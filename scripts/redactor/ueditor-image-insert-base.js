@@ -135,12 +135,17 @@
                 make_caption_editable: function(){
                     var self = this,
                         data = this.data.get("style"),
-                        $caption = this.$('.wp-caption-text')
-                        ;
-
-                    if (!data) return false;
-                    if( !data.caption || !this.data.get("show_caption") || this.$('.wp-caption-text').length === 0) return;
-
+                        $caption = this.$('.wp-caption-text'),
+						show_caption = this.data.get("show_caption") || false
+                    ;
+					
+					// let's try checking if WP Default show caption style
+					// show_caption = ( !show_caption && data.caption ) ? data.caption.show : false;
+					if ( show_caption === false && data.caption ) show_caption = data.caption.show; 
+					
+					if (!data) return false;
+                    if( !data.caption || !show_caption || this.$('.wp-caption-text').length === 0) return;
+					
 
                     //.attr('contenteditable', true)
                     $caption.off('keyup')
@@ -319,8 +324,8 @@
                     //
                     //controls.css('margin-left', margin + 'px');
                     this.controls.$el.css({
-                        left: 15,
-                        top:15
+                        left: -1,
+                        top: (this.controls.$el.height() + 1) * -1
                     });
                 },
 
@@ -468,7 +473,7 @@
                     var me = this,
                         _inserts = {},
                         inserts_from_shortcode = {}// inserts created from caption shortcode
-                        remaining_images = contentElement.find('img');
+                        remaining_images = contentElement.find('img')
                         ;
 
                     if( !contentElement.is(".wp-caption-text") ) this.$editor = contentElement;

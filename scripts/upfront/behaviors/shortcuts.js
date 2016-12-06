@@ -49,7 +49,7 @@
 		},
 		control_keys: {
 			backspace: 8,
-			delete: 46,
+			"delete": 46,
 			down: 40,
 			enter: 13,
 			space: 32,
@@ -106,6 +106,6 @@
 	};
 
 define(Shortcuts);
-	
+
 })(jQuery);
 //# sourceURL=shortcuts.js

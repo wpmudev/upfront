@@ -8,7 +8,7 @@
 abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 
 	const DEFAULT_DATA_TYPE = 'post_data';
-	
+
 	protected $_data = array();
 	protected $_post;
 	protected $_editor = false;
@@ -32,7 +32,12 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 		$this->_post = $post;
 		$this->_editor = $editor;
 
-		$post_parts = self::get_default_parts($this->_data);
+		// Allow compat layer to force only needed parts
+		$post_parts = apply_filters('upfront-override_post_parts', false, $post->post_type);
+		if (empty($post_parts)) {
+			$post_parts = self::get_default_parts($this->_data);
+		}
+
 		//$disabled_post_parts = !empty($this->_data['hidden_parts']) ? $this->_data['hidden_parts'] : array();
 		$parts = array();
 		foreach ($post_parts as $part) {
@@ -50,6 +55,11 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 
 	public function get_propagated_classes () {
 		return array();
+	}
+
+	public function get_property ($prop) {
+		if ( isset($this->_data[$prop]) ) return $this->_data[$prop];
+		return false;
 	}
 
 	/**
@@ -114,7 +124,7 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 		if (!class_exists($class_name)) $class_name = get_class() . '_' . self::_normalize_type_to_class(self::DEFAULT_DATA_TYPE);
 		return $class_name;
 	}
-	
+
 	private static function _normalize_type_to_class ($type) {
 		$type_strings = explode('_', $type);
 		$type_strings = array_map('ucfirst', $type_strings);
@@ -144,7 +154,6 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 			$padding_left = isset( $options['contents']['padding_left'] ) ? $options['contents']['padding_left'] : 0;
 			$padding_right = isset( $options['contents']['padding_right'] ) ? $options['contents']['padding_right'] : 0;
 		}
-
 
 		// New post part view
 		$style_variant->marginLeft = 0;

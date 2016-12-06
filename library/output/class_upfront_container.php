@@ -10,7 +10,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 
 	/**
 	 * Array of child views, it's only filled in self::get_markup foreach loop
-	 * 
+	 *
 	 * @var array
 	 */
 	protected $_child_views = array();
@@ -18,10 +18,15 @@ abstract class Upfront_Container extends Upfront_Entity {
 	public function get_markup () {
 		$html='';
 		$wrap='';
+		// Allow compat to forbid post data types (some wreck up output from plugins)
+		$forbidden_post_data_types = apply_filters('upfront-forbidden_post_data_types', array());
 
 		if (!empty($this->_data[$this->_children])) {
 
 			foreach ($this->_data[$this->_children] as $idx => $child) {
+				if (upfront_get_property_value('view_class', $child) === 'PostDataPartView' &&
+				 	in_array(upfront_get_property_value('part_type', $child), $forbidden_post_data_types)) continue;
+
 				$this->_child_views[] = $child_view  = $this->instantiate_child($child, $idx);
 				if ($child_view instanceof Upfront_Entity) {
 					// Have wrapper? If so, then add wrappers
@@ -77,6 +82,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 			// This will be used for the breakpoint preset toggling
 			$preset = $this->_get_preset($data, $preset_map);
 
+			$view->set_preset($preset);
 
 			$breakpoint = upfront_get_property_value('breakpoint', $data);
 			$theme_styles = array('default' => $theme_style);
@@ -89,8 +95,9 @@ abstract class Upfront_Container extends Upfront_Entity {
 				$theme_styles_attr = " data-theme-styles='" . json_encode($theme_styles) . "'";
 			}
 			$slug = upfront_get_property_value('id_slug', $data);
-			if ($slug === 'ucomment' && is_single() && !comments_open())
-				return '';
+			if ($slug === 'ucomment' && is_single()) {
+				if (!(function_exists('upfront_exporter_is_running') && upfront_exporter_is_running()) && !comments_open()) return '';
+			}
 
 			$classes = $this->_get_property('class');
 			$column = upfront_get_class_num('c', $classes);
@@ -118,7 +125,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 		return $preset_map;
 	}
 
-	protected function _get_preset ($data, $preset_map) {
+	protected function _get_preset ($data, $preset_map, $breakpoint = false) {
 		// We also preserve the current preset class, so it all
 		// just works without JS requirement on client
 		$preset = upfront_get_property_value('preset', $data);
@@ -126,10 +133,33 @@ abstract class Upfront_Container extends Upfront_Entity {
 		// Also, if we have a preset map and a default grid breakpoint
 		// mapped, let's try to use this as default preset
 		if (!empty($preset_map)) {
-			$default_bp = Upfront_Output::$grid->get_default_breakpoint();
-			if ($default_bp && is_callable(array($default_bp, 'get_id'))) {
-				$bp = $default_bp->get_id();
-				if (!empty($preset_map[$bp])) $preset = $preset_map[$bp];
+			$grid = Upfront_Grid::get_grid();
+			if ( false === $breakpoint ) {
+				$default_bp = $grid->get_default_breakpoint();
+				if ($default_bp && is_callable(array($default_bp, 'get_id'))) {
+					$bp = $default_bp->get_id();
+					if (!empty($preset_map[$bp])) $preset = $preset_map[$bp];
+				}
+			}
+			else {
+				$bp = $breakpoint->get_id();
+				if (!empty($preset_map[$bp])) {
+					$preset = $preset_map[$bp];
+				}
+				else {
+					// Get closest breakpoint with set preset
+					$columns = $breakpoint->get_columns();
+					$closest = false;
+					$breakpoints = $grid->get_breakpoints();
+					foreach ( $breakpoints as $each_breakpoint ) {
+						$each_columns = $each_breakpoint->get_columns();
+						if ( $closest !== false && $each_columns > $closest ) continue;
+						if ( $each_columns < $columns ) continue;
+						$closest = $each_columns;
+						$each_bp = $each_breakpoint->get_id();
+						if (!empty($preset_map[$each_bp])) $preset = $preset_map[$each_bp];
+					}
+				}
 			}
 		}
 		return $preset;

@@ -8,6 +8,13 @@
 		lastTime = currTime + timeToCall;
 		return id;
 	};
+
+	var rgba_to_rba = function(color){
+		if( typeof Upfront !== "undefined" && Upfront.Util  ) // If we are in editor then delegate to Upfront.Util.colors.rgba_to_rgb
+			return Upfront.Util.colors.rgba_to_rgb( color );
+
+		return color.replace(/ /g,'').replace(/^rgba\((\d+)\,(\d+)\,(\d+)\,(\d+\.?\d{0,}?)\)$/, "rgb($1, $2, $3)");
+	};
 	var requestAnimationFrame =
 			$.proxy(window.requestAnimationFrame, window) ||
 			$.proxy(window.webkitRequestAnimationFrame, window) ||
@@ -16,7 +23,7 @@
 			$.proxy(window.msRequestAnimationFrame, window) ||
 			rAFPollyfill
 		;
-	
+
 	$.fn.uparallax = function (args) {
 		var isMethod = typeof args === 'string',
 			callArgs = isMethod ? Array.prototype.slice.call(arguments, 1) : [],
@@ -39,6 +46,7 @@
 				}
 				else {
 					// Initialize object
+					args.bgColor = rgba_to_rba( $el.parent().css("background-color") );
 					$el.data('uparallax', new Upfront_Parallax($el, args));
 				}
 			}
@@ -49,7 +57,7 @@
 		}
 		return this;
 	};
-	
+
 	var Upfront_Parallax = function ($el, args) {
 		var me = this,
 			data = $.extend({
@@ -63,22 +71,23 @@
 				renderer: this.getDefaultRenderer(), // Available: canvas, absolute, fixed,
 				overflowTop: 100, // px, render more than the background height to prevent artifact on late refresh
 				overflowBottom: 100, // px, render more than the background height to prevent artifact on late refresh
+				bgColor: "#fff"
 			}, args)
 		;
 		this.opts = data;
 		this.$parent = $el.parent();
 		this.$element = $el;
 		this.$moveElement = typeof this.opts.element === 'string' ? $el.find(this.opts.element) : this.opts.element;
-		
+
 		Upfront_Parallax.id++;
 		this.id = Upfront_Parallax.id;
 		Upfront_Parallax.instances[this.id] = this;
-		
+
 		if (this.opts.autostart) {
 			this.start();
 		}
-	}
-	
+	};
+
 	// Static ID
 	Upfront_Parallax.id = 0;
 	Upfront_Parallax.instances = {};
@@ -96,7 +105,7 @@
 		if (Upfront_Parallax.started) return;
 		Upfront_Parallax.started = true;
 		Upfront_Parallax.draw();
-	}
+	};
 	Upfront_Parallax.draw = function (time) {
 		var scrollTop = Upfront_Parallax.cache.scrollTop;
 		if (
@@ -112,21 +121,21 @@
 		Upfront_Parallax.cache.lastScrollTop = scrollTop;
 		Upfront_Parallax.cache.winHeight = winHeight;
 		Upfront_Parallax.cache.scrollBottom = scrollBottom;
-		
-		for (id in Upfront_Parallax.instances) {
+
+		for (var id in Upfront_Parallax.instances) {
 			Upfront_Parallax.instances[id].draw(time);
 		}
 		Upfront_Parallax.prevTime = time;
 		requestAnimationFrame(Upfront_Parallax.draw);
-	}
+	};
 	Upfront_Parallax.updateScroll = function (e) {
 		var scrollTop = window.pageYOffset;
 		Upfront_Parallax.cache.scrollTop = scrollTop;
-	}
+	};
 	$(window).one('load.upfront_paralax', Upfront_Parallax.updateScroll);
 	$(window).on('load.upfront_paralax', Upfront_Parallax.draw);
 	$(window).on('scroll.upfront_paralax', Upfront_Parallax.updateScroll);
-	
+
 	Upfront_Parallax.prototype = {
 		cache: {},
 		canvas: false,
@@ -241,9 +250,7 @@
 			this.$element.css({
 				position: 'fixed',
 				top: 0,
-				left: 0,
-				//transform: 'translate3d(0,0,0)',
-				//backfaceVisibility: 'hidden'
+				left: 0
 			});
 		},
 		restorePos: function () {
@@ -251,8 +258,7 @@
 				position: '',
 				top: '',
 				left: '',
-				transform: '',
-				//backfaceVisibility: ''
+				transform: ''
 			});
 		},
 		prepareCanvas: function () {
@@ -270,6 +276,8 @@
 				$('.upfront-output-layout, .upfront-layout').append(this.canvas);
 			}
 			this.context = this.canvas.getContext('2d');
+			if( this.is_image_png() )
+				this.context.fillStyle = this.opts.bgColor;
 			this.updateCanvas();
 		},
 		updateCanvas: function () {
@@ -288,13 +296,32 @@
 				return;
 			}
 			var me = this,
-				img = new Image,
-				src = this.$moveElement.css('background-image').replace(/^url\(\s*['"]?\s*/, '').replace(/\s*['"]?\s*\)$/, '')
+				img = new Image(),
+				src = this.$moveElement.css('background-image').replace(/^url\(\s*['"]?\s*/, '').replace(/\s*['"]?\s*\)$/, ''),
+				position = this.$moveElement.css('background-position').split(' ')
 			;
+
+			// Convert percent to decimal.
+			this.size_percentage = parseInt(this.$moveElement.css('background-size'), 10) * 0.01;
+			// Get user set positions (convert percentage to decimal).
+			this.percent_x = parseInt(position[0], 10) * 0.01;
+			this.percent_y = parseInt(position[1], 10) * 0.01;
+
+			// Check if scaling is NaN, if it is, we set default parameter
+			if ( isNaN(this.size_percentage) ) {
+				this.size_percentage = 1;
+				this.percent_x = 0.5;
+				this.percent_y = 0.5;
+			}
+
 			if (src != 'none') {
 				this.cache.img = img;
+				this.cache.background_color = this.$parent.css("background-color") || "#fff";
 				img.src = src;
 				this.$element.css('display', 'none');
+				this.$parent.css({
+					background: 'none'
+				});
 			}
 		},
 		renderImage: function () {
@@ -304,7 +331,8 @@
 				$(this.imgCanvas).css({
 					display: 'block'
 				});
-				this.imgContext = this.imgCanvas.getContext('2d');
+
+				this.imgContext = this.imgCanvas.getContext('2d', {alpha: false});
 			}
 			var width = this.cache.width,
 				height = this.cache.height,
@@ -333,7 +361,17 @@
 			drawHeight = Math.floor(parallaxHeight/imgHeight * this.cache.img.height);
 			drawX = (this.cache.img.width - drawWidth) / 2;
 			drawY = (this.cache.img.height - drawHeight) / 2;
-			this.imgContext.drawImage(this.cache.img, drawX, drawY, drawWidth, drawHeight, 0, 0, width, parallaxHeight);
+			scale = this.size_percentage;
+			// Offset X and Y by user set position.
+			position_x = (-0.5 * width * scale) + (width * scale * this.percent_x);
+			position_y = (-0.5 * height * scale) + (height * scale * this.percent_y);
+
+			if ( this.is_image_png() ) {
+				this.fillCanvas(width, parallaxHeight);
+			}
+
+			this.imgContext.drawImage(this.cache.img, drawX, drawY, drawWidth, drawHeight, position_x, position_y, (width * scale), (parallaxHeight * scale));
+
 		},
 		refresh: function () {
 			this.refreshCache();
@@ -363,9 +401,6 @@
 				});
 			}
 			else if ('canvas' == this.opts.renderer) {
-				this.$parent.css({
-					background: 'none'
-				});
 				this.updateCanvas();
 				this.renderImage();
 			}
@@ -422,9 +457,7 @@
 				if (this.cache.visible) {
 					if ('fixed' == this.opts.renderer) {
 						this.$element.css({
-							visibility: 'hidden',
-							//transform: 'translate3d(0, ' + winHeight + 'px, 0)'
-							//transform: 'translateY(' + winHeight + 'px)'
+							visibility: 'hidden'
 						});
 					}
 					else if ('canvas' == this.opts.renderer) {
@@ -439,15 +472,15 @@
 			else if (translate < minTranslate) {
 				translate = minTranslate;
 			}
-			
+
 			if (!this.cache.visible) return;
 			this.cache.translate = translate;
-			
+
 			if ('canvas' == this.opts.renderer) {
 				this.drawCanvas(translate, maxTranslate);
 			}
 			else {
-				for (i in effects) {
+				for (var i in effects) {
 					var effect = this.getEffect(effects[i], translate, maxTranslate);
 					if (effect.property == 'transform') {
 						transform += (transform == '' ? '' : ' ');
@@ -500,6 +533,7 @@
 				drawRelY = scrollTop - offsetTop;
 				drawY += drawRelY;
 			}
+
 			drawY += translate * -1;
 			if (closest.top && closest.top.cache.offsetBottom < offsetTop) {
 				clearTop -= Math.min(this.opts.overflowTop, Math.ceil((offsetTop - closest.top.cache.offsetBottom) / 2));
@@ -513,13 +547,27 @@
 			else if (!closest.bottom) {
 				clearBottom += this.opts.overflowBottom;
 			}
+
 			this.context.drawImage(this.imgCanvas, 0, 0, width, parallaxHeight, offsetLeft, offsetTop-this.movementOffset-scrollTop+translate, width, parallaxHeight);
+
 			if (clearTop > scrollTop) {
 				this.context.clearRect(offsetLeft, 0, width, clearTop-scrollTop);
 			}
 			if (winHeight > clearBottom-scrollTop) {
 				this.context.clearRect(offsetLeft, clearBottom-scrollTop, width, winHeight-(clearBottom-scrollTop));
 			}
+		},
+		/**
+		 * Checks if image src image in png
+		 * @returns {boolean|*|Array|{index: number, input: string}}
+         */
+		is_image_png: function(){
+			return this.cache.img && this.cache.img.src && this.cache.img.src.toLowerCase().match(/.png/);
+		},
+		fillCanvas: function(width, parallaxHeight){
+			this.imgContext.fillStyle = this.opts.bgColor;
+			this.imgContext.rect(0, 0, width, parallaxHeight);
+			this.imgContext.fill();
 		},
 		clearCanvas: function () {
 			this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -529,7 +577,7 @@
 				closestTop = false,
 				closestBottom = false
 			;
-			for (id in Upfront_Parallax.instances) {
+			for (var id in Upfront_Parallax.instances) {
 				current = Upfront_Parallax.instances[id];
 				if (current.id == this.id) continue;
 				if (current.cache.offsetBottom <= this.cache.offsetTop) {
@@ -544,7 +592,7 @@
 			return {
 				top: closestTop,
 				bottom: closestBottom
-			}
+			};
 		},
 		getEffect: function (effect, translate, maxTranslate) {
 			var property = 'transform',

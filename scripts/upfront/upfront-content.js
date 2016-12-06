@@ -18,14 +18,18 @@ define("content", deps, function(postTpl, ContentTools) {
 		_.extend(this, Backbone.Events);
 
 		//If the post is in the cache, prepare it!
-		if(Upfront.data.posts[this.postId]){
-			this.post = Upfront.data.posts[this.postId];
-			if(!this.post.meta.length)
-				this.post.meta.fetch();
-
-			this.loadingPost = new $.Deferred();
-			this.loadingPost.resolve(this.post);
-		}
+    // Disabled due to a bug where the post name and title
+    // did not update properly when editing again without refresh.
+    /*
+     *    if(Upfront.data.posts[this.postId]){
+     *      this.post = Upfront.data.posts[this.postId];
+     *      if(!this.post.meta.length)
+     *        this.post.meta.fetch();
+     *
+     *      this.loadingPost = new $.Deferred();
+     *      this.loadingPost.resolve(this.post);
+     *    }
+     */
 
 		//this.postView = opts.view;
 		this.contentEditor = false;
@@ -38,8 +42,8 @@ define("content", deps, function(postTpl, ContentTools) {
 			me.contentEditor = new ContentTools.PostContentEditor({
 				post: me.post,
 				//postView: me.postView,
-				content_mode: me.content_mode,
-				/*authorTpl: this.getTemplate('author'),
+				content_mode: me.content_mode/*,
+				authorTpl: this.getTemplate('author'),
 				partOptions: this.postView.partOptions,*/
 			});
 /*
@@ -72,12 +76,6 @@ define("content", deps, function(postTpl, ContentTools) {
 		 * public method in constructor
 		 */
 		_reboot: function () {
-			// Let's first check if we're ready for this
-			if (!(this.contentEditor || {}).prepareBox) {
-				//Upfront.Util.log("Rebooting the editor too soon, bailing out");
-				return false;
-			}
-
 			this.trigger('loaded', this.contentEditor);
 
 			this.stopListening(this.contentEditor, 'cancel');
@@ -105,6 +103,9 @@ define("content", deps, function(postTpl, ContentTools) {
 			// Specific change event handles
 			this.stopListening(this.contentEditor, 'change:title');
 			this.listenTo(this.contentEditor, 'change:title', this.changeTitle);
+
+			this.stopListening(Upfront.Events, 'change:title');
+			this.listenTo(Upfront.Events, 'change:title', this.changeTitle);
 
 			this.stopListening(this.contentEditor, 'change:content');
 			this.listenTo(this.contentEditor, 'change:content', this.changeContent);
@@ -165,12 +166,16 @@ define("content", deps, function(postTpl, ContentTools) {
 			}
 
 			var post = Upfront.data.posts[this.postId];
-			if(post){
-				this.post = post;
-				deferred.resolve(post);
-				this.loadingPost = deferred.promise();
-				return this.loadingPost;
-			}
+    // Disabled due to a bug where the post name and title
+    // did not update properly when editing again without refresh.
+    /*
+     *  if(post){
+     *    this.post = post;
+     *    deferred.resolve(post);
+     *    this.loadingPost = deferred.promise();
+     *    return this.loadingPost;
+     *  }
+     */
 
 			return this.fetchPost();
 		},
@@ -184,7 +189,7 @@ define("content", deps, function(postTpl, ContentTools) {
 
 			//this.bindPostEvents();
 			me.loadingPost = deferred.promise();
-			this.post.fetch({withMeta: true, filterContent: true}).done(function(response){
+			this.post.fetch({withMeta: true/*, filterContent: true*/}).done(function(response){
 				if(!Upfront.data.posts)
 					Upfront.data.posts = {};
 				Upfront.data.posts[me.postId] = me.post;
@@ -206,7 +211,12 @@ define("content", deps, function(postTpl, ContentTools) {
 		},
 
 		publish: function(results){
-			this.save(results, 'publish', Upfront.Settings.l10n.global.content.publishing.replace(/%s/, this.post.get('post_type')), Upfront.Settings.l10n.global.content.published.replace(/%s/, this.capitalize(this.post.get('post_type'))));
+			var postStatus = 'publish';
+			if(typeof results.status !== "undefined" && results.status !== "publish") {
+				postStatus = results.status;
+			}
+
+			this.save(results, postStatus, Upfront.Settings.l10n.global.content.publishing.replace(/%s/, this.post.get('post_type')), Upfront.Settings.l10n.global.content.published.replace(/%s/, this.capitalize(this.post.get('post_type'))));
 		},
 
 		saveDraft:function(results){
@@ -266,13 +276,11 @@ define("content", deps, function(postTpl, ContentTools) {
 				status = "draft";
 			}
 
-
-
 			if ( results.title ) {
 				this.post.set('post_title', results.title);
 			}
 			if ( results.excerpt ) {
-				this.post.set('post_excerpt', results.content);
+				this.post.set('post_excerpt', results.excerpt);
 			}
 			if ( results.content ) {
 				this.post.set('post_content', results.content);
@@ -304,8 +312,13 @@ define("content", deps, function(postTpl, ContentTools) {
 			this.post.set('post_status', status);
 
 			/* If this is a new post, take out the default post_name so that the system assigns a new one based on the edited title */
-			if($('body').hasClass('is_new'))
+			// additional condition if post name/slug not yet edited on sidebar
+			if( $('body').hasClass('is_new') && ( typeof _upfront_post_data.post_name_updated === 'undefined' || !_upfront_post_data.post_name_updated ) ) {
 				this.post.set('post_name', '');
+			}
+
+			// we can now clear flag for edited post name from sidebar
+			_upfront_post_data.post_name_updated = false;
 
 			this.post.save().done(function(result){
 				if ( me.post.is_new && post_name.length ) {
@@ -321,6 +334,7 @@ define("content", deps, function(postTpl, ContentTools) {
 						me.trigger('post:saved');
 					}
 				}
+				Upfront.Events.trigger('post:saved');
 				postUpdated = true;
 			});
 
@@ -564,8 +578,11 @@ define("content", deps, function(postTpl, ContentTools) {
 				}
 			;
 
-			//If we are already editing, don't do anything
-			if(this.contentEditor || Upfront.Application.is_builder())// || Upfront.Application.current_subapplication == Upfront.Application.PostContentEditor)
+			// If we are already editing, don't do anything
+			if (
+				this.contentEditor ||
+				true === Upfront.plugins.isForbiddenByPlugin('trigger post editor')
+			)
 				return;
 
 			//If we haven't fetched all the data, return too

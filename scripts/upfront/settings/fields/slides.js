@@ -1,6 +1,6 @@
 (function ($) {
 define([
-	'text!elements/upfront-slider/tpl/backend.html',
+	'text!elements/upfront-slider/tpl/backend.html'
 ], function(editorTpl) {
 	var l10n = Upfront.Settings.l10n.slider_element;
 
@@ -45,7 +45,7 @@ define([
 			setTimeout(function(){
 				var settings = $('#settings');
 				settings.height(settings.find('.upfront-settings_panel:visible').outerHeight());
-			},100)
+			},100);
 
 		},
 

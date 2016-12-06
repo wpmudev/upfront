@@ -24,16 +24,50 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 	public function expand_featured_image_template () {
 		
 		if (empty($this->_post->ID)) return '';
+		
+		$featured_data = $featured_class = '';
+		
+		$data = get_post_meta($this->_post->ID, '_thumbnail_data', true);
 
 		$resize_featured = isset($this->_data['resize_featured'])
 			? (int)$this->_data['resize_featured']
 			: (int)Upfront_Posts_PostsData::get_default('resize_featured')
 		;
 
-		$pre_selected = $this->get_pre_selected();
-		$thumbnail = ( !empty($pre_selected) )
-			? '<img src="'. $this->get_pre_selected() .'" />'
-			: $this->_get_thumbnail()
+		$img_src = $this->get_pre_selected();
+		if ( empty($img_src) ) {
+			if ( $this->_editor ) { // Always use full size image for editor rendering
+				$img_src = $this->_get_full_image();
+			}
+			else {
+				$img_src = $this->_get_thumbnail(true);
+
+				// We need this only for front-end
+				if (!empty($data) && isset($data['imageSize']) && isset($data['maskSize']) && ($data['imageSize']['width'] < $data['maskSize']['width'] || $data['imageSize']['height'] < $data['maskSize']['height'])) {
+					$offsetTop = -$data['imageOffset']['top'];
+					$offsetLeft = -$data['imageOffset']['left'];
+					
+					// If image croppped we dont need the negative left & top
+					if($data['imageSize']['height'] > $data['maskSize']['height']) {
+						$offsetTop = 0;
+					}
+					
+					if($data['imageSize']['width'] > $data['maskSize']['width']) {
+						$offsetLeft = 0;
+					}
+					
+					$featured_data = "data-featured-image='{ \"offsetTop\": ". $offsetTop .", \"offsetLeft\": ". $offsetLeft .", \"offsetWidth\": ". $data['maskSize']['width'] .", \"offsetHeight\": ". $data['maskSize']['height'] ." }' data-featured-align='".$data['align']."' data-featured-valign='".$data['valign']."' data-featured-dotalign='".$data['isDotAlign']."' data-featured-mode='".$data['mode']."'";
+					$featured_class = 'class="upfront-featured-image-smaller"';
+				}
+				
+				if(empty($data)) {
+					$featured_class = 'class="upfront-featured-image-fit-wrapper"';
+				}
+			}
+		}
+		$thumbnail = ( !empty($img_src) )
+			? '<img src="'. $img_src .'" '.$featured_class.' '.$featured_data.' />'
+			: ''
 		;
 
 		// Let's deal with the fallback options
@@ -95,16 +129,36 @@ class Upfront_Post_Data_PartView_Featured_Image extends Upfront_Post_Data_PartVi
 	 *
 	 * @return string Thumbnail markup, can also be an empty string
 	 */
-	private function _get_thumbnail () {
+	private function _get_thumbnail ($src = false) {
+		
+		if (empty($this->_post->ID)) return '';
+		
+		$image_size = '';
+		
 		$full_featured = isset($this->_data['full_featured_image'])
 			? (int)$this->_data['full_featured_image']
 			: (int)Upfront_Posts_PostsData::get_default('full_featured_image')
 		;
+		
+		if(empty($_POST) && !$full_featured) {
+			$image_size = 'uf_post_featured_image';
+		}
+	
+		return upfront_get_edited_post_thumbnail($this->_post->ID, $src, $image_size);
+	}
 
-		return $full_featured == 1
-			? get_the_post_thumbnail($this->_post->ID)
-			: upfront_get_edited_post_thumbnail($this->_post->ID)
-		;
+	/**
+	 * Get full featured image for the current given post
+	 *
+	 * @return string Image src
+	 */
+	private function _get_full_image () {
+		$post_thumbnail_id = get_post_thumbnail_id($this->_post);
+		if ( $post_thumbnail_id ) {
+			$attachment = wp_get_attachment_image_src($post_thumbnail_id, 'full');
+			if ( is_array($attachment) ) return $attachment[0];
+		}
+		return '';
 	}
 
 	/**

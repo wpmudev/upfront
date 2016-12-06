@@ -95,4 +95,10 @@ class Upfront_Object_Group extends Upfront_Container {
 		$this->_child_instances[$key] = new $view($child_data, $this->_data);
 		return $this->_child_instances[$key];
 	}
+
+
+	public function get_style_for ($breakpoint, $context, $col = false) {
+
+		return '';
+	}
 }

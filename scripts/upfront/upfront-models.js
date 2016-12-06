@@ -91,12 +91,29 @@ var _alpha = "alpha",
 		 */
 		decode_preset: function (breakpoint_id) {
 			breakpoint_id = breakpoint_id || (Upfront.Views.breakpoints_storage.get_breakpoints().get_active() || {}).id;
-			var current = this.get_property_value_by_name('preset') || 'default',
+			var current = this.get_property_value_by_name('current_preset') || this.get_property_value_by_name('preset') || 'default',
 				model = this.get_property_value_by_name("breakpoint_presets") || {},
-				breakpoint_preset = (model[breakpoint_id] || {}).preset,
-				actual = breakpoint_preset || current
+				breakpoint_preset
 			;
+
+			// we need to provide proper fallback here, mobile -> tablet -> desktop
+			if ( breakpoint_id == 'mobile' ) {
+				breakpoint_preset = (model[breakpoint_id] || model['tablet'] || model['desktop'] || {}).preset;
+			} else if ( breakpoint_id == 'tablet' ) {
+				breakpoint_preset = (model[breakpoint_id] || model['desktop'] || {}).preset;
+			} else {
+				breakpoint_preset = (model[breakpoint_id] || {}).preset;
+				// when on desktop, set `current_preset` to desktop preset
+				current = breakpoint_preset || current || 'default';
+			}
+			var actual = breakpoint_preset || current;
+
+			// we have to retain current preset coz will be lose below
+			this.set_property('current_preset', current, true);
+
+			// this will repaint the element but will also lose our current preset
 			this.set_property('preset', actual, false); // Do *not* be silent here, we do want repaint
+
 			return actual;
 		},
 
@@ -105,22 +122,22 @@ var _alpha = "alpha",
 		 *
 		 * The packed values will be decoded later on using the `decode_preset` method.
 		 * As a side-effect, we also update the model `breakpoint_presets` property.
-		 * As a side-effect #2, we also set whatever the current preset is (or default) as 
+		 * As a side-effect #2, we also set whatever the current preset is (or default) as
 		 * default breakpoint preset, if it's not already set.
 		 *
 		 * @param {String} preset_id Preset ID to pack
-		 * @param {String} breakpoint_id Breakpoint ID used to resolve the preset in storage 
+		 * @param {String} breakpoint_id Breakpoint ID used to resolve the preset in storage
 		 *                               - will default to current one
 		 *
 		 * @return {Object} Packed breakpoint presets
 		 */
 		encode_preset: function (preset_id, breakpoint_id) {
 			breakpoint_id = breakpoint_id || (Upfront.Views.breakpoints_storage.get_breakpoints().get_active() || {}).id;
-			var	data = this.get_property_value_by_name("breakpoint_presets") || {};
+			var	data = this.get_property_value_by_name("breakpoint_presets") || {},
 				current = (this.get_property_by_name('preset').previousAttributes() || {value: 'default'}).value,
 				default_bp_id = (Upfront.Views.breakpoints_storage.get_breakpoints().findWhere({'default': true}) || {}).id
 			;
-			
+
 			data[breakpoint_id] = {preset: preset_id};
 			if (!data[default_bp_id]) data[default_bp_id] = {preset: current};
 
@@ -164,8 +181,8 @@ var _alpha = "alpha",
 			return this.get_property_value_by_name("content");
 		},
 		set_content: function (content, options) {
+			options = typeof options != 'undefined' ? options: {};
 			var prop = this.get_property_by_name("content");
-			var options = typeof options != 'undefined' ? options: {};
 			if (prop) return prop.set("value", content, options);
 			return this.get("properties").add(new Upfront.Models.Property({"name": "content", "value": content}));
 		},
@@ -215,10 +232,10 @@ var _alpha = "alpha",
 			return this.get_property_value_by_name("visibility");
 		},
 		get_breakpoint_property_value: function (property, return_default, default_value, breakpoint) {
-			var breakpoint = breakpoint ? breakpoint : Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
+			breakpoint = breakpoint ? breakpoint : Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
 			default_value = typeof default_value === "undefined" ? false : default_value;
 
-			if ( !breakpoint || breakpoint.default )
+			if ( !breakpoint || breakpoint['default'] )
 				return this.get_property_value_by_name(property);
 			var data = this.get_property_value_by_name('breakpoint');
 			if ( _.isObject(data) && _.isObject(data[breakpoint.id]) && property in data[breakpoint.id] )
@@ -228,8 +245,8 @@ var _alpha = "alpha",
 			return default_value;
 		},
 		set_breakpoint_property: function (property, value, silent, breakpoint) {
-			var breakpoint = breakpoint ? breakpoint : Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
-			if ( !breakpoint || breakpoint.default ) {
+			breakpoint = breakpoint ? breakpoint : Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
+			if ( !breakpoint || breakpoint['default'] ) {
 				this.set_property(property, value, silent);
 			}
 			else {
@@ -242,10 +259,11 @@ var _alpha = "alpha",
 			}
 		},
 		add_to: function (collection, index, options) {
+			options = _.isObject(options) ? options : {};
 			var me = this,
 				models = [],
-				added = false,
-				options = _.isObject(options) ? options : {};
+				added = false
+			;
 			collection.each(function(each, i){
 				if ( i == index ){
 					models.push(me);
@@ -286,7 +304,7 @@ var _alpha = "alpha",
 					? args[0]["wrappers"]
 					: new Wrappers(args[0]["wrappers"])
 				;
-				this.set("wrappers", args[0].wrappers)
+				this.set("wrappers", args[0].wrappers);
 			} else this.set("wrappers", new Wrappers([]));
 			if (args && args[0] && args[0]["properties"]) {
 				args[0]["properties"] = args[0]["properties"] instanceof Properties
@@ -295,7 +313,7 @@ var _alpha = "alpha",
 				;
 				this.set("properties", args[0]["properties"]);
 			} else this.set("properties", new Properties([]));
-			
+
 			if (this.init) this.init();
 		}
 	}),
@@ -381,7 +399,7 @@ var _alpha = "alpha",
 					? args[0]["wrappers"]
 					: new Wrappers(args[0]["wrappers"])
 				;
-				this.set("wrappers", args[0].wrappers)
+				this.set("wrappers", args[0].wrappers);
 			} else this.set("wrappers", new Wrappers([]));
 			if (args && args[0] && args[0]["properties"]) {
 				args[0]["properties"] = args[0]["properties"] instanceof Properties
@@ -390,7 +408,7 @@ var _alpha = "alpha",
 				;
 				this.set("properties", args[0]["properties"]);
 			} else this.set("properties", new Properties([]));
-			
+
 			this.init_property('has_settings', 1);
 			this.init_property('type', 'ModuleGroup');
 			if (this.init) this.init();
@@ -451,14 +469,14 @@ var _alpha = "alpha",
 					? args[0]["modules"]
 					: new Modules(args[0]["modules"])
 				;
-				this.set("modules", args[0].modules)
+				this.set("modules", args[0].modules);
 			} else this.set("modules", new Modules([]));
 			if (args && args[0] && args[0]["wrappers"]) {
 				args[0]["wrappers"] = args[0]["wrappers"] instanceof Wrappers
 					? args[0]["wrappers"]
 					: new Wrappers(args[0]["wrappers"])
 				;
-				this.set("wrappers", args[0].wrappers)
+				this.set("wrappers", args[0].wrappers);
 			} else this.set("wrappers", new Wrappers([]));
 			if (args && args[0] && args[0]["properties"]) {
 				args[0]["properties"] = args[0]["properties"] instanceof Properties
@@ -504,10 +522,10 @@ var _alpha = "alpha",
 				});
 			}
 			if ( ref_models2.length > 1 ){
-				var index = _.indexOf(ref_models2, this);
-				if ( index == 0 )
+				var _index = _.indexOf(ref_models2, this);
+				if ( _index === 0 )
 					ret.right = ref_models2[1];
-				else if ( index == 1 ){
+				else if ( _index === 1 ){
 					ret.left = ref_models2[0];
 					ret.right = ref_models2.length > 2 ? ref_models2[2] : false;
 				}
@@ -533,8 +551,8 @@ var _alpha = "alpha",
 		"model": Region,
 
 		get_by_name: function (name) {
-			var found = false,
-				name = name.toLowerCase();
+			name = name.toLowerCase();
+			var found = false;
 			this.each(function (model) {
 				if (model.get("name").toLowerCase() == name) found = model;
 			});
@@ -555,8 +573,8 @@ var _alpha = "alpha",
 		},
 
 		index_container: function (model, excludes) {
-			var excludes = _.isArray(excludes) ? excludes : [excludes],
-				collection = this.filter(function(m){
+			excludes = _.isArray(excludes) ? excludes : [excludes];
+			var collection = this.filter(function(m){
 					return m.is_main() && ! _.contains(excludes, m.get('name'));
 				}),
 				index = collection.indexOf(model);
@@ -564,13 +582,13 @@ var _alpha = "alpha",
 		},
 
 		total_container: function (excludes) {
-			var excludes = _.isArray(excludes) ? excludes : [excludes],
-				collection = this.filter(function(m){
+			excludes = _.isArray(excludes) ? excludes : [excludes];
+			var collection = this.filter(function(m){
 					return m.is_main() && ! _.contains(excludes, m.get('name'));
 				});
 			return collection.length;
 		},
-		
+
 		get_new_title: function (prefix, start) {
 			var title = (prefix + start).replace(/[^A-Za-z0-9\s_-]/g, ''),
 				name = title.toLowerCase().replace(/\s/g, '-');
@@ -595,9 +613,9 @@ var _alpha = "alpha",
 					? args[0]["properties"]
 					: new Properties(args[0]["properties"])
 				;
-				this.set("properties", args[0].properties)
+				this.set("properties", args[0].properties);
 			} else this.set("properties", new Properties([]));
-		},
+		}
 	}),
 
 	Wrappers = Backbone.Collection.extend({
@@ -628,21 +646,21 @@ var _alpha = "alpha",
 					? args[0]["regions"]
 					: new Regions(args[0]["regions"])
 				;
-				this.set("regions", args[0].regions)
+				this.set("regions", args[0].regions);
 			}
 			if (args && args[0] && args[0]["properties"]) {
 				args[0]["properties"] = args[0]["properties"] instanceof Properties
 					? args[0]["properties"]
 					: new Properties(args[0]["properties"])
 				;
-				this.set("properties", args[0].properties)
+				this.set("properties", args[0].properties);
 			}
 			if (args && args[0] && args[0]["wrappers"]) {
 				args[0]["wrappers"] = args[0]["wrappers"] instanceof Wrappers
 					? args[0]["wrappers"]
 					: new Wrappers(args[0]["wrappers"])
 				;
-				this.set("wrappers", args[0].wrappers)
+				this.set("wrappers", args[0].wrappers);
 			}
 		},
 		get_current_state: function () {
@@ -803,7 +821,7 @@ var _alpha = "alpha",
 
             if( _.indexOf(dates, attr) !== -1 ){
                 //return new Date( value  ); // <-- Breaks in FF
-                var raw_offset = (new Date()).getTimezoneOffset(), 
+                var raw_offset = (new Date()).getTimezoneOffset(),
                 	tz_offset = raw_offset / 60,
                 	offset = tz_offset > 0 ? '-' : '+', // Reversed because Date.getTimezoneOffset() returns reversed values...
                 	hours = parseInt(Math.abs(tz_offset), 10),
@@ -814,16 +832,16 @@ var _alpha = "alpha",
                 mins = mins >= 10 ? '' + mins : '0' + mins;
                 if (timestamp && hours.length && mins.length) timestamp += offset + hours + mins;
 
-				
+
 				//return new Date(Date.parse(timestamp)); // <-- We need this to instantiate Date object in Firefox. @See "batman bug" in Asana.
-				
+
 				/** Have to do this in order to satisfy safari as well.
 				 * This works with Firefox and chrome too.
 				*/
 
 				var a = timestamp.split(/[^0-9]/);
-				return new Date (a[0],a[1]-1,a[2],a[3],a[4],a[5]); 
-                
+				return new Date (a[0],a[1]-1,a[2],a[3],a[4],a[5]);
+
             }
 			return this.attributes[attr];
 		},
@@ -955,7 +973,7 @@ var _alpha = "alpha",
 								pages: Math.ceil(pagination.total / pagination.page_size),
 								currentPage: pagination.page,
 								loaded: postdata.flush ? {} : me.pagination.loaded
-							}
+							};
 							me.pagination.loaded[pagination.page] = true;
 							_.each(response.data.results, function(modelData){
 								var model = new me.model(modelData);
@@ -1441,16 +1459,16 @@ var _alpha = "alpha",
 			return this.meta.fetch();
 		}
 	}),
-	
+
 	PageTemplate = WPModel.extend({
 		modelName: 'template',
 		defaults: {
-			
+
 		},
-		
+
 		initialize: function(model, options){
 			var me = this;
-		},
+		}
 
 	}),
 
@@ -1477,7 +1495,7 @@ var _alpha = "alpha",
 			}
 		}
 	});
-	
+
 	PageTemplateList = WPCollection.extend({
 		collectionName: 'page_templates',
 		model: PageTemplate,
@@ -1498,7 +1516,7 @@ var _alpha = "alpha",
 				})
 			;
 		}
-		
+
 	});
 
 	var Comment = WPModel.extend({
@@ -1731,7 +1749,7 @@ var _alpha = "alpha",
 	                col: 24,
 	                row: 50,
 	                left: 0,
-	                float: "none"
+	                "float": "none"
 	            },
 	            image : {
 	            	order: 0,
@@ -1796,4 +1814,3 @@ return {
 });
 
 })(jQuery);
-

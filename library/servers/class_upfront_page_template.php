@@ -31,22 +31,22 @@ class Upfront_Server_PageTemplate extends Upfront_Server {
 		register_post_type(Upfront_PageTemplate::LAYOUT_TEMPLATE_TYPE, array(
 			"exclude_from_search" => false,
 			"publicly_queryable" => true,
-			// "supports" => false,
-			// "has_archive" => false,
-			// "rewrite" => false,
-			"label" => "Page Templates", // uncomment this if want to check on admin
-			"show_ui" => true, // uncomment this if want to check on admin
-			"show_in_nav_menus" => true, // uncomment this if want to check on admin
+			"supports" => false,
+			"has_archive" => false,
+			"rewrite" => false,
+			// "label" => "Page Templates", // uncomment this if want to check on admin
+			// "show_ui" => true, // uncomment this if want to check on admin
+			// "show_in_nav_menus" => true, // uncomment this if want to check on admin
 		));
 		register_post_type(Upfront_PageTemplate::LAYOUT_TEMPLATE_DEV_TYPE, array(
 			"exclude_from_search" => false,
 			"publicly_queryable" => true,
-			// "supports" => false,
-			// "has_archive" => false,
-			// "rewrite" => false,
-			"label" => "Page Dev Templates", // uncomment this if want to check on admin
-			"show_ui" => true, // uncomment this if want to check on admin
-			"show_in_nav_menus" => true, // uncomment this if want to check on admin
+			"supports" => false,
+			"has_archive" => false,
+			"rewrite" => false,
+			// "label" => "Page Dev Templates", // uncomment this if want to check on admin
+			// "show_ui" => true, // uncomment this if want to check on admin
+			// "show_in_nav_menus" => true, // uncomment this if want to check on admin
 		));
 		register_post_status(Upfront_PageTemplate::LAYOUT_TEMPLATE_STATUS, array(
 			'public' => true,

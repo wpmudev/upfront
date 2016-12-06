@@ -1,5 +1,5 @@
 define([
-	'elements/upfront-code/js/model',
+	'elements/upfront-code/js/model'
 ], function (CodeModel) {
 	var l10n = Upfront.Settings.l10n.code_element;
 	var Element = Upfront.Views.Editor.Sidebar.Element.extend({

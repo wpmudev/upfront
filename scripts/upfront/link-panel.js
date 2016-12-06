@@ -1,7 +1,7 @@
 (function ($) {
 define([
 	"scripts/upfront/link-model",
-	"text!scripts/upfront/templates/link-panel.html",
+	"text!scripts/upfront/templates/link-panel.html"
 ], function(LinkModel, linkPanelTpl) {
 
 	var getAnchors = function() {
@@ -29,6 +29,11 @@ define([
 		};
 
 		regions.each(function(r) {
+			var regionTitle = r.attributes.title;
+			var id = '#upfront-region-container-' + r.attributes.name;
+			// Add Anchors for each region.
+			anchors.push({id: id, label: regionTitle})
+			// Get Modules.
 			find(r.get("modules"));
 		});
 
@@ -92,7 +97,7 @@ define([
 		visit_lightbox: function(e) {
 			e.preventDefault();
 			var url = $(e.target).attr('href');
-			
+
 			// if there is no url defined, no point going forward
 			if(!url || url==='')
 				return;
@@ -108,10 +113,10 @@ define([
 				var regionview = Upfront.data.region_views[region.cid];
 				regionview.show();
 			}
-			
+
 		},
 		getUrlanchor: function(url) {
-			if(typeof(url) == 'undefined') var url = $(location).attr('href');
+			if(typeof(url) == 'undefined') url = $(location).attr('href');
 
 			if(url.indexOf('#') >=0) {
 				var tempurl = url.split('#');
@@ -139,7 +144,8 @@ define([
 			}
 
 			// Rewrite anchor url to new style (to include full url)
-			var pageUrl = document.location.origin + document.location.pathname;
+			var pageUrl = this.get_mapped_url();
+
 			if (this.model.get('type') === 'anchor' && this.model.get('url').match(/^#/) !== null) {
 				this.model.set({'url' : pageUrl + this.model.get('url')}, {silent:true});
 			}
@@ -147,12 +153,39 @@ define([
 			this.listenTo(this.model, 'change:type', this.handleTypeChange);
 		},
 
+		get_mapped_url: function() {
+			// Example: http://mysite.com
+			var home_url = Upfront.mainData.site || document.location.origin;
+			// Example: http://mynetwork.com/site2
+			var site_url = Upfront.mainData.siteUrl || document.location.origin;
+			// Example: site2
+			var site_path = site_url.split('/')[3];
+			var location_path = document.location.pathname;
+			// If site url is mapped different than home url and has a site path, correct this.
+			if (
+				home_url !== site_url
+				&& site_path && site_path !== ''
+				&& location_path.search(site_path) > -1
+			) {
+				// Strip out the site URL from pathname.
+				var new_location = location_path.split('/');
+				new_location.shift();
+				new_location.shift();
+				location_path = '/' + new_location.join('/');
+			}
+			// If URL has edit in it, use relative Anchor.
+			if (location_path.search('edit') > -1) {
+				return '';
+			}
+			return home_url + location_path;
+		},
+
 		onOkClick: function() {
-			if (this.model.get('type') == 'lightbox' && this.$el.find('.js-ulinkpanel-lightbox-input').val() !== '') {
+			if (this.model.get('type') === 'lightbox' && this.$el.find('.js-ulinkpanel-lightbox-input').val() !== '') {
 				this.createLightBox();
 			} else {
 				this.close();
-				this.model.trigger("change")
+				this.model.trigger("change");
 			}
 			//this.trigger('change', this.model);
 		},
@@ -252,7 +285,7 @@ define([
 		 * Check input for lightbox name for enter key.
 		 */
 		onLightboxNameInputChange: function(event) {
-			if (event.which == 13) {
+			if (event.which === 13) {
 				event.preventDefault();
 				this.createLightBox();
 			}
@@ -270,12 +303,12 @@ define([
 			});
 
 			Upfront.Application.LayoutEditor.createLightboxRegion(name);
-			// this is required to send a 'dontflag' to the editor, 
+			// this is required to send a 'dontflag' to the editor,
 			// because the lightbox is created
 			// after the link is saved in the text.
-			// triggering the change again will refresh the editor's state 
+			// triggering the change again will refresh the editor's state
 			// and get rid of missing link flag
-			this.model.trigger("change", true); 
+			this.model.trigger("change", true);
 			this.render();
 		},
 
@@ -379,7 +412,7 @@ define([
 
 		renderAnchorSelect: function() {
 			var model = this.model,
-				pageUrl = document.location.origin + document.location.pathname;
+				pageUrl = this.get_mapped_url();
 
 			var anchorValues = [{label: 'Choose Anchor...', value: ''}];
 			_.each(getAnchors(), function(anchor) {
@@ -395,7 +428,17 @@ define([
 				values: anchorValues,
 				default_value: anchorValue,
 				change: function () {
-					model.set({'url': this.get_value()});
+					var url = this.get_value();
+					// Quick fix for exporter url ending up in local site menus until we solve
+					// mapping anchors to pages. This will allow user to create links to anchors
+					// on specific pages when using editor, but builder for now does not have
+					// proper support for that.
+					// Use case that we have to cover is in menu that is present on all pages
+					// make link to anchor on homepage or other specific page.
+					if (document.location.pathname.match(/^\/create_new\//) !== null) {
+						url = '#' + url.split('#')[1];
+					}
+					model.set({'url': url});
 				}
 			});
 			this.anchorSelect.render();
