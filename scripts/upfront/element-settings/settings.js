@@ -101,26 +101,6 @@ define([
 			this.model.get("properties").trigger('change');
 			Upfront.Events.trigger("element:settings:saved");
 			Upfront.Events.trigger("element:settings:deactivate");
-			// NOT SAVING ON ELEMENT SETTINGS CLOSE ANYMORE
-			// if(Upfront.Application.is_builder()) {
-				// Upfront.Events.trigger("command:layout:export_theme");
-			// }
-			// else {
-				// if ( _upfront_post_data.layout.specificity && _upfront_post_data.layout.item && !_upfront_post_data.layout.item.match(/-page/) )
-					// Upfront.Events.trigger("command:layout:save_as");
-				// else
-					// Upfront.Events.trigger("command:layout:save");
-			// }
-
-			//TODO re-work this after merge
-			// var pluginsCallResult = Upfront.plugins.call('save-settings');
-
-			// if (!pluginsCallResult.status || pluginsCallResult.status !== 'called') {
-				// if ( _upfront_post_data.layout.specificity && _upfront_post_data.layout.item && !_upfront_post_data.layout.item.match(/-page/) )
-					// Upfront.Events.trigger("command:layout:save_as");
-				// else
-					// Upfront.Events.trigger("command:layout:save");
-			// }
 
 			if (this.onSaveSettings) this.onSaveSettings();
 

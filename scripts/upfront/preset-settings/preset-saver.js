@@ -2,26 +2,26 @@
 define([
 ], function() {
 	var PresetSaver = function() {
-		var pendingSavePresets = {};
+		var pending = {};
 
 		/**
-		 * Saves type presets to server one by one, when done typeResult will
+		 * Saves type presets to server one by one, when done result will
 		 * be resolved with either fail or success depending on result.
 		 */
-		var saveTypePresets = function(slug, typePresets, typeResult) {
-			var currentPreset = typePresets.pop();
+		var saveType = function(slug, type, result) {
+			var preset = type.pop();
 			Upfront.Util.post({
 				action: 'upfront_save_' + slug + '_preset',
-				data: currentPreset
+				data: preset
 			}).done(function() {
-				if (typePresets.length > 0) {
-					saveTypePresets(slug, typePresets, typeResult);
+				if (type.length > 0) {
+					saveType(slug, type, result);
 				} else {
-					typeResult.resolve();
+					result.resolve();
 				}
 			}).fail( function() {
-				typeResult.reject();
-				Upfront.Views.Editor.notify('Preset ' + currentPreset.name + ' save failed.');
+				result.reject();
+				Upfront.Views.Editor.notify('Preset ' + preset.name + ' save failed.');
 			});
 		};
 
@@ -29,22 +29,22 @@ define([
 		 * Loops through queued presets and requests saving of each one.
 		 * Clears queued presets after all is done.
 		 */
-		this.savePresets = function() {
-			var typesResults = [];
-			result = $.Deferred();
+		this.save = function() {
+			var results = [],
+				result = $.Deferred();
 			// Iterate through all preset types (text, image, gallery...)
-			_.each(pendingSavePresets, function(typePresets, slug) {
+			_.each(pending, function(type, slug) {
 				// Save presets from type sequentially, if done in parallel some
 				// won't be saved since server will read/write to db in parallel
-				if (typePresets.length > 0) {
-					var typeResult = $.Deferred();
-					typesResults.push(typeResult);
-					saveTypePresets(slug, typePresets, typeResult);
+				if (type.length > 0) {
+					var d = $.Deferred();
+					results.push(d);
+					saveType(slug, type, d);
 				}
 			});
 
-			if (typesResults.length > 0) {
-				$.when.apply($, typesResults).done( function() {
+			if (results.length > 0) {
+				$.when.apply($, results).done( function() {
 					result.resolve();
 				}).fail( function() {
 					result.reject();
@@ -59,13 +59,13 @@ define([
 		/**
 		 * Allows queueing presets from anywhere.
 		 */
-		this.queuePresetSave = function(presetProperties, ajaxSlug) {
-			pendingSavePresets[ajaxSlug] = pendingSavePresets[ajaxSlug] || [];
+		this.queue = function(properties, ajaxSlug) {
+			pending[ajaxSlug] = pending[ajaxSlug] || [];
 			// First remove preset if already added
-			pendingSavePresets[ajaxSlug] = _.reject(pendingSavePresets[ajaxSlug], function(preset) {
-				return preset.id === presetProperties.id;
+			pending[ajaxSlug] = _.reject(pending[ajaxSlug], function(preset) {
+				return preset.id === properties.id;
 			});
-			pendingSavePresets[ajaxSlug].push(presetProperties);
+			pending[ajaxSlug].push(properties);
 		};
 	};
 

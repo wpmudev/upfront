@@ -40,7 +40,6 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		this._save_layout(this.layout.get("current_layout"));
 	},
 
-	//TODO re-work after merge
 	save_post_layout: function ($post_layout_key) {
 		this._save_layout($post_layout_key);
 	},
@@ -166,21 +165,35 @@ var LayoutEditorSubapplication = Subapplication.extend({
 				var url_key = '/' + Backbone.history.getFragment();
 				Upfront.Application.urlCache[url_key] = false;
 
-				// Save presets
-				var presetSaving = Upfront.Application.presetSaver.savePresets();
-				presetSaving.done( function() {
-					Upfront.Util.log("presets saved");
-					Upfront.Events.trigger("command:layout:save_success");
-				}).fail( function() {
-					Upfront.Util.log("error saving presets");
-					Upfront.Events.trigger("command:layout:save_error");
-				});
+				Upfront.Application.save_presets();
 			})
 			.error(function () {
 				Upfront.Util.log("error saving layout");
 				Upfront.Events.trigger("command:layout:save_error");
 			})
 		;
+	},
+
+	save_presets: function() {
+		var presetSaving = Upfront.Application.presetSaver.save();
+
+		presetSaving.done( function() {
+			Upfront.Application.save_colors();
+		}).fail( function() {
+			Upfront.Util.log("error saving presets");
+			Upfront.Events.trigger("command:layout:save_error");
+		});
+	},
+
+	save_colors: function() {
+		var colorSaving = Upfront.Application.colorSaver.save();
+
+		colorSaving.done( function() {
+			Upfront.Events.trigger("command:layout:save_success");
+		}).fail( function() {
+			Upfront.Util.log("error saving color");
+			Upfront.Events.trigger("command:layout:save_error");
+		});
 	},
 
 	_delete_layout: function () {
@@ -933,6 +946,8 @@ var Application = new (Backbone.Router.extend({
 
 				app.create_preset_saver();
 
+				app.create_color_saver();
+
 				$(document).trigger('Upfront:loaded');
 				Upfront.Events.trigger('Upfront:loaded');
 			}
@@ -1462,6 +1477,10 @@ var Application = new (Backbone.Router.extend({
 
 	create_preset_saver: function() {
 		this.presetSaver = Upfront.Views.PresetSaver;
+	},
+
+	create_color_saver: function() {
+		this.colorSaver = Upfront.Views.ColorSaver;
 	},
 
 	ensure_layout_style: function() {

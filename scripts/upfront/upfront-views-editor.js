@@ -28,7 +28,9 @@
 		"scripts/upfront/upfront-views-editor/presets/button/collection",
 		"scripts/upfront/upfront-views-editor/property",
 		"scripts/upfront/upfront-views-editor/properties",
-		"scripts/upfront/preset-settings/preset-saver", // If adding more arguments adjust _.rest in line 72
+		"scripts/upfront/preset-settings/preset-saver",
+		"scripts/upfront/upfront-views-editor/theme-colors/color-saver",
+		// If adding more arguments adjust _.rest in line 93
 		"text!upfront/templates/property.html",
 		"text!upfront/templates/properties.html",
 		"text!upfront/templates/property_edit.html",
@@ -70,7 +72,8 @@
 			button_presets_collection,
 			Property,
 			Properties,
-			PresetSaver
+			PresetSaver,
+			ColorSaver
 	) {
 		var _template_files = [
 			"text!upfront/templates/property.html",
@@ -88,7 +91,7 @@
 		];
 
 		// Auto-assign the template contents to internal variable
-		var _template_args = _.rest(arguments, 28),
+		var _template_args = _.rest(arguments, 29),
 			_Upfront_Templates = {}
 			;
 		_(_template_files).each(function (file, idx) {
@@ -146,7 +149,8 @@
 			Theme_Colors : Theme_Colors,
 			breakpoints_storage: BreakPoint.storage,
 			Font_Model: Fonts.Model,
-			PresetSaver: PresetSaver
+			PresetSaver: PresetSaver,
+			ColorSaver: ColorSaver
 		};
 	});
 })(jQuery);
