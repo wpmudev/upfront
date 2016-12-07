@@ -111,7 +111,8 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			save_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 ),
 			breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 			is_responsive = breakpoint && !breakpoint['default'],
-			compressed
+			compressed,
+			me = this
 		;
 		data.layout = _upfront_post_data.layout;
 		data.preferred_layout = preferred_layout;
@@ -165,7 +166,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 				var url_key = '/' + Backbone.history.getFragment();
 				Upfront.Application.urlCache[url_key] = false;
 
-				Upfront.Application.save_presets();
+				me.save_presets();
 			})
 			.error(function () {
 				Upfront.Util.log("error saving layout");
