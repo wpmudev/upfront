@@ -1140,7 +1140,7 @@ define([
 						"current_url": window.location.href,
 						"original_length": _layout_compressed ? _layout_compressed.original_length : 0,
 						"compressed_length": _layout_compressed ? _layout_compressed.compressed_length : 0,
-						"compression": Upfront.mainData.save_compression ? 1 : k
+						"compression": Upfront.mainData.save_compression ? 1 : 0
 					})
 					.success(function (response) {
 						var data = response.data || {};
