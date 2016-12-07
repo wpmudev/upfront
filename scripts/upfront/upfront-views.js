@@ -1740,6 +1740,9 @@ define([
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint:after", this.on_change_breakpoint_after);
 				this.listenTo(Upfront.Events, "upfront:grid:updated", this.on_grid_update);
 				//this.listenTo(Upfront.Events, "entity:wrapper:update_position", this.on_wrapper_update);
+				
+				// Check if preset exist, if not replace with default
+				this.check_if_preset_exist();
 
 				if (this.init) this.init();
 			},
@@ -1911,12 +1914,9 @@ define([
 						setPreset = this.model.get_property_value_by_name('preset')
 					;
 					if ( currentPreset && setPreset !== currentPreset ) {
-						this.model.set_property('preset', currentPreset, false);
+						this.model.set_property('preset', currentPreset, true);
 					}
 				}
-				
-				// Check if preset exist, if not replace with default
-				this.check_if_preset_exist();
 
 				//**
 				// * Make sure it's rendered and then adjust top panel position
@@ -1931,16 +1931,17 @@ define([
 					elementType = this.model.get_property_value_by_name('type'),
 					type = this.get_element_type(elementType) || {}
 				;
-				
+
 				if(type.id === undefined) return;
 
 				var existingPresets = Upfront.mainData[type.id + 'Presets'];
-				
+
 				// Preset doesnt exist -> set default
 				if(!_.contains(existingPresets, preset)) {
+					this.model.set_property('current_preset', 'default', false);
 					this.model.set_property('preset', 'default', false);
+					this.render();
 				}
-				
 			},
 			get_element_type: function(type) {
 				var elementTypes = {
