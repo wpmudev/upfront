@@ -51,6 +51,12 @@ div#page .upfront-object.upfront-image .swap-image-overlay p:before,
 	background-repeat: no-repeat;	
 }
 
+.upfront-icon-linkbutton:before {
+	background-image: url(../img/uf-core-el-sprite_new.png) !important;
+	background-image: url('../img/uf-core-el-sprite_new.svg') !important;
+	background-repeat: no-repeat !important;	
+}
+
 .upfront-ui .upfront-icon-region-crop:before {
 	background-position: -410px -100px;
 }

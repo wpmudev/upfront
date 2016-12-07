@@ -5983,13 +5983,9 @@ span.upfront-settings-item-title:after {
 .upfront-wrapper-meta.upfront-resize-handle-wrapper:before {
   content: "";
   position: absolute;
-  top: 5px;
-  bottom: 5px;
-  left: 5px;
-  right: 5px;
+  left: 3px;
   background: #fff;
-  border-radius: 3px;
-  box-shadow: 0 0 5px 0 rgba(36, 57, 77, 0.5);
+  box-shadow: none;
   z-index: -1; }
 
 .upfront-wrapper:not(.upfront-inline-panel-item-open):hover > .upfront-wrapper-meta,
@@ -6038,7 +6034,7 @@ span.upfront-settings-item-title:after {
 .upfront-wrapper.upfront-wrapper-spacer[data-last-in-row="1"]:hover > .upfront-wrapper-meta-right {
   display: none !important; }
 
-.upfront-entity-size-hint {
+.upfront-entity-size-hint, .uimage-resize-hint {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -7564,7 +7560,7 @@ span.upfront-settings-item-title:after {
   display: block; }
 
 .upfront-logo,
-.upfront-ui .upfront-icon:not(.upfront-icon-button):before,
+.upfront-ui .upfront-icon:before,
 .region-lock-switch:before,
 .upfront-icon-control-region:before,
 .panel-setting-dialog-region:before, .panel-setting-dialog-info:before,
@@ -18888,6 +18884,11 @@ div#page .upfront-object.upfront-image .swap-image-overlay p:before,
   background-image: url(../img/uf-core-el-sprite_new.png);
   background-image: url("../img/uf-core-el-sprite_new.svg");
   background-repeat: no-repeat; }
+
+.upfront-icon-linkbutton:before {
+  background-image: url(../img/uf-core-el-sprite_new.png) !important;
+  background-image: url("../img/uf-core-el-sprite_new.svg") !important;
+  background-repeat: no-repeat !important; }
 
 .upfront-ui .upfront-icon-region-crop:before {
   background-position: -410px -100px; }
