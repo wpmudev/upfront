@@ -200,6 +200,7 @@ text!upfront/templates/property_edit.html
 text!upfront/templates/properties.html
 /var/www/local.wordpress.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/properties.js
 /var/www/local.wordpress.dev/wp-content/themes/upfront/scripts/upfront/preset-settings/preset-saver.js
+/var/www/local.wordpress.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/theme-colors/color-saver.js
 text!upfront/templates/sidebar_settings_lock_area.html
 text!upfront/templates/sidebar_settings_background.html
 spectrum/spectrum.js
