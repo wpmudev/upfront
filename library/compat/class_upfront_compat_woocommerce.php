@@ -20,6 +20,49 @@ class Upfront_Compat_WooCommerce {
 		add_filter('upfront-widget_plugins_widgets', array($this, 'declare_plugins_widgets'));
 		add_filter('upfront-layout_to_name', array($this, 'layout_to_name'), 10, 4);
 		add_filter('upfront-builder_available_layouts', array($this, 'builder_available_layouts'));
+		add_filter('upfront-forbidden_post_data_types', array($this, 'forbidden_post_data_types'));
+	}
+
+public function forbidden_post_data_types($types) {
+	$post = get_post();
+	if (is_null($post)) return $types;
+
+	if (self::is_woo_page($post)) {
+		$types = array('title', 'date_posted', 'comment_form', 'comment_count', 'comments', 'comments_pagination');
+	}
+	return $types;
+}
+
+
+	/**
+	 * Checks if a post is actually a known Woo page
+	 *
+	 * @param WP_Post|int $post Post to check
+	 *
+	 * @return bool
+	 */
+	public static function is_woo_page ($post) {
+		if (!class_exists('WP_Post')) return false; // Basic sanity check
+
+		// Ensure we have an actual post here
+		if (!($post instanceof WP_Post)) $post = get_post($post);
+		if (!($post instanceof WP_Post)) return false;
+
+		return in_array($post->ID, self::get_woo_page_ids());
+	}
+
+	/**
+	 * Returns a list of known Woo pages as a list of post IDs
+	 *
+	 * @return array List of post IDs
+	 */
+	public static function get_woo_page_ids () {
+		return $pages = array(
+			wc_get_page_id('cart'),
+			wc_get_page_id('checkout'),
+			wc_get_page_id('myaccount'),
+			wc_get_page_id('shop')
+		);
 	}
 
 /**
