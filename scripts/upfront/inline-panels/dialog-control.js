@@ -70,7 +70,6 @@ define([
 		},
 
 		onClickControl: function(e){
-			
 			this.$el.siblings('.upfront-control-dialog-open').removeClass('upfront-control-dialog-open');
 
 			if(!$(e.target).closest('.upfront-icon').length || $(e.target).closest('upfront-icon-media-label-delete').length) {

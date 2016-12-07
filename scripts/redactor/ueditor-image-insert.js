@@ -46,7 +46,8 @@ var ImageInsert = base.ImageInsertBase.extend({
 	},
 
 	/**
-	 * The user want a new insert. Fetch all the required data to create a new image insert
+	 * The user want a new insert.
+	 * Fetch all the required data to create a new image insert
 	 */
 	start: function ($el) {
 		var me = this,
@@ -84,7 +85,7 @@ var ImageInsert = base.ImageInsertBase.extend({
 
 		data.image = this.get_proper_image();
 
-		data.style.group.width_cls = this.get_group_width_cls( data.image );
+		data.style.group.width_cls = this.get_group_width_cls(data.image);
 
 		if (data.show_caption == 0) {
 			data.style.image.width_cls = Upfront.Settings.LayoutEditor.Grid.class + 24;
@@ -129,7 +130,7 @@ var ImageInsert = base.ImageInsertBase.extend({
 		this.$el
 			.html(this.tpl(data))
 		;
-		this.create_controlls( data.style.group.width_cls );
+		this.create_controlls(data.style.group.width_cls);
 
 		this.controls.render();
 		this.$(".ueditor-insert-variant-group").append(this.controls.$el);
@@ -151,7 +152,8 @@ var ImageInsert = base.ImageInsertBase.extend({
 	},
 
 	/**
-	 * Called automatically by UEditorInsert whenever the controls are created or refreshed
+	 * Called automatically by UEditorInsert
+	 * whenever the controls are created or refreshed
 	 */
 	control_events: function () {
 		var me = this;
