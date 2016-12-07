@@ -298,7 +298,7 @@ public function forbidden_post_data_types($types) {
 
 	public function layout_to_name($layout_name, $type, $item, $specificity) {
 		if ($specificity === 'archive-product' && $item === 'product') {
-			return __('Product Archive', 'upfront');
+			return __('WooCommerce Shop Page', 'upfront');
 		}
 
 		if ($specificity === 'single-page-woocart' || $specificity === 'woocart') {
