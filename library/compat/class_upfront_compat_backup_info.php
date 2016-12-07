@@ -92,7 +92,7 @@ class Upfront_Compat_Backup_Info {
 	 * @return bool
 	 */
 	private function _has_dashboard () {
-		if (Upfront_Compat::has_dashboard()) return false;
+		if (false === Upfront_Compat::has_dashboard()) return false;
 
 		if (!empty(WPMUDEV_Dashboard::$site) && is_callable(array(WPMUDEV_Dashboard::$site, 'allowed_user'))) {
 			return WPMUDEV_Dashboard::$site->allowed_user();
@@ -136,5 +136,5 @@ class Upfront_Compat_Backup_Info {
 	private function _get_activation_url () {
 		return admin_url('plugins.php');
 	}
-	
+
 }
