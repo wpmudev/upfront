@@ -67,7 +67,9 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		me.listenTo(this.link, 'change', function() {
 			me.property('link', me.link.toJSON());
 		});
-
+		
+		// Check if preset exist, if not replace with default
+		this.check_if_preset_exist();
 	},
 	placeholderClick: function(e) {
 		e.preventDefault();

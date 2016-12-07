@@ -55,6 +55,9 @@ define(function() {
 
 			this.model.on('region:updated', this.refreshMarkup, this);
 			this.listenTo(this.model.get("properties"), 'change', this.refreshMarkup);
+			
+			// Check if preset exist, if not replace with default
+			this.check_if_preset_exist();
 		},
 
 		get_content_markup: function () {
