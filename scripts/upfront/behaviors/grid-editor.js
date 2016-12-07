@@ -3226,6 +3226,8 @@ var GridEditor = {
 		if ( app.layout_ready ) {
 			// Trigger updated event if it is changed after layout finished rendering
 			Upfront.Events.trigger('upfront:grid:updated');
+			// Second event for stuff that happen afterward
+			Upfront.Events.trigger('upfront:grid:updated:after');
 		}
 
 		if (

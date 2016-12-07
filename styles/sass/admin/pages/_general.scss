@@ -126,6 +126,26 @@
 }
 
 /**
+ * Under Construction
+ */
+.under-construction p.label {
+	display: inline-block;
+	padding-right: 20px;
+}
+.under-construction span.link {
+	display: block;
+}
+.under-construction span.link:before {
+	display: inline-block;
+	content: '\f348';
+	font-family: dashicons;
+	padding-right: 5px;
+}
+.under-construction button:disabled {
+	opacity: .5;
+}
+
+/**
  * Changelog
  */
  .postbox .inside.changelog .previous {
@@ -138,3 +158,15 @@
     max-height:400px;
     overflow-y:auto;
  }
+ 
+/**
+* Upfront Reset Layout
+*/
+.postbox .upfront-layout-reset {
+	width: 70%;
+	
+	.upfront-reset-global-option {
+		display: inline-block;
+		padding-top: 5px;
+	}
+}

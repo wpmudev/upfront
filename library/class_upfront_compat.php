@@ -2,8 +2,20 @@
 
 require_once('compat/class_upfront_compat_converter.php');
 require_once('compat/class_upfront_compat_parser.php');
+require_once('compat/class_upfront_compat_woocommerce.php');
+require_once('compat/class_upfront_compat_marketpress.php');
 
 class Upfront_Compat implements IUpfront_Server {
+
+	/**
+	 * Check if we have Dashboard plugin alive and active
+	 *
+	 * @return bool
+	 */
+	public static function has_dashboard () {
+		return class_exists('WPMUDEV_Dashboard');
+	}
+
 
 	/**
 	 * Front-end update notice key
@@ -76,6 +88,10 @@ class Upfront_Compat implements IUpfront_Server {
 		add_filter('wphb_minification_display_enqueued_file', array($this, 'is_upfront_resource_skippable_with_hummingbird'), 10, 3);
 		add_filter('wphb_combine_resource', array($this, 'is_upfront_resource_skippable_with_hummingbird'), 10, 3);
 		add_filter('wphb_minify_resource', array($this, 'is_upfront_resource_skippable_with_hummingbird'), 10, 3);
+
+		// WooCommerce compat
+		$this->enable_wc_compat();
+		$this->enable_mp_compat();
 	}
 
 	/**
@@ -87,6 +103,9 @@ class Upfront_Compat implements IUpfront_Server {
 	 */
 	public function prevent_conflicted_children_updates ($raw) {
 		if (defined('DOING_AJAX') && DOING_AJAX) return $raw; // Presumably we know what we're doing there
+		// Only ever kick in when there's no WPMU DEV Dashboard around.
+		// Otherwise, trust it'll do the right thing on its own.
+		if (Upfront_Compat::has_dashboard()) return $raw;
 
 		if (empty($raw) || empty($raw->response)) return $raw; // So nothing new here, carry on
 
@@ -306,7 +325,17 @@ class Upfront_Compat implements IUpfront_Server {
 		die;
 	}
 
+	private function enable_wc_compat() {
+		if (class_exists('Upfront_Compat_WooCommerce')) {
+			new Upfront_Compat_WooCommerce();
+		}
+	}
 
-
+	private function enable_mp_compat() {
+		if (class_exists('Upfront_Compat_MarketPress')) {
+			new Upfront_Compat_MarketPress();
+		}
+	}
 }
+
 add_action('init', array('Upfront_Compat', 'serve'));

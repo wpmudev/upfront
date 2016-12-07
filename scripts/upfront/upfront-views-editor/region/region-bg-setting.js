@@ -6,11 +6,58 @@
 	define([
 		'scripts/upfront/upfront-views-editor/modal-bg-setting',
 		'scripts/upfront/upfront-views-editor/fields',
-		"text!upfront/templates/region_edit_panel.html"
-	], function (ModalBgSetting, Fields, region_edit_panel_tpl) {
+		"text!upfront/templates/region_edit_panel.html",
+		'scripts/perfect-scrollbar/perfect-scrollbar'
+	], function (ModalBgSetting, Fields, region_edit_panel_tpl, perfectScrollbar) {
 
 
 		return ModalBgSetting.extend({
+			events: {
+				// Cancel button:
+				"click .upfront-inline-modal-cancel": "on_click_cancel",
+				"click .upfront-inline-modal-content": "on_click_content",
+				"click .uf-settings-panel__title": "toggle_advanced_settings",
+				"click .upfront-inline-modal-save": "on_click_save"
+			},
+
+			// Reset all Region Setting data to when it was opened.
+			reset_models: function() {
+				// Only reset if oldData exists.
+				if (typeof this.oldData !== 'undefined') {
+					// Get current changed models.
+					var models = this.model.get('properties').models;
+					// Get models from when Region Settings opened.
+					var previous_models = this.oldData;
+					// Revert each model to previous state.
+					this.revert_models_to_previous(models, previous_models);
+				}
+			},
+
+			// Updates models to previous_models if they exist.
+			revert_models_to_previous: function(models, previous_models) {
+				// Revert each model.
+				models.map(function(model, index) {
+					// Get previous model data.
+					var previous = previous_models[index];
+					// If previous Attribute was set, revert to it.
+					if (previous && typeof previous.name !== 'undefined') {
+						model.set("name", previous.name)
+						model.set("value", previous.value)
+					}
+				});
+			},
+
+			save_current_models: function() {
+				var oldData = [];
+				var models = this.model.get('properties').models;
+				models.map(function(model) {
+					// Push copy of attributes to oldData.
+					// Clone is used so it is not a reference that can change.
+					oldData.push(_.clone(model.attributes));
+				});
+				this.oldData = oldData;
+			},
+
 			render_modal: function ($content, $modal) {
 				var me = this,
 					setting_cback = this.get_template(),
@@ -19,7 +66,7 @@
 
 				// Preserve background settings element event binding by detaching them before resetting html
 				$content.find('.upfront-region-bg-setting-tab-primary, .upfront-region-bg-setting-tab-secondary').children().detach();
-
+				
 				$content.html(setting);
 				$modal.addClass('upfront-region-modal-bg');
 
@@ -33,6 +80,57 @@
 
 				// Render padding settings
 				this.render_padding_settings($content.find('.upfront-region-bg-setting-padding'));
+
+				// Add JS Scrollbar.
+				var $bg_settings_content = this.$el.find('.uf-region-bg-settings-panel-content');
+				$bg_settings_content = $bg_settings_content[0] || false;
+				if ( $bg_settings_content ) {
+					// Set max height
+					this.set_settings_content_max_height();
+					
+					// Add JS Scrollbar.
+					perfectScrollbar.withDebounceUpdate(
+						// Element.
+						$bg_settings_content,
+						// Run First.
+						true,
+						// Event.
+						"region:background:type:changed",
+						// Initialize.
+						true
+					);
+
+					// When color spectrum is shown, set position of $bg_settings_content to initial for fixing z-index issue
+					Upfront.Events.on("color:spectrum:show", function() {
+						$($bg_settings_content).css('position', 'initial');
+					});
+					// When color spectrum is hidden, set position back to relative
+					Upfront.Events.on("color:spectrum:hide", function() {
+						$($bg_settings_content).css('position', 'relative');
+					});
+				}
+				
+				// If region settings sidebar.
+				if (this.$el.parent().attr('id') === 'region-settings-sidebar') {
+					// adding class to #sidebar-ui for fixing z-index issues with main dropdown.
+					$('#sidebar-ui').addClass('region-settings-activated');
+					// Save region data for later resetting.
+					this.save_current_models();
+				}
+			},
+			
+			set_settings_content_max_height: function() {
+				var height = this.$el.height(),
+					titleHeight = this.$el.find('.upfront-region-bg-setting-header').first().outerHeight(true),
+					advancedSettingsHeight = this.$el.find('.upfront-settings_panel.advanced-settings').first().outerHeight(true)
+				;
+				this.$el.find('.uf-region-bg-settings-panel-content').css('max-height', (height-titleHeight-advancedSettingsHeight-70) + 'px');
+			},
+
+			close: function(save) {
+				// removing class from #sidebar-ui that was previously added on showSettings
+				$('#sidebar-ui').removeClass('region-settings-activated');
+				return ModalBgSetting.prototype.close.call(this, save);
 			},
 
 			get_template: function () {
@@ -146,22 +244,21 @@
 							});
 						}
 					}),
-					make_global = new Fields.Checkboxes({
+					make_global = new Fields.Button({
 						model: this.model,
 						name: 'scope',
-						multiple: false,
-						values: [
-							{ label: l10n.make_global, value: 'global' }
-						],
-						change: function(){
-							var value = this.get_value();
-							if ( value == 'global' ){
-								me.apply_region_scope(this.model, 'global');
-								$region_name.find('.upfront-region-bg-setting-is-global').show();
-							}
-							//else {
-							//	me.apply_region_scope(this.model, 'local');
-							//}
+						classname: 'upfront-region-bg-setting-globalize',
+						label: l10n.make_global,
+						compact: true,
+						on_click: function(){
+							me.apply_region_scope(this.model, 'global');
+							$region_auto.show();
+							// Show Global Label.
+							$region_name.find('.upfront-region-bg-setting-is-global').show();
+							// Show Localize button.
+							localize_region.$el.show();
+							// Hide this button.
+							this.$el.hide();
 						}
 					}),
 					localize_region = new Fields.Button({
@@ -172,12 +269,12 @@
 						compact: true,
 						on_click: function () {
 							me.apply_region_scope(this.model, 'local');
-							$region_name.find('.upfront-region-bg-setting-name-wrap').show();
 							$region_auto.show();
-							$region_name.find('.upfront-region-bg-setting-name-edit').hide();
+							// Hide Global Label.
 							$region_name.find('.upfront-region-bg-setting-is-global').hide();
-							make_global.$el.find('[value=global]').prop('checked', false);
+							// Show Make Global button.
 							make_global.$el.show();
+							// Hide this button.
 							this.$el.hide();
 						},
 						rendered: function () {
@@ -187,7 +284,7 @@
 					name_save = new Fields.Button({
 						model: this.model,
 						name: 'save',
-						label: l10n.save,
+						label: l10n.ok.toLowerCase(),
 						compact: true,
 						classname: 'upfront-region-bg-setting-name-save',
 						on_click: function () {
@@ -195,6 +292,8 @@
 							$region_name.find('.upfront-region-bg-setting-name-wrap').show();
 							$region_auto.show();
 							$region_name.find('.upfront-region-bg-setting-name-edit').hide();
+							// Make panels editable.
+							me.toggle_editable_region_panels(true);
 							if ( this.model.get('scope') == 'global' ) {
 								make_global.$el.hide();
 								if ( !localize_region._no_display )
@@ -206,7 +305,7 @@
 						}
 					}),
 					$region_name = $region_header.find('.upfront-region-bg-setting-name'),
-					$region_auto = $region_header.find('.upfront-region-bg-setting-auto-resize')
+					$region_auto = $region_header.parent().find('.upfront-region-bg-setting-auto-resize')
 				;
 
 				if ( is_responsive ) {
@@ -249,6 +348,8 @@
 					e.preventDefault();
 					$region_name.find('.upfront-region-bg-setting-name-wrap').hide();
 					$region_auto.hide();
+					// Make panels un-editable.
+					me.toggle_editable_region_panels(false);
 					$region_name.find('.upfront-region-bg-setting-name-edit').show();
 					if ( me.model.get('scope') != 'global' )
 						region_name.get_field().prop('disabled', false).trigger('focus').select();
@@ -270,6 +371,16 @@
 				}
 			},
 
+			toggle_editable_region_panels: function(make_editable) {
+				if (make_editable) {
+					// Make content editable.
+					return $('.upfront-bg-setting-type, .upfront-region-bg-setting-region-style-container, .upfront-region-bg-setting-footer, .upfront-bg-setting-tab, .upfront-region-bg-setting-padding').css({ pointerEvents: "auto", opacity: 1});
+				} else {
+					// Make content un-editable.
+					return $('.upfront-bg-setting-type, .upfront-region-bg-setting-region-style-container, .upfront-region-bg-setting-footer, .upfront-bg-setting-tab, .upfront-region-bg-setting-padding').css({ pointerEvents: "none", opacity: 0.5});
+				}
+			},
+
 			render_main_settings: function ($content) {
 				var me = this,
 					breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
@@ -280,10 +391,11 @@
 					total_container = collection.total_container(['shadow', 'lightbox']), // don't include shadow and lightbox region
 					is_top = index_container == 0,
 					is_bottom = index_container == total_container-1,
-					region_type = new Fields.Radios({
+					region_type = new Fields.Select({
 						model: this.model,
 						name: 'type',
 						default_value: 'wide',
+						label: l10n.region_style,
 						layout: 'horizontal-inline',
 						values: this.get_region_types(index_container),
 						change: function () {
@@ -441,7 +553,7 @@
 						default_value: '',
 						layout: 'horizontal-inline',
 						values: [
-							{ label: l10n.sticky_region, value: '1' }
+							{ label: l10n.sticky_region + ':', value: '1' }
 						],
 						change: function () {
 							var value = this.get_value();
@@ -455,6 +567,7 @@
 				// Show the sticky option if there's no sticky region yet AND the region is <= 300px height
 				if ( ( !has_sticky && this.for_view.$el.height() <= 300 ) || this.model.get('sticky') ) {
 					region_sticky.render();
+					region_sticky.$el.find('label').append('<span class="upfront-bg-setting-sticky-toggle"></span>');
 					$region_sticky.append(region_sticky.$el);
 				}
 				else {
@@ -465,12 +578,13 @@
 			render_padding_settings: function ($content) {
 				var $template = $(region_edit_panel_tpl),
 					tpl = _.template($template.find('#upfront-region-bg-setting-padding').html()),
-					bg_padding_type = new Fields.Radios({
+					bg_padding_type = new Fields.Checkboxes({
 						model: this.model,
 						use_breakpoint_property: true,
 						property: 'bg_padding_type',
 						label: '',
-						values: [{ label: l10n.varied_padding, value: 'varied' }, { label: l10n.equal_padding, value: 'equal' }],
+						values: [{ label: ' ', value: 'varied' }, { label: l10n.equal_padding, value: 'equal' }],
+						multiple: false,
 						default_value: this.model.get_breakpoint_property_value('bg_padding_type') || 'equal',
 						change: function () {
 							this.model.set_breakpoint_property('bg_padding_type', this.get_value());
@@ -488,24 +602,6 @@
 							}
 						}
 					}),
-					top_bg_padding_slider = new Fields.Slider({
-						model: this.model,
-						use_breakpoint_property: true,
-						property: 'top_bg_padding_slider',
-						label: '',
-						default_value: this.model.get_breakpoint_property_value('top_bg_padding_slider') || 0,
-						min: 0,
-						max: 200,
-						step: 5,
-						valueTextFilter: function () {return '';},
-						change: function () {
-							var value = this.get_value();
-
-							this.model.set_breakpoint_property('top_bg_padding_slider', value);
-							top_bg_padding_num.get_field().val(value);
-							this.model.set_breakpoint_property('top_bg_padding_num', value, true);
-						}
-					}),
 					top_bg_padding_num = new Fields.Number({
 						model: this.model,
 						use_breakpoint_property: true,
@@ -520,26 +616,6 @@
 							var value = this.get_value();
 
 							this.model.set_breakpoint_property('top_bg_padding_num', value);
-							this.model.set_breakpoint_property('top_bg_padding_slider', value, true);
-							top_bg_padding_slider.$el.find('#'+top_bg_padding_slider.get_field_id()).slider('value', value);
-						}
-					}),
-					bottom_bg_padding_slider = new Fields.Slider({
-						model: this.model,
-						use_breakpoint_property: true,
-						property: 'bottom_bg_padding_slider',
-						label: '',
-						default_value: this.model.get_breakpoint_property_value('bottom_bg_padding_slider') || 0,
-						min: 0,
-						max: 200,
-						step: 5,
-						valueTextFilter: function () {return '';},
-						change: function () {
-							var value = this.get_value();
-
-							this.model.set_breakpoint_property('bottom_bg_padding_slider', value);
-							bottom_bg_padding_num.get_field().val(value);
-							this.model.set_breakpoint_property('bottom_bg_padding_num', value, true);
 						}
 					}),
 					bottom_bg_padding_num = new Fields.Number({
@@ -555,34 +631,6 @@
 							var value = this.get_value();
 
 							this.model.set_breakpoint_property('bottom_bg_padding_num', value);
-							this.model.set_breakpoint_property('bottom_bg_padding_slider', value, true);
-							bottom_bg_padding_slider.$el.find('#'+bottom_bg_padding_slider.get_field_id()).slider('value', value);
-						}
-					}),
-					bg_padding_slider = new Fields.Slider({
-						model: this.model,
-						use_breakpoint_property: true,
-						property: 'bg_padding_slider',
-						label: '',
-						default_value: this.model.get_breakpoint_property_value('bg_padding_slider') || 0,
-						min: 0,
-						max: 200,
-						step: 5,
-						valueTextFilter: function () {return '';},
-						change: function () {
-							var value = this.get_value();
-
-							this.model.set_breakpoint_property('bg_padding_slider', value);
-							this.model.set_breakpoint_property('top_bg_padding_slider', value, true);
-							this.model.set_breakpoint_property('bottom_bg_padding_slider', value, true);
-							top_bg_padding_slider.$el.find('#'+top_bg_padding_slider.get_field_id()).slider('value', value);
-							bottom_bg_padding_slider.$el.find('#'+bottom_bg_padding_slider.get_field_id()).slider('value', value);
-							bg_padding_num.get_field().val(value);
-							top_bg_padding_num.get_field().val(value);
-							bottom_bg_padding_num.get_field().val(value);
-							this.model.set_breakpoint_property('bg_padding_num', value, true);
-							this.model.set_breakpoint_property('top_bg_padding_num', value, true);
-							this.model.set_breakpoint_property('bottom_bg_padding_num', value, true);
 						}
 					}),
 					bg_padding_num = new Fields.Number({
@@ -602,12 +650,6 @@
 							bottom_bg_padding_num.get_field().val(value);
 							this.model.set_breakpoint_property('top_bg_padding_num', value, true);
 							this.model.set_breakpoint_property('bottom_bg_padding_num', value, true);
-							this.model.set_breakpoint_property('bg_padding_slider', value, true);
-							this.model.set_breakpoint_property('top_bg_padding_slider', value, true);
-							this.model.set_breakpoint_property('bottom_bg_padding_slider', value, true);
-							bg_padding_slider.$el.find('#'+bg_padding_slider.get_field_id()).slider('value', value);
-							top_bg_padding_slider.$el.find('#'+top_bg_padding_slider.get_field_id()).slider('value', value);
-							bottom_bg_padding_slider.$el.find('#'+bottom_bg_padding_slider.get_field_id()).slider('value', value);
 						}
 					}),
 					$region_padding_type,
@@ -633,16 +675,10 @@
 
 				bg_padding_type.render();
 				$region_padding_type.append(bg_padding_type.$el);
-				top_bg_padding_slider.render();
-				$region_top_padding.append(top_bg_padding_slider.$el);
 				top_bg_padding_num.render();
 				$region_top_padding.append(top_bg_padding_num.$el);
-				bottom_bg_padding_slider.render();
-				$region_bottom_padding.append(bottom_bg_padding_slider.$el);
 				bottom_bg_padding_num.render();
 				$region_bottom_padding.append(bottom_bg_padding_num.$el);
-				bg_padding_slider.render();
-				$region_equal_padding.append(bg_padding_slider.$el);
 				bg_padding_num.render();
 				$region_equal_padding.append(bg_padding_num.$el);
 			},
@@ -763,6 +799,24 @@
 				});
 
 				this.listenTo(Upfront.Application.cssEditor, 'updateStyles', this.adjust_grid_padding);
+			},
+			toggle_advanced_settings: function() {
+				// toggle advanced settings content
+				if (this.$el.find('.advanced-settings').hasClass('uf-settings-panel--expanded')) {
+					this.$el.find('.advanced-settings').removeClass('uf-settings-panel--expanded')
+						.find('.uf-settings-panel__body').hide();
+				} else {
+					this.$el.find('.advanced-settings').addClass('uf-settings-panel--expanded')
+						.find('.uf-settings-panel__body').show();
+				}
+				// resize settings content
+				this.set_settings_content_max_height();
+			},
+			
+			// Close Region Settings Sidebar.
+			on_click_cancel: function() {
+				this.reset_models();
+				return this.close(false);
 			},
 
 			adjust_grid_padding: function() {

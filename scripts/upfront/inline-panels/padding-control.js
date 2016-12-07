@@ -54,7 +54,7 @@ define([
 			var	target = $(e.target);
 
 			if (this.isDisabled) 	return;
-
+			
 			if (!target.closest('.upfront-icon-region-padding').length) {
 				e.stopPropagation();
 				return;
@@ -88,12 +88,22 @@ define([
 			this.update_position();
 
 			Upfront.Events.trigger('upfront:hide:subControl');
+			
+			// add class if last region to allocate clearance
+			var $region = this.$el.closest('.upfront-region-container'),
+				$lastRegion = $('.upfront-region-container').not(
+				'.upfront-region-container-shadow').last()
+			;
+			if ( $lastRegion.get(0) == $region.get(0) ) $region.addClass('upfront-last-region-padding');
 		},
 
 		close: function() {
 			this.isOpen = false;
 			this.$el.removeClass('upfront-control-dialog-open');
 			this.$el.closest('.upfront-inline-panel-item-open').removeClass('upfront-inline-panel-item-open');
+			
+			// remove class that was previously added on last region
+			this.$el.closest('.upfront-region-container').removeClass('upfront-last-region-padding');
 		},
 
 		on_render: function() {
@@ -247,7 +257,7 @@ define([
 						me.update_locked_values(padding)
 					}
 					
-					this.model.set_breakpoint_property('lock_padding', value);
+					this.model.set_breakpoint_property('lock_padding', value, true); // Shouldn't trigger changes
 				},
 
 			}),

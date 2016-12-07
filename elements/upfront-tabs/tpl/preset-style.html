@@ -1,9 +1,7 @@
-#page .upfront-tabs-container.tab-preset-<?php echo $properties['id']  ?> .tabs-tab:hover,
+#page .upfront-tabs-container.tab-preset-<?php echo $properties['id']  ?> .tabs-tab:hover, 
 #page .upfront-tabs-container.tab-preset-<?php echo $properties['id']  ?> .tabs-tab:hover .inner-box,
-#page .upfront-tabs-container.tab-preset-<?php echo $properties['id']  ?> .tabs-tab:hover .inner-box p,
 #page .upfront-tabs.<?php echo $properties['id']  ?>.live-preview-hover .tabs-tab,
-#page .upfront-tabs.<?php echo $properties['id']  ?>.live-preview-hover .tabs-tab .inner-box,
-#page .upfront-tabs.<?php echo $properties['id']  ?>.live-preview-hover .tabs-tab .inner-box p
+#page .upfront-tabs.<?php echo $properties['id']  ?>.live-preview-hover .tabs-tab .inner-box
 {
 	<?php if(!empty($properties['hover-use-color'])) { ?>
 		<?php if(!empty($properties['hover-tab-bg'])) { ?>background: <?php echo $properties['hover-tab-bg'] ?>; <?php } ?>
@@ -32,12 +30,10 @@
         border: none;
     <?php } ?>
 }
-#page .upfront-tabs-container.tab-preset-<?php echo $properties['id']  ?> .tabs-tab.tabs-tab-active,
+#page .upfront-tabs-container.tab-preset-<?php echo $properties['id']  ?> .tabs-tab.tabs-tab-active, 
 #page .upfront-tabs-container.tab-preset-<?php echo $properties['id']  ?> .tabs-tab.tabs-tab-active .inner-box,
-#page .upfront-tabs-container.tab-preset-<?php echo $properties['id']  ?> .tabs-tab.tabs-tab-active .inner-box p,
 #page .upfront-tabs.<?php echo $properties['id']  ?>.live-preview-active .tabs-tab,
-#page .upfront-tabs.<?php echo $properties['id']  ?>.live-preview-active .tabs-tab .inner-box,
-#page .upfront-tabs.<?php echo $properties['id']  ?>.live-preview-active .tabs-tab .inner-box p {
+#page .upfront-tabs.<?php echo $properties['id']  ?>.live-preview-active .tabs-tab .inner-box {
 	<?php if(!empty($properties['active-use-color'])) { ?>
 		<?php if(!empty($properties['active-tab-bg'])) { ?>background: <?php echo $properties['active-tab-bg'] ?>; <?php } ?>
 	<?php } ?>
@@ -66,8 +62,7 @@
         border: none;
     <?php } ?>
 }
-#page .upfront-tabs-container.tab-preset-<?php echo $properties['id']  ?> .tabs-tab, #page .upfront-tabs-container.tab-preset-<?php echo $properties['id']  ?> .tabs-tab .inner-box,
-#page .upfront-tabs-container.tab-preset-<?php echo $properties['id']  ?> .tabs-tab, #page .upfront-tabs-container.tab-preset-<?php echo $properties['id']  ?> .tabs-tab .inner-box p{
+#page .upfront-tabs-container.tab-preset-<?php echo $properties['id']  ?> .tabs-tab, #page .upfront-tabs-container.tab-preset-<?php echo $properties['id']  ?> .tabs-tab .inner-box {
 	<?php if(!empty($properties['static-tab-bg'])) { ?>background: <?php echo $properties['static-tab-bg'] ?>; <?php } ?>
 	<?php if(!empty($properties['static-font-color'])) { ?>color: <?php echo $properties['static-font-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['static-font-family'])) { ?>font-family: <?php echo $properties['static-font-family']  ?>; <?php } ?>

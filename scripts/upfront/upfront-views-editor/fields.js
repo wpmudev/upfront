@@ -526,6 +526,7 @@
                     if( me.options.autoHide !== true ){
                         me.$(".sp-replacer").removeClass("sp-active");
                         me.$(".sp-container").addClass("sp-hidden");
+						Upfront.Events.trigger("color:spectrum:hide");
                     }
                 });
 
@@ -566,6 +567,9 @@
              * @param color
              */
             on_spectrum_show: function(color){
+				
+				Upfront.Events.trigger("color:spectrum:show");
+				
                 var $input = $(".sp-input"),
                     input_val = $input.val();
 
@@ -642,6 +646,7 @@
 
                 this.revert();
                 this.$(".sp-container").addClass("sp-hidden"); //  hide
+				Upfront.Events.trigger("color:spectrum:hide");
                 $("html").off('mousedown', _.bind( this.hide_on_outer_click, this ) );
             },
             revert: function(){

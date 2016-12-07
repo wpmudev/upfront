@@ -297,8 +297,23 @@
 			}
 			var me = this,
 				img = new Image(),
-				src = this.$moveElement.css('background-image').replace(/^url\(\s*['"]?\s*/, '').replace(/\s*['"]?\s*\)$/, '')
+				src = this.$moveElement.css('background-image').replace(/^url\(\s*['"]?\s*/, '').replace(/\s*['"]?\s*\)$/, ''),
+				position = this.$moveElement.css('background-position').split(' ')
 			;
+
+			// Convert percent to decimal.
+			this.size_percentage = parseInt(this.$moveElement.css('background-size'), 10) * 0.01;
+			// Get user set positions (convert percentage to decimal).
+			this.percent_x = parseInt(position[0], 10) * 0.01;
+			this.percent_y = parseInt(position[1], 10) * 0.01;
+
+			// Check if scaling is NaN, if it is, we set default parameter
+			if ( isNaN(this.size_percentage) ) {
+				this.size_percentage = 1;
+				this.percent_x = 0.5;
+				this.percent_y = 0.5;
+			}
+
 			if (src != 'none') {
 				this.cache.img = img;
 				this.cache.background_color = this.$parent.css("background-color") || "#fff";
@@ -346,12 +361,16 @@
 			drawHeight = Math.floor(parallaxHeight/imgHeight * this.cache.img.height);
 			drawX = (this.cache.img.width - drawWidth) / 2;
 			drawY = (this.cache.img.height - drawHeight) / 2;
+			scale = this.size_percentage;
+			// Offset X and Y by user set position.
+			position_x = (-0.5 * width * scale) + (width * scale * this.percent_x);
+			position_y = (-0.5 * height * scale) + (height * scale * this.percent_y);
 
-			if( this.is_image_png() ) {
+			if ( this.is_image_png() ) {
 				this.fillCanvas(width, parallaxHeight);
 			}
 
-			this.imgContext.drawImage(this.cache.img, drawX, drawY, drawWidth, drawHeight, 0, 0, width, parallaxHeight);
+			this.imgContext.drawImage(this.cache.img, drawX, drawY, drawWidth, drawHeight, position_x, position_y, (width * scale), (parallaxHeight * scale));
 
 		},
 		refresh: function () {

@@ -35,10 +35,15 @@
                 }
                 $('#page').addClass(this.active.get('id') + '-breakpoint');
 
-                if (this.active.get('default'))
+                if (this.active.get('default')) {
                     $('#page').removeClass('responsive-breakpoint').addClass('default-breakpoint');
-                else
+                }
+                else {
                     $('#page').removeClass('default-breakpoint').addClass('responsive-breakpoint');
+                }
+
+                // Final events that run the latest
+                Upfront.Events.trigger("upfront:layout_size:change_breakpoint:after", changed_model.toJSON(), prev_active_json);
             },
             on_change_enabled: function(changed_model) {
                 // If disabled point was active it will disapear and leave UI in broken state.

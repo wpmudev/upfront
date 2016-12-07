@@ -40,7 +40,6 @@ class Upfront_Layout extends Upfront_JsonModel {
 			if ($load_from_database) {
 				$id = $storage_key . '-' . $cascade[$o];
 				$layout = self::from_id($id, $storage_key);
-
 			}
 
 			// Always try to load from theme files if layout is empty
@@ -56,12 +55,11 @@ class Upfront_Layout extends Upfront_JsonModel {
 				return apply_filters('upfront_layout_from_id', $layout, self::id_to_type($id), self::$cascade);
 			}
 		}
-
+		
 		$id= false;
 		// If we're out of the loop and still empty, we really have to be doing something now...
 		if (!$layout || ($layout && $layout->is_empty())) {
 			$layout = self::from_files(array(), $cascade, $storage_key);
-
 			if (!$layout->is_empty()) {
 				$layout->set("current_layout", self::id_to_type($id));
 				$layout->set("template_type", "file");
@@ -80,10 +78,15 @@ class Upfront_Layout extends Upfront_JsonModel {
 			foreach ( $data['regions'] as $region ) {
 				if ( isset( $region['scope'] ) && $region['scope'] != 'local' ){
 					$applied_scope = self::_apply_scoped_region($region);
-					foreach ( $applied_scope as $applied_data ) {
-						if ( !in_array($applied_data['name'], $regions_added) ){
-							$regions[] = $applied_data;
-							$regions_added[] = $applied_data['name'];
+					if ( empty($applied_scope) ) {
+						// if empty because was deleted from Reset Layout (Upfront General - admin dashboard)
+						$regions[] = $region;
+					} else {
+						foreach ( $applied_scope as $applied_data ) {
+							if ( !in_array($applied_data['name'], $regions_added) ){
+								$regions[] = $applied_data;
+								$regions_added[] = $applied_data['name'];
+							}
 						}
 					}
 					continue;
@@ -91,7 +94,6 @@ class Upfront_Layout extends Upfront_JsonModel {
 				$regions[] = $region;
 			}
 		}
-
 		// Make sure we replace properties with global ones
 		$data["properties"] = self::get_layout_properties();
 		$data['regions'] = $regions;
@@ -130,16 +132,25 @@ class Upfront_Layout extends Upfront_JsonModel {
 						if ( $region['name'] != $region_data['name'] && $region['container'] != $region_data['name'] && $region['name'] != $region_data['container'] )
 							continue;
 						if ( isset($region['scope']) && $region['scope'] == $region_data['scope'] && !in_array($region_data['name'], $regions_added) ){
-							$regions[] = $region_data;
-							$regions_added[] = $region_data['name'];
+							// check if global region was not reset via Upfront General (admin dashboard)
+							$applied_scope_check = self::_apply_scoped_region($region);
+							if ( !empty($applied_scope_check) ) {
+								$regions[] = $region_data;
+								$regions_added[] = $region_data['name'];
+							}							
 						}
 					}
 					if ( !in_array($region['name'], $regions_added) ){
 						$applied_scope = self::_apply_scoped_region($region);
-						foreach ( $applied_scope as $applied_data ) {
-							if ( !in_array($applied_data['name'], $regions_added) ){
-								$regions[] = $applied_data;
-								$regions_added[] = $applied_data['name'];
+						if ( empty($applied_scope) ) {
+							// if empty because was deleted from Reset Layout (Upfront General - admin dashboard)
+							$regions[] = $region;
+						} else {
+							foreach ( $applied_scope as $applied_data ) {
+								if ( !in_array($applied_data['name'], $regions_added) ){
+									$regions[] = $applied_data;
+									$regions_added[] = $applied_data['name'];
+								}
 							}
 						}
 					}
@@ -215,10 +226,15 @@ class Upfront_Layout extends Upfront_JsonModel {
 		foreach ( $data['regions'] as $region ) {
 			if ( $region['scope'] != 'local' ){
 				$applied_scope = self::_apply_scoped_region($region);
-				foreach ( $applied_scope as $applied_data ) {
-					if ( !in_array($applied_data['name'], $regions_added) ){
-						$regions[] = $applied_data;
-						$regions_added[] = $applied_data['name'];
+				if ( empty($applied_scope) ) {
+					// if empty because was deleted from Reset Layout (Upfront General - admin dashboard)
+					$regions[] = $region;
+				} else {
+					foreach ( $applied_scope as $applied_data ) {
+						if ( !in_array($applied_data['name'], $regions_added) ){
+							$regions[] = $applied_data;
+							$regions_added[] = $applied_data['name'];
+						}
 					}
 				}
 				continue;
@@ -252,10 +268,15 @@ class Upfront_Layout extends Upfront_JsonModel {
 		foreach ( $regions_data as $i => $region ) {
 			if ( $region['scope'] != 'local' ){
 				$applied_scope = self::_apply_scoped_region($region);
-				foreach ( $applied_scope as $applied_data ) {
-					if ( !in_array($applied_data['name'], $regions_added) ){
-						$regions[] = $applied_data;
-						$regions_added[] = $applied_data['name'];
+				if ( empty($applied_scope) ) {
+					// if empty because was deleted from Reset Layout (Upfront General - admin dashboard)
+					$regions[] = $region;
+				} else {
+					foreach ( $applied_scope as $applied_data ) {
+						if ( !in_array($applied_data['name'], $regions_added) ){
+							$regions[] = $applied_data;
+							$regions_added[] = $applied_data['name'];
+						}
 					}
 				}
 				continue;
@@ -345,6 +366,9 @@ class Upfront_Layout extends Upfront_JsonModel {
 	 */
 	public static function get_default_layouts () {
 		$layouts = array(
+			'maintenance-mode' => array(
+				'layout' => self::get_maintenance_mode_layout_cascade()
+			),
 			'archive-home' => array(
 				'layout' => array(
 					'item' => 'archive-home',
@@ -377,6 +401,19 @@ class Upfront_Layout extends Upfront_JsonModel {
 		);
 
 		return apply_filters('upfront-core-default_layouts', $layouts);
+	}
+	
+	/**
+	 * Returns the default mainteanance page layout cascade
+	 *
+	 * @return (array) maintenance page layout cascade
+	 */
+	public static function get_maintenance_mode_layout_cascade () {
+		return array(
+			'specificity' => 'single-maintenance-mode_page',
+			'item' => 'single-page',
+			'type' => 'single',
+		);
 	}
 
 	/**

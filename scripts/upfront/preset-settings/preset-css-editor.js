@@ -1,7 +1,8 @@
 (function ($) {
 define([
-	'text!upfront/templates/popup.html'
-], function(popupTemplate) {
+	'text!upfront/templates/popup.html',
+	'scripts/perfect-scrollbar/perfect-scrollbar'
+], function(popupTemplate, perfectScrollbar) {
 	var l10n = Upfront.Settings && Upfront.Settings.l10n
 		? Upfront.Settings.l10n.global.views
 		: Upfront.mainData.l10n.global.views
@@ -213,6 +214,17 @@ define([
 			// Set up the proper vscroller width to go along with new change.
 			editor.renderer.scrollBar.width = 5;
 			editor.renderer.scroller.style.right = "5px";
+			// Add JS Scrollbar.
+			perfectScrollbar.withDebounceUpdate(
+				// Element.
+				this.$el.find('.ace_scrollbar')[0],
+				// Run First.
+				true,
+				// Event.
+				false,
+				// Initialize.
+				true
+			);
 
 			editor.focus();
 			this.editor = editor;

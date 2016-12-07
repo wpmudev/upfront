@@ -92,7 +92,7 @@ define([
 					}),
 					controls: new Upfront.Views.Editor.Field.Select({
 						model: this.model,
-						label: l10n.controls + ":",
+						label: l10n.map_controls + ":",
 						placeholder: l10n.choose_ctrl,
 						property: 'background_map_controls',
 						use_breakpoint_property: true,

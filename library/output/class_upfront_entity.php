@@ -126,6 +126,7 @@ abstract class Upfront_Entity {
 		$background_repeat = $this->_get_breakpoint_property('background_repeat', $breakpoint_id);
 		$background_fill = $this->_get_breakpoint_property('background_fill', $breakpoint_id);
 		$background_position = $this->_get_breakpoint_property('background_position', $breakpoint_id);
+		$background_size = $this->_get_breakpoint_property('background_size', $breakpoint_id);
 		$background_style = $this->_get_breakpoint_property('background_style', $breakpoint_id);
 		$background_image = preg_replace('/^https?:/', '', $background_image);
 		if (!$lazy_loading) {
@@ -136,7 +137,7 @@ abstract class Upfront_Entity {
 			$css[] = 'background-repeat: no-repeat';
 			$css[] = 'background-position: 50% 50%';
 		} else {
-			$css[] = 'background-size: auto auto';
+			$css[] = "background-size: $background_size";
 			$css[] = 'background-repeat: ' . $background_repeat;
 			$css[] = 'background-position: ' . $background_position;
 		}
@@ -148,8 +149,12 @@ abstract class Upfront_Entity {
 		$default_type = $this->get_background_type();
 		$css = array();
 		$background_color = $this->_get_breakpoint_property('background_color', $breakpoint_id);
+		$featured_fallback_background_color = $this->_get_breakpoint_property('featured_fallback_background_color', $breakpoint_id);
 		if ( !$type || in_array($type, array('image', 'color', 'featured')) ){
-			if ($background_color) {
+			// if featured and no featured image, set to fallback color
+			if ($featured_fallback_background_color && 'featured' == $type && !has_post_thumbnail(Upfront_Output::get_post_id())) {
+				$css[] = 'background-color: ' . $featured_fallback_background_color;
+			} else if ($background_color) {
 				$css[] = 'background-color: ' . $background_color;
 			}
 			if (!$this->_is_background_overlay($breakpoint_id)) {
@@ -247,6 +252,21 @@ abstract class Upfront_Entity {
 			if ('parallax' == $background_style) {
 				$attr .= 'data-bg-parallax=".upfront-bg-image"';
 			}
+
+			// What a mess!
+			// Okay, so now let's check if we're dealing with a "fixed" image
+			// "fixed" meaning fixed in position and size constraints.
+			// Apparently, same deal for "tile"...
+			if ('fixed' === $background_style || 'tile' === $background_style) {
+				// We do? Nice!
+				// Okay, so with that in mind, let's throw in some attributes,
+				// so that the background loading routine in layout.js
+				// stops breaking our carefully crafted inline CSS re:size and position
+				$ratio_kw = esc_attr($background_style);
+				$image_attr .= " data-bg-image-ratio-{$breakpoint_id}='{$ratio_kw}'";
+			}
+			// Okay, let's get on with our lives now...
+			
 			$markup = "<div class='upfront-bg-image upfront-image-lazy upfront-image-lazy-bg' style='{$image_css}' {$image_attr}></div>";
 		}
 		else if ('map' == $type) {
@@ -267,12 +287,25 @@ abstract class Upfront_Entity {
 			$auto = $this->_get_breakpoint_property('background_slider_rotate', $breakpoint_id);
 			$interval = $this->_get_breakpoint_property('background_slider_rotate_time', $breakpoint_id) * 1000;
 			$show_control = $this->_get_breakpoint_property('background_slider_control', $breakpoint_id);
+			$control_style = $this->_get_breakpoint_property('background_slider_control_style', $breakpoint_id);
 			$effect = $this->_get_breakpoint_property('background_slider_transition', $breakpoint_id);
 			$slide_attr = "data-slider-show-control='{$show_control}' data-slider-effect='{$effect}'";
 			if ( $auto )
 				$slide_attr .= " data-slider-auto='1' data-slider-interval='{$interval}'";
 			else
 				$slide_attr .= " data-slider-auto='0'";
+
+			if ($control_style === 'arrows') {
+				$slide_attr .= " data-control_num='0'";
+				$slide_attr .= " data-control_next_prev='1'";
+			} else if ($control_style === 'dots') {
+				$slide_attr .= " data-control_num='1'";
+				$slide_attr .= " data-control_next_prev='0'";
+			} else {
+				$slide_attr .= " data-control_num='1'";
+				$slide_attr .= " data-control_next_prev='1'";
+			}
+
 	    	foreach ( $images as $image ){
 	    		//$src = wp_get_attachment_image($image, 'full');
 	    		$src = upfront_get_attachment_image_lazy($image, 'full');

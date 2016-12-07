@@ -236,6 +236,11 @@
 #sidebar-ui #theme-colors-swatches .upfront-field-wrap {
     margin: 0;
 }
+
+#sidebar-ui #theme-colors-swatches .sp-container.sp-light.sp-alpha-enabled {
+	z-index: 99999999;
+}
+
 .panel-setting-theme-colors-meta {
     margin-top: 15px;
     line-height: 13px;

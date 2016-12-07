@@ -1,8 +1,9 @@
 (function ($) {
 define([
 	'scripts/upfront/preset-settings/preset-manager',
-	'scripts/upfront/element-settings/advanced-settings'
-], function (PresetManager, AdvancedSettings) {
+	'scripts/upfront/element-settings/advanced-settings',
+	'scripts/perfect-scrollbar/perfect-scrollbar'
+], function (PresetManager, AdvancedSettings, perfectScrollbar) {
 	var l10n = Upfront.Settings && Upfront.Settings.l10n
 		? Upfront.Settings.l10n.global.views
 		: Upfront.mainData.l10n.global.views
@@ -101,15 +102,6 @@ define([
 			Upfront.Events.trigger("element:settings:saved");
 			Upfront.Events.trigger("element:settings:deactivate");
 
-			var pluginsCallResult = Upfront.plugins.call('save-settings');
-
-			if (!pluginsCallResult.status || pluginsCallResult.status !== 'called') {
-				if ( _upfront_post_data.layout.specificity && _upfront_post_data.layout.item && !_upfront_post_data.layout.item.match(/-page/) )
-					Upfront.Events.trigger("command:layout:save_as");
-				else
-					Upfront.Events.trigger("command:layout:save");
-			}
-
 			if (this.onSaveSettings) this.onSaveSettings();
 
 			this.removePreviewClasses();
@@ -161,6 +153,18 @@ define([
 				panel.render();
 				panel.parent_view = me;
 				me.$el.find('#sidebar-scroll-wrapper').append(panel.el);
+
+				// Add JS Scrollbar.
+				perfectScrollbar.withDebounceUpdate(
+					// Element.
+					me.$el.find('#sidebar-scroll-wrapper')[0],
+					// Run First.
+					false,
+					// Event.
+					"menu_element:settings:rendered",
+					// Initialize.
+					true
+				);
 			});
 
 			this.$el.addClass('upfront-ui');
