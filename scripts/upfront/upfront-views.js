@@ -1818,7 +1818,7 @@ define([
 					"extra_buttons": extra_buttons
 				});
 
-        if (typeof model.properties.usingNewAppearance === 'undefined') model.properties.preset = '';
+				if (typeof model.properties.usingNewAppearance === 'undefined') model.properties.preset = '';
 
 				template = _.template(_Upfront_Templates["object"], model);
 
@@ -1914,6 +1914,9 @@ define([
 						this.model.set_property('preset', currentPreset, false);
 					}
 				}
+				
+				// Check if preset exist, if not replace with default
+				this.check_if_preset_exist();
 
 				//**
 				// * Make sure it's rendered and then adjust top panel position
@@ -1922,6 +1925,48 @@ define([
 				//	me.adjust_top_settings_panel_position();
 				//}, 150);
 
+			},
+			check_if_preset_exist: function() {
+				var preset = this.model.get_property_value_by_name('preset'),
+					elementType = this.model.get_property_value_by_name('type'),
+					type = this.get_element_type(elementType) || {}
+				;
+				
+				if(type.id === undefined) return;
+
+				var existingPresets = Upfront.mainData[type.id + 'Presets'];
+				
+				// Preset doesnt exist -> set default
+				if(!_.contains(existingPresets, preset)) {
+					this.model.set_property('preset', 'default', false);
+				}
+				
+			},
+			get_element_type: function(type) {
+				var elementTypes = {
+					UaccordionModel: { id: 'accordion'},
+					UcommentModel: { id: 'comment'},
+					UcontactModel: { id: 'contact'},
+					UgalleryModel: { id: 'gallery'},
+					UimageModel: { id: 'image'},
+					LoginModel: { id: 'login'},
+					LikeBox: { id: 'likebox'},
+					MapModel: { id: 'map'},
+					UnewnavigationModel: { id: 'nav'},
+					ButtonModel: { id: 'button'},
+					PostsModel: { id: 'posts'},
+					UsearchModel: { id: 'search'},
+					USliderModel: { id: 'slider'},
+					SocialMediaModel: { id: 'social'},
+					UtabsModel: { id: 'tab'},
+					ThisPageModel: { id: 'thispage'},
+					ThisPostModel: { id: 'thispost'},
+					UwidgetModel: { id: 'widget'},
+					UyoutubeModel: { id: 'youtube'},
+					PlainTxtModel: { id:'text'}
+				};
+
+				return elementTypes[type];
 			},
 			update: function (prop, options) {
 				if (typeof prop === 'undefined') return this.render();
