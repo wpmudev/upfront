@@ -82,18 +82,18 @@ class Upfront_Compat_Backup_Info {
 	public function get_plugin_action () {
 		if ($this->is_plugin_active()) return __('Backup with Snapshot', 'upfront');
 		if ($this->is_plugin_present() && current_user_can('activate_plugins')) return __('Activate Snapshot', 'upfront');
-		
+
 		return __('Install Snapshot', 'upfront');
 	}
 
 	/**
-	 * Check if we have Dashbaord plugin alive and active
+	 * Check if we have Dashboard plugin alive and active
 	 *
 	 * @return bool
 	 */
 	private function _has_dashboard () {
-		if (!class_exists('WPMUDEV_Dashboard')) return false;
-		
+		if (Upfront_Compat::has_dashboard()) return false;
+
 		if (!empty(WPMUDEV_Dashboard::$site) && is_callable(array(WPMUDEV_Dashboard::$site, 'allowed_user'))) {
 			return WPMUDEV_Dashboard::$site->allowed_user();
 		}
