@@ -82,6 +82,10 @@ var LinkView = Backbone.View.extend({
 			var selectorOptions = {postTypes: this.post_types()};
 			Upfront.Views.Editor.PostSelector.open(selectorOptions).done(function (post){
 				me.model.set({linkType: 'post', linkUrl: post.get('permalink')});
+				// Also trigger an event to propagate our selection.
+				// This is so the inline link dialog doesn't have to be
+				// re-opened in order for user to *click* OK to apply
+				me.trigger("post:selected");
 			});
 		} else {
 			this.model.set({linkType: type, linkUrl: url});

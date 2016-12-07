@@ -167,28 +167,43 @@ var UeditorInsert = Backbone.View.extend({
 					control.sub_items = subItems;
 				}
 
-				me.controls.listenTo(control, 'select', function(item){
+				me.controls.listenTo(control, 'select', function (item) {
 					me.controls.trigger('control:select:' + control.id, item);
 				});
-			}
-			else if(controlData.type == 'dialog'){
+			} else if(controlData.type == 'dialog') {
 				control = new Controls.DialogControl();
 				control.view = controlData.view;
-				me.controls.listenTo(control, 'panel:ok', function(view){
+				
+				me.controls.listenTo(control, 'panel:ok', function (view) {
 					me.controls.trigger('control:ok:' + control.id, view, control);
 				});
 
-				me.controls.listenTo(control, 'panel:open', function(){
+				// Special-case handling for post selection dialog.
+				// This is added here so the user doesn't have to re-open
+				// the link type dialog to *click* OK to have her link actually
+				// applied. They already selected it once, now we propagate.
+				me.controls.listenTo(control.view, 'post:selected', function () {
+					// The inline panel link control for images should
+					// now receive the event as if we had clicked "OK"
+					me.controls.trigger(
+						'control:ok:' + control.id, 
+						control.view, 
+						control
+					);
+				});
+
+				me.controls.listenTo(control, 'panel:open', function () {
 					me.controls.$el.addClass('uinsert-control-visible');
 					me.$el.addClass('nosortable');
 				});
-				me.controls.listenTo(control, 'panel:close', function(){
+
+				me.controls.listenTo(control, 'panel:close', function () {
 					me.controls.$el.removeClass('uinsert-control-visible');
 					me.$el.removeClass('nosortable');
 				});
 			}
 
-			if(control){
+			if (control) {
                 _.extend(control, controlData);
 				items.push(control);
 			}
