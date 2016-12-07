@@ -102,15 +102,6 @@ define([
 			Upfront.Events.trigger("element:settings:saved");
 			Upfront.Events.trigger("element:settings:deactivate");
 
-			var pluginsCallResult = Upfront.plugins.call('save-settings');
-
-			if (!pluginsCallResult.status || pluginsCallResult.status !== 'called') {
-				if ( _upfront_post_data.layout.specificity && _upfront_post_data.layout.item && !_upfront_post_data.layout.item.match(/-page/) )
-					Upfront.Events.trigger("command:layout:save_as");
-				else
-					Upfront.Events.trigger("command:layout:save");
-			}
-
 			if (this.onSaveSettings) this.onSaveSettings();
 
 			this.removePreviewClasses();
