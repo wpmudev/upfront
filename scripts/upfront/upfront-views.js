@@ -1740,7 +1740,7 @@ define([
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint:after", this.on_change_breakpoint_after);
 				this.listenTo(Upfront.Events, "upfront:grid:updated", this.on_grid_update);
 				//this.listenTo(Upfront.Events, "entity:wrapper:update_position", this.on_wrapper_update);
-				
+
 				// Check if preset exist, if not replace with default
 				this.check_if_preset_exist();
 
@@ -1797,7 +1797,6 @@ define([
 					this.$el.removeClass(oldThemeStyle);
 					this.$el.addClass(props.preset);
 				}
-
 
 				var row = this.model.get_breakpoint_property_value('row', true);
 				height = ( row ) ? row * Upfront.Settings.LayoutEditor.Grid.baseline : 0;
@@ -1934,14 +1933,46 @@ define([
 
 				if(type.id === undefined) return;
 
-				var existingPresets = Upfront.mainData[type.id + 'Presets'];
+				var existingPresets = Upfront.mainData[type.id + 'Presets'],
+					existingIds = this.get_preset_ids(existingPresets)
+				;
 
 				// Preset doesnt exist -> set default
-				if(!_.contains(existingPresets, preset)) {
-					this.model.set_property('current_preset', 'default', false);
-					this.model.set_property('preset', 'default', false);
+				if(!_.contains(existingIds, preset)) {
+					this.model.set_property('current_preset', 'default', true);
+					this.model.set_property('preset', 'default', true);
 					this.render();
 				}
+				
+				var breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled() || {},
+					breakpoint_presets = this.model.get_property_value_by_name("breakpoint_presets") || {}
+				;
+				
+				
+				// Update breakpoint presets
+				_.each(breakpoints, function (breakpoint) {
+					if(typeof breakpoint_presets[breakpoint.id] !== "undefined" && breakpoint_presets[breakpoint.id].preset) {
+						var actualPreset =  breakpoint_presets[breakpoint.id].preset;
+						if(!_.contains(existingIds, actualPreset)) {
+							// Overwrite current preset with default
+							actualPreset = 'default';
+						}
+						
+						// Update breakpoint value
+						breakpoint_presets[breakpoint.id] = {preset: actualPreset};
+					}
+				});
+
+				this.model.set_property('breakpoint_presets', breakpoint_presets, true);
+			},
+			get_preset_ids: function(presets) {
+				var preset_ids = [];
+				
+				_.each(presets, function(preset){
+					preset_ids.push(preset.id);
+				});
+				
+				return preset_ids;
 			},
 			get_element_type: function(type) {
 				var elementTypes = {
