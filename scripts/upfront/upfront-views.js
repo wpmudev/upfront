@@ -3377,6 +3377,7 @@ define([
 				this.hidden = false;
 				this.on('entity:resize_stop', this.on_resize, this);
 			},
+			// Update the size hints for elements when editing groups.
 			update_group_size_hints: function() {
 				var grid = Upfront.Settings.LayoutEditor.Grid,
 					selection_type = this.get_selection_type,

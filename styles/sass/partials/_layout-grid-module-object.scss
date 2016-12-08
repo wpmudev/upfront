@@ -288,6 +288,7 @@
 	background: rgba(44, 62, 80, 0.3)
 }
 
+.upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-module,
 .upfront-module:hover,
 .upfront-object-group-on-edit .upfront-object:hover {
 	/*background-color: rgba(255,255,255,0.3);*/
@@ -663,19 +664,44 @@
   z-index: 81;
   display: none !important;
 }
-.upfront-wrapper-meta:before {
+
+.upfront-resize-handle-group:before,
+.upfront-resize-handle-element:before {
 	content: "";
 	position: absolute;
-	left: 4px;
+	left: -4px;
 	right: 0;
 	top: 50%;
 	bottom: 50%;
 	background: #fff;
 	border-radius: 0;
 	border: 1px solid #48596a;
-	z-index: -1;
+	z-index: 1;
 	height: 7px;
 	width: 7px;
+}
+
+.upfront-resize-handle-group,
+.upfront-resize-handle-element {
+    position: absolute;
+    right: auto;
+    left: 0;
+    top: 50%;
+    bottom: 50%;
+	display: none;
+}
+
+.upfront-resize-handle-group-right,
+.upfront-resize-handle-element-right {
+	right: 0;
+	left: auto;
+}
+
+/* Display handles upon element hover. */
+.upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-resize-handle-element,
+.upfront-module-group:hover .upfront-modules_container > .upfront-resize-handle-group,
+.upfront-object-view:hover .upfront-resize-handle-element {
+	display: block;
 }
 
 .upfront-wrapper-meta.upfront-resize-handle-wrapper:before {
@@ -686,6 +712,7 @@
   box-shadow: none;
   z-index: -1;
 }
+
 .upfront-wrapper:not(.upfront-inline-panel-item-open):hover > .upfront-wrapper-meta,
 .upfront-wrapper-active > .upfront-wrapper-meta,
 .upfront-wrapper.ui-resizable-resizing > .upfront-wrapper-meta,
@@ -756,8 +783,9 @@
 	display: inline-block;
 	border-radius: 50%;
 	vertical-align: middle;
+	border: 1px solid #1E2F3F;
 }
-.upfront-module-group .upfront-entity-size-hint-color {
+.upfront-module-group:not(.upfront-module-group-on-edit) .upfront-entity-size-hint-color {
 	background: rgba(248, 210, 111, 1);
 }
 .upost-data-object ~ .upfront-entity-size-hint .upfront-entity-size-hint-color {
