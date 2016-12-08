@@ -103,22 +103,38 @@ public function forbidden_post_data_types($types) {
 	 */
 	public function override_entity_ids ($cascade) {
 		$theme = Upfront_Theme::get_instance();
+
 		if (!empty($cascade['item']) && 'single-product' === $cascade['item']) {
 			// Let's test if a theme supports Woo product layouts.
 			// As in, does this theme have single-product ready-made layouts?
 
 			// If it doesn't, let's emulate - we'll be single pages here
 			if (!$theme->has_theme_layout('single-product')) $cascade['item'] = 'single-page';
-		}
 
-		if (!empty($cascade['specificity']) && $cascade['specificity'] === 'single-page-' . wc_get_page_id('cart')) {
-			if ($theme->has_theme_layout('single-page-woocart')) $cascade['specificity'] = 'single-page-woocart';
-		}
-		if (!empty($cascade['specificity']) && $cascade['specificity'] === 'single-page-' . wc_get_page_id('checkout')) {
-			if ($theme->has_theme_layout('single-page-woocheckout')) $cascade['specificity'] = 'single-page-woocheckout';
-		}
-		if (!empty($cascade['specificity']) && $cascade['specificity'] === 'single-page-' . wc_get_page_id('myaccount')) {
-			if ($theme->has_theme_layout('single-page-woomyaccount')) $cascade['specificity'] = 'single-page-woomyaccount';
+		} else if (!empty($cascade['specificity'])) {
+			// Swap single-page-{number} with specific layouts
+			$s = $cascade['specificity'];
+			$layouts = array(
+				'single-page-woocart'      => 'single-page-' . wc_get_page_id('cart'),
+				'single-page-wooccheckout' => 'single-page-' . wc_get_page_id('checkout'),
+				'single-page-woomyaccount' => 'single-page-' . wc_get_page_id('myaccount'),
+			);
+
+			foreach ($layouts as $slug=>$specificity) {
+				if ($s === $specificity) {
+					if ($theme->has_theme_layout($slug)) $cascade['specificity'] = $slug;
+					break;
+				}
+			}
+
+		} else {
+			// If all else fails try to find out if this really isn't the shop page.
+			// When in General > Permalinks > Product Permalinks
+			// selected value is not Default, shop page resolves to archive instead archive-product
+			global $wp_query;
+			if (empty($cascade['item']) && $wp_query->is_archive && $wp_query->queried_object_id === wc_get_page_id('shop')) {
+				$cascade['item'] = 'archive-product';
+			}
 		}
 
 		return $cascade;
