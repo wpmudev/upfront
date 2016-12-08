@@ -1,8 +1,12 @@
 /* GENERAL FORM STYLE 
 	 ================== */
+	 
+.upfront_login-block .upfront_login-form {
+	padding: 10px;
+}	 
+
 .upfront_login-form form input {
 	height:40px;
-	border:3px solid #ceddea;
 	background-color: #fff;
 	padding:0 10px;
 }
@@ -10,25 +14,26 @@
 	border-color: #aec4d8;
 	outline:none;
 }
-.upfront_login-form form input[type="submit"]{
-	border: 2px solid #269a47;
-	background-color: #2cad4a;
+.upfront_login-form form input[type="submit"] {
+	background-color: #1b7bd7;
 	color: #fff;
 	width: 100%;
 	text-align: center;
+	font:16px/2.2 Arial;
+	color: #fff;
 }
 .upfront_login-form form input[type="submit"]:hover {
-	background-color: #269a47;
+	background-color: #1770c5;
 }
 .upfront_login-form form input[type="checkbox"]{
 	height:20px;
-	margin-bottom:15px;
 	position: relative;
 	top: 3px;
 }
 /*.upfront_login-form form label, .upfront_login-form p { color:#6486a6; }*/
 .upfront_login-form p { margin-bottom: 0; text-align: center; }
-.upfront_login-form p a { color:#39a678; }
+.upfront_login-form p span { display: block; }
+.upfront_login-form p a { color:#1b7bd7; }
 
 
 /* HOVER FORM 
@@ -60,18 +65,18 @@
 .upfront_login.upfront_login-click .upfront_login-form {
 	position: relative;
 	display: block;
-	background-color: #fff;
+	background-color: rgb(232, 232, 232);
 	border-radius: 3px;
 	cursor: default;
-	border:2px solid #527caa;
-	top:20px;
+	border:none;
+	top:35px;
 	left:0;
 	padding:15px;
 	padding-bottom: 5px;
 }
 
 /* triangular tooltip */
-.upfront_login.upfront_login-hover:hover .upfront_login-form:before,
+/*.upfront_login.upfront_login-hover:hover .upfront_login-form:before,
 .upfront_login.upfront_login-click.active .upfront_login-form:before {
 	content:'';
 	display:inline-block;
@@ -85,49 +90,24 @@
 	position:absolute;
 	top:-7px;
 	left:25%;
-}
+}*/
 .upfront_login.upfront_login-hover .upfront_login-form label,
 .upfront_login.upfront_login-click .upfront_login-form label
  { text-align: left; display: block;}
 
 .upfront_login.upfront_login-hover:hover .upfront_login-trigger,
-.upfront_login.upfront_login-click.active .upfront_login-trigger {
+.upfront_login.upfront_login-click.active .upfront_login-trigger,
+.upfront-output-upfront-login_element a.logout_link {
 	display: inline-block;
 }
 
-/* Click */
-/*
-.upfront_login.upfront_login-click .upfront_login-form form input[type="submit"]{
-	width: 70%;
+/* login trigger default styles */
+.upfront_login-trigger {
+	font: 15px/1 Arial;
+	color: #000;
+	padding:10px;
+	background: #e8e8e8;
 }
-.upfront_login.upfront_login-click .login-username, 
-.upfront_login.upfront_login-click .login-password { margin-bottom: 15px; }
-.upfront_login.upfront_login-click .upfront_login-form {
-	display: none;
-}
-.upfront_login.upfront_login-click {
-	z-index: 0;
-}
-.upfront_login.upfront_login-click.active {
-	background: rgba(38,58,77,.8);
-	position: fixed;
-	top: 0; left: 0;
-	bottom: 0; right: 0;
-	z-index: 9;
-	padding-top: 5em;
-}*/
-/*.upfront_login.upfront_login-click.active .upfront_login-form {
-	display: block;
-	background: #fff;
-	z-index: 10;
-	width: 80%;
-	max-width: 350px;
-	margin: 0 auto;
-	padding: 2em;
-}*/
-/*.upfront_login.upfront_login-click.active .upfront_login-trigger {
-	display: none;
-}*/
 
 /* css animation */
 .upfront_login.upfront_login-hover .upfront_login-form,
@@ -185,24 +165,20 @@
 	animation-name: fadeInDown;
 }
 
-
-
-
-
-
-
-
 div.upfront-output-upfront-login_element form#loginform input:not([type=checkbox]) {
   width: 100%;
   padding:0 10px;
   box-sizing: border-box;
 }
 
+div.upfront-output-upfront-login_element form#loginform input.upfront-input-labels {
+	padding: 0;
+}
 
 div.upfront-output-upfront-login_element form#loginform p {
   text-align:left;
   line-height: 1.2;
-  margin-top:1em
+  margin-bottom: 10px;
 }
 
 div.upfront-output-upfront-login_element form#loginform label {
@@ -216,19 +192,4 @@ div.upfront-output-upfront-login_element form#loginform label:not(.uf-click-to-e
 input#rememberme {
   width:18px;
   height:18px;  
-  vertical-align:middle;
-  margin-right:10px
-}
-input#rememberme:before {
-  content:'';
-  display: block;
-  width:100%;
-  height:100%;
-  border:3px solid #CEDDEA;
-  background-color:#fff;
-}
-input#rememberme:checked:before {
-	background-position: -733px -138px;
-	background-image: url('../../../img/uf-ui-sprite.svg');
-	background-repeat: no-repeat;
 }

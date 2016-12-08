@@ -657,7 +657,8 @@ RedactorPlugins.upfrontIcons = function() {
                 'click .ueditor-font-icon': 'insert_icon',
                 'open': 'open',
                 'toolbarClosed': "close",
-                'change .upfront-font-icons-controlls input': "input_change"
+                'change .upfront-font-icons-controlls input': "input_change",
+                'keydown .upfront-font-icons-controlls input': "input_key_down"
             },
             render: function (options) {
                 this.$el.html(this.tpl({icons: Upfront.mainData.font_icons }));
@@ -702,6 +703,7 @@ RedactorPlugins.upfrontIcons = function() {
 
                 this.closeToolbar();
             },
+
             input_change: function(e){
                 var $sel = this.$sel;
                 e.stopPropagation();
@@ -709,15 +711,28 @@ RedactorPlugins.upfrontIcons = function() {
                 var $input = $(e.target),
                     val = $input.val() + "px";
 
-                if ($input.hasClass("font-icons-size")) {
+                if ($input.hasClass("font-icons-size") && $sel) {
                     $sel.css("font-size", val);
                 }
 
-                if ($input.hasClass("font-icons-top")) {
+                if ($input.hasClass("font-icons-top") && $sel) {
                     $sel.css("top", val);
                 }
                 this.redactor.code.sync();
             },
+
+						input_key_down: function(e) {
+							// If key is return close panel.
+							if (e.which === 13) {
+								// Keep from entering return symbol.
+								e.preventDefault();
+								// Close Panel and Toolbar on Enter.
+								this.closePanel();
+								this.closeToolbar();
+								this.redactor.dropdown.hideAll();
+							}
+						},
+
             set_current_icon: function () {
                 var $sel = $(this.redactor.selection.getCurrent()).last(),
                     self = this;
@@ -731,9 +746,8 @@ RedactorPlugins.upfrontIcons = function() {
                     this.$(".font-icons-top").val(parseFloat($sel.css("top")));
                 }
             }
-
         }))
-    }
+    };
 };
 
 /*--------------------
@@ -814,7 +828,7 @@ RedactorPlugins.upfrontLink = function() {
                 // this function is better called in 'this.open()', no point having it executed without a linkModel.
                 if(typeof(this.linkModel) === 'undefined')
                     return;
-                
+
 				var linkTypes = {},
 					me = this;
 
@@ -837,6 +851,10 @@ RedactorPlugins.upfrontLink = function() {
 				this.listenTo(this.linkPanel, 'linkpanel:close', function() {
 					// Didn't find any function to do this, so go raw
 					$('a.re-upfrontLink').click().removeClass('dropact redactor_act');
+					// Preserve caret position, or it will just reset to 0 after selection is removed.
+					var caretOffset = me.redactor.caret.getOffset();
+					me.redactor.selection.remove();
+					me.redactor.caret.setOffset(caretOffset);
 				});
 
 				this.linkPanel.render();
@@ -912,7 +930,7 @@ RedactorPlugins.upfrontLink = function() {
                         .replace(/>/g, ctm)
                     ;
                     this.redactor.selection.replaceWithHtml(selectedText);
-                    
+
 					this.redactor.link.set(selectedText, this.linkModel.get('url'), this.linkModel.get('target'));
 					// Now select created link
 					this.selectedLink = this.redactor.utils.isCurrentOrParent('A');
@@ -1150,13 +1168,29 @@ RedactorPlugins.upfrontColor = function() {
                 tablist.children('li').on('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    tablist.children('li').removeClass('active');
-                    $(this).addClass('active');
-                    tabs.children('li').removeClass('active');
-                    tabs.children('li#' + $(this).attr('id') + '-content').addClass('active');
 
-                    self.$('input.foreground').spectrum('option', 'color', typeof(self.current_color) == 'object' ? self.current_color.toRgbString() : self.current_color);
-                    self.$('input.background').spectrum('option', 'color', typeof(self.current_bg) == 'object' ? self.current_bg.toRgbString() : self.current_bg);
+					var $list_items = self.$el.find(".tablist li"),
+						$content_hub = self.$el.find(".tabs"),
+						$me = $(this),
+						$content_item = $content_hub.children('li#' + $me.attr('id') + '-content')
+					;
+                    $list_items.removeClass('active');
+                    $me.addClass('active');
+
+					$content_hub.children('li').removeClass('active');
+                    $content_item.addClass('active');
+					$content_item.find(".sp-container").removeClass("sp-hidden");
+
+                    self.$('input.foreground').spectrum(
+						'option',
+						'color',
+						(self.current_color && 'object' === typeof(self.current_color) ? self.current_color.toRgbString() : self.current_color) || ''
+					);
+                    self.$('input.background').spectrum(
+						'option',
+						'color',
+						(self.current_bg && 'object' === typeof(self.current_bg) ? self.current_bg.toRgbString() : self.current_bg) || ''
+					);
                 });
 
                 this.$el.html(tablist).append(tabs);

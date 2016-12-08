@@ -345,6 +345,47 @@ class Upfront_MacroCodec_Wordpress extends Upfront_SimpleExpansionMacroCodec {
 			'site_description' => get_bloginfo('description', 'display'),
 		);
 	}
+
+	/**
+	 * Standalone shortcode expansion wrapper
+	 *
+	 * We do this in order to allow for additional
+	 * hooks exposure.
+	 *
+	 * @param string $content Content to be processed
+	 *
+	 * @return string Processed content
+	 */
+	public function do_shortcode ($content) {
+		if (!$this->can_process_shortcodes()) return $content;
+
+		/**
+		 * Expose the shortcode processing action
+		 *
+		 * This is useful for plugins such as Appointments+,
+		 * that do shortcode detection in order to enqueue
+		 * their FE stuff.
+		 *
+		 * @param string $content Content, before shortcode processing
+		 */
+		do_action('upfront-shortcode-content', $content);
+
+		$content = do_shortcode($content);
+
+		return $content;
+	}
+	
+	/**
+	 * Check whether we're able to process shortcodes in layout elements
+	 *
+	 * @return bool
+	 */
+	public function can_process_shortcodes () {
+		return apply_filters(
+			'upfront-shortcode-enable_in_layout',
+			(defined('UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES') && UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES ? false : true)
+		);
+	}
 }
 
 

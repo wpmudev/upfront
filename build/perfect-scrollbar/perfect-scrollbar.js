@@ -1,0 +1,1 @@
+!function(e){define(["scripts/perfect-scrollbar/perfect-scrollbar-library"],function(e){return e.withDebounceUpdate=function(n,t,r,i){"undefined"!=typeof i&&e.initialize(n,{suppressScrollX:!0});var o=_.debounce(function(){e.update(n)},500,t);"undefined"!=typeof r&&Upfront.Events.on(r,o),setTimeout(o)},e})}(jQuery);

@@ -1,7 +1,7 @@
 #upfront-popup .upfront-social-media-save_settings
 {
     width: auto;
-    font-family: 'Source Sans Pro';
+    font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
     background: #1fcd8f;
     border: none !important;
     border-radius:0;
@@ -273,7 +273,7 @@
     font-weight: bold;
     color: #6b8399;
     font-size: 15px;
-    font-family: 'Source Sans Pro';
+    font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
     margin-top: 9px;
     margin-bottom: 15px;
 }

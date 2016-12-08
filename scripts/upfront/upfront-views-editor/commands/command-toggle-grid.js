@@ -12,14 +12,13 @@
             className: "command-grid",
             render: function () {
                 this.$el.addClass('upfront-icon upfront-icon-grid');
-                //this.$el.html('Toggle grid');
                 this.$el.prop("title", l10n.toggle_grid);
                 this.listenTo(Upfront.Events, "entity:region:added", this.update_grid);
                 this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.update_grid);
                 this.listenTo(Upfront.Events, "grid:toggle", this.on_click);
             },
             on_click: function () {
-                $('.upfront-overlay-grid').size() || this.create_grid();
+                if (!$('.upfront-overlay-grid').size()) this.create_grid();
                 this.toggle_grid();
             },
             create_grid: function () {
@@ -27,10 +26,8 @@
                 //this.attach_event();
             },
             toggle_grid: function () {
-                if(!Upfront.Application.get_gridstate())
-                    this.show_grid();
-                else
-                    this.hide_grid();
+                if (!Upfront.Application.get_gridstate()) this.show_grid();
+                else this.hide_grid();
             },
             show_grid: function () {
                 this.$el.addClass('upfront-icon-grid-active');
@@ -55,7 +52,7 @@
                     Upfront.Application.adjust_grid_padding_settings(this);
                 });
 
-                !Upfront.Application.get_gridstate() || this.show_grid();
+                if (!!Upfront.Application.get_gridstate()) this.show_grid();
             }
         });
 

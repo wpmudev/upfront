@@ -7,6 +7,9 @@ class Upfront_Server_PageLayout extends Upfront_Server {
 
 	private static $_instance;
 
+	/**
+	 * @var $_data  Upfront_PageLayout
+	 */
 	private $_data;
 
 	public static function get_instance () {
@@ -71,6 +74,7 @@ class Upfront_Server_PageLayout extends Upfront_Server {
 		if (empty($layout_id)) return false;
 
 		$layout = $this->_data->get_page_layout($layout_id, $load_dev);
+
 		if (empty($layout)) return false;
 
 		return $layout;
@@ -123,7 +127,18 @@ class Upfront_Server_PageLayout extends Upfront_Server {
 	}
 
 	public function db_layout_to_name ($item) {
-		if ( !is_array($item) && !isset($item['source']) ) return Upfront_EntityResolver::db_layout_to_name($item);
+		
+		// bypass layout name if maintenance page
+		if ( is_array($item) && isset($item['name']) && isset($item['source']) && $item['source'] == 'cpt' ) {
+			// extract page id
+			preg_match_all('!\d+!', $item['name'], $matches);
+			$page_id = ( isset($matches[0]) ) ? (int) implode('',$matches[0]) : false;
+			if ( upfront_is_maintenance_page($page_id) ) {
+				return Upfront_EntityResolver::layout_to_name(Upfront_Layout::get_maintenance_mode_layout_cascade());
+			}
+		}
+		
+		if ( !is_array($item) ) return Upfront_EntityResolver::db_layout_to_name($item);
 
 		return ucwords(preg_replace(array('/-layout/', '/[\-]/'), array('',' '), $item['name']));
 	}
@@ -203,6 +218,21 @@ class Upfront_Server_PageLayout extends Upfront_Server {
 		return $layout;
 	}
 
+	/**
+	 * Returns layout by $slug
+	 *
+	 * @param $slug
+	 * @param $load_dev
+	 * @return array|bool
+	 */
+	public function get_layout_by_slug($slug, $load_dev){
+
+		// Dumb quick check to make sure that what we try to resolve here
+		// doesn't resemble something that's not a single page layout
+		if (preg_match('/-archive-/', $slug)) return false;
+
+		return $this->_data->get_by_slug( $slug, $load_dev );
+	}
 }
 // Upfront_Server_PageLayout::serve();
 add_action('init', array('Upfront_Server_PageLayout', 'serve'), 0);

@@ -64,6 +64,6 @@ define([
 		}
 	});
 
-	return BaseModule
+	return BaseModule;
 });
 })(jQuery);

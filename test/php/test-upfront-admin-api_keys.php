@@ -28,6 +28,17 @@ class Upfront_Admin_ApiKeys_Test  extends WP_UnitTestCase {
 		Upfront_Tests::stop_identifying();
 	}
 
+	public function test_output () {
+		ob_start();
+		do_action('upfront-core-inject_dependencies');
+		$out = ob_get_clean();
+
+		$this->assertNotEmpty($out, "Scraped output is not empty");
+
+		$has_keys = !!preg_match('/_upfront_api_keys/', $out);
+		$this->assertTrue($has_keys, "Output has global keys");
+	}
+
 
 
 }

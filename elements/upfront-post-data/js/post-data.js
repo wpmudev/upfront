@@ -65,6 +65,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 			this.listenTo(this.parent_module_view, 'update_position', this.update_position);
 		}
 
+		this.listenTo(Upfront.Events, 'entity:drop:before_render', this.set_prev_region_container);
 		this.update_height();
 	},
 
@@ -95,7 +96,9 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		this.$el.find('.upfront-object-content').empty().append(markup);
 		this.adjust_featured_image();
 		this.adjust_inserted_image();
-		this.prepare_editor();
+		if ( Upfront.Application.is_editor() ) {
+			this.prepare_editor();
+		}
 
 		// Show full image if we are in mobile mode
 		if(type === "featured_image") {
@@ -128,10 +131,12 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 	},
 
 	/**
-	 * Part objects do *NOT* get individual control items - parent group does
+	 * Part objects has only padding control
 	 */
 	getControlItems: function () {
-		return _([]);
+		var controls = [];
+		controls.push(this.createPaddingControl());
+		return _(controls);
 	},
 
 	/**
@@ -277,6 +282,10 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		if ( type == 'featured_image' && !this.object_group_view.mobileMode ) {
 			this.remove_region_class('upfront-region-container-has-' + type, true);
 		}
+
+
+		if( this.prev_region_container )
+			this.prev_region_container.removeClass( 'upfront-region-container-has-' + type );
 	},
 
 	adjust_featured_image: function () {
@@ -342,6 +351,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		if ( type != 'content' ) return;
 		var me = this,
 			ed = Upfront.Behaviors.GridEditor,
+			breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 			pos = ed.get_position(this.$el.find('> .upfront-object')),
 			left_indent = parseInt(this.object_group_view.get_preset_property('left_indent'), 10),
 			right_indent = parseInt(this.object_group_view.get_preset_property('right_indent'), 10),
@@ -365,7 +375,7 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 				else if ( 'right' == variant.group['float'] ) {
 					group_margin_right = ( right_indent - Math.abs(margin_right) ) * ed.col_size;
 				}
-				else if ( 'none' == variant.group['float'] ) {
+				else if ( 'none' == variant.group['float'] && ( !breakpoint || breakpoint['default'] ) ) {
 					group_margin_left = ( left_indent - Math.abs(margin_left) + Math.abs(left) ) * ed.col_size;
 					variant_max_col -= left;
 				}
@@ -390,6 +400,16 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 				this.editor_view
 			);
 		}
+	},
+	/**
+	 * Sets previous region container when element is moved to a new region
+	 *
+	 * @event Upfront.Events::entity:drop:render
+	 * @param dragdrop
+	 * @param region_container
+     */
+	set_prev_region_container: function( dragdrop, region_container){
+		this.prev_region_container = region_container;
 	}
 
 });
@@ -403,6 +423,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 		this.listenTo(Upfront.Events, 'editor:post:tax:updated', this.update_categories);
 
+
 		/*_.extend(this.events, {
 			'click .upfront-post-part-trigger': 'on_edit_click'
 		});*/
@@ -415,6 +436,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 		this.delegateEvents();
 	},
+
 
 	get_extra_buttons: function(){
 		//return '<a href="#" title="' + l10n.edit_post_parts + '" class="upfront-icon-button upfront-icon-button-nav upfront-post-part-trigger"></a>';
@@ -740,6 +762,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		else {
 			this.constructor.__super__.on_element_edit_stop.call(this, edit, post, saving_draft);
 		}
+		Upfront.Events.trigger('entity:object:refresh', this);
 	},
 
 	checkSize: function() {
@@ -748,8 +771,10 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		var maskSize = this.model.get_breakpoint_property_value('element_size', true),
 			size = imageData.imageSize;
 
-		if(size.width >= maskSize.width && size.height >= maskSize.height) {
-			return 'big';
+		if ( typeof size !== 'undefined' && typeof maskSize !== 'undefined' ) {
+			if(size.width >= maskSize.width && size.height >= maskSize.height) {
+				return 'big';
+			}
 		}
 
 		return 'small';
@@ -764,7 +789,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		if ( !this.is_featured_image_set() ) return;
 		// Retrieve image data from post meta
 		var imageData = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data');
-
+		if ( typeof imageData === 'undefined' ) return;
 		// Store variables used in resize event handlers
 		this.resizingData = {
 			data: {
@@ -1277,7 +1302,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		Upfront.Events.trigger("featured:image:resized", newImageData);
 
 		import_promise.done(function(){
-			imageId = me.resizingData.data.imageId,
+			imageId = me.resizingData.data.imageId;
 			Upfront.Views.Editor.ImageEditor.saveImageEdition(
 				imageId,
 				me.resizingData.data.rotation,
@@ -1544,7 +1569,9 @@ var PostDataElement_Meta = PostDataElement.extend({
  * Add the elements to Upfront, only when in single layout. Place the element in DataElement.
  */
 function add_elements () {
-	if ( 'type' in _upfront_post_data.layout && 'single' === _upfront_post_data.layout.type ) {
+	var pluginLayout = Upfront.Application.is_plugin_layout();
+
+	if ( Upfront.Application.is_single() && !Upfront.Application.is_single('404_page') ) {
 		Upfront.Application.LayoutEditor.add_object("Upostdata-post_data", {
 			"Model": PostDataModel,
 			"View": PostDataView,
@@ -1560,97 +1587,104 @@ function add_elements () {
 			cssSelectorsId: 'post_post_data'
 		});
 
-		Upfront.Application.LayoutEditor.add_object("Upostdata-author", {
-			"Model": PostDataModel,
-			"View": PostDataView,
-			"DataElement": PostDataElement_Author,
-			"Settings": PostDataSettings,
-			cssSelectors: {
-				'.author': {label: l10n.css.author_author_label, info: l10n.css.author_author_info},
-				'.author a': {label: l10n.css.author_author_link_label, info: l10n.css.author_author_link_info},
-				'.gravatar': {label: l10n.css.author_gravatar_label, info: l10n.css.author_gravatar_info},
-				'.author-email': {label: l10n.css.author_email_label, info: l10n.css.author_email_info},
-				'.author-email a': {label: l10n.css.author_email_link_label, info: l10n.css.author_email_link_info},
-				'.author-url': {label: l10n.css.author_url_label, info: l10n.css.author_url_info},
-				'.author-url a': {label: l10n.css.author_url_link_label, info: l10n.css.author_url_link_info},
-				'.author-bio': {label: l10n.css.author_bio_label, info: l10n.css.author_bio_info}
-			},
-			cssSelectorsId: 'post_author'
-		});
-
-		if( !Upfront.Application.is_single("page") )
-			Upfront.Application.LayoutEditor.add_object("Upostdata-taxonomy", {
+		if (_.isUndefined(pluginLayout)) {
+			Upfront.Application.LayoutEditor.add_object("Upostdata-author", {
 				"Model": PostDataModel,
 				"View": PostDataView,
-				"DataElement": PostDataElement_Taxonomy,
+				"DataElement": PostDataElement_Author,
 				"Settings": PostDataSettings,
 				cssSelectors: {
-					'.post_tags': {label: l10n.css.taxonomy_tags_label, info: l10n.css.taxonomy_tags_info},
-					'.post_tags a': {label: l10n.css.taxonomy_tags_link_label, info: l10n.css.taxonomy_tags_link_info},
-					'.post_categories': {label: l10n.css.taxonomy_category_label, info: l10n.css.taxonomy_category_info},
-					'.post_categories a': {label: l10n.css.taxonomy_category_link_label, info: l10n.css.taxonomy_category_link_info}
+					'.author': {label: l10n.css.author_author_label, info: l10n.css.author_author_info},
+					'.author a': {label: l10n.css.author_author_link_label, info: l10n.css.author_author_link_info},
+					'.gravatar': {label: l10n.css.author_gravatar_label, info: l10n.css.author_gravatar_info},
+					'.author-email': {label: l10n.css.author_email_label, info: l10n.css.author_email_info},
+					'.author-email a': {label: l10n.css.author_email_link_label, info: l10n.css.author_email_link_info},
+					'.author-url': {label: l10n.css.author_url_label, info: l10n.css.author_url_info},
+					'.author-url a': {label: l10n.css.author_url_link_label, info: l10n.css.author_url_link_info},
+					'.author-bio': {label: l10n.css.author_bio_label, info: l10n.css.author_bio_info}
 				},
-				cssSelectorsId: 'post_taxonomy'
+				cssSelectorsId: 'post_author'
 			});
 
-		Upfront.Application.LayoutEditor.add_object("Upostdata-featured_image", {
-			"Model": PostDataModel,
-			"View": PostDataView,
-			"DataElement": PostDataElement_FeaturedImage,
-			"Settings": PostDataSettings,
-			cssSelectors: {
-				'.thumbnail': {label: l10n.css.featured_thumbnail_label, info: l10n.css.featured_thumbnail_info},
-				'.thumbnail img': {label: l10n.css.featured_thumbnail_img_label, info: l10n.css.featured_thumbnail_img_info}
-			},
-			cssSelectorsId: 'post_featured_image'
-		});
+			if( !Upfront.Application.is_single("page") )
+				Upfront.Application.LayoutEditor.add_object("Upostdata-taxonomy", {
+					"Model": PostDataModel,
+					"View": PostDataView,
+					"DataElement": PostDataElement_Taxonomy,
+					"Settings": PostDataSettings,
+					cssSelectors: {
+						'.post_tags': {label: l10n.css.taxonomy_tags_label, info: l10n.css.taxonomy_tags_info},
+						'.post_tags a': {label: l10n.css.taxonomy_tags_link_label, info: l10n.css.taxonomy_tags_link_info},
+						'.post_categories': {label: l10n.css.taxonomy_category_label, info: l10n.css.taxonomy_category_info},
+						'.post_categories a': {label: l10n.css.taxonomy_category_link_label, info: l10n.css.taxonomy_category_link_info}
+					},
+					cssSelectorsId: 'post_taxonomy'
+				});
 
-		Upfront.Application.LayoutEditor.add_object("Upostdata-comments", {
-			"Model": PostDataModel,
-			"View": PostDataView,
-			"DataElement": PostDataElement_Comments,
-			"Settings": PostDataSettings,
-			cssSelectors: {
-				'.comment_count': {label: l10n.css.comment_count_label, info: l10n.css.comment_count_info},
-				'.comments': {label: l10n.css.comments_label, info: l10n.css.comments_info},
-				'.comments_pagination': {label: l10n.css.comments_pagination_label, info: l10n.css.comments_pagination_info},
+			Upfront.Application.LayoutEditor.add_object("Upostdata-featured_image", {
+				"Model": PostDataModel,
+				"View": PostDataView,
+				"DataElement": PostDataElement_FeaturedImage,
+				"Settings": PostDataSettings,
+				cssSelectors: {
+					'.thumbnail': {label: l10n.css.featured_thumbnail_label, info: l10n.css.featured_thumbnail_info},
+					'.thumbnail img': {label: l10n.css.featured_thumbnail_img_label, info: l10n.css.featured_thumbnail_img_info}
+				},
+				cssSelectorsId: 'post_featured_image'
+			});
 
-				'.upfront-post_data-comments': {label: l10n.css.comments_label, info: l10n.css.comments_info},
-				'.upfront-post_data-comments .comment': {label: l10n.css.comment_label, info: l10n.css.comment_info},
-				'.upfront-post_data-comments .comment-wrapper': {label: l10n.css.comment_wrapper_label, info: l10n.css.comment_wrapper_info},
-				'.upfront-post_data-comments .avatar': {label: l10n.css.comment_avatar_image_label, info: l10n.css.comment_avatar_image_info},
-				'.upfront-post_data-comments .comment-meta': {label: l10n.css.comment_meta_label, info: l10n.css.comment_meta_info},
-				'.upfront-post_data-comments .comment-meta .fn a': {label: l10n.css.comment_athor_label, info: l10n.css.comment_author_info},
-				'.upfront-post_data-comments .comment-meta .comment-time': {label: l10n.css.comment_time_label, info: l10n.css.comment_time_info},
-				'.upfront-post_data-comments .comment-content': {label: l10n.css.comment_content_label, info: l10n.css.comment_content_info},
-				'.upfront-post_data-comments .comment-content p': {label: l10n.css.comment_content_p_label, info: l10n.css.comment_content_p_info},
-				'.upfront-post_data-comments .edit-link a': {label: l10n.css.edit_link_label, info: l10n.css.edint_link_info},
-				'.upfront-post_data-comments .comment-reply a': {label: l10n.css.comment_reply_label, info: l10n.css.comment_reply_info},
+			Upfront.Application.LayoutEditor.add_object("Upostdata-comments", {
+				"Model": PostDataModel,
+				"View": PostDataView,
+				"DataElement": PostDataElement_Comments,
+				"Settings": PostDataSettings,
+				cssSelectors: {
+					'.comment_count': {label: l10n.css.comment_count_label, info: l10n.css.comment_count_info},
+					'.comments': {label: l10n.css.comments_label, info: l10n.css.comments_info},
+					'.comments_pagination': {label: l10n.css.comments_pagination_label, info: l10n.css.comments_pagination_info},
 
-				'.comment-respond': {label: l10n.css.comment_form_label, info: l10n.css.comment_form_info},
-				'.comment-respond .comment-reply-title': {label: l10n.css.reply_title_label, info: l10n.css.reply_title_info},
-				'.comment-respond .logged-in-as': {label: l10n.css.logged_in_label, info: l10n.css.logged_in_info},
-				'.comment-respond .logged-in-as a': {label: l10n.css.logged_in_link_label, info: l10n.css.logged_in_link_info},
-				'.comment-respond .comment-form-comment': {label: l10n.css.respond_label, info: l10n.css.respond_info},
-				'.comment-respond .comment-form-comment input[type="text"]': {label: l10n.css.comment_input_label, info: l10n.css.comment_input_info},
-				'.comment-respond .comment-form-comment textarea': {label: l10n.css.comment_textarea_label, info: l10n.css.comment_textarea_info},
-				'.comment-respond .form-submit .submit': {label: l10n.css.submit_button, info: l10n.css.submit_button}
-			},
-			cssSelectorsId: 'post_comments'
-		});
+					'.upfront-post_data-comments': {label: l10n.css.comments_label, info: l10n.css.comments_info},
+					'.upfront-post_data-comments .comment': {label: l10n.css.comment_label, info: l10n.css.comment_info},
+					'.upfront-post_data-comments .comment-wrapper': {label: l10n.css.comment_wrapper_label, info: l10n.css.comment_wrapper_info},
+					'.upfront-post_data-comments .avatar': {label: l10n.css.comment_avatar_image_label, info: l10n.css.comment_avatar_image_info},
+					'.upfront-post_data-comments .comment-meta': {label: l10n.css.comment_meta_label, info: l10n.css.comment_meta_info},
+					'.upfront-post_data-comments .comment-meta .fn a': {label: l10n.css.comment_athor_label, info: l10n.css.comment_author_info},
+					'.upfront-post_data-comments .comment-meta .comment-time': {label: l10n.css.comment_time_label, info: l10n.css.comment_time_info},
+					'.upfront-post_data-comments .comment-content': {label: l10n.css.comment_content_label, info: l10n.css.comment_content_info},
+					'.upfront-post_data-comments .comment-content p': {label: l10n.css.comment_content_p_label, info: l10n.css.comment_content_p_info},
+					'.upfront-post_data-comments .edit-link a': {label: l10n.css.edit_link_label, info: l10n.css.edint_link_info},
+					'.upfront-post_data-comments .comment-reply a': {label: l10n.css.comment_reply_label, info: l10n.css.comment_reply_info},
 
-		Upfront.Application.LayoutEditor.add_object("Upostdata-meta", {
-			"Model": PostDataModel,
-			"View": PostDataView,
-			"DataElement": PostDataElement_Meta,
-			"Settings": PostDataSettings,
-			cssSelectors: {
-				'.meta': {label: l10n.css.post_meta_label, info: l10n.css.post_meta_info}
-			},
-			cssSelectorsId: 'post_meta'
-		});
-	}
-	else {
+					'.comment-respond': {label: l10n.css.comment_form_label, info: l10n.css.comment_form_info},
+					'.comment-respond .comment-reply-title': {label: l10n.css.reply_title_label, info: l10n.css.reply_title_info},
+					'.comment-respond .logged-in-as': {label: l10n.css.logged_in_label, info: l10n.css.logged_in_info},
+					'.comment-respond .logged-in-as a': {label: l10n.css.logged_in_link_label, info: l10n.css.logged_in_link_info},
+					'.comment-respond .comment-form-comment': {label: l10n.css.respond_label, info: l10n.css.respond_info},
+					'.comment-respond .comment-form-comment input[type="text"]': {label: l10n.css.comment_input_label, info: l10n.css.comment_input_info},
+					'.comment-respond .comment-form-comment textarea': {label: l10n.css.comment_textarea_label, info: l10n.css.comment_textarea_info},
+					'.comment-respond .form-submit .submit': {label: l10n.css.submit_button, info: l10n.css.submit_button}
+				},
+				cssSelectorsId: 'post_comments'
+			});
+
+			Upfront.Application.LayoutEditor.add_object("Upostdata-meta", {
+				"Model": PostDataModel,
+				"View": PostDataView,
+				"DataElement": PostDataElement_Meta,
+				"Settings": PostDataSettings,
+				cssSelectors: {
+					'.meta': {label: l10n.css.post_meta_label, info: l10n.css.post_meta_info}
+				},
+				cssSelectorsId: 'post_meta'
+			});
+		} else {
+			Upfront.Application.LayoutEditor.remove_object('Upostdata-author');
+			Upfront.Application.LayoutEditor.remove_object('Upostdata-taxonomy');
+			Upfront.Application.LayoutEditor.remove_object('Upostdata-featured_image');
+			Upfront.Application.LayoutEditor.remove_object('Upostdata-comments');
+			Upfront.Application.LayoutEditor.remove_object('Upostdata-meta');
+		}
+	} else {
 		Upfront.Application.LayoutEditor.remove_object('Upostdata-post_data');
 		Upfront.Application.LayoutEditor.remove_object('Upostdata-author');
 		Upfront.Application.LayoutEditor.remove_object('Upostdata-taxonomy');

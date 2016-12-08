@@ -44,13 +44,13 @@ define([
 							{
 								name: 'captionBackground',
 								label: l10n.caption_bg
-							},
+							}
 						]
 					}
-				},
+				}
 			]
 		},
-		
+
 		migrateDefaultStyle: function(styles) {
 			//replace default classes
 			styles = styles.replace(/(div)?\.upfront-uslider\s/g, '');
@@ -98,7 +98,7 @@ define([
 							} else {
 								parent.$el.find('.rotate-time').css('opacity', '0.5');
 							}
-						},
+						}
 					},
 					{
 						type: 'Number',

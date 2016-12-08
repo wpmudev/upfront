@@ -1,7 +1,7 @@
 define([
 	'scripts/upfront/element-settings/settings',
 	'scripts/upfront/preset-settings/util',
-	'text!elements/upfront-button/tpl/preset-style.html',
+	'text!elements/upfront-button/tpl/preset-style.html'
 ], function(ElementSettings, Util, styleTpl) {
 	var l10n = Upfront.Settings.l10n.button_element;
 
@@ -26,7 +26,7 @@ define([
 									{
 										name: 'bgcolor',
 										label: l10n.settings.button_bg_label
-									},
+									}
 								],
 								fields: {
 									use: 'usebgcolor'
@@ -45,7 +45,7 @@ define([
 									style: 'fontstyle_style',
 									size: 'fontsize',
 									line_height: 'lineheight',
-									color: 'color',
+									color: 'color'
 								}
 							}
 						},
@@ -74,7 +74,7 @@ define([
 									use: 'useborder',
 									width: 'borderwidth',
 									type: 'bordertype',
-									color: 'bordercolor',
+									color: 'bordercolor'
 								}
 							}
 						}
@@ -93,7 +93,7 @@ define([
 									{
 										name: 'hov_bgcolor',
 										label: l10n.settings.button_bg_label
-									},
+									}
 								],
 								fields: {
 									use: 'hov_usebgcolor'
@@ -146,7 +146,7 @@ define([
 									use: 'hov_useborder',
 									width: 'hov_borderwidth',
 									type: 'hov_bordertype',
-									color: 'hov_bordercolor',
+									color: 'hov_bordercolor'
 								}
 							}
 						},
@@ -159,7 +159,7 @@ define([
 								fields: {
 									use: 'hov_use_animation',
 									duration: 'hov_duration',
-									easing: 'hov_transition',
+									easing: 'hov_transition'
 								}
 							}
 						}
@@ -178,7 +178,7 @@ define([
 									{
 										name: 'focus_bgcolor',
 										label: l10n.settings.button_bg_label
-									},
+									}
 								],
 								fields: {
 									use: 'focus_usebgcolor'
@@ -231,13 +231,13 @@ define([
 									use: 'focus_useborder',
 									width: 'focus_borderwidth',
 									type: 'focus_bordertype',
-									color: 'focus_bordercolor',
+									color: 'focus_bordercolor'
 								}
 							}
 						}
 					]
 				},
-				
+
 				migrateDefaultStyle: function(styles) {
 					//replace image wrapper class
 					styles = styles.replace(/(div)?\.upfront-button\s/g, '');
@@ -248,25 +248,25 @@ define([
 				},
 
 				migratePresetProperties: function(newPreset) {
-					
+
 					var preset = this.property('preset') ? this.clear_preset_name(this.property('preset')) : 'default',
 						props = this.presets.findWhere({id: preset}),
 						obj = {};
 
 					if(typeof props !== "undefined") {
 						_.each(props.attributes, function(preset_value, index) {
-							
+
 							if(index === 'id' || index === 'name' || index === 'preset_style' || index === 'legacy') {
 								return;
 							}
-							
+
 							obj[index] = preset_value;
 						});
 					}
-					
+
 					//Migrate properties from existing preset
 					newPreset.set(obj);
-				},
+				}
 			}
 		},
 		title: l10n.settings.label

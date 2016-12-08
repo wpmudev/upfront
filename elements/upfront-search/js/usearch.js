@@ -172,16 +172,16 @@ var UsearchButtonSetting_Label = Upfront.Views.Editor.Settings.Item.extend({
 	render: function () {
 		var me = this;
 		var value = this.model.get_property_value_by_name("label"),
-			value_text = '__image__' == value || '' == value || !value ? 'Custom text' : value,
+			value_text = '__image__' == value || '' === value || !value ? 'Custom text' : value,
 			image = '<label for="search_type-image"><i class="icon-search"></i></label>',
-			text = '<span class="search-search_text' + ((value !='' && value != '__image__') ? ' active' : '') + '" contenteditable="true">' + value_text + '</span>'
+			text = '<span class="search-search_text' + ((value !=='' && value !== '__image__') ? ' active' : '') + '" contenteditable="true">' + value_text + '</span>'
 		;
 		// Wrap method accepts an object, with defined "title" and "markup" properties.
 		// The "markup" one holds the actual Item markup.
 		this.wrap({
 			"title": l10n.btn_content,
 			"markup": '<input type="radio" id="search_type-image" name="search_type" value="__image__" ' + (value == '__image__' ? 'checked="checked"' : '') + ' /> ' + image +
-				'<input type="radio" id="search_type-text" name="search_type" value="' + value_text + '" ' + ((value !='' && value != '__image__') ? 'checked="checked"' : '') + ' /> ' + text
+				'<input type="radio" id="search_type-text" name="search_type" value="' + value_text + '" ' + ((value !=='' && value !== '__image__') ? 'checked="checked"' : '') + ' /> ' + text
 		});
 
 		this.$el.find(".search-search_placeholder").on('click', function() {

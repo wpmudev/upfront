@@ -100,7 +100,7 @@ div.preset-manager-panel .color-module.two{
     height: 19px;
 }
 .upfront-field-wrap-color .sp-preview{
-    top: 1px;
+    top: 0px;
 }
 div.preset-manager-panel div.fontColor label, div.preset-manager-panel div.borderColor label{
     left: auto;
@@ -195,22 +195,39 @@ a.upfront-region-name-edit-trigger{
 .uf-bgsettings-imageitem .uf-bgsettings-image-pos-x-num{
     margin: 0 30px 0 0;
 }
-.upfront-region-bg-setting-tab-primary .uf-bgsettings-image-pick{
+.upfront-bg-setting-tab-primary .uf-bgsettings-image-pick{
     float: left;
 }
-.upfront-region-bg-setting-type{
+.upfront-bg-setting-type{
     float: right;
     margin-left: 6px;
+}
+div.preset-manager-panel .checkbox-tooltip{
+    left: auto;
+    right: 8px;
+}
+.upfront-element-controls .upfront-inline-panel .padding-lock{
+    left: auto;
+    right: 45px;
+}
+.upfront-element-controls .upfront-inline-panel .upfront-padding-container-left{
+    float: left;
+}
+.upfront-post_data-part.part-module-panel .upfront-settings-item-title .toggle{
+    right: auto;
+    left: 0;
 }
 /*-------------- End of General --------------*/
 
 /*-------------- Sidebar --------------*/
 #sidebar-ui .sidebar-commands-control .command-start-responsive{
-    margin: 10px 10px 0 0;
+    margin: 0 8px 0 14px;
 }
 #sidebar-ui{
     left: auto;
     right: 0;
+    border-left: 1px solid #1a2d40;
+    border-right: none;
 }
 #sidebar-ui .command-logo{
     float: right;
@@ -250,7 +267,7 @@ a.upfront-region-name-edit-trigger{
     margin: 0 5px 0 0;
 }
 #sidebar-ui .sidebar-commands-control .command-grid{
-    margin: 1px 77px 8px 12px;
+    margin: 0px 6px 8px 12px;
 }
 #sidebar-ui ul.sidebar-panel-tabspane{
     padding: 0 10px 5px 0;
@@ -296,8 +313,9 @@ a.upfront-region-name-edit-trigger{
 #upfront-entity_list-pagination{
     float: right;
 }
-#upfront-search_action, #upfront-search_container{
-    float: left;
+#upfront-search_action, 
+#upfront-search_container{
+    float: left !important;
 }
 .upfront-pagination_navigation .upfront-pagination_page-item{
     margin-right:5px;
@@ -317,6 +335,31 @@ a.upfront-region-name-edit-trigger{
 }
 .upfront-field-select-option{
     margin: 0 0 0 10px !important;
+}
+.upfront-icon-redo:before, .upfront-icon-undo:before{
+    right: 7px;
+    left: auto;
+}
+#sidebar-ui .sidebar-commands-control .command-save{
+    margin: 10px 0 0 15px;
+    float: left;
+}
+#sidebar-ui .sidebar-commands-control.sidebar-commands-responsive-control .command-save{
+    margin-top: 44px;
+}
+#sidebar-ui .sidebar-commands-control li{
+    margin: 0 6px 8px 6px;
+}
+#sidebar-ui .upfront-typography-fields-left{
+    width: 53%;
+}
+#sidebar-ui .sidebar-panels{
+    border-left: 1px solid #324253;
+    border-right: none;
+}
+#element-settings-sidebar{
+    border-left: 1px solid #334454;
+    border-right: none;
 }
 /*-------------- End of Sidebar --------------*/
 
@@ -421,6 +464,12 @@ li.activate-breakpoints-dropdown{
     margin-left: -15px;
     margin-right: auto;
 }
+.upfront-post_data-part.part-module-panel.preset_specific .upfront-settings-item-title .upfront-field-wrap-checkboxes label span{
+    padding: 0 15px 0 0;
+}
+.upfront-settings-item-title span, .upfront-global-social-settings .upfront-settings-item-title span{
+    margin-right: 0;
+}
 /*Element Setting*/
 #element-settings-sidebar .padding-settings .padding-top,
 #element-settings-sidebar .padding-settings .padding-bottom{
@@ -447,7 +496,9 @@ li.activate-breakpoints-dropdown{
     left: 11px;
     right: auto;
 }
-
+#sidebar-ui .apply-post-template, #sidebar-ui .save-post-template{
+    float: left;
+}
 /*CSS Editor*/
 #upfront-csseditor, #upfront-general-csseditor{
     left: 0;
@@ -475,7 +526,7 @@ li.activate-breakpoints-dropdown{
 .ulinkpanel .upfront-field-wrap-radios > label, .ulinkpanel-dark .upfront-field-wrap-radios > label{
     margin: 0 0 0 15px;
 }
-.uslider-slides-setting .upfront-region-bg-slider-add-image{
+.uslider-slides-setting .upfront-bg-slider-add-image{
     float: right;
 }
 
@@ -597,8 +648,8 @@ div#page.upfront-layout-view .upfront-editable_entity.upfront-module .upfront-ac
     margin-right: 5px;
     margin-left: auto;
 }
-.upfront-region-bg-slider-image,
-.upfront-region-bg-slider-add-image {
+.upfront-bg-slider-image,
+.upfront-bg-slider-add-image {
     float: right;
     margin: 0 7px 15px 7px;
 }
@@ -730,10 +781,13 @@ div#page.upfront-layout-view .upfront-editable_entity.upfront-module .upfront-ac
     text-align: left;
 }
 .upfront-field-text.ueditor-post-url-text{
-    float: left;
-    direction: ltr;
-    text-align: left;
+    float: right;
+    direction: rtl;
+    text-align: right;
     margin-top: 5px;
+}
+#sidebar-ui .ueditor-save-post-data, #sidebar-ui #upfront-tax-add_term{
+    top: 4px;
 }
 .ueditor-box-title{
     padding: 0 10px 0 0;

@@ -1,7 +1,7 @@
 <div class="upfront_login upfront_login-hover">
 	<?php echo $trigger; ?>
 	<div class="upfront_login-form-wrapper" style="<?php echo esc_attr($offset); ?>">
-		<div class="upfront_login-form">
+		<div class="upfront_login-form triggered">
 			<?php 
 				wp_login_form(array(
 					'remember' => true,
@@ -13,8 +13,7 @@
 			?>
 			<p class="login-lostpassword">
 				<small>
-					<span class="login-lostpassword-label"><?php echo esc_html($lost_password); ?></span>
-					<br />
+					<span class="login-lostpassword-label"><?php echo esc_html($lost_password);  ?></span>
 					<a class="login-lostpassword-link" href="<?php echo esc_url(wp_lostpassword_url()); ?>">
 						<?php echo esc_html($lost_password_link); ?>
 					</a>

@@ -1,7 +1,8 @@
 (function ($) {
 define([
-	'text!upfront/templates/popup.html'
-], function(popupTemplate) {
+	'text!upfront/templates/popup.html',
+	'scripts/perfect-scrollbar/perfect-scrollbar'
+], function(popupTemplate, perfectScrollbar) {
 	var l10n = Upfront.Settings && Upfront.Settings.l10n
 		? Upfront.Settings.l10n.global.views
 		: Upfront.mainData.l10n.global.views
@@ -213,6 +214,17 @@ define([
 			// Set up the proper vscroller width to go along with new change.
 			editor.renderer.scrollBar.width = 5;
 			editor.renderer.scroller.style.right = "5px";
+			// Add JS Scrollbar.
+			perfectScrollbar.withDebounceUpdate(
+				// Element.
+				this.$el.find('.ace_scrollbar')[0],
+				// Run First.
+				true,
+				// Event.
+				false,
+				// Initialize.
+				true
+			);
 
 			editor.focus();
 			this.editor = editor;
@@ -523,7 +535,7 @@ define([
 					label: l10n.insert_font,
 					compact: true,
 					on_click: function(){
-						me.finish();
+						me.preview_font();
 					}
 				})
 			];
@@ -540,9 +552,6 @@ define([
 				var variants = Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants(this.fields[0].get_value());
 				this.render_variants(variants);
 			});
-			this.listenTo(this.fields[1], 'changed', function() {
-				this.preview_font();
-			});
 
 			return this;
 		},
@@ -556,8 +565,13 @@ define([
 			$variant_field.trigger('chosen:updated');
 		},
 		preview_font: function() {
+			var font_value = this.fields[0].get_value();
+			if ( !font_value ) {
+				this.finish();
+				return;
+			}
 			this.replaceFont({
-				font_family: this.fields[0].get_value(),
+				font_family: font_value,
 				variant: Upfront.Views.Font_Model.parse_variant(this.fields[1].get_value())
 			});
 		},
@@ -588,6 +602,7 @@ define([
 			if (lines.length > 0) {
 				this.style_doc.insertLines(this.font_family_range.start.row + 1, lines);
 			}
+			this.finish();
 		},
 		reset_properties: function() {
 			var row, line, result;

@@ -136,7 +136,16 @@ class Upfront_PostDataPartView extends Upfront_Object {
 	public function get_markup () {
 		if (empty($this->_markup)) {
 			$post = $this->_parent->get_post();
-			$this->_markup = $this->_part_view->get_markup($post);
+			// Try to get content from plugins compatibility
+			$content = apply_filters('upfront-postdata_get_markup_before', false, $post->post_type);
+			if (!empty($content)) {
+				// Show only content part and insert plugins rendering to it
+				$this->_markup['content'] = $content;
+			}
+
+			if (empty($this->_markup)) {
+				$this->_markup = $this->_part_view->get_markup($post);
+			}
 		}
 		return isset($this->_markup[$this->get_part_type()])
 			? $this->_markup[$this->get_part_type()]
@@ -198,12 +207,12 @@ class Upfront_PostDataPartView extends Upfront_Object {
 			$right_indent = $this->_part_view->get_property('right_indent');
 			$max_col = $col - intval($left_indent) - intval($right_indent);
 			$variants = Upfront_ChildTheme::getPostImageVariants();
-			foreach ( $variants as $variant ) {
+			if (is_array($variants)) foreach ( $variants as $variant ) {
 				$left = intval($variant->group->left);
 				$margin_left = intval($variant->group->margin_left);
 				$margin_right = intval($variant->group->margin_right);
 				$variant_max_col = $max_col - $margin_left - $margin_right;
-				if ( isset($variant->group->float) && 'none' == $variant->group->float ) {
+				if ( isset($variant->group->float) && 'none' == $variant->group->float && $point->is_default() ) {
 					$variant_max_col -= $left;
 				}
 				$variant_max_col = $variant_max_col > $col ? $col : $variant_max_col;

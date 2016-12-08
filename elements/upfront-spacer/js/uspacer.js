@@ -81,7 +81,7 @@ define([
 				this.stopListening((this._previous_parent_module_view || this.parent_module_view), 'entity:drop');
 				this.listenTo(this.parent_module_view, 'entity:drop', this.on_element_drop);
 
-				module_col = Upfront.Behaviors.GridEditor.get_class_num(this.parent_module_view.model.get_property_value_by_name('class'), grid.class);
+				module_col = Upfront.Behaviors.GridEditor.get_class_num(this.parent_module_view.model.get_property_value_by_name('class'), grid['class']);
 
 				// Make sure module class is added
 				this.parent_module_view.$el.find('> .upfront-module').addClass('upfront-module-spacer');
@@ -95,7 +95,7 @@ define([
 
 			this.$el.html(template);
 
-			col = Upfront.Behaviors.GridEditor.get_class_num(props.class, grid.class);
+			col = Upfront.Behaviors.GridEditor.get_class_num(props['class'], grid['class']);
 			col = col > module_col ? module_col : col;
 
 			$object = this.$el.find('.upfront-editable_entity:first');
@@ -116,6 +116,9 @@ define([
 			return false;
 		},
 		apply_paddings: function () {
+			return false;
+		},
+		retain_current_preset: function () {
 			return false;
 		},
 		_is_applying: function (from_view) {
@@ -159,7 +162,7 @@ define([
 		},
 		on_content_style_edit_stop: function () {
 			return;
-		},
+		}
 	});
 
 	Upfront.Models.UspacerModel = UspacerModel;

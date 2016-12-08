@@ -876,6 +876,64 @@ var LayoutEditor = {
 			'global-region-manager'
 		);
 	},
+	
+	open_theme_fonts_manager: function() {
+		var me = {};
+		var textFontsManager = new Upfront.Views.Editor.Fonts.Text_Fonts_Manager({ collection: Upfront.Views.Editor.Fonts.theme_fonts_collection });
+		textFontsManager.render();
+		// Only enable font icon manager on builder for now
+		if (Upfront.Application.mode.current === Upfront.Application.MODE.THEME) {
+			var iconFontsManager = new Upfront.Views.Editor.Fonts.Icon_Fonts_Manager({collection: Upfront.Views.Editor.Fonts.icon_fonts_collection});
+			iconFontsManager.render();
+		}
+
+		var popup = Upfront.Popup.open(
+			function (data, $top, $bottom) {
+				var $me = $(this);
+				$me.empty()
+					.append('<p class="upfront-popup-placeholder">' + Upfront.Settings.l10n.global.behaviors.loading_content + '</p>');
+
+				me.$popup = {
+					"top": $top,
+					"content": $me,
+					"bottom": $bottom
+				};
+			},
+			{
+				width: 750
+			},
+			'font-manager-popup'
+		);
+
+		me.$popup.top.html(
+			'<ul class="upfront-tabs">' +
+				'<li id="theme-text-fonts-tab" class="active">' + Upfront.Settings.l10n.global.behaviors.theme_text_fonts + '</li>' +
+				(Upfront.Application.mode.current === Upfront.Application.MODE.THEME ? '<li id="theme-icon-fonts-tab">' + Upfront.Settings.l10n.global.behaviors.theme_icon_fonts + '</li>' : '') +
+			'</ul>' +
+			me.$popup.top.html()
+		);
+
+		me.$popup.top.on('click', '#theme-text-fonts-tab', function(event) {
+			me.$popup.content.html(textFontsManager.el);
+			$('#theme-icon-fonts-tab').removeClass('active');
+			$('#theme-text-fonts-tab').addClass('active');
+			$('.theme-fonts-ok-button').css('margin-top', '30px');
+		});
+
+		me.$popup.top.on('click', '#theme-icon-fonts-tab', function() {
+			me.$popup.content.html(iconFontsManager.el);
+			$('#theme-text-fonts-tab').removeClass('active');
+			$('#theme-icon-fonts-tab').addClass('active');
+			$('.theme-fonts-ok-button').css('margin-top', 0);
+		});
+
+		me.$popup.bottom.append('<a class="theme-fonts-ok-button">' + Upfront.Settings.l10n.global.behaviors.ok + '</a>');
+		me.$popup.content.html(textFontsManager.el);
+		textFontsManager.set_ok_button(me.$popup.bottom.find('.theme-fonts-ok-button'));
+		me.$popup.bottom.find('.theme-fonts-ok-button').on('click', function() {
+			Upfront.Popup.close();
+		});
+	},
 
 	_refresh_global_regions: function () {
 		return Upfront.Util.post({
@@ -915,7 +973,7 @@ var LayoutEditor = {
 				$title = $('<h3 class="global-region-manager-title">'+ manager.title +'</h3>'),
 				$content = $('<div class="global-region-manager-content upfront-scroll-panel"></div>');
 			$wrap.append([$title, $content]);
-			ed._render_regions(manager.data, $content);
+			ed._render_regions(manager.data, $content, manager.classname);
 			$el.append($wrap);
 			// don't propagate scroll
 			Upfront.Views.Mixins.Upfront_Scroll_Mixin.stop_scroll_propagation($content);
@@ -953,7 +1011,7 @@ var LayoutEditor = {
 		});
 	},
 
-	_render_regions: function (regions, $el) {
+	_render_regions: function (regions, $el, type) {
 		var $lists = $('<ul class="global-region-manager-lists"></ul>');
 		_.each(regions, function(region){
 			var classes = ['global-region-manager-list'],
@@ -982,7 +1040,154 @@ var LayoutEditor = {
 				'</li>'
 			);
 		});
+		// If no regions, display message.
+		if (regions.length < 1) {
+			if (type === 'lightbox') {
+				var message = Upfront.Settings.l10n.global.behaviors.no_lightboxes;
+			} else {
+				var message = Upfront.Settings.l10n.global.behaviors.no_global_regions;
+			}
+			$lists = '<span class="region-list-empty">' + message + '</span>';
+		}
 		$el.append($lists);
+	},
+
+	/**
+	 * Show import image dialog.
+	 * This will call an event that will try to populate the theme images, then check if image exists.
+	 * If there is image to be imported, show. Otherwise, just ignore.
+	 *
+	 * @author Jeffri
+	 */
+	import_image_dialog: function () {
+		var ed = Upfront.Behaviors.LayoutEditor,
+			import_each = 2,
+			image_list = [],
+			import_image_list = []
+		;
+		Upfront.Events.trigger('upfront:import_image:populate_theme_images', image_list);
+		if ( image_list.length <= 0 ) return;
+
+		Upfront.Util.post({
+			action: 'upfront_list_import_image',
+			images: image_list
+		}).done(function(response){
+			if ( parseInt(response.data.error, 10) !== 0 ) return;
+			_.each(response.data.images, function (image) {
+				if ( image.status === 'not_exists' ) import_image_list.push(image.filepath);
+				else if ( image.status === 'exists' ) Upfront.Events.trigger('upfront:import_image:imported', image);
+			});
+			if ( import_image_list.length > 0 ) ed.open_import_image_dialog(import_image_list);
+		});
+	},
+
+	/**
+	 * Handling the import image dialog
+	 *
+	 * @author Jeffri
+	 * @param image_list
+	 */
+	open_import_image_dialog: function (image_list) {
+		var ed = Upfront.Behaviors.LayoutEditor;
+		if ( !ed.import_image_modal ){
+			ed.import_image_modal = new Upfront.Views.Editor.Modal({to: $('body'), button: false, top: 120, width: 600});
+			ed.import_image_modal.render();
+			$('body').append(ed.import_image_modal.el);
+		}
+		ed.import_image_modal.open(function($content, $modal) {
+			var importing = false,
+				import_button = new Upfront.Views.Editor.Field.Button({
+					name: 'import_image',
+					label: Upfront.Settings.l10n.global.behaviors.import_image_button,
+					compact: true,
+					classname: 'upfront-import-image-button',
+					on_click: function () {
+						if ( importing ) return; // Prevent multiple click
+						// Import images
+						ed.do_import_image(image_list).done(function () {
+							// Finished, let's show success message and close the modal
+							$content.html(
+								'<p>' + Upfront.Settings.l10n.global.behaviors.import_image_done_description + '</p>'
+							);
+							setTimeout(function(){
+								ed.import_image_modal.close();
+							}, 3000);
+						});
+						importing = true;
+					}
+				}),
+				ignore_button = new Upfront.Views.Editor.Field.Button({
+					name: 'import_image_ignore',
+					label: Upfront.Settings.l10n.global.behaviors.import_image_ignore_button,
+					compact: true,
+					classname: 'upfront-import-image-button',
+					on_click: function () {
+						ed.import_image_modal.close();
+					}
+				}),
+				$image_list = $('<ul class="upfront-import-image-list upfront-scroll-panel"></ul>')
+			;
+			$modal.addClass('upfront-import-image-modal');
+			$content.html(
+				'<p>' + Upfront.Settings.l10n.global.behaviors.import_image_description + '</p>'
+			);
+			_.each(image_list, function (img, index) {
+				$image_list.append(
+					'<li class="upfront-import-image-each" id="import-image-' + index + '">' +
+						'<img src="' + img + '" alt="" />' +
+					'</li>'
+				);
+			});
+			$content.append($image_list);
+			_.each([import_button, ignore_button], function (button) {
+				button.render();
+				button.delegateEvents();
+				$content.append(button.$el);
+			});
+		}, ed);
+	},
+
+	/**
+	 * Do importing the images from import_image_dialog, a recursive function
+	 *
+	 * @author Jeffri
+	 * @param image_list
+	 */
+	do_import_image: function (image_list) {
+		var ed = Upfront.Behaviors.LayoutEditor,
+			import_each = 4,
+			each_image_list,
+			_update_image_status = function (status) {
+				for ( var i = ed._import_image_index; i < ed._import_image_index + import_each; i++ ) {
+					$('#import-image-'+i).removeClass('processing done').addClass(status);
+				}
+			}
+		;
+		if ( !ed._import_image_index ) ed._import_image_index = 0;
+		if ( !ed._import_image_deferred ) ed._import_image_deferred = new $.Deferred();
+
+		each_image_list = image_list.slice(ed._import_image_index, ed._import_image_index + import_each);
+
+		if ( each_image_list.length === 0 ) {
+			ed._import_image_deferred.resolve();
+			ed._import_image_index = false;
+			return;
+		}
+
+		_update_image_status('processing');
+
+		Upfront.Util.post({
+			action: 'upfront_import_image',
+			images: each_image_list
+		}).done(function (response) {
+			_.each(response.data.images, function (image) {
+				if ( image.status === 'import_success' ) Upfront.Events.trigger('upfront:import_image:imported', image);
+			});
+			_update_image_status('done');
+			ed._import_image_index += import_each;
+			ed.do_import_image(image_list);
+		});
+		return ed._import_image_deferred.promise();
 	}
 };
 

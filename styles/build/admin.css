@@ -8,13 +8,26 @@
   overflow: hidden;
   display: block; }
 
+.postbox.newtheme .character {
+  background-image: url("../../img/uf-admin-sprite.svg");
+  background-repeat: no-repeat; }
+
+.upfront_admin {
+  padding: 0 10px; }
+
 .upfront_admin h1 {
   text-transform: uppercase;
   color: #777;
-  font-family: 'Roboto Condensed';
-  font-size: 30px;
-  letter-spacing: -0.2px;
-  padding: 20px 10px 0; }
+  font: bold 32px/1 'Roboto Condensed', Helvetica Neueu, Helvetica, Arial, sans-serif;
+  letter-spacing: -0.54px;
+  padding: 20px 0;
+  -webkit-font-smoothing: antialiased; }
+
+.upfront_admin p.info {
+  font: normal 16px/1 'Roboto', Helvetica Neueu, Helvetica, Arial, sans-serif;
+  color: #4d4d4d;
+  margin-top: 0px;
+  margin-bottom: 40px; }
 
 .upfront_admin .float_left {
   float: left; }
@@ -40,6 +53,92 @@
   width: 18px;
   height: 18px;
   margin-top: 7px; }
+
+.upfront_admin h1,
+.upfront_admin h2,
+.upfront_admin h3,
+.upfront_admin h4 {
+  text-transform: uppercase; }
+
+/* META BOXES */
+.upfront_admin .postbox-container {
+  width: 100%; }
+
+.upfront_admin .postbox {
+  border: none;
+  border-radius: 6px;
+  border-bottom: 2px #E4E4E4 solid;
+  box-shadow: none; }
+
+.upfront_admin .postbox h2.title {
+  border-bottom: 1px solid #eee;
+  padding: 0 30px 0;
+  margin-bottom: 0;
+  color: #777;
+  margin-top: 0;
+  font: bold 18px/60px 'Roboto Condensed', Helvetica Neueu, Helvetica, Arial, sans-serif;
+  letter-spacing: -0.5px;
+  -webkit-font-smoothing: antialiased; }
+
+/* EDIT THEME - ICON BUTTONS */
+.postbox.themes .download,
+.postbox.themes .edit.info {
+  width: 48px;
+  padding: 13px;
+  vertical-align: top;
+  background: url("../../img/uf-admin-sprite.svg") #AFAFAF; }
+
+.postbox.themes .download:hover,
+.postbox.themes .edit.info:hover {
+  background: url("../../img/uf-admin-sprite.svg") #999; }
+
+.postbox.themes .download,
+.postbox.themes .download:hover {
+  background-position: -100px -80px; }
+
+.postbox.themes .edit.info,
+.postbox.themes .edit.info:hover {
+  background-position: -100px -146px; }
+
+/* NO THUMBNAIL THEME STYLING */
+.uf-thx-theme a:before {
+  content: '';
+  background: url("../../img/uf-admin-sprite.svg") #F1F1F1;
+  width: 140px;
+  height: 45px;
+  position: absolute;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0; }
+
+.uf-thx-theme_screenshot .no-image {
+  background: #F1F1F1;
+  width: 225px;
+  height: 126px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  position: relative; }
+
+.uf-thx-theme_screenshot .no-image:before {
+  content: '';
+  background: url("../../img/uf-admin-sprite.svg") #F1F1F1;
+  width: 145px;
+  height: 45px;
+  position: absolute;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0; }
+
+@media screen and (min-width: 920px) {
+  .upfront-col-left, .upfront-col-right {
+    width: 49%;
+    float: left; }
+  .upfront-col-left {
+    margin-right: 2%; } }
 
 span.role_check_mark:before {
   color: #1abc9c;
@@ -177,9 +276,6 @@ input.upfront_toggle_checkbox {
   padding-right: 50px;
   display: block; }
 
-.upfront-general-settings {
-  font-family: 'Roboto'; }
-
 .upfront-general-settings .upfront-debug-block {
   border-bottom: 1px solid #eee;
   padding: 14px 0 10px;
@@ -197,38 +293,13 @@ input.upfront_toggle_checkbox {
 .upfront-general-settings .upfront-debug-block:last-child {
   border-bottom: none; }
 
-.upfront-general-settings .postbox-container {
-  width: 100%; }
-
-.upfront-general-settings .postbox h2.title {
-  border-bottom: 1px solid #eee;
-  padding: 25px 30px 25px;
-  margin-bottom: 0;
-  color: #777;
-  font-weight: bold;
-  margin-top: 0; }
-
 .upfront-col-right,
-.upfront-general-settings .upfront-col-left {
-  margin-top: 30px; }
-
-@media screen and (min-width: 920px) {
-  .upfront-general-settings .upfront-col-left {
-    width: 48%;
-    float: left;
-    margin-right: 2%; }
-  .upfront-general-settings .upfront-col-right {
-    width: 48%;
-    float: left; } }
-
-.upfront-general-settings h1,
-.upfront-general-settings h2,
-.upfront-general-settings h3,
-.upfront-general-settings h4 {
-  text-transform: uppercase; }
+.upfront-col-left {
+  margin-top: 20px; }
 
 .upfront-general-settings .upfront-debug-block a.upfront_button,
-.upfront-general-settings .upfront-debug-block button {
+.upfront-general-settings .upfront-debug-block button,
+.upfront_admin button {
   background-color: #AFAFAF;
   border: none;
   color: #fff;
@@ -269,12 +340,6 @@ input.upfront_toggle_checkbox {
 .upfront-general-settings a {
   color: #18A7E0;
   text-decoration: none; }
-
-.upfront-general-settings .postbox {
-  border: none;
-  border-radius: 6px;
-  border-bottom: 2px #E4E4E4 solid;
-  box-shadow: none; }
 
 .upfront-general-settings .postbox .inside.version-info {
   font-size: 14px;
@@ -335,6 +400,25 @@ input.upfront_toggle_checkbox {
   cursor: pointer; }
 
 /**
+ * Under Construction
+ */
+.under-construction p.label {
+  display: inline-block;
+  padding-right: 20px; }
+
+.under-construction span.link {
+  display: block; }
+
+.under-construction span.link:before {
+  display: inline-block;
+  content: '\f348';
+  font-family: dashicons;
+  padding-right: 5px; }
+
+.under-construction button:disabled {
+  opacity: .5; }
+
+/**
  * Changelog
  */
 .postbox .inside.changelog .previous {
@@ -347,8 +431,14 @@ input.upfront_toggle_checkbox {
   max-height: 400px;
   overflow-y: auto; }
 
-#upfront_restrictions_form {
-  padding: 0 10px; }
+/**
+* Upfront Reset Layout
+*/
+.postbox .upfront-layout-reset {
+  width: 70%; }
+  .postbox .upfront-layout-reset .upfront-reset-global-option {
+    display: inline-block;
+    padding-top: 5px; }
 
 #upfront_user_restrictions_listing {
   display: table;
@@ -360,7 +450,7 @@ input.upfront_toggle_checkbox {
   -o-border-radius: 5px;
   -webkit-border-radius: 5px;
   border-radius: 5px;
-  margin-top: 40px;
+  margin-top: 20px;
   padding-bottom: 5px;
   border-bottom: 2px solid #e4e4e4; }
 
@@ -444,35 +534,24 @@ ul.upfront_restrictions_functionality_row:hover li {
   background: #fff;
   text-align: left; }
 
-#upront_restrictions_submit {
+#upront_restrictions_submit,
+.upfront_admin .create.theme {
   display: block;
   width: 187px;
   height: 40px;
   background-color: #00cf8d;
-  box-shadow: 0 3px 0 0 #00b37a;
   font-family: 'Roboto';
   font-size: 15px;
   color: #fff;
   margin: 30px auto;
   border: none;
   text-align: center;
-  -mox-border-radius: 4px;
-  -o-border-radius: 4px;
-  -webkit-border-radius: 4px;
   border-radius: 4px;
   text-transform: uppercase;
   cursor: pointer; }
 
-.upfront_admin_experimental .upfront_admin_experimental_contents {
-  padding-left: 10px;
-  padding-right: 10px; }
-
-.upfront_admin_experimental p.disclaimer {
-  font-family: 'Roboto';
-  font-size: 15px;
-  color: #8e8e8e;
-  margin-top: 30px;
-  margin-bottom: 30px; }
+.upfront_admin .create.theme {
+  margin: 0 auto; }
 
 .upfront_admin_experimental .form_content {
   display: inline-block;

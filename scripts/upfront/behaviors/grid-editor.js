@@ -424,6 +424,10 @@ var GridEditor = {
 			find_model = function (modules) {
 				if ( !modules )
 					return false;
+				
+				if ( !modules.get_by_element_id && typeof modules.get_by_element_id !== 'function')
+					return false;
+				
 				var module_model = modules.get_by_element_id(element_id),
 					found_model;
 				if ( module_model )
@@ -443,6 +447,10 @@ var GridEditor = {
 			find_object = function (objects) {
 				if ( !objects )
 					return false;
+				
+				if ( !objects.get_by_element_id && typeof objects.get_by_element_id !== 'function')
+					return false;
+				
 				var object_model = objects.get_by_element_id(element_id),
 					found_object;
 				if ( object_model )
@@ -1306,25 +1314,19 @@ var GridEditor = {
 				});
 
 				if ( !breakpoint || breakpoint['default'] ){
-					model.set_property('row', rsz_row);
-					// Also resize containing object if it's only one object
+					// Resize containing object first if it's only one object
 					var objects = model.get('objects');
 					if ( objects && objects.length == 1 ){
 						objects.each(function(object){
 							object.set_property('row', rsz_row );
 						});
 					}
+
+					// Then resize the module
+					model.set_property('row', rsz_row);
 				}
 				else {
-					model_breakpoint = Upfront.Util.clone(model.get_property_value_by_name('breakpoint') || {});
-					if ( !_.isObject(model_breakpoint[breakpoint.id]) )
-						model_breakpoint[breakpoint.id] = {};
-					breakpoint_data = model_breakpoint[breakpoint.id];
-					breakpoint_data.edited = true;
-					breakpoint_data.row = rsz_row;
-
-					model.set_property('breakpoint', model_breakpoint);
-					// Also resize containing object if it's only one object
+					// Resize containing object first if it's only one object
 					var objects = model.get('objects');
 					if ( objects && objects.length == 1 ){
 						objects.each(function(object){
@@ -1335,6 +1337,16 @@ var GridEditor = {
 							object.set_property('breakpoint', obj_breakpoint);
 						});
 					}
+
+					// Then resize the module
+					model_breakpoint = Upfront.Util.clone(model.get_property_value_by_name('breakpoint') || {});
+					if ( !_.isObject(model_breakpoint[breakpoint.id]) )
+						model_breakpoint[breakpoint.id] = {};
+					breakpoint_data = model_breakpoint[breakpoint.id];
+					breakpoint_data.edited = true;
+					breakpoint_data.row = rsz_row;
+
+					model.set_property('breakpoint', model_breakpoint);
 				}
 
 				/*if ( is_parent_group )
@@ -2275,7 +2287,6 @@ var GridEditor = {
 			breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().findWhere({id: breakpoint_id}).toJSON(),
 			desktop_breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_default().toJSON(),
 			silent = ( silent === true ) ? true : false,
-			wrapper_index = 0,
 			desktop_lines = ed.parse_modules_to_lines(modules, wrappers, desktop_breakpoint.id, desktop_breakpoint.columns),
 			lines = ed.parse_modules_to_lines(modules, wrappers, breakpoint_id, parent_col),
 			filtered_lines = ed._filter_edited_lines(lines, breakpoint),
@@ -2288,22 +2299,23 @@ var GridEditor = {
 			adapt_lines_bottom = [],
 			adapt_col = 0
 		;
+		ed._wrapper_index = 0;
 		// First let's find wrappers that we need to adapt from desktop layout
 		_.each(desktop_lines, function (line, l) {
 			_.each(line.wrappers, function (wrapper, w) {
 				if ( wrapper.spacer ) return; // Ignore spacers
 				var is_edited = wrapper.model.get_breakpoint_property_value('edited', false, false, breakpoint);
 				if ( is_edited ) {
-					wrapper_index++;
+					ed._wrapper_index++;
 					return;
 				}
-				wrapper_index++;
+				ed._wrapper_index++;
 				// Find prev and next wrapper for reference later when deciding the final order
 				adapt_wrappers.push({
 					prev: ed._find_prev_wrapper_from_lines(wrapper, w, line, l, desktop_lines),
 					next: ed._find_next_wrapper_from_lines(wrapper, w, line, l, desktop_lines),
 					current: wrapper,
-					order: wrapper_index
+					order: ed._wrapper_index
 				});
 			});
 		});
@@ -2319,7 +2331,7 @@ var GridEditor = {
 				adapt_wrappers_top.push(adapt_wrapper);
 				return false;
 			}
-			else if ( wrapper_index == adapt_wrapper.order + (adapt_wrappers.length - aw - 1) ) {
+			else if ( ed._wrapper_index == adapt_wrapper.order + (adapt_wrappers.length - aw - 1) ) {
 				adapt_wrappers_bottom.push(adapt_wrapper);
 				return false;
 			}
@@ -2332,24 +2344,11 @@ var GridEditor = {
 		adapt_lines_insert = adapt_lines.slice(0);
 		adapt_lines_bottom = ed._adapt_wrappers_to_line(adapt_wrappers_bottom, parent_col);
 
-		wrapper_index = 0;
+		ed._wrapper_index = 0;
 		// Now that when we know which wrappers we need to adapt, we'll find where to add them
 		// Add the top wrappers
 		_.each(adapt_lines_top, function (adapt_line) {
-			var apply_col = Math.floor(parent_col/adapt_line.wrappers.length),
-				remaining_col = parent_col - (apply_col * adapt_line.wrappers.length)
-			;
-			_.each(adapt_line.wrappers, function (adapt_wrapper, aw) {
-				var this_col = apply_col;
-				if ( remaining_col > 0 ) {
-					this_col++;
-					remaining_col--;
-				}
-				wrapper_index++;
-				adapt_wrapper.current.model.set_breakpoint_property('clear', ( aw == 0 ), silent, breakpoint);
-				adapt_wrapper.current.model.set_breakpoint_property('col', this_col, silent, breakpoint);
-				adapt_wrapper.current.model.set_breakpoint_property('order', wrapper_index, silent, breakpoint);
-			});
+			ed._set_adapt_wrappers(adapt_line.wrappers, parent_col, silent, breakpoint);
 		});
 
 		// Insert between elements
@@ -2379,17 +2378,7 @@ var GridEditor = {
 
 					if ( !is_adding ) return;
 					// Finally, add this line in
-					_.each(adapt_line.wrappers, function (adapt_wrapper, aw) {
-						var this_col = apply_col;
-						if ( remaining_col > 0 ) {
-							this_col++;
-							remaining_col--;
-						}
-						wrapper_index++;
-						adapt_wrapper.current.model.set_breakpoint_property('clear', ( aw == 0 ), silent, breakpoint);
-						adapt_wrapper.current.model.set_breakpoint_property('col', this_col, silent, breakpoint);
-						adapt_wrapper.current.model.set_breakpoint_property('order', wrapper_index, silent, breakpoint);
-					});
+					ed._set_adapt_wrappers(adapt_line.wrappers, parent_col, silent, breakpoint)
 					inserted.push(al);
 				});
 				// Remove inserted lines
@@ -2398,26 +2387,34 @@ var GridEditor = {
 				});
 
 				// Set new order for existing wrappers
-				wrapper_index++;
-				wrapper.model.set_breakpoint_property('order', wrapper_index, silent, breakpoint);
+				ed._wrapper_index++;
+				wrapper.model.set_breakpoint_property('order', ed._wrapper_index, silent, breakpoint);
 			});
 		});
 
 		// Add the bottom wrappers and the rest of uninserted wrappers
 		_.each(_.union(adapt_lines_insert, adapt_lines_bottom), function (adapt_line) {
-			var apply_col = Math.floor(parent_col/adapt_line.wrappers.length),
-				remaining_col = parent_col - (apply_col * adapt_line.wrappers.length)
-			;
-			_.each(adapt_line.wrappers, function (adapt_wrapper, aw) {
-				var this_col = apply_col;
-				if ( remaining_col > 0 ) {
-					this_col++;
-					remaining_col--;
-				}
-				wrapper_index++;
-				adapt_wrapper.current.model.set_breakpoint_property('clear', ( aw == 0 ), silent, breakpoint);
-				adapt_wrapper.current.model.set_breakpoint_property('col', this_col, silent, breakpoint);
-				adapt_wrapper.current.model.set_breakpoint_property('order', wrapper_index, silent, breakpoint);
+			ed._set_adapt_wrappers(adapt_line.wrappers, parent_col, silent, breakpoint);
+		});
+	},
+
+	_set_adapt_wrappers: function (adapt_wrappers, parent_col, silent, breakpoint) {
+		var apply_col = Math.floor(parent_col/adapt_wrappers.length),
+			remaining_col = parent_col - (apply_col * adapt_wrappers.length),
+			ed = this
+		;
+		_.each(adapt_wrappers, function (adapt_wrapper, aw) {
+			var this_col = apply_col;
+			if ( remaining_col > 0 ) {
+				this_col++;
+				remaining_col--;
+			}
+			ed._wrapper_index++;
+			adapt_wrapper.current.model.set_breakpoint_property('clear', ( aw == 0 ), silent, breakpoint);
+			adapt_wrapper.current.model.set_breakpoint_property('col', this_col, silent, breakpoint);
+			adapt_wrapper.current.model.set_breakpoint_property('order', ed._wrapper_index, silent, breakpoint);
+			_.each(adapt_wrapper.current.modules, function (module, m) {
+				module.model.set_breakpoint_property('col', this_col, silent, breakpoint);
 			});
 		});
 	},
@@ -3225,6 +3222,13 @@ var GridEditor = {
 		app.layout.set_property('grid', options);
 		app.layout_view.update_grid_css();
 		this.init(); // re-init to update grid values
+
+		if ( app.layout_ready ) {
+			// Trigger updated event if it is changed after layout finished rendering
+			Upfront.Events.trigger('upfront:grid:updated');
+			// Second event for stuff that happen afterward
+			Upfront.Events.trigger('upfront:grid:updated:after');
+		}
 
 		if (
 				flag_update_breakpoint &&

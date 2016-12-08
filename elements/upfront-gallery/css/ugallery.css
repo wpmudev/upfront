@@ -18,6 +18,11 @@
 	overflow: visible;
 }
 
+.ugallery_border {
+	overflow: hidden;
+	display: block;
+}
+
 .ugallery_item img,
 .ugallery_item a {
 	display: block;
@@ -499,7 +504,7 @@ div.preset-manager-panel .caption-height-number input {
 	font-size: 14px;
 	line-height: 1.2em;
 	text-decoration: none;
-	font-family: Source Sans Pro, sans-serif;
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 	font-weight: normal;
 	font-style: normal;
 }

@@ -44,15 +44,13 @@ define([
 
 			content_editable_selector: ".editable",
 
-			initialize: function() {
-				//var script = this.fallback('script');
-				//this.checkJS(script);
-			},
+			initialize: function () {},
 
 			get_content_markup: function () {
 				var markup = this.fallback('markup'),
 					raw_style = this.fallback('style'),
-					script = '(function($){' + this.fallback('script') + '})(jQuery)',
+					raw_script = this.fallback('script'),
+					script = Syntax.checker("script").wrap(raw_script),
 					element_id = this.property('element_id'),
 					style = ''
 				;
@@ -65,7 +63,7 @@ define([
 				style = Upfront.Util.colors.convert_string_ufc_to_color(style); // Allow for theme colors.
 
 				// Check initial scripts
-				if (!Syntax.checker("script").check(script)) {
+				if (!Syntax.checker("script").check(raw_script)) {
 					script = '';
 				}
 
@@ -76,12 +74,7 @@ define([
 			},
 
 			on_render: function () {
-				// this.$el.find(".upfront-entity_meta").append('<a href="#" class="upfront-icon-button re-edit">...</a>');
 				var me = this;
-				// this.$el.find(".upfront-entity_meta .re-edit").on("click", function (e) {
-				// 	e.preventDefault();
-				// 	me.start_markup_editor();
-				// });
 				if (
 					!this.property('markup') &&
 					!this.property('style') &&
@@ -122,7 +115,7 @@ define([
 
 			/**
 			 * Propagated edit event - implicit settings click
-			 * 
+			 *
 			 * This is what happens on settings click.
 			 * Could have some custom logic but let's go with the default
 			 * The default being: double-click content for content edit, settings click for code edit
@@ -133,12 +126,12 @@ define([
 
 			/**
 			 * Explicit content double-click
-			 * 
+			 *
 			 * We want to edit *contents*, not the code in this scenario
 			 */
 			on_edit_content: function (){
 				if (this.is_editing) return false;
-				
+
 				if (!Upfront.Application.user_can_modify_layout()) return false;
 
 				// Since we're doing double duty here, let's first check if content editing mode is to boot
@@ -249,7 +242,7 @@ define([
 					.on("click", function () {
 						$root.hide();
 						Upfront.Media.Manager.open({
-							multiple_selection: false,
+							multiple_selection: false
 						}).done(function (popup, results) {
 							if (results && results.at) {
 								var selected = results.at(0).get("image").src,
@@ -280,7 +273,7 @@ define([
 				$('#page').css('padding-bottom', '200px');
 				$editor.show();
 
-				this.resizeHandler = this.resizeHandler || function(){
+				this.resizeHandler = this.resizeHandler || function () {
 					$editor.width($(window).width() - $('#sidebar-ui').width() -1);
 				};
 				$(window).on('resize', this.resizeHandler);
@@ -303,8 +296,9 @@ define([
 					editor.getSession().setMode("ace/mode/" + Syntax.TYPES[syntax]);
 					editor.setShowPrintMargin(false);
 
-					if ("markup" === syntax && html)
-							editor.getSession().setValue(html);
+					if ("markup" === syntax && html) {
+						editor.getSession().setValue(html);
+					}
 
 					// Live update
 					editor.on('change', function(){
@@ -336,7 +330,7 @@ define([
 				var editorTop = $editor.find('.upfront-css-top'),
 					editorBody = $editor.find('.upfront-css-body')
 				;
-				
+
 				//Enable only height resize
 				editorTop
 					.removeClass("ui-resizable-handle").addClass("ui-resizable-handle")
@@ -370,11 +364,11 @@ define([
 					me.editors[syntax].resize();
 					me.currentEditor = me.editors[syntax];
 
-					if(syntax == 'script')
+					if(syntax == 'script') {
 						$editor.find('upfront-css-image').hide();
-					else
+					} else {
 						$editor.find('upfront-css-image').show();
-
+					}
 				});
 
 				//save edition
@@ -490,10 +484,10 @@ define([
 
 			},
 
-			destroyEditor: function(){
+			destroyEditor: function () {
 				var me = this;
-				if(this.editors && this.editors.length){
-					_.each(this.editors, function(ed){
+				if (this.editors && this.editors.length) {
+					_.each(this.editors, function (ed) {
 						ed.destroy();
 					});
 					me.editors = false;
@@ -504,7 +498,7 @@ define([
 				this.is_editing = false;
 			},
 
-			hiliteElement: function(e){
+			hiliteElement: function (e) {
 				e.preventDefault();
 				var element = this.$el.find('.upfront-object-content');
 				var offset = element.offset().top - 50;
@@ -512,7 +506,7 @@ define([
 				this.blink(element, 4);
 			},
 
-			blink: function(element, times) {
+			blink: function (element, times) {
 				var me = this;
 				element.css('outline', '3px solid #3ea');
 				setTimeout(function(){
@@ -528,11 +522,11 @@ define([
 				}, 100);
 			},
 
-			fallback: function(attribute){
+			fallback: function (attribute) {
 				return this.model.get_property_value_by_name(attribute) || Upfront.data.upfront_code.defaults.fallbacks[attribute];
 			},
 
-			property: function(name, value, silent) {
+			property: function (name, value, silent) {
 				if ("undefined" != typeof value) {
 					if ("undefined" == typeof silent) silent = true;
 					return this.model.set_property(name, value, silent);
@@ -569,12 +563,8 @@ define([
 			},
 
 			on_render: function () {
-				// this.$el.find(".upfront-entity_meta").append('<a href="#" class="upfront-icon-button re-edit">...</a>');
 				var me = this;
-				// this.$el.find(".upfront-entity_meta .re-edit").on("click", function (e) {
-				// 	e.preventDefault();
-				// 	me.on_edit();
-				// });
+
 				if (!this.model.get_property_value_by_name('markup')) {
 					setTimeout(function () {
 						me.on_edit();
@@ -583,9 +573,8 @@ define([
 			},
 
 			on_edit: function () {
-				if (this.is_editing)
-					return false;
-				
+				if (this.is_editing) return false;
+
 				if (!Upfront.Application.user_can_modify_layout()) return false;
 
 				this.is_editing = true;
@@ -604,7 +593,7 @@ define([
 							me.update_property.apply(this, [me.model]);
 						})
 						.on("focus click", function () {
-							$module.draggable("disable")
+							$module.draggable("disable");
 						})
 						.focus()
 					.end()
@@ -621,11 +610,11 @@ define([
 					})
 				;
 			},
-			fallback: function(attribute){
+			fallback: function (attribute) {
 				return this.model.get_property_value_by_name(attribute) || Upfront.data.upfront_code.defaults.fallbacks[attribute];
 			},
 
-			getControlItems: function(){
+			getControlItems: function () {
 				return _([
 					this.createPaddingControl(),
 					this.createControl('edit', l10n.edit, 'on_edit_settings')

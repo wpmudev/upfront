@@ -54,6 +54,9 @@ define([
 						Upfront.mainData[this.mainDataCollection] : [];
 
 				Upfront.mainData[this.mainDataCollection].unshift(this.getPresetDefaults('default'));
+
+				// Generate presets styles to page
+				Util.generatePresetsToPage(this.ajaxActionSlug, this.styleTpl);
 			}
 
 
@@ -64,13 +67,9 @@ define([
 					me.model.trigger("preset:updated", properties.id);
 					return false;
 				}
-				
-				Upfront.Util.post({
-					action: 'upfront_save_' + this.ajaxActionSlug + '_preset',
-					data: properties
-				}).done( function() {
-					me.model.trigger("preset:updated", properties.id);
-				});
+
+				me.model.trigger("preset:updated", properties.id);
+				Upfront.Application.presetSaver.queue(properties, me.ajaxActionSlug);
 			};
 
 			// Let's not flood server on some nuber property firing changes like crazy
@@ -224,8 +223,8 @@ define([
 			}
 
 			if (
-				Upfront.Application.user_can("SWITCH_PRESET") 
-				&& 
+				Upfront.Application.user_can("SWITCH_PRESET")
+				&&
 				(Upfront.Application.user_can("MODIFY_PRESET") || Upfront.Application.user_can("DELETE_PRESET"))
 			) { // Don't build the control if we can't do this
 				this.editPresetModule = new EditPresetModule({
@@ -461,7 +460,7 @@ define([
 
 			// Make sure we don't lose our current preset
 			this.model.encode_preset(preset.id);
-			
+
 			//Notify preset is created
 			Upfront.Views.Editor.notify(l10n.preset_created.replace(/%s/, presetName));
 
@@ -550,10 +549,10 @@ define([
 			this.render();
 
 			this.defaultOverlay();
-			
+
 			// run layout change event
 			Upfront.Events.trigger('entity:layout:change');
-			
+
 			Upfront.Events.trigger('element:preset:updated');
 			//Display notification
 			Upfront.Views.Editor.notify(l10n.preset_changed.replace(/%s/, preset));
@@ -697,7 +696,7 @@ define([
 				if (!(setting || {}).render) return true;
 				if ( ! setting.panel ) setting.panel = me;
 				setting.render();
-				$body.append(setting.el)
+				$body.append(setting.el);
 			});
 
 

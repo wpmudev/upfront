@@ -88,7 +88,7 @@ class Upfront_PageLayout {
 			'suppress_filters' => true,
 
 		));
-		
+
 		return !empty($query->posts[0]) && !empty($query->posts[0]->post_content)
 			? unserialize(base64_decode($query->posts[0]->post_content))
 			: false
@@ -213,5 +213,34 @@ class Upfront_PageLayout {
 		}
 		return $result;
 	}
-	
+
+	/**
+	 * Returns page layout using slug
+	 *
+	 * @param $slug
+	 * @param $load_dev
+	 * @return bool|array
+	 */
+	public function get_by_slug($slug, $load_dev ){
+
+		if ( empty($slug) ) return false;
+
+		$post_type = ( $load_dev )
+				? self::PAGE_LAYOUT_DEV_TYPE
+				: self::PAGE_LAYOUT_TYPE
+		;
+
+		$query = new WP_Query(array(
+				'name' => strtolower($slug),
+				'post_type' => $post_type,
+				'suppress_filters' => true,
+				'posts_per_page' => 1,
+		));
+
+		return !empty($query->posts[0]) && !empty($query->posts[0]->post_content)
+				? unserialize(base64_decode($query->posts[0]->post_content))
+				: false
+				;
+
+	}
 }

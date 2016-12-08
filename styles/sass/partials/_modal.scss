@@ -1,5 +1,5 @@
 .upfront-message-modal {
-	font-family: "Source Sans Pro", sans-serif;
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 	color: #3c5266;
 }
 .upfront-modal-title {
@@ -76,5 +76,155 @@
 }
 .upfront-apply-page-modal .upfront-field-wrap-button.upfront-continue-apply-template input {
   color: #6486a6;
+}
+
+.upfront-import-image-modal {
+	text-align: center;
+	color: rgba(28, 45, 61, 1);
+	font-size: 16px;
+	background: rgba(28, 45, 61, 0.5);
+}
+.upfront-import-image-modal .upfront-inline-modal-content {
+	padding: 40px;
+}
+.upfront-import-image-button {
+	display: inline-block;
+	font-size: 14px;
+	margin: 0 20px;
+	padding: 0 20px;
+	line-height: 40px;
+	height: 40px;
+	text-align: center;
+	color: #7190af;
+	border: 1px solid #b2cbe2;
+	border-radius: 3px;
+	background: #f9fcff;
+}
+.upfront-import-image-list {
+	padding: 20px 0 0;
+	text-align: center;
+}
+.upfront-import-image-list.upfront-scroll-panel {
+	max-height: 320px;
+}
+.upfront-import-image-each {
+	width: 103px;
+	height: 75px;
+	border: 1px solid #a9cae8;
+	/* Below is image pattern for background */
+	background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+CjxyZWN0IHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0iI0U0RjNGRiI+PC9yZWN0Pgo8cmVjdCB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIGZpbGw9IiNEMkU3RjgiPjwvcmVjdD4KPHJlY3QgeD0iMTAiIHk9IjEwIiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIGZpbGw9IiNEMkU3RjgiPjwvcmVjdD4KPC9zdmc+") repeat;
+	background-position: 5px 0;
+	overflow: hidden;
+	display: inline-block;
+	vertical-align: top;
+	margin: 0 10px 20px;
+	position: relative;
+}
+.upfront-import-image-each.processing {
+	animation-duration: 1s;
+	animation-name: import-processing;
+	animation-direction: alternate;
+	animation-iteration-count: infinite;
+}
+.upfront-import-image-each.done {
+	display: none;
+}
+.upfront-import-image-each img {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+	width: 100%;
+	height: auto;
+}
+
+@keyframes import-processing {
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0.5;
+	}
+}
+
+
+
+.upfront-inline-modal,
+.upfront-inline-modal-wrap {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 10001004;
+}
+.upfront-inline-modal {
+}
+.upfront-inline-modal-wrap {
+	margin: auto;
+	width: 50%;
+	border: 1px solid #fff;
+	background: #e5f3ff;
+	-moz-box-shadow: 0 0 20px rgba(39,58,76,.8);
+	-webkit-box-shadow: 0 0 20px rgba(39,58,76,.8);
+	box-shadow: 0 0 20px rgba(39,58,76,.8);
+}
+.upfront-inline-modal-wrap .upfront-inline-modal-content {
+	padding: 16px;
+}
+.upfront-inline-modal-wrap .upfront-inline-modal-content:before,
+.upfront-inline-modal-wrap .upfront-inline-modal-content:after {
+	content: " ";
+	display: table;
+}
+.upfront-inline-modal-wrap .upfront-inline-modal-content:after {
+	clear: both;
+}
+.upfront-inline-modal-save,
+.upfront-inline-modal-save:hover {
+	position: absolute;
+	bottom: -35px;
+	right: 0;
+	color: #f1f8ff;
+	font-size: 18px;
+	height: 34px;
+	line-height: 34px;
+	padding: 0 36px;
+	background: #2ecb90;
+	border: none;
+	border-bottom: 1px solid rgba(27,45,63,.5);
+}
+.upfront-modal-bg .upfront-inline-modal-wrap {
+	width: 384px;
+}
+
+
+
+.upfront-bg-setting-prompt-modal {
+	text-align: center;
+	color: rgba(28, 45, 61, 1);
+	font-size: 16px;
+	background: rgba(28, 45, 61, 0.5);
+}
+.upfront-bg-setting-prompt-modal .upfront-inline-modal-content {
+	padding: 40px;
+}
+.upfront-bg-setting-prompt-modal p {
+	margin: 0 0 20px;
+}
+.upfront-bg-setting-prompt-button {
+	display: inline-block;
+	font-size: 14px;
+	margin: 0 20px;
+	padding: 0 20px;
+	line-height: 40px;
+	height: 40px;
+	text-align: center;
+	color: #7190af;
+	border: 1px solid #b2cbe2;
+	border-radius: 3px;
+	background: #f9fcff;
 }
 

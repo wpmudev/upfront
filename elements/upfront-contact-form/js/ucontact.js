@@ -5,7 +5,7 @@ define([
 	'upfront-data',
 	'elements/upfront-contact-form/js/settings',
 	'text!elements/upfront-contact-form/templates/preset-style.html',
-	'scripts/upfront/preset-settings/util',
+	'scripts/upfront/preset-settings/util'
 ], function (upfront_data, Settings, settingsStyleTpl, PresetUtil) {
 var template = upfront_data.data && upfront_data.data.ucontact && upfront_data.data.ucontact.template ?
 	upfront_data.data.ucontact.template
@@ -132,7 +132,7 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 					}
 					else {
 
-						try { text = $label.text() } catch (e) { text = ''; }
+						try { text = $label.text(); } catch (e) { text = ''; }
 					}
 
 					var targetproperty = false;
@@ -157,7 +157,7 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 					$label.siblings('input, textarea').attr('placeholder', $label.text());
 				}
 			});
-		
+
 		}
 	},
 	handleButtonclick: function(e) {
@@ -169,7 +169,7 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 		if (Upfront.Application.user_can_modify_layout()) {
 			$button = this.$el.find('button.submit-field > span');
 			var ueditor = $button.data('ueditor');
-			
+
 			//Check if ueditor is defined ( prevent JS error when double click for select all )
 			if(typeof ueditor !== "undefined") {
 				ueditor.start();
@@ -179,7 +179,7 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 	editLabeltext: function(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		
+
 		if (Upfront.Application.user_can_modify_layout()) {
 			$label = $(e.target);
 			$label.css('opacity', 1);

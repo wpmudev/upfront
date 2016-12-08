@@ -295,3 +295,7 @@
 .chosen-container:not(.chosen-with-drop) .chosen-drop {
 	display: none !important;
 }
+
+#settings .chosen-container-multi .chosen-choices li.search-field input[type=text] {
+	height: 20px;
+}

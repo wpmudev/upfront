@@ -17,9 +17,9 @@ define([
 						moduleType: 'MenuStyle',
 						options: {
 							title: l10n.panel.menu_kind_label,
-							state: 'global',
+							state: 'global'
 						}
-					},
+					}
 				],
 				Static: [
 					{
@@ -35,7 +35,7 @@ define([
 								style: 'static-style',
 								size: 'static-font-size',
 								line_height: 'static-line-height',
-								color: 'static-font-color',
+								color: 'static-font-color'
 							}
 						}
 					},
@@ -49,10 +49,10 @@ define([
 								{
 									name: 'static-nav-bg',
 									label: l10n.panel.item_background_label
-								},
+								}
 							]
 						}
-					},
+					}
 				],
 				Hover: [
 					{
@@ -71,7 +71,7 @@ define([
 								style: 'hover-style',
 								size: 'hover-font-size',
 								line_height: 'hover-line-height',
-								color: 'hover-font-color',
+								color: 'hover-font-color'
 							}
 						}
 					},
@@ -85,16 +85,16 @@ define([
 							prepend: 'hover-',
 							prefix: 'static',
 							fields: {
-								use: 'hover-use-color',
+								use: 'hover-use-color'
 							},
 							abccolors: [
 								{
 									name: 'hover-nav-bg',
 									label: l10n.panel.item_background_label
-								},
+								}
 							]
 						}
-					},
+					}
 				],
 				Focus: [
 					{
@@ -113,7 +113,7 @@ define([
 								style: 'focus-style',
 								size: 'focus-font-size',
 								line_height: 'focus-line-height',
-								color: 'focus-font-color',
+								color: 'focus-font-color'
 							}
 						}
 					},
@@ -127,19 +127,19 @@ define([
 							prepend: 'focus-',
 							prefix: 'static',
 							fields: {
-								use: 'focus-use-color',
+								use: 'focus-use-color'
 							},
 							abccolors: [
 								{
 									name: 'focus-nav-bg',
 									label: l10n.panel.item_background_label
-								},
+								}
 							]
 						}
-					},
-				],
+					}
+				]
 			},
-			
+
 			migrateDefaultStyle: function(styles) {
 					//replace image wrapper class
 					styles = styles.replace(/(div)?\.upfront-navigation\s/g, '');

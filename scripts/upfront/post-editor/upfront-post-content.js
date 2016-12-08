@@ -280,7 +280,6 @@ PostContentEditor.prototype = {
 					this.$content
 						.off('blur')
 						.on('blur', _.bind(this.blur, this))
-						.off('keyup')
 						.on('keyup', _.bind(this.keyup, this))
 						.off('stop')
 						.on("stop", _.bind(this.stopEditContent, this))
@@ -303,6 +302,9 @@ PostContentEditor.prototype = {
 				}
 			},
 			stopEditContent: function () {
+				if( this.editor.redactor && this.editor.redactor.code )
+					this.editor.redactor.code.startSync();
+
 				if ( this.$content.length ){
 					this.$content
 						.off('blur')
@@ -338,9 +340,7 @@ PostContentEditor.prototype = {
 						}
 
 					});
-
 					content = $.trim( this.editor.getValue() );
-
 					content = content.replace(/(\n)*?<br\s*\/?>\n*/g, "<br/>");
 					if ( isExcerpt ) {
 						this.parent.currentData.excerpt = content;
@@ -348,6 +348,7 @@ PostContentEditor.prototype = {
 					else {
 						this.parent.currentData.content = content;
 					}
+					
 					this.parent.currentData.inserts = this.editor.getInsertsData();
 				}
 			},
@@ -373,8 +374,8 @@ PostContentEditor.prototype = {
 			type: 'author',
 			events: function () {
 				return _.extend({}, _partView.prototype.events, {
-					'click .upostdata-part' : 'editAuthor',
-				})
+					'click .upostdata-part' : 'editAuthor'
+				});
 			},
 			init: function () {
 				this.listenTo(this.parent, 'change:author', this.authorChanged);
@@ -420,8 +421,8 @@ PostContentEditor.prototype = {
 			type: 'gravatar',
 			events: function () {
 				return _.extend({}, _partView.prototype.events, {
-					'click .upostdata-part' : 'editAuthor',
-				})
+					'click .upostdata-part' : 'editAuthor'
+				});
 			},
 			init: function () {
 				PostContentEditor.prototype.partView.author.prototype.init.call(this);
@@ -449,7 +450,7 @@ PostContentEditor.prototype = {
 					'click .upostdata-part': 'editDate',
 					'click .ueditor-action-pickercancel': 'editDateCancel',
 					'click .ueditor-action-pickerok': 'editDateOk'
-				})
+				});
 			},
 			init: function () {
 				this.listenTo(this.parent, 'change:date', this.dateChanged);
@@ -581,7 +582,7 @@ PostContentEditor.prototype = {
 			events: function () {
 				return _.extend({}, _partView.prototype.events, {
 					'click .upost_thumbnail_changer': 'editThumb'
-				})
+				});
 			},
 			editContent: function () {
 				_partView.prototype.editContent.call(this);
@@ -648,12 +649,12 @@ PostContentEditor.prototype = {
 							sizes = image;
 							imageId = id;
 						});
-
+						
 						deferred.resolve({
-							src: sizes.medium ? sizes.medium[0] : sizes.full[0],
-							srcFull: sizes.full[0],
-							srcOriginal: sizes.full[0],
-							fullSize: {width: sizes.full[1], height: sizes.full[2]},
+							src: sizes.medium ? sizes.medium[0] : (sizes.full ? sizes.full[0] : ''),
+							srcFull: sizes.full ? sizes.full[0] : '',
+							srcOriginal: sizes.full ? sizes.full[0]: '',
+							fullSize: {width: sizes.full ? sizes.full[1] : 0, height: sizes.full ? sizes.full[2] : 0},
 							size: {width: $img.width(), height: $img.height()},
 							position: {top: 0, left: 0},
 							rotation: 0,
@@ -760,7 +761,7 @@ PostContentEditor.prototype = {
 					;
 
 					// Update post meta
-					me.updatePost(imageData)
+					me.updatePost(imageData);
 
 					//post.meta.save();
 					if(!img.length)
@@ -820,7 +821,7 @@ PostContentEditor.prototype = {
 					return this.model.set_property(name, value, silent);
 				}
 				return this.model.get_property_value_by_name(name);
-			},
+			}
 		}),
 
 		tags: _partView.extend({
@@ -942,7 +943,6 @@ PostContentEditor.prototype = {
 	prepareBox: function(){
 		var self = this,
 			$main = $(Upfront.Settings.LayoutEditor.Selectors.main);
-
 		if(typeof this.box !== "undefined") {
 			this.box.remove();
 		}
@@ -957,41 +957,22 @@ PostContentEditor.prototype = {
 		var me = this,
 			events = ['cancel', 'publish', 'draft', 'trash', 'auto-draft']
 		;
-
 		_.each(events, function(e){
 			me.listenTo(me.box, e, function(){
 				_.each(me._viewInstances, function (view) {
 					view.trigger(e);
 				});
 				var results = {};
-				if(e=='publish' || e=='draft' || e=='auto-draft'){
+				if( (e=='publish' || e=='draft' || e=='auto-draft') ){
 					results.title = me.currentData.title;
 					results.content = me.currentData.content;
 					results.excerpt = me.currentData.excerpt;
 					results.author = me.currentData.author;
 					results.date = me.currentData.date;
 					results.inserts = me.currentData.inserts;
-					// if(me.currentContent){
-						// var editor = $(me.currentContent).data('ueditor');
-//
-                        // // cleanup inserts markup
-                        // me.$el.find(".upfront-inline-panel").remove();
-                        // me.$el.find(".ueditor-insert-remove").remove();
-//
-						// results.content = $.trim( editor.getValue() );
-						// results.content = results.content.replace(/(\n)*?<br\s*\/?>\n*/g, "<br/>");
-						// results.inserts = editor.getInsertsData();
-						// results.author = me.postAuthor;
-					// }
-					// if(me.selectedDate)
-						// results.date = me.selectedDate;
-
-					if(me.postStatus)
-						results.status = me.postStatus;
-					if(me.postVisibility)
-						results.visibility = me.postVisibility;
-					if(me.postPassword)
-						results.pass = me.postPassword;
+					if(me.postStatus) results.status = me.postStatus;
+					if(me.postVisibility) results.visibility = me.postVisibility;
+					if(me.postPassword) results.pass = me.postPassword;
 				}
 				me.trigger(e, results);
 			});
@@ -1123,9 +1104,9 @@ PostContentEditor.prototype = {
 			range.collapse(false);//collapse the range to the end point.
 			range.select();//Select the range (make it the visible selection)
 		}
-	},
+	}
 
-}
+};
 
 
 
@@ -1177,6 +1158,8 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 		//this.prepareBox();
 	},
     title_blurred: function(){
+		if(typeof this.box === "undefined") return;
+
         if( this.post.is_new && !this.box.urlEditor.hasDefinedSlug && !_.isEmpty(this.parts.titles.html()) ){
             this.post.set("post_name",  this.parts.titles.html().toLowerCase().replace(/\ /g,'-'));
             this.box.urlEditor.render();
@@ -1478,7 +1461,7 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 	openImageEditor: function(newImage, imageInfo, postId){
 		var me = this,
 		mask = this.$('.ueditor_thumb'),
-		height = this.partOptions.featured_image && this.partOptions.featured_image.height ? this.partOptions.featured_image.height : 60
+		height = this.partOptions.featured_image && this.partOptions.featured_image.height ? this.partOptions.featured_image.height : 60,
 		editorOptions = _.extend({}, imageInfo, {
 			element_id: 'post_' + postId,
 			element_cols: Upfront.Util.grid.width_to_col(mask.width(), true),
@@ -1812,7 +1795,7 @@ var PostContentEditorLegacy = Backbone.View.extend(_.extend({}, PostContentEdito
 			this.parts.titles.off('change', this.onTitleEdited);
 
 		if(this.editors)
-			_.each(this.editors, function(e){e.stop()});
+			_.each(this.editors, function(e){e.stop();});
 
 		var draggable = this.$el.closest('.ui-draggable');
 		if(draggable.length)
@@ -1886,7 +1869,7 @@ return {
 	PostContentEditor: PostContentEditor,
 	PostContentEditorLegacy: PostContentEditorLegacy,
 	getMarkupper: function getMarkupper(){return markupper;}
-}
+};
 
 
 //End define

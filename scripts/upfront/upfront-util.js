@@ -15,13 +15,6 @@ _.mixin({
 	}
 });
 
-var _tpl = _.template;
-_.template = function (tpl, data) {
-	if (typeof undefined === typeof data) return _tpl(tpl);
-	var tmp = _tpl(tpl);
-	return tmp(data);
-};
-
 //requestFrameAnimation polyfill
 var rAFPollyfill = function(callback){
 		var currTime = new Date().getTime(),
@@ -34,7 +27,9 @@ var rAFPollyfill = function(callback){
 
 
 
-define(function() {
+define([
+	"pako"
+], function ( pako ){
 	var guessLinkType = function(url) {
 		if(!$.trim(url) || $.trim(url) == '#' || $.trim(url) === '') {
 			return 'unlink';
@@ -142,6 +137,10 @@ define(function() {
 			if ( Upfront.Application.current_subapplication.layout ) {
 				//request.upfront_layout = Upfront.Application.layout.get('layout');
 				request.layout = Upfront.Application.current_subapplication.layout.get('layout');
+			}
+			if ( Upfront.layout_data_from_create_layout && request.data && request.data.post_id === 'fake_post' && !request.layout ) {
+				request.layout = Upfront.layout_data_from_create_layout;
+				Upfront.layout_data_from_create_layout = false;
 			}
 			if ( !request.storage_key ) request.storage_key = _upfront_storage_key;
 			request.stylesheet = _upfront_stylesheet;
@@ -252,9 +251,9 @@ define(function() {
              * @param string|int|null class_size either a string of the class size like 12 or '12'
              */
             update_class :  function ($el, class_prefix, class_size) {
-				class_size = (class_prefix || '').replace( /[^\d.]/g, '');
 				var class_name;
                 if (_.isUndefined(class_size)) {
+					class_size = (class_prefix || '').replace( /[^\d.]/g, '');
                     class_name = class_prefix.replace(class_size, "");
                 } else {
                     class_name = class_prefix;
@@ -806,6 +805,73 @@ define(function() {
 				}
 				else
 					return false;
+		},
+
+		/**
+		 * Compress passed data using pako.deflate
+		 *
+		 * @param data
+		 * @param options
+		 * @returns {string} base64 encoded string
+		 */
+		compress: function (data, options) {
+			console.time('compressing');
+			var default_options = { to: 'string', level: Upfront.mainData.save_compression_level },
+				stringified, raw, encoded
+			;
+			if ( _.isObject(options) ) {
+				options = _.extend(default_options, options);
+			}
+			else {
+				options = default_options;
+			}
+			// Stringify data to preserve types
+			stringified = JSON.stringify(data);
+			// Use deflateRaw, so wrapper isn't included
+			raw = pako.deflateRaw(stringified, options);
+			// Base64 encode it so we can work with string
+			encoded = btoa(raw);
+			console.log('compressed length:' + encoded.length, 'compressed ratio:' + Math.round(encoded.length/stringified.length*100)/100);
+			console.timeEnd('compressing');
+			return {
+				result: encoded,
+				original_length: stringified.length,
+				compressed_length: encoded.length
+			};
+		},
+
+		/**
+		 * Extract compressed data from pako.deflate, accept base64 encoded string
+		 *
+		 * @param compressed
+		 * @param options
+		 * @param compressed_length
+		 * @param original_length
+		 * @returns extracted data, with the same type before compression
+		 */
+		extract: function (compressed, options, compressed_length, original_length) {
+			console.time('extracting');
+			if ( compressed_length && compressed_length !== compressed.length ) return false;
+			var default_options = { to: 'string' },
+				decoded, inflated, parsed
+			;
+			if ( _.isObject(options) ) {
+				options = _.extend(default_options, options);
+			}
+			else {
+				options = default_options;
+			}
+			// Base64 decode first
+			decoded = atob(compressed);
+			// Use inflateRaw to extract as we deflate without wrapper
+			inflated = pako.inflateRaw(decoded, options);
+
+			if ( original_length && original_length !== inflated.length ) return false;
+
+			// Finally, parse it to get back original value
+			parsed = JSON.parse(inflated);
+			console.timeEnd('extracting');
+			return parsed;
 		}
 	};
 
@@ -840,6 +906,7 @@ define(function() {
 		open: function (callback, data, classname) {
 				data = data || {};
 				this.data = data;
+				this.disable_esc = data.disable_esc || false;
 				classname = classname || 'default-popup';
 				this.init();
 				var me = this,
@@ -855,10 +922,11 @@ define(function() {
 						}
 				;
 
-				$('body').bind( 'keyup', function( event ) {
-					if ( event.keyCode === 27 )
-						me.close();
-				});
+				if ( !this.disable_esc ) {
+					$('body').bind( 'keyup', function( event ) {
+						if ( event.keyCode === 27 ) me.close();
+					});
+				}
 
 				// data.width = width, data.height = height;
 				this.$background
@@ -947,18 +1015,22 @@ define(function() {
 
 	var PreviewUpdate = function () {
 		var _layout_data = false,
+			_last_layout_data = false,
+			_layout_compressed = false,
 			_layout = false,
 			_saving_flag = false,
 			_is_dirty = false,
 			_preview_url = false,
 			_revision_idx = false,
-			run = function (layout) {
+			_tab_id = false,
+			run = function (layout, tab_id) {
 				if (!!Upfront.Settings.Application.PERMS.REVISIONS) { // Only rebind stuff when revisions listening is enabled.
 					if (Upfront.Application.mode.current === Upfront.Application.MODE.THEME) {
 						// Exporter mode
 						rebind_exporter_events();
 					} else {
 						// Normal mode
+						_tab_id = tab_id;
 						_layout = layout;
 						rebind_events();
 					}
@@ -1036,9 +1108,16 @@ define(function() {
 				if (_layout_data && _layout_data.regions) _layout_data.regions = _(_layout_data.regions).reject(function (reg) { return reg.name === "shadow"; });
 				_layout_data.layout = _upfront_post_data.layout;
 				_layout_data.preferred_layout = _layout.get("current_layout");
+				_layout_data.tab_id = _tab_id;
 
-				//_layout_data = JSON.stringify(_layout_data, undefined, 2);
-				_layout_data = JSON.stringify(_layout_data);
+				if ( Upfront.mainData.save_compression ) {
+					_layout_compressed = Upfront.Util.compress(_layout_data);
+					_layout_data = _layout_compressed.result;
+				}
+				else {
+					//_layout_data = JSON.stringify(_layout_data, undefined, 2);
+					_layout_data = JSON.stringify(_layout_data);
+				}
 			},
 			save = function () {
 				if (_saving_flag) return false;
@@ -1047,8 +1126,22 @@ define(function() {
 				_is_dirty = true;
 				set_data();
 
+				// Don't flood server with unnecessary requests
+				if (_layout_data === _last_layout_data) {
+					_saving_flag = false;
+					return;
+				}
+				_last_layout_data = _layout_data;
+
 				Upfront.Events.trigger("preview:build:start");
-				Upfront.Util.post({action: "upfront_build_preview", "data": _layout_data, "current_url": window.location.href})
+				Upfront.Util.post({
+						action: "upfront_build_preview",
+						"data": _layout_data,
+						"current_url": window.location.href,
+						"original_length": _layout_compressed ? _layout_compressed.original_length : 0,
+						"compressed_length": _layout_compressed ? _layout_compressed.compressed_length : 0,
+						"compression": Upfront.mainData.save_compression ? 1 : 0
+					})
 					.success(function (response) {
 						var data = response.data || {};
 						if ("html" in data && data.html) {
@@ -1059,6 +1152,7 @@ define(function() {
 						}
 						_saving_flag = false;
 						Upfront.Events.trigger("preview:build:stop");
+
 						//Upfront.Util.log("we're good here");
 
 						// Notify about concurrent edits
@@ -1066,13 +1160,17 @@ define(function() {
 							var users = _.values(data.concurrent_users).join(', ');
 							Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.views.already_edited_nag.replace(/%s/, users), 'error');
 						}
+						// If multiple tabs are open, warn on save.
+						if (data.other_tab_open) {
+							Upfront.Views.Editor.notify(Upfront.Settings.l10n.global.views.multiple_tabs_nag, 'error');
+						}
 					})
 					.error(function () {
 						Upfront.Util.log("error building layout preview");
 					})
 				;
 
-				run(_layout);
+				run(_layout, _tab_id);
 			},
 			clear = function () {
 				_is_dirty = false; // Clear dirty flag, we just saved changes

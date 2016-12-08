@@ -7,28 +7,36 @@
 class Upfront_UnewnavigationView extends Upfront_Object {
 
 	public function get_markup () {
+		$breakpoint_menu_id = $this->_get_property('breakpoint_menu_id');
 		$menu_id = $this->_get_property('menu_id');
 		$menu_slug = $this->_get_property('menu_slug');
-
 		$activeBreakpoints = Upfront_Grid::get_grid()->get_breakpoints();
-
-
-
-
-
-
 		$preset = $this->_get_property('preset');
 		if (!isset($preset)) {
 			$preset = 'default';
 		}
-
-		$preset_props = Upfront_Nav_Presets_Server::get_instance()->get_preset_properties($preset);
 		$breakpoint_data = $this->_get_property('breakpoint');
-		
+
 		if ($this->_get_property('usingNewAppearance') == true) {
+			/* NEW APPEARANCE */
+			// preset here uses the Desktop one
+			$preset_props = Upfront_Nav_Presets_Server::get_instance()->get_preset_properties($preset);
 			$breakpoint_data['preset'] = isset($preset_props['breakpoint'])?$preset_props['breakpoint']:false;
+			// catering breakpoint presets
+			$breakpoint_presets = $this->_get_property('breakpoint_presets');
+			$breakpoint_presets = is_array($breakpoint_presets) ? $breakpoint_presets : array();
+			foreach ( $breakpoint_presets as $key=>$properties ) {
+				// skip the desktop since already catered above
+				if ( $key == 'desktop' ) continue;
+				// if preset not defined skip also
+				if ( !isset($properties['preset']) ) continue;
+				// supplying correct breakpoint preset data
+				$preset_props = Upfront_Nav_Presets_Server::get_instance()->get_preset_properties($properties['preset']);
+				$breakpoint_data['preset'][$key] = ( isset($preset_props['breakpoint']) && isset($preset_props['breakpoint'][$key]) ) ? $preset_props['breakpoint'][$key] : false;
+			}
 		} else {
-			$breakpoint_property = $this->_get_property('breakpoint');
+			/* OLD APPEARANCE */
+			$breakpoint_property = $breakpoint_data;
 			$breakpoint_property = is_array($breakpoint_property) ? $breakpoint_property : array();
 			foreach ($breakpoint_property as $key=>$properties) {
 				$breakpoint_data['preset'][$key] = $properties;
@@ -41,7 +49,6 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 					$breakpoint_data['preset'][$key]['burger_over'] = $properties['burger_over'];
 				}
 			}
-			
 		}
 
 		// if a breakpoint does not have info to render menu style, copy it from one higher
@@ -50,27 +57,29 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 			foreach ($activeBreakpoints as $name => $point) {
 				$data = $point->get_data();
 
-				if(!array_key_exists($name, $breakpoint_data['preset']) && $higher_name != '')
+				if(!array_key_exists($name, $breakpoint_data['preset']) && '' != $higher_name && !empty($breakpoint_data['preset'][$higher_name])) {
 					$breakpoint_data['preset'][$name] = $breakpoint_data['preset'][$higher_name];
+				}
 
 				$higher_name = $name;
-			}
 
-			/** if breakpoint has menu_style set to burger, but no
-				burger_alignment is defined, set it to default
-			**/
-			if(isset($breakpoint_data['preset'][$name]) && isset($breakpoint_data['preset'][$name]['menu_style']) && $breakpoint_data['preset'][$name]['menu_style'] && !isset($breakpoint_data['preset'][$name]['burger_alignment']) ) {
-				$breakpoint_data['preset'][$name]['burger_alignment'] = 'left';
+				/** if breakpoint has menu_style set to burger, but no
+					burger_alignment is defined, set it to default
+				**/
+				if(isset($breakpoint_data['preset'][$name]) && isset($breakpoint_data['preset'][$name]['menu_style']) && $breakpoint_data['preset'][$name]['menu_style'] && !isset($breakpoint_data['preset'][$name]['burger_alignment']) ) {
+					$breakpoint_data['preset'][$name]['burger_alignment'] = 'left';
+				}
 			}
 		}
+
 		$menu_style = $this->_get_property('menu_style');
 		$menu_alignment = $this->_get_property('menu_alignment');
 
 		$desktopPreset = (is_array($breakpoint_data['preset']) && isset($breakpoint_data['preset']['desktop']))?$breakpoint_data['preset']['desktop']:false;
-		
+
 		$sub_navigation = $this->_get_property('allow_sub_nav');
 		$is_floating = $this->_get_property('is_floating');
-		
+
 		$breakpoint_data['preset']['desktop']['is_floating'] = $is_floating ? $is_floating : '';
 
 		if ($this->_get_property('usingNewAppearance') == true) {
@@ -99,25 +108,52 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		$breakpoint_data = preg_replace('#\\\\"#', '"', $breakpoint_data);
 		$menu_alignment = $menu_alignment ? "data-alignment='{$menu_alignment}' data-alignment='{$menu_alignment}'" : "";
 		$sub_navigation = $sub_navigation ? "data-allow-sub-nav='yes'" : "data-allow-sub-nav='no'";
-		
+
 		$new_appearance = $this->_get_property('usingNewAppearance') ? 'true' : 'false';
 		$using_appearance = "data-new-appearance='{$new_appearance}'";
 
 		$float_class = $is_floating ? 'upfront-navigation-float' : '';
 
 		upfront_add_element_script('unewnavigation_responsive', array('js/responsive.js', dirname(__FILE__)));
-		
+
 		if ($is_floating) {
 			//wp_enqueue_script('unewnavigation', upfront_element_url('js/public.js', dirname(__FILE__)));
 			upfront_add_element_script('unewnavigation', array('js/public.js', dirname(__FILE__)));
 		}
 
+		$breakpoint_menu_id = is_array($breakpoint_menu_id) ? $breakpoint_menu_id : array();
+		$menu_html = '';
+		if ( count($breakpoint_menu_id) ) {
+			// return all menu for each breakpoint
+			foreach ( $breakpoint_menu_id as $breakpoint => $breakpoint_menu ) {
+				if ( isset($breakpoint_menu['menu_id']) ) {
+					// check first if the breakpoint menu still existing, otherwise fallback to using menu_slug
+					$target_menu = ( wp_get_nav_menu_object($breakpoint_menu['menu_id']) ) ? $breakpoint_menu['menu_id'] : $menu_slug ;
+					$menu = wp_nav_menu(array(
+						'menu' => $target_menu,
+						'fallback_cb'     => false,
+						'echo' => false,
+						'walker' => new upfront_nav_walker(),
+					));
+					if($new_appearance == 'true') {
+						$menu_html .= "<div class='nav-preset-{$preset} {$float_class} upfront-output-unewnavigation upfront-navigation upfront-breakpoint-navigation upfront-{$breakpoint}-breakpoint-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
+					} else {
+						$menu_html .= "<div class='{$float_class} upfront-output-unewnavigation upfront-navigation upfront-breakpoint-navigation upfront-{$breakpoint}-breakpoint-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
+					}
+				}
+			}
+		}
+		// if we do have breakpoint menu then go ahead and show it, skip the rest below
+		if ( !empty($menu_html) ) {
+			return $menu_html;
+		}
+		
+		// normal display with no other menu on each breakpoint
 		if($menu_slug) {
 			$menu = wp_get_nav_menu_object($menu_slug);
 			if($menu)
 				$menu_id = $menu->term_id;
 		}
-
 		if ( $menu_id ) {
 			$menu = wp_nav_menu(array(
 				'menu' => $menu_id,
@@ -132,7 +168,6 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				return "<div class='{$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . self::_get_l10n('select_menu') . "</div>";
 			}
 		}
-		
 		if($new_appearance == 'true') {
 			return "<div class='nav-preset-{$preset} {$float_class} upfront-output-unewnavigation upfront-navigation' {$using_appearance} {$menu_style} {$menu_alignment} {$breakpoint_data} {$sub_navigation}>" . $menu . "</div>";
 		} else {
@@ -224,7 +259,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				'responsive_subitem_label' => __('Responsive Sub Menu Item', 'upfront'),
 				'responsive_subitem_hover_label' => __('Responsive Sub Menu Item hover', 'upfront'),
 			),
-			'new_menu_name' => __('New Menu Name', 'upfront'),
+			'new_menu_name' => __('Type new menu name...', 'upfront'),
 			'create_new' => __('Create New', 'upfront'),
 			'link_name' => __('Link Name', 'upfront'),
 			'mnu' => array(
@@ -290,7 +325,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 			upfront_add_ajax('upfront_new_load_menu_items', array($this, "load_menu_items"));
 			upfront_add_ajax('upfront_new_menu_from_slug', array($this, "menu_from_slug"));
 		}
-		
+
 		if (Upfront_Permissions::current(Upfront_Permissions::SAVE) && Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE)) {
 			upfront_add_ajax('upfront_new_delete_menu_item', array($this, "delete_menu_item"));
 			upfront_add_ajax('upfront_new_update_menu_order', array($this, "update_menu_order"));
@@ -317,7 +352,8 @@ class Upfront_newMenuSetting extends Upfront_Server {
 
 		if(isset($_POST['data'])) {
 			$menu_id = $_POST['data'];
-			$menu = wp_get_nav_menu_object( $menu_id ? $menu_id : $_POST['alternate'] );
+			$alternate = !empty($_POST['alternate']) ? $_POST['alternate'] : false;
+			$menu = wp_get_nav_menu_object( $menu_id ? $menu_id : $alternate );
 
 			$menu_items = $menu
 				? wp_get_nav_menu_items( $menu->term_id, array( 'update_post_term_cache' => false ) )

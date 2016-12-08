@@ -4,17 +4,35 @@
  * Takes care of the post parts template expansion.
  */
 abstract class Upfront_PostPart_View {
-	
+
+	/**
+	 * Internal data storage
+	 *
+	 * @var array
+	 */
 	protected $_data;
+
+	/**
+	 * Post instance
+	 *
+	 * @var object
+	 */
 	protected $_post;
 
+	/**
+	 * Internal reference to self?
+	 *
+	 * @var object
+	 */
 	protected static $_current;
 
 	/**
 	 * Main public method.
 	 * Expands each part of the post parts and constructs markup string,
 	 * then wraps it in post wrapper.
-	 * @param object WP_Post object instance
+	 *
+	 * @param object $post WP_Post object instance
+	 *
 	 * @return string Rendered post markup
 	 */
 	abstract public function get_markup ($post);
@@ -22,7 +40,9 @@ abstract class Upfront_PostPart_View {
 
 	/**
 	 * Loads post part template from a file.
+	 *
 	 * @param string $slug Post part template slug
+	 *
 	 * @return string Loaded template
 	 */
 	abstract protected function _get_template ($slug);
@@ -164,9 +184,9 @@ abstract class Upfront_PostPart_View {
 	 */
 	public function expand_content_template () {
 		$length = isset($this->_data['content_length'])
-        	? (int)$this->_data['content_length']
-        	: (int)Upfront_Posts_PostsData::get_default('content_length')
-        ;
+			? (int)$this->_data['content_length']
+			: (int)Upfront_Posts_PostsData::get_default('content_length')
+		;
 		$content = $this->_get_content_value($length);
 
 		$out = $this->_get_template('content');
@@ -218,15 +238,14 @@ abstract class Upfront_PostPart_View {
 		if (empty($tags)) return '';
 
 		$length = isset($this->_data['tags_limit'])
-        	? (int)$this->_data['tags_limit']
-        	: (int)Upfront_Posts_PostsData::get_default('tags_limit')
-        ;
+			? (int)$this->_data['tags_limit']
+			: (int)Upfront_Posts_PostsData::get_default('tags_limit')
+		;
 
-        if ($length) {
+		if ($length) {
 			$list = array_map('trim', explode(',', $tags));
 			$tags = join(', ', array_slice($list, 0, $length));
 		}
-
 
 		$out = $this->_get_template('tags');
 
@@ -252,11 +271,11 @@ abstract class Upfront_PostPart_View {
 		if (empty($categories)) return '';
 
 		$length = isset($this->_data['categories_limit'])
-        	? (int)$this->_data['categories_limit']
-        	: (int)Upfront_Posts_PostsData::get_default('categories_limit')
-        ;
+			? (int)$this->_data['categories_limit']
+			: (int)Upfront_Posts_PostsData::get_default('categories_limit')
+		;
 
-        if ($length) {
+		if ($length) {
 			$list = array_map('trim', explode(',', $categories));
 			$categories = join(', ', array_slice($list, 0, $length));
 		}
@@ -309,6 +328,9 @@ abstract class Upfront_PostPart_View {
 
 	/**
 	 * Return either full content or excerpt, based on data state.
+	 *
+	 * @param int $length Length
+	 *
 	 * @return string Content or excerpt
 	 */
 	protected function _get_content_value ($length) {
@@ -320,9 +342,13 @@ abstract class Upfront_PostPart_View {
 
 	/**
 	 * Returns post full content, with filters applied.
+	 *
 	 * @return string Final post full content.
 	 */
 	protected function _get_content () {
+		$content = apply_filters('upfront-post_data-get_content-before', false);
+		if (!empty($content)) return $content;
+
 		global $post;
 		$post = $this->_post;
 		setup_postdata($post);
@@ -336,7 +362,9 @@ abstract class Upfront_PostPart_View {
 	/**
 	 * Returns post excerpt.
 	 * If a post doesn't have one, generates it with preset limit.
+	 *
 	 * @param int $length Length in words
+	 *
 	 * @return string Post excerpt
 	 */
 	protected function _get_excerpt ($length) {

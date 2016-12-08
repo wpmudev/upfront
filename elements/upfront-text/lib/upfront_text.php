@@ -57,12 +57,17 @@ class Upfront_PlainTxtView extends Upfront_Object {
 				$style[] = 'border: '.Upfront_UFC::init()->process_colors($this->_get_property('border'));
 			}
 
-			return (sizeof($style)>0 ? "<div class='plaintxt_padding' style='".implode(';', $style)."'>": ''). $content .(sizeof($style)>0 ? "</div>": '');
+			return (sizeof($style)>0 
+				? "<div class='plaintxt_padding' style='".implode(';', $style)."'>": ''). $content .(sizeof($style)>0 ? "</div>": '');
 		}
 
 		// Render new appearance
 		$return_content = "<div class='plain-text-container'>";
-		if(isset($preset_props['additional_padding']) && $preset_props['additional_padding'] == "yes") {
+		if (
+			isset($preset_props['additional_padding']) 
+			&& 
+			$preset_props['additional_padding'] == "yes"
+		) {
 			$return_content .= "<div class='plaintxt_padding'>" . $content . "</div>";
 		} else {
 			$return_content .= $content;
@@ -72,29 +77,35 @@ class Upfront_PlainTxtView extends Upfront_Object {
 		return $return_content;
 	}
 
+	/**
+	 * Decorates content according to settings.
+	 *
+	 * Wraps the most common filters done in `the_content` filter,
+	 * without actually making use of it.
+	 *
+	 * @param string $content Raw content
+	 *
+	 * @return string Decorated content
+	 */
 	protected function _decorate_content ($content) {
-
 		if (defined('DOING_AJAX') && DOING_AJAX) return $content;
-		$do_processing = apply_filters(
-			'upfront-shortcode-enable_in_layout',
-			(defined('UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES') && UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES ? false : true)
-		);
 
-		//Taking out the the_content filter application and manually applying the minimum required WP text processing functions
-		//if ($do_processing) $content = apply_filters("the_content", $content);
-		if($do_processing) {
-			$content = do_shortcode($content);
+		$codec = Upfront_Codec::get('wordpress'); 
+
+		// Manually applying the minimum required WP text processing functions
+		if ($codec->can_process_shortcodes()) {
+			$content = $codec->do_shortcode($content);
+
 			$content = wptexturize($content);
 			$content = convert_smilies($content);
 			$content = convert_chars($content);
-			/**
-			 * removing it for now to prevent it from adding excessive p tags since the markup and content is already made and confirmed in the text el via ueditor
-			 */
-//			$content = wpautop($content);
+
+			// Prevent adding excessive p tags since the markup and content is already made 
+			// and confirmed in the text el via ueditor
 			$content = shortcode_unautop($content);
 		}
 
-		return Upfront_Codec::get('wordpress')->expand_all($content);
+		return $codec->expand_all($content);
 	}
 
 	public static function add_l10n_strings ($strings) {

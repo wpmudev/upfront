@@ -140,18 +140,22 @@ jQuery(document).ready(function($) {
 	}
 
 	$win.on('load', floatInit);
+	
+	function hasNavInit() {
+		//Work around for having the region container have a higher z-index if it contains the nav, so that the dropdowns, if overlapping to the following regions should not loose "hover" when the mouse travels down to the next region.
+		$('div.upfront-navigation').each(function() {
+			if($(this).find('ul.sub-menu').length > 0) {
+				$(this).closest('.upfront-output-region-container, .upfront-output-region-sub-container').each(function() {
+					$(this).addClass('upfront-region-container-has-nav');
+				});
 
-	//Work around for having the region container have a higher z-index if it contains the nav, so that the dropdowns, if overlapping to the following regions should not loose "hover" when the mouse travels down to the next region.
-	$('div.upfront-navigation').each(function() {
-		if($(this).find('ul.sub-menu').length > 0) {
-			$(this).closest('.upfront-output-region-container, .upfront-output-region-sub-container').each(function() {
-				$(this).addClass('upfront-region-container-has-nav');
-			});
-
-			//Make sure parent wrapper have higher z-index
-			$(this).closest('.upfront-output-module').css({'z-index': '9999', position: 'relative'})
-		}
-	});
+				//Make sure parent wrapper have higher z-index
+				$(this).closest('.upfront-output-module').css({'z-index': '9999', position: 'relative'});
+			}
+		});
+	}
+	
+	hasNavInit();
 
 	$('body').on('touchstart click', '.burger_nav_close, .burger_overlay', null, function() {
 		$(this).closest('.upfront-navigation').find('div.responsive_nav_toggler').trigger('click');
@@ -281,20 +285,20 @@ jQuery(document).ready(function($) {
 						});
 					}
 					return el.currentStyle[prop] ? el.currentStyle[prop] : null;
-				}
+				};
 				return this;
-			}
+			};
 		}
-		
+
 		var breakpoint = window.getComputedStyle(document.body,':after').getPropertyValue('content');
-		
+
 		if(breakpoint === null && $('html').hasClass('ie8')) {
 			breakpoint = window.get_breakpoint_ie8($( window ).width());
 			$(window).trigger('resize');
 		}
 
 		if(breakpoint) {
-			breakpoint = breakpoint.replace(/['"]/g, '')
+			breakpoint = breakpoint.replace(/['"]/g, '');
 			if (current_breakpoint != breakpoint) {
 				previous_breakpoint = current_breakpoint;
 				current_breakpoint = breakpoint;
@@ -320,10 +324,10 @@ jQuery(document).ready(function($) {
 		elements.each(function () {
 
 			var breakpoints = $(this).data('breakpoints');
-			
+
 			var usingNewAppearance = $(this).data('new-appearance');
 
-			var currentwidth = (typeof(bpwidth) != 'undefined') ? parseInt(bpwidth) : $(window).width();
+			var currentwidth = (typeof(bpwidth) != 'undefined') ? parseInt(bpwidth, 10) : $(window).width();
 
 			var currentKey, preset, responsive_css;
 
@@ -418,7 +422,7 @@ jQuery(document).ready(function($) {
 			} else {
 				// Leave old code for backward compatibility
 				var bparray = [];
-				for (key in breakpoints) {
+				for (var key in breakpoints) {
 					if (key !== 'preset') bparray.push(breakpoints[key]);
 				}
 
@@ -430,7 +434,7 @@ jQuery(document).ready(function($) {
 				});
 
 				for (key in bparray) {
-					if(bparray[key] && bparray[key]['width'] && parseInt(currentwidth) >= parseInt(bparray[key]['width'])) {
+					if(bparray[key] && bparray[key]['width'] && parseInt(currentwidth, 10) >= parseInt(bparray[key]['width'], 10)) {
 
 						if(bparray[key]['burger_menu'] == 'yes') {
 
@@ -515,5 +519,39 @@ jQuery(document).ready(function($) {
 	$(document).on('changed_breakpoint', function(e) {
 		roll_responsive_nav( e.selector, e.width);
 	});
+	
+	/**
+		TOGGLING BREAKPOINT MENU
+	**/
+	$(document).on('upfront-breakpoint-change', function(e, breakpoint) {
+		hasNavInit();
+		toggle_breakpoint_menu(breakpoint);
+	});
+	function toggle_breakpoint_menu(breakpoint) {
+		breakpoint = breakpoint || 'desktop';
+		$('.upfront-output-object.upfront-output-unewnavigation').each(function(){
+			var $this = $(this),
+				$target = get_target_breakpoint_menu($this, breakpoint)
+			;
+			if ( $target.length ) {
+				$this.find('.upfront-breakpoint-navigation').hide();
+				$target.show();
+			}
+		});
+	}
+	// proper fallback to higher menu if target breakpoint menu not set
+	function get_target_breakpoint_menu(parent, breakpoint) {
+		var $target = parent.find('.upfront-'+ breakpoint +'-breakpoint-navigation');
+		if ( breakpoint == 'mobile' ) {
+			// fallback to tablet menu
+			if ( $target.length == 0 ) $target = parent.find('.upfront-tablet-breakpoint-navigation');
+			// fallback to desktop menu
+			if ( $target.length == 0 ) $target = parent.find('.upfront-desktop-breakpoint-navigation');
+		} else if ( breakpoint == 'tablet' ) {
+			// fallback to desktop menu
+			if ( $target.length == 0 ) $target = parent.find('.upfront-desktop-breakpoint-navigation');
+		} 
+		return $target;
+	}
+	toggle_breakpoint_menu(window.upfront_get_breakpoint());
 });
-

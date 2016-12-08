@@ -73,10 +73,12 @@ var CodeView = Upfront.Views.ObjectView.extend({
 		if (view.on_edit) {
 			this.on_settings_click = function () {
 				return view.on_edit();
-			}
+			};
 		}
 
-		setTimeout(function(){ self.update_size_hint( self.$el.closest(".upfront-editable_entity").width(), self.$el.closest(".upfront-editable_entity").height() ) }, 510);
+		setTimeout(function (){
+			self.update_size_hint( self.$el.closest(".upfront-editable_entity").width(), self.$el.closest(".upfront-editable_entity").height() );
+		}, 510);
 
 		return view;
 	},
@@ -95,7 +97,7 @@ var CodeView = Upfront.Views.ObjectView.extend({
 	 *
 	 */
 	getControlItems: function () {
-		
+
 		if ( !Upfront.Settings.Application.PERMS.EMBED ) {
 			return _([
 					this.createPaddingControl()
@@ -116,8 +118,7 @@ var CodeView = Upfront.Views.ObjectView.extend({
 Upfront.Application.LayoutEditor.add_object("Code", {
 	"Model": CodeModel,
 	"View": CodeView,
-	"Element": CodeElement,
-	//"Settings": CodeSettings
+	"Element": CodeElement
 });
 
 Upfront.Models.CodeModel = CodeModel;

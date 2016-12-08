@@ -42,7 +42,9 @@ define([
 
 			this.default_padding = {
 				top: false,
-				bottom: false
+				bottom: false,
+				left: false,
+				right: false
 			}
 
 			this.listenTo(Upfront.Events, "upfront:paddings:updated", this.refresh);
@@ -52,18 +54,22 @@ define([
 			var	target = $(e.target);
 
 			if (this.isDisabled) 	return;
-
-			e.preventDefault();
-
+			
 			if (!target.closest('.upfront-icon-region-padding').length) {
 				e.stopPropagation();
 				return;
 			}
+			
+			if (target.hasClass('.upfront-field-checkbox')) {
+				return;
+			}
+			
+			e.preventDefault();
 
 			this.clicked(e);
 
 			this.$el.siblings('.upfront-control-dialog-open').removeClass('upfront-control-dialog-open');
-			
+
 			this.listenTo(Upfront.Events, "upfront:hide:paddingPanel", this.close);
 
 			if (this.isOpen) {
@@ -77,21 +83,37 @@ define([
 			this.isOpen = true;
 			this.refresh();
 			this.$el.addClass('upfront-control-dialog-open');
+			
+			// Set position of padding container
+			this.update_position();
+
 			Upfront.Events.trigger('upfront:hide:subControl');
+			
+			// add class if last region to allocate clearance
+			var $region = this.$el.closest('.upfront-region-container'),
+				$lastRegion = $('.upfront-region-container').not(
+				'.upfront-region-container-shadow').last()
+			;
+			if ( $lastRegion.get(0) == $region.get(0) ) $region.addClass('upfront-last-region-padding');
 		},
 
 		close: function() {
 			this.isOpen = false;
 			this.$el.removeClass('upfront-control-dialog-open');
 			this.$el.closest('.upfront-inline-panel-item-open').removeClass('upfront-inline-panel-item-open');
+			
+			// remove class that was previously added on last region
+			this.$el.closest('.upfront-region-container').removeClass('upfront-last-region-padding');
 		},
 
 		on_render: function() {
 			var me = this,
 				$paddingControl = me.$('.upfront-padding-control'),
-				$paddingTopContainer = $('<div class="upfront-padding-container">' + l10n.top_padding_short + '<span class="upfront-padding-value"></span></div>'),
-				$paddingBottomContainer = $('<div class="upfront-padding-container">' + l10n.bottom_padding_short + '<span class="upfront-padding-value"></span></div>'),
-				$advancedPaddingContainer = $('<div class="upfront-padding-container"></div>'),
+				$paddingTopContainer = $('<div class="upfront-padding-container upfront-padding-container-top"></div>'),
+				$paddingLockContainer = $('<div class="upfront-padding-container upfront-padding-container-lock"></div>'),
+				$paddingLeftContainer = $('<div class="upfront-padding-container upfront-padding-container-left"></div>'),
+				$paddingRightContainer = $('<div class="upfront-padding-container upfront-padding-container-right"></div>'),
+				$paddingBottomContainer = $('<div class="upfront-padding-container upfront-padding-container-bottom"></div>'),
 				column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding
 			;
 
@@ -103,15 +125,21 @@ define([
 				$paddingControl = $('<div class="upfront-padding-control inline-panel-control-dialog"></div>');
 				me.$el.append($paddingControl);
 			}
-
+			
 			if(me.default_padding.top === false) {
 				me.default_padding.top = column_padding;
 			}
 			if(me.default_padding.bottom === false){
 				me.default_padding.bottom = column_padding;
 			}
+			if(me.default_padding.left === false) {
+				me.default_padding.left = column_padding;
+			}
+			if(me.default_padding.right === false) {
+				me.default_padding.right = column_padding;
+			}
 
-			me.paddingTop = new Upfront.Views.Editor.Field.Slider({
+			me.paddingTop = new Upfront.Views.Editor.Field.Number({
 				model: this.model,
 				use_breakpoint_property: true,
 				property: 'top_padding_num',
@@ -120,32 +148,66 @@ define([
 				min: 0,
 				max: 200,
 				step: 5,
-				valueTextFilter: function (valueText) {
-					me.paddingTop.$el.parent('.upfront-padding-container').find('.upfront-padding-value').html(valueText);
-					return '';
-				},
-				change: function () {
-					var value = this.get_value();
+				change: function (value) {
+					var value = this.get_value(), 
+						lockPadding = this.model.get_breakpoint_property_value('lock_padding', true);
+					
+					if(lockPadding === "yes") {
+						me.update_locked_values(value);
+					}
 
 					this.model.set_breakpoint_property('use_padding', 'yes', true);
-					this.model.set_breakpoint_property('lock_padding', '', true);
 					this.model.set_breakpoint_property('top_padding_use', 'yes', true);
 					this.model.set_breakpoint_property('top_padding_slider', value, true); // silent, don't need to trigger update again
 					this.model.set_breakpoint_property('top_padding_num', value);
 					Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
 					Upfront.Events.trigger("upfront:paddings:top:updated", this.model, Upfront.data.currentEntity);
-				},
-				callbacks: {
-					stop: function (e) {
-						var uislider = $(this).data('uiSlider');
-						if ( !uislider || !_.isObject(uislider) || !('handle' in uislider) ) return;
-						// Call blur on stop to prevent key event handled by jQuery UI Slider
-						uislider.handle.blur();
-					}
 				}
 			});
 
-			me.paddingBottom = new Upfront.Views.Editor.Field.Slider({
+			me.paddingLeft = new Upfront.Views.Editor.Field.Number({
+				model: this.model,
+				use_breakpoint_property: true,
+				property: 'left_padding_num',
+				label: '',
+				default_value: this.model.get_breakpoint_property_value('left_padding_num') || me.default_padding.left,
+				min: 0,
+				max: 200,
+				step: 5,
+				change: function () {
+					var value = this.get_value();
+
+					this.model.set_breakpoint_property('use_padding', 'yes', true);
+					this.model.set_breakpoint_property('left_padding_use', 'yes', true);
+					this.model.set_breakpoint_property('left_padding_slider', value, true); // silent, don't need to trigger update again
+					this.model.set_breakpoint_property('left_padding_num', value);
+					Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
+					Upfront.Events.trigger("upfront:paddings:left:updated", this.model, Upfront.data.currentEntity);
+				}
+			});
+			
+			me.paddingRight = new Upfront.Views.Editor.Field.Number({
+				model: this.model,
+				use_breakpoint_property: true,
+				property: 'right_padding_num',
+				label: '',
+				default_value: this.model.get_breakpoint_property_value('right_padding_num') || me.default_padding.right,
+				min: 0,
+				max: 200,
+				step: 5,
+				change: function () {
+					var value = this.get_value();
+
+					this.model.set_breakpoint_property('use_padding', 'yes', true);
+					this.model.set_breakpoint_property('right_padding_use', 'yes', true);
+					this.model.set_breakpoint_property('right_padding_slider', value, true); // silent, don't need to trigger update again
+					this.model.set_breakpoint_property('right_padding_num', value);
+					Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
+					Upfront.Events.trigger("upfront:paddings:right:updated", this.model, Upfront.data.currentEntity);
+				}
+			});
+			
+			me.paddingBottom = new Upfront.Views.Editor.Field.Number({
 				model: this.model,
 				use_breakpoint_property: true,
 				property: 'bottom_padding_num',
@@ -154,53 +216,80 @@ define([
 				min: 0,
 				max: 200,
 				step: 5,
-				valueTextFilter: function (valueText) {
-					me.paddingBottom.$el.parent('.upfront-padding-container').find('.upfront-padding-value').html(valueText);
-					return '';
-				},
 				change: function () {
 					var value = this.get_value();
 
 					this.model.set_breakpoint_property('use_padding', 'yes', true);
-					this.model.set_breakpoint_property('lock_padding', '', true);
 					this.model.set_breakpoint_property('bottom_padding_use', 'yes', true);
 					this.model.set_breakpoint_property('bottom_padding_slider', value, true); // silent, don't need to trigger update again
 					this.model.set_breakpoint_property('bottom_padding_num', value);
 					Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
 					Upfront.Events.trigger("upfront:paddings:bottom:updated", this.model, Upfront.data.currentEntity);
-				},
-				callbacks: {
-					stop: function (e) {
-						var uislider = $(this).data('uiSlider');
-						if ( !uislider || !_.isObject(uislider) || !('handle' in uislider) ) return;
-						// Call blur on stop to prevent key event handled by jQuery UI Slider
-						uislider.handle.blur();
-					}
 				}
 			});
+			
+			me.lockPadding = new Upfront.Views.Editor.Field.Checkboxes({
+				model: this.model,
+				className: 'padding-lock',
+				use_breakpoint_property: true,
+				property: 'lock_padding',
+				label: "",
+				default_value: 0,
+				multiple: false,
+				values: [
+					{ label: '', value: 'yes' }
+				],
+				show: function(value) {
+					if(value == "yes") {
+						me.paddingLeft.$el.find('input').prop( "disabled", true ).css('opacity', 0.4);
+						me.paddingRight.$el.find('input').prop( "disabled", true ).css('opacity', 0.4);
+						me.paddingBottom.$el.find('input').prop( "disabled", true ).css('opacity', 0.4);
+					} else {
+						me.paddingLeft.$el.find('input').prop( "disabled", false ).css('opacity', 1);
+						me.paddingRight.$el.find('input').prop( "disabled", false ).css('opacity', 1);
+						me.paddingBottom.$el.find('input').prop( "disabled", false ).css('opacity', 1);
+					}
+				},
+				change: function(value) {
+					var padding = this.model.get_breakpoint_property_value('top_padding_num', true);
+					
+					if(value === "yes") {
+						me.update_locked_values(padding)
+					}
+					
+					this.model.set_breakpoint_property('lock_padding', value, true); // Shouldn't trigger changes
+				},
 
+			}),
+		
+			// Empty padding container
 			$paddingControl.html('');
+			
+			// Append panel title, arrow is not set like pseudo element because we cant update its styles with jQuery
+			$paddingControlTitle = '<span class="upfront-padding-arrow"></span><span class="upfront-padding-title">'+ l10n.padding_title +'</span>';
+			$paddingControl.append($paddingControlTitle);
+			
+			// Append padding icons
+			$paddingControlTitle = '<span class="upfront-padding-keyboard">&nbsp;</span><span class="upfront-checkbox-info" title="'+ l10n.padding_keyboard +'"></span>';
+			$paddingControl.append($paddingControlTitle);
+
+			// Append padding controls
 			me.paddingTop.render();
 			$paddingTopContainer.append(me.paddingTop.$el);
 			$paddingControl.append($paddingTopContainer);
+			me.lockPadding.render();
+			$paddingLockContainer.append(me.lockPadding.$el);
+			me.lockPadding.delegateEvents();
+			$paddingControl.append($paddingLockContainer);
+			me.paddingLeft.render();
+			$paddingLeftContainer.append(me.paddingLeft.$el);
+			$paddingControl.append($paddingLeftContainer);
+			me.paddingRight.render();
+			$paddingRightContainer.append(me.paddingRight.$el);
+			$paddingControl.append($paddingRightContainer);
 			me.paddingBottom.render();
 			$paddingBottomContainer.append(me.paddingBottom.$el);
 			$paddingControl.append($paddingBottomContainer);
-			
-			if ( me.model.attributes.modules === undefined && !me.model.get_property_value_by_name("code_selection_type") ) {
-			
-				me.advancedPadding = new Upfront.Views.Editor.Field.Button({
-					className: 'upfront-field-wrap upfront-field-wrap-button upfront-field-advanced-padding',
-					compact: true,
-					label: l10n.advanced_padding,
-					name: 'advanced-padding'
-				});
-				
-				me.advancedPadding.render();
-				$advancedPaddingContainer.append(me.advancedPadding.$el);
-				$paddingControl.append($advancedPaddingContainer);
-				
-			} 
 
 			$paddingTopContainer.on('mousedown', function() {
 				Upfront.data.currentEntity.padding_hint_locked = true;
@@ -228,13 +317,40 @@ define([
 				}, 1000);
 			});
 		},
+		
+		update_locked_values: function(value) {
+			// Left padding
+			this.model.set_breakpoint_property('left_padding_use', 'yes', true);
+			this.model.set_breakpoint_property('left_padding_slider', value, true); // silent, don't need to trigger update again
+			this.model.set_breakpoint_property('left_padding_num', value);
+			
+			// Bottom padding
+			this.model.set_breakpoint_property('bottom_padding_use', 'yes', true);
+			this.model.set_breakpoint_property('bottom_padding_slider', value, true); // silent, don't need to trigger update again
+			this.model.set_breakpoint_property('bottom_padding_num', value);
+			
+			// Right padding
+			this.model.set_breakpoint_property('right_padding_use', 'yes', true);
+			this.model.set_breakpoint_property('right_padding_slider', value, true); // silent, don't need to trigger update again
+			this.model.set_breakpoint_property('right_padding_num', value);
+			
+			// Update input values
+			this.paddingLeft.get_field().val(value);
+			this.paddingRight.get_field().val(value);
+			this.paddingTop.get_field().val(value);
+			this.paddingBottom.get_field().val(value);
+		},
 
 		refresh: function(model) {
 			if ( model && model !== this.model ) return;
 			var column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
 				top_padding_use = this.model.get_breakpoint_property_value('top_padding_use', true),
 				bottom_padding_use = this.model.get_breakpoint_property_value('bottom_padding_use', true),
-				padding_top_val, padding_bottom_val
+				left_padding_use = this.model.get_breakpoint_property_value('left_padding_use', true),
+				right_padding_use = this.model.get_breakpoint_property_value('right_padding_use', true),
+				lockPadding = this.model.get_breakpoint_property_value('lock_padding', true),
+				lockPaddingField = this.lockPadding.$el.find('input'),
+				padding_top_val, padding_bottom_val, padding_left_val, padding_right_val
 			;
 
 			if(this.default_padding.top === false) {
@@ -243,31 +359,44 @@ define([
 			if(this.default_padding.bottom === false){
 				this.default_padding.bottom = column_padding;
 			}
+			if(this.default_padding.left === false){
+				this.default_padding.left = column_padding;
+			}
+			if(this.default_padding.right === false){
+				this.default_padding.right = column_padding;
+			}
+
 			padding_top_val = top_padding_use ? this.model.get_breakpoint_property_value('top_padding_num', true) : this.default_padding.top;
 			padding_bottom_val = bottom_padding_use ? this.model.get_breakpoint_property_value('bottom_padding_num', true) : this.default_padding.bottom;
+			padding_left_val = left_padding_use ? this.model.get_breakpoint_property_value('left_padding_num', true) : this.default_padding.left;
+			padding_right_val = right_padding_use ? this.model.get_breakpoint_property_value('right_padding_num', true) : this.default_padding.right;
 
+			lockPadding ? lockPaddingField.attr('checked', 'checked') : lockPaddingField.removeAttr('checked');
+			lockPaddingField.trigger('change');
 
 			if(typeof this.paddingTop !== 'undefined') {
 				this.paddingTop.get_field().val(padding_top_val);
-				if(typeof this.paddingTop.$el.find('#'+this.paddingTop.get_field_id()).slider('instance') !== 'undefined') 	this.paddingTop.$el.find('#'+this.paddingTop.get_field_id()).slider('value', padding_top_val);
-				this.paddingTop.$el.parent('.upfront-padding-container').find('.upfront-padding-value').html(padding_top_val);
 			}
 			if(typeof this.paddingBottom !== 'undefined') {
 				this.paddingBottom.get_field().val(padding_bottom_val);
-				if(typeof this.paddingBottom.$el.find('#'+this.paddingBottom.get_field_id()).slider('instance') !== 'undefined') 	this.paddingBottom.$el.find('#'+this.paddingBottom.get_field_id()).slider('value', padding_bottom_val);
-				this.paddingBottom.$el.parent('.upfront-padding-container').find('.upfront-padding-value').html(padding_bottom_val);
+			}
+			if(typeof this.paddingLeft !== 'undefined') {
+				this.paddingLeft.get_field().val(padding_left_val);
+			}
+			if(typeof this.paddingRight !== 'undefined') {
+				this.paddingRight.get_field().val(padding_right_val);
 			}
 		},
 		on_up_arrow_click: function() {
 			if(typeof this.paddingTop !== 'undefined') {
-				var padding_top_val = parseInt(this.model.get_breakpoint_property_value('top_padding_num', true)) - 5;
+				var padding_top_val = parseInt(this.model.get_breakpoint_property_value('top_padding_num', true), 10) - 5;
 
 				padding_top_val = padding_top_val < 0 ? 0 : padding_top_val;
 
 				this.model.set_breakpoint_property('top_padding_use', 'yes');
 				this.model.set_breakpoint_property('top_padding_num', padding_top_val);
 				this.model.set_breakpoint_property('top_padding_slider', padding_top_val);
-				
+
 				Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
 				Upfront.Events.trigger("upfront:paddings:top:updated", this.model, Upfront.data.currentEntity);
 
@@ -276,17 +405,29 @@ define([
 		},
 		on_down_arrow_click: function() {
 			if(typeof this.paddingTop !== 'undefined') {
-				var padding_top_val = parseInt(this.model.get_breakpoint_property_value('top_padding_num', true)) + 5;
+				var padding_top_val = parseInt(this.model.get_breakpoint_property_value('top_padding_num', true), 10) + 5;
 
 				this.model.set_breakpoint_property('top_padding_use', 'yes');
 				this.model.set_breakpoint_property('top_padding_num', padding_top_val);
 				this.model.set_breakpoint_property('top_padding_slider', padding_top_val);
-				
+
 				Upfront.Events.trigger("upfront:paddings:updated", this.model, Upfront.data.currentEntity);
 				Upfront.Events.trigger("upfront:paddings:top:updated", this.model, Upfront.data.currentEntity);
 
 				this.refresh();
 			}
+		},
+		update_position: function() {
+			// Get number of elements before padding
+			var elementsNumber = this.$el.prevAll().length,
+				leftPosition = elementsNumber * 38,
+				dir = Upfront.Util.isRTL() ? "right" : "left";
+			
+			// Set container position
+			this.$el.find('.upfront-padding-control').css(dir, -leftPosition);
+			
+			// Update arrow position under padding button
+			this.$el.find('.upfront-padding-arrow').css(dir, leftPosition);
 		}
 	});
 

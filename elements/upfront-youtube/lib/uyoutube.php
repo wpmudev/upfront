@@ -35,7 +35,9 @@ class Upfront_UyoutubeView extends Upfront_Object {
 			'single_video_id' => '',
 			'player_width' => 384,
 			'player_height' => 240,
-			'youtube_status' => 'starting'
+			'youtube_status' => 'starting',
+			'loop' => false,
+			'autoplay' => false
 		);
 	}
 
@@ -68,6 +70,9 @@ class Upfront_UyoutubeView extends Upfront_Object {
 			$data = $this->properties_to_array();
 
 			$data['wrapper_id'] = str_replace('youtube-object-', 'wrapper-', $data['element_id']);
+			$video_id = $data['multiple_videos'][0]['id'];
+			$data['loop_string'] = $data['loop'] ? "&loop=1&playlist=$video_id" : '';
+			$data['autoplay_string'] = $data['autoplay'] ? "&autoplay=1" : '';
 
 			$markup = upfront_get_template('uyoutube', $data, dirname(dirname(__FILE__)) . '/tpl/youtube.html');
 
@@ -112,6 +117,9 @@ class Upfront_UyoutubeView extends Upfront_Object {
 			'gallery_label' => __('Gallery', 'upfront'),
 			'list_label' => __('List', 'upfront'),
 			'first_to_thumbnails' => __('Add 1st Video to Thumbnails', 'upfront'),
+			'autoplay' => __('Play Video on Page Load', 'upfront'),
+			'loop' => __('Loop', 'upfront'),
+			'playback' => __('Playback', 'upfront'),
 			'thumbnail_size' => __('Thumbnail Size', 'upfront'),
 			'thumbnail_size_info' => __('Slide to resize the thumbnails.', 'upfront'),
 			'videos_title' => __('VIDEO', 'upfront'),

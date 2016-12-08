@@ -17,7 +17,8 @@ define([
 	"text!upfront/templates/region_container.html",
 	"text!upfront/templates/region.html",
 	"text!upfront/templates/wrapper.html",
-	"text!upfront/templates/layout.html"
+	"text!upfront/templates/layout.html",
+	"text!upfront/templates/api_key_overlay_region.html"
 ], function (RenderQueue, RenderQueueReporter) {
   var _template_files = [
     "text!upfront/templates/object.html",
@@ -27,7 +28,8 @@ define([
     "text!upfront/templates/region_container.html",
     "text!upfront/templates/region.html",
     "text!upfront/templates/wrapper.html",
-    "text!upfront/templates/layout.html"
+    "text!upfront/templates/layout.html",
+    "text!upfront/templates/api_key_overlay_region.html"
 ];
 
 	// Auto-assign the template contents to internal variable
@@ -182,6 +184,7 @@ define([
 				var $bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
 					color = this.model.get_breakpoint_property_value('background_color', true)
 				;
+				this.remove_api_key_overlay();
 				if ( color ) {
 					$bg.css('background-color', color);
 				} else {
@@ -192,6 +195,7 @@ define([
 				var is_layout = ( this instanceof Layout ),
 					repeat = this.model.get_breakpoint_property_value('background_repeat', true),
 					position = this.model.get_breakpoint_property_value('background_position', true),
+					size = this.model.get_breakpoint_property_value('background_size', true),
 					style = this.model.get_breakpoint_property_value('background_style', true)
 				;
 				if ( data.image ){
@@ -204,7 +208,7 @@ define([
 							overflowBottom: 0
 						});
 					}
-					if ( style == 'full' || style == 'parallax' ){
+					if ( style == 'full') {
 						var size = this._get_full_size_el((is_layout ? $(window) : $type), data.ratio, false);
 						$type.data('bg-position-y', size[3]);
 						$type.data('bg-position-x', size[2]);
@@ -215,7 +219,7 @@ define([
 						});
 					} else {
 						$type.css({
-							backgroundSize: "auto auto",
+							backgroundSize: size,
 							backgroundRepeat: repeat,
 							backgroundPosition: position
 						});
@@ -238,6 +242,7 @@ define([
 					image = this.model.get_breakpoint_property_value('background_image', true),
 					ratio = parseFloat(this.model.get_breakpoint_property_value('background_image_ratio', true))
 				;
+				this.remove_api_key_overlay();
 				this.update_background_color();
 				this._update_background_image_from_data({
 					image: image,
@@ -248,6 +253,8 @@ define([
 				var me = this;
 				var $bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
 					bg_default = this.model.get_breakpoint_property_value('background_default', true),
+					featured_fallback_background_color = this.model.get_breakpoint_property_value('featured_fallback_background_color', true),
+					bg_type = this.model.get_breakpoint_property_value('background_type', true),
 					_update_default = function () {
 						if ( bg_default == 'image' ) {
 							me.update_background_image($type, $overlay);
@@ -260,13 +267,9 @@ define([
 						}
 					}
 				;
+				this.remove_api_key_overlay();
 				$bg.addClass('no-featured_image');
-				if ( bg_default == 'hide' ) {
-					$bg.css('background-color', '');
-				}
-				else {
-					this.update_background_color();
-				}
+				this.update_background_color();
 
 				var post = Upfront.data.posts[_upfront_post_data.post_id];
 				if (
@@ -321,13 +324,17 @@ define([
 				Upfront.Util.post({action: 'this_post-get_thumbnail', post_id: _upfront_post_data.post_id})
 					.done(function(response){
 						if(typeof(response.data.featured_image) != 'undefined') {
-
 							if (response.data.featured_image !== '') {
 								me.$el.children('.feature_image_selector')
 									.addClass('change_feature_image')
 									.text(l10n.change_featured_image)
 								;
 							} else {
+								// fallback to set color
+								if ( bg_type == 'featured' && bg_default == 'color' && $bg.hasClass('no-featured_image') ) {
+									$bg.css('background-color', featured_fallback_background_color);
+								}
+								
 								me.$el.children('.feature_image_selector')
 									.removeClass('change_feature_image')
 									.text(l10n.add_featured_image)
@@ -360,7 +367,30 @@ define([
 					me.update_background_map($type, $overlay);
 				});
 			},
+			// If no API Key, display notice.
+			add_api_key_overlay: function() {
+				// Only add if overlay does not already exist.
+				if (!this.$el.find('#upfront_map-api_key_overlay-wrapper')[0]) {
+					this.$el.find('.upfront-region-bg-overlay').append(
+						_.template(_Upfront_Templates['api_key_overlay_region'])
+					);
+				}
+			},
+			remove_api_key_overlay: function () {
+				this.$el.find('#upfront_map-api_key_overlay-wrapper').remove();
+			},
 			update_background_map: function ($type, $overlay) {
+
+				// If background type is map and is missing API Key, show notice.
+				if (
+					!(window._upfront_api_keys || {})['gmaps']
+					&& Upfront.Application.user_can_modify_layout()
+					// Warn if invalid API Key.
+					|| typeof google_maps_auth_error !== 'undefined'
+				) {
+					this.add_api_key_overlay();
+				}
+
 				try {
 					if (!window.google.maps.Map) return this.postpone_map_init($type, $overlay);
 				} catch (e) {
@@ -416,13 +446,26 @@ define([
 					rotate = this.model.get_breakpoint_property_value('background_slider_rotate', true),
 					rotate_time = this.model.get_breakpoint_property_value('background_slider_rotate_time', true),
 					control = this.model.get_breakpoint_property_value('background_slider_control', true),
-					transition = this.model.get_breakpoint_property_value('background_slider_transition', true);
+					control_style = this.model.get_breakpoint_property_value('background_slider_control_style', true),
+					transition = this.model.get_breakpoint_property_value('background_slider_transition', true)
+				;
+				this.remove_api_key_overlay();
 				if ( slide_images ) {
 					if ( rotate ) {
 						$type.attr('data-slider-auto', 1);
 						$type.attr('data-slider-interval', rotate_time*1000);
 					} else {
 						$type.attr('data-slider-auto', 0);
+					}
+					if (control_style === 'arrows') {
+						$type.attr('data-control_num', 0);
+						$type.attr('data-control_next_prev', 1);
+					} else if (control_style === 'dots') {
+						$type.attr('data-control_num', 1);
+						$type.attr('data-control_next_prev', 0);
+					} else {
+						$type.attr('data-control_num', 1);
+						$type.attr('data-control_next_prev', 1);
 					}
 					$type.attr('data-slider-show-control', control);
 					$type.attr('data-slider-effect', transition);
@@ -471,7 +514,9 @@ define([
 					width = this.model.get_breakpoint_property_value('background_video_width', true),
 					height = this.model.get_breakpoint_property_value('background_video_height', true),
 					style = this.model.get_breakpoint_property_value('background_video_style', true) || 'crop',
-					ratio, $embed;
+					ratio, $embed
+				;
+				this.remove_api_key_overlay();
 				if ( style == 'inside' && color ) {
 					$bg.css('background-color', color);
 				} else {
@@ -588,7 +633,7 @@ define([
 						if ( $overlay.data('uparallax') ) $overlay.uparallax('refresh');
 					}, 2000);
 				}
-				if ( style == 'full' || style == 'parallax' ) {
+				if ( style == 'full') {
 					var size = this._get_full_size_el($type, data.ratio, false);
 					$type.data('bg-position-y', size[3]);
 					$type.data('bg-position-x', size[2]);
@@ -659,9 +704,13 @@ define([
 			remove_background: function () {
 				var $bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
 					$overlay = this.$el.find('.upfront-region-bg-overlay');
+
 				if ( $overlay.length ) {
+					if($overlay.parent().hasClass('upfront-module-group-bg')) return;
+					
 					$overlay.hide();
 				}
+				
 				$bg.css({
 					backgroundColor: "",
 					backgroundImage: "none",
@@ -804,7 +853,7 @@ define([
 			},
 			on_hide_click: function (e) {
 				e.preventDefault();
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					data = Upfront.Util.clone(this.model.get_property_value_by_name('breakpoint') || {});
 				if ( !_.isObject(data[breakpoint.id]) )
 					data[breakpoint.id] = {};
@@ -843,7 +892,7 @@ define([
 
 			},
 			apply_breakpoint_position: function ($el, $toggle, exceptions) {
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					grid = Upfront.Settings.LayoutEditor.Grid;
 				if ( !breakpoint ) return;
 				var me = this,
@@ -957,16 +1006,17 @@ define([
 				});
 
 			},
-			show_top_padding_hint: function (value) {
-				var me               = this,
-					top_padding_hint = this.$el.parents('.upfront-module').find('.upfront-entity-top-padding-hint')
+			show_top_padding_hint: function (value, $el) {
+				var me = this,
+					$el = ( _.isUndefined($el) || false === $el || !($el instanceof jQuery) ) ? this.$el.parents('.upfront-module') : $el,
+					top_padding_hint = $el.find('.upfront-entity-top-padding-hint')
 				;
 				if(!this.top_padding_hint_flag) {
 					this.top_padding_hint_flag = true;
 					return;
 				}
 				if(!top_padding_hint.length) {
-					top_padding_hint = $('<div class="upfront-ui upfront-entity-padding-hint upfront-entity-top-padding-hint"></div>').appendTo(this.$el.parents('.upfront-module'));
+					top_padding_hint = $('<div class="upfront-ui upfront-entity-padding-hint upfront-entity-top-padding-hint"></div>').appendTo($el);
 				}
 				top_padding_hint.css({
 					height: value + 'px',
@@ -974,26 +1024,28 @@ define([
 				});
 				clearTimeout(this.top_padding_hint_timer);
 				this.top_padding_hint_timer = setTimeout(function() {
-					me.hide_top_padding_hint();
+					me.hide_top_padding_hint($el);
 				}, 1000);
 			},
-			hide_top_padding_hint: function () {
+			hide_top_padding_hint: function ($el) {
+				var $el = _.isUndefined($el) || false === $el ? this.$el.parents('.upfront-module') : $el;
 				if(!this.padding_hint_locked) {
-					this.$el.parents('.upfront-module').find('.upfront-entity-top-padding-hint').css({
+					$el.find('.upfront-entity-top-padding-hint').css({
 						opacity: 0
 					});
 				}
 			},
-			show_bottom_padding_hint: function (value) {
+			show_bottom_padding_hint: function (value, $el) {
 				var me                  = this,
-					bottom_padding_hint = this.$el.parents('.upfront-module').find('.upfront-entity-bottom-padding-hint')
+					$el = _.isUndefined($el) || false === $el ? this.$el.parents('.upfront-module') : $el,
+					bottom_padding_hint = $el.find('.upfront-entity-bottom-padding-hint')
 				;
 				if(!this.bottom_padding_hint_flag) {
 					this.bottom_padding_hint_flag = true;
 					return;
 				}
 				if(!bottom_padding_hint.length) {
-					bottom_padding_hint = $('<div class="upfront-ui upfront-entity-padding-hint upfront-entity-bottom-padding-hint"></div>').appendTo(this.$el.parents('.upfront-module'));
+					bottom_padding_hint = $('<div class="upfront-ui upfront-entity-padding-hint upfront-entity-bottom-padding-hint"></div>').appendTo($el);
 				}
 				bottom_padding_hint.css({
 					height: value + 'px',
@@ -1001,12 +1053,13 @@ define([
 				});
 				clearTimeout(this.bottom_padding_hint_timer);
 				this.bottom_padding_hint_timer = setTimeout(function() {
-					me.hide_bottom_padding_hint();
+					me.hide_bottom_padding_hint($el);
 				}, 1000);
 			},
-			hide_bottom_padding_hint: function () {
+			hide_bottom_padding_hint: function ($el) {
+				var $el = _.isUndefined($el) || false === $el ? this.$el.parents('.upfront-module') : $el;
 				if(!this.padding_hint_locked) {
-					this.$el.parents('.upfront-module').find('.upfront-entity-bottom-padding-hint').css({
+					$el.find('.upfront-entity-bottom-padding-hint').css({
 						opacity: 0
 					});
 				}
@@ -1185,7 +1238,7 @@ define([
 
 			fix_flexbox_clear: function ($el) {
 				// @TODO Experiment: don't need flexbox clearing workaround as elements will always take the whole width!
-				/*var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				/*var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					off = $el.offset(),
 					width = $el.width(),
 					$prev;
@@ -1742,6 +1795,8 @@ define([
 				this.on('entity:resize_stop', this.on_resize);
 
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint:after", this.on_change_breakpoint_after);
+				this.listenTo(Upfront.Events, "upfront:grid:updated", this.on_grid_update);
 				//this.listenTo(Upfront.Events, "entity:wrapper:update_position", this.on_wrapper_update);
 
 				if (this.init) this.init();
@@ -1757,7 +1812,7 @@ define([
 				Upfront.Events.trigger("entity:settings:deactivate");
 			},
 			render: function () {
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					grid = Upfront.Settings.LayoutEditor.Grid,
 					props = {},
 					me = this,
@@ -1891,8 +1946,13 @@ define([
 				this.ensure_breakpoint_change_is_listened();
 				this.ensureUiOffsetCalls();
 
-				if ( this.parent_module_view ) {
+				if ( this.object_group_view ) { // If this is in object group, it will have it's own control
+					this.$control_el = this.$el;
+				}
+				else if ( this.parent_module_view ) { // Otherwise, the control will be on module level
 					this.$control_el = this.parent_module_view.$('.upfront-module');
+				}
+				if ( this.$control_el && this.$control_el.length == 1 ) {
 					this.updateControls();
 					this.toggleControls();
 					setTimeout(function() {
@@ -1902,6 +1962,15 @@ define([
 
 				if ( breakpoint && !breakpoint['default'] ) {
 					this.update_position();
+				} else if ( $('#element-settings-sidebar').children().length == 0 ) {
+					// when saving from responsive mode, preset gets overwritten by breakpoint presets
+					// we have to correct that here but only when element settings not activated
+					var currentPreset = this.model.get_property_value_by_name('current_preset'),
+						setPreset = this.model.get_property_value_by_name('preset')
+					;
+					if ( currentPreset && setPreset !== currentPreset ) {
+						this.model.set_property('preset', currentPreset, false);
+					}
 				}
 
 				//**
@@ -1918,6 +1987,9 @@ define([
 				// var prev_value = prop._previousAttributes.value,
 				var value = prop.get('value'),
 					$me = this.$el.find('.upfront-editable_entity:first'),
+					$padding_el = this.object_group_view
+						? $me
+						: ( this.parent_module_view ? this.parent_module_view.$el.find('>.upfront-module') : false ),
 					grid = Upfront.Settings.LayoutEditor.Grid
 				;
 				if ( prop.id == 'row' ){
@@ -1949,18 +2021,18 @@ define([
 					;
 
 					if( current_property && val ) {
-						if( current_property === 'top_padding_num' ) this.show_top_padding_hint(val);
-						if( current_property === 'bottom_padding_num' ) this.show_bottom_padding_hint(val);
+						if( current_property === 'top_padding_num' ) this.show_top_padding_hint(val, $padding_el);
+						if( current_property === 'bottom_padding_num' ) this.show_bottom_padding_hint(val, $padding_el);
 					}
 
 				}
 				else if ( prop.id.match(/(top|bottom|left|right)_padding_(use|num|slider)/) ) {
 					this.apply_paddings($me);
-					this.handle_visual_padding_hint(prop);
+					this.handle_visual_padding_hint(prop, $padding_el);
 				}
 				else if ( prop.id.match(/padding_slider/) ) {
 					this.render();
-					this.handle_visual_padding_hint(prop);
+					this.handle_visual_padding_hint(prop, $padding_el);
 				}
 				else if ( prop.id == 'wrapper_id' ) {
 					// Updated wrapper, re-listen to wrapper update position
@@ -1974,27 +2046,27 @@ define([
 				}
 				Upfront.Events.trigger('entity:object:update', this, this.model);
 			},
-			handle_visual_padding_hint: function (prop) {
+			handle_visual_padding_hint: function (prop, $el) {
 				if (typeof prop === 'undefined') return;
 
 				var value = prop.get('value');
 
 				if ( prop.id.match(/(top|bottom)_padding_(num|slider)/) ) {
 					if ( prop.id.match(/top_padding_(num|slider)/) ) {
-						this.show_top_padding_hint(value);
+						this.show_top_padding_hint(value, $el);
 					}
 					if ( prop.id.match(/bottom_padding_(num|slider)/) ) {
-						this.show_bottom_padding_hint(value);
+						this.show_bottom_padding_hint(value, $el);
 					}
 				}
 				else if ( prop.id.match(/padding_slider/) ) {
-					this.show_top_padding_hint(value);
-					this.show_bottom_padding_hint(value);
+					this.show_top_padding_hint(value, $el);
+					this.show_bottom_padding_hint(value, $el);
 				}
 
 			},
 			update_position: function () {
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
 				if ( !breakpoint ) return;
 				var $object = this.$el.find('> .upfront-editable_entity:first'),
 					$toggle = this.$el.find('> .upfront-object-hidden-toggle')
@@ -2039,7 +2111,7 @@ define([
 					return;
 				}
 
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					is_responsive = breakpoint && !breakpoint['default'],
 					$container = $parentRegionEl.closest('.upfront-region-container'),
 					containerOffset = is_responsive ? $parentRegionEl.offset() : $container.offset(),
@@ -2054,6 +2126,13 @@ define([
 					this.parent_module_view.$el.addClass('offset-ui-from-right-top');
 				} else {
 					this.parent_module_view.$el.removeClass('offset-ui-from-right-top');
+				}
+			},
+			on_click: function (e) {
+				_Upfront_EditableEntity.prototype.on_click.call(this, e);
+				if ( this.object_group_view && "editing" in this.object_group_view && this.object_group_view.editing ) {
+					// On object group edit, do not propagate
+					e.stopPropagation();
 				}
 			},
 			on_element_edit_start: function (edit, post) {
@@ -2080,6 +2159,7 @@ define([
 						this.parent_module_view.enable_interaction(false);
 					}
 				}
+				Upfront.Events.trigger('entity:object:refresh', this);
 			},
 			on_content_style_edit_start: function () {
 				if ( this.parent_module_view ){
@@ -2092,6 +2172,7 @@ define([
 					this.parent_module_view.$el.find('>.upfront-module').removeClass('upfront-module-editing');
 					this.parent_module_view.enable_interaction(false);
 				}
+				Upfront.Events.trigger('entity:object:refresh', this);
 			},
 			on_element_resize_start: function (attr) {
 
@@ -2139,7 +2220,7 @@ define([
 			on_toggle_object_edit: function (enable) {
 				var $object = this.$el.find('>.upfront-editable_entity:first'),
 					$hide = $object.find('> .upfront-entity_meta > a.upfront-entity-hide_trigger'),
-					breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint
+					breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON()
 				;
 				if ( $object.data('ui-draggable') ) {
 					$object.draggable('option', 'disabled', !enable);
@@ -2174,18 +2255,26 @@ define([
 					this.$control_el = this.parent_module_view.$('.upfront-module');
 					this.updateControls();
 					var me = this;
-					setTimeout(function() {
-						if( typeof me.paddingControl !== 'undefined' && typeof me.paddingControl.model !== 'undefined' ) {
-							me.paddingControl.refresh(me.paddingControl.model);
-							me.apply_paddings($obj);
-							me.after_breakpoint_change();
-						}
-					}, 300);
 				}
+			},
+
+			on_change_breakpoint_after: function (breakpoint) {
+				var $obj = this.$el.find('> .upfront-editable_entity:first');
+				if( typeof this.paddingControl !== 'undefined' && typeof this.paddingControl.model !== 'undefined' ) {
+					this.paddingControl.refresh(this.paddingControl.model);
+					this.apply_paddings($obj);
+				}
+				this.after_breakpoint_change();
 			},
 
 			after_breakpoint_change: function(){
 				//Override this method on Element views for specifics
+			},
+
+			on_grid_update: function () {
+				var $obj = this.$el.find('> .upfront-editable_entity:first');
+				this.apply_paddings($obj);
+				this.update_position();
 			},
 
 			activate: function () {
@@ -2212,11 +2301,15 @@ define([
 				this.parent_module_view.$el.find('>.upfront-module').removeClass('upfront-module-active');
 				if ( !this.parent_module_view.wrapper_view ) return;
 				this.parent_module_view.wrapper_view.$el.removeClass('upfront-wrapper-active upfront-inline-panel-item-open');
+				// Close padding control
+				if ( this.paddingControl ) {
+					this.paddingControl.close();
+				}
 			},
 
 			on_hide_click: function (e) {
 				e.preventDefault();
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					data = Upfront.Util.clone(this.model.get_property_value_by_name('breakpoint') || {});
 				if ( !_.isObject(data[breakpoint.id]) )
 					data[breakpoint.id] = {};
@@ -2537,7 +2630,7 @@ define([
 
 			on_module_update: function (view, model) {
 				if ( !this.parent_module_view || this.parent_module_view != view ) return;
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					module_cols = this.get_module_cols()
 				;
 				if ( Upfront.Application.layout_ready ) {
@@ -2641,6 +2734,9 @@ define([
 				this.listenTo(Upfront.Events, "entity:object:refresh", this.on_object_refresh);
 				this.listenTo(Upfront.Events, "layout:render", this.on_after_layout_render);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint:after", this.on_change_breakpoint_after);
+				this.listenTo(Upfront.Events, "upfront:grid:updated", this.on_grid_update);
+				this.listenTo(Upfront.Events, "upfront:grid:updated:after", this.on_grid_update_after);
 			},
 
 			on_entity_remove: function(e, view) {
@@ -2824,7 +2920,7 @@ define([
 				this.fix_wrapper_height(this.model, wrappers, col);
 			},
 			apply_adapt_to_breakpoints: function () {
-				var current_breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+				var current_breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
 				if ( current_breakpoint && !current_breakpoint['default'] ) return;
 				// Only do it if it was from ObjectGroup
 				if ( !this.object_group_view ) return;
@@ -2839,7 +2935,7 @@ define([
 				_.each(breakpoints, function(each){
 					var breakpoint = each.toJSON();
 					if ( breakpoint['default'] ) return;
-					var col = ed.get_class_num(module_view.$el, ed.grid['class']),
+					var col = ed.get_class_num(module_view.$el.find('> .upfront-module'), ed.grid['class']),
 						breakpoint_data = module_view.model.get_property_value_by_name('breakpoint')
 					;
 					if ( _.isObject(breakpoint_data) && _.isObject(breakpoint_data[breakpoint.id]) && !_.isUndefined(breakpoint_data[breakpoint.id].col) ) {
@@ -2917,12 +3013,18 @@ define([
 				}
 			},
 			on_change_breakpoint: function (breakpoint) {
-				var me = this;
-				// Make sure clearing flexbox is applied, set a timeout to let other positioning finish
-				setTimeout(function(){
-					//me.apply_flexbox_clear();
-					me.lazy_apply_wrapper_height();
-				}, 1000);
+
+			},
+			on_change_breakpoint_after: function (breakpoint) {
+				//this.apply_flexbox_clear();
+				this.lazy_apply_wrapper_height();
+			},
+			on_grid_update: function () {
+
+			},
+			on_grid_update_after: function () {
+				//this.apply_flexbox_clear();
+				this.lazy_apply_wrapper_height();
 			},
 			remove: function() {
 				if(this.model)
@@ -2969,12 +3071,13 @@ define([
 				this.on('region:updated', this.on_region_update, this);
 
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+				this.listenTo(Upfront.Events, "upfront:grid:updated", this.on_grid_update);
 				//this.listenTo(Upfront.Events, "entity:wrapper:update_position", this.on_wrapper_update);
 
 				this.listenTo(Upfront.Events, "layout:render", this.on_after_layout_render);
 			},
 			render: function () {
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					grid = Upfront.Settings.LayoutEditor.Grid,
 					props = {},
 					is_parent_group = ( typeof this.group_view != 'undefined' ),
@@ -3059,7 +3162,7 @@ define([
 				Upfront.Events.trigger('entity:module:update', this, this.model);
 			},
 			update_position: function () {
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					grid = Upfront.Settings.LayoutEditor.Grid;
 				if ( ! breakpoint ) return;
 				var $module = this.$el.find('> .upfront-module'),
@@ -3230,6 +3333,9 @@ define([
 				}
 				//this.update_position();
 			},
+			on_grid_update: function () {
+
+			},
 			on_after_layout_render: function () {
 			},
 			remove: function(){
@@ -3254,6 +3360,7 @@ define([
 				"click > .upfront-module-group-toggle-container > .upfront-module-group-edit": "on_edit",
 				"click > .upfront-entity_meta > a.upfront-entity-hide_trigger": "on_hide_click",
 				"click > .upfront-module-hidden-toggle > a.upfront-entity-hide_trigger": "on_hide_click",
+				"click > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
 				//"click a.redactor_act": "onOpenPanelClick",
 				//"click .upfront-save_settings": "onOpenPanelClick",
 				"click .open-item-controls": "onOpenItemControlsClick",
@@ -3273,6 +3380,7 @@ define([
 				this.listenTo(Upfront.Events, 'layout:after_render', this.update_size_hint);
 
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+				this.listenTo(Upfront.Events, "upfront:grid:updated", this.on_grid_update);
 				//this.listenTo(Upfront.Events, "entity:wrapper:update_position", this.on_wrapper_update);
 				this.listenTo(Upfront.Events, "command:module_group:finish_edit", this.on_finish);
 				this.listenTo(Upfront.Events, "command:module_group:close_panel", this.closeControlPanel);
@@ -3292,67 +3400,13 @@ define([
 
 				if ( prop.id.match(/(top|bottom)_padding_(num|slider)/) ) {
 					if ( prop.id.match(/top_padding_(num|slider)/) ) {
-						this.show_top_padding_hint(value);
+						this.show_top_padding_hint(value, this.$el);
 					}
 					if ( prop.id.match(/bottom_padding_(num|slider)/) ) {
-						this.show_bottom_padding_hint(value);
+						this.show_bottom_padding_hint(value, this.$el);
 					}
 				}
 
-			},
-			show_top_padding_hint: function (value) {
-				var me               = this,
-					top_padding_hint = this.$el.find('.upfront-entity-top-padding-hint')
-				;
-				if(!this.top_padding_hint_flag) {
-					this.top_padding_hint_flag = true;
-					return;
-				}
-				if(!top_padding_hint.length) {
-					top_padding_hint = $('<div class="upfront-ui upfront-entity-padding-hint upfront-entity-top-padding-hint"></div>').appendTo(this.$el);
-				}
-				top_padding_hint.css({
-					height: value + 'px',
-					opacity: 1
-				});
-				clearTimeout(this.top_padding_hint_timer);
-				this.top_padding_hint_timer = setTimeout(function() {
-					me.hide_top_padding_hint();
-				}, 1000);
-			},
-			hide_top_padding_hint: function () {
-				if(!this.padding_hint_locked) {
-					this.$el.find('.upfront-entity-top-padding-hint').css({
-						opacity: 0
-					});
-				}
-			},
-			show_bottom_padding_hint: function (value) {
-				var me                  = this,
-					bottom_padding_hint = this.$el.find('.upfront-entity-bottom-padding-hint')
-				;
-				if(!this.bottom_padding_hint_flag) {
-					this.bottom_padding_hint_flag = true;
-					return;
-				}
-				if(!bottom_padding_hint.length) {
-					bottom_padding_hint = $('<div class="upfront-ui upfront-entity-padding-hint upfront-entity-bottom-padding-hint"></div>').appendTo(this.$el);
-				}
-				bottom_padding_hint.css({
-					height: value + 'px',
-					opacity: 1
-				});
-				clearTimeout(this.bottom_padding_hint_timer);
-				this.bottom_padding_hint_timer = setTimeout(function() {
-					me.hide_bottom_padding_hint();
-				}, 1000);
-			},
-			hide_bottom_padding_hint: function () {
-				if(!this.padding_hint_locked) {
-					this.$el.find('.upfront-entity-bottom-padding-hint').css({
-						opacity: 0
-					});
-				}
 			},
 
 			createPaddingControl: function(){
@@ -3435,6 +3489,9 @@ define([
 				});
 				this.listenTo(linkPanelControl, 'panel:open panel:close', function() {
 					me.toggleLinkPanel();
+				});
+				this.listenTo(linkPanelControl, 'panel:close', function() {
+					me.closeControlPanel();
 				});
 				this.listenTo(ungroupControl, 'click', function (e) {
 					me.on_ungroup();
@@ -3534,7 +3591,7 @@ define([
 				Upfront.Events.trigger("entity:module_group:after_render", this, this.model);
 			},
 			update: function (prop) {
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					prop_class = this.model.get_property_value_by_name('class'),
 					row = this.model.get_property_value_by_name('row'),
 					use_padding = this.model.get_breakpoint_property_value('use_padding', true),
@@ -3569,7 +3626,6 @@ define([
 				this.$bg.toggleClass('upfront-module-group-bg-padding', use_padding ? true : false);
 
 				this.update_position();
-				this.update_background();
 				// Check if width is changed, if it did, let's normalize child modules
 				if ( Upfront.Application.layout_ready && prop && ( prop.id == 'class' || prop.id == 'breakpoint' ) && prev_col != col ) {
 					this.normalize_child_modules(prev_col);
@@ -3577,13 +3633,16 @@ define([
 				Upfront.Events.trigger('entity:module_group:update', this, this.model);
 			},
 			update_position: function () {
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					grid = Upfront.Settings.LayoutEditor.Grid
 				;
 
 				this.apply_paddings(this.$el.find('> .upfront-modules_container'));
 
-				if ( ! breakpoint ) return;
+				if ( ! breakpoint ) {
+					this.update_background();
+					return;
+				}
 
 				var $toggle = this.$el.find('> .upfront-module-hidden-toggle'),
 					hide = this.model.get_breakpoint_property_value('hide', true)
@@ -3618,6 +3677,7 @@ define([
 					this._theme_style = theme_style;
 				}
 				this.update_size_hint();
+				this.update_background();
 				this.trigger('update_position', this, this.model);
 				Upfront.Events.trigger('entity:module_group:update_position', this, this.model);
 			},
@@ -3633,11 +3693,10 @@ define([
 				if( typeof e !== "undefined" ){
 					e.preventDefault();
 				}
-				var BgSettings = Upfront.Views.Editor.BgSettings.Settings.extend({
+				var GroupSettings = Upfront.Views.Editor.BgSettings.GroupSettings.extend({
 					bg_title: l10n.group_settings,
-					enable_types: ['color', 'image'/*, 'slider', 'video', 'map'*/]
 				});
-				Upfront.Events.trigger("entity:settings:activate", this, BgSettings);
+				Upfront.Events.trigger("element:settings:activate", this, GroupSettings);
 			},
 			on_ungroup: function () {
 				var me = this,
@@ -3674,7 +3733,7 @@ define([
 					combine_right_spacer = 0
 				;
 				// Make sure module interaction is enabled first to prevent issue after ungroup
-				this.toggle_modules_interaction(true, true);
+				this.toggle_modules_interaction(true, true, true);
 				ed.start(this, this.model);
 				// Find previous and next wrapper
 				_.each(region_lines, function (l) {
@@ -3952,10 +4011,11 @@ define([
 				this.update_size_hint();
 			},
 			on_dblclick: function (e) {
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
 				// We don't want to activate the Group when Settings sidebar is open
 				if($('#element-settings-sidebar').html() !== '' || $('#settings').html() !== '') return false;
 				if ( this.$el.hasClass('upfront-module-group-on-edit') || this.$el.hasClass('upfront-module-group-disabled') ) return;
+				if ( this.wrapper_view && this.wrapper_view.$el.hasClass('upfront-inline-panel-item-open') ) return;
 				this.closeControlPanel(false);
 				if ( !breakpoint || breakpoint['default'] ) {
 					this.on_edit();
@@ -4004,14 +4064,17 @@ define([
 					this.$el.draggable('option', 'disabled', false);
 				}
 			},
-			toggle_modules_interaction: function (enable, can_edit) {
+			toggle_modules_interaction: function (enable, can_edit, force) {
 				can_edit = can_edit === true ? true : false;
+				force = force === true ? true : false;
 				this.model.get('modules').each(function(module){
 					var module_view = Upfront.data.module_views ? Upfront.data.module_views[module.cid] : false;
 					if ( module_view ) {
 						if ( enable ) {
 							module_view.enable_interaction(true);
-							module_view.disable_interaction(!can_edit, false, true, true, !can_edit);
+							if ( !force ) { // element inside group has limited interaction, when force is passed, we allow all interaction
+								module_view.disable_interaction(!can_edit, false, true, true, !can_edit);
+							}
 						}
 						else {
 							module_view.disable_interaction(true, false, false, false, true);
@@ -4024,23 +4087,31 @@ define([
 				this.update_position();
 			},
 			on_change_breakpoint: function (breakpoint) {
-				var $hide = this.$el.find('> .upfront-entity_meta > a.upfront-entity-hide_trigger');
+				var $hide = this.$el.find('> .upfront-entity_meta > a.upfront-entity-hide_trigger'),
+					$delete = this.$el.find('> .upfront-entity_meta > a.upfront-entity-delete_trigger')
+				;
 				if ( !breakpoint['default'] ){
 					this.$el.addClass('upfront-module-group-reorder-mode');
 					$hide.show();
+					$delete.hide();
 				}
 				else {
 					this.$el.removeClass('upfront-module-group-reorder-mode');
 					$hide.hide();
+					$delete.show();
 				}
 				this.on_finish(); // make sure to close editing
 				//this.update_position();
+				//this.update_background();
+			},
+			on_grid_update: function () {
 				this.update_background();
 			},
 			deactivate: function () {
 				// We don't want to deactivate the Group when Settings sidebar is open
 				if($('#element-settings-sidebar').html() !== '' || $('#settings').html() !== '') return false;
 				Upfront.data.prevEntity = false;
+				this.$el.closest('.upfront-region-container').removeClass('upfront-region-module-activated');
 				this.$el.removeClass("upfront-module-group-active");
 				this.check_deactivated();
 				this.trigger("upfront:entity:deactivate", this);
@@ -4070,6 +4141,8 @@ define([
 				this.trigger("activated", this);
 				this.trigger("upfront:entity:activate", this);
 				this.listenToOnce(this, 'deactivated', this.deactivate);
+				$('.upfront-region-module-activated').removeClass('.upfront-region-module-activated');
+				this.$el.closest('.upfront-region-container').addClass('upfront-region-module-activated');
 				this.$el.addClass("upfront-module-group-active");
 			},
 			remove: function(){
@@ -4119,8 +4192,12 @@ define([
 				this.listenTo(Upfront.Events, "entity:module_group:group", this.on_group);
 				this.listenTo(Upfront.Events, "entity:module_group:ungroup", this.on_ungroup);
 				this.listenTo(Upfront.Events, "layout:after_render", this.on_after_layout_render);
+				this.listenTo(Upfront.Events, "layout:after_render:finish", this.on_after_layout_render_finish);
 				this.listenTo(Upfront.Events, "upfront:csseditor:ready", this.on_csseditor_ready);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint:after", this.on_change_breakpoint_after);
+				this.listenTo(Upfront.Events, "upfront:grid:updated", this.on_grid_update);
+				this.listenTo(Upfront.Events, "upfront:grid:updated:after", this.on_grid_update_after);
 
 				this.lazy_apply_wrapper_height = _.debounce(this.apply_wrapper_height, 1000);
 			},
@@ -4147,7 +4224,7 @@ define([
 						}
 					}
 				}
-				view.remove();
+				//view.remove(); // Unneeded as below model.remove call will also call view.remove eventually
 				this.model.remove(view.model);
 				this.normalize_child_spacing();
 				Upfront.Events.trigger("entity:removed:after");
@@ -4378,9 +4455,9 @@ define([
 				this.apply_flexbox_clear();
 				this.apply_adapt_to_breakpoints();
 				this.normalize_child_spacing();
-				setTimeout(function(){
-					me.lazy_apply_wrapper_height();
-				}, 1000); // Wait for other positioning finished
+			},
+			on_after_layout_render_finish: function () {
+				this.lazy_apply_wrapper_height();
 			},
 			on_csseditor_ready: function () {
 				//this.lazy_apply_wrapper_height();
@@ -4407,7 +4484,7 @@ define([
 				this.fix_wrapper_height(this.model, wrappers, col);
 			},
 			apply_adapt_to_breakpoints: function () {
-				var current_breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+				var current_breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
 				if ( current_breakpoint && !current_breakpoint['default'] )
 					return;
 				// Don't do anything on shadow region
@@ -4453,12 +4530,18 @@ define([
 				this.apply_adapt_to_breakpoints();
 			},
 			on_change_breakpoint: function (breakpoint) {
-				var me = this;
-				// Make sure clearing flexbox is applied, set a timeout to let other positioning finish
-				setTimeout(function(){
-					me.apply_flexbox_clear();
-					me.lazy_apply_wrapper_height();
-				}, 1000);
+
+			},
+			on_change_breakpoint_after: function (breakpoint) {
+				this.apply_flexbox_clear();
+				this.lazy_apply_wrapper_height();
+			},
+			on_grid_update: function () {
+
+			},
+			on_grid_update_after: function () {
+				this.apply_flexbox_clear();
+				this.lazy_apply_wrapper_height();
 			},
 			remove: function() {
 				var me = this;
@@ -4697,6 +4780,9 @@ define([
 
 				// breakpoint changes
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint:after", this.on_change_breakpoint_after);
+				this.listenTo(Upfront.Events, "upfront:grid:updated", this.on_grid_update);
+				this.listenTo(Upfront.Events, "upfront:grid:updated:after", this.on_grid_update_after);
 
 				this.listenTo(Upfront.Events, "entity:contextmenu:deactivate", this.remove_context_menu);
 
@@ -4731,11 +4817,15 @@ define([
 					type = this._get_region_type(),
 					previous_type = this._get_previous_region_type(),
 					default_breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_default().toJSON(),
-					contained_width = Upfront.Application.layout.get_property_value_by_name('contained_region_width') || (default_breakpoint.columns * grid.column_width);
-				if ( type == 'clip' )
-					this.$bg.css('max-width', contained_width + 'px');
-				else
+					default_width = (default_breakpoint.columns * grid.column_width),
+					contained_width = Upfront.Application.layout.get_property_value_by_name('contained_region_width') || default_width
+				;
+				if ( type == 'clip' ) {
+					this.$bg.css('max-width', ( contained_width > default_width ? contained_width : default_width ) + 'px');
+				}
+				else {
 					this.$bg.css('max-width', '');
+				}
 				this.update_background();
 				if ( previous_type != type ){
 					this.$el.removeClass('upfront-region-container-' + previous_type);
@@ -4762,10 +4852,17 @@ define([
 				this.$layout.removeClass(grid['class'] + this.max_col);
 				this.max_col = breakpoint.columns;
 				this.$layout.addClass(grid['class'] + this.max_col);
-				setTimeout(function(){
-					me.update_background();
-					me.fix_height();
-				}, 500);
+			},
+			on_change_breakpoint_after: function (breakpoint) {
+				this.update_background();
+				this.fix_height();
+			},
+			on_grid_update: function () {
+
+			},
+			on_grid_update_after: function () {
+				this.update();
+				this.fix_height();
 			},
 			on_contained_width_change: function (width) {
 				var type = this._get_region_type();
@@ -4788,9 +4885,6 @@ define([
 				this.listenTo(Upfront.Events, "command:newpage:start", this.close_edit);
 				this.listenTo(Upfront.Events, "command:newpost:start", this.close_edit);
 				this.$el.find('.upfront-region-edit-fixed-trigger').show();
-				if ( Upfront.Application.sidebar.visible )
-					Upfront.Application.sidebar.toggleSidebar();
-				e.stopPropagation();
 			},
 			finish_edit: function (e) {
 				Upfront.Events.trigger("entity:region:deactivated");
@@ -4899,7 +4993,7 @@ define([
 			},
 			on_region_update: function (region) {
 				// Update flexible region column
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					col = this.max_col;
 				_.each(this.sub_model, function (sub) {
 					var sub_type = sub.get('sub');
@@ -4936,7 +5030,7 @@ define([
 				me.lazyFixHeight();
 			},
 			fix_height: function () {
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
 				// Don't need to adapt height if breakpoint isn't default or that flexbox is supported
 				// Make sure to test with non-flexbox browser whenever possible
 				if ( ( breakpoint && !breakpoint['default'] ) || this.$layout.css('display').indexOf('flex') != -1 ){
@@ -4993,7 +5087,7 @@ define([
 				}
 			},
 			update_pos: function () {
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 					offset = this.$el.offset(),
 					top = offset.top,
@@ -5136,6 +5230,7 @@ define([
 				this.listenTo(Upfront.Events, "sidebar:toggle:done", this.update_pos);
 				this.listenTo(Upfront.Events, "application:mode:after_switch", this.update_pos);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+				this.listenTo(Upfront.Events, "upfront:grid:updated", this.on_grid_update);
 				$(window).on('scroll.region_subcontainer_' + this.model.get('name'), this, this.on_scroll);
 				$(window).on('resize.region_subcontainer_' + this.model.get('name'), this, this.on_window_resize);
 			},
@@ -5176,8 +5271,11 @@ define([
 				this.update_pos();
 				//_.delay(this.update_pos.bind(this), 200);
 			},
+			on_grid_update: function () {
+				this.update_pos();
+			},
 			update_pos: function () {
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
 					offset = this.$el.offset(),
 					top = offset.top,
@@ -5390,6 +5488,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:navigation:responsive_open", this.refresh_background);
 				this.listenTo(Upfront.Events, "entity:navigation:responsive_close", this.refresh_background);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+				this.listenTo(Upfront.Events, "upfront:grid:updated", this.on_grid_update);
 				this.listenTo(Upfront.Events, "entity:region:hide_toggle", this.update_hide_toggle);
 				this.listenTo(Upfront.Events, "command:region:edit_toggle", this.update_buttons);
 				this.listenTo(Upfront.Events, "entity:region:removed", this.update_buttons);
@@ -5404,7 +5503,7 @@ define([
 				this.trigger("activate_region", this);
 			},
 			on_mouse_over: function () {
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					container = this.parent_view.get_container_view(this.model),
 					$main = $(Upfront.Settings.LayoutEditor.Selectors.main);
 				if ( ! $main.hasClass('upfront-region-editing') )
@@ -5413,7 +5512,7 @@ define([
 					this.trigger("activate_region", this);
 			},
 			on_mouse_enter: function (e) {
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
 				if ( breakpoint !== undefined ) {
 					// popup Edit region only on Responsive Tablet and below
 					if ( breakpoint.name != "Default Desktop" ) {
@@ -5453,7 +5552,7 @@ define([
 				this.$el.find('> .upfront-region-wrapper > .upfront-modules_container').append(local_view.el);
 				local_view.render();
 				this.render_panels();
-				this.render_bg_setting();
+				// this.render_bg_setting();
 				//if ( this._is_clipped() )
 				//	this.$el.append('<div class="upfront-region-active-overlay" />');
 				this.display_region_hint();
@@ -5474,21 +5573,29 @@ define([
 					opts = {
 						model: this.model,
 						to: this.$el,
-						width: 420,
-						top: 52,
-						right:43,
+						width: 260,
+						top: 0,
+						left: 0,
 						keep_position: false
-					};
-				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting(opts);
+					},
+					region_settings_sidebar = $('#region-settings-sidebar');
+				this.bg_setting = new Upfront.Views.Editor.RegionBgSetting(opts);
 				this.bg_setting.for_view = this;
 				this.bg_setting.render();
-				this.$el.append(this.bg_setting.el);
-				this.listenTo(this.bg_setting, "modal:open", this.on_modal_open);
+				// Causes color picker not to work
+				//Upfront.Events.trigger('region:settings:activate', this.bg_setting);
+				// Replace contents of region_settings_sidebar.
+				region_settings_sidebar.html(this.bg_setting.el);
+
+				this.listenTo(this.bg_setting, "modal:open", function() {
+					region_settings_sidebar.css('opacity', '');
+					this.on_modal_open();
+				});
 				this.listenTo(this.bg_setting, "modal:close", this.on_modal_close);
 			},
 			update: function () {
 				var grid = Upfront.Settings.LayoutEditor.Grid,
-					breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+					breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					container = this.model.get("container"),
 					name = this.model.get("name").toLowerCase().replace(/\s/g, "-"),
 					previous_name = this.model.previous("name"),
@@ -5527,14 +5634,14 @@ define([
 				else {
 					this.remove_background();
 				}
+				this.update_padding();
 				this.update_position();
 				this.update_buttons();
 				this.update_size_hint(this.col * grid.column_width, parseInt(this.$el.css('height'), 10));
-				this.update_padding();
 				this.trigger("region_update", this);
 			},
 			update_position: function () {
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					grid = Upfront.Settings.LayoutEditor.Grid,
 					$edit = this.$el.find('> .upfront-region-edit-trigger');
 				if ( ! breakpoint ) return;
@@ -5611,6 +5718,7 @@ define([
 					$container.css('min-height', '');
 				}
 				this.trigger("region_changed", this);
+				Upfront.Events.trigger("entity:region:update_position", this, this.model);
 			},
 			update_padding: function () {
 				var props = {},
@@ -5623,7 +5731,7 @@ define([
 				});
 
 				var breakpoints = typeof Upfront.Settings.LayoutEditor.Theme.breakpoints !== 'undefined' ? Upfront.Settings.LayoutEditor.Theme.breakpoints : [],
-					current_breakpoint = typeof Upfront.Settings.LayoutEditor.CurrentBreakpoint !== 'undefined' ? Upfront.Settings.LayoutEditor.CurrentBreakpoint : 'desktop',
+					current_breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					current_breakpoint_id = current_breakpoint === 'default' ? current_breakpoint : current_breakpoint.id,
 					top_padding,
 					bottom_padding
@@ -5657,7 +5765,7 @@ define([
 				});
 			},
 			update_buttons: function () {
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					$delete_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-delete_trigger');
 				if ( !breakpoint || breakpoint['default'] ){
 					if (
@@ -5831,9 +5939,11 @@ define([
 				}
 
 				var me = this,
-					container_view = this.parent_view.get_container_view(this.model);
+					container_view = this.parent_view.get_container_view(this.model)
+				;
+
 				this.listenToOnce(Upfront.Events, "entity:region:deactivated", function(deac){
-					if(e && !this.$el.is($(e.target).closest('div.upfront-region'))) {
+					if(e && !this.$el.is($(e.target).closest('div.upfront-region')) && me.bg_setting) {
 						me.bg_setting.close(false);
 					}
 				});
@@ -5860,6 +5970,8 @@ define([
 
 
 
+				this.render_bg_setting();
+
 				if(this.model.get('type') == 'lightbox') {
 					this.bg_setting.right =  80;
 					this.bg_setting.top = setting_offset.top;
@@ -5880,14 +5992,13 @@ define([
 				}
 
 				container_view.$el.addClass('upfront-region-bg-setting-open');
-				this.render_bg_setting();
 				this.bg_setting.open().always(function(){
 					container_view.$el.removeClass('upfront-region-bg-setting-open');
 				});
 			},
 			on_hide_click: function (e) {
 				e.preventDefault();
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					data = Upfront.Util.clone(this.model.get_property_value_by_name('breakpoint') || {});
 				if ( !_.isObject(data[breakpoint.id]) )
 					data[breakpoint.id] = {};
@@ -5924,6 +6035,7 @@ define([
 				var container_view = this.parent_view.get_container_view(this.model);
 				container_view.$el.find('.upfront-region-finish-edit').css('display', ''); // reset hide finish edit button
 				this.bg_setting.remove(); // removing it here, i'll be re-rendered before opening
+				this.bg_setting = false;
 			},
 			on_change_breakpoint: function (breakpoint) {
 				var $delete = this.$el.find('> .upfront-entity_meta > a.upfront-entity-delete_trigger'),
@@ -5939,6 +6051,13 @@ define([
 					//$settings.show();
 					$hide.hide();
 				}
+				this.update_position();
+				this.update_padding();
+				this.update_size_hint(parseInt(this.$el.css('width'), 10), parseInt(this.$el.css('height'), 10));
+				if ( this._is_clipped() )
+					this.update_background();
+			},
+			on_grid_update: function () {
 				this.update_position();
 				this.update_padding();
 				this.update_size_hint(parseInt(this.$el.css('width'), 10), parseInt(this.$el.css('height'), 10));
@@ -5964,6 +6083,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.check_modules);
 				this.listenTo(Upfront.Events, "layout:after_render", this.check_modules);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+				this.listenTo(Upfront.Events, "upfront:grid:updated", this.on_grid_update);
 				this.listenTo(this.model, "restrict_to_container", this.update_position_on_restrict);
 				$(window).on('scroll.region_' + this.model.get('name'), this, this.on_scroll);
 			},
@@ -5984,7 +6104,7 @@ define([
 			},
 			render_bg_setting: function () {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
-				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: $main, width: 420});
+				this.bg_setting = new Upfront.Views.Editor.RegionBgSettingFixed({model: this.model, to: $main, width: 420});
 				this.bg_setting.render();
 				$main.append(this.bg_setting.el);
 				this.listenTo(this.bg_setting, "modal:open", this.on_modal_open);
@@ -6240,6 +6360,9 @@ define([
 					this.$el.hide();
 				else
 					this.$el.show();
+			},
+			on_grid_update: function () {
+				this.update_padding();
 			}
 		}),
 
@@ -6270,6 +6393,7 @@ define([
 				this.listenTo(Upfront.Events, "entity:drag_stop", this.check_modules);
 				this.listenTo(Upfront.Events, "layout:after_render", this.check_modules);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+				this.listenTo(Upfront.Events, "upfront:grid:updated", this.on_grid_update);
 			},
 			render: function () {
 				this.constructor.__super__.render.call(this);
@@ -6287,7 +6411,7 @@ define([
 			},
 			render_bg_setting: function () {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main);
-				this.bg_setting = new Upfront.Views.Editor.ModalBgSetting({model: this.model, to: $main, width: 420});
+				this.bg_setting = new Upfront.Views.Editor.RegionBgSettingLightbox({model: this.model, to: $main, width: 420});
 				this.bg_setting.for_view = this;
 				this.bg_setting.render();
 				$main.append(this.bg_setting.el);
@@ -6447,6 +6571,10 @@ define([
 				this.update_padding();
 				this.update_region_position();
 				this.hide();
+			},
+			on_grid_update: function () {
+				this.update_padding();
+				this.update_region_position();
 			}
 		}),
 
@@ -6466,6 +6594,7 @@ define([
 				this.listenTo(Upfront.Events, 'entity:region:resize_stop', this.resume_edit);
 				this.listenTo(Upfront.Events, "entity:region:deactivated", this.deactivate_region);
 				this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.on_change_breakpoint);
+				this.listenTo(Upfront.Events, "upfront:grid:updated", this.on_grid_update);
 			},
 			render: function () {
 				this.$el.html('');
@@ -6722,7 +6851,7 @@ define([
 				}
 			},
 			apply_adapt_region_to_breakpoints: function () {
-				var current_breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+				var current_breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
 				if ( current_breakpoint && !current_breakpoint['default'] )
 					return;
 				var me = this,
@@ -6736,6 +6865,9 @@ define([
 				});
 			},
 			on_change_breakpoint: function (breakpoint) {
+
+			},
+			on_grid_update: function () {
 
 			},
 			remove: function(){
@@ -6782,17 +6914,20 @@ define([
 				// this.model.bind("remove", this.on_remove, this);
 				this.listenTo(this.model, 'remove', this.on_remove);
 
+				this.listenTo(Upfront.Events, 'entity:region:update_position', this.on_region_update);
 				this.listenTo(Upfront.Events, 'entity:module:update_position', this.on_module_update);
 				this.listenTo(Upfront.Events, 'entity:modules:render_module', this.on_module_update);
 				this.listenTo(Upfront.Events, 'entity:object:update_position', this.on_object_update);
 				this.listenTo(Upfront.Events, 'entity:objects:render_object', this.on_object_update);
 				this.listenTo(Upfront.Events, 'layout:after_render', this.on_layout_after_render);
 
+				this.listenTo(Upfront.Events, "upfront:grid:updated", this.on_grid_update);
+
 				// this one to do fix the wrapper visibility for elements inside a lightbox
 				this.listenTo(Upfront.Events, 'upfront:lightbox:show', this.on_lightbox_show);
 			},
 			render: function () {
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					template = _.template(_Upfront_Templates["wrapper"]),
 					grid = Upfront.Settings.LayoutEditor.Grid,
 					model_cls = this.model.get_property_value_by_name('class'),
@@ -6839,7 +6974,7 @@ define([
 				}
 			},
 			update_position: function () {
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint;
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
 				if ( ! breakpoint ) return;
 				var ed = Upfront.Behaviors.GridEditor,
 					grid = Upfront.Settings.LayoutEditor.Grid,
@@ -6902,7 +7037,7 @@ define([
 					? current_col
 					: Upfront.Util.width_to_col(this.$el.width())
 				;
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					ed = Upfront.Behaviors.GridEditor,
 					col_class = Upfront.Settings.LayoutEditor.Grid['class'],
 					min_col = this._find_child_min_col(),
@@ -7013,7 +7148,7 @@ define([
 				}
 			},
 			_find_closest_wrapper: function (reverse, min_col) {
-				var breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
+				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					$wrappers = this.$el.parent()
 						.children('.upfront-wrapper:visible')
 						.filter(function(){
@@ -7063,6 +7198,13 @@ define([
 					display: ''
 				});
 				this.update_position();
+			},
+			on_grid_update: function () {
+				this.update_position();
+			},
+			on_region_update: function (from_view) {
+				if ( !this.parent_view || !this.parent_view.region_view || this.parent_view.region_view != from_view ) return;
+				this.toggle_wrapper_visibility();
 			},
 			on_module_update: function (from_view) {
 				if ( !from_view.wrapper_view || from_view.wrapper_view != this ) return;
@@ -7145,12 +7287,14 @@ define([
 					me.$el.append(me.bg_setting.el);
 
 					me.fix_height();
+					me.update_grid_css(); // Don't forget to update grid CSS
 
 					// Use flexbox when we can
 					if ( Upfront.Util.css_support('flex') )
 						$('html').addClass('flexbox-support');
 
 					Upfront.Events.trigger("layout:after_render");
+					Upfront.Events.trigger("layout:after_render:finish");
 				});
 
 				RenderQueue.start();
@@ -7321,7 +7465,9 @@ define([
 			update_grid_css: function () {
 				var grid = Upfront.Settings.LayoutEditor.Grid,
 					styles = [],
-					selector = '#page.upfront-layout-view';
+					selector = '#page.upfront-layout-view'
+				;
+				styles.push(selector + ' { min-width: ' + grid.column_width*grid.size + 'px; }');
 				styles.push(selector + ' .upfront-grid-layout { width: ' + grid.column_width*grid.size + 'px; }');
 				styles.push(selector + ' .upfront-object { padding: ' + grid.column_padding + 'px; }');
 				styles.push(selector + ' .upfront-overlay-grid {background-size: 100% ' + grid.baseline + 'px; }');
@@ -7329,10 +7475,12 @@ define([
 				styles.push(selector + ' .upfront-inserted_image-wrapper .wp-caption-text, ' + selector + ' .uinsert-image-wrapper { padding: ' + grid.column_padding + 'px; }');
 				styles.push(selector + ' .upfront-module-group-bg-padding { margin: ' + grid.column_padding + 'px; }');
 
-				if ( $('#upfront-grid-style-inline').length )
+				if ( $('#upfront-grid-style-inline').length ) {
 					$('#upfront-grid-style-inline').html( styles.join("\n") );
-				else
+				}
+				else {
 					$('body').append('<style id="upfront-grid-style-inline">' + styles.join("\n") + '</style>');
+				}
 			},
 			remove: function(){
 				if(this.local_view)
@@ -7340,6 +7488,7 @@ define([
 				this.local_view = null;
 				$(window).off('resize.upfront_layout');
 				$(window).off('scroll.upfront_layout');
+				this.stopListening(Upfront.Events, 'upfront:start:responsive');
 				if (this.bg_setting)
 					this.bg_setting.remove();
 				this.bg_setting = null;
@@ -7349,8 +7498,15 @@ define([
 				this.options = false;
 			},
 			open_edit_background: function () {
+				var me = this;
 				this.bg_setting.open().always(function(){
 
+				});
+				// Add unique class.
+				this.bg_setting.$el.addClass('upfront-modal-bg-settings-global');
+				// Close when Responsive mode starts.
+				this.listenTo(Upfront.Events, 'upfront:start:responsive', function() {
+					if ( me.bg_setting ) me.bg_setting.close(false);
 				});
 			},
 			fix_height: function () {

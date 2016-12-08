@@ -7,8 +7,9 @@
         "text!upfront/templates/popup.html",
         'scripts/upfront/upfront-views-editor/fields',
         'scripts/upfront/upfront-views-editor/fonts',
-        'scripts/upfront/upfront-views-editor/notifier'
-    ], function (popup_tpl, Fields, Fonts, notifier) {
+      'scripts/upfront/upfront-views-editor/notifier',
+			'scripts/perfect-scrollbar/perfect-scrollbar'
+    ], function (popup_tpl, Fields, Fonts, notifier, perfectScrollbar) {
         return Backbone.View.extend({
             className: 'upfront-ui',
             id: 'upfront-csseditor',
@@ -75,6 +76,8 @@
             initialize: function() {
                 if (!$('#' + this.id).length) $('body').append(this.el);
                 Upfront.Events.on("command:region:edit_toggle", this.close, this);
+
+				Upfront.plugins.call('insert-css-editor-types', {types: this.elementTypes});
             },
             init: function(options) {
                 var me = this,
@@ -193,6 +196,11 @@
                 this.elementType.id + '_default' : this.stylename;
             },
             get_css_selector: function() {
+                var pluginsCallResult = Upfront.plugins.call('get-css-editor-selector', {object: this});
+                if (pluginsCallResult.status && pluginsCallResult.status === 'called' && pluginsCallResult.result) {
+                    return pluginsCallResult.result;
+                }
+
                 if (this.is_global_stylesheet) return '';
 
                 if (this.is_region_style()) return '.upfront-' + this.elementType.id + '-' + this.model.get('name');
@@ -268,9 +276,10 @@
                     editor = ace.edit(this.$('.upfront-css-ace')[0]),
                     session = editor.getSession(),
                     scrollerDisplayed = false,
+                    selector,
                     scope,
                     styles
-                    ;
+                ;
 
                 session.setUseWorker(false);
                 editor.setShowPrintMargin(false);
@@ -304,7 +313,8 @@
 
                 styles = Upfront.Util.colors.convert_string_color_to_ufc(this.get_style_element().html().replace(/div#page.upfront-layout-view .upfront-editable_entity.upfront-module/g, '#page'));
                 if (this.is_global_stylesheet === false) {
-                    scope = new RegExp(this.get_css_selector() + '\\s*', 'g');
+                    selector = this.get_css_selector().replace(/[.+*\[\]]/g, '\\$&');
+                    scope = new RegExp(selector + '\\s*', 'g');
                     styles = styles.replace(scope, '');
                 }
                 editor.setValue($.trim(styles), -1);
@@ -312,6 +322,18 @@
                 // Set up the proper vscroller width to go along with new change.
                 editor.renderer.scrollBar.width = 5;
                 editor.renderer.scroller.style.right = "5px";
+
+								// Add JS Scrollbar.
+								perfectScrollbar.withDebounceUpdate(
+									// Element.
+									this.$el.find('.ace_scrollbar')[0],
+									// Run First.
+									false,
+									// Event.
+									false,
+									// Initialize.
+									true
+								);
 
                 editor.focus();
                 this.editor = editor;
@@ -324,6 +346,16 @@
             },
             prepareSpectrum: function(){
                 var me = this,
+                    color_change = function (color) {
+                        var colorString;
+                        if( color.get_is_theme_color() !== false ){
+                            colorString = color.theme_color;
+                        }else{
+                            colorString = color.alpha < 1 ? color.toRgbString() : color.toHexString();
+                        }
+                        me.editor.insert(colorString);
+                        me.editor.focus();
+                    },
                     color_picker = new Fields.Color({
                         default_value: '#ffffff',
                         showAlpha: true,
@@ -339,16 +371,7 @@
                             show: function(){
                                 //spectrum = $('.sp-container:visible');
                             },
-                            choose: function(color) {
-								var colorString;
-                                if( color.get_is_theme_color() !== false ){
-                                    colorString = color.theme_color;
-                                }else{
-                                    colorString = color.alpha < 1 ? color.toRgbString() : color.toHexString();
-                                }
-                                me.editor.insert(colorString);
-                                me.editor.focus();
-                            }
+                            choose: color_change
                         }
                     })
                     ;

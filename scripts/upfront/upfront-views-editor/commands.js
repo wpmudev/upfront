@@ -5,6 +5,7 @@
         ;
     define([
         'scripts/upfront/upfront-views-editor/fields',
+        'scripts/upfront/upfront-views-editor/commands/commands',
         'scripts/upfront/upfront-views-editor/commands/command',
         'scripts/upfront/upfront-views-editor/commands/command-cancel-post-layout',
         'scripts/upfront/upfront-views-editor/commands/command-delete',
@@ -43,9 +44,11 @@
         'scripts/upfront/upfront-views-editor/commands/breakpoint/command-add-custom-breakpoint',
         'scripts/upfront/upfront-views-editor/commands/breakpoint/command-breakpoint-dropdown',
         'scripts/upfront/upfront-views-editor/commands/command-open-media-gallery',
-        'scripts/upfront/upfront-views-editor/commands/command-popup-list'
+        'scripts/upfront/upfront-views-editor/commands/command-popup-list',
+        'scripts/upfront/upfront-views-editor/commands/command-menu'
     ], function (
         Fields,
+        Commands,
         Command,
         CommandCancelPostLayout,
         CommandDelete,
@@ -84,13 +87,14 @@
         CommandAddCustomBreakpoint,
         CommandBreakpointDropdown,
         CommandOpenMediaGallery,
-        CommandPopupList
+        CommandPopupList,
+        CommandMenu
     ) {
-        var Commands = Backbone.View.extend({
+        var Commands = Commands.extend({
             "tagName": "ul",
 
             initialize: function () {
-                this.Commands = _([
+                this.commands = _([
                     new CommandNewPage({"model": this.model}),
                     new CommandNewPost({"model": this.model}),
                     new CommandSaveLayout({"model": this.model}),
@@ -104,29 +108,6 @@
                     new CommandResetEverything({"model": this.model})
                 ]);
                 if (Upfront.Settings.Debug.transients) this.commands.push(new CommandExportHistory({model: this.model}));
-            },
-            render: function () {
-                this.$el.find("li").remove();
-                this.commands.each(this.add_command, this);
-            },
-
-            add_command: function (command) {
-                if (!command) return;
-                command.remove();
-                command.render();
-                this.$el.append(command.el);
-                command.bind("upfront:command:remove", this.remove_command, this);
-                command.delegateEvents();
-            },
-
-            remove_command: function (to_remove) {
-                var coms = this.commands.reject(function (com) {
-                        com.remove();
-                        return com.cid == to_remove.cid;
-                    })
-                    ;
-                this.commands = _(coms);
-                this.render();
             }
         });
 
@@ -170,7 +151,8 @@
             Command_AddCustomBreakpoint: CommandAddCustomBreakpoint,
             Command_BreakpointDropdown: CommandBreakpointDropdown,
             Command_OpenMediaGallery: CommandOpenMediaGallery,
-            Command_PopupList: CommandPopupList
+            Command_PopupList: CommandPopupList,
+            Command_Menu: CommandMenu
         };
 
 
