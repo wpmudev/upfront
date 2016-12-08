@@ -1955,7 +1955,7 @@ var InsertManager = Backbone.View.extend({
 					if(element.length){
 						element.replaceWith(insert.el);
 						insert.delegateEvents();
-						insert.controls.delegateEvents();
+						if (insert.controls) insert.controls.delegateEvents();
 						if(insert.controlEvents)
 							insert.controlEvents();
 					}
@@ -1986,14 +1986,14 @@ var InsertManager = Backbone.View.extend({
 			indexPosition = redactor.range.startOffset;
 
 		if( !current || _.isEmpty( $block ) ) return false;
-		
+
 
 		var $image_embed_insert_wrappers = $(".upfront-inserted_image-wrapper, .upfront-inserted_embed-wrapper"),
 			block_top = $block.offset().top,
 			block_html = $.trim( $block.html() ) || '',
 			prevblock_html = $.trim( $prevBlock.html() ) || '',
 			show_tooltip = true;
-			
+
 		$image_embed_insert_wrappers.each(function(){
 			var $this = $(this),
 				height = $this.find(".ueditor-insert-variant-group").height(),
