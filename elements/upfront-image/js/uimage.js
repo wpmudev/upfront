@@ -264,6 +264,11 @@ define([
 			me.listenTo(linkPanel, 'linkpanel:close', function() {
 				control.close();
 			});
+			
+			// Update wrapper size
+			me.listenTo(linkPanel, 'linkpanel:update:wrapper', function() {
+				control.updateWrapperSize();
+			});
 
 			control.icon = 'link';
 			control.tooltip = l10n.ctrl.image_link;

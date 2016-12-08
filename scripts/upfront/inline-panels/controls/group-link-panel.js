@@ -40,6 +40,11 @@ define([
 					type: link.get('type')
 				});
 			});
+			this.listenTo(this.link, 'change:type', function(link) {
+				if(link.get('type') === 'entry') {
+					this.trigger('change:type');
+				}
+			});
 		}		
 	});
 

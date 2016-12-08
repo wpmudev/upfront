@@ -499,8 +499,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			imageUrl: image.get('srcFull')
 		});
 
-
-
+		// Update wrapper size
+		this.listenTo(linkPanel, 'linkpanel:update:wrapper', function() {
+			linkControl.updateWrapperSize();
+		});
 
 		this.listenTo(linkPanel.model, "change", function( model ){
 			/**

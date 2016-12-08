@@ -3398,7 +3398,7 @@ define([
 						tooltip: l10n.link_group_to
 					})
 				;
-				
+
 				this.listenTo(linkPanelControl, 'change change:target', function(data) {
 					this.model.set_property('href', data.url);
 					this.model.set_property('linkTarget', data.target);
@@ -3410,7 +3410,9 @@ define([
 					me.closeControlPanel();
 					me.$el.closest('.upfront-inline-panel-item-open').removeClass('upfront-inline-panel-item-open');
 				});
-				
+				this.listenTo(linkPanelControl, 'change:type', function() {
+					linkPanelControl.updateWrapperSize();
+				});
 				return linkPanelControl; 
 			},
 			

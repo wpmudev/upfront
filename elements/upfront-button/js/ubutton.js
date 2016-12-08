@@ -310,6 +310,11 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			this.$el.find('a').attr('href', me.link.get('url'));
 		});
 
+		this.listenTo(this.link, 'change:type', function() {
+			if(me.link.get('type') === 'entry') {
+				linkPanelControl.updateWrapperSize();
+			}
+		});
 
 		return linkPanelControl;
 	},
