@@ -2045,6 +2045,9 @@ define([
 					&& $object.parents('.upfront-module-group').length === 0
 				) {
 					$object.parents('.upfront-wrapper').addClass('upfront-wrapper-multiple-modules')
+				} else {
+					// Remove class otherwise.
+					$object.parents('.upfront-wrapper').removeClass('upfront-wrapper-multiple-modules')
 				}
 			},
 
@@ -2185,10 +2188,14 @@ define([
 				}
 			},
 			on_element_resize: function (attr) {
-
+				// Add/remove multiple module class.
+				$object = this.$el.find('.upfront-editable_entity:first');
+				this.add_multiple_module_class($object);
 			},
 			on_element_drop: function (attr) {
-
+				// Add/remove multiple module class.
+				$object = this.$el.find('.upfront-editable_entity:first');
+				this.add_multiple_module_class($object);
 			},
 			on_resize_start: function (attr) {
 

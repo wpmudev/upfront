@@ -294,6 +294,11 @@
 	outline: 1px solid rgba(72,89,106,0.3);
 }
 
+.upfront-wrapper.upfront-wrapper-multiple-modules.ui-resizable-resizing .upfront-editable_entity > .upfront-entity-size-hint,
+.upfront-wrapper-multiple-modules:hover .upfront-module-view .upfront-resize-handle-element {
+	display: none;
+}
+
 .upfront-wrapper-multiple-modules .upfront-module:hover,
 .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-module,
 .upfront-module:hover,
