@@ -1914,6 +1914,8 @@ define([
 				$object.append($handle_w);
 				$object.append($handle_e);
 
+				this.add_multiple_module_class($object);
+
 				this.apply_paddings(this.$el.find('> .upfront-editable_entity:first'));
 
 				//this.init_ckeditor_on_focus();
@@ -2034,6 +2036,18 @@ define([
 				}
 				Upfront.Events.trigger('entity:object:update', this, this.model);
 			},
+
+			add_multiple_module_class: function ($object) {
+				// If wrapper has more than one module, add a class.
+				if (
+					$object.parents('.upfront-wrapper').children('.upfront-module-view').length > 1
+					// Not a Group.
+					&& $object.parents('.upfront-module-group').length === 0
+				) {
+					$object.parents('.upfront-wrapper').addClass('upfront-wrapper-multiple-modules')
+				}
+			},
+
 			handle_visual_padding_hint: function (prop, $el) {
 				if (typeof prop === 'undefined') return;
 
