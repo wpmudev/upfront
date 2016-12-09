@@ -179,7 +179,7 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		var presetSaving = Upfront.Application.presetSaver.save();
 
 		presetSaving.done( function() {
-			Upfront.Application.save_colors();
+			Upfront.Application.current_subapplication.save_colors();
 		}).fail( function() {
 			Upfront.Util.log("error saving presets");
 			Upfront.Events.trigger("command:layout:save_error");
