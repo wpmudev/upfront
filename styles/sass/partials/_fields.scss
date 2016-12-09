@@ -795,7 +795,8 @@ div.upfront-date_picker td a{
 	text-align: center;
 }
 
-.upfront-field-wrap-checkboxes .checkbox-info:before {
+.upfront-field-wrap-checkboxes .checkbox-info:before,
+.upfront-settings-item-title .checkbox-info:before {
 	display: inline-block;
 	content: "";
 	width: 15px;

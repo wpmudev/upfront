@@ -1865,3 +1865,13 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 .upfront-ui .upfront-region-panel-item-add-region .upfront-icon-region-add:before {
 	background-position: -260px -130px;
 }
+
+#region-settings-sidebar .upfront-region-bg-setting-aria-role {
+	clear: both;
+	padding-top: 10px;
+}
+
+#region-settings-sidebar .upfront-region-bg-setting-aria-role .upfront-field-label-block {
+	font-weight: normal;
+	color: #96acc1;
+}
