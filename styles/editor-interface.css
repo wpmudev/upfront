@@ -13810,7 +13810,7 @@ body .redactor_air .redactor-toolbar {
 .redactor-toolbar li a {
   display: block;
   width: 28px;
-  height: 30px;
+  height: 28px;
   outline: none;
   text-decoration: none;
   font-size: 0;
@@ -13863,17 +13863,17 @@ body .redactor-toolbar li a.redactor_btn_formatting {
   background-position: -25px; }
 
 body .redactor-toolbar li a.re-bold {
-  background-position: -345px -185px; }
+  background-position: -345px -186px; }
 
 body .redactor-toolbar li a.re-bold.redactor-act {
-  background-position: -345px -185px;
+  background-position: -345px -186px;
   opacity: 1; }
 
 body .redactor-toolbar li a.re-italic {
-  background-position: -347px -215px; }
+  background-position: -347px -216px; }
 
 body .redactor-toolbar li a.re-italic.redactor-act {
-  background-position: -347px -215px;
+  background-position: -347px -216px;
   opacity: 1; }
 
 body .redactor-toolbar li a.redactor_btn_deleted {
@@ -13974,44 +13974,44 @@ body .redactor-toolbar li a.redactor_btn_h3 {
 
 body .redactor-toolbar li a.ueditor-noquote,
 body .redactor-toolbar li a.redactor_btn_quote {
-  background-position: -376px -244px; }
+  background-position: -376px -246px; }
 
 body .redactor-toolbar li a.ueditor-quote,
 body .redactor-toolbar li a.redactor_btn_quote.redactor-act {
-  background-position: -376px -244px; }
+  background-position: -376px -246px; }
 
 body .redactor-toolbar li a.ueditor-quote-alternative {
-  background-position: -376px -214px; }
+  background-position: -376px -216px; }
 
 body .redactor-toolbar li a.redactor_btn_pre {
   background-position: -875px; }
 
 body .redactor-toolbar li a.re-upfrontIcons {
-  background-position: -376px -155px; }
+  background-position: -376px -156px; }
 
 ul.redactor-toolbar li a.ueditor-justify {
   background-position: -436px -154px; }
 
 ul.redactor-toolbar li a.ueditor-center {
-  background-position: -436px -214px; }
+  background-position: -436px -216px; }
 
 ul.redactor-toolbar li a.ueditor-left {
-  background-position: -436px -244px; }
+  background-position: -436px -246px; }
 
 ul.redactor-toolbar li a.ueditor-right {
   background-position: -436px -184px; }
 
 ul.redactor-toolbar li a.re-stateLists {
-  background-position: -406px -244px; }
+  background-position: -406px -246px; }
 
 ul.redactor-toolbar li a.ueditor-orderedlist {
   background-position: -406px -184px; }
 
 ul.redactor-toolbar li a.ueditor-unorderedlist {
-  background-position: -406px -214px; }
+  background-position: -406px -216px; }
 
 ul.redactor-toolbar li a.re-upfrontLink, ul.redactor-toolbar li a.re-upfrontLinkCTA {
-  background-position: -347px -244px; }
+  background-position: -347px -246px; }
 
 ul.redactor-toolbar li a.redactor_btn_upfrontSink {
   background-position: -594px -167px; }
@@ -14690,12 +14690,12 @@ ul.upfront_color_picker_rgba {
   position: relative; }
 
 .redactor-dropdown-box-upfrontColor .uf-color-picker-wrapper.uf-bottom-right {
-  top: -205px;
-  left: -240px; }
+  top: -204px;
+  left: -245px; }
 
 .redactor-dropdown-box-upfrontColor .uf-color-picker-wrapper.uf-top-right {
-  top: -65px;
-  left: -240px; }
+  top: -69px;
+  left: -242px; }
 
 .redactor-dropdown-box-upfrontColor .tablist.uf-top-left {
   top: -1px;
@@ -14710,14 +14710,14 @@ ul.upfront_color_picker_rgba {
   border-right: none; }
 
 .redactor-dropdown-box-upfrontColor .tablist.uf-top-right {
-  top: -1px;
+  top: 0px;
   right: -28px;
   border: 1px solid #cccccc;
   border-left: none; }
 
 .redactor-dropdown-box-upfrontColor .tablist.uf-bottom-right {
   bottom: 0px;
-  right: -28px;
+  right: -30px;
   border: 1px solid #cccccc;
   border-left: none; }
 
@@ -14727,8 +14727,8 @@ ul.upfront_color_picker_rgba {
   font-size: 11px;
   cursor: pointer;
   border-radius: 0px;
-  width: 31px;
-  height: 31px;
+  width: 30px;
+  height: 30px;
   border: 1px solid #fff;
   overflow: hidden;
   float: none; }
@@ -14855,7 +14855,7 @@ div.sp-val:active .sp-dragger:after {
   width: 0;
   border: 8px solid;
   border-color: inherit;
-  top: 7px;
+  top: 6px;
   left: 6px;
   position: absolute;
   text-indent: -6px;

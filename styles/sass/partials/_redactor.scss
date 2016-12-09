@@ -265,7 +265,7 @@ body .redactor_air .redactor-toolbar {
 .redactor-toolbar li a {
 	display: block;
 	width: 28px;
-	height: 30px;
+	height: 28px;
 	outline: none;
 	text-decoration: none;
 	font-size: 0;
@@ -327,10 +327,10 @@ only screen and (                min-resolution: 2dppx) {
 */
 body .redactor-toolbar li a.redactor_btn_html				{ background-position: 0px; }
 body .redactor-toolbar li a.redactor_btn_formatting		    { background-position: -25px; }
-body .redactor-toolbar li a.re-bold				{ background-position: -345px -185px; }
-body .redactor-toolbar li a.re-bold.redactor-act	{ background-position: -345px -185px; opacity: 1; }
-body .redactor-toolbar li a.re-italic			    { background-position: -347px -215px; }
-body .redactor-toolbar li a.re-italic.redactor-act { background-position: -347px -215px; opacity: 1; }
+body .redactor-toolbar li a.re-bold				{ background-position: -345px -186px; }
+body .redactor-toolbar li a.re-bold.redactor-act	{ background-position: -345px -186px; opacity: 1; }
+body .redactor-toolbar li a.re-italic			    { background-position: -347px -216px; }
+body .redactor-toolbar li a.re-italic.redactor-act { background-position: -347px -216px; opacity: 1; }
 body .redactor-toolbar li a.redactor_btn_deleted		 	{ background-position: -500px; }
 body .redactor-toolbar li a.redactor_btn_unorderedlist 	    { background-position: -100px; }
 body .redactor-toolbar li a.redactor_btn_orderedlist   	    { background-position: -125px; }
@@ -370,13 +370,13 @@ body .redactor-toolbar li a.redactor_btn_h2			 		{ background-position: -800px; 
 body .redactor-toolbar li a.redactor_btn_h3			 		{ background-position: -825px; }
 
 body .redactor-toolbar li a.ueditor-noquote,
-body .redactor-toolbar li a.redactor_btn_quote		 		{ background-position: -376px -244px }
+body .redactor-toolbar li a.redactor_btn_quote		 		{ background-position: -376px -246px }
 body .redactor-toolbar li a.ueditor-quote,
-body .redactor-toolbar li a.redactor_btn_quote.redactor-act { background-position: -376px -244px }
-body .redactor-toolbar li a.ueditor-quote-alternative		{ background-position: -376px -214px }
+body .redactor-toolbar li a.redactor_btn_quote.redactor-act { background-position: -376px -246px }
+body .redactor-toolbar li a.ueditor-quote-alternative		{ background-position: -376px -216px }
 
 body .redactor-toolbar li a.redactor_btn_pre		 		{ background-position: -875px; }
-body .redactor-toolbar li a.re-upfrontIcons				{ background-position: -376px -155px; }
+body .redactor-toolbar li a.re-upfrontIcons				{ background-position: -376px -156px; }
 
 
 ul.redactor-toolbar li a.ueditor-justify {
@@ -384,11 +384,11 @@ ul.redactor-toolbar li a.ueditor-justify {
 }
 
 ul.redactor-toolbar li a.ueditor-center {
-	background-position: -436px -214px;
+	background-position: -436px -216px;
 }
 
 ul.redactor-toolbar li a.ueditor-left {
-	background-position: -436px -244px;
+	background-position: -436px -246px;
 }
 
 ul.redactor-toolbar li a.ueditor-right {
@@ -396,7 +396,7 @@ ul.redactor-toolbar li a.ueditor-right {
 }
 
 ul.redactor-toolbar li a.re-stateLists{
-	background-position: -406px -244px;
+	background-position: -406px -246px;
 }
 
 ul.redactor-toolbar li a.ueditor-orderedlist {
@@ -404,11 +404,11 @@ ul.redactor-toolbar li a.ueditor-orderedlist {
 }
 
 ul.redactor-toolbar li a.ueditor-unorderedlist {
-	background-position: -406px -214px;
+	background-position: -406px -216px;
 }
 
 ul.redactor-toolbar li a.re-upfrontLink, ul.redactor-toolbar li a.re-upfrontLinkCTA{
-	background-position: -347px -244px;
+	background-position: -347px -246px;
 }
 
 ul.redactor-toolbar li a.redactor_btn_upfrontSink{
