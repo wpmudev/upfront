@@ -14727,8 +14727,9 @@ ul.upfront_color_picker_rgba {
   font-size: 11px;
   cursor: pointer;
   border-radius: 0px;
-  width: 28px;
-  height: 28px;
+  width: 31px;
+  height: 31px;
+  border: 1px solid #fff;
   overflow: hidden;
   float: none; }
 
@@ -14844,23 +14845,21 @@ div.sp-val:active .sp-dragger:after {
   position: relative; }
 
 .re-icon.re-upfrontColor:after {
-  content: url("data:image/svg+xml; utf8, %3Csvg%20fill%3D%27currentcolor%27%20width%3D%2714px%27%20height%3D%2714px%27%20viewBox%3D%271%201%2014%2014%27%20version%3D%271.1%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20xmlns%3Axlink%3D%27http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%27%3E%0A%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3Cpath%20d%3D%27M9.5%2C5.5%20L13%2C5.5%20L13%2C3%20L3%2C3%20L3%2C5.5%20L6.5%2C5.5%20L6.5%2C13%20L9.5%2C13%20L9.5%2C5.5%20Z%27%20id%3D%27path-1%27%20class%3D%27upfront-t-icon%27%3E%3C%2Fpath%3E%0A%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%3Cg%20id%3D%27Combined-Shape%27%20stroke%3D%27none%27%20fill%3D%27currentcolor%27%3E%0A%20%20%20%20%20%20%20%20%3Cuse%20fill%3D%22currentcolor%22%20fill-rule%3D%27evenodd%27%20xlink%3Ahref%3D%27%23path-1%27%3E%3C%2Fuse%3E%0A%20%20%20%20%3C%2Fg%3E%0A%3C%2Fsvg%3E");
+  content: 'T';
+  font-family: Arial Black, arial, sans-serif;
+  font-weight: bold;
+  font-size: 16px;
   color: inherit;
   display: block;
   height: 0;
   width: 0;
   border: 8px solid;
   border-color: inherit;
-  font-size: 12px;
   top: 7px;
   left: 6px;
   position: absolute;
-  text-indent: -4px;
-  font-family: arial;
-  font-weight: bold;
-  color: #1691fb;
-  border-radius: 3px;
-  fill: currentColor; }
+  text-indent: -6px;
+  border-radius: 3px; }
 
 #path-1 {
   fill: red;
@@ -14883,21 +14882,20 @@ div.sp-val:active .sp-dragger:after {
   border-radius: 2px; }
 
 #tabforeground:after {
-  content: url("data:image/svg+xml; utf8, %3Csvg%20fill%3D%27currentcolor%27%20width%3D%2714px%27%20height%3D%2714px%27%20viewBox%3D%271%201%2014%2014%27%20version%3D%271.1%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20xmlns%3Axlink%3D%27http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%27%3E%0A%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%20%20%3Cpath%20d%3D%27M9.5%2C5.5%20L13%2C5.5%20L13%2C3%20L3%2C3%20L3%2C5.5%20L6.5%2C5.5%20L6.5%2C13%20L9.5%2C13%20L9.5%2C5.5%20Z%27%20id%3D%27path-1%27%20class%3D%27upfront-t-icon%27%3E%3C%2Fpath%3E%0A%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%3Cg%20id%3D%27Combined-Shape%27%20stroke%3D%27none%27%20fill%3D%27currentcolor%27%3E%0A%20%20%20%20%20%20%20%20%3Cuse%20fill%3D%22currentcolor%22%20fill-rule%3D%27evenodd%27%20xlink%3Ahref%3D%27%23path-1%27%3E%3C%2Fuse%3E%0A%20%20%20%20%3C%2Fg%3E%0A%3C%2Fsvg%3E");
+  content: 'T';
+  font-family: Arial Black, arial, sans-serif;
+  font-weight: bold;
+  font-size: 16px;
   color: inherit;
   display: block;
   height: 0;
   width: 0;
   border-color: inherit;
-  font-size: 12px;
-  top: 6px;
-  left: 15px;
+  top: 2px;
+  left: 14px;
   position: absolute;
   text-indent: -6px;
-  font-family: arial;
-  font-weight: bold;
-  border-radius: 3px;
-  fill: currentColor; }
+  border-radius: 3px; }
 
 #tabbackground:after {
   content: ' ';
