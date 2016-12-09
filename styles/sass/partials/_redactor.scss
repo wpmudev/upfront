@@ -808,3 +808,17 @@ a.ueditor-unlink {
 .uf-redactor-bottom {
 	top: -10px;
 }
+.redactor-dropdown .ulinkpanel-back .upfront-icon-linkbutton:before {
+	position: relative;
+	left: 5px;
+	top: 3px;
+}
+.redactor-dropdown .link-control-panel input.upfront-field-text {
+	top: 1px;
+}
+.redactor-dropdown .ulinkpanel-dark .upfront-home-link {
+	padding: 4px 0px;
+}
+.redactor-dropdown .ulinkpanel-new-lightbox, .redactor-dropdown .ulinkpanel-lightbox-selector {
+	margin-top: 0px;
+}

@@ -8615,7 +8615,7 @@ i.upfront-field-icon-burger-trigger {
   left: 0;
   background: #263a4d;
   opacity: .75;
-  z-index: 10001004; }
+  z-index: 100010041; }
 
 #upfront-popup {
   position: fixed;
@@ -14366,6 +14366,20 @@ a.ueditor-unlink {
 .uf-redactor-bottom {
   top: -10px; }
 
+.redactor-dropdown .ulinkpanel-back .upfront-icon-linkbutton:before {
+  position: relative;
+  left: 5px;
+  top: 3px; }
+
+.redactor-dropdown .link-control-panel input.upfront-field-text {
+  top: 1px; }
+
+.redactor-dropdown .ulinkpanel-dark .upfront-home-link {
+  padding: 4px 0px; }
+
+.redactor-dropdown .ulinkpanel-new-lightbox, .redactor-dropdown .ulinkpanel-lightbox-selector {
+  margin-top: 0px; }
+
 /* New Color Picker CSS override */
 .sp-container {
   background-color: #ffffff;
@@ -14507,14 +14521,14 @@ input[type=text].sp-input {
 
 .sp-input-container {
   position: absolute;
-  top: -38px;
+  top: -40px;
   left: -90px; }
 
 .upfront_color_picker_rgb_preview {
   width: 10px;
   position: absolute;
   left: 11px;
-  top: 25px;
+  top: 23px;
   height: 22px;
   /* magic happens below */
   background-color: #d2d2d2;
@@ -14635,8 +14649,8 @@ ul.upfront_color_picker_rgba {
 .upfront_color_picker_reset {
   position: absolute;
   text-indent: 999px;
-  right: 13px;
-  bottom: 10px;
+  right: 12px;
+  bottom: 8px;
   cursor: pointer; }
 
 .noColor {
