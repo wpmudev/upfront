@@ -288,6 +288,12 @@
 	background: rgba(44, 62, 80, 0.3)
 }
 
+.upfront-resize-handle-wrapper:hover ~ .upfront-module-group .upfront-resize-handle-group,
+.upfront-resize-handle-wrapper:hover ~ .upfront-module-group .upfront-entity-size-hint,
+.upfront-resize-handle-wrapper:hover ~ .upfront-module-group .upfront-selected-border {
+	display: block;
+}
+
 .upfront-wrapper-multiple-modules:hover .upfront-module,
 .upfront-wrapper-multiple-modules .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-module {
 	box-shadow: inset 0 0 0 2px rgba(255,255,255,0.50);
@@ -506,6 +512,7 @@
 	display: block;
 	z-index: 10;
 }
+.upfront-wrapper-module-group-on-edit .upfront-selected-border,
 .upfront-module-group-active > .upfront-selected-border {
 	box-shadow: inset 0 0 0 2px rgba(248, 210, 111, 1);
 }
