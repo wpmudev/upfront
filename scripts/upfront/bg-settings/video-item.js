@@ -6,39 +6,94 @@ var l10n = Upfront.Settings && Upfront.Settings.l10n
 ;
 
 define([
-	'scripts/upfront/bg-settings/mixins'
-], function(Mixins) {
+	'scripts/upfront/bg-settings/mixins',
+	'elements/upfront-image/js/video-selector'
+], function(Mixins, VideoSelector) {
 
 	var VideoItem = Upfront.Views.Editor.Settings.Item.extend(_.extend({}, Mixins, {
 		group: false,
 		initialize: function (options) {
 			var me = this,
-				fields = {
-					video: new Upfront.Views.Editor.Field.Text({
+				fields;
+			var videoSelector = new VideoSelector();
+
+			var pickVideoButton = new Upfront.Views.Editor.Field.Button({
+				label: l10n.pick_video,
+				model: this.model,
+				compact: true,
+				classname: 'uf-button-alt uf-bgsettings-image-pick uf-bgsettings-video-pick',
+				on_click: function(){
+					videoSelector.open().done(function(videoData){
+						videoSelector.close();
+						// Reset stuff
+						me.model.set_breakpoint_property('uploaded_background_video_embed', '');
+						me.model.set_breakpoint_property('uploaded_background_video', '');
+						me.model.set_breakpoint_property('background_video_embed', '');
+						me.model.set_breakpoint_property('background_video', '');
+
+						// Set new values
+						me.model.set_breakpoint_property('background_video_width', videoData.width);
+						me.model.set_breakpoint_property('background_video_height', videoData.height);
+						me.model.set_breakpoint_property('uploaded_background_video_embed', videoData.embed);
+						me.model.set_breakpoint_property('uploaded_background_video', videoData.id);
+						me.model.set_breakpoint_property('type', 'uploaded_video');
+					});
+				}
+			});
+			var videoUrlInput = new Upfront.Views.Editor.Field.Text({
+				model: this.model,
+				label: l10n.video_url,
+				property: 'background_video',
+				use_breakpoint_property: true,
+				default_value: '',
+				placeholder: l10n.video_source,
+				change: function () {
+					var value = this.get_value();
+					if ( value ){
+						me.model.set_breakpoint_property('type', 'video');
+						me.model.set_breakpoint_property('uploaded_background_video_embed', "");
+						me.model.set_breakpoint_property('uploaded_background_video', '');
+						me.model.set_breakpoint_property('background_video_embed', "");
+						me.get_video_embed(value).done(function(response){
+							if ( !response.data)
+								return;
+							me.model.set_breakpoint_property('background_video_width', response.data.width);
+							me.model.set_breakpoint_property('background_video_height', response.data.height);
+							me.model.set_breakpoint_property('background_video_embed', response.data.html);
+						});
+					}
+					this.model.set_breakpoint_property(this.property_name, value);
+				},
+				rendered: function (){
+					this.$el.addClass('uf-bgsettings-video-url');
+				}
+			});
+
+			fields = {
+					bg_style: new Upfront.Views.Editor.Field.Select({
 						model: this.model,
-						label: l10n.video_url + ':',
-						property: 'background_video',
+						label: 'Video Source',
+						className: 'upfront-field-wrap upfront-field-wrap-select background-video-style-field',
+						property: 'background_style',
 						use_breakpoint_property: true,
-						default_value: '',
-						placeholder: l10n.video_source,
+						default_value: 'upload',
+						icon_class: 'upfront-region-field-icon',
+						values: this.get_bg_style_values(),
 						change: function () {
 							var value = this.get_value();
-							if ( value ){
-								me.model.set_breakpoint_property('background_video_embed', "");
-								me.get_video_embed(value).done(function(response){
-									if ( !response.data || !response.data.width || !response.data.height )
-										return;
-									me.model.set_breakpoint_property('background_video_width', response.data.width);
-									me.model.set_breakpoint_property('background_video_height', response.data.height);
-									me.model.set_breakpoint_property('background_video_embed', response.data.html);
-								});
+							if ( value == 'upload' ){
+								videoUrlInput.$el.hide();
+								pickVideoButton.$el.show();
 							}
-							this.model.set_breakpoint_property(this.property_name, value);
-						},
-						rendered: function (){
-							this.$el.addClass('uf-bgsettings-video-url');
+							else if ( value == 'service' ) {
+								pickVideoButton.$el.hide();
+								videoUrlInput.$el.show();
+							}
+							me._bg_style = value;
+							me.update_video();
 						}
 					}),
+					pick_video: pickVideoButton,
 					mute: new Upfront.Views.Editor.Field.Checkboxes({
 						model: this.model,
 						property: 'background_video_mute',
@@ -55,6 +110,7 @@ define([
 							this.$el.addClass('uf-bgsettings-video-mute');
 						}
 					}),
+					video: videoUrlInput,
 					autoplay: new Upfront.Views.Editor.Field.Checkboxes({
 						model: this.model,
 						property: 'background_video_autoplay',
@@ -131,7 +187,7 @@ define([
 						rendered: function (){
 							this.$el.addClass('uf-bgsettings-video-color');
 						}
-					}),
+					})
 				};
 
 			this.$el.addClass('uf-bgsettings-item uf-bgsettings-videoitem');
@@ -144,12 +200,36 @@ define([
 
 			this.bind_toggles();
 			this.constructor.__super__.initialize.call(this, options);
+
+			setTimeout( function() {
+				var currentStyle = me.model.get_breakpoint_property_value('background_style');
+				if ( currentStyle === 'upload' ){
+					videoUrlInput.$el.hide();
+					pickVideoButton.$el.show();
+				} else if (currentStyle === 'service' ) {
+					pickVideoButton.$el.hide();
+					videoUrlInput.$el.show();
+				} else if (currentStyle === '') {
+					me.model.set_breakpoint_property('background_style', 'upload');
+				}
+			}, 50);
 		},
 		get_video_embed: function (url) {
 			return Upfront.Util.post({
 				action: "upfront-media-get_embed_raw",
 				media: url
 			});
+		},
+		get_bg_style_values: function () {
+			var values = [
+				{ label: 'Upload', value: 'upload', icon: 'bg-image-full' },
+				{ label: 'Video Service', value: 'service', icon: 'bg-image-tile' }
+			];
+			return values;
+		},
+		update_video: function () {
+			var style = this._bg_style;
+			this.model.set_breakpoint_property('background_style', style);
 		}
 	}));
 

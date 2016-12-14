@@ -173,7 +173,6 @@ define([
 							}
 							break;
 						case 'uploaded_video':
-							console.log('we have uploaded video yay');
 							this.update_uploaded_background_video($type, $overlay);
 							break;
 					}
@@ -334,7 +333,7 @@ define([
 								if ( bg_type == 'featured' && bg_default == 'color' && $bg.hasClass('no-featured_image') ) {
 									$bg.css('background-color', featured_fallback_background_color);
 								}
-								
+
 								me.$el.children('.feature_image_selector')
 									.removeClass('change_feature_image')
 									.text(l10n.add_featured_image)
@@ -504,7 +503,6 @@ define([
 				}
 			},
 			update_background_video: function ($type, $overlay) {
-				console.log('update_background_video');
 				var me = this,
 					is_layout = ( this instanceof Layout ),
 					$bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
@@ -553,7 +551,6 @@ define([
 				}
 			},
 			update_uploaded_background_video: function ($type, $overlay) {
-				console.log('update_uploaded_background_video');
 				var me = this,
 					is_layout = ( this instanceof Layout ),
 					$bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
@@ -564,6 +561,8 @@ define([
 					height = this.model.get_breakpoint_property_value('background_video_height', true),
 					style = this.model.get_breakpoint_property_value('background_video_style', true) || 'crop',
 					ratio, $embed;
+
+				this.remove_api_key_overlay();
 				if ( style == 'inside' && color ) {
 					$bg.css('background-color', color);
 				} else {
@@ -619,6 +618,7 @@ define([
 						this.refresh_background_slider($type, $overlay);
 						break;
 					case 'video':
+					case 'uploaded_video':
 						this.refresh_background_video($type, $overlay);
 						break;
 				}
@@ -671,23 +671,41 @@ define([
 				google.maps.event.trigger(this.bg_map, 'resize');
 			},
 			refresh_background_video: function ($type, $overlay) {
-				var video = this.model.get_breakpoint_property_value('background_video', true),
-					embed = this.model.get_breakpoint_property_value('background_video_embed', true),
+				var sourceType = this.model.get_breakpoint_property_value('background_style', true);
+				var video, embed, $embed, $video,
 					width = this.model.get_breakpoint_property_value('background_video_width', true),
 					height = this.model.get_breakpoint_property_value('background_video_height', true),
 					style = this.model.get_breakpoint_property_value('background_video_style', true) || 'crop',
-					ratio,
+					ratio;
+
+				if (sourceType === 'service' ) {
+					video = this.model.get_breakpoint_property_value('background_video', true);
+					embed = this.model.get_breakpoint_property_value('background_video_embed', true);
 					$embed = $type.children('iframe');
+				} else {
+					video = this.model.get_breakpoint_property_value('uploaded_background_video', true);
+					embed = this.model.get_breakpoint_property_value('uploaded_background_video_embed', true);
+					$embed = $type.children('.wp-video');
+					$video = $embed.children('video');
+				}
+
 				if ( video && embed ) {
 					ratio = height/width;
 					if ( style == 'crop' || style == 'inside' ){
 						var size = this._get_full_size_el($type, ratio, (style == 'inside'));
+						this.model.set_breakpoint_property('uploaded_background_video_left', size[2] + 'px');
 						$embed.css({
 							width: size[0],
 							height: size[1],
 							left: size[2],
 							top: size[3]
 						});
+						if ($video.length) {
+							$video.css({
+								width: size[0],
+								height: size[1]
+							});
+						}
 					} else if ( style == 'full' ){
 						$embed.css({
 							width: $type.width(),
@@ -695,6 +713,12 @@ define([
 							left: 0,
 							top: 0
 						});
+						if ($video.length) {
+							$video.css({
+								width: $type.width(),
+								height: $type.height()
+							});
+						}
 					}
 				}
 			},
@@ -707,10 +731,10 @@ define([
 
 				if ( $overlay.length ) {
 					if($overlay.parent().hasClass('upfront-module-group-bg')) return;
-					
+
 					$overlay.hide();
 				}
-				
+
 				$bg.css({
 					backgroundColor: "",
 					backgroundImage: "none",
