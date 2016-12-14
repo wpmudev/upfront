@@ -5509,6 +5509,16 @@ span.upfront-settings-item-title:after {
 #settings .ugroup-settings .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num {
   left: -78px; }
 
+.background-video-style-field {
+  margin-top: 0; }
+
+.uf-bgsettings-video-pick {
+  margin-bottom: 5px;
+  width: 100%; }
+
+.uf-bgsettings-video-pick input {
+  width: 100%; }
+
 #settings {
   position: fixed;
   left: 0;
