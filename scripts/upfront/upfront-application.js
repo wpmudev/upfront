@@ -111,7 +111,8 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			save_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 ),
 			breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 			is_responsive = breakpoint && !breakpoint['default'],
-			compressed
+			compressed,
+			me = this
 		;
 		data.layout = _upfront_post_data.layout;
 		data.preferred_layout = preferred_layout;
@@ -165,12 +166,35 @@ var LayoutEditorSubapplication = Subapplication.extend({
 				var url_key = '/' + Backbone.history.getFragment();
 				Upfront.Application.urlCache[url_key] = false;
 
+				me.save_presets();
 			})
 			.error(function () {
 				Upfront.Util.log("error saving layout");
 				Upfront.Events.trigger("command:layout:save_error");
 			})
 		;
+	},
+
+	save_presets: function() {
+		var presetSaving = Upfront.Application.presetSaver.save();
+
+		presetSaving.done( function() {
+			Upfront.Application.current_subapplication.save_colors();
+		}).fail( function() {
+			Upfront.Util.log("error saving presets");
+			Upfront.Events.trigger("command:layout:save_error");
+		});
+	},
+
+	save_colors: function() {
+		var colorSaving = Upfront.Application.colorSaver.save();
+
+		colorSaving.done( function() {
+			Upfront.Events.trigger("command:layout:save_success");
+		}).fail( function() {
+			Upfront.Util.log("error saving color");
+			Upfront.Events.trigger("command:layout:save_error");
+		});
 	},
 
 	_delete_layout: function () {
@@ -921,7 +945,11 @@ var Application = new (Backbone.Router.extend({
 
 				app.create_cssEditor();
 
-                $(document).trigger('Upfront:loaded');
+				app.create_preset_saver();
+
+				app.create_color_saver();
+
+				$(document).trigger('Upfront:loaded');
 				Upfront.Events.trigger('Upfront:loaded');
 			}
 		);
@@ -1446,6 +1474,14 @@ var Application = new (Backbone.Router.extend({
 		Upfront.Events.on("upfront:layout:loaded", me.apply_region_css, me);
 		Upfront.Events.on("upfront:layout:loaded", me.ensure_layout_style, me);
 		this.cssEditor = cssEditor;
+	},
+
+	create_preset_saver: function() {
+		this.presetSaver = Upfront.Views.PresetSaver;
+	},
+
+	create_color_saver: function() {
+		this.colorSaver = Upfront.Views.ColorSaver;
 	},
 
 	ensure_layout_style: function() {
