@@ -933,7 +933,7 @@ define([
 			this.applyElementSize(data.elementSize.width, data.elementSize.height, false); // This won't update element_size property
 
 			if(starting.length){
-				return starting.outerHeight(data.elementSize.height);
+				return starting.outerHeight(data.elementSize.height - vPadding);
 			}
 
 			//Wonderful stuff from here down

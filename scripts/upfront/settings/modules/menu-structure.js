@@ -158,6 +158,9 @@ define([
 				scrollDown = false;
 
 			}
+
+
+			return Upfront.Events.trigger("menu_element:settings:rendered");
 		},
 
 		enableSorting: function(event) {

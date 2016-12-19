@@ -429,7 +429,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				$menu_button[0].disabled = true;
 			}
 			// On Enter key, hit create button.
-			if (e.which == 13) $menu_button.trigger('click');
+			if (e.which == 13 && !$menu_button[0].disabled) {
+				return me.create_new_menu(e.target.value);
+			}
 		});
 		// appending the new menu name textbox
 		me.$el.find('div.upfront-object-content .upfront_new_menu_name_and_button').append(newMenuName.$el);
