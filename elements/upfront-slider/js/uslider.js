@@ -838,7 +838,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	createLinkControl: function() {
 		var me = this,
 			slide = this.model.slideCollection.at(this.getCurrentSlide()),
-			control = new Upfront.Views.Editor.InlinePanels.DialogControl(),
+			control = new Upfront.Views.Editor.InlinePanels.LinkControl(),
 			link;
 
 		if (this.currentSlideLink) {
@@ -888,6 +888,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		});
 
 		me.listenTo(link, 'change', function(data) {
+			// If we have boolean type return
+			if(data === true) return;
+			
 			slide.set({link: data.toJSON()}, {silent:true});
 			// Rather than changing template rendering set properties that tempalte uses also
 			slide.set({
@@ -913,6 +916,12 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			me.$el.find('.upfront-default-slider-item-current a')
 				.attr('target', data.get('target'));
 		});
+		
+		// Update wrapper size
+		me.listenTo(linkPanel, 'linkpanel:update:wrapper', function() {
+			control.updateWrapperSize();
+		});
+			
 		this.currentSlideLink = link;
 
 		control.icon = 'link';
@@ -1444,28 +1453,31 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl(),
 			slideCollection = this.model.slideCollection,
 			multiBelow = {
+				back: ['back', l10n.back_button],
 				above: ['above', l10n.above_img],
 				below: ['below', l10n.below_img],
 				nocaption: ['nocaption', l10n.no_text]
 			},
-				multiOver = {
-					topOver: ['topOver', l10n.over_top],
-					bottomOver: ['bottomOver', l10n.over_bottom],
-					topCover: ['topCover', l10n.cover_top],
-					middleCover: ['middleCover', l10n.cover_mid],
-					bottomCover: ['bottomCover', l10n.cover_bottom],
-					nocaption: ['nocaption', l10n.no_text]
-				},
-				multiSide = {
-					right: ['right', l10n.at_right],
-					left: ['left', l10n.at_left],
-					nocaption: ['nocaption', l10n.no_text]
-				},
-				primaryStyle = this.get_preset_property('primaryStyle'),
-				multiControls = {},
-				captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl(),
-				slide = slideCollection.at(this.getCurrentSlide())
-			;
+			multiOver = {
+				back: ['back', l10n.back_button],
+				topOver: ['topOver', l10n.over_top],
+				bottomOver: ['bottomOver', l10n.over_bottom],
+				topCover: ['topCover', l10n.cover_top],
+				middleCover: ['middleCover', l10n.cover_mid],
+				bottomCover: ['bottomCover', l10n.cover_bottom],
+				nocaption: ['nocaption', l10n.no_text]
+			},
+			multiSide = {
+				back: ['back', l10n.back_button],
+				right: ['right', l10n.at_right],
+				left: ['left', l10n.at_left],
+				nocaption: ['nocaption', l10n.no_text]
+			},
+			primaryStyle = this.get_preset_property('primaryStyle'),
+			multiControls = {},
+			captionControl = new Upfront.Views.Editor.InlinePanels.TooltipControl(),
+			slide = slideCollection.at(this.getCurrentSlide())
+		;
 
 
 		captionControl.sub_items = {};
@@ -1487,7 +1499,10 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			captionControl.icon = 'caption';
 			captionControl.tooltip = l10n.cap_position;
 			captionControl.selected = multiControls[slide.get('style')] ? slide.get('style') : 'nocaption';
-			this.listenTo(captionControl, 'select', function(item){
+			this.listenTo(captionControl, 'select', function(item) {
+				if(item === "back") {
+					return;
+				}
 				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					previousStyle = breakpoint['default'] ? slide.get('style') : slide.get_breakpoint_attr('style', breakpoint.id)
 				;
@@ -1510,18 +1525,22 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		}
 
 		moreOptions.icon = 'more';
-		moreOptions.tooltip = l10n.cap_position;
+		moreOptions.tooltip = Upfront.Settings.l10n.global.views.more_options;
 		moreOptions.sub_items = {};
 
-		moreOptions.sub_items['add'] = this.createControl('add', l10n.add_slide, 'openImageSelector');
+		
 		moreOptions.sub_items['crop'] = this.createControl('crop', l10n.edit_img, 'imageEditMask');
-		moreOptions.sub_items['remove'] = this.createControl('remove', l10n.remove_slide, 'onRemoveSlide');
+		
 
 		if( multiControls ) {
 			moreOptions.sub_items['caption'] = captionControl;
 		}
 
 		moreOptions.sub_items['link'] = this.createLinkControl();
+		
+		moreOptions.sub_items['add'] = this.createControl('add', l10n.add_slide, 'openImageSelector');
+		
+		moreOptions.sub_items['remove'] = this.createControl('remove', l10n.remove_slide, 'onRemoveSlide');
 
 		var controls = _([
 			//this.createControl('next', l10n.css.next_label, 'nextSlide'),
