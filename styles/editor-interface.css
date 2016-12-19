@@ -1665,7 +1665,8 @@ input.upfront-field-text:hover,
   z-index: 21; }
 
 #sidebar-ui .upfront-field-select-expanded .upfront-field-select-options,
-#element-settings-sidebar .upfront-field-select-expanded .upfront-field-select-options {
+#element-settings-sidebar .upfront-field-select-expanded .upfront-field-select-options,
+#region-settings-sidebar .upfront-field-select-expanded .upfront-field-select-options {
   position: fixed;
   display: none; }
 
