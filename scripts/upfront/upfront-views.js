@@ -1941,14 +1941,12 @@ define([
 				if(!_.contains(existingIds, preset)) {
 					this.model.set_property('current_preset', 'default', true);
 					this.model.set_property('preset', 'default', true);
-					this.render();
 				}
 				
 				var breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled() || {},
 					breakpoint_presets = this.model.get_property_value_by_name("breakpoint_presets") || {}
 				;
-				
-				
+
 				// Update breakpoint presets
 				_.each(breakpoints, function (breakpoint) {
 					if(typeof breakpoint_presets[breakpoint.id] !== "undefined" && breakpoint_presets[breakpoint.id].preset) {
