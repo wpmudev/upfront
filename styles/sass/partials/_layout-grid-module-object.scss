@@ -288,10 +288,28 @@
 	background: rgba(44, 62, 80, 0.3)
 }
 
+/* Group Edit Individual Element Resize Handles */
+/*
+ *.upfront-module-group-on-edit.upfront-editable_entity .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-resize-handle-element,
+ */
+.upfront-wrapper-module-group-on-edit .upfront-module-group-on-edit .upfront-resize-handle-wrapper:hover + .upfront-module-view .upfront-resize-handle-element,
+.upfront-module-group-on-edit .upfront-wrapper-meta:hover ~ .upfront-module-view .upfront-module .upfront-entity-size-hint,
 .upfront-resize-handle-wrapper:hover ~ .upfront-module-group .upfront-resize-handle-group,
-.upfront-resize-handle-wrapper:hover ~ .upfront-module-group .upfront-entity-size-hint,
+.upfront-resize-handle-wrapper:hover ~ .upfront-module-group > .upfront-entity-size-hint,
+.upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-entity-size-hint,
 .upfront-resize-handle-wrapper:hover ~ .upfront-module-group .upfront-selected-border {
 	display: block;
+}
+
+.upfront-module-group.upfront-module-group-on-edit:hover .upfront-modules_container > .upfront-resize-handle-group,
+.upfront-wrapper.ui-resizable-resizing .upfront-module-group .upfront-editable_entity > .upfront-entity-size-hint,
+.upfront-wrapper-multiple-modules .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-entity-size-hint,
+.upfront-wrapper.upfront-wrapper-multiple-modules.ui-resizable-resizing .upfront-editable_entity > .upfront-entity-size-hint,
+.upfront-wrapper-module-group-on-edit .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-entity-size-hint,
+/* Hide group resize handles for elements on edit */
+.upfront-wrapper-module-group-on-edit .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-resize-handle-element,
+.upfront-wrapper-multiple-modules:hover .upfront-module-view .upfront-resize-handle-element {
+	display: none;
 }
 
 .upfront-wrapper-multiple-modules:hover .upfront-module,
@@ -300,11 +318,8 @@
 	outline: 1px solid rgba(72,89,106,0.3);
 }
 
-.upfront-wrapper.upfront-wrapper-multiple-modules.ui-resizable-resizing .upfront-editable_entity > .upfront-entity-size-hint,
-.upfront-wrapper-multiple-modules:hover .upfront-module-view .upfront-resize-handle-element {
-	display: none;
-}
 
+.upfront-module-group-on-edit .upfront-wrapper-meta:hover ~ .upfront-module-view .upfront-module,
 .upfront-wrapper-multiple-modules .upfront-module:hover,
 .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-module,
 .upfront-module:hover,
@@ -314,6 +329,15 @@
 	outline: 1px solid #48596a;
 	/*z-index: 40;*/
 }
+
+
+/* Hide group elements when editing group (disabled)
+ *.upfront-wrapper-module-group-on-edit .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-module {
+ *    box-shadow: none;
+ *    outline: none;
+ *}
+ */
+
 .upfront-module-active,
 .upfront-module-active:hover,
 .upfront-module-group-active {
@@ -775,7 +799,9 @@
 .upfront-editing-content-style .upfront-wrapper:hover > .upfront-wrapper-meta,
 .upfront-module-group-editing .upfront-wrapper.upfront-wrapper-module-group-on-edit > .upfront-wrapper-meta,
 .upfront-module-group-editing .upfront-wrapper:hover > .upfront-wrapper-meta,
-.upfront-object-group-editing .upfront-wrapper.upfront-wrapper-object-group-on-edit > .upfront-wrapper-meta,
+/*
+ *.upfront-object-group-editing .upfront-wrapper.upfront-wrapper-object-group-on-edit > .upfront-wrapper-meta,
+ */
 .upfront-object-group-editing .upfront-wrapper:hover > .upfront-wrapper-meta {
   display: none !important;
 }
@@ -853,8 +879,8 @@
 .upfront-module-group:hover > .upfront-entity-size-hint,
 .upfront-wrapper.ui-resizable-resizing .upfront-editable_entity > .upfront-entity-size-hint,
 /* .upfront-module:hover > .upfront-objects_container > .upfront-editable_entities_container > .upfront-object-view > .upfront-entity-size-hint, */
-.upfront-module.ui-resizable-resizing > .upfront-objects_container > .upfront-editable_entities_container > .upfront-object-view > .upfront-entity-size-hint,
-.upfront-wrapper.ui-resizable-resizing .upfront-module > .upfront-objects_container > .upfront-editable_entities_container > .upfront-object-view > .upfront-entity-size-hint {
+.upfront-module.ui-resizable-resizing > .upfront-objects_container > .upfront-editable_entities_container > .upfront-object-view > .upfront-entity-size-hint {
+
   display: block;
 }
 .upfront-module-group-on-edit > .upfront-entity-size-hint,
@@ -863,12 +889,13 @@
 .upfront-module-group.upfront-module-group-element-editing:hover > .upfront-entity-size-hint,
 .upfront-module-group.upfront-module-group-no-edit > .upfront-entity-size-hint,
 .upfront-module-group.upfront-module-group-no-edit:hover > .upfront-entity-size-hint,
-.upfront-module:hover .upfront-object-group .upfront-object-view .upfront-entity-size-hint {
+.upfront-module:hover .upfront-object-group .upfront-object-view .upfront-entity-size-hint,
+/* Image size hint within group upon resizing */
+.upfront-wrapper.ui-resizable-resizing .upfront-module-parent-group .uimage-resize-hint {
   display: none;
 }
 .upfront-object-group-on-edit .upfront-object-group .upfront-object-view:hover > .upfront-entity-size-hint,
-.upfront-object-group-on-edit .upfront-object-group .upfront-object.ui-resizable-resizing ~ .upfront-entity-size-hint,
-.upfront-object-group-on-edit .upfront-object-group .upfront-wrapper.ui-resizable-resizing > .upfront-object-view > .upfront-entity-size-hint{
+.upfront-object-group-on-edit .upfront-object-group .upfront-object.ui-resizable-resizing ~ .upfront-entity-size-hint {
 	display: block;
 }
 
