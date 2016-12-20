@@ -5,7 +5,7 @@
 		"scripts/upfront/global-event-handlers",
 		"scripts/upfront/inline-panels/inline-panels",
 		"scripts/upfront/element-settings/sidebar",
-		"scripts/upfront/link-panel", // If adding more arguments adjust _.rest in line 72
+		"scripts/upfront/link-panel",
 		"upfront/post-editor/upfront-post-edit",
 		"scripts/upfront/upfront-views-editor/jquery-plugins",
 		"scripts/upfront/upfront-views-editor/mixins",
@@ -28,6 +28,9 @@
 		"scripts/upfront/upfront-views-editor/presets/button/collection",
 		"scripts/upfront/upfront-views-editor/property",
 		"scripts/upfront/upfront-views-editor/properties",
+		"scripts/upfront/preset-settings/preset-saver",
+		"scripts/upfront/upfront-views-editor/theme-colors/color-saver",
+		// If adding more arguments adjust _.rest in line 93
 		"text!upfront/templates/property.html",
 		"text!upfront/templates/properties.html",
 		"text!upfront/templates/property_edit.html",
@@ -68,7 +71,9 @@
 			Sidebar,
 			button_presets_collection,
 			Property,
-			Properties
+			Properties,
+			PresetSaver,
+			ColorSaver
 	) {
 		var _template_files = [
 			"text!upfront/templates/property.html",
@@ -86,7 +91,7 @@
 		];
 
 		// Auto-assign the template contents to internal variable
-		var _template_args = _.rest(arguments, 27),
+		var _template_args = _.rest(arguments, 29),
 			_Upfront_Templates = {}
 			;
 		_(_template_files).each(function (file, idx) {
@@ -143,7 +148,9 @@
 			Mixins: Mixins,
 			Theme_Colors : Theme_Colors,
 			breakpoints_storage: BreakPoint.storage,
-			Font_Model: Fonts.Model
+			Font_Model: Fonts.Model,
+			PresetSaver: PresetSaver,
+			ColorSaver: ColorSaver
 		};
 	});
 })(jQuery);

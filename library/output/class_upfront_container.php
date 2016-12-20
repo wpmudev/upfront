@@ -19,14 +19,43 @@ abstract class Upfront_Container extends Upfront_Entity {
 	public function get_markup () {
 		$html='';
 		$wrap='';
+
 		// Allow compat to forbid post data types (some wreck up output from plugins)
 		$forbidden_post_data_types = apply_filters('upfront-forbidden_post_data_types', array());
 
-		if (!empty($this->_data[$this->_children])) {
+		$do_compat = false;
+		if (count($forbidden_post_data_types) > 0) {
+			// This is for compatibility layer to ensure that only post content is rendered
+			// when needed.
+			// To allow other post part types to be rendered in other places than main module
+			// only filter if there is content present (which means this is main module that
+			// shows content beside other part types)
+			$check_children_type = $this->_type === 'Object_Group' &&
+				$this->_children === 'objects' &&
+				count($this->_data[$this->_children]) > 1;
 
+			$are_post_parts = false;
+			if ($check_children_type) {
+				$first_child = $this->_data[$this->_children][0];
+				$are_post_parts = upfront_get_property_value('view_class', $first_child) === 'PostDataPartView';
+			}
+			if ($are_post_parts) {
+				foreach ($this->_data[$this->_children] as $idx => $child) {
+					if ( upfront_get_property_value('part_type', $child) === 'content' ) {
+						// There is content, show only content i.e. do filtering
+						$do_compat = true;
+						break;
+					}
+				}
+			}
+		}
+
+		if (!empty($this->_data[$this->_children])) {
 			foreach ($this->_data[$this->_children] as $idx => $child) {
-				if (upfront_get_property_value('view_class', $child) === 'PostDataPartView' &&
-				 	in_array(upfront_get_property_value('part_type', $child), $forbidden_post_data_types)) continue;
+				if ($do_compat) {
+					if (upfront_get_property_value('view_class', $child) === 'PostDataPartView' &&
+						in_array(upfront_get_property_value('part_type', $child), $forbidden_post_data_types)) continue;
+				}
 
 				$this->_child_views[] = $child_view  = $this->instantiate_child($child, $idx);
 				if ($child_view instanceof Upfront_Entity) {

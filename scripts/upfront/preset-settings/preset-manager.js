@@ -68,12 +68,8 @@ define([
 					return false;
 				}
 
-				Upfront.Util.post({
-					action: 'upfront_save_' + this.ajaxActionSlug + '_preset',
-					data: properties
-				}).done( function() {
-					me.model.trigger("preset:updated", properties.id);
-				});
+				me.model.trigger("preset:updated", properties.id);
+				Upfront.Application.presetSaver.queue(properties, me.ajaxActionSlug);
 			};
 
 			// Let's not flood server on some nuber property firing changes like crazy

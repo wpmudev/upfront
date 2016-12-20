@@ -1,8 +1,8 @@
 define([], function () {
 	var Panel = Backbone.View.extend({
-		className: 'upfront-inline-panel upfront-no-select',
+		className: 'upfront-inline-panel upfront-panels-shadow upfront-no-select',
 		position_v: 'top',
-		position_h: 'center',
+		position_h: 'left',
 
 		initialize: function () {
 			this.items = _([]);
@@ -15,7 +15,8 @@ define([], function () {
 					'upfront-inline-panel-'+this.position_v+'-'+this.position_h
 				],
 				width = 0,
-				height = 0;
+				height = 0,
+				borderSize = 1;
 
 			this.$el.html('');
 			this.collapsedParent = false;
@@ -54,11 +55,9 @@ define([], function () {
 			}
 
 			this.$el.css({
-				width: width,
-				height: height
+				width: width + (borderSize * 2),
+				height: height + (borderSize * 2)
 			});
-
-
 		},
 
 		remove: function() {

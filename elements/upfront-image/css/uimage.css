@@ -91,8 +91,6 @@
 #upfront-image-overlay .select-files:before {
 	background-position: -702px -872px;
 	content: " ";
-	background-image: url('../../../img/uf-core-el-sprite.svg');
-	background-repeat: no-repeat;
 	float: left;
 	display: block;
 	width: 28px;
@@ -126,8 +124,8 @@
 	left: 12%;
 }
 
-#upfront-image-overlay .icon-picture{
-	background: url(../../../img/uf-core-el-sprite.svg) no-repeat -806px -322px;
+#upfront-image-overlay .icon-picture {
+	background-position:-806px -322px;
 	padding: 0 15px;
 }
 
@@ -316,7 +314,6 @@
 
 .image-edit-control>i {
 	color: #DAEDFE;
-	background: rgba(255, 255, 255, .9) url(../../../img/uf-core-el-sprite.svg) no-repeat;
 	position: relative;
 	z-index:12;
 	width: 35px;
@@ -396,8 +393,6 @@ a.image-edit-button:hover {
 	content: '';
 	display: inline-block;
 	vertical-align: middle;
-	background: url(../../../img/uf-core-el-sprite.png);
-	background: url(../../../img/uf-core-el-sprite.svg), none;
 }
 
 a.image-edit-button.deactivated {
@@ -722,23 +717,23 @@ a.image-edit-button.deactivated:hover {
 
 /* Select box icons */
 .upfront-field-icon-nocaption:before {
-	background-position: -700px -455px!important;
+	background-position: -700px -455px;
 }
 .upfront-field-icon-topOver:before {
-	background-position: -699px -520px!important;
+	background-position: -288px -308px;
 }
 .upfront-field-icon-showCaption:before,
 .upfront-field-icon-bottomOver:before {
-	background-position: -699px -488px!important;
+	background-position: -318px -308px;
 }
 .upfront-field-icon-topCover:before {
-	background-position: -699px -552px!important;
+	background-position: -349px -308px;
 }
 .upfront-field-icon-middleCover:before {
-	background-position: -699px -584px!important;
+	background-position: -379px -308px;
 }
 .upfront-field-icon-bottomCover:before {
-	background-position: -699px -616px!important;
+	background-position: -409px -308px;
 }
 
 div.preset-manager-panel .caption_location {
@@ -774,154 +769,6 @@ div.preset-manager-panel .caption_select .upfront-field-label {
 }
 
 /* Controls */
-div.uimage-controls i.upfront-icon:before,
-.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item i.upfront-icon:before {
-	background-image: url(../../../img/uf-core-el-sprite.svg);
-}
-
-.upfront-ui .upfront-icon-region-crop:before {
-	background-position: -261px -221px;
-}
-
-.upfront-ui .upfront-icon-region-link:before {
-	background-position: -260px -249px;
-}
-
-.upfront-ui .upfront-icon-region-swap:before {
-	background-position: -291px -342px;
-}
-
-.upfront-ui .upfront-icon-region-lock-unlocked:before {
-	background-position: -261px -430px;
-}
-
-.upfront-ui .upfront-icon-region-lock-locked:before {
-	background-position: -261px -460px;
-}
-
-.upfront-ui .upfront-icon-region-nocaption:before {
-	background-position: -701px -458px!important;
-}
-.upfront-ui .upfront-icon-region-nocaption:hover:before {
-	background-position: -809px -458px!important;
-}
-.upfront-ui .upfront-icon-region-nocaption-active:before {
-	background-position: -700px -455px!important;
-}
-.upfront-ui .upfront-icon-region-nocaption-active:hover:before {
-	background-position: -808px -455px!important;
-}
-
-.upfront-ui .upfront-icon-region-topOver:before {
-	background-position: -699px -520px!important;
-}
-.upfront-ui .upfront-icon-region-topOver:hover:before {
-	background-position: -807px -520px!important;
-}
-.upfront-ui .upfront-icon-region-topOver-active:before {
-	background-position: -699px -520px!important;
-}
-.upfront-ui .upfront-icon-region-topOver-active:hover:before {
-	background-position: -807px -520px!important;
-}
-
-.upfront-ui .upfront-icon-region-bottomOver:before {
-	background-position: -699px -490px!important;
-}
-.upfront-ui .upfront-icon-region-bottomOver:hover:before {
-	background-position: -807px -490px!important;
-}
-.upfront-ui .upfront-icon-region-bottomOver-active:before {
-	background-position: -699px -487px!important;
-}
-.upfront-ui .upfront-icon-region-bottomOver-active:hover:before {
-	background-position: -807px -487px!important;
-}
-
-.upfront-ui .upfront-icon-region-topCover:before {
-	background-position: -699px -554px!important;
-}
-.upfront-ui .upfront-icon-region-topCover:hover:before {
-	background-position: -807px -554px!important;
-}
-.upfront-ui .upfront-icon-region-topCover-active:before {
-	background-position: -699px -552px!important;
-}
-.upfront-ui .upfront-icon-region-topCover-active:hover:before {
-	background-position: -807px -552px!important;
-}
-
-.upfront-ui .upfront-icon-region-middleCover:before {
-	background-position: -699px -586px!important;
-}
-.upfront-ui .upfront-icon-region-middleCover:hover:before {
-	background-position: -807px -586px!important;
-}
-.upfront-ui .upfront-icon-region-middleCover-active:before {
-	background-position: -699px -584px!important;
-}
-.upfront-ui .upfront-icon-region-middleCover-active:hover:before {
-	background-position: -807px -584px!important;
-}
-
-.upfront-ui .upfront-icon-region-bottomCover:before {
-	background-position: -699px -618px!important;
-}
-.upfront-ui .upfront-icon-region-bottomCover:hover:before {
-	background-position: -807px -618px!important;
-}
-.upfront-ui .upfront-icon-region-bottomCover-active:before {
-	background-position: -699px -616px!important;
-}
-.upfront-ui .upfront-icon-region-bottomCover-active:hover:before {
-	background-position: -807px -616px!important;
-}
-
-.upfront-ui .upfront-icon-region-above:before {
-	background-position: -702px -682px!important;
-}
-.upfront-ui .upfront-icon-region-above:hover:before {
-	background-position: -810px -682px!important;
-}
-.upfront-ui .upfront-icon-region-above-active:before {
-	background-position: -699px -680px!important;
-}
-.upfront-ui .upfront-icon-region-above-active:hover:before {
-	background-position: -807px -680px!important;
-}
-
-.upfront-ui .upfront-icon-region-below:before {
-	background-position: -702px -650px!important;
-}
-.upfront-ui .upfront-icon-region-below:hover:before {
-	background-position: -810px -650px!important;
-}
-.upfront-ui .upfront-icon-region-below-active:before {
-	background-position: -699px -646px!important;
-}
-.upfront-ui .upfront-icon-region-below-active:hover:before {
-	background-position: -807px -646px!important;
-}
-
-.upfront-ui .upfront-icon-region-collapsedControl:before {
-	background-position: -699px -710px;
-}
-.upfront-ui .upfront-icon-region-collapsedControl:hover:before {
-	background-position: -807px -710px;
-}
-.upfront-ui .upfront-icon-region-collapsedControl-active:before {
-	background-position: -699px -721px;
-}
-.upfront-ui .upfront-icon-region-collapsedControl-active:hover:before {
-	background-position: -807px -721px;
-}
-
-.upfront-ui .upfront-icon-region-replace-image:before {
-	background-position: -699px -744px;
-}
-.upfront-ui .upfront-icon-region-replace-image:hover:before {
-	background-position: -807px -744px;
-}
 
 .upfront-inline-panel-subitem .upfront-inline-panel-subitem {
 	position: absolute;
@@ -1009,29 +856,9 @@ div.uimage-controls i.upfront-icon:before,
 /* Image Element - Dimensions Corner Hint
 	 ====================================== */
 
-.upfront-ui.uimage-resize-hint {
-	position: absolute;
-	top: 15px;
-	left: 15px;
-	background: #3d5266;
-	padding:2px 5px;
-	font:normal 11px/13px Verdana, sans-serif;
-	color: #DCEBF8;
-  min-height: 16px;
-}
-
-.upfront-ui.uimage-resize-hint b {
-	color: #ADC3D8;
-	font-weight: bold;
-}
-
 .uimage-resize-hint.sizehint-top {
 	top: 15px;
 	bottom: auto;
-}
-
-.upfront-ui.uimage-resize-hint.featured-image-sizehint{
-    top: 0;
 }
 
 .uimage-resize-hint {
@@ -1056,7 +883,6 @@ div.uimage-controls i.upfront-icon:before,
 	height: 90px;
 	float: left;
 	margin-right: 5%;
-	background-image: url(../../../img/uf-core-el-sprite.svg);
 }
 
 .upfront-ui .uimage-fullwidth-info-1{
@@ -1101,47 +927,6 @@ div.uimage-controls i.upfront-icon:before,
 .upfront-control-dialog-open .image-control-button {
 	visibility: visible;
 }
-.uimage-caption-control {
-	display: none;
-}
-.open .uimage-caption-control {
-	display: block;
-}
-
-.uimage-caption-control-item.open>.tooltip-content {
-	display: none !important;
-}
-
-.uimage-caption-control .upfront-inline-panel-item {
-	display: inline-block;
-	position: static;
-	float: none;
-	border: 0;
-}
-
-.uimage-caption-control .uimage-caption-control-tip {
-	width: 100%;
-	height: 5px;
-}
-
-.uimage-caption-control .uimage-caption-control-tip:before {
-	content: '';
-	display: block;
-	width: 10px;
-	border: 5px solid transparent;
-	border-bottom: 5px solid rgba(31, 48, 63, 0.8);
-	margin: 0 auto;
-	position: absolute;
-	top: 36px;
-	left: 15px;
-}
-
-.uimage-caption-control .tooltip-bottom .tooltip-content {
-	top: auto;
-	bottom: auto;
-	margin: 100% 0 0;
-}
-
 .uimage-settings .upfront-settings-item{
 	padding-bottom: 0;
 }
@@ -1375,7 +1160,6 @@ div#page .upfront-object.upfront-image .swap-image-overlay p.upfront-icon-swap-i
 }
 div#page .upfront-object.upfront-image .swap-image-overlay p:before {
 	content: "";
-	background-image: url('../../../img/uf-core-el-sprite.svg');
 	background-position: -807px -361px;
 	display: inline-block;
 	width: 24px;
@@ -1393,7 +1177,6 @@ div#page .upfront-object.upfront-image .swap-image-overlay p:before {
 }
 .image-edit-control-panel-item {
 	border-radius: 3px;
-	background-image: url(../../../img/uf-core-el-sprite.svg);
 	background-position: -287px -491px;
 	background-color: rgba(242,249,255,1);
 	z-index: initial;
@@ -1401,7 +1184,6 @@ div#page .upfront-object.upfront-image .swap-image-overlay p:before {
 }
 .image-edit-control-panel-item.upfront-control-dialog-open {
 	border-radius: 3px;
-	background-image: url(../../../img/uf-core-el-sprite.svg);
 	background-position: -287px -522px;
 	background-color: rgba(242,249,255,1);
 	z-index: initial;
@@ -1494,54 +1276,52 @@ div#page .upfront-object.upfront-image .swap-image-overlay p:before {
 	position: absolute;
 	top: 4px;
 	left: 3px;
-	background: url(../../../img/uf-core-el-sprite.png);
-	background: url(../../../img/uf-core-el-sprite.svg), none;
 }
 
 #image-edit-button-swap:before{
-	background-position: -291px -342px;
+	background-position: -382px -102px;
 	width: 18px;
 	height: 16px;
 	opacity: 0.7;
 }
 #image-edit-button-swap:hover:before{
-	background-position: -291px -342px;
+	background-position: -382px -102px;
 	width: 18px;
 	height: 16px;
 	opacity: 1;
 }
 #image-edit-button-reset:before{
-	background-position: -291px -368px;
+	background-position: -291px -398px;
 	width: 18px;
 	height: 20px;
 	opacity: 0.7;
 }
 #image-edit-button-reset:hover:before{
-	background-position: -291px -368px;
+	background-position: -291px -398px
 	width: 18px;
 	height: 20px;
 	opacity: 1;
 }
 #image-edit-button-fit:before{
-	background-position: -291px -398px;
+	background-position: -291px -428px;
 	width: 18px;
 	height: 18px;
 	opacity: 0.7;
 }
 #image-edit-button-fit:hover:before{
-	background-position: -291px -398px;
+	background-position: -291px -428px;
 	width: 18px;
 	height: 18px;
 	opacity: 1;
 }
 #image-edit-button-fill:before{
-	background-position: -291px -431px;
+	background-position: -291px -461px;
 	width: 18px;
 	height: 18px;
 	opacity: 0.7;
 }
 #image-edit-button-fill:hover:before{
-	background-position: -291px -431px;
+	background-position: -291px -461px;
 	width: 18px;
 	height: 18px;
 	opacity: 1;

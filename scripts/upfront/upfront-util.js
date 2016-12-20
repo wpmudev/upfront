@@ -1015,6 +1015,7 @@ define([
 
 	var PreviewUpdate = function () {
 		var _layout_data = false,
+			_last_layout_data = false,
 			_layout_compressed = false,
 			_layout = false,
 			_saving_flag = false,
@@ -1125,6 +1126,13 @@ define([
 				_is_dirty = true;
 				set_data();
 
+				// Don't flood server with unnecessary requests
+				if (_layout_data === _last_layout_data) {
+					_saving_flag = false;
+					return;
+				}
+				_last_layout_data = _layout_data;
+
 				Upfront.Events.trigger("preview:build:start");
 				Upfront.Util.post({
 						action: "upfront_build_preview",
@@ -1132,7 +1140,7 @@ define([
 						"current_url": window.location.href,
 						"original_length": _layout_compressed ? _layout_compressed.original_length : 0,
 						"compressed_length": _layout_compressed ? _layout_compressed.compressed_length : 0,
-						"compression": Upfront.mainData.save_compression ? 1 : 0,
+						"compression": Upfront.mainData.save_compression ? 1 : 0
 					})
 					.success(function (response) {
 						var data = response.data || {};

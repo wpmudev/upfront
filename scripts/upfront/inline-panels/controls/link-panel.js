@@ -1,7 +1,8 @@
+(function ($) {
 define([
-	'scripts/upfront/inline-panels/dialog-control'
-], function (DialogControl) {
-	var LinkPanelControl = DialogControl.extend({
+	'scripts/upfront/inline-panels/link-control'
+], function (LinkControl) {
+	var LinkPanelControl = LinkControl.extend({
 		initialize: function (options) {
 			this.options = options || {};
 			this.constructor.__super__.initialize.call(this, options);
@@ -31,3 +32,4 @@ define([
 
 	return LinkPanelControl;
 });
+})(jQuery);

@@ -10,7 +10,9 @@ class Upfront_Posts_Model {
 	/**
 	 * Fetch a list of post instances, according to parameters in data.
 	 * Will delegate to appropriate model implementation.
+	 *
 	 * @param  array $data Raw data (element properties)
+	 *
 	 * @return array List of posts
 	 */
 	public static function get_posts ($data) {
@@ -21,7 +23,9 @@ class Upfront_Posts_Model {
 	/**
 	 * Fetch a list of available meta fields
 	 * Will delegate to post list fetching, which is then inspected for common meta fields.
+	 *
 	 * @param  array $data Raw data (element properties)
+	 *
 	 * @return array List of meta fields
 	 */
 	public static function get_meta_fields ($data) {
@@ -31,7 +35,9 @@ class Upfront_Posts_Model {
 
 	/**
 	 * Spawns a new WP_Query instance, according to parameters in data.
+	 *
 	 * @param  array $data Raw data (element properties)
+	 *
 	 * @return object A new WP_Query instance
 	 */
 	public static function spawn_query ($data) {
@@ -41,7 +47,9 @@ class Upfront_Posts_Model {
 
 	/**
 	 * Utility method for selecting the appropriate posts model implementation class from raw data.
+	 *
 	 * @param  array $data Raw data (element properties)
+	 *
 	 * @return string Final model class name.
 	 */
 	private static function _get_model_class ($data) {
@@ -53,7 +61,9 @@ class Upfront_Posts_Model {
 
 	/**
 	 * Are we to show one post (single)? Or multiple ones (list)?
+	 *
 	 * @param array $data The properties data array
+	 *
 	 * @return bool If we're showing a single item
 	 */
 	public static function is_single ($data) {
@@ -62,14 +72,23 @@ class Upfront_Posts_Model {
 
 	/**
 	 * Get the posts limit, also taking into account the display type
+	 *
 	 * @param array $data The properties data array
+	 * @param int $default Default fallback limit value
+	 *
 	 * @return int Posts limit
 	 */
-	public static function get_limit ($data) {
-		$limit = !empty($data['limit']) && is_numeric($data['limit'])
-			? (int)$data['limit']
+	public static function get_limit ($data, $default=false) {
+		$default = !empty($default) && is_numeric($default) 
+			? (int)$default 
 			: 5
 		;
+		$limit = !empty($data['limit']) && is_numeric($data['limit'])
+			? (int)$data['limit']
+			: $default
+		;
+		if (empty($limit)) $limit = $default;
+
 		return self::is_single($data)
 			? 1
 			: $limit
@@ -79,7 +98,9 @@ class Upfront_Posts_Model {
 	/**
 	 * Gets the post list offset (ie. how many posts to skip off the top of the list)
 	 * taking into account the pagination, as offset breaks pagination.
+	 *
 	 * @param array $data The properties data array
+	 *
 	 * @return int Number of posts to skip.
 	 */
 	public static function get_offset ($data) {
@@ -129,12 +150,22 @@ class Upfront_Posts_Model {
 			add_filter('posts_clauses', array('Upfront_Posts_Model', 'filter_force_home'), 10, 2);
 		}
 
+		// Sanity-check the post type first
+		if (!empty($args['post_type']) && '*' === $args['post_type']) {
+			$args['post_type'] = false;
+		}
+		// Check if we have tax_query and no post type
+		if (!empty($args['tax_query']) && empty($args['post_type'])) {
+			$args['post_type'] = 'any';
+		}
+
 		$query = new WP_Query($args);
 
 		// Drop the hack as soon as we're done
 		if (!empty($data['sticky']) && 'prepend' === $data['sticky'] && !$has_pages) {
 			remove_filter('posts_clauses', array('Upfront_Posts_Model', 'filter_force_home'), 10, 2);
 		}
+
 		return $query;
 	}
 }
@@ -154,7 +185,6 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 		} else $query = $data['query'];
 
 		$args = array();
-		$args['posts_per_page'] = self::get_limit($data);
 
 		if (empty($data['pagination'])) {
 			// Generic queries don't do offset setting - just fetch the paged value
@@ -173,6 +203,14 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 		// Tax queries
 		if (!empty($query['tax_query']['queries'])) {
 			$args['tax_query'] = $query['tax_query']['queries'];
+		}
+		
+		// Now let's safeguard the posts per page setting
+		if (!empty($query['posts_per_page']) && is_numeric($query['posts_per_page'])) {
+			$per_page = (int)$query['posts_per_page'];
+			$old_limit = self::get_limit($data);
+			$data['limit'] = $per_page;
+			$args['posts_per_page'] = self::get_limit($data, $old_limit);
 		}
 
 		return self::_spawn_query($args, $data);

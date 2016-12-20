@@ -20,6 +20,49 @@ class Upfront_Compat_WooCommerce {
 		add_filter('upfront-widget_plugins_widgets', array($this, 'declare_plugins_widgets'));
 		add_filter('upfront-layout_to_name', array($this, 'layout_to_name'), 10, 4);
 		add_filter('upfront-builder_available_layouts', array($this, 'builder_available_layouts'));
+		add_filter('upfront-forbidden_post_data_types', array($this, 'forbidden_post_data_types'));
+	}
+
+public function forbidden_post_data_types($types) {
+	$post = get_post();
+	if (is_null($post)) return $types;
+
+	if (self::is_woo_page($post)) {
+		$types = array('title', 'date_posted', 'comment_form', 'comment_count', 'comments', 'comments_pagination');
+	}
+	return $types;
+}
+
+
+	/**
+	 * Checks if a post is actually a known Woo page
+	 *
+	 * @param WP_Post|int $post Post to check
+	 *
+	 * @return bool
+	 */
+	public static function is_woo_page ($post) {
+		if (!class_exists('WP_Post')) return false; // Basic sanity check
+
+		// Ensure we have an actual post here
+		if (!($post instanceof WP_Post)) $post = get_post($post);
+		if (!($post instanceof WP_Post)) return false;
+
+		return in_array($post->ID, self::get_woo_page_ids());
+	}
+
+	/**
+	 * Returns a list of known Woo pages as a list of post IDs
+	 *
+	 * @return array List of post IDs
+	 */
+	public static function get_woo_page_ids () {
+		return $pages = array(
+			wc_get_page_id('cart'),
+			wc_get_page_id('checkout'),
+			wc_get_page_id('myaccount'),
+			wc_get_page_id('shop')
+		);
 	}
 
 /**
@@ -60,22 +103,38 @@ class Upfront_Compat_WooCommerce {
 	 */
 	public function override_entity_ids ($cascade) {
 		$theme = Upfront_Theme::get_instance();
+
 		if (!empty($cascade['item']) && 'single-product' === $cascade['item']) {
 			// Let's test if a theme supports Woo product layouts.
 			// As in, does this theme have single-product ready-made layouts?
 
 			// If it doesn't, let's emulate - we'll be single pages here
 			if (!$theme->has_theme_layout('single-product')) $cascade['item'] = 'single-page';
-		}
 
-		if (!empty($cascade['specificity']) && $cascade['specificity'] === 'single-page-' . wc_get_page_id('cart')) {
-			if ($theme->has_theme_layout('single-page-woocart')) $cascade['specificity'] = 'single-page-woocart';
-		}
-		if (!empty($cascade['specificity']) && $cascade['specificity'] === 'single-page-' . wc_get_page_id('checkout')) {
-			if ($theme->has_theme_layout('single-page-woocheckout')) $cascade['specificity'] = 'single-page-woocheckout';
-		}
-		if (!empty($cascade['specificity']) && $cascade['specificity'] === 'single-page-' . wc_get_page_id('myaccount')) {
-			if ($theme->has_theme_layout('single-page-woomyaccount')) $cascade['specificity'] = 'single-page-woomyaccount';
+		} else if (!empty($cascade['specificity'])) {
+			// Swap single-page-{number} with specific layouts
+			$s = $cascade['specificity'];
+			$layouts = array(
+				'single-page-woocart'      => 'single-page-' . wc_get_page_id('cart'),
+				'single-page-wooccheckout' => 'single-page-' . wc_get_page_id('checkout'),
+				'single-page-woomyaccount' => 'single-page-' . wc_get_page_id('myaccount'),
+			);
+
+			foreach ($layouts as $slug=>$specificity) {
+				if ($s === $specificity) {
+					if ($theme->has_theme_layout($slug)) $cascade['specificity'] = $slug;
+					break;
+				}
+			}
+
+		} else {
+			// If all else fails try to find out if this really isn't the shop page.
+			// When in General > Permalinks > Product Permalinks
+			// selected value is not Default, shop page resolves to archive instead archive-product
+			global $wp_query;
+			if (empty($cascade['item']) && $wp_query->is_archive && $wp_query->queried_object_id === wc_get_page_id('shop')) {
+				$cascade['item'] = 'archive-product';
+			}
 		}
 
 		return $cascade;
@@ -255,7 +314,7 @@ class Upfront_Compat_WooCommerce {
 
 	public function layout_to_name($layout_name, $type, $item, $specificity) {
 		if ($specificity === 'archive-product' && $item === 'product') {
-			return __('Product Archive', 'upfront');
+			return __('WooCommerce Shop Page', 'upfront');
 		}
 
 		if ($specificity === 'single-page-woocart' || $specificity === 'woocart') {
