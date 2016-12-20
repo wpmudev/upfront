@@ -524,9 +524,11 @@
                         me.options.spectrum.choose(me.color);
 
                     if( me.options.autoHide !== true ){
-                        me.$(".sp-replacer").removeClass("sp-active");
-						me.$(".sp-container").addClass("sp-hidden");
-	
+                        setTimeout( function() {
+							me.$(".sp-replacer").removeClass("sp-active");
+							me.$(".sp-container").addClass("sp-hidden");
+						});
+						
 						Upfront.Events.trigger("color:spectrum:hide");
                     }
                 });
