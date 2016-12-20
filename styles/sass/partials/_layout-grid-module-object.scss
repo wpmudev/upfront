@@ -292,8 +292,12 @@
 /*
  *.upfront-module-group-on-edit.upfront-editable_entity .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-resize-handle-element,
  */
+/* Element Resize Handle on Group Edit resizing. */
 .upfront-wrapper-module-group-on-edit .upfront-module-group-on-edit .upfront-resize-handle-wrapper:hover + .upfront-module-view .upfront-resize-handle-element,
+/* Element Size Hint on Group Edit resizing. */
 .upfront-module-group-on-edit .upfront-wrapper-meta:hover ~ .upfront-module-view .upfront-module .upfront-entity-size-hint,
+/* Image Size Hint on Group Edit resizing. */
+.upfront-module-group-on-edit .upfront-wrapper-meta:hover ~ .upfront-module-view .upfront-module .uimage-resize-hint,
 .upfront-resize-handle-wrapper:hover ~ .upfront-module-group .upfront-resize-handle-group,
 .upfront-resize-handle-wrapper:hover ~ .upfront-module-group > .upfront-entity-size-hint,
 .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-entity-size-hint,
