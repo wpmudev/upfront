@@ -1702,8 +1702,8 @@ input.upfront-field-text:hover,
 
 .upfront-object-content div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap ul .upfront-field-select-option:hover label,
 .upfront-field-select-option:hover {
-  background: #5f7f9a;
-  color: white; }
+  background: #d4dee8;
+  color: #8899a9; }
 
 .upfront-field-select-option label {
   display: block;
@@ -7016,7 +7016,8 @@ span.upfront-settings-item-title:after {
 	right: 0;
 	bottom: 65px;
 	top: 44px;*/
-  background: #f7fbff; }
+  background: #f7fbff;
+  max-height: 100%; }
 
 #element-settings-sidebar #settings .upfront-settings_panel_scroll {
   min-width: 255px; }
@@ -11292,7 +11293,8 @@ div.ugallery-controls i.upfront-icon:before {
 
 .upfront-element-controls .upfront-inline-panel {
   z-index: 3000;
-  border: 1px solid #cccccc; }
+  border: 1px solid #cccccc;
+  background: #fff; }
 
 .upfront-element-controls.ugallery-controls .upfront-inline-panel {
   border: none; }
