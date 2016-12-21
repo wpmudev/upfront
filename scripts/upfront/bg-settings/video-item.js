@@ -209,8 +209,10 @@ define([
 				} else if (currentStyle === 'service' ) {
 					pickVideoButton.$el.hide();
 					videoUrlInput.$el.show();
-				} else if (currentStyle === '') {
+				} else {
 					me.model.set_breakpoint_property('background_style', 'upload');
+					videoUrlInput.$el.hide();
+					pickVideoButton.$el.show();
 				}
 			}, 50);
 		},
