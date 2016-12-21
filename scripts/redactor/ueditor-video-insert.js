@@ -1,7 +1,7 @@
 ;(function($){
 	define([
 			"scripts/redactor/ueditor-insert",
-			'elements/upfront-image/js/video-selector'
+			'scripts/upfront/video-selector'
 	],
 	function(Insert, VideoSelector) {
 		var l10n = Upfront.Settings && Upfront.Settings.l10n ?

@@ -524,6 +524,10 @@ jQuery(document).ready(function($){
 				ratio = parseFloat($(this).attr('data-bg-video-ratio')),
 				style = $(this).attr('data-bg-video-style') || 'crop',
 				$embed = $(this).children('iframe');
+
+			if ( $embed.length === 0) {
+				$embed = $(this).find('video');
+			}
 			$(this).css('overflow', 'hidden');
 			$embed.css({
 				position: 'absolute'

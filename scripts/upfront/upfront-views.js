@@ -693,14 +693,13 @@ define([
 					ratio = height/width;
 					if ( style == 'crop' || style == 'inside' ){
 						var size = this._get_full_size_el($type, ratio, (style == 'inside'));
-						this.model.set_breakpoint_property('uploaded_background_video_left', size[2] + 'px');
 						$embed.css({
 							width: size[0],
 							height: size[1],
 							left: size[2],
 							top: size[3]
 						});
-						if ($video.length) {
+						if ($video && $video.length) {
 							$video.css({
 								width: size[0],
 								height: size[1]
@@ -713,7 +712,7 @@ define([
 							left: 0,
 							top: 0
 						});
-						if ($video.length) {
+						if ($video && $video.length) {
 							$video.css({
 								width: $type.width(),
 								height: $type.height()
@@ -2073,7 +2072,7 @@ define([
 					this.model.set_property('current_preset', 'default', true);
 					this.model.set_property('preset', 'default', true);
 				}
-				
+
 				var breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled() || {},
 					breakpoint_presets = this.model.get_property_value_by_name("breakpoint_presets") || {}
 				;
@@ -2086,7 +2085,7 @@ define([
 							// Overwrite current preset with default
 							actualPreset = 'default';
 						}
-						
+
 						// Update breakpoint value
 						breakpoint_presets[breakpoint.id] = {preset: actualPreset};
 					}
@@ -2096,11 +2095,11 @@ define([
 			},
 			get_preset_ids: function(presets) {
 				var preset_ids = [];
-				
+
 				_.each(presets, function(preset){
 					preset_ids.push(preset.id);
 				});
-				
+
 				return preset_ids;
 			},
 			get_element_type: function(type) {
@@ -2234,7 +2233,7 @@ define([
 						this.model.set_property('preset', 'default', false);
 						this.render();
 					}
-					
+
 					if(elementTypes[elType] === element) {
 						var breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled() || {},
 							breakpoint_presets = this.model.get_property_value_by_name("breakpoint_presets") || {}
@@ -2247,7 +2246,7 @@ define([
 									// Overwrite current preset with default
 									actualPreset = 'default';
 								}
-								
+
 								// Update breakpoint value
 								breakpoint_presets[breakpoint.id] = {preset: actualPreset};
 							}
@@ -3646,7 +3645,7 @@ define([
 				var property_url = this.model.get_property_value_by_name('href');
 
 				if( !property_url ) property_url = "";
-				
+
 				var me = this,
 					linkPanelControl = new Upfront.Views.Editor.InlinePanels.Controls.GroupLinkPanel({
 						linkUrl: property_url,
@@ -3672,25 +3671,25 @@ define([
 				this.listenTo(linkPanelControl, 'change:type', function() {
 					linkPanelControl.updateWrapperSize();
 				});
-				return linkPanelControl; 
+				return linkPanelControl;
 			},
-			
+
 			createMoreOptionsControl: function() {
 				var me = this,
 					moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl()
 				;
-				
+
 				moreOptions.icon = 'more';
 				moreOptions.tooltip = l10n.more_options;
-				
+
 				moreOptions.sub_items = {};
 				moreOptions.sub_items['link'] = this.createGroupLinkControl();
 				moreOptions.sub_items['edit_elements'] = this.createControl('edit_elements', l10n.edit_elements, 'on_edit');
 				moreOptions.sub_items['ungroup'] = this.createControl('ungroup', l10n.ungroup, 'on_ungroup');
-				
+
 				return moreOptions;
 			},
-			
+
 			createPaddingControl: function(){
 				this.paddingControl = new Upfront.Views.Editor.InlinePanels.PaddingControl({
 					model: this.model
@@ -3727,7 +3726,7 @@ define([
 			toggleLinkPanel: function() {
 				this.$el.toggleClass('control-dialog-open');
 			},
-			
+
 			getControlItems: function(){
 				return _([
 					this.createMoreOptionsControl(),
@@ -3766,7 +3765,7 @@ define([
 					this.stopListening(this.wrapper_view, 'update_position');
 					this.listenTo(this.wrapper_view, 'update_position', this.on_wrapper_update);
 				}
-				
+
 				this.$el.html(template);
 
 				// Create Group Handles.

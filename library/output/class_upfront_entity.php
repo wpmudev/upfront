@@ -363,12 +363,7 @@ abstract class Upfront_Entity {
 				$video = $this->_get_breakpoint_property('uploaded_background_video', $breakpoint_id);
 				$video_id = 'bg_video_' . self::$_video_index;
 
-				$left = $this->_get_breakpoint_property('uploaded_background_video_left', $breakpoint_id);
 				$style = $this->_get_breakpoint_property('background_video_style', $breakpoint_id);
-				$css = '';
-				if ($left) {
-					$css .= 'left: ' . $left;
-				}
 
 				$width = $this->_get_breakpoint_property('background_video_width', $breakpoint_id);
 				$height = $this->_get_breakpoint_property('background_video_height', $breakpoint_id);
@@ -399,7 +394,7 @@ abstract class Upfront_Entity {
 			}
 		}
 
-		return "<div style='" . $css . "' class='{$classes}' {$attr}>{$markup}</div>" . "\n";
+		return "<div class='{$classes}' {$attr}>{$markup}</div>" . "\n";
 	}
 
 	public function get_propagated_classes () {

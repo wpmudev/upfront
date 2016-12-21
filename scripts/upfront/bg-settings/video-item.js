@@ -7,7 +7,7 @@ var l10n = Upfront.Settings && Upfront.Settings.l10n
 
 define([
 	'scripts/upfront/bg-settings/mixins',
-	'elements/upfront-image/js/video-selector'
+	'scripts/upfront/video-selector'
 ], function(Mixins, VideoSelector) {
 
 	var VideoItem = Upfront.Views.Editor.Settings.Item.extend(_.extend({}, Mixins, {
