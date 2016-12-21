@@ -10,7 +10,7 @@
 }
 
 .upfront-resize {
-	background: rgba(100,100,100,.2);
+	background: rgba(0,0,0,0.06);
 	z-index:1;
 	pointer-events: none;
 }
@@ -81,6 +81,7 @@
 	width: 7px;
 	height: 7px;
 	max-width: 10px;
+    box-sizing: border-box;
 }
 .upfront-editable_entity:not(.ui-resizable-disabled):hover > .upfront-resize-handle-s:not(.active-menu-item),
 .upfront-module-group-active > .upfront-resize-handle-s:not(.active-menu-item),
