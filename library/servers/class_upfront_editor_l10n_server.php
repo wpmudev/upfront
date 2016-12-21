@@ -658,7 +658,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'bg_color_short' => __('BG Color', 'upfront'),
 				'browse' => __('Browse...', 'upfront'),
 				'pick_image' => __('Pick Image', 'upfront'),
-				'pick_video' => __('Pick video', 'upfront'),
+				'pick_video' => __('Pick Video', 'upfront'),
 				'image_type' => __('Image Type', 'upfront'),
 				'full_width_bg' => __('Full Width', 'upfront'),
 				'tiled_pattern' => __('Tiled / Pattern', 'upfront'),

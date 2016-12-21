@@ -325,6 +325,7 @@ abstract class Upfront_Entity {
 				$style = $this->_get_breakpoint_property('background_video_style', $breakpoint_id);
 				$mute = $this->_get_breakpoint_property('background_video_mute', $breakpoint_id);
 				$autoplay = $this->_get_breakpoint_property('background_video_autoplay', $breakpoint_id);
+				$loop = $this->_get_breakpoint_property('background_video_loop', $breakpoint_id);
 				if ( $video && $embed ){
 					self::$_video_index++;
 					$video_id = 'bg_video_' . self::$_video_index;
@@ -373,7 +374,7 @@ abstract class Upfront_Entity {
 
 				$mute = $this->_get_breakpoint_property('background_video_mute', $breakpoint_id);
 				$autoplay = $this->_get_breakpoint_property('background_video_autoplay', $breakpoint_id);
-
+				$loop = $this->_get_breakpoint_property('background_video_loop', $breakpoint_id);
 
 				if ($mute)
 					$vid_attr .= ' muted ';
