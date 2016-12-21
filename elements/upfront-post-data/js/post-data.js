@@ -86,6 +86,9 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 
 	on_element_drop: function () {
 		this.update_height();
+		// Add/remove multiple module class.
+		$object = this.$el.find('.upfront-editable_entity:first');
+		this.add_multiple_module_class($object);
 	},
 
 	render_view: function (markup) {
@@ -1057,6 +1060,11 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 			// Save image crop from resize
 			this.saveTemporaryResizing(elementSize);
+
+			// Add/remove multiple module class.
+			$object = this.$el.find('.upfront-editable_entity:first');
+			this.add_multiple_module_class($object);
+
 		}
 
 		// Also resize child objects if it's only one object
