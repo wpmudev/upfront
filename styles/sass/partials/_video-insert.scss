@@ -12,7 +12,15 @@
 	cursor: pointer;
 }
 
+.uinsert-video-insert .ueditor-insert-remove {
+	top: 10px;
+	right: 10px;
+	position: absolute;
+	display: none;
+}
+
 .uinsert-video-insert:hover .video-insert-controls,
+.uinsert-video-insert:hover .ueditor-insert-remove,
 .video-insert-controls.video-insert-controls-expanded {
 	display: block;
 }
