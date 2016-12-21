@@ -1991,6 +1991,16 @@ define([
 				$object.data('default_col', col);
 				$object.data('current_col', col);
 
+				// Create Element Handles.
+				$handle_w = $("<b />").addClass('upfront-resize-handle-element');
+				$handle_e = $("<b/>").addClass('upfront-resize-handle-element').addClass('upfront-resize-handle-element-right')
+
+				// Add Element Handles.
+				$object.append($handle_w);
+				$object.append($handle_e);
+
+				this.add_multiple_module_class($object);
+
 				this.apply_paddings(this.$el.find('> .upfront-editable_entity:first'));
 
 				//this.init_ckeditor_on_focus();
@@ -2184,6 +2194,21 @@ define([
 				}
 				Upfront.Events.trigger('entity:object:update', this, this.model);
 			},
+
+			add_multiple_module_class: function ($object) {
+				// If wrapper has more than one module, add a class.
+				if (
+					$object.parents('.upfront-wrapper').children('.upfront-module-view').length > 1
+					// Not a Group.
+					&& $object.parents('.upfront-module-group').length === 0
+				) {
+					$object.parents('.upfront-wrapper').addClass('upfront-wrapper-multiple-modules')
+				} else {
+					// Remove class otherwise.
+					$object.parents('.upfront-wrapper').removeClass('upfront-wrapper-multiple-modules')
+				}
+			},
+
 			on_preset_deleted: function(element, preset) {
 				var elementTypes = {
 						PlainTxtModel: 'text',
@@ -2233,6 +2258,7 @@ define([
 				}
 
 			},
+
 			handle_visual_padding_hint: function (prop, $el) {
 				if (typeof prop === 'undefined') return;
 
@@ -2370,10 +2396,14 @@ define([
 				}
 			},
 			on_element_resize: function (attr) {
-
+				// Add/remove multiple module class.
+				$object = this.$el.find('.upfront-editable_entity:first');
+				this.add_multiple_module_class($object);
 			},
 			on_element_drop: function (attr) {
-
+				// Add/remove multiple module class.
+				$object = this.$el.find('.upfront-editable_entity:first');
+				this.add_multiple_module_class($object);
 			},
 			on_resize_start: function (attr) {
 
@@ -3311,6 +3341,7 @@ define([
 				if (this.$el.is(".upfront-active_entity")) {
 					this.$el.trigger("upfront-editable_entity-selected", [this.model, this]);
 				}
+
 				Upfront.Events.trigger("entity:module:after_render", this, this.model);
 			},
 			update: function (prop, options) {
@@ -3530,6 +3561,7 @@ define([
 					this._objects_view.remove();
 				Backbone.View.prototype.remove.call(this);
 			}
+
 		}),
 
 		ModuleGroup = _Upfront_EditableEntity.extend({
@@ -3568,11 +3600,31 @@ define([
 
 				this.listenTo(Upfront.Events, 'upfront:element:edit:start', this.on_element_edit_start);
 				this.listenTo(Upfront.Events, 'upfront:element:edit:stop', this.on_element_edit_stop);
-
+				this.listenTo(Upfront.Events, 'entity:module_group:edit', this.update_group_size_hints);
 
 				this.editing = false;
 				this.hidden = false;
 				this.on('entity:resize_stop', this.on_resize, this);
+			},
+			// Update the size hints for elements when editing groups.
+			update_group_size_hints: function() {
+				var grid = Upfront.Settings.LayoutEditor.Grid,
+					selection_type = this.get_selection_type,
+					column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
+					hPadding = parseInt( (this.model.get_breakpoint_property_value('left_padding_num') || column_padding), 10 ) + parseInt( (this.model.get_breakpoint_property_value('right_padding_num') || column_padding), 10 ),
+					width = width ? width - hPadding : this.$el.width() - hPadding
+				;
+
+				// For each module in group, update size hint.
+				this.$el.find('.upfront-module-view').each(function(index, value) {
+					var height = parseInt($(value).css('height'), 10);
+					var type = selection_type($(value).find('.upfront-object-view'));
+
+					var hint = '<div class="upfront-entity-size-hint-color"></div><span class="upfront-entity-type">' + type + ',</span>'
+						+ width + ' &#215; ' + height;
+					// Replace size hint html.
+					$(value).find('.upfront-entity-size-hint').html(hint);
+				});
 			},
 			handle_visual_padding_hint: function (prop) {
 				if (typeof prop === 'undefined') return;
@@ -3589,7 +3641,7 @@ define([
 				}
 
 			},
-			
+
 			createGroupLinkControl: function() {
 				var property_url = this.model.get_property_value_by_name('href');
 
@@ -3717,12 +3769,21 @@ define([
 				
 				this.$el.html(template);
 
+				// Create Group Handles.
+				var group_container = this.$el.find('> .upfront-modules_container');
+				var $handle_w = $("<b />").addClass('upfront-resize-handle-group');
+				var $handle_e = $("<b/>").addClass('upfront-resize-handle-group').addClass('upfront-resize-handle-group-right');
+
+				// Add Group Handles.
+				group_container.append($handle_w);
+				group_container.append($handle_e);
+
 				this.$bg = this.$el.find('.upfront-module-group-bg');
 				this.update();
 				var local_view = this._modules_view || new Modules({"model": this.model.get("modules")});
 				local_view.region_view = this.region_view;
 				local_view.group_view = this;
-				this.$el.find('> .upfront-modules_container').append(local_view.el);
+				group_container.append(local_view.el);
 				local_view.render();
 
 				this.apply_paddings(this.$el.find('> .upfront-modules_container'));
@@ -4126,6 +4187,7 @@ define([
 				Upfront.Events.trigger('entity:module_group:edit', this, this.model);
 			},
 			on_edit: function () {
+
 				if(!Upfront.Application.user_can_modify_layout()) return false;
 
 				Upfront.Events.trigger("command:module_group:finish_edit"); // close other reorder first
