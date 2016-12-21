@@ -56,7 +56,7 @@ define([], function () {
 
 			this.$el.css({
 				width: width + (borderSize * 2),
-				height: height + (borderSize * 2)
+				height: height + borderSize
 			});
 		},
 
