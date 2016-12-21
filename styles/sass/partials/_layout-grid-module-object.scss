@@ -132,9 +132,16 @@
 }
 
 .upfront-active_entity > .upfront-editable_entity {
-	/* Commented out as we seem to be doubling up on those dotted lines */
 	box-shadow: inset 0px 0px 0px 2px rgba(111, 188, 248, 1);
 }
+
+/* Active element on hover */
+.upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-module-active.upfront-module,
+.upfront-module-active.upfront-module:hover {
+	box-shadow: none;
+	outline: none;
+}
+
 .upfront-editable_entity.ui-resizable-resizing {
 	overflow: hidden;
 	/*padding-bottom:15px;*/
