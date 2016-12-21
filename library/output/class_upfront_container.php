@@ -7,7 +7,8 @@ abstract class Upfront_Container extends Upfront_Entity {
 	protected $_child_view_class;
 	protected $_wrapper;
 	protected $_wrapper_is_spacer;
-
+	public static $_presets;
+	
 	/**
 	 * Array of child views, it's only filled in self::get_markup foreach loop
 	 *
@@ -143,12 +144,58 @@ abstract class Upfront_Container extends Upfront_Entity {
 			return $view->get_markup();
 		}
 	}
+	
+	public static function _load_presets () {
+		
+		if( empty( self::$_presets ) ) {
+			self::$_presets = array(
+				'UnewnavigationModel' => Upfront_Nav_Presets_Server::get_instance()->get_presets_ids(),
+				'ButtonModel' => Upfront_Button_Presets_Server::get_instance()->get_presets_ids(),
+				'PostsModel' => Upfront_Posts_Presets_Server::get_instance()->get_presets_ids(),
+				'PlainTxtModel' => Upfront_Text_Presets_Server::get_instance()->get_presets_ids(),
+				'UimageModel' => Upfront_Image_Presets_Server::get_instance()->get_presets_ids(),
+				'UaccordionModel' => Upfront_Accordion_Presets_Server::get_instance()->get_presets_ids(),
+				'UcommentModel' => Upfront_Ucomment_Presets_Server::get_instance()->get_presets_ids(),
+				'UcontactModel' => Upfront_Contact_Presets_Server::get_instance()->get_presets_ids(),
+				'UgalleryModel' => Upfront_Gallery_Presets_Server::get_instance()->get_presets_ids(),
+				'USliderModel' => Upfront_Slider_Presets_Server::get_instance()->get_presets_ids(),
+				'UtabsModel' => Upfront_Tab_Presets_Server::get_instance()->get_presets_ids(),
+				'ThisPostModel' => Upfront_Post_Presets_Server::get_instance()->get_presets_ids(),
+				'UwidgetModel' => Upfront_Widget_Presets_Server::get_instance()->get_presets_ids(),
+				'LoginModel' => Upfront_Login_Presets_Server::get_instance()->get_presets_ids(),
+			);
+		}
+
+		return self::$_presets;
+	}
+	
+	public function preset_exist ( $preset, $type ) {
+		
+		if( empty( $type ) ) return 'default';
+		
+		$presets = Upfront_Container::_load_presets();
+
+		if( isset( $presets[$type] ) && !empty( $presets[$type] ) ) {
+			if( in_array( $preset, $presets[$type] ) ) {
+				return $preset;
+			} else {
+				return 'default';
+			}
+		}
+		
+		return 'default';
+	}
 
 	protected function _get_preset_map ($data) {
 		$preset_map = array();
 		$raw_preset_map = upfront_get_property_value('breakpoint_presets', $data);
+		$type = upfront_get_property_value('type', $data);
 		if (!empty($raw_preset_map)) foreach ($raw_preset_map as $bp => $pst) {
 			if (empty($pst['preset'])) continue;
+			
+			// Check if preset exist, if not use default
+			$pst['preset'] = $this->preset_exist( $pst['preset'], $type );
+			
 			$preset_map[$bp] = esc_js($pst['preset']);
 		}
 		return $preset_map;
@@ -158,6 +205,10 @@ abstract class Upfront_Container extends Upfront_Entity {
 		// We also preserve the current preset class, so it all
 		// just works without JS requirement on client
 		$preset = upfront_get_property_value('preset', $data);
+		$type = upfront_get_property_value('type', $data);
+		
+		// Check if preset exist, if not use default
+		$preset = $this->preset_exist( $preset, $type );
 
 		// Also, if we have a preset map and a default grid breakpoint
 		// mapped, let's try to use this as default preset
@@ -191,6 +242,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 				}
 			}
 		}
+
 		return $preset;
 	}
 

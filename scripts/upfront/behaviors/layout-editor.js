@@ -769,7 +769,6 @@ var LayoutEditor = {
 			});
 		}
 	},
-
 	/* Cleanup region CSS, running on save/export */
 	clean_region_css: function () {
 		var me = this,

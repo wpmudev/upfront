@@ -124,6 +124,9 @@ define([
 
 			this.listenTo(Upfront.Events, 'entity:module:update', this.on_uimage_update);
 			this.listenTo(this.model, "preset:updated", this.preset_updated);
+
+			// Check if preset exist, if not replace with default
+			this.check_if_preset_exist();
 		},
 
 		get_preset_properties: function() {

@@ -314,6 +314,7 @@ class Upfront_Uimage_Server extends Upfront_Server {
 	private function _add_hooks() {
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			upfront_add_ajax('upfront-media-image_sizes', array($this, "get_image_sizes"));
+			upfront_add_ajax('upfront-media-video_info', array($this, "get_video_info"));
 			upfront_add_ajax('upfront-media-image-create-size', array($this, "create_image_size"));
 		}
 		if (Upfront_Permissions::current(Upfront_Permissions::SAVE) && Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE)) {
@@ -645,7 +646,6 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		$transformations['resize'] = $resize;
 
 		return $transformations;
-
 	}
 
 	function save_resizing() {
@@ -653,5 +653,26 @@ class Upfront_Uimage_Server extends Upfront_Server {
 		$layout = Upfront_Layout::from_entity_ids($data['layout']);
 		return $this->_out(new Upfront_JsonResponse_Success($layout->get_element_data('uslider-object-1388746230599-1180')));
 	}
+
+	function get_video_info() {
+		$data = stripslashes_deep($_POST);
+
+		$video_id = !empty($data['video_id']) ? intval($data['video_id']) : false;
+		if (!$video_id) $this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('invalid_id')));
+
+		$video_url = wp_get_attachment_url($video_id);
+		$video_html = wp_video_shortcode( array('src' => $video_url) );
+		$video_html = preg_replace('#width="\d+"#', 'width="1920"', $video_html);
+		$video_html = preg_replace('#height="\d+"#', 'height="1080"', $video_html);
+		$video_html = str_replace('preload="metadata"', 'preload="auto"', $video_html);
+		$video_html = str_replace('controls="controls"', '', $video_html);
+
+		$result = array(
+			'url' => $video_html
+		);
+
+		return $this->_out(new Upfront_JsonResponse_Success($result));
+	}
+
 }
 Upfront_Uimage_Server::serve();

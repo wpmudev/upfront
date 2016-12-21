@@ -102,6 +102,154 @@ define([
 			}
 		]
 	});
+	
+	var PasswordField = Upfront.Views.Editor.Field.Text.extend({
+		get_label_html: function () {},
+		get_field_html: function () {
+				var attr = {
+					'type': 'password',
+					'class': 'upfront-field upfront-field-text',
+					'id': this.get_field_id(),
+					'name': this.get_field_name(),
+					'value': this.get_saved_value()
+				};
+				return '<input ' + this.get_field_attr_html(attr) + ' />';
+			}
+	});
+
+	var SMTPAuthenticationSettings = Upfront.Views.Editor.Settings.Item.extend({
+		className: 'no-title general_settings_item smtp-authentication',
+		initialize: function(opts) {
+			//var showsettings = this.model.get_property_value_by_name('smtp_authentication');
+			this.update_fields();
+			//this.update_fields(showsettings === 'yes'?'yes':'no');
+			this.constructor.__super__.initialize.call(this, opts);
+		},
+		get_title: function() {
+			return '';
+		},
+		update_fields: function(show) {
+			var me = this;
+			this.fields=_([]);
+			
+			if(typeof(show) !== 'undefined' && ((show.length > 0 && show[0] === 'yes') || show === 'yes')) {
+				
+
+				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Text({
+					model: this.model,
+					property: 'smtp_username',
+					label: l10n.smtp.username,
+				});
+
+				this.fields._wrapped[this.fields._wrapped.length] = new PasswordField({
+					model: this.model,
+					property: 'smtp_password',
+					label: l10n.smtp.password
+				});
+
+	
+			}
+
+			if(typeof(show) !== 'undefined') {
+				me.$el.html('');
+				me.render();
+			}
+		}
+	});
+
+
+
+	var SMTPSpecificSettings = Upfront.Views.Editor.Settings.Item.extend({
+		className: 'no-title smtp-configuration',
+		initialize: function(opts) {
+			
+			this.authentication = opts.authentication;
+
+			//var showsettings = this.model.get_property_value_by_name('smtp_enable');
+
+			//this.update_fields(showsettings === 'yes'?'yes':'no');
+			this.update_fields();
+			this.constructor.__super__.initialize.call(this, opts);
+		},
+		get_title: function() {
+			return l10n.smtp.configuration;
+		},
+		update_fields: function(show) {
+			var me = this;
+			this.fields=_([]);
+			this.$el.addClass('no-title');
+			if(typeof(show) !== 'undefined' && show === 'yes') {
+				this.$el.removeClass('no-title');
+				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Email({
+					model: this.model,
+					property: 'smtp_from_email',
+					label: l10n.smtp.from_email
+				});
+
+				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Text({
+					model: this.model,
+					property: 'smtp_from_name',
+					label: l10n.smtp.from_name
+				});
+
+				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Text({
+					model: this.model,
+					property: 'smtp_host',
+					label: l10n.smtp.host
+				});
+
+				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Text({
+					model: this.model,
+					property: 'smtp_port',
+					label: l10n.smtp.port
+				});
+
+				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Radios({
+					model: this.model,
+					className: 'inline-radios smtp-secure plaintext-settings upfront-field-wrap',
+					property: 'smtp_secure',
+					label: l10n.smtp.secure,
+					default_value: 'none',
+					values: [
+						{
+							label: l10n.smtp.none,
+							value: 'none'
+						},
+						{
+							label: l10n.smtp.ssl,
+							value: 'ssl'
+						},
+						{
+							label: l10n.smtp.tls,
+							value: 'tls'
+						}
+					]
+				});
+
+				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Checkboxes({
+					model: this.model,
+					className: 'inline-checkbox plaintext-settings upfront-field-wrap enable-authentication',
+					property: 'smtp_authentication',
+					default_value: 'no',
+					values: [
+						{
+							label: l10n.smtp.authentication,
+							value: 'yes'
+						}
+					],
+					change: function(value) {
+						me.authentication.update_fields(value === 'yes' || (value.length > 0 && value[0] === 'yes')?'yes':'no');
+					}
+				});
+			}
+
+			if(typeof(show) !== 'undefined') {
+				me.$el.html('');
+				me.render();
+			}
+		}
+	});
+
 
 	var ContactFormSettings = ElementSettings.extend({
 		panels: {
@@ -309,47 +457,7 @@ define([
 								]
 							}
 						},
-						{
-							moduleType: 'Typography',
-							options: {
-								title: l10n.typography_label,
-								state: 'focus',
-								prepend: 'focus-',
-								prefix: 'static',
-								toggle: true,
-								fields: {
-									use: 'focus-use-typography',
-									typeface: 'focus-font-family',
-									fontstyle: 'focus-font-style',
-									weight: 'focus-weight',
-									style: 'focus-style',
-									size: 'focus-font-size',
-									line_height: 'focus-line-height',
-									color: 'focus-font-color'
-								},
-								default_element: "field-labels",
-								elements: [
-									{ label: l10n.field_values_label, value: "field-values" },
-									{ label: l10n.button_label, value: "button" }
-								]
-							}
-						},
-						{
-							moduleType: 'Border',
-							options: {
-								state: 'focus-fields',
-								title: '',
-								label: 'Fields Border',
-								prepend: 'focus-',
-								prefix: 'static',
-								fields: {
-									use: 'focus-fields-useborder',
-									width: 'focus-fields-borderwidth',
-									type: 'focus-fields-bordertype',
-									color: 'focus-fields-bordercolor'
-								}
-							}
-						},
+				
 						{
 							moduleType: 'Border',
 							options: {
@@ -362,21 +470,87 @@ define([
 									use: 'focus-button-useborder',
 									width: 'focus-button-borderwidth',
 									type: 'focus-button-bordertype',
-									color: 'focus-button-bordercolor'
-								}
+									color: 'focus-button-bordercolor',
+								},
 							}
 						}
 					]
-				},
-
-				migrateDefaultStyle: function(styles) {
-					//replace image wrapper class
-					styles = styles.replace(/(div)?\.upfront-contact-form\s/g, '');
-					styles = styles.replace(/(div)?\.upfront-object\s/g, '');
-
-					return styles;
 				}
 			}
+		},
+		initialize: function (opts) {
+			var me = this;
+			// Call the super constructor here, so that the appearance panel is instantiated
+			this.constructor.__super__.initialize.call(this, opts);
+
+			var panel = new RootSettingsPanel({
+				model: this.model,
+				title: l10n.smtp.label
+			});
+			
+			var smtp_authentication = new SMTPAuthenticationSettings({model: this.model});
+			
+			var smtp_configuration = new SMTPSpecificSettings({model: this.model, authentication: smtp_authentication});
+
+			var smtp_enable = new Upfront.Views.Editor.Settings.Item({
+				model: this.model,
+				title: l10n.smtp.enable,
+				className: 'general_smtp_settings',
+				fields: [
+					new Upfront.Views.Editor.Field.Radios({
+						model: this.model,
+						property: 'smtp_enable',
+						className: 'inline-radios plaintext-settings',
+						default_value: 'no',
+						values: [
+							{
+								label: l10n.smtp.no,
+								value: 'no'
+							},
+							{
+								label: l10n.smtp.yes,
+								value: 'yes'
+							}
+						],
+						change: function(value) {
+							if(value === 'yes')
+								smtp_enable.$el.addClass('general_settings_item');
+							else
+								smtp_enable.$el.removeClass('general_settings_item');
+
+							smtp_configuration.update_fields(value);
+							
+							var show_authentication = this.model.get_property_value_by_name('smtp_authentication');
+							smtp_authentication.update_fields((show_authentication.length > 0 && show_authentication[0] === 'yes' && value ==='yes') ?'yes':'no');
+						}
+
+					}),
+				]
+			});
+
+
+
+			var show_smtp = this.model.get_property_value_by_name('smtp_enable');
+			var show_authentication = this.model.get_property_value_by_name('smtp_authentication');
+			
+			setTimeout(function() {
+				smtp_configuration.update_fields(show_smtp === 'yes'?'yes':'no');
+				smtp_authentication.update_fields((show_smtp === 'yes' && (show_authentication === 'yes' || (show_authentication.length > 0 && show_authentication[0] === 'yes')))?'yes':'no');
+			}, 200);
+			
+
+			panel.settings = _([smtp_enable, smtp_configuration, smtp_authentication]);
+
+			this.panels = {General: this.panels.General, SMTPPanel: panel , Appearance: this.panels.Appearance, Advanced: this.panels.Advanced};
+			//this.panels = _.extend({SMTPPanel: panel}, this.panels);
+
+		},
+		migrateDefaultStyle: function(styles) {
+				//replace image wrapper class
+				styles = styles.replace(/(div)?\.upfront-contact-form\s/g, '');
+				styles = styles.replace(/(div)?\.upfront-object\s/g, '');
+
+				return styles;
 		},
 		title: 'Contact Element'
 	});

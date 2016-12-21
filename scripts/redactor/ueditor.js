@@ -846,7 +846,7 @@ var Ueditor = function($el, options) {
 			observeLinks: false,
 			observeImages: false,
 			formattingTags: ['h1', 'h2', 'h3', 'h4', 'p', 'pre'],
-            inserts: Upfront.Settings.Application.PERMS.EMBED ? ["image", "embed"] : ["image"],
+            inserts: Upfront.Settings.Application.PERMS.EMBED ? ["image", "embed", "video"] : ["image", "video"],
             linkTooltip: false,
             cleanOnPaste: true, // font icons copy and paste wont work without this set to true - BUT, with it set to true, paste won't work AT ALL!!!
             replaceDivs: false,
@@ -1440,6 +1440,11 @@ Ueditor.prototype = {
 		$("html").on('mousedown', {ueditor : me}, this.stopOnOutsideClick);
 	},
 	stopOnOutsideClick: function(e){
+		// Flag that should prevent redactor closing when unwanted, such as when clicking in image selector.
+		// Flag should be managed by the element that is using redactor, has to be set and unset when needed
+		// to keep proper functionality.
+		if (Upfront.preventRedactorStopOnOutsideClick === true) return;
+
 		if( !( $(e.target).hasClass("redactor_box")
 				|| $(e.target).parents().hasClass("redactor-box")
 				|| $(e.target).parents().hasClass("redactor_air")
@@ -1964,7 +1969,7 @@ var InsertManager = Backbone.View.extend({
 					if(element.length){
 						element.replaceWith(insert.el);
 						insert.delegateEvents();
-						insert.controls.delegateEvents();
+						if (insert.controls) insert.controls.delegateEvents();
 						if(insert.controlEvents)
 							insert.controlEvents();
 					}
@@ -1995,14 +2000,14 @@ var InsertManager = Backbone.View.extend({
 			indexPosition = redactor.range.startOffset;
 
 		if( !current || _.isEmpty( $block ) ) return false;
-		
+
 
 		var $image_embed_insert_wrappers = $(".upfront-inserted_image-wrapper, .upfront-inserted_embed-wrapper"),
 			block_top = $block.offset().top,
 			block_html = $.trim( $block.html() ) || '',
 			prevblock_html = $.trim( $prevBlock.html() ) || '',
 			show_tooltip = true;
-			
+
 		$image_embed_insert_wrappers.each(function(){
 			var $this = $(this),
 				height = $this.find(".ueditor-insert-variant-group").height(),

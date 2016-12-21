@@ -1019,7 +1019,7 @@ PostContentEditor.prototype = {
 			autostart: true,
 			autoexit: true,
 			focus: false,
-			inserts: ["postImage", "embed"],
+			inserts: ["postImage", "video", "embed"],
 			insertsData: this.inserts,
 			pastePlainText: false,
 			placeholder: "<p>Content here</p>"
