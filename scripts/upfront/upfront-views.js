@@ -114,7 +114,8 @@ define([
 					is_layout = ( this instanceof Layout ),
 					$bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
 					type = this.model.get_breakpoint_property_value('background_type', true),
-					$overlay = $bg.children('.upfront-region-bg-overlay');
+					$overlay = $bg.children('.upfront-region-bg-overlay'),
+					video_background_style;
 
 				if ( type != 'featured' && me.$el.children('.feature_image_selector').length > 0 ) {
 					me.$el.children('.feature_image_selector').remove();
@@ -164,7 +165,16 @@ define([
 							this.update_background_slider($type, $overlay);
 							break;
 						case 'video':
-							this.update_background_video($type, $overlay);
+							video_background_style = this.model.get_breakpoint_property_value('background_style', true);
+							if (video_background_style === 'service') {
+								this.update_background_video($type, $overlay);
+							} else {
+								this.update_uploaded_background_video($type, $overlay);
+							}
+							break;
+						case 'uploaded_video':
+							console.log('we have uploaded video yay');
+							this.update_uploaded_background_video($type, $overlay);
 							break;
 					}
 				}
@@ -494,6 +504,7 @@ define([
 				}
 			},
 			update_background_video: function ($type, $overlay) {
+				console.log('update_background_video');
 				var me = this,
 					is_layout = ( this instanceof Layout ),
 					$bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
@@ -506,6 +517,53 @@ define([
 					ratio, $embed
 				;
 				this.remove_api_key_overlay();
+				if ( style == 'inside' && color ) {
+					$bg.css('background-color', color);
+				} else {
+					$bg.css('background-color', '');
+				}
+				if ( is_layout ) {
+					$overlay.css('position', 'fixed');
+				}
+				if ( video && embed && ( this._prev_video && this._prev_video != video || !this._prev_video ) ) {
+					ratio = height/width;
+					$embed = $(embed);
+					$embed.css('position', 'absolute').appendTo($type);
+					if ( style == 'crop' || style == 'inside' ) {
+						var size = this._get_full_size_el( ( is_layout ? $(window) : $type ), ratio, (style == 'inside') );
+						$embed.css({
+							width: size[0],
+							height: size[1],
+							left: size[2],
+							top: size[3]
+						});
+					} else if ( style == 'full' ) {
+						$embed.css({
+							width: is_layout ? $(window).width() : $type.width(),
+							height: is_layout ? $(window).height() : $type.height(),
+							left: 0,
+							top: 0
+						});
+					}
+					this._prev_video = video;
+				} else if ( !video || !embed ) {
+					this.remove_background();
+				} else {
+					this.refresh_background();
+				}
+			},
+			update_uploaded_background_video: function ($type, $overlay) {
+				console.log('update_uploaded_background_video');
+				var me = this,
+					is_layout = ( this instanceof Layout ),
+					$bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
+					color = this.model.get_breakpoint_property_value('background_color', true),
+					video = this.model.get_breakpoint_property_value('uploaded_background_video', true),
+					embed = this.model.get_breakpoint_property_value('uploaded_background_video_embed', true),
+					width = this.model.get_breakpoint_property_value('background_video_width', true),
+					height = this.model.get_breakpoint_property_value('background_video_height', true),
+					style = this.model.get_breakpoint_property_value('background_video_style', true) || 'crop',
+					ratio, $embed;
 				if ( style == 'inside' && color ) {
 					$bg.css('background-color', color);
 				} else {

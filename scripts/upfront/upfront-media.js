@@ -564,6 +564,16 @@ define([
                     }) );
                 }
 
+								if (_.indexOf(this.options.media_type, 'videos') !== -1) {
+                    sections = _( sections.reject(function(section){
+                        return section === "additional_sizes";
+                    }) );
+
+                    renderers =  _( renderers.reject(function(renderer){
+                        return renderer === "render_additional_sizes";
+                    }) );
+								}
+
 
 
                 // add sections
