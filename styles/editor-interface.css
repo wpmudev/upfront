@@ -2659,6 +2659,10 @@ div#page.upfront-layout-view.upfront-layout-view .upfront-editable_entity.upfron
 .video-insert-controls-panel .upfront_toggle {
   margin-left: 10px; }
 
+.upfront-output-layout .uinsert-video-insert .video-insert-controls,
+.upfront-output-layout .uinsert-video-insert .ueditor-insert-remove {
+  display: none; }
+
 span.role_check_mark:before {
   color: #1abc9c;
   content: "\f147";

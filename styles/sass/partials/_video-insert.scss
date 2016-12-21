@@ -46,3 +46,8 @@
 .video-insert-controls-panel .upfront_toggle {
 	margin-left: 10px;
 }
+
+.upfront-output-layout .uinsert-video-insert .video-insert-controls,
+.upfront-output-layout .uinsert-video-insert .ueditor-insert-remove {
+	display: none;
+}
