@@ -82,6 +82,12 @@ class Upfront_Posts extends Upfront_Server {
 	 * @param WP $wp WordPress object
 	 */
 	public function force_wp_archive_limit ($wp) {
+		// Let WooCommerce handle stuff if we are dealing with products, since in that case we just
+		// pass through content rendering
+		if (!empty($wp->query_vars['post_type']) && $wp->query_vars['post_type'] === 'product') return;
+		if (!empty($wp->query_vars['product_cat'])) return;
+		if (!empty($wp->query_vars['product_tag'])) return;
+
 		if (!empty($wp->query_vars['paged'])) $wp->query_vars['posts_per_page'] = 1;
 	}
 
@@ -123,14 +129,20 @@ class Upfront_Posts extends Upfront_Server {
 		$raw_taxonomies = apply_filters('upfront_posts-list-taxonomies', get_taxonomies(array(
 			'public' => true,
 		), 'objects'));
+
+		// Initialize data
 		$data = array(
 			"post_types" => array('' => __('Please, select one', 'upfront')),
 			"taxonomies" => array('' => __('Please, select one', 'upfront')),
 		);
+
 		foreach ($raw_post_types as $type => $obj) {
 			if (apply_filters('upfront_posts-list-skip_post_type-' . $type, false, $obj)) continue;
 			$data["post_types"][$type] = $obj->labels->name;
 		}
+		// Allow for "any" post type to be used in tax queries
+		$data["post_types"]["*"] = __("Any", "upfront");
+
 		foreach ($raw_taxonomies as $tax => $obj) {
 			if (apply_filters('upfront_posts-list-skip_taxonomy-' . $tax, false, $obj)) continue;
 			$data['taxonomies'][$tax] = $obj->labels->name;

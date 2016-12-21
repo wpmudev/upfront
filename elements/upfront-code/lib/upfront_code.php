@@ -112,6 +112,7 @@ class Upfront_CodeView extends Upfront_Object {
 			'default_markup' => __('<b>Enter your markup here...</b>', 'upfront'),
 			'default_style' => __('/* Your styles here */', 'upfront'),
 			'default_script' => __('/* Your code here */', 'upfront'),
+			'settings' => __('Settings', 'upfront'),
 			'intro' => array(
 				'embed' => __('Embed 3rd Party code', 'upfront'),
 				'code' => __('Write Custom Code', 'upfront'),

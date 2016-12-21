@@ -28,8 +28,11 @@ class Upfront_MediaServer extends Upfront_Server {
 
 		if (Upfront_Permissions::current(Upfront_Permissions::UPLOAD)) {
 			upfront_add_ajax('upfront-media-remove_item', array($this, "remove_item"));
+			upfront_add_ajax('upfront-media-remove_theme_item', array($this, "remove_theme_item"));
 			upfront_add_ajax('upfront-media-update_media_item', array($this, "update_media_item"));
 			upfront_add_ajax('upfront-media-upload', array($this, "upload_media"));
+			upfront_add_ajax('upfront-save-video-info', array($this, "save_video_info"));
+			upfront_add_ajax('upfront-get-video-info', array($this, "get_video_info"));
 			upfront_add_ajax('upfront-upload-icon-font', array($this, "upload_icon_font"));
 			upfront_add_ajax('upfront_update_active_icon_font', array($this, "update_active_icon_font"));
 			upfront_add_ajax('upfront_remove_icon_font_file', array($this, "remove_icon_font_file"));
@@ -184,7 +187,7 @@ class Upfront_MediaServer extends Upfront_Server {
 			);
 		}
 	}
-	
+
 	/**
 	 * Serve 1920 image size when uploading 4k images
 	 */
@@ -420,7 +423,17 @@ class Upfront_MediaServer extends Upfront_Server {
 		$data = stripslashes_deep($_POST);
 		$data['type'] = !empty($data['type']) ? $data['type'] : array('images');
 		$query = Upfront_MediaCollection::apply_filters($data);
-		$this->_out(new Upfront_JsonResponse_Success($query->to_php()));
+		$results = $query->to_php();
+
+		if (in_array('videos',  $data['type'])) {
+			foreach($results['items'] as $index=>$video) {
+				$video_info = get_post_meta(intval($video['ID']), 'videoinfo', true);
+				if (is_array($video_info) && $video_info['cover'] !== '') {
+					$results['items'][$index]['thumbnail'] = '<img class="media-library-video-thumbnail" src="' . $video_info['cover'] . '" />';
+				}
+			}
+		}
+		$this->_out(new Upfront_JsonResponse_Success($results));
 	}
 
 	public function list_theme_images () {
@@ -548,6 +561,44 @@ class Upfront_MediaServer extends Upfront_Server {
 		$this->_out(new Upfront_JsonResponse_Success("All good, media removed"));
 	}
 
+	// Same as remove_item but for theme/UI images.
+	public function remove_theme_item () {
+		$data = stripslashes_deep($_POST);
+
+		$post_id = !empty($data['item_id']) ? $data['item_id'] : false;
+		$post_ids = !empty($data['post_ids']) ? $data['post_ids'] : array();
+		if (!$post_id && !$post_ids) $this->_out(new Upfront_JsonResponse_Error("No post_id"));
+
+		if (!empty($post_id)) {
+			$post_ids[] = $post_id;
+		}
+
+		// Paths for theme images.
+		$supported_relpaths = array('ui');
+		foreach ($supported_relpaths as $testpath) {
+			if (!is_dir(trailingslashit(get_stylesheet_directory()) . $testpath)) continue;
+			$relpath = $testpath;
+			break;
+		}
+		if (empty($relpath)) $this->_out(new Upfront_JsonResponse_Error("No theme images directory"));
+
+		$dirPath = trailingslashit(trailingslashit(get_stylesheet_directory()) . $relpath);
+
+		foreach ($post_ids as $post_id) {
+			// Check permissions before allowing to delete file.
+			if (!current_user_can('upload_files')) $this->_out(new Upfront_JsonResponse_Error("You can't do this"));
+
+			// Clean up the file name
+			$filename = Upfront_UploadHandler::to_clean_file_name($post_id);
+
+			// Full path to file to delete.
+			$destination = $dirPath . $filename;
+			// Delete file.
+			@unlink($destination);
+		}
+		$this->_out(new Upfront_JsonResponse_Success("All good, media removed"));
+	}
+
 	public function update_media_item () {
 		$request = stripslashes_deep($_POST);
 		$data = !empty($request['data']) ? $request['data'] : false;
@@ -622,13 +673,14 @@ class Upfront_MediaServer extends Upfront_Server {
 				? (int)$media->size
 				: 0
 			;
-			if ($space_allowed && $file_size && $file_size + $space_used > $space_allowed) {
+			// If upload space is restricted and upload is too large, display an error.
+			if ($space_allowed && $file_size && $file_size + $space_used > $space_allowed && !get_site_option('upload_space_check_disabled')) {
 				// Upload quota exceeded
 				@unlink("{$pfx}{$filename}");
 				$this->_out(new Upfront_JsonResponse_Error(__("Error uploading the media item: allocated space quota exceeded", 'upfront')));
 			}
 
-			if(!preg_match('/\.(jpg|jpeg|gif|svg|png)$/i', $filename)) {
+			if(!preg_match('/\.(jpg|jpeg|gif|svg|png|mp4|webm)$/i', $filename)) {
 				// We have an error happening!
 				@unlink("{$pfx}{$filename}");
 				$this->_out(new Upfront_JsonResponse_Error(__("Sorry, this file type is not permitted for security reasons.", 'upfront')));
@@ -659,6 +711,122 @@ class Upfront_MediaServer extends Upfront_Server {
 
 		$this->_out(new Upfront_JsonResponse_Success($new_ids));
 	}
+
+	public function save_video_info () {
+		$new_ids = array();
+
+		// if (!$this->_check_valid_request_level(Upfront_Permissions::UPLOAD)) $this->_out(new Upfront_JsonResponse_Error("You can't do this."));
+		$request = stripslashes_deep($_POST);
+
+		$videoId = !empty($request['videoId']) ? intval($request['videoId']) : false;
+		if (!$videoId) $this->_out(new Upfront_JsonResponse_Error("Invalid video id"));
+
+		$base64image = !empty($request['base64image']) ? $request['base64image'] : false;
+		if (!$base64image) $this->_out(new Upfront_JsonResponse_Error("Invalid base64 image"));
+
+		$thumbname = !empty($request['thumbname']) ? $request['thumbname'] : false;
+		if (!$thumbname) $this->_out(new Upfront_JsonResponse_Error("Invalid thumbnail name"));
+
+		$embed = !empty($request['embed']) ? $request['embed'] : false;
+		if (!$embed) $this->_out(new Upfront_JsonResponse_Error("Embed is required"));
+
+		$width = !empty($request['width']) ? $request['width'] : false;
+		if (!$width) $this->_out(new Upfront_JsonResponse_Error("Width is required"));
+
+		$height = !empty($request['height']) ? $request['height'] : false;
+		if (!$height) $this->_out(new Upfront_JsonResponse_Error("Height is required"));
+
+		$aspect = !empty($request['aspect']) ? $request['aspect'] : false;
+		if (!$aspect) $this->_out(new Upfront_JsonResponse_Error("Aspect is required"));
+
+		if (!function_exists('wp_generate_attachment_metadata')) require_once(ABSPATH . 'wp-admin/includes/image.php');
+
+		$tempdir = get_temp_dir();
+
+		// $mb = 1024 * 1024;
+		// $space_used = function_exists('get_space_used')
+			// ? (int)get_space_used() * $mb
+			// : 0
+		// ;
+		// $space_allowed = function_exists('get_space_allowed')
+			// ? (int)get_space_allowed() * $mb
+			// : 0
+		// ;
+
+		$base64image = explode(',', $base64image);
+
+		$image = base64_decode($base64image[1]);
+
+		$filepath = $tempdir . $thumbname;
+
+		file_put_contents($filepath, $image);
+		$file_size = getimagesize($filepath);
+
+		// if ($space_allowed && $file_size && $file_size + $space_used > $space_allowed) {
+			// // Upload quota exceeded
+			// @unlink("{$pfx}{$filename}");
+			// $this->_out(new Upfront_JsonResponse_Error(__("Error uploading the media item: allocated space quota exceeded", 'upfront')));
+		// }
+
+		// array based on $_FILE as seen in PHP file uploads
+		$file = array(
+			'name' => $thumbname, // ex: wp-header-logo.png
+			'type' => 'image/jpg',
+			'tmp_name' => $filepath,
+			'error' => 0,
+			'size' => filesize($filepath),
+		);
+
+		$overrides = array(
+			'test_form' => false,
+			'test_size' => true,
+			'test_upload' => true,
+		);
+
+		// move the temporary file into the uploads directory
+		$results = wp_handle_sideload( $file, $overrides );
+
+		if (!empty($results['error'])) {
+			die('Could not upload thumbnail');
+		} else {
+
+			// $filename = $results['file']; // full path to the file
+			// $local_url = $results['url']; // URL to the file in the uploads dir
+			// $type = $results['type']; // MIME type of the file
+
+			// Drop transients for quotas et al
+			if (is_multisite()) {
+				delete_transient('dirsize_cache');
+			}
+
+			// Save video info for video
+			add_post_meta($videoId, 'videoinfo', array(
+					'id' => $videoId,
+					'embed' => $embed,
+					'cover' => $results['url'],
+					'width' => $width,
+					'height' => $height,
+					'aspect' => $aspect
+				)
+			);
+
+			$this->_out(new Upfront_JsonResponse_Success(array("thumburl" => $results['url'])));
+		}
+	}
+
+	function get_video_info() {
+		$data = stripslashes_deep($_POST);
+
+		$video_id = !empty($data['video_id']) ? intval($data['video_id']) : false;
+		if (!$video_id) $this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('invalid_id')));
+
+		return $this->_out(new Upfront_JsonResponse_Success(
+			array(
+				'videoinfo' => get_post_meta($video_id, 'videoinfo', true)
+			)
+		));
+	}
+
 
 	private function _check_valid_request_level ($level) {
 		if (!Upfront_Permissions::current($level)) return false;

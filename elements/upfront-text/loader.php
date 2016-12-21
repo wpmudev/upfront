@@ -11,6 +11,9 @@ function utext_init () {
 
 	// Expose our JavaScript definitions to the Upfront API
 	upfront_add_layout_editor_entity('utext', upfront_relative_element_url('js/utext', __FILE__));
+
+	// Add front script
+	add_action('wp_enqueue_scripts', array('Upfront_PlainTxtView', 'add_styles_scripts'));
 }
 // Initialize the entity when Upfront is good and ready
 add_action('upfront-core-initialized', 'utext_init');

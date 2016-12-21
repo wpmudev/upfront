@@ -10,3 +10,4 @@ npm-debug.log
 .project
 .settings
 .tags*
+.idea

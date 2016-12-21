@@ -68,8 +68,9 @@
             <img src="{{image.src}}" {[ if( image.width ){  ]} width="{{image.width}}" {[ } ]}  class="{{style.image.size_class}} wp-image-{{attachment_id}}" >
         {[ if(link_url){ ]} </a> {[ } ]}
         {[ if(style.caption.show){ ]}
-            <p class="wp-caption-text">{{caption}}</p>
+			<div class="upfront-wrapper wp-caption-text {{style.caption.width_cls}}" style="min-height:{{style.caption.height}}px">{{ caption }}</div>
         {[ } ]}
+		<div style="clear:both;"></div>
     </div>
     <div class="post-images-shortcode-wp" contenteditable="false"></div>
 </script>
@@ -177,9 +178,6 @@
 </script>
 <script type="text/template" id="upfront-formatting">
     <ul class="upfront-redactor-tag-list">
-        <li class="tag-list-section-title">
-            {{standard_formatting}}
-        </li>
         <li>
             <p  data-tag="p" class="tag-list-tag-p tag-list-tag">{{paragraph}}</p>
         </li>

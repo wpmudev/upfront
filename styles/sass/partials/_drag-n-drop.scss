@@ -58,7 +58,7 @@
   cursor: sw-resize;
 }
 
-.upfront-resize-handle-s {
+.upfront-resize-handle-s.ui-resizable-handle {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -69,19 +69,21 @@
   display: none !important;
 }
 .upfront-editable_entity > .upfront-resize-handle-s:before {
-  content: "";
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  right: 0;
-  margin: auto;
-  width: 45px;
-  height: 4px;
-  background: #fff;
-  border-radius:3px;
-  box-shadow: 0 0 5px 0 rgba(36,57,77,.5);
+	content: "";
+	position: absolute;
+	bottom: -3px;
+	left: 0;
+	right: 0;
+	margin: auto;
+	background: #fff;
+	border: 1px solid #48596a;
+	border-radius: 0;
+	width: 7px;
+	height: 7px;
+	max-width: 10px;
 }
 .upfront-editable_entity:not(.ui-resizable-disabled):hover > .upfront-resize-handle-s:not(.active-menu-item),
+.upfront-module-group-active > .upfront-resize-handle-s:not(.active-menu-item),
 .upfront-editable_entity.ui-resizable-resizing > .upfront-resize-handle-s,
 .upfront-module-active:not(.upfront-module-editing) > .upfront-resize-handle-s:not(.active-menu-item) {
   display: block !important;
@@ -91,7 +93,9 @@
 }
 .upfront-module-spacer > .upfront-resize-handle-s,
 .upfront-inline-panel-item-open .upfront-module-view > .upfront-module-active > .upfront-resize-handle-s,
-.upfront-inline-panel-item-open .upfront-module-view > .upfront-module-active:hover > .upfront-resize-handle-s {
+.upfront-inline-panel-item-open .upfront-module-view > .upfront-module-active:hover > .upfront-resize-handle-s,
+.upfront-module-object-group-on-edit.upfront-module-view > .upfront-module-active > .upfront-resize-handle-s,
+.upfront-module-object-group-on-edit.upfront-module-view > .upfront-module-active:hover > .upfront-resize-handle-s {
   display: none !important;
 }
 
@@ -104,7 +108,7 @@
   display: none !important;
 }
 
-.upfront-resize-handle-wrapper {
+.upfront-resize-handle-wrapper.ui-resizable-handle {
   cursor: ew-resize;
 }
 

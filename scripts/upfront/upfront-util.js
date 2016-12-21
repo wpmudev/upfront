@@ -15,13 +15,6 @@ _.mixin({
 	}
 });
 
-var _tpl = _.template;
-_.template = function (tpl, data) {
-	if (typeof undefined === typeof data) return _tpl(tpl);
-	var tmp = _tpl(tpl);
-	return tmp(data);
-};
-
 //requestFrameAnimation polyfill
 var rAFPollyfill = function(callback){
 		var currTime = new Date().getTime(),
@@ -144,6 +137,10 @@ define([
 			if ( Upfront.Application.current_subapplication.layout ) {
 				//request.upfront_layout = Upfront.Application.layout.get('layout');
 				request.layout = Upfront.Application.current_subapplication.layout.get('layout');
+			}
+			if ( Upfront.layout_data_from_create_layout && request.data && request.data.post_id === 'fake_post' && !request.layout ) {
+				request.layout = Upfront.layout_data_from_create_layout;
+				Upfront.layout_data_from_create_layout = false;
 			}
 			if ( !request.storage_key ) request.storage_key = _upfront_storage_key;
 			request.stylesheet = _upfront_stylesheet;
@@ -924,7 +921,7 @@ define([
 							return false;
 						}
 				;
-				
+
 				if ( !this.disable_esc ) {
 					$('body').bind( 'keyup', function( event ) {
 						if ( event.keyCode === 27 ) me.close();
@@ -1018,6 +1015,7 @@ define([
 
 	var PreviewUpdate = function () {
 		var _layout_data = false,
+			_last_layout_data = false,
 			_layout_compressed = false,
 			_layout = false,
 			_saving_flag = false,
@@ -1128,6 +1126,13 @@ define([
 				_is_dirty = true;
 				set_data();
 
+				// Don't flood server with unnecessary requests
+				if (_layout_data === _last_layout_data) {
+					_saving_flag = false;
+					return;
+				}
+				_last_layout_data = _layout_data;
+
 				Upfront.Events.trigger("preview:build:start");
 				Upfront.Util.post({
 						action: "upfront_build_preview",
@@ -1135,7 +1140,7 @@ define([
 						"current_url": window.location.href,
 						"original_length": _layout_compressed ? _layout_compressed.original_length : 0,
 						"compressed_length": _layout_compressed ? _layout_compressed.compressed_length : 0,
-						"compression": Upfront.mainData.save_compression ? 1 : 0,
+						"compression": Upfront.mainData.save_compression ? 1 : 0
 					})
 					.success(function (response) {
 						var data = response.data || {};

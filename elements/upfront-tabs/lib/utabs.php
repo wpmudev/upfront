@@ -80,12 +80,7 @@ class Upfront_UtabsView extends Upfront_Object {
 	}
 
 	protected function _do_shortcode ($content) {
-		$do_processing = apply_filters(
-			'upfront-shortcode-enable_in_layout', 
-			(defined('UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES') && UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES ? false : true)
-		);
-		if ($do_processing) $content = do_shortcode($content);
-		return $content;
+		return Upfront_Codec::get('wordpress')->do_shortcode($content);
 	}
 
 	public function add_js_defaults($data){
@@ -140,7 +135,7 @@ class Upfront_UtabsView extends Upfront_Object {
 				'active_p_label' => __('Active tab content paragraph', 'upfront'),
 				'active_p_info' => __('The paragraph that contains active tab content', 'upfront'),
 			),
-			'settings' => __('Tabs settings', 'upfront'),
+			'settings' => __('Settings', 'upfront'),
 			'add_tab' => __('Add a Tab', 'upfront'),
 			'default_preset' => __('Default', 'upfront'),
 			'content_area_colors_label' => __('Content Area Colors', 'upfront'),

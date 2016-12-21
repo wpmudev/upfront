@@ -126,6 +126,7 @@ abstract class Upfront_Entity {
 		$background_repeat = $this->_get_breakpoint_property('background_repeat', $breakpoint_id);
 		$background_fill = $this->_get_breakpoint_property('background_fill', $breakpoint_id);
 		$background_position = $this->_get_breakpoint_property('background_position', $breakpoint_id);
+		$background_size = $this->_get_breakpoint_property('background_size', $breakpoint_id);
 		$background_style = $this->_get_breakpoint_property('background_style', $breakpoint_id);
 		$background_image = preg_replace('/^https?:/', '', $background_image);
 		if (!$lazy_loading) {
@@ -136,7 +137,7 @@ abstract class Upfront_Entity {
 			$css[] = 'background-repeat: no-repeat';
 			$css[] = 'background-position: 50% 50%';
 		} else {
-			$css[] = 'background-size: auto auto';
+			$css[] = "background-size: $background_size";
 			$css[] = 'background-repeat: ' . $background_repeat;
 			$css[] = 'background-position: ' . $background_position;
 		}
@@ -148,8 +149,12 @@ abstract class Upfront_Entity {
 		$default_type = $this->get_background_type();
 		$css = array();
 		$background_color = $this->_get_breakpoint_property('background_color', $breakpoint_id);
+		$featured_fallback_background_color = $this->_get_breakpoint_property('featured_fallback_background_color', $breakpoint_id);
 		if ( !$type || in_array($type, array('image', 'color', 'featured')) ){
-			if ($background_color) {
+			// if featured and no featured image, set to fallback color
+			if ($featured_fallback_background_color && 'featured' == $type && !has_post_thumbnail(Upfront_Output::get_post_id())) {
+				$css[] = 'background-color: ' . $featured_fallback_background_color;
+			} else if ($background_color) {
 				$css[] = 'background-color: ' . $background_color;
 			}
 			if (!$this->_is_background_overlay($breakpoint_id)) {
@@ -247,6 +252,21 @@ abstract class Upfront_Entity {
 			if ('parallax' == $background_style) {
 				$attr .= 'data-bg-parallax=".upfront-bg-image"';
 			}
+
+			// What a mess!
+			// Okay, so now let's check if we're dealing with a "fixed" image
+			// "fixed" meaning fixed in position and size constraints.
+			// Apparently, same deal for "tile"...
+			if ('fixed' === $background_style || 'tile' === $background_style) {
+				// We do? Nice!
+				// Okay, so with that in mind, let's throw in some attributes,
+				// so that the background loading routine in layout.js
+				// stops breaking our carefully crafted inline CSS re:size and position
+				$ratio_kw = esc_attr($background_style);
+				$image_attr .= " data-bg-image-ratio-{$breakpoint_id}='{$ratio_kw}'";
+			}
+			// Okay, let's get on with our lives now...
+
 			$markup = "<div class='upfront-bg-image upfront-image-lazy upfront-image-lazy-bg' style='{$image_css}' {$image_attr}></div>";
 		}
 		else if ('map' == $type) {
@@ -267,12 +287,25 @@ abstract class Upfront_Entity {
 			$auto = $this->_get_breakpoint_property('background_slider_rotate', $breakpoint_id);
 			$interval = $this->_get_breakpoint_property('background_slider_rotate_time', $breakpoint_id) * 1000;
 			$show_control = $this->_get_breakpoint_property('background_slider_control', $breakpoint_id);
+			$control_style = $this->_get_breakpoint_property('background_slider_control_style', $breakpoint_id);
 			$effect = $this->_get_breakpoint_property('background_slider_transition', $breakpoint_id);
 			$slide_attr = "data-slider-show-control='{$show_control}' data-slider-effect='{$effect}'";
 			if ( $auto )
 				$slide_attr .= " data-slider-auto='1' data-slider-interval='{$interval}'";
 			else
 				$slide_attr .= " data-slider-auto='0'";
+
+			if ($control_style === 'arrows') {
+				$slide_attr .= " data-control_num='0'";
+				$slide_attr .= " data-control_next_prev='1'";
+			} else if ($control_style === 'dots') {
+				$slide_attr .= " data-control_num='1'";
+				$slide_attr .= " data-control_next_prev='0'";
+			} else {
+				$slide_attr .= " data-control_num='1'";
+				$slide_attr .= " data-control_next_prev='1'";
+			}
+
 	    	foreach ( $images as $image ){
 	    		//$src = wp_get_attachment_image($image, 'full');
 	    		$src = upfront_get_attachment_image_lazy($image, 'full');
@@ -282,50 +315,91 @@ abstract class Upfront_Entity {
 			$markup = "<div class='upfront-bg-slider' {$slide_attr}>{$slides_markup}</div>";
 		}
 		else if ('video' == $type){
-			$video = $this->_get_breakpoint_property('background_video', $breakpoint_id);
-			$embed = $this->_get_breakpoint_property('background_video_embed', $breakpoint_id);
-			$width = $this->_get_breakpoint_property('background_video_width', $breakpoint_id);
-			$height = $this->_get_breakpoint_property('background_video_height', $breakpoint_id);
-			$style = $this->_get_breakpoint_property('background_video_style', $breakpoint_id);
-			$mute = $this->_get_breakpoint_property('background_video_mute', $breakpoint_id);
-            $autoplay = $this->_get_breakpoint_property('background_video_autoplay', $breakpoint_id);
-            $loop = $this->_get_breakpoint_property('background_video_loop', $breakpoint_id);
-			if ( $video && $embed ){
-			    self::$_video_index++;
-                $video_id = 'bg_video_' . self::$_video_index;
-			    $mute = $mute === false ? 1 : intval($mute);
-                $autoplay = $autoplay === false ? 1 : intval($autoplay);
-				$attr = 'data-bg-video-ratio="' . round($height/$width, 2) . '" ';
-				$attr .= 'data-bg-video-style="' . $style . '" ';
-				$attr .= 'data-bg-video-mute="' . $mute . '"';
-				$attr .= 'data-bg-video-loop="' . $loop . '"';
-				$autoplay_attr = '&amp;autoplay=' . $autoplay;
-				// hack additional attributes
-				$vid_attrs = array(
-					'.*?vimeo\.' => ($loop === 1 ? '&amp;loop=1' : 'loop=0') . $autoplay_attr . ( $mute == 1 ? '&amp;api=1&amp;player_id=' . $video_id : '' ),
-					'.*?youtube\.com\/(v|embed)\/(.+?)(\/|\?).*?$' =>  '&amp;controls=0&amp;showinfo=0&amp;rel=0&amp;wmode=transparent&amp;html5=1&amp;modestbranding=1' . ($loop === 1 ? '&amp;loop=1&amp;enablejsapi=1' : 'loop=0') . $autoplay_attr . ( $mute == 1 ? '&amp;enablejsapi=1' /*. '&amp;origin=' . site_url()*/ : '' ),
-					'.*?wistia\.' => ($loop === 1 ? 'endVideoBehavior=loop' : '') . ( $autoplay == 1 ? '&amp;autoPlay=true' : '' ) . ( $mute == 1 ? '&amp;volume=0' : '' )
-				);
-				$vid_attr = '';
-				$embed_attr = ' id="' . $video_id . '"';
-				if ( preg_match('/(^.*?<iframe.*?src=[\'"])(.*?)([\'"])(.*$)/is', $embed, $match) ){
-					foreach ( $vid_attrs as $vid => $a ){
-						if ( preg_match( '/^(https?:|)\/\/' . $vid . '/i', $match[2], $vid_match ) ){
-							foreach ( $vid_match as $i => $m ){
-								if ( $i == 0 )
-									continue;
-								$a = str_replace('$'.$i, $m, $a);
+			$background_style = $this->_get_breakpoint_property('background_style', $breakpoint_id);
+			$background_style = $background_style ? $background_style : 'service';
+			if ('service' === $background_style) {
+				$video = $this->_get_breakpoint_property('background_video', $breakpoint_id);
+				$embed = $this->_get_breakpoint_property('background_video_embed', $breakpoint_id);
+				$width = $this->_get_breakpoint_property('background_video_width', $breakpoint_id);
+				$height = $this->_get_breakpoint_property('background_video_height', $breakpoint_id);
+				$style = $this->_get_breakpoint_property('background_video_style', $breakpoint_id);
+				$mute = $this->_get_breakpoint_property('background_video_mute', $breakpoint_id);
+				$autoplay = $this->_get_breakpoint_property('background_video_autoplay', $breakpoint_id);
+				if ( $video && $embed ){
+					self::$_video_index++;
+					$video_id = 'bg_video_' . self::$_video_index;
+					$mute = $mute === false ? 1 : intval($mute);
+					$autoplay = $autoplay === false ? 1 : intval($autoplay);
+					$attr = 'data-bg-video-ratio="' . round($height/$width, 2) . '" ';
+					$attr .= 'data-bg-video-style="' . $style . '" ';
+					$attr .= 'data-bg-video-mute="' . $mute . '"';
+					$attr .= 'data-bg-video-loop="' . $loop . '"';
+					$autoplay_attr = '&amp;autoplay=' . $autoplay;
+					// hack additional attributes
+					$vid_attrs = array(
+						'.*?vimeo\.' => ($loop === 1 ? '&amp;loop=1' : 'loop=0') . $autoplay_attr . ( $mute == 1 ? '&amp;api=1&amp;player_id=' . $video_id : '' ),
+						'.*?youtube\.com\/(v|embed)\/(.+?)(\/|\?).*?$' =>  '&amp;controls=0&amp;showinfo=0&amp;rel=0&amp;wmode=transparent&amp;html5=1&amp;modestbranding=1' . ($loop === 1 ? '&amp;loop=1&amp;enablejsapi=1' : 'loop=0') . $autoplay_attr . ( $mute == 1 ? '&amp;enablejsapi=1' /*. '&amp;origin=' . site_url()*/ : '' ),
+						'.*?wistia\.' => ($loop === 1 ? 'endVideoBehavior=loop' : '') . ( $autoplay == 1 ? '&amp;autoPlay=true' : '' ) . ( $mute == 1 ? '&amp;volume=0' : '' )
+					);
+					$vid_attr = '';
+					$embed_attr = ' id="' . $video_id . '"';
+					if ( preg_match('/(^.*?<iframe.*?src=[\'"])(.*?)([\'"])(.*$)/is', $embed, $match) ){
+						foreach ( $vid_attrs as $vid => $a ){
+							if ( preg_match( '/^(https?:|)\/\/' . $vid . '/i', $match[2], $vid_match ) ){
+								foreach ( $vid_match as $i => $m ){
+									if ( $i == 0 )
+										continue;
+									$a = str_replace('$'.$i, $m, $a);
+								}
+								$vid_attr = $a;
+								break;
 							}
-							$vid_attr = $a;
-							break;
 						}
+						$embed = $match[1] . $match[2] . ( strpos($match[2], '?') > 0  ? '&amp;' : '?' ) . $vid_attr . $match[3] . $embed_attr . $match[4];
 					}
-					$embed = $match[1] . $match[2] . ( strpos($match[2], '?') > 0  ? '&amp;' : '?' ) . $vid_attr . $match[3] . $embed_attr . $match[4];
+					$markup = "<script class='video-embed-code' type='text/html'>{$embed}</script>";
 				}
-				$markup = "<script class='video-embed-code' type='text/html'>{$embed}</script>";
+			} else {
+				$video = $this->_get_breakpoint_property('uploaded_background_video', $breakpoint_id);
+				$video_id = 'bg_video_' . self::$_video_index;
+
+				$left = $this->_get_breakpoint_property('uploaded_background_video_left', $breakpoint_id);
+				$style = $this->_get_breakpoint_property('background_video_style', $breakpoint_id);
+				$css = '';
+				if ($left) {
+					$css .= 'left: ' . $left;
+				}
+
+				$width = $this->_get_breakpoint_property('background_video_width', $breakpoint_id);
+				$height = $this->_get_breakpoint_property('background_video_height', $breakpoint_id);
+				$attr = ' data-bg-video-ratio="' . round($height/$width, 2) . '" ';
+				$attr .= 'data-bg-video-style="' . $style . '" ';
+				$attr .= 'id="' . $video_id . '"  ';
+
+				$mute = $this->_get_breakpoint_property('background_video_mute', $breakpoint_id);
+				$autoplay = $this->_get_breakpoint_property('background_video_autoplay', $breakpoint_id);
+
+
+				if ($mute)
+					$vid_attr .= ' muted ';
+				if ($autoplay)
+					$vid_attr .= ' autoplay ';
+				if ($loop)
+					$vid_attr .= ' loop ';
+
+				$embed = $this->_get_breakpoint_property('uploaded_background_video_embed', $breakpoint_id);
+				$embed = str_replace('video class', 'video ' . $vid_attr . 'controls class', $embed);
+				$embed = preg_replace('#width="\d+"#', 'width="' . $width . '"', $embed);
+				$embed = preg_replace('#height="\d+"#', 'height="' . $height . '"', $embed);
+
+				if ( $video && $embed ){
+					self::$_video_index++;
+					$markup = "<script class='video-embed-code' type='text/html'>{$embed}</script>";
+				}
 			}
 		}
-		return "<div class='{$classes}' {$attr}>{$markup}</div>" . "\n";
+
+		return "<div style='" . $css . "' class='{$classes}' {$attr}>{$markup}</div>" . "\n";
 	}
 
 	public function get_propagated_classes () {

@@ -69,12 +69,7 @@ class Upfront_UaccordionView extends Upfront_Object {
 	}
 
 	protected function _do_shortcode ($content) {
-		$do_processing = apply_filters(
-			'upfront-shortcode-enable_in_layout', 
-			(defined('UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES') && UPFRONT_DISABLE_LAYOUT_TEXT_SHORTCODES ? false : true)
-		);
-		if ($do_processing) $content = do_shortcode($content);
-		return $content;
+		return Upfront_Codec::get('wordpress')->do_shortcode($content);
 	}
 
 	public function add_js_defaults($data){
@@ -141,7 +136,7 @@ class Upfront_UaccordionView extends Upfront_Object {
 				'wrap' => __('Element Wrapper', 'upfront'),
 				'wrap_info' => __('The wrapper of the whole element.', 'upfront'),
 			),
-			'settings' => __('Accordion settings', 'upfront'),
+			'settings' => __('Settings', 'upfront'),
 			'panel_label'	=> __('Panel', 'upfront'),
 			'add_panel'	=> __('Add Panel', 'upfront'),
 			'content_label' => __('<p>Content</p>', 'upfront'),

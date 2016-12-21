@@ -55,9 +55,20 @@ define(function() {
 
 			this.model.on('region:updated', this.refreshMarkup, this);
 			this.listenTo(this.model.get("properties"), 'change', this.refreshMarkup);
+			
+			// Check if preset exist, if not replace with default
+			this.check_if_preset_exist();
 		},
 
 		get_content_markup: function () {
+			// Query plugin output only if single page is loading
+			if (Upfront.Application.is_single() === false) {
+				var pluginLayout = Upfront.Application.is_plugin_layout();
+				if (pluginLayout) {
+					this.$el.find(".upfront-object-content").empty().append('<div>Below is sample content for ' + pluginLayout.pluginName + '. Use it as a reference for styling.</div>' + pluginLayout.data);
+					return;
+				}
+			}
 			if(this.changed || !this.markup){
 				//Is it shadow?
 				if(this.parent_module_view.region.get("name") != 'shadow')

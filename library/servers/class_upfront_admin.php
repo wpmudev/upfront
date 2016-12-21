@@ -37,7 +37,7 @@ class Upfront_Server_Admin implements IUpfront_Server {
 
 	public function pagetemplate_notice() {
 		$screen = ( function_exists('get_current_screen') ) ? get_current_screen() : false;
-		if(($GLOBALS['pagenow'] == "post.php" && $screen && $screen->post_type == "page")|| $GLOBALS['pagenow'] == "post-new.php" ) {
+		if( ($GLOBALS['pagenow'] == "post.php" || $GLOBALS['pagenow'] == "post-new.php") && $screen && $screen->post_type == "page" && post_type_supports($screen->post_type,'page-attributes') ) {
 			echo '<div class="error"><p>'. __('WARNING: If you change the template associated with this post then any content or changes you have made using the drag and drop Upfront editor will be lost.', 'upfront'). '</p></div>';
 		}
 	}

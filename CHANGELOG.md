@@ -1,6 +1,78 @@
 Change Log
 ============
 
+1.6.1 - 2016-12-01
+-------------------------------------------------------------------------------
+- Fix: region settings bug fixes and improvements
+- Fix: color picker cutoff in sidebar settings
+- Fix: define switches case sensitivity and HHVM issue
+- Fix: refactor shortcode expansion to WordPress codec implementation
+- Fix: drag and drop error when no elements is in layout
+- Fix: MarketPress compatibility issue with third party plugin
+
+1.6 - 2016-11-23
+-------------------------------------------------------------------------------
+- Add: Maintenance mode
+- Add: MarketPress compatibility
+- Add: Region settings moved to sidebars
+- Add: better dynamic scrollbars
+
+- Fix: tabs element header issue
+- Fix: current menu item issue in editor mode
+- Fix: issue with region background parallax
+- Fix: check for space limiting enabled state before enforcing
+- Fix: issue with incorrect Google Maps API key
+- Fix: image inserts captions issue
+- Fix: code element validity check
+- Fix: issue with fixed position global background image
+
+1.5 - 2016-10-24
+-------------------------------------------------------------------------------
+- Add: WooCommerce support
+- Add: padding setting to individual post part on post data elements
+- Add: region settings moved to the sidebar
+- Add: global region reset toggle to reset options area in admin
+
+- Fix: prevent double clicking on padding control to open group editing
+- Fix: region bg issue if total grid width is more than the screen width
+- Fix: improve layout rendering by change finite timeouts to pubsub
+- Fix: improve compatibility with anchoring with the Domain Mapping plugin
+- Fix: keyboard controlled padding is broken
+- Fix: slider side caption bug
+- Fix: remove upfront template admin notice on post types
+- Fix: element padding panel gets cut when on bottom of page
+- Fix: Upfront notifier z-index
+- Fix: redactor inline panel over post select popup
+- Fix: accordion editor exit issue
+
+1.4.3 - 2016-10-05
+-------------------------------------------------------------------------------
+- Add: compress data when saving
+- Add: loop option for youtube element and video region
+- Add: streamlined group settings to sidebar
+- Add: improved element padding controls
+- Add: improved image insert trigger behavior
+
+- Fix: default bg for triggered menu not rendered
+- Fix: menu element inline link panel hidden when on bottom of page
+- Fix: sidebar more menu overlapped with element settings panel
+- Fix: esc key issue on builder getting started dialog
+- Fix: overlapping issue with the inline image button
+- Fix: only warn users when multiple tabs are open for the current layout
+- Fix: issue with notifications/warnings being hidden behind the media overlay
+- Fix: restyle initial state of the menu element
+- Fix: error when preset is deleted on different breakpoint
+- Fix: slider element with side caption resizing issue
+- Fix: can't delete login element after editing default appearance
+- Fix: post/page setting not displayed first time
+- Fix: parallax background issue on firefox
+- Fix: layout naming issue in admin list
+- Fix: post data meta element issue
+- Fix: rtl position issues
+- Fix: gallery image controls overlapped issue
+- Fix: can't create new menu in menu element
+- Fix: prevent save as draft to include shadow region
+
 
 1.4.2 - 2016-09-15
 -------------------------------------------------------------------------------

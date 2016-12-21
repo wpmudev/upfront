@@ -235,6 +235,9 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 			'cant_update_auto' => __('Cannot update menu auto add pages', 'upfront'),
 			'visit_url' => __('Visit URL', 'upfront'),
 			'edit_url' => __('Edit URL', 'upfront'),
+			'edit_label' => __('Edit label', 'upfront'),
+			'remove_link' => __('Remove link', 'upfront'),
+			'link_label' => __('Link label', 'upfront'),
 			'create_dropdown' => __('Create Drop-Down', 'upfront'),
 			'choose_existing_menu' => __('Choose existing menu', 'upfront'),
 			'are_you_sure_nag' => __('Are you sure to delete this menu?', 'upfront'),
@@ -298,7 +301,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 				'background_label' => __('Background', 'upfront'),
 				'item_background_label' => __('Item Background', 'upfront'),
 			),
-			'settings' => __('Navigation settings', 'upfront'),
+			'settings' => __('Settings', 'upfront'),
 			'add_item' => __('Add a menu item', 'upfront'),
 		);
 		return !empty($key)

@@ -7,6 +7,8 @@
 @import 'sass/partials/sidebar-ui';
 @import 'sass/partials/fields';
 @import 'sass/partials/ueditor-inserts';
+@import 'sass/partials/video-insert';
+@import 'sass/admin/buttons';
 @import 'sass/partials/region';
 @import 'sass/partials/map-editor';
 @import 'sass/partials/bgsettings';
@@ -162,7 +164,7 @@
   right: 0;
   background: rgba(38,58,77,0.8);
   display: none;
-	z-index: 10;
+  z-index: 1000;
 }
 
 #preventUsageOverlay span, #preventElementsUsageOverlay span {
@@ -194,7 +196,8 @@
 }
 
 
-
+@import 'sass/partials/perfect-scrollbar';
+@import 'sass/partials/new-perfect-scrollbar';
 @import 'sass/partials/redactor';
 @import 'sass/partials/new-color-picker';
 @import 'sass/partials/plaintext';

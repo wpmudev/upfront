@@ -52,11 +52,10 @@
                 Upfront.Events.on("layout:render", this.apply_state_binding, this);
             },
             get_title: function () {
-                if ( Upfront.Application.is_single( "post" ) ) {
-                    return l10n.post_settings;
-                } else if ( Upfront.Application.is_single( "page" ) ) {
+				if ( Upfront.Application.is_single( "page" ) ) {
                     return l10n.page_settings;
                 }
+				return l10n.post_settings;
             },
             on_save: function () {
                 var regions = this.model.get('regions');

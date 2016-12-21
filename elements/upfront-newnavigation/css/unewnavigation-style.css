@@ -40,7 +40,7 @@ div.upfront-navigation div[data-style="burger"] ul.sub-menu > li {
 }
 
 
-div.upfront-navigation li.menu-item a {
+div.upfront-navigation li.menu-item a:not(.js-ulinkpanel-input-entry) {
   display: block;
   padding: 6px 20px;
   font-size: 16px;

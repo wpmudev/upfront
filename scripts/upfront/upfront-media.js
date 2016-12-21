@@ -1,8 +1,9 @@
 (function ($, undefined) {
 
 define([
-    'scripts/upfront/upfront-media/insert-options-item-control'
-],function(InsertOptions) {
+    'scripts/upfront/upfront-media/insert-options-item-control',
+		'scripts/perfect-scrollbar/perfect-scrollbar'
+],function(InsertOptions, perfectScrollbar) {
 
 	var MEDIA_SIZES = {
 		FULL: "full",
@@ -129,6 +130,22 @@ define([
 				data = {
 					"action": "upfront-media-remove_item",
 					"post_ids": this.invoke("get", "ID")
+				}
+			;
+			Upfront.Util.post(data)
+				.success(function (response) {
+					me.reset([]);
+					Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+				})
+			;
+		},
+		// Same as delete_media_items except for theme/UI images.
+		delete_theme_items: function () {
+			var me = this,
+				data = {
+					"action": "upfront-media-remove_theme_item",
+					// Theme images use file names rather than post IDs.
+					"post_ids": this.invoke("get", "post_title")
 				}
 			;
 			Upfront.Util.post(data)
@@ -483,7 +500,12 @@ define([
 					if (!show_nag || (show_nag && confirm(l10n.item_in_use_nag))) {
 						ActiveFilters.current_keys = [];
 						ActiveFilters.current_models = [];
-						this.model.delete_media_items();
+						// If theme image, delete via proper deletion method.
+						if (ActiveFilters.themeImages) {
+							return this.model.delete_theme_items();
+						}
+						// Otherwise delete media item.
+						return this.model.delete_media_items();
 					}
 				}
 			}
@@ -541,6 +563,16 @@ define([
                         return renderer === "render_insert_options";
                     }) );
                 }
+
+								if (_.indexOf(this.options.media_type, 'videos') !== -1) {
+                    sections = _( sections.reject(function(section){
+                        return section === "additional_sizes";
+                    }) );
+
+                    renderers =  _( renderers.reject(function(renderer){
+                        return renderer === "render_additional_sizes";
+                    }) );
+								}
 
 
 
@@ -1431,9 +1463,9 @@ define([
 				uploadUrl = ActiveFilters.themeImages ? _upfront_media_upload.theme : _upfront_media_upload.normal
 			;
 
-            this.$("#fileupload").remove();
-            this.$el.append('<input id="fileupload" type="file" style="display:none" name="media" data-url="' + uploadUrl + '" multiple >');
-            this.$("#fileupload").off("click").on("click", function (e) { e.stopPropagation(); }).fileupload({
+			this.$("#fileupload").remove();
+			this.$el.append('<input id="fileupload" type="file" style="display:none" name="media" data-url="' + uploadUrl + '" multiple >');
+			this.$("#fileupload").off("click").on("click", function (e) { e.stopPropagation(); }).fileupload({
 				dataType: 'json',
 				add: function (e, data) {
 					var media = data.files[0],
@@ -1447,7 +1479,8 @@ define([
 					data.submit();
 					new_media[count].on("upload:abort", function () {
 						data.abort();
-						if (new_media[count].get("ID")) {
+						// If normal Media.
+						if (new_media[count].get("ID") && !ActiveFilters.themeImages) {
 							// Already uploaded this file, remove on the server side
 							Upfront.Util.post({
 								action: "upfront-media-remove_item",
@@ -1455,7 +1488,7 @@ define([
 							}).always(function () {
 								media_library_view.model.trigger("change");
 							});
-						}
+						} 
 						media_library_view.model.remove(new_media[count]);
 						media_library_view.model.trigger("change");
 					});
@@ -1695,17 +1728,19 @@ define([
 			update_model: function (selected) {
 				// checking on all models on current page
 				for ( var key in selected.models ) {
-					var model = selected.models[key];
-					var index = ActiveFilters.current_keys.indexOf(model.attributes.ID);
+					var model = selected.models[key],
+						modelAttributes = ((model || {}).attributes || {})
+						index = ActiveFilters.current_keys.indexOf(modelAttributes.ID)
+					;
 					if( index == -1 ) {
 						// inserting selected media models on the list
-						if( model.attributes.selected ) {
-							ActiveFilters.current_keys.push(model.attributes.ID);
+						if( modelAttributes.selected ) {
+							ActiveFilters.current_keys.push(modelAttributes.ID);
 							ActiveFilters.current_models.push(model);
 						}
 					} else {
 						// removing media models on the list
-						if( !model.attributes.selected || model.attributes.selected === undefined ) {
+						if( !modelAttributes.selected || modelAttributes.selected === undefined ) {
 							ActiveFilters.current_keys.splice(index, 1);
 							ActiveFilters.current_models.splice(index, 1);
 						}
@@ -1995,7 +2030,7 @@ define([
 
 					// preserving selected media
 					if( ActiveFilters.current_keys.length ) {
-						var target_index = ActiveFilters.current_keys.indexOf(model.attributes.ID);
+						var target_index = ActiveFilters.current_keys.indexOf(((model || {}).attributes || {}).ID);
 						if( target_index != -1 ) {
 							model.set({selected: true}, {silent: true});
 							model.trigger("appearance:update");
@@ -2006,6 +2041,18 @@ define([
 				// running change event to apply persistent list
 				var selected_model = new MediaCollection_Selection(ActiveFilters.current_models);
 				Upfront.Events.trigger("media:item:selection_changed", selected_model);
+
+				// Add JS Scrollbar.
+				perfectScrollbar.withDebounceUpdate(
+					// Element.
+					this.el,
+					// Run First.
+					true,
+					// Event.
+					false,
+					// Initialize.
+					true
+				);
 			}
 		},
 		update: function () {
@@ -2119,11 +2166,14 @@ define([
 				this.$el.find('.upfront-media-progress-bar').remove();
 
 				// adding it on persistent list
-				ActiveFilters.current_keys.push(this.model.attributes.ID);
 				ActiveFilters.current_models.push(this.model);
-				// redraw media gallery
-				manager.render_library();
-
+				// Only do if regular media.
+				if (!ActiveFilters.themeImages) {
+					// Add as current keys so uploads are selected.
+					ActiveFilters.current_keys.push(this.model.attributes.ID);
+					// redraw media gallery
+					manager.render_library();
+				}
 			},
 			remove: function() {
 				Upfront.Events.off("media_manager:media:toggle_titles", this.toggle_title);

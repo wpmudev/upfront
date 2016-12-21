@@ -7,7 +7,8 @@ abstract class Upfront_Container extends Upfront_Entity {
 	protected $_child_view_class;
 	protected $_wrapper;
 	protected $_wrapper_is_spacer;
-
+	public static $_presets;
+	
 	/**
 	 * Array of child views, it's only filled in self::get_markup foreach loop
 	 *
@@ -19,9 +20,43 @@ abstract class Upfront_Container extends Upfront_Entity {
 		$html='';
 		$wrap='';
 
-		if (!empty($this->_data[$this->_children])) {
+		// Allow compat to forbid post data types (some wreck up output from plugins)
+		$forbidden_post_data_types = apply_filters('upfront-forbidden_post_data_types', array());
 
+		$do_compat = false;
+		if (count($forbidden_post_data_types) > 0) {
+			// This is for compatibility layer to ensure that only post content is rendered
+			// when needed.
+			// To allow other post part types to be rendered in other places than main module
+			// only filter if there is content present (which means this is main module that
+			// shows content beside other part types)
+			$check_children_type = $this->_type === 'Object_Group' &&
+				$this->_children === 'objects' &&
+				count($this->_data[$this->_children]) > 1;
+
+			$are_post_parts = false;
+			if ($check_children_type) {
+				$first_child = $this->_data[$this->_children][0];
+				$are_post_parts = upfront_get_property_value('view_class', $first_child) === 'PostDataPartView';
+			}
+			if ($are_post_parts) {
+				foreach ($this->_data[$this->_children] as $idx => $child) {
+					if ( upfront_get_property_value('part_type', $child) === 'content' ) {
+						// There is content, show only content i.e. do filtering
+						$do_compat = true;
+						break;
+					}
+				}
+			}
+		}
+
+		if (!empty($this->_data[$this->_children])) {
 			foreach ($this->_data[$this->_children] as $idx => $child) {
+				if ($do_compat) {
+					if (upfront_get_property_value('view_class', $child) === 'PostDataPartView' &&
+						in_array(upfront_get_property_value('part_type', $child), $forbidden_post_data_types)) continue;
+				}
+
 				$this->_child_views[] = $child_view  = $this->instantiate_child($child, $idx);
 				if ($child_view instanceof Upfront_Entity) {
 					// Have wrapper? If so, then add wrappers
@@ -109,12 +144,58 @@ abstract class Upfront_Container extends Upfront_Entity {
 			return $view->get_markup();
 		}
 	}
+	
+	public static function _load_presets () {
+		
+		if( empty( self::$_presets ) ) {
+			self::$_presets = array(
+				'UnewnavigationModel' => Upfront_Nav_Presets_Server::get_instance()->get_presets_ids(),
+				'ButtonModel' => Upfront_Button_Presets_Server::get_instance()->get_presets_ids(),
+				'PostsModel' => Upfront_Posts_Presets_Server::get_instance()->get_presets_ids(),
+				'PlainTxtModel' => Upfront_Text_Presets_Server::get_instance()->get_presets_ids(),
+				'UimageModel' => Upfront_Image_Presets_Server::get_instance()->get_presets_ids(),
+				'UaccordionModel' => Upfront_Accordion_Presets_Server::get_instance()->get_presets_ids(),
+				'UcommentModel' => Upfront_Ucomment_Presets_Server::get_instance()->get_presets_ids(),
+				'UcontactModel' => Upfront_Contact_Presets_Server::get_instance()->get_presets_ids(),
+				'UgalleryModel' => Upfront_Gallery_Presets_Server::get_instance()->get_presets_ids(),
+				'USliderModel' => Upfront_Slider_Presets_Server::get_instance()->get_presets_ids(),
+				'UtabsModel' => Upfront_Tab_Presets_Server::get_instance()->get_presets_ids(),
+				'ThisPostModel' => Upfront_Post_Presets_Server::get_instance()->get_presets_ids(),
+				'UwidgetModel' => Upfront_Widget_Presets_Server::get_instance()->get_presets_ids(),
+				'LoginModel' => Upfront_Login_Presets_Server::get_instance()->get_presets_ids(),
+			);
+		}
+
+		return self::$_presets;
+	}
+	
+	public function preset_exist ( $preset, $type ) {
+		
+		if( empty( $type ) ) return 'default';
+		
+		$presets = Upfront_Container::_load_presets();
+
+		if( isset( $presets[$type] ) && !empty( $presets[$type] ) ) {
+			if( in_array( $preset, $presets[$type] ) ) {
+				return $preset;
+			} else {
+				return 'default';
+			}
+		}
+		
+		return 'default';
+	}
 
 	protected function _get_preset_map ($data) {
 		$preset_map = array();
 		$raw_preset_map = upfront_get_property_value('breakpoint_presets', $data);
+		$type = upfront_get_property_value('type', $data);
 		if (!empty($raw_preset_map)) foreach ($raw_preset_map as $bp => $pst) {
 			if (empty($pst['preset'])) continue;
+			
+			// Check if preset exist, if not use default
+			$pst['preset'] = $this->preset_exist( $pst['preset'], $type );
+			
 			$preset_map[$bp] = esc_js($pst['preset']);
 		}
 		return $preset_map;
@@ -124,6 +205,10 @@ abstract class Upfront_Container extends Upfront_Entity {
 		// We also preserve the current preset class, so it all
 		// just works without JS requirement on client
 		$preset = upfront_get_property_value('preset', $data);
+		$type = upfront_get_property_value('type', $data);
+		
+		// Check if preset exist, if not use default
+		$preset = $this->preset_exist( $preset, $type );
 
 		// Also, if we have a preset map and a default grid breakpoint
 		// mapped, let's try to use this as default preset
@@ -157,6 +242,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 				}
 			}
 		}
+
 		return $preset;
 	}
 

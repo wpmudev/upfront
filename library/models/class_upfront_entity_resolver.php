@@ -90,6 +90,8 @@ abstract class Upfront_EntityResolver {
 				$term = !empty($tax_query['terms']) ? $tax_query['terms'] : false;
 			}
 			if ($taxonomy && $term) $wp_entity = self::_to_entity($taxonomy, $term);
+		} else if (!empty($query->tax_query) && isset($query->query['post_type']) && $query->query['post_type'] === 'product') {
+			$wp_entity['item'] = 'product';
 		}
 
 		$wp_entity['type'] = 'archive';
@@ -169,10 +171,18 @@ abstract class Upfront_EntityResolver {
 		$item = !empty($layout_ids['item']) ? preg_replace("/^{$type}-/", "", $layout_ids['item']) : "";
 		$specificity = !empty($layout_ids['specificity']) ? preg_replace("/^{$type}-{$item}-/", "", $layout_ids['specificity']) : "";
 
+
+		$layout_name = apply_filters('upfront-layout_to_name', '', $type, $item, $specificity);
+		if ($layout_name !== '') return $layout_name;
+
 		if ('single' === $type) {
 			if ('404_page' === $item || 'single-404_page' === $specificity) {
 				// 404 page layout
 				return __('404 Page', 'upfront');
+			}
+			if ('maintenance' === $item || 'single-maintenance-mode_page' === $specificity) {
+				// maintenance mode page layout
+				return __('Maintenance Mode', 'upfront');
 			}
 
 			if (empty($item) && empty($specificity)) return __('Single Generic', 'upfront');
@@ -217,7 +227,12 @@ abstract class Upfront_EntityResolver {
 			} else {
 				// means this is taxonomy
 				$taxonomy = get_taxonomy($item);
-				$name = is_object($taxonomy->labels) ? $taxonomy->labels->singular_name : $taxonomy->labels['singular_name'];
+				if ($taxonomy) { // This can be (bool)false, so let's make sure it's not
+					$name = is_object($taxonomy->labels)
+						? $taxonomy->labels->singular_name
+						: $taxonomy->labels['singular_name']
+					;
+				} else return false; // We don't know what that is, don't lie
 				return !empty($specificity)
 					? sprintf("%s: %s", $name, $specificity)
 					: $name

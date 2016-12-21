@@ -24,7 +24,10 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		$root = Upfront::get_root_url();
 		$ajax = admin_url('admin-ajax.php');
+		// Home URL
 		$site = home_url();
+		// Site URL
+		$site_url = get_site_url();
 		$includes_url = includes_url();
 		$current_theme_url = get_stylesheet_directory_uri();
 		$site_path = parse_url($site, PHP_URL_PATH);
@@ -36,6 +39,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			$includes_url = preg_replace('/^https:/', 'http:', $includes_url);
 			$ajax = preg_replace('/^https:/', 'http:', $ajax);
 			$site = preg_replace('/^https:/', 'http:', $site);
+			$site_url = preg_replace('/^https:/', 'http:', $site_url);
 			$current_theme_url = preg_replace('/^https:/', 'http:', $current_theme_url);
 		}
 
@@ -241,7 +245,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
 		if (empty($prev_post_image_variants)) $prev_post_image_variants = json_encode(array());
 		if (is_array($prev_post_image_variants)) $prev_post_image_variants = json_encode($prev_post_image_variants);
-		
+
 		$other_post_image_variants = apply_filters(
 			'upfront_get_other_post_image_variants',
 			array(
@@ -395,6 +399,12 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		$menus = json_encode(wp_get_nav_menus());
 		$is_rtl = (int) is_rtl();
+
+		$plugins_layouts = array();
+		$plugins_layouts = json_encode(
+			apply_filters('upfront-plugins_layouts', $plugins_layouts)
+		);
+
 		$main = <<<EOMainJs
 // Set up the global namespace
 var Upfront = window.Upfront || {};
@@ -406,6 +416,7 @@ Upfront.mainData = {
 	ajax: '{$ajax}',
 	admin: '{$admin}',
 	site: '{$site}',
+	siteUrl: '{$site_url}',
 	debug: {$debug},
 	layoutEditorRequirements: {$layout_editor_requirements},
 	applicationModes: {$application_modes},
@@ -435,7 +446,8 @@ Upfront.mainData = {
 	menus: {$menus},
 	isRTL: {$is_rtl},
 	save_compression: {$save_compression},
-	save_compression_level: {$save_compression_level}
+	save_compression_level: {$save_compression_level},
+	pluginsLayouts: {$plugins_layouts}
 };
 EOMainJs;
 		$this->_out(new Upfront_JavascriptResponse_Success($main));

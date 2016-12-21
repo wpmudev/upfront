@@ -128,6 +128,8 @@ class Upfront_Output {
 
 		// load layouts not yet saved on custom post type
 		if ( $load_from_options ) {
+			// if maintenance page, bypass the layout
+			if ( upfront_is_maintenance_page() ) $layout_ids = Upfront_Layout::get_maintenance_mode_layout_cascade();
 			$layout = Upfront_Layout::from_entity_ids($layout_ids);
 			if ($layout->is_empty()) {
 				$layout = Upfront_Layout::create_layout($layout_ids);
