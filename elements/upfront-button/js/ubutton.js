@@ -67,7 +67,9 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 		me.listenTo(this.link, 'change', function() {
 			me.property('link', me.link.toJSON());
 		});
-
+		
+		// Check if preset exist, if not replace with default
+		this.check_if_preset_exist();
 	},
 	placeholderClick: function(e) {
 		e.preventDefault();
@@ -310,6 +312,11 @@ var ButtonView = Upfront.Views.ObjectView.extend({
 			this.$el.find('a').attr('href', me.link.get('url'));
 		});
 
+		this.listenTo(this.link, 'change:type', function() {
+			if(me.link.get('type') === 'entry') {
+				linkPanelControl.updateWrapperSize();
+			}
+		});
 
 		return linkPanelControl;
 	},

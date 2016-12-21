@@ -29,13 +29,14 @@ var PostImageInsert_Manager = base.ImageInsertBase.extend({
             ;
 
         promise.done(function(popup, result){
+					var insert;
             if(_.isEmpty(  result ) ) return;
             var is_wp = result.at(0).get("insert_option") === "wp_default";
             if( is_wp ) {
-                var insert = new WP_PostImageInsert({start: result, $editor: $editor});
+                insert = new WP_PostImageInsert({start: result, $editor: $editor});
                 deferred.resolve(insert);
             }else{
-                var insert = new PostImageInsert({start: result, $editor: $editor});
+                insert = new PostImageInsert({start: result, $editor: $editor});
                 deferred.resolve(insert);
 
             }
@@ -51,7 +52,7 @@ var PostImageInsert_Manager = base.ImageInsertBase.extend({
      * @param inserts
      * @returns {*}
      */
-    importFromShortcode: function($contentEl, insertsData, inserts){
+    importFromShortcode: function($contentEl, insertsData){
         var self = this,
             insert,
             inserts = {};

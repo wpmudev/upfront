@@ -308,6 +308,11 @@ return (function ($) {
 				tooltip: 'link',
 				id: 'link'
 			});
+			
+			// Update wrapper size
+			this.listenTo(linkPanel, 'linkpanel:update:wrapper', function() {
+				linkControl.updateWrapperSize();
+			});
 
 			this.listenTo(this.link, 'change', function() {
 				me.model.link = me.link.toJSON();

@@ -181,6 +181,7 @@ class Upfront_UcontactView extends Upfront_Object {
 	}
 
 	private function check_form_received () {
+		
 		if (isset($_POST['ucontact']) && $_POST['ucontact'] == 'sent' && $_POST['contactformid'] == $this->_get_property('element_id')) {
 			//Get all the needed fields and sanitize them
 			$_POST = stripslashes_deep( $_POST );
@@ -252,9 +253,15 @@ class Upfront_UcontactView extends Upfront_Object {
 					add_filter('wp_mail_from_name', $name_callback, 99);
 				}
 
+				// Do the SMTP magic here
+				$smtp_enable = $this->_get_property_t('smtp_enable') == 'yes' ? true : false;
+
+				if($smtp_enable) {
+					add_action('phpmailer_init', array($this, 'kick_in_smtp'));					
+				}
+
 				// ... then send email
 				if (!wp_mail($emailto, $subject, $message, $headers)) {
-					
 					$this->msg = self::_get_l10n('error_sending');
 					$this->msg_class = 'error';
 				} else $this->msg = self::_get_l10n('mail_sent');
@@ -269,6 +276,32 @@ class Upfront_UcontactView extends Upfront_Object {
 				$this->msg = self::_get_l10n('mail_sent');
 			}
 		}
+	}
+
+	public function kick_in_smtp($phpmailer){
+		$smtp_from_email = $this->_get_property_t('smtp_from_email');
+		$smtp_host = $this->_get_property_t('smtp_host');
+		if( !is_email($smtp_from_email) || empty($smtp_host) ){
+			return;
+		}
+
+		$phpmailer->isSMTP();   
+		$phpmailer->Mailer = "smtp";
+		$phpmailer->From = $this->_get_property_t('smtp_from_email');
+		$phpmailer->FromName = $this->_get_property_t('smtp_from_name');
+		$phpmailer->Sender = $phpmailer->From; //Return-Path
+		$phpmailer->AddReplyTo($phpmailer->From,$phpmailer->FromName); //Reply-To
+		$phpmailer->Host = $this->_get_property_t('smtp_host');
+		$phpmailer->SMTPSecure = $this->_get_property_t('smtp_secure');
+		$phpmailer->Port = $this->_get_property_t('smtp_port');
+		$smtp_auth = $this->_get_property_t('smtp_authentication');
+		$phpmailer->SMTPAuth = ( isset( $smtp_auth[0] ) && $smtp_auth[0] == "yes" ) ? TRUE : FALSE;
+
+		if( isset( $smtp_auth[0] ) && $smtp_auth[0] == "yes" ) {
+			$phpmailer->Username = $this->_get_property_t('smtp_username');
+			$phpmailer->Password = $this->_get_property_t('smtp_password');
+		}
+
 	}
 
 	public function get_post ($param){
@@ -476,6 +509,24 @@ class Upfront_UcontactView extends Upfront_Object {
 				'missing_subject' => __('You must write a subject for the message.', 'upfront'),
 				'missing_body' => __('You forgot to write a message.', 'upfront'),
 				'realperson_regenerate' => __('Click to change', 'upfront'),
+			),
+			'smtp' => array(
+				'enable' => __('Enable SMTP'),
+				'label' => __('SMTP Settings'),
+				'from_email' => __('From (Email)'),
+				'from_name' => __('From (Name)'),
+				'host' => __('SMTP Host'),
+				'none' => __('None'),
+				'ssl' => __('SSL'),
+				'tls' => __('TLS'),
+				'port' => __('SMTP Port'),
+				'no' => __('No'),
+				'yes' => __('Yes'),
+				'username' => __('Username'),
+				'password' => __('Password'),
+				'configuration' => __('Configuration'),
+				'secure' => __('SMTP Secure'),
+				'authentication' => __('Enable SMTP Authentication')
 			)
 		);
 		return !empty($key)

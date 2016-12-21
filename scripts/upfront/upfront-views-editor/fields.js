@@ -519,13 +519,16 @@
                 this.update_input_border_color(this.get_saved_value());
                 this.$(".sp-container").data("field_color", this);
                 this.$(".sp-container").data("$spectrum", this.$spectrum );
-                this.$(".sp-container").find(".sp-choose").on("click.spectrum", function(e){
+                this.$spectrum.on("change.spectrum", function(e) {
                     if(me.options.spectrum && me.options.spectrum.choose && me.color)
                         me.options.spectrum.choose(me.color);
 
                     if( me.options.autoHide !== true ){
-                        me.$(".sp-replacer").removeClass("sp-active");
-                        me.$(".sp-container").addClass("sp-hidden");
+                        setTimeout( function() {
+							me.$(".sp-replacer").removeClass("sp-active");
+							me.$(".sp-container").addClass("sp-hidden");
+						});
+						
 						Upfront.Events.trigger("color:spectrum:hide");
                     }
                 });

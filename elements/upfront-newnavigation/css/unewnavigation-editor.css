@@ -2,6 +2,7 @@
 	display: block;
 	margin: auto;
 	max-width: 760px;
+	min-width: 315px;
 	float: none;
 	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 	padding: 15px 0;

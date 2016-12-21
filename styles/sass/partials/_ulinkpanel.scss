@@ -174,6 +174,7 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 	border: 1px solid #e5e5e5;
 	border-radius: 2px;
 	height: 24px;
+	min-height: 24px;
 	line-height: 24px;
 }
 
@@ -335,7 +336,7 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 	background-position: -442px -310px;
 }
 .ulinkpanel-dark .upfront-link-back:before {
-	background-position: -290px -103px;
+	background-position: -290px -102px;
 }
 .ulinkpanel-dark {
 	background: #ffffff;
@@ -401,6 +402,10 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 	background: #fff;
 	border: 1px solid #e5e5e5;
 	margin-top: 1px;
+}
+.link-control-panel .upfront-field-select-options,
+.link-control-panel .upfront-settings-link-field {
+	text-align: left;
 }
 .link-control-panel .upfront-settings-link-field .upfront-field-select-options {
 	background: #fff;
@@ -563,7 +568,7 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 	position: relative;
 	top: -1px;
 }
-.group-link-control input.upfront-field-text {
+.group-link-control .link-control-panel input.upfront-field-text {
 	top: 1px;
 }
 .link-control-panel .ulinkpanel-external-wrap input {

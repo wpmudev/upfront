@@ -916,6 +916,12 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			me.$el.find('.upfront-default-slider-item-current a')
 				.attr('target', data.get('target'));
 		});
+		
+		// Update wrapper size
+		me.listenTo(linkPanel, 'linkpanel:update:wrapper', function() {
+			control.updateWrapperSize();
+		});
+			
 		this.currentSlideLink = link;
 
 		control.icon = 'link';

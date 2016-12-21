@@ -271,6 +271,8 @@ define([
 				event.preventDefault();
 			}
 
+			this.trigger('linkpanel:update:wrapper');
+
 			var me = this,
 				selectorOptions = {
 					postTypes: getPostTypes()

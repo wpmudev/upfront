@@ -564,6 +564,16 @@ define([
                     }) );
                 }
 
+								if (_.indexOf(this.options.media_type, 'videos') !== -1) {
+                    sections = _( sections.reject(function(section){
+                        return section === "additional_sizes";
+                    }) );
+
+                    renderers =  _( renderers.reject(function(renderer){
+                        return renderer === "render_additional_sizes";
+                    }) );
+								}
+
 
 
                 // add sections
@@ -1718,17 +1728,19 @@ define([
 			update_model: function (selected) {
 				// checking on all models on current page
 				for ( var key in selected.models ) {
-					var model = selected.models[key];
-					var index = ActiveFilters.current_keys.indexOf(model.attributes.ID);
+					var model = selected.models[key],
+						modelAttributes = ((model || {}).attributes || {})
+						index = ActiveFilters.current_keys.indexOf(modelAttributes.ID)
+					;
 					if( index == -1 ) {
 						// inserting selected media models on the list
-						if( model.attributes.selected ) {
-							ActiveFilters.current_keys.push(model.attributes.ID);
+						if( modelAttributes.selected ) {
+							ActiveFilters.current_keys.push(modelAttributes.ID);
 							ActiveFilters.current_models.push(model);
 						}
 					} else {
 						// removing media models on the list
-						if( !model.attributes.selected || model.attributes.selected === undefined ) {
+						if( !modelAttributes.selected || modelAttributes.selected === undefined ) {
 							ActiveFilters.current_keys.splice(index, 1);
 							ActiveFilters.current_models.splice(index, 1);
 						}
@@ -2018,7 +2030,7 @@ define([
 
 					// preserving selected media
 					if( ActiveFilters.current_keys.length ) {
-						var target_index = ActiveFilters.current_keys.indexOf(model.attributes.ID);
+						var target_index = ActiveFilters.current_keys.indexOf(((model || {}).attributes || {}).ID);
 						if( target_index != -1 ) {
 							model.set({selected: true}, {silent: true});
 							model.trigger("appearance:update");
@@ -2031,9 +2043,16 @@ define([
 				Upfront.Events.trigger("media:item:selection_changed", selected_model);
 
 				// Add JS Scrollbar.
-				perfectScrollbar.initialize(this.el, {
-					suppressScrollX: true
-				});
+				perfectScrollbar.withDebounceUpdate(
+					// Element.
+					this.el,
+					// Run First.
+					true,
+					// Event.
+					false,
+					// Initialize.
+					true
+				);
 			}
 		},
 		update: function () {

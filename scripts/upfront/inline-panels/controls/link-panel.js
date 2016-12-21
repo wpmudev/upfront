@@ -1,3 +1,4 @@
+(function ($) {
 define([
 	'scripts/upfront/inline-panels/link-control'
 ], function (LinkControl) {
@@ -31,3 +32,4 @@ define([
 
 	return LinkPanelControl;
 });
+})(jQuery);

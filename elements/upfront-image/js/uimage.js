@@ -124,6 +124,9 @@ define([
 
 			this.listenTo(Upfront.Events, 'entity:module:update', this.on_uimage_update);
 			this.listenTo(this.model, "preset:updated", this.preset_updated);
+
+			// Check if preset exist, if not replace with default
+			this.check_if_preset_exist();
 		},
 
 		get_preset_properties: function() {
@@ -263,6 +266,11 @@ define([
 			// Close panel when event is triggered (enter key is hit).
 			me.listenTo(linkPanel, 'linkpanel:close', function() {
 				control.close();
+			});
+			
+			// Update wrapper size
+			me.listenTo(linkPanel, 'linkpanel:update:wrapper', function() {
+				control.updateWrapperSize();
 			});
 
 			control.icon = 'link';
@@ -928,7 +936,7 @@ define([
 			this.applyElementSize(data.elementSize.width, data.elementSize.height, false); // This won't update element_size property
 
 			if(starting.length){
-				return starting.outerHeight(data.elementSize.height);
+				return starting.outerHeight(data.elementSize.height - vPadding);
 			}
 
 			//Wonderful stuff from here down

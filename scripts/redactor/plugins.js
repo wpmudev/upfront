@@ -1164,7 +1164,8 @@ RedactorPlugins.upfrontColor = function() {
                                 self.current_color = color;
 								self.updateColors();
                             }
-                        }
+                        },
+						autoHide: true
                     }),
                     background_picker = new Upfront.Views.Editor.Field.Color({
                         blank_alpha: 0,
@@ -1188,7 +1189,8 @@ RedactorPlugins.upfrontColor = function() {
                                 self.current_bg = color;
 								self.updateColors();
                             }
-                        }
+                        },
+						autoHide: true
                     });
 
                 foreground_picker.render();

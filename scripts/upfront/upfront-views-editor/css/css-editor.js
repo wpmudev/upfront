@@ -324,9 +324,16 @@
                 editor.renderer.scroller.style.right = "5px";
 
 								// Add JS Scrollbar.
-								perfectScrollbar.initialize(this.$el.find('.ace_scrollbar')[0], {
-									suppressScrollX: true
-								});
+								perfectScrollbar.withDebounceUpdate(
+									// Element.
+									this.$el.find('.ace_scrollbar')[0],
+									// Run First.
+									false,
+									// Event.
+									false,
+									// Initialize.
+									true
+								);
 
                 editor.focus();
                 this.editor = editor;
