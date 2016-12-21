@@ -284,7 +284,7 @@ class Upfront_UcontactView extends Upfront_Object {
 		if( !is_email($smtp_from_email) || empty($smtp_host) ){
 			return;
 		}
-		
+
 		$phpmailer->isSMTP();   
 		$phpmailer->Mailer = "smtp";
 		$phpmailer->From = $this->_get_property_t('smtp_from_email');
@@ -294,13 +294,14 @@ class Upfront_UcontactView extends Upfront_Object {
 		$phpmailer->Host = $this->_get_property_t('smtp_host');
 		$phpmailer->SMTPSecure = $this->_get_property_t('smtp_secure');
 		$phpmailer->Port = $this->_get_property_t('smtp_port');
-		$phpmailer->SMTPAuth = ($this->_get_property_t('smtp_authentication') =="yes") ? TRUE : FALSE;
-		
-		if($phpmailer->SMTPAuth) {
+		$smtp_auth = $this->_get_property_t('smtp_authentication');
+		$phpmailer->SMTPAuth = ( isset( $smtp_auth[0] ) && $smtp_auth[0] == "yes" ) ? TRUE : FALSE;
+
+		if( isset( $smtp_auth[0] ) && $smtp_auth[0] == "yes" ) {
 			$phpmailer->Username = $this->_get_property_t('smtp_username');
 			$phpmailer->Password = $this->_get_property_t('smtp_password');
 		}
-		
+
 	}
 
 	public function get_post ($param){
