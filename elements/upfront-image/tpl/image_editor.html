@@ -84,8 +84,11 @@
 </script>
 
 <script type="text/template" id="sizehint-tpl">
-	<b>w:</b>{{width}}{[ if(width.toString().indexOf("%") === -1){ ]}px{[ } ]}
-	<b>h:</b>{{height}}{[ if(height.toString().indexOf("%") === -1){ ]}px{[ } ]}
+	<div class="upfront-entity-size-hint-color"></div>
+	<span class="upfront-entity-type">{{Upfront.Settings.l10n.global.views.image}},</span>
+	{{width}}{[ if(width.toString().indexOf("%") === -1){ ]}{[ } ]}
+	&#215;
+	{{height}}{[ if(height.toString().indexOf("%") === -1){ ]}{[ } ]}
 </div>
 </script>
 

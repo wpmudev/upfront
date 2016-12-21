@@ -2,8 +2,9 @@
 define("ueditor", [ // For require to include scripts in build and not load them separately they must be passes as an array and not variable that points to array
 	'text!scripts/redactor/ueditor-templates.html',
 	'scripts/redactor/ueditor-inserts',
-    'redactor_plugins'
-], function(tpl, Inserts, redactor_plugins){
+    'redactor_plugins',
+	'scripts/upfront/inline-panels/inline-tooltip'
+], function(tpl, Inserts, redactor_plugins, InlineTooltip){
 var hackedRedactor = false;
 var UeditorEvents = redactor_plugins.UeditorEvents;
 $.fn.ueditor = function(options){
@@ -185,14 +186,31 @@ var hackRedactor = function(){
             bounds.left = center - Math.floor((width + 1) / 2);
         }
 
-
-
-
         this.$air.css({
             left: bounds.left  + 'px',
             top: bounds.top + 'px'
         }).show();
 
+		var buttons = this.$air.find('.redactor-toolbar > li');
+		
+		_.each(buttons, function(button) {
+			$(button).find('a').utooltip({
+				fromTitle: true,
+				panel: 'redactor'
+			});
+		});
+		
+		this.$air.find('.redactor-dropdown-box-upfrontIcons').utooltip({
+			fromTitle: false,
+			content: Upfront.Settings.l10n.global.ueditor.icons_label,
+			panel: 'redactor'
+		});
+		
+		this.$air.find('.tablist li').utooltip({
+			fromTitle: true,
+			panel: 'colorPicker'
+		});
+		
         /**
          * If redactor is to high for the user to see it, show it under the selected text
          */
@@ -801,7 +819,7 @@ var Ueditor = function($el, options) {
         self = this,
         unique_id = Upfront.Util.get_unique_id("redactor");
     this.$el = $el;
-    this.$air = $("<div class='redactor_air upfront-ui'></div>").attr("id", unique_id ).hide();
+    this.$air = $("<div class='redactor_air upfront-panels-shadow upfront-ui'></div>").attr("id", unique_id ).hide();
     $("body").append(this.$air);
     if( !_.isEmpty(options.airButtons) ){
         options.buttons = options.airButtons;
@@ -918,8 +936,6 @@ var Ueditor = function($el, options) {
 		}
 		return html;
 	};
-
-
 
     // Enter callback inside lists
     this.options.enterCallback = function (e) {
@@ -1233,8 +1249,6 @@ Ueditor.prototype = {
 					me.start(e);
 			})
 		;
-
-
 
 		if(me.$el.prop('tagName') == 'DIV') {
 			me.$el.on('click', 'i.visit_link', function() {

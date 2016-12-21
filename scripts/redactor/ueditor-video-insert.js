@@ -29,6 +29,7 @@
 				'click .video-insert-toggle-controls': 'toggleControls',
 				'click .video-insert-toggle-loop': 'toggleLoop',
 				'click .video-insert-toggle-autoplay': 'toggleAutoplay',
+				'click .ueditor-insert-remove': 'removeInsert'
 			},
 
 			getSimpleOutput: function () {
@@ -178,7 +179,9 @@
 						'<div><span>Loop</span><div class="upfront_toggle"><input ' + (this.data.get('loop') ? 'checked' : '') + ' type="checkbox" class="upfront_toggle_checkbox video-insert-toggle-checkbox-loop"> <label class="upfront_toggle_label video-insert-toggle-loop"> <span class="upfront_toggle_inner"></span> <span class="upfront_toggle_switch"></span></label></div></div>' +
 						'<div><span>Controls</span><div class="upfront_toggle"><input ' + (this.data.get('controls') ? 'checked' : '') + ' type="checkbox" class="upfront_toggle_checkbox video-insert-toggle-checkbox-controls"> <label class="upfront_toggle_label video-insert-toggle-controls"> <span class="upfront_toggle_inner"></span> <span class="upfront_toggle_switch"></span></label></div></div>' +
 						'</div>' +
-						'</div>');
+						'</div>' +
+						'<a href="#" contenteditable="false" class="upfront-icon-button upfront-icon-button-delete ueditor-insert-remove"></a>'
+					);
 				this.$el.append(controls);
 				if (this.controlsOpen) {
 					this.$el.find('.video-insert-controls').addClass('video-insert-controls-expanded');
@@ -248,6 +251,11 @@
 					$videoInsert.replaceWith(insert.$el);
 				});
 				return inserts;
+			},
+
+			removeInsert: function(e) {
+				e.preventDefault();
+				this.$el.remove();
 			}
 		});
 

@@ -33,6 +33,7 @@ chosen/chosen.jquery.min.js
 /var/www/local.wordpress.dev/wp-content/themes/upfront/scripts/upfront/global-event-handlers.js
 /var/www/local.wordpress.dev/wp-content/themes/upfront/scripts/upfront/inline-panels/panels.js
 /var/www/local.wordpress.dev/wp-content/themes/upfront/scripts/upfront/inline-panels/panel.js
+/var/www/local.wordpress.dev/wp-content/themes/upfront/scripts/upfront/inline-panels/inline-tooltip.js
 /var/www/local.wordpress.dev/wp-content/themes/upfront/scripts/upfront/inline-panels/item.js
 /var/www/local.wordpress.dev/wp-content/themes/upfront/scripts/upfront/inline-panels/item-multi.js
 /var/www/local.wordpress.dev/wp-content/themes/upfront/scripts/upfront/inline-panels/control.js
@@ -46,6 +47,8 @@ text!scripts/upfront/inline-panels/templates/panel-control-template.html
 /var/www/local.wordpress.dev/wp-content/themes/upfront/scripts/upfront/inline-panels/dialog-control.js
 /var/www/local.wordpress.dev/wp-content/themes/upfront/scripts/upfront/inline-panels/image-control.js
 /var/www/local.wordpress.dev/wp-content/themes/upfront/scripts/upfront/inline-panels/controls/visit-link.js
+text!scripts/upfront/inline-panels/templates/link-control-template.html
+/var/www/local.wordpress.dev/wp-content/themes/upfront/scripts/upfront/inline-panels/link-control.js
 /var/www/local.wordpress.dev/wp-content/themes/upfront/scripts/upfront/inline-panels/controls/link-panel.js
 /var/www/local.wordpress.dev/wp-content/themes/upfront/scripts/upfront/link-model.js
 /var/www/local.wordpress.dev/wp-content/themes/upfront/scripts/upfront/inline-panels/controls/group-link-panel.js

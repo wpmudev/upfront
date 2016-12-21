@@ -133,7 +133,7 @@
 
 .upfront-active_entity > .upfront-editable_entity {
 	/* Commented out as we seem to be doubling up on those dotted lines */
-	/* outline: 1px dotted #5c7c9b; */
+	box-shadow: inset 0px 0px 0px 2px rgba(111, 188, 248, 1);
 }
 .upfront-editable_entity.ui-resizable-resizing {
 	overflow: hidden;
@@ -287,16 +287,17 @@
 	/*border: 1px solid #b3da11;*/
 	background: rgba(44, 62, 80, 0.3)
 }
+
 .upfront-module:hover,
 .upfront-object-group-on-edit .upfront-object:hover {
-  background-color: rgba(255,255,255,0.3);
-  box-shadow: inset 0px 0px 3px 0px rgba(60,82,103,0.15);
+	/*background-color: rgba(255,255,255,0.3);*/
+	box-shadow: inset 0 0 0 1px #48596a;
 	/*z-index: 40;*/
 }
 .upfront-module-active,
 .upfront-module-active:hover,
 .upfront-module-group-active {
-	box-shadow: inset 0px 0px 0px 2px rgba(111, 188, 248, 1);
+	/*box-shadow: inset 0px 0px 0px 2px rgba(111, 188, 248, 1);*/
 	z-index: 4;
 }
 .upfront-module-has-nav:hover,
@@ -470,24 +471,29 @@
 .upfront-ui-selected, .ui-selecting {
 	position: relative;
 }
+
+.upfront-active_entity > .upost-data-object.upfront-editable_entity {
+	box-shadow: inset 0 0 0 2px rgba(111, 248, 148, 1);
+}
+
 #upfront-group-selection, .upfront-selected-border {
 	position: absolute;
 	top: 0;
 	bottom: 0;
 	left: 0;
 	right: 0;
-	background-image: linear-gradient(to right, #2fda9c 0px, #2fda9c 1px, #24ae81 1px, #24ae81 2px), linear-gradient(to right, #2fda9c 0px, #2fda9c 1px, #24ae81 1px, #24ae81 2px), linear-gradient(to bottom, #2fda9c 0px, #2fda9c 1px, #24ae81 1px, #24ae81 2px), linear-gradient(to bottom, #2fda9c 0px, #2fda9c 1px, #24ae81 1px, #24ae81 2px);
-	background-size: 2px 1px, 2px 1px, 1px 2px, 1px 2px;
-	background-position: 0 0, 0 100%, 0 0, 100% 0;
-	background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
 	z-index: -1;
 	display: none;
+	box-shadow: inset 0 0 0 1px #48596a;
 }
 #upfront-group-selection {
 	bottom: auto;
 	right: auto;
 	display: block;
 	z-index: 10;
+}
+.upfront-module-group-active > .upfront-selected-border {
+	box-shadow: inset 0 0 0 2px rgba(248, 210, 111, 1);
 }
 .upfront-ui-selected .upfront-selected-border,
 .ui-selecting .upfront-selected-border,
@@ -654,24 +660,36 @@
   height: auto;
   width: 14px;
   padding-top: 15px;
-  z-index: 70;
+  z-index: 81;
   display: none !important;
 }
+.upfront-wrapper-meta:before {
+	content: "";
+	position: absolute;
+	left: 4px;
+	right: 0;
+	top: 50%;
+	bottom: 50%;
+	background: #fff;
+	border-radius: 0;
+	border: 1px solid #48596a;
+	z-index: -1;
+	height: 7px;
+	width: 7px;
+}
+
 .upfront-wrapper-meta.upfront-resize-handle-wrapper:before {
   content: "";
   position: absolute;
-  top: 5px;
-  bottom: 5px;
-  left: 5px;
-  right: 5px;
+  left: 3px;
   background: #fff;
-  border-radius:3px;
-  box-shadow: 0 0 5px 0 rgba(36,57,77,.5);
+  box-shadow: none;
   z-index: -1;
 }
 .upfront-wrapper:not(.upfront-inline-panel-item-open):hover > .upfront-wrapper-meta,
-/* .upfront-wrapper.not:hover > .upfront-wrapper-meta, */
-.upfront-wrapper.ui-resizable-resizing > .upfront-wrapper-meta {
+.upfront-wrapper-active > .upfront-wrapper-meta,
+.upfront-wrapper.ui-resizable-resizing > .upfront-wrapper-meta,
+.upfront-module-group-active ~ .upfront-wrapper-meta {
   display: block !important;
 }
 .upfront-editing-post-content .upfront-wrapper:hover > .upfront-wrapper-meta,
@@ -715,27 +733,44 @@
   display: none !important;
 }
 
-
-
-.upfront-entity-size-hint {
-  position: absolute;
-  top: 0;
-  left: 0;
-  background: #3d5266;
-  color: #dcebf8;
-  font-size: 13px;
-  line-height: 17px;
-  padding: 0 5px;
-  z-index: 10;
-  display: none;
+.upfront-entity-size-hint, .uimage-resize-hint {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	background: rgb(37, 58, 78);
+	color: #dcebf8;
+	font: bold 12px Courier, sans-serif;
+	line-height: normal;
+	padding: 5px;
+	z-index: 10;
+	display: none;
+	margin: 2px;
 }
 .upfront-entity-size-hint b {
-  color: #ADC3D8;
+	color: #ADC3D8;
+}
+.upfront-entity-size-hint-color {
+	background: rgba(111, 188, 248, 1);
+	width: 10px;
+	height: 10px;
+	display: inline-block;
+	border-radius: 50%;
+	vertical-align: middle;
+}
+.upfront-module-group .upfront-entity-size-hint-color {
+	background: rgba(248, 210, 111, 1);
+}
+.upost-data-object ~ .upfront-entity-size-hint .upfront-entity-size-hint-color {
+	background: rgba(111, 248, 148, 1);
+}
+.upfront-entity-size-hint .upfront-entity-type {
+	display: inline-block;
+	margin: 0 0.3rem;
 }
 /* .upfront-editable_entity:hover > .upfront-entity-size-hint, */
 .upfront-editable_entity.ui-resizable-resizing > .upfront-entity-size-hint,
-.upfront-module:not(.upfront-module-active):hover .upfront-entity-size-hint,
-.upfront-module-group:not(.upfront-module-group-active):hover > .upfront-entity-size-hint,
+.upfront-module:hover .upfront-entity-size-hint,
+.upfront-module-group:hover > .upfront-entity-size-hint,
 .upfront-wrapper.ui-resizable-resizing .upfront-editable_entity > .upfront-entity-size-hint,
 /* .upfront-module:hover > .upfront-objects_container > .upfront-editable_entities_container > .upfront-object-view > .upfront-entity-size-hint, */
 .upfront-module.ui-resizable-resizing > .upfront-objects_container > .upfront-editable_entities_container > .upfront-object-view > .upfront-entity-size-hint,

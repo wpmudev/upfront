@@ -129,14 +129,20 @@ class Upfront_Posts extends Upfront_Server {
 		$raw_taxonomies = apply_filters('upfront_posts-list-taxonomies', get_taxonomies(array(
 			'public' => true,
 		), 'objects'));
+
+		// Initialize data
 		$data = array(
 			"post_types" => array('' => __('Please, select one', 'upfront')),
 			"taxonomies" => array('' => __('Please, select one', 'upfront')),
 		);
+
 		foreach ($raw_post_types as $type => $obj) {
 			if (apply_filters('upfront_posts-list-skip_post_type-' . $type, false, $obj)) continue;
 			$data["post_types"][$type] = $obj->labels->name;
 		}
+		// Allow for "any" post type to be used in tax queries
+		$data["post_types"]["*"] = __("Any", "upfront");
+
 		foreach ($raw_taxonomies as $tax => $obj) {
 			if (apply_filters('upfront_posts-list-skip_taxonomy-' . $tax, false, $obj)) continue;
 			$data['taxonomies'][$tax] = $obj->labels->name;
