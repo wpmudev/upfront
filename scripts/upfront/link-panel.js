@@ -33,7 +33,7 @@ define([
 			var regionTitle = r.attributes.title;
 			var id = '#upfront-region-container-' + r.attributes.name;
 			// Add Anchors for each region.
-			anchors.push({id: id, label: regionTitle})
+			anchors.push({id: id, label: regionTitle});
 			// Get Modules.
 			find(r.get("modules"));
 		});
@@ -344,24 +344,24 @@ define([
 			this.$el.html('Error occurred, link panel switch to new style.');
 				return;
 			}
-			
+
 			if (!this.model.get('url') && (!this.model.get('type') || this.model.get('type') === "unlink")) {
 				// If not URL set type to external
 				this.model.set({'type': 'external'}, {silent: true});
 			}
-			
+
 			var linkModel = this.model,
 				linkTitle = linkModel.get('title'),
 				linkUrl = linkModel.get('url');
-			
+
 			if(typeof linkTitle !== "undefined" && linkTitle.length > 25) {
 				linkModel.set('title', linkTitle.substr(0, 25) + '...');
 			}
-			
+
 			if(typeof linkUrl !== "undefined" && linkUrl.length > 25) {
 				linkModel.set('url', linkUrl.substr(0, 25) + '...');
 			}
-			
+
 			var tplData = {
 				title: this.title,
 				link: linkModel.toJSON(),
@@ -374,7 +374,7 @@ define([
 			this.$el.html(this.tpl(tplData));
 
 			this.renderTypeSelect();
-			
+
 			if (this.model.get('type') == 'anchor') {
 				this.renderAnchorSelect();
 			}
@@ -391,14 +391,14 @@ define([
 			if (_.contains(['external'], this.model.get('type'))) {
 				this.renderTargetRadio();
 			}
-			
+
 			this.updateWrapperSize();
 
 			this.delegateEvents();
-			
+
 			this.renderTooltips();
 		},
-		
+
 		saveControls: function () {
 			this.$el.find('.lightbox-selector').show();
 			this.$el.find('.js-ulinkpanel-new-lightbox').hide();
@@ -408,21 +408,21 @@ define([
 			this.$el.find('.lightbox-selector').hide();
 			this.$el.find('.js-ulinkpanel-new-lightbox').show();
 		},
-		
+
 		updateWrapperSize: function () {
 			var totalWidth = 0;
 
 			this.$el.children().each(function(i, element) {
 				var elementWidth = 0;
 				if($(element).hasClass('upfront-field-post-pages')) {
-					elementWidth = parseInt($(element).find('.js-ulinkpanel-input-entry').width());
+					elementWidth = parseInt($(element).find('.js-ulinkpanel-input-entry').width(), 10);
 				} else {
-					elementWidth = $(element).hasClass('upfront-settings-link-target') ? 0 : parseInt($(element).width());
+					elementWidth = $(element).hasClass('upfront-settings-link-target') ? 0 : parseInt($(element).width(), 10);
 				}
 
 				totalWidth = totalWidth + elementWidth;
 			});
-			
+
 			this.$el.css('width', totalWidth + 10);
 
 			this.$el.closest('.ulinkpanel-dark').css('width', totalWidth + 10);
@@ -430,18 +430,18 @@ define([
 			// If redactor link update the container width
 			this.$el.closest('.redactor_air').css('width', totalWidth + 10);
 		},
-		
+
 		getTooltipSelect: function(panel) {
 			var me = this,
 				select = Upfront.Views.Editor.Field.Select.extend({
 					className: 'upfront-field-wrap upfront-field-wrap-select',
 					render: function() {
 						select.__super__.render.apply(this, arguments);
-						
+
 						var self = this;
-						
+
 						_.each(this.options.values, function(value) {
-							var element = element = self.$el.find('[value="'+value.value+'"]').parent();
+							var element = self.$el.find('[value="'+value.value+'"]').parent();
 							me.addTooltip(element, value.tooltip ? value.tooltip : value.label, panel);
 						});
 					},
@@ -453,7 +453,7 @@ define([
 							$('.upfront-field-select-expanded').removeClass('upfront-field-select-expanded');
 							return;
 						}
-						
+
 						$('.upfront-field-select-expanded').removeClass('upfront-field-select-expanded');
 						this.$el.find('.upfront-field-select').css('min-width', '').css('min-width', this.$el.find('.upfront-field-select').width());
 						this.$el.find('.upfront-field-select').addClass('upfront-field-select-expanded');
@@ -485,10 +485,10 @@ define([
 						$('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, this.on_scroll);
 
 						this.trigger('focus');
-					},
+					}
 				})
 			;
-			
+
 			return select;
 		},
 
@@ -500,14 +500,14 @@ define([
 				if (!use) {
 					return;
 				}
-				
+
 				if(!me.model.get('url') && type === "unlink") {
 					return;
 				}
 
 				typeSelectValues.push(this.getLinkTypeValue(type));
 			}, this);
-			
+
 			var tooltipSelect = this.getTooltipSelect('side');
 
 			this.typeSelect = new tooltipSelect({
@@ -524,34 +524,34 @@ define([
 			this.typeSelect.render();
 			this.$el.find('.upfront-settings-link-select').prepend(this.typeSelect.el);
 		},
-		
+
 		renderTooltips: function() {
 			this.$el.find('.upfront-link-back, .js-ulinkpanel-input-external, .js-ulinkpanel-input-url, .ulinkpanel-entry-browse, .js-ulinkpanel-input-phone, .upfront-home-link, .js-ulinkpanel-input-url, .anchor-selector, .js-ulinkpanel-input-email, .upfront-create-new-lightbox').utooltip({
 				fromTitle: true
 			});
-			
+
 			var linkType = this.model.get('type'),
-				linkTitle = this.getLinkTypeValue(linkType)
-			
+				linkTitle = this.getLinkTypeValue(linkType);
+
 			this.$el.find('.upfront-link-select .upfront-field-select').utooltip({
 				fromTitle: false,
 				content: linkTitle.tooltip
 			});
-			
+
 			var targetType = this.model.get('target'),
-				targetContent
+				targetContent;
 			if(targetType === '_blank') {
 				targetContent = Upfront.Settings.l10n.global.content.blank_label;
 			} else {
-				targetContent = Upfront.Settings.l10n.global.content.self_label
+				targetContent = Upfront.Settings.l10n.global.content.self_label;
 			}
-			
+
 			this.$el.find('.uf-link-target-select .upfront-field-select').utooltip({
 				fromTitle: false,
 				content: targetContent
 			});
 		},
-		
+
 		addTooltip: function(element, content, panel) {
 			$(element).utooltip({
 				fromTitle: false,
@@ -622,7 +622,7 @@ define([
 				me = this,
 				lightboxValues = []
 			;
-			
+
 			_.each(getLightBoxes() || [], function(lightbox) {
 				lightboxValues.push({label: lightbox.label, value: lightbox.id});
 			});
@@ -643,12 +643,18 @@ define([
 			});
 			this.lightboxSelect.render();
 			this.$el.find('.lightbox-selector').append(this.lightboxSelect.el);
-			this.$el.find('.upfront-lightbox-select ul').prepend('<li class="upfront-field-select-option upfront-create-new-lightbox" title="'+ Upfront.Settings.l10n.global.content.create_lightbox +'"><label>' + Upfront.Settings.l10n.global.content.new_lightbox + '</label></li>')
-			
+			this.$el.find('.upfront-lightbox-select ul').prepend(
+				'<li class="upfront-field-select-option upfront-create-new-lightbox" title="'+
+				Upfront.Settings.l10n.global.content.create_lightbox +
+				'"><label>' +
+				Upfront.Settings.l10n.global.content.new_lightbox +
+				'</label></li>'
+			);
+
 			if(lightboxValues.length > 4) {
 				this.$el.find('.upfront-lightbox-select ul').addClass('upfront-field-select-options-scrollbar');
 			}
-			
+
 			this.$el.find('.upfront-create-new-lightbox').on("click", function(e) {
 				me.newLightbox();
 			});
