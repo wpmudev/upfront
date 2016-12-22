@@ -574,6 +574,7 @@ define([
 				],
 				change: function () {
 					me.model.set({'target': this.get_value()});
+					me.renderTooltips();
 				}
 			});
 
