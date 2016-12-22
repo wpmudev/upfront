@@ -48,7 +48,7 @@ define([
 			this.model.get('properties').bind('remove', this.render, this);
 
 			this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
-			
+
 			// Check if preset exist, if not replace with default
 			this.check_if_preset_exist();
 		},
@@ -92,7 +92,7 @@ define([
 		onTabClick: function(event) {
 			var $tab = $(event.currentTarget);
 			var contentId;
-			
+
 			// And make tab active
 			$tab
 				.siblings().removeClass('tabs-tab-active').end()
@@ -100,7 +100,7 @@ define([
 			$('#' + $tab.data('content-id'))
 				.siblings().removeClass('utab-content-active').end()
 				.addClass('utab-content-active');
-			
+
 			if (Upfront.Application.user_can_modify_layout()) {
 				// Stop tab content editor on switching tabs, always
 				this.$el.find('.utab-content').each(function () {
@@ -109,7 +109,7 @@ define([
 						ed.stop();
 					}
 				});
-				
+
 				// Avoid doing this, let the Double Click editor functionality do it's thing
 				// If tab is already active start editor if not started already
 				// if ($tab.hasClass('tabs-tab-active')) {
@@ -208,8 +208,8 @@ define([
 				$tabtitles = this.$el.find('.tabs-tab .inner-box'),
 				count = 0,
 				$tabs;
-				
-			if (Upfront.Application.user_can_modify_layout()) {	
+
+			if (Upfront.Application.user_can_modify_layout()) {
 				me.initializeTabTitleEditor($tabtitles);
 			} else {
 				this.$el.find('.tabs-tab i').remove();
@@ -235,9 +235,11 @@ define([
 
 			Upfront.Events.trigger('entity:object:refresh', this);
 		},
-		
+
 		initializeTabTitleEditor: function($tabtitles) {
-			var me = this;
+			var me = this,
+				count = 0
+			;
 			$tabtitles.each(function () {
 				var $content = $(this);
 				count++;
