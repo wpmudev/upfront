@@ -15217,6 +15217,7 @@ div.sp-val:active .sp-dragger:after {
   height: 16px;
   width: 16px;
   position: absolute;
+  z-index: 98;
   left: 6px;
   top: 6px;
   line-height: 24px;
@@ -15228,6 +15229,17 @@ div.sp-val:active .sp-dragger:after {
   -moz-background-size: 8px 8px;
   background-size: 8px 8px;
   background-position: 0 0, 4px 4px;
+  border-radius: 3px; }
+
+#tabbackground .tabbackground-item {
+  display: block;
+  border: none;
+  height: 16px;
+  width: 16px;
+  position: absolute;
+  z-index: 99;
+  left: 6px;
+  top: 6px;
   border-radius: 3px; }
 
 .sp-thumb-inner {
