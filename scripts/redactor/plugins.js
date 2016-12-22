@@ -840,7 +840,9 @@ RedactorPlugins.upfrontLink = function() {
 					// Defaults
 					href = '',
 					type = 'external',
-					target = '_self';
+					target = '_self',
+					title = ''
+				;
 
 				this.selectedLink = redactor.utils.isCurrentOrParent('A');
 
@@ -856,12 +858,16 @@ RedactorPlugins.upfrontLink = function() {
 						// Old linking, guess link type
 						type = this.guessLinkType(href);
 					}
+					if (!_.isUndefined($(this.selectedLink).attr('data-upfront-link-title'))) {
+						title = $(this.selectedLink).attr('data-upfront-link-title');
+					}
 				}
 
 				this.linkModel = new LinkModel({
 					type: type,
 					url: href,
-					target: target
+					target: target,
+					title: title
 				});
 
 				this.listenTo(this.linkModel, 'change', function (dontflag) {
@@ -1057,6 +1063,14 @@ RedactorPlugins.upfrontLink = function() {
 				}
 
 				$(this.selectedLink).attr('data-upfront-link-type', this.linkModel.get('type'));
+				
+				// Store title too
+				if (this.linkModel.get('title')) {
+					$(this.selectedLink).attr('data-upfront-link-title', this.linkModel.get('title'));
+				}
+				else {
+					$(this.selectedLink).removeAttr('data-upfront-link-title');
+				}
 
 				// Do redactor stuff
 				this.redactor.$element.focus();

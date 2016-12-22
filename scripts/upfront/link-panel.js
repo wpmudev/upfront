@@ -355,12 +355,12 @@ define([
 				linkTitle = linkModel.get('title'),
 				linkUrl = linkModel.get('url');
 
-			if(typeof linkTitle !== "undefined" && linkTitle.length > 25) {
-				linkModel.set('title', linkTitle.substr(0, 25) + '...');
+			if(typeof linkTitle !== "undefined") {
+				linkModel.set('display_title', linkTitle.length > 25 ? linkTitle.substr(0, 25) + '...' : linkTitle);
 			}
 
-			if(typeof linkUrl !== "undefined" && linkUrl.length > 25) {
-				linkModel.set('url', linkUrl.substr(0, 25) + '...');
+			if(typeof linkUrl !== "undefined") {
+				linkModel.set('display_url', linkUrl.length > 25 ? linkUrl.substr(0, 25) + '...' : linkUrl);
 			}
 
 			var tplData = {
@@ -416,7 +416,7 @@ define([
 			this.$el.children().each(function(i, element) {
 				var elementWidth = 0;
 				if($(element).hasClass('upfront-field-post-pages')) {
-					elementWidth = parseInt($(element).find('.js-ulinkpanel-input-entry').width(), 10);
+					elementWidth = parseInt($(element).find('.js-ulinkpanel-input-entry').outerWidth(), 10);
 				} else {
 					elementWidth = $(element).hasClass('upfront-settings-link-target') ? 0 : parseInt($(element).width(), 10);
 				}
