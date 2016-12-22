@@ -30,6 +30,7 @@ define([
 		};
 
 		regions.each(function(r) {
+			if (r.get('name') == 'shadow') return; // Do not include shadow region
 			var regionTitle = r.attributes.title;
 			var id = '#upfront-region-container-' + r.attributes.name;
 			// Add Anchors for each region.
