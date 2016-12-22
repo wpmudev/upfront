@@ -308,6 +308,12 @@
 .upfront-resize-handle-wrapper:hover ~ .upfront-module-group .upfront-resize-handle-group,
 .upfront-resize-handle-wrapper:hover ~ .upfront-module-group > .upfront-entity-size-hint,
 .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-entity-size-hint,
+/* Border on Group resize hover */
+.upfront-module-group-handle-hover .upfront-selected-border, 
+/* Size Hint on Group resize hover */
+.upfront-module-group-handle-hover > .upfront-entity-size-hint, 
+/* Handle on Group resize hover */
+.upfront-module-group-handle-hover .upfront-resize-handle-group, 
 .upfront-resize-handle-wrapper:hover ~ .upfront-module-group .upfront-selected-border {
 	display: block;
 }
@@ -884,6 +890,11 @@
 	display: inline-block;
 	margin: 0 0.3rem;
 }
+
+.uimage-resize-hint.upfront-entity-size-hint .upfront-entity-type {
+	margin: 0;
+}
+
 /* .upfront-editable_entity:hover > .upfront-entity-size-hint, */
 .upfront-editable_entity.ui-resizable-resizing > .upfront-entity-size-hint,
 .upfront-module:hover .upfront-entity-size-hint,
