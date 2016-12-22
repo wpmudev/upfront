@@ -3,7 +3,7 @@ define([
 	'scripts/upfront/inline-panels/control',
 	'text!scripts/upfront/inline-panels/templates/panel-control-template.html'
 ], function (Control, panelControlTemplate) {
-	var l10n = Upfront.mainData.l10n.image_element;
+	var l10n = Upfront.mainData.l10n.image_editor;
 
 	var DialogControl = Control.extend({
 		multiControl: true,

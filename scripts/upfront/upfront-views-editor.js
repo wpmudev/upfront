@@ -30,6 +30,8 @@
 		"scripts/upfront/upfront-views-editor/properties",
 		"scripts/upfront/preset-settings/preset-saver",
 		"scripts/upfront/upfront-views-editor/theme-colors/color-saver",
+		"scripts/upfront/upfront-views-editor/image-editor",
+		"scripts/upfront/upfront-views-editor/image-selector",
 		// If adding more arguments adjust _.rest in line 93
 		"text!upfront/templates/property.html",
 		"text!upfront/templates/properties.html",
@@ -73,7 +75,9 @@
 			Property,
 			Properties,
 			PresetSaver,
-			ColorSaver
+			ColorSaver,
+			ImageEditor,
+			ImageSelector
 	) {
 		var _template_files = [
 			"text!upfront/templates/property.html",
@@ -91,7 +95,7 @@
 		];
 
 		// Auto-assign the template contents to internal variable
-		var _template_args = _.rest(arguments, 29),
+		var _template_args = _.rest(arguments, 31),
 			_Upfront_Templates = {}
 			;
 		_(_template_files).each(function (file, idx) {
@@ -143,7 +147,9 @@
 				"CSSEditor": CSS.CSSEditor,
 				"Insert_Font_Widget": Fonts.Insert_Font_Widget,
 				"GeneralCSSEditor": CSS.GeneralCSSEditor,
-				"LinkPanel": LinkPanel
+				"LinkPanel": LinkPanel,
+				"ImageEditor": new ImageEditor(),
+				"ImageSelector": new ImageSelector()
 			},
 			Mixins: Mixins,
 			Theme_Colors : Theme_Colors,

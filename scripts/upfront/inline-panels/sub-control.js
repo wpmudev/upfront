@@ -3,7 +3,7 @@ define([
 	'scripts/upfront/inline-panels/item',
 	'scripts/upfront/inline-panels/control'
 ], function (Item, Control) {
-	var l10n = Upfront.mainData.l10n.image_element;
+	var l10n = Upfront.mainData.l10n.image_editor;
 
 	var SubControl = Control.extend({
 		multiControl: true,

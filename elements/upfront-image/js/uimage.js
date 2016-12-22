@@ -1,17 +1,15 @@
 (function ($) {
 define([
 	'text!elements/upfront-image/tpl/image.html',
-	'text!elements/upfront-image/tpl/image_editor.html',
+	'text!scripts/upfront/templates/image_editor.html',
 	'elements/upfront-image/js/image-context-menu',
 	'elements/upfront-image/js/image-settings',
-	'elements/upfront-image/js/image-selector',
-	'elements/upfront-image/js/image-editor',
 	'elements/upfront-image/js/image-element',
 	"scripts/upfront/link-model",
 	'elements/upfront-image/js/model',
 	'text!elements/upfront-image/tpl/preset-style.html',
 	'scripts/upfront/preset-settings/util'
-], function(imageTpl, editorTpl, ImageContextMenu, ImageSettings, ImageSelector, ImageEditor, ImageElement, LinkModel, UimageModel, settingsStyleTpl, PresetUtil) {
+], function(imageTpl, editorTpl, ImageContextMenu, ImageSettings, ImageElement, LinkModel, UimageModel, settingsStyleTpl, PresetUtil) {
 
 	var l10n = Upfront.Settings.l10n.image_element;
 	var breakpointColumnPadding = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().get('column_padding');
@@ -29,6 +27,10 @@ define([
 
 		// Property used to speed resizing up;
 		resizingData: {},
+		
+		// Property used to store temporary data for saving later
+		savedMeta: false,
+		prevUrl: false,
 
 		initialize: function() {
 			var me = this;
@@ -490,8 +492,6 @@ define([
 				props.captionBackground = false;
 			}
 			*/
-
-			props.l10n = l10n.template;
 
 			props.usingNewAppearance = props.usingNewAppearance || false;
 
@@ -1274,6 +1274,10 @@ define([
 
 			import_promise.done(function(){
 				imageId = me.property('image_id');
+				// Set element id before saving image
+				Upfront.Views.Editor.ImageEditor.setOptions({
+					element_id: me.property('element_id')
+				});
 				Upfront.Views.Editor.ImageEditor.saveImageEdition(
 					imageId,
 					me.property('rotation'),
@@ -1287,6 +1291,11 @@ define([
 						return;
 					}
 
+					me.savedMeta = imageData.meta;
+					if ( !me.prevUrl ) {
+						me.prevUrl = me.property('src');
+					}
+					
 					me.property('size', resize);
 					me.property('position', position);
 					me.property('src', imageData.url);
@@ -1322,7 +1331,8 @@ define([
 			var me = this,
 				post_id = ( typeof _upfront_post_data.post_id !== 'undefined' ) ? _upfront_post_data.post_id : false,
 				layout_ids = ( typeof _upfront_post_data.layout !== 'undefined' ) ? _upfront_post_data.layout : '',
-				load_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 )
+				load_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 ),
+				imageId = me.property('image_id')
 			;
 
 			if(this.cropTimer){
@@ -1338,7 +1348,16 @@ define([
 						action: 'upfront_update_layout_element'
 					};
 					Upfront.Util.post(saveData);
+					
+					Upfront.Views.Editor.ImageEditor.saveUsedImage(imageId, me.savedMeta, me.prevUrl);
 				});
+			}
+			else {
+				// Set element id beforehand
+				Upfront.Views.Editor.ImageEditor.setOptions({
+					element_id: me.property('element_id')
+				});
+				Upfront.Views.Editor.ImageEditor.saveUsedImage(imageId, me.savedMeta, me.prevUrl);
 			}
 		},
 
@@ -1445,8 +1464,7 @@ define([
 				}
 				this.$el.find('.uimage-resize-hint').html(this.sizehintTpl({
 						width: elementSize.width,
-						height: elementSize.height,
-						l10n: l10n.template
+						height: elementSize.height
 					})
 				);
 				// Let's override the min-height set to element
@@ -1790,7 +1808,7 @@ define([
 				moreOptions.tooltip = Upfront.Settings.l10n.global.views.more_options;
 
 				moreOptions.sub_items = {};
-				moreOptions.sub_items['swap'] = this.createControl('swap', l10n.btn.swap_image, 'openImageSelector');
+				moreOptions.sub_items['swap'] = this.createControl('swap', l10n.ctrl.swap_image, 'openImageSelector');
 				moreOptions.sub_items['crop'] = this.createControl('crop', l10n.ctrl.edit_image, 'editRequest');
 				moreOptions.sub_items['link'] = this.createLinkControl();
 				moreOptions.sub_items['lock'] = this.createControl(lock_icon, lock_tooltip, 'lockImage');
@@ -1819,8 +1837,6 @@ define([
 		cssSelectorsId: Upfront.data.uimage.defaults.type
 	});
 
-	Upfront.Views.Editor.ImageEditor = new ImageEditor();
-	Upfront.Views.Editor.ImageSelector = new ImageSelector();
 	Upfront.Models.UimageModel = UimageModel;
 	Upfront.Views.UimageView = UimageView;
 

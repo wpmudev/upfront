@@ -1311,6 +1311,10 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 		import_promise.done(function(){
 			imageId = me.resizingData.data.imageId;
+			// Set element id before saving image
+			Upfront.Views.Editor.ImageEditor.setOptions({
+				element_id: me.property('element_id')
+			});
 			Upfront.Views.Editor.ImageEditor.saveImageEdition(
 				imageId,
 				me.resizingData.data.rotation,

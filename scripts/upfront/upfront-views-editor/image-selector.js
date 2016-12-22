@@ -1,8 +1,11 @@
 (function ($) {
 define([
-	'text!elements/upfront-image/tpl/image_editor.html'
+	'text!scripts/upfront/templates/image_editor.html'
 ], function(editorTpl) {
-	var l10n = Upfront.Settings.l10n.image_element;
+	var l10n = Upfront.Settings && Upfront.Settings.l10n
+			? Upfront.Settings.l10n.image_editor
+			: Upfront.mainData.l10n.image_editor
+		;
 
 	var ImageSelector = Backbone.View.extend({
 		selectorTpl: _.template($(editorTpl).find('#selector-tpl').html()),
@@ -15,7 +18,7 @@ define([
 
 		initialize: function(){
 			// Set the form up
-			this.setup_upload_form();
+			this.listenTo(Upfront.Events, 'Upfront:loaded', this.setup_upload_form);
 		},
 		setup_upload_form : function(){
 				var me = this;

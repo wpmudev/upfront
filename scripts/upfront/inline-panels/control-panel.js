@@ -3,7 +3,7 @@ define([
 	'scripts/upfront/inline-panels/collapsed-multi-control',
 	'scripts/upfront/inline-panels/tooltip-control'
 ], function (Panel, CollapsedMultiControl, TooltipControl) {
-	var l10n = Upfront.mainData.l10n.image_element;
+	var l10n = Upfront.mainData.l10n.image_editor;
 
 	var ControlPanel = Panel.extend({
 		position_v: 'none', // Image view will handle this

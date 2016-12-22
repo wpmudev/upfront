@@ -1,8 +1,8 @@
 (function ($) {
 define([
-	'text!elements/upfront-image/tpl/video_editor.html'
+	'text!scripts/upfront/templates/video_editor.html'
 ], function(editorTpl) {
-	var l10n = Upfront.Settings.l10n.image_element;
+	var l10n = Upfront.Settings.l10n.image_editor;
 
 	// Had some mysterious issue with deferred not being the one we need,
 	// this resolves it.
