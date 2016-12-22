@@ -1773,35 +1773,35 @@ RedactorPlugins.blockquote = function() {
 										noquote: {
 												iconClass: 'ueditor-noquote',
 												isActive: function (redactor) {
-														var quote = redactor.blockquote.getQuote();
-														return !quote;
+													var quote = redactor.blockquote.getQuote();
+													return !quote;
 												},
 												callback: function (name, el, button) {
-														if( me.utils.isCurrentOrParent(['BLOCKQUOTE']) ){
-																//me.block.formatBlockquote('blockquote');
-																//$( me.selection.getCurrent()).unwrap("<blockquote></blockquote>");
-																me.utils.replaceToTag(me.selection.getBlock(), 'p');
-														}
+													if( me.utils.isCurrentOrParent(['BLOCKQUOTE']) ){
+														var block = me.selection.getBlock();
+														$(block).removeClass('upfront-quote-alternative');
+														me.utils.replaceToTag(block, 'p');
+													}
 												}
 										},
 										quote: {
 												iconClass: 'ueditor-quote',
 												isActive: function (redactor) {
-														var quote = redactor.blockquote.getQuote();
-														return quote && !$(quote).hasClass('upfront-quote-alternative');
+													var quote = redactor.blockquote.getQuote();
+													return quote && !$(quote).hasClass('upfront-quote-alternative');
 												},
 												callback: function (name, el, button) {
-														me.block.formatBlockquote('blockquote');
+													me.block.formatBlockquote('blockquote');
 												}
 										},
 										alternative: {
 												iconClass: 'ueditor-quote-alternative',
 												isActive: function (redactor) {
-														var quote = redactor.blockquote.getQuote();
-														return quote && $(quote).hasClass('upfront-quote-alternative');
+													var quote = redactor.blockquote.getQuote();
+													return quote && $(quote).hasClass('upfront-quote-alternative');
 												},
 												callback: function (name, el, button) {
-														me.blockquote.getQuote().addClass('upfront-quote-alternative');
+													me.blockquote.getQuote().addClass('upfront-quote-alternative');
 												}
 										}
 								}
@@ -1811,7 +1811,7 @@ RedactorPlugins.blockquote = function() {
 				getQuote: function () {
 						var quote = $(this.selection.getParent());
 						if (quote.prop('tagName') == 'BLOCKQUOTE')
-								return quote;
+							return quote;
 						quote = quote.closest('blockquote');
 						return quote.closest('.redactor-box').length ? quote : false;
 				}
