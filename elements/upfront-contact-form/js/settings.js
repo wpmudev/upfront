@@ -104,7 +104,6 @@ define([
 	});
 	
 	var PasswordField = Upfront.Views.Editor.Field.Text.extend({
-		get_label_html: function () {},
 		get_field_html: function () {
 				var attr = {
 					'type': 'password',
