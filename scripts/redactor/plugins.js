@@ -1295,7 +1295,7 @@ RedactorPlugins.upfrontColor = function() {
 						render: function () {
 
 								var tabforeground = $('<li id="tabforeground" class="active" title="'+ Upfront.Settings.l10n.global.content.text_color +'">').html('');
-								var tabbackground = $('<li id="tabbackground" title="'+ Upfront.Settings.l10n.global.content.text_background +'">').html('');
+								var tabbackground = $('<li id="tabbackground" title="'+ Upfront.Settings.l10n.global.content.text_background +'">').html('<span class="tabbackground-item"></span>');
 								var tablist = $('<ul class="tablist">').append(tabbackground).append(tabforeground);
 
 								var tabs = $('<ul class="tabs">').append($('<li id="tabforeground-content" class="active">').html('<input class="foreground" type="text">')).append($('<li id="tabbackground-content">').html('<input class="background" type="text">'));
@@ -1351,20 +1351,23 @@ RedactorPlugins.upfrontColor = function() {
 										var color = tinycolor(self.current_bg);
 										if (color.getAlpha() === 0) {
 												this.redactor.$toolbar.find('.re-icon.re-upfrontColor').addClass('transparent').css('border-color', "");
+												this.redactor.$toolbar.find('.tabbackground-item').css('background', color.toRgbString());
 										} else {
 												this.redactor.$toolbar.find('.re-icon.re-upfrontColor').removeClass('transparent').css('border-color', color.toRgbString());
+												this.redactor.$toolbar.find('.tabbackground-item').css('background', color.toRgbString());
 										}
-								}
-								else {
+								} else {
 										this.redactor.$toolbar.find('.re-icon.re-upfrontColor').addClass('transparent').css('border-color', '');
 								}
 
 
-								if (self.current_color)
+								if (self.current_color) {
 										this.redactor.$toolbar.find('.re-icon.re-upfrontColor').css('color', self.current_color);
-								else
+										this.redactor.$toolbar.find('#tabforeground').css('color', self.current_color);
+								} else {
 										this.redactor.$toolbar.find('.re-icon.re-upfrontColor').css('color', '');
-
+										this.redactor.$toolbar.find('#tabforeground').css('color', '');
+								}
 						},
 						updateColors: function () {
 								this.redactor.buffer.set();
