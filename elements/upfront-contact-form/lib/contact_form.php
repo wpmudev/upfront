@@ -289,8 +289,8 @@ class Upfront_UcontactView extends Upfront_Object {
 		$phpmailer->Mailer = "smtp";
 		$phpmailer->From = $this->_get_property_t('smtp_from_email');
 		$phpmailer->FromName = $this->_get_property_t('smtp_from_name');
-		$phpmailer->Sender = $phpmailer->From; //Return-Path
-		$phpmailer->AddReplyTo($phpmailer->From,$phpmailer->FromName); //Reply-To
+		$phpmailer->Sender = $this->_get_property_t('smtp_from_email'); //Return-Path
+		$phpmailer->AddReplyTo($this->_get_property_t('smtp_from_email'), $this->_get_property_t('smtp_from_name')); //Reply-To
 		$phpmailer->Host = $this->_get_property_t('smtp_host');
 		$phpmailer->SMTPSecure = $this->_get_property_t('smtp_secure');
 		$phpmailer->Port = $this->_get_property_t('smtp_port');
