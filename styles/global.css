@@ -502,6 +502,11 @@ div.upfront-region-container-lightbox .upfront-grid-layout {
   max-height:1px;
   max-width: 1px;
 }
+div[data-bg-type-desktop="video"] .upfront-grid-layout,
+div[data-bg-type-tablet="video"] .upfront-grid-layout,
+div[data-bg-type-mobile="video"] .upfront-grid-layout {
+  z-index: 10;
+}
 div.upfront-region-lightbox, div.upfront-region-side-lightbox,
 .flexbox-support div.upfront-region-lightbox, .flexbox-support div.upfront-region-side-lightbox {
   position:fixed;

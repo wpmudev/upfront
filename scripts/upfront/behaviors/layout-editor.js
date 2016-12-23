@@ -146,6 +146,7 @@ var LayoutEditor = {
 			sel_bottom = ( sel_bottom === false || off.bottom > sel_bottom ) ? off.bottom : sel_bottom;
 			sel_left = ( sel_left === false || off.left < sel_left ) ? off.left : sel_left;
 			sel_right = ( sel_right === false || off.right > sel_right ) ? off.right : sel_right;
+			if (typeof wrap_off === 'undefined') return;
 			wrap_off.right = wrap_off.left + wrap_width;
 			wrap_off.bottom = wrap_off.top + wrap_height;
 			wrap_top = ( wrap_top === false || wrap_off.top < wrap_top ) ? wrap_off.top : wrap_top;
@@ -571,6 +572,7 @@ var LayoutEditor = {
 			sel_bottom = ( sel_bottom === false || off.bottom > sel_bottom ) ? off.bottom : sel_bottom;
 			sel_left = ( sel_left === false || off.left < sel_left ) ? off.left : sel_left;
 			sel_right = ( sel_right === false || off.right > sel_right ) ? off.right : sel_right;
+			if (typeof wrap_off === 'undefined') return;
 			wrap_off.left = Math.round(wrap_off.left);
 			wrap_off.top = Math.round(wrap_off.top);
 			wrap_off.right = wrap_off.left + wrap_width;
