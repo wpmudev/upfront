@@ -22,6 +22,8 @@ License: MIT
 
 #element-settings-sidebar .sp-container {
 	position: fixed !important;
+	/* Avoid scrollbar overlapping color picker. */
+	z-index: 100000000;
 }
 
 /* http://ansciath.tumblr.com/post/7347495869/css-aspect-ratio */
