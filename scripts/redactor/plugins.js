@@ -1310,32 +1310,34 @@ RedactorPlugins.upfrontColor = function() {
 								//		redac.bufferAirBindHide();
 								//};
 
-								tablist.children('li').on('click', function (e) {
+								tablist.children('li').on('mousedown', function (e) {
 										e.preventDefault();
 										e.stopPropagation();
 
-					var $list_items = self.$el.find(".tablist li"),
-						$content_hub = self.$el.find(".tabs"),
-						$me = $(this),
-						$content_item = $content_hub.children('li#' + $me.attr('id') + '-content')
-					;
+										var $list_items = self.$el.find(".tablist li"),
+											$content_hub = self.$el.find(".tabs"),
+											$me = $(this),
+											$content_item = $content_hub.children('li#' + $me.attr('id') + '-content')
+										;
 										$list_items.removeClass('active');
 										$me.addClass('active');
 
-					$content_hub.children('li').removeClass('active');
+										$content_hub.children('li').removeClass('active');
 										$content_item.addClass('active');
-					$content_item.find(".sp-container").removeClass("sp-hidden");
+										$content_item.find(".sp-container").removeClass("sp-hidden");
 
 										self.$('input.foreground').spectrum(
-						'option',
-						'color',
-						(self.current_color && 'object' === typeof(self.current_color) ? self.current_color.toRgbString() : self.current_color) || ''
-					);
+											'option',
+											'color',
+											(self.current_color && 'object' === typeof(self.current_color) ? self.current_color.toRgbString() : self.current_color) || ''
+										);
 										self.$('input.background').spectrum(
-						'option',
-						'color',
-						(self.current_bg && 'object' === typeof(self.current_bg) ? self.current_bg.toRgbString() : self.current_bg) || ''
-					);
+											'option',
+											'color',
+											(self.current_bg && 'object' === typeof(self.current_bg) ? self.current_bg.toRgbString() : self.current_bg) || ''
+										);
+										
+										return false;
 								});
 
 								this.$el.html(tablist).append(tabs);
