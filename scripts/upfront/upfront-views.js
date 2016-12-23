@@ -3777,6 +3777,14 @@ define([
 				group_container.append($handle_w);
 				group_container.append($handle_e);
 
+				// Add Hover Class on group resize handle hover.
+				me = this;
+				this.$el.parent().find('.upfront-resize-handle-wrapper').hover(function() {
+					me.$el.addClass('upfront-module-group-handle-hover');
+				}, function() {
+					me.$el.removeClass('upfront-module-group-handle-hover');
+				})
+
 				this.$bg = this.$el.find('.upfront-module-group-bg');
 				this.update();
 				var local_view = this._modules_view || new Modules({"model": this.model.get("modules")});

@@ -647,7 +647,7 @@ define([
 					this.$el.find('b.upfront-entity_meta').after('<div class="swap-image-overlay"><p class="upfront-icon upfront-icon-swap-image"><span>Click to </span>Swap Image</p></div>');
 				}
 			} else {
-				var resizeHint = $('<div>').addClass('upfront-ui uimage-resize-hint' + onTop);
+				var resizeHint = $('<div>').addClass('upfront-ui upfront-entity-size-hint uimage-resize-hint' + onTop);
 				this.$el.append(resizeHint);
 				setTimeout( function () {
 					me.applyElementSize(false, false, false); // don't update property here

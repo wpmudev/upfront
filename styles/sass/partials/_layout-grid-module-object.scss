@@ -308,6 +308,12 @@
 .upfront-resize-handle-wrapper:hover ~ .upfront-module-group .upfront-resize-handle-group,
 .upfront-resize-handle-wrapper:hover ~ .upfront-module-group > .upfront-entity-size-hint,
 .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-entity-size-hint,
+/* Border on Group resize hover */
+.upfront-module-group-handle-hover .upfront-selected-border, 
+/* Size Hint on Group resize hover */
+.upfront-module-group-handle-hover > .upfront-entity-size-hint, 
+/* Handle on Group resize hover */
+.upfront-module-group-handle-hover .upfront-resize-handle-group, 
 .upfront-resize-handle-wrapper:hover ~ .upfront-module-group .upfront-selected-border {
 	display: block;
 }
@@ -325,7 +331,7 @@
 
 .upfront-wrapper-multiple-modules:hover .upfront-module,
 .upfront-wrapper-multiple-modules .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-module {
-	box-shadow: inset 0 0 0 2px rgba(255,255,255,0.50);
+	box-shadow: inset 0 0 0 1px rgba(255,255,255,0.50);
 	outline: 1px solid rgba(72,89,106,0.3);
 }
 
@@ -336,7 +342,7 @@
 .upfront-module:hover,
 .upfront-object-group-on-edit .upfront-object:hover {
 	/*background-color: rgba(255,255,255,0.3);*/
-	box-shadow: inset 0 0 0 2px rgba(255,255,255,0.50);
+	box-shadow: inset 0 0 0 1px rgba(255,255,255,0.50);
 	outline: 1px solid #48596a;
 	/*z-index: 40;*/
 }
@@ -539,7 +545,8 @@
 	right: 0;
 	z-index: -1;
 	display: none;
-	box-shadow: inset 0 0 0 1px #48596a;
+	outline: 1px solid #48596a;
+	box-shadow: inset 0 0 0 1px rgba(255,255,255,0.50);
 }
 #upfront-group-selection {
 	bottom: auto;
@@ -550,6 +557,7 @@
 .upfront-wrapper-module-group-on-edit .upfront-selected-border,
 .upfront-module-group-active > .upfront-selected-border {
 	box-shadow: inset 0 0 0 2px rgba(248, 210, 111, 1);
+	outline: none;
 }
 .upfront-ui-selected .upfront-selected-border,
 .ui-selecting .upfront-selected-border,
@@ -731,6 +739,7 @@
 	top: 50%;
 	bottom: 50%;
     box-sizing: border-box;
+	margin-top: -25px;
 }
 
 /* Hide initially. */
@@ -884,6 +893,11 @@
 	display: inline-block;
 	margin: 0 0.3rem;
 }
+
+.uimage-resize-hint.upfront-entity-size-hint .upfront-entity-type {
+	margin: 0;
+}
+
 /* .upfront-editable_entity:hover > .upfront-entity-size-hint, */
 .upfront-editable_entity.ui-resizable-resizing > .upfront-entity-size-hint,
 .upfront-module:hover .upfront-entity-size-hint,
