@@ -1645,6 +1645,7 @@ var InsertManagerInserts = Backbone.View.extend({
 					options.inserts = _.without(options.inserts, "embed");
         }
 
+        this._inserts = options._inserts || {};
         this.insertsData = options.insertsData || {};
         this.inserts = options.inserts || {};
         this.redactor = options.redactor;
@@ -1701,7 +1702,7 @@ var InsertManagerInserts = Backbone.View.extend({
 
                 // if(!results) Let's allow promises without result for now!
                 //	return;
-                self.inserts[insert.cid] = insert;
+                self._inserts[insert.data.id] = insert;
                 //Allow to undo
                 //this.trigger('insert:prechange'); // "this" is the embedded image object
                 //self.trigger('insert:prechange'); // "self" is the view
@@ -1783,6 +1784,7 @@ var InsertManager = Backbone.View.extend({
 
         var self = this,
             tooltips = new InsertManagerInserts({
+			_inserts: this._inserts, // This the inserted object
             insertsData: this.insertsData,
             inserts: this.inserts,
             redactor: this.ueditor.redactor,
