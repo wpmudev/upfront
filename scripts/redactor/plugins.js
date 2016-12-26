@@ -1284,11 +1284,16 @@
 							$positionClass = 'uf-bottom-right',
 							$selectionHeight = $(this.redactor.selection.getBlock()).height(),
 							$air = this.redactor.$air
+						;
 
 						if($containerOffset.top < this.$el.find('.sp-container').height()) {
 							$positionClass = 'uf-top-right';
-
-							this.redactor.$air.css('top', parseInt($air.css('top')) + $selectionHeight / 2);
+							
+							if(this.redactor.$air.hasClass('under')) {
+								this.redactor.$air.css('top', parseInt($air.css('top')) + $selectionHeight);
+							} else {
+								this.redactor.$air.css('top', parseInt($air.css('top')) + $selectionHeight + 100);
+							}
 						}
 
 						this.$el.addClass('uf-color-picker-wrapper');
