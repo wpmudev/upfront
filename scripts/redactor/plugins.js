@@ -1278,6 +1278,17 @@
 						this.positionColorPicker();
 						this.fadeInToolbar();
 					},
+					scrollPageForPicker: function() {
+						var viewportTop = $(window).scrollTop(),
+							ueditorTop = this.$el.closest('.redactor-toolbar').offset().top,
+							pickerHeight = this.$el.height(),
+							offsetAfterPicker = ueditorTop - pickerHeight
+						;
+						
+						if(viewportTop > offsetAfterPicker) {
+							$(window).scrollTop(offsetAfterPicker);
+						}
+					},
 					positionColorPicker: function() {
 						var $redactorContainer = this.$el.closest('.redactor-toolbar'),
 							$containerOffset = $redactorContainer.offset(),
@@ -1299,6 +1310,8 @@
 						this.$el.addClass('uf-color-picker-wrapper');
 
 						this.$el.addClass($positionClass).find('.tablist').addClass($positionClass);
+						
+						this.scrollPageForPicker();
 					},
 					render: function () {
 
