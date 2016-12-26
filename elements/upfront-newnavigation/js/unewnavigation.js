@@ -1249,14 +1249,17 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	addPrimaryMenuItem : function(e) {
 
 		e.preventDefault();
-		if(this.$el.find('ul.menu > li > i.navigation-add-item').length > 0) {
+		// commenting this as New Panels do not use this
+		// if(this.$el.find('ul.menu > li > i.navigation-add-item').length > 0) {
 
-			this.$el.find('ul.menu > li > i.navigation-add-item').trigger('click');
-		}
-		else {
+			// this.$el.find('ul.menu > li > i.navigation-add-item').trigger('click');
+		// }
+		// else {
 
-			this.addMenuItem(e);
-		}
+			// this.addMenuItem(e);
+		// }
+		
+		this.addMenuItem(e);
 	},
 	addMenuItem : function(e) {
 
@@ -1287,7 +1290,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				$(e.target).parent('li').next('li').append(e.target);
 			}
 		}
-		me.editMenuItem(me.$el.find('a.new_menu_item').removeClass('new_menu_item')); //linkPanel does not popup on new menu creation because of this class being removed
+		// me.editMenuItem(me.$el.find('a.new_menu_item').removeClass('new_menu_item')); //linkPanel does not popup on new menu creation because of this class being removed
+		me.$el.find('li.new_menu_item i.upfront-icon-region-labelEdit').click(); // enable edit mode via panel
 	},
 
 	getControlItems: function(){
