@@ -1285,7 +1285,7 @@
 							offsetAfterPicker = ueditorTop - pickerHeight
 						;
 						
-						if(viewportTop > offsetAfterPicker) {
+						if(viewportTop > offsetAfterPicker && ueditorTop > pickerHeight) {
 							$('html,body').animate({scrollTop: offsetAfterPicker},'slow');
 						}
 					},
