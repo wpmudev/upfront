@@ -12422,8 +12422,8 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
 .group-link-control .link-control-panel input.upfront-field-text {
   top: 1px; }
 
-.link-control-panel .ulinkpanel-external-wrap input {
-  padding-right: 55px; }
+.js-ulinkpanel-input-external-padding {
+  padding-right: 55px !important; }
 
 /* ----- New Editor bar ----- */
 .upfront-postcontent-editor {

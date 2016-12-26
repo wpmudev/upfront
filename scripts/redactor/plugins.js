@@ -1281,11 +1281,14 @@
 					positionColorPicker: function() {
 						var $redactorContainer = this.$el.closest('.redactor-toolbar'),
 							$containerOffset = $redactorContainer.offset(),
-							$positionClass = 'uf-bottom-right';
-						;
+							$positionClass = 'uf-bottom-right',
+							$selectionHeight = $(this.redactor.selection.getBlock()).height(),
+							$air = this.redactor.$air
 
 						if($containerOffset.top < this.$el.find('.sp-container').height()) {
 							$positionClass = 'uf-top-right';
+
+							this.redactor.$air.css('top', parseInt($air.css('top')) + $selectionHeight / 2);
 						}
 
 						this.$el.addClass('uf-color-picker-wrapper');
