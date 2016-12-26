@@ -1307,6 +1307,18 @@
 								$positionClass = 'uf-top-right uf-top-right-spacing';
 							}
 						}
+						
+						if($containerOffset.left < this.$el.find('.sp-container').width()) {
+							$positionClass = 'uf-bottom-left';
+
+							if($containerOffset.top < this.$el.find('.sp-container').height()) {
+								if(this.redactor.$air.hasClass('under')) {
+									$positionClass = 'uf-top-left uf-top-left-spacing';
+								} else {
+									$positionClass = 'uf-top-left';
+								}
+							}
+						}
 
 						this.$el.addClass('uf-color-picker-wrapper');
 
