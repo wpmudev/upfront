@@ -10903,7 +10903,9 @@ License: MIT
   position: relative; }
 
 #element-settings-sidebar .sp-container {
-  position: fixed !important; }
+  position: fixed !important;
+  /* Avoid scrollbar overlapping color picker. */
+  z-index: 100000000; }
 
 /* http://ansciath.tumblr.com/post/7347495869/css-aspect-ratio */
 .sp-top {
@@ -15018,6 +15020,10 @@ ul.upfront_color_picker_rgba {
 .redactor-dropdown-box-upfrontColor .uf-color-picker-wrapper.uf-top-right {
   top: -69px;
   left: -242px; }
+
+.redactor-dropdown-box-upfrontColor .uf-color-picker-wrapper.uf-top-right-spacing {
+  top: -65px;
+  left: -243px; }
 
 .redactor-dropdown-box-upfrontColor .tablist.uf-top-left {
   top: -1px;

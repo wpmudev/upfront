@@ -1304,6 +1304,7 @@
 								this.redactor.$air.css('top', parseInt($air.css('top')) + $selectionHeight);
 							} else {
 								this.redactor.$air.css('top', parseInt($air.css('top')) + $selectionHeight + 100);
+								$positionClass = 'uf-top-right uf-top-right-spacing';
 							}
 						}
 
