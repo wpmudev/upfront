@@ -1286,7 +1286,7 @@
 						;
 						
 						if(viewportTop > offsetAfterPicker) {
-							$(window).scrollTop(offsetAfterPicker);
+							$('html,body').animate({scrollTop: offsetAfterPicker},'slow');
 						}
 					},
 					positionColorPicker: function() {
