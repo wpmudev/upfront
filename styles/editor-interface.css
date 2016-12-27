@@ -12013,6 +12013,9 @@ a.ulinkpanel-entry-url:hover {
 .ulinkpanel-lightbox-selector {
   margin-top: 1px; }
 
+.group-link-control .ulinkpanel-new-lightbox {
+  margin-top: 0px; }
+
 .ulinkpanel-lightbox-selector {
   border: 1px solid #7c9dbf; }
 
