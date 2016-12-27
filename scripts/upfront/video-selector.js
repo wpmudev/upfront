@@ -57,7 +57,15 @@ define([
 							form[0].reset();
 						})
 						.bind('fileuploadfail', function (e, response) {
-							var error = response.jqXHR.responseJSON.error;
+							var error;
+							
+							// Check if responseJSON exist to prevent JS errors
+							if(response.jqXHR.responseJSON !== "undefined" && response.jqXHR.responseJSON) {
+								error = response.jqXHR.responseJSON.error;
+							} else {
+								error = response.jqXHR.statusText;
+							}
+							
 							Upfront.Views.Editor.notify(error, 'error');
 							me.openSelector();
 							form[0].reset();
