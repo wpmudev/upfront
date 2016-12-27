@@ -4166,6 +4166,7 @@ define([
 				ed.update_position_data($wrap.closest('.upfront-editable_entities_container'));
 				ed.update_wrappers(region);
 				Upfront.Events.trigger("entity:module_group:ungroup", modules_arr, region);
+				Upfront.Events.trigger("tooltip:close"); // Close tooltip
 			},
 			_update_padding: function (dir, object, add) {
 				var padding_use = object.get_breakpoint_property_value(dir+'_padding_use', true),
