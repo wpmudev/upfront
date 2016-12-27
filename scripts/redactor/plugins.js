@@ -863,6 +863,9 @@
 							}
 						}
 
+						// And now, we escape the URL before anything else
+						href = encodeURI(href);
+
 						this.linkModel = new LinkModel({
 							type: type,
 							url: href,
