@@ -42,7 +42,7 @@
 	<div class="uslider-texts">
 		<?php for($i=0; $i<$slidesLength; $i++) { ?>
 		<div class="uslide-text caption-<?php echo $slides[$i]['id'] ?>" rel="<?php echo $slides[$i]['id'] ?>" style="background-color:<?php echo !empty($slides[$i]['captionBackground']) ? $slides[$i]['captionBackground'] : 'transparent' ?>;color:<?php echo $slides[$i]['captionColor'] ?>">
-			<div class="uslide-editable-text" placeholder="Slider description">
+			<div class="uslide-editable-text">
 				<?php echo $slides[$i]['text'] ?>
 			</div>
 		</div>

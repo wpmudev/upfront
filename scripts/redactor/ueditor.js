@@ -1493,7 +1493,8 @@ Ueditor.prototype = {
 				'z-index': '0',
 				'top': pos.top,
 				'left': pos.left,
-				'right': $parent.outerWidth() - (pos.left + this.$el.outerWidth())
+				'width': this.$el.outerWidth(),
+				'height': this.$el.outerHeight()
 			});
 
 			//Make sure that the editor has one line of text
