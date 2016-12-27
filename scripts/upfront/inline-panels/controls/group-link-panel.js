@@ -34,6 +34,10 @@ define([
 			});
 			this.listenTo(this.link, 'change change:target change:type', function(link) {
 				me.render_label();
+				
+				// If not an object return
+				if(typeof link !== 'object') return;
+				
 				this.trigger('change', {
 					url: link.get('url'),
 					target: link.get('target'),
