@@ -345,9 +345,8 @@ define([
 			this.$el.html('Error occurred, link panel switch to new style.');
 				return;
 			}
-
-			if (!this.model.get('url') && (!this.model.get('type') || this.model.get('type') === "unlink")) {
-				// If not URL set type to external
+			
+			if (!this.model.get('url') && !this.model.get('type')) {
 				this.model.set({'type': 'external'}, {silent: true});
 			}
 
@@ -389,7 +388,7 @@ define([
 				}
 			}
 
-			if (_.contains(['external'], this.model.get('type'))) {
+			if (_.contains(['external', 'unlink'], this.model.get('type'))) {
 				this.renderTargetRadio();
 			}
 
@@ -509,16 +508,26 @@ define([
 				typeSelectValues.push(this.getLinkTypeValue(type));
 			}, this);
 
-			var tooltipSelect = this.getTooltipSelect('side');
+			var tooltipSelect = this.getTooltipSelect('side'),
+				typeSelected = this.model.get('type')
+			;
+			
+			if(this.model.get('type') === 'unlink' || !this.model.get('type')) {
+				typeSelected = 'external';
+			}
 
 			this.typeSelect = new tooltipSelect({
 				label: '',
 				className: 'upfront-link-select',
 				values: typeSelectValues,
-				default_value: this.model.get('type'),
+				default_value: typeSelected,
 				change: function () {
 					me.model.set({'type': this.get_value()});
 					Upfront.Events.trigger("tooltip:close");
+					
+					if(this.get_value() === "unlink") {
+						me.close();
+					}
 				}
 			});
 
@@ -532,6 +541,7 @@ define([
 			});
 
 			var linkType = this.model.get('type'),
+				linkType = linkType === 'unlink' ? 'external' : linkType,
 				linkTitle = this.getLinkTypeValue(linkType);
 
 			this.$el.find('.upfront-link-select .upfront-field-select').utooltip({

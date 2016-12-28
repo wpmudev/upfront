@@ -920,6 +920,7 @@
 							var caretOffset = me.redactor.caret.getOffset();
 							me.redactor.selection.remove();
 							me.redactor.caret.setOffset(caretOffset);
+							this.showSiblings();
 						});
 
 						this.listenTo(this.linkModel, 'change:type', function() {
@@ -989,11 +990,7 @@
 
 						var text = this.redactor.selection.getHtml();
 						this.redactor.selection.restore();
-						if (text !== '' && $.parseHTML(text).length > 1) {// there is html inside
-							this.redactor.insert.html(text, true);
-						} else {
-							this.redactor.link.unlink();
-						}
+						this.redactor.link.unlink();
 
 						this.redactor.$element.focus();
 						this.updateMissingLightboxFlag();
