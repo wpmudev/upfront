@@ -376,12 +376,10 @@ abstract class Upfront_Entity {
 				$autoplay = $this->_get_breakpoint_property('background_video_autoplay', $breakpoint_id);
 				$loop = $this->_get_breakpoint_property('background_video_loop', $breakpoint_id);
 
-				if ($mute)
-					$vid_attr .= ' muted ';
-				if ($autoplay)
-					$vid_attr .= ' autoplay ';
-				if ($loop)
-					$vid_attr .= ' loop ';
+				$vid_attr = isset($vid_attr) ? $vid_attr : '';
+				if ($mute) $vid_attr .= ' muted ';
+				if ($autoplay) $vid_attr .= ' autoplay ';
+				if ($loop) $vid_attr .= ' loop ';
 
 				$embed = $this->_get_breakpoint_property('uploaded_background_video_embed', $breakpoint_id);
 				$embed = str_replace('video class', 'video ' . $vid_attr . 'controls class', $embed);
