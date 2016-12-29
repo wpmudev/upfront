@@ -11842,6 +11842,9 @@ div.ugallery-controls i.upfront-icon:before {
   width: 18px;
   height: 18px; }
 
+.upfront-element-controls .upfront-inline-panel .upfront-control-dialog-open.upfront-inline-panel-item .upfront-icon-region-link:before {
+  background-position: -381px -71px !important; }
+
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-reorder:before {
   background-position: -261px -521px;
   width: 18px;
