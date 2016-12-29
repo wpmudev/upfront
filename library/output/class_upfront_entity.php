@@ -367,7 +367,11 @@ abstract class Upfront_Entity {
 				$style = $this->_get_breakpoint_property('background_video_style', $breakpoint_id);
 
 				$width = $this->_get_breakpoint_property('background_video_width', $breakpoint_id);
+				if (empty($width)) $width = 1; // Basic sanity check, prevents division by zero
+
 				$height = $this->_get_breakpoint_property('background_video_height', $breakpoint_id);
+				if (empty($height)) $height = 1; // Basic sanity check, prevents division by zero
+
 				$attr = ' data-bg-video-ratio="' . round($height/$width, 2) . '" ';
 				$attr .= 'data-bg-video-style="' . $style . '" ';
 				$attr .= 'id="' . $video_id . '"  ';
