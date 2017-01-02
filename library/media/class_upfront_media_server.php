@@ -820,9 +820,21 @@ class Upfront_MediaServer extends Upfront_Server {
 		$video_id = !empty($data['video_id']) ? intval($data['video_id']) : false;
 		if (!$video_id) $this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('invalid_id')));
 
+		$meta_info = get_post_meta($video_id, 'videoinfo', true);
+		if (empty($meta_info)) {
+			$meta_info = array(
+				'id' => $video_id,
+				'embed' => Upfront_Uimage_Server::get_video_html($video_id),
+				'cover' => false,
+				'width' => false,
+				'height' => false,
+				'aspect' => false,
+			);
+		}
+
 		return $this->_out(new Upfront_JsonResponse_Success(
 			array(
-				'videoinfo' => get_post_meta($video_id, 'videoinfo', true)
+				'videoinfo' => $meta_info,
 			)
 		));
 	}

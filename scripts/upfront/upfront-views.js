@@ -3777,6 +3777,14 @@ define([
 				group_container.append($handle_w);
 				group_container.append($handle_e);
 
+				// Add Hover Class on group resize handle hover.
+				me = this;
+				this.$el.parent().find('.upfront-resize-handle-wrapper').hover(function() {
+					me.$el.addClass('upfront-module-group-handle-hover');
+				}, function() {
+					me.$el.removeClass('upfront-module-group-handle-hover');
+				})
+
 				this.$bg = this.$el.find('.upfront-module-group-bg');
 				this.update();
 				var local_view = this._modules_view || new Modules({"model": this.model.get("modules")});
@@ -4158,6 +4166,7 @@ define([
 				ed.update_position_data($wrap.closest('.upfront-editable_entities_container'));
 				ed.update_wrappers(region);
 				Upfront.Events.trigger("entity:module_group:ungroup", modules_arr, region);
+				Upfront.Events.trigger("tooltip:close"); // Close tooltip
 			},
 			_update_padding: function (dir, object, add) {
 				var padding_use = object.get_breakpoint_property_value(dir+'_padding_use', true),

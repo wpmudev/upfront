@@ -659,6 +659,8 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'browse' => __('Browse...', 'upfront'),
 				'pick_image' => __('Pick Image', 'upfront'),
 				'pick_video' => __('Pick Video', 'upfront'),
+				'allowed_video_type_error' => __('Only webm and mp4 are allowed.', 'upfront'),
+				'preparing_video_upload' => __('Preparing video', 'upfront'),
 				'image_type' => __('Image Type', 'upfront'),
 				'full_width_bg' => __('Full Width', 'upfront'),
 				'tiled_pattern' => __('Tiled / Pattern', 'upfront'),

@@ -96,7 +96,7 @@
 
 						me.data.set({
 							'video_embed': me.getEmbedFromVideoData(videoData),
-							'id': videoData.id
+							//'id': videoData.id // @TODO: this data.id is used by InsertManager, but in the form of uinsert-*
 						});
 
 						if (deferred) {
@@ -112,7 +112,13 @@
 			 */
 			getEmbedFromVideoData: function(videoData) {
 				// Fit video to parent
-				var width = parseInt(this.$editor.width(), 10);
+				var width;
+				if (this.$editor.children('.upfront-indented_content').length > 0) {
+					width = parseInt(this.$editor.children('.upfront-indented_content').width(), 10);
+				}
+				else {
+					width = parseInt(this.$editor.width(), 10);
+				}
 
 				var embed = $(videoData.embed).find('video')
 					.attr('preload', 'none') // Prevent video from preloading in editor,
@@ -124,7 +130,7 @@
 					.attr('data-aspect', videoData.aspect) // For future use
 					.attr('controls', 'controls'); // Shown by default
 
-				return embed;
+				return $('<div/>').append(embed).html(); // Return the html string for saving
 			},
 
 			toggleVideoControls: function(event) {
@@ -255,7 +261,7 @@
 
 			removeInsert: function(e) {
 				e.preventDefault();
-				this.$el.remove();
+				this.trigger('remove', this);
 			}
 		});
 

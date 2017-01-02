@@ -147,7 +147,7 @@ class Upfront_UnewnavigationView extends Upfront_Object {
 		if ( !empty($menu_html) ) {
 			return $menu_html;
 		}
-		
+
 		// normal display with no other menu on each breakpoint
 		if($menu_slug) {
 			$menu = wp_get_nav_menu_object($menu_slug);
@@ -628,7 +628,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 
 		if (!isset($item_data['menu-item-db-id'])) $item_data['menu-item-db-id'] = 0;
 
-		$itemId = wp_update_nav_menu_item($menuId, $item_data['menu-item-db-id'], $item_data);
+		$itemId = wp_update_nav_menu_item(intval($menuId), intval($item_data['menu-item-db-id']), $item_data);
 		$this->_out(new Upfront_JsonResponse_Success(array('itemId' => $itemId)));
 	}
 }

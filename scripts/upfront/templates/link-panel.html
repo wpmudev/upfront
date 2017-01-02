@@ -1,8 +1,8 @@
 <div class="ulinkpanel-back"><button class="upfront-icon upfront-icon-linkbutton upfront-link-back" title="{{Upfront.Settings.l10n.global.content.link_back}}"></button></div>
 <div class="upfront-settings-link-select"></div>
-{[if(type == 'external') { ]}
+{[if(type == 'external' || type == 'unlink') { ]}
 <div class="upfront-settings-link-field upfront-field-wrap ulinkpanel-external-wrap">
-	<input type="text" value="{{link.url}}" placeholder="http://example.com" class="upfront-field-text js-ulinkpanel-input-url js-ulinkpanel-input-external" title="{{Upfront.Settings.l10n.global.content.external}}">
+	<input type="text" value="{{link.url}}" placeholder="http://example.com" class="upfront-field-text js-ulinkpanel-input-url js-ulinkpanel-input-external js-ulinkpanel-input-external-padding" title="{{Upfront.Settings.l10n.global.content.external}}">
 </div>
 {[ } ]}
 {[if(type == 'phone') { ]}
@@ -20,7 +20,7 @@
 	{[if(!link.url || link.url=='' || link.url=='http://') { ]}
 		<a class="ulinkpanel-entry-url ulinkpanel-entry-browse js-ulinkpanel-input-entry" href="#" title="{{Upfront.Settings.l10n.global.content.browse_post_page}}">{{Upfront.Settings.l10n.global.views.browse}}</a>
 	{[ } else { ]}
-		<a class="ulinkpanel-entry-url js-ulinkpanel-input-url js-ulinkpanel-input-entry" href="#" title="{{Upfront.Settings.l10n.global.content.edit_post_page}}">{{(link.title) ? link.title : link.url}}</a>
+		<a class="ulinkpanel-entry-url js-ulinkpanel-input-url js-ulinkpanel-input-entry" href="#" title="{{Upfront.Settings.l10n.global.content.edit_post_page}}">{{(link.display_title) ? link.display_title : link.display_url}}</a>
 	{[ } ]}
 </div>
 {[ } ]}

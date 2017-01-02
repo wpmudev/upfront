@@ -61,7 +61,7 @@
 
 <script type="text/template" id="upload-form-tpl">
 <form id="upfront-upload-video" name="upfront-upload-video" enctype="multipart/form-data" method="post" action="{{url}}" data-url="{{url}}?action=upfront-media-upload">
-	<input type="file" name="media" id="upfront-video-file-input" multiple >
+	<input type="file" name="media" id="upfront-video-file-input" multiple accept="video/mp4,video/webm">
 	<input type="hidden" name="action" value="upfront-media-upload">
 	<input type="submit" value="Upload">
 </form>

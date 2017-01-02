@@ -367,7 +367,11 @@ abstract class Upfront_Entity {
 				$style = $this->_get_breakpoint_property('background_video_style', $breakpoint_id);
 
 				$width = $this->_get_breakpoint_property('background_video_width', $breakpoint_id);
+				if (empty($width)) $width = 1; // Basic sanity check, prevents division by zero
+
 				$height = $this->_get_breakpoint_property('background_video_height', $breakpoint_id);
+				if (empty($height)) $height = 1; // Basic sanity check, prevents division by zero
+
 				$attr = ' data-bg-video-ratio="' . round($height/$width, 2) . '" ';
 				$attr .= 'data-bg-video-style="' . $style . '" ';
 				$attr .= 'id="' . $video_id . '"  ';
@@ -376,12 +380,10 @@ abstract class Upfront_Entity {
 				$autoplay = $this->_get_breakpoint_property('background_video_autoplay', $breakpoint_id);
 				$loop = $this->_get_breakpoint_property('background_video_loop', $breakpoint_id);
 
-				if ($mute)
-					$vid_attr .= ' muted ';
-				if ($autoplay)
-					$vid_attr .= ' autoplay ';
-				if ($loop)
-					$vid_attr .= ' loop ';
+				$vid_attr = isset($vid_attr) ? $vid_attr : '';
+				if ($mute) $vid_attr .= ' muted ';
+				if ($autoplay) $vid_attr .= ' autoplay ';
+				if ($loop) $vid_attr .= ' loop ';
 
 				$embed = $this->_get_breakpoint_property('uploaded_background_video_embed', $breakpoint_id);
 				$embed = str_replace('video class', 'video ' . $vid_attr . 'controls class', $embed);

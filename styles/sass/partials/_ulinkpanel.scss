@@ -132,6 +132,10 @@ a.ulinkpanel-entry-url:hover {
 	margin-top: 1px;
 }
 
+.group-link-control .ulinkpanel-new-lightbox {
+	margin-top: 0px;
+}
+
 .ulinkpanel-lightbox-selector {
 	border: 1px solid #7c9dbf;
 }
@@ -504,6 +508,7 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 }
 .link-control-panel .ulinkpanel-entry-wrap {
 	width: auto;
+	white-space: nowrap;
 }
 .link-control-panel .anchor-selector {
 	margin-top: 0px;
@@ -571,6 +576,6 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 .group-link-control .link-control-panel input.upfront-field-text {
 	top: 1px;
 }
-.link-control-panel .ulinkpanel-external-wrap input {
-	padding-right: 55px;
+.js-ulinkpanel-input-external-padding {
+	padding-right: 55px !important;
 }

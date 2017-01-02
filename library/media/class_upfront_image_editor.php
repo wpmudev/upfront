@@ -496,7 +496,19 @@ class Upfront_ImageEditor_Server extends Upfront_Server {
 		$data = stripslashes_deep($_POST);
 
 		$video_id = !empty($data['video_id']) ? intval($data['video_id']) : false;
-		if (!$video_id) $this->_out(new Upfront_JsonResponse_Error(self::_get_l10n('invalid_id')));
+		if (!$video_id) $this->_out(new Upfront_JsonResponse_Error(Upfront_UimageView::_get_l10n('invalid_id')));
+
+		$result = array(
+			'url' => self::get_video_html($video_id),
+		);
+
+		return $this->_out(new Upfront_JsonResponse_Success($result));
+	}
+
+	public static function get_video_html ($video_id) {
+		if (!is_numeric($video_id)) return false;
+		$video_id = (int)$video_id;
+		if (empty($video_id)) return false;
 
 		$video_url = wp_get_attachment_url($video_id);
 		$video_html = wp_video_shortcode( array('src' => $video_url) );
@@ -505,11 +517,8 @@ class Upfront_ImageEditor_Server extends Upfront_Server {
 		$video_html = str_replace('preload="metadata"', 'preload="auto"', $video_html);
 		$video_html = str_replace('controls="controls"', '', $video_html);
 
-		$result = array(
-			'url' => $video_html
-		);
+		return $video_html;
 
-		return $this->_out(new Upfront_JsonResponse_Success($result));
 	}
 }
 Upfront_ImageEditor_Server::serve();

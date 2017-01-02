@@ -3,6 +3,9 @@ define([
 	'text!scripts/upfront/templates/video_editor.html'
 ], function(editorTpl) {
 	var l10n = Upfront.Settings.l10n.image_editor;
+	var l10nG = Upfront.Settings && Upfront.Settings.l10n
+		? Upfront.Settings.l10n.global.views
+		: Upfront.mainData.l10n.global.views;
 
 	// Had some mysterious issue with deferred not being the one we need,
 	// this resolves it.
@@ -12,7 +15,7 @@ define([
 		selectorTpl: _.template($(editorTpl).find('#selector-tpl').html()),
 		progressTpl: _.template($(editorTpl).find('#progress-tpl').html()),
 		formTpl: _.template($(editorTpl).find('#upload-form-tpl').html()),
-		defaultOptions: {multiple: false, multiple_sizes: true, preparingText: l10n.sel.preparing},
+		defaultOptions: {multiple: false, multiple_sizes: true, preparingText: l10nG.preparing_video_upload},
 		options: {},
 
 
@@ -52,12 +55,20 @@ define([
 						.bind('fileuploaddone', function (e, data) {
 							var response = data.result;
 							progress.css('width', '100%');
-							$('#upfront-image-uploading h2').html(l10n.sel.preparing);
+							$('#upfront-image-uploading h2').html(l10nG.preparing_video_upload);
 							me.onFileUploadDone(response);
 							form[0].reset();
 						})
 						.bind('fileuploadfail', function (e, response) {
-							var error = response.jqXHR.responseJSON.error;
+							var error;
+
+							// Check if responseJSON exist to prevent JS errors
+							if(response.jqXHR.responseJSON !== "undefined" && response.jqXHR.responseJSON) {
+								error = response.jqXHR.responseJSON.error;
+							} else {
+								error = response.jqXHR.statusText;
+							}
+
 							Upfront.Views.Editor.notify(error, 'error');
 							me.openSelector();
 							form[0].reset();
@@ -66,6 +77,10 @@ define([
 
 				fileInput.on('change', function(){
 					if (this.files.length) {
+						if (this.files[0].name.match(/\.(mp4|webm)$/) === null) {
+							Upfront.Views.Editor.notify(l10nG.allowed_video_type_error, 'error');
+							return;
+						}
 						if(XMLHttpRequest && (new XMLHttpRequest()).upload) { //XHR uploads!
 							me.uploadVideo(this.files);
 						} else {

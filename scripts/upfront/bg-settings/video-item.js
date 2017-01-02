@@ -94,6 +94,7 @@ define([
 						}
 					}),
 					pick_video: pickVideoButton,
+					video: videoUrlInput,
 					mute: new Upfront.Views.Editor.Field.Checkboxes({
 						model: this.model,
 						property: 'background_video_mute',
@@ -110,7 +111,6 @@ define([
 							this.$el.addClass('uf-bgsettings-video-mute');
 						}
 					}),
-					video: videoUrlInput,
 					autoplay: new Upfront.Views.Editor.Field.Checkboxes({
 						model: this.model,
 						property: 'background_video_autoplay',

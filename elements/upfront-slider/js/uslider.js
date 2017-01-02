@@ -454,7 +454,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 					autostart: false,
 					upfrontMedia: false,
 					upfrontImages: false,
-					placeholder: l10n.slide_desc,
+					placeholder: '<p>' + l10n.slide_desc + '</p>',
 					linebreaks: false,
 					inserts: []
 				})
