@@ -908,6 +908,10 @@
 
   display: block;
 }
+/* Prevent Code Element double size hint on hover. */
+.upfront-code_element-module:hover .upfront-editable_entities_container > .upfront-entity-size-hint,
+/* Prevent Code Element double size hint on resize. */
+.upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-code_element-module .upfront-editable_entities_container > .upfront-entity-size-hint,
 .upfront-module-group-on-edit > .upfront-entity-size-hint,
 .upfront-module-group-on-edit:hover > .upfront-entity-size-hint,
 .upfront-module-group.upfront-module-group-element-editing > .upfront-entity-size-hint,
