@@ -196,7 +196,7 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 		}
 
 		// Misc queries: time, search...
-		foreach (array('year', 'monthnum', 'w', 'day', 's') as $q) {
+		foreach (array('year', 'monthnum', 'w', 'day', 's', 'author_name') as $q) {
 			if (!empty($query['query_vars'][$q])) $args[$q] = $query['query_vars'][$q];
 		}
 
@@ -204,7 +204,7 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 		if (!empty($query['tax_query']['queries'])) {
 			$args['tax_query'] = $query['tax_query']['queries'];
 		}
-		
+
 		// Now let's safeguard the posts per page setting
 		if (!empty($query['posts_per_page']) && is_numeric($query['posts_per_page'])) {
 			$per_page = (int)$query['posts_per_page'];
