@@ -564,7 +564,7 @@ define([
                     }) );
                 }
 
-								if (_.indexOf(this.options.media_type, 'videos') !== -1) {
+				if (_.indexOf(this.options.media_type, 'videos') !== -1) {
                     sections = _( sections.reject(function(section){
                         return section === "additional_sizes";
                     }) );
@@ -572,9 +572,7 @@ define([
                     renderers =  _( renderers.reject(function(renderer){
                         return renderer === "render_additional_sizes";
                     }) );
-								}
-
-
+				}
 
                 // add sections
                 sections.each(function(section){
@@ -599,10 +597,27 @@ define([
 					var image = this.model.at(0).get('image'),
 						$container = $('<div class="upfront-size-hints upfront-field-wrap upfront-field-wrap-text"><label class="upfront-field-label upfront-field-label-block">'+ l10n.natural_size +'</label></div>');
 					if ( image !== undefined ) {
-						$container.append('<span class="upfront-size-hint-width">'+ l10n.width_label +': <span>'+ image.width + l10n.px_label +'</span></span>');
-						$container.append('<span class="upfront-size-hint-height">'+ l10n.height_label +': <span>'+ image.height + l10n.px_label +'</span></span>');
-
-						$hub.append($container);
+						var iwidth = parseInt((image || {}).width, 10),
+							iheight = parseInt((image || {}).height, 10)
+						;
+						// Only render size hint if we're actually able to
+						if (iwidth && iheight) {
+							$container.append(
+								'<span class="upfront-size-hint-width">' +
+									l10n.width_label +
+								': <span>' +
+									image.width + l10n.px_label +
+								'</span></span>'
+							);
+							$container.append(
+								'<span class="upfront-size-hint-height">' +
+									l10n.height_label +
+								': <span>' +
+									image.height + l10n.px_label +
+								'</span></span>'
+							);
+							$hub.append($container);
+						}
 					}
 				}
 			},
