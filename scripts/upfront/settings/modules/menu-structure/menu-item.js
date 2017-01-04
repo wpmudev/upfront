@@ -87,6 +87,8 @@ define([
 					return contentL10n.larger_image;
 				case 'lightbox':
 					return contentL10n.lightbox;
+				case 'homepage':
+					return contentL10n.homepage;
 			}
 		},
 

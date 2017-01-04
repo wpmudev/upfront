@@ -106,7 +106,7 @@ define([
 			var me = this;
 
 			var typeSelectValues = [];
-			_.each(['unlink', 'external', 'entry', 'anchor', 'lightbox', 'email'], function(t) {
+			_.each(['unlink', 'external', 'entry', 'anchor', 'lightbox', 'email', 'homepage'], function(t) {
 				typeSelectValues.push(this.getLinkTypeValue(t));
 			}, this);
 
@@ -163,6 +163,8 @@ define([
 					return { value: 'image', label: contentL10n.larger_image };
 				case 'lightbox':
 					return { value: 'lightbox', label: contentL10n.lightbox };
+				case 'homepage':
+					return { value: 'homepage', label: contentL10n.homepage };
 			}
 		},
 
@@ -216,7 +218,13 @@ define([
 			} else {
 				this.model.set({ 'menu-item-type': 'custom' });
 			}
-
+			
+			if (this.type === 'homepage') {
+				this.model.set({'menu-item-url': Upfront.mainData.site});
+				this.model.set({'menu-item-type': 'homepage' });
+				this.saveItem();
+			}
+			
 			this.$el.parent().find('.menu-item-type').first().text(this.getLinkTypeLabel(value));
 		},
 
@@ -357,6 +365,8 @@ define([
 					return contentL10n.larger_image;
 				case 'lightbox':
 					return contentL10n.lightbox;
+				case 'homepage':
+					return contentL10n.homepage;
 			}
 		}
 	});
