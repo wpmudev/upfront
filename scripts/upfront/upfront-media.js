@@ -595,7 +595,8 @@ define([
 
 				if(this.model.length === 1) {
 					var image = this.model.at(0).get('image'),
-						$container = $('<div class="upfront-size-hints upfront-field-wrap upfront-field-wrap-text"><label class="upfront-field-label upfront-field-label-block">'+ l10n.natural_size +'</label></div>');
+						$container = $('<div class="upfront-size-hints upfront-field-wrap upfront-field-wrap-text"><label class="upfront-field-label upfront-field-label-block">'+ l10n.natural_size +'</label></div>')
+					;
 					if ( image !== undefined ) {
 						var iwidth = parseInt((image || {}).width, 10),
 							iheight = parseInt((image || {}).height, 10)

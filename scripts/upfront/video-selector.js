@@ -418,7 +418,6 @@ define([
 
 			Upfront.Media.Manager.open(opts)
 				.done(function(popup, result){
-					console.log('meida manager', result);
 					if(result && result.length > 0){
 						var video_id = result.at(0).get('ID');
 						Upfront.Util.post({
