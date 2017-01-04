@@ -279,6 +279,11 @@ class Upfront_UcontactView extends Upfront_Object {
 	}
 
 	public function kick_in_smtp($phpmailer){
+		//Get all the needed fields and sanitize them
+		$_POST = stripslashes_deep( $_POST );
+		$name = preg_replace('/\n\r/', ' ', sanitize_text_field($_POST['sendername']));
+		$email = is_email($_POST['senderemail']);
+		
 		$smtp_from_email = $this->_get_property_t('smtp_from_email');
 		$smtp_host = $this->_get_property_t('smtp_host');
 		if( !is_email($smtp_from_email) || empty($smtp_host) ){
@@ -287,21 +292,50 @@ class Upfront_UcontactView extends Upfront_Object {
 
 		$phpmailer->isSMTP();   
 		$phpmailer->Mailer = "smtp";
-		$phpmailer->From = $this->_get_property_t('smtp_from_email');
-		$phpmailer->FromName = $this->_get_property_t('smtp_from_name');
-		$phpmailer->Sender = $this->_get_property_t('smtp_from_email'); //Return-Path
-		$phpmailer->AddReplyTo($this->_get_property_t('smtp_from_email'), $this->_get_property_t('smtp_from_name')); //Reply-To
+		$phpmailer->SetFrom($email, $name);
+		$phpmailer->AddReplyTo($email, $name); //Reply-To
 		$phpmailer->Host = $this->_get_property_t('smtp_host');
 		$phpmailer->SMTPSecure = $this->_get_property_t('smtp_secure');
 		$phpmailer->Port = $this->_get_property_t('smtp_port');
 		$smtp_auth = $this->_get_property_t('smtp_authentication');
 		$phpmailer->SMTPAuth = ( isset( $smtp_auth[0] ) && $smtp_auth[0] == "yes" ) ? TRUE : FALSE;
 
+		// Strip unwanted tags from the message
+		$message = wp_kses(
+			$_POST['sendermessage'],
+			array(
+				'a' => array(
+					'href' => array (),
+					'title' => array ()),
+				'abbr' => array(
+					'title' => array ()),
+				'acronym' => array(
+					'title' => array ()),
+				'b' => array(),
+				'blockquote' => array(
+					'cite' => array ()),
+				'cite' => array (),
+				'code' => array(),
+				'del' => array(
+					'datetime' => array ()),
+				'em' => array (), 'i' => array (),
+				'q' => array(
+					'cite' => array ()),
+				'strike' => array(),
+				'strong' => array(),
+			)
+		);
+		
+		// Add name and email to email body
+		$name_label = self::_get_l10n('name_label');
+		$email_label = self::_get_l10n('email_label');
+		$body = $message . "\n\n{$name_label} {$name} \n{$email_label} {$email}";
+		$phpmailer->Body = $body;
+
 		if( isset( $smtp_auth[0] ) && $smtp_auth[0] == "yes" ) {
 			$phpmailer->Username = $this->_get_property_t('smtp_username');
 			$phpmailer->Password = $this->_get_property_t('smtp_password');
 		}
-
 	}
 
 	public function get_post ($param){
