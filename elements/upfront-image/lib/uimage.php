@@ -297,6 +297,7 @@ class Upfront_UimageView extends Upfront_Object {
 				'ok' => __('Ok', 'upfront'),
 				'move_image_nag' => __('To achieve full-width Image, please first move it so that there are no other elements in the way.', 'upfront'),
 				'dont_show_again' => __('Don\'t show this message again', 'upfront'),
+				'supported_video_formats' => __('Supported formats: mp4/webm', 'upfront'),
 			),
 		);
 		return !empty($key)
