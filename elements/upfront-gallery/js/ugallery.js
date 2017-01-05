@@ -211,6 +211,9 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		if (this.property('status') !== 'ok' || !this.images.length) {
 			this.property('has_settings', 0);
 		}
+		
+		this.listenTo(Upfront.Events, 'command:layout:save', this.saveThumbs);
+		this.listenTo(Upfront.Events, 'command:layout:save_as', this.saveThumbs);
 
 		Upfront.Events.on('upfront:layout_size:change_breakpoint', function() {
 			setTimeout(function() {
@@ -1295,10 +1298,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			this.lastThumbnailSize.height !== this.property('thumbHeight')
 		)) return false;
 
-		var editOptions = {
-				images: this.getRegenerateData(imageIds),
-				action: 'upfront-media-image-create-size'
-			},
+		var regImages = this.getRegenerateData(imageIds),
 			loading = new Upfront.Views.Editor.Loading({
 				loading: l10n.regenerating,
 				done: l10n.regenerating_done,
@@ -1311,23 +1311,27 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			this.parent_module_view.$el.append(loading.$el);
 		}
 
-		Upfront.Util.post(editOptions).done(function(response) {
+		Upfront.Views.Editor.ImageEditor.saveImagesEdition(regImages).done(function(response) {
 			loading.done();
 			var images = response.data.images,
 				models = []
 			;
 
-			_.each(editOptions.images, function(image){
+			_.each(regImages, function(image){
 				var model = me.images.get(image.id),
 					changes = images[image.id]
 				;
 
 				if(!changes.error){
+					if(!model._prevUrl) {
+						model._prevUrl = model.get('src');
+					}
 					model.set({
 						src: changes.url,
 						srcFull: changes.urlOriginal,
 						size: image.resize,
-						cropPosition: {top: image.crop.top, left: image.crop.left}
+						cropPosition: {top: image.crop.top, left: image.crop.left},
+						meta: changes.meta
 					}, {silent: true});
 				}
 				models.push(model);
@@ -1461,6 +1465,22 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	imagesChanged: function() {
 		this.property('images', this.images.toJSON());
 		this.rebindShuffle();
+	},
+	
+	saveThumbs: function () {
+		var imagesData = [];
+		this.images.each(function(image){
+			imagesData.push({
+				id: image.id,
+				meta: image.get('meta'),
+				prev_url: image._prevUrl ? image._prevUrl : ''
+			});
+		});
+		// Set element id beforehand
+		Upfront.Views.Editor.ImageEditor.setOptions({
+			element_id: this.property('element_id')
+		});
+		Upfront.Views.Editor.ImageEditor.saveUsedImages(imagesData);
 	},
 
 	/**

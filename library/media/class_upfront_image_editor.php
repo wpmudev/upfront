@@ -82,8 +82,9 @@ class Upfront_ImageEditor_Server extends Upfront_Server {
 		;
 	}
 
-	function create_image_size(){
+	function create_image_size($layout){
 		$data = stripslashes_deep($_POST);
+		$layout_id = $layout->get_id();
 
 		if(! $data['images']) {
 			return $this->_out(new Upfront_JsonResponse_Error(self::_get_l10n('no_images')));
@@ -114,14 +115,15 @@ class Upfront_ImageEditor_Server extends Upfront_Server {
 				$resize = isset($imageData['resize']) ? $imageData['resize'] : false;
 				$crop = isset($imageData['crop']) ? $imageData['crop'] : false;
 
-				$images[$imageData['id']] = self::resize_image($imageData);
+				$images[$imageData['id']] = self::resize_image($imageData, $layout_id);
 			}
 		}
-		return $this->_out(new Upfront_JsonResponse_Success(array('images' => $images)));
+		return $this->_out(new Upfront_JsonResponse_Success(array('images' => $images, 'temps' => get_option('upfront_temp_image_sizes'))));
 	}
 	
-	function save_image_sizes() {
+	function save_image_sizes($layout) {
 		$data = stripslashes_deep($_POST);
+		$layout_id = $layout->get_id();
 		
 		if(! $data['images']) {
 			return $this->_out(new Upfront_JsonResponse_Error(self::_get_l10n('no_images')));
@@ -163,8 +165,8 @@ class Upfront_ImageEditor_Server extends Upfront_Server {
 
 		// Clean unused images
 		$temp_sizes = get_option('upfront_temp_image_sizes');
-		if ( !empty($temp_sizes) && !empty($temp_sizes[$element_id]) ) {
-			foreach ( $temp_sizes[$element_id] as $i => $image ) {
+		if ( !empty($temp_sizes) && !empty($temp_sizes[$layout_id]) && !empty($temp_sizes[$layout_id][$element_id]) ) {
+			foreach ( $temp_sizes[$layout_id][$element_id] as $i => $image ) {
 				$is_used = false;
 				foreach ( $images as $used_img ) {
 					if ( empty($used_img['path']) ) continue;
@@ -174,11 +176,11 @@ class Upfront_ImageEditor_Server extends Upfront_Server {
 					}
 				}
 				if ( $is_used ) {
-					unset($temp_sizes[$element_id][$i]);
+					unset($temp_sizes[$layout_id][$element_id][$i]);
 					continue;
 				}
 				$images_to_delete[] = $image;
-				unset($temp_sizes[$element_id][$i]);
+				unset($temp_sizes[$layout_id][$element_id][$i]);
 			}
 		}
 		update_option('upfront_temp_image_sizes', $temp_sizes);
@@ -308,7 +310,7 @@ class Upfront_ImageEditor_Server extends Upfront_Server {
 		return $this->_out(new Upfront_JsonResponse_Success($result));
 	}
 
-	public static function resize_image($imageData) {
+	public static function resize_image($imageData, $layout_id) {
 		$rotate = isset($imageData['rotate']) && is_numeric($imageData['rotate']) ? $imageData['rotate'] : false;
 		$resize = isset($imageData['resize']) ? $imageData['resize'] : false;
 		$crop = isset($imageData['crop']) ? $imageData['crop'] : false;
@@ -423,8 +425,10 @@ class Upfront_ImageEditor_Server extends Upfront_Server {
 		// Store this resizing as temporary crops
 		$temp_sizes = get_option('upfront_temp_image_sizes');
 		if ( !is_array($temp_sizes) ) $temp_sizes = array();
-		if ( !isset($temp_sizes[$element_id]) ) $temp_sizes[$element_id] = array();
-		$temp_sizes[$element_id][] = $saved;
+		if ( !isset($temp_sizes[$layout_id]) ) $temp_sizes[$layout_id] = array();
+		if ( !isset($temp_sizes[$layout_id][$element_id]) ) $temp_sizes[$layout_id][$element_id] = array();
+		$temp_sizes[$layout_id]['_last_edited'] = current_time('timestamp');
+		$temp_sizes[$layout_id][$element_id][] = $saved;
 		update_option('upfront_temp_image_sizes', $temp_sizes);
 
 // *** ALright, so this is the magic cleanup part

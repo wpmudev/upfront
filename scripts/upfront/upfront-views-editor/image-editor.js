@@ -58,6 +58,9 @@
 			fullSize: {width: 0, height:0},
 			buttons: [],
 			sizes: false,
+			
+			_saving: false,
+			_saveQueued: 0,
 
 			events: {
 				'click #image-edit-button-ok': 'imageOk',
@@ -1362,30 +1365,72 @@
 			},
 
 			saveImageEdition: function(imageId, rotate, resize, crop){
-				var opts = {
+				var images = [{
+						element_id: this.element_id,
+						id: imageId,
+						rotate: rotate,
+						resize: resize,
+						crop: crop
+					}]
+				;
+				
+				return this.saveImagesEdition(images);
+			},
+			
+			saveImagesEdition: function (images) {
+				var me = this,
+					deferred = $.Deferred(),
+					opts = {
 						action: 'upfront-media-image-create-size',
-						images: [{
-							element_id: this.element_id,
-							id: imageId,
-							rotate: rotate,
-							resize: resize,
-							crop: crop
-						}]
+						images: images
 					}
 				;
+				
+				// Check if we need to delay this request, we do saving one at a time
+				if ( false !== this._saving ) {
+					this._saving.always(function(){
+						me.callSaveImagesEdition(opts, deferred);
+					});
+					this._saveQueued++;
+					this._saving = deferred.promise();
+					return this._saving;
+				}
+				
+				// Continue otherwise
+				this.callSaveImagesEdition(opts, deferred);
+				
+				this._saving = deferred.promise();
 
-				return Upfront.Util.post(opts);
+				return this._saving;
+			},
+			
+			callSaveImagesEdition: function (opts, deferred) {
+				var me = this;
+				return Upfront.Util.post(opts).done(function(results){
+					console.log(results, me._saveQueued);
+					if ( me._saveQueued > 0 ) me._saveQueued--;
+					if ( me._saveQueued <= 0 ) me._saving = false;
+					deferred.resolve(results);
+				}).fail(function(){
+					deferred.reject();
+				});
 			},
 			
 			saveUsedImage: function(imageId, imageMeta, prevUrl) {
+				var images = [{
+						id: imageId,
+						meta: imageMeta,
+						prev_url: prevUrl
+					}]
+				;
+				return this.saveUsedImages(images);
+			},
+			
+			saveUsedImages: function(images) {
 				var opts = {
 						action: 'upfront-media-image-save-sizes',
 						element_id: this.element_id,
-						images: [{
-							id: imageId,
-							meta: imageMeta,
-							prev_url: prevUrl
-						}]
+						images: images
 					}
 				;
 

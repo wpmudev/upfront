@@ -1228,7 +1228,6 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	saveTemporaryResizing: function(){
 		var me = this,
 			imagesData = [],
-			editOptions = {action: 'upfront-media-image-create-size'},
 			sentData = {},
 			element_id = this.model.get_property_value_by_name("element_id")
 		;
@@ -1251,21 +1250,23 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			sentData[slide.id] = data;
 		});
 
-		editOptions.images = imagesData;
-
-		return Upfront.Util.post(editOptions).done(function(response){
+		return Upfront.Views.Editor.ImageEditor.saveImagesEdition(imagesData).done(function(response){
 			var images = response.data.images;
 			_.each(images, function(data, id){
 				if ( true === data.error ) return; // error, ignore this
 				var slide = me.model.slideCollection.get(id),
 					imageData = sentData[id]
 				;
+				if( !slide._prevUrl ) {
+					slide._prevUrl = slide.get('src');
+				}
 				slide.set({
 					src: data.url,
 					srcFull: data.urlOriginal,
 					size: imageData.resize,
 					cropSize: {width: imageData.crop.width, height: imageData.crop.height},
-					cropOffset: {left: imageData.crop.left, top: imageData.crop.top}
+					cropOffset: {left: imageData.crop.left, top: imageData.crop.top},
+					meta: data.meta
 				}, {silent: true});
 			});
 
@@ -1294,8 +1295,31 @@ var USliderView = Upfront.Views.ObjectView.extend({
 					action: 'upfront_update_layout_element'
 				};
 				Upfront.Util.post(saveData).done();
+				
+				me.saveUsedImages();
 			});
 		}
+		else {
+			me.saveUsedImages();
+		}
+	},
+	
+	saveUsedImages: function () {
+		var me = this,
+			imagesData = []
+		;
+		this.model.slideCollection.each(function(slide){
+			imagesData.push({
+				id: slide.id,
+				meta: slide.get('meta'),
+				prev_url: slide._prevUrl ? slide._prevUrl : ''
+			});
+		});
+		// Set element id beforehand
+		Upfront.Views.Editor.ImageEditor.setOptions({
+			element_id: this.property('element_id')
+		});
+		Upfront.Views.Editor.ImageEditor.saveUsedImages(imagesData);
 	},
 
 	onRemoveSlide: function(e) {

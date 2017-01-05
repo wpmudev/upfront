@@ -1349,7 +1349,9 @@ define([
 					};
 					Upfront.Util.post(saveData);
 					
-					Upfront.Views.Editor.ImageEditor.saveUsedImage(imageId, me.savedMeta, me.prevUrl);
+					if (me.savedMeta) {
+						Upfront.Views.Editor.ImageEditor.saveUsedImage(imageId, me.savedMeta, me.prevUrl);
+					}
 				});
 			}
 			else {
@@ -1357,7 +1359,9 @@ define([
 				Upfront.Views.Editor.ImageEditor.setOptions({
 					element_id: me.property('element_id')
 				});
-				Upfront.Views.Editor.ImageEditor.saveUsedImage(imageId, me.savedMeta, me.prevUrl);
+				if (me.savedMeta) {
+					Upfront.Views.Editor.ImageEditor.saveUsedImage(imageId, me.savedMeta, me.prevUrl);
+				}
 			}
 		},
 

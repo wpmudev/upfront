@@ -285,7 +285,9 @@ function upfront_add_ajax ($action, $callback, $admin = true) {
 	$hook = 'wp_ajax_' . ( !$admin ? 'nopriv_' : '' ) . $action;
 	$hook = apply_filters('upfront-access-ajax_hook', $hook, $action);
 	add_action($hook, 'upfront_ajax_init');
-	add_action($hook, $callback);
+	// We call our own hook, so we can pass layout object to the callback
+	$uf_hook = 'uf_ajax_' . $action;
+	add_action($uf_hook, $callback, 10, 1);
 }
 
 /**
@@ -302,9 +304,10 @@ function upfront_add_ajax_nopriv ($action, $callback) {
  * Run first on each AJAX action registered with upfront_add_ajax
  */
 function upfront_ajax_init () {
-	$stylesheet = $layout_ids = $storage_key = $load_dev = false;
+	$action = $stylesheet = $layout_ids = $storage_key = $load_dev = false;
 	// Automatically instantiate Upfront_Layout object
 	if ( 'POST' === $_SERVER['REQUEST_METHOD'] ) {
+		$action = !empty($_POST['action']) ? $_POST['action'] : false;
 		$layout_ids = !empty($_POST['layout']) ? $_POST['layout'] : false;
 		$storage_key = !empty($_POST['storage_key']) ? $_POST['storage_key'] : false;
 		$stylesheet = !empty($_POST['stylesheet']) ? $_POST['stylesheet'] : false;
@@ -315,11 +318,17 @@ function upfront_ajax_init () {
 		$stylesheet = !empty($_GET['stylesheet']) ? $_GET['stylesheet'] : false;
 		$load_dev = !empty($_GET['load_dev']) && 1 === (int)$_GET['load_dev'] ? true : false;
 	}
+	if (false === $action) $action = !empty($_GET['action']) ? $_GET['action'] : false;
+	$uf_hook = 'uf_ajax_' . $action;
 
 	if (false === $stylesheet) $stylesheet = apply_filters('upfront_get_stylesheet', $stylesheet);
 
 	upfront_switch_stylesheet($stylesheet);
-	if ( !is_array($layout_ids) ) return;
+	if ( !is_array($layout_ids) ) {
+		// No layout, just call the action then
+		do_action($uf_hook);
+		return;
+	}
 
 	// Let's setup the $post object on single post/page, so we can get post data from AJAX request
 	if ( 'single' === $layout_ids['type'] && isset($layout_ids['item']) && isset($layout_ids['specificity']) ) {
@@ -331,6 +340,9 @@ function upfront_ajax_init () {
 
 	$layout = Upfront_Layout::from_entity_ids($layout_ids, $storage_key, $load_dev);
 	if ( $layout->is_empty() ) $layout = Upfront_Layout::create_layout($layout_ids);
+	
+	// Call the action hook with $layout object passed
+	do_action($uf_hook, $layout);
 }
 
 /**
