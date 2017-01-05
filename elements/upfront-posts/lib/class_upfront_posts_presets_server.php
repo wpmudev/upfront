@@ -43,7 +43,7 @@ class Upfront_Posts_Presets_Server extends Upfront_Presets_Server {
 		return array(
 			'id' => 'default',
 			'name' => self::$instance->get_l10n('default_preset'),
-			'enabled_post_parts' => array('categories', 'author')
+			'enabled_post_parts' => array('title', 'content')
 		);
 	}
 }
