@@ -77,6 +77,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 	on_element_resize: function (attr) {
 		this.processFloatStatus();
+		// Add/remove multiple module class.
+		$object = this.$el.find('.upfront-editable_entity:first');
+		this.add_multiple_module_class($object);
 	},
 
 	on_after_layout_render: function () {
