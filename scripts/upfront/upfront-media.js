@@ -2124,9 +2124,12 @@ define([
 			initialize: function () {
 				var cls = '';
 
+				// Detect the default WP video icon being used as thumb
+				// It's fugly, so let's add class so we can override
 				if ((this.model.get("thumbnail") || '').match(/wp-includes\/images\/media\/video/i)) {
 					cls += "override";
 				}
+
 				this.template = _.template("<div class='thumbnail " + cls + "'>{{thumbnail}}</div> <div class='title'>{{post_title}}</div> <div class='upfront-media_item-editor-container' />");
 				Upfront.Events.on("media_manager:media:toggle_titles", this.toggle_title, this);
 
