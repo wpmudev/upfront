@@ -2,8 +2,9 @@
 define("ueditor", [ // For require to include scripts in build and not load them separately they must be passes as an array and not variable that points to array
 	'text!scripts/redactor/ueditor-templates.html',
 	'scripts/redactor/ueditor-inserts',
-    'redactor_plugins'
-], function(tpl, Inserts, redactor_plugins){
+    'redactor_plugins',
+	'scripts/upfront/inline-panels/inline-tooltip'
+], function(tpl, Inserts, redactor_plugins, InlineTooltip){
 var hackedRedactor = false;
 var UeditorEvents = redactor_plugins.UeditorEvents;
 $.fn.ueditor = function(options){
@@ -185,14 +186,31 @@ var hackRedactor = function(){
             bounds.left = center - Math.floor((width + 1) / 2);
         }
 
-
-
-
         this.$air.css({
             left: bounds.left  + 'px',
             top: bounds.top + 'px'
         }).show();
 
+		var buttons = this.$air.find('.redactor-toolbar > li');
+		
+		_.each(buttons, function(button) {
+			$(button).find('a').utooltip({
+				fromTitle: true,
+				panel: 'redactor'
+			});
+		});
+		
+		this.$air.find('.redactor-dropdown-box-upfrontIcons').utooltip({
+			fromTitle: false,
+			content: Upfront.Settings.l10n.global.ueditor.icons_label,
+			panel: 'redactor'
+		});
+		
+		this.$air.find('.tablist li').utooltip({
+			fromTitle: true,
+			panel: 'colorPicker'
+		});
+		
         /**
          * If redactor is to high for the user to see it, show it under the selected text
          */
@@ -801,7 +819,7 @@ var Ueditor = function($el, options) {
         self = this,
         unique_id = Upfront.Util.get_unique_id("redactor");
     this.$el = $el;
-    this.$air = $("<div class='redactor_air upfront-ui'></div>").attr("id", unique_id ).hide();
+    this.$air = $("<div class='redactor_air upfront-panels-shadow upfront-ui'></div>").attr("id", unique_id ).hide();
     $("body").append(this.$air);
     if( !_.isEmpty(options.airButtons) ){
         options.buttons = options.airButtons;
@@ -828,7 +846,7 @@ var Ueditor = function($el, options) {
 			observeLinks: false,
 			observeImages: false,
 			formattingTags: ['h1', 'h2', 'h3', 'h4', 'p', 'pre'],
-            inserts: Upfront.Settings.Application.PERMS.EMBED ? ["image", "embed"] : ["image"],
+            inserts: Upfront.Settings.Application.PERMS.EMBED ? ["image", "embed", "video"] : ["image", "video"],
             linkTooltip: false,
             cleanOnPaste: true, // font icons copy and paste wont work without this set to true - BUT, with it set to true, paste won't work AT ALL!!!
             replaceDivs: false,
@@ -918,8 +936,6 @@ var Ueditor = function($el, options) {
 		}
 		return html;
 	};
-
-
 
     // Enter callback inside lists
     this.options.enterCallback = function (e) {
@@ -1234,8 +1250,6 @@ Ueditor.prototype = {
 			})
 		;
 
-
-
 		if(me.$el.prop('tagName') == 'DIV') {
 			me.$el.on('click', 'i.visit_link', function() {
 				me.visitLink($(this).attr('data-href'));
@@ -1426,6 +1440,11 @@ Ueditor.prototype = {
 		$("html").on('mousedown', {ueditor : me}, this.stopOnOutsideClick);
 	},
 	stopOnOutsideClick: function(e){
+		// Flag that should prevent redactor closing when unwanted, such as when clicking in image selector.
+		// Flag should be managed by the element that is using redactor, has to be set and unset when needed
+		// to keep proper functionality.
+		if (Upfront.preventRedactorStopOnOutsideClick === true) return;
+
 		if( !( $(e.target).hasClass("redactor_box")
 				|| $(e.target).parents().hasClass("redactor-box")
 				|| $(e.target).parents().hasClass("redactor_air")
@@ -1474,7 +1493,8 @@ Ueditor.prototype = {
 				'z-index': '0',
 				'top': pos.top,
 				'left': pos.left,
-				'right': $parent.outerWidth() - (pos.left + this.$el.outerWidth())
+				'width': this.$el.outerWidth(),
+				'height': this.$el.outerHeight()
 			});
 
 			//Make sure that the editor has one line of text
@@ -1626,6 +1646,7 @@ var InsertManagerInserts = Backbone.View.extend({
 					options.inserts = _.without(options.inserts, "embed");
         }
 
+        this._inserts = options._inserts || {};
         this.insertsData = options.insertsData || {};
         this.inserts = options.inserts || {};
         this.redactor = options.redactor;
@@ -1682,7 +1703,7 @@ var InsertManagerInserts = Backbone.View.extend({
 
                 // if(!results) Let's allow promises without result for now!
                 //	return;
-                self.inserts[insert.cid] = insert;
+                self._inserts[insert.data.id] = insert;
                 //Allow to undo
                 //this.trigger('insert:prechange'); // "this" is the embedded image object
                 //self.trigger('insert:prechange'); // "self" is the view
@@ -1764,6 +1785,7 @@ var InsertManager = Backbone.View.extend({
 
         var self = this,
             tooltips = new InsertManagerInserts({
+			_inserts: this._inserts, // This the inserted object
             insertsData: this.insertsData,
             inserts: this.inserts,
             redactor: this.ueditor.redactor,
@@ -1950,7 +1972,7 @@ var InsertManager = Backbone.View.extend({
 					if(element.length){
 						element.replaceWith(insert.el);
 						insert.delegateEvents();
-						insert.controls.delegateEvents();
+						if (insert.controls) insert.controls.delegateEvents();
 						if(insert.controlEvents)
 							insert.controlEvents();
 					}
@@ -1981,14 +2003,14 @@ var InsertManager = Backbone.View.extend({
 			indexPosition = redactor.range.startOffset;
 
 		if( !current || _.isEmpty( $block ) ) return false;
-		
+
 
 		var $image_embed_insert_wrappers = $(".upfront-inserted_image-wrapper, .upfront-inserted_embed-wrapper"),
 			block_top = $block.offset().top,
 			block_html = $.trim( $block.html() ) || '',
 			prevblock_html = $.trim( $prevBlock.html() ) || '',
 			show_tooltip = true;
-			
+
 		$image_embed_insert_wrappers.each(function(){
 			var $this = $(this),
 				height = $this.find(".ueditor-insert-variant-group").height(),

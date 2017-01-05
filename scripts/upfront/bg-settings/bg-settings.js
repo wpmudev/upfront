@@ -13,8 +13,9 @@ define([
 	'scripts/upfront/bg-settings/video-item',
 	'scripts/upfront/element-settings/settings',
 	'scripts/upfront/element-settings/root-settings-panel',
-	'scripts/upfront/element-settings/advanced-settings'
-], function(ColorItem, ImageItem, MapItem, SliderItem, VideoItem, ElementSettings, RootSettingsPanel, AdvancedSettings) {
+	'scripts/upfront/element-settings/advanced-settings',
+	'scripts/perfect-scrollbar/perfect-scrollbar'
+], function(ColorItem, ImageItem, MapItem, SliderItem, VideoItem, ElementSettings, RootSettingsPanel, AdvancedSettings, perfectScrollbar) {
 	
 	var BgItem = Upfront.Views.Editor.Settings.Item.extend({
 		initialize: function (options) {
@@ -189,6 +190,10 @@ define([
 
 			var parent = this.$el.find('.uf-settings-panel__body');
 			this.$el.find('.padding-bg-checkbox-field').appendTo(parent);
+
+			perfectScrollbar.initialize(parent[0], {
+				suppressScrollX: true
+			});
 		},
 		
 		settings_opened: function() {

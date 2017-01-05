@@ -34,14 +34,13 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 
 		this.events = _.extend({}, this.events, {
 			'click a.menu_item' : 'exitEditMode',
-			'dblclick a.menu_item' : 'editMenuItem'/*,
-			'click a.newnavigation-add-item': 'addPrimaryMenuItem'*/
 		});
 
 		this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
 		this.listenTo(Upfront.Events, "menu_element:delete", this.delete_menu, this);
 
 		this.listenTo(this.model, "preset:updated", this.preset_updated);
+		this.listenTo(this.model, "menuitem:edit", this.editMenuItem);
 
 		// get all menus
 		var menu_id = this.model.get_property_value_by_name('menu_id');
@@ -235,7 +234,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				else target.addClass('menu_item_placeholder');
 			}).on('blur', function(e) {
 
-					var being_edited = false;
+					var being_edited = false,
+						blurred_editor = ueditor_target.data('ueditor')
+					;
 					if(target.closest('li').data('backboneview').model['being-edited'])
 						being_edited = target.closest('li').data('backboneview').model['being-edited'];
 
@@ -246,7 +247,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 						return;
 					}
 
-					ueditor_target.data('ueditor').stop();
+					if ( blurred_editor ) blurred_editor.stop();
 
 					target.closest('li').removeClass('edit_mode');
 					if(!target.hasClass('new_menu_item')) {
@@ -430,7 +431,9 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				$menu_button[0].disabled = true;
 			}
 			// On Enter key, hit create button.
-			if (e.which == 13) $menu_button.trigger('click');
+			if (e.which == 13 && !$menu_button[0].disabled) {
+				return me.create_new_menu(e.target.value);
+			}
 		});
 		// appending the new menu name textbox
 		me.$el.find('div.upfront-object-content .upfront_new_menu_name_and_button').append(newMenuName.$el);
@@ -1246,14 +1249,17 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	addPrimaryMenuItem : function(e) {
 
 		e.preventDefault();
-		if(this.$el.find('ul.menu > li > i.navigation-add-item').length > 0) {
+		// commenting this as New Panels do not use this
+		// if(this.$el.find('ul.menu > li > i.navigation-add-item').length > 0) {
 
-			this.$el.find('ul.menu > li > i.navigation-add-item').trigger('click');
-		}
-		else {
+			// this.$el.find('ul.menu > li > i.navigation-add-item').trigger('click');
+		// }
+		// else {
 
-			this.addMenuItem(e);
-		}
+			// this.addMenuItem(e);
+		// }
+		
+		this.addMenuItem(e);
 	},
 	addMenuItem : function(e) {
 
@@ -1284,7 +1290,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				$(e.target).parent('li').next('li').append(e.target);
 			}
 		}
-		me.editMenuItem(me.$el.find('a.new_menu_item').removeClass('new_menu_item')); //linkPanel does not popup on new menu creation because of this class being removed
+		// me.editMenuItem(me.$el.find('a.new_menu_item').removeClass('new_menu_item')); //linkPanel does not popup on new menu creation because of this class being removed
+		me.$el.find('li.new_menu_item i.upfront-icon-region-labelEdit').click(); // enable edit mode via panel
 	},
 
 	getControlItems: function(){

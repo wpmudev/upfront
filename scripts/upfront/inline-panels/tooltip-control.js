@@ -45,11 +45,35 @@ define([
 		open: function() {
 			this.isOpen = true;
 			this.$el.addClass('upfront-control-dialog-open');
+			this.trigger('panel:open');
+			this.hideParentItems();
+			this.updateWidth();
 		},
 
 		close: function() {
 			this.isOpen = false;
 			this.$el.removeClass('upfront-control-dialog-open');
+			this.trigger('panel:close');
+			this.showParentItems();
+			
+			var parentItems = this.$el.closest('.image-sub-control').children('.upfront-inline-panel-item');
+			
+			this.$el
+				.closest('.image-sub-control').css('width', (28 * parentItems.length) + 2);
+		},
+		
+		hideParentItems: function() {
+			this.$el.parent().closest('.image-sub-control')
+				.find('.upfront-inline-panel-item')
+				.not('.uimage-caption-control-item, .uimage-caption-control-item .upfront-inline-panel-item')
+				.hide();
+		},
+		
+		showParentItems: function() {
+			this.$el.parent().closest('.image-sub-control')
+				.find('.upfront-inline-panel-item')
+				.not('.uimage-caption-control-item, .uimage-caption-control-item .upfront-inline-panel-item')
+				.show();
 		},
 
 		render: function() {
@@ -59,6 +83,8 @@ define([
 				selectedItem,
 				wrapperClass = ''
 			;
+			
+			this.item_count = 0;
 
 			if(!this.$el.hasClass('uimage-caption-control-item')) {
 				this.$el.addClass('uimage-caption-control-item');
@@ -82,16 +108,17 @@ define([
 				item.$el.find('i').addClass('upfront-icon-region-caption');
 				captionControl.append(item.$el);
 				me.listenTo(item, 'click', me.selectItem);
+				me.item_count++;
 			});
 
 			selectedItem = this.sub_items[this.selected];
-					if(selectedItem){
-							if( typeof selectedItem.icon !== 'undefined' ){
-									this.$el.children('i').addClass('upfront-icon-region-' + selectedItem.icon);
-							}else if( typeof selectedItem.label !== 'undefined' ){
-									this.$el.find('.tooltip-content').append( ': ' +  selectedItem.label );
-							}
-					}
+			if(selectedItem){
+				if( typeof selectedItem.icon !== 'undefined' ){
+					this.$el.children('i').addClass('upfront-icon-region-' + selectedItem.icon);
+				} else if( typeof selectedItem.label !== 'undefined' ){
+					this.$el.find('.tooltip-content').append( ': ' +  selectedItem.label );
+				}
+			}
 		},
 
 		get_selected_item: function () {
@@ -112,12 +139,26 @@ define([
 				}
 
 			});
+			
+			if(found === "back") {
+				this.close();
+				return;
+			}
 
-			if(found){
+			if(found) {
 				this.selected = found;
 				this.render();
 				this.trigger('select', found);
 			}
+		},
+		
+		updateWidth: function () {
+			//Set width depending of items
+			this.$el
+				.closest('.image-sub-control').css('width', (28 * this.item_count) + 2);
+				
+			this.$el
+				.find('.uimage-caption-control').css('width', (28 * this.item_count) + 2);
 		},
 
 		setDisabled: function(isDisabled) {

@@ -147,6 +147,22 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		return $presets;
 	}
+	
+	/**
+	 * @return array of saved preset ID`s
+	 */
+	 
+	public function get_presets_ids () {
+		$preset_ids = array();
+		$presets = $this->get_presets();
+		
+		foreach ( $presets as $idx => $preset ) {
+			if ( empty( $preset['id'] ) ) continue;
+			$preset_ids[] = $preset['id'];
+		}
+		
+		return $preset_ids;
+	}
 
 	/**
 	 * @return array saved presets

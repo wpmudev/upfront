@@ -5643,7 +5643,8 @@
                         var $listParent = $list.parent();
                         if (this.utils.isRedactorParent($listParent) && $listParent[0].tagName != 'LI' && this.utils.isBlock($listParent[0]))
                         {
-                            $listParent.replaceWith($listParent.contents());
+                            // Warning!!! This code cause loosing current selection
+							// $listParent.replaceWith($listParent.contents());
                         }
                     }
 

@@ -58,6 +58,9 @@ define([
 				if ( widget_data ) {
 					this.content_loaded = true;
 				}
+				
+				// Attempt cleaning up scripts
+				// widget_data = widget_data.replace(/\<script(.|\s)*?\<\/script\>/gm, ''); // Not right now though
 
 				return widget_data;
 		},

@@ -329,10 +329,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			compact: true,
 			property: "term",
 			values: [{label:l10n.select_tax, value:"", disabled: true}],
-			change: function(value) {
-				me.model.set_property("term", value);
-				me.trigger('setting:changed');
-			}
+			change: this._set_term_value 
 		}));
 		this.populate_shared_tax_generic_items();
 		if ("list" === display_type) {
@@ -478,11 +475,23 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			compact: true,
 			property: "term",
 			values: terms,
-			default_value: this.model.get_property_value_by_name('term')
+			default_value: this.model.get_property_value_by_name('term'),
+			change: this._set_term_value
 		});
 		this.fields._wrapped[4] = field;
 		this.$el.empty();
 		this.render();
+	},
+	
+	/**
+	 * Internal value setter
+	 * 
+	 * Used as taxonomy term chosen picker.
+	 */
+	_set_term_value: function () {
+		var term = this.get_value();
+		this.model.set_property("term", term);
+		this.trigger('setting:changed');
 	}
 
 });
@@ -734,6 +743,17 @@ Panels.PostParts = PresetManager.extend({
 		_.each(post_parts, function (part) {
 			if(enabled_post_parts.indexOf(part) === -1) {
 				unused_parts.push({ value: part, label: l10n['modules'][part + '_title'] });
+			}
+		});
+
+		$sortable.sortable({
+			start: function (e, ui) {
+				$sortable.disableSelection();
+			},
+			stop: function (e, ui) {
+				var parts = $sortable.sortable('toArray', {attribute: 'data-part'});
+				me.model.set_property(me.options.property, parts, false);
+				$sortable.enableSelection();
 			}
 		});
 		

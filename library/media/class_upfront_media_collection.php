@@ -77,7 +77,7 @@ class Upfront_MediaCollection extends Upfront_Media {
 		$collection = new self;
 
 		if (!empty($filters['type'])) $collection->_set_type_arguments($filters['type']);
-		
+
 		if (!empty($filters['media_limit'])) {
 			$collection->_args['posts_per_page'] = intval($filters['media_limit']);
 		}

@@ -68,9 +68,6 @@
 #page .upfront-accordion-container {
 	width: 100%;
 }
-#page .upfront-accordion-container .upfront-icon-button-accordion-add-panel:before {
-background-position: -261px -132px;
-}
 .upfront-editable_entity:hover .upfront-entity_meta .upfront-icon-button-accordion-add-panel {
     opacity: 1;
 	visibility: visible;

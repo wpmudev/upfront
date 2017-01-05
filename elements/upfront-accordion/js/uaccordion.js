@@ -36,6 +36,9 @@ define([
 			Upfront.Events.on('entity:deactivated', this.stopEdit, this);
 
 			this.listenTo(Upfront.Events, "theme_colors:update", this.update_colors, this);
+			
+			// Check if preset exist, if not replace with default
+			this.check_if_preset_exist();
 		},
 		update_colors: function () {
 			var me = this,

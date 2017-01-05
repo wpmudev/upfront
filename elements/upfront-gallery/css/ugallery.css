@@ -27,7 +27,13 @@
 .ugallery_item a {
 	display: block;
 }
-
+.ugallery .upfront-inline-panel-item {
+	background:transparent;
+}
+.ugallery-controls .upfront-inline-panel {
+	background:#fff;
+	box-shadow:0 0 0 1px #ccc;
+}
 .even_padding .ugallery_item {
 	margin-bottom: 0;
 }
@@ -328,8 +334,10 @@ div.ugallery-label-selector {
 	z-index: auto;
 }
 
-.ugallery_item:hover .ugallery-controls {
+.ugallery_item:hover .ugallery-controls,
+.ugallery_item.stayOpen .ugallery-controls {
 	display: block;
+	border-radius: 2px;
 }
 .ugallery-controls .upfront-inline-panel {
 	opacity: 1;
@@ -390,72 +398,11 @@ div.ugallery-label-selector {
 	display: none;
 }
 
-div.ugallery-controls i.upfront-icon:before {
+/*div.ugallery-controls i.upfront-icon:before {
 	background-image: url(../../../img/uf-core-el-sprite.svg);
-}
-
-.upfront-ui .upfront-field-icon-over:before,
-.upfront-ui .upfront-icon-region-over:before {
-	background-position: -699px -486px;
-}
-.upfront-ui .upfront-icon-region-over:hover:before {
-	background-position: -807px -486px;
-}
-.upfront-ui .upfront-icon-region-over-active:before {
-	background-position: -699px -486px;
-}
-.upfront-ui .upfront-icon-region-over-active:hover:before {
-	background-position: -807px -486px;
-}
-
-.upfront-field-icon-none:before {
-	background-position: -700px -455px!important;
-}
-
-.upfront-ui .upfront-field-icon-below:before {
-	background-position: -699px -646px;
-}
-
-.upfront-ui .upfront-icon-region-fullscreen:before {
-	background-position: -700px -775px;
-}
-.upfront-ui .upfront-icon-region-fullscreen:hover:before {
-	background-position: -808px -775px;
-}
-.upfront-ui .upfront-icon-region-fullscreen-active:before {
-	background-position: -700px -775px;
-}
-.upfront-ui .upfront-icon-region-fullscreen-active:hover:before {
-	background-position: -808px -775px;
-}
-
-/*.upfront-inline-panel div.upfront-inline-panel-item i.upfront-icon.upfront-icon-region-remove:before {
-	background-image: url(../../../img/uf-ui-sprite.svg);
 }*/
 
-.upfront-ui .upfront-icon-region-remove:before {
-	background-position: -261px -282px;
-}
-.upfront-ui .upfront-icon-region-remove-active:before {
-	background-position: -1229px -154px;
-}
-.upfront-ui .upfront-icon-region-remove-active:hover:before {
-	background-position: -731px -231px;
-}
 
-.upfront-ui .upfront-icon-region-edit-labels:before {
-	background-position: -482px -231px;
-}
-.upfront-ui .upfront-icon-region-edit-labels-no-labels:before {
-	background-position: -479px -201px;
-}
-
-.upfront-icon-region-toggle-sorting:before {
-	background-position: -261px -311px;
-}
-.upfront-icon-region-toggle-sorting.upfront-icon-region-sorting-active:before {
-	background-position: -291px -311px;
-}
 
 div.preset-manager-panel .field-caption-height {
 	border-left: 2px solid #dae6f2;
@@ -759,15 +706,22 @@ figure.gallery-labels-figure img.mfp-img {
 }
 
 .ugallery-controls {
-	top:0;
-	bottom: auto;
+	top: auto;
+	bottom: 2px;
+	right: 2px;
 	width: auto;
 }
+
+.ugallery-controls .upfront-inline-panel {
+	width: 28px !important;
+	height: 28px !important;
+}
+
 .ugallery-controls > .upfront-inline-panel {
 	position: relative;
 }
 .ugallery-controls .upfront-inline-panel-item .upfront-icon {
-	padding: 4px 4px 2px;
+	padding: 5px 6px 5px 5px;
 }
 .ugallery-caption-over {
 	box-sizing: border-box;

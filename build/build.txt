@@ -33,6 +33,7 @@ chosen/chosen.jquery.min.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/global-event-handlers.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/panels.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/panel.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/inline-tooltip.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/item.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/item-multi.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/control.js
@@ -46,6 +47,8 @@ text!scripts/upfront/inline-panels/templates/panel-control-template.html
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/dialog-control.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/image-control.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/controls/visit-link.js
+text!scripts/upfront/inline-panels/templates/link-control-template.html
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/link-control.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/controls/link-panel.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/link-model.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/controls/group-link-panel.js
@@ -79,6 +82,7 @@ C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/settings/settings-labeled-lightbox-trigger.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/settings.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/notifier.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/perfect-scrollbar/perfect-scrollbar-library.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/perfect-scrollbar/perfect-scrollbar.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/css/css-editor.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/css/general-css-editor.js
@@ -198,6 +202,8 @@ text!upfront/templates/property_edit.html
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/property.js
 text!upfront/templates/properties.html
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/properties.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/preset-settings/preset-saver.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/theme-colors/color-saver.js
 text!upfront/templates/sidebar_settings_lock_area.html
 text!upfront/templates/sidebar_settings_background.html
 spectrum/spectrum.js
@@ -224,6 +230,8 @@ text!scripts/upfront/templates/map-editor.html
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/inline-panels/map-editor.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/bg-settings/map-item.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/bg-settings/slider-item.js
+text!elements/upfront-image/tpl/video_editor.html
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/video-selector.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/bg-settings/video-item.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/element-settings/settings-container.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/element-settings/root-panel-mixin.js
@@ -278,6 +286,7 @@ C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-accordion/js/
 redactor/redactor.js
 text!scripts/redactor/ueditor-templates.html
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/redactor/ueditor-insert.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/redactor/ueditor-video-insert.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/redactor/ueditor-insert-utils.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/redactor/ueditor-image-insert-base.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/redactor/ueditor-image-insert.js

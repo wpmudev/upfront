@@ -117,40 +117,6 @@
 	background: #145064 linear-gradient(135deg, rgba(51, 91, 128,1) 0%,rgba(51, 91, 128,1) 50%,rgba(0,0,0,0) 51%,rgba(0,0,0,0) 100%); /* W3C */
 }
 
-.upfront-ui .upfront-icon-region-right:before {
-	background-position: -699px -42px!important;
-}
-.upfront-ui .upfront-icon-region-right:hover:before {
-	background-position: -807px -42px!important;
-}
-.upfront-ui .upfront-icon-region-right-active:before {
-	background-position: -699px -39px!important;
-}
-.upfront-ui .upfront-icon-region-right-active:hover:before {
-	background-position: -807px -39px!important;
-}
-
-.upfront-ui .upfront-icon-region-left:before {
-	background-position: -698px -810px!important;
-}
-.upfront-ui .upfront-icon-region-left:hover:before {
-	background-position: -806px -810px!important;
-}
-.upfront-ui .upfront-icon-region-left-active:before {
-	background-position: -698px -807px!important;
-}
-.upfront-ui .upfront-icon-region-left-active:hover:before {
-	background-position: -806px -807px!important;
-}
-
-.upfront-ui .upfront-icon-prev:before {
-	background-position: -291px -133px;
-}
-
-.upfront-ui .upfront-icon-next:before {
-	background-position: -290px -103px;
-}
-
 .uslider-settings .upfront-settings-item{
 	padding-bottom: 0;
 }
@@ -165,13 +131,13 @@
 background-position: -699px -646px;
 }
 .upfront-field-icon-bottomOver:before {
-background-position: -699px -489px;
+background-position: -318px -308px;
 }
 .upfront-field-icon-nocaption:before {
-background-position: -699px -455px;
+background-position: -258px -308px;
 }
 .upfront-field-icon-right:before {
-background-position: -699px -808px;
+background-position: -258px -336px;
 }
 .upfront-field-icon-textonly:before {
 background-position: -699px -646px;
@@ -229,7 +195,7 @@ background-position: -699px -646px;
 	margin-top: 10px;
 }
 .upfront-ui .upfront-icon-region-add:before {
-	background-position: -261px -191px;
+	background-position: -321px -131px;
 	width: 18px;
 	height: 18px;
 }
