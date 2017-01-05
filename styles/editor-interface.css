@@ -5239,7 +5239,7 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
   padding: 0 16px 10px; }
 
 .uf-bgsettings-video-url {
-  margin: 0 0 10px; }
+  margin: 10px 0 5px; }
 
 .upfront-bg-setting-tab-video span label,
 .upfront-bg-setting-tab-video .uf-bgsettings-item .upfront-field-wrap > label {
@@ -6374,6 +6374,9 @@ span.upfront-settings-item-title:after {
 .upfront-module.ui-resizable-resizing > .upfront-objects_container > .upfront-editable_entities_container > .upfront-object-view > .upfront-entity-size-hint {
   display: block; }
 
+/* Prevent Code Element double size hint on hover. */
+.upfront-code_element-module:hover .upfront-editable_entities_container > .upfront-entity-size-hint,
+.upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-code_element-module .upfront-editable_entities_container > .upfront-entity-size-hint,
 .upfront-module-group-on-edit > .upfront-entity-size-hint,
 .upfront-module-group-on-edit:hover > .upfront-entity-size-hint,
 .upfront-module-group.upfront-module-group-element-editing > .upfront-entity-size-hint,
@@ -10881,6 +10884,24 @@ a.upfront-post-layout-trigger:before {
 /* --- Media manager videos --- */
 .upfront-media_manager-post_image li.upfront-media_item .thumbnail img.media-library-video-thumbnail {
   height: 100%; }
+
+.upfront-media_manager-post_image li.upfront-media_item .thumbnail.override:before {
+  content: " ";
+  display: block;
+  position: absolute;
+  background: url(../img/uf-core-el-sprite_new.svg);
+  height: 28px;
+  width: 43px;
+  background-size: 1860px;
+  background-position-y: -572px;
+  background-position-x: -84px;
+  top: 50%;
+  left: 50%;
+  margin-left: -21px;
+  margin-top: -14px; }
+
+.upfront-media_manager-post_image li.upfront-media_item .thumbnail.override img {
+  display: none; }
 
 /* --- Color Picker --- */
 /***
