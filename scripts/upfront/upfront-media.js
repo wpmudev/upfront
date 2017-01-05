@@ -2122,8 +2122,12 @@ define([
 				click: "toggle_item_selection"
 			},
 			initialize: function () {
+				var cls = '';
 
-				this.template = _.template("<div class='thumbnail'>{{thumbnail}}</div> <div class='title'>{{post_title}}</div> <div class='upfront-media_item-editor-container' />");
+				if ((this.model.get("thumbnail") || '').match(/wp-includes\/images\/media\/video/i)) {
+					cls += "override";
+				}
+				this.template = _.template("<div class='thumbnail " + cls + "'>{{thumbnail}}</div> <div class='title'>{{post_title}}</div> <div class='upfront-media_item-editor-container' />");
 				Upfront.Events.on("media_manager:media:toggle_titles", this.toggle_title, this);
 
 				this.model.on("appearance:update", this.update, this);
