@@ -429,7 +429,7 @@ class Upfront_MediaServer extends Upfront_Server {
 			foreach($results['items'] as $index=>$video) {
 				$video_info = get_post_meta(intval($video['ID']), 'videoinfo', true);
 				if (is_array($video_info) && $video_info['cover'] !== '') {
-					$results['items'][$index]['thumbnail'] = '<img class="media-library-video-thumbnail" src="' . $video_info['cover'] . '" />';
+					$results['items'][$index]['thumbnail'] = '<img class="media-library-video-thumbnail" src="' . esc_url($video_info['cover']) . '" />';
 				}
 			}
 		}
