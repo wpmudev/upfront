@@ -748,7 +748,11 @@
 }
 
 /* Show on hover. */
+/* Post data resize handles. */
 .upfront-wrapper-post-data > .upfront-resize-handle-wrapper:hover, 
+/* Post data resize hint. */
+.upfront-wrapper-post-data > .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-object-group-view > .upfront-entity-size-hint, 
+/* Multiple Module handles. */
 .upfront-wrapper-multiple-modules .upfront-wrapper-meta.upfront-resize-handle-wrapper:hover {
 	display: block;
 }

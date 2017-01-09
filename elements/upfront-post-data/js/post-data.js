@@ -857,6 +857,9 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	},
 
 	on_element_resizing: function(attr) {
+		// Update the resize hint.
+		this.update_size_hint(attr.width, attr.height);
+
 		// Check if mobileMode
 		if(this.mobileMode) {
 			return;
