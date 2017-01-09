@@ -292,10 +292,14 @@ define([
 		onLightboxNameInputChange: function(event) {
 			if (event.which === 13) {
 				event.preventDefault();
-				this.createLightBox();
-				this.saveControls();
-				Upfront.Events.trigger("tooltip:close"); // Close tooltip
+				this.handleLightboxCreate();
 			}
+		},
+		
+		handleLightboxCreate: function() {
+			this.createLightBox();
+			this.saveControls();
+			Upfront.Events.trigger("tooltip:close"); // Close tooltip
 		},
 
 		createLightBox: function() {
@@ -399,7 +403,14 @@ define([
 			this.renderTooltips();
 		},
 
-		saveControls: function () {
+		saveControls: function (e) {
+			var type = this.model.get('type');
+			
+			if(type === 'lightbox' && this.$el.find('.js-ulinkpanel-lightbox-input').val() !== '') {
+				e.preventDefault();
+				this.handleLightboxCreate();
+			}
+			
 			this.$el.find('.lightbox-selector').show();
 			this.$el.find('.js-ulinkpanel-new-lightbox').hide();
 		},
