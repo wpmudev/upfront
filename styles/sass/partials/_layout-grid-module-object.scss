@@ -748,15 +748,22 @@
 }
 
 /* Show on hover. */
+.upfront-wrapper-post-data > .upfront-resize-handle-wrapper:hover, 
 .upfront-wrapper-multiple-modules .upfront-wrapper-meta.upfront-resize-handle-wrapper:hover {
 	display: block;
 }
 
+/* Hide post data sub element resize hint and handles. */
+.upfront-wrapper-post-data .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-resize-handle-element,
+.upfront-wrapper-post-data .upfront-module-view .upfront-object-view:hover .upfront-resize-handle-element,
+.upfront-wrapper-post-data .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-entity-size-hint,
 /* Hide resize handles for multiple-modules resizing. */
 .upfront-wrapper-multiple-modules .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-resize-handle-element {
 	display: none;
 }
 
+/* Post Data resize handles */
+.upfront-wrapper-post-data > .upfront-resize-handle-wrapper:before,
 /* Resize handles for group and elements. */
 .upfront-resize-handle-group:before,
 .upfront-resize-handle-element:before {

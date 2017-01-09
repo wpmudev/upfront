@@ -67,6 +67,9 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 
 		this.listenTo(Upfront.Events, 'entity:drop:before_render', this.set_prev_region_container);
 		this.update_height();
+
+		// Add Class for post data element styling purposes.
+		this.$el.parents('.upfront-module-view').parent().addClass('upfront-wrapper-post-data');
 	},
 
 	update: function (prop, options) {
@@ -75,6 +78,9 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 		this.constructor.__super__.update.call(this, prop, options);
 		this.adjust_featured_image();
 		this.adjust_inserted_image();
+
+		// Add Class for post data element styling purposes.
+		this.$el.parents('.upfront-module-view').parent().addClass('upfront-wrapper-post-data');
 	},
 
 	update_position: function () {
