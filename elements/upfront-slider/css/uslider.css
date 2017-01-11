@@ -254,7 +254,7 @@ div.uslide-image img {
 	display: flex;
 	width: 100%;
 }
-.uslide-caption p{
+.uslide-caption p, .uslide-caption h1, .uslide-caption h2, .uslide-caption h3, .uslide-caption h4, .uslide-caption h5, .uslide-caption h6, .uslide-caption pre, .uslide-caption blockquote {
 	width:100%;
 }
 
