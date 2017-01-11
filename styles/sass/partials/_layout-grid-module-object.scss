@@ -318,6 +318,10 @@
 	display: block;
 }
 
+/* Post Data Size Hint on Group Edit resizing. */
+.upfront-module-group-on-edit .upfront-wrapper-post-data .upfront-wrapper-meta:hover ~ .upfront-module-view .upfront-module .upfront-object-view .upfront-entity-size-hint,
+/* Post Element Resize Handle on Group Edit resizing. */
+.upfront-wrapper-module-group-on-edit .upfront-module-group-on-edit .upfront-wrapper-post-data .upfront-resize-handle-wrapper:hover + .upfront-module-view .upfront-resize-handle-element,
 .upfront-module-group.upfront-module-group-on-edit:hover .upfront-modules_container > .upfront-resize-handle-group,
 .upfront-wrapper.ui-resizable-resizing .upfront-module-group .upfront-editable_entity > .upfront-entity-size-hint,
 .upfront-wrapper-multiple-modules .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-entity-size-hint,
@@ -748,15 +752,26 @@
 }
 
 /* Show on hover. */
+/* Post data resize handles. */
+.upfront-wrapper-post-data > .upfront-resize-handle-wrapper:hover, 
+/* Post data resize hint. */
+.upfront-wrapper-post-data > .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-object-group-view > .upfront-entity-size-hint, 
+/* Multiple Module handles. */
 .upfront-wrapper-multiple-modules .upfront-wrapper-meta.upfront-resize-handle-wrapper:hover {
 	display: block;
 }
 
+/* Hide post data sub element resize hint and handles. */
+.upfront-wrapper-post-data .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-resize-handle-element,
+.upfront-wrapper-post-data .upfront-module-view .upfront-object-view:hover .upfront-resize-handle-element,
+.upfront-wrapper-post-data .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-entity-size-hint,
 /* Hide resize handles for multiple-modules resizing. */
 .upfront-wrapper-multiple-modules .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-resize-handle-element {
 	display: none;
 }
 
+/* Post Data resize handles */
+.upfront-wrapper-post-data > .upfront-resize-handle-wrapper:before,
 /* Resize handles for group and elements. */
 .upfront-resize-handle-group:before,
 .upfront-resize-handle-element:before {
