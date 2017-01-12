@@ -788,7 +788,7 @@ define([
 			},
 			on_click: function (e) {
 				// We don't want to activate the element when Settings sidebar is open
-				if ($('#element-settings-sidebar').html() !== '' || $('#settings').html() !== '') return false;
+				//if ($('#element-settings-sidebar').html() !== '' || $('#settings').html() !== '') return false;
 				// Let's not activate if shift key is hold
 				if (e && e.shiftKey) return;
 				this.activate();
@@ -1224,7 +1224,7 @@ define([
 			getControlItems: function(){
 				return _([
 					this.createPaddingControl(),
-					this.createControl('settings', l10n.settings, 'on_settings_click')
+					//this.createControl('settings', l10n.settings, 'on_settings_click')
 				]);
 			}
 		}),
@@ -2492,11 +2492,13 @@ define([
 				this.apply_paddings($obj);
 				this.update_position();
 			},
-
 			activate: function () {
+				// Do not activate if inside ObjectGroup and not editing
+				if ( this.object_group_view ) return false;
 				// Deactivate previous ObjectView
 				if(typeof(Upfront.data.prevEntity) !== 'undefined' && Upfront.data.prevEntity !== false) {
-					Upfront.data.prevEntity.deactivate();
+					if (Upfront.data.prevEntity == this) return false;
+					Upfront.data.prevEntity.trigger('deactivated');
 				}
 				Upfront.data.prevEntity = this;
 				_Upfront_EditableEntity.prototype.activate.call(this);
@@ -2506,10 +2508,11 @@ define([
 				this.parent_module_view.$el.find('>.upfront-module').addClass('upfront-module-active');
 				if ( !this.parent_module_view.wrapper_view ) return;
 				this.parent_module_view.wrapper_view.$el.addClass('upfront-wrapper-active');
+				this.on_settings_click();
 			},
 			deactivate: function () {
 				// We don't want to deactivate the element when Settings sidebar is open
-				if($('#element-settings-sidebar').html() !== '' || $('#settings').html() !== '') return false;
+				//if($('#element-settings-sidebar').html() !== '' || $('#settings').html() !== '') return false;
 				Upfront.data.prevEntity = false;
 				_Upfront_EditableEntity.prototype.deactivate.call(this);
 				this.$el.closest('.upfront-region-container').removeClass('upfront-region-module-activated');
@@ -3786,12 +3789,13 @@ define([
 				})
 
 				this.$bg = this.$el.find('.upfront-module-group-bg');
-				this.update();
 				var local_view = this._modules_view || new Modules({"model": this.model.get("modules")});
 				local_view.region_view = this.region_view;
 				local_view.group_view = this;
 				group_container.append(local_view.el);
 				local_view.render();
+
+				this.update();
 
 				this.apply_paddings(this.$el.find('> .upfront-modules_container'));
 
@@ -4240,7 +4244,7 @@ define([
 			on_dblclick: function (e) {
 				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON();
 				// We don't want to activate the Group when Settings sidebar is open
-				if($('#element-settings-sidebar').html() !== '' || $('#settings').html() !== '') return false;
+				//if($('#element-settings-sidebar').html() !== '' || $('#settings').html() !== '') return false;
 				if ( this.$el.hasClass('upfront-module-group-on-edit') || this.$el.hasClass('upfront-module-group-disabled') ) return;
 				if ( this.wrapper_view && this.wrapper_view.$el.hasClass('upfront-inline-panel-item-open') ) return;
 				this.closeControlPanel(false);
@@ -4254,7 +4258,7 @@ define([
 			on_hide_click: function (e) {
 				_Upfront_EditableEntity.prototype.on_hide_click.call(this, e);
 				this.closeControlPanel(false);
-				this.deactivate();
+				this.trigger('deactivated');
 				e.stopPropagation();
 				Upfront.Events.trigger("entity:module_group:hide_toggle", this, this.model);
 			},
@@ -4336,7 +4340,7 @@ define([
 			},
 			deactivate: function () {
 				// We don't want to deactivate the Group when Settings sidebar is open
-				if($('#element-settings-sidebar').html() !== '' || $('#settings').html() !== '') return false;
+				//if($('#element-settings-sidebar').html() !== '' || $('#settings').html() !== '') return false;
 				Upfront.data.prevEntity = false;
 				this.$el.closest('.upfront-region-container').removeClass('upfront-region-module-activated');
 				this.$el.parent().removeClass("upfront-wrapper-active");
@@ -4353,9 +4357,11 @@ define([
 				if (!Upfront.Application.user_can_modify_layout()) return false;
 
 				if (this.hidden) return false;
+				if (this.editing) return false;
 				// Deactivate previous ObjectView
 				if(typeof(Upfront.data.prevEntity) !== 'undefined' && Upfront.data.prevEntity !== false) {
-					Upfront.data.prevEntity.deactivate();
+					if (Upfront.data.prevEntity == this) return false;
+					Upfront.data.prevEntity.trigger('deactivated');
 				}
 				Upfront.data.prevEntity = this;
 				if (this.activate_condition && !this.activate_condition()) return false;
@@ -4373,6 +4379,8 @@ define([
 				this.$el.closest('.upfront-region-container').addClass('upfront-region-module-activated');
 				this.$el.parent().addClass("upfront-wrapper-active");
 				this.$el.addClass("upfront-module-group-active");
+				
+				this.on_settings_click();
 			},
 			remove: function(){
 				if (this._modules_view) {

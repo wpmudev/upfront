@@ -57,9 +57,9 @@ define([], function () {
 
 		the_settings_view = new settings_obj_view({
 			model: view.model,
-			anchor: ( current_object_proto ? current_object_proto.anchor : false )
+			anchor: ( current_object_proto ? current_object_proto.anchor : false ),
+			for_view: view
 		});
-		the_settings_view.for_view = view;
 		the_settings_view.render();
 		$('#element-settings-sidebar').html(the_settings_view.el);
 		$('#element-settings-sidebar').append('<div id="preventElementsUsageOverlay"><span></span></div>');

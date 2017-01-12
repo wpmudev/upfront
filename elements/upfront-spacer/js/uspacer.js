@@ -143,7 +143,7 @@ define([
 		activate: function () {
 			// Deactivate previous ObjectView
 			if(typeof(Upfront.data.prevEntity) !== 'undefined' && Upfront.data.prevEntity !== false) {
-				Upfront.data.prevEntity.deactivate();
+				Upfront.data.prevEntity.trigger('deactivated');
 			}
 			$('.upfront-region-module-activated').removeClass('.upfront-region-module-activated');
 		},

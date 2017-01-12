@@ -19,6 +19,7 @@
             initialize: function(opts) {
                 this.options = opts;
                 this.panels = _([]);
+                this.for_view = this.options.for_view ? this.options.for_view : false;
             },
             get_title: function () {
                 return l10n.settings;

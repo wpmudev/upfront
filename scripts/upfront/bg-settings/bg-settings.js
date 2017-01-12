@@ -227,11 +227,17 @@ define([
 		initialize: function (opts) {
 			this.has_tabs = false;
 			this.options = opts;
+			this.for_view = this.options.for_view ? this.options.for_view : false;
 			var panel = new GroupLayout(opts);
 			this.panels = [
 				panel,
 				new AdvancedSettings({model: this.model})
 			];
+			
+			// Listen to element deactivation and save setting automatically
+			if ( this.for_view !== false ) {
+				this.listenTo(this.for_view, 'deactivated', this.saveSettings);
+			}
 		},
 		title: l10n.group_settings
 	});

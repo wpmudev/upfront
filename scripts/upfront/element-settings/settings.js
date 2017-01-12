@@ -25,6 +25,8 @@ define([
 				breakpointData,
 				skip_appearance = !Upfront.Application.user_can("SWITCH_PRESET") && !Upfront.Application.user_can("MODIFY_PRESET") && !Upfront.Application.user_can("DELETE_PRESET")
 			;
+			
+			this.for_view = this.options.for_view ? this.options.for_view : false;
 
 			// Setup model so that it uses breakpoint values
 			if (this.hasBreakpointSettings === true) {
@@ -75,6 +77,11 @@ define([
 			});
 
 			this.listenTo(Upfront.Events, 'element:settings:render', this.setScrollMaxHeight);
+			
+			// Listen to element deactivation and save setting automatically
+			if ( this.for_view ) {
+				this.listenTo(this.for_view, 'deactivated', this.saveSettings);
+			}
 		},
 
 		saveSettings: function() {
