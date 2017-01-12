@@ -1129,6 +1129,8 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			me.calculateImageResize(wrapperSize, slide);
 		});
 
+		// Update Resize Hint.
+		this.update_size_hint();
 	},
 
 	on_element_resize: function(attr) {
