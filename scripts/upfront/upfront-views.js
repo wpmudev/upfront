@@ -927,7 +927,7 @@ define([
 					return l10n.login;
 				} else if (selection.children('div').hasClass('uposts-object')) {
 					return l10n.posts;
-				} else if (selection.children('div').hasClass('upost-data-object')) {
+				} else if (selection.children('div').hasClass('upost-data-object') || selection.children('div').hasClass('upfront-post-data-part')) {
 					return l10n.post_data;
 				} else {
 					return l10n.element;
@@ -942,7 +942,8 @@ define([
 				var	column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
 					hPadding = parseInt( (this.model.get_breakpoint_property_value('left_padding_num') || column_padding), 10 ) + parseInt( (this.model.get_breakpoint_property_value('right_padding_num') || column_padding), 10 ),
 					vPadding = parseInt( (this.model.get_breakpoint_property_value('top_padding_num') || column_padding), 10 ) + parseInt( (this.model.get_breakpoint_property_value('bottom_padding_num') || column_padding), 10 ),
-					width = width ? width - hPadding : this.$el.width() - hPadding,
+					//width = width ? width - hPadding : this.$el.width() - hPadding,
+					width = width ? width : this.$el.width(),
 					height = height ? height : this.$el.outerHeight(),
 					type = this.get_selection_type(this.$el),
 					hint = '<div class="upfront-entity-size-hint-color"></div><span class="upfront-entity-type">' + type + ',</span>'
@@ -3607,16 +3608,12 @@ define([
 			},
 			// Update the size hints for elements when editing groups.
 			update_group_size_hints: function() {
-				var grid = Upfront.Settings.LayoutEditor.Grid,
-					selection_type = this.get_selection_type,
-					column_padding = Upfront.Settings.LayoutEditor.Grid.column_padding,
-					hPadding = parseInt( (this.model.get_breakpoint_property_value('left_padding_num') || column_padding), 10 ) + parseInt( (this.model.get_breakpoint_property_value('right_padding_num') || column_padding), 10 ),
-					width = width ? width - hPadding : this.$el.width() - hPadding
-				;
+				var selection_type = this.get_selection_type;
 
 				// For each module in group, update size hint.
 				this.$el.find('.upfront-module-view').each(function(index, value) {
 					var height = parseInt($(value).css('height'), 10);
+					var width = parseInt($(value).css('width'), 10);
 					var type = selection_type($(value).find('.upfront-object-view'));
 
 					var hint = '<div class="upfront-entity-size-hint-color"></div><span class="upfront-entity-type">' + type + ',</span>'
