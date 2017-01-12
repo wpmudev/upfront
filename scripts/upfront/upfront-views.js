@@ -3605,6 +3605,7 @@ define([
 				this.editing = false;
 				this.hidden = false;
 				this.on('entity:resize_stop', this.on_resize, this);
+				this.on('entity:resizing', this.on_resizing);
 			},
 			// Update the size hints for elements when editing groups.
 			update_group_size_hints: function() {
@@ -4222,6 +4223,9 @@ define([
 				this.editing = false;
 				this.enable_interaction();
 				this.toggle_modules_interaction(false);
+			},
+			on_resizing: function (attr) {
+				this.update_size_hint(attr.width, attr.height);
 			},
 			on_resize: function (attr) {
 				var wrappers = this.model.get('wrappers');
