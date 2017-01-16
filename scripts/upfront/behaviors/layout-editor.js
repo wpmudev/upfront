@@ -1008,31 +1008,40 @@ var LayoutEditor = {
 				}
 			}
 			else {
-				// lightbox
+				// Global Lightboxes.
 				Upfront.Util.post({
-						action: 'upfront_delete_scoped_regions',
-						scope: scope,
-						name: name,
-						storage_key: _upfront_save_storage_key
-					}).done(function(data) {
-						// Also remove from current layout
-						if ( data.data ) {
-							_.each(data.data, function(region_name){
-								var model = collection.get_by_name(region_name);
-								collection.remove(model);
-							});
-							ed._refresh_global_regions().done(function(){
-								ed._render_global_region_manager($el);
-							});
-						}
-					});
+					action: 'upfront_delete_scoped_regions',
+					scope: scope,
+					name: name,
+					storage_key: _upfront_save_storage_key
+				}).done(function(data) {
+					// Also remove from current layout
+					if ( data.data ) {
+						_.each(data.data, function(region_name){
+							var model = collection.get_by_name(region_name);
+							collection.remove(model);
+						});
+						ed._refresh_global_regions().done(function(){
+							ed._render_global_region_manager($el);
+						});
+					}
+				});
 			}
 		});
 	},
 
 	_render_regions: function (regions, $el, type) {
 		var $lists = $('<ul class="global-region-manager-lists"></ul>');
+		var has_global = false;
 		_.each(regions, function(region){
+			is_global = ( region.scope === 'global' );
+			// Only display global regions/lightboxes.
+			if (!is_global) {
+				// Skip to next.
+				return;
+			}
+			has_global = true;
+
 			var classes = ['global-region-manager-list'],
 				has_main = false;
 			if ( !region.container || region.name == region.container ){
@@ -1059,8 +1068,8 @@ var LayoutEditor = {
 				'</li>'
 			);
 		});
-		// If no regions, display message.
-		if (regions.length < 1) {
+		// If no regions or no global regions, display message.
+		if (regions.length < 1 || !has_global) {
 			if (type === 'lightbox') {
 				var message = Upfront.Settings.l10n.global.behaviors.no_lightboxes;
 			} else {
