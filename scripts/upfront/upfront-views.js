@@ -1136,20 +1136,29 @@ define([
 				}
 			},
 			updateControls: function() {
-				var elementControlsTpl = '<div class="upfront-element-controls upfront-ui"></div>';
-				if(this.paddingControl && typeof this.paddingControl.isOpen !== 'undefined' && this.paddingControl.isOpen)	return;
+				var elementControlsTpl = '<div class="upfront-element-controls upfront-ui"></div>',
+					exists = false;
+				
+				if (!this.$control_el || this.$control_el.length === 0) {
+					this.$control_el = this.$el;
+				}
+				
+				exists = (this.$control_el.find('>.upfront-element-controls').length > 0);
 
+				if(this.paddingControl && typeof this.paddingControl.isOpen !== 'undefined' && this.paddingControl.isOpen) {
+					if (exists) return;
+					else this.paddingControl.close();
+				}
+				
 				if (!this.controls) {
 					this.controls = this.createControls();
 				}
 
 				if (this.controls === false) return;
+				
 
 				this.controls.render();
-				if (!this.$control_el || this.$control_el.length === 0) {
-					this.$control_el = this.$el;
-				}
-				if (this.$control_el.find('>.upfront-element-controls').length === 0) {
+				if (!exists) {
 					this.$control_el.append(elementControlsTpl);
 					this.$control_el.find('>.upfront-element-controls').html('').append(this.controls.$el);
 				}
@@ -3697,6 +3706,8 @@ define([
 				this.paddingControl.tooltip = l10n.padding_settings;
 				this.paddingControl.default_padding.top = 0;
 				this.paddingControl.default_padding.bottom = 0;
+				this.paddingControl.default_padding.left = 0;
+				this.paddingControl.default_padding.right = 0;
 
 				return this.paddingControl;
 			},
