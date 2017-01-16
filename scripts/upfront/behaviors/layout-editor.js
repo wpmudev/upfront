@@ -985,6 +985,7 @@ var LayoutEditor = {
 		$el.on('click', '.region-list-trash', function(e){
 			e.preventDefault();
 			var name = $(this).attr('data-name');
+			var scope = $(this).attr('data-scope');
 			if ( $(this).closest('.global-region-manager-wrap').hasClass('global-region-manager-global') ){
 				if ( confirm('Deleting the global regions will remove it from all layouts. Continue?') ) {
 					Upfront.Util.post({
@@ -1008,6 +1009,23 @@ var LayoutEditor = {
 			}
 			else {
 				// lightbox
+				Upfront.Util.post({
+						action: 'upfront_delete_scoped_regions',
+						scope: scope,
+						name: name,
+						storage_key: _upfront_save_storage_key
+					}).done(function(data) {
+						// Also remove from current layout
+						if ( data.data ) {
+							_.each(data.data, function(region_name){
+								var model = collection.get_by_name(region_name);
+								collection.remove(model);
+							});
+							ed._refresh_global_regions().done(function(){
+								ed._render_global_region_manager($el);
+							});
+						}
+					});
 			}
 		});
 	},
@@ -1034,7 +1052,7 @@ var LayoutEditor = {
 						//'<a href="#" class="region-list-edit" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.edit + '</a>' +
 						(
 							false === Upfront.plugins.isForbiddenByPlugin('show region list trash') ?
-							'<a href="#" class="region-list-trash" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.trash + '</a>' :
+							'<a href="#" class="region-list-trash" data-name="' + region.name + '" data-scope="' + region.scope + '">' + Upfront.Settings.l10n.global.behaviors.trash + '</a>' :
 							''
 						) +
 					'</span>' +
