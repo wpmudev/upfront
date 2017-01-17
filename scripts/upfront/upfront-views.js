@@ -6270,20 +6270,26 @@ define([
 			trigger_edit: function (e) {
 				var container_view = this.parent_view.get_container_view(this.model);
 				container_view.trigger_edit(e);
-				e.stopPropagation();
+				if (typeof e !== 'undefined' && e.stopPropagation) {
+					e.stopPropagation();
+				}
 			},
 			close_edit: function (e) {
 				var container_view = this.parent_view.get_container_view(this.model);
 				container_view.close_edit();
-				e.stopPropagation();
+				if (typeof e !== 'undefined' && e.stopPropagation) {
+					e.stopPropagation();
+				}
 			},
 			on_modal_open: function () {
-				var container_view = this.parent_view.get_container_view(this.model);
-				container_view.$el.find('.upfront-region-finish-edit').css('display', 'none'); // hide finish edit button
+				// Commented out so controls show when region settings are open.
+				//var container_view = this.parent_view.get_container_view(this.model);
+				//container_view.$el.find('.upfront-region-finish-edit').css('display', 'none'); // hide finish edit button
 			},
 			on_modal_close: function () {
-				var container_view = this.parent_view.get_container_view(this.model);
-				container_view.$el.find('.upfront-region-finish-edit').css('display', ''); // reset hide finish edit button
+				// Commented out so controls show when region settings are open.
+				//var container_view = this.parent_view.get_container_view(this.model);
+				//container_view.$el.find('.upfront-region-finish-edit').css('display', ''); // reset hide finish edit button
 				this.bg_setting.remove(); // removing it here, i'll be re-rendered before opening
 				this.bg_setting = false;
 			},
@@ -6581,7 +6587,9 @@ define([
 			trigger_edit: function (e) {
 				var container_view = this.parent_view.get_container_view(this.model);
 				container_view.trigger_edit_fixed();
-				e.stopPropagation();
+				if (typeof e !== 'undefined' && e.stopPropagation) {
+					e.stopPropagation();
+				}
 			},
 			close_edit: function (e) {
 				var container_view = this.parent_view.get_container_view(this.model);

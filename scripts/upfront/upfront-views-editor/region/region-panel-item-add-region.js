@@ -454,6 +454,8 @@
                     Upfront.Events.trigger('command:region:edit_toggle', true);
                     Upfront.Events.trigger('command:region:fixed_edit_toggle', true);
                     view.trigger("activate_region", view);
+										// Trigger Settings for new region.
+										view.trigger_edit();
                 }
             }
         });

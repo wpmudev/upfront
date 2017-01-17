@@ -416,8 +416,7 @@
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-left > .upfront-region-resize-handle-e,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-right > .upfront-region-resize-handle-w,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-hidden > .upfront-region-resize-handle-s,
-.upfront-region-editing .upfront-region-container-full > .upfront-region-resize-handle,
-.upfront-region-editing .upfront-region-bg-setting-open .upfront-region-resize-handle {
+.upfront-region-editing .upfront-region-container-full > .upfront-region-resize-handle {
 	visibility: hidden;
 }
 .upfront-region-editing .upfront-region-active-overlay,
@@ -1855,12 +1854,13 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 	display: block;
 }
 
-/* Hide 'Add Region' triggers & 'Region Resize' handle when settings panel is open */
+/* Hide 'Add Region' triggers & 'Region Resize' handle when settings panel is open 
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-region-panel-item-add-region,
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-icon-control-region-resize-e:before,
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-icon-control-region-resize-w:before {
 	display:none;
 }
+*/
 .upfront-ui .upfront-region-panel-item-add-region .upfront-icon-region-add:before {
 	background-position: -260px -130px;
 }
