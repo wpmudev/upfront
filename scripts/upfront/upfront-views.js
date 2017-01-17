@@ -5122,6 +5122,8 @@ define([
 				$main.addClass('upfront-region-editing');
 				this.update_overlay();
 				Upfront.Events.trigger("command:region:edit_toggle", true);
+				Upfront.Events.trigger("command:region:show_settings", this);
+
 				this.trigger("activate_region", this);
 				this.listenTo(Upfront.Events, "command:newpage:start", this.close_edit);
 				this.listenTo(Upfront.Events, "command:newpost:start", this.close_edit);
@@ -5732,6 +5734,7 @@ define([
 				this.listenTo(Upfront.Events, "upfront:grid:updated", this.on_grid_update);
 				this.listenTo(Upfront.Events, "entity:region:hide_toggle", this.update_hide_toggle);
 				this.listenTo(Upfront.Events, "command:region:edit_toggle", this.update_buttons);
+				this.listenTo(Upfront.Events, "command:region:show_settings", this.region_edit_triggered);
 				this.listenTo(Upfront.Events, "entity:region:removed", this.update_buttons);
 				$(window).on('resize.region_' + this.model.get('name'), this, this.on_window_resize);
 
@@ -5739,6 +5742,12 @@ define([
 			},
 			on_click: function (e) {
 
+			},
+			region_edit_triggered: function(container) {
+				// Only show settings for the correct region.
+				if ($.contains(container.el, this.el)) {
+					this.on_settings_click();
+				}
 			},
 			on_mouse_up: function () {
 				this.trigger("activate_region", this);
@@ -6184,7 +6193,7 @@ define([
 				;
 
 				this.listenToOnce(Upfront.Events, "entity:region:deactivated", function(deac){
-					if(e && !this.$el.is($(e.target).closest('div.upfront-region')) && me.bg_setting) {
+					if(me.bg_setting) {
 						me.bg_setting.close(false);
 					}
 				});
