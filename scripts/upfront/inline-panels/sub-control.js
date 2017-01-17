@@ -40,6 +40,9 @@ define([
 			if (this.isOpen) {
 				this.close();
 			} else {
+				// We have to close all open panels before open this one
+				Upfront.Events.trigger('upfront:hide:subControl');
+
 				this.open();
 			}
 		},
