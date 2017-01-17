@@ -325,7 +325,6 @@ div.ugallery-label-selector {
 	z-index: 1000;
 }
 
-.upfront-control-visible .ugallery-controls,
 .ugallery-controls.upfront-control-visible {
 	display: block;
 }
