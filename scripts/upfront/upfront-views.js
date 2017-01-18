@@ -4807,7 +4807,6 @@ define([
 			events: {
 				"click > .upfront-region-edit-trigger": "trigger_edit",
 				"click > .upfront-region-edit-fixed-trigger": "trigger_edit_fixed",
-				"click > .upfront-region-finish-edit": "finish_edit" ,
 				"contextmenu": "on_context_menu",
 				"mouseover": "on_mouse_over"
 			},
@@ -5034,15 +5033,14 @@ define([
 					type = this._get_region_type(),
 					data = _.extend(this.model.toJSON(), {size_class: grid['class'], max_col: this.max_col, available_col: this.available_col}),
 					template = _.template(_Upfront_Templates["region_container"], data),
-					$edit = $('<div class="upfront-region-edit-trigger upfront-ui" title="' + l10n.change_background + '"><i class="upfront-icon upfront-icon-region-edit"></i></div>'),
-					$finish = $('<div class="upfront-region-finish-edit upfront-ui"><i class="upfront-field-icon upfront-field-icon-tick"></i> ' + l10n.finish_edit_bg + '</div>');
+					$edit = $('<div class="upfront-region-edit-trigger upfront-ui" title="' + l10n.change_background + '"><i class="upfront-icon upfront-icon-region-edit"></i></div>')
+				;
 				Upfront.Events.trigger("entity:region_container:before_render", this, this.model);
 				this.$el.html(template);
 				this.$bg = this.$el.find('.upfront-region-container-bg');
 				this.$layout = this.$el.find('.upfront-grid-layout');
 				$edit.appendTo(this.$el);
 				//$edit_fixed.appendTo(this.$el);
-				$finish.appendTo(this.$el);
 				//this.render_fixed_panel();
 				this.update();
 				//if ( type != 'clip' )
@@ -5148,11 +5146,6 @@ define([
 				this.$el.find('.upfront-region-edit-lightbox-trigger').hide();
 				if ( !Upfront.Application.sidebar.visible )
 					Upfront.Application.sidebar.toggleSidebar();
-				$('.upfront-region-container > .upfront-region-finish-edit').css({
-					position: '',
-					left: '',
-					right: ''
-				});
 			},
 			trigger_edit_lightbox: function(e) {
 				if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.CONTENT )
@@ -5169,16 +5162,6 @@ define([
 				Upfront.Events.trigger("command:region:fixed_edit_toggle", true);
 				//if ( Upfront.Application.sidebar.visible )
 					//Upfront.Application.sidebar.toggleSidebar();
-				setTimeout(function(){
-					$('.upfront-region-container > .upfront-region-finish-edit').each(function(){
-						$(this).css({
-							position: 'fixed',
-							left: (me.$layout.offset().left + me.$layout.width()) - $(this).width(),
-							right: 'auto'
-						});
-					});
-				}, 350);
-
 			},
 			trigger_edit_fixed: function () {
 				if ( Upfront.Application.get_current() == Upfront.Settings.Application.MODE.CONTENT )
@@ -5192,15 +5175,6 @@ define([
 				Upfront.Events.trigger("command:region:fixed_edit_toggle", true);
 				if ( Upfront.Application.sidebar.visible )
 					Upfront.Application.sidebar.toggleSidebar();
-				setTimeout(function(){
-					$('.upfront-region-container > .upfront-region-finish-edit').each(function(){
-						$(this).css({
-							position: 'fixed',
-							left: (me.$layout.offset().left + me.$layout.width()) - $(this).width(),
-							right: 'auto'
-						});
-					});
-				}, 350);
 			},
 			update_overlay: function () {
 				var $main = $(Upfront.Settings.LayoutEditor.Selectors.main),
@@ -5408,27 +5382,6 @@ define([
 						right: ''
 					});
 				}
-				}
-				if ( $main.hasClass('upfront-region-editing') && this.$el.hasClass('upfront-region-container-active') ){
-					var $fin = this.$el.find('.upfront-region-finish-edit'),
-						fin_offset = $fin.offset();
-					if ( bottom+$fin.outerHeight() > scroll_bottom && top < scroll_bottom ){
-						if ( $fin.css('position') != 'fixed' )
-							$fin.css({
-								position: 'fixed',
-								bottom: 0,
-								left: fin_offset.left,
-								right: 'auto'
-							});
-					}
-					else {
-						$fin.css({
-							position: '',
-							bottom: '',
-							left: '',
-							right: ''
-						});
-					}
 				}
 			},
 			remove: function(){
@@ -6284,14 +6237,14 @@ define([
 			on_modal_open: function () {
 				// Commented out so controls show when region settings are open.
 				//var container_view = this.parent_view.get_container_view(this.model);
-				//container_view.$el.find('.upfront-region-finish-edit').css('display', 'none'); // hide finish edit button
 			},
 			on_modal_close: function () {
 				// Commented out so controls show when region settings are open.
 				//var container_view = this.parent_view.get_container_view(this.model);
-				//container_view.$el.find('.upfront-region-finish-edit').css('display', ''); // reset hide finish edit button
 				this.bg_setting.remove(); // removing it here, i'll be re-rendered before opening
 				this.bg_setting = false;
+				// Close Region Edit Mode.
+				Upfront.Events.trigger("entity:region:deactivated");
 			},
 			on_change_breakpoint: function (breakpoint) {
 				var $delete = this.$el.find('> .upfront-entity_meta > a.upfront-entity-delete_trigger'),
