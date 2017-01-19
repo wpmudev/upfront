@@ -575,7 +575,7 @@ div.sp-val:active .sp-dragger:after { display:block;}
 	top: 6px;
     left: 6px;
 	position: absolute;
-	text-indent: -6px;
+	text-indent: -5px;
 	border-radius: 3px;
 }
 
@@ -601,14 +601,15 @@ div.sp-val:active .sp-dragger:after { display:block;}
 	background-size:8px 8px;
 
 	background-position:0 0, 4px 4px;
-	border-radius: 2px;
+	border-radius: 3px;
 }
 
 #tabforeground:after {
 	content: 'T';
 	font-family: Arial Black, arial, sans-serif;
 	font-weight:bold;
-	font-size:16px;color: inherit;
+	font-size:16px;
+	color: inherit;
 	display: block;
 	height:0;
 	width:0;
