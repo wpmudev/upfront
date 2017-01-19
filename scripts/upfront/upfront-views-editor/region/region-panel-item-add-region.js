@@ -447,7 +447,8 @@
 								}
 								function end() {
 										var baseline = Upfront.Settings.LayoutEditor.Grid.baseline,
-												height = view.$el.outerHeight();
+											height = view.$el.outerHeight()
+										;
 										//model.set_property('row', Math.ceil(height/baseline), true);
 										view.$el.removeClass(ani_class);
 										// enable edit and activate the new region
@@ -456,6 +457,7 @@
 										view.trigger("activate_region", view);
 										// Trigger Settings for new region.
 										view.trigger_edit();
+
 								}
 						}
 				});

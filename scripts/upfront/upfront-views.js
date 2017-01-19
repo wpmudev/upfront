@@ -5619,7 +5619,9 @@ define([
 				"click > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
 				"click > .upfront-entity_meta > a.upfront-entity-hide_trigger": "on_hide_click",
 				"click > .upfront-region-hidden-toggle > a.upfront-entity-hide_trigger": "on_hide_click",
-				"click > .upfront-region-edit-trigger": "trigger_edit"
+				"click > .upfront-region-edit-trigger": "trigger_edit",
+				// Show settings of sub regions on click.
+				"click > .upfront-region-panels": "on_settings_click"
 			},
 			attributes: function(){
 				var grid = Upfront.Settings.LayoutEditor.Grid,
@@ -6154,27 +6156,10 @@ define([
 					}
 				});
 
-				// Make sure all other instance is closed
-				_.each(_.flatten([container_view.model, container_view.sub_model]), function(each){
-					var each_view = Upfront.data.region_views[each.cid];
-					if ( each == me.model ) {
-						each_view.$el.find('.upfront-inline-modal-wrap').draggable({
-							delay: 300,
-							addClasses: false,
-							cancel: '.upfront-field-select, input,textarea,button,select,option'
-						});
-						return;
-					}
-					if ( each_view && each_view.bg_setting )
-						each_view.bg_setting.close(false);
-				});
-
 				var $settings_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-settings_trigger'),
 					setting_offset = $settings_trigger.offset(),
 					offset = this.$el.offset(),
 					width = this.$el.width();
-
-
 
 				this.render_bg_setting();
 
