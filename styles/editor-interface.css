@@ -15235,7 +15235,7 @@ div.sp-val:active .sp-dragger:after {
   top: 6px;
   left: 6px;
   position: absolute;
-  text-indent: -5px;
+  text-indent: -4.5px;
   border-radius: 3px; }
 
 #path-1 {
