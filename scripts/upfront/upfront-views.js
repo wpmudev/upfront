@@ -5616,7 +5616,6 @@ define([
 				"mouseenter": "on_mouse_enter",
 				"mouseleave > .upfront-region-edit-trigger-small": "on_mouse_leave",
 				"click": "on_click",
-				"click > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
 				"click > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
 				"click > .upfront-entity_meta > a.upfront-entity-hide_trigger": "on_hide_click",
 				"click > .upfront-region-hidden-toggle > a.upfront-entity-hide_trigger": "on_hide_click",
@@ -5765,6 +5764,10 @@ define([
 					this._modules_view = local_view;
 				else
 					this._modules_view.delegateEvents();
+
+				// Hide settings button for regular regions.
+				var $settings_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-settings_trigger');
+				$settings_trigger.hide();
 			},
 			render_panels: function () {
 				this.region_panels = new Upfront.Views.Editor.RegionPanels({model: this.model});
@@ -6302,7 +6305,11 @@ define([
 					$edit_full = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-full upfront-ui"><div class="upfront-region-edit-text">' + l10n.click_to_edit_floating_region + '</div></div>'),
 					$ok = $('<div class="upfront-region-finish-edit-fixed upfront-ui">' + l10n.ok + '</div>'),
 					$size = $('<div class="upfront-region-size-hint upfront-ui"></div>'),
-					$position = $('<div class="upfront-region-position-hint upfront-ui"></div>');
+					$position = $('<div class="upfront-region-position-hint upfront-ui"></div>'),
+					$settings_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-settings_trigger')
+				;
+				// Hide settings button for regular regions.
+				$settings_trigger.show();
 				$size.appendTo(this.$el);
 				$position.appendTo(this.$el);
 				$edit.appendTo(this.$el);
@@ -6609,6 +6616,9 @@ define([
 			render: function () {
 				this.constructor.__super__.render.call(this);
 				this.hide();
+				var $settings_trigger = this.$el.find('> .upfront-entity_meta > a.upfront-entity-settings_trigger');
+				// Hide settings button for regular regions.
+				$settings_trigger.show();
 
 					//var	$edit = $('<div class="upfront-region-edit-trigger upfront-region-edit-trigger-small upfront-ui" title="' + l10n.edit_ltbox + '"><i class="upfront-icon upfront-icon-region-edit"></i></div>');
 					//$ok = $('<div class="upfront-region-finish-edit-lightbox upfront-ui">Finish Editing</div>');
