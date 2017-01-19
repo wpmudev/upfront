@@ -716,7 +716,7 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 	display: block;
 }
 
-.background-type-field .upfront-field-select, 
+.background-type-field .upfront-field-select,
 .background-image-field .upfront-field-select {
 	max-width: 140px;
 	margin-top: 3px;
@@ -738,7 +738,7 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 }
 
 .uf-bgsettings-video-url {
-	margin: 0 0 10px;
+	margin: 10px 0 5px;
 }
 
 .upfront-bg-setting-tab-video span label,
@@ -1024,7 +1024,7 @@ span.upfront-settings-item-title:after {
     left: 0;
 	margin: 0;
 	padding: 5px 0 10px 0;
-	
+
 	label.upfront-field-label.upfront-field-label-block {
 		display: none;
 	}
@@ -1046,13 +1046,13 @@ span.upfront-settings-item-title:after {
 #settings .ugroup-settings .upfront_toggle {
 	width: 100%;
     padding-left: 0;
-	
+
 	span.upfront-field-label-text {
 		position: absolute;
 		left: 50px;
 		top: 2px;
 	}
-	
+
 	label.upfront_toggle_label {
 		margin: 0;
 	}
@@ -1064,4 +1064,16 @@ span.upfront-settings-item-title:after {
 
 #settings .ugroup-settings .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num {
 	left: -78px;
+}
+
+.background-video-style-field {
+	margin-top: 0;
+}
+
+.uf-bgsettings-video-pick {
+	margin-bottom: 5px;
+	width: 100%;
+}
+.uf-bgsettings-video-pick input {
+	width: 100%;
 }

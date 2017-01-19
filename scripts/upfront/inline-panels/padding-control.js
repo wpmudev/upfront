@@ -266,7 +266,7 @@ define([
 			$paddingControl.html('');
 			
 			// Append panel title, arrow is not set like pseudo element because we cant update its styles with jQuery
-			$paddingControlTitle = '<span class="upfront-padding-arrow"></span><span class="upfront-padding-title">'+ l10n.padding_title +'</span>';
+			$paddingControlTitle = '<span class="upfront-control-arrow"></span><span class="upfront-padding-title">'+ l10n.padding_title +'</span>';
 			$paddingControl.append($paddingControlTitle);
 			
 			// Append padding icons
@@ -420,14 +420,14 @@ define([
 		update_position: function() {
 			// Get number of elements before padding
 			var elementsNumber = this.$el.prevAll().length,
-				leftPosition = elementsNumber * 38,
+				leftPosition = elementsNumber * 28,
 				dir = Upfront.Util.isRTL() ? "right" : "left";
 			
 			// Set container position
-			this.$el.find('.upfront-padding-control').css(dir, -leftPosition);
+			this.$el.find('.upfront-padding-control').css(dir, -(leftPosition + 5));
 			
 			// Update arrow position under padding button
-			this.$el.find('.upfront-padding-arrow').css(dir, leftPosition);
+			this.$el.find('.upfront-control-arrow').css(dir, leftPosition);
 		}
 	});
 

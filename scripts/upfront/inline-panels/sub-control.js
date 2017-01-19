@@ -40,6 +40,9 @@ define([
 			if (this.isOpen) {
 				this.close();
 			} else {
+				// We have to close all open panels before open this one
+				Upfront.Events.trigger('upfront:hide:subControl');
+
 				this.open();
 			}
 		},
@@ -48,23 +51,46 @@ define([
 			this.isOpen = true;
 			this.$el.addClass('upfront-sub-control-dialog-open');
 			Upfront.Events.trigger('upfront:hide:paddingPanel');
+			this.trigger('panel:open');
+			
+			var parent = this.$el.closest('.upfront-inline-panel');
+			
+			if(this.inline === true) {
+				parent.removeClass('upfront-panels-shadow');
+			}
+			
+			this.updateWidth();
 		},
 
 		close: function() {
 			this.isOpen = false;
 			this.$el.removeClass('upfront-sub-control-dialog-open');
+			this.trigger('panel:close');
+			
+			var parent = this.$el.closest('.upfront-inline-panel');
+			
+			if(this.inline === true) {
+				if(!parent.hasClass('upfront-panels-shadow')) {
+					parent.addClass('upfront-panels-shadow');
+				}
+			}
 		},
 
 		render: function() {
 			Item.prototype.render.call(this, arguments);
 			var captionControl = this.$('.image-sub-control'),
 				me = this,
-				selectedItem,
-				item_count = 0
+				selectedItem
 			;
+			
+			this.item_count = 0;
 
 			if(!captionControl.length){
-				captionControl = $('<div class="image-sub-control inline-panel-sub-control-dialog"></div>');
+				if(this.inline === true) {
+					captionControl = $('<div class="image-sub-control upfront-panels-shadow inline-panel-sub-control-no-dropdown inline-panel-sub-control-dialog"></div>');
+				} else {
+					captionControl = $('<div class="image-sub-control upfront-panels-shadow inline-panel-sub-control-dialog"></div>');
+				}
 				this.$el.append(captionControl);
 			}
 			_.each(this.sub_items, function(item, key){
@@ -73,16 +99,31 @@ define([
 				} else {
 					item.setIsSelected(false);
 				}
-
+				
+				if(me.inline === true) {
+					item.panel_type = 'tooltip';
+				}
+				
 				item.render();
 				item.delegateEvents();
 				captionControl.append(item.$el);
-				item_count++;
+				me.item_count++;
 			});
 
+			// Prepend arrow, it is not set like pseudo element because we cant update its styles with jQuery
+			var panelArrow = '<span class="upfront-control-arrow"></span>';
+			this.$el
+				.find('.image-sub-control').prepend(panelArrow);
+		},
+		
+		updateWidth: function () {
 			//Set width depending of items
 			this.$el
-				.find('.image-sub-control').css('width', 38 * item_count);
+				.find('.image-sub-control').css('width', (28 * this.item_count) + 2);
+
+			//Show sub controls on each open
+			this.$el
+				.find('.upfront-inline-panel-item').show();
 		},
 
 		get_selected_item: function () {

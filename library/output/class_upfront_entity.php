@@ -266,7 +266,7 @@ abstract class Upfront_Entity {
 				$image_attr .= " data-bg-image-ratio-{$breakpoint_id}='{$ratio_kw}'";
 			}
 			// Okay, let's get on with our lives now...
-			
+
 			$markup = "<div class='upfront-bg-image upfront-image-lazy upfront-image-lazy-bg' style='{$image_css}' {$image_attr}></div>";
 		}
 		else if ('map' == $type) {
@@ -315,49 +315,88 @@ abstract class Upfront_Entity {
 			$markup = "<div class='upfront-bg-slider' {$slide_attr}>{$slides_markup}</div>";
 		}
 		else if ('video' == $type){
-			$video = $this->_get_breakpoint_property('background_video', $breakpoint_id);
-			$embed = $this->_get_breakpoint_property('background_video_embed', $breakpoint_id);
-			$width = $this->_get_breakpoint_property('background_video_width', $breakpoint_id);
-			$height = $this->_get_breakpoint_property('background_video_height', $breakpoint_id);
-			$style = $this->_get_breakpoint_property('background_video_style', $breakpoint_id);
-			$mute = $this->_get_breakpoint_property('background_video_mute', $breakpoint_id);
-            $autoplay = $this->_get_breakpoint_property('background_video_autoplay', $breakpoint_id);
-            $loop = $this->_get_breakpoint_property('background_video_loop', $breakpoint_id);
-			if ( $video && $embed ){
-			    self::$_video_index++;
-                $video_id = 'bg_video_' . self::$_video_index;
-			    $mute = $mute === false ? 1 : intval($mute);
-                $autoplay = $autoplay === false ? 1 : intval($autoplay);
-				$attr = 'data-bg-video-ratio="' . round($height/$width, 2) . '" ';
-				$attr .= 'data-bg-video-style="' . $style . '" ';
-				$attr .= 'data-bg-video-mute="' . $mute . '"';
-				$attr .= 'data-bg-video-loop="' . $loop . '"';
-				$autoplay_attr = '&amp;autoplay=' . $autoplay;
-				// hack additional attributes
-				$vid_attrs = array(
-					'.*?vimeo\.' => ($loop === 1 ? '&amp;loop=1' : 'loop=0') . $autoplay_attr . ( $mute == 1 ? '&amp;api=1&amp;player_id=' . $video_id : '' ),
-					'.*?youtube\.com\/(v|embed)\/(.+?)(\/|\?).*?$' =>  '&amp;controls=0&amp;showinfo=0&amp;rel=0&amp;wmode=transparent&amp;html5=1&amp;modestbranding=1' . ($loop === 1 ? '&amp;loop=1&amp;enablejsapi=1' : 'loop=0') . $autoplay_attr . ( $mute == 1 ? '&amp;enablejsapi=1' /*. '&amp;origin=' . site_url()*/ : '' ),
-					'.*?wistia\.' => ($loop === 1 ? 'endVideoBehavior=loop' : '') . ( $autoplay == 1 ? '&amp;autoPlay=true' : '' ) . ( $mute == 1 ? '&amp;volume=0' : '' )
-				);
-				$vid_attr = '';
-				$embed_attr = ' id="' . $video_id . '"';
-				if ( preg_match('/(^.*?<iframe.*?src=[\'"])(.*?)([\'"])(.*$)/is', $embed, $match) ){
-					foreach ( $vid_attrs as $vid => $a ){
-						if ( preg_match( '/^(https?:|)\/\/' . $vid . '/i', $match[2], $vid_match ) ){
-							foreach ( $vid_match as $i => $m ){
-								if ( $i == 0 )
-									continue;
-								$a = str_replace('$'.$i, $m, $a);
+			$background_style = $this->_get_breakpoint_property('background_style', $breakpoint_id);
+			$background_style = $background_style ? $background_style : 'service';
+			if ('service' === $background_style) {
+				$video = $this->_get_breakpoint_property('background_video', $breakpoint_id);
+				$embed = $this->_get_breakpoint_property('background_video_embed', $breakpoint_id);
+				$width = $this->_get_breakpoint_property('background_video_width', $breakpoint_id);
+				$height = $this->_get_breakpoint_property('background_video_height', $breakpoint_id);
+				$style = $this->_get_breakpoint_property('background_video_style', $breakpoint_id);
+				$mute = $this->_get_breakpoint_property('background_video_mute', $breakpoint_id);
+				$autoplay = $this->_get_breakpoint_property('background_video_autoplay', $breakpoint_id);
+				$loop = $this->_get_breakpoint_property('background_video_loop', $breakpoint_id);
+				if ( $video && $embed ){
+					self::$_video_index++;
+					$video_id = 'bg_video_' . self::$_video_index;
+					$mute = $mute === false ? 1 : intval($mute);
+					$autoplay = $autoplay === false ? 1 : intval($autoplay);
+					$attr = 'data-bg-video-ratio="' . round($height/$width, 2) . '" ';
+					$attr .= 'data-bg-video-style="' . $style . '" ';
+					$attr .= 'data-bg-video-mute="' . $mute . '"';
+					$attr .= 'data-bg-video-loop="' . $loop . '"';
+					$autoplay_attr = '&amp;autoplay=' . $autoplay;
+					// hack additional attributes
+					$vid_attrs = array(
+						'.*?vimeo\.' => ($loop === 1 ? '&amp;loop=1' : 'loop=0') . $autoplay_attr . ( $mute == 1 ? '&amp;api=1&amp;player_id=' . $video_id : '' ),
+						'.*?youtube\.com\/(v|embed)\/(.+?)(\/|\?).*?$' =>  '&amp;controls=0&amp;showinfo=0&amp;rel=0&amp;wmode=transparent&amp;html5=1&amp;modestbranding=1' . ($loop === 1 ? '&amp;loop=1&amp;enablejsapi=1' : 'loop=0') . $autoplay_attr . ( $mute == 1 ? '&amp;enablejsapi=1' /*. '&amp;origin=' . site_url()*/ : '' ),
+						'.*?wistia\.' => ($loop === 1 ? 'endVideoBehavior=loop' : '') . ( $autoplay == 1 ? '&amp;autoPlay=true' : '' ) . ( $mute == 1 ? '&amp;volume=0' : '' )
+					);
+					$vid_attr = '';
+					$embed_attr = ' id="' . $video_id . '"';
+					if ( preg_match('/(^.*?<iframe.*?src=[\'"])(.*?)([\'"])(.*$)/is', $embed, $match) ){
+						foreach ( $vid_attrs as $vid => $a ){
+							if ( preg_match( '/^(https?:|)\/\/' . $vid . '/i', $match[2], $vid_match ) ){
+								foreach ( $vid_match as $i => $m ){
+									if ( $i == 0 )
+										continue;
+									$a = str_replace('$'.$i, $m, $a);
+								}
+								$vid_attr = $a;
+								break;
 							}
-							$vid_attr = $a;
-							break;
 						}
+						$embed = $match[1] . $match[2] . ( strpos($match[2], '?') > 0  ? '&amp;' : '?' ) . $vid_attr . $match[3] . $embed_attr . $match[4];
 					}
-					$embed = $match[1] . $match[2] . ( strpos($match[2], '?') > 0  ? '&amp;' : '?' ) . $vid_attr . $match[3] . $embed_attr . $match[4];
+					$markup = "<script class='video-embed-code' type='text/html'>{$embed}</script>";
 				}
-				$markup = "<script class='video-embed-code' type='text/html'>{$embed}</script>";
+			} else {
+				$video = $this->_get_breakpoint_property('uploaded_background_video', $breakpoint_id);
+				$video_id = 'bg_video_' . self::$_video_index;
+
+				$style = $this->_get_breakpoint_property('background_video_style', $breakpoint_id);
+
+				$width = $this->_get_breakpoint_property('background_video_width', $breakpoint_id);
+				if (empty($width)) $width = 1; // Basic sanity check, prevents division by zero
+
+				$height = $this->_get_breakpoint_property('background_video_height', $breakpoint_id);
+				if (empty($height)) $height = 1; // Basic sanity check, prevents division by zero
+
+				$attr = ' data-bg-video-ratio="' . round($height/$width, 2) . '" ';
+				$attr .= 'data-bg-video-style="' . $style . '" ';
+				$attr .= 'id="' . $video_id . '"  ';
+
+				$mute = $this->_get_breakpoint_property('background_video_mute', $breakpoint_id);
+				$autoplay = $this->_get_breakpoint_property('background_video_autoplay', $breakpoint_id);
+				$loop = $this->_get_breakpoint_property('background_video_loop', $breakpoint_id);
+
+				$vid_attr = isset($vid_attr) ? $vid_attr : '';
+				if ($mute) $vid_attr .= ' muted ';
+				if ($autoplay) $vid_attr .= ' autoplay ';
+				if ($loop) $vid_attr .= ' loop ';
+
+				$embed = $this->_get_breakpoint_property('uploaded_background_video_embed', $breakpoint_id);
+				$embed = str_replace('video class', 'video ' . $vid_attr . 'controls class', $embed);
+				$embed = preg_replace('#width="\d+"#', 'width="' . $width . '"', $embed);
+				$embed = preg_replace('#height="\d+"#', 'height="' . $height . '"', $embed);
+
+				if ( $video && $embed ){
+					self::$_video_index++;
+					$markup = "<script class='video-embed-code' type='text/html'>{$embed}</script>";
+				}
 			}
 		}
+
 		return "<div class='{$classes}' {$attr}>{$markup}</div>" . "\n";
 	}
 

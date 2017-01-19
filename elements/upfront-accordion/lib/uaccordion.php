@@ -136,7 +136,7 @@ class Upfront_UaccordionView extends Upfront_Object {
 				'wrap' => __('Element Wrapper', 'upfront'),
 				'wrap_info' => __('The wrapper of the whole element.', 'upfront'),
 			),
-			'settings' => __('Accordion settings', 'upfront'),
+			'settings' => __('Settings', 'upfront'),
 			'panel_label'	=> __('Panel', 'upfront'),
 			'add_panel'	=> __('Add Panel', 'upfront'),
 			'content_label' => __('<p>Content</p>', 'upfront'),

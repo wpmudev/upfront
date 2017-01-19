@@ -150,12 +150,22 @@ class Upfront_Posts_Model {
 			add_filter('posts_clauses', array('Upfront_Posts_Model', 'filter_force_home'), 10, 2);
 		}
 
+		// Sanity-check the post type first
+		if (!empty($args['post_type']) && '*' === $args['post_type']) {
+			$args['post_type'] = false;
+		}
+		// Check if we have tax_query and no post type
+		if (!empty($args['tax_query']) && empty($args['post_type'])) {
+			$args['post_type'] = 'any';
+		}
+
 		$query = new WP_Query($args);
 
 		// Drop the hack as soon as we're done
 		if (!empty($data['sticky']) && 'prepend' === $data['sticky'] && !$has_pages) {
 			remove_filter('posts_clauses', array('Upfront_Posts_Model', 'filter_force_home'), 10, 2);
 		}
+
 		return $query;
 	}
 }
@@ -186,7 +196,7 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 		}
 
 		// Misc queries: time, search...
-		foreach (array('year', 'monthnum', 'w', 'day', 's') as $q) {
+		foreach (array('year', 'monthnum', 'w', 'day', 's', 'author_name') as $q) {
 			if (!empty($query['query_vars'][$q])) $args[$q] = $query['query_vars'][$q];
 		}
 
@@ -194,7 +204,7 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 		if (!empty($query['tax_query']['queries'])) {
 			$args['tax_query'] = $query['tax_query']['queries'];
 		}
-		
+
 		// Now let's safeguard the posts per page setting
 		if (!empty($query['posts_per_page']) && is_numeric($query['posts_per_page'])) {
 			$per_page = (int)$query['posts_per_page'];

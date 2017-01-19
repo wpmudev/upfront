@@ -430,8 +430,7 @@
                 hideOnOuterClick: true
             },
             spectrumDefaults: {
-                clickoutFiresChange: false,
-                chooseText: 'OK',
+                clickoutFiresChange: true,
                 showSelectionPalette: true,
                 showAlpha: true,
                 showPalette: true,
@@ -439,6 +438,7 @@
                 palette: Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : [],
                 maxSelectionSize: 10,
                 preferredFormat: "hex",
+				showButtons: false,
                 showInput: true,
                 allowEmpty:true,
                 appendTo : "parent"
@@ -519,13 +519,16 @@
                 this.update_input_border_color(this.get_saved_value());
                 this.$(".sp-container").data("field_color", this);
                 this.$(".sp-container").data("$spectrum", this.$spectrum );
-                this.$(".sp-container").find(".sp-choose").on("click.spectrum", function(e){
+                this.$spectrum.on("change.spectrum", function(e) {
                     if(me.options.spectrum && me.options.spectrum.choose && me.color)
                         me.options.spectrum.choose(me.color);
 
                     if( me.options.autoHide !== true ){
-                        me.$(".sp-replacer").removeClass("sp-active");
-                        me.$(".sp-container").addClass("sp-hidden");
+                        setTimeout( function() {
+							me.$(".sp-replacer").removeClass("sp-active");
+							me.$(".sp-container").addClass("sp-hidden");
+						});
+						
 						Upfront.Events.trigger("color:spectrum:hide");
                     }
                 });
@@ -545,7 +548,7 @@
             on_spectrum_move: function(color, e){
                 if( !_.isEmpty( color ) ){
                     this.color = color;
-                    var rgb = color.toHexString();
+                    var rgb = color.toRgbString();
                     $('.sp-dragger').css({
                         'border-top-color': rgb,
                         'border-right-color': rgb
@@ -575,7 +578,7 @@
 
                 if( !_.isEmpty( color ) ){
                     this.color = color;
-                    var rgb = color.toHexString();
+                    var rgb = color.toRgbString();
                     this.rgba = _.extend(this.rgba, color.toRgb());
                     this.update_input_border_color( color.toRgbString() );
                     this.render_sidebar_rgba(this.rgba);
@@ -583,7 +586,7 @@
                 }
                 if( !_.isEmpty( input_val) && !this.is_hex( input_val )){
                     var t_color = tinycolor( input_val );
-                    $input.val(t_color.toHexString());
+                    $input.val(t_color.toRgbString());
                 }
                 //this.spectrumOptions = spectrumOptions;
 
@@ -690,10 +693,14 @@
                 return this.default_value;
             },
             update_input_border_color : function(rgb){
-                var spPreview = this.$el.find(".sp-preview");
-                $(".sp-input").css({
-                    borderColor : rgb
-                });
+                var spPreview = this.$el.find(".sp-preview"),
+					me = this;
+				
+				setTimeout( function() {
+					me.$el.find(".upfront_color_picker_rgb_main").css({
+						backgroundColor: rgb
+					});
+				}, 10);
 
                 spPreview.css({
                     backgroundColor: rgb
@@ -728,7 +735,7 @@
                 // Set the new color
                 this.$spectrum.spectrum("set", color.toRgbString());
                 this.update_input_border_color( color.toRgbString() );
-                this.update_input_val( color.toHexString() );
+                this.update_input_val( color.toRgbString() );
                 this.render_sidebar_rgba(  color.toRgb() );
                 // Trigger move event
                 if(this.options.spectrum && typeof this.options.spectrum.move === "function"){

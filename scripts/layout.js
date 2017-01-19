@@ -264,8 +264,9 @@ jQuery(document).ready(function($){
 							id = $iframe.attr('id');
 						$(this).append($iframe);
 						// If mute is enabled:
+						var src;
 						if ( $(this).attr('data-bg-video-mute') == 1 ) {
-							var src = $iframe.attr('src');
+							src = $iframe.attr('src');
 							if ( src.match(/youtube\.com/i) ) {
 								// If loop is enabled too.
 								if ( $(this).attr('data-bg-video-loop') == 1 ) {
@@ -278,7 +279,7 @@ jQuery(document).ready(function($){
 							}
 						// If only loop is enabled:
 						} else if ( $(this).attr('data-bg-video-loop') == 1 ) {
-							var src = $iframe.attr('src');
+							src = $iframe.attr('src');
 							// Only loop via this method if youtube video.
 							if ( src.match(/youtube\.com/i) ) {
 								change_youtube_video(id, 'loop');
@@ -523,6 +524,10 @@ jQuery(document).ready(function($){
 				ratio = parseFloat($(this).attr('data-bg-video-ratio')),
 				style = $(this).attr('data-bg-video-style') || 'crop',
 				$embed = $(this).children('iframe');
+
+			if ( $embed.length === 0) {
+				$embed = $(this).find('video');
+			}
 			$(this).css('overflow', 'hidden');
 			$embed.css({
 				position: 'absolute'
@@ -590,7 +595,7 @@ jQuery(document).ready(function($){
 			;
 
 			// If table or mobile breakpoint, image is smaller than container and dotAlign is true make it inline
-			if((breakpoint === "tablet" || breakpoint === "mobile") && 
+			if((breakpoint === "tablet" || breakpoint === "mobile") &&
 					((mode === "small" || mode === "vertical" ) && dotalign === true)) {
 
 				// Set text-align for parent container
@@ -598,13 +603,13 @@ jQuery(document).ready(function($){
 					'textAlign': align,
 					'maxWidth': '100%'
 				});
-				
+
 				// Make image inline
 				$img.css({
 					'position': 'static',
 					'display': 'inline-block'
 				});
-				
+
 				// Update margin to position image top or bottom
 				/*if(valign === "center") {
 					$img.css({
@@ -623,7 +628,7 @@ jQuery(document).ready(function($){
 						'maxWidth': '100%',
 						'width': '100%'
 					});
-					
+
 					$img.css({
 						'position': 'static',
 						'display': 'inline-block'
@@ -641,15 +646,15 @@ jQuery(document).ready(function($){
 					});
 				} else {
 					// Null above and position image into parent container
-					$img.css({ 
-						'top': data.offsetTop, 
+					$img.css({
+						'top': data.offsetTop,
 						'left': data.offsetLeft,
 						'position': 'relative',
 						'display': 'block',
 						'marginTop': 0,
 						'width': 'initial'
 					});
-					
+
 					$container.css({ 'width': data.offsetWidth, 'height': data.offsetHeight});
 				}
 			}
@@ -689,7 +694,7 @@ jQuery(document).ready(function($){
 					$object.css('min-height', '');
 					$object.closest('.upfront-output-object-group').css('min-height', '');
 				}
-				
+
 				if ( !$img.hasClass('upfront-featured-image-fit-wrapper') ) return; // No fit for this
 				height -= padding_top + padding_bottom;
 				$(this).css('height', height);
@@ -1044,10 +1049,10 @@ jQuery(document).ready(function($){
 			//translate width in columns to width in pixels as per the total width of upfront-grid-layout being 24 cols
 			lightbox.css('width', $('div.upfront-grid-layout').first().width()*lightbox.data('col')/24);
 			lightbox.show().css({'margin-left': -(parseInt(lightbox.width()/2)), 'margin-top': -(parseInt(lightbox.height()/2))});
-			
+
 			/* elements can subscribe to the following event to
-			 * to render their content based 
-			 * on the dimensions of the lightbox 
+			 * to render their content based
+			 * on the dimensions of the lightbox
 			 * itself, such elements are gallery and slider
 			*/
 			$(document).trigger("upfront-lightbox-open", lightbox);
@@ -1239,7 +1244,7 @@ jQuery(document).ready(function($){
 				height = $img.height(),
 				width = $img.width()
 			;
-			
+
 			//Remove blank.gif to calculate width correctly
 			$img.attr('src', '');
 
@@ -1392,7 +1397,7 @@ jQuery(document).ready(function($){
 			// Edge case, for when we don't have a preset for this
 			// breakpoint in an element - it should retain its classes
 			// if (!map[breakpoint]) return true;
-			
+
 			// we have to provide proper fallback here, mobile -> tablet -> desktop
 			if ( breakpoint == 'mobile' ) {
 				map[breakpoint] = map[breakpoint] || map['tablet'] || map['desktop'];
@@ -1448,7 +1453,7 @@ jQuery(document).ready(function($){
 		Upfront.Events.once("application:mode:before_switch", reset_responsive_class);
 		Upfront.Events.once("layout:render", remove_responsive_class);
 	});
-	
+
 	// remove inline panels on Image Insert redactor-box FE
 	var $image_insert_inline_panels = $('.upfront-output-wrapper .upfront-inserted_image-basic-wrapper').find('.upfront-inline-panel-item');
 	if ( $image_insert_inline_panels.length > 0 ) {

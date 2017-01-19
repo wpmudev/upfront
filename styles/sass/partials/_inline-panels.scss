@@ -5,16 +5,421 @@
 	transition-delay: 0;
 	transition-duration: 0;
 }
-
 .image-sub-control .upfront-inline-panel-item {
 	display: inline-block;
 }
-
 .image-sub-control .uimage-control-panel-item {
 	position: static;
 	top: 0px;
 }
-
 .upfront-inline-panel-item.group-link-control {
 	z-index: 51;
+}
+.upfront-element-controls .upfront-inline-panel .image-sub-control.inline-panel-sub-control-no-dropdown {
+	top: -1px;
+	right: -2px;
+	position: absolute;
+	left: auto;
+}
+.upfront-element-controls .upfront-inline-panel .image-sub-control.inline-panel-sub-control-no-dropdown .upfront-control-arrow {
+	display: none;
+}
+
+/* Inline panels icons */
+
+/*  Selectors using uf-core-el-sprite 
+	================================= */
+
+#upfront-image-overlay .select-files:before,
+#upfront-image-overlay .icon-picture,
+.image-edit-control>i,
+.image-edit-button:before,
+div.uimage-controls i.upfront-icon:before,
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item i.upfront-icon:before,
+.upfront-ui .uimage-fullwidth-info,
+div#page .upfront-object.upfront-image .swap-image-overlay p:before,
+.image-edit-control-panel-item,
+.image-edit-control-panel-item.upfront-control-dialog-open,
+.image-crop-edit-button:before {
+
+	/* 
+	background-image: url(../../../img/uf-core-el-sprite.png);
+	background-image: url('../../../img/uf-core-el-sprite.svg');
+	*/
+	background-image: url(../img/uf-core-el-sprite_new.png);
+	background-image: url('../img/uf-core-el-sprite_new.svg');
+	background-repeat: no-repeat;	
+}
+
+.upfront-icon-linkbutton:before {
+	background-image: url(../img/uf-core-el-sprite_new.png) !important;
+	background-image: url('../img/uf-core-el-sprite_new.svg') !important;
+	background-repeat: no-repeat !important;	
+}
+
+.upfront-ui .upfront-icon-region-crop:before {
+	background-position: -410px -100px;
+}
+
+.upfront-ui .upfront-icon-region-link:before {
+	background-position: -381px -41px
+}
+
+.upfront-ui .upfront-icon-region-swap:before {
+	background-position: -380px -100px;
+}
+
+.upfront-ui .upfront-icon-region-lock-unlocked:before {
+	background-position: -290px -160px;
+}
+
+.upfront-ui .upfront-icon-region-lock-locked:before {
+	background-position: -290px -130px;
+}
+
+.upfront-ui .upfront-icon-region-nocaption:before {
+	background-position: -260px -310px!important;
+}
+
+.upfront-ui .upfront-icon-region-nocaption:hover:before {
+	background-position: -260px -310px!important;
+}
+
+.upfront-ui .upfront-icon-region-nocaption-active:before {
+	background-position: -700px -455px!important;
+}
+
+.upfront-ui .upfront-icon-region-nocaption-active:hover:before {
+	background-position: -808px -455px!important;
+}
+
+.upfront-ui .upfront-icon-region-topOver:before {
+	background-position: -290px -310px!important;
+}
+
+.upfront-ui .upfront-icon-region-topOver:hover:before {
+	background-position: -290px -310px!important;
+}
+
+.upfront-ui .upfront-icon-region-topOver-active:before {
+	background-position: -699px -520px!important;
+}
+
+.upfront-ui .upfront-icon-region-topOver-active:hover:before {
+	background-position: -807px -520px!important;
+}
+
+.upfront-ui .upfront-icon-region-bottomOver:before {
+	background-position: -320px -310px!important;
+}
+
+.upfront-ui .upfront-icon-region-bottomOver:hover:before {
+	background-position: -320px -310px!important;
+}
+
+.upfront-ui .upfront-icon-region-bottomOver-active:before {
+	background-position: -699px -487px!important;
+}
+
+.upfront-ui .upfront-icon-region-bottomOver-active:hover:before {
+	background-position: -807px -487px!important;
+}
+
+.upfront-ui .upfront-icon-region-topCover:before {
+	background-position: -350px -310px!important;
+}
+
+.upfront-ui .upfront-icon-region-topCover:hover:before {
+	background-position: -350px -310px!important;
+}
+
+.upfront-ui .upfront-icon-region-topCover-active:before {
+	background-position: -699px -552px!important;
+}
+
+.upfront-ui .upfront-icon-region-topCover-active:hover:before {
+	background-position: -807px -552px!important;
+}
+
+.upfront-ui .upfront-icon-region-middleCover:before {
+	background-position: -380px -310px!important;
+}
+
+.upfront-ui .upfront-icon-region-middleCover:hover:before {
+	background-position: -380px -310px!important;
+}
+
+.upfront-ui .upfront-icon-region-middleCover-active:before {
+	background-position: -699px -584px!important;
+}
+
+.upfront-ui .upfront-icon-region-middleCover-active:hover:before {
+	background-position: -807px -584px!important;
+}
+
+.upfront-ui .upfront-icon-region-bottomCover:before {
+	background-position: -410px -310px!important;
+}
+
+.upfront-ui .upfront-icon-region-bottomCover:hover:before {
+	background-position: -410px -310px!important;
+}
+
+.upfront-ui .upfront-icon-region-bottomCover-active:before {
+	background-position: -699px -616px!important;
+}
+
+.upfront-ui .upfront-icon-region-bottomCover-active:hover:before {
+	background-position: -807px -616px!important;
+}
+
+.upfront-ui .upfront-icon-region-above:before {
+	background-position: -350px -340px!important;
+}
+
+.upfront-ui .upfront-icon-region-above:hover:before {
+	background-position: -350px -340px!important;
+}
+
+.upfront-ui .upfront-icon-region-above-active:before {
+	background-position: -699px -680px!important;
+}
+
+.upfront-ui .upfront-icon-region-above-active:hover:before {
+	background-position: -807px -680px!important;
+}
+
+.upfront-ui .upfront-icon-region-below:before {
+	background-position: -320px -340px!important;
+}
+
+.upfront-ui .upfront-icon-region-below:hover:before {
+	background-position: -320px -340px!important;
+}
+
+.upfront-ui .upfront-icon-region-below-active:before {
+	background-position: -699px -646px!important;
+}
+
+.upfront-ui .upfront-icon-region-below-active:hover:before {
+	background-position: -807px -646px!important;
+}
+
+.upfront-ui .upfront-icon-region-collapsedControl:before {
+	background-position: -699px -710px;
+}
+
+.upfront-ui .upfront-icon-region-collapsedControl:hover:before {
+	background-position: -807px -710px;
+}
+
+.upfront-ui .upfront-icon-region-collapsedControl-active:before {
+	background-position: -699px -721px;
+}
+
+.upfront-ui .upfront-icon-region-collapsedControl-active:hover:before {
+	background-position: -807px -721px;
+}
+
+.upfront-ui .upfront-icon-region-replace-image:before {
+	background-position: -699px -744px;
+}
+
+.upfront-ui .upfront-icon-region-replace-image:hover:before {
+	background-position: -807px -744px;
+}
+
+.upfront-ui .upfront-icon-region-back:before {
+	background-position: -292px -101px !important;
+}
+
+/* Gallery inline panel icons */
+
+.upfront-ui .upfront-field-icon-over:before,
+.upfront-ui .upfront-icon-region-over:before {
+	background-position: -318px -308px;
+}
+
+.upfront-ui .upfront-icon-region-over:hover:before {
+	background-position: -807px -486px;
+}
+
+.upfront-ui .upfront-icon-region-over-active:before {
+	background-position: -699px -486px;
+}
+
+.upfront-ui .upfront-icon-region-over-active:hover:before {
+	background-position: -807px -486px;
+}
+
+.upfront-field-icon-none:before {
+	background-position: -700px -455px!important;
+}
+
+.upfront-ui .upfront-field-icon-below:before {
+	background-position: -319px -338px;
+}
+
+.upfront-ui .upfront-icon-region-fullscreen:before {
+	background-position: -440px -100px;
+}
+
+.upfront-ui .upfront-icon-region-fullscreen:hover:before {
+	background-position: -440px -100px;
+}
+
+.upfront-ui .upfront-icon-region-fullscreen-active:before {
+	background-position: -700px -775px;
+}
+
+.upfront-ui .upfront-icon-region-fullscreen-active:hover:before {
+	background-position: -808px -775px;
+}
+
+.upfront-ui .upfront-icon-region-remove:before {
+	background-position: -348px -130px;
+}
+
+.upfront-ui .upfront-icon-region-remove-active:before {
+	background-position: -1229px -154px;
+}
+
+.upfront-ui .upfront-icon-region-remove-active:hover:before {
+	background-position: -731px -231px;
+}
+
+.upfront-ui .upfront-icon-region-edit-labels:before {
+	background-position: -482px -231px;
+}
+.upfront-ui .upfront-icon-region-edit-labels-no-labels:before {
+	background-position: -479px -201px;
+}
+
+.upfront-icon-region-toggle-sorting:before {
+	background-position: -411px -41px;
+}
+
+.upfront-icon-region-toggle-sorting.upfront-icon-region-sorting-active:before {
+	background-position: -411px -41px;
+}
+
+/* Group inline panel */
+.upfront-module-group .upfront-icon.upfront-icon-region-edit_elements:before {
+	background-position: -442px -41px;
+}
+
+.upfront-module-group .upfront-icon.upfront-icon-region-ungroup:before {
+	background-position: -442px -71px;
+}
+
+/* Slider inline panel icons */
+
+.upfront-ui .upfront-icon-region-right:before {
+	background-position: -260px -340px!important;
+}
+.upfront-ui .upfront-icon-region-right:hover:before {
+	background-position: -260px -340px!important;
+}
+.upfront-ui .upfront-icon-region-right-active:before {
+	background-position: -699px -39px!important;
+}
+.upfront-ui .upfront-icon-region-right-active:hover:before {
+	background-position: -807px -39px!important;
+}
+
+.upfront-ui .upfront-icon-region-left:before {
+	background-position: -290px -340px!important;
+}
+.upfront-ui .upfront-icon-region-left:hover:before {
+	background-position: -290px -340px!important;
+}
+.upfront-ui .upfront-icon-region-left-active:before {
+	background-position: -698px -807px!important;
+}
+.upfront-ui .upfront-icon-region-left-active:hover:before {
+	background-position: -806px -807px!important;
+}
+
+.upfront-ui .upfront-icon-prev:before {
+	background-position: -291px -133px;
+}
+
+.upfront-ui .upfront-icon-next:before {
+	background-position: -290px -103px;
+}
+
+/* Navigation inline panel icons */
+
+.upfront-navigation .upfront-ui .upfront-icon-region-link:before{
+	background-position: -381px -41px;
+}
+
+.upfront-ui .upfront-icon-region-labelEdit:before {
+    background-position: -380px -131px;
+}
+
+.upfront-ui .upfront-icon-region-remove:before {
+    background-position: -351px -131px;
+}
+
+/* Accordion inline panel icons */
+
+#page .upfront-accordion-container .upfront-icon-button-accordion-add-panel:before {
+	background-position: -261px -132px;
+}
+
+/* Code inline panel icons */
+
+.upfront_code-jsalert .upfront-icon-button:before {
+	background-position: -480px -205px;
+}
+
+/* Tooltip caption inline panel */
+
+.uimage-caption-control {
+	display: none;
+	position: relative;
+	top: -28px;
+	left: -1px;
+}
+.open .uimage-caption-control {
+	display: block;
+}
+
+.uimage-caption-control-item.open>.tooltip-content {
+	display: none !important;
+}
+
+.uimage-caption-control .upfront-inline-panel-item {
+	display: inline-block;
+	position: static;
+	float: none;
+	border: 0;
+}
+
+.uimage-caption-control .uimage-caption-control-tip {
+	width: 100%;
+	height: 5px;
+}
+
+.uimage-caption-control .uimage-caption-control-tip:before {
+	content: '';
+	display: block;
+	width: 10px;
+	border: 5px solid transparent;
+	border-bottom: 5px solid rgba(31, 48, 63, 0.8);
+	margin: 0 auto;
+	position: absolute;
+	top: 36px;
+	left: 15px;
+}
+
+.uimage-caption-control .tooltip-bottom .tooltip-content {
+	top: auto;
+	bottom: auto;
+	margin: 100% 0 0;
+}
+
+.upfront-inline-panel, .image-sub-control, .ulinkpanel-dark, .uimage-caption-control {
+	border-radius: 2px;
 }

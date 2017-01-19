@@ -566,7 +566,15 @@ define([
                     }) );
                 }
 
+				if (_.indexOf(this.options.media_type, 'videos') !== -1) {
+                    sections = _( sections.reject(function(section){
+                        return section === "additional_sizes";
+                    }) );
 
+                    renderers =  _( renderers.reject(function(renderer){
+                        return renderer === "render_additional_sizes";
+                    }) );
+				}
 
                 // add sections
                 sections.each(function(section){
@@ -589,12 +597,30 @@ define([
 
 				if(this.model.length === 1) {
 					var image = this.model.at(0).get('image'),
-						$container = $('<div class="upfront-size-hints upfront-field-wrap upfront-field-wrap-text"><label class="upfront-field-label upfront-field-label-block">'+ l10n.natural_size +'</label></div>');
+						$container = $('<div class="upfront-size-hints upfront-field-wrap upfront-field-wrap-text"><label class="upfront-field-label upfront-field-label-block">'+ l10n.natural_size +'</label></div>')
+					;
 					if ( image !== undefined ) {
-						$container.append('<span class="upfront-size-hint-width">'+ l10n.width_label +': <span>'+ image.width + l10n.px_label +'</span></span>');
-						$container.append('<span class="upfront-size-hint-height">'+ l10n.height_label +': <span>'+ image.height + l10n.px_label +'</span></span>');
-
-						$hub.append($container);
+						var iwidth = parseInt((image || {}).width, 10),
+							iheight = parseInt((image || {}).height, 10)
+						;
+						// Only render size hint if we're actually able to
+						if (iwidth && iheight) {
+							$container.append(
+								'<span class="upfront-size-hint-width">' +
+									l10n.width_label +
+								': <span>' +
+									image.width + l10n.px_label +
+								'</span></span>'
+							);
+							$container.append(
+								'<span class="upfront-size-hint-height">' +
+									l10n.height_label +
+								': <span>' +
+									image.height + l10n.px_label +
+								'</span></span>'
+							);
+							$hub.append($container);
+						}
 					}
 				}
 			},
@@ -2137,8 +2163,15 @@ define([
 				click: "toggle_item_selection"
 			},
 			initialize: function () {
+				var cls = '';
 
-				this.template = _.template("<div class='thumbnail'>{{thumbnail}}</div> <div class='title'>{{post_title}}</div> <div class='upfront-media_item-editor-container' />");
+				// Detect the default WP video icon being used as thumb
+				// It's fugly, so let's add class so we can override
+				if ((this.model.get("thumbnail") || '').match(/wp-includes\/images\/media\/video/i)) {
+					cls += "override";
+				}
+
+				this.template = _.template("<div class='thumbnail " + cls + "'>{{thumbnail}}</div> <div class='title'>{{post_title}}</div> <div class='upfront-media_item-editor-container' />");
 				Upfront.Events.on("media_manager:media:toggle_titles", this.toggle_title, this);
 
 				this.model.on("appearance:update", this.update, this);

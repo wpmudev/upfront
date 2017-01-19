@@ -15,6 +15,22 @@ class Upfront_MediaItem extends Upfront_Media {
 			if (!is_object($label)) continue;
 			$labels[] = $label->term_id;
 		}
+
+		if ($this->_post->post_mime_type === 'video/mp4') {
+			return array(
+				'ID' => $this->_post->ID,
+				'post_title' => $this->_post->post_title,
+				'thumbnail' => wp_get_attachment_image($this->_post->ID, array(103, 75), true),
+				'parent' => $this->_post->post_parent ? get_the_title($this->_post->post_parent) : false,
+				'post_content' => $this->_post->post_content ? $this->_post->post_content : false,
+				'post_excerpt' => $this->_post->post_excerpt ? $this->_post->post_excerpt : false,
+				'original_url' => get_post_meta($this->_post->ID, 'original_url', true),
+				'document_url' => esc_url(wp_get_attachment_url($this->_post->ID)),
+				'labels' => $labels
+			);
+		}
+
+
 		$sizes = array();
 		foreach(get_intermediate_image_sizes() as $info) {
 			$size = is_array($info) && !empty($info['width']) && !empty($info['height'])

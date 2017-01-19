@@ -14,3 +14,110 @@
 .inline-radios {
 	margin: 5px 0 0;
 }
+
+div.no-title div.upfront-settings-item-title {
+  display: none;
+}
+
+.smtp-secure.plaintext-settings.upfront-field-wrap.inline-radios {
+	margin: 13px 0;
+    width: 120%;
+    border-bottom: 1px solid #e5ecf4;
+    padding-bottom: 15px;
+    margin-left: -15px;
+    padding-left: 15px;
+}
+
+.smtp-secure.plaintext-settings.upfront-field-wrap.inline-radios > label {
+	margin-bottom: 10px;
+}
+
+.smtp-secure.plaintext-settings.upfront-field-wrap.inline-radios > span.upfront-field-multiple {
+	margin-right: 30px;
+}
+.smtp-secure.plaintext-settings.upfront-field-wrap.inline-radios > span.upfront-field-multiple:last-child {
+	margin-right: 0;
+}
+
+.enable-authentication label span.upfront-field-label-text {
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.smtp-configuration .upfront-field-wrap-text label.upfront-field-label-block {
+  font-weight:normal;
+}
+
+.smtp-authentication .upfront-settings-item-content {
+    margin-left: 15px;
+    border-left: 2px solid #e5ecf4;
+}
+
+/* pixel perfection for SMTP settings*/
+#settings .general_settings_item.smtp-authentication {
+  padding-bottom: 8px;
+}
+
+#settings .general_settings_item.smtp-authentication input {
+  width: 95%;
+}
+
+.general_smtp_settings {
+  padding-top: 11px
+}
+
+.general_smtp_settings .upfront-settings-item-title {
+  line-height: 24px
+}
+
+.general_smtp_settings .upfront-settings-item-content .inline-radios {
+  margin-top: 0;
+}
+
+.general_smtp_settings .upfront-settings-item-content .inline-radios > span:first-child {
+  margin-right: 20px;
+}
+
+
+
+.smtp-configuration .upfront-settings-item-title {
+  padding-top: 17px;
+  line-height: 14px
+}
+
+.smtp-configuration .upfront-settings-item-content .upfront-field-wrap-text {
+    margin-top:11px;
+}
+
+.smtp-configuration .upfront-settings-item-content .upfront-field-wrap-text .upfront-field-label {
+    margin-bottom:4px;
+}
+
+.inline-radios.smtp-secure.plaintext-settings.upfront-field-wrap {
+  margin-top:16px;
+  padding-bottom: 10px
+}
+
+.inline-radios.smtp-secure.plaintext-settings.upfront-field-wrap .upfront-field-label {
+  margin-bottom:15px;
+}
+
+.inline-checkbox.plaintext-settings.upfront-field-wrap.enable-authentication {
+  margin-top:2px;
+}
+
+.inline-checkbox.plaintext-settings.upfront-field-wrap.enable-authentication > span {
+  margin-bottom: 0;
+}
+
+.general_settings_item.smtp-authentication .upfront-settings-item > .upfront-settings-item-content > div:first-child {
+  margin-top:2px;
+
+}
+.general_settings_item.smtp-authentication .upfront-settings-item > .upfront-settings-item-content > div > .upfront-field-label {
+  margin-bottom:4px;
+}
+
+#settings .general_settings_item.smtp-authentication {
+  padding-bottom: 17px;
+}

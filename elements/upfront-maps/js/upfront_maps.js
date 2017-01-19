@@ -160,6 +160,10 @@ define([
 		on_element_resize: function (attr) {
 			//Refresh Map size when resize finish
 			this.refresh_map();
+
+			// Add/remove multiple module class.
+			$object = this.$el.find('.upfront-editable_entity:first');
+			this.add_multiple_module_class($object);
 		},
 
 		on_render: function () {
