@@ -1129,9 +1129,15 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			me.calculateImageResize(wrapperSize, slide);
 		});
 
+		// Update Resize Hint.
+		this.update_size_hint();
 	},
 
 	on_element_resize: function(attr) {
+		// Add/remove multiple module class.
+		$object = this.$el.find('.upfront-editable_entity:first');
+		this.add_multiple_module_class($object);
+
 		if( !this.model.slideCollection.length ) return;
 
 		var properties = this.get_preset_properties();
@@ -1158,6 +1164,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		me.cropHeight = newElementSize.height;
 
 		me.setTimer();
+
 	},
 
 	calculateImageResize: function(wrapperSize, slide){

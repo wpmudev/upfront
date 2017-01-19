@@ -1054,6 +1054,10 @@ define([
 				imgPosition = {top: 0, left: 0};
 			}
 
+			// Add/remove multiple module class.
+			$object = this.$el.find('.upfront-editable_entity:first');
+			this.add_multiple_module_class($object);
+
 			if(starting.length) {
 				this.elementSize = {
 					height: attr.height - (2 * padding),
@@ -1090,6 +1094,7 @@ define([
 
 			this.resizingData = {};
 			this.showCaption();
+
 		},
 
 		getMaskSize: function() {

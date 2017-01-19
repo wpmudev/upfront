@@ -11,10 +11,10 @@ define([
 
 		events: {
 			'click': 'onClickControl',
-			'click .upfront-apply': 'close',
+			'click .upfront-apply': 'save',
 			'click .upfront-link-back': 'onClickControl'
 		},
-
+		
 		initialize: function(options) {
 			var me = this;
 			this.options = options || {};
@@ -27,6 +27,13 @@ define([
 
 				me.close();
 			});
+		},
+		
+		save: function() {
+			// If lightbox type do not close linkpanel 
+			if(typeof this.options.model !== "undefined" && this.options.model.get('type') === 'lightbox' && this.$el.find('.js-ulinkpanel-lightbox-input').val() !== '') return;
+			
+			this.close();
 		},
 
 		render: function(){

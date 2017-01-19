@@ -5821,6 +5821,9 @@ span.upfront-settings-item-title:after {
 .upfront-resize-handle-wrapper:hover ~ .upfront-module-group .upfront-selected-border {
   display: block; }
 
+/* Post Data Size Hint on Group Edit resizing. */
+.upfront-module-group-on-edit .upfront-wrapper-post-data .upfront-wrapper-meta:hover ~ .upfront-module-view .upfront-module .upfront-object-view .upfront-entity-size-hint,
+.upfront-wrapper-module-group-on-edit .upfront-module-group-on-edit .upfront-wrapper-post-data .upfront-resize-handle-wrapper:hover + .upfront-module-view .upfront-resize-handle-element,
 .upfront-module-group.upfront-module-group-on-edit:hover .upfront-modules_container > .upfront-resize-handle-group,
 .upfront-wrapper.ui-resizable-resizing .upfront-module-group .upfront-editable_entity > .upfront-entity-size-hint,
 .upfront-wrapper-multiple-modules .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-entity-size-hint,
@@ -6236,14 +6239,21 @@ span.upfront-settings-item-title:after {
   display: none; }
 
 /* Show on hover. */
+/* Post data resize handles. */
+.upfront-wrapper-post-data > .upfront-resize-handle-wrapper:hover,
+.upfront-wrapper-post-data > .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-object-group-view > .upfront-entity-size-hint,
 .upfront-wrapper-multiple-modules .upfront-wrapper-meta.upfront-resize-handle-wrapper:hover {
   display: block; }
 
-/* Hide resize handles for multiple-modules resizing. */
+/* Hide post data sub element resize hint and handles. */
+.upfront-wrapper-post-data .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-resize-handle-element,
+.upfront-wrapper-post-data .upfront-module-view .upfront-object-view:hover .upfront-resize-handle-element,
+.upfront-wrapper-post-data .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-entity-size-hint,
 .upfront-wrapper-multiple-modules .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-resize-handle-element {
   display: none; }
 
-/* Resize handles for group and elements. */
+/* Post Data resize handles */
+.upfront-wrapper-post-data > .upfront-resize-handle-wrapper:before,
 .upfront-resize-handle-group:before,
 .upfront-resize-handle-element:before {
   content: "";
@@ -19542,10 +19552,10 @@ div#page .upfront-object.upfront-image .swap-image-overlay p:before,
   background-position: -1229px -154px; }
 
 .upfront-ui .upfront-icon-region-remove-active:hover:before {
-  background-position: -731px -231px; }
+  background-position: -731px -233px; }
 
 .upfront-ui .upfront-icon-region-edit-labels:before {
-  background-position: -482px -231px; }
+  background-position: -482px -233px; }
 
 .upfront-ui .upfront-icon-region-edit-labels-no-labels:before {
   background-position: -479px -201px; }
