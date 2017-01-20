@@ -769,7 +769,8 @@
 	display: block;
 	z-index: 9996;
 }
-.upfront-edit-responsive .upfront-region-editing .upfront-region-panels {
+/* Hide add regions for responsive mode. */
+.upfront-edit-responsive .upfront-region-editing .upfront-region-panels .upfront-inline-panel {
 	display: none;
 }
 .upfront-region-fixed-editing .upfront-region-fixed-panels {
