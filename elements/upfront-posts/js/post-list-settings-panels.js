@@ -745,17 +745,19 @@ Panels.PostParts = PresetManager.extend({
 				unused_parts.push({ value: part, label: l10n['modules'][part + '_title'] });
 			}
 		});
-
-		$sortable.sortable({
-			start: function (e, ui) {
-				$sortable.disableSelection();
-			},
-			stop: function (e, ui) {
-				var parts = $sortable.sortable('toArray', {attribute: 'data-part'});
-				me.model.set_property(me.options.property, parts, false);
-				$sortable.enableSelection();
-			}
-		});
+		
+		if(typeof $sortable !== "undefined") {
+			$sortable.sortable({
+				start: function (e, ui) {
+					$sortable.disableSelection();
+				},
+				stop: function (e, ui) {
+					var parts = $sortable.sortable('toArray', {attribute: 'data-part'});
+					me.model.set_property(me.options.property, parts, false);
+					$sortable.enableSelection();
+				}
+			});
+		}
 		
 		return unused_parts;
 	},
