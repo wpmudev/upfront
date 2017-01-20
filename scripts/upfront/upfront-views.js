@@ -6087,7 +6087,9 @@ define([
 								thecollection.remove(sub_model);
 						});
 					}
-
+	
+					// Close settings and edit mode.
+					this.on_modal_close();
 
 					if( 'fixed' === this.model.get('type')  ){ //  If it's a floating region!
 						this.parent_view.get_container_view(this.model).close_edit();
