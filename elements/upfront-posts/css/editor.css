@@ -407,8 +407,8 @@ div.preset-manager-panel .upfront-add-post-module .upfront-field-select-value:be
 
 .upfront-settings-item-content .upfront-post-limit,
 .upfront-settings-item-content .upfront-post-type,
-.upfront-display-type-list .upfront-settings-item-content .upfront-offset-number,
-.upfront-display-type-list .upfront-settings-item-content .upfront-post-taxonomy {
+.upfront-settings-item-content .upfront-offset-number,
+.upfront-settings-item-content .upfront-post-taxonomy {
 	display: inline-block;
 }
 
@@ -421,22 +421,26 @@ div.preset-manager-panel .upfront-add-post-module .upfront-field-select-value:be
 }
 
 .upfront-settings-item-content .upfront-post-limit input,
-.upfront-display-type-list .upfront-settings-item-content .upfront-offset-number input {
+.upfront-settings-item-content .upfront-offset-number input {
 	font-size: 12px;
 	height: 26px;
 }
 
 .upfront-settings-item-content .upfront-post-limit,
-.upfront-display-type-list .upfront-settings-item-content .upfront-offset-number {
+.upfront-settings-item-content .upfront-offset-number {
 	width: 65px;
 	position: relative;
-	top: -8px;
+	top: -9px;
 }
 
 .upfront-settings-item-content .upfront-post-type,
-.upfront-display-type-list .upfront-settings-item-content .upfront-post-taxonomy {
+.upfront-settings-item-content .upfront-post-taxonomy {
 	width: 160px;
 	margin-top: 5px;
+}
+
+.upfront-display-type-single .upfront-settings-item-content .upfront-post-type {
+	width: 230px;
 }
 
 .upfront-settings-item-content .post_parts.ui-sortable li .part_action:after {
