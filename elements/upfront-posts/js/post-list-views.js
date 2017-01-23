@@ -24,6 +24,9 @@ var Views = {
 					compact: true,
 					on_click: function(){
 						this.model.set_property('display_type', 'single', true);
+						
+						// Re-render posts element
+						Upfront.Events.trigger('posts:settings:dispatched', this);
 					}
 				}),
 				list = new Upfront.Views.Editor.Field.Button({
@@ -32,6 +35,9 @@ var Views = {
 					compact: true,
 					on_click: function(){
 						this.model.set_property('display_type', 'list', true);
+						
+						// Re-render posts element
+						Upfront.Events.trigger('posts:settings:dispatched', this);
 					}
 				}),
 
