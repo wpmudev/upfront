@@ -5381,10 +5381,22 @@ define([
 					var bg_type = this.model.get_breakpoint_property_value('background_type', true),
 						full_screen_height = parseInt(this.$layout.find('.upfront-region-center').css('min-height'), 10);
 					if ( scroll_top >= top-rel_top && scroll_bottom <= bottom ) {
-						this.$bg.children('.upfront-region-bg-overlay').css('top', ( scroll_top - rel_top ));
+						this.$bg.children('.upfront-region-bg-overlay').css({
+							position: 'fixed',
+							top: rel_top,
+							left: main_off.left,
+							right: 0,
+							bottom: 'auto'
+						});
 					}
 					else {
-						this.$bg.children('.upfront-region-bg-overlay').css('top', ( height - win_height ));
+						this.$bg.children('.upfront-region-bg-overlay').css({
+							position: '',
+							top: ( height - win_height ),
+							left: '',
+							right: '',
+							bottom: ''
+						});
 					}
 				}
 
