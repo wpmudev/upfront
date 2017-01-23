@@ -293,6 +293,8 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 		this.listenTo(this.model.get('objects'), 'change', this.on_render);
 		this.listenTo(this.model.get('objects'), 'add', this.on_render);
 		this.listenTo(this.model.get('objects'), 'remove', this.on_render);
+		
+		this.listenTo(Upfront.Events, 'posts:settings:dispatched', this.settings_dispatch);
 
 		this.listenTo(Upfront.Events, 'csseditor:open', this.on_csseditor_open);
 		this.listenTo(Upfront.Events, 'csseditor:closed', this.on_csseditor_closed);
@@ -320,6 +322,11 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 
 		Upfront.Views.ObjectGroup.prototype.render.call(this);
 	},
+	
+	settings_dispatch: function() {
+		this.child_view = false;
+		this.on_render();
+	},
 
 	on_render: function () {
 		// Query plugin output only if single page is loading
@@ -332,6 +339,7 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 		}
 
 		var type = this.model.get_property_value_by_name("display_type");
+
 		this.render_view(type);
 		// Let's not render min-height (remove it)
 		if ( type && Views.DEFAULT != type ) {
@@ -422,7 +430,7 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 		this.child_view = view;
 		this.render_view_after();
 
-		this.$el.find(".upfront-object-group-default").append(view.$el);
+		this.$el.find(".upfront-object-group-default").empty().append(view.$el);
 
 		// Hide objects container if compat mode
 		if ( this.is_compat() ) {
