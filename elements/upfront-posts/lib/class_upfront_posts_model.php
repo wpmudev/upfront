@@ -206,13 +206,19 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 		}
 
 		// Now let's safeguard the posts per page setting
-		if (!empty($query['posts_per_page']) && is_numeric($query['posts_per_page'])) {
-			$per_page = (int)$query['posts_per_page'];
-			$old_limit = self::get_limit($data);
-			$data['limit'] = $per_page;
-			$args['posts_per_page'] = self::get_limit($data, $old_limit);
+		
+		if (self::is_single($data)) {
+			// If single we need only one post
+			$data['limit'] = $args['posts_per_page'] = 1;
+		} else {
+			if (!empty($query['posts_per_page']) && is_numeric($query['posts_per_page'])) {
+				$per_page = (int)$query['posts_per_page'];
+				$old_limit = self::get_limit($data);
+				$data['limit'] = $per_page;
+				$args['posts_per_page'] = self::get_limit($data, $old_limit);
+			}
 		}
-
+		
 		return self::_spawn_query($args, $data);
 	}
 
