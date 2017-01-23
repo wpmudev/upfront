@@ -185,6 +185,7 @@ var CustomSelectorField =  Upfront.Views.Editor.Field.Hidden.extend({
 					me.select_posts(e);
 				}
 				me.model.set_property(me.options.property, me.encode_values(values));
+				Upfront.Events.trigger('posts:settings:dispatched', this);
 				me.trigger("post:added");
 			})
 		;
