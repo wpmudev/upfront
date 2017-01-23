@@ -785,10 +785,14 @@ define([
 				}
 			} else if (linktype == 'anchor') {
 				selector = url.replace(/^.*?#/, '#');
+				// In Editor, region anchors do not have prepended 'upfront-'.
+				var alternateSelector = selector.replace('upfront-', '');
 				if ($(selector).length > 0) {
 					$('html,body').animate({scrollTop: $(selector).offset().top},'slow');
+				} else if ($(alternateSelector).length > 0) {
+					$('html,body').animate({scrollTop: $(alternateSelector).offset().top},'slow');
 				} else {
-					console.log('obselete anchor');
+					console.log('obsolete anchor');
 				}
 			}
 			else if (linktype == 'entry') {
