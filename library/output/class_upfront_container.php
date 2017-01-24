@@ -144,14 +144,13 @@ abstract class Upfront_Container extends Upfront_Entity {
 			return $view->get_markup();
 		}
 	}
-	
+
 	public static function _load_presets () {
-		
 		if( empty( self::$_presets ) ) {
 			self::$_presets = array(
 				'UnewnavigationModel' => Upfront_Nav_Presets_Server::get_instance()->get_presets_ids(),
 				'ButtonModel' => Upfront_Button_Presets_Server::get_instance()->get_presets_ids(),
-				'PostDataModel' => Upfront_PostData_Presets_Server::get_instance()->get_presets_ids(),
+				'PostDataModel' => Upfront_PostData_Elements_Server::get_instance()->get_presets_ids(),
 				'PostsModel' => Upfront_Posts_Presets_Server::get_instance()->get_presets_ids(),
 				'PlainTxtModel' => Upfront_Text_Presets_Server::get_instance()->get_presets_ids(),
 				'UimageModel' => Upfront_Image_Presets_Server::get_instance()->get_presets_ids(),
