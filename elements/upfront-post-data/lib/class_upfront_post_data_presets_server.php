@@ -30,6 +30,24 @@ class Upfront_PostData_Elements_Server implements IUpfront_Server {
 		return self::$_instance;
 	}
 
+	/**
+	 * Parts preset IDs proxying method
+	 *
+	 * Gathers the presets for all known parts and splices them together.
+	 *
+	 * @return array List of parts preset IDs
+	 */
+	public function get_presets_ids () {
+		$presets = array();
+
+		foreach ($this->_get_servers() as $server) {
+			if (!is_callable(array($server, 'get_presets_ids'))) continue;
+			$presets = array_merge($presets, $server->get_presets_ids());
+		}
+
+		return $presets;
+	}
+
 	private function __construct () {
 		$this->_initialize_servers();
 	}
