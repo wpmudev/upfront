@@ -949,6 +949,7 @@ var LayoutEditor = {
 	_render_global_region_manager: function ($el) {
 		var ed = Upfront.Behaviors.LayoutEditor,
 			collection = Upfront.Application.layout.get("regions"),
+			me = this,
 			region_managers = [
 				{
 					title: Upfront.Settings.l10n.global.behaviors.global_regions,
@@ -982,62 +983,56 @@ var LayoutEditor = {
 		$el.on('click', '.region-list-edit', function(e){
 			e.preventDefault();
 		});
+		// Remove previous event listener.
+		$el.off('click', '.region-list-trash');
+		// Add event listener.
 		$el.on('click', '.region-list-trash', function(e){
 			e.preventDefault();
+			e.stopPropagation();
 			var name = $(this).attr('data-name');
 			var scope = $(this).attr('data-scope');
-			if ( $(this).closest('.global-region-manager-wrap').hasClass('global-region-manager-global') ){
-				if ( confirm('Deleting the global regions will remove it from all layouts. Continue?') ) {
+			var target = e.target;
+			//if ( $(this).closest('.global-region-manager-wrap').hasClass('global-region-manager-global') ){
+			// Confirm user wishes to delete the region.
+			if (scope === 'global') {
+				if ( confirm(Upfront.Settings.l10n.global.behaviors.confirm_delete_region) ) {
+					// Global Regions and Lightboxes.
 					Upfront.Util.post({
 						action: 'upfront_delete_scoped_regions',
 						scope: 'global',
 						name: name,
 						storage_key: _upfront_save_storage_key
 					}).done(function(data) {
-						// Also remove from current layout
+						// If data, remove from current layout
 						if ( data.data ) {
-							_.each(data.data, function(region_name){
-								var model = collection.get_by_name(region_name);
-								collection.remove(model);
-							});
-							ed._refresh_global_regions().done(function(){
-								ed._render_global_region_manager($el);
-							});
+							if (data.data.length > 0) {
+								_.each(data.data, function(region_name){
+									var model = collection.get_by_name(region_name);
+									collection.remove(model);
+								});
+								ed._refresh_global_regions().done(function(){
+									ed._render_global_region_manager($el);
+								});
+							} else {
+							// If global but not yet saved, simply remove from layout.
+							me.remove_from_global_region_list(name, target, collection, $el, ed);
+							}
 						}
 					});
 				}
-			}
-			else {
-				if (scope === 'global') {
-					// Global Lightboxes.
-					Upfront.Util.post({
-						action: 'upfront_delete_scoped_regions',
-						scope: scope,
-						name: name,
-						storage_key: _upfront_save_storage_key
-					}).done(function(data) {
-						// Also remove from current layout
-						if ( data.data ) {
-							_.each(data.data, function(region_name){
-								var model = collection.get_by_name(region_name);
-								collection.remove(model);
-							});
-							ed._refresh_global_regions().done(function(){
-								ed._render_global_region_manager($el);
-							});
-						}
-					});
-				} else {
-					// Local Lightboxes.
-					// Remove the lightbox from the layout.
-					var model = collection.get_by_name(name);
-					collection.remove(model);
-					// Remove the lightbox from this UI list.
-					var lightbox_list_item = $(e.target).parents('.region-list-sub-lightbox');
-					return lightbox_list_item.remove();
-				}
+			} else {
+				// Local Lightboxes.
+				me.remove_from_global_region_list(name, target, collection, $el, ed);
 			}
 		});
+	},
+
+	remove_from_global_region_list: function (name, target, collection, $el, ed) {
+		// Remove the region from the layout.
+		var model = collection.get_by_name(name);
+		collection.remove(model);
+		// Remove the region from this UI list (refresh it).
+		ed._render_global_region_manager($el);
 	},
 
 	_render_regions: function (regions, $el, type) {
