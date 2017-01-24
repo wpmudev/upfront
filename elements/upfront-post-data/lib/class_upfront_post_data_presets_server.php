@@ -10,7 +10,18 @@ class Upfront_PostData_Elements_Server implements IUpfront_Server {
 
 	private $_servers = array();
 
-	public static function get_instance ($type) {
+	/**
+	 * Gets the elements/parts server instance.
+	 *
+	 * If type argument is empty, returns global element server instance.
+	 * Otherwise returns requested part (type) server instance.
+	 *
+	 * @param string $type Optional part type to get particular part server
+	 *
+	 * @return object IUpfront_Server instance
+	 */
+	public static function get_instance ($type=false) {
+		if (empty($type) && false === $type) return self::$_instance;
 		return self::$_instance->_get_server($type);
 	}
 
