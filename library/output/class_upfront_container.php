@@ -168,11 +168,10 @@ abstract class Upfront_Container extends Upfront_Entity {
 
 		return self::$_presets;
 	}
-	
+
 	public function preset_exist ( $preset, $type ) {
-		
 		if( empty( $type ) ) return 'default';
-		
+
 		$presets = Upfront_Container::_load_presets();
 
 		if( isset( $presets[$type] ) && !empty( $presets[$type] ) ) {
@@ -182,7 +181,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 				return 'default';
 			}
 		}
-		
+
 		return 'default';
 	}
 
@@ -190,14 +189,16 @@ abstract class Upfront_Container extends Upfront_Entity {
 		$preset_map = array();
 		$raw_preset_map = upfront_get_property_value('breakpoint_presets', $data);
 		$type = upfront_get_property_value('type', $data);
+
 		if (!empty($raw_preset_map)) foreach ($raw_preset_map as $bp => $pst) {
 			if (empty($pst['preset'])) continue;
-			
+
 			// Check if preset exist, if not use default
 			$pst['preset'] = $this->preset_exist( $pst['preset'], $type );
-			
+
 			$preset_map[$bp] = esc_js($pst['preset']);
 		}
+
 		return $preset_map;
 	}
 
@@ -206,7 +207,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 		// just works without JS requirement on client
 		$preset = upfront_get_property_value('preset', $data);
 		$type = upfront_get_property_value('type', $data);
-		
+
 		// Check if preset exist, if not use default
 		$preset = $this->preset_exist( $preset, $type );
 

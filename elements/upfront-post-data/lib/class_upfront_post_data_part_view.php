@@ -23,8 +23,10 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 	 * Main public method.
 	 * Expands each part of the post parts and constructs markup string,
 	 * then wraps it in post wrapper.
+	 *
 	 * @param object WP_Post object instance
 	 * @param bool Is editor or not
+	 *
 	 * @return string Rendered post markup
 	 */
 	public function get_markup ($post, $editor = false) {
@@ -104,6 +106,7 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 
 	/**
 	 * Returns post full content, with filters applied.
+	 *
 	 * @return string Final post full content.
 	 */
 	protected function _get_content () {
@@ -115,7 +118,9 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 
 	/**
 	 * Get view class responsible for rendering
+	 *
 	 * @param array $data Data array
+	 *
 	 * @return string The class name
 	 */
 	public static function _get_view_class ($data) {

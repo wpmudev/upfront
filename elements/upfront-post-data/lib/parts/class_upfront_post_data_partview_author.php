@@ -28,7 +28,7 @@ class Upfront_Post_Data_PartView_Author extends Upfront_Post_Data_PartView {
 		$author = $this->_post->post_author;
 
 		$name = get_the_author_meta('display_name', $author);
-		if (!empty($this->_data['display_name'])) {	
+		if (!empty($this->_data['display_name'])) {
 			if ('first_last' === $this->_data['display_name'] || 'last_first' === $this->_data['display_name']) {
 				$first = get_the_author_meta('first_name', $author);
 				$last = get_the_author_meta('last_name', $author);
@@ -39,7 +39,7 @@ class Upfront_Post_Data_PartView_Author extends Upfront_Post_Data_PartView {
 					;
 				}
 			}
-			
+
 			if ('nickname' === $this->_data['display_name']) {
 				$nick = get_the_author_meta('nickname', $author);
 				if (!empty($nick)) $name = $nick;
@@ -108,8 +108,8 @@ class Upfront_Post_Data_PartView_Author extends Upfront_Post_Data_PartView {
 		$out = Upfront_Codec::get()->expand($out, "email_string", esc_html($email_string));
 
 		return $out;
-	}	
-	
+	}
+
 	/**
 	 * Converts the URL part into markup.
 	 *
@@ -131,7 +131,7 @@ class Upfront_Post_Data_PartView_Author extends Upfront_Post_Data_PartView {
 			? esc_html(sanitize_text_field($this->_data['link_text']))
 			: __('Website', 'upfront')
 		;
-		
+
 		$author_url = get_author_posts_url($author);
 		$url = get_the_author_meta('url', $author);
 		if (empty($url)) $url = $author_url;
