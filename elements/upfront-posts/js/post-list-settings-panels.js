@@ -462,14 +462,19 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			default_value: this.model.get_property_value_by_name('term'),
 			change: this._set_term_value
 		});
-		this.fields._wrapped[4] = field;
+
+		var display_type = this.model.get_property_value_by_name("display_type"),
+			index = "list" === display_type ? 4 : 3 // "single" has one field less (limit)
+		;
+
+		this.fields._wrapped[index] = field;
 		this.$el.empty();
 		this.render();
 	},
-	
+
 	/**
 	 * Internal value setter
-	 * 
+	 *
 	 * Used as taxonomy term chosen picker.
 	 */
 	_set_term_value: function () {
