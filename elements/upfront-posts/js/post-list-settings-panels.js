@@ -264,8 +264,10 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 		});
 
 		this.fields = _([]);
-		
-		this.populate_limit_items();
+
+		if ("list" === display_type) {
+			this.populate_limit_items();
+		}
 
 		this.fields.push(new Upfront.Views.Editor.Field.Select({
 			model: this.model,
@@ -278,21 +280,20 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 				me.trigger('setting:changed');
 			}
 		}));
-		
-		if ("list" === display_type) {
-			this.fields.push(new Upfront.Views.Editor.Field.Number({
-				model: this.model,
-				className: 'upfront-offset-number',
-				label: l10n.offset,
-				property: "offset",
-				min: 1,
-				max: 20,
-				change: function(value) {
-					me.model.set_property("offset", value);
-					me.trigger('setting:changed');
-				}
-			}));
-		}
+
+		// Even individual posts allow for offset
+		this.fields.push(new Upfront.Views.Editor.Field.Number({
+			model: this.model,
+			className: 'upfront-offset-number',
+			label: l10n.offset,
+			property: "offset",
+			min: 1,
+			max: 20,
+			change: function(value) {
+				me.model.set_property("offset", value);
+				me.trigger('setting:changed');
+			}
+		}));
 
 		this.fields.push(new Upfront.Views.Editor.Field.Select({
 			model: this.model,
