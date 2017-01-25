@@ -217,7 +217,7 @@ return (function ($) {
 
 			$(this.el).html(content).addClass('menu-item-depth-'+me.level);
 			if ( menu_set_url === current_url ) $(this.el).addClass('current-menu-item');
-			
+
 			$(this.el).data('depth', me.level);
 			this.createControlPanel();
 
@@ -238,19 +238,19 @@ return (function ($) {
 		setItemControlsState: function() {
 			if (this.$el.hasClass('controls-visible')) {
 				this.controlsVisible = true;
-				
+
 				while(currentcontext.length > 0 && currentcontext.hasClass('sub-menu')) {
 					currentcontext.addClass('time_being_display');
 					currentcontext = currentcontext.parent().parent('ul');
 				}
-				
+
 				// add class if last region to allocate clearance
 				var $region = this.$el.closest('.upfront-region-container'),
 					$lastRegion = $('.upfront-region-container').not(
 					'.upfront-region-container-shadow').last()
 				;
 				if ( $lastRegion.get(0) == $region.get(0) ) $region.addClass('upfront-last-region-padding');
-				
+
 
 			} else {
 				this.controlsVisible = false;
@@ -258,12 +258,12 @@ return (function ($) {
 				this.$el.closest('.upfront-region-container').removeClass('upfront-last-region-padding');
 			}
 		},
-		
+
 		editLabel: function() {
 			this.parent_view.model.trigger('menuitem:edit', this.$el.find('a'));
 			Upfront.Events.trigger('upfront:hide:subControl');
 		},
-		
+
 		createControlsEach: function() {
 			var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
 				moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl(),
@@ -272,11 +272,11 @@ return (function ($) {
 
 			moreOptions.icon = 'more';
 			moreOptions.inline = true;
-			//moreOptions.tooltip = l10n.ctrl.caption_position;	
+			//moreOptions.tooltip = l10n.ctrl.caption_position;
 			moreOptions.sub_items = {};
-			
+
 			moreOptions.sub_items['edit'] = this.createControl('labelEdit', l10n.edit_label, 'editLabel', 28, 28);
-			
+
 			moreOptions.sub_items['link'] = this.createLinkControl();
 
 			moreOptions.sub_items['remove'] = this.createControl('remove', l10n.remove_link, 'deleteMenuItem', 28, 28);
@@ -287,7 +287,7 @@ return (function ($) {
 				me.$el.closest('.ui-sortable').sortable('enable');
 				me.$el.removeClass('stayOpen');
 			});
-			
+
 			this.listenTo(moreOptions, 'panel:open', function() {
 				me.$el.closest('.ui-sortable').sortable('disable');
 				me.$el.addClass('stayOpen controls-visible');
@@ -295,7 +295,7 @@ return (function ($) {
 
 			return panel;
 		},
-		
+
 		createLinkControl: function(){
 			var me = this,
 				linkControl = new Upfront.Views.Editor.InlinePanels.LinkControl()
@@ -308,7 +308,7 @@ return (function ($) {
 				tooltip: 'link',
 				id: 'link'
 			});
-			
+
 			// Update wrapper size
 			this.listenTo(linkPanel, 'linkpanel:update:wrapper', function() {
 				linkControl.updateWrapperSize();
@@ -328,12 +328,12 @@ return (function ($) {
 			//Set icon width & height
 			linkControl.width = 28;
 			linkControl.height = 28;
-			
+
 			this.$el.data('linkpanel', linkControl);
 
 			return linkControl;
 		},
-		
+
 		createControl: function(icon, tooltip, click_callback, width, height) {
 			var me = this,
 				item = new Upfront.Views.Editor.InlinePanels.Control();
@@ -450,7 +450,9 @@ return (function ($) {
 				$(this.el).children('a.menu_item'):$(this.el).children('div').children('a.menu_item');
 
 			if (!menu_item.hasClass('menu_item_placeholder') && menu_item.next('a.ueditor-placeholder').length < 1) {
-				this.model['menu-item-title'] = menu_item.text();
+				// Try to include html tags also, since WP allows so in menu items
+				var fullText = menu_item.find('.menu_item-ueditor').html();
+				this.model['menu-item-title'] = fullText ? fullText : menu_item.text();
 			} else {
 				this.model['menu-item-title'] = '';
 			}
