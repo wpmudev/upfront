@@ -50,7 +50,12 @@ class Upfront_Posts_PostView {
 	 */
 	public static function get_post_parts ($data) {
 		$preset_id = self::get_preset_id($data);
-
+		
+		// If we have post parts from AJAX call use it
+		if (isset($data['preset_post_parts']) && !empty($data['preset_post_parts'])) {
+			return $data['preset_post_parts'];
+		}
+			
 		if (!empty($preset_id)) {
 			$preset_server = Upfront_Posts_Presets_Server::get_instance();
 			$preset = !empty($preset_server)

@@ -75,9 +75,14 @@ var Views = {
 		render: function (silent) {
 			var me = this,
 				model = Upfront.Util.model_to_json(this.model),
+				preset = this.model.get_property_value_by_name('preset'),
+				presets = (Upfront.mainData || {})["postsPresets"] || [],
+				post_parts = (_.findWhere(presets, {id: preset}) || {}).enabled_post_parts || [],
+				preset_post_parts = this.model.set_property('preset_post_parts', post_parts),
 				props = model.properties || {},
 				query = {}
 			;
+			
 			if (window._upfront_get_current_query) query = window._upfront_get_current_query();
 			//console.log(query);
 			silent = _.isUndefined(silent) ? false : silent;
