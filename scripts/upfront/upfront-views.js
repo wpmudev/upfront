@@ -2574,6 +2574,10 @@ define([
 			remove_region_class: function (classname, container) {
 				this.toggle_region_class(classname, false, container);
 			},
+			
+			get_resize_min_col: function () {
+				return false;
+			},
 
 			/* Getting dimension and resize element */
 			get_element_size: function (real) {
@@ -3564,6 +3568,19 @@ define([
 
 			},
 			on_after_layout_render: function () {
+			},
+			get_resize_min_col: function () {
+				var min_col = 0;
+				if ( ! this._objects_view ) return false;
+				this._objects_view.model.each(function(obj){
+					var view = Upfront.data.object_views[obj.cid],
+						each_min_col
+					;
+					if ( !view ) return;
+					each_min_col = view.get_resize_min_col();
+					min_col = each_min_col > min_col ? each_min_col : min_col;
+				});
+				return min_col > 0 ? min_col : false; 
 			},
 			remove: function(){
 				if(this._objects_view)
