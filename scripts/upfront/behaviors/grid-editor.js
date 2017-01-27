@@ -1957,6 +1957,9 @@ var GridEditor = {
 			line_col = 0,
 			line = 0
 		;
+		
+		if(typeof modules === "undefined" || !modules) return;
+		
 		modules.each(function(module, i){
 			var wrapper_id = module.get_wrapper_id(),
 				wrapper = wrappers.get_by_wrapper_id(wrapper_id),
