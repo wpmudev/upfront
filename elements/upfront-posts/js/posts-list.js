@@ -555,6 +555,11 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 	},
 
 	enable_object_edit: function () {
+		
+		if(typeof this._posts_model === "undefined" || this._posts_model === false) {
+			this._posts_model = new Upfront.Models.ObjectGroup();
+		}
+		
 		var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 			ed = Upfront.Behaviors.GridEditor,
 			wrappers = this._posts_model.get('wrappers'),
