@@ -200,6 +200,9 @@ var PostsEachView = Upfront.Views.ObjectGroup.extend({
 		
 		if( !this.editable ) {
 			this.wrapper_view.$el.resizable('option', 'disabled', true);
+		} else {
+			// Prevent multiple Done buttons
+			this.$el.find('.upfront-object-group-finish-edit').remove();
 		}
 		
 		Upfront.Views.ObjectGroup.prototype.render.call(this, options);
