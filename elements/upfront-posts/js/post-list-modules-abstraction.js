@@ -199,6 +199,8 @@
 						.append('<a href="#delete" class="upfront-post-delete-part">-</a>')
 					;
 				}
+				
+				this.$el.addClass(this.data_part);
 
 				var $content = this.$el.find('.upfront-settings-post-wrapper');
 				$content.hide();

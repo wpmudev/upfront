@@ -106,8 +106,34 @@ var PostsPartView = Upfront.Views.ObjectView.extend({
 		if( typeof e !== "undefined" ){
 			e.preventDefault();
 		}
+	
+		var me = this;
+		
+		// Render settings
+		this.object_group_view.object_group_view.on_settings_click();
 
-		Upfront.Events.trigger("element:settings:activate", this, this.settings);
+		// Open part settings
+		setTimeout( function() {
+			var $sidebar = $('#element-settings-sidebar'),
+				$preset_manager = $sidebar.find('.preset-manager-panel'),
+				$preset_parts = $preset_manager.find('.upfront-post-modules'),
+				part_type = me.model.get_property_value_by_name('part_type'),
+				$preset_part = $preset_parts.find('.' + part_type)
+				
+			;
+			
+			// Open Presets tab
+			$preset_manager.find('.uf-settings-panel__title').click();
+			
+			// Close Defautl Preset warning
+			$preset_manager.find('.overlay-button-input').click();
+			
+			$('#sidebar-scroll-wrapper').animate({scrollTop: $preset_part.offset().top - 30 }, function() {
+				// Open part settings
+				$preset_part.find('.upfront-settings-item-title').click();
+			});
+
+		}, 100);
 	},
 	
 	update_height: function () {
