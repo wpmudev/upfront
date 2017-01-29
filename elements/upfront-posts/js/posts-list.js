@@ -197,7 +197,11 @@ var PostsEachView = Upfront.Views.ObjectGroup.extend({
 		}
 
 		this.$el.addClass( this.editable ? 'upfront-object-group-editable' : 'upfront-object-group-uneditable' );
-
+		
+		if( !this.editable ) {
+			this.wrapper_view.$el.resizable('option', 'disabled', true);
+		}
+		
 		Upfront.Views.ObjectGroup.prototype.render.call(this, options);
 		this.render_object_view(options.data);
 	},
