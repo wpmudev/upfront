@@ -120,11 +120,10 @@
 	width: 26px;
 	height: 18px;
 	margin: 15px 16px 0 0;
-	opacity: 0.5;
+	opacity: 1;
 	transition: opacity;
 	position: relative;
 	background: #fdfdfd;
-	border: 1px solid #e5e5e5;
 }
 #sidebar-ui .command-more-menu:hover {
 	opacity: 0.8;
@@ -137,18 +136,19 @@
 	display: block;
 	width: 26px;
 	height: 18px;
-	background: #fdfdfd;
-	border-radius: 3px;
+	border-radius: 2px;
 	position: relative;
 	z-index: 1100;
 	color: #a5a5a5;
+	opacity: 0.4;
+	border: 1px solid rgba(140, 140, 140, 0.5);
 }
 #sidebar-ui .command-more-menu.menu-open .upfront-icon-more-menu {
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
 }
 #sidebar-ui .command-more-menu .upfront-icon-more-menu:before {
-	margin: -4px 0 0;
+	margin: -3px 0 0;
 }
 #sidebar-ui .command-more-menu .command-more-menu-list {
 	display: block;
