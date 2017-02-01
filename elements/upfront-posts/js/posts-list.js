@@ -387,10 +387,11 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 			type = this.model.get_property_value_by_name('data_type'),
 			is_locked = this.model.get_property_value_by_name('is_locked'),
 			controls = [],
+			type = this.model.get_property_value_by_name("display_type"),
 			lock_icon = ''
 		;
 
-		if ( objects.length > 1 ) {
+		if ( objects.length > 1 && type !== '' ) {
 			controls.push(this.createControl('reorder', l10n.settings, 'on_edit_click'));
 			this._multiple = true;
 		}
