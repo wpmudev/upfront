@@ -379,6 +379,7 @@
 	margin: 0 0 0 10px;
 	width: 100px;
 	font-size: 11px;
+	font-family: "Open Sans";
 	line-height: 11px;
 	float: left;
 }
@@ -390,11 +391,12 @@
 	overflow: hidden;
 }
 #sidebar-ui .sidebar-profile-name {
-	color: #dae6f2;
+	color: #282828;
+	font-weight: 600;
 	margin-top: 5px;
 }
 #sidebar-ui .sidebar-profile-role {
-	color: #7c9dbf;
+	color: #b0b0b0;
 	margin-top: 3px;
 }
 #sidebar-ui .sidebar-profile-edit {
