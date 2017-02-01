@@ -355,7 +355,7 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 	
 	settings_dispatch: function() {
 		this.child_view = false;
-		this.on_render();
+		this.render();
 	},
 
 	on_render: function () {
