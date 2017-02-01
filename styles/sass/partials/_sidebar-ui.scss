@@ -263,10 +263,10 @@
 	line-height: 28px;
 	font-size: 12px;
 	height: 30px;
-	opacity: .8;
+	opacity: 0.75;
 	background: #fff;
 	font-family: "Open Sans";
-	border: 2px solid #f0f0f0;
+	border: 1px solid #909090;
 	font-weight: bold;
 	width: 200px;
 	text-align: center;
@@ -295,7 +295,11 @@
 #sidebar-ui .sidebar-commands-primary .command-new-page:hover,
 #sidebar-ui .sidebar-commands-primary .command-new-post:hover {
 	opacity:1;
-	color: #cbe5ff;
+}
+#sidebar-ui .sidebar-commands-primary .command-new-page:active,
+#sidebar-ui .sidebar-commands-primary .command-new-post:active {
+	opacity:0.75;
+	background: rgb(230,230,230);
 }
 #sidebar-ui .sidebar-commands-primary .command-open-media-gallery,
 #sidebar-ui .sidebar-commands-primary .command-popup-list {
@@ -509,14 +513,14 @@
 }
 
 #sidebar-ui .sidebar-panel-title {
-	font-size: 10px;
-	font-weight: normal;
-	line-height: 32px;
-	height: 32px;
+	font-size: 11px;
+	font-weight: bold;
+	line-height: 30px;
+	letter-spacing: 0.5px;
+	height: 30px;
 	background: #fff;
-	border-top: 1px solid #f2f9ff;
-	border-bottom: 1px solid #a3bfd9;
-	color: #395773;
+	border-bottom: 1px solid #e8e8e8;
+	color: #969696;
 	padding: 0 0 0 15px;
 	margin: 0;
 	cursor: pointer;
@@ -524,6 +528,8 @@
 }
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-title {
 	border-bottom: none;
+	background: #e7e7e7;
+	color: #212121;
 }
 #sidebar-ui .sidebar-panel-title:before {
 	display: block;
@@ -531,7 +537,6 @@
 	width: 16px;
 	height: 16px;
 	border-radius: 16px;
-	background: #c0ddf6;
 	position: absolute;
 	right: 15px;
 	top: 10px;
@@ -540,25 +545,21 @@
 	top: 9px;
 }
 #sidebar-ui .sidebar-panel-title:after {
-	content: " ";
+	content: "+";
+	font-size: 20px;
 	display: block;
 	width: 0;
 	height: 0;
-	border-top: 3px solid #85aacc;
-	border-right: 4px solid transparent;
-	border-left: 4px solid transparent;
 	z-index: 5;
 	position: absolute;
-	top: 17px;
-	right: 19px;
+	bottom: 30px;
+	right: 22px;
+	font-weight: normal;
 }
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-title:after {
-	border-right: none;
-	border-left: 3px solid #85aacc;
-	border-top: 4px solid transparent;
-	border-bottom: 4px solid transparent;
-	top: 13px;
-	right: 21px;
+	border: none;
+	content: "\2013";
+	font-weight: normal;
 }
 #sidebar-ui .sidebar-panel-content {
 	background: #e5f3ff;
@@ -584,7 +585,6 @@
 	height: auto;
 	max-height: 450px;
 	padding: 0;
-	border-top: 1px solid #accae6;
 	/* border-bottom: 1px solid #accae6; */
 	opacity: 1;
 	position: relative;
