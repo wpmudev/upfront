@@ -54,7 +54,7 @@
 	bottom: 0;
 	left: 0;
 	width: 260px;
-	border-right: 1px solid #1a2d40;
+	border-right: none;
 	color: #2c2c2c;
 	display: none;
 	font: 16px/24px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
@@ -501,7 +501,7 @@
 }
 #sidebar-ui .sidebar-panels {
 	color: #395773;
-	border-right: 1px solid #324253;
+	border-right: none;
 }
 #sidebar-ui .sidebar-panel {
 	background: #cee1f2;
@@ -509,11 +509,11 @@
 }
 
 #sidebar-ui .sidebar-panel-title {
-	font-size: 16px;
+	font-size: 10px;
 	font-weight: normal;
-	line-height: 36px;
-	height: 39px;
-	background: #d9edff;
+	line-height: 32px;
+	height: 32px;
+	background: #fff;
 	border-top: 1px solid #f2f9ff;
 	border-bottom: 1px solid #a3bfd9;
 	color: #395773;

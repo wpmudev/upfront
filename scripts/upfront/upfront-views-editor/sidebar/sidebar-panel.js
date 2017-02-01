@@ -23,7 +23,7 @@
 										this.$el.addClass('active');
 								else
 										this.$el.removeClass('active');
-								this.$el.html('<h3 class="sidebar-panel-title">' + this.get_title() + '</h3><div class="sidebar-panel-content" />');
+								this.$el.html('<h3 class="sidebar-panel-title">' + this.get_title().toUpperCase() + '</h3><div class="sidebar-panel-content" />');
 
 								this.stop_scroll_propagation(this.$el.find('.sidebar-panel-content'));
 
