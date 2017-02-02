@@ -261,26 +261,44 @@
 				var me = this;
                 _.delay(function() { // Delay because opening animation causes wrong outerHeight results
                     var in_sidebar = me.$el.parents('#sidebar-ui').length,
-                        in_settings = me.$el.parents('#element-settings-sidebar').length,
-                        settingsTitleHeight = 68;
+                        in_settings = me.$el.parents('#element-settings-sidebar').length
+                    ;
 
                     // Apply if select field is in sidebar or settings sidebar
                     if(in_sidebar == 1 || in_settings == 1) {
-                        var setting_dropdown = me.$el.find('.upfront-settings-post-wrapper'),
-                            select = setting_dropdown.parent(),
-                            dropDownTop = select.offset().top - $('#element-settings-sidebar').offset().top,
-							dropDownTop = dropDownTop + settingsTitleHeight
-						;
-						
-						setting_dropdown.css("width", select.width() + 10);
-                        setting_dropdown.css('top', dropDownTop + "px");
-                        setting_dropdown.css('display', 'block');
+                       me.update_settings_position();
                     }
 					
 					return $content.show();
                 }, 10);
 				
 				$('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, this.on_scroll);				
+			},
+			update_settings_position: function() {
+				var me = this,
+					settingsTitleHeight = 68,
+					setting_dropdown = me.$el.find('.upfront-settings-post-wrapper'),
+					select = setting_dropdown.parent(),
+					dropDownTop = select.offset().top - $('#element-settings-sidebar').offset().top,
+					dropDownTop = dropDownTop + settingsTitleHeight,
+					viewportHeight = $(window).height(),
+					availableBelow = viewportHeight - dropDownTop,
+					availableAbove = dropDownTop,
+					settingsHeight = setting_dropdown.height()
+				;
+				
+				if (availableBelow > settingsHeight) {
+					// Available space below setting is enough
+					setting_dropdown.css('top', dropDownTop + "px");
+				} else if (availableAbove > settingsHeight) {
+					// Available space below is not enough but fine above
+					setting_dropdown.css('top', (dropDownTop - settingsHeight - 30) + "px");
+				} else {
+					// There is no space above and below
+				}
+				
+				setting_dropdown.css("width", select.width() + 10);
+				setting_dropdown.css('display', 'block');
 			},
 			on_scroll: function(e) {
 				$('.upfront-settings-item-title').removeClass('active-panel');
