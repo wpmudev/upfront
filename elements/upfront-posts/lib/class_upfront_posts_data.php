@@ -228,6 +228,8 @@ class Upfront_Posts_PostsData {
 			'excerpt' => __('Excerpt', 'upfront'),
 			'full_post' => __('Full Post', 'upfront'),
 			'limit' => __('Limit to', 'upfront'),
+			'words' => __('words', 'upfront'),
+			'content_type' => __('Content Type', 'upfront'),
 			'pagination' => __('Pagination:', 'upfront'),
 			'none' => __('None', 'upfront'),
 			'prev_next' => __('Prev. / Next Page', 'upfront'),

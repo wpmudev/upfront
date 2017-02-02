@@ -201,7 +201,7 @@ define([
 				{
 					type: 'Radios',
 					property: 'content_type',
-					layout: "horizontal",
+					layout: "horizontal-inline",
 					values: [
 						{
 							label: l10n.modules.excerpt,
@@ -211,8 +211,23 @@ define([
 							label: l10n.modules.full_post,
 							value: 'full'
 						}
-					]
-				}
+					],
+					show: function(value, $el){
+						if(value === "excerpt") {
+							$el.siblings('.uf-posts-content-length').show();
+						} else {
+							$el.siblings('.uf-posts-content-length').hide();
+						}
+					},
+				},
+				{
+					type: 'Number',
+					property: 'content_length',
+					className: 'uf-posts-content-length',
+					label: l10n.limit,
+					suffix: l10n.words,
+					label_style: 'inline',
+				},
 			];
 		}
 	});
