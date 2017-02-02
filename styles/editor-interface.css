@@ -3186,8 +3186,7 @@ input.upfront_toggle_checkbox {
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-left > .upfront-region-resize-handle-e,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-right > .upfront-region-resize-handle-w,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-hidden > .upfront-region-resize-handle-s,
-.upfront-region-editing .upfront-region-container-full > .upfront-region-resize-handle,
-.upfront-region-editing .upfront-region-bg-setting-open .upfront-region-resize-handle {
+.upfront-region-editing .upfront-region-container-full > .upfront-region-resize-handle {
   visibility: hidden; }
 
 .upfront-region-editing .upfront-region-active-overlay,
@@ -3485,7 +3484,8 @@ input.upfront_toggle_checkbox {
   display: block;
   z-index: 9996; }
 
-.upfront-edit-responsive .upfront-region-editing .upfront-region-panels {
+/* Hide add regions for responsive mode. */
+.upfront-edit-responsive .upfront-region-editing .upfront-region-panels .upfront-inline-panel {
   display: none; }
 
 .upfront-region-fixed-editing .upfront-region-fixed-panels {
@@ -4461,12 +4461,13 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 .upfront-region-editing .upfront-region.controls-visible .responsive-item-controls {
   display: block; }
 
-/* Hide 'Add Region' triggers & 'Region Resize' handle when settings panel is open */
+/* Hide 'Add Region' triggers & 'Region Resize' handle when settings panel is open 
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-region-panel-item-add-region,
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-icon-control-region-resize-e:before,
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-icon-control-region-resize-w:before {
-  display: none; }
-
+	display:none;
+}
+*/
 .upfront-ui .upfront-region-panel-item-add-region .upfront-icon-region-add:before {
   background-position: -260px -130px; }
 
@@ -7168,6 +7169,7 @@ span.upfront-settings-item-title:after {
   left: 0px;
   top: 6px; }
 
+.upfront-field-title,
 .upfront-settings-item-title,
 .upfront-global-social-settings .upfront-settings-item-title {
   font-size: 11px;
@@ -7179,6 +7181,7 @@ span.upfront-settings-item-title:after {
   position: relative;
   letter-spacing: 0.34px; }
 
+.upfront-field-title span,
 .upfront-settings-item-title span,
 .upfront-global-social-settings .upfront-settings-item-title span {
   background-color: #f2f9ff;
