@@ -10,54 +10,54 @@ var l10n = Upfront.Settings && Upfront.Settings.l10n
 		;
 
 var Box = Backbone.View.extend({
-    className: 'ueditor-box-wrapper upfront-ui',
-    post: false,
-    taxSection: false,
-    offset: {min:0, max:0},
-    position: {min:0, max:0},
-    onScrollFunction: false,
-    statusSelect: false,
-    visibilitySelect: false,
-    taxSections : [],
-    events: {
-        'click .ueditor-action-preview': 'navigate_to_preview',
-        'click .ueditor-button-cancel-edit': 'cancel',
-        'click .ueditor-action-publish': 'publish',
-        'click .ueditor-action-draft': 'saveAsDraft',
-        'click .ueditor-action-trash': 'trash',
-        'click .ueditor-box-title': 'toggle_section',
-        'click .ueditor-save-post-data': 'save_post_data'
-    },
+		className: 'ueditor-box-wrapper upfront-ui',
+		post: false,
+		taxSection: false,
+		offset: {min:0, max:0},
+		position: {min:0, max:0},
+		onScrollFunction: false,
+		statusSelect: false,
+		visibilitySelect: false,
+		taxSections : [],
+		events: {
+				'click .ueditor-action-preview': 'navigate_to_preview',
+				'click .ueditor-button-cancel-edit': 'cancel',
+				'click .ueditor-action-publish': 'publish',
+				'click .ueditor-action-draft': 'saveAsDraft',
+				'click .ueditor-action-trash': 'trash',
+				'click .ueditor-box-title': 'toggle_section',
+				'click .ueditor-save-post-data': 'save_post_data'
+		},
 
-    initialize: function(options){
-        var me = this;
-        this.post = options.post;
-        this.layout_modified = false;
+		initialize: function(options){
+				var me = this;
+				this.post = options.post;
+				this.layout_modified = false;
 
-        this.statusSection = new PostStatusView({post: this.post});
-        this.visibilitySection = new PostVisibilityView({post: this.post});
-        this.scheduleSection = new PostScheduleView({post: this.post});
-        this.urlEditor = new PostUrlEditor( { post: this.post } );
+				this.statusSection = new PostStatusView({post: this.post});
+				this.visibilitySection = new PostVisibilityView({post: this.post});
+				this.scheduleSection = new PostScheduleView({post: this.post});
+				this.urlEditor = new PostUrlEditor( { post: this.post } );
 
-        this.tpl = _.template($(editionBox_tpl).find("#ueditor-box-main").html());
-        this.datepickerTpl = _.template($(Upfront.data.tpls.popup).find('#datepicker-tpl').html());
-        //Upfront.Events.trigger('upfront:element:edit:start', 'write', this.post);
+				this.tpl = _.template($(editionBox_tpl).find("#ueditor-box-main").html());
+				this.datepickerTpl = _.template($(Upfront.data.tpls.popup).find('#datepicker-tpl').html());
+				//Upfront.Events.trigger('upfront:element:edit:start', 'write', this.post);
 
-        // this.listenTo(Upfront.Events, 'upfront:element:edit:stop', this.element_stop_prop);
-        this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
-        this.listenTo(Upfront.Events, 'entity:layout:change', this.on_layout_change);
+				// this.listenTo(Upfront.Events, 'upfront:element:edit:stop', this.element_stop_prop);
+				this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
+				this.listenTo(Upfront.Events, 'entity:layout:change', this.on_layout_change);
 
-        Upfront.Events.off("command:layout:trash", this.trash);
-        Upfront.Events.off("command:layout:save", this.publish);
-        Upfront.Events.off("command:layout:save_as", this.save_as_publish);
-        Upfront.Events.off("command:post:save", this.publish);
+				Upfront.Events.off("command:layout:trash", this.trash);
+				Upfront.Events.off("command:layout:save", this.publish);
+				Upfront.Events.off("command:layout:save_as", this.save_as_publish);
+				Upfront.Events.off("command:post:save", this.publish);
 
-        Upfront.Events.on("command:layout:trash", this.trash, this);
-        Upfront.Events.on("command:layout:save", this.publish, this);
-        Upfront.Events.on("command:layout:save_as", this.save_as_publish, this);
-        Upfront.Events.on("command:post:save", this.publish, this);
+				Upfront.Events.on("command:layout:trash", this.trash, this);
+				Upfront.Events.on("command:layout:save", this.publish, this);
+				Upfront.Events.on("command:layout:save_as", this.save_as_publish, this);
+				Upfront.Events.on("command:post:save", this.publish, this);
 
-    },
+		},
 
 	rebindEvents: function () {
 		//Rebind events for whole box
@@ -70,15 +70,15 @@ var Box = Backbone.View.extend({
 
 		// Rebind events for visibility section
 		this.visibilitySection.render();
-        this.visibilitySection.delegateEvents();
+				this.visibilitySection.delegateEvents();
 
 		// Rebind events for schedule section
 		this.scheduleSection.render();
-        this.scheduleSection.delegateEvents();
+				this.scheduleSection.delegateEvents();
 
 		// Rebind events for url section
 		this.urlEditor.render();
-        this.urlEditor.delegateEvents();
+				this.urlEditor.delegateEvents();
 	},
 
 	// element_stop_prop: function () {
@@ -139,42 +139,42 @@ var Box = Backbone.View.extend({
 		return this;
 	},
 
-    navigate_to_preview: function(e){
-        e.preventDefault();
+		navigate_to_preview: function(e){
+				e.preventDefault();
 
-        if( this.post.get("post_status") === "auto-draft" ){
-            this.post.trigger('editor:auto-draft');
-            this.trigger('auto-draft');
-            window.open(this.post.get("guid") + "&preview=true", '_blank');
-            return;
-        }
+				if( this.post.get("post_status") === "auto-draft" ){
+						this.post.trigger('editor:auto-draft');
+						this.trigger('auto-draft');
+						window.open(this.post.get("guid") + "&preview=true", '_blank');
+						return;
+				}
 
-        window.open(this.post.get("guid"), '_blank');
-    },
+				window.open(this.post.get("guid"), '_blank');
+		},
 
-    renderTaxonomyEditor: function($el, tax){
+		renderTaxonomyEditor: function($el, tax){
 		tax = typeof tax === "undefined" ? "category" : tax;
-        var self = this,
-            termsList = new Upfront.Collections.TermList([], {postId: this.post.id, taxonomy: tax})
-        ;
+				var self = this,
+						termsList = new Upfront.Collections.TermList([], {postId: this.post.id, taxonomy: tax})
+				;
 
-        if (!this._post_type_has_taxonomy(tax)) {
-            // Post type doesn't support this taxonomy. Bail out
-            $el.hide();
-            return false;
-        }
+				if (!this._post_type_has_taxonomy(tax)) {
+						// Post type doesn't support this taxonomy. Bail out
+						$el.hide();
+						return false;
+				}
 
-        termsList.fetch({allTerms: true}).done(function(response){
-            var tax_view_constructor = response.data.taxonomy.hierarchical ? ContentEditorTaxonomy_Hierarchical : ContentEditorTaxonomy_Flat,
-                tax_view = self.taxSections[tax] = new tax_view_constructor({collection: termsList, tax: tax})
-            ;
+				termsList.fetch({allTerms: true}).done(function(response){
+						var tax_view_constructor = response.data.taxonomy.hierarchical ? ContentEditorTaxonomy_Hierarchical : ContentEditorTaxonomy_Flat,
+								tax_view = self.taxSections[tax] = new tax_view_constructor({collection: termsList, tax: tax})
+						;
 
-            tax_view.allTerms = new Upfront.Collections.TermList(response.data.allTerms);
-            tax_view.render();
-            $el.html(tax_view.$el);
-        });
+						tax_view.allTerms = new Upfront.Collections.TermList(response.data.allTerms);
+						tax_view.render();
+						$el.html(tax_view.$el);
+				});
 
-    },
+		},
 
 	on_layout_change: function() {
 		if ( Upfront.Application.layout_ready ) {
@@ -182,118 +182,118 @@ var Box = Backbone.View.extend({
 		}
 	},
 
-    populateSections: function(){
-        this.$('.misc-pub-post-status').html(this.statusSection.$el);
-        this.$('.misc-pub-visibility').html(this.visibilitySection.$el);
-        this.$('.misc-pub-schedule').html(this.scheduleSection.$el);
+		populateSections: function(){
+				this.$('.misc-pub-post-status').html(this.statusSection.$el);
+				this.$('.misc-pub-visibility').html(this.visibilitySection.$el);
+				this.$('.misc-pub-schedule').html(this.scheduleSection.$el);
 
-        this.$(".misc-pub-section.misc-pub-post-url").html( this.urlEditor.$el  );
+				this.$(".misc-pub-section.misc-pub-post-url").html( this.urlEditor.$el	);
 
 		// We dont need this as we have another tab for them
-        //this.renderTaxonomyEditor(this.$(".misc-pub-post-category"), "category");
-        //this.renderTaxonomyEditor(this.$(".misc-pub-post-tags"), "post_tag");
-    },
+				//this.renderTaxonomyEditor(this.$(".misc-pub-post-category"), "category");
+				//this.renderTaxonomyEditor(this.$(".misc-pub-post-tags"), "post_tag");
+		},
 
-    /**
-     * Helper method to determine if a currently edited post type supports a taxonomy.
-     *
-     * Currently very simplistic
-     *
-     * @param {String} tax Taxonomy to check for
-     *
-     * @return {Boolean}
-     */
-    _post_type_has_taxonomy: function (tax) {
-        if (!tax) return true;
-        var type = this.post.get("post_type") || 'post';
-        return "page" !== type;
-    },
+		/**
+		 * Helper method to determine if a currently edited post type supports a taxonomy.
+		 *
+		 * Currently very simplistic
+		 *
+		 * @param {String} tax Taxonomy to check for
+		 *
+		 * @return {Boolean}
+		 */
+		_post_type_has_taxonomy: function (tax) {
+				if (!tax) return true;
+				var type = this.post.get("post_type") || 'post';
+				return "page" !== type;
+		},
 
-    getButtonText: function(){
-        var initial = this.initialStatus,
-            date = this.post.get('post_date'),
-            now = new Date()
-            ;
+		getButtonText: function(){
+				var initial = this.initialStatus,
+						date = this.post.get('post_date'),
+						now = new Date()
+						;
 
-        date = date ? date.getTime() : 0;
-        now = now.getTime();
+				date = date ? date.getTime() : 0;
+				now = now.getTime();
 
-        // Check the initial status value and deal with it appropriately
-        if (!initial && this.post && this.post.get) {
-            initial = this.post.get("post_status");
-        }
+				// Check the initial status value and deal with it appropriately
+				if (!initial && this.post && this.post.get) {
+						initial = this.post.get("post_status");
+				}
 
-        if(now < date) {
-            if(initial == 'future')
-                return l10n.global.content.update;
-            return l10n.global.content.schedule;
-        }
-        else {
-            if(initial == 'publish')
-                return l10n.global.content.update;
-            return l10n.global.content.publish;
-        }
-    },
+				if(now < date) {
+						if(initial == 'future')
+								return l10n.global.content.update;
+						return l10n.global.content.schedule;
+				}
+				else {
+						if(initial == 'publish')
+								return l10n.global.content.update;
+						return l10n.global.content.publish;
+				}
+		},
 
-    setPosition: function(){
-        var $container = $(".upost-data-object-post_data, .upfront-output-this_post").length ? $(".upost-data-object-post_data, .upfront-output-this_post") : this.$el.closest(".upfront-postcontent-editor"),
-            container_pos = $container.map(function(){
-               return {
-                   right: $(this).width() + $(this).offset().left,
-                   $el: $(this)
-               };
-            }),
-            right_container = _.max(container_pos, function(container){ return container.right; }),
-            right_space = $("body").width() - right_container.right,
-            right = right_space > this.$el.width() ? right_space - this.$el.width() :  10
-        ;
+		setPosition: function(){
+				var $container = $(".upost-data-object-post_data, .upfront-output-this_post").length ? $(".upost-data-object-post_data, .upfront-output-this_post") : this.$el.closest(".upfront-postcontent-editor"),
+						container_pos = $container.map(function(){
+							 return {
+									 right: $(this).width() + $(this).offset().left,
+									 $el: $(this)
+							 };
+						}),
+						right_container = _.max(container_pos, function(container){ return container.right; }),
+						right_space = $("body").width() - right_container.right,
+						right = right_space > this.$el.width() ? right_space - this.$el.width() :  10
+				;
 
-        if( Upfront.Util.isRTL() ){
-            this.$el.css({
-                left: right + 10,
-                right: "auto"
-            });
-        }else{
-            this.$el.css({
-                right: right + 10
-            });
-        }
+				if( Upfront.Util.isRTL() ){
+						this.$el.css({
+								left: right + 10,
+								right: "auto"
+						});
+				}else{
+						this.$el.css({
+								right: right + 10
+						});
+				}
 
-    },
+		},
 
-    toggleRegionClass: function (show) {
-        this.$el.closest('.upfront-region-container').toggleClass('upfront-region-container-editing-post', show);
-    },
+		toggleRegionClass: function (show) {
+				this.$el.closest('.upfront-region-container').toggleClass('upfront-region-container-editing-post', show);
+		},
 
-    destroy: function(){
-    	// Upfront.Events.off("upfront:element:edit:stop", this.element_stop_prop);
-    },
+		destroy: function(){
+			// Upfront.Events.off("upfront:element:edit:stop", this.element_stop_prop);
+		},
 
-    _stop_overlay: function () {
-        $(".editing-overlay").remove();
-        $(".upfront-module").removeClass("editing-content");
-        $(".upfront-module.fadedOut").fadeTo( "slow" , 1).removeClass("fadedOut");
-        $(".ueditor-display-block").removeClass("ueditor-display-block");
-    },
+		_stop_overlay: function () {
+				$(".editing-overlay").remove();
+				$(".upfront-module").removeClass("editing-content");
+				$(".upfront-module.fadedOut").fadeTo( "slow" , 1).removeClass("fadedOut");
+				$(".ueditor-display-block").removeClass("ueditor-display-block");
+		},
 
-    cancel: function(e){
-        e.preventDefault();
-        if(confirm(l10n.global.content.discard_changes.replace(/%s/, this.post.get('post_title')))){
-            //this.toggleRegionClass(false);
-            //this.destroy();
-            this.post.trigger('editor:cancel');
-            this.trigger('cancel');
-            Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
-            this.fadein_other_elements();
-            //this.remove();
-        }
-    },
-    fadein_other_elements: function(){
-        $(".editing-overlay").remove();
-        $(".upfront-module").removeClass("editing-content");
-        $(".upfront-module.fadedOut").fadeTo( "fast" , 1).removeClass("fadedOut");
-        $(".ueditor-display-block").removeClass("ueditor-display-block");
-    },
+		cancel: function(e){
+				e.preventDefault();
+				if(confirm(l10n.global.content.discard_changes.replace(/%s/, this.post.get('post_title')))){
+						//this.toggleRegionClass(false);
+						//this.destroy();
+						this.post.trigger('editor:cancel');
+						this.trigger('cancel');
+						Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
+						this.fadein_other_elements();
+						//this.remove();
+				}
+		},
+		fadein_other_elements: function(){
+				$(".editing-overlay").remove();
+				$(".upfront-module").removeClass("editing-content");
+				$(".upfront-module.fadedOut").fadeTo( "fast" , 1).removeClass("fadedOut");
+				$(".ueditor-display-block").removeClass("ueditor-display-block");
+		},
 	save_as_publish: function() {
 		// so we have decided to always show the dialog and later improve this
 		this.stopListening(Upfront.Events, 'command:proceed:save:post');
@@ -315,87 +315,87 @@ var Box = Backbone.View.extend({
 		$layout_key = 'single-post-' + this.post.get("ID");
 		Upfront.Events.trigger('command:layout:save_post_layout', $layout_key);
 	},
-    publish: function(){
-        var me = this;
-        if ( typeof _upfront_post_data.skip_publish !== 'undefined' && _upfront_post_data.skip_publish === 1 ) {
-            _upfront_post_data.skip_publish = 0;
-            return;
-        }
+		publish: function(){
+				var me = this;
+				if ( typeof _upfront_post_data.skip_publish !== 'undefined' && _upfront_post_data.skip_publish === 1 ) {
+						_upfront_post_data.skip_publish = 0;
+						return;
+				}
 
-        // resetting up post_status upon publishing as this function does not only publish
-        // but it saves post status according to selected status on sidebar
-        if ( typeof _upfront_post_data.post_status !== 'undefined' && _upfront_post_data.post_status.length > 0 ) {
-            this.post.set("post_status", _upfront_post_data.post_status);
-            _upfront_post_data.post_status = '';
-            if ( this.post.get("post_status") == 'draft' ) {
-                this.saveDraft();
-                return;
-            }
-        } else {
+				// resetting up post_status upon publishing as this function does not only publish
+				// but it saves post status according to selected status on sidebar
+				if ( typeof _upfront_post_data.post_status !== 'undefined' && _upfront_post_data.post_status.length > 0 ) {
+						this.post.set("post_status", _upfront_post_data.post_status);
+						_upfront_post_data.post_status = '';
+						if ( this.post.get("post_status") == 'draft' ) {
+								this.saveDraft();
+								return;
+						}
+				} else {
 			// assume to publish if no selected status on sidebar
 			// but also account for private
 			var visibility = (this.post || {}).getVisibility && 'private' === this.post.getVisibility()
 				? 'private'
 				: 'publish'
 			;
-            this.post.set("post_status", visibility);
-            Upfront.Events.trigger("global:status:change", visibility);
-        }
+						this.post.set("post_status", visibility);
+						Upfront.Events.trigger("global:status:change", visibility);
+				}
 
-        me.post.trigger('editor:publish');
-        me.trigger('publish');
-        Upfront.Events.trigger('upfront:element:edit:stop', 'write', me.post);
-        Upfront.Events.trigger('upfront:post:edit:stop', 'write', me.post.toJSON());
-        me.fadein_other_elements();
-        me._stop_overlay();
-    },
-    saveAsDraft: function (e) {
-        e.preventDefault();
-        this.saveDraft();
-        // saveAsDraft() was triggered from Save Draft button which does not include saving layout
-        // so needs to fire global event to save it
-        $layout_key = 'single-' + this.post.get("post_type") + '-' + this.post.get("ID");
-        Upfront.Events.trigger('command:layout:save_post_layout', $layout_key);
-    },
-    saveDraft: function(){
-        this.post.trigger('editor:draft');
-        this.trigger('draft');
-        Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post, true);// last true means 'saving draft'
-    },
+				me.post.trigger('editor:publish');
+				me.trigger('publish');
+				Upfront.Events.trigger('upfront:element:edit:stop', 'write', me.post);
+				Upfront.Events.trigger('upfront:post:edit:stop', 'write', me.post.toJSON());
+				me.fadein_other_elements();
+				me._stop_overlay();
+		},
+		saveAsDraft: function (e) {
+				e.preventDefault();
+				this.saveDraft();
+				// saveAsDraft() was triggered from Save Draft button which does not include saving layout
+				// so needs to fire global event to save it
+				$layout_key = 'single-' + this.post.get("post_type") + '-' + this.post.get("ID");
+				Upfront.Events.trigger('command:layout:save_post_layout', $layout_key);
+		},
+		saveDraft: function(){
+				this.post.trigger('editor:draft');
+				this.trigger('draft');
+				Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post, true);// last true means 'saving draft'
+		},
 
-    trash: function(){
-        if(confirm( l10n.global.content.delete_confirm.replace(/%s/, this.post.get('post_type')))){
-            this.trigger('trash');
-            Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
-        }
-    },
+		trash: function(){
+				if(confirm( l10n.global.content.delete_confirm.replace(/%s/, this.post.get('post_type')))){
+						this.trigger('trash');
+						Upfront.Events.trigger('upfront:element:edit:stop', 'write', this.post);
+				}
+		},
 
-    toggle_section: function(e){
-        e.preventDefault();
-        var $this = $(e.target),
-            $this_section = $this.closest(".ueditor-box-section"),
-            $this_wrap = $this_section.find(".ueditor-box-content-wrap")
-            ;
+		toggle_section: function(e){
+				e.preventDefault();
+				var $this = $(e.target),
+						$this_section = $this.closest(".ueditor-box-section"),
+						$this_wrap = $this_section.find(".ueditor-box-content-wrap")
+						;
 
-        $this_section.toggleClass("show");
-        $this_wrap.slideToggle();
-    }
+				$this_section.toggleClass("show");
+				$this_wrap.slideToggle();
+		}
 });
 
 var PostSectionView = Backbone.View.extend({
-    events:{
-        'click .ueditor-btn-edit': 'toggleEditor',
-        'click .ueditor-button-cancel': 'cancelEdit',
-        "click .ueditor-button-small-ok" : "update",
-        'change input[type="radio"][name="visibility"]': 'visibility_radio_change',
-        "change input[name='visibility']" : "set_visibility"
-    },
-    toggleEditor: function(e){
-        e.preventDefault();
-        var $button = $(e.target),
+		events:{
+				'click .ueditor-btn-edit': 'toggleEditor',
+				'click .ueditor-button-cancel': 'cancelEdit',
+				"click .ueditor-button-small-ok" : "update",
+				'change input[type="radio"][name="visibility"]': 'visibility_radio_change',
+				"change input[name='visibility']" : "set_visibility"
+		},
+		toggleEditor: function(e){
+				e.preventDefault();
+				var $button = $(e.target),
 			$this_togglable,
-            $this_prev_data_toggle = $button.parent().parent().find(".ueditor-previous-data-toggle")
-            ;
+						$this_prev_data_toggle = $button.parent().parent().find(".ueditor-previous-data-toggle")
+						;
 
 		if (
 			$button.hasClass('ueditor-edit-post-url')
@@ -417,88 +417,88 @@ var PostSectionView = Backbone.View.extend({
 			!$button.hasClass('ueditor-edit-post-metadesc')
 		) {
 			$(".ueditor-box-content-wrap .ueditor-togglable").parent().removeClass('upfront-settings-toggled');
-        }
+				}
 		$(".ueditor-box-content-wrap .ueditor-togglable").not($this_togglable).slideUp();
-        $(".ueditor-box-content-wrap .ueditor-btn-edit").show();
-        $(".ueditor-previous-data-toggle").not( $this_prev_data_toggle ).show();
+				$(".ueditor-box-content-wrap .ueditor-btn-edit").css({'display': ''});
+				$(".ueditor-previous-data-toggle").not( $this_prev_data_toggle ).show();
 
-        $this_prev_data_toggle.hide();
-        $button.hide();
-        $this_togglable.slideDown(100);
+				$this_prev_data_toggle.hide();
+				$button.hide();
+				$this_togglable.slideDown(100);
 		$this_togglable.parent().addClass('upfront-settings-toggled');
-    },
-    cancelEdit: function(e){
-        e.preventDefault();
-        var $button = $(e.target),
-            $this_prev_data_toggle = $button.closest(".misc-pub-section").find(".ueditor-previous-data-toggle")
-            ;
-        $this_prev_data_toggle.show();
-        $button.closest(".ueditor-togglable").slideUp(100, function(){
-            $button.closest(".ueditor-togglable").siblings(".ueditor-btn-edit").show();
+		},
+		cancelEdit: function(e){
+				e.preventDefault();
+				var $button = $(e.target),
+						$this_prev_data_toggle = $button.closest(".misc-pub-section").find(".ueditor-previous-data-toggle")
+						;
+				$this_prev_data_toggle.show();
+				$button.closest(".ueditor-togglable").slideUp(100, function(){
+						$button.closest(".ueditor-togglable").siblings(".ueditor-btn-edit").show();
 			$button.closest(".ueditor-togglable").parent().removeClass('upfront-settings-toggled');
-        });
+				});
 
-    },
-    visibility_radio_change: function(e){
-        var $this = $(e.target),
-            val = $this.val(),
-            $this_togglable = $(".ueditor-togglable-child-" + val)
-            ;
-        $this.closest(".ueditor-togglable").find(".ueditor-togglable-child").not($this_togglable).hide();
-        $this_togglable.show();
-    }
+		},
+		visibility_radio_change: function(e){
+				var $this = $(e.target),
+						val = $this.val(),
+						$this_togglable = $(".ueditor-togglable-child-" + val)
+						;
+				$this.closest(".ueditor-togglable").find(".ueditor-togglable-child").not($this_togglable).hide();
+				$this_togglable.show();
+		}
 });
 
 var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
-    termListingTpl : _.template($(editionBox_tpl).find('#upfront-term-list-tpl').html()),
+		termListingTpl : _.template($(editionBox_tpl).find('#upfront-term-list-tpl').html()),
 	termTopListingTpl : _.template($(editionBox_tpl).find('#upfront-term-mostused-tpl').html()),
-    termSingleTpl : _.template($(editionBox_tpl).find('#upfront-term-single-tpl').html()),
+		termSingleTpl : _.template($(editionBox_tpl).find('#upfront-term-single-tpl').html()),
 	termTopSingleTpl : _.template($(editionBox_tpl).find('#upfront-term-mostused-single-tpl').html()),
-    defaults: {
-        title: "Categories"
-    },
-    className: "upfront-taxonomy-hierarchical",
-    events: _.extend({},PostSectionView.prototype.events, this.events, {
-        "click #upfront-tax-add_term": "handle_new_term",
-        "click .add-new-taxonomies-btn": "toggle_add_new",
-        "keydown #upfront-add_term": "handle_enter_new_term",
-        "change .upfront-taxonomy_item": "handle_terms_update",
-        'keydown #upfront-new_term': 'handle_enter_new_term',
+		defaults: {
+				title: "Categories"
+		},
+		className: "upfront-taxonomy-hierarchical",
+		events: _.extend({},PostSectionView.prototype.events, this.events, {
+				"click #upfront-tax-add_term": "handle_new_term",
+				"click .add-new-taxonomies-btn": "toggle_add_new",
+				"keydown #upfront-add_term": "handle_enter_new_term",
+				"change .upfront-taxonomy_item": "handle_terms_update",
+				'keydown #upfront-new_term': 'handle_enter_new_term',
 		"click .upfront-taxonomy-tab": "on_click"
-    }),
-    updateTimer: false,
-    allTerms: false,
-    initialize: function(options){
-        this.tax = options.tax;
-        //this.collection.on('add remove', this.render, this);
-    },
+		}),
+		updateTimer: false,
+		allTerms: false,
+		initialize: function(options){
+				this.tax = options.tax;
+				//this.collection.on('add remove', this.render, this);
+		},
 
-    render: function() {
-        var self = this,
-            selected_term_ids = self.collection.pluck("term_id"),
-            all_terms = this.allTerms.sortBy(function(term, indx) {
-                return selected_term_ids.indexOf( term.get("term_id") ) !== -1;
-            }),
+		render: function() {
+				var self = this,
+						selected_term_ids = self.collection.pluck("term_id"),
+						all_terms = this.allTerms.sortBy(function(term, indx) {
+								return selected_term_ids.indexOf( term.get("term_id") ) !== -1;
+						}),
 			mostUsed = this.allTerms.sortBy(function(term){
 				return term.get("count");
 			})
 		;
 
-        this.$el.html(
-            this.termListingTpl(_.extend({}, this.defaults, {
-                allTerms: this.allTerms.where({'parent': 0}),
-                postTerms: this.collection,
-                termTemplate: this.termSingleTpl,
-                labels: this.collection.taxonomyObject.labels
-            }))
-        );
+				this.$el.html(
+						this.termListingTpl(_.extend({}, this.defaults, {
+								allTerms: this.allTerms.where({'parent': 0}),
+								postTerms: this.collection,
+								termTemplate: this.termSingleTpl,
+								labels: this.collection.taxonomyObject.labels
+						}))
+				);
 
 		this.$el.find('.most-used-categories').html(
 			this.termTopListingTpl(_.extend({}, this.defaults, {
-                mostUsed: mostUsed.reverse(),
+								mostUsed: mostUsed.reverse(),
 				termTemplate: this.termTopSingleTpl,
 				postTerms: this.collection
-            }))
+						}))
 		);
 
 		this.$el.find(".taxonomy-panel-content").hide().first().show();
@@ -525,7 +525,7 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
 		// Attach chosen select to template
 		this.$el.find('.upfront-taxonomy-chosen').html(this.taxonomySelect.$el);
 
-    },
+		},
 
 	on_click: function (e) {
 		var tab = "#" + $(e.target).data("target");
@@ -581,67 +581,67 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
 		return chosenField;
 	},
 
-    handle_new_term: function() {
-        var me = this,
-            $term_name = this.$(".upfront-tax-new_term"),
-            term_name = $term_name.val(),
-            parentId, term
-            ;
+		handle_new_term: function() {
+				var me = this,
+						$term_name = this.$(".upfront-tax-new_term"),
+						term_name = $term_name.val(),
+						parentId, term
+						;
 
-        if(!term_name)
-            return false;
+				if(!term_name)
+						return false;
 
-        if ($("#upfront-taxonomy-parents").length)
-            parentId = parseInt($("#upfront-taxonomy-parents").val(), 10);
+				if ($("#upfront-taxonomy-parents").length)
+						parentId = parseInt($("#upfront-taxonomy-parents").val(), 10);
 
-        term = new Upfront.Models.Term({
-            taxonomy: this.collection.taxonomy,
-            name: term_name,
-            parent: parentId
-        });
+				term = new Upfront.Models.Term({
+						taxonomy: this.collection.taxonomy,
+						name: term_name,
+						parent: parentId
+				});
 
-        term.save().done(function(response){
-            me.allTerms.add(term);
-            me.collection.add(term);
+				term.save().done(function(response){
+						me.allTerms.add(term);
+						me.collection.add(term);
 			setTimeout( function () {
 				me.update();
 				// me.render(); // avoid double render, update() already call render()
 			}, 100 );
-        });
+				});
 
 		// Hide new category after added
 		$term_name.val("");
 		this.$el.find(".add-new-taxonomies-btn").removeClass('upfront-add-active');
 		this.$el.find(".ueditor-togglable-child").toggle();
-        this.$("#upfront-taxonomy-list").scrollTop(0);
-    },
+				this.$("#upfront-taxonomy-list").scrollTop(0);
+		},
 
-    handle_terms_update: function(e){
-        var me = this,
-            $target = $(e.target),
-            termId = $target.val()
-            ;
-        if(!$target.is(':checked')){
-            this.collection.remove(this.allTerms.get(termId));
-        } else {
-            this.collection.add(this.allTerms.get(termId));
-        }
-        this.collection.save();
-        Upfront.Events.trigger("editor:post:tax:updated", this.collection, this.tax);
+		handle_terms_update: function(e){
+				var me = this,
+						$target = $(e.target),
+						termId = $target.val()
+						;
+				if(!$target.is(':checked')){
+						this.collection.remove(this.allTerms.get(termId));
+				} else {
+						this.collection.add(this.allTerms.get(termId));
+				}
+				this.collection.save();
+				Upfront.Events.trigger("editor:post:tax:updated", this.collection, this.tax);
 
-    },
+		},
 
-    handle_enter_new_term: function (e) {
-        if(e.which == 13){
-            this.handle_new_term(e);
-        }
-    },
-    update: function(e){
-        this.collection.save();
-        Upfront.Events.trigger("editor:post:tax:updated", this.collection, this.tax);
-        this.render();
-    },
-    toggle_add_new: function(e){
+		handle_enter_new_term: function (e) {
+				if(e.which == 13){
+						this.handle_new_term(e);
+				}
+		},
+		update: function(e){
+				this.collection.save();
+				Upfront.Events.trigger("editor:post:tax:updated", this.collection, this.tax);
+				this.render();
+		},
+		toggle_add_new: function(e){
 		e.preventDefault();
 		$target = $(e.currentTarget);
 
@@ -650,47 +650,47 @@ var ContentEditorTaxonomy_Hierarchical = PostSectionView.extend({
 		} else {
 			$target.addClass('upfront-add-active');
 		}
-        this.$el.find(".ueditor-togglable-child").toggle();
-    }
+				this.$el.find(".ueditor-togglable-child").toggle();
+		}
 });
 
 var ContentEditorTaxonomy_Flat = PostSectionView.extend({
-    "className": "upfront-taxonomy-flat",
-    termListTpl: _.template($(editionBox_tpl).find('#upfront-flat-term-list-tpl').html()),
-    termSingleTpl: _.template($(editionBox_tpl).find('#upfront-term-flat-single-tpl').html()),
-    changed: false,
-    updateTimer: false,
-    events: _.extend({}, PostSectionView.prototype.events, {
-        "click .ueditor-button-small-flat-tax-add": "handle_new_term",
-        'click .upfront-taxonomy_item-flat': 'handle_term_click',
-        'keydown #upfront-flat-tax-add_term': 'handle_enter_new_term',
-        'keydown .upfront-flat-tax-new_term': 'handle_enter_new_term',
-        'click .upfront-taxonomy-list-choose-from-prev': 'toggle_prev_used_tax'
-    }),
-    initialize: function(options){
-        this.collection.on('add remove', this.update, this);
-        this.tax = options.tax;
-    },
-    render: function () {
-        var me = this,
-            currentTerms = new Upfront.Collections.TermList(),
-            otherTerms = new Upfront.Collections.TermList()
-            ;
+		"className": "upfront-taxonomy-flat",
+		termListTpl: _.template($(editionBox_tpl).find('#upfront-flat-term-list-tpl').html()),
+		termSingleTpl: _.template($(editionBox_tpl).find('#upfront-term-flat-single-tpl').html()),
+		changed: false,
+		updateTimer: false,
+		events: _.extend({}, PostSectionView.prototype.events, {
+				"click .ueditor-button-small-flat-tax-add": "handle_new_term",
+				'click .upfront-taxonomy_item-flat': 'handle_term_click',
+				'keydown #upfront-flat-tax-add_term': 'handle_enter_new_term',
+				'keydown .upfront-flat-tax-new_term': 'handle_enter_new_term',
+				'click .upfront-taxonomy-list-choose-from-prev': 'toggle_prev_used_tax'
+		}),
+		initialize: function(options){
+				this.collection.on('add remove', this.update, this);
+				this.tax = options.tax;
+		},
+		render: function () {
+				var me = this,
+						currentTerms = new Upfront.Collections.TermList(),
+						otherTerms = new Upfront.Collections.TermList()
+						;
 
-        this.allTerms.each(function (term, idx) {
-            term.children = [];
-            if(me.collection.get(term.get('term_id')))
-                currentTerms.add(term);
-            else
-                otherTerms.add(term);
-        });
+				this.allTerms.each(function (term, idx) {
+						term.children = [];
+						if(me.collection.get(term.get('term_id')))
+								currentTerms.add(term);
+						else
+								otherTerms.add(term);
+				});
 
-        this.$el.html(this.termListTpl({
-            currentTerms: currentTerms,
-            otherTerms: otherTerms,
-            termTemplate: this.termSingleTpl,
-            labels: this.collection.taxonomyObject.labels
-        }));
+				this.$el.html(this.termListTpl({
+						currentTerms: currentTerms,
+						otherTerms: otherTerms,
+						termTemplate: this.termSingleTpl,
+						labels: this.collection.taxonomyObject.labels
+				}));
 
 		// Get chosen select
 		var selectAddTaxonomy = this.chosen_field();
@@ -713,7 +713,7 @@ var ContentEditorTaxonomy_Flat = PostSectionView.extend({
 
 		// Attach chosen select to template
 		this.$el.find('.upfront-taxonomy-chosen').html(this.taxonomySelect.$el);
-    },
+		},
 
 	normalize_tax_object: function(otherTerms) {
 		var termsChosen = { label: '', value: ''};
@@ -759,82 +759,82 @@ var ContentEditorTaxonomy_Flat = PostSectionView.extend({
 		return chosenField;
 	},
 
-    handle_term_click: function(e){
-        var me = this,
-            $target = $(e.currentTarget),
-            termId = $target.attr('data-term_id');
+		handle_term_click: function(e){
+				var me = this,
+						$target = $(e.currentTarget),
+						termId = $target.attr('data-term_id');
 
-        if($target.parent().attr('id') == 'upfront-taxonomy-list-current')
-            this.collection.remove(termId);
-        else
-            this.collection.add(this.allTerms.get(termId));
-    },
+				if($target.parent().attr('id') == 'upfront-taxonomy-list-current')
+						this.collection.remove(termId);
+				else
+						this.collection.add(this.allTerms.get(termId));
+		},
 
 	handle_choose_term: function(termId) {
 		this.collection.add(this.allTerms.get(termId));
 	},
 
-    handle_new_term: function (term_name) {
-        var me = this,
-            term
-            ;
+		handle_new_term: function (term_name) {
+				var me = this,
+						term
+						;
 
-        if(! term_name)
-            return false;
+				if(! term_name)
+						return false;
 
-        term = new Upfront.Models.Term({
-            taxonomy: this.collection.taxonomy,
-            name: term_name
-        });
+				term = new Upfront.Models.Term({
+						taxonomy: this.collection.taxonomy,
+						name: term_name
+				});
 
-        term.save().done(function(response){
-            me.allTerms.add(term);
-            me.collection.add(term).save();
-        });
-    },
+				term.save().done(function(response){
+						me.allTerms.add(term);
+						me.collection.add(term).save();
+				});
+		},
 
-    handle_enter_new_term: function (e) {
-        if(e.which == 13){
-            this.handle_new_term(e);
-        }
-    },
-    toggle_prev_used_tax: function(e){
-        e.preventDefault();
-        this.$(".ueditor-togglable-child").slideToggle();
-    },
-    update: function(e){
+		handle_enter_new_term: function (e) {
+				if(e.which == 13){
+						this.handle_new_term(e);
+				}
+		},
+		toggle_prev_used_tax: function(e){
+				e.preventDefault();
+				this.$(".ueditor-togglable-child").slideToggle();
+		},
+		update: function(e){
 		var me = this;
-        this.collection.save();
-        Upfront.Events.trigger("editor:post:tax:updated", this.collection, this.tax);
+				this.collection.save();
+				Upfront.Events.trigger("editor:post:tax:updated", this.collection, this.tax);
 		setTimeout( function () {
 			me.render();
 		}, 50);
-    }
+		}
 });
 
 
 var PageTemplateEditor = PostSectionView.extend({
-    "className": "upfront-page-template-editor",
-    pageTemplateListTpl: _.template($(editionBox_tpl).find('#upfront-page-template-list-tpl').html()),
-    changed: false,
-    updateTimer: false,
-    allPageTemplates: false,
-    events: _.extend({}, PostSectionView.prototype.events, {
+		"className": "upfront-page-template-editor",
+		pageTemplateListTpl: _.template($(editionBox_tpl).find('#upfront-page-template-list-tpl').html()),
+		changed: false,
+		updateTimer: false,
+		allPageTemplates: false,
+		events: _.extend({}, PostSectionView.prototype.events, {
 		"click .save-post-template": "handle_save_as",
 		"click .apply-post-template": "show_apply_template_modal",
 		"click .update-post-template": "update_template",
 		"click .reset-post-template": "reset_changes",
 		"click .delete-post-template": "show_delete_template_modal"
-    }),
-    initialize: function(options){
+		}),
+		initialize: function(options){
 			var me = this;
 			this.label = options.label;
 
 			this.off('initiate:no:layout:change', this.initiate_no_layout_change);
 			this.on('initiate:no:layout:change', this.initiate_no_layout_change);
-    },
-    render: function () {
-      var me = this;
+		},
+		render: function () {
+			var me = this;
 
 			this.$el.html(this.pageTemplateListTpl({
 					label: me.label
@@ -860,7 +860,7 @@ var PageTemplateEditor = PostSectionView.extend({
 
 			this.listenTo(Upfront.Events, 'entity:module:update', this.on_layout_change);
 			this.listenTo(Upfront.Events, 'entity:layout:change', this.on_layout_change);
-    },
+		},
 
 		after_append: function () {
 			var me = this;
@@ -1376,43 +1376,43 @@ var SaveLayoutFields = Backbone.View.extend({
 });
 
 var PostUrlEditor = PostSectionView.extend({
-    hasDefinedSlug : false,
-    className: "upfront-slug_editor-url",
-    tpl : _.template($(editionBox_tpl).find("#post-url-editor").html()),
-    initialize: function(opts){
-        this.post = opts.post;
+		hasDefinedSlug : false,
+		className: "upfront-slug_editor-url",
+		tpl : _.template($(editionBox_tpl).find("#post-url-editor").html()),
+		initialize: function(opts){
+				this.post = opts.post;
 		this.listenTo(Upfront.Events, 'content:change:title', this.changeTitle);
-        this.hasDefinedSlug = _.isEmpty( this.post.get("post_name") ) ? false : true;
+				this.hasDefinedSlug = _.isEmpty( this.post.get("post_name") ) ? false : true;
 
 		this.metadesc = new Post_Box_Metadesc({model: this.post});
 
 		this.render();
-    },
+		},
 
-    render: function(){
-        var self = this,
-            base = this.post.get("guid"),
+		render: function(){
+				var self = this,
+						base = this.post.get("guid"),
 			postTitle = this.post.get("post_title")
 		;
 
-        base = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
+				base = base ? base.replace(/\?.*$/, '') : window.location.origin + '/';
 
-        this.$el.html(this.tpl({
-            rootUrl: base,
+				this.$el.html(this.tpl({
+						rootUrl: base,
 			postTitle: postTitle,
-            slug: self.post.get('post_name'),
-            url_label : "post" === self.post.get("post_type") ? l10n.global.content.post_url : l10n.global.content.page_url
+						slug: self.post.get('post_name'),
+						url_label : "post" === self.post.get("post_type") ? l10n.global.content.post_url : l10n.global.content.page_url
 		})).append(this.metadesc.render().$el);
-    },
+		},
 	changeTitle: function(title) {
 		this.post.set( "post_title", title );
 		this.render();
 	},
-    update: function(e){
-        e.preventDefault();
-        var val = this.$(".ueditor-post-url-text").val();
+		update: function(e){
+				e.preventDefault();
+				var val = this.$(".ueditor-post-url-text").val();
 		var title = this.$(".ueditor-post-title-text").val();
-        if( val.length > 1 ){
+				if( val.length > 1 ){
 			var slug = val.toLowerCase().replace(/ /g, '-'),
 			rootUrl = this.post.get("guid")
 			;
@@ -1420,12 +1420,12 @@ var PostUrlEditor = PostSectionView.extend({
 			// Update Preview button href
 			$('.ueditor-action-preview').attr("href", rootUrl + "?preview=true");
 
-            // added flag to be used on upfront-content.js
-            _upfront_post_data.post_name_updated = true;
+						// added flag to be used on upfront-content.js
+						_upfront_post_data.post_name_updated = true;
 
-            this.post.set( "post_name", slug );
-            this.hasDefinedSlug = true;
-        }
+						this.post.set( "post_name", slug );
+						this.hasDefinedSlug = true;
+				}
 
 		if( title.length > 1 ){
 			this.post.set( "post_title", title );
@@ -1435,179 +1435,179 @@ var PostUrlEditor = PostSectionView.extend({
 		if( val.length > 1 || title.length > 1 ){
 			this.render();
 		}
-    }
+		}
 });
 
 var PostStatusView = PostSectionView.extend({
-    statusOptions: {
-        future: {value:'future', name: l10n.global.content.scheduled},
-        publish: {value: 'publish', name: l10n.global.content.published},
-        pending: {value: 'pending', name: l10n.global.content.pending_review},
-        draft: {value: 'draft', name: l10n.global.content.draft},
-        'private': {value: 'private', name: l10n.global.content.private_post},
-        'auto-draft': {value: 'auto-draft', name: l10n.global.content.new_post},
-        'trash': {value: 'trash', name: l10n.global.content.deleted_post}
-    },
-    initialStatus: false,
+		statusOptions: {
+				future: {value:'future', name: l10n.global.content.scheduled},
+				publish: {value: 'publish', name: l10n.global.content.published},
+				pending: {value: 'pending', name: l10n.global.content.pending_review},
+				draft: {value: 'draft', name: l10n.global.content.draft},
+				'private': {value: 'private', name: l10n.global.content.private_post},
+				'auto-draft': {value: 'auto-draft', name: l10n.global.content.new_post},
+				'trash': {value: 'trash', name: l10n.global.content.deleted_post}
+		},
+		initialStatus: false,
 	className: 'upfront-toggleable-content',
-    tpl: _.template($(editionBox_tpl).find('#post-status-tpl').html()),
-    initialize: function(options){
-        this.post = options.post;
-        this.render();
-    },
-    render: function(){
-        this.initialStatus = this.currentStatus = this.post.get("post_status");
+		tpl: _.template($(editionBox_tpl).find('#post-status-tpl').html()),
+		initialize: function(options){
+				this.post = options.post;
+				this.render();
+		},
+		render: function(){
+				this.initialStatus = this.currentStatus = this.post.get("post_status");
 		this.currentTime = this.post.get("server_time");
-        this.status = this.getStatus();
-        this.options = this.getStatusOptions();
-        this.$el.html( this.tpl(_.extend({}, this.post, {status: this.status}, {options: this.options} )) );
-        return this;
-    },
-    getStatusOptions: function(postata){
-        var ops = [],
-            status = this.initialStatus
-            ;
+				this.status = this.getStatus();
+				this.options = this.getStatusOptions();
+				this.$el.html( this.tpl(_.extend({}, this.post, {status: this.status}, {options: this.options} )) );
+				return this;
+		},
+		getStatusOptions: function(postata){
+				var ops = [],
+						status = this.initialStatus
+						;
 
-        if(status == 'publish'){
-            ops.push(this.statusOptions.publish);
-        }
-        else if(status == 'future'){
-            ops.push(this.statusOptions.future);
-        }
-        ops.push(this.statusOptions.pending);
-        ops.push(this.statusOptions.draft);
+				if(status == 'publish'){
+						ops.push(this.statusOptions.publish);
+				}
+				else if(status == 'future'){
+						ops.push(this.statusOptions.future);
+				}
+				ops.push(this.statusOptions.pending);
+				ops.push(this.statusOptions.draft);
 
-        if(status == 'private'){
-            ops = [ this.statusOptions['private'] ];
-        }
+				if(status == 'private'){
+						ops = [ this.statusOptions['private'] ];
+				}
 
-        return ops;
-    },
-    getStatus: function(){
-        var current = this.post.get("post_status");
-        if(['auto-draft', 'draft', 'pending'].indexOf(current) != -1)
-            return this.statusOptions[current];
-        return this.statusOptions[this.initialStatus];
-    },
-    update: function(e){
-        e.preventDefault();
+				return ops;
+		},
+		getStatus: function(){
+				var current = this.post.get("post_status");
+				if(['auto-draft', 'draft', 'pending'].indexOf(current) != -1)
+						return this.statusOptions[current];
+				return this.statusOptions[this.initialStatus];
+		},
+		update: function(e){
+				e.preventDefault();
 
 		var $button = $(e.target);
 		$button.closest(".ueditor-togglable").slideUp(100, function(){
-            $button.closest(".ueditor-togglable").siblings(".ueditor-btn-edit").show();
-        });
+						$button.closest(".ueditor-togglable").siblings(".editor-btn-edit").show();
+				});
 
 		$(".ueditor-box-content-wrap .ueditor-togglable").parent().removeClass('upfront-settings-toggled');
 
 		$button.closest(".ueditor-togglable").parent().removeClass('upfront-settings-toggled');
 
-        var status = this.$("select").val();
-        if(!_.isEmpty( status ) && status !== this.initialStatus ){
-            _upfront_post_data.post_status = status;
-            this.post.set("post_status", status);
-            this.trigger("status:change", status);
-            this.render();
-        }
-    }
+				var status = this.$("select").val();
+				if(!_.isEmpty( status ) && status !== this.initialStatus ){
+						_upfront_post_data.post_status = status;
+						this.post.set("post_status", status);
+						this.trigger("status:change", status);
+						this.render();
+				}
+		}
 
 });
 
 var PostVisibilityView = PostSectionView.extend({
-    tpl: _.template($(editionBox_tpl).find('#post-visibility-tpl').html()),
-    post_password: "",
-    postVisibility: false,
+		tpl: _.template($(editionBox_tpl).find('#post-visibility-tpl').html()),
+		post_password: "",
+		postVisibility: false,
 	className: 'upfront-toggleable-content',
-    visibilityOptions: {
-        'public': {value: 'public', name:l10n.global.content.public_post},
-        'sticky': {value: 'sticky', name:l10n.global.content.sticky},
-        'password': {value: 'password', name: l10n.global.content.protected_post},
-        'private': {value: 'private', name: l10n.global.content.is_private}
-    },
-    initialize: function(opts){
-        this.post = opts.post;
-        this.render();
-    },
-    render: function(){
-        this.postVisibility = !this.postVisibility ? this.post.getVisibility() : this.postVisibility;
-        this.status = this.visibilityOptions[ this.postVisibility ];
-        if(this.postVisibility == 'password')
-            this.post_password = this.post.get('post_password');
+		visibilityOptions: {
+				'public': {value: 'public', name:l10n.global.content.public_post},
+				'sticky': {value: 'sticky', name:l10n.global.content.sticky},
+				'password': {value: 'password', name: l10n.global.content.protected_post},
+				'private': {value: 'private', name: l10n.global.content.is_private}
+		},
+		initialize: function(opts){
+				this.post = opts.post;
+				this.render();
+		},
+		render: function(){
+				this.postVisibility = !this.postVisibility ? this.post.getVisibility() : this.postVisibility;
+				this.status = this.visibilityOptions[ this.postVisibility ];
+				if(this.postVisibility == 'password')
+						this.post_password = this.post.get('post_password');
 
-        this.$el.html( this.tpl(_.extend({}, this.post, {status : this.status, post_password: this.post_password} ) ) );
-        return this;
-    },
-    getVisibilityOptions: function(){
-        var now = this.post.getVisibility(),
-            ops = this.visibilityOptions
-            ;
-        if(now == 'password')
-            return [
-                {value: 'password', name: l10n.global.content.edit_pwd},
-                ops['public'],
-                ops.sticky,
-                ops['private']
-            ]
-                ;
-        return _.values(ops);
-    },
-    set_visibility: function(e){
-        var visibility_status = $(e.target).val();
-        this.postVisibility = visibility_status;
-    },
-    update: function(){
-        var $pass = this.$(".ueditor-post-pass"),
-            pass = $pass.val();
-        this.postVisibility = this.$("input[name='sticky']").is(":checked") ? this.postVisibility = "sticky" : this.postVisibility;
+				this.$el.html( this.tpl(_.extend({}, this.post, {status : this.status, post_password: this.post_password} ) ) );
+				return this;
+		},
+		getVisibilityOptions: function(){
+				var now = this.post.getVisibility(),
+						ops = this.visibilityOptions
+						;
+				if(now == 'password')
+						return [
+								{value: 'password', name: l10n.global.content.edit_pwd},
+								ops['public'],
+								ops.sticky,
+								ops['private']
+						]
+								;
+				return _.values(ops);
+		},
+		set_visibility: function(e){
+				var visibility_status = $(e.target).val();
+				this.postVisibility = visibility_status;
+		},
+		update: function(){
+				var $pass = this.$(".ueditor-post-pass"),
+						pass = $pass.val();
+				this.postVisibility = this.$("input[name='sticky']").is(":checked") ? this.postVisibility = "sticky" : this.postVisibility;
 
-        if( !this.visibilityOptions.hasOwnProperty( this.postVisibility ) ) return;
+				if( !this.visibilityOptions.hasOwnProperty( this.postVisibility ) ) return;
 
-        switch ( this.postVisibility ){
-            case "password":
-                if( pass !== ""  ){
-                    $pass.css("border", "1px solid #a3bfd9");
-                    this.post.setVisibility(this.postVisibility);
-                    this.post.set("post_password", pass);
-                    this.trigger("visibility:change", "password", pass);
-                }else{
-                    $pass.css("border", "1px solid red");
-                    return;
-                }
-                break;
-            default:
-                this.post.setVisibility(this.postVisibility);
+				switch ( this.postVisibility ){
+						case "password":
+								if( pass !== ""  ){
+										$pass.css("border", "1px solid #a3bfd9");
+										this.post.setVisibility(this.postVisibility);
+										this.post.set("post_password", pass);
+										this.trigger("visibility:change", "password", pass);
+								}else{
+										$pass.css("border", "1px solid red");
+										return;
+								}
+								break;
+						default:
+								this.post.setVisibility(this.postVisibility);
 
-                this.trigger("visibility:change", this.postVisibility, "");
-                break;
-        }
+								this.trigger("visibility:change", this.postVisibility, "");
+								break;
+				}
 
 		$(".ueditor-box-content-wrap .ueditor-togglable").parent().removeClass('upfront-settings-toggled');
 
-        this.render();
-    }
+				this.render();
+		}
 });
 
 var PostScheduleView = PostSectionView.extend({
-    tpl: _.template($(editionBox_tpl).find('#post-schedule-tpl').html()),
+		tpl: _.template($(editionBox_tpl).find('#post-schedule-tpl').html()),
 	className: 'upfront-toggleable-content',
-    initialize: function(options){
-        this.post = options.post;
-        this.render();
-    },
-    render: function(){
+		initialize: function(options){
+				this.post = options.post;
+				this.render();
+		},
+		render: function(){
 		this.initialDate = this.post.get("post_date");
 
-        var date = {},
+				var date = {},
 			objDate = new Date(this.initialDate),
 			locale = "en-us",
 			month = objDate.toLocaleString(locale, { month: "short" });
 			me = this;
 
 		date.date = month + " " +this.initialDate.getDate() + ", " + this.initialDate.getFullYear();
-        date.currentHour = this.initialDate.getHours();
-        date.currentMinute = this.initialDate.getMinutes();
-        this.schedule = this.getSchedule();
+				date.currentHour = this.initialDate.getHours();
+				date.currentMinute = this.initialDate.getMinutes();
+				this.schedule = this.getSchedule();
 		Upfront.Events.trigger('upfront:save:label', this.getButtonText());
-        this.$el.html( this.tpl(_.extend( {}, this.post, date, {schedule: this.schedule }) ) );
+				this.$el.html( this.tpl(_.extend( {}, this.post, date, {schedule: this.schedule }) ) );
 
 		this.$('#upfront-schedule-datepicker').datepicker({
 			dateFormat: "M d, yy"
@@ -1615,8 +1615,8 @@ var PostScheduleView = PostSectionView.extend({
 
 		this.validateDate();
 
-        return this;
-    },
+				return this;
+		},
 	validateDate: function () {
 		this.$('.schedule-hours, .schedule-minutes').change(function() {
 			var max = parseInt($(this).attr('max'), 10);
@@ -1632,59 +1632,59 @@ var PostScheduleView = PostSectionView.extend({
 		});
 	},
 	getButtonText: function(){
-        var initial = this.initialStatus,
-            date = this.post.get('post_date'),
-            now = new Date()
-            ;
+				var initial = this.initialStatus,
+						date = this.post.get('post_date'),
+						now = new Date()
+						;
 
-        date = date ? date.getTime() : 0;
-        now = now.getTime();
+				date = date ? date.getTime() : 0;
+				now = now.getTime();
 
-        // Check the initial status value and deal with it appropriately
-        if (!initial && this.post && this.post.get) {
-            initial = this.post.get("post_status");
-        }
+				// Check the initial status value and deal with it appropriately
+				if (!initial && this.post && this.post.get) {
+						initial = this.post.get("post_status");
+				}
 
-        if(now < date) {
-            if(initial == 'future')
-                return l10n.global.content.update;
-            return l10n.global.content.schedule;
-        }
-        else {
-            if(initial == 'publish')
-                return l10n.global.content.update;
-            return l10n.global.content.publish;
-        }
-    },
-    getSchedule: function(){
-        var now = new Date(),
-            date = this.initialDate,
+				if(now < date) {
+						if(initial == 'future')
+								return l10n.global.content.update;
+						return l10n.global.content.schedule;
+				}
+				else {
+						if(initial == 'publish')
+								return l10n.global.content.update;
+						return l10n.global.content.publish;
+				}
+		},
+		getSchedule: function(){
+				var now = new Date(),
+						date = this.initialDate,
 			current = this.post.get('server_time'),
 			status = this.post.get('post_status'),
-            formatDate = Upfront.Util.format_date
-            ;
+						formatDate = Upfront.Util.format_date
+						;
 
-        if((!date && !this.initialDate) || (formatDate(date, true) === formatDate(current, true) && status !== "publish"))
-            return {
-                key: l10n.global.content.publish,
-                text: l10n.global.content.immediately
-            };
+				if((!date && !this.initialDate) || (formatDate(date, true) === formatDate(current, true) && status !== "publish"))
+						return {
+								key: l10n.global.content.publish,
+								text: l10n.global.content.immediately
+						};
 
-        if(date.getTime() == this.initialDate){
-            if(date.getTime() < now.getTime())
-                return {
-                    key: l10n.global.content.published,
-                    text: formatDate(date, true)
-                };
-            else
-                return {
-                    key: l10n.global.content.scheduled,
-                    text: formatDate(date, true)
-                };
-        }
+				if(date.getTime() == this.initialDate){
+						if(date.getTime() < now.getTime())
+								return {
+										key: l10n.global.content.published,
+										text: formatDate(date, true)
+								};
+						else
+								return {
+										key: l10n.global.content.scheduled,
+										text: formatDate(date, true)
+								};
+				}
 
-        if(date.getTime() < now.getTime()) {
-            if(status !== "publish") {
+				if(date.getTime() < now.getTime()) {
+						if(status !== "publish") {
 				return {
 					key: l10n.global.content.publish_on,
 					text: formatDate(date, true)
@@ -1696,40 +1696,40 @@ var PostScheduleView = PostSectionView.extend({
 				};
 			}
 		} else {
-            return {
-                key: l10n.global.content.scheduled_for,
-                text: formatDate(date, true)
-            };
+						return {
+								key: l10n.global.content.scheduled_for,
+								text: formatDate(date, true)
+						};
 		}
-    },
-    update: function(){
+		},
+		update: function(){
 
 		var dateField = this.$('#upfront-schedule-datepicker').datepicker( 'getDate' ),
 			date = new Date(),
-            year = dateField.getFullYear(),
-            month = dateField.getMonth(),
-            day = dateField.getDate(),
-            hour = this.$("input[name='hh']").val(),
-            minute = this.$("input[name='mn']").val()
-            ;
-        date.setFullYear(year);
-        date.setMonth(month);
-        date.setDate(day);
-        date.setHours(hour);
-        date.setMinutes(minute);
+						year = dateField.getFullYear(),
+						month = dateField.getMonth(),
+						day = dateField.getDate(),
+						hour = this.$("input[name='hh']").val(),
+						minute = this.$("input[name='mn']").val()
+						;
+				date.setFullYear(year);
+				date.setMonth(month);
+				date.setDate(day);
+				date.setHours(hour);
+				date.setMinutes(minute);
 
 		$(".ueditor-box-content-wrap .ueditor-togglable").parent().removeClass('upfront-settings-toggled');
 
-        this.post.set("post_date", date);
-        this.trigger('date:updated', date);
-        this.render();
-    }
+				this.post.set("post_date", date);
+				this.trigger('date:updated', date);
+				this.render();
+		}
 
 });
 
 
 return {
-    Box: Box,
+		Box: Box,
 	ContentEditorTaxonomy_Hierarchical: ContentEditorTaxonomy_Hierarchical,
 	ContentEditorTaxonomy_Flat: ContentEditorTaxonomy_Flat,
 	PageTemplateEditor: PageTemplateEditor
