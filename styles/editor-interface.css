@@ -7200,6 +7200,12 @@ span.upfront-settings-item-title:after {
   z-index: 1;
   margin-left: 10px; }
 
+.upfront-field-title {
+  line-height: 1; }
+
+.upfront-field-title span {
+  margin-left: -5px; }
+
 .general_settings_item .upfront-settings-item-title {
   top: 5px;
   line-height: 25px;
