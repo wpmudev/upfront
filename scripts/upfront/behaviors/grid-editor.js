@@ -1547,13 +1547,17 @@ var GridEditor = {
 						el: ed.get_el($(this))
 					});
 				});
-				if ( has_group ) {
-					_.each(child_els, function (child) {
-						if ( !child.is_group ) return;
-						var child_min_col = ed.get_group_min_col(child.view);
-						min_col = child_min_col > min_col ? child_min_col : min_col;
-					});
-				}
+				_.each(child_els, function (child) {
+					var child_min_col = false;
+					if ( child.is_group ) {
+						child_min_col = ed.get_group_min_col(child.view);
+					}
+					else {
+						child_min_col = child.view.get_resize_min_col();
+					}
+					if ( !child_min_col ) return;
+					min_col = child_min_col > min_col ? child_min_col : min_col;
+				});
 
 				$resize = $('<div class="upfront-resize" style="height:'+me.height+'px;"></div>');
 				$resize.css({
@@ -1591,13 +1595,17 @@ var GridEditor = {
 							el: ed.get_el($(this))
 						});
 					});
-					if ( also_has_group ) {
-						_.each(also_child_els, function (child) {
-							if ( !child.is_group ) return;
-							var child_min_col = ed.get_group_min_col(child.view);
-							also_min_col = child_min_col > also_min_col ? child_min_col : also_min_col;
-						});
-					}
+					_.each(also_child_els, function (child) {
+						var child_min_col = false;
+						if ( child.is_group ) {
+							child_min_col = ed.get_group_min_col(child.view);
+						}
+						else {
+							child_min_col = child.view.get_resize_min_col();
+						}
+						if ( !child_min_col ) return;
+						also_min_col = child_min_col > also_min_col ? child_min_col : also_min_col;
+					});
 
 					max_col = me.col + also_resize.col;
 					if ( !is_spacer && !also_is_spacer ) {
@@ -1913,8 +1921,24 @@ var GridEditor = {
 		_.each(lines, function (line) {
 			var line_min_col = 0;
 			_.each(line.wrappers, function (w) {
-				if (w.spacer ) line_min_col += 1; // Spacer minimum column is 1
-				else line_min_col += ed.min_col; // Element minimum column depend to ed.min_col
+				var w_min_col = ed.min_col;
+				if (w.spacer ) {
+					// Spacer minimum column is 1
+					line_min_col += 1;
+				}
+				else {
+					// Otherwise, try find each element min column, if nothing, use ed.min_col
+					_.each(w.modules, function(m){
+						var view = Upfront.data.module_views[m.model.cid],
+							m_min_col
+						;
+						if ( !view ) return;
+						m_min_col = view.get_resize_min_col();
+						if ( !m_min_col ) return;
+						w_min_col = m_min_col > w_min_col ? m_min_col : w_min_col;
+					});
+					line_min_col += w_min_col;
+				}
 			});
 			if ( line_min_col > min_col ) min_col = line_min_col;
 		});

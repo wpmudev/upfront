@@ -154,6 +154,21 @@
             }
         });
 
+		var Field_Title = Field.extend({
+            className: 'upfront-field-wrap upfront-field-wrap-title',
+			render: function () {
+				this.$el.html('');
+
+				if ( this.label ) {
+					this.$el.append('<div class="upfront-field-title"><span>' + this.label + '</span></div>');
+				}
+			},
+
+            get_field_html: function () {
+                return '';
+            }
+        });
+
         /**
          * Start in initially not editable state.
          * Used for things such as permalink fields in "New Page" dialog.
@@ -1671,6 +1686,7 @@
         return {
             "Field": Field,
             "Text": Field_Text,
+			"Title": Field_Title,
             "Button": Field_Button,
             "Email": Field_Email,
             "Textarea": Field_Textarea,

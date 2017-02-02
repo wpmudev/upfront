@@ -146,20 +146,21 @@ var CustomSelectorField =  Upfront.Views.Editor.Field.Hidden.extend({
 
 				var title = value.permalink;
 
-				if(typeof value.post_title !== "undefined")
+				if (typeof value.post_title !== "undefined") {
 					title = value.post_title;
-				
+				}
+
 				if (!is_single) {
 					field += '<li><span class="post-count">' + postCount + '</span><span class="permalink">' + title + '</span><a href="#rmv" data-id="' + value.id + '"><i>&times;</i></a></li>';
 				} else {
 					field += '<li><span class="permalink">' + title + '</span><a href="#rmv" data-id="' + value.id + '"><i>&times;</i></a></li>';
 				}
-				
+
 				postCount++;
 			});
 			field += '</ul>';
 		}
-		
+
 		field += '<i class="upfront-posts-custom-add_post"></i> <a href="#add" class="upfront-add-posts">' + string + '</a>';
 
 		return '<div class="custom_posts">' + field + '</div>';
@@ -238,7 +239,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 		$('.upfront-chosen-select', this.$el).chosen({
 			width: '230px'
 		});
-		
+
 		var display_type = this.model.get_property_value_by_name("display_type");
 		this.$el.addClass('upfront-display-type-' + display_type);
 	},
@@ -282,8 +283,10 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 		});
 
 		this.fields = _([]);
-		
-		this.populate_limit_items();
+
+		if ("list" === display_type) {
+			this.populate_limit_items();
+		}
 
 		this.fields.push(new Upfront.Views.Editor.Field.Select({
 			model: this.model,
@@ -297,6 +300,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			}
 		}));
 
+		// Even individual posts allow for offset
 		this.fields.push(new Upfront.Views.Editor.Field.Number({
 			model: this.model,
 			className: 'upfront-offset-number',
@@ -328,7 +332,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			compact: true,
 			property: "term",
 			values: [{label:l10n.select_tax, value:"", disabled: true}],
-			change: this._set_term_value 
+			change: this._set_term_value
 		}));
 		this.populate_shared_tax_generic_items();
 		if ("list" === display_type) {
@@ -339,7 +343,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			this.toggle_offset_based_on_pagination_value(this.model.get_property_value_by_name("pagination"));
 		}, this);
 	},
-	
+
 	populate_limit_items: function () {
 		var me = this,
 			display_type = this.model.get_property_value_by_name("display_type");
@@ -479,14 +483,19 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			default_value: this.model.get_property_value_by_name('term'),
 			change: this._set_term_value
 		});
-		this.fields._wrapped[4] = field;
+
+		var display_type = this.model.get_property_value_by_name("display_type"),
+			index = "list" === display_type ? 4 : 3 // "single" has one field less (limit)
+		;
+
+		this.fields._wrapped[index] = field;
 		this.$el.empty();
 		this.render();
 	},
-	
+
 	/**
 	 * Internal value setter
-	 * 
+	 *
 	 * Used as taxonomy term chosen picker.
 	 */
 	_set_term_value: function () {

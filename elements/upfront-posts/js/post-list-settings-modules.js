@@ -199,6 +199,10 @@ define([
 		get_fields: function () {
 			return [
 				{
+					type: 'Title',
+					label: l10n.content_type
+				},
+				{
 					type: 'Radios',
 					property: 'content_type',
 					layout: "horizontal-inline",

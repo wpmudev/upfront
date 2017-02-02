@@ -846,10 +846,16 @@ jQuery(document).ready(function($){
 				}
 				if ( is_full_screen ){
 					if ( is_bg_image ) {
-						$bg_image.css('background-position', bg_position_x + ' ' + ( bg_position_y + scroll_top - body_off.top ) + 'px');
+						$bg_image.css({
+							backgroundAttachment: 'fixed',
+							backgroundPosition: bg_position_x + ' ' + bg_position_y + 'px'
+						});
 					}
 					else if ( is_bg_overlay ) {
-						$bg_overlay.css('top', ( scroll_top - body_off.top ));
+						$bg_overlay.css({
+							position: 'fixed',
+							top: ( scroll_top - body_off.top )
+						});
 					}
 				}
 			}
@@ -883,10 +889,16 @@ jQuery(document).ready(function($){
 				}
 				else if ( is_full_screen ) {
 					if ( is_bg_image ) {
-						$bg_image.css('background-position', bg_position_x + ' ' + ( bg_position_y + ( container_height - win_height ) ) + 'px');
+						$bg_image.css({
+							backgroundAttachment: '',
+							backgroundPosition: bg_position_x + ' ' + ( bg_position_y + ( container_height - win_height ) ) + 'px'
+						});
 					}
 					else if ( is_bg_overlay ) {
-						$bg_overlay.css('top', ( container_height - win_height ));
+						$bg_overlay.css({
+							position: '',
+							top: ( container_height - win_height )
+						});
 					}
 				}
 			}

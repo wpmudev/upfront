@@ -106,6 +106,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'lightboxes' => __('Lightboxes', 'upfront'),
 				'no_lightboxes' => __('No Lightboxes Found', 'upfront'),
 				'trash' => __('Trash', 'upfront'),
+				'confirm_delete_region' => __('Deleting a global region will remove it from all layouts. Continue?', 'upfront'),
 				'preview_size' => __('Preview Size', 'upfront'),
 				'import_image' => __('Import Images', 'upfront'),
 				'import_image_description' => __('This layout contains images that are not in your Media Library. If you plan on using those images, please import them, otherwise if you plan on replacing those images you can ignore this message.', 'upfront'),
