@@ -35,6 +35,8 @@
                         };
                     })
                     ;
+              	// Add class for styling purposes.
+              	me.$popup.top.parent().addClass('upfront-popup-posts');
                 var has_comments = false,
                     current_post_id = Upfront.data.currentPost && Upfront.data.currentPost.id
                         ? Upfront.data.currentPost.id
@@ -177,6 +179,10 @@
                 var me = this,
                     views = this.views[this.currentPanel];
 
+                views.search.render();
+                me.$popup.top.append(views.search.$el);
+                views.search.setElement(views.search.$el);
+
                 views.view.render();
                 me.$popup.content.html(views.view.$el);
                 views.view.setElement(views.view.$el);
@@ -188,10 +194,6 @@
                     me.$popup.bottom.html(views.pagination.$el);
                     views.pagination.setElement(views.pagination.$el);
                 }
-
-                views.search.render();
-                me.$popup.bottom.append(views.search.$el);
-                views.search.setElement(views.search.$el);
             }
         });
 

@@ -10,15 +10,12 @@
 	background: #f2f9ff;
 	width: 100%;
 	border-top: 1px solid transparent;
-	border-bottom: 1px solid transparent;
+	border-bottom: 1px solid #e1e1e1;
 	line-height: 18px;
 	overflow: hidden;
 	max-height: 28px;
 }
 
-.upfront-list-items .upfront-list_item {
-	opacity: 0.8;
-}
 .upfront-list-items .upfront-list_item:hover {
 	opacity: 1;
 }
@@ -35,23 +32,20 @@
 
 }
 #upfront-list .upfront-list_item:hover {
-	background: #e8f4fe;
+	background: #fff;
 }
 #upfront-list .upfront-list-items .upfront-list_item:hover{
 	/*border-top: 1px solid #a4b9cb;
 	border-bottom: 1px solid #a4b9cb;*/
 	cursor: pointer;
-	background-color:#c7dbee;
+	background-color:#fff;
 }
 #upfront-list .upfront-list_item {
-	color:#32475c;
+	color:#5b5b5b;
 }
 
 #upfront-list .upfront-list_item:first-child:hover{
 	border-top: 1px solid transparent;
-}
-#upfront-list .upfront-list_item:nth-child(even) {
-	background: #e8f4fe;
 }
 #upfront-list #upfront-list-meta {
 	padding-top: 20px;
