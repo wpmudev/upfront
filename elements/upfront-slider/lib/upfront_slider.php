@@ -104,7 +104,7 @@ class Upfront_UsliderView extends Upfront_Object {
 			'controls' => 'both', // both, arrows, dots, none
 			'controlsWhen' => 'always', // always, hover
 
-			'rotate' => array('true'),
+			'rotate' => array('false'),
 			'rotateTime' => 5,
 
 			'transition' => 'crossfade', // crossfade, slide-left, slide-right, slide-bottom, slide-top
