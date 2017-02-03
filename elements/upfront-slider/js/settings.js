@@ -155,6 +155,24 @@ define([
 							{ label: l10n.on_hover, value: 'hover' },
 							{ label: l10n.always, value: 'always' }
 						]
+					},
+					
+				]
+			},
+			{
+				type: 'SettingsItem',
+				triggerChange: true,
+				title: l10n.accessibility,
+				className: 'general_settings_item',
+				fields: [
+					{
+						type: 'Checkboxes',
+						property: 'keyboardControls',
+						layout: 'horizontal-inline',
+						className: 'keyboardControls',
+						multiple: true,
+						default_value: 0,
+						values: [ { label: l10n.enable_arrows_slide, value: 'true' } ],
 					}
 				]
 			}
