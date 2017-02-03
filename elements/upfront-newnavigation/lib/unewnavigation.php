@@ -419,8 +419,9 @@ class Upfront_newMenuSetting extends Upfront_Server {
 			'menu-item-object' => $e->object,
 			'menu-item-object-id' => $e->object_id,
 			'menu-item-target' => ($e->type === 'anchor' || $e->type === 'email' || $e->type === 'phone') ? '_self' : $e->target,
-			'menu-item-position' => $e->menu_order
-			);
+			'menu-item-position' => $e->menu_order,
+			'menu-item-classes' => join( ' ', $e->classes )
+		);
 
 		if(isset($children_elements[$e->ID])) {
 			foreach($children_elements[$e->ID] as $child_element)
