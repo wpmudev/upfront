@@ -378,29 +378,45 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		e.gallerySelected = true;
 	},
 
-	createControlsEach: function(image) {
-		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel();
+	createControlsEach: function(image, $item) {
+		var panel = new Upfront.Views.Editor.InlinePanels.ControlPanel(),
+			moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl()
+		;
+
+		moreOptions.icon = 'more';
+		moreOptions.inline = true;
+		moreOptions.tooltip = l10n.ctrl.thumbnail_options;	
+		moreOptions.sub_items = {};
 
 		if (Upfront.Application.user_can_modify_layout()) {
-			panel.items = _([
-				this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask', 30, 30),
-				this.createLinkControl(image)
-			]);
+			moreOptions.sub_items['crop'] = this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask', 28, 28);
+			moreOptions.sub_items['link'] = this.createLinkControl(image);
 		} else {
-			panel.items = _([
-				this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask')
-			]);
+			moreOptions.sub_items['crop'] = this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask');
 		}
 
 		if (Upfront.Application.user_can_modify_layout()) {
-		if (this.property('labelFilters') === 'true') {
-			panel.items.push(this.createLabelControl(image));
-		}
+			if (this.property('labelFilters') === 'true') {
+				moreOptions.sub_items['label'] = this.createLabelControl(image);
+			}
 
-		if (image.get('imageLink').type === 'image' || image.get('imageLink').type === 'lightbox' || -1 !== ['image', 'lightbox'].indexOf( this.property( "linkTo" ) ) ) {
-			panel.items.push(this.createControl('fullscreen', l10n.ctrl.show_image, 'openImageLightbox', 30, 30));
+			if (image.get('imageLink').type === 'image' || image.get('imageLink').type === 'lightbox' || -1 !== ['image', 'lightbox'].indexOf( this.property( "linkTo" ) ) ) {
+				moreOptions.sub_items['fullscreen'] = this.createControl('fullscreen', l10n.ctrl.show_image, 'openImageLightbox', 28, 28);
+			}
+			
+			moreOptions.sub_items['remove'] = this.createControl('remove', l10n.ctrl.rm_image, 'removeImage', 28, 28);
 		}
-		}
+		
+		panel.items.push(moreOptions);
+
+		this.listenTo(moreOptions, 'panel:close', function(){
+			$item.removeClass('stayOpen controls-visible');
+		});
+		
+		this.listenTo(moreOptions, 'panel:open', function() {
+			console.log($item);
+			$item.addClass('stayOpen controls-visible');
+		});
 
 		return panel;
 	},
@@ -445,8 +461,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		control.id = 'edit_labels';
 
 		//Set icon width & height
-		control.width = 30;
-		control.height = 30;
+		control.width = 28;
+		control.height = 28;
 
 		me.listenTo(control, 'panel:open', function(){
 			me.lastOpenedControl = control;
@@ -474,7 +490,7 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 	createLinkControl: function(image){
 		var me = this,
-			linkControl = new Upfront.Views.Editor.InlinePanels.DialogControl(),
+			linkControl = new Upfront.Views.Editor.InlinePanels.LinkControl(),
 			imageLink = new LinkModel(image.get('imageLink'));
 
 		linkControl.view = linkPanel = new Upfront.Views.Editor.LinkPanel({
@@ -483,8 +499,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 			imageUrl: image.get('srcFull')
 		});
 
-
-
+		// Update wrapper size
+		this.listenTo(linkPanel, 'linkpanel:update:wrapper', function() {
+			linkControl.updateWrapperSize();
+		});
 
 		this.listenTo(linkPanel.model, "change", function( model ){
 			/**
@@ -544,8 +562,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		linkControl.id = 'link';
 
 		//Set icon width & height
-		linkControl.width = 30;
-		linkControl.height = 30;
+		linkControl.width = 28;
+		linkControl.height = 28;
 
 		return linkControl;
 	},
@@ -909,11 +927,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	on_render: function() {
 		var me = this,
 			resizingFunction;
-
-		// Hide delete icon
-		if (!Upfront.Application.user_can_modify_layout()) {
-			this.$el.find('.remove-image').remove();
-		}
 
 		//Bind resizing events
 		if ( me.parent_module_view && !me.parent_module_view.$el.data('resizeHandling') ) {
@@ -1778,16 +1791,16 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		moreOptions = new Upfront.Views.Editor.InlinePanels.SubControl();
 
 		moreOptions.icon = 'more';
-		moreOptions.tooltip = l10n.ctrl.caption_position;
+		moreOptions.tooltip = Upfront.Settings.l10n.global.views.more_options;
 
 		moreOptions.sub_items = {};
-		moreOptions.sub_items['add'] = this.createControl('add', l10n.template.add_img, 'openImageSelector', 38, 38);
-		moreOptions.sub_items['toggle-sorting'] = this.createControl('toggle-sorting', l10n.toggle_dnd, 'toggleSorting', 38, 38);
+		moreOptions.sub_items['add'] = this.createControl('add', l10n.template.add_img, 'openImageSelector', 28, 28);
+		moreOptions.sub_items['toggle-sorting'] = this.createControl('toggle-sorting', l10n.toggle_dnd, 'toggleSorting', 28, 28);
 
 		return _([
 			moreOptions,
 			this.createPaddingControl(),
-			this.createControl('settings', l10n.settings, 'on_settings_click', 38, 38)
+			this.createControl('settings', l10n.settings, 'on_settings_click', 28, 28)
 		]);
 	},
 	/**
@@ -1798,10 +1811,10 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 	 * @returns controls of of the single image
 	 */
 	add_controls_to_item: function(image, $item){
-		var controls = this.createControlsEach(image);
+		var controls = this.createControlsEach(image, $item);
 		controls.render();
 		$item.find('.ugallery-controls').remove();
-		$item.append($('<div class="ugallery-controls upfront-ui"></div>').append(controls.$el));
+		$item.append($('<div class="ugallery-controls upfront-element-controls upfront-ui"></div>').append(controls.$el));
 
 		return controls;
 	}

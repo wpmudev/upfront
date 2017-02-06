@@ -51,6 +51,10 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 
 		//Update player size on resize
 		this.onResizeStop(this);
+
+		// Add/remove multiple module class.
+		$object = this.$el.find('.upfront-editable_entity:first');
+		this.add_multiple_module_class($object);
 	},
 
 	get_content_markup: function () {

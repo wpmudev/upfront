@@ -10,7 +10,7 @@ define([
 		hideOnClick: true,
 
 		events: {
-			'click': 'onClickControl',
+			'click .upfront-icon': 'onClickControl',
 			'click button': 'onClickOk'
 		},
 

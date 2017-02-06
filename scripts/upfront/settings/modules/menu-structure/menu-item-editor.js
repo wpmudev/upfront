@@ -179,6 +179,8 @@ define([
 			Upfront.Views.Editor.PostSelector.open(selectorOptions).done(
 				function(post) {
 					me.model.set({'menu-item-url' : post.get('permalink')});
+					me.model.set({'menu-item-object': post.get('post_type') });
+					me.model.set({'menu-item-object-id': post.get('ID') });
 					me.saveItem();
 					me.render();
 				}
@@ -197,18 +199,24 @@ define([
 		},
 
 		onTypeChange: function(value) {
-			// First reset url property
-			// We don't want funny results when changing from one type to another.
+			// First reset, we don't want funny results when changing from one type to another.
 			this.model.set({'menu-item-url': ''});
+			this.model.set({'menu-item-object': '' });
+			this.model.set({'menu-item-object-id': 0 });
+
 			this.type = value;
 			this.render();
 
 			if (this.type === 'entry') {
+				this.model.set({ 'menu-item-type': 'post_type' });
 				this.showPagePostSelector();
-			}
-			else if (this.type === 'unlink') {
+			} else if (this.type === 'unlink') {
+				this.model.set({ 'menu-item-type': 'custom' });
 				this.saveItem();
+			} else {
+				this.model.set({ 'menu-item-type': 'custom' });
 			}
+
 			this.$el.parent().find('.menu-item-type').first().text(this.getLinkTypeLabel(value));
 		},
 
@@ -301,7 +309,7 @@ define([
 			});
 			this.saveItem();
 		},
-		
+
 		onEmailNameKeydown: function(event) {
 			if (event.which == 13) {
 				event.preventDefault();

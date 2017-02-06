@@ -34,33 +34,22 @@ define([
 			});
 			this.listenTo(this.link, 'change change:target change:type', function(link) {
 				me.render_label();
+				
+				// If not an object return
+				if(typeof link !== 'object') return;
+				
 				this.trigger('change', {
 					url: link.get('url'),
 					target: link.get('target'),
 					type: link.get('type')
 				});
 			});
-		},
-
-		label: function () {
-			return ( this.link.get('type') != 'unlink' ? l10n.edit_link : l10n.not_linked );
-		},
-
-		onClickControl: function(e){
-			this.$el.siblings('.upfront-control-dialog-open').removeClass('upfront-control-dialog-open');
-
-			if($(e.target).closest('.inline-panel-control-dialog').length) {
-				return;
-			}
-
-			e.preventDefault();
-
-			if(this.isopen) {
-				this.close();
-			} else {
-				this.open();
-			}
-		}
+			this.listenTo(this.link, 'change:type', function(link) {
+				if(link.get('type') === 'entry') {
+					this.trigger('change:type');
+				}
+			});
+		}		
 	});
 
 	return GroupLinkPanelControl;

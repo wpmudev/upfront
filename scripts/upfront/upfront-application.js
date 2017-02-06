@@ -111,7 +111,8 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			save_dev = ( _upfront_storage_key != _upfront_save_storage_key ? 1 : 0 ),
 			breakpoint = Upfront.Settings.LayoutEditor.CurrentBreakpoint,
 			is_responsive = breakpoint && !breakpoint['default'],
-			compressed
+			compressed,
+			me = this
 		;
 		data.layout = _upfront_post_data.layout;
 		data.preferred_layout = preferred_layout;
@@ -165,12 +166,35 @@ var LayoutEditorSubapplication = Subapplication.extend({
 				var url_key = '/' + Backbone.history.getFragment();
 				Upfront.Application.urlCache[url_key] = false;
 
+				me.save_presets();
 			})
 			.error(function () {
 				Upfront.Util.log("error saving layout");
 				Upfront.Events.trigger("command:layout:save_error");
 			})
 		;
+	},
+
+	save_presets: function() {
+		var presetSaving = Upfront.Application.presetSaver.save();
+
+		presetSaving.done( function() {
+			Upfront.Application.current_subapplication.save_colors();
+		}).fail( function() {
+			Upfront.Util.log("error saving presets");
+			Upfront.Events.trigger("command:layout:save_error");
+		});
+	},
+
+	save_colors: function() {
+		var colorSaving = Upfront.Application.colorSaver.save();
+
+		colorSaving.done( function() {
+			Upfront.Events.trigger("command:layout:save_success");
+		}).fail( function() {
+			Upfront.Util.log("error saving color");
+			Upfront.Events.trigger("command:layout:save_error");
+		});
 	},
 
 	_delete_layout: function () {
@@ -509,10 +533,14 @@ var LayoutEditorSubapplication = Subapplication.extend({
 		Upfront.data.region_views[region.cid].show();
 	},
 	getLightboxSafeName: function(regionName) {
-		var regions = (this.layout && this.layout.get ? this.layout.get('regions') : Upfront.Application.current_subapplication.layout.get('regions')),
-			region = regions ? regions.get_by_name('lightbox') : false;
+		var regions = (this.layout && this.layout.get
+				? this.layout.get('regions')
+				: Upfront.Application.current_subapplication.layout.get('regions')
+			),
+			region = (regions ? regions.get_by_name('lightbox') : false)
+		;
 
-		if ( ! region ){
+		if (!region) {
 			region = new Upfront.Models.Region({
 				"name": "lightbox",
 				"container": "lightbox",
@@ -521,27 +549,24 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			region.add_to(regions, regions.length-1);
 		}
 
-		return 'ltb-' + regionName.toLowerCase().replace(/\s/g, '-') + (regions.length+1);
+		return 'ltb-' +
+			regionName.toLowerCase().replace(/[^-_a-z0-9]/g, '-') +
+			(regions.length+1)
+		;
 	},
 	createLightboxRegion: function(regionName){
 
-		var regions = (this.layout && this.layout.get ? this.layout.get('regions') : Upfront.Application.current_subapplication.layout.get('regions'));
-		//	region = regions ? regions.get_by_name('lightbox') : false;
-
-		/*if ( ! region ){
-			region = new Upfront.Models.Region({
-				"name": "lightbox",
-				"container": "lightbox",
-				"title": "lightbox Region"
-			});
-			region.add_to(regions, regions.length-1);
-		}*/
+		var regions = (
+				this.layout && this.layout.get
+					? this.layout.get('regions')
+					: Upfront.Application.current_subapplication.layout.get('regions')
+		);
 
 		var	safeName = this.getLightboxSafeName(regionName),
 			lightbox = new Upfront.Models.Region(_.extend({}, Upfront.data.region_default_args, {
 				name: safeName,
 				container: 'lightbox',
-				title: regionName,
+				title: (regionName || '').replace(/[><&]/, ''),
 				type: 'lightbox',
 				sub: 'lightbox'
 			}))
@@ -921,7 +946,11 @@ var Application = new (Backbone.Router.extend({
 
 				app.create_cssEditor();
 
-                $(document).trigger('Upfront:loaded');
+				app.create_preset_saver();
+
+				app.create_color_saver();
+
+				$(document).trigger('Upfront:loaded');
 				Upfront.Events.trigger('Upfront:loaded');
 			}
 		);
@@ -1446,6 +1475,14 @@ var Application = new (Backbone.Router.extend({
 		Upfront.Events.on("upfront:layout:loaded", me.apply_region_css, me);
 		Upfront.Events.on("upfront:layout:loaded", me.ensure_layout_style, me);
 		this.cssEditor = cssEditor;
+	},
+
+	create_preset_saver: function() {
+		this.presetSaver = Upfront.Views.PresetSaver;
+	},
+
+	create_color_saver: function() {
+		this.colorSaver = Upfront.Views.ColorSaver;
 	},
 
 	ensure_layout_style: function() {

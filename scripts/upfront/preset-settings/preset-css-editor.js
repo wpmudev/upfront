@@ -214,11 +214,17 @@ define([
 			// Set up the proper vscroller width to go along with new change.
 			editor.renderer.scrollBar.width = 5;
 			editor.renderer.scroller.style.right = "5px";
-
 			// Add JS Scrollbar.
-			perfectScrollbar.initialize(this.$el.find('.ace_scrollbar')[0], {
-				suppressScrollX: true
-			});
+			perfectScrollbar.withDebounceUpdate(
+				// Element.
+				this.$el.find('.ace_scrollbar')[0],
+				// Run First.
+				true,
+				// Event.
+				false,
+				// Initialize.
+				true
+			);
 
 			editor.focus();
 			this.editor = editor;

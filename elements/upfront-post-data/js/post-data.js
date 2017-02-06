@@ -86,6 +86,9 @@ var PostDataPartView = Upfront.Views.ObjectView.extend({
 
 	on_element_drop: function () {
 		this.update_height();
+		// Add/remove multiple module class.
+		$object = this.$el.find('.upfront-editable_entity:first');
+		this.add_multiple_module_class($object);
 	},
 
 	render_view: function (markup) {
@@ -1057,6 +1060,11 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 			// Save image crop from resize
 			this.saveTemporaryResizing(elementSize);
+
+			// Add/remove multiple module class.
+			$object = this.$el.find('.upfront-editable_entity:first');
+			this.add_multiple_module_class($object);
+
 		}
 
 		// Also resize child objects if it's only one object
@@ -1453,7 +1461,6 @@ var PostDataElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	},
 
 	add_element: function () {
-
 		var part_objects = this.create_part_objects(this._post_parts),
 			object = new PostDataModel({
 				properties: [
@@ -1489,7 +1496,14 @@ var PostDataElement_PostData = PostDataElement.extend({
 		'date_posted',
 		'title',
 		'content'
-	]
+	],
+	add_element: function () {
+		var pluginLayout = Upfront.Application.is_plugin_layout();
+		if (!_.isUndefined(pluginLayout)) {
+			this._post_parts = ['content'];
+		}
+		PostDataElement.prototype.add_element.call(this);
+	}
 });
 
 var PostDataElement_Author = PostDataElement.extend({

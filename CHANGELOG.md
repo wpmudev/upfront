@@ -1,6 +1,47 @@
 Change Log
 ============
 
+
+1.7 - 2017-01-10
+-------------------------------------------------------------------------------
+- Add: new design for interaction panels.
+- Add: new design for element state user interface.
+- Add: new design for grouping experience.
+- Add: improved design for redactor toolbar.
+- Add: improved design for color picker.
+- Add: improved and optimized saving behavior.
+- Add: upload video to region background video options.
+- Add: video inserts.
+- Add: region setting is moved to sidebar.
+- Add: new improved way to handle SMTP.
+
+- Fix: lightbox creation issues.
+- Fix: update multiple module class elements resize.
+- Fix: escape the thumbnail override URL.
+- Fix: selected image source type check.
+- Fix: author archives with generic queries.
+- Fix: double resize hint for code element.
+- Fix: button link panel icon active state.
+- Fix: new lightbox field position for group element.
+- Fix: tooltip is not closed on ungroup.
+- Fix: slider caption issue with cover placeholder placement.
+- Fix: issue with editing menu items.
+- Fix: ensure the generated virtual links follow SSL convention.
+- Fix: preset class output on post data element.
+- Fix: prevent color picker being overlapped by sidebar scrollbar.
+- Fix: url truncated if more than 25 characters, post/page panel display issue.
+- Fix: redactor blockquote doesn't return to default state.
+- Fix: redactor quote icon not marking active.
+- Fix: redactor adding list loose selection.
+- Fix: group editing styling and other minor element hover styling.
+- Fix: empty image element growing when resizing.
+- Fix: changing product permalink option causes issues with shop page.
+- Fix: global CSS typos.
+- Fix: media manager throws JS errors.
+- Fix: skip updates conflict resolution when Dashboard plugin is present.
+- Fix: apply the posts limit propagated from the query.
+- Fix: interacting with data element could cause freshly-written contents to clear.
+
 1.6.1 - 2016-12-01
 -------------------------------------------------------------------------------
 - Fix: region settings bug fixes and improvements

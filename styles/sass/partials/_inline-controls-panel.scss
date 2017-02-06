@@ -1,3 +1,19 @@
+/*  Selectors using uf-core-el-sprite 
+    ================================= */
+
+.upfront-element-controls .upfront-inline-panel .upfront-padding-keyboard,
+.upfront-element-controls .upfront-inline-panel .upfront-checkbox-info:before,
+.upfront-element-controls .upfront-inline-panel .padding-lock label,
+div.ugallery-controls i.upfront-icon:before {
+    /* 
+    background-image: url('../img/uf-core-el-sprite.png');
+    background-image: url('../img/uf-core-el-sprite.svg');
+    */
+    background-image: url('../img/uf-core-el-sprite_new.png');
+    background-image: url('../img/uf-core-el-sprite_new.svg');
+    background-repeat: no-repeat;
+}
+
 .upfront-wrapper:not(.ui-resizable-resizing) .upfront-module.upfront-module-active:not(.ui-resizable-resizing):not(.upfront-module-editing) > .upfront-element-controls,
 .upfront-wrapper:not(.ui-resizable-resizing) .upfront-module-group.upfront-module-group-active:not(.ui-resizable-resizing):not(.upfront-module-group-on-edit) > .upfront-element-controls,
 .upfront-wrapper:not(.ui-resizable-resizing) .upfront-module.upfront-module-active:not(.ui-resizable-resizing):not(.upfront-module-editing) .upfront-object-group-view > .upfront-element-controls,
@@ -12,16 +28,31 @@
 {
     display: none;
 }
+#upfront-inline-tooltip {
+	position: absolute;
+	width: auto;
+	z-index: 10;
+	background: rgb(0, 0, 0);
+	height: 19px;
+	line-height: 20px;
+	color: #fff;
+	font-size: 11px;
+	padding: 0px 5px;
+}
 .upfront-module-object-group-on-edit > .upfront-module > .upfront-element-controls,
 .upfront-object-group-on-edit > .upfront-element-controls {
     display: none !important;
 }
 .upfront-element-controls .upfront-inline-panel {
 	z-index: 3000;
-    box-shadow: 0 0 3px 0 rgba(36,57,77,0.3);
+    border: 1px solid #cccccc;
+	background: #fff;
+}
+.upfront-element-controls.ugallery-controls .upfront-inline-panel {
+	border: none;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item {
-    background: #F5F5F5;
+    background: #FFFFFF;
     border-bottom: 0;
     cursor: default;
 }
@@ -30,38 +61,52 @@
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon {
     cursor: pointer;
-}
-.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-control-dialog-open,
-.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item:hover {
-    background: #E6ECF2;
+	height: 28px;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-padding-control {
-    min-width: 170px;
+    min-width: 150px;
     width:100%;
     font-size: 11px;
     font-family: 'Open Sans';
-    padding: 5px 10px 10px 10px;
+	padding: 5px 5px 10px 5px;
     margin-top: 0px;
-    background: #E6ECF2;
-    box-shadow: 0px 1px 2px #ADADAD;
-    color: #253A4E;
-	border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid #cccccc;
+    box-shadow: 0px 1px 2px #e2e2e2;
+    color: #212121;
+	border-radius: 1px;
 	position: relative;
 	top: 9px;
 }
-.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-padding-arrow {
-	width: 0;
-	height: 0;
-	border-style: solid;
-	border-width: 0 5px 5px 5px;
-	border-color: transparent transparent #e7ecf2 transparent;
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-control-arrow {
+	width: 8px;
+	height: 8px;
+    transform: rotate(45deg);
+    background: #ffffff;
+    border-left: 1px solid #cccccc;
+    border-top: 1px solid #cccccc;
 	position: absolute;
 	top: -5px;
 	margin-left: 15px;
 	content: '';
 }
-.upfront-element-controls .upfront-inline-panel .upfront-padding-container .upfront-field-number[type=number] {
-	width: 50px;
+.upfront-element-controls .upfront-inline-panel .image-sub-control,
+.upfront-element-controls .upfront-inline-panel .ulinkpanel-dark {
+    border: 1px solid #cccccc;
+    height: 30px;
+  	position: relative;
+  	left: -5px;
+}
+.upfront-element-controls .upfront-inline-panel .upfront-padding-container .upfront-field-number[type=number],
+.redactor-dropdown-box-upfrontIcons .upfront-font-icons-controlls .upfront-field-number[type=number] {
+	width: 43px;
+  	height: 25px;
+  	background: #fbfbfb;
+  	border: 1px solid #e8e8e8;
+}
+.redactor-dropdown-box-upfrontIcons .upfront-font-icons-controlls .upfront-field-number[type=number] {
+	width: 35px;
+	margin-left: 5px;
 }
 .upfront-element-controls .upfront-padding-container .upfront-field-wrap {
 	margin: 0px;
@@ -94,19 +139,18 @@
     letter-spacing: 0.34px;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-padding-keyboard {
-	background-position: -290px -284px;
+	background-position: -290px -254px;
     width: 20px;
     height: 11px;
-    background-image: url("../img/uf-core-el-sprite.svg");
 	position: absolute;
-	top: 47px;
-	left: 30px;
+	top: 45px;
+	left: 25px;
 	z-index: 99;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-checkbox-info {
 	position: absolute;
-	top: 41px;
-	right: 30px;
+	top: 38px;
+	right: 28px;
 	z-index: 99;
 	cursor: pointer;
 }
@@ -115,8 +159,7 @@
 	content: "";
 	width: 15px;
 	height: 15px;
-	background-image: url('../img/uf-core-el-sprite.svg');
-	background-position: -483px -141px;
+	background-position: -484px -140px;
 	margin-left: 5px;
 	margin-right: 5px;
 	margin-bottom: -4px;
@@ -141,15 +184,13 @@
     background-image: url('../img/uf-core-el-sprite.png');
     background-image: url('../img/uf-core-el-sprite.svg'), none;
     background-position: -658px -169px;
-    left: 0px;
+    left: -4px;
     top: 8px;
     position: relative;
-	border: 1px solid #e6ecf2;
     cursor: pointer;
 }
 .upfront-element-controls .upfront-inline-panel .padding-lock .upfront-field-multiple-selected label {
     background-position: -658px -137px;
-	border: 1px solid #cdd8e2;
 	border-radius: 50%;
 }
 .upfront-element-controls .upfront-inline-panel .padding-lock {
@@ -158,6 +199,36 @@
     left: 45px;
 	top: 22px;
 	z-index: 100;
+}
+/* chrome input[type=number] styling */
+.upfront-padding-control .upfront-field-number[type=number]::-webkit-inner-spin-button,
+.redactor-dropdown-box-upfrontIcons .upfront-font-icons-controlls .upfront-field-number[type=number]::-webkit-inner-spin-button {
+	-webkit-appearance:none;
+	width:12px;
+	padding:0;
+	margin:0;
+	height:27px;
+	background-color:#ffffff;
+	display:inline-block;
+	position:relative;
+	border-left:1px solid #e8e8e8;
+	cursor: pointer;
+	background-image: url('../img/uf-ui-sprite.svg');
+	background-position: -346px -242px;
+}
+.upfront-padding-control .upfront-field-number[type=number]::-webkit-inner-spin-button {
+	-webkit-appearance:none;
+	width:12px;
+	padding:0;
+	margin:0;
+	height:23px;
+	background-color:#ffffff;
+	display:inline-block;
+	position:relative;
+	border-left:1px solid #e8e8e8;
+	cursor: pointer;
+	background-image: url('../img/uf-ui-sprite.svg');
+	background-position: -346px -244px;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-padding-control span.upfront-padding-value {
     color: #00afec;
@@ -175,54 +246,52 @@
     border-radius: 2px;
     padding: 5px 7px;
     font-family: 'Open Sans';
-    opacity: 0.75;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-padding-control .upfront-field-advanced-padding input:hover {
-    opacity: 1;
     background: #fff;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon {
-    opacity: 0.70;
+    opacity: 0.80;
 }
+/*
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-control-dialog-open .upfront-icon,
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-icon,
+*/
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon:hover {
     opacity: 1;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-settings:before {
-    background-position: -261px -371px;
+    background-position: -351px -41px;
     width: 18px;
     height: 18px;
-    opacity: 0.75;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-settings:hover:before {
-    background-position: -231px -371px;
+    background-position: -351px -41px;
     width: 18px;
     height: 18px;
-    opacity: 0.75;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-control-dialog-open .upfront-icon-region-settings:before {
-    background-position: -231px -371px;
+    background-position: -351px -71px;
     width: 18px;
     height: 18px;
-    opacity: 1;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-padding:before {
-    background-position: -261px -341px;
+    background-position: -321px -41px;
     width: 18px;
     height: 18px;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-padding:hover:before {
-    background-position: -231px -341px;
+    background-position: -321px -41px;
     width: 18px;
     height: 18px;
-	opacity: 0.75;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-control-dialog-open.upfront-inline-panel-item .upfront-icon-region-padding:before {
-    background-position: -231px -341px !important;
+    background-position: -321px -71px !important;
     width: 18px;
     height: 18px;
-	opacity: 1;
+}
+.upfront-element-controls .upfront-inline-panel .upfront-control-dialog-open.upfront-inline-panel-item .upfront-icon-region-link:before {
+    background-position: -381px -71px !important;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-reorder:before {
     background-position: -261px -521px;
@@ -236,34 +305,43 @@
     background-image: url("../img/uf-ui-sprite.svg")!important;
 }
 .upfront-icon-region-more {
-	height: 38px;
+	height: 28px;
+}
+.inline-panel-sub-control-dialog {
+    position: relative;
+    top: 9px;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-more:before {
-    background-position: -291px -460px;
+    background-position: -291px -40px;
     width: 24px;
     height: 24px;
-    opacity: 0.75;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item .upfront-icon-region-more:hover:before {
-    background-position: -291px -490px;
+    background-position: -291px -40px;
     width: 24px;
     height: 24px;
-    opacity: 0.75;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-icon-region-more:before {
-    background-position: -291px -490px;
+    background-position: -291px -70px;
     width: 24px;
     height: 24px;
     opacity: 1 !important;
 }
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .upfront-inline-panel-item,
+.upfront-element-controls .upfront-inline-panel .upfront-control-dialog-open.upfront-inline-panel-item,
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open {
-    background: #E6ECF2;
+    background: #72848d;
 }
+
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .inline-panel-sub-control-dialog .upfront-inline-panel-item,
+.upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .inline-panel-sub-control-dialog {
+  background: #FFFFFF;
+}
+
 
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .slider-caption-second-level .upfront-inline-panel-item,
 .upfront-element-controls .upfront-inline-panel .upfront-inline-panel-item.upfront-sub-control-dialog-open .slider-caption-second-level {
-	background: #DAE0E6;
+	background: #FFFFFF;
 }
 
 .upfront-element-controls .control-panel-overlay {
@@ -272,4 +350,8 @@
 	position: absolute;
 	z-index: 99;
 	opacity: 0;
+}
+
+.upfront-panels-shadow {
+	box-shadow: 0 0 3px 0 rgba(36,57,77,0.3);
 }

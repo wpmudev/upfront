@@ -150,7 +150,7 @@ var ImageInsert = base.ImageInsertBase.extend({
             editor_col = Upfront.Util.grid.width_to_col( this.$editor.width() )
             ;
 
-        if( !_.isEmpty( data.selectedImage.src  ) ) return  data.selectedImage;
+        if( !_.isEmpty( ((data || {}).selectedImage || {}).src  ) ) return  data.selectedImage;
 
         return image;
     },
