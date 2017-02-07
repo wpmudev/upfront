@@ -16,9 +16,10 @@
             currentPanel: false,
             render: function () {
                 this.$el.addClass("upfront-entity_list upfront-icon upfront-icon-browse");
-                if ( Upfront.Application.is_single( "post" ) )
-                    this.$el.html('<a title="'+ l10n.posts_pages_comments +'">' + l10n.posts_pages_comments + '</a>');
-                else
+              	// Comment out comments functionality for now.
+                //if ( Upfront.Application.is_single( "post" ) )
+                    //this.$el.html('<a title="'+ l10n.posts_pages_comments +'">' + l10n.posts_pages_comments + '</a>');
+                //else
                     this.$el.html('<a title="'+ l10n.posts_pages +'">' + l10n.posts_pages + '</a>');
             },
             on_click: function () {
@@ -53,7 +54,8 @@
                     '<ul class="upfront-tabs">' +
                     '<li data-type="posts" class="active">' + l10n.posts + '</li>' +
                     '<li data-type="pages">' + l10n.pages + '</li>' +
-                    (has_comments ? '<li data-type="comments">' + l10n.comments + '</li>' : '') +
+              			// Comment out comments functionality for now.
+                    //(has_comments ? '<li data-type="comments">' + l10n.comments + '</li>' : '') +
                     '</ul>' +
                     me.$popup.top.html()
                 ).find('.upfront-tabs li').on("click", function () {

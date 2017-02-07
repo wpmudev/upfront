@@ -6,10 +6,10 @@
 	<script type="text/template" id="upfront-post-list-tpl">
 		<div id="upfront-list">
 			<div id="upfront-list-meta" class="upfront-list_item clearfix">
-				<div class="upfront-list_item-component upfront-date upfront-header {{ orderby == 'post_date' ? 'active ordered-' + order : '' }}" data-sortby="post_date">{{Upfront.Settings.l10n.global.content.date}} <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
 				<div class="upfront-list_item-component upfront-title upfront-header {{ orderby == 'post_title' ? 'active ordered-' + order : '' }}"  data-sortby="post_title">Post Title <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
 				<div class="upfront-list_item-component upfront-author upfront-header {{ orderby == 'post_author' ? 'active ordered-' + order : '' }}" data-sortby="post_author">Author <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
 				<div class="upfront-list_item-component upfront-comments-count upfront-header {{ orderby == 'post_comments' ? 'active ordered-' + order : '' }}" data-sortby="post_comments"><i class="icon-post-comments"></i> <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
+				<div class="upfront-list_item-component upfront-date upfront-header {{ orderby == 'post_date' ? 'active ordered-' + order : '' }}" data-sortby="post_date">{{Upfront.Settings.l10n.global.content.date}} <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
 			</div>
 			<div class="upfront-list-items upfront-scroll-panel">
 				{[ if(!posts.length){ ]}
@@ -17,24 +17,27 @@
 				{[ } else { ]}
 				{[ _.each(posts, function (post, idx){ ]}
 				<div class="upfront-list_item-post upfront-list_item clearfix status-{{ post.get("post_status") }}" data-post_id="{{ post.get("ID") }}">
+				<div class="upfront-list_item-component upfront-avatar"><img src="//www.gravatar.com/avatar/{[ if(post.author.get('data')){]}{{ post.author.get('data').gravatar }}{[}]}?s=32" /></div>
+				<div class="upfront-list_item-component upfront-title-and-author">
+					<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ post.get("post_title") }}</div>
+					<div class="upfront-list_item-component upfront-author">{[ if(post.author.get('data')){ ]} {{ post.author.get('data').display_name }} {[ } ]}</div>
+				</div>
 				<div class="upfront-list_item-component upfront-date post-status-{{ post.get("post_status") }}" title="{[ if(post.get("post_status") == "publish") { ]}Published{[ } else if(post.get("post_status") == "future") { ]}Scheduled{[ } else { ]}Draft{[ } ]}">{[ if(post.get("post_status") == "future") { ]}sched. for{[ } ]}
-				{{ Upfront.Util.format_date(post.get("post_date")) }}</div>
-			<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ post.get("post_title") }}</div>
-			<div class="upfront-list_item-component upfront-author">{[ if(post.author.get('data')){ ]} {{ post.author.get('data').display_name }} {[ } ]}</div>
-			<div class="upfront-list_item-component upfront-comments-count">{{ post.get("comment_count") }}</div>
-			<div class="upfront-list_item-component upfront-editactions">
-				{[ if (canEdit || (canEditOwn && parseInt(post.get('post_author'), 10) === Upfront.data.currentUser.id)) { ]}
-				<a href="/edit/post/{{ post.get("ID") }}" class="editaction edit">
-					{{Upfront.Settings.l10n.global.content.edit}}
-				</a>{[ } ]}<a href="{{ post.get("permalink") }}" class="editaction view">
-					{{Upfront.Settings.l10n.global.content.view}}
-				</a>{[ if (canEdit || (canEditOwn && parseInt(post.get('post_author'), 10) === Upfront.data.currentUser.id)) { ]}<a href="#" class="editaction trash">
-					{{Upfront.Settings.l10n.global.content.trash}}
-				</a>
-				{[ } ]}
+					{{ Upfront.Util.format_date(post.get("post_date")) }}</div>
+				
+				<div class="upfront-list_item-component upfront-editactions">
+					{[ if (canEdit || (canEditOwn && parseInt(post.get('post_author'), 10) === Upfront.data.currentUser.id)) { ]}
+					<a href="/edit/post/{{ post.get("ID") }}" class="editaction edit">
+						{{Upfront.Settings.l10n.global.content.edit}}
+					</a>{[ } ]}<a href="{{ post.get("permalink") }}" class="editaction view">
+						{{Upfront.Settings.l10n.global.content.view}}
+					</a>{[ if (canEdit || (canEditOwn && parseInt(post.get('post_author'), 10) === Upfront.data.currentUser.id)) { ]}<a href="#" class="editaction trash">
+						{{Upfront.Settings.l10n.global.content.trash}}
+					</a>
+					{[ } ]}
+				</div>
 			</div>
-		</div>
-		{[ }); } ]}
+			{[ }); } ]}
 		</div>
 		</div>
 	</script>

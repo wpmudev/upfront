@@ -1,10 +1,17 @@
 /* Entities(Posts) list */
+.upfront-popup-posts #upfront-popup-content {
+	background: #fff;
+}
 .upfront-entity_list-posts {
 }
 #upfront-list {
 	width: 100%;
 	color: #99b3cc;
 	font-size:13px;
+}
+.upfront-popup-posts #upfront-list .upfront-list_item {
+	background: none;
+	max-height: 60px;
 }
 #upfront-list .upfront-list_item {
 	background: #f2f9ff;
@@ -20,23 +27,42 @@
 	opacity: 1;
 }
 
+.upfront-popup-posts #upfront-list .upfront-list_item .upfront-avatar {
+	padding: 15px;
+	padding-left: 30px;
+}
+
 #upfront-list .upfront-list_item .upfront-list_item-component {
 	padding: 4px 15px;
 	float:left;
 }
+.upfront-popup-posts #upfront-list .upfront-list_item-component:first-child.upfront-avatar
 #upfront-list .upfront-list_item .upfront-list_item-component:first-child {
-	padding-left: 40px;
+	padding: 15px;
+	padding-left: 30px;
 }
+
+.upfront-popup-posts #upfront-list .upfront-list_item .upfront-list_item-component.upfront-title {
+	color: rgba(110, 110, 110, 1);
+	font-weight: 700;
+	font-size: 12px;
+}
+
+.upfront-popup-posts #upfront-list .upfront-list_item:hover .upfront-list_item-component.upfront-title {
+	color: rgba(33, 33, 33, 1);
+}
+
 #upfront-list .upfront-list_item .upfront-list_item-component.upfront-title {
 	color:#395269;
-
 }
-#upfront-list .upfront-list_item:hover {
+.upfront-popup-posts #upfront-list .upfront-list-items .upfront-list_item:hover {
 	background: #fff;
+	border-bottom: 1px solid #e1e1e1;
+	border-top: 1px solid transparent;
 }
 #upfront-list .upfront-list-items .upfront-list_item:hover{
-	/*border-top: 1px solid #a4b9cb;
-	border-bottom: 1px solid #a4b9cb;*/
+	border-top: 1px solid #a4b9cb;
+	border-bottom: 1px solid #a4b9cb;
 	cursor: pointer;
 	background-color:#fff;
 }
@@ -49,6 +75,9 @@
 }
 #upfront-list #upfront-list-meta {
 	padding-top: 20px;
+}
+.upfront-popup-posts #upfront-list #upfront-list-meta.upfront-list_item {
+	background: none;
 }
 #upfront-list #upfront-list-meta.upfront-list_item {
 	background: #e5f3fe;
@@ -105,9 +134,22 @@
 }
 
 /* Posts list */
+.upfront-popup-posts .upfront-avatar img {
+	border-radius: 50%;
+}
+.upfront-popup-posts #upfront-list .upfront-list_item-component.upfront-title-and-author {
+	min-height: 30px;
+	padding: 11px 0;
+}
 .upfront-list_item-component.upfront-date {
 	width: 30%;
 	vertical-align: middle;
+}
+.upfront-popup-posts #upfront-list .upfront-list_item .upfront-list_item-component.upfront-title-and-author div {
+	display: block;
+	float: none;
+	padding: 0;
+	width: 100%;
 }
 .upfront-list_item-component.upfront-title {
 	width: 45%;
@@ -115,12 +157,17 @@
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+.upfront-popup-posts .upfront-list_item-component.upfront-author {
+	font-style: italic;
+	color: #a2a2a2;
+}
 .upfront-list_item-component.upfront-author {
 	width: 15%;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
+
 .upfront-list_item-component.upfront-comments-count {
 	width: 10%;
 }
@@ -129,14 +176,22 @@
 	width: 25%;
 	display: none;
 }
-.upfront-list_item-component.upfront-date {
-	position: relative;
 
+.upfront-popup-posts #upfront-list .upfront-list_item .upfront-list_item-component.upfront-date {
+	position: relative;
+	float: right;
+	text-align: right;
+	width: 86px;
+	font-size: 12px;
+	margin: 15px;
+	padding-right: 0;
+	padding-left: 0;
 }
+
 .upfront-list_item-component.upfront-date:not(.upfront-header):before {
 	content: '';
 	position: absolute;
-	left:15px;
+	left:0;
 	top:0;
 	display: block;
 	width:15px;

@@ -2,9 +2,11 @@
 .upfront-popup-meta {
 	height: 50px;
 	width: 100%;
+}
+.upfront-popup-posts .upfront-popup-meta {
 	background: #f7f7f7;
 }
-.upfront-popup-meta:last-of-type {
+.upfront-popup-posts .upfront-popup-meta:last-of-type {
 	background: none;
 }
 .upfront-popup-meta .upfront-tabs {
@@ -16,6 +18,9 @@
 }
 .upfront-popup-meta .upfront-tabs.upfront-media_manager-tabs {
 	display: none;
+}
+.upfront-popup-posts .upfront-popup-meta .upfront-tabs li {
+	font-size: 12px;
 }
 .upfront-popup-meta .upfront-tabs li {
 	display: inline-block;
@@ -31,6 +36,9 @@
 .upfront-popup-meta .upfront-tabs li:hover {
 }
 
+.upfront-popup-posts .upfront-popup-meta .upfront-tabs li.active {
+	font-weight: bold;
+}
 
 .upfront-popup-meta .upfront-tabs li.active {
 	color: #212121;
