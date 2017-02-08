@@ -516,11 +516,8 @@ div.ugallery-magnific-labels {
 	color: #A1C5E6;
 	font-size: 13px;
 	line-height: 1.2em;
-	width: 200px;
 	margin: 0;
 }
-
-
 
 .upfront-ui .ugallery-magnific-panel:before,
 .upfront-ui .ugallery-magnific-panel:after {
@@ -534,7 +531,6 @@ div.ugallery-magnific-labels {
 }
 
 .upfront-ui .ugallery-magnific-panel {
-	background: rgba(31, 48, 63, 0.8);
 	transition: max-height .5s;
 	-webkit-transition: max-height .5s; /* Safari */
 	max-height: 300px;
@@ -1046,4 +1042,16 @@ figure.gallery-labels-figure img.mfp-img {
     height: 60px;
     top: 0;bottom: 0;left: 0;right: 0;
     margin: auto;
+}
+
+.ugallery-controls .upfront-ui.inline-panel-control-dialog-edit_labels {
+	position: absolute;
+	z-index: 2010;
+	background: #ffffff;
+	padding: 5px;
+	left: auto;
+	top: auto;
+	right: -56px;
+	bottom: 0px;
+	text-align: left;
 }
