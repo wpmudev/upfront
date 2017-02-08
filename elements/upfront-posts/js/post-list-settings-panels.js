@@ -390,6 +390,10 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 	populate_shared_tax_generic_items: function () {
 		var display_type = this.model.get_property_value_by_name("display_type"),
 			me = this;
+			
+		if ("list" === display_type) {
+			this.populate_limit_items();
+		}
 
 		if ("list" === display_type) {
 			this.fields.push(new Upfront.Views.Editor.Field.Select({
