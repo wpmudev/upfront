@@ -52,6 +52,26 @@
 									// Initialize.
 									true
 								);
+
+								// Add tooltips to inline edit/trash buttons.
+								this.add_tooltips();
+						},
+
+						// Add tooltips to inline edit/trash buttons.
+						add_tooltips: function() {
+								// Add Edit tooltip.
+								this.$el.find('.editaction.edit').utooltip({
+									fromTitle: false,
+									content: Upfront.Settings.l10n.global.content.edit_page,
+									panel: 'postEditor'
+								});
+
+								// Add trash tooltip.
+								this.$el.find('.editaction.trash').utooltip({
+									fromTitle: false,
+									content: Upfront.Settings.l10n.global.content.trash_page,
+									panel: 'postEditor'
+								});
 						},
 
 						renderPreview: function (page) {

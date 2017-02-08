@@ -105,8 +105,6 @@
 			<div id="upfront-list-meta" class="upfront-list_item clearfix">
 				<div class="upfront-list_item-component upfront-date upfront-header {{ orderby == 'post_date' ? 'active ordered-' + order : '' }}" data-sortby="post_date">{{Upfront.Settings.l10n.global.content.date}} <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
 				<div class="upfront-list_item-component upfront-title upfront-header {{ orderby == 'post_title' ? 'active ordered-' + order : '' }}"  data-sortby="post_title">Page Title <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
-				<div class="upfront-list_item-component upfront-author upfront-header {{ orderby == 'post_author' ? 'active ordered-' + order : '' }}" data-sortby="post_author">Author <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
-				<div class="upfront-list_item-component upfront-comments-count upfront-header {{ orderby == 'post_comments' ? 'active ordered-' + order : '' }}" data-sortby="post_comments"><i class="icon-post-comments"></i> <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
 			</div>
 			<div class="upfront-list-items upfront-scroll-panel">
 				{[ if(!pages.length){ ]}
@@ -122,11 +120,9 @@
 			<div class="upfront-list_item-component upfront-editactions">
 				{[ if (canEdit || (canEditOwn && parseInt(post.get('post_author'), 10) === Upfront.data.currentUser.id)) { ]}
 				<a href="/edit/page/{{ post.get("ID") }}" class="editaction edit">
-					{{Upfront.Settings.l10n.global.content.edit}}
-				</a>{[ } ]}<a href="{{ post.get("permalink") }}" class="editaction view">
-					{{Upfront.Settings.l10n.global.content.view}}
-				</a>{[ if (canEdit || (canEditOwn && parseInt(post.get('post_author'), 10) === Upfront.data.currentUser.id)) { ]}<a href="#" class="editaction trash">
-					{{Upfront.Settings.l10n.global.content.trash}}
+					<i class="upfront-icon upfront-icon-region-labelEdit"></i>
+				</a>{[ } ]}{[ if (canEdit || (canEditOwn && parseInt(post.get('post_author'), 10) === Upfront.data.currentUser.id)) { ]}<a href="#" class="editaction trash">
+					<i class="upfront-icon upfront-icon-region-remove"></i>
 				</a>
 				{[ } ]}
 			</div>
