@@ -28,7 +28,7 @@
 	height: 760px;
 }
 
-#upfront-popup.media-manager input[type=text] {
+.media-manager #upfront-popup-content input[type=text] {
 	background: #fff;
 	border: 1px solid #e5e5e5;
 	height: 22px;
@@ -36,19 +36,19 @@
 	opacity: 1;
 	border-radius: 3px;
 }
-#upfront-popup.media-manager input[type=text]::-webkit-input-placeholder {
+.media-manager #upfront-popup-content input[type=text]::-webkit-input-placeholder {
 	color: #bdbdbd;
 }
-#upfront-popup.media-manager input[type=text]:-moz-placeholder {
+.media-manager #upfront-popup-content input[type=text]:-moz-placeholder {
 	color: #bdbdbd;
 }
-#upfront-popup.media-manager input[type=text]::-moz-placeholder {
+.media-manager #upfront-popup-content input[type=text]::-moz-placeholder {
 	color: #bdbdbd;
 }
-#upfront-popup.media-manager input[type=text]:-ms-input-placeholder {
+.media-manager #upfront-popup-content input[type=text]:-ms-input-placeholder {
 	color: #bdbdbd;
 }
-#upfront-popup.media-manager input[type=text]:focus {
+.media-manager #upfront-popup-content input[type=text]:focus {
 	border-color: #a8a8a8;
 }
 
@@ -95,15 +95,16 @@
 }
 .upfront-media_manager-post_image li.upfront-media_item.selected .thumbnail {
 	/*border:1px solid #1FCD8F;*/
-	outline:#1FCD8F solid 3px;
+	outline: 2px solid #1691fb;
 }
 .upfront-media_manager-post_image li.upfront-media_item.selected:before {
 	content:'';
-	width:30px;
-	height:30px;
-	background-color: #233140;
-	background-image: url(../img/uf-ui-sprite.svg);
-	background-position: -726px -132px;
+	width:16px;
+	height:16px;
+	border-radius: 8px;
+	background-color: #1691fb;
+	/*background-image: url(../img/uf-ui-sprite.svg);
+	background-position: -726px -132px;*/
 	display: block;
 	position: absolute;
 	right:7px;
@@ -217,7 +218,7 @@
 	bottom: 0;
 	left: 0;
 	margin: 0;
-	padding: 7px 15px 0 15px;
+	padding: 30px 15px 0 15px;
 	overflow-x: hidden;
 	overflow-y: auto;
 }
@@ -824,7 +825,7 @@
 	margin: 6px 5px 0 0;
 }
 #upfront-popup-top.upfront-popup-meta .delete_control_container a {
-	color: #757575;
+	color: #545454;
 	font-weight: normal;
 	vertical-align: top;
 }

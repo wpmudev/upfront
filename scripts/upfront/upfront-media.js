@@ -1574,7 +1574,8 @@ define([
 				el: this.popup_data.$bottom,
 				button_text: button_text,
 				button_text_multiple: button_text_multiple,
-				ck_insert: data.ck_insert
+				ck_insert: data.ck_insert,
+				show_insert: data.show_insert
 			});
 			this.library_view = new MediaManager_PostImage_View(data.collection, data);
 			//this.embed_view = new MediaManager_EmbedMedia({});
@@ -1760,6 +1761,7 @@ define([
 	var MediaManager_BottomCommand = Backbone.View.extend({
 		initialize: function(opts){
 			this.options = opts;
+			this.listenTo(Upfront.Events, "media:item:selection_changed", this.update_model);
 		},
 		render: function () {
 			var button_text = this.options.button_text,
@@ -1781,6 +1783,31 @@ define([
 				.append(pagination.$el)
 				.append(use.$el)
 			;
+			
+			use.listenTo(this, "media_manager:active_filters:updated", use.render);
+		},
+		update_model: function (selected) {
+			// checking on all models on current page
+			for ( var key in selected.models ) {
+				var model = selected.models[key],
+					modelAttributes = ((model || {}).attributes || {})
+					index = ActiveFilters.current_keys.indexOf(modelAttributes.ID)
+				;
+				if( index == -1 ) {
+					// inserting selected media models on the list
+					if( modelAttributes.selected ) {
+						ActiveFilters.current_keys.push(modelAttributes.ID);
+						ActiveFilters.current_models.push(model);
+					}
+				} else {
+					// removing media models on the list
+					if( !modelAttributes.selected || modelAttributes.selected === undefined ) {
+						ActiveFilters.current_keys.splice(index, 1);
+						ActiveFilters.current_models.splice(index, 1);
+					}
+				}
+			}
+			this.trigger("media_manager:active_filters:updated");
 		},
 		switch_to_upload: function (e) {
 			this.trigger("media_manager:switcher:to_upload");
@@ -1856,7 +1883,6 @@ define([
 			},
 			initialize: function (opts) {
 				this.options = opts;
-				Upfront.Events.on("media:item:selection_changed", this.update_model, this);
 			},
 			render: function () {
 				this.$el.empty();
@@ -1866,29 +1892,6 @@ define([
 				else if ( ActiveFilters.current_models.length > 1 ) {
 					this.$el.append('<a href="#use" class="use">' + ( this.options.button_text_multiple || l10n.ok ) + '</a>');
 				}
-			},
-			update_model: function (selected) {
-				// checking on all models on current page
-				for ( var key in selected.models ) {
-					var model = selected.models[key],
-						modelAttributes = ((model || {}).attributes || {})
-						index = ActiveFilters.current_keys.indexOf(modelAttributes.ID)
-					;
-					if( index == -1 ) {
-						// inserting selected media models on the list
-						if( modelAttributes.selected ) {
-							ActiveFilters.current_keys.push(modelAttributes.ID);
-							ActiveFilters.current_models.push(model);
-						}
-					} else {
-						// removing media models on the list
-						if( !modelAttributes.selected || modelAttributes.selected === undefined ) {
-							ActiveFilters.current_keys.splice(index, 1);
-							ActiveFilters.current_models.splice(index, 1);
-						}
-					}
-				}
-				this.render();
 			},
 			use_selection: function (e) {
 				e.preventDefault();

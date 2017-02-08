@@ -9111,44 +9111,38 @@ i.upfront-field-icon-burger-trigger {
 .upfront-pagination_item {
   float: left;
   line-height: 20px;
-  margin: 0 5px 0 0;
+  margin: 0;
   text-align: center;
   font-size: 16px;
-  color: #aec4d8;
+  color: #1691fb;
   cursor: pointer;
-  border: 2px solid transparent;
   padding: 3px;
-  width: 30px;
-  height: 30px;
-  background: rgba(35, 49, 64, 0.5); }
+  width: 22px;
+  height: 22px;
+  border-radius: 3px; }
 
 /* Previous & Next button triangles created with CSS */
 .upfront-pagination_item.upfront-pagination_item-prev,
 .upfront-pagination_item.upfront-pagination_item-next {
-  width: 30px;
-  height: 30px;
-  border: 2px solid #7c9dbf;
-  background: transparent;
-  opacity: .7; }
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  background: #fff;
+  color: #1a1a1a;
+  font-size: 12px;
+  line-height: 22px;
+  font-weight: bold; }
 
 .upfront-pagination_item.upfront-pagination_item-prev:after,
 .upfront-pagination_item.upfront-pagination_item-next:after {
   content: '';
-  width: 0;
-  height: 0;
-  font-size: 0;
-  line-height: 0;
-  top: -5px;
-  position: relative;
-  border-bottom: 5px solid transparent;
-  border-top: 5px solid transparent; }
+  display: block; }
 
 .upfront-pagination_item.upfront-pagination_item-prev:after {
-  border-right: 5px solid #E5F3FF;
-  left: -1px; }
+  content: "\2039"; }
 
 .upfront-pagination_item.upfront-pagination_item-next:after {
-  border-left: 5px solid #E5F3FF; }
+  content: "\203A"; }
 
 .upfront-pagination_item:hover {
   opacity: 1; }
@@ -9159,21 +9153,20 @@ i.upfront-field-icon-burger-trigger {
   line-height: 20px;
   margin: 0px 10px;
   text-align: center;
-  font-size: 16px;
-  color: #B8D0E6;
+  font-size: 11px;
+  color: #d2d2d2;
   cursor: pointer; }
 
 #upfront-popup .upfront-pagination_navigation input,
 #upfront-popup .upfront-pagination_navigation input:focus {
-  background: #233140;
-  background: rgba(35, 49, 64, 0.5);
+  background: #646560;
   color: #fff;
-  height: 30px;
+  height: 22px;
   width: 50px;
-  font-size: 16px;
-  border: 1px solid #e5f3ff;
-  border: 1px solid rgba(229, 243, 255, 0.4);
-  margin-right: 5px; }
+  font-size: 12px;
+  font-weight: bold;
+  border: 1px solid #d2d2d2;
+  margin-right: 4px; }
 
 #upfront-popup .upfront-pagination_navigation input:focus {
   background: rgba(35, 49, 64, 0.7);
@@ -9181,9 +9174,9 @@ i.upfront-field-icon-burger-trigger {
 
 .upfront-pagination_navigation .upfront-pagination_page-item {
   font-weight: bold;
-  color: #1fcd8f;
-  border-bottom: 1px solid #1fcd8f;
-  margin-left: 5px; }
+  color: #1691fb;
+  border-bottom: 1px solid #1691fb;
+  margin-left: 4px; }
 
 .upfront-pagination_item.current {
   color: #fff;
@@ -9218,12 +9211,12 @@ i.upfront-field-icon-burger-trigger {
 }
 */
 #upfront-entity_list-pagination small {
-  width: 100%;
-  color: #8dadbd;
-  text-align: center;
+  color: #919191;
+  text-align: left;
   float: left;
   clear: both;
-  font-size: 13px; }
+  font-size: 11px;
+  margin-left: 32px; }
 
 /* Tax */
 #upfront-taxonomy-list, #upfront-taxonomy-add {
@@ -10320,7 +10313,7 @@ a.upfront-post-layout-trigger:before {
   max-width: 700px;
   height: 760px; }
 
-#upfront-popup.media-manager input[type=text] {
+.media-manager #upfront-popup-content input[type=text] {
   background: #fff;
   border: 1px solid #e5e5e5;
   height: 22px;
@@ -10328,19 +10321,19 @@ a.upfront-post-layout-trigger:before {
   opacity: 1;
   border-radius: 3px; }
 
-#upfront-popup.media-manager input[type=text]::-webkit-input-placeholder {
+.media-manager #upfront-popup-content input[type=text]::-webkit-input-placeholder {
   color: #bdbdbd; }
 
-#upfront-popup.media-manager input[type=text]:-moz-placeholder {
+.media-manager #upfront-popup-content input[type=text]:-moz-placeholder {
   color: #bdbdbd; }
 
-#upfront-popup.media-manager input[type=text]::-moz-placeholder {
+.media-manager #upfront-popup-content input[type=text]::-moz-placeholder {
   color: #bdbdbd; }
 
-#upfront-popup.media-manager input[type=text]:-ms-input-placeholder {
+.media-manager #upfront-popup-content input[type=text]:-ms-input-placeholder {
   color: #bdbdbd; }
 
-#upfront-popup.media-manager input[type=text]:focus {
+.media-manager #upfront-popup-content input[type=text]:focus {
   border-color: #a8a8a8; }
 
 #upfront-popup.media-manager #upfront-popup-top {
@@ -10383,15 +10376,16 @@ a.upfront-post-layout-trigger:before {
 
 .upfront-media_manager-post_image li.upfront-media_item.selected .thumbnail {
   /*border:1px solid #1FCD8F;*/
-  outline: #1FCD8F solid 3px; }
+  outline: 2px solid #1691fb; }
 
 .upfront-media_manager-post_image li.upfront-media_item.selected:before {
   content: '';
-  width: 30px;
-  height: 30px;
-  background-color: #233140;
-  background-image: url(../img/uf-ui-sprite.svg);
-  background-position: -726px -132px;
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  background-color: #1691fb;
+  /*background-image: url(../img/uf-ui-sprite.svg);
+	background-position: -726px -132px;*/
   display: block;
   position: absolute;
   right: 7px;
@@ -10499,7 +10493,7 @@ a.upfront-post-layout-trigger:before {
   bottom: 0;
   left: 0;
   margin: 0;
-  padding: 7px 15px 0 15px;
+  padding: 30px 15px 0 15px;
   overflow-x: hidden;
   overflow-y: auto; }
 
@@ -11083,7 +11077,7 @@ a.upfront-post-layout-trigger:before {
   margin: 6px 5px 0 0; }
 
 #upfront-popup-top.upfront-popup-meta .delete_control_container a {
-  color: #757575;
+  color: #545454;
   font-weight: normal;
   vertical-align: top; }
 
