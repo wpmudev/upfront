@@ -1037,8 +1037,6 @@
             initialize: function(options) {
                 this.options = options;
                 Field.prototype.initialize.call(this, options);
-                //Close dropdown on parent scroll
-                $('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, this.closeChosen);
             },
 
             render: function () {
@@ -1120,6 +1118,9 @@
                         select_dropdown.css('display', 'block');
                     }
                 }, 20);
+				
+				//Close dropdown on parent scroll
+                $('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, this.closeChosen);
 
                 me.$el.find('.chosen-drop').show();
             },
