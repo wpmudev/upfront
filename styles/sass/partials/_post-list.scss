@@ -44,7 +44,7 @@
 
 .upfront-popup-posts #upfront-list .upfront-list_item .upfront-list_item-component.upfront-title {
 	color: rgba(110, 110, 110, 1);
-	font-weight: 700;
+	font-weight: 600;
 	font-size: 12px;
 }
 
@@ -172,9 +172,33 @@
 	width: 10%;
 }
 
+.upfront-popup-posts #upfront-list .upfront-list_item .upfront-list_item-component.upfront-editactions {
+	position: absolute;
+	right: 0;
+	margin: 15px;
+	width: auto;
+	border: 1px solid #cccccc;
+	height: 30px;
+	background: #fff;
+	padding: 0;
+}
+
 .upfront-list_item-component.upfront-editactions {
 	width: 25%;
 	display: none;
+}
+
+.upfront-popup-posts .upfront-editactions .upfront-icon-region-labelEdit:before {
+	background-image: url(../img/uf-core-el-sprite_new.png);
+	background-image: url(../img/uf-core-el-sprite_new.svg);
+	background-repeat: no-repeat;
+	margin: 0;
+}
+
+.upfront-popup-posts .upfront-editactions .upfront-icon-region-remove:before {
+	background-image: url(../img/uf-core-el-sprite_new.png);
+	background-image: url(../img/uf-core-el-sprite_new.svg);
+	background-repeat: no-repeat;
 }
 
 .upfront-popup-posts #upfront-list .upfront-list_item .upfront-list_item-component.upfront-date {
@@ -227,12 +251,17 @@
 	background-position: -1231px -224px;
 }
 
+.upfront-popup-posts .upfront-editactions .edit, .upfront-popup-posts .upfront-editactions .trash {
+	background: none;
+}
 
-.upfront-list_item-component.upfront-editactions a.editaction {
+.upfront-popup-posts .upfront-list_item-component.upfront-editactions a.editaction {
 	display: inline-block;
-	border-radius: 3px;
 	padding: 0 5px;
-	
+	margin: 0;
+	padding: 5px 6px 5px 5px;
+	height: 28px;
+	width: 28px;
 }
 
 a.editaction.edit, a.editaction.view {

@@ -17,7 +17,6 @@
 						events: {
 								"click #upfront-list-meta .upfront-list_item-component": "handle_sort_request",
 								"click .editaction.edit": "handle_post_edit",
-								"click .editaction.view": "handle_post_view",
 								"click #upfront-list-page-path a.upfront-path-back": "handle_return_to_posts",
 								"click .editaction.trash": "trash_post"
 						},
@@ -48,7 +47,27 @@
 									true
 								);
 
+								// Add tooltips to inline edit/trash buttons.
+								this.add_tooltips();
+
 								//this.mark_sort_order();
+						},
+
+						// Add tooltips to inline edit/trash buttons.
+						add_tooltips: function() {
+								// Add Edit tooltip.
+								this.$el.find('.editaction.edit').utooltip({
+									fromTitle: false,
+									content: Upfront.Settings.l10n.global.content.edit_post,
+									panel: 'postEditor'
+								});
+
+								// Add trash tooltip.
+								this.$el.find('.editaction.trash').utooltip({
+									fromTitle: false,
+									content: Upfront.Settings.l10n.global.content.trash_post,
+									panel: 'postEditor'
+								});
 						},
 
 						handle_sort_request: function (e) {
@@ -146,7 +165,7 @@
 								});
 								$("#upfront-list-page").hide();
 						}
-				});
 
+				});
 		});
 }(jQuery));

@@ -181,6 +181,8 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'spam' => __('Spam', 'upfront'),
 				'untrash' => __('Untrash', 'upfront'),
 				'trash' => __('Trash', 'upfront'),
+				'trash_post' => __('Trash post', 'upfront'),
+				'trash_page' => __('Trash page', 'upfront'),
 				'post_url' => __('Post Title & URL', 'upfront'),
 				'page_url' => __('Page Title & URL', 'upfront'),
 				'edit_post_url' => __('Edit the <b>URL</b> for this post', 'upfront'),
