@@ -15,7 +15,8 @@
             },
             on_click: function () {
                 Upfront.Media.Manager.open({
-                    media_type: ["images", "videos", "audios", "other"]
+                    media_type: ["images", "videos", "audios", "other"],
+                    show_control: false
                 });
             }
         });

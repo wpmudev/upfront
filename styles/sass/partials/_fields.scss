@@ -467,7 +467,7 @@ input.upfront-field-text:hover,
 	overflow-x: hidden;
 	overflow-y: scroll;
 }
-.upfront-additive_multiselection {
+/*.upfront-additive_multiselection {
 	color: rgb(96, 127, 153);
     cursor: pointer;
     display: inline-block;
@@ -539,21 +539,21 @@ input.upfront-field-text:hover,
 .upfront-additive_multiselection .labels_list ul.empty {
 	border: none;
 	display: none;
-}
-.upfront-suggest-list,
-.upfront-additive_multiselection .labels_list li {
+}*/
+.upfront-suggest-list/*,
+.upfront-additive_multiselection .labels_list li*/ {
 	padding: 0;
 	margin: 0 !important;
 	line-height: 14px;
 	position: relative;
 }
-.upfront-additive_multiselection .labels_list li label {
+/*.upfront-additive_multiselection .labels_list li label {
 	font-weight: normal;
 	font-family: verdana,sans-serif;
     font-size: 11px;
-}
-.upfront-suggest-list .upfront-field-checkbox,
-.upfront-additive_multiselection .labels_list .upfront-field-checkbox  {
+}*/
+.upfront-suggest-list .upfront-field-checkbox/*,
+.upfront-additive_multiselection .labels_list .upfront-field-checkbox*/  {
 	float: none;
 	position: absolute;
 	top: 0;
@@ -562,16 +562,16 @@ input.upfront-field-text:hover,
 	right: 10px;
 	margin: auto;
 }
-.upfront-suggest-list label,
-.upfront-additive_multiselection .labels_list li label {
+.upfront-suggest-list label/*,
+.upfront-additive_multiselection .labels_list li label*/ {
 	display: block;
 	padding: 7px 30px 7px 10px;
 }
 
-.upfront-additive_multiselection .upfront-field-checkbox { border: none; }
+/*.upfront-additive_multiselection .upfront-field-checkbox { border: none; }*/
 
-.upfront-suggest-match,
-.upfront-additive_multiselection .labels_list .selection {
+.upfront-suggest-match/*,
+.upfront-additive_multiselection .labels_list .selection*/ {
 	background: rgb(31, 205, 143);
 	box-shadow: 0 0 0 1px rgb(31, 205, 143), 0 2px 0 rgb(27, 179, 125), 0 0 0 2px rgb(31, 205, 143);
 	border-radius: 1px;
@@ -596,25 +596,25 @@ input.upfront-field-text:hover,
 .upfront-field-wrap-multiple {
 	margin-right: -15px;
 }
-.upfront-suggest-add-wrap,
-.upfront-additive_multiselection .add_labels {
+.upfront-suggest-add-wrap/*,
+.upfront-additive_multiselection .add_labels*/ {
 	border: 1px solid rgb(163, 191, 217);
 	border-top: none;
 	background: rgb(204, 230, 255);
 	line-height: 16px;
 	position: relative;
 }
-.upfront-additive_multiselection .add_labels.empty {
+/*.upfront-additive_multiselection .add_labels.empty {
 	border: none;
-}
-.upfront-suggest-add-value,
-.upfront-additive_multiselection .add_labels .add_value {
+}*/
+.upfront-suggest-add-value/*,
+.upfront-additive_multiselection .add_labels .add_value*/ {
 	display: block;
 	font-weight: bold;
 	padding: 6px 0 6px 12px;
 }
-.upfront-suggest-add,
-.upfront-additive_multiselection .add_labels .add_link {
+.upfront-suggest-add/*,
+.upfront-additive_multiselection .add_labels .add_link*/ {
 	display: block;
 	position: absolute;
 	top: 6px;
