@@ -1710,7 +1710,8 @@ var Application = new (Backbone.Router.extend({
 				if (parseInt(page.pageId, 10) === parseInt(postId, 10)) {
 					result = {
 						pluginName: data.pluginName,
-						content: data.sampleContents[page.content] ? data.sampleContents[page.content] : ''
+						content: data.sampleContents[page.content] ? data.sampleContents[page.content] : '',
+						title: page.title ? page.title : ''
 					};
 				}
 			});
@@ -1720,12 +1721,14 @@ var Application = new (Backbone.Router.extend({
 				if (layout.specificity && currentLayout.specificity && _.isNull(currentLayout.specificity.match(layout.specificity)) === false) {
 					result = {
 						pluginName: data.pluginName,
-						content: data.sampleContents[layout.content] ? data.sampleContents[layout.content] : ''
+						content: data.sampleContents[layout.content] ? data.sampleContents[layout.content] : '',
+						title: layout.title ? layout.title : ''
 					};
 				} else if (layout.item === currentLayout.item) {
 					result = {
 						pluginName: data.pluginName,
-						content: data.sampleContents[layout.content] ? data.sampleContents[layout.content] : ''
+						content: data.sampleContents[layout.content] ? data.sampleContents[layout.content] : '',
+						title: layout.title ? layout.title : ''
 					};
 				}
 			});
