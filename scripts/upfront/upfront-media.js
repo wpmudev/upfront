@@ -2,8 +2,8 @@
 
 define([
     'scripts/upfront/upfront-media/insert-options-item-control',
-		'scripts/perfect-scrollbar/perfect-scrollbar'
-],function(InsertOptions, perfectScrollbar) {
+	'scripts/perfect-scrollbar/perfect-scrollbar'
+], function(InsertOptions, perfectScrollbar) {
 
 	var MEDIA_SIZES = {
 		FULL: "full",
@@ -887,38 +887,38 @@ define([
 				}
 			});
 
-				var MediaManager_ItemControl_LabelItem = Backbone.View.extend({
-					tagName: 'li',
-					events: {
-						click: "toggle_label_assignment"
-					},
-					render: function () {
-						var me = this,
-							is_used = this.media_items.is_used_label(this.model),
-							used = _.template('<input type="checkbox" id="{{id}}" class="upfront-field-checkbox" value="{{value}}" checked />'),
-							free = _.template('<input type="checkbox" id="{{id}}" class="upfront-field-checkbox" value="{{value}}" />'),
-							label = _.template('<label for="{{id}}">{{name}}</label>'),
-							name = this.model.get("filter") || '',
-							match_rx = this.selection ? new RegExp('(' + this.selection + ')', 'i') : false,
-							obj = this.model.toJSON()
-						;
-						this.matched = false;
-						this.$el.empty();
-						if (match_rx && !name.match(match_rx)) return false;
-						this.matched = true;
-						obj.id = this.cid;
-						obj.name = name.replace(match_rx, '<span class="selection">$1</span>');
-						this.$el
-							.append(label(obj))
-							.append((is_used ? used : free)(obj))
-						;
-					},
-					toggle_label_assignment: function (e) {
-						e.preventDefault();
-						e.stopPropagation();
-						this.media_items.update_label_state(this.model);
-					}
-				});
+			var MediaManager_ItemControl_LabelItem = Backbone.View.extend({
+				tagName: 'li',
+				events: {
+					click: "toggle_label_assignment"
+				},
+				render: function () {
+					var me = this,
+						is_used = this.media_items.is_used_label(this.model),
+						used = _.template('<input type="checkbox" id="{{id}}" class="upfront-field-checkbox" value="{{value}}" checked />'),
+						free = _.template('<input type="checkbox" id="{{id}}" class="upfront-field-checkbox" value="{{value}}" />'),
+						label = _.template('<label for="{{id}}">{{name}}</label>'),
+						name = this.model.get("filter") || '',
+						match_rx = this.selection ? new RegExp('(' + this.selection + ')', 'i') : false,
+						obj = this.model.toJSON()
+					;
+					this.matched = false;
+					this.$el.empty();
+					if (match_rx && !name.match(match_rx)) return false;
+					this.matched = true;
+					obj.id = this.cid;
+					obj.name = name.replace(match_rx, '<span class="selection">$1</span>');
+					this.$el
+						.append(label(obj))
+						.append((is_used ? used : free)(obj))
+					;
+				},
+				toggle_label_assignment: function (e) {
+					e.preventDefault();
+					e.stopPropagation();
+					this.media_items.update_label_state(this.model);
+				}
+			});
 
 		var MediaManager_SearchFiltersControl = Backbone.View.extend({
 			className: "upfront-search_filter-control",
