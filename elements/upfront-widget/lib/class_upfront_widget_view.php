@@ -21,14 +21,21 @@ class Upfront_UwidgetView extends Upfront_Object {
 		// We should be good here now
 
 		$instance = array();
+		$role = '';
 
 		foreach($fields as $field) {
 			$name = !empty($field['name']) ? $field['name'] : false;
 			if (empty($name)) continue;
 			$instance[$name] = $this->_get_property($name);
 		}
+		
+		
+		// If custom menu widget we need role navigation
+		if( strpos($widget_name, 'nav_menu') !== false ) {
+			$role = ' role="navigation" aria-label="'. $widget_name .'"';
+		}
 
-		return "<div class=' upfront-widget'>" .
+		return "<div class='upfront-widget' ". $role .">" .
 			$widget->get_widget_markup($instance) .
 		"</div>";
 	}

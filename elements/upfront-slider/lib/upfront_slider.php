@@ -28,6 +28,7 @@ class Upfront_UsliderView extends Upfront_Object {
 
 		$data['slides'] = $slides;
 		$data['rotate'] = $data['rotate'] ? true : false;
+		$data['keyboardControls'] = $data['keyboardControls'] ? true : false;
 
 		$data['dots'] = array_search($data['controls'], array('dots', 'both')) !== false;
 		$data['arrows'] = array_search($data['controls'], array('arrows', 'both')) !== false;
@@ -104,8 +105,9 @@ class Upfront_UsliderView extends Upfront_Object {
 			'controls' => 'both', // both, arrows, dots, none
 			'controlsWhen' => 'always', // always, hover
 
-			'rotate' => array('true'),
+			'rotate' => array('false'),
 			'rotateTime' => 5,
+			'keyboardControls' => array('true'),
 
 			'transition' => 'crossfade', // crossfade, slide-left, slide-right, slide-bottom, slide-top
 			'slides' => array(), // Convert to Uslider_Slides to use, and to Object to store
@@ -218,8 +220,10 @@ class Upfront_UsliderView extends Upfront_Object {
 			'dots' => __('Dots', 'upfront'),
 			'arrows' => __('Arrows', 'upfront'),
 			'both' => __('Both', 'upfront'),
+			'enable_arrows_slide' => __('Enable slide with arrow keys?', 'upfront'),
 			'ok' => __('Ok', 'upfront'),
 			'slides_order' => __('Slides order', 'upfront'),
+			'accessibility' => __('Accessibility', 'upfront'),
 			'slides' => __('Slides', 'upfront'),
 			'add_slide' => __('Add Slide', 'upfront'),
 			'choose_type' => __('Please choose the type of slider', 'upfront'),

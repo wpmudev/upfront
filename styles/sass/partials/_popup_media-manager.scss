@@ -199,6 +199,7 @@
 	color: #335b80;
 }
 .upfront-media-controls .change_title .upfront-field-label,
+.upfront-media-controls .change_alt .upfront-field-label,
 .upfront-media-controls .size_hints .upfront-field-label,
 .upfront-media-controls .add_labels .upfront-field-label,
 .upfront-media-controls .upfront-filter_selection-control .upfront-field-label,
@@ -206,7 +207,8 @@
 	padding: 0 0 0 0px;
 	font-weight:normal;
 }
-.upfront-media-controls .change_title .selected_length {
+.upfront-media-controls .change_title .selected_length,
+.upfront-media-controls .change_alt .selected_length {
 	color: #7c98b2;
 	font-family: Verdana, sans-serif;
 	font-size: 11px;

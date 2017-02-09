@@ -535,6 +535,7 @@ define([
                 var self = this,
                     sections = _([
                         'change_title',
+						'change_alt',
 						'size_hints',
                         'add_labels',
                         'existing_labels',
@@ -543,6 +544,7 @@ define([
                     ]),
                     renderers = _([
                         'render_title',
+						'render_alt',
 						'render_size_hint',
                         'render_labels_adding',
                         'render_shared_labels',
@@ -620,6 +622,28 @@ define([
 							$hub.append($container);
 						}
 					}
+				}
+			},
+			render_alt: function () {
+				var	me = this,
+					$hub = this.$el.find(".change_alt"),
+					image = this.model.at(0).get('image');
+
+
+				$hub.empty();
+				if (this.model.length > 1) {
+					$hub.append('<span class="selected_length">' + l10n.files_selected.replace(/%d/, this.model.length) + '</span>');
+				} else {
+					this.alt_field = new Upfront.Views.Editor.Field.Text({
+						model: this.model.at(0),
+						label: l10n.media_alt,
+						name: 'alt',
+						change: function(){
+							me.change_alt();
+						}
+					});
+					this.alt_field.render();
+					$hub.append(this.alt_field.$el);
 				}
 			},
 			render_title: function () {
@@ -726,6 +750,23 @@ define([
 				//e.stopPropagation();
 				var model = this.model.at(0);
 				model.set({post_title: this.title_field.get_value()});
+				var me = this,
+					data = {
+						action: "upfront-media-update_media_item",
+						data: model.toJSON()
+					}
+				;
+				Upfront.Util.post(data)
+					.done(function () {
+						model.trigger("change");
+					})
+				;
+				model.trigger("appearance:update");
+			},
+			change_alt: function (e) {
+				//e.stopPropagation();
+				var model = this.model.at(0);
+				model.set({alt: this.alt_field.get_value()});
 				var me = this,
 					data = {
 						action: "upfront-media-update_media_item",

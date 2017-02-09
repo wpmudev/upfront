@@ -890,10 +890,11 @@
                 _.delay(function() { // Delay because opening animation causes wrong outerHeight results
                     var in_sidebar = me.$el.parents('#sidebar-ui').length,
                         in_settings = me.$el.parents('#element-settings-sidebar').length,
+						in_region = me.$el.parents('#region-settings-sidebar').length,
                         settingsTitleHeight = 46;
 
                     // Apply if select field is in sidebar or settings sidebar
-                    if(in_sidebar == 1 || in_settings == 1) {
+                    if(in_sidebar == 1 || in_settings == 1 || in_region == 1) {
                         var select_dropdown = me.$el.find('.upfront-field-select-options'),
                             select = select_dropdown.parent(),
                             dropDownTop = select.offset().top - $('#element-settings-sidebar').offset().top;
@@ -1036,8 +1037,6 @@
             initialize: function(options) {
                 this.options = options;
                 Field.prototype.initialize.call(this, options);
-                //Close dropdown on parent scroll
-                $('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, this.closeChosen);
             },
 
             render: function () {
@@ -1119,6 +1118,9 @@
                         select_dropdown.css('display', 'block');
                     }
                 }, 20);
+				
+				//Close dropdown on parent scroll
+                $('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, this.closeChosen);
 
                 me.$el.find('.chosen-drop').show();
             },
