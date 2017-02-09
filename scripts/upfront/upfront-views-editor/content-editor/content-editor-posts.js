@@ -10,7 +10,7 @@
 
 
 				return Backbone.View.extend({
-						className: "upfront-entity_list-posts bordered-bottom",
+						className: "upfront-entity_list-posts",
 						postListTpl: _.template($(popup_tpl).find('#upfront-post-list-tpl').html()),
 						postSingleTpl: _.template($(popup_tpl).find('#upfront-post-single-tpl').html()),
 						paginationTpl: _.template($(popup_tpl).find('#upfront-pagination-tpl').html()),

@@ -1,3 +1,12 @@
+.upfront-popup-posts .upfront-popup-meta:first-of-type {
+	background: #f7f7f7;
+	border-bottom: 1px solid #e1e1e1;
+}
+
+.upfront-popup-posts .upfront-popup-meta:last-of-type {
+	background: none;
+}
+
 /* Entities(Posts) list */
 .upfront-popup-posts #upfront-popup-content {
 	background: #fff;
@@ -12,6 +21,11 @@
 .upfront-popup-posts #upfront-list .upfront-list_item {
 	background: none;
 	max-height: 60px;
+	margin: 0 32px;
+	width: 653px;
+	width: -moz-calc(100% - 47px);
+	width: -webkit-calc(100% - 47px);
+	width: calc(100% - 47px);
 }
 #upfront-list .upfront-list_item {
 	background: #f2f9ff;
@@ -29,7 +43,7 @@
 
 .upfront-popup-posts #upfront-list .upfront-list_item .upfront-avatar {
 	padding: 15px;
-	padding-left: 30px;
+	padding-left: 0;
 }
 
 #upfront-list .upfront-list_item .upfront-list_item-component {
@@ -177,10 +191,12 @@
 	right: 0;
 	margin: 15px;
 	width: auto;
-	border: 1px solid #cccccc;
 	height: 30px;
 	background: #fff;
 	padding: 0;
+	border: 1px solid #cccccc;
+	box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3);
+	border-radius: 2px;
 }
 
 .upfront-list_item-component.upfront-editactions {
@@ -207,7 +223,7 @@
 	text-align: right;
 	width: 86px;
 	font-size: 12px;
-	margin: 15px;
+	margin: 15px 0;
 	padding-right: 0;
 	padding-left: 0;
 }
@@ -650,3 +666,66 @@ a.editaction.trash {
 	width: 98%;
 }
 
+/* Pagination */
+.upfront-popup-posts .upfront-pagination_navigation {
+	font-size: 11px;
+	color: rgb(156,155,156);
+}
+
+.upfront-popup-posts#upfront-popup .upfront-pagination_navigation input {
+	background:rgb(96,96,96);
+	background:rgba(96, 96, 96, 0.5);
+	color: #fff;
+	height: 22px;
+	width: 50px;
+	font-size: 11px;
+	border: 1px solid rgb(168, 168, 168);
+	border: 1px solid rgba(168, 168, 168, 1);
+	margin-right: 5px;
+}
+
+.upfront-popup-posts .upfront-pagination_navigation .upfront-pagination_page-item {
+	color: #1979cc;
+	border-bottom: 1px solid #1979cc;
+	font-size: 11px;
+}
+
+.upfront-popup-posts .upfront-pagination_item, .upfront-popup-posts .upfront-pagination_item:hover {
+	width: 22px;
+	height: 22px;
+	background: #fff;
+	border: 1px solid #cccccc;
+	box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3);
+	border-radius: 2px;
+	opacity: 1;
+}
+
+.upfront-popup-posts .upfront-pagination_item-prev:after, .upfront-popup-posts .upfront-pagination_item-next:after {
+	content: "";
+	border: none;
+}
+
+.upfront-popup-posts .upfront-pagination_item:before {
+	color: rgb(25,25,25);
+	font-size: 8px;
+	/* Temporary Font */
+	font-family: dashicons;
+	font-weight: bold;
+	position: relative;
+	top: -4px;
+}
+
+.upfront-popup-posts .upfront-pagination_item-prev:before {
+	content: "\f341";
+}
+
+.upfront-popup-posts .upfront-pagination_item-next:before {
+	content: "\f345";
+}
+
+.upfront-popup-posts #upfront-entity_list-pagination small {
+	font-size: 10px;
+	width: 50px;
+	margin-left: 37px;
+	color: rgb(156,155,156);
+}
