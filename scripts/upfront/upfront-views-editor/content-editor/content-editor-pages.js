@@ -14,9 +14,10 @@
 								"click .upfront-list-page_item": "handle_page_activate",
 								"click .upfront-page-path-item": "handle_page_activate",
 								"change #upfront-page_template-select": "template_change",
-								"click .editaction.trash": "trash_page",
 								"click .editaction.edit": "handle_post_edit",
-								"click .editaction.view": "handle_post_view"
+								"click .editaction.trash": "trash_confirm",
+								"click .upfront-posts-delete-cancel-button": "trash_cancel",
+								"click .upfront-posts-delete-button": "trash_page"
 						},
 						currentPage: false,
 						pageListTpl: _.template($(popup_tpl).find('#upfront-page-list-tpl').html()),
@@ -127,17 +128,26 @@
 
 								this.currentPage = page;
 						},
+						trash_confirm: function(e) {
+							// Show delete confirmation.
+							$(e.target).parents('.upfront-list_item').find('.upfront-delete-confirm').show();
+						},
+						trash_cancel: function(e) {
+							// Hide delete confirmation.
+							$(e.target).parents('.upfront-delete-confirm').hide();
+						},
 						trash_page: function (e) {
 								var me = this;
 								var postelement = $(e.currentTarget).closest('.upfront-list_item-post.upfront-list_item');
 								var postId = postelement.attr('data-post_id');
-								if(confirm( Upfront.Settings.l10n.global.content.delete_confirm.replace(/%s/, this.collection.get(postId).get('post_type')))) {
-										this.collection.get(postId).set('post_status', 'trash').save().done(function(){
+								// Hide delete confirmation.
+								$(e.target).parents('.upfront-delete-confirm').hide();
+								// Delete Page.
+								this.collection.get(postId).set('post_status', 'trash').save().done(function(){
 
-												me.collection.remove(me.collection.get(postId));
-												postelement.remove();
-										});
-								}
+										me.collection.remove(me.collection.get(postId));
+										postelement.remove();
+								});
 						},
 						post_saved: function () {
 								// We should fetch colletion after post / page update to retrieve any title changes

@@ -463,6 +463,52 @@ a.editaction.trash {
 	padding: 15px 20px;
 }
 
+/* Delete Confirmation */
+.upfront-popup-posts .upfront-delete-confirm {
+	position: absolute;
+	left: 0;
+	width: 100%;
+	background: rgba(105, 116, 121, 0.9);
+	height: 60px;
+	display: none;
+}
+
+.upfront-popup-posts .upfront-delete-confirm div {
+	margin: auto;
+	display: block;
+	text-align: center;
+	height: 60px;
+	padding: 16px;
+	line-height: 22px;
+}
+
+.upfront-popup-posts .upfront-delete-confirm span {
+	display: inline-block;
+	color: #fff;
+	font-size: 12px;
+	font-weight: 100;
+	letter-spacing: 0.5px;
+	margin-right: 15px;
+}
+
+.upfront-popup-posts .upfront-delete-confirm span b {
+	font-weight: 600;
+}
+
+.upfront-popup-posts #upfront-list .upfront-delete-confirm button {
+	color: #595959;
+	width: auto;
+	border: 1px solid #677780;
+	border-radius: 0;
+	background: #fff;
+	height: 22px;
+	line-height: 11px;
+	font-size: 11px;
+	text-transform: none;
+	padding: 0 9px;
+	float: none;
+}
+
 
 /* Comments-specific additions to Entities list */
 .upfront-comment-approved {
