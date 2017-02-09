@@ -11,8 +11,6 @@ class Upfront_Layout extends Upfront_JsonModel {
 	protected static $_layout_default_version = false;
 
 	public static function from_entity_ids ($cascade, $storage_key = '', $dev_first = false) {
-		$cascade = apply_filters('upfront-layout-from_entity_ids', $cascade);
-
 		$layout = array();
 		if (!is_array($cascade)) return $layout;
 		self::$cascade = $cascade;
