@@ -1,10 +1,11 @@
-.upfront-popup-posts .upfront-popup-meta:first-of-type {
+.upfront-popup-posts .upfront-popup-meta {
 	background: #f7f7f7;
 	border-bottom: 1px solid #e1e1e1;
 }
 
 .upfront-popup-posts .upfront-popup-meta:last-of-type {
 	background: none;
+	border: none;
 }
 
 /* Entities(Posts) list */
@@ -681,13 +682,14 @@ a.editaction.trash {
 	font-size: 11px;
 	border: 1px solid rgb(168, 168, 168);
 	border: 1px solid rgba(168, 168, 168, 1);
-	margin-right: 5px;
+	margin-right: 2px;
 }
 
 .upfront-popup-posts .upfront-pagination_navigation .upfront-pagination_page-item {
 	color: #1979cc;
 	border-bottom: 1px solid #1979cc;
 	font-size: 11px;
+	margin: 0 0 0 2px;
 }
 
 .upfront-popup-posts .upfront-pagination_item, .upfront-popup-posts .upfront-pagination_item:hover {
@@ -698,6 +700,7 @@ a.editaction.trash {
 	box-shadow: 0 0 3px 0 rgba(36, 57, 77, 0.3);
 	border-radius: 2px;
 	opacity: 1;
+	margin: 0;
 }
 
 .upfront-popup-posts .upfront-pagination_item-prev:after, .upfront-popup-posts .upfront-pagination_item-next:after {
@@ -726,6 +729,6 @@ a.editaction.trash {
 .upfront-popup-posts #upfront-entity_list-pagination small {
 	font-size: 10px;
 	width: 50px;
-	margin-left: 37px;
+	margin-left: 32px;
 	color: rgb(156,155,156);
 }
