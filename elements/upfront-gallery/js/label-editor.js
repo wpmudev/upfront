@@ -11,13 +11,13 @@ define([
 		labelSelectorTpl: _.template(labelSelectorTpl),
 
 		events: {
-			"click :text": "stop_prop",
-			"keyup .labels_filter :text.filter": "fillLabelSuggestionList",
+			'keyup .labels_filter .filter': 'fill_suggestion_list',
+			'keydown .labels_filter .filter': 'on_field_keydown',
+			'click .labels_filter .filter': 'on_field_click',
+			'click label': 'onLabelClick',
+			'click .existing_labels a': 'removeLabel',
+			'click .ugallery-magnific-addbutton': 'focus_name_field',
 			"click .new_labels .toggle-add-label": "show_add_label",
-			"click .new_labels .submit-label": "add_new_labels",
-			"focus :text.filter": "add_focus_state",
-			"blur :text.filter": "remove_focus_state",
-			"keyup .new_labels :text.add-label": "enter_new_labels"
 		},
 
 		initialize: function(options) {
@@ -26,58 +26,11 @@ define([
 			this.labels = options.labels;
 			this.imageId = options.imageId;
 		},
-		
-		stop_prop: function (e) {
-			e.stopPropagation();
-		},
-		
-		add_focus_state: function (e) {
-			this.$el.addClass('focus');
-		},
-		
-		remove_focus_state: function (e) {
-			this.$el.removeClass('focus');
-		},
-		
-		update_selection: function (e) {
-			e.preventDefault();
-			e.stopPropagation();
-			var $text = this.$el.find(".labels_filter :text.filter"),
-				selection = $text.val()
-			;
-			this.selection = selection;
-
-			this.render_labels();
-		},
-		
-		show_add_label: function (e) {
-			e.preventDefault();
-			e.stopPropagation();
-			var $hub = this.$el.find(".new_labels");
-			$hub.addClass('active');
-		},
-		
-		enter_new_labels: function (e) {
-			if (e.which == 13) {
-				this.add_new_labels();
-			}
-		},
-		
-		add_new_labels: function (e) {
-			if (e) {
-				e.preventDefault();
-				e.stopPropagation();
-			}
-			var $text = this.$el.find(".new_labels :text.add-label"),
-				selection = $text.val()
-			;
-			this.model.add_new_label(selection);
-		},
 
 		/*?
 		 * Prevent crazy click hijack that navigates and reloads the page.
 		 */
-		onNameFieldClick: function(event) {
+		on_field_click: function(event) {
 			$(event.target).focus();
 			event.preventDefault();
 			event.stopPropagation();
@@ -106,53 +59,18 @@ define([
 				l10n: l10n.template,
 				selection: this.selection
 			}));
-			
-			//this.render_existing_labels();
-			this.render_labels();
 
 			return this;
 		},
 		
-		render_existing_labels: function () {
-			var me = this,
-				$hub = this.$el.find("div.labels_filter ul")
-			;
-			$hub.empty();
-			
-			_.each(this.model.get_shared_labels(), function (label) {
-				var item = new MediaManager_ItemControl_LabelItem({model: label});
-				item.media_items = me.model;
-				item.render();
-				$hub.append(item.$el);
-			});
+		show_add_label: function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			var $hub = this.$el.find(".new_labels");
+			$hub.addClass('active');
 		},
-		render_labels: function () {
-			var me = this,
-				$hub = this.$el.find(".labels_list ul"),
-				known_labels = ActiveFilters.get("label"),
-				shared_labels = this.model.get_shared_labels(),
-				has_selection = false,
-				match = 0
-			;
-			$hub.empty();
-			if (!this.selection) return false;
-			
-			known_labels.each(function (label) {
-				var item = new MediaManager_ItemControl_LabelItem({model: label});
-				item.shared = shared_labels;
-				item.media_items = me.model;
-				item.selection = me.selection;
-				item.render();
-				if (item.matched) {
-					$hub.append(item.$el);
-					match++;
-				}
-			});
-			if (match > 0) this.$el.addClass('has_match');
-			else this.$el.removeClass('has_match');
-		},
-
-		focusNameField: function() {
+	
+		focus_name_field: function() {
 			var $addlabels = this.$el.find('.ugallery-addlabels');
 			if ( $addlabels.val() === '' )
 				$addlabels.focus();
@@ -160,7 +78,7 @@ define([
 				this.addLabel($addlabels);
 		},
 
-		fillLabelSuggestionList: function(e) {
+		fill_suggestion_list: function(e) {
 			var me = this;
 
 			if([9, 13, 38, 40, 27].indexOf(e.which) !== -1) {
@@ -180,7 +98,6 @@ define([
 					var lab = Upfront.data.ugallery.label_names[label];
 
 					if(!_.findWhere(me.labels, { id: lab.id + '' }) && !_.findWhere(me.labels, { id: parseInt(lab.id, 10)})){
-						console.log(lab.text);
 						labels.push({
 							id: lab.id,
 							text: lab.text.replace(val, '<span class="selection">' + val + '</span>')
@@ -188,6 +105,9 @@ define([
 					}
 				}
 			});
+			
+			if (labels.length > 0) this.$el.find('.upfront-additive_multiselection').addClass('has_match');
+				else this.$el.find('.upfront-additive_multiselection').removeClass('has_match');
 
 			this.$el.find('.labels_list').html(me.labelSelectorTpl({labels: labels, l10n: l10n.template}));
 		},
@@ -248,7 +168,7 @@ define([
 			}
 		},
 
-		onNameFieldKeydown: function(e) {
+		on_field_keydown: function(e) {
 			if (_.indexOf([13, 9, 40, 38, 27], e.which) !== -1) {
 				e.preventDefault();
 			}
@@ -351,39 +271,6 @@ define([
 					me.updateLabels();
 				}
 			});
-		}
-	});
-	
-	var Label_ItemControl_LabelItem = Backbone.View.extend({
-		tagName: 'li',
-		events: {
-			click: "toggle_label_assignment"
-		},
-		render: function () {
-			var me = this,
-				is_used = this.media_items.is_used_label(this.model),
-				used = _.template('<input type="checkbox" id="{{id}}" class="upfront-field-checkbox" value="{{value}}" checked />'),
-				free = _.template('<input type="checkbox" id="{{id}}" class="upfront-field-checkbox" value="{{value}}" />'),
-				label = _.template('<label for="{{id}}">{{name}}</label>'),
-				name = this.model.get("filter") || '',
-				match_rx = this.selection ? new RegExp('(' + this.selection + ')', 'i') : false,
-				obj = this.model.toJSON()
-			;
-			this.matched = false;
-			this.$el.empty();
-			if (match_rx && !name.match(match_rx)) return false;
-			this.matched = true;
-			obj.id = this.cid;
-			obj.name = name.replace(match_rx, '<span class="selection">$1</span>');
-			this.$el
-				.append(label(obj))
-				.append((is_used ? used : free)(obj))
-			;
-		},
-		toggle_label_assignment: function (e) {
-			e.preventDefault();
-			e.stopPropagation();
-			this.media_items.update_label_state(this.model);
 		}
 	});
 
