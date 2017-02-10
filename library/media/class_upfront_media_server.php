@@ -94,6 +94,7 @@ class Upfront_MediaServer extends Upfront_Server {
 			'px_label' => __("px", 'upfront'),
 			'width_label' => __("w", 'upfront'),
 			'height_label' => __("h", 'upfront'),
+			'copy_url' => __("Copy File URL", 'upfront'),
 			'add_labels' => __("Add Label(s)", 'upfront'),
 			'media_labels' => __("Media Labels", 'upfront'),
 			'current_labels' => __("Current Label(s)", 'upfront'),
@@ -162,7 +163,8 @@ class Upfront_MediaServer extends Upfront_Server {
 			'confirm_delete_items' => __("Are you sure you want to delete selected items?", 'upfront'),
 			'on_this_page' => __("on this page", 'upfront'),
 			'display' => __('Display', 'upfront'),
-			'info' => __('Info', 'upfront')
+			'info' => __('Info', 'upfront'),
+			'full_size' => __('Full size', 'upfront')
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

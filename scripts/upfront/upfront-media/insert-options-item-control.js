@@ -1,41 +1,41 @@
 ;(function($){
-    define(function(){
-    var l10n = Upfront.Settings.l10n.media;
-    var INSERT_OPTIONS = {
-        uf_insert: 'image_insert',
-        wp_insert: 'wp_default'
-    };
+	define(function(){
+	var l10n = Upfront.Settings.l10n.media;
+	var INSERT_OPTIONS = {
+		uf_insert: 'image_insert',
+		wp_insert: 'wp_default'
+	};
 
-    var Options_Control = Backbone.View.extend({
-        initialize: function(opts){
+	var Options_Control = Backbone.View.extend({
+		events: {
+			"click a.upfront-media-insert-option-toggle": "toggle_option"
+		},
+		initialize: function(opts){
 
-        },
-        render: function(){
-            var radios = new Upfront.Views.Editor.Field.Radios({
-                label: l10n.insert_options,
-                model:  this.model,
-                name:  "insert_option",
-                layout: 'horizontal-inline',
-                default_value: this.model.at(0).get("insert_option") || 'image_insert',
-                values: [
-                    { label: l10n.image_inserts, value: INSERT_OPTIONS.uf_insert },
-                    { label: l10n.wp_default, value: INSERT_OPTIONS.wp_insert }
-                ],
-                change: function(val){
-                    this.model.at(0).set("insert_option", val);
-                }
-            });
-            radios.render();
-            this.$el.html( radios.el );
+		},
+		render: function(){
+			var insert_option = this.model.at(0).get("insert_option") || INSERT_OPTIONS.uf_insert,
+				active_class = insert_option == INSERT_OPTIONS.uf_insert ? 'active' : 'inactive'
+			;
+			this.$el.empty();
+			this.$el.append('<a class="upfront-media-insert-option-toggle ' + active_class + '"></a>');
+			this.$el.append('<label class="upfront-field-label upfront-field-label-block">'+ l10n.full_size +'</label>');
 
-            return  this;
-        }
-    });
+			return  this;
+		},
+		toggle_option: function(e) {
+			e.stopPropagation();
+			e.preventDefault();
+			var insert_option = this.model.at(0).get("insert_option") || INSERT_OPTIONS.uf_insert;
+			this.model.at(0).set("insert_option", insert_option == INSERT_OPTIONS.uf_insert ? INSERT_OPTIONS.wp_insert : INSERT_OPTIONS.uf_insert);
+			this.render();
+		}
+	});
 
-    return {
-        Options_Control: Options_Control,
-        INSERT_OPTIONS: INSERT_OPTIONS
-    };
+	return {
+		Options_Control: Options_Control,
+		INSERT_OPTIONS: INSERT_OPTIONS
+	};
 
 //End Define
    });

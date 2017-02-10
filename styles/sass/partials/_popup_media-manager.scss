@@ -229,10 +229,13 @@
 	width: 38.3%;
 	position: absolute;
 	top: 0;
-	bottom: 0;
+	bottom: 90px;
 	right: 0;
 	padding: 0;
 	background: #f2f2f2;
+}
+.upfront-media_manager .upfront-media-controls-no-insert {
+	bottom: 0;
 }
 .upfront-media_manager .upfront-media-controls .upfront-item-control,
 .upfront-media_manager .upfront-media-controls .upfront-search-control,
@@ -253,12 +256,21 @@
 .upfront-media_manager .upfront-media-controls-search-selected .upfront-item-control {
 	top: 83px;
 }
+.upfront-media_manager .upfront-media-controls .upfront-item-control {
+	padding-bottom: 0;
+}
+.upfront-media_manager .upfront-media-controls-no-insert .upfront-item-control {
+	padding-bottom: 30px;
+}
 .upfront-media-controls .upfront-field-label {
 	color: #909090;
 	text-transform: uppercase;
 	font-weight: bold;
 	font-family: "Open Sans", Helvetica Neueu, Helvetica, Arial, sans-serif;
 	margin-bottom: 18px;
+}
+.upfront-media-controls .upfront-field-wrap {
+	font-family: "Open Sans", Helvetica Neueu, Helvetica, Arial, sans-serif;
 }
 .upfront-media-controls .change_title .upfront-field-label,
 .upfront-media-controls .size_hints .upfront-field-label,
@@ -268,6 +280,7 @@
 	padding: 0 0 0 0px;
 }
 .upfront-media-controls .change_title .selected_length {
+	display: block;
 	color: #212121;
 	font-size: 11px;
 	line-height: 16px;
@@ -276,12 +289,12 @@
 .upfront-media-controls .change_title .selected_length .selected_files {
 	font-weight: bold;
 }
-.upfront-media-controls .upfront-field-wrap {
-	font-family: "Open Sans", Helvetica Neueu, Helvetica, Arial, sans-serif;
+.upfront-media-controls .change_title .upfront-field-wrap {
+	margin: 10px 0 0;
 }
 
 .upfront-search-control:after,
-.upfront-item-control .change_title:after {
+.upfront-item-control .copy_url:after {
 	content: "";
 	display: block;
 	border-bottom: 1px solid #e9e9e9;
@@ -328,8 +341,19 @@
 .upfront-size-hints .upfront-size-hint-height span {
 	font-weight: normal;
 }
-.upfront-item-control .change_title {
+.upfront-item-control .copy_url {
 	margin: 0 0 24px;
+}
+.upfront-item-control .copy_url .upfront-field-wrap-button {
+	display: inline-block;
+	background: #212121;
+	height: 18px;
+	line-height: 18px;
+	border-radius: 9px;
+	padding: 0 10px;
+	margin: 5px 0 0;
+	font-size: 11px;
+	color: #fff;
 }
 .upfront-media-controls .upfront-search_filter-control {
 	margin: 0;
@@ -557,7 +581,6 @@
 }
 .upfront-filter_selection-tab .upfront-field-multiple {
 	text-align: center;
-	color: #757575;
 	text-transform: uppercase;
 	font-weight: bold;
 	font-family: "Open Sans", Helvetica Neueu, Helvetica, Arial, sans-serif;
@@ -586,6 +609,7 @@
 }
 .upfront-filter_selection-tab .upfront-field-multiple label {
 	width: 100%;
+	color: #757575;
 }
 .upfront-filter_selection-tab .upfront-field-multiple-selected label span {
 	color: #fff;
@@ -684,10 +708,11 @@
 	float: right;
 	text-align: center;
 	width: 38.3%;
-	padding: 0 30px;
-	margin: -60px 0 0;
+	height: 90px;
+	padding: 30px;
+	margin: -90px 0 0;
 	position: relative;
-	display: none;
+	background: #f2f2f2;
 }
 .upfront-popup-meta .use_selection_container.inactive {
 	background: #cee1f2;
@@ -926,14 +951,99 @@
 
 
 /* ----------- Insert Options -------- */
-.upfront-media-controls .insert_options{
-  border-bottom: 1px solid rgba(97, 128, 152, 0.2);
-  margin-bottom: 10px;
-  display: block;
-  min-height: 40px;
+.upfront-media-controls .insert_options {
+	border-top: 1px solid #e9e9e9;
+	margin: 15px 0;
+	padding: 15px 0 0;
+	line-height: 15px;
 }
-.upfront-media-controls .insert_options .upfront-field-wrap{
-  line-height: 40px;
+.upfront-media-controls .insert_options .upfront-field-label-block {
+	display: inline-block;
+	line-height: 15px;
+	vertical-align: top;
+	margin: 0;
+}
+.upfront-media-insert-option-toggle {
+	display: inline-block;
+	width: 25px;
+	height: 15px;
+	border-radius: 8px;
+	padding: 2px;
+	margin: 0 5px 0 0;
+	cursor: pointer;
+	vertical-align: top;
+}
+.upfront-media-insert-option-toggle:after {
+	content: '';
+	display: inline-block;
+	width: 9px;
+	height: 9px;
+	border-radius: 5px;
+	vertical-align: top;
+}
+.upfront-media-insert-option-toggle.active,
+.upfront-media-insert-option-toggle.active:hover {
+	background: #869499;
+	border: 1px solid #72848b;
+	text-align: right;
+}
+.upfront-media-insert-option-toggle.active:after {
+	background: #fff;
+}
+.upfront-media-insert-option-toggle.inactive,
+.upfront-media-insert-option-toggle.inactive:hover {
+	background: #fff;
+	border: 1px solid #e5e5e5;
+	text-align: left;
+}
+.upfront-media-insert-option-toggle.inactive:after {
+	background: #abb4b8;
+}
+
+.upfront-media-controls .additional_sizes {
+	
+}
+.upfront-media-controls .additional_sizes .upfront-field-wrap {
+	display: -webkit-flex;
+	display: flex;
+	flex-flow: row wrap;
+	margin: 0 0 1px;
+}
+.upfront-media-controls .additional_sizes .upfront-field-wrap .upfront-field-multiple {
+	flex: 1 1 33.3%;
+	text-align: center;
+	font-family: "Open Sans", Helvetica Neueu, Helvetica, Arial, sans-serif;
+	border: 1px solid #e6e6e6;
+	background: #fff;
+	min-width: 33.3%;
+	padding: 4px 10px;
+	margin: 0 0 -1px -1px;
+	position: relative;
+	z-index: 0;
+}
+.upfront-media-controls .additional_sizes .upfront-field-wrap .upfront-field-multiple-selected {
+	border-color: #73868d;
+	background: #87959a;
+	z-index: 1;
+}
+.upfront-media-controls .additional_sizes .upfront-field-wrap .upfront-field-multiple label {
+	color: #757575;
+	width: 100%;
+}
+.upfront-media-controls .additional_sizes .upfront-field-wrap .upfront-field-multiple-selected label span {
+	color: #fff;
+}
+.upfront-media-controls .additional_sizes .upfront-field-wrap .upfront-field-multiple:nth-of-type(3n-2) {
+	border-top-left-radius: 3px;
+	border-bottom-left-radius: 3px;
+}
+.upfront-media-controls .additional_sizes .upfront-field-wrap .upfront-field-multiple:nth-of-type(3n),
+.upfront-media-controls .additional_sizes .upfront-field-wrap .upfront-field-multiple:last-of-type {
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
+}
+.upfront-media-controls .additional_sizes .upfront-field-wrap .upfront-field-multiple input {
+	display: none;
 }
 
 /* --- Media manager videos --- */
