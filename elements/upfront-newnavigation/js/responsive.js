@@ -169,7 +169,7 @@ jQuery(document).ready(function($) {
 	});
 	
 	// Hide burger nav if latest link
-	$('.menu li a').on('focus', function() {
+	$('.menu li a').on('focusout', function() {
 		if($(this).parent().is(":last-child")) {
 			$(this).closest('.upfront-navigation').find('.responsive_nav_toggler').trigger('click');
 		}
