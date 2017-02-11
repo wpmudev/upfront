@@ -21,7 +21,15 @@
             render: function () {
 
                 this.$el.html(this.paginationTpl(this.collection.pagination));
+            	// Check if there are extra pages and if not, hide extra UI.
+            	this.hide_extra_ui();
             },
+						hide_extra_ui: function() {
+              if (this.collection.pagination.pages === 1) {
+              	this.$el.find('.upfront-pagination_item').hide();
+              	this.$el.find('.upfront-pagination_navigation').hide();
+              }
+						},
             handle_pagination_request: function (e, page) {
                 page = page ? page : parseInt($(e.target).attr("data-page_idx"), 10) || 0;
                 var me = this,
