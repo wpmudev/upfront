@@ -435,6 +435,7 @@ class Upfront_UgalleryView extends Upfront_Object {
 				'image_labels' => __('Image labels', 'upfront'),
 				'create_label' => __('Create new label', 'upfront'),
 				'type_label' => __('Type to create label', 'upfront'),
+				'pick_label' => __('Type to pick label', 'upfront'),
 			),
 			'lightbox' => array(
 				'title' => 'Gallery Lightbox',

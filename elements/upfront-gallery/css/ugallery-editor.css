@@ -89,3 +89,32 @@
 	margin-bottom: 0;
 	line-height: inherit;
 }
+.ugallery-magnific-panel .labels_filter ul li {
+	position: relative;
+}
+.ugallery-magnific-panel .labels_filter ul li:after {
+	position: absolute;
+	right: 4px;
+	top: 0px;
+}
+.ugallery-magnific-panel .labels_filter ul li label {
+	margin-right: 4px;
+}
+.ugallery-magnific-panel.upfront-additive_multiselection .labels_filter input[type=text] {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    height: 22px;
+    font-size: 11px;
+    opacity: 1;
+    border-radius: 3px;
+	width: auto;
+	margin-top: 2px;
+}
+.ugallery-magnific-panel .new_labels {
+	position: relative;
+}
+.ugallery-magnific-panel .new_labels.active .submit-label {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}

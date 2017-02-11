@@ -14,8 +14,7 @@ define([
 			'keyup .labels_filter .filter': 'fill_suggestion_list',
 			'keydown .labels_filter .filter': 'on_field_keydown',
 			'click .labels_filter .filter': 'on_field_click',
-			'click label': 'onLabelClick',
-			'click .existing_labels a': 'removeLabel',
+			'click .labels_filter label': 'remove_label',
 			'click .ugallery-magnific-addbutton': 'focus_name_field',
 			"click .new_labels .toggle-add-label": "show_add_label",
 		},
@@ -223,28 +222,7 @@ define([
 			this.gallery.addLabel(label.text, this.imageId);
 		},
 
-		onLabelClick: function(e){
-			var me = this,
-				$label = $(e.target).hasClass('selection') ? $(e.target).parent() : $(e.target);
-
-			// Prevent click hijack that reloads the page
-			e.preventDefault();
-			e.stopPropagation();
-
-			var labelId = $label.attr('rel');
-			if (labelId) {
-				var label = Upfront.data.ugallery.label_ids[labelId];
-				this.gallery.addLabel(label.text, this.imageId);
-				$.when(this.gallery.addLabel(label.text, this.imageId)).done(function(label) {
-					me.labels.push(label);
-					me.updateLabels();
-					me.$el.find('.labels_list').html('');
-					me.$el.find('.ugallery-addlabels').val('');
-				});
-			}
-		},
-
-		removeLabel: function(e){
+		remove_label: function(e){
 			e.preventDefault();
 
 			var $label = $(e.target),
@@ -264,6 +242,10 @@ define([
 			this.labels = _.without(this.labels, label);
 
 			this.gallery.deleteLabel(labelId, this.imageId);
+			
+			if (!$label.is( "li" )) {
+				$label = $label.closest('li');
+			}
 
 			$label.fadeOut('fast', function(){
 				$(this).remove();

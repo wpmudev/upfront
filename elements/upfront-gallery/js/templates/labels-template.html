@@ -1,8 +1,7 @@
 {[ if (labels.length) { ]}
 	{[ _.each(labels, function(label){ ]}
 		<li>
-			<label>{{label.text}}<label>
-			<a href="#remove" title="Remove" class="upfront-icon upfront-icon-media-label-delete" data-idx="{{label.id}}"></a>
+			<label data-idx="{{label.id}}">{{label.text}}<label>
 		</li>
 	{[ }) ]}
 {[ } else { ]}
