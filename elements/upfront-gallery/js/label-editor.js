@@ -56,6 +56,7 @@ define([
 		render: function() {
 			this.$el.html(this.template({
 				labels: _.template(labelsTpl, {labels: this.labels, l10n: l10n.template}),
+				labelsCount: this.labels.length,
 				imageId: this.imageId,
 				l10n: l10n.template,
 				selection: this.selection

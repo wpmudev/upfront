@@ -110,6 +110,9 @@
 	width: auto;
 	margin-top: 2px;
 }
+.ugallery-magnific-panel.upfront-additive_multiselection .labels_filter.empty input[type=text] {
+	margin-top: 0px;
+}
 .ugallery-magnific-panel .new_labels {
 	position: relative;
 }
@@ -117,4 +120,11 @@
 	position: absolute;
 	top: 0px;
 	right: 0px;
+}
+.ugallery-controls .uimage-control-panel-item {
+	z-index: 60;
+}
+.ugallery-magnific-panel input.add-label {
+	height: 22px;
+	border: none;
 }

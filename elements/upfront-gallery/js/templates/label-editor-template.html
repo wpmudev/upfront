@@ -2,7 +2,7 @@
 	<div class="ugallery-magnific-panel upfront-media-controls upfront-additive_multiselection">
 		<div class="ugallery-magnific-wrapper">
 			<span class="existing-labels-title">{{l10n.image_labels}}</span>
-			<div class="labels_filter">
+			<div class="labels_filter {{labelsCount ? '' : 'empty'}}">
 				<ul>{{labels}}</ul>
 				<input type="text" class="filter upfront-field upfront-field-text" value="{{selection}}" placeholder="{{l10n.pick_label}}"/>
 			</div>
