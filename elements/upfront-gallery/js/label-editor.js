@@ -14,9 +14,11 @@ define([
 			'keyup .labels_filter .filter': 'fill_suggestion_list',
 			'keydown .labels_filter .filter': 'on_field_keydown',
 			'click .labels_filter .filter': 'on_field_click',
-			'click .labels_filter label': 'remove_label',
+			'click .labels_filter li': 'remove_label',
 			'click .ugallery-magnific-addbutton': 'focus_name_field',
-			"click .new_labels .toggle-add-label": "show_add_label",
+			'click .new_labels .toggle-add-label': 'show_add_label',
+			'click label': 'on_label_click',
+			'click .submit-label': 'on_label_add'
 		},
 
 		initialize: function(options) {
@@ -36,8 +38,8 @@ define([
 			return false;
 		},
 
-		updateLabels: function() {
-			this.$el.find('.ugallery-magnific-wrapper').html(_.template(labelsTpl, {labels: this.labels, l10n: l10n.template}));
+		update_labels: function() {
+			this.$el.find('.labels_filter ul').html(_.template(labelsTpl, {labels: this.labels, l10n: l10n.template}));
 			if (this.labels.length) {
 				this.$el.parents('.inline-panel-control-dialog')
 					.siblings('.upfront-icon-region-edit-labels-no-labels')
@@ -70,11 +72,11 @@ define([
 		},
 	
 		focus_name_field: function() {
-			var $addlabels = this.$el.find('.ugallery-addlabels');
-			if ( $addlabels.val() === '' )
-				$addlabels.focus();
+			var $add_labels = this.$el.find('.ugallery-add_labels');
+			if ( $add_labels.val() === '' )
+				$add_labels.focus();
 			else
-				this.addLabel($addlabels);
+				this.add_label($add_labels);
 		},
 
 		fill_suggestion_list: function(e) {
@@ -111,7 +113,7 @@ define([
 			this.$el.find('.labels_list').html(me.labelSelectorTpl({labels: labels, l10n: l10n.template}));
 		},
 
-		selectNextSuggestion: function() {
+		select_next_suggestion: function() {
 			var selected,
 				suggestions,
 				currentIdx = -1,
@@ -141,7 +143,7 @@ define([
 			}
 		},
 
-		selectPreviousSuggestion: function() {
+		select_previous_suggestion: function() {
 			var selected,
 				suggestions,
 				currentIdx = -1,
@@ -174,25 +176,47 @@ define([
 
 			switch (e.which) {
 				case 13: // Enter
-					this.addLabel($(e.target));
+					this.add_label($(e.target));
 					break;
 				case 9: // Tab
 				case 40: // Down
-					this.selectNextSuggestion();
+					this.select_next_suggestion();
 					break;
 				case 38: // Up
-					this.selectPreviousSuggestion();
+					this.select_previous_suggestion();
 					break;
 				case 27: // Escape
-					this.clearSuggestions();
+					this.clear_suggestions();
 			}
 		},
 
-		clearSuggestions: function() {
+		clear_suggestions: function() {
 			this.$el.find('.labels_list').html('');
 		},
+		
+		on_label_click: function(e){
+			var me = this,
+				$label = $(e.target).hasClass('selection') ? $(e.target).parent() : $(e.target)
+			;
 
-		addLabel: function($nameField) {
+			// Prevent click hijack that reloads the page
+			e.preventDefault();
+			e.stopPropagation();
+
+			var labelId = $label.attr('rel');
+			if (labelId) {
+				var label = Upfront.data.ugallery.label_ids[labelId];
+				this.gallery.addLabel(label.text, this.imageId);
+				$.when(this.gallery.addLabel(label.text, this.imageId)).done(function(label) {
+					me.labels.push(label);
+					me.update_labels();
+					me.$el.find('.labels_list').html('').hide();
+					me.$el.find('.filter').val('');
+				});
+			}
+		},
+
+		add_label: function($nameField) {
 			var selected = this.$el.find('.labels_list label.selected'),
 				me = this,
 				label,
@@ -204,7 +228,7 @@ define([
 					$nameField.val('').siblings('.labels_list').html('');
 					$.when(this.gallery.addLabel(label, this.imageId)).done(function(label) {
 						me.labels.push(label);
-						me.updateLabels();
+						me.update_labels();
 						$nameField.val('').siblings('.labels_list').html('');
 					});
 				}
@@ -216,7 +240,7 @@ define([
 			label = Upfront.data.ugallery.label_ids[labelId];
 
 			this.labels.push(label);
-			this.updateLabels();
+			this.update_labels();
 
 			$nameField.val('').siblings('.labels_list').html('');
 			this.gallery.addLabel(label.text, this.imageId);
@@ -225,9 +249,14 @@ define([
 		remove_label: function(e){
 			e.preventDefault();
 
-			var $label = $(e.target),
-				me = this,
-				labelId = $label.data('idx'),
+			var $label = $(e.target);
+			
+			if (!$label.is( "li" )) {
+				$label = $label.closest('li');
+			}
+			
+			var	me = this,
+				labelId = $label.find('label').data('idx'),
 				data,
 				label;
 
@@ -243,14 +272,10 @@ define([
 
 			this.gallery.deleteLabel(labelId, this.imageId);
 			
-			if (!$label.is( "li" )) {
-				$label = $label.closest('li');
-			}
-
 			$label.fadeOut('fast', function(){
 				$(this).remove();
 				if (me.labels.length === 0) {
-					me.updateLabels();
+					me.update_labels();
 				}
 			});
 		}
