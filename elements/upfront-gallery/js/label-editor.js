@@ -210,8 +210,11 @@ define([
 				$.when(this.gallery.addLabel(label.text, this.imageId)).done(function(label) {
 					me.labels.push(label);
 					me.update_labels();
-					me.$el.find('.labels_list').html('').hide();
+					me.$el.find('.labels_list').html('');
 					me.$el.find('.filter').val('');
+					
+					// Hide labels list
+					me.$el.find('.upfront-additive_multiselection').removeClass('has_match');
 				});
 			}
 		},
