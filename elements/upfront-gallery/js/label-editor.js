@@ -79,7 +79,27 @@ define([
 			else
 				this.add_label($add_labels);
 		},
+		
+		on_label_add: function(e) {
+			e.preventDefault();
+			e.stopPropagation();
 
+			var	me = this,
+				$nameField = this.$el.find('.add-label'),
+				label = $.trim($nameField.val())
+			;
+
+			if (label.length){
+				$nameField.val('').siblings('.labels_list').html('');
+				
+				$.when(this.gallery.addLabel(label, this.imageId)).done(function(label) {
+					me.labels.push(label);
+					me.update_labels();
+					$nameField.val('');
+				});
+			}
+		},
+		
 		fill_suggestion_list: function(e) {
 			var me = this;
 
@@ -225,20 +245,6 @@ define([
 				me = this,
 				label,
 				labelId;
-
-			if(!selected.length){
-				label = $.trim($nameField.val());
-				if(label.length){
-					$nameField.val('').siblings('.labels_list').html('');
-					$.when(this.gallery.addLabel(label, this.imageId)).done(function(label) {
-						me.labels.push(label);
-						me.update_labels();
-						$nameField.val('').siblings('.labels_list').html('');
-					});
-				}
-
-				return;
-			}
 
 			labelId = selected.attr('rel');
 			label = Upfront.data.ugallery.label_ids[labelId];
