@@ -89,7 +89,7 @@ class Upfront_UcommentView extends Upfront_Object {
 			require_once($wp_tpl);
 			$overriden_template = ob_get_clean();
 		}
-		
+
 		$post = is_object($global_post) ? clone($global_post) : $global_post;
 		$wp_query = is_object($global_query) ? clone($global_query) : $global_query;
 
@@ -105,26 +105,26 @@ class Upfront_UcommentView extends Upfront_Object {
 		$tpl = self::_get_external_comments_template($post_id);
 		if (!empty($tpl)) return $tpl;
 
-        $defaults = self::default_properties();
-        $prepend_form = (bool) $defaults['prepend_form'];
-        $form_args = array(
-        	'comment_field' => self::_get_comment_form_field(),
-        );
-        $form_args = apply_filters('upfront_comment_form_args', array_filter($form_args));
-        
-        $comments = array();
-        $post = false;
+		$defaults = self::default_properties();
+		$prepend_form = (bool) $defaults['prepend_form'];
+		$form_args = array(
+			'comment_field' => self::_get_comment_form_field(),
+		);
+		$form_args = apply_filters('upfront_comment_form_args', array_filter($form_args));
+
+		$comments = array();
+		$post = false;
 		if (is_numeric($post_id)) {
 			$post = get_post($post_id);
 			$comment_args = array(
 				'post_id' => $post->ID,
-				'order'   => 'ASC',
+				'order' => 'ASC',
 				'orderby' => 'comment_date_gmt',
-				'status'  => 'approve',
+				'status' => 'approve',
 			);
 			$commenter = wp_get_current_commenter();
 			$user_id = get_current_user_id();
-			
+
 			if (!empty($user_id)) $comment_args['include_unapproved'] = array($user_id);
 			else if (!empty($commenter['comment_author_email'])) $comment_args['include_unapproved'] = array($commenter['comment_author_email']);
 
@@ -147,9 +147,9 @@ class Upfront_UcommentView extends Upfront_Object {
 
 		ob_start();
 
-        if ($prepend_form) { 
-            comment_form($form_args, $post->ID);
-        }
+		if ($prepend_form) {
+			comment_form($form_args, $post->ID);
+		}
 		// Load comments
 		if ($comments && sizeof($comments)) {
 			echo '<ol class="upfront-comments">';
@@ -157,12 +157,12 @@ class Upfront_UcommentView extends Upfront_Object {
 			echo '</ol>';
 		}
 		// Load comment form
-        if (!$prepend_form) {
-            comment_form($form_args, $post->ID);
-        }
+		if (!$prepend_form) {
+			comment_form($form_args, $post->ID);
+		}
 
-        // Clean up after ourselves
-        remove_filter('comment_form_fields', array('Upfront_UcommentView', 'rearrange_comment_form_fields'));
+		// Clean up after ourselves
+		remove_filter('comment_form_fields', array('Upfront_UcommentView', 'rearrange_comment_form_fields'));
 
 		return ob_get_clean();
 	}
@@ -229,7 +229,7 @@ class Upfront_UcommentView extends Upfront_Object {
 			'view_class' => "UcommentView",
 			"class" => "c24 upfront-comment",
 			'has_settings' => 1,
-            "prepend_form" => false
+			"prepend_form" => false
 		);
 	}
 

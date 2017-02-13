@@ -196,7 +196,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 				'json' => true
 			)
 		);
-    	if (empty($theme_fonts)) $theme_fonts = json_encode(array());
+		if (empty($theme_fonts)) $theme_fonts = json_encode(array());
 
 		$icon_fonts = get_option('upfront_' . get_stylesheet() . '_icon_fonts');
 		$icon_fonts = apply_filters(
@@ -206,7 +206,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 				'json' => true
 			)
 		);
-    	if (empty($icon_fonts)) $icon_fonts = json_encode(array());
+		if (empty($icon_fonts)) $icon_fonts = json_encode(array());
 
 		$additional_fonts = $child_instance ? $child_instance->getAdditionalFonts() : json_encode(array());
 
@@ -224,7 +224,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			)
 		);
 
-    	if (empty($theme_colors)) $theme_colors = json_encode(array());
+		if (empty($theme_colors)) $theme_colors = json_encode(array());
 
 		$post_image_variants = get_option('upfront_' . get_stylesheet() . '_post_image_variants');
 		$post_image_variants = apply_filters(
@@ -321,12 +321,12 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"CONTENT" => "content",
 			"THEME" => "theme",
 			"POST" => "post layout",
-            "CONTENT_STYLE" => "post content style",
+			"CONTENT_STYLE" => "post content style",
 			"POSTCONTENT" => "post content",
-     		"RESPONSIVE" => "responsive",
+	 		"RESPONSIVE" => "responsive",
 			"POSTCONTENT_STYLE" => false,
 			//"DEFAULT" => (current_user_can("manage_options") ? "layout" : "content"),
-		    // These need some finer control over
+			// These need some finer control over
 			// We have to set DEFAULT to layout, because user should be able to load the editor
 			//"DEFAULT" => (Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE) ? "layout" : "content"),
 			"DEFAULT" => "layout",
@@ -483,60 +483,60 @@ EOMainJs;
 		return apply_filters('upfront_l10n', $l10n);
 	}
 
-    /**
-     * Returns default font icons
-     *
-     * @return array
-     */
-    private function _get_default_font_icons(){
-        return json_encode( array(
-            "~",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "0",
-            "-",
-            "+",
-            "Q",
-            "W",
-            "E",
-            "R",
-            "T",
-            "Y",
-            "U",
-            "I",
-            "O",
-            "P",
-            "{",
-            "}",
-            "|",
-            "A",
-            "S",
-            "D",
-            "F",
-            "G",
-            "H",
-            "J",
-            "K",
-            "L",
-            ":",
-            '"',
-            "Z",
-            "X",
-            "C",
-            "V",
-            "B",
-            "N",
-            "M",
-            "<",
-            ">",
-            "?",
-        ) );
-    }
+	/**
+	 * Returns default font icons
+	 *
+	 * @return array
+	 */
+	private function _get_default_font_icons(){
+		return json_encode( array(
+			"~",
+			"1",
+			"2",
+			"3",
+			"4",
+			"5",
+			"6",
+			"7",
+			"8",
+			"9",
+			"0",
+			"-",
+			"+",
+			"Q",
+			"W",
+			"E",
+			"R",
+			"T",
+			"Y",
+			"U",
+			"I",
+			"O",
+			"P",
+			"{",
+			"}",
+			"|",
+			"A",
+			"S",
+			"D",
+			"F",
+			"G",
+			"H",
+			"J",
+			"K",
+			"L",
+			":",
+			'"',
+			"Z",
+			"X",
+			"C",
+			"V",
+			"B",
+			"N",
+			"M",
+			"<",
+			">",
+			"?",
+		) );
+	}
 }
