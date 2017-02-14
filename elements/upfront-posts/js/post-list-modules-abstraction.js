@@ -95,13 +95,35 @@
 
 				$module_content.append(this.state.$el);
 
-				//Move Edit Preset to bottom
+				// Move Edit Preset to bottom
 				$module_content.find('.state_modules').append(this.$el.find('.edit_preset_css'));
 				this.$el.addClass("preset_specific");
+				
+				// Re-position toggle module
+				this.repositionToggle(this.state.$el, modules);
 				
 				this.updatePreview();
 
 				this.trigger('rendered');
+			},
+			repositionToggle: function ($el, modules) {
+				var $toggle_settings = $el.find('.toggle_settings_item'),
+					firstClass
+				;
+				
+				// Retrieve first field class
+				_.each(modules, function (module) {
+					if (module.moduleType === "Toggle") {
+						if(typeof module.options.fields[0] !== "undefined") {
+							firstClass = module.options.fields[0];
+						}
+					}
+				});
+				
+				// Move toggle before first field
+				if (firstClass) {
+					this.$el.find('.' + firstClass).before($toggle_settings);
+				}
 			},
 			get_modules: function () {
 				var me = this,
