@@ -7880,7 +7880,6 @@ span.upfront-settings-item-title:after {
 .position-select-wrap .position-select:checked,
 .upfront-field-checkbox:checked,
 .upfront-ui .upfront-region-field-icon:before,
-#upfront-popup-top.upfront-popup-meta .upload:before,
 .upfront-icon-button-hide:before,
 .upfront-entity-hide_trigger:before {
   content: " ";
@@ -8381,9 +8380,24 @@ span.upfront-settings-item-title:after {
   background-position: -342px -178px; }
 
 .upfront-icon-media-info:before {
-  width: 20px;
-  height: 20px;
-  background-position: -342px -111px; }
+  width: 14px;
+  height: 14px;
+  background-position: -484px -140px; }
+
+.upfront-icon-media-upload:before {
+  width: 18px;
+  height: 16px;
+  background-position: -514px -171px; }
+
+.upfront-icon-label-add:before {
+  width: 8px;
+  height: 8px;
+  background-position: -519px -207px; }
+
+.upfront-icon-label-add-alt:before {
+  width: 8px;
+  height: 8px;
+  background-position: -519px -239px; }
 
 .upfront-icon-button:before {
   width: 18px;
@@ -10380,12 +10394,11 @@ a.upfront-post-layout-trigger:before {
 
 .upfront-media_manager-post_image li.upfront-media_item.selected:before {
   content: '';
-  width: 16px;
-  height: 16px;
-  border-radius: 8px;
-  background-color: #1691fb;
-  /*background-image: url(../img/uf-ui-sprite.svg);
-	background-position: -726px -132px;*/
+  width: 15px;
+  height: 15px;
+  background-image: url("../img/uf-core-el-sprite_new.png");
+  background-image: url("../img/uf-core-el-sprite_new.svg");
+  background-position: -515px -140px;
   display: block;
   position: absolute;
   right: 7px;
@@ -10685,9 +10698,15 @@ a.upfront-post-layout-trigger:before {
   cursor: pointer; }
 
 .upfront-additive_multiselection .labels_filter ul li:after {
-  content: "\00d7";
-  margin-left: 3px;
-  font-weight: 600; }
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  background-image: url("../img/uf-core-el-sprite_new.png");
+  background-image: url("../img/uf-core-el-sprite_new.svg");
+  background-position: -521px -273px;
+  margin: 7px 0 0 3px;
+  vertical-align: top; }
 
 .upfront-additive_multiselection .labels_filter ul li .upfront-field-checkbox {
   visibility: hidden;
@@ -10744,17 +10763,15 @@ a.upfront-post-layout-trigger:before {
 
 .upfront-additive_multiselection .new_labels .toggle-add-label {
   display: block;
-  color: #949494;
   background: #fff;
   border: 1px solid #e5e5e5;
   border-radius: 3px;
   height: 20px;
-  line-height: 20px;
-  font-weight: bold;
-  font-size: 14px;
-  padding: 0 5px;
   float: left;
   cursor: pointer; }
+
+.upfront-additive_multiselection .new_labels .toggle-add-label:before {
+  margin: 5px; }
 
 .upfront-additive_multiselection .new_labels.active .toggle-add-label {
   display: none; }
@@ -10781,14 +10798,12 @@ a.upfront-post-layout-trigger:before {
 .upfront-additive_multiselection .new_labels.active .submit-label {
   background: #8e9da4;
   border-left: 1px solid #a5a5a5;
-  color: #fff;
   height: 20px;
-  line-height: 20px;
-  font-weight: bold;
-  font-size: 14px;
   float: right;
-  padding: 0 5px;
   cursor: pointer; }
+
+.upfront-additive_multiselection .new_labels.active .submit-label:before {
+  margin: 5px; }
 
 .upfront-media-controls .existing_labels,
 .upfront-media-controls .upfront-filter_selected-control {
@@ -11022,7 +11037,7 @@ a.upfront-post-layout-trigger:before {
   display: block; }
 
 /* --- Embed media --- */
-#upfront-popup-top .upload {
+#upfront-popup-top .media-upload {
   float: right; }
 
 .upfront-embed_media .upfront-pane {
@@ -11060,12 +11075,12 @@ a.upfront-post-layout-trigger:before {
   overflow: hidden; }
 
 #upfront-popup-top.upfront-popup-meta .media-info:before {
-  margin: 3px 10px 3px 2px; }
+  margin: 5px 10px 5px 5px; }
 
 #upfront-popup-top.upfront-popup-meta .media-info-active {
   background-color: #e6e6e6; }
 
-#upfront-popup-top.upfront-popup-meta .upload {
+#upfront-popup-top.upfront-popup-meta .media-upload {
   display: inline-block;
   float: none;
   width: auto;
@@ -11082,10 +11097,9 @@ a.upfront-post-layout-trigger:before {
   vertical-align: top;
   margin: 0 0 0 20px; }
 
-#upfront-popup-top.upfront-popup-meta .upload:before {
-  width: 30px;
-  height: 20px;
-  background-position: -1181px -119px; }
+#upfront-popup-top.upfront-popup-meta .media-upload:before {
+  margin: 4px 6px 4px 0;
+  float: left; }
 
 #upfront-popup-top.upfront-popup-meta .delete_control_container {
   display: inline-block;
@@ -11286,16 +11300,14 @@ a.upfront-post-layout-trigger:before {
   content: " ";
   display: block;
   position: absolute;
-  background: url(../img/uf-core-el-sprite_new.svg);
-  height: 28px;
-  width: 43px;
-  background-size: 1860px;
-  background-position-y: -572px;
-  background-position-x: -84px;
+  background-image: url(../img/uf-core-el-sprite_new.png);
+  background-image: url(../img/uf-core-el-sprite_new.svg);
+  height: 23px;
+  width: 30px;
+  background-position: -480px -328px;
   top: 50%;
   left: 50%;
-  margin-left: -21px;
-  margin-top: -14px; }
+  margin: -11px 0 0 -15px; }
 
 .upfront-media_manager-post_image li.upfront-media_item .thumbnail.override img {
   display: none; }

@@ -24,7 +24,6 @@
 .position-select-wrap .position-select:checked,
 .upfront-field-checkbox:checked,
 .upfront-ui .upfront-region-field-icon:before,
-#upfront-popup-top.upfront-popup-meta .upload:before,
 .upfront-icon-button-hide:before,
 .upfront-entity-hide_trigger:before {
 	content: " ";
@@ -541,10 +540,27 @@
 	background-position: -342px -178px;
 }
 .upfront-icon-media-info:before {
-	width: 20px;
-	height: 20px;
-	background-position: -342px -111px;
+	width: 14px;
+	height: 14px;
+	background-position: -484px -140px;
 }
+.upfront-icon-media-upload:before {
+	width: 18px;
+	height: 16px;
+	background-position: -514px -171px;
+}
+.upfront-icon-label-add:before {
+	width: 8px;
+	height: 8px;
+	background-position: -519px -207px;
+}
+.upfront-icon-label-add-alt:before {
+	width: 8px;
+	height: 8px;
+	background-position: -519px -239px;
+}
+
+
 .upfront-icon-button:before {
 	width: 18px;
 	height: 18px;

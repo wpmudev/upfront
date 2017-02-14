@@ -817,7 +817,7 @@ define([
 						.append('<div class="labels_filter"><ul></ul><input type="text" class="filter upfront-field upfront-field-text" value="' + sel + '" placeholder="' + l10n.type_labels_pick + '" /></div>')
 						.append('<div class="labels_list"><ul></ul></div>')
 						.append('<div class="title">' + l10n.create_new_label + '</div>')
-						.append('<div class="new_labels"><a class="toggle-add-label">+</a><input type="text" class="add-label upfront-field upfront-field-text" placeholder="' + l10n.type_labels_add + '" /><a class="submit-label">+</a></div>')
+						.append('<div class="new_labels"><a class="toggle-add-label upfront-icon-control upfront-icon-label-add"></a><input type="text" class="add-label upfront-field upfront-field-text" placeholder="' + l10n.type_labels_add + '" /><a class="submit-label upfront-icon-control upfront-icon-label-add-alt"></a></div>')
 					;
 					this.render_existing_labels();
 					this.render_labels();
@@ -1488,10 +1488,10 @@ define([
 			"click .media-info": "switch_controls"
 		},
 		info_template: _.template(
-			'<button type="button" class="media-info upfront-icon upfront-icon-media-info">' + l10n.info + '</button>'
+			'<button type="button" class="media-info upfront-icon-control upfront-icon-media-info">' + l10n.info + '</button>'
 		),
 		upload_template: _.template(
-			'<button type="button" class="upload">' + l10n.upload + '</button>'
+			'<button type="button" class="media-upload upfront-icon-control upfront-icon-media-upload">' + l10n.upload + '</button>'
 		),
 		initialize: function () {
 			Upfront.Events.on("media:item:selection_changed", this.switch_delete, this);
