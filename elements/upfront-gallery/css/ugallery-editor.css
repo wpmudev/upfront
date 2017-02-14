@@ -121,6 +121,12 @@
 	top: 0px;
 	right: 0px;
 }
+.ugallery-magnific-add .new_labels {
+	margin-top: 5px;
+}
+.ugallery-magnific-panel .new_labels.active .submit-label {
+	height: 22px;
+}
 .ugallery-controls .uimage-control-panel-item {
 	z-index: 60;
 }

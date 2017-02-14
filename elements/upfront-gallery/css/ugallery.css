@@ -746,7 +746,9 @@ figure.gallery-labels-figure img.mfp-img {
 .upfront-ui .existing-labels-title {
 	display: block;
 	margin-bottom: 5px;
-	font-size: 16px;
+	font-size: 13px;
+	text-transform: uppercase;
+	color: #b6b6b6;
 }
 
 .mfp-figure figure {
@@ -1047,11 +1049,14 @@ figure.gallery-labels-figure img.mfp-img {
 .ugallery-controls .upfront-ui.inline-panel-control-dialog-edit_labels {
 	position: absolute;
 	z-index: 2010;
+	border: 1px solid #dfdfdf;
+	border-radius: 3px;
 	background: #ffffff;
-	padding: 5px;
+	padding: 9px;
 	left: auto;
 	top: auto;
 	right: -56px;
 	bottom: 0px;
 	text-align: left;
+	
 }
