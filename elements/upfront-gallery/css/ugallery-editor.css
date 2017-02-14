@@ -134,3 +134,9 @@
 	height: 22px;
 	border: none;
 }
+.ugallery-magnific-panel .labels_list {
+    position: absolute;
+    width: 90%;
+    z-index: 999;
+	margin-top: -3px;
+}
