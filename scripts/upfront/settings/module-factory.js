@@ -13,10 +13,11 @@ define([
 	'scripts/upfront/settings/modules/margin',
 	'scripts/upfront/settings/modules/anchor',
 	'scripts/upfront/settings/modules/menu-structure',
+	'scripts/upfront/settings/modules/toggle',
 	'elements/upfront-newnavigation/js/settings/menu-style'
 ], function(TypographySettingsModule, BorderSettingsModule, HovAnimationSettingsModule, RadiusSettingsModule,
 			SelectboxSettingsModule, CheckboxSettingsModule, CaptionLocationSettingsModule, GalleryCaptionLocationSettingsModule,
-			ColorsSettingsModule, ElementStyleModule, PaddingSettingsModule, MarginSettingsModule, AnchorSettingsModule, MenuStructureModule, MenuStyleModule) {
+			ColorsSettingsModule, ElementStyleModule, PaddingSettingsModule, MarginSettingsModule, AnchorSettingsModule, MenuStructureModule, ToggleSettingsModule, MenuStyleModule) {
 	var ModuleFactory = function() {
 		var classes = {
 			'Typography': TypographySettingsModule,
@@ -33,7 +34,8 @@ define([
 			'Margin': MarginSettingsModule,
 			'Anchor': AnchorSettingsModule,
 			'MenuStructure': MenuStructureModule,
-			'MenuStyle': MenuStyleModule
+			'MenuStyle': MenuStyleModule,
+			'Toggle': ToggleSettingsModule
 		};
 
 		this.createModule = function(module, options, model) {
