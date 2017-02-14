@@ -112,6 +112,7 @@ define([
 				labels = [];
 
 			if(val.length < 2) {
+				this.$el.find('.upfront-additive_multiselection').removeClass('has_match');
 				return $('.labels_list').html('');
 			}
 
@@ -127,7 +128,7 @@ define([
 					}
 				}
 			});
-			
+
 			if (labels.length > 0) this.$el.find('.upfront-additive_multiselection').addClass('has_match');
 				else this.$el.find('.upfront-additive_multiselection').removeClass('has_match');
 
