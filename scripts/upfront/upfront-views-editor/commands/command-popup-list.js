@@ -181,22 +181,60 @@
                 var me = this,
                     views = this.views[this.currentPanel];
 
-                views.search.render();
-                me.$popup.top.append(views.search.$el);
-                views.search.setElement(views.search.$el);
-
+								// Content
                 views.view.render();
                 me.$popup.content.html(views.view.$el);
                 views.view.setElement(views.view.$el);
 
-                me.$popup.bottom.empty();
+								// Search.
+                views.search.render();
+								me.$popup.content.before(views.search.$el);
+                views.search.setElement(views.search.$el);
 
+								// Clear Bottom.
+                me.$popup.bottom.empty();
+              	// Pagination.
                 if (views.pagination) {
                     views.pagination.render();
                     me.$popup.bottom.html(views.pagination.$el);
                     views.pagination.setElement(views.pagination.$el);
                 }
-            }
+            },
+						// Handle filtering.
+						handle_filter: function(e) {
+							// Get values of filters UI.
+							var filterValues = this.get_filter_values();
+							// Store Original Models.
+							if (typeof this.originalModels === 'undefined') {
+								this.originalModels = this.collection.models;
+							}
+							// Object for fetching posts.
+							filterObject = {
+								post_status: filterValues.post_status,
+								post_date: filterValues.post_date,
+								category: filterValues.category
+							};
+							filterObject[name] = value;
+							// Get models that match filter.
+							var newModels = this.collection.where(filterObject);
+							this.collection.reset(newModels);
+						},
+
+					get_filter_values: function() {
+							//temp
+							post_status = 'draft';
+							//temp
+							post_date = 'all';
+							//temp
+							category = 'all';
+							return {
+								post_status: post_status,
+								post_date: post_date,
+								category: category
+							};
+						},
+
+						
         });
 
     });

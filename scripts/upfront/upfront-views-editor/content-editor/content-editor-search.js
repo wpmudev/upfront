@@ -9,7 +9,7 @@
 
         return Backbone.View.extend({
             id: "upfront-entity_list-search",
-            searchTpl: _.template($(popup_tpl).find('#upfront-search-tpl').html()),
+            searchTpl: _.template($(popup_tpl).find('#upfront-filter-tpl').html()),
             events: {
                 "click #upfront-search_action": "dispatch_search_click",
                 "keydown #upfront-list-search_input": "dispatch_search_enter"

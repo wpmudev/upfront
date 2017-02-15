@@ -15,7 +15,7 @@
 						postSingleTpl: _.template($(popup_tpl).find('#upfront-post-single-tpl').html()),
 						paginationTpl: _.template($(popup_tpl).find('#upfront-pagination-tpl').html()),
 						events: {
-								"click #upfront-list-meta .upfront-list_item-component": "handle_sort_request",
+								//"click #upfront-list-meta .upfront-list_item-component": "handle_sort_request",
 								"click .editaction.edit": "handle_post_edit",
 								"click #upfront-list-page-path a.upfront-path-back": "handle_return_to_posts",
 								"click .editaction.trash": "trash_confirm",
@@ -51,8 +51,6 @@
 
 								// Add tooltips to inline edit/trash buttons.
 								this.add_tooltips();
-
-								//this.mark_sort_order();
 						},
 
 						// Add tooltips to inline edit/trash buttons.
@@ -82,6 +80,7 @@
 										this.collection.reSort(sortby, order);
 								}
 						},
+
 						/*
 						 handle_post_reveal: function (e) {
 						 var me = this,

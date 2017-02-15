@@ -18,7 +18,6 @@
 }
 .upfront-popup-posts .upfront-list-items {
 	max-height: 440px;
-	max-height: 80%;
 }
 #upfront-list {
 	width: 100%;
@@ -773,6 +772,12 @@ a.editaction.trash {
 	margin-right: 2px;
 }
 
+
+/* Hide controls when single page. */
+.upfront-popup-posts .upfront-single-page-pagination .upfront-pagination_item, .upfront-popup-posts .upfront-single-page-pagination .upfront-pagination_navigation {
+	display: none;
+}
+
 .upfront-popup-posts .upfront-pagination_navigation .upfront-pagination_page-item {
 	color: #1979cc;
 	border-bottom: 1px solid #1979cc;
@@ -819,4 +824,10 @@ a.editaction.trash {
 	width: 50px;
 	margin-left: 32px;
 	color: rgb(156,155,156);
+}
+
+.upfront-popup-posts #upfront-entity_list-pagination.upfront-single-page-pagination small {
+	margin: 0;
+	line-height: 10px;
+	color: rgb(242,242,242);
 }
