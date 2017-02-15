@@ -58,9 +58,13 @@
                     //(has_comments ? '<li data-type="comments">' + l10n.comments + '</li>' : '') +
                     '</ul>' +
                     me.$popup.top.html()
+                  + '<div class="upfront-icon upfront-icon-popup-search"></div>'
                 ).find('.upfront-tabs li').on("click", function () {
                     me.dispatch_panel_creation(this);
                 } );
+
+							// Add Toggle Filter button functionality.
+							me.$popup.top.find('.upfront-icon-popup-search').click(me.toggle_filter);
 
                 me.dispatch_panel_creation();
 
@@ -71,6 +75,10 @@
                     Upfront.Events.off("upfront:comments:sort");
                 });
             },
+          	// Hide/Show filtering section.
+          	toggle_filter: function(e) {
+          		$(e.target).parents('.upfront-popup-posts').find('#upfront-entity_list-search').slideToggle();
+          	},
             dispatch_panel_creation: function (data) {
                 var me = this,
                     $el = data ? $(data) : me.$popup.top.find('.upfront-tabs li.active'),
@@ -188,7 +196,7 @@
 
 								// Search.
                 views.search.render();
-								me.$popup.content.before(views.search.$el);
+								me.$popup.content.prepend(views.search.$el);
                 views.search.setElement(views.search.$el);
 
 								// Clear Bottom.

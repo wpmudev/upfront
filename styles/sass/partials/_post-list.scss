@@ -22,6 +22,32 @@
 }
 
 /* Filter */
+.upfront-popup-posts #upfront-popup-top .upfront-icon-popup-search {
+	color: #000;
+	background: #e1e1e1;
+	border: 1px solid #f0f0f0;
+	border-radius: 3px;
+	width: 44px;
+	height: 30px;
+	padding: 4px 9px;
+	display: inline-block;
+	margin: 10px;
+	margin-left: 50px;
+	cursor: pointer;
+}
+
+.upfront-popup-posts #upfront-popup-top .upfront-icon-popup-search:before {
+	float: none;
+	display: inline-block;
+}
+
+.upfront-popup-posts #upfront-popup-top .upfront-icon-popup-search:after {
+	content: "<";
+	font-size: 7px;
+	float: right;
+	line-height: 15px;
+}
+
 .upfront-popup-posts .upfront-list-filter-container {
 	background: #f0f0f0;
 	padding: 10px 32px;
@@ -34,6 +60,7 @@
 .upfront-popup-posts #upfront-search_container {
 	float: none;
 	display: inline-block;
+	height: 22px;
 }
 
 .upfront-popup-posts .search_container {
@@ -56,7 +83,7 @@
 	display: inline;
 	width: 60px;
 	float: none;
-	font-size: 11px;
+	font-size: 12px;
 	text-transform: none;
 	background: #fff;
 	color: #000;
@@ -64,7 +91,7 @@
 	line-height: normal;
 	border-radius: 0;
 	border: 1px solid #e1e1e1;
-	letter-spacing: 0.5px;
+	margin-left: 2px;
 }
 
 /* Entities(Posts) list */
