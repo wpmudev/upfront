@@ -8,6 +8,65 @@
 	border: none;
 }
 
+.upfront-ui.upfront-popup-posts .upfront-icon-popup-close:before {
+	display: none;
+}
+
+.upfront-ui.upfront-popup-posts .upfront-icon-popup-close#upfront-popup-close:hover,
+.upfront-ui.upfront-popup-posts .upfront-icon-popup-close {
+	top: 15px;
+	right: 33px;
+	color: #737373;
+	font-weight: 400;
+	font-size: 24px;
+}
+
+/* Filter */
+.upfront-popup-posts .upfront-list-filter-container {
+	background: #f0f0f0;
+	padding: 10px 32px;
+}
+
+.upfront-popup-posts #upfront-entity_list-search {
+	float: none;
+}
+
+.upfront-popup-posts #upfront-search_container {
+	float: none;
+	display: inline-block;
+}
+
+.upfront-popup-posts .search_container {
+	width: 217px;
+	float: right;
+}
+
+.upfront-popup-posts #upfront-search_container input[type=text] {
+	height: 22px;
+	background: #fff;
+	padding: 5px;
+	font-size: 10px;
+	color: #464646;
+	border: 1px solid #e1e1e1;
+	letter-spacing: 0.3px;
+}
+
+#upfront-popup.upfront-popup-posts button.search {
+	padding: 0;
+	display: inline;
+	width: 60px;
+	float: none;
+	font-size: 11px;
+	text-transform: none;
+	background: #fff;
+	color: #000;
+	height: 22px;
+	line-height: normal;
+	border-radius: 0;
+	border: 1px solid #e1e1e1;
+	letter-spacing: 0.5px;
+}
+
 /* Entities(Posts) list */
 .upfront-popup-posts #upfront-popup-content {
 	background: #fff;

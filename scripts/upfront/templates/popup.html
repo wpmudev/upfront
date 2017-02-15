@@ -6,11 +6,11 @@
 	<script type="text/template" id="upfront-filter-tpl">
 		<div id="upfront-list-meta" class="upfront-list-filter-container clearfix">
 			<button class="upfront-posts-filter-button">filter</button>
-			<div class="search_container clearfix">
-				<div id="upfront-search_action" class="search">Search</div>
+			<div class="search_container">
 				<div id="upfront-search_container" style="display:{{ query ? 'block' : 'none' }}">
-					<input type="text" id="upfront-list-search_input" value="{{ query ? query : '' }}" />
+					<input type="text" id="upfront-list-search_input" value="{{ query ? query : '' }}" placeholder="{{Upfront.Settings.l10n.global.content.search_posts}}"/>
 				</div>
+				<button id="upfront-search_action" class="search">{{Upfront.Settings.l10n.global.views.search}}</button>
 			</div>
 
 		</div>
