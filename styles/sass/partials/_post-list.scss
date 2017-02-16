@@ -24,7 +24,7 @@
 /* Filter */
 .upfront-popup-posts #upfront-popup-top .upfront-icon-popup-search {
 	color: #000;
-	background: #e1e1e1;
+	background: #fff;
 	border: 1px solid #f0f0f0;
 	border-radius: 3px;
 	width: 44px;
@@ -36,25 +36,34 @@
 	cursor: pointer;
 }
 
+.upfront-popup-posts #upfront-popup-top .upfront-icon-popup-search:hover {
+	background: #e1e1e1;
+}
+
 .upfront-popup-posts #upfront-popup-top .upfront-icon-popup-search:before {
 	float: none;
 	display: inline-block;
+	margin: 0;
 }
 
 .upfront-popup-posts #upfront-popup-top .upfront-icon-popup-search:after {
-	content: "<";
-	font-size: 7px;
+	content: "\f347";
+	font-size: 8px;
 	float: right;
-	line-height: 15px;
+	line-height: 22px;
+	font-family: dashicons;
+	margin-right: -2px;
 }
 
 .upfront-popup-posts .upfront-list-filter-container {
 	background: #f0f0f0;
 	padding: 10px 32px;
+	height: 44px;
 }
 
 .upfront-popup-posts #upfront-entity_list-search {
 	float: none;
+	display: none;
 }
 
 .upfront-popup-posts #upfront-search_container {
@@ -99,12 +108,20 @@
 	background: #fff;
 	max-height: 440px;
 	max-height: 80%;
+	overflow: hidden;
 }
+
+.upfront-popup-posts #upfront-popup-content.upfront-filter-panel-open {
+	max-height: 484px;
+}
+
 .upfront-entity_list-posts {
 }
+
 .upfront-popup-posts .upfront-list-items {
 	max-height: 440px;
 }
+
 #upfront-list {
 	width: 100%;
 	color: #99b3cc;

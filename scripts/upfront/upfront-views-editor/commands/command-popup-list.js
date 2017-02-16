@@ -77,7 +77,16 @@
             },
           	// Hide/Show filtering section.
           	toggle_filter: function(e) {
-          		$(e.target).parents('.upfront-popup-posts').find('#upfront-entity_list-search').slideToggle();
+          		var filterSection = $(e.target).parents('.upfront-popup-posts').find('#upfront-entity_list-search');
+          		var contentSection = filterSection.parent();
+          		if (filterSection.css('display') === 'none') {
+								contentSection.addClass('upfront-filter-panel-open');
+          			// Add class for correct height.
+          			return filterSection.slideToggle('fast');
+          		}
+          		// Remove class for correct height.
+							contentSection.removeClass('upfront-filter-panel-open');
+          		return filterSection.slideToggle('fast');
           	},
             dispatch_panel_creation: function (data) {
                 var me = this,
