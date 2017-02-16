@@ -214,8 +214,8 @@ jQuery(document).ready(function($){
 						$overlay.uparallax({
 							element: $overlay.attr('data-bg-parallax')
 						});
-						if (false === overflow_top && $prev.length > 0 && $prev.height() < 100) overflow_top = $prev.height();
-						if (false === overflow_bottom && $next.length > 0 && $next.height() < 100) overflow_bottom = $next.height();
+						if (false === overflow_top && $prev.length > 0 && $prev.height() < 200) overflow_top = $prev.height() * 0.5;
+						if (false === overflow_bottom && $next.length > 0 && $next.height() < 200) overflow_bottom = $next.height() * 0.5;
 						if (false !== overflow_top) $overlay.uparallax('setOption', 'overflowTop', overflow_top);
 						if (false !== overflow_bottom) $overlay.uparallax('setOption', 'overflowBottom', overflow_bottom);
 						$(document).on('upfront-responsive-nav-open upfront-responsive-nav-close', function () {
