@@ -56,7 +56,7 @@ define([
 		title: l10n.modules.post_wrapper,
 		data_part: 'post_wrapper',
 		get_modules: function () {
-			var modules = [], // gravatar doesn't have typography
+			var modules = [],
 				me = this,
 				name = function (name) { return 'post_wrapper-' + name; }
 			;
@@ -118,17 +118,152 @@ define([
 	Modules.part_author = Panel.Toggleable.extend({
 		title: l10n.modules.author_title,
 		data_part: 'author',
+		get_modules: function () {
+			var modules = [],
+				me = this,
+				name = function (name) { return 'author-' + name; }
+			;
+			
+			modules.push({
+				moduleType: 'Toggle',
+				options: {
+					label: l10n.modules.gravatar_title,
+					name: 'gravatar-use',
+					default_value: 1,
+					as_field: false,
+					classStyle: 'gravatar-use',
+					fields: [
+						'gravatar_size',
+						'gravatar_border_width',
+						'gravatar_border_type',
+						'gravatar_border_color',
+						'gravatar_radius',
+						'gravatar_radius_number'
+					]
+				}
+			});
+			
+			modules.push({
+				moduleType: 'Typography',
+				options: {
+					toggle: true,
+					state: 'static',
+					fields: {
+						use: name('use-typography'),
+						typeface: name('font-family'),
+						weight: name('weight'),
+						fontstyle: name('fontstyle'),
+						style: name('style'),
+						size: name('font-size'),
+						line_height: name('line-height'),
+						color: name('font-color')
+					}
+				}
+			});
+			
+			return modules;
+		},
 		get_fields: function () {
 			return [
 				{
 					type: 'Select',
-					label: l10n.numeric,
+					label: l10n.modules.display,
 					label_style: 'inline',
 					property: 'display_name',
 					values: [
-						{label: l10n.numeric, value: 'display_name'},
+						{label: l10n.modules.display_name, value: 'display_name'},
+						{label: l10n.modules.first_last, value: 'first_last'},
+						{label: l10n.modules.last_first, value: 'last_first'},
+						{label: l10n.modules.nickname, value: 'nickname'},
+						{label: l10n.modules.username, value: 'username'}
 					]
-				}
+				},
+				{
+					type: 'Select',
+					label: l10n.modules.link_to,
+					label_style: 'inline',
+					property: 'link',
+					values: [
+						{label: l10n.modules.website, value: 'website'},
+						{label: l10n.modules.author_page, value: 'author'}
+					]
+				},
+				{
+					type: 'Checkboxes',
+					property: 'target',
+					values: [
+						{label: l10n.modules.new_tab, value: '_blank'}
+					]
+				},
+				{
+					type: "Number",
+					className: 'gravatar_size',
+					label: l10n.modules.gravatar_size,
+					label_style: 'inline',
+					name: "gravatar_size"
+				},
+				{
+					type: "Number",
+					className: 'borderWidth gravatar_border_width',
+					label: '',
+					default_value: 1,
+					suffix: l10n.px,
+					name: "gravatar_border_width",
+					values: [
+						{ label: "", value: '1' }
+					],
+				},
+				{
+					type: "Select",
+					className: 'gravatar_border_type borderType',
+					multiple: false,
+					name: "gravatar_border_type",
+					default_value: "solid",
+					values: [
+						{ label: l10n.modules.solid, value: 'solid' },
+						{ label: l10n.modules.dashed, value: 'dashed' },
+						{ label: l10n.modules.dotted, value: 'dotted' }
+					],
+				},
+				{
+					type: "Color",
+					className: 'upfront-field-wrap upfront-field-wrap-color sp-cf borderColor gravatar_border_color',
+					multiple: false,
+					name: "gravatar_border_color",
+					blank_alpha : 0,
+					label_style: 'inline',
+					label: '',
+					default_value: '#000',
+				},
+				{
+					type: "Slider",
+					className: 'gravatar_radius upfront-field-wrap upfront-field-wrap-slider radius-slider',
+					label: '',
+					suffix: l10n.px,
+					min: 0,
+					name: "gravatar_radius",
+					max: 1000,
+					step: 10,
+					show: function() {
+
+					}
+				},
+				{
+					type: "Number",
+					className: 'gravatar_radius_number gravatar_radius_number',
+					label: '',
+					min: 0,
+					max: 1000,
+					default_value: 0,
+					values: [
+						{ label: "", value: '0' }
+					],
+					change: function() {
+						
+					},
+					label_style: 'inline',
+					name: "gravatar_radius_number"
+				},
 			];
 		}
 	});
@@ -257,17 +392,72 @@ define([
 	Modules.part_gravatar = Panel.Toggleable.extend({
 		title: l10n.modules.gravatar_title,
 		data_part: 'gravatar',
+		get_modules: function () {
+			var modules = [],
+				me = this,
+				name = function (name) { return 'gravatar-' + name; }
+			;
+			
+			modules.push({
+				moduleType: 'Toggle',
+				options: {
+					label: l10n.modules.gravatar_title,
+					name: 'gravatar-use',
+					default_value: 1,
+					classStyle: 'gravatar-use',
+					fields: [
+						'gravatar_size',
+						'gravatar_border_width',
+						'gravatar_border_type',
+						'gravatar_border_color'
+					]
+				}
+			});
+			
+			return modules;
+		},
 		get_fields: function () {
 			return [
 				{
-					type: 'Select',
-					label: l10n.numeric,
+					type: "Number",
+					className: 'gravatar_size',
+					label: l10n.modules.gravatar_size,
 					label_style: 'inline',
-					property: 'display_name',
+					name: "gravatar_size"
+				},
+				{
+					type: "Number",
+					className: 'borderWidth gravatar_border_width',
+					label: '',
+					default_value: 1,
+					suffix: l10n.px,
+					name: "gravatar_border_width",
 					values: [
-						{label: l10n.numeric, value: 'display_name'},
-					]
-				}
+						{ label: "", value: '1' }
+					],
+				},
+				{
+					type: "Select",
+					className: 'gravatar_border_type borderType',
+					multiple: false,
+					name: "gravatar_border_type",
+					default_value: "solid",
+					values: [
+						{ label: l10n.modules.solid, value: 'solid' },
+						{ label: l10n.modules.dashed, value: 'dashed' },
+						{ label: l10n.modules.dotted, value: 'dotted' }
+					],
+				},
+				{
+					type: "Color",
+					className: 'upfront-field-wrap upfront-field-wrap-color sp-cf borderColor gravatar_border_color',
+					multiple: false,
+					name: "gravatar_border_color",
+					blank_alpha : 0,
+					label_style: 'inline',
+					label: '',
+					default_value: '#000',
+				},
 			];
 		}
 	});
