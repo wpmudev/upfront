@@ -52,10 +52,11 @@
 								}
 								me.$popup.top.html(
 										'<ul class="upfront-tabs">' +
-										'<li data-type="posts" class="active">' + l10n.posts + '</li>' +
-										'<li data-type="pages">' + l10n.pages + '</li>' +
-										// Comment out comments functionality for now.
-										//(has_comments ? '<li data-type="comments">' + l10n.comments + '</li>' : '') +
+											'<li data-type="posts" class="active">' + l10n.posts + '</li>' +
+											'<li data-type="pages">' + l10n.pages + '</li>' +
+											'<li data-type="cpts">' + l10n.cpts + '</li>' +
+											// Comment out comments functionality for now.
+											//(has_comments ? '<li data-type="comments">' + l10n.comments + '</li>' : '') +
 										'</ul>' +
 										me.$popup.top.html()
 									+ '<div class="upfront-icon upfront-icon-popup-search"></div>'
@@ -63,8 +64,8 @@
 										me.dispatch_panel_creation(this);
 								} );
 
-							// Add Toggle Filter button functionality.
-							me.$popup.top.find('.upfront-icon-popup-search').click(me.toggle_filter);
+								// Add Toggle Filter button functionality.
+								me.$popup.top.find('.upfront-icon-popup-search').click(me.toggle_filter);
 
 								me.dispatch_panel_creation();
 
@@ -119,6 +120,25 @@
 								}
 								else if(panel == 'pages'){
 										collection = new Upfront.Collections.PostList([], {postType: 'page'});
+										collection.orderby = 'post_date';
+										fetchOptions = {limit: 15};
+								}
+								else if(panel == 'cpts'){
+										var postTypes = Upfront.mainData.content_settings.post_types
+											collection
+										;
+										postTypes.forEach(function(postType) {
+											// Ignore WP post types.
+											if (postType.name === 'post' || postType.name === 'page' || postType.name === 'attachmente') return;
+											var newCollection = new Upfront.Collections.PostList([], {postType: postType});
+											// If collection already exists, add to it.
+											if (collection.add) {
+												collection.add(newCollection.toJSON())
+											} else {
+												// Otherwise assign it.
+												collection = newCollection;
+											}
+										});
 										collection.orderby = 'post_date';
 										fetchOptions = {limit: 15};
 								}
@@ -186,6 +206,28 @@
 																pagination: new ContentEditor.Pagination({collection: collection})
 														};
 														me.views.comments = views;
+														break;
+												case "cpts":
+														//Check if we have rendered the panel once
+														cachedElements = null;
+														if(typeof me.views[panel] !== "undefined") {
+																cachedElements = me.views[panel].view.collection.pagination.totalElements;
+														}
+														//Check collection total elements
+														collectionElements = collection.pagination.totalElements;
+
+														//Compare total items, if same return cached panel
+														if(cachedElements == collectionElements) {
+																return me.render_panel(me.views[panel]);
+														}
+
+														collection.on('reset sort', me.render_panel, me);
+														views = {
+																view: new ContentEditor.Cpt({collection: collection, $popup: me.$popup}),
+																search: new ContentEditor.Search({collection: collection}),
+																pagination: new ContentEditor.Pagination({collection: collection})
+														};
+														me.views.cpts = views;
 														break;
 										}
 										me.render_panel();

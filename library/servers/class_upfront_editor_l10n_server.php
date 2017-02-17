@@ -494,6 +494,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'popup_preloader' => __('Please, hold on...', 'upfront'),
 				'posts' => __('Posts', 'upfront'),
 				'pages' => __('Pages', 'upfront'),
+				'cpts' => __('CPTs', 'upfront'),
 				'comments' => __('Comments', 'upfront'),
 				'media' => __('Media', 'upfront'),
 				'no_image' => __('No Image', 'upfront'),
