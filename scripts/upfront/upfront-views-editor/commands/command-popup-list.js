@@ -54,7 +54,8 @@
 										'<ul class="upfront-tabs">' +
 											'<li data-type="posts" class="active">' + l10n.posts + '</li>' +
 											'<li data-type="pages">' + l10n.pages + '</li>' +
-											'<li data-type="cpts">' + l10n.cpts + '</li>' +
+											// If Custom Post Type, display tab.
+											(Upfront.mainData.content_settings.post_types.length > 3 ? '<li data-type="cpts">' + l10n.cpts + '</li>': '') +
 											// Comment out comments functionality for now.
 											//(has_comments ? '<li data-type="comments">' + l10n.comments + '</li>' : '') +
 										'</ul>' +
@@ -129,7 +130,7 @@
 										;
 										postTypes.forEach(function(postType) {
 											// Ignore WP post types.
-											if (postType.name === 'post' || postType.name === 'page' || postType.name === 'attachmente') return;
+											if (postType.name === 'post' || postType.name === 'page' || postType.name === 'attachment') return;
 											var newCollection = new Upfront.Collections.PostList([], {postType: postType});
 											// If collection already exists, add to it.
 											if (collection.add) {
