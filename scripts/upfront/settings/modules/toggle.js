@@ -14,6 +14,10 @@ define([
 			this.options = options || {};
 
 			var me = this;
+			
+			if(this.options.as_field === true) {
+				this.className = this.classStyle + ' uf_as_field';
+			}
 
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Checkboxes({
