@@ -89,6 +89,7 @@ class Upfront_MediaServer extends Upfront_Server {
 			'selected' => __('%s selected', 'upfront'),
 			'selected_no_label' => __('%s selected, they do not share any common labels.', 'upfront'),
 			'media_title' => __("Media Title", 'upfront'),
+			'media_alt' => __("Media Alt", 'upfront'),
 			'natural_size' => __("Natural Size", 'upfront'), // remove
 			'information' => __("Information", 'upfront'),
 			'px_label' => __("px", 'upfront'),

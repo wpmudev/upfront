@@ -285,10 +285,19 @@ abstract class Upfront_Container extends Upfront_Entity {
 			$pre = "";
 			$post = "";
 		}
-
+		
+		
+		// Display role on region container
+		$role = "";
+		
+		$region_role = $this->_get_property('region_role');
+		if ( !empty( $region_role ) ) {
+			$role = "role='{$region_role}'";
+		}
+		
 		$style = $style ? "style='{$style}'" : '';
 		$element_id = $element_id ? "id='{$element_id}'" : '';
-		return "{$pre}<{$this->_tag} class='{$class}' {$style} {$element_id} {$attr}>{$out}</{$this->_tag}>{$post}";
+		return "{$pre}<{$this->_tag} class='{$class}' {$role} {$style} {$element_id} {$attr}>{$out}</{$this->_tag}>{$post}";
 	}
 
 	public function get_wrapper () {

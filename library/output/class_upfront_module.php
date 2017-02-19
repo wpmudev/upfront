@@ -30,23 +30,23 @@ class Upfront_Module extends Upfront_Container {
 		$wrapper_id = $this->_get_property('wrapper_id');
 		return Upfront_Wrapper::get_instance($wrapper_id, $this->_parent_data);
 	}
-    
-    public function get_css_class () {
-        $classes = parent::get_css_class();
-        $more_classes = array();
 
-        /*foreach ($this->_child_instances as $view) {
-        	$cls = $view->get_propagated_classes();
-        	if (empty($cls)) continue;
+	public function get_css_class () {
+		$classes = parent::get_css_class();
+		$more_classes = array();
 
-        	$more_classes = array_merge($more_classes, $cls);
-        }*/
+		/*foreach ($this->_child_instances as $view) {
+			$cls = $view->get_propagated_classes();
+			if (empty($cls)) continue;
 
-        $prop_class = $this->_get_property('class');
-        $column = upfront_get_class_num('c', $prop_class);
-        $more_classes[] = 'c' . $column;
-        return $classes . ' ' . join(' ', $more_classes);
-    }
+			$more_classes = array_merge($more_classes, $cls);
+		}*/
+
+		$prop_class = $this->_get_property('class');
+		$column = upfront_get_class_num('c', $prop_class);
+		$more_classes[] = 'c' . $column;
+		return $classes . ' ' . join(' ', $more_classes);
+	}
 
 	public function instantiate_child ($child_data, $idx) {
 		$key = md5(serialize($child_data));

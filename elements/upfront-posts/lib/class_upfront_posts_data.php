@@ -42,10 +42,10 @@ class Upfront_Posts_PostsData {
 
 			// list_type===custom settings
 			'posts_list' => '', // JSON map of id/permalink pairs
-			
+
 			'thumbnail_size' => 'large', // thumbnail, medium, large, uf_post_featured_image, uf_custom_thumbnail_size
-			'custom_thumbnail_width' => 200, 
-			'custom_thumbnail_height' => 200, 
+			'custom_thumbnail_width' => 200,
+			'custom_thumbnail_height' => 200,
 
 			// Post parts
 			'post_parts' => $enabled_parts,
@@ -175,10 +175,10 @@ class Upfront_Posts_PostsData {
 			'post_parts_sorter' => __('Drag to re-order Post Parts', 'upfront'),
 			'select_custom_post' => __('Select custom post', 'upfront'),
 			'add_custom_post' => __('Add a custom post', 'upfront'),
-            'resize_featured' => __('Re-size featured image to fit container', 'upfront'),
+			'resize_featured' => __('Re-size featured image to fit container', 'upfront'),
 			'general_settings' => __('General Settings', 'upfront'),
 			'post_part_settings' => __('Post Parts Settings', 'upfront'),
-			
+
 			'css' => array(
 				'container_label' => __('Element container', 'upfront'),
 				'container_info' => __('The container for all posts', 'upfront'),

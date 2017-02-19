@@ -301,6 +301,7 @@ define([
 			return _.extend(this.presetDefaults, {
 				id: presetName.toLowerCase().replace(/ /g, '-'),
 				name: presetName,
+				preset: presetName,
 				// should always be empty
 				preset_style: ''
 			});

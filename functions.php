@@ -49,7 +49,7 @@ class Upfront {
 	 * List of files to exclude in scanning
 	 *
 	 * @TODO refactor var name and location
-	 * 
+	 *
 	 * @var array
 	 */
 	public static $Excluded_Files = array(".", "..", ".DS_Store");
@@ -479,7 +479,7 @@ add_action( 'admin_enqueue_scripts', 'uf_admin_bar_styles' );
 /**
  * Gets rid of the admin notice and declares support for Woo
  */
-	function uf_add_woocommerce_support() {
-		add_theme_support('woocommerce');
-	}
+function uf_add_woocommerce_support() {
+	add_theme_support('woocommerce');
+}
 add_action('after_setup_theme', 'uf_add_woocommerce_support');
