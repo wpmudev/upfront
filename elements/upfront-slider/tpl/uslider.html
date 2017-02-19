@@ -7,10 +7,12 @@
   data-effect="<?php echo $transition ?>"
   data-interval="<?php echo $rotateTime * 1000 ?>"
   data-show_control="<?php echo $controlsWhen ?>"
+  data-keyboard_control="<?php echo $keyboardControls ?>"
   data-control_num="<?php echo $dots /* && $production */ ? 1 : 0 ?>"
   data-control_next_prev="<?php echo $arrows /* && $production */ ? 1 : 0 ?>"
   data-starting_slide="<?php echo $startingSlide ?>"
   data-caption_height="<?php echo $primaryStyle == 'below' ? 1 : 0 ?>"
+  <?php if($keyboardControls) { ?> tabindex="0" <?php } ?>
 >
 	<?php if($slidesLength){ ?>
 	<div class="uslides">

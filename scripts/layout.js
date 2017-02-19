@@ -1,6 +1,8 @@
 jQuery(document).ready(function($){
 	var throttle = function(a,b,c){var d,e,f,g=null,h=0;c||(c={});var i=function(){h=c.leading===!1?0:new Date().getTime(),g=null,f=a.apply(d,e),g||(d=e=null)};return function(){var j=new Date().getTime();h||c.leading!==!1||(h=j);var k=b-(j-h);return d=this,e=arguments,0>=k||k>b?(clearTimeout(g),g=null,h=j,f=a.apply(d,e),g||(d=e=null)):g||c.trailing===!1||(g=setTimeout(i,k)),f}};
-
+	var lastKey = new Date();
+	var lastClick = new Date();
+	
 	function css_support( property )
 	{
 		var div = document.createElement('div'),
@@ -212,8 +214,8 @@ jQuery(document).ready(function($){
 						$overlay.uparallax({
 							element: $overlay.attr('data-bg-parallax')
 						});
-						if (false === overflow_top && $prev.length > 0 && $prev.height() < 100) overflow_top = $prev.height();
-						if (false === overflow_bottom && $next.length > 0 && $next.height() < 100) overflow_bottom = $next.height();
+						if (false === overflow_top && $prev.length > 0 && $prev.height() < 200) overflow_top = $prev.height() * 0.5;
+						if (false === overflow_bottom && $next.length > 0 && $next.height() < 200) overflow_bottom = $next.height() * 0.5;
 						if (false !== overflow_top) $overlay.uparallax('setOption', 'overflowTop', overflow_top);
 						if (false !== overflow_bottom) $overlay.uparallax('setOption', 'overflowBottom', overflow_bottom);
 						$(document).on('upfront-responsive-nav-open upfront-responsive-nav-close', function () {
@@ -846,10 +848,16 @@ jQuery(document).ready(function($){
 				}
 				if ( is_full_screen ){
 					if ( is_bg_image ) {
-						$bg_image.css('background-position', bg_position_x + ' ' + ( bg_position_y + scroll_top - body_off.top ) + 'px');
+						$bg_image.css({
+							backgroundAttachment: 'fixed',
+							backgroundPosition: bg_position_x + ' ' + bg_position_y + 'px'
+						});
 					}
 					else if ( is_bg_overlay ) {
-						$bg_overlay.css('top', ( scroll_top - body_off.top ));
+						$bg_overlay.css({
+							position: 'fixed',
+							top: ( scroll_top - body_off.top )
+						});
 					}
 				}
 			}
@@ -883,10 +891,16 @@ jQuery(document).ready(function($){
 				}
 				else if ( is_full_screen ) {
 					if ( is_bg_image ) {
-						$bg_image.css('background-position', bg_position_x + ' ' + ( bg_position_y + ( container_height - win_height ) ) + 'px');
+						$bg_image.css({
+							backgroundAttachment: '',
+							backgroundPosition: bg_position_x + ' ' + ( bg_position_y + ( container_height - win_height ) ) + 'px'
+						});
 					}
 					else if ( is_bg_overlay ) {
-						$bg_overlay.css('top', ( container_height - win_height ));
+						$bg_overlay.css({
+							position: '',
+							top: ( container_height - win_height )
+						});
 					}
 				}
 			}
@@ -1459,5 +1473,21 @@ jQuery(document).ready(function($){
 	if ( $image_insert_inline_panels.length > 0 ) {
 		$image_insert_inline_panels.remove();
 	}
+	
+	// Keyboard Focus Styles http://codepen.io/fusco/pen/4de5926b34d3a76c9ac9854b6beefebb
+	$(this).on('focusin', function (e) {
+		$('.keyboard-outline').removeClass('keyboard-outline');
+		var wasByKeyboard = lastClick < lastKey;
+		if (wasByKeyboard) {
+			$(e.target).addClass('keyboard-outline');
+		}
+	});
 
+	$(this).on('mousedown', function () {
+		lastClick = new Date();
+	});
+
+	$(this).on('keydown', function () {
+		lastKey = new Date();
+	});
 });

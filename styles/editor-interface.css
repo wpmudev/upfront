@@ -1665,7 +1665,8 @@ input.upfront-field-text:hover,
   z-index: 21; }
 
 #sidebar-ui .upfront-field-select-expanded .upfront-field-select-options,
-#element-settings-sidebar .upfront-field-select-expanded .upfront-field-select-options {
+#element-settings-sidebar .upfront-field-select-expanded .upfront-field-select-options,
+#region-settings-sidebar .upfront-field-select-expanded .upfront-field-select-options {
   position: fixed;
   display: none; }
 
@@ -2176,7 +2177,8 @@ div.upfront-date_picker td a {
   border-top: 1px solid #accae6;
   text-align: center; }
 
-.upfront-field-wrap-checkboxes .checkbox-info:before {
+.upfront-field-wrap-checkboxes .checkbox-info:before,
+.upfront-settings-item-title .checkbox-info:before {
   display: inline-block;
   content: "";
   width: 15px;
@@ -3186,8 +3188,7 @@ input.upfront_toggle_checkbox {
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-left > .upfront-region-resize-handle-e,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-side-right > .upfront-region-resize-handle-w,
 .responsive-breakpoint.upfront-region-editing .upfront-region-container-active .upfront-region-hidden > .upfront-region-resize-handle-s,
-.upfront-region-editing .upfront-region-container-full > .upfront-region-resize-handle,
-.upfront-region-editing .upfront-region-bg-setting-open .upfront-region-resize-handle {
+.upfront-region-editing .upfront-region-container-full > .upfront-region-resize-handle {
   visibility: hidden; }
 
 .upfront-region-editing .upfront-region-active-overlay,
@@ -3485,7 +3486,8 @@ input.upfront_toggle_checkbox {
   display: block;
   z-index: 9996; }
 
-.upfront-edit-responsive .upfront-region-editing .upfront-region-panels {
+/* Hide add regions for responsive mode. */
+.upfront-edit-responsive .upfront-region-editing .upfront-region-panels .upfront-inline-panel {
   display: none; }
 
 .upfront-region-fixed-editing .upfront-region-fixed-panels {
@@ -4461,14 +4463,23 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 .upfront-region-editing .upfront-region.controls-visible .responsive-item-controls {
   display: block; }
 
-/* Hide 'Add Region' triggers & 'Region Resize' handle when settings panel is open */
+/* Hide 'Add Region' triggers & 'Region Resize' handle when settings panel is open 
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-region-panel-item-add-region,
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-icon-control-region-resize-e:before,
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-icon-control-region-resize-w:before {
-  display: none; }
-
+	display:none;
+}
+*/
 .upfront-ui .upfront-region-panel-item-add-region .upfront-icon-region-add:before {
   background-position: -260px -130px; }
+
+#region-settings-sidebar .upfront-region-bg-setting-aria-role {
+  clear: both;
+  padding-top: 10px; }
+
+#region-settings-sidebar .upfront-region-bg-setting-aria-role .upfront-field-label-block {
+  font-weight: normal;
+  color: #96acc1; }
 
 .upfront_map-editor {
   position: fixed;
@@ -5820,6 +5831,9 @@ span.upfront-settings-item-title:after {
 .upfront-resize-handle-wrapper:hover ~ .upfront-module-group .upfront-selected-border {
   display: block; }
 
+/* Post Data Size Hint on Group Edit resizing. */
+.upfront-module-group-on-edit .upfront-wrapper-post-data .upfront-wrapper-meta:hover ~ .upfront-module-view .upfront-module .upfront-object-view .upfront-entity-size-hint,
+.upfront-wrapper-module-group-on-edit .upfront-module-group-on-edit .upfront-wrapper-post-data .upfront-resize-handle-wrapper:hover + .upfront-module-view .upfront-resize-handle-element,
 .upfront-module-group.upfront-module-group-on-edit:hover .upfront-modules_container > .upfront-resize-handle-group,
 .upfront-wrapper.ui-resizable-resizing .upfront-module-group .upfront-editable_entity > .upfront-entity-size-hint,
 .upfront-wrapper-multiple-modules .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-entity-size-hint,
@@ -6229,14 +6243,21 @@ span.upfront-settings-item-title:after {
   display: none; }
 
 /* Show on hover. */
+/* Post data resize handles. */
+.upfront-wrapper-post-data > .upfront-resize-handle-wrapper:hover,
+.upfront-wrapper-post-data > .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-object-group-view > .upfront-entity-size-hint,
 .upfront-wrapper-multiple-modules .upfront-wrapper-meta.upfront-resize-handle-wrapper:hover {
   display: block; }
 
-/* Hide resize handles for multiple-modules resizing. */
+/* Hide post data sub element resize hint and handles. */
+.upfront-wrapper-post-data .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-resize-handle-element,
+.upfront-wrapper-post-data .upfront-module-view .upfront-object-view:hover .upfront-resize-handle-element,
+.upfront-wrapper-post-data .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-entity-size-hint,
 .upfront-wrapper-multiple-modules .upfront-resize-handle-wrapper:hover ~ .upfront-module-view .upfront-resize-handle-element {
   display: none; }
 
-/* Resize handles for group and elements. */
+/* Post Data resize handles */
+.upfront-wrapper-post-data > .upfront-resize-handle-wrapper:before,
 .upfront-resize-handle-group:before,
 .upfront-resize-handle-element:before {
   content: "";
@@ -7158,6 +7179,7 @@ span.upfront-settings-item-title:after {
   left: 0px;
   top: 6px; }
 
+.upfront-field-title,
 .upfront-settings-item-title,
 .upfront-global-social-settings .upfront-settings-item-title {
   font-size: 11px;
@@ -7169,6 +7191,7 @@ span.upfront-settings-item-title:after {
   position: relative;
   letter-spacing: 0.34px; }
 
+.upfront-field-title span,
 .upfront-settings-item-title span,
 .upfront-global-social-settings .upfront-settings-item-title span {
   background-color: #f2f9ff;
@@ -10471,6 +10494,7 @@ a.upfront-post-layout-trigger:before {
   color: #335b80; }
 
 .upfront-media-controls .change_title .upfront-field-label,
+.upfront-media-controls .change_alt .upfront-field-label,
 .upfront-media-controls .size_hints .upfront-field-label,
 .upfront-media-controls .add_labels .upfront-field-label,
 .upfront-media-controls .upfront-filter_selection-control .upfront-field-label,
@@ -10478,7 +10502,8 @@ a.upfront-post-layout-trigger:before {
   padding: 0 0 0 0px;
   font-weight: normal; }
 
-.upfront-media-controls .change_title .selected_length {
+.upfront-media-controls .change_title .selected_length,
+.upfront-media-controls .change_alt .selected_length {
   color: #7c98b2;
   font-family: Verdana, sans-serif;
   font-size: 11px;
@@ -15225,7 +15250,7 @@ div.sp-val:active .sp-dragger:after {
   top: 6px;
   left: 6px;
   position: absolute;
-  text-indent: -6px;
+  text-indent: -4.5px;
   border-radius: 3px; }
 
 #path-1 {
@@ -15246,7 +15271,7 @@ div.sp-val:active .sp-dragger:after {
   -moz-background-size: 8px 8px;
   background-size: 8px 8px;
   background-position: 0 0, 4px 4px;
-  border-radius: 2px; }
+  border-radius: 3px; }
 
 #tabforeground:after {
   content: 'T';
@@ -19440,10 +19465,10 @@ div#page .upfront-object.upfront-image .swap-image-overlay p:before,
   background-position: -1229px -154px; }
 
 .upfront-ui .upfront-icon-region-remove-active:hover:before {
-  background-position: -731px -231px; }
+  background-position: -731px -233px; }
 
 .upfront-ui .upfront-icon-region-edit-labels:before {
-  background-position: -482px -231px; }
+  background-position: -482px -233px; }
 
 .upfront-ui .upfront-icon-region-edit-labels-no-labels:before {
   background-position: -479px -201px; }

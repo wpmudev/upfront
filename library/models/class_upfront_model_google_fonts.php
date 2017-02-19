@@ -18,8 +18,8 @@ class Upfront_Model_GoogleFonts {
 	}
 
 	/**
-   * Lists available font categories. In Google Fonts that is:
-   * serif, sans-serif, handwriting, etc.
+	 * Lists available font categories. In Google Fonts that is:
+	 * serif, sans-serif, handwriting, etc.
 	 * @return array
 	 */
 	public function get_categories () {

@@ -82,6 +82,14 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		this.add_multiple_module_class($object);
 	},
 
+	get_resize_min_col: function () {
+		// If initial menu view.
+		if(!this.property('menu_id')) {
+			// Minimum of 9 columns.
+			return 9;
+		}
+	},
+
 	on_after_layout_render: function () {
 		var me = this;
 		setTimeout(function(){
@@ -753,8 +761,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			selector.attr('data-alignment', breakpoint.menu_alignment);
 
 			// Add responsive nav toggler
-			if(!selector.find('div.responsive_nav_toggler').length)
-				selector.prepend($('<div class="responsive_nav_toggler"><div></div><div></div><div></div></div>').data('view', me));
+			if(!selector.find('.responsive_nav_toggler').length)
+				selector.prepend($('<button class="responsive_nav_toggler"><div></div><div></div><div></div></button>').data('view', me));
 
 			// clone sub-menu's parent's link (if any) on top of the sub-menu's items, and make the parent clickable to toggle the appearance of sub-menu. Only on front end.
 			selector.find('li.menu-item-has-children').each(function() {
@@ -791,7 +799,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			selector.removeAttr('data-burger_over');
 
 			// Remove responsive nav toggler
-			selector.find('div.responsive_nav_toggler').remove();
+			selector.find('.responsive_nav_toggler').remove();
 			me.showMenu(selector.find('ul.menu'));
 
 			//remove any sub-menu item's parent's clones
@@ -895,8 +903,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 							bparray[key]['menu_alignment'] : selector.data('alignmentbk') ));
 
 					// Add responsive nav toggler
-					if(!selector.find('div.responsive_nav_toggler').length)
-						selector.prepend($('<div class="responsive_nav_toggler"><div></div><div></div><div></div></div>').data('view', me));
+					if(!selector.find('.responsive_nav_toggler').length)
+						selector.prepend($('<button class="responsive_nav_toggler"><div></div><div></div><div></div></button>').data('view', me));
 
 					// clone sub-menu's parent's link (if any) on top of the sub-menu's items, and make the parent clickable to toggle the appearance of sub-menu. Only on front end.
 					selector.find('li.menu-item-has-children').each(function() {
@@ -933,7 +941,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 					selector.removeAttr('data-burger_over', '');
 
 					// Remove responsive nav toggler
-					selector.find('div.responsive_nav_toggler').remove();
+					selector.find('.responsive_nav_toggler').remove();
 					me.showMenu(selector.find('ul.menu'));
 
 					//remove any sub-menu item's parent's clones
@@ -999,7 +1007,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			this.showMenu($menu);
 			var offset = $menu.position();
 
-			var close_icon = $('<i class="burger_nav_close"></i>');
+			var close_icon = $('<button class="burger_nav_close"></button>');
 			$menu.prepend($('<li>').addClass('wrap_burger_nav_close').append(close_icon));
 
 			close_icon.bind('touchstart click', function() {
@@ -1030,7 +1038,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 			Upfront.Events.trigger("entity:navigation:responsive_open", $nav);
 		} else {
 			this.hideMenu($menu);
-			this.$el.find('i.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
+			this.$el.find('.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
 
 			$nav.removeAttr('data-burger_open');
 
@@ -1111,7 +1119,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				this.$el.find('.upfront-object-content').append($('<div class="burger_overlay"></div>'));
 			}
 			if (((presetProperties.breakpoint || {}).desktop || {}).menu_style === 'burger') {
-				container.prepend($('<div>').addClass("responsive_nav_toggler").data('view', me).append('<div></div><div></div><div></div>'));
+				container.prepend($('<button>').addClass("responsive_nav_toggler").data('view', me).append('<div></div><div></div><div></div>'));
 				me.hideMenu(this.$el.find('ul.menu'));
 			}
 		} else {
@@ -1128,7 +1136,7 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 				this.$el.find('.upfront-object-content').append($('<div class="burger_overlay"></div>'));
 			}
 			if(menu_style === 'burger') {
-				container.prepend($('<div>').addClass("responsive_nav_toggler").data('view', me).append('<div></div><div></div><div></div>'));
+				container.prepend($('<button>').addClass("responsive_nav_toggler").data('view', me).append('<div></div><div></div><div></div>'));
 				me.hideMenu(this.$el.find('ul.menu'));
 			}
 		}
@@ -1330,8 +1338,8 @@ Upfront.Application.LayoutEditor.add_object("Unewnavigation", {
 
 		"[data-style='burger'] ul.menu": {label: l10n.css.responsive_bar_label, info: l10n.css.bar_info},
 		"[data-style='burger'] .responsive_nav_toggler": {label: l10n.css.responsive_trigger, info: l10n.css.hover_info},
-		"[data-style='burger'] div.responsive_nav_toggler > div": {label: l10n.css.responsive_trigger_bars, info: l10n.css.hover_info},
-		"[data-style='burger'] i.burger_nav_close": {label: l10n.css.responsive_nav_close, info: l10n.css.close_info},
+		"[data-style='burger'] .responsive_nav_toggler > div": {label: l10n.css.responsive_trigger_bars, info: l10n.css.hover_info},
+		"[data-style='burger'] .burger_nav_close": {label: l10n.css.responsive_nav_close, info: l10n.css.close_info},
 		"[data-style='burger'] ul.menu > li.menu-item a": {label: l10n.css.responsive_item_label, info: l10n.css.item_info},
 		"[data-style='burger'] ul.menu > li.menu-item:hover a": {label: l10n.css.responsive_hover_label, info: l10n.css.hover_info},
 		"[data-style='burger'] ul.sub-menu > li.menu-item > a": {label: l10n.css.responsive_subitem_label, info: l10n.css.subitem_info},

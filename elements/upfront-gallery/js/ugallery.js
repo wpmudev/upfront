@@ -390,9 +390,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 		if (Upfront.Application.user_can_modify_layout()) {
 			moreOptions.sub_items['crop'] = this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask', 28, 28);
-			moreOptions.sub_items['link'] = this.createLinkControl(image);
-		} else {
-			moreOptions.sub_items['crop'] = this.createControl('crop', l10n.ctrl.edit_image, 'imageEditMask');
 		}
 
 		if (Upfront.Application.user_can_modify_layout()) {
@@ -402,6 +399,8 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 
 			if (image.get('imageLink').type === 'image' || image.get('imageLink').type === 'lightbox' || -1 !== ['image', 'lightbox'].indexOf( this.property( "linkTo" ) ) ) {
 				moreOptions.sub_items['fullscreen'] = this.createControl('fullscreen', l10n.ctrl.show_image, 'openImageLightbox', 28, 28);
+			} else {
+				moreOptions.sub_items['link'] = this.createLinkControl(image);
 			}
 			
 			moreOptions.sub_items['remove'] = this.createControl('remove', l10n.ctrl.rm_image, 'removeImage', 28, 28);
@@ -414,7 +413,6 @@ var UgalleryView = Upfront.Views.ObjectView.extend({
 		});
 		
 		this.listenTo(moreOptions, 'panel:open', function() {
-			console.log($item);
 			$item.addClass('stayOpen controls-visible');
 		});
 

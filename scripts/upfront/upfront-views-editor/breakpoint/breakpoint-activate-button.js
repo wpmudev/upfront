@@ -30,6 +30,8 @@
                 // hide all Edit Region for responsive
                 // Edit Region will show on mouseenter
                 $('.upfront-region-edit-trigger-small').removeClass('visible');
+								// hide region settings.
+								Upfront.Events.trigger("entity:region:deactivated");
             }
         });
     });
