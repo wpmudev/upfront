@@ -10592,6 +10592,13 @@ a.upfront-post-layout-trigger:before {
 .upfront-media-controls .change_title .upfront-field-wrap {
   margin: 10px 0 0; }
 
+.upfront-media-controls .change_alt .upfront-field-wrap {
+  margin: 10px 0 0; }
+
+.upfront-media-controls .change_alt .upfront-field-label {
+  text-transform: none;
+  margin-bottom: 5px; }
+
 .upfront-search-control:after,
 .upfront-item-control .copy_url:after {
   content: "";

@@ -651,9 +651,7 @@ define([
 
 
 				$hub.empty();
-				if (this.model.length > 1) {
-					$hub.append('<span class="selected_length">' + l10n.files_selected.replace(/%d/, this.model.length) + '</span>');
-				} else {
+				if (this.model.length === 1) {
 					this.alt_field = new Upfront.Views.Editor.Field.Text({
 						model: this.model.at(0),
 						label: l10n.media_alt,
