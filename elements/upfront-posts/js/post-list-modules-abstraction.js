@@ -266,7 +266,14 @@
 				// Remove shadow overlay
 				this.$el.find(".upfront-settings-item-title").removeClass('active-panel');
 				
-				return $content.hide();
+				// Hide content
+				$content.hide()
+				
+				// Set modules height to initial
+				this.$el.closest('.upfront-post-modules').css('height', 'initial');
+				
+				// Scroll to modules to fix the height
+				$('#sidebar-scroll-wrapper').animate({scrollTop: $('.uf-settings-panel').offset().top - 30 });
 			},
 			show_content: function () {
 				var $content = this.$el.find('.upfront-settings-post-wrapper');
@@ -302,12 +309,6 @@
 						if($('.upfront-settings-post-wrapper').is(":visible")) {
 							// Hide settings
 							me.hide_content();
-							
-							// Set modules height to initial
-							me.$el.closest('.upfront-post-modules').css('height', 'initial');
-							
-							// Scroll to modules to fix the height
-							$('#sidebar-scroll-wrapper').animate({scrollTop: $('.uf-settings-panel').offset().top - 30 });
 						}
 					}
 				});
