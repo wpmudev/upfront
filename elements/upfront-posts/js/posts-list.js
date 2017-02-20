@@ -336,7 +336,7 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 		}
 		
 		this.events = _.extend({}, this.events, {
-			'click .reorder-overlay' : 'on_edit_click',
+			'click .reorder-overlay p' : 'on_edit_click',
 		});
 		
 		this.delegateEvents();

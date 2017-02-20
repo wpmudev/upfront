@@ -492,7 +492,7 @@ div.preset-manager-panel div.borderColor.gravatar_border_color {
 	left:0;
 }
 
-.reorder-overlay:hover {
+.reorder-overlay p:hover {
 	cursor:pointer;
 }
 
