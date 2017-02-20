@@ -77,7 +77,7 @@ define([
 
 			this.createBackup();
 
-			this.defaultOverlay();
+			this.on('body:rendered', this.defaultOverlay, this);
 
 			this.listenToOnce(Upfront.Events, 'element:settings:canceled', function() {
 				this.updateCanceledPreset(this.backupPreset);

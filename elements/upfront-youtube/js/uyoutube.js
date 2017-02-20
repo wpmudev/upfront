@@ -238,14 +238,15 @@ var BehaviorPanel = RootSettingsPanel.extend({
 	initialize: function (opts) {
 		this.options = opts;
 		var render_all = function(){
-			this.settings.invoke('render');
-		},
-		me = this,
-		SettingsItem =  Upfront.Views.Editor.Settings.Item,
-		Fields = Upfront.Views.Editor.Field
+				this.settings.invoke('render');
+			},
+			me = this,
+			SettingsItem =  Upfront.Views.Editor.Settings.Item,
+			Fields = Upfront.Views.Editor.Field
 		;
 
 		this.model.on('doit', render_all, this);
+		this.on('body:rendered', this.on_body_render, this);
 
 		this.settings = _([
 			new SettingsItem({
@@ -406,9 +407,8 @@ var BehaviorPanel = RootSettingsPanel.extend({
 		return l10n.settings;
 	},
 
-	render: function() {
+	on_body_render: function() {
 		var me = this;
-		RootSettingsPanel.prototype.render.call(this);
 
 		this.listMultipleVideos();
 		setTimeout(function(){

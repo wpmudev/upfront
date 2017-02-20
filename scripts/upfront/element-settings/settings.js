@@ -11,6 +11,7 @@ define([
 
 	var ElementSettings = Backbone.View.extend({
 		id: 'settings',
+		className: 'upfront-ui',
 		events: {
 			'click .upfront-save_settings' : 'saveSettings',
 			'click .upfront-cancel_settings' : 'cancelSettings'
@@ -76,7 +77,7 @@ define([
 				me.model.trigger('settings:open', me);
 			});
 
-			this.listenTo(Upfront.Events, 'element:settings:render', this.setScrollMaxHeight);
+			this.listenTo(Upfront.Events, 'element:settings:render', this.deferSetScrollMaxHeight);
 			
 			// Listen to element deactivation and save setting automatically
 			if ( this.for_view ) {
@@ -102,6 +103,7 @@ define([
 				this.model.set_property('breakpoint', breakpointsData, true);
 			}
 			_.each(this.panels, function(panel){
+				if (!panel._bodyRendered) return; // No body rendered yet, no need to save
 				panel.save_settings();
 			});
 
@@ -135,11 +137,14 @@ define([
 		},
 
 		render: function () {
-			var me = this;
+			var me = this,
+				$wrapper = $('<div id="sidebar-scroll-wrapper" />'),
+				count = 0
+			;
 
 			this.$el
 				.html(
-					'<div class="upfront-settings-title">' + this.title + '</div><div id="sidebar-scroll-wrapper" />'
+					'<div class="upfront-settings-title">' + this.title + '</div>'
 				)
 			;
 
@@ -159,12 +164,15 @@ define([
 			_.each(this.panels, function (panel) {
 				panel.render();
 				panel.parent_view = me;
-				me.$el.find('#sidebar-scroll-wrapper').append(panel.el);
+				$wrapper.append(panel.el);
+				if (count === 0) {
+					panel.showBody();
+				}
 
 				// Add JS Scrollbar.
 				perfectScrollbar.withDebounceUpdate(
 					// Element.
-					me.$el.find('#sidebar-scroll-wrapper')[0],
+					$wrapper[0],
 					// Run First.
 					false,
 					// Event.
@@ -172,15 +180,23 @@ define([
 					// Initialize.
 					true
 				);
+				
+				count++;
 			});
+			
+			this.$el.append($wrapper);
 
-			this.$el.addClass('upfront-ui');
 			this.$el.append(
 				"<div class='upfront-settings-button_panel'>" +
 					"<button type='button' class='upfront-cancel_settings'>" + l10n.cancel + "</button>" +
 					"<button type='button' class='upfront-save_settings'><i class='icon-ok'></i> " + l10n.save_element + "</button>" +
 				'</div>'
 			);
+		},
+		
+		deferSetScrollMaxHeight: function () {
+			var me = this;
+			_.defer(function(){ me.setScrollMaxHeight(); });
 		},
 
 		setScrollMaxHeight: function(){

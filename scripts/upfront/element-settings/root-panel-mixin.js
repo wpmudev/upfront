@@ -24,35 +24,38 @@ define([
 		},
 
 		toggleBody: function () {
-			this.$el.find('.uf-settings-panel__body').toggle();
-			this.$el.toggleClass('uf-settings-panel--expanded');
+			if (this.$el.hasClass('uf-settings-panel--expanded')) this.hideBody();
+			else this.showBody();
 		},
 
 		/**
 		 * Hides panel body
 		 */
 		hideBody: function () {
-			this.$el.find('.uf-settings-panel__body').hide();
 			this.$el.removeClass('uf-settings-panel--expanded');
+			this.trigger('hideBody');
 		},
 
 		/**
 		 * Shows panel body
 		 */
 		showBody: function () {
-			this.$el.find('.uf-settings-panel__body').show();
-			this.$el.addClass('uf-settings-panel--expanded');
-		},
-
-		render: function () {
 			var body;
-
-			this.$el.html('<div class="uf-settings-panel__title">' + this.getTitle() + '</div>');
-
+			this.$el.addClass('uf-settings-panel--expanded');
+			
+			if (this._bodyRendered) return;
+			
 			body = this.getBody();
 			body.addClass('uf-settings-panel__body');
 			this.$el.append(body);
-			this.$el.addClass('uf-settings-panel--expanded');
+			
+			this._bodyRendered = true;
+			
+			this.trigger('body:rendered');
+		},
+
+		render: function () {
+			this.$el.html('<div class="uf-settings-panel__title">' + this.getTitle() + '</div>');
 		}
 	};
 

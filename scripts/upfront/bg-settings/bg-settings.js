@@ -161,6 +161,7 @@ define([
 			var me = this;
 			
 			this.listenTo(Upfront.Events, 'element:settings:render', this.settings_opened);
+			this.on('body:rendered', this.on_body_render, this);
 
 			var ColorSettings = new ColorItem({ model: this.model });
 			var ImageSettings = new ImageItem({ model: this.model });
@@ -183,12 +184,10 @@ define([
 			});
 		},
 		
-		render: function(options) {
-			this.constructor.__super__.render.call(this, options);
+		on_body_render: function () {
+			var parent = this.$el.find('.uf-settings-panel__body');
 			
 			// Move padding checkbox to bottom
-
-			var parent = this.$el.find('.uf-settings-panel__body');
 			this.$el.find('.padding-bg-checkbox-field').appendTo(parent);
 
 			perfectScrollbar.initialize(parent[0], {

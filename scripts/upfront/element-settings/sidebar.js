@@ -2,7 +2,6 @@
 define([], function () {
 	// Setup basics
 	$('body').append('<div id="element-settings-sidebar" />');
-	$('#element-settings-sidebar').width(0).css('opacity', 0);
 	var the_settings_view;
 	var model;
 	var oldData;
@@ -12,7 +11,7 @@ define([], function () {
 		if (the_settings_view) {
 			the_settings_view.cleanUp();
 			the_settings_view = false;
-			$('#element-settings-sidebar').width(10).css('opacity', 0).html('');
+			$('#element-settings-sidebar').removeClass('element-settings-active').html('');
 			Upfront.Events.off('element:settings:saved', destroySettings);
 			Upfront.Events.off('element:settings:cancel', resetModel);
 			
@@ -63,8 +62,7 @@ define([], function () {
 		the_settings_view.render();
 		$('#element-settings-sidebar').html(the_settings_view.el);
 		$('#element-settings-sidebar').append('<div id="preventElementsUsageOverlay"><span></span></div>');
-		$('#element-settings-sidebar').width(260).css('opacity', '');
-		$('.uf-settings-panel--expanded:not(:first)').toggleClass('uf-settings-panel--expanded').find('.uf-settings-panel__body').toggle();
+		$('#element-settings-sidebar').addClass('element-settings-active');
 
 		Upfront.Events.on('element:settings:saved', destroySettings);
 

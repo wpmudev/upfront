@@ -560,7 +560,7 @@ define([
 
 			var me = this,
 				panel = new Upfront.Views.Editor.InlinePanels.Panel()
-				;
+			;
 
 			panel.items = this.getControlItems();
 			panel.render();
@@ -668,7 +668,6 @@ define([
 			}
 
 			setTimeout(function() {
-				me.updateControls();
 				me.$el.removeClass('upfront-editing');
 
 				me.editCaption();
@@ -679,10 +678,10 @@ define([
 				this.$('.uimage').addClass('uimage-mobile-mode');
 				this.once('update_position', this.setMobileMode); // Run setMobileMode after positioning finished
 			}
-
-			this.setStuckToTop();
-
+			
 			setTimeout( function() {
+				me.setStuckToTop();
+				
 				me.$el.closest('.ui-draggable').on('dragstop', function() {
 					setTimeout(function() {
 						me.setStuckToTop();
@@ -695,8 +694,12 @@ define([
 			setTimeout(function() {
 				me.toggleResizableHandles();
 			}, 100);
-
-			this.toggle_caption_controls();
+		},
+		
+		activate: function () {
+			var me = this;
+			this.constructor.__super__.activate.call(this);
+			_.defer(function(){ me.toggle_caption_controls(); });
 		},
 
 		toggleResizableHandles: function() {

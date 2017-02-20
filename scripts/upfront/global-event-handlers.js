@@ -8,7 +8,7 @@ define(function() {
 
 
   // Allow focus on click for inputs and textareas - draggable hijacks it
-	var nonDraggableSelectors = '#page input[type="text"], #page input[type="email"], #page input[type="password"], #page textarea, #page select, #page .upfront-field-select';
+	/*var nonDraggableSelectors = '#page input[type="text"], #page input[type="email"], #page input[type="password"], #page textarea, #page select, #page .upfront-field-select';
 	$('body').on('mouseover', nonDraggableSelectors, function(event) {
 		try {
 			$(event.target).closest('.ui-draggable').draggable('disable');
@@ -22,7 +22,7 @@ define(function() {
 		} catch (event) {
 			// We don't do anything but have to guard here
 		}
-	});
+	});*/
 
 	/**
 	 * Hide color picker when clicked outside of it

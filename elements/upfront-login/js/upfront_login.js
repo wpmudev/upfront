@@ -378,7 +378,7 @@ define([
 	});
 
 	var LoginSettings = ElementSettings.extend({
-		className: 'login-element-settings',
+		className: 'login-element-settings upfront-ui',
 		events: _.extend({},ElementSettings.prototype.events, this.events, {
 			'change input[name="part_style"]': 'toggle_part_style'
     }),

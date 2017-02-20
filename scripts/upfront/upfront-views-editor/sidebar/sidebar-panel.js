@@ -43,7 +43,7 @@
 											// Run First.
 											true,
 											// Event.
-											"entity:object:refresh",
+											false, //"entity:object:refresh",
 											// Initialize.
 											true
 										);

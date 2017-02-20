@@ -7295,7 +7295,11 @@ span.upfront-settings-item-title:after {
   bottom: 0;
   background-color: #334454;
   border-right: 1px solid #334454;
-  width: 260px; }
+  width: 260px;
+  display: none; }
+
+#element-settings-sidebar.element-settings-active {
+  display: block; }
 
 #element-settings-sidebar #settings {
   position: relative;
@@ -7353,7 +7357,11 @@ span.upfront-settings-item-title:after {
   border: 0 none; }
 
 #element-settings-sidebar #settings .uf-settings-panel__body {
-  border-bottom: 1px solid #c3d5e6; }
+  border-bottom: 1px solid #c3d5e6;
+  display: none; }
+
+#element-settings-sidebar #settings .uf-settings-panel--expanded .uf-settings-panel__body {
+  display: block; }
 
 #element-settings-sidebar #settings .uf-settings-panel:last-child .uf-settings-panel__body {
   border-bottom: 0 none; }

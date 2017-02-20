@@ -305,10 +305,11 @@
                     this.preventUsage('write');
                     return;
                 }
-                this.prevented_usage_type = false;
-                this.writingIsOn = false;
+                if (!this.prevented_usage_type) return;
                 $('#preventUsageOverlay').hide();
 				$('#preventElementsUsageOverlay').hide();
+                this.prevented_usage_type = false;
+                this.writingIsOn = false;
             },
             render: function () {
                 var current_app = Upfront.Application.get_current();

@@ -382,8 +382,12 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				me.on_render();
 			}, 100);
 		}
-
-		this.update_caption_controls();
+	},
+	
+	activate: function () {
+		var me = this;
+		this.constructor.__super__.activate.call(this);
+		_.defer(function(){ me.update_caption_controls(); });
 	},
 
 	update_caption_controls: function(){

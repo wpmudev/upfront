@@ -820,7 +820,8 @@ define([
 				this.listenToOnce(this, 'deactivated', this.deactivate);
 
 				this.$el.addClass("upfront-active_entity");
-				this.adjust_top_settings_panel_position();
+				
+				_.defer(function(){ me.adjust_top_settings_panel_position(); });
 			},
 			// Stub handlers
 			on_meta_click: function () {},
@@ -2036,11 +2037,10 @@ define([
 				else if ( this.parent_module_view ) { // Otherwise, the control will be on module level
 					this.$control_el = this.parent_module_view.$('.upfront-module');
 				}
+				
 				if ( this.$control_el && this.$control_el.length == 1 ) {
-					this.updateControls();
-					this.toggleControls();
-					setTimeout(function() {
-						if(me.paddingControl && typeof me.paddingControl.isOpen !== 'undefined' && !me.paddingControl.isOpen)	me.paddingControl.refresh();
+					setTimeout(function () {
+						if (me.paddingControl && typeof me.paddingControl.isOpen !== 'undefined' && !me.paddingControl.isOpen) me.paddingControl.refresh();
 					}, 300);
 				}
 
@@ -2064,6 +2064,12 @@ define([
 				//	me.adjust_top_settings_panel_position();
 				//}, 150);
 
+			},
+			deferred_render: function () {
+				var me = this;
+				_.defer(function(){
+					me.render();
+				});
 			},
 			check_if_preset_exist: function() {
 				var preset = this.model.get_property_value_by_name('preset'),
@@ -2139,7 +2145,8 @@ define([
 				return elementTypes[type];
 			},
 			update: function (prop, options) {
-				if (typeof prop === 'undefined') return this.render();
+				var me = this;
+				if (typeof prop === 'undefined') return this.deferred_render();
 
 				// var prev_value = prop._previousAttributes.value,
 				var value = prop.get('value'),
@@ -2188,7 +2195,7 @@ define([
 					this.handle_visual_padding_hint(prop, $padding_el);
 				}
 				else if ( prop.id.match(/padding_slider/) ) {
-					this.render();
+					this.deferred_render();
 					this.handle_visual_padding_hint(prop, $padding_el);
 				}
 				else if ( prop.id == 'wrapper_id' ) {
@@ -2199,7 +2206,7 @@ define([
 					}
 				}
 				else {
-					this.render();
+					this.deferred_render();
 				}
 				Upfront.Events.trigger('entity:object:update', this, this.model);
 			},
@@ -2503,6 +2510,7 @@ define([
 				this.update_position();
 			},
 			activate: function () {
+				var me = this;
 				// Do not activate if inside ObjectGroup and not editing
 				if ( this.object_group_view ) return false;
 				// Deactivate previous ObjectView
@@ -2519,6 +2527,13 @@ define([
 				if ( !this.parent_module_view.wrapper_view ) return;
 				this.parent_module_view.wrapper_view.$el.addClass('upfront-wrapper-active');
 				this.on_settings_click();
+				
+				_.defer(function(){
+					if ( me.$control_el && me.$control_el.length == 1 ) {
+						me.updateControls();
+						me.toggleControls();
+					}
+				})
 			},
 			deactivate: function () {
 				// We don't want to deactivate the element when Settings sidebar is open
@@ -7583,6 +7598,8 @@ define([
 				if ( !$(e.target).closest('.upfront-object-group-on-edit').length ) {
 					Upfront.Events.trigger("command:object_group:finish_edit");
 				}
+				
+				e.stopPropagation();
 			},
 			on_keydown: function (e) {
 				var currentEntity = Upfront.data.currentEntity;
