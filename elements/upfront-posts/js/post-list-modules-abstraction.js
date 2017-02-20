@@ -187,7 +187,8 @@
 			events: function () {
 				return _.extend({}, OptionsModule.prototype.events, {
 					'click .upfront-settings-item-title .upfront-post-delete-part': 'removePart',
-					'click .upfront-settings-item-title': 'toggle_box'
+					'click .upfront-settings-item-title': 'toggle_box',
+					'click .upfront-settings-post-wrapper': 'handleSettingsClick'
 				});
 			},
 			render: function () {
@@ -283,15 +284,38 @@
 
                     // Apply if select field is in sidebar or settings sidebar
                     if(in_sidebar == 1 || in_settings == 1) {
-                       me.update_settings_position();
+                       me.update_settings_position(true);
                     }
 					
 					return $content.show();
                 }, 10);
 				
-				$('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, this.on_scroll);				
+				$('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, function() {
+					if($('.upfront-settings-post-wrapper').is(":visible")) {
+						// Update settings position
+						me.update_settings_position();
+					}
+				});
+
+				$(document).click(function(event) {
+					if(!$(event.target).closest('.upfront-settings-post-wrapper').length) {
+						if($('.upfront-settings-post-wrapper').is(":visible")) {
+							// Hide settings
+							me.hide_content();
+							
+							// Set modules height to initial
+							me.$el.closest('.upfront-post-modules').css('height', 'initial');
+							
+							// Scroll to modules to fix the height
+							$('#sidebar-scroll-wrapper').animate({scrollTop: $('.uf-settings-panel').offset().top - 30 });
+						}
+					}
+				});
 			},
-			update_settings_position: function() {
+			handleSettingsClick: function(e) {
+				this.update_settings_position();
+			},
+			update_settings_position: function(firstTime) {
 				var me = this,
 					settingsTitleHeight = 68,
 					setting_dropdown = me.$el.find('.upfront-settings-post-wrapper'),
@@ -312,15 +336,15 @@
 					setting_dropdown.css('top', (dropDownTop - settingsHeight - 30) + "px");
 				} else {
 					// There is no space above and below
+					setting_dropdown.css('top', dropDownTop + "px");
+
+					if(me.$el.closest('.upfront-post-modules').length) {
+						me.$el.closest('.upfront-post-modules').height(settingsHeight - settingsTitleHeight);
+					}
 				}
 				
 				setting_dropdown.css("width", select.width() + 10);
-				setting_dropdown.css('display', 'block');
 			},
-			on_scroll: function(e) {
-				$('.upfront-settings-item-title').removeClass('active-panel');
-				$('.upfront-settings-post-wrapper').hide();
-            },
 			hide_all: function() {
 				var $wrapper = this.$el.parent();
 				$wrapper.parent().find(".upfront-settings-item-title").removeClass('active-panel');
