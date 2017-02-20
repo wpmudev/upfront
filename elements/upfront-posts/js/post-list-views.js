@@ -12,7 +12,7 @@ var Views = {
 
 
 	initial: Backbone.View.extend({
-		className: 'upfront_posts-initial upfront-initial-overlay-wrapper',
+		className: 'upfront_posts-initial',
 		tpl: _.template($template.filter("#initial").html()),
 		events: {
 			'click [href="#continue"]': "dispatch"

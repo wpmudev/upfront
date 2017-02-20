@@ -373,6 +373,8 @@ class Upfront_Posts_PostsData {
 			'thumbnail_size_custom' => __('Custom <em>(existing not affected)</em>', 'upfront'),
 			'thumbnail_size_custom_width' => __('Custom Width in px', 'upfront'),
 			'thumbnail_size_custom_height' => __('Custom Height in px', 'upfront'),
+			
+			'reoder_layout' => __('Edit Post Parts Layout', 'upfront')
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

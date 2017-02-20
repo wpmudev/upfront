@@ -334,6 +334,12 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 		if ( this.model.get('objects').length === 0 ) {
 			this._is_compat = true;
 		}
+		
+		this.events = _.extend({}, this.events, {
+			'click .reorder-overlay' : 'on_edit_click',
+		});
+		
+		this.delegateEvents();
 	},
 
 	is_compat: function () {
@@ -392,12 +398,17 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 		;
 
 		if ( objects.length > 1 && type !== '' ) {
-			controls.push(this.createControl('reorder', l10n.settings, 'on_edit_click'));
+			if (Upfront.Application.user_can_modify_layout()) {
+				this.$el.find('b.upfront-entity_meta').after('<div class="reorder-overlay"><p class="upfront-icon-swap-image"><span>'+ l10n.reoder_layout +'</span></p></div>');
+				this.$el.addClass('uf-post-layout-edit');
+			}
 			this._multiple = true;
 		}
 		else {
+			this.$el.removeClass('uf-post-layout-edit');
 			this._multiple = false;
 		}
+
 		controls.push(this.createPaddingControl());
 		controls.push(this.createControl('settings', l10n.settings, 'on_settings_click'));
 		return _(controls);
