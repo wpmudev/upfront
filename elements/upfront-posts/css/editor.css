@@ -458,3 +458,30 @@ div.preset-manager-panel .upfront-add-post-module .upfront-field-select-value:be
 .upfront-settings-item-content .post_parts.ui-sortable li.active .part_action:after {
 	background-position: -43px -145px;
 }
+
+div.preset-manager-panel .upfront-post-modules .settings_module {
+	clear: both;
+}
+
+div.preset-manager-panel .upfront-post-modules .gravatar_radius {
+	top: -15px;
+}
+
+div.preset-manager-panel .upfront-post-modules .gravatar_border_width {
+	margin-top: 0px;
+}
+
+div.preset-manager-panel .upfront-post-modules .gravatar_size {
+	padding: 5px 0px 5px 10px;
+    position: relative;
+    top: 0px;
+    border-left: 2px solid #dae6f2;
+}
+
+div.preset-manager-panel .upfront-post-modules .gravatar_size input {
+	width: 60px;
+}
+
+div.preset-manager-panel div.borderColor.gravatar_border_color {
+	margin-top: -7px;
+}
