@@ -191,9 +191,16 @@ define([
 			var parent = this.$el.find('.uf-settings-panel__body');
 			this.$el.find('.padding-bg-checkbox-field').appendTo(parent);
 
-			perfectScrollbar.initialize(parent[0], {
-				suppressScrollX: true
-			});
+			perfectScrollbar.withDebounceUpdate(
+				// Element.
+				parent[0],
+				// Run First.
+				true,
+				// Event.
+				false,
+				// Initialize.
+				true
+			);
 		},
 		
 		settings_opened: function() {
