@@ -250,7 +250,7 @@ define([
 				},
 				{
 					type: "Number",
-					className: 'gravatar_radius_number gravatar_radius_number',
+					className: 'gravatar_radius_number border_radius_number',
 					label: '',
 					min: 0,
 					max: 1000,
@@ -388,80 +388,7 @@ define([
 			];
 		}
 	});
-	
-	Modules.part_gravatar = Panel.Toggleable.extend({
-		title: l10n.modules.gravatar_title,
-		data_part: 'gravatar',
-		get_modules: function () {
-			var modules = [],
-				me = this,
-				name = function (name) { return 'gravatar-' + name; }
-			;
-			
-			modules.push({
-				moduleType: 'Toggle',
-				options: {
-					label: l10n.modules.gravatar_title,
-					name: 'gravatar-use',
-					default_value: 1,
-					classStyle: 'gravatar-use',
-					fields: [
-						'gravatar_size',
-						'gravatar_border_width',
-						'gravatar_border_type',
-						'gravatar_border_color'
-					]
-				}
-			});
-			
-			return modules;
-		},
-		get_fields: function () {
-			return [
-				{
-					type: "Number",
-					className: 'gravatar_size',
-					label: l10n.modules.gravatar_size,
-					label_style: 'inline',
-					name: "gravatar_size"
-				},
-				{
-					type: "Number",
-					className: 'borderWidth gravatar_border_width',
-					label: '',
-					default_value: 1,
-					suffix: l10n.px,
-					name: "gravatar_border_width",
-					values: [
-						{ label: "", value: '1' }
-					],
-				},
-				{
-					type: "Select",
-					className: 'gravatar_border_type borderType',
-					multiple: false,
-					name: "gravatar_border_type",
-					default_value: "solid",
-					values: [
-						{ label: l10n.modules.solid, value: 'solid' },
-						{ label: l10n.modules.dashed, value: 'dashed' },
-						{ label: l10n.modules.dotted, value: 'dotted' }
-					],
-				},
-				{
-					type: "Color",
-					className: 'upfront-field-wrap upfront-field-wrap-color sp-cf borderColor gravatar_border_color',
-					multiple: false,
-					name: "gravatar_border_color",
-					blank_alpha : 0,
-					label_style: 'inline',
-					label: '',
-					default_value: '#000',
-				},
-			];
-		}
-	});
-	
+
 	Modules.part_date_posted = Panel.Toggleable.extend({
 		title: l10n.modules.date_posted_title,
 		data_part: 'date_posted',

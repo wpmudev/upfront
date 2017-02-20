@@ -14,15 +14,15 @@ class Upfront_Posts_PostView {
 	private static $_parts = array(
 		0 => 'date_posted',
 		1 => 'author',
-		2 => 'gravatar',
-		3 => 'comment_count',
-		4 => 'featured_image',
-		5 => 'title',
-		6 => 'content',
-		7 => 'read_more',
-		8 => 'tags',
-		9 => 'categories',
-		10 => 'meta',
+		//2 => 'gravatar',
+		2 => 'comment_count',
+		3 => 'featured_image',
+		4 => 'title',
+		5 => 'content',
+		6 => 'read_more',
+		7 => 'tags',
+		8 => 'categories',
+		9 => 'meta',
 	);
 
 	public function __construct ($data=array()) {
