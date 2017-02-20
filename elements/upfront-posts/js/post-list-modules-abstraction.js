@@ -122,7 +122,7 @@
 			},
 			get_modules: function () {
 				var me = this,
-					name = function (name) { return 'static-' + me.data_part + '-' + name; }
+					name = function (name) { return me.data_part + '-' + name; }
 				;
 				return [{
 					moduleType: 'Typography',
