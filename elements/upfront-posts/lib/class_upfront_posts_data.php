@@ -293,6 +293,17 @@ class Upfront_Posts_PostsData {
 				'website' => __('Website', 'upfront'),
 				'author_page' => __('Author page', 'upfront'),
 				'new_tab' => __('Open in New Tab', 'upfront'),
+				'round_corners' => __('Round corners', 'upfront'),
+				'display_settings' => __('Display settings', 'upfront'),
+				'inline' => __('Inline', 'upfront'),
+				'block' => __('Block', 'upfront'),
+				'show_max' => __('Show max:', 'upfront'),
+				'separate_with' => __('Separate with:', 'upfront'),
+				'padding' => __('Padding', 'upfront'),
+				'margin' => __('Margin', 'upfront'),
+				'single_category' => __('Single category', 'upfront'),
+				'single_tag' => __('Single tag', 'upfront'),
+				'background' => __('Background', 'upfront')
 			),
 			
 			'css' => array(

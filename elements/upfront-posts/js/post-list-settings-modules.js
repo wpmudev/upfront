@@ -205,15 +205,12 @@ define([
 				},
 				{
 					type: "Number",
-					className: 'borderWidth gravatar_border_width',
-					label: '',
+					className: 'borderWidth gravatar_border_width uf-module-label-title',
+					label: l10n.modules.border,
 					default_value: 1,
 					suffix: l10n.px,
 					name: "gravatar_border_width",
 					property: "gravatar_border_width",
-					values: [
-						{ label: "", value: '1' }
-					],
 				},
 				{
 					type: "Select",
@@ -241,8 +238,8 @@ define([
 				},
 				{
 					type: "Slider",
-					className: 'gravatar_radius upfront-field-wrap upfront-field-wrap-slider radius-slider',
-					label: '',
+					className: 'gravatar_radius upfront-field-wrap upfront-field-wrap-slider radius-slider uf-module-label-title',
+					label: l10n.modules.round_corners,
 					suffix: l10n.px,
 					min: 0,
 					name: "gravatar_radius",
@@ -380,19 +377,155 @@ define([
 	Modules.part_tags = Panel.Toggleable.extend({
 		title: l10n.modules.tags_title,
 		data_part: 'tags',
-		get_fields: function () {
+		gget_fields: function () {
 			return [
 				{
-					type: 'Select',
-					label: l10n.numeric,
-					label_style: 'inline',
-					property: 'display_name',
+					type: 'Title',
+					label: l10n.modules.display_settings
+				},
+				{
+					type: 'Radios',
+					property: 'tags_display_type',
+					layout: "horizontal-inline",
 					values: [
-						{label: l10n.numeric, value: 'display_name'},
+						{
+							label: l10n.modules.inline,
+							value: 'inline'
+						},
+						{
+							label: l10n.modules.block,
+							value: 'block'
+						}
+					],
+					show: function(value, $el) {
+						var $wrapper = $el.closest('.upfront-settings-post-wrapper');
+						if(value === "block") {
+							$wrapper.find('.toggle_settings_item').show();
+						} else {
+							$wrapper.find('.toggle_settings_item').hide();
+						}
+					},
+				},
+				{
+					type: 'Number',
+					property: 'tags_show_max',
+					label: l10n.modules.show_max,
+					min: 0,
+					max: 1000,
+					default_value: 0,
+					label_style: 'inline',
+				},
+				{
+					type: "Text",
+					label: l10n.modules.separate_with,
+					label_style: 'inline',
+					property: "tags_separator"
+				},
+				{
+					type: "Number",
+					className: 'tags_padding_top_bottom',
+					label: l10n.modules.padding,
+					suffix: l10n.px,
+					min: 0,
+					max: 1000,
+					default_value: 0,
+					label_style: 'inline',
+					name: "tags_padding_top_bottom",
+					property: "tags_padding_top_bottom"
+				},
+				{
+					type: "Number",
+					className: 'tags_padding_left_right',
+					label: '',
+					suffix: l10n.px,
+					min: 0,
+					max: 1000,
+					default_value: 0,
+					label_style: 'inline',
+					name: "tags_padding_left_right",
+					property: "tags_padding_left_right"
+				},
+				{
+					type: "Number",
+					className: 'tags_margin_top_bottom',
+					label: l10n.modules.margin,
+					suffix: l10n.px,
+					min: 0,
+					max: 1000,
+					default_value: 0,
+					label_style: 'inline',
+					name: "tags_margin_top_bottom",
+					property: "tags_margin_top_bottom"
+				},
+				{
+					type: "Number",
+					className: 'tags_margin_left_right',
+					label: '',
+					suffix: l10n.px,
+					min: 0,
+					max: 1000,
+					default_value: 0,
+					label_style: 'inline',
+					name: "tags_margin_left_right",
+					property: "tags_margin_left_right"
+				},
+				{
+					type: "Color",
+					className: 'upfront-field-wrap upfront-field-wrap-color sp-cf tags_background',
+					multiple: false,
+					name: "tags_background",
+					property: "tags_background",
+					blank_alpha : 0,
+					label_style: 'inline',
+					label: l10n.modules.background,
+					default_value: '#000',
+				},
+			];
+		},
+		get_modules: function () {
+			var modules = [],
+				me = this,
+				name = function (name) { return 'tags-' + name; }
+			;
+			
+			modules.push({
+				moduleType: 'Toggle',
+				options: {
+					label: l10n.modules.single_category,
+					property: 'tags-single-use',
+					default_value: 1,
+					as_field: false,
+					classStyle: 'tags-single-use',
+					fields: [
+						'tags_padding_top_bottom',
+						'tags_padding_left_right',
+						'tags_margin_top_bottom',
+						'tags_margin_left_right',
+						'tags_background'
 					]
 				}
-			];
-		}
+			});
+			
+			modules.push({
+				moduleType: 'Typography',
+				options: {
+					toggle: true,
+					state: 'static',
+					fields: {
+						use: name('use-typography'),
+						typeface: name('font-family'),
+						weight: name('weight'),
+						fontstyle: name('fontstyle'),
+						style: name('style'),
+						size: name('font-size'),
+						line_height: name('line-height'),
+						color: name('font-color')
+					}
+				}
+			});
+			
+			return modules;
+		},
 	});
 
 	Modules.part_date_posted = Panel.Toggleable.extend({
@@ -452,46 +585,158 @@ define([
 		get_fields: function () {
 			return [
 				{
-					type: 'Select',
-					label: l10n.numeric,
-					label_style: 'inline',
-					property: 'display_name',
+					type: 'Title',
+					label: l10n.modules.display_settings
+				},
+				{
+					type: 'Radios',
+					property: 'category_display_type',
+					layout: "horizontal-inline",
 					values: [
-						{label: l10n.numeric, value: 'display_name'},
+						{
+							label: l10n.modules.inline,
+							value: 'inline'
+						},
+						{
+							label: l10n.modules.block,
+							value: 'block'
+						}
+					],
+					show: function(value, $el) {
+						var $wrapper = $el.closest('.upfront-settings-post-wrapper');
+						if(value === "block") {
+							$wrapper.find('.toggle_settings_item').show();
+						} else {
+							$wrapper.find('.toggle_settings_item').hide();
+						}
+					},
+				},
+				{
+					type: 'Number',
+					property: 'category_show_max',
+					label: l10n.modules.show_max,
+					min: 0,
+					max: 1000,
+					default_value: 0,
+					label_style: 'inline',
+				},
+				{
+					type: "Text",
+					label: l10n.modules.separate_with,
+					label_style: 'inline',
+					property: "category_separator"
+				},
+				{
+					type: "Number",
+					className: 'category_padding_top_bottom',
+					label: l10n.modules.padding,
+					suffix: l10n.px,
+					min: 0,
+					max: 1000,
+					default_value: 0,
+					label_style: 'inline',
+					name: "category_padding_top_bottom",
+					property: "category_padding_top_bottom"
+				},
+				{
+					type: "Number",
+					className: 'category_padding_left_right',
+					label: '',
+					suffix: l10n.px,
+					min: 0,
+					max: 1000,
+					default_value: 0,
+					label_style: 'inline',
+					name: "category_padding_left_right",
+					property: "category_padding_left_right"
+				},
+				{
+					type: "Number",
+					className: 'category_margin_top_bottom',
+					label: l10n.modules.margin,
+					suffix: l10n.px,
+					min: 0,
+					max: 1000,
+					default_value: 0,
+					label_style: 'inline',
+					name: "category_margin_top_bottom",
+					property: "category_margin_top_bottom"
+				},
+				{
+					type: "Number",
+					className: 'category_margin_left_right',
+					label: '',
+					suffix: l10n.px,
+					min: 0,
+					max: 1000,
+					default_value: 0,
+					label_style: 'inline',
+					name: "category_margin_left_right",
+					property: "category_margin_left_right"
+				},
+				{
+					type: "Color",
+					className: 'upfront-field-wrap upfront-field-wrap-color sp-cf category_background',
+					multiple: false,
+					name: "category_background",
+					property: "category_background",
+					blank_alpha : 0,
+					label_style: 'inline',
+					label: l10n.modules.background,
+					default_value: '#000',
+				},
+			];
+		},
+		get_modules: function () {
+			var modules = [],
+				me = this,
+				name = function (name) { return 'category-' + name; }
+			;
+			
+			modules.push({
+				moduleType: 'Toggle',
+				options: {
+					label: l10n.modules.single_category,
+					property: 'category-single-use',
+					default_value: 1,
+					as_field: false,
+					classStyle: 'category-single-use',
+					fields: [
+						'category_padding_top_bottom',
+						'category_padding_left_right',
+						'category_margin_top_bottom',
+						'category_margin_left_right',
+						'category_background'
 					]
 				}
-			];
-		}
+			});
+			
+			modules.push({
+				moduleType: 'Typography',
+				options: {
+					toggle: true,
+					state: 'static',
+					fields: {
+						use: name('use-typography'),
+						typeface: name('font-family'),
+						weight: name('weight'),
+						fontstyle: name('fontstyle'),
+						style: name('style'),
+						size: name('font-size'),
+						line_height: name('line-height'),
+						color: name('font-color')
+					}
+				}
+			});
+			
+			return modules;
+		},
 	});
 	
 	Modules.part_read_more = Panel.Toggleable.extend({
 		title: l10n.modules.read_more_title,
 		data_part: 'read_more'
 	});
-	
-	/*
-	Modules.part_author = Panel.Toggleable.extend({
-		title: l10n.author_part_title,
-		data_part: 'author',
-		get_fields: function () {
-			return [
-				{
-					type: 'Select',
-					label: l10n.display,
-					label_style: 'inline',
-					property: 'display_name',
-					values: [
-						{label: l10n.author.display_name, value: 'display_name'},
-						{label: l10n.author.first_last, value: 'first_last'},
-						{label: l10n.author.last_first, value: 'last_first'},
-						{label: l10n.author.nickname, value: 'nickname'},
-						{label: l10n.author.username, value: 'username'}
-					]
-				},
-			];
-		}
-	});
-	*/
 
 	return Modules;
 });
