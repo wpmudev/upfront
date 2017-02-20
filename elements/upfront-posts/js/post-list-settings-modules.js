@@ -377,7 +377,7 @@ define([
 	Modules.part_tags = Panel.Toggleable.extend({
 		title: l10n.modules.tags_title,
 		data_part: 'tags',
-		gget_fields: function () {
+		get_fields: function () {
 			return [
 				{
 					type: 'Title',
@@ -491,7 +491,7 @@ define([
 			modules.push({
 				moduleType: 'Toggle',
 				options: {
-					label: l10n.modules.single_category,
+					label: l10n.modules.single_tag,
 					property: 'tags-single-use',
 					default_value: 1,
 					as_field: false,
