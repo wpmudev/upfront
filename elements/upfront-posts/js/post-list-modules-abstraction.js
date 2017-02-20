@@ -108,22 +108,17 @@
 			},
 			repositionToggle: function ($el, modules) {
 				var $toggle_settings = $el.find('.toggle_settings_item'),
-					firstClass
+					me = this
 				;
 				
-				// Retrieve first field class
+				// Wrap toggle fields into module
 				_.each(modules, function (module) {
 					if (module.moduleType === "Toggle") {
-						if(typeof module.options.fields[0] !== "undefined") {
-							firstClass = module.options.fields[0];
-						}
+						_.each(module.options.fields, function (field) {
+							$toggle_settings.append(me.$el.find('.' + field));
+						});
 					}
 				});
-				
-				// Move toggle before first field
-				if (firstClass) {
-					this.$el.find('.' + firstClass).before($toggle_settings);
-				}
 			},
 			get_modules: function () {
 				var me = this,

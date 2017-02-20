@@ -200,7 +200,8 @@ define([
 					className: 'gravatar_size',
 					label: l10n.modules.gravatar_size,
 					label_style: 'inline',
-					name: "gravatar_size"
+					name: "gravatar_size",
+					property: "gravatar_size"
 				},
 				{
 					type: "Number",
@@ -209,6 +210,7 @@ define([
 					default_value: 1,
 					suffix: l10n.px,
 					name: "gravatar_border_width",
+					property: "gravatar_border_width",
 					values: [
 						{ label: "", value: '1' }
 					],
@@ -218,6 +220,7 @@ define([
 					className: 'gravatar_border_type borderType',
 					multiple: false,
 					name: "gravatar_border_type",
+					property: "gravatar_border_type",
 					default_value: "solid",
 					values: [
 						{ label: l10n.modules.solid, value: 'solid' },
@@ -230,6 +233,7 @@ define([
 					className: 'upfront-field-wrap upfront-field-wrap-color sp-cf borderColor gravatar_border_color',
 					multiple: false,
 					name: "gravatar_border_color",
+					property: "gravatar_border_color",
 					blank_alpha : 0,
 					label_style: 'inline',
 					label: '',
@@ -242,6 +246,7 @@ define([
 					suffix: l10n.px,
 					min: 0,
 					name: "gravatar_radius",
+					property: "gravatar_radius",
 					max: 1000,
 					step: 10,
 					show: function() {
@@ -262,7 +267,8 @@ define([
 						
 					},
 					label_style: 'inline',
-					name: "gravatar_radius_number"
+					name: "gravatar_radius_number",
+					property: "gravatar_radius_number"
 				},
 			];
 		}

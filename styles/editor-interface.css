@@ -19143,6 +19143,7 @@ div.preset-manager-panel .margin-settings {
   padding-bottom: 15px; }
 
 div.preset-manager-panel .toggle_settings_item {
+  border-top: 1px solid #e5ecf4;
   padding-top: 15px; }
 
 div.preset-manager-panel .toggle_settings_item.uf_as_field {
