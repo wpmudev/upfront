@@ -1106,6 +1106,7 @@ var Application = new (Backbone.Router.extend({
 		this.layout = new Upfront.Models.Layout(data);
 		this.current_subapplication.layout = this.layout;
 		this.sidebar.model.set(this.layout.toJSON());
+		window._upfront_post_data.layout = layoutData.data.cascade;
 
 		if(typeof layoutData.data.post !== "undefined" && layoutData.data.post !== null) {
 			if((layoutData.data.post.ID !== "undefined" && layoutData.data.query.post_count) || (layoutData.data.post.ID !== "undefined" && layoutData.data.cascade.type === "single") || layoutData.data.query.is_singular) {
@@ -1120,8 +1121,6 @@ var Application = new (Backbone.Router.extend({
 		var shadow = this.layout.get('regions').get_by_name("shadow");
 		if(shadow)
 			this.layout.get('regions').remove(shadow);
-
-		window._upfront_post_data.layout = layoutData.data.cascade;
 
 		Upfront.Events.trigger("upfront:layout:loaded");
 		if (me.current_subapplication && me.current_subapplication.start)
