@@ -92,7 +92,8 @@ class Upfront_Compat_CoursePress {
 					'type' => 'single',
 					'content' => 'course',
 					'title' => __('Course Number One', 'upfront'),
-					'displayname' => __('CoursePress Course page', 'upfront')
+					'displayname' => __('CoursePress Course page', 'upfront'),
+					'killPostSettings' => __('This is virtual page handled by CoursePress.', 'upfront'),
 				),
 				array(
 					'item' => 'single-course_archive',
@@ -100,7 +101,8 @@ class Upfront_Compat_CoursePress {
 					'type' => 'single',
 					'content' => 'course_archive',
 					'title' => __('All Courses', 'upfront'),
-					'displayname' => __('CoursePress Course Archive page', 'upfront')
+					'displayname' => __('CoursePress Course Archive page', 'upfront'),
+					'killPostSettings' => __('This is virtual page handled by CoursePress.', 'upfront'),
 				),
 				array(
 					'item' => 'single-unit_archive',
@@ -108,7 +110,8 @@ class Upfront_Compat_CoursePress {
 					'type' => 'single',
 					'content' => 'unit_archive',
 					'title' => __('Course Number One', 'upfront'),
-					'displayname' => __('CoursePress Course Units page', 'upfront')
+					'displayname' => __('CoursePress Course Units page', 'upfront'),
+					'killPostSettings' => __('This is virtual page handled by CoursePress.', 'upfront'),
 				),
 				array(
 					'item' => 'single-unit',
@@ -116,7 +119,8 @@ class Upfront_Compat_CoursePress {
 					'type' => 'single',
 					'content' => 'unit',
 					'title' => __('Course Number One', 'upfront'),
-					'displayname' => __('CoursePress Course Unit page', 'upfront')
+					'displayname' => __('CoursePress Course Unit page', 'upfront'),
+					'killPostSettings' => __('This is virtual page handled by CoursePress.', 'upfront'),
 				),
 				array(
 					'item' => 'single-course_notifications_archive',
@@ -124,7 +128,8 @@ class Upfront_Compat_CoursePress {
 					'type' => 'single',
 					'content' => 'course_notifications_archive',
 					'title' => __('Course Number One', 'upfront'),
-					'displayname' => __('CoursePress Course Notifications page', 'upfront')
+					'displayname' => __('CoursePress Course Notifications page', 'upfront'),
+					'killPostSettings' => __('This is virtual page handled by CoursePress.', 'upfront'),
 				),
 				array(
 					'item' => 'single-course_discussion_archive',
@@ -132,7 +137,8 @@ class Upfront_Compat_CoursePress {
 					'type' => 'single',
 					'content' => 'course_discussion_archive',
 					'title' => __('Course Number One', 'upfront'),
-					'displayname' => __('CoursePress Course Discussions page', 'upfront')
+					'displayname' => __('CoursePress Course Discussions page', 'upfront'),
+					'killPostSettings' => __('This is virtual page handled by CoursePress.', 'upfront'),
 				),
 				array(
 					'item' => 'single-course_discussion',
@@ -140,7 +146,8 @@ class Upfront_Compat_CoursePress {
 					'type' => 'single',
 					'content' => 'course_discussion',
 					'title' => __('Course Number One', 'upfront'),
-					'displayname' => __('CoursePress Course Discussion page', 'upfront')
+					'displayname' => __('CoursePress Course Discussion page', 'upfront'),
+					'killPostSettings' => __('This is virtual page handled by CoursePress.', 'upfront'),
 				),
 				array(
 					'item' => 'single-course_workbook',
@@ -148,7 +155,8 @@ class Upfront_Compat_CoursePress {
 					'type' => 'single',
 					'content' => 'course_workbook',
 					'title' => __('Course Number One', 'upfront'),
-					'displayname' => __('CoursePress Course Workbook page', 'upfront')
+					'displayname' => __('CoursePress Course Workbook page', 'upfront'),
+					'killPostSettings' => __('This is virtual page handled by CoursePress.', 'upfront'),
 				),
 			)
 		);

@@ -1717,7 +1717,8 @@ var Application = new (Backbone.Router.extend({
 					result = {
 						pluginName: data.pluginName,
 						content: data.sampleContents[page.content] ? data.sampleContents[page.content] : '',
-						title: page.title ? page.title : ''
+						title: page.title ? page.title : '',
+						killPostSettings: page.killPostSettings || false
 					};
 				}
 			});
@@ -1728,13 +1729,15 @@ var Application = new (Backbone.Router.extend({
 					result = {
 						pluginName: data.pluginName,
 						content: data.sampleContents[layout.content] ? data.sampleContents[layout.content] : '',
-						title: layout.title ? layout.title : ''
+						title: layout.title ? layout.title : '',
+						killPostSettings: layout.killPostSettings || false
 					};
 				} else if (layout.item === currentLayout.item) {
 					result = {
 						pluginName: data.pluginName,
 						content: data.sampleContents[layout.content] ? data.sampleContents[layout.content] : '',
-						title: layout.title ? layout.title : ''
+						title: layout.title ? layout.title : '',
+						killPostSettings: layout.killPostSettings || false
 					};
 				}
 			});
