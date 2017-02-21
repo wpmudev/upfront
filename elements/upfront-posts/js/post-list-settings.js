@@ -4,8 +4,7 @@ define([
 	'scripts/upfront/element-settings/settings',
 	'scripts/upfront/element-settings/advanced-settings',
 	'scripts/upfront/preset-settings/util',
-	'text!elements/upfront-widget/tpl/preset-style.html'
-], function(Panels, ElementSettings, AdvancedSettings, Util, styleTpl) {
+], function(Panels, ElementSettings, AdvancedSettings, Util) {
 
 var l10n = Upfront.Settings.l10n.posts_element;
 
@@ -69,9 +68,6 @@ var PostsSettings = ElementSettings.extend({
 		return l10n.settings;
 	}
 });
-
-// Generate presets styles to page
-Util.generatePresetsToPage('posts', styleTpl);
 
 return PostsSettings;
 
