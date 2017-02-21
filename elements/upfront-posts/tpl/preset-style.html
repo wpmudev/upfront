@@ -1,1 +1,11 @@
+#page .<?php echo $properties['id'] ?> .uf-posts {
+    <?php if(!empty($properties['element_wrapper-background-color'])) { ?>background-color: <?php echo $properties['element_wrapper-background-color'] ?>; <?php } ?>
+
+    <?php if(!empty($properties['element_wrapper-use-border'])) { ?>
+		<?php if(!empty($properties['element_wrapper-border-width']) && !empty($properties['element_wrapper-border-type']) && !empty($properties['element_wrapper-border-color'])) { ?>border: <?php echo $properties['element_wrapper-border-width'] ?>px <?php echo $properties['element_wrapper-border-type'] ?> <?php echo $properties['element_wrapper-border-color'] ?>;<?php } ?>
+    <?php } else { ?>
+		border: none;
+    <?php } ?>
+}
+
 <?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>
