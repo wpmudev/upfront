@@ -9,6 +9,9 @@ class Upfront_Compat_CoursePress {
 	public function add_hooks() {
 		if (class_exists('CoursePress') === false) return;
 
+		// Force loadig of CP styles
+		if (upfront_exporter_is_running() && class_exists('CoursePress_Core')) CoursePress_Core::$is_cp_page = true;
+
 		add_filter('upfront_pre_get_post_markup_use_post', array($this, 'use_post'), 10, 3);
 		add_filter('upfront-plugins_layouts', array($this, 'add_plugins_layouts'));
 		add_filter('upfront-forbidden_post_data_types', array($this, 'forbidden_post_data_types'));
