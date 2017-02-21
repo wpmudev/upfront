@@ -1725,7 +1725,7 @@ var Application = new (Backbone.Router.extend({
 			if (result) return; // save cycles
 			_.each(data.layouts, function(layout) {
 				if (result) return; // save cycles
-				if (layout.specificity && currentLayout.specificity && _.isNull(currentLayout.specificity.match(layout.specificity)) === false) {
+				if (layout.specificity && currentLayout.specificity && currentLayout.specificity === layout.specificity) {
 					result = {
 						pluginName: data.pluginName,
 						content: data.sampleContents[layout.content] ? data.sampleContents[layout.content] : '',
