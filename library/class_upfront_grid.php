@@ -89,35 +89,35 @@ class Upfront_Grid {
 
 	public function get_default_breakpoints () {
 		return array(
-	        array(
-	          'name' => 'Default Desktop',
-	          'short_name' => 'Default',
-	          'default' => true,
-	          'id' => 'desktop',
-	          'width' => 1080,
-	          'columns' => 24,
-	          'enabled' => true,
-	          'fixed' => true
-	        ),
-	        array(
-	          'name' => 'Tablet',
-	          'short_name' => 'Tablet',
-	          'id' => 'tablet',
-	          'width' => 570,
-	          'columns' => 12,
-	          'enabled' => true,
-	          'fixed' => true
-	        ),
-	        array(
-	          'name' => 'Mobile',
-	          'short_name' => 'Mobile',
-	          'id' => 'mobile',
-	          'width' => 315,
-	          'columns' => 7,
-	          'enabled' => true,
-	          'fixed' => true
-	        )
-      	);
+			array(
+				'name' => 'Default Desktop',
+				'short_name' => 'Default',
+				'default' => true,
+				'id' => 'desktop',
+				'width' => 1080,
+				'columns' => 24,
+				'enabled' => true,
+				'fixed' => true
+			),
+			array(
+				'name' => 'Tablet',
+				'short_name' => 'Tablet',
+				'id' => 'tablet',
+				'width' => 570,
+				'columns' => 12,
+				'enabled' => true,
+				'fixed' => true
+			),
+			array(
+				'name' => 'Mobile',
+				'short_name' => 'Mobile',
+				'id' => 'mobile',
+				'width' => 315,
+				'columns' => 7,
+				'enabled' => true,
+				'fixed' => true
+			)
+		);
 	}
 
 	public function get_breakpoints_data () {
@@ -763,7 +763,7 @@ class Upfront_GridBreakpoint {
 			( $min_width > 0 ? "#page.upfront-layout-view.desktop-breakpoint .upfront-region-container, #page.upfront-layout-view.desktop-breakpoint .upfront-region-sub-container {min-width: {$min_width}px;}" . "\n" : "" ) .
 			"#page.upfront-layout-view .upfront-object {padding: {$column_padding}px;}" . "\n" .
 			"#page.upfront-layout-view .upfront-inserted_image-wrapper .wp-caption-text, #page.upfront-layout-view .uinsert-image-wrapper {padding: {$column_padding}px;}" . "\n" .
-            "#page.upfront-layout-view .upfront-module-group-bg-padding {margin: {$column_padding}px;}" . "\n" .
+			"#page.upfront-layout-view .upfront-module-group-bg-padding {margin: {$column_padding}px;}" . "\n" .
 			"#page.upfront-layout-view .plaintxt_padding {padding: {$type_padding}px;}" . "\n" .
 			"#page.upfront-layout-view .upfront-region-postlayouteditor {padding: {$column_padding}px 0;}" . "\n" .
 			"#page.upfront-layout-view #region-container-postlayouteditor {min-width: 0;}" . "\n" .
@@ -981,7 +981,7 @@ class Upfront_GridBreakpoint {
 		if ( is_array($fill_margin) ){
 			foreach ( $fill_margin as $dir => $val ) {
 				if( is_rtl() )
-					$prefix = ( 'left' == $dir ) ?  $this->_prefixes[self::PREFIX_MARGIN_RIGHT] : $this->_prefixes[self::PREFIX_MARGIN_LEFT] ;
+					$prefix = ( 'left' == $dir ) ? $this->_prefixes[self::PREFIX_MARGIN_RIGHT] : $this->_prefixes[self::PREFIX_MARGIN_LEFT] ;
 				else
 					$prefix = ( 'left' == $dir ) ? $this->_prefixes[self::PREFIX_MARGIN_LEFT] : $this->_prefixes[self::PREFIX_MARGIN_RIGHT];
 

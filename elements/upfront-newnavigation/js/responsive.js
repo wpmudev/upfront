@@ -160,12 +160,26 @@ jQuery(document).ready(function($) {
 	}
 	
 	hasNavInit();
-
-	$('body').on('touchstart click', '.burger_nav_close, .burger_overlay', null, function() {
-		$(this).closest('.upfront-navigation').find('div.responsive_nav_toggler').trigger('click');
+	
+	// Show burger nav on enter
+	$('.responsive_nav_toggler, .burger_nav_close').keydown(function(e) {
+		if (e.which == 13) {
+			$(this).closest('.upfront-navigation').find('.responsive_nav_toggler').trigger('click');
+		}
+	});
+	
+	// Hide burger nav if latest link
+	$('.menu li a').on('focusout', function() {
+		if($(this).parent().is(":last-child")) {
+			$(this).closest('.upfront-navigation').find('.responsive_nav_toggler').trigger('click');
+		}
 	});
 
-	$('body').on('touchstart click', '.upfront-navigation .upfront-navigation div.responsive_nav_toggler', null, function(e) {
+	$('body').on('touchstart click', '.burger_nav_close, .burger_overlay', null, function() {
+		$(this).closest('.upfront-navigation').find('.responsive_nav_toggler').trigger('click');
+	});
+
+	$('body').on('touchstart click', '.upfront-navigation .upfront-navigation .responsive_nav_toggler', null, function(e) {
 		e.preventDefault();
 		if($(this).parent().find('ul.menu').css('display') == 'none') {
 			$(this).closest('div.upfront-output-wrapper').addClass('on_the_top');
@@ -184,7 +198,7 @@ jQuery(document).ready(function($) {
 
 			//$(e.target).closest('.responsive_nav_toggler').css({position: 'fixed', left: offset.left, top: offset.top+(($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block')?$('div#wpadminbar').outerHeight():0)});
 			//$(this).parent().find('ul.menu').css('padding-top', '60px');
-			var close_icon = $('<i class="burger_nav_close"></i>');
+			var close_icon = $('<button class="burger_nav_close"></button>');
 
 			$(this).parent().find('ul.menu').prepend($('<li>').addClass('wrap_burger_nav_close').append(close_icon));
 
@@ -232,7 +246,7 @@ jQuery(document).ready(function($) {
 				width: ''
 			});
 
-			$('i.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
+			$('.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
 
 			$(this).closest('div.upfront-output-wrapper').removeClass('on_the_top');
 
@@ -359,8 +373,8 @@ jQuery(document).ready(function($) {
 					$(this).attr('data-burger_over', preset.burger_over);
 
 					// Add responsive nav toggler
-					if(!$(this).find('div.responsive_nav_toggler').length)
-						$(this).prepend($('<div class="responsive_nav_toggler"><div></div><div></div><div></div></div>'));
+					if(!$(this).find('.responsive_nav_toggler').length)
+						$(this).prepend($('<button class="responsive_nav_toggler"><div></div><div></div><div></div></button>'));
 
 					//offset a bit if admin bar or side bar is present
 					if($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block') {
@@ -399,7 +413,7 @@ jQuery(document).ready(function($) {
 					$(this).removeAttr('data-burger_over', '');
 
 					// Remove responsive nav toggler
-					$(this).find('div.responsive_nav_toggler').remove();
+					$(this).find('.responsive_nav_toggler').remove();
 					$(this).find('ul.menu').show();
 
 					//remove any display:block|none specifications from the sub-menus
@@ -448,8 +462,8 @@ jQuery(document).ready(function($) {
 							$(this).attr('data-burger_over', bparray[key]['burger_over']);
 
 							// Add responsive nav toggler
-							if(!$(this).find('div.responsive_nav_toggler').length)
-								$(this).prepend($('<div class="responsive_nav_toggler"><div></div><div></div><div></div></div>'));
+							if(!$(this).find('.responsive_nav_toggler').length)
+								$(this).prepend($('<button class="responsive_nav_toggler"><div></div><div></div><div></div></button>'));
 
 							//offset a bit if admin bar or side bar is present
 							if($('div#wpadminbar').length && $('div#wpadminbar').css('display') == 'block') {
@@ -482,7 +496,7 @@ jQuery(document).ready(function($) {
 							$(this).removeAttr('data-burger_over', '');
 
 							// Remove responsive nav toggler
-							$(this).find('div.responsive_nav_toggler').remove();
+							$(this).find('.responsive_nav_toggler').remove();
 							$(this).find('ul.menu').show();
 
 							//remove any display:block|none specifications from the sub-menus

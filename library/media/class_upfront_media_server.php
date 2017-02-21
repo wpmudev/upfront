@@ -87,6 +87,7 @@ class Upfront_MediaServer extends Upfront_Server {
 			'item_in_use_nag' => __("The selected media file is already in use. Are you sure?", 'upfront'),
 			'files_selected' => __('%d files selected', 'upfront'),
 			'media_title' => __("Media Title", 'upfront'),
+			'media_alt' => __("Media Alt", 'upfront'),
 			'natural_size' => __("Natural Size", 'upfront'),
 			'px_label' => __("px", 'upfront'),
 			'width_label' => __("W", 'upfront'),

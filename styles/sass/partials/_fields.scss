@@ -248,7 +248,8 @@ input.upfront-field-text:hover,
 	z-index: 21;
 }
 #sidebar-ui .upfront-field-select-expanded .upfront-field-select-options,
-#element-settings-sidebar .upfront-field-select-expanded .upfront-field-select-options {
+#element-settings-sidebar .upfront-field-select-expanded .upfront-field-select-options,
+#region-settings-sidebar .upfront-field-select-expanded .upfront-field-select-options {
 	position: fixed;
 	display: none;
 }
@@ -796,7 +797,8 @@ div.upfront-date_picker td a{
 	text-align: center;
 }
 
-.upfront-field-wrap-checkboxes .checkbox-info:before {
+.upfront-field-wrap-checkboxes .checkbox-info:before,
+.upfront-settings-item-title .checkbox-info:before {
 	display: inline-block;
 	content: "";
 	width: 15px;

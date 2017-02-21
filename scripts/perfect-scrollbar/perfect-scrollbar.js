@@ -14,7 +14,12 @@ define([
 	 */
 	perfectScrollbar.withDebounceUpdate = function(el, runFirst, event, initialize) {
 		// Initialize the JS scrollbar.
-		if (typeof initialize !== 'undefined') {
+		if (
+			// Do not load if library not loaded.
+			typeof initialize !== 'undefined'
+			// Do not load if already initialized.
+			&& !$(el).hasClass('ps-container')
+		) {
 			perfectScrollbar.initialize(el, {
 				// Do not allow X axis scrolling.
 				suppressScrollX: true

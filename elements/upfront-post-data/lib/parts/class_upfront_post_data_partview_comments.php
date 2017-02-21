@@ -1,7 +1,7 @@
 <?php
 
 class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
-	
+
 	protected static $_parts = array(
 		0 => 'comment_count',
 		1 => 'comments',
@@ -68,16 +68,16 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 		$tpl = $this->_get_external_comments_template();
 		if (!empty($tpl)) return ''; // We already have a form included with the comments
 
-        $form_args = array(
-        	'comment_field' => $this->_get_comment_form_field(),
-        );
+		$form_args = array(
+			'comment_field' => $this->_get_comment_form_field(),
+		);
 
-        /**
-         * Filter the default WP form arguments
-         *
-         * @param array default form arguments
-         */
-        $form_args = apply_filters('upfront_comment_form_args', array_filter($form_args));
+		/**
+		 * Filter the default WP form arguments
+		 *
+		 * @param array default form arguments
+		 */
+		$form_args = apply_filters('upfront_comment_form_args', array_filter($form_args));
 
 		if (!$is_fake_data) {
 			$post = $this->_post;
@@ -89,18 +89,18 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 		// ... aaand start with comments fields rearrangement for WP4.4
 		add_filter('comment_form_fields', array('Upfront_Post_Data_PartView_Comments', 'rearrange_comment_form_fields'));
 
-        ob_start();
-        comment_form($form_args, $post->ID);
-        $comment_form = ob_get_clean();
+		ob_start();
+		comment_form($form_args, $post->ID);
+		$comment_form = ob_get_clean();
 
-        // Clean up after ourselves
-        remove_filter('comment_form_fields', array('Upfront_Post_Data_PartView_Comments', 'rearrange_comment_form_fields'));
+		// Clean up after ourselves
+		remove_filter('comment_form_fields', array('Upfront_Post_Data_PartView_Comments', 'rearrange_comment_form_fields'));
 
-        $out = $this->_get_template('comment_form');
+		$out = $this->_get_template('comment_form');
 
-        $out = Upfront_Codec::get()->expand($out, "comment_form", $comment_form);
+		$out = Upfront_Codec::get()->expand($out, "comment_form", $comment_form);
 
-        return $out;
+		return $out;
 	}
 
 	/**
@@ -127,12 +127,12 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 
 		$pagination = $this->_get_pagination();
 		if (empty($pagination)) return '';
-		
+
 		$out = $this->_get_template('comments_pagination');
 
-        $out = Upfront_Codec::get()->expand($out, "pagination", $pagination);
+		$out = Upfront_Codec::get()->expand($out, "pagination", $pagination);
 
-        return $out;
+		return $out;
 	}
 
 	/**
@@ -157,8 +157,8 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 		$tpl = $this->_get_external_comments_template();
 		if (!empty($tpl)) return $tpl;
 
-        $comments = array();
-        $post = false;
+		$comments = array();
+		$post = false;
 		$skip = !empty($this->_data['disable_showing'])
 			? $this->_data['disable_showing']
 			: Upfront_Posts_PostsData::get_default('disable_showing')
@@ -174,7 +174,7 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 			);
 			$commenter = wp_get_current_commenter();
 			$user_id = get_current_user_id();
-			
+
 			if (!empty($user_id)) $comment_args['include_unapproved'] = array($user_id);
 			else if (!empty($commenter['comment_author_email'])) $comment_args['include_unapproved'] = array($commenter['comment_author_email']);
 
@@ -478,7 +478,7 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 		);
 		// Defaults first
 		$opt = 'comment_date_gmt';
-		
+
 		$order = !empty($this->_data['order']) && in_array($this->_data['order'], $allowed)
 			? $this->_data['order']
 			: $opt

@@ -652,6 +652,24 @@
 							this.model.set_breakpoint_property('bottom_bg_padding_num', value, true);
 						}
 					}),
+					aria_role = new Fields.Select({
+						model: this.model,
+						use_breakpoint_property: true,
+						property: 'region_role',
+						label: l10n.roles_select_label,
+						default_value: this.model.get_breakpoint_property_value('region_role'),
+						values: [
+							{label: l10n.roles.none, value: ""},
+							{label: l10n.roles.banner, value: "banner"},
+							{label: l10n.roles.main, value: "main"},
+							{label: l10n.roles.complementary, value: "complementary"},
+							{label: l10n.roles.contentinfo, value: "contentinfo"}
+						],
+						change: function () {
+							var value = this.get_value();
+							this.model.set_breakpoint_property('region_role', value);
+						}
+					}),
 					$region_padding_type,
 					$region_equal_padding,
 					$region_top_padding,
@@ -681,6 +699,8 @@
 				$region_bottom_padding.append(bottom_bg_padding_num.$el);
 				bg_padding_num.render();
 				$region_equal_padding.append(bg_padding_num.$el);
+				aria_role.render();
+				$content.find('.upfront-region-bg-setting-aria-role').append(aria_role.$el);
 			},
 
 			apply_region_scope: function (model, scope, name, title) {

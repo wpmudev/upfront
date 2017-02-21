@@ -111,7 +111,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 
 		$db_option = $storage_key . '_' . get_stylesheet() . '_styles';
 		$current_styles = get_option($db_option, array());
-    	$current_styles = apply_filters('upfront_get_theme_styles', $current_styles);
+		$current_styles = apply_filters('upfront_get_theme_styles', $current_styles);
 
 		$styles = apply_filters('upfront-save_styles', $styles, $name, $element_type);
 
@@ -189,19 +189,17 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$layout_style_loaded = false; // Keep track of global layout CSS, so we sent over to the filter
 
 		if( is_array( $styles ) ){
-		  foreach($styles as $type => $elements) {
-			foreach($elements as $name => $content) {
-			  // If region CSS, only load the one saved matched the layout_id
-			  $style_rx = '/^(' . preg_quote("{$layout_id}", '/') . '|' . preg_quote("{$type}", '/') . ')/';
-			  if ( preg_match('/^region(-container|)$/', $type) && !preg_match($style_rx, $name) )
-				continue;
+			foreach($styles as $type => $elements) {
+				foreach($elements as $name => $content) {
+					// If region CSS, only load the one saved matched the layout_id
+					$style_rx = '/^(' . preg_quote("{$layout_id}", '/') . '|' . preg_quote("{$type}", '/') . ')/';
+					if ( preg_match('/^region(-container|)$/', $type) && !preg_match($style_rx, $name) ) continue;
 
-			  $content = str_replace('#page', 'div#page .upfront-output-region-container .upfront-output-module', $content);
-			  $out .= $content;
-			  if ( $type == 'layout' && $name == 'layout-style' )
-			  	$layout_style_loaded = true;
+					$content = str_replace('#page', 'div#page .upfront-output-region-container .upfront-output-module', $content);
+					$out .= $content;
+					if ( $type == 'layout' && $name == 'layout-style' ) $layout_style_loaded = true;
+				}
 			}
-		  }
 		}
 
 
@@ -234,7 +232,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 					'face' => $face,
 					'weight' => $properties['weight']
 				);
-				if (!empty($face) && false !== strpos($face, ' '))  $face = '"' . $face . '"';
+				if (!empty($face) && false !== strpos($face, ' ')) $face = '"' . $face . '"';
 				if (isset($properties['font_family'])) {
 					$font = $properties['font_face'] ? "{$face}, {$properties['font_family']}" : "inherit";
 				} else {
@@ -370,26 +368,26 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		return $selector;
 	}
 
-    /**
-     * Saves theme colors styles
-     * Hooks to upfront_save_theme_colors_styles ajax call
-     * @access public
-     */
-    function save_theme_colors_styles(){
-        if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+	/**
+	 * Saves theme colors styles
+	 * Hooks to upfront_save_theme_colors_styles ajax call
+	 * @access public
+	 */
+	function save_theme_colors_styles(){
+		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
 		if (!Upfront_Permissions::current(Upfront_Permissions::LAYOUT_MODE)) $this->_reject();
 
-        $styles = trim(stripslashes($_POST['styles']));
-        $styles = apply_filters('upfront-save_theme_colors_styles', $styles);
+		$styles = trim(stripslashes($_POST['styles']));
+		$styles = apply_filters('upfront-save_theme_colors_styles', $styles);
 
-        update_option("upfront_" . get_stylesheet() . "_theme_colors_styles", $styles);
+		update_option("upfront_" . get_stylesheet() . "_theme_colors_styles", $styles);
 
-        $this->_out(new Upfront_JsonResponse_Success(array(
-            'styles' => $styles
-        )));
-    }
+		$this->_out(new Upfront_JsonResponse_Success(array(
+			'styles' => $styles
+		)));
+	}
 
-    private function _get_theme_colors_styles(){
-        return apply_filters('upfront_get_theme_colors_styles', get_option("upfront_" . get_stylesheet() . "_theme_colors_styles"));
-    }
+	private function _get_theme_colors_styles(){
+		return apply_filters('upfront_get_theme_colors_styles', get_option("upfront_" . get_stylesheet() . "_theme_colors_styles"));
+	}
 }

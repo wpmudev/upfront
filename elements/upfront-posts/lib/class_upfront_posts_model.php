@@ -206,7 +206,7 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 		}
 
 		// Now let's safeguard the posts per page setting
-		
+
 		if (self::is_single($data)) {
 			// If single we need only one post
 			$data['limit'] = $args['posts_per_page'] = 1;
@@ -216,9 +216,11 @@ class Upfront_Posts_Model_Generic extends Upfront_Posts_Model {
 				$old_limit = self::get_limit($data);
 				$data['limit'] = $per_page;
 				$args['posts_per_page'] = self::get_limit($data, $old_limit);
+			} else {
+				$args['posts_per_page'] = $data['limit'];
 			}
 		}
-		
+
 		return self::_spawn_query($args, $data);
 	}
 

@@ -12,6 +12,23 @@
 			$panel.addClass('accordion-panel-active').find('.accordion-panel-content').slideDown();
 			$panel.siblings().removeClass('accordion-panel-active').find('.accordion-panel-content').slideUp();
 		});
+		
+		/**
+		 * Activate focused panel with Enter keydown
+		 */
+		$('.accordion-panel-title').keydown(function(e) {
+			if (e.which == 13) {
+				$(this).click();
+			}
+
+			if (e.which == 38 || e.which == 37) {
+				$(this).parent().prev('.accordion-panel').find('.accordion-panel-title').focus().click();
+			}
+			
+			if (e.which == 40 || e.which == 39) {
+				$(this).parent().next('.accordion-panel').find('.accordion-panel-title').focus().click();
+			}
+		});
 	});
 
 	/**

@@ -259,6 +259,7 @@ text!scripts/upfront/settings/modules/menu-structure/menu-item.tpl
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/settings/modules/menu-structure/menu-item.js
 text!scripts/upfront/settings/modules/menu-structure/menu-structure.tpl
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/settings/modules/menu-structure.js
+C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/settings/modules/toggle.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-newnavigation/js/settings/menu-style.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/settings/module-factory.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/element-settings/root-settings-panel.js
