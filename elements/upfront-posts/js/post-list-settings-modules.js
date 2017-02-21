@@ -1,6 +1,6 @@
 define([
 	'elements/upfront-posts/js/post-list-modules-abstraction',
-	'text!elements/upfront-posts/tpl/views.html'
+	'text!elements/upfront-posts/tpl/preset-style.html'
 ], function (Panel, template) {
 	var l10n = Upfront.Settings.l10n.posts_element;
 

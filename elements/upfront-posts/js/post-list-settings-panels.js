@@ -6,8 +6,7 @@ define([
 	'scripts/upfront/preset-settings/preset-manager',
 	'scripts/upfront/preset-settings/util',
 	'elements/upfront-posts/js/post-list-settings-modules',
-	'scripts/upfront/preset-settings/util',
-], function(tpl, Parts, RootSettingsPanel, PresetManager, Util, Posts_Modules, PresetUtil) {
+], function(tpl, Parts, RootSettingsPanel, PresetManager, Util, Posts_Modules) {
 
 var l10n = Upfront.Settings.l10n.posts_element;
 var $template = $(tpl);
@@ -875,6 +874,8 @@ Panels.PostParts = PresetManager.extend({
 		}
 	}
 });
+
+Util.generatePresetsToPage('posts', Posts_Modules.template);
 
 return Panels;
 
