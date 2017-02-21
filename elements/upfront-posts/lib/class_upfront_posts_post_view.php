@@ -253,13 +253,13 @@ class Upfront_Posts_PostView {
 		if (!empty($this->_data['content']) && 'content' === $this->_data['content']) return ''; // Only for excerpts
 
 		$permalink = get_permalink($this->_post->ID);
-		
+
 		$title = esc_html(apply_filters('the_title', $this->_post->post_title));
 
 		$out = $this->_get_template('read_more');
 
 		$out = Upfront_Codec::get()->expand($out, "permalink", $permalink);
-		
+
 		$out = Upfront_Codec::get()->expand($out, "title", $title);
 
 		return $out;
