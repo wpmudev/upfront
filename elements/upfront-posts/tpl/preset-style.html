@@ -1,3 +1,4 @@
+/* Element Wrapper */
 #page .<?php echo $properties['id'] ?> .uf-posts {
     <?php if(!empty($properties['element_wrapper-background-color'])) { ?>background-color: <?php echo $properties['element_wrapper-background-color'] ?>; <?php } ?>
 
@@ -7,5 +8,27 @@
 		border: none;
     <?php } ?>
 }
+
+/* Post Wrapper */
+#page .<?php echo $properties['id'] ?> .uf-posts li.uf-post:not(.upfront-wrapper-spacer) {
+    <?php if(!empty($properties['post_wrapper-background-color'])) { ?>background-color: <?php echo $properties['post_wrapper-background-color'] ?>; <?php } ?>
+
+    <?php if(!empty($properties['post_wrapper-use-border'])) { ?>
+		<?php if(!empty($properties['post_wrapper-border-width']) && !empty($properties['post_wrapper-border-type']) && !empty($properties['post_wrapper-border-color'])) { ?>border: <?php echo $properties['post_wrapper-border-width'] ?>px <?php echo $properties['post_wrapper-border-type'] ?> <?php echo $properties['post_wrapper-border-color'] ?>;<?php } ?>
+    <?php } else { ?>
+		border: none;
+    <?php } ?>
+	
+	<?php if(!empty($properties['post_wrapper-use-margin'])) { ?>
+		<?php if(!empty($properties['post_wrapper-lock-margin'])) { ?>
+			margin: <?php echo $properties['post_wrapper-top-margin'] ?>px;
+		<?php } else { ?>
+			margin: <?php echo $properties['post_wrapper-top-margin'] ?>px <?php echo $properties['post_wrapper-right-margin'] ?>px <?php echo $properties['post_wrapper-bottom-margin'] ?>px <?php echo $properties['post_wrapper-left-margin'] ?>px;
+		<?php } ?>
+	<?php } ?>
+}
+
+
+/* Custom CSS */
 
 <?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>
