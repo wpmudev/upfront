@@ -165,7 +165,6 @@ class Upfront_Compat_CoursePress {
 	}
 
 	public function layout_to_name($layout_name, $type, $item, $specificity) {
-		error_log(json_encode(array($type, $item, $specificity)));
 		if ($specificity === 'single-course') {
 			return __('CoursePress Course', 'upfront');
 		}
