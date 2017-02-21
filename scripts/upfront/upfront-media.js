@@ -184,7 +184,7 @@ define([
 		current_page: 1,
 		max_pages: 1,
 		max_items: 1,
-		media_limit: 20,
+		media_limit: 60,
 		initialize: function () {
 			this.to_defaults();
 			Upfront.Events.on("media_manager:media:filters_updated", this.update_active_filters, this);
@@ -1523,7 +1523,7 @@ define([
 	 */
 	var MediaManager_Switcher = Backbone.View.extend({
 		events: {
-			"click .upload": "switch_to_upload",
+			"click .media-upload": "switch_to_upload",
 			"click .media-info": "switch_controls"
 		},
 		info_template: _.template(
