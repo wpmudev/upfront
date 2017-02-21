@@ -893,6 +893,13 @@ var Application = new (Backbone.Router.extend({
 				app.setup_edit_layout();
 			}
 		});
+
+		Upfront.Events.on('upfront:renderingqueue:done', function () {
+			// Call mode context dialog - this is what pops up the explaining
+			// dialog for the users (only if Exporter plugin is active)
+			var modeContextDialog = Upfront.plugins.call('mode-context-dialog');
+		});
+
 		app.loading.render();
 		$('body').append(app.loading.$el);
 
