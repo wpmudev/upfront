@@ -412,10 +412,11 @@ input.upfront-field-text:hover,
 .upfront-field-multiple label {
 	display: table;
 	color: rgb(48, 71, 94);
-	font-size: 11px;
+	font-size: 10px;
 	font-weight: 700;
-	letter-spacing: 0.34px;
+	letter-spacing: 0.3px;
 	font-family:'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
 }
 .upfront-field-multiple label .upfront-field-label-text {
 	display: table-cell;
