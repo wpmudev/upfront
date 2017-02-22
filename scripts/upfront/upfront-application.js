@@ -893,6 +893,13 @@ var Application = new (Backbone.Router.extend({
 				app.setup_edit_layout();
 			}
 		});
+
+		Upfront.Events.on('upfront:renderingqueue:done', function () {
+			// Call mode context dialog - this is what pops up the explaining
+			// dialog for the users (only if Exporter plugin is active)
+			var modeContextDialog = Upfront.plugins.call('mode-context-dialog');
+		});
+
 		app.loading.render();
 		$('body').append(app.loading.$el);
 
@@ -1099,6 +1106,7 @@ var Application = new (Backbone.Router.extend({
 		this.layout = new Upfront.Models.Layout(data);
 		this.current_subapplication.layout = this.layout;
 		this.sidebar.model.set(this.layout.toJSON());
+		window._upfront_post_data.layout = layoutData.data.cascade;
 
 		if(typeof layoutData.data.post !== "undefined" && layoutData.data.post !== null) {
 			if((layoutData.data.post.ID !== "undefined" && layoutData.data.query.post_count) || (layoutData.data.post.ID !== "undefined" && layoutData.data.cascade.type === "single") || layoutData.data.query.is_singular) {
@@ -1113,8 +1121,6 @@ var Application = new (Backbone.Router.extend({
 		var shadow = this.layout.get('regions').get_by_name("shadow");
 		if(shadow)
 			this.layout.get('regions').remove(shadow);
-
-		window._upfront_post_data.layout = layoutData.data.cascade;
 
 		Upfront.Events.trigger("upfront:layout:loaded");
 		if (me.current_subapplication && me.current_subapplication.start)
@@ -1710,22 +1716,28 @@ var Application = new (Backbone.Router.extend({
 				if (parseInt(page.pageId, 10) === parseInt(postId, 10)) {
 					result = {
 						pluginName: data.pluginName,
-						content: data.sampleContents[page.content] ? data.sampleContents[page.content] : ''
+						content: data.sampleContents[page.content] ? data.sampleContents[page.content] : '',
+						title: page.title ? page.title : '',
+						killPostSettings: page.killPostSettings || false
 					};
 				}
 			});
 			if (result) return; // save cycles
 			_.each(data.layouts, function(layout) {
 				if (result) return; // save cycles
-				if (layout.specificity && currentLayout.specificity && _.isNull(currentLayout.specificity.match(layout.specificity)) === false) {
+				if (layout.specificity && currentLayout.specificity && currentLayout.specificity === layout.specificity) {
 					result = {
 						pluginName: data.pluginName,
-						content: data.sampleContents[layout.content] ? data.sampleContents[layout.content] : ''
+						content: data.sampleContents[layout.content] ? data.sampleContents[layout.content] : '',
+						title: layout.title ? layout.title : '',
+						killPostSettings: layout.killPostSettings || false
 					};
 				} else if (layout.item === currentLayout.item) {
 					result = {
 						pluginName: data.pluginName,
-						content: data.sampleContents[layout.content] ? data.sampleContents[layout.content] : ''
+						content: data.sampleContents[layout.content] ? data.sampleContents[layout.content] : '',
+						title: layout.title ? layout.title : '',
+						killPostSettings: layout.killPostSettings || false
 					};
 				}
 			});

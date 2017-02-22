@@ -225,7 +225,18 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 	public static function get_template_markup($post, $properties) {
 		$post = !empty($post) ? $post : new WP_Post(new StdClass);
-		$markup = Upfront_ThisPostView::get_post_markup($post->ID, $post->post_type, $properties);
+		$use_post = apply_filters('upfront_pre_get_post_markup_use_post', '', $post, $properties);
+
+		if ($use_post === true) {
+			if(!$properties['post_data'])
+				$properties['post_data'] = array();
+
+			$properties['featured_image'] = array_search('featured_image', $properties['post_data']) !== FALSE;
+
+			$markup = self::post_template($post, $properties) . self::get_padding_styles($properties, $archive, $post);
+		} else {
+			$markup = Upfront_ThisPostView::get_post_markup($post->ID, $post->post_type, $properties);
+		}
 		$markup = upfront_get_template(
 			'this-post',
 			array(
@@ -234,6 +245,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 			),
 			dirname(dirname(__FILE__)) . '/tpl/this-post.php'
 		);
+
 		return $markup;
 	}
 
