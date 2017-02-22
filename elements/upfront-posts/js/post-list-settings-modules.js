@@ -13,7 +13,7 @@ define([
 		get_modules: function () {
 			var modules = [],
 				me = this,
-				name = function (name) { return 'element_wrapper-' + name; }
+				name = function (name) { return 'element-wrapper-' + name; }
 			;
 
 			modules.push({
@@ -58,7 +58,7 @@ define([
 		get_modules: function () {
 			var modules = [],
 				me = this,
-				name = function (name) { return 'post_wrapper-' + name; }
+				name = function (name) { return 'post-wrapper-' + name; }
 			;
 			
 			modules.push({
@@ -133,12 +133,12 @@ define([
 					as_field: false,
 					classStyle: 'gravatar-use',
 					fields: [
-						'gravatar_size',
-						'gravatar_border_width',
-						'gravatar_border_type',
-						'gravatar_border_color',
-						'gravatar_radius',
-						'gravatar_radius_number'
+						'gravatar-size',
+						'gravatar-border-width',
+						'gravatar-border-type',
+						'gravatar-border-color',
+						'gravatar-radius',
+						'gravatar-radius-number'
 					]
 				}
 			});
@@ -169,7 +169,7 @@ define([
 					type: 'Select',
 					label: l10n.modules.display,
 					label_style: 'inline',
-					property: 'display_name',
+					property: 'author-display-name',
 					values: [
 						{label: l10n.modules.display_name, value: 'display_name'},
 						{label: l10n.modules.first_last, value: 'first_last'},
@@ -182,7 +182,7 @@ define([
 					type: 'Select',
 					label: l10n.modules.link_to,
 					label_style: 'inline',
-					property: 'link',
+					property: 'author-link',
 					values: [
 						{label: l10n.modules.website, value: 'website'},
 						{label: l10n.modules.author_page, value: 'author'}
@@ -190,34 +190,34 @@ define([
 				},
 				{
 					type: 'Checkboxes',
-					property: 'target',
+					property: 'author-target',
 					values: [
 						{label: l10n.modules.new_tab, value: '_blank'}
 					]
 				},
 				{
 					type: "Number",
-					className: 'gravatar_size',
+					className: 'gravatar-size',
 					label: l10n.modules.gravatar_size,
 					label_style: 'inline',
-					name: "gravatar_size",
-					property: "gravatar_size"
+					name: "gravatar-size",
+					property: "gravatar-size"
 				},
 				{
 					type: "Number",
-					className: 'borderWidth gravatar_border_width uf-module-label-title',
+					className: 'borderWidth gravatar-border-width uf-module-label-title',
 					label: l10n.modules.border,
 					default_value: 1,
 					suffix: l10n.px,
-					name: "gravatar_border_width",
-					property: "gravatar_border_width",
+					name: "gravatar-border-width",
+					property: "gravatar-border-width",
 				},
 				{
 					type: "Select",
-					className: 'gravatar_border_type borderType',
+					className: 'gravatar-border-type borderType',
 					multiple: false,
-					name: "gravatar_border_type",
-					property: "gravatar_border_type",
+					name: "gravatar-border-type",
+					property: "gravatar-border-type",
 					default_value: "solid",
 					values: [
 						{ label: l10n.modules.solid, value: 'solid' },
@@ -227,10 +227,10 @@ define([
 				},
 				{
 					type: "Color",
-					className: 'upfront-field-wrap upfront-field-wrap-color sp-cf borderColor gravatar_border_color',
+					className: 'upfront-field-wrap upfront-field-wrap-color sp-cf borderColor gravatar-border-color',
 					multiple: false,
-					name: "gravatar_border_color",
-					property: "gravatar_border_color",
+					name: "gravatar-border-color",
+					property: "gravatar-border-color",
 					blank_alpha : 0,
 					label_style: 'inline',
 					label: '',
@@ -238,12 +238,12 @@ define([
 				},
 				{
 					type: "Slider",
-					className: 'gravatar_radius upfront-field-wrap upfront-field-wrap-slider radius-slider uf-module-label-title',
+					className: 'gravatar-radius upfront-field-wrap upfront-field-wrap-slider radius-slider uf-module-label-title',
 					label: l10n.modules.round_corners,
 					suffix: l10n.px,
 					min: 0,
-					name: "gravatar_radius",
-					property: "gravatar_radius",
+					name: "gravatar-radius",
+					property: "gravatar-radius",
 					max: 1000,
 					step: 10,
 					show: function() {
@@ -252,7 +252,7 @@ define([
 				},
 				{
 					type: "Number",
-					className: 'gravatar_radius_number border_radius_number',
+					className: 'gravatar-radius-number border_radius_number',
 					label: '',
 					min: 0,
 					max: 1000,
@@ -264,8 +264,8 @@ define([
 						
 					},
 					label_style: 'inline',
-					name: "gravatar_radius_number",
-					property: "gravatar_radius_number"
+					name: "gravatar-radius-number",
+					property: "gravatar-radius-number"
 				},
 			];
 		}
@@ -280,7 +280,7 @@ define([
 					type: 'Select',
 					label: l10n.modules.image_size,
 					label_style: 'inline',
-					property: 'image_size',
+					property: 'featured-image-size',
 					values: [
 						{label: l10n.modules.custom_size, value: 'custom_size'},
 					]
@@ -290,7 +290,7 @@ define([
 					label: l10n.modules.custom_width,
 					className: 'image-custom-width',
 					label_style: 'inline',
-					property: "custom_width",
+					property: "featured-custom-width",
 					suffix: l10n.px,
 				},
 				{
@@ -298,12 +298,12 @@ define([
 					label: l10n.modules.custom_height,
 					className: 'image-custom-height',
 					label_style: 'inline',
-					property: "custom_height",
+					property: "featured-custom-height",
 					suffix: l10n.px,
 				},
 				{
 					type: "Checkboxes",
-					property: "resize_featured",
+					property: "feature-resize",
 					multiple: false,
 					default_value: 0,
 					values: [{ label: l10n.modules.resize_to_fit, value: '1' }]
@@ -324,7 +324,7 @@ define([
 			return [
 				{
 					type: 'Checkboxes',
-					property: 'hide_if_no_comments',
+					property: 'comments-hide-if-empty',
 					values: [{ label: l10n.modules.hide_if_no_comments, value: '1' }]
 				}
 			];
@@ -342,7 +342,7 @@ define([
 				},
 				{
 					type: 'Radios',
-					property: 'content_type',
+					property: 'content-type',
 					layout: "horizontal-inline",
 					values: [
 						{
@@ -364,7 +364,7 @@ define([
 				},
 				{
 					type: 'Number',
-					property: 'content_length',
+					property: 'content-length',
 					className: 'uf-posts-content-length',
 					label: l10n.limit,
 					suffix: l10n.words,
@@ -385,7 +385,7 @@ define([
 				},
 				{
 					type: 'Radios',
-					property: 'tags_display_type',
+					property: 'tags-display-type',
 					layout: "horizontal-inline",
 					values: [
 						{
@@ -408,7 +408,7 @@ define([
 				},
 				{
 					type: 'Number',
-					property: 'tags_show_max',
+					property: 'tags-show-max',
 					label: l10n.modules.show_max,
 					min: 0,
 					max: 1000,
@@ -419,62 +419,62 @@ define([
 					type: "Text",
 					label: l10n.modules.separate_with,
 					label_style: 'inline',
-					property: "tags_separator"
+					property: "tags-separator"
 				},
 				{
 					type: "Number",
-					className: 'tags_padding_top_bottom',
+					className: 'tags-padding-top-bottom',
 					label: l10n.modules.padding,
 					suffix: l10n.px,
 					min: 0,
 					max: 1000,
 					default_value: 0,
 					label_style: 'inline',
-					name: "tags_padding_top_bottom",
-					property: "tags_padding_top_bottom"
+					name: "tags-padding-top-bottom",
+					property: "tags-padding-top-bottom"
 				},
 				{
 					type: "Number",
-					className: 'tags_padding_left_right',
+					className: 'tags-padding-left-right',
 					label: '',
 					suffix: l10n.px,
 					min: 0,
 					max: 1000,
 					default_value: 0,
 					label_style: 'inline',
-					name: "tags_padding_left_right",
-					property: "tags_padding_left_right"
+					name: "tags-padding-left-right",
+					property: "tags-padding-left-right"
 				},
 				{
 					type: "Number",
-					className: 'tags_margin_top_bottom',
+					className: 'tags-margin-top-bottom',
 					label: l10n.modules.margin,
 					suffix: l10n.px,
 					min: 0,
 					max: 1000,
 					default_value: 0,
 					label_style: 'inline',
-					name: "tags_margin_top_bottom",
-					property: "tags_margin_top_bottom"
+					name: "tags-margin-top-bottom",
+					property: "tags-margin-top-bottom"
 				},
 				{
 					type: "Number",
-					className: 'tags_margin_left_right',
+					className: 'tags-margin-left-right',
 					label: '',
 					suffix: l10n.px,
 					min: 0,
 					max: 1000,
 					default_value: 0,
 					label_style: 'inline',
-					name: "tags_margin_left_right",
-					property: "tags_margin_left_right"
+					name: "tags-margin-left-right",
+					property: "tags-margin-left-right"
 				},
 				{
 					type: "Color",
-					className: 'upfront-field-wrap upfront-field-wrap-color sp-cf tags_background',
+					className: 'upfront-field-wrap upfront-field-wrap-color sp-cf tags-background',
 					multiple: false,
-					name: "tags_background",
-					property: "tags_background",
+					name: "tags-background",
+					property: "tags-background",
 					blank_alpha : 0,
 					label_style: 'inline',
 					label: l10n.modules.background,
@@ -497,11 +497,11 @@ define([
 					as_field: false,
 					classStyle: 'tags-single-use',
 					fields: [
-						'tags_padding_top_bottom',
-						'tags_padding_left_right',
-						'tags_margin_top_bottom',
-						'tags_margin_left_right',
-						'tags_background'
+						'tags-padding-top-bottom',
+						'tags-padding-left-right',
+						'tags-margin-top-bottom',
+						'tags-margin-left-right',
+						'tags-background'
 					]
 				}
 			});
@@ -537,7 +537,7 @@ define([
 					type: "Select",
 					label: l10n.modules.date_format,
 					multiple: false,
-					property: "predefined_date_format",
+					property: "date-format",
 					values: [
 						{ label: l10n.modules.wp_date, value: "wp_date" },
 						{ label: l10n.modules.dMY, value: "d M Y" },
@@ -551,14 +551,14 @@ define([
 				{
 					type: "Text",
 					label: l10n.modules.php_format,
-					className: 'php_date_format',
+					className: 'php-date-format',
 					label_style: 'inline',
-					property: "date_posted_format"
+					property: "date-posted-format"
 				},
 				{
 					type: "Button",
 					label: l10n.modules.reference,
-					className: 'php_date_reference',
+					className: 'php-date-reference',
 					compact: true,
 					on_click: function (e) {
 						if (e && e.preventDefault) e.preventDefault();
@@ -590,7 +590,7 @@ define([
 				},
 				{
 					type: 'Radios',
-					property: 'category_display_type',
+					property: 'category-display-type',
 					layout: "horizontal-inline",
 					values: [
 						{
@@ -613,7 +613,7 @@ define([
 				},
 				{
 					type: 'Number',
-					property: 'category_show_max',
+					property: 'category-show-max',
 					label: l10n.modules.show_max,
 					min: 0,
 					max: 1000,
@@ -624,62 +624,62 @@ define([
 					type: "Text",
 					label: l10n.modules.separate_with,
 					label_style: 'inline',
-					property: "category_separator"
+					property: "category-separator"
 				},
 				{
 					type: "Number",
-					className: 'category_padding_top_bottom',
+					className: 'category-padding-top-bottom',
 					label: l10n.modules.padding,
 					suffix: l10n.px,
 					min: 0,
 					max: 1000,
 					default_value: 0,
 					label_style: 'inline',
-					name: "category_padding_top_bottom",
-					property: "category_padding_top_bottom"
+					name: "category-padding-top-bottom",
+					property: "category-padding-top-bottom"
 				},
 				{
 					type: "Number",
-					className: 'category_padding_left_right',
+					className: 'category-padding-left-right',
 					label: '',
 					suffix: l10n.px,
 					min: 0,
 					max: 1000,
 					default_value: 0,
 					label_style: 'inline',
-					name: "category_padding_left_right",
-					property: "category_padding_left_right"
+					name: "category-padding-left-right",
+					property: "category-padding-left-right"
 				},
 				{
 					type: "Number",
-					className: 'category_margin_top_bottom',
+					className: 'category-margin-top-bottom',
 					label: l10n.modules.margin,
 					suffix: l10n.px,
 					min: 0,
 					max: 1000,
 					default_value: 0,
 					label_style: 'inline',
-					name: "category_margin_top_bottom",
-					property: "category_margin_top_bottom"
+					name: "category-margin-top-bottom",
+					property: "category-margin-top-bottom"
 				},
 				{
 					type: "Number",
-					className: 'category_margin_left_right',
+					className: 'category-margin-left-right',
 					label: '',
 					suffix: l10n.px,
 					min: 0,
 					max: 1000,
 					default_value: 0,
 					label_style: 'inline',
-					name: "category_margin_left_right",
-					property: "category_margin_left_right"
+					name: "category-margin-left-right",
+					property: "category-margin-left-right"
 				},
 				{
 					type: "Color",
-					className: 'upfront-field-wrap upfront-field-wrap-color sp-cf category_background',
+					className: 'upfront-field-wrap upfront-field-wrap-color sp-cf category-background',
 					multiple: false,
-					name: "category_background",
-					property: "category_background",
+					name: "category-background",
+					property: "category-background",
 					blank_alpha : 0,
 					label_style: 'inline',
 					label: l10n.modules.background,
@@ -702,11 +702,11 @@ define([
 					as_field: false,
 					classStyle: 'category-single-use',
 					fields: [
-						'category_padding_top_bottom',
-						'category_padding_left_right',
-						'category_margin_top_bottom',
-						'category_margin_left_right',
-						'category_background'
+						'category-padding-top-bottom',
+						'category-padding-left-right',
+						'category-margin-top-bottom',
+						'category-margin-left-right',
+						'category-background'
 					]
 				}
 			});
