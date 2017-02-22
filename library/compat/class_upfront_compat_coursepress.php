@@ -18,8 +18,20 @@ class Upfront_Compat_CoursePress {
 		add_filter('upfront-layout_to_name', array($this, 'layout_to_name'), 10, 4);
 		add_filter('upfront-builder_available_layouts', array($this, 'add_builder_available_layouts'));
 		add_filter('upfront-post_data-get_content-before', array($this, 'kill_double_discussion_querying'));
+		add_filter('upfront-post_data-get_content-after', array($this, 'balance_out_tags_in_discussion_content'));
 	}
 
+	/**
+	 * CoursePress seems to be missing one closing div tag in generated content for single discussion, so just
+	 * add it here until that is resolved in CoursePress.
+	 */
+	public function balance_out_tags_in_discussion_content($content) {
+		$layout = Upfront_Layout::get_parsed_cascade();
+
+		if ($layout['item'] !== 'single-course_discussion') return $content;
+
+		return $content . '</div>';
+	}
 
 	/**
 	 * This one is complicated.
