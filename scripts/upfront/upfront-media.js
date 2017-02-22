@@ -185,6 +185,7 @@ define([
 		max_pages: 1,
 		max_items: 1,
 		media_limit: 60,
+		current_filter_control: 0,
 		initialize: function () {
 			this.to_defaults();
 			Upfront.Events.on("media_manager:media:filters_updated", this.update_active_filters, this);
@@ -223,6 +224,7 @@ define([
 
 			this.themeImages =false;
 			this.current_page = 1;
+			this.current_filter_control = 0;
 
 			this.set_labels_to_defaults();
 		},
@@ -839,6 +841,7 @@ define([
 				},
 				initialize: function () {
 					this.listenTo(Upfront.Events, "media_manager:media:labels_updated", this.render);
+					this._adding_label = false;
 				},
 				stop_prop: function (e) {
 					e.stopPropagation();
@@ -912,8 +915,11 @@ define([
 				show_add_label: function (e) {
 					e.preventDefault();
 					e.stopPropagation();
-					var $hub = this.$el.find(".new_labels");
+					var $hub = this.$el.find(".new_labels"),
+						$text = this.$el.find(".new_labels :text.add-label")
+					;
 					$hub.addClass('active');
+					$text.focus();
 				},
 				enter_new_labels: function (e) {
 					if (e.which == 13) {
@@ -925,9 +931,12 @@ define([
 						e.preventDefault();
 						e.stopPropagation();
 					}
+					if (this._adding_label) return;
 					var $text = this.$el.find(".new_labels :text.add-label"),
 						selection = $text.val()
 					;
+					this._adding_label = true;
+					$text.attr('disabled', true);
 					this.model.add_new_label(selection);
 				}
 			});
@@ -1122,7 +1131,7 @@ define([
 					className: "upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios upfront-filter_selection-tab",
 					values: values,
 					multiple: false,
-					default_value: 0,
+					default_value: ActiveFilters.current_filter_control,
 					change: function(){
 						me.select_control(this.get_value());
 					}
@@ -1135,6 +1144,7 @@ define([
 				this.$control.empty();
 				if ('false' === idx) return false;
 
+				ActiveFilters.current_filter_control = idx;
 
 				var control = this.controls.toArray()[idx];
 				control.render();
@@ -1694,7 +1704,10 @@ define([
 			}
 
 			var me = this,
-				uploaded = 0, progressing = 0, done =0,
+				uploaded = 0,
+				progressing = 0,
+				done = 0,
+				processed = 0,
 				new_media = [],
 				media_library_view = me.library_view._subviews.media,
 				uploadUrl = ActiveFilters.themeImages ? _upfront_media_upload.theme : _upfront_media_upload.normal
@@ -1709,7 +1722,7 @@ define([
 						count = uploaded,
 						name = media.name || 'tmp'
 					;
-					uploaded +=1;
+					uploaded++;
 					new_media[count] = new MediaItem_Model({progress: 0});
 					new_media[count].set({post_title: name});
 					media_library_view.model.add(new_media[count], {at: 0});
@@ -1733,16 +1746,22 @@ define([
 				},
 				progressall: function (e, data) {
 					var count = progressing;
-					progressing+=1;
+					progressing++;
 					var progress = parseInt(data.loaded / data.total * 100, 10);
 					if (new_media[count]) new_media[count].trigger("upload:progress", progress);
 				},
 				done: function (e, data) {
 					var count = done;
-					done +=1;
+					done++;
+					processed++;
 					if(ActiveFilters.themeImages){
 						new_media[count].set(data.result.data, {silent: true});
-						return new_media[count].trigger("upload:finish", me);
+						new_media[count].trigger("upload:finish", me);
+						if (processed == uploaded) { // Refresh when all images has processed
+							ActiveFilters.to_defaults();
+							Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+						}
+						return;
 					}
 
 					var result = data.result.data || [],
@@ -1756,13 +1775,20 @@ define([
 					}).done(function (response) {
 						new_media[count].set(response.data, {silent:true});
 						new_media[count].trigger("upload:finish", me);
-					}).fail(function () {
-						Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+					}).always(function () {
+						if (processed == uploaded) { // Refresh when all images has processed
+							ActiveFilters.to_defaults();
+							Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+						}
 					});
 				},
 				fail: function (e, data) {
+					processed++;
 					if (data.jqXHR.responseJSON && data.jqXHR.responseJSON.error) Upfront.Views.Editor.notify(data.jqXHR.responseJSON.error, 'error');
-					Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+					if (processed == uploaded) { // Refresh when all images has processed
+						ActiveFilters.to_defaults();
+						Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+					}
 				}
 			}).trigger("click");
 
@@ -2295,7 +2321,6 @@ define([
 
 			// running again change event to apply persistent list
 			var selected_model = new MediaCollection_Selection(ActiveFilters.current_models);
-			console.log(ActiveFilters.current_models)
 			Upfront.Events.trigger("media:item:selection_changed", selected_model);
 		},
 		remove: function() {
@@ -2384,7 +2409,7 @@ define([
 					// Add as current keys so uploads are selected.
 					ActiveFilters.current_keys.push(this.model.attributes.ID);
 					// redraw media gallery
-					manager.render_library();
+					//manager.render_library();
 				}
 			},
 			remove: function() {
