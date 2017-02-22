@@ -1,9 +1,9 @@
 /* Element Wrapper */
 #page .<?php echo $properties['id'] ?> .uf-posts {
-    <?php if(!empty($properties['element_wrapper-background-color'])) { ?>background-color: <?php echo $properties['element_wrapper-background-color'] ?>; <?php } ?>
+    <?php if(!empty($properties['element-wrapper-background-color'])) { ?>background-color: <?php echo $properties['element-wrapper-background-color'] ?>; <?php } ?>
 
-    <?php if(!empty($properties['element_wrapper-use-border'])) { ?>
-		<?php if(!empty($properties['element_wrapper-border-width']) && !empty($properties['element_wrapper-border-type']) && !empty($properties['element_wrapper-border-color'])) { ?>border: <?php echo $properties['element_wrapper-border-width'] ?>px <?php echo $properties['element_wrapper-border-type'] ?> <?php echo $properties['element_wrapper-border-color'] ?>;<?php } ?>
+    <?php if(!empty($properties['element-wrapper-use-border'])) { ?>
+		<?php if(!empty($properties['element-wrapper-border-width']) && !empty($properties['element-wrapper-border-type']) && !empty($properties['element-wrapper-border-color'])) { ?>border: <?php echo $properties['element-wrapper-border-width'] ?>px <?php echo $properties['element-wrapper-border-type'] ?> <?php echo $properties['element-wrapper-border-color'] ?>;<?php } ?>
     <?php } else { ?>
 		border: none;
     <?php } ?>
@@ -11,23 +11,37 @@
 
 /* Post Wrapper */
 #page .<?php echo $properties['id'] ?> .uf-posts li.uf-post:not(.upfront-wrapper-spacer) {
-    <?php if(!empty($properties['post_wrapper-background-color'])) { ?>background-color: <?php echo $properties['post_wrapper-background-color'] ?>; <?php } ?>
+    <?php if(!empty($properties['post-wrapper-background-color'])) { ?>background-color: <?php echo $properties['post-wrapper-background-color'] ?>; <?php } ?>
 
-    <?php if(!empty($properties['post_wrapper-use-border'])) { ?>
-		<?php if(!empty($properties['post_wrapper-border-width']) && !empty($properties['post_wrapper-border-type']) && !empty($properties['post_wrapper-border-color'])) { ?>border: <?php echo $properties['post_wrapper-border-width'] ?>px <?php echo $properties['post_wrapper-border-type'] ?> <?php echo $properties['post_wrapper-border-color'] ?>;<?php } ?>
+    <?php if(!empty($properties['post-wrapper-use-border'])) { ?>
+		<?php if(!empty($properties['post-wrapper-border-width']) && !empty($properties['post-wrapper-border-type']) && !empty($properties['post-wrapper-border-color'])) { ?>border: <?php echo $properties['post-wrapper-border-width'] ?>px <?php echo $properties['post-wrapper-border-type'] ?> <?php echo $properties['post-wrapper-border-color'] ?>;<?php } ?>
     <?php } else { ?>
 		border: none;
     <?php } ?>
 	
-	<?php if(!empty($properties['post_wrapper-use-margin'])) { ?>
-		<?php if(!empty($properties['post_wrapper-lock-margin'])) { ?>
-			margin: <?php echo $properties['post_wrapper-top-margin'] ?>px;
+	<?php if(!empty($properties['post-wrapper-use-margin'])) { ?>
+		<?php if(!empty($properties['post-wrapper-lock-margin'])) { ?>
+			margin: <?php echo $properties['post-wrapper-top-margin'] ?>px;
 		<?php } else { ?>
-			margin: <?php echo $properties['post_wrapper-top-margin'] ?>px <?php echo $properties['post_wrapper-right-margin'] ?>px <?php echo $properties['post_wrapper-bottom-margin'] ?>px <?php echo $properties['post_wrapper-left-margin'] ?>px;
+			margin: <?php echo $properties['post-wrapper-top-margin'] ?>px <?php echo $properties['post-wrapper-right-margin'] ?>px <?php echo $properties['post-wrapper-bottom-margin'] ?>px <?php echo $properties['post-wrapper-left-margin'] ?>px;
 		<?php } ?>
 	<?php } ?>
 }
 
+/* Part Author */
+
+<?php if(!empty($properties['author-use-typography']) && $properties['author-use-typography'] == 'yes') { ?>
+
+#page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.author, #page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.author a {
+	<?php if(!empty($properties['author-font-family'])) { ?>font-family: <?php echo $properties['author-font-family']  ?>; <?php } ?>
+    <?php if(!empty($properties['author-font-size'])) { ?>font-size: <?php echo $properties['author-font-size']  ?>px; <?php } ?>
+    <?php if(!empty($properties['author-weight'])) { ?>font-weight: <?php echo $properties['author-weight']  ?>;<?php } ?>
+    <?php if(!empty($properties['author-style'])) { ?>font-style: <?php echo $properties['author-style']  ?>;<?php } ?>
+    <?php if(!empty($properties['author-line-height'])) { ?>line-height: <?php echo $properties['author-line-height']  ?>;<?php } ?>
+	<?php if(!empty($properties['author-font-color'])) { ?>color: <?php echo $properties['author-font-color']  ?>; <?php } ?>
+}
+
+<?php } ?>
 
 /* Custom CSS */
 

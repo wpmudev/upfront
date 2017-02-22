@@ -163,35 +163,72 @@ class Upfront_Posts_PostView {
 		if (empty($this->_post->post_author)) return '';
 
 		$author = $this->_post->post_author;
+
 		$name = get_the_author_meta('display_name', $author);
-		$url = get_author_posts_url($author);
+
+		if (!empty($this->_data['gravatar-use'])) {
+			$gravatar_size = !empty($this->_data['gravatar-size'])
+				? $this->_data['gravatar-size']
+				: Upfront_Posts_PostsData::get_default('gravatar_size')
+			;
+
+			$gravatar = get_avatar($author, $gravatar_size, null, $name);
+		} else {
+			$gravatar = '';
+		}
+
+		if (!empty($this->_data['author-display-name'])) {	
+			if ('first_last' === $this->_data['author-display-name'] || 'last_first' === $this->_data['author-display-name']) {
+				$first = get_the_author_meta('first_name', $author);
+				$last = get_the_author_meta('last_name', $author);
+				if (!empty($first) && !empty($last)) {
+					$name = 'first_last' === $this->_data['author-display-name']
+						? "{$first} {$last}"
+						: "{$last} {$first}"
+					;
+				}
+			}
+			
+			if ('nickname' === $this->_data['author-display-name']) {
+				$nick = get_the_author_meta('nickname', $author);
+				if (!empty($nick)) $name = $nick;
+			}
+
+			if ('username' === $this->_data['author-display-name']) {
+				$nick = get_the_author_meta('username', $author);
+				if (!empty($nick)) $name = $nick;
+			}
+		}
+
+		$url = ''; //
+		if (!empty($this->_data['author-link'])) {
+			if ('author' === $this->_data['author-link']) {
+				$url = get_author_posts_url($author);
+			}
+			if ('website' === $this->_data['author-link']) {
+				$link = get_the_author_meta('url', $author);
+				if (!empty($link)) $url = $link;
+			}
+		}
+
+		$target = '';
+		if (!empty($this->_data['author-target'][0])) {
+			$target = '_blank';
+		}
 
 		$out = $this->_get_template('author');
 
 		$out = Upfront_Codec::get()->expand($out, "name", esc_html($name));
 		$out = Upfront_Codec::get()->expand($out, "url", esc_url($url));
+		$out = Upfront_Codec::get()->expand($out, "target", esc_attr($target));
+		$out = Upfront_Codec::get()->expand($out, "gravatar", $gravatar);		
 
 		return $out;
 	}
 
 	public function expand_gravatar_template () {
-		if (empty($this->_post->post_author)) return '';
-
-		$gravatar_size = !empty($this->_data['gravatar_size'])
-			? $this->_data['gravatar_size']
-			: Upfront_Posts_PostsData::get_default('gravatar_size')
-		;
-
-		$author = $this->_post->post_author;
-		$name = get_the_author_meta('display_name', $author);
-		$gravatar = get_avatar($author, $gravatar_size, null, $name);
-
-		$out = $this->_get_template('gravatar');
-
-		$out = Upfront_Codec::get()->expand($out, "name", esc_html($name));
-		$out = Upfront_Codec::get()->expand($out, "gravatar", $gravatar);
-
-		return $out;
+		// We no longer have gravatar part
+		return false;
 	}
 
 	public function expand_comment_count_template () {

@@ -133,7 +133,7 @@ define([
 					as_field: false,
 					classStyle: 'gravatar-use',
 					fields: [
-						'gravatar-size',
+						'gravatar-size', // Part property
 						'gravatar-border-width',
 						'gravatar-border-type',
 						'gravatar-border-color',
@@ -170,6 +170,7 @@ define([
 					label: l10n.modules.display,
 					label_style: 'inline',
 					property: 'author-display-name',
+					name: 'author-display-name',
 					values: [
 						{label: l10n.modules.display_name, value: 'display_name'},
 						{label: l10n.modules.first_last, value: 'first_last'},
@@ -183,6 +184,7 @@ define([
 					label: l10n.modules.link_to,
 					label_style: 'inline',
 					property: 'author-link',
+					name: 'author-link',
 					values: [
 						{label: l10n.modules.website, value: 'website'},
 						{label: l10n.modules.author_page, value: 'author'}
@@ -191,6 +193,7 @@ define([
 				{
 					type: 'Checkboxes',
 					property: 'author-target',
+					name: 'author-target',
 					values: [
 						{label: l10n.modules.new_tab, value: '_blank'}
 					]
