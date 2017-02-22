@@ -71,6 +71,8 @@ class Upfront_Posts_PostsData {
 			$key = self::_slug_to_part_key($part);
 			$defaults[$key] = self::get_template($part);
 		}
+		
+		$defaults = self::apply_preset($defaults);
 
 		return $defaults;
 	}
