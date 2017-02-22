@@ -150,19 +150,23 @@
 	opacity: 1;
 }
 
-.upfront-popup-posts #upfront-list .upfront-list_item .upfront-avatar {
-	padding: 15px;
-	padding-left: 0;
+.upfront-popup-posts #upfront-list .upfront-list_item .upfront-post-thumbnail img {
+	margin: 14px;
+	margin-left: 0;
+}
+
+.upfront-popup-posts .upfront-entity_list-cpt .upfront-post-thumbnail img {
+	max-width: 32px;
+	max-height: 32px;
+}
+
+#upfront-list .upfront-list_item .upfront-list_item-component.upfront-post-thumbnail {
+	padding: 0;
 }
 
 #upfront-list .upfront-list_item .upfront-list_item-component {
 	padding: 4px 15px;
 	float:left;
-}
-.upfront-popup-posts #upfront-list .upfront-list_item-component:first-child.upfront-avatar
-#upfront-list .upfront-list_item .upfront-list_item-component:first-child {
-	padding: 15px;
-	padding-left: 30px;
 }
 
 .upfront-popup-posts #upfront-list .upfront-list_item .upfront-list_item-component.upfront-title {
@@ -933,4 +937,13 @@ a.editaction.trash {
 	margin: 0;
 	line-height: 10px;
 	color: rgb(242,242,242);
+}
+
+.upfront-popup-posts #upfront-entity_list-pagination small span {
+	text-transform: lowercase;
+}
+
+/* Keep CPTs capitalized */
+.upfront-popup-posts #upfront-entity_list-pagination small span[data-posttype="cpts"] {
+	text-transform: none;
 }

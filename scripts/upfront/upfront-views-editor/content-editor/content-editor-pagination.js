@@ -19,7 +19,6 @@
                 this.options = opts;
             },
             render: function () {
-
                 this.$el.html(this.paginationTpl(this.collection.pagination));
             	// Check if there are extra pages and if not, hide extra UI.
             	this.hide_extra_ui();

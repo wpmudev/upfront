@@ -23,7 +23,7 @@
 				{[ } else { ]}
 				{[ _.each(posts, function (post, idx){ ]}
 				<div class="upfront-list_item-post upfront-list_item clearfix status-{{ post.get("post_status") }}" data-post_id="{{ post.get("ID") }}">
-					<div class="upfront-list_item-component upfront-avatar"><img src="//www.gravatar.com/avatar/{[ if(post.author.get('data')){]}{{ post.author.get('data').gravatar }}{[}]}?s=32" /></div>
+					<div class="upfront-list_item-component upfront-avatar upfront-post-thumbnail"><img src="//www.gravatar.com/avatar/{[ if(post.author.get('data')){]}{{ post.author.get('data').gravatar }}{[}]}?s=32" /></div>
 					<div class="upfront-list_item-component upfront-title-and-author">
 						<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ post.get("post_title") }}</div>
 						<div class="upfront-list_item-component upfront-author">{[ if(post.author.get('data')){ ]} {{ post.author.get('data').display_name }} {[ } ]}</div>
@@ -299,7 +299,7 @@
 
 			<a class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-next"></a>
 
-			<small>{{totalElements}} items</small>
+			<small>{{totalElements}} <span data-posttype="{{this.options.postType.toLowerCase()}}">{{this.options.postType}}</span></small>
 		</div>
 	</script>
 

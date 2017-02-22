@@ -169,7 +169,7 @@
 														views = {
 																view: new ContentEditor.Posts({collection: collection, $popup: me.$popup}),
 																search: new ContentEditor.Search({collection: collection}),
-																pagination: new ContentEditor.Pagination({collection: collection})
+																pagination: new ContentEditor.Pagination({collection: collection, postType: l10n.posts})
 														};
 														me.views.posts = views;
 														break;
@@ -191,7 +191,7 @@
 														views = {
 																view: new ContentEditor.Pages({collection: collection, $popup: me.$popup}),
 																search: new ContentEditor.Search({collection: collection}),
-																pagination: new ContentEditor.Pagination({collection: collection})
+																pagination: new ContentEditor.Pagination({collection: collection, postType: l10n.pages})
 														};
 														me.views.pages = views;
 														break;
@@ -222,7 +222,7 @@
 														views = {
 																view: new ContentEditor.Cpt({collection: collection, $popup: me.$popup}),
 																search: new ContentEditor.Search({collection: collection}),
-																pagination: new ContentEditor.Pagination({collection: collection})
+																pagination: new ContentEditor.Pagination({collection: collection, postType: l10n.cpts})
 														};
 														me.views.cpts = views;
 														break;
