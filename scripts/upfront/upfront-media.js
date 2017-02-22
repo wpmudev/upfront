@@ -1672,15 +1672,6 @@ define([
 			this.library_view.render();
 
 			this.$el.empty().append(this.library_view.$el);
-			if (arguments.length) {
-				var sel = arguments[0], me = this;
-				if ("ID" in sel) {
-					this.library_view.media_collection.once("reset", function () {
-						var found = me.library_view.media_collection.where({ID: sel.ID});
-						if (found.length) found[0].set({selected: true});
-					});
-				}
-			}
 		},
 		render_embed: function () {
 			return false;
@@ -2402,6 +2393,7 @@ define([
 				this.$el.find(".thumbnail .upfront-image-upload-placeholder").replaceWith(this.model.get("thumbnail"));
 				this.$el.find('.upfront-media-progress-bar').remove();
 
+				this.model.set({selected: true});
 				// adding it on persistent list
 				ActiveFilters.current_models.push(this.model);
 				// Only do if regular media.
