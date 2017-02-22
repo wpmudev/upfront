@@ -24,10 +24,10 @@
 						</div>
 					</a>
 				</div>
-				<span class="fold"></span> <a class="unit-archive-single-title" href="#" data-original-href="#" rel="bookmark">Intro </a>
+				<span class="fold"></span> <a class="unit-archive-single-title" href="#" data-original-href="#" rel="bookmark">Intro Unit </a>
 				<ul class="unit-archive-module-wrapper">
 					<li>
-						<div class="section-title section-seen" data-id="1">Section Title</div>
+						<div class="section-title section-seen" data-id="1">Unit Section Title</div>
 						<ul class="module-list"></ul>
 					</li>
 				</ul>
@@ -101,7 +101,7 @@
 				<span class="fold"></span> <a class="unit-archive-single-title" href="#" data-original-href="#" rel="bookmark">Second unit </a>
 				<ul class="unit-archive-module-wrapper">
 					<li>
-						<div class="section-title" data-id="1">Section Title</div>
+						<div class="section-title" data-id="1">Unit Section Title</div>
 						<ul class="module-list"></ul>
 					</li>
 				</ul>
