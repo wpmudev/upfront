@@ -374,6 +374,10 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 					$posts[$i]->author = $this->remove_private_user_fields(new WP_User($posts[$i]->post_author));
 				}
 
+				if($data['withThumbnail']){
+					$posts[$i]->thumbnail = wp_get_attachment_image_src(get_post_thumbnail_id($posts[$i]->ID));
+				}
+
 				if($data['withMeta']){
 					$posts[$i]->meta = $this->parse_single_meta(get_metadata('post', $posts[$i]->ID));
 				}

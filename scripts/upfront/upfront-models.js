@@ -1481,7 +1481,7 @@ var _alpha = "alpha",
 		postType: 'post',
 		withMeta: false,
 		withAuthor: false,
-		fetchAttributes: ['postId', 'postType', 'withMeta', 'withAuthor'],
+		fetchAttributes: ['postId', 'postType', 'withMeta', 'withAuthor', 'withThumbnail'],
 		initialize: function(models, options){
 			if(options){
 				if(options.postId)
@@ -1492,6 +1492,8 @@ var _alpha = "alpha",
 					this.withMeta = options.withMeta;
 				if(options.withAuthor)
 					this.withAuthor = options.withAuthor;
+				if(options.withThumbnail)
+					this.withThumbnail = options.withThumbnail;
 			}
 		}
 	});

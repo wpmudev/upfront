@@ -22,18 +22,25 @@
 								"click .upfront-posts-delete-button": "trash_post"
 						},
 						initialize: function(options){
-							console.log(this.collection);
 								this.collection.on('change reset', this.render, this);
 								this.listenTo(Upfront.Events, 'post:saved', this.post_saved);
 						},
 						render: function () {
+								var postTypeList = Upfront.mainData.content_settings.post_types;
+								var postTypes = {};
+								postTypeList.map(function(type) {
+									// Ignore WP post types.
+									if (name === 'attachment' || name === 'post' || name === 'page') return;
+									postTypes[type.name] = type.label;
+								});
 								this.$el.empty().append(
 										this.postListTpl({
 												posts: this.collection.getPage(this.collection.pagination.currentPage),
 												orderby: this.collection.orderby,
 												order: this.collection.order,
 												canEdit: Upfront.Application.user_can("EDIT"),
-												canEditOwn: Upfront.Application.user_can("EDIT_OWN")
+												canEditOwn: Upfront.Application.user_can("EDIT_OWN"),
+												postTypes: postTypes
 										})
 								);
 

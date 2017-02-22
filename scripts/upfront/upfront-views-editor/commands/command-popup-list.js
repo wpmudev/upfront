@@ -128,20 +128,16 @@
 										var postTypes = Upfront.mainData.content_settings.post_types
 											collection
 										;
-										postTypes.forEach(function(postType) {
+										var postTypeNames= [];
+										postTypes.map(function(postType) {
+											var name = postType.name;
 											// Ignore WP post types.
-											if (postType.name === 'post' || postType.name === 'page' || postType.name === 'attachment') return;
-											var newCollection = new Upfront.Collections.PostList([], {postType: postType});
-											// If collection already exists, add to it.
-											if (collection.add) {
-												collection.add(newCollection.toJSON())
-											} else {
-												// Otherwise assign it.
-												collection = newCollection;
-											}
+											if (name === 'attachment' || name === 'post' || name === 'page') return;
+											postTypeNames.push(name);
 										});
+										collection = new Upfront.Collections.PostList([], {postType: postTypeNames});
 										collection.orderby = 'post_date';
-										fetchOptions = {limit: 15};
+										fetchOptions = {limit: 15, withThumbnail: true};
 								}
 								else{
 										var post_id = Upfront.data.currentPost && Upfront.data.currentPost.id
