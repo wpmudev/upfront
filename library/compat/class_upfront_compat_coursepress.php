@@ -9,7 +9,7 @@ class Upfront_Compat_CoursePress {
 	public function add_hooks() {
 		if (class_exists('CoursePress') === false) return;
 
-		// Force loadig of CP styles
+		// Force always loading CP styles in builder
 		if (upfront_exporter_is_running() && class_exists('CoursePress_Core')) CoursePress_Core::$is_cp_page = true;
 
 		add_filter('upfront_pre_get_post_markup_use_post', array($this, 'use_post'), 10, 3);
@@ -17,8 +17,34 @@ class Upfront_Compat_CoursePress {
 		add_filter('upfront-forbidden_post_data_types', array($this, 'forbidden_post_data_types'));
 		add_filter('upfront-layout_to_name', array($this, 'layout_to_name'), 10, 4);
 		add_filter('upfront-builder_available_layouts', array($this, 'add_builder_available_layouts'));
+		add_filter('upfront-post_data-get_content-before', array($this, 'kill_double_discussion_querying'));
 	}
 
+
+	/**
+	 * This one is complicated.
+	 * Apparently, when post data part view such as title or content is doing get_markup it actually calls
+	 * get_markup of post data, which causes post data content to be rendered multiple times, at least twice.
+	 * On single discussion page if content render is called more than once db error will happen because
+	 * WP will query comments with broken SQL. So, here we watch when get_content is called first time to
+	 * return any non-empty string so that content would not be rendered. After that let it do it's own thing.
+	 * Post data render will be called exactly twice, since in discussion template there is exactly two post
+	 * data parts, title and content, and user does not have means to add another unless he edits actual layout
+	 * file. (post data parts UI is disabled in plugin pages).
+	 */
+	private $discussion_page_query_call_no = 0;
+	public function kill_double_discussion_querying($content) {
+		$layout = Upfront_Layout::get_parsed_cascade();
+
+		if ($layout['item'] !== 'single-course_discussion') return '';
+
+		if ($this->discussion_page_query_call_no === 0) {
+			$this->discussion_page_query_call_no = 1;
+			return 'emptiness'; // Yep, not important what it says, just needs to be non-empty string
+		}
+
+		return '';
+	}
 	/**
 	 * Checks against post object if current page is CoursePress page.
 	 *
