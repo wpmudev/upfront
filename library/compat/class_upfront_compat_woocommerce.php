@@ -7,14 +7,17 @@ class Upfront_Compat_WooCommerce {
 	}
 
 	public function add_hooks() {
-		if (class_exists('woocommerce') === false) return;
+		if (class_exists('woocommerce') === false) {
+			add_filter('upfront-builder_skip_exported_layouts', array($this, 'skip_layouts_when_inactive'), 10, 2);
+			return;
+		}
 
 		add_action('after_setup_theme', array($this, 'add_woocommerce_support'));
 		add_filter('template_include', array($this, 'override_single_product_tpl'), 99, 3);
 		add_filter('upfront-entity_resolver-entity_ids', array($this, 'override_entity_ids'));
 		add_filter('upfront-post_data-get_content-before', array($this, 'override_single_product_filter'));
 		add_filter('upfront-posts-get_markup-before', array($this, 'override_posts_markup_filter'));
-		add_filter('upfront-plugins_layouts', array($this, 'add_woocommerce_layouts'));
+		add_filter('upfront-plugins_layoucartts', array($this, 'add_woocommerce_layouts'));
 		add_filter('upfront-postdata_get_markup_before', array($this, 'override_postdata_content'), 10, 2);
 		add_filter('upfront-override_post_parts', array($this, 'override_post_parts'), 10, 2);
 		add_filter('upfront-widget_plugins_widgets', array($this, 'declare_plugins_widgets'));
@@ -23,15 +26,34 @@ class Upfront_Compat_WooCommerce {
 		add_filter('upfront-forbidden_post_data_types', array($this, 'forbidden_post_data_types'));
 	}
 
-public function forbidden_post_data_types($types) {
-	$post = get_post();
-	if (is_null($post)) return $types;
+	/**
+	 * Hides CoursePress layouts in builder exported layouts if "Layouts" popup when CoursePress is not active.
+	 */
+	public function skip_layouts_when_inactive($skip, $layout) {
+		$woo_layouts = array(
+			'single-product',
+			'archive-product_cat',
+			'archive-product_tag',
+			'archive-product',
+			'single-page-woocart',
+			'single-page-woomyaccount',
+			'single-page-woocheckout',
+		);
+		if (in_array($layout['specificity'], $woo_layouts)) return true;
 
-	if (self::is_woo_page($post)) {
-		$types = array('title', 'date_posted', 'comment_form', 'comment_count', 'comments', 'comments_pagination');
+		return $skip;
 	}
-	return $types;
-}
+
+
+	public function forbidden_post_data_types($types) {
+		$post = get_post();
+		if (is_null($post)) return $types;
+
+		if (self::is_woo_page($post)) {
+			$types = array('title', 'date_posted', 'comment_form', 'comment_count', 'comments', 'comments_pagination');
+		}
+		return $types;
+	}
 
 
 	/**
