@@ -26,6 +26,8 @@ class Upfront_Posts_PostView {
 	);
 
 	public function __construct ($data=array()) {
+		// Add presets props to $this->_data
+		$data = Upfront_Posts_PostsData::apply_preset($data);
 		$this->_data = $data;
 	}
 	
