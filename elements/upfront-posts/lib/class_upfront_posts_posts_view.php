@@ -12,11 +12,11 @@ class Upfront_Posts_PostsView {
 	 * @param array $data The properties data array
 	 * @return array Array of parsed markup items for each post in the list.
 	 */
-	public static function get_posts_part_markup ($data) {
+	public static function get_posts_part_markup ($data, $ajax_call = false) {
 		$posts = Upfront_Posts_Model::get_posts($data);
 		$posts_markup = array();
 
-		$view = new Upfront_Posts_PostView($data);
+		$view = new Upfront_Posts_PostView($data, $ajax_call);
 
 		foreach($posts as $idx => $post) {
 			$posts_markup[$post->ID] = $view->get_parts_markup($post);

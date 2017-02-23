@@ -25,9 +25,12 @@ class Upfront_Posts_PostView {
 		9 => 'meta',
 	);
 
-	public function __construct ($data=array()) {
-		// Add presets props to $this->_data
-		$data = Upfront_Posts_PostsData::apply_preset($data);
+	public function __construct ($data=array(), $ajax_call = false) {
+		// Add presets props to $this->_data if not AJAX call
+		if($ajax_call != true) {
+			$data = Upfront_Posts_PostsData::apply_preset($data);
+		}
+		
 		$this->_data = $data;
 	}
 	
