@@ -121,6 +121,11 @@ class Upfront_Compat_CoursePress {
 			'course_discussion_archive' => $this->get_sample_content('course_discussion_archive'),
 			'course_discussion' => $this->get_sample_content('course_discussion'),
 			'course_workbook' => $this->get_sample_content('course_workbook'),
+			'course_grades_archive' => $this->get_sample_content('course_grades_archive'),
+			'coursepress_student_login' => $this->get_sample_content('coursepress_student_login'),
+			'coursepress_student_signup' => $this->get_sample_content('coursepress_student_signup'),
+			'coursepress_student_dashboard' => $this->get_sample_content('coursepress_student_dashboard'),
+			'coursepress_student_settings' => $this->get_sample_content('coursepress_student_settings'),
 		);
 
 		$layouts['course-press'] = array(
@@ -199,6 +204,51 @@ class Upfront_Compat_CoursePress {
 					'displayname' => __('CoursePress Course Workbook page', 'upfront'),
 					'killPostSettings' => __('This is virtual page handled by CoursePress.', 'upfront'),
 				),
+				array(
+					'item' => 'single-course_grades_archive',
+					'specificity' => 'single-course_grades_archive',
+					'type' => 'single',
+					'content' => 'course_grades_archive',
+					'title' => __('Course Number One', 'upfront'),
+					'displayname' => __('CoursePress Course Workbook page', 'upfront'),
+					'killPostSettings' => __('This is virtual page handled by CoursePress.', 'upfront'),
+				),
+				array(
+					'item' => 'single-coursepress_student_login',
+					'specificity' => 'single-coursepress_student_login',
+					'type' => 'single',
+					'content' => 'coursepress_student_login',
+					'title' => __('Course Number One', 'upfront'),
+					'displayname' => __('CoursePress Student Login page', 'upfront'),
+					'killPostSettings' => __('This is virtual page handled by CoursePress.', 'upfront'),
+				),
+				array(
+					'item' => 'single-coursepress_student_signup',
+					'specificity' => 'single-coursepress_student_signup',
+					'type' => 'single',
+					'content' => 'coursepress_student_signup',
+					'title' => __('Course Number One', 'upfront'),
+					'displayname' => __('CoursePress Student Signup page', 'upfront'),
+					'killPostSettings' => __('This is virtual page handled by CoursePress.', 'upfront'),
+				),
+				array(
+					'item' => 'single-coursepress_student_dashboard',
+					'specificity' => 'single-coursepress_student_dashboard',
+					'type' => 'single',
+					'content' => 'coursepress_student_dashboard',
+					'title' => __('Course Number One', 'upfront'),
+					'displayname' => __('CoursePress Courses Dashboard page', 'upfront'),
+					'killPostSettings' => __('This is virtual page handled by CoursePress.', 'upfront'),
+				),
+				array(
+					'item' => 'single-coursepress_student_settings',
+					'specificity' => 'single-coursepress_student_settings',
+					'type' => 'single',
+					'content' => 'coursepress_student_settings',
+					'title' => __('Course Number One', 'upfront'),
+					'displayname' => __('CoursePress Student Settings page', 'upfront'),
+					'killPostSettings' => __('This is virtual page handled by CoursePress.', 'upfront'),
+				),
 			)
 		);
 
@@ -235,6 +285,23 @@ class Upfront_Compat_CoursePress {
 		if ($specificity === 'single-course_workbook') {
 			return __('CoursePress Course Workbook', 'upfront');
 		}
+
+		if ($specificity === 'single-course_grades_archive') {
+			return __('CoursePress Course Grades', 'upfront');
+		}
+		if ($specificity === 'single-coursepress_student_login') {
+			return __('CoursePress Student Login', 'upfront');
+		}
+		if ($specificity === 'single-coursepress_student_signup') {
+			return __('CoursePress Student Signup', 'upfront');
+		}
+		if ($specificity === 'single-coursepress_student_dashboard') {
+			return __('CoursePress Courses Dashboard', 'upfront');
+		}
+		if ($specificity === 'single-coursepress_student_settings') {
+			return __('CoursePress Student Settings', 'upfront');
+		}
+
 
 		return $layout_name;
 	}
@@ -294,6 +361,41 @@ class Upfront_Compat_CoursePress {
 				'type' => 'single',
 				'item' => 'course_workbook',
 				'specificity' => 'single-course_workbook'
+			)
+		);
+		$layouts[] = array(
+			'layout' => array(
+				'type' => 'single',
+				'item' => 'course_grades_archive',
+				'specificity' => 'single-course_grades_archive'
+			)
+		);
+		$layouts[] = array(
+			'layout' => array(
+				'type' => 'single',
+				'item' => 'coursepress_student_login',
+				'specificity' => 'single-coursepress_student_login'
+			)
+		);
+		$layouts[] = array(
+			'layout' => array(
+				'type' => 'single',
+				'item' => 'coursepress_student_signup',
+				'specificity' => 'single-coursepress_student_signup'
+			)
+		);
+		$layouts[] = array(
+			'layout' => array(
+				'type' => 'single',
+				'item' => 'coursepress_student_dashboard',
+				'specificity' => 'single-coursepress_student_dashboard'
+			)
+		);
+		$layouts[] = array(
+			'layout' => array(
+				'type' => 'single',
+				'item' => 'coursepress_student_settings',
+				'specificity' => 'single-coursepress_student_settings'
 			)
 		);
 
