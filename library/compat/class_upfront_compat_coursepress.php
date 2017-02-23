@@ -19,6 +19,31 @@ class Upfront_Compat_CoursePress {
 		add_filter('upfront-builder_available_layouts', array($this, 'add_builder_available_layouts'));
 		add_filter('upfront-post_data-get_content-before', array($this, 'kill_double_discussion_querying'));
 		add_filter('upfront-post_data-get_content-after', array($this, 'balance_out_tags_in_discussion_content'));
+		add_filter('upfront-post_data-get_content-after', array($this, 'wrap_with_coursepress_css_class'), 99);
+	}
+
+	public function wrap_with_coursepress_css_class($content) {
+		$layout = Upfront_Layout::get_parsed_cascade();
+		$cp_layouts = array(
+			'single-course',
+			'single-course_archive',
+			'single-course_discussion',
+			'single-course_discussion_archive',
+			'single-course_grades_archive',
+			'single-course_notifications_archive',
+			'single-course_workbook',
+			'single-coursepress_student_dashboard',
+			'single-coursepress_student_login',
+			'single-coursepress_student_settings',
+			'single-coursepress_student_signup',
+			'single-unit',
+			'single-unit_archive',
+			'single-coursepress_instructor'
+		);
+
+		if (in_array($layout['item'], $cp_layouts) === false) return $content;
+
+		return '<div class="coursepress-content">' . $content . '</div>';
 	}
 
 	/**
