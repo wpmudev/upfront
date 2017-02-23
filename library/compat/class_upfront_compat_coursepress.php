@@ -80,7 +80,10 @@ class Upfront_Compat_CoursePress {
 	}
 
 	public function add_hooks() {
-		if (class_exists('CoursePress') === false) return;
+		if (class_exists('CoursePress') === false) {
+			add_filter('upfront-builder_skip_exported_layouts', array($this, 'skip_layouts_when_inactive'), 10, 2);
+		 	return;
+		}
 
 		// Force always loading CP styles in builder
 		if (upfront_exporter_is_running() && class_exists('CoursePress_Core')) CoursePress_Core::$is_cp_page = true;
@@ -92,6 +95,16 @@ class Upfront_Compat_CoursePress {
 		add_filter('upfront-post_data-get_content-before', array($this, 'kill_double_discussion_querying'));
 		add_filter('upfront-post_data-get_content-after', array($this, 'balance_out_tags_in_discussion_content'));
 		add_filter('upfront-post_data-get_content-after', array($this, 'wrap_with_coursepress_css_class'), 99);
+	}
+
+	/**
+	 * Hides CoursePress layouts in builder exported layouts if "Layouts" popup when CoursePress is not active.
+	 */
+	public function skip_layouts_when_inactive($skip, $layout) {
+		$s = str_replace('single-', '', $layout['specificity']);
+		if (empty($this->cp_layouts[$s]) === false) return true;
+
+		return $skip;
 	}
 
 	/**
