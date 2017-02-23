@@ -117,7 +117,8 @@
 								if(panel == 'posts'){
 										collection = new Upfront.Collections.PostList([], {postType: 'post'});
 										collection.orderby = 'post_date';
-										fetchOptions = {filterContent: true, withAuthor: true, limit: 15};
+										fetchOptions = {filterContent: true, withAuthor: true, limit: 15, post_status: 'any'};
+console.log(new Upfront.Collections.FilterList([], {postType: 'post'}).fetch({postType: 'post'}));
 								}
 								else if(panel == 'pages'){
 										collection = new Upfront.Collections.PostList([], {postType: 'page'});

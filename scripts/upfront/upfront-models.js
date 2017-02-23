@@ -1481,6 +1481,7 @@ var _alpha = "alpha",
 		postType: 'post',
 		withMeta: false,
 		withAuthor: false,
+		withThumbnail: false,
 		fetchAttributes: ['postId', 'postType', 'withMeta', 'withAuthor', 'withThumbnail'],
 		initialize: function(models, options){
 			if(options){
@@ -1643,6 +1644,21 @@ var _alpha = "alpha",
 		}
 	}),
 
+	Filter = Backbone.Model.extend({
+		defaults: {
+			value: '',
+			label: ''
+		},
+	}),
+
+	FilterList = WPCollection.extend({
+		model: Filter,
+		collectionName: 'filter_data',
+		initialize: function(models, options){
+			console.log(models, options)
+		},
+	}),
+
 	Term =  WPModel.extend({
 		modelName: 'term',
 		defaults: {
@@ -1795,6 +1811,7 @@ return {
       "Comment": Comment,
       "Comments": Comments,
       "Meta": Meta,
+      "Filter": Filter,
       "Term": Term,
       "User": User,
       "ImageVariant" : ImageVariant
@@ -1807,6 +1824,7 @@ return {
       "Wrappers": Wrappers,
       "CommentList": CommentList,
       "MetaList": MetaList,
+      "FilterList": FilterList,
       "PostList": PostList,
       "TermList": TermList,
       "ImageVariants" : ImageVariants,

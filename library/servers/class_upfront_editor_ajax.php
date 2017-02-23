@@ -172,6 +172,61 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$this->_out(new Upfront_JsonResponse_Success($updated));
 	}
 
+	public function fetch_filter_data ($data) {
+		$post_type = $data['postType'] ? $data['postType'] : 'post';
+		$dates = $this->_get_date_filter_data($post_type);
+		return $this->_out(new Upfront_JsonResponse_Success(array(
+			'dates' => $dates,
+		)));
+	}
+
+	// Based off of core's method: WP_List_Table::months_dropdown()
+	private function _get_date_filter_data ($post_type) {
+		global $wpdb, $wp_locale;
+
+		$extra_checks = "AND post_status != 'auto-draft'";
+        if ( ! isset( $_GET['post_status'] ) || 'trash' !== $_GET['post_status'] ) {
+            $extra_checks .= " AND post_status != 'trash'";
+        } elseif ( isset( $_GET['post_status'] ) ) {
+            $extra_checks = $wpdb->prepare( ' AND post_status = %s', $_GET['post_status'] );
+        }
+
+		$months = $wpdb->get_results( $wpdb->prepare( "
+            SELECT DISTINCT YEAR( post_date ) AS year, MONTH( post_date ) AS month
+            FROM $wpdb->posts
+            WHERE post_type = %s
+            $extra_checks
+            ORDER BY post_date DESC
+        ", $post_type ) );
+
+		$months = apply_filters( 'months_dropdown_results', $months, $post_type );
+ 
+        $month_count = count( $months );
+		// Array to return with values and labels of dates.
+		$date_values_and_labels = array();
+ 
+        if ( !$month_count || ( 1 == $month_count && 0 == $months[0]->month ) )
+            return;
+
+		foreach ( $months as $arc_row ) {
+            if ( 0 == $arc_row->year )
+                continue;
+ 
+            $month = zeroise( $arc_row->month, 2 );
+            $year = $arc_row->year;
+ 
+            $value = esc_attr( $year . $month );
+            $label = sprintf( __( '%1$s %2$d' ), $wp_locale->get_month( $month ), $year );
+			$date_values_and_labels[] = array(
+				'value' => $value,
+				'label' => $label,
+			);
+		}
+		return $date_values_and_labels;
+	}
+
+
+
 	function fetch_term($data) {
 		if(!$data['taxonomy'])
 			$this->_out(new Upfront_JsonResponse_Error("Invalid taxonomy."));
@@ -776,6 +831,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$limit = isset($data['limit']) ? (int)$data['limit'] : 10;
 		$page = isset($data['page']) ? (int)$data['page'] + 1 : 1;
 		$search = !empty($data['search']) ? $data['search'] : false;
+		$status = !empty($data['post_status']) ? $data['post_status'] : false;
 
 		$args = array(
 			'orderby' => $sort,
@@ -783,6 +839,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			'post_type' => $post_type,
 			'posts_per_page' => $limit,
 			'paged' => $page,
+			'post_status' => $status,
 		);
 		if ($search) $args['s'] = $search;
 

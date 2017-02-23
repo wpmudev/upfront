@@ -142,6 +142,8 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'private_post' => __('Privately Published', 'upfront'),
 				'new_post' => __('New', 'upfront'),
 				'search_posts' => __('Search posts...', 'upfront'),
+				'search_pages' => __('Search pages...', 'upfront'),
+				'search_cpts' => __('Search CPTs...', 'upfront'),
 				'deleted_post' => __('Deleted', 'upfront'),
 				'public_post' => __('Public', 'upfront'),
 				'sticky' => __('Sticky', 'upfront'),
