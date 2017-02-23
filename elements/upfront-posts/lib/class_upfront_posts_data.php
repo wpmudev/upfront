@@ -67,11 +67,6 @@ class Upfront_Posts_PostsData {
 			'preset' => 'default'
 		);
 
-		foreach ($default_parts as $part) {
-			$key = self::_slug_to_part_key($part);
-			$defaults[$key] = self::get_template($part);
-		}
-		
 		$defaults = self::apply_preset($defaults);
 
 		return $defaults;
@@ -152,7 +147,7 @@ class Upfront_Posts_PostsData {
 	 * @param  string $slug Raw slug
 	 * @return string Finished part name
 	 */
-	private static function _slug_to_part_key ($slug) {
+	public static function _slug_to_part_key ($slug) {
 		$slug = self::_get_normalized_slug($slug);
 		return "post-part-{$slug}";
 	}

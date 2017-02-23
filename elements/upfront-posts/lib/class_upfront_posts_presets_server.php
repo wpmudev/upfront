@@ -40,11 +40,22 @@ class Upfront_Posts_Presets_Server extends Upfront_Presets_Server {
 	}
 	
 	public static function get_preset_defaults() {
-		return array(
+		$defaults = array(
 			'id' => 'default',
 			'name' => self::$instance->get_l10n('default_preset'),
 			'enabled_post_parts' => array('title', 'content')
 		);
+		
+		$default_parts = Upfront_Posts_PostView::get_default_parts();
+		$default_parts = apply_filters('upfront_posts-defaults-default_parts', $default_parts);
+
+		// Set post part templates to preset
+		foreach ($default_parts as $part) {
+			$key = Upfront_Posts_PostsData::_slug_to_part_key($part);
+			$defaults[$key] = Upfront_Posts_PostsData::get_template($part);
+		}
+
+		return $defaults;
 	}
 }
 
