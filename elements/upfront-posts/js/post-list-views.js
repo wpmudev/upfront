@@ -77,9 +77,8 @@ var Views = {
 				model = Upfront.Util.model_to_json(this.model),
 				preset = this.model.get_property_value_by_name('preset'),
 				presets = (Upfront.mainData || {})["postsPresets"] || [],
-				post_parts = (_.findWhere(presets, {id: preset}) || {}).enabled_post_parts || [],
-				preset_post_parts = this.model.set_property('preset_post_parts', post_parts),
-				props = model.properties || {},
+				preset_props = (_.findWhere(presets, {id: preset}) || {}),
+				props = model.properties || {}, 
 				query = {}
 			;
 			
@@ -91,6 +90,7 @@ var Views = {
 					action: "upfront_posts-load",
 					data: {
 						props: props,
+						preset_props: preset_props,
 						query: query,
 						compat: this.element.is_compat() ? 1 : 0
 					}

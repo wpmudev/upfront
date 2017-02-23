@@ -103,6 +103,8 @@ class Upfront_Posts extends Upfront_Server {
 	public function load_posts () {
 		$request = !empty($_POST['data']) ? stripslashes_deep($_POST['data']) : array();
 		$data = !empty($request['props']) ? $this->to_data_array($request['props']) : array();
+		$preset_data = !empty($request['preset_props']) ? $request['preset_props'] : array();
+		$data = array_merge($data, $preset_data);
 		$compat = !empty($request['compat']) ? ($request['compat'] == 1) : false;
 		if (!empty($request['query'])) $data['query'] = $request['query'];
 
