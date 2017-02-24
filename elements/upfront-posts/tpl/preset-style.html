@@ -43,6 +43,18 @@
 
 <?php } ?>
 
+<?php if(!empty($properties['gravatar-use']) && $properties['gravatar-use'] == 'yes') { ?>
+
+#page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.gravatar img {
+	<?php if(!empty($properties['gravatar-border-width']) && !empty($properties['gravatar-border-type']) && !empty($properties['gravatar-border-color'])) { ?>border: <?php echo $properties['gravatar-border-width'] ?>px <?php echo $properties['gravatar-border-type'] ?> <?php echo $properties['gravatar-border-color'] ?>;<?php } ?>
+	
+	<?php if(!empty($properties['gravatar-radius']) { ?>
+		border-radius: <?php echo $properties['gravatar-radius'] ?>px;
+	<?php } ?>
+}
+
+<?php } ?>
+
 /* Custom CSS */
 
 <?php if(!empty($properties['preset_style'])) { ?><?php echo $properties['preset_style'] ?><?php } ?>
