@@ -174,10 +174,56 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 	public function fetch_filter_data ($data) {
 		$post_type = $data['postType'] ? $data['postType'] : 'post';
+		$statuses = $this->_get_status_filter_data($post_type);
 		$dates = $this->_get_date_filter_data($post_type);
+		$categories = $this->_get_category_filter_data($post_type);
+
 		return $this->_out(new Upfront_JsonResponse_Success(array(
+			'statuses' => $statuses,
 			'dates' => $dates,
+			'categories' => $categories,
 		)));
+	}
+
+	// Based off of core's method: WP_Posts_List_Table::get_views()
+	private function _get_status_filter_data ($post_type) {
+/*
+ *        $num_posts = wp_count_posts( $post_type, 'readable' );
+ *        $statuses = array();
+ *
+ *        if ( $mine ) {
+ *            $statuses['mine'] = $mine;
+ *        }
+ */
+
+/*
+ *        foreach ( get_post_stati(array('show_in_admin_status_list' => true), 'objects') as $status ) {
+ *            $class = '';
+ *
+ *            $status_name = $status->name;
+ *
+ *            if ( ! in_array( $status_name, $avail_post_stati ) || empty( $num_posts->$status_name ) ) {
+ *                continue;
+ *            }
+ *
+ *            if ( isset($_REQUEST['post_status']) && $status_name === $_REQUEST['post_status'] ) {
+ *                $class = 'current';
+ *            }
+ *
+ *            $status_args = array(
+ *                'post_status' => $status_name,
+ *                'post_type' => $post_type,
+ *            );
+ *
+ *            $status_label = sprintf(
+ *                translate_nooped_plural( $status->label_count, $num_posts->$status_name ),
+ *                number_format_i18n( $num_posts->$status_name )
+ *            );
+ *
+ *            $statuses[ $status_name ] = $this->get_edit_link( $status_args, $status_label, $class );
+ *        }
+ */
+		return get_post_stati(array('show_in_admin_status_list' => true), 'objects');
 	}
 
 	// Based off of core's method: WP_List_Table::months_dropdown()
@@ -223,6 +269,61 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			);
 		}
 		return $date_values_and_labels;
+	}
+
+	// Based off of core's function: wp_dropdown_categories
+	private function _get_category_filter_data ($post_type) {
+		$defaults = array(
+			'show_option_all'   => '',
+			'show_option_none'  => '',
+			'orderby'           => 'id',
+			'order'             => 'ASC',
+			'show_count'        => 0,
+			'hide_empty'        => 1,
+			'child_of'          => 0,
+			'exclude'           => '',
+			'echo'              => 1,
+			'selected'          => 0,
+			'hierarchical'      => 0,
+			'name'              => 'cat',
+			'id'                => '',
+			'class'             => 'postform',
+			'depth'             => 0,
+			'tab_index'         => 0,
+			'taxonomy'          => 'category',
+			'hide_if_empty'     => false,
+			'option_none_value' => -1,
+			'value_field'       => 'term_id',
+			'required'          => false,
+		);
+
+		$defaults['selected'] = ( is_category() ) ? get_query_var( 'cat' ) : 0;
+
+		$r = wp_parse_args( $args, $defaults );
+		$option_none_value = $r['option_none_value'];
+
+		if ( ! isset( $r['pad_counts'] ) && $r['show_count'] && $r['hierarchical'] ) {
+			$r['pad_counts'] = true;
+		}
+
+		$tab_index = $r['tab_index'];
+
+		$tab_index_attribute = '';
+		if ( (int) $tab_index > 0 ) {
+			$tab_index_attribute = " tabindex=\"$tab_index\"";
+		}
+
+		// Avoid clashes with the 'name' param of get_terms().
+		$get_terms_args = $r;
+		unset( $get_terms_args['name'] );
+		$categories = get_terms( $r['taxonomy'], $get_terms_args );
+
+		$name = esc_attr( $r['name'] );
+		$class = esc_attr( $r['class'] );
+		$id = $r['id'] ? esc_attr( $r['id'] ) : $name;
+		$required = $r['required'] ? 'required' : '';
+		return $categories;
+
 	}
 
 
