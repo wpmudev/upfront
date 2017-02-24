@@ -145,10 +145,17 @@
 				
 				var $sidebar_panel_content = this.$el.find('.sidebar-panel-content');
 				// Add JS Scrollbar.
-				perfectScrollbar.initialize($sidebar_panel_content[0], {
-					suppressScrollX: true
-				});
-				
+				perfectScrollbar.withDebounceUpdate(
+					// Element.
+					$sidebar_panel_content[0],
+					// Run First.
+					true,
+					// Event.
+					false,
+					// Initialize.
+					true
+				);
+	
 				var me = this;
 				// When color spectrum is shown, set positions
 				Upfront.Events.on("color:spectrum:show", function() {

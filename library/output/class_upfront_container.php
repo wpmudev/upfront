@@ -151,7 +151,14 @@ abstract class Upfront_Container extends Upfront_Entity {
 			self::$_presets = array(
 				'UnewnavigationModel' => Upfront_Nav_Presets_Server::get_instance()->get_presets_ids(),
 				'ButtonModel' => Upfront_Button_Presets_Server::get_instance()->get_presets_ids(),
-				'PostDataModel' => Upfront_PostData_Presets_Server::get_instance()->get_presets_ids(),
+				'PostDataModel' => array(
+					'post_data' => Upfront_PostData_Presets_Server::get_instance()->get_presets_ids(),
+					'author' => Upfront_Author_Presets_Server::get_instance()->get_presets_ids(),
+					'featured_image' => Upfront_FeaturedImage_Presets_Server::get_instance()->get_presets_ids(),
+					'taxonomy' => Upfront_Taxonomy_Presets_Server::get_instance()->get_presets_ids(),
+					'comments' => Upfront_Comments_Presets_Server::get_instance()->get_presets_ids(),
+					'meta' => Upfront_Meta_Presets_Server::get_instance()->get_presets_ids()
+				),
 				'PostsModel' => Upfront_Posts_Presets_Server::get_instance()->get_presets_ids(),
 				'PlainTxtModel' => Upfront_Text_Presets_Server::get_instance()->get_presets_ids(),
 				'UimageModel' => Upfront_Image_Presets_Server::get_instance()->get_presets_ids(),
@@ -170,14 +177,25 @@ abstract class Upfront_Container extends Upfront_Entity {
 		return self::$_presets;
 	}
 	
-	public function preset_exist ( $preset, $type ) {
+	public function preset_exist ( $preset, $type, $data_type = '' ) {
 		
 		if( empty( $type ) ) return 'default';
 		
 		$presets = Upfront_Container::_load_presets();
+		
+		if ( empty($data_type) ) {
+			$preset_list = isset($presets[$type]) && !empty($presets[$type]) 
+				? $presets[$type] 
+				: array();
+		}
+		else {
+			$preset_list = isset($presets[$type]) && isset($presets[$type][$data_type]) && !empty($presets[$type][$data_type]) 
+				? $presets[$type][$data_type] 
+				: array();
+		}
 
-		if( isset( $presets[$type] ) && !empty( $presets[$type] ) ) {
-			if( in_array( $preset, $presets[$type] ) ) {
+		if( !empty($preset_list) ) {
+			if( in_array( $preset, $preset_list ) ) {
 				return $preset;
 			} else {
 				return 'default';
@@ -191,11 +209,12 @@ abstract class Upfront_Container extends Upfront_Entity {
 		$preset_map = array();
 		$raw_preset_map = upfront_get_property_value('breakpoint_presets', $data);
 		$type = upfront_get_property_value('type', $data);
+		$data_type = ( 'PostDataModel' === $type ) ? upfront_get_property_value('data_type', $data) : '';
 		if (!empty($raw_preset_map)) foreach ($raw_preset_map as $bp => $pst) {
 			if (empty($pst['preset'])) continue;
 			
 			// Check if preset exist, if not use default
-			$pst['preset'] = $this->preset_exist( $pst['preset'], $type );
+			$pst['preset'] = $this->preset_exist( $pst['preset'], $type, $data_type );
 			
 			$preset_map[$bp] = esc_js($pst['preset']);
 		}
@@ -285,10 +304,19 @@ abstract class Upfront_Container extends Upfront_Entity {
 			$pre = "";
 			$post = "";
 		}
-
+		
+		
+		// Display role on region container
+		$role = "";
+		
+		$region_role = $this->_get_property('region_role');
+		if ( !empty( $region_role ) ) {
+			$role = "role='{$region_role}'";
+		}
+		
 		$style = $style ? "style='{$style}'" : '';
 		$element_id = $element_id ? "id='{$element_id}'" : '';
-		return "{$pre}<{$this->_tag} class='{$class}' {$style} {$element_id} {$attr}>{$out}</{$this->_tag}>{$post}";
+		return "{$pre}<{$this->_tag} class='{$class}' {$role} {$style} {$element_id} {$attr}>{$out}</{$this->_tag}>{$post}";
 	}
 
 	public function get_wrapper () {

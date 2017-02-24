@@ -1,4 +1,4 @@
-<div class="upfront_login upfront_login-block">
+<div class="upfront_login upfront_login-block" role="form">
 	<div class="upfront_login-form-wrapper">
 		<div class="upfront_login-form">
 			<?php 

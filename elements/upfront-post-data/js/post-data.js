@@ -620,7 +620,8 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			: new Views[Views.DEFAULT]({model: this.model})
 		;
 		view.element = this;
-		view.element.postId = this.editor.postId;
+		// When rendering plugin page with fake content there will be no editor
+		view.element.postId = this.editor ? this.editor.postId : false;
 		view.render();
 
 		this.child_view = view;
@@ -663,6 +664,8 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 	},
 
 	prepare_editor: function () {
+		// When rendering plugin page with fake content there will be no editor
+		if (!Upfront.Views || !Upfront.Views.PostDataEditor) return;
 		//this.listenTo(Upfront.Views.PostDataEditor, 'post:saved post:trash', this.on_render); // No need anymore with current post experience
 		this.listenTo(Upfront.Views.PostDataEditor, 'post:cancel', this.on_cancel);
 		this.listenTo(Upfront.Views.PostDataEditor, 'editor:edit:start', this.on_edit_start);

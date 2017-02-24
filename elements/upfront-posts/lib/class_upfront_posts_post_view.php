@@ -147,20 +147,20 @@ class Upfront_Posts_PostView {
 
 	public function expand_featured_image_template () {
 		if (empty($this->_post->ID)) return '';
-		
+
 		$thumbnail_size = isset($this->_data['thumbnail_size'])
 			? $this->_data['thumbnail_size']
 			: Upfront_Posts_PostsData::get_default('thumbnail_size')
 		;
-		
+
 		$thumbnail = upfront_get_edited_post_thumbnail($this->_post->ID, false, $thumbnail_size);
 		if (empty($thumbnail)) return '';
 
-        $resize_featured = isset($this->_data['resize_featured'])
-        	? (int)$this->_data['resize_featured']
-        	: (int)Upfront_Posts_PostsData::get_default('resize_featured')
-        ;
-        $resize_featured = $resize_featured ? 0 : 1; // Reverse the logic, as per: https://app.asana.com/0/11140166463836/75256787123017
+		$resize_featured = isset($this->_data['resize_featured'])
+			? (int)$this->_data['resize_featured']
+			: (int)Upfront_Posts_PostsData::get_default('resize_featured')
+		;
+		$resize_featured = $resize_featured ? 0 : 1; // Reverse the logic, as per: https://app.asana.com/0/11140166463836/75256787123017
 
 		$out = $this->_get_template('featured_image');
 
@@ -174,7 +174,7 @@ class Upfront_Posts_PostView {
 	public function expand_title_template () {
 		if (empty($this->_post->post_title)) return '';
 
-		$title = esc_html(apply_filters('the_title', $this->_post->post_title));
+		$title = esc_html(apply_filters('the_title', $this->_post->post_title, $this->_post->ID));
 		$permalink = get_permalink($this->_post->ID);
 
 		$out = $this->_get_template('title');
@@ -187,9 +187,9 @@ class Upfront_Posts_PostView {
 
 	public function expand_content_template () {
 		$length = isset($this->_data['content_length'])
-        	? (int)$this->_data['content_length']
-        	: (int)Upfront_Posts_PostsData::get_default('content_length')
-        ;
+			? (int)$this->_data['content_length']
+			: (int)Upfront_Posts_PostsData::get_default('content_length')
+		;
 		$content = $this->_get_content_value($length);
 		$content_type = $this->_get_content_type();
 
@@ -208,11 +208,11 @@ class Upfront_Posts_PostView {
 		if (empty($tags)) return '';
 
 		$length = isset($this->_data['tags_limit'])
-        	? (int)$this->_data['tags_limit']
-        	: (int)Upfront_Posts_PostsData::get_default('tags_limit')
-        ;
+			? (int)$this->_data['tags_limit']
+			: (int)Upfront_Posts_PostsData::get_default('tags_limit')
+		;
 
-        if ($length) {
+		if ($length) {
 			$list = array_map('trim', explode(',', $tags));
 			$tags = join(', ', array_slice($list, 0, $length));
 		}
@@ -232,11 +232,11 @@ class Upfront_Posts_PostView {
 		if (empty($categories)) return '';
 
 		$length = isset($this->_data['categories_limit'])
-        	? (int)$this->_data['categories_limit']
-        	: (int)Upfront_Posts_PostsData::get_default('categories_limit')
-        ;
+			? (int)$this->_data['categories_limit']
+			: (int)Upfront_Posts_PostsData::get_default('categories_limit')
+		;
 
-        if ($length) {
+		if ($length) {
 			$list = array_map('trim', explode(',', $categories));
 			$categories = join(', ', array_slice($list, 0, $length));
 		}
@@ -254,9 +254,13 @@ class Upfront_Posts_PostView {
 
 		$permalink = get_permalink($this->_post->ID);
 
+		$title = esc_html(apply_filters('the_title', $this->_post->post_title, $this->_post->ID));
+
 		$out = $this->_get_template('read_more');
 
 		$out = Upfront_Codec::get()->expand($out, "permalink", $permalink);
+
+		$out = Upfront_Codec::get()->expand($out, "title", $title);
 
 		return $out;
 	}

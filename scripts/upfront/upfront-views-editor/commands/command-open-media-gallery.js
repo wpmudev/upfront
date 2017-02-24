@@ -16,7 +16,8 @@
             on_click: function () {
                 Upfront.Media.Manager.open({
                     media_type: ["images", "videos", "audios", "other"],
-                    show_control: false
+                    show_control: false,
+					show_insert: false
                 });
             }
         });

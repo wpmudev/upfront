@@ -184,7 +184,8 @@ define([
 		current_page: 1,
 		max_pages: 1,
 		max_items: 1,
-		media_limit: 20,
+		media_limit: 60,
+		current_filter_control: 0,
 		initialize: function () {
 			this.to_defaults();
 			Upfront.Events.on("media_manager:media:filters_updated", this.update_active_filters, this);
@@ -223,6 +224,7 @@ define([
 
 			this.themeImages =false;
 			this.current_page = 1;
+			this.current_filter_control = 0;
 
 			this.set_labels_to_defaults();
 		},
@@ -341,6 +343,9 @@ define([
             this.options = args.options;
 		},
 		render: function () {
+			if (!this.options.show_insert) {
+				this.$el.addClass('upfront-media-controls-no-insert');
+			}
 			this.render_filters();
 		},
 		render_filters: function () {
@@ -540,6 +545,8 @@ define([
 					sections = _([
 						'size_hints',
 						'change_title',
+						'change_alt',
+						'copy_url',
 						//'existing_labels',
 						'add_labels',
 						'insert_options',
@@ -548,6 +555,8 @@ define([
 					renderers = _([
 						'render_size_hint',
 						'render_title',
+						'render_alt',
+						'render_copy_url',
 						//'render_shared_labels',
 						'render_labels_adding',
 						'render_insert_options',
@@ -637,6 +646,26 @@ define([
 					}
 				}
 			},
+			render_alt: function () {
+				var	me = this,
+					$hub = this.$el.find(".change_alt"),
+					image = this.model.at(0).get('image');
+
+
+				$hub.empty();
+				if (this.model.length === 1) {
+					this.alt_field = new Upfront.Views.Editor.Field.Text({
+						model: this.model.at(0),
+						label: l10n.media_alt,
+						name: 'alt',
+						change: function(){
+							me.change_alt();
+						}
+					});
+					this.alt_field.render();
+					$hub.append(this.alt_field.$el);
+				}
+			},
 			render_title: function () {
 				var	me = this,
 					$hub = this.$el.find(".change_title")
@@ -661,6 +690,22 @@ define([
 					this.title_field.render();
 					$hub.append(this.title_field.$el);
 				}
+			},
+			render_copy_url: function () {
+				var	$hub = this.$el.find(".copy_url");
+				if (this.model.length > 1) return false;
+				
+				this.copy_url = new Upfront.Views.Editor.Field.Button({
+					model: this.model.at(0),
+					label: l10n.copy_url,
+					compact: true,
+					name: "document_url",
+					on_click: function () {
+						Upfront.Util.add_to_clipboard(this.model.get('document_url'));
+					}
+				});
+				this.copy_url.render();
+				$hub.append(this.copy_url.$el);
 			},
 			render_labels_adding: function () {
 				var me = this,
@@ -689,53 +734,38 @@ define([
 				});
 			},
 			render_additional_sizes: function () {
-                var me = this,
-                    $hub = this.$el.find(".additional_sizes"),
-                    additional_sizes = this.model.get_additional_sizes(),
-                    title = l10n.additional_sizes,
-                    sizes = []
-                    ;
-                $hub.empty();
+				var me = this,
+					$hub = this.$el.find(".additional_sizes"),
+					additional_sizes = this.model.get_additional_sizes(),
+					title = l10n.additional_sizes,
+					sizes = []
+					;
+				$hub.empty();
 
-                if( ( this.options.insert_options &&  this.model.at(0).get("insert_option") === INSERT_OPTIONS.wp_insert) || ( !this.options.hide_sizes  && !this.options.insert_options )    ) {
-                    if (!additional_sizes.length) return false;
-                    _(additional_sizes).each(function (size) {
-                        sizes.push({ label: (size === MEDIA_SIZES.FULL ? l10n.size_full : size), value: size });
-                    });
-                    this.size_field = new Upfront.Views.Editor.Field.Select({
-                        model: this.model.at(0),
-                        label: title,
-                        name: 'selected_size',
-                        width: '100%',
-                        values: sizes,
-                        default_value: MEDIA_SIZES.FULL,
-                        change: function(){
-                            me.select_size();
-                        }
-                    });
-                    this.size_field.render();
-                    $hub.append(this.size_field.$el);
-                    this.size_field.$el.on("click", function (e) {
-                        e.stopPropagation();
-                    });
-                }
-
-
-                if (this.model.length < 2) {
-                    this.add_url_label($hub);
-                }
+				if( ( this.options.insert_options &&  this.model.at(0).get("insert_option") === INSERT_OPTIONS.wp_insert) || ( !this.options.hide_sizes  && !this.options.insert_options )    ) {
+					if (!additional_sizes.length) return false;
+					_(additional_sizes).each(function (size) {
+						if (size === MEDIA_SIZES.FULL) return;
+						sizes.push({ label: size, value: size });
+					});
+					this.size_field = new Upfront.Views.Editor.Field.Radios({
+						model: this.model.at(0),
+						name: 'selected_size',
+						width: '100%',
+						values: sizes,
+						default_value: additional_sizes[0],
+						change: function(){
+							me.select_size();
+						}
+					});
+					this.size_field.render();
+					$hub.append(this.size_field.$el);
+					this.size_field.$el.on("click", function (e) {
+						e.stopPropagation();
+					});
+				}
 
 			},
-            add_url_label: function($hub){
-                // Add URL label
-                var url_field = new Upfront.Views.Editor.Field.Text({
-                    model: this.model.at(0),
-                    label: l10n.url,
-                    name: "document_url"
-                });
-                url_field.render();
-                $hub.append(url_field.$el);
-            },
 			select_size: function (e) {
 				//e.stopPropagation();
 				var size = this.size_field.get_value() || MEDIA_SIZES.FULL;
@@ -747,6 +777,23 @@ define([
 				//e.stopPropagation();
 				var model = this.model.at(0);
 				model.set({post_title: this.title_field.get_value()});
+				var me = this,
+					data = {
+						action: "upfront-media-update_media_item",
+						data: model.toJSON()
+					}
+				;
+				Upfront.Util.post(data)
+					.done(function () {
+						model.trigger("change");
+					})
+				;
+				model.trigger("appearance:update");
+			},
+			change_alt: function (e) {
+				//e.stopPropagation();
+				var model = this.model.at(0);
+				model.set({alt: this.alt_field.get_value()});
 				var me = this,
 					data = {
 						action: "upfront-media-update_media_item",
@@ -794,6 +841,7 @@ define([
 				},
 				initialize: function () {
 					this.listenTo(Upfront.Events, "media_manager:media:labels_updated", this.render);
+					this._adding_label = false;
 				},
 				stop_prop: function (e) {
 					e.stopPropagation();
@@ -811,7 +859,7 @@ define([
 						.append('<div class="labels_filter"><ul></ul><input type="text" class="filter upfront-field upfront-field-text" value="' + sel + '" placeholder="' + l10n.type_labels_pick + '" /></div>')
 						.append('<div class="labels_list"><ul></ul></div>')
 						.append('<div class="title">' + l10n.create_new_label + '</div>')
-						.append('<div class="new_labels"><a class="toggle-add-label">+</a><input type="text" class="add-label upfront-field upfront-field-text" placeholder="' + l10n.type_labels_add + '" /><a class="submit-label">+</a></div>')
+						.append('<div class="new_labels"><a class="toggle-add-label upfront-icon-control upfront-icon-label-add"></a><input type="text" class="add-label upfront-field upfront-field-text" placeholder="' + l10n.type_labels_add + '" /><a class="submit-label upfront-icon-control upfront-icon-label-add-alt"></a></div>')
 					;
 					this.render_existing_labels();
 					this.render_labels();
@@ -867,8 +915,11 @@ define([
 				show_add_label: function (e) {
 					e.preventDefault();
 					e.stopPropagation();
-					var $hub = this.$el.find(".new_labels");
+					var $hub = this.$el.find(".new_labels"),
+						$text = this.$el.find(".new_labels :text.add-label")
+					;
 					$hub.addClass('active');
+					$text.focus();
 				},
 				enter_new_labels: function (e) {
 					if (e.which == 13) {
@@ -880,9 +931,12 @@ define([
 						e.preventDefault();
 						e.stopPropagation();
 					}
+					if (this._adding_label) return;
 					var $text = this.$el.find(".new_labels :text.add-label"),
 						selection = $text.val()
 					;
+					this._adding_label = true;
+					$text.attr('disabled', true);
 					this.model.add_new_label(selection);
 				}
 			});
@@ -1077,7 +1131,7 @@ define([
 					className: "upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios upfront-filter_selection-tab",
 					values: values,
 					multiple: false,
-					default_value: 0,
+					default_value: ActiveFilters.current_filter_control,
 					change: function(){
 						me.select_control(this.get_value());
 					}
@@ -1090,6 +1144,7 @@ define([
 				this.$control.empty();
 				if ('false' === idx) return false;
 
+				ActiveFilters.current_filter_control = idx;
 
 				var control = this.controls.toArray()[idx];
 				control.render();
@@ -1192,7 +1247,10 @@ define([
 					match = 0
 				;
 				$hub.empty();
-				if (!this.selection) return false;
+				if (!this.selection) {
+					this.$el.removeClass('has_match');
+					return false;
+				}
 				//if (!this.$el.is(".active")) return false; // Only actually render this if we can see it - it takes *a while* to do so
 
 				this.model.each(function (model) {
@@ -1475,14 +1533,14 @@ define([
 	 */
 	var MediaManager_Switcher = Backbone.View.extend({
 		events: {
-			"click .upload": "switch_to_upload",
+			"click .media-upload": "switch_to_upload",
 			"click .media-info": "switch_controls"
 		},
 		info_template: _.template(
-			'<button type="button" class="media-info upfront-icon upfront-icon-media-info">' + l10n.info + '</button>'
+			'<button type="button" class="media-info upfront-icon-control upfront-icon-media-info">' + l10n.info + '</button>'
 		),
 		upload_template: _.template(
-			'<button type="button" class="upload">' + l10n.upload + '</button>'
+			'<button type="button" class="media-upload upfront-icon-control upfront-icon-media-upload">' + l10n.upload + '</button>'
 		),
 		initialize: function () {
 			Upfront.Events.on("media:item:selection_changed", this.switch_delete, this);
@@ -1509,8 +1567,10 @@ define([
             this.trigger("media_manager:switcher:to_upload");
 		},
 		switch_controls: function (e) {
-			e.preventDefault();
-			e.stopPropagation();
+			if (e) {
+				e.preventDefault();
+				e.stopPropagation();
+			}
 			this.$el.find('.media-info').toggleClass('media-info-active');
             this.trigger("media_manager:switcher:toggle_controls");
 		},
@@ -1551,18 +1611,19 @@ define([
 		initialize: function (data) {
 			data = _.extend({
 				type: "PostImage",
-				multiple_selection: false
+				multiple_selection: false,
+				show_control: true,
+				show_insert: true
 			}, data);
 
 			var type = data.type,
 				multiple_selection = data.multiple_selection,
 				button_text = data.button_text,
-				button_text_multiple = data.button_text_multiple,
-				show_control = _.isUndefined(data.show_control) ? true : data.show_control
+				button_text_multiple = data.button_text_multiple
 			;
 
 			this.popup_data = data.data;
-			this.show_control = show_control;
+			this.show_control = data.show_control;
 
 			ActiveFilters.to_defaults();
 			this.switcher_view = new MediaManager_Switcher({el: this.popup_data.$top});
@@ -1574,8 +1635,10 @@ define([
 				el: this.popup_data.$bottom,
 				button_text: button_text,
 				button_text_multiple: button_text_multiple,
-				ck_insert: data.ck_insert
+				ck_insert: data.ck_insert,
+				show_insert: data.show_insert
 			});
+			
 			this.library_view = new MediaManager_PostImage_View(data.collection, data);
 			//this.embed_view = new MediaManager_EmbedMedia({});
 
@@ -1585,6 +1648,8 @@ define([
 				ActiveFilters.themeImages = true;
 				this.library_view.multiple_selection = false;
 			}
+			
+			this.listenTo(Upfront.Events, "media:item:selection_changed", this.update_model);
 		},
 		remove: function() {
 			this.library_view.remove();
@@ -1607,15 +1672,6 @@ define([
 			this.library_view.render();
 
 			this.$el.empty().append(this.library_view.$el);
-			if (arguments.length) {
-				var sel = arguments[0], me = this;
-				if ("ID" in sel) {
-					this.library_view.media_collection.once("reset", function () {
-						var found = me.library_view.media_collection.where({ID: sel.ID});
-						if (found.length) found[0].set({selected: true});
-					});
-				}
-			}
 		},
 		render_embed: function () {
 			return false;
@@ -1639,7 +1695,10 @@ define([
 			}
 
 			var me = this,
-				uploaded = 0, progressing = 0, done =0,
+				uploaded = 0,
+				progressing = 0,
+				done = 0,
+				processed = 0,
 				new_media = [],
 				media_library_view = me.library_view._subviews.media,
 				uploadUrl = ActiveFilters.themeImages ? _upfront_media_upload.theme : _upfront_media_upload.normal
@@ -1654,7 +1713,7 @@ define([
 						count = uploaded,
 						name = media.name || 'tmp'
 					;
-					uploaded +=1;
+					uploaded++;
 					new_media[count] = new MediaItem_Model({progress: 0});
 					new_media[count].set({post_title: name});
 					media_library_view.model.add(new_media[count], {at: 0});
@@ -1678,16 +1737,22 @@ define([
 				},
 				progressall: function (e, data) {
 					var count = progressing;
-					progressing+=1;
+					progressing++;
 					var progress = parseInt(data.loaded / data.total * 100, 10);
 					if (new_media[count]) new_media[count].trigger("upload:progress", progress);
 				},
 				done: function (e, data) {
 					var count = done;
-					done +=1;
+					done++;
+					processed++;
 					if(ActiveFilters.themeImages){
 						new_media[count].set(data.result.data, {silent: true});
-						return new_media[count].trigger("upload:finish", me);
+						new_media[count].trigger("upload:finish", me);
+						if (processed == uploaded) { // Refresh when all images has processed
+							ActiveFilters.to_defaults();
+							Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+						}
+						return;
 					}
 
 					var result = data.result.data || [],
@@ -1701,13 +1766,20 @@ define([
 					}).done(function (response) {
 						new_media[count].set(response.data, {silent:true});
 						new_media[count].trigger("upload:finish", me);
-					}).fail(function () {
-						Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+					}).always(function () {
+						if (processed == uploaded) { // Refresh when all images has processed
+							ActiveFilters.to_defaults();
+							Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+						}
 					});
 				},
 				fail: function (e, data) {
+					processed++;
 					if (data.jqXHR.responseJSON && data.jqXHR.responseJSON.error) Upfront.Views.Editor.notify(data.jqXHR.responseJSON.error, 'error');
-					Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+					if (processed == uploaded) { // Refresh when all images has processed
+						ActiveFilters.to_defaults();
+						Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+					}
 				}
 			}).trigger("click");
 
@@ -1721,7 +1793,6 @@ define([
 		toggle_controls: function () {
 			if (!this.library_view) return false;
 			this.library_view.toggle_controls();
-			this.command_view.toggle_button();
 			this.show_control = false;
 		},
 		load: function (data) {
@@ -1737,7 +1808,7 @@ define([
 					ActiveFilters.set_max_items(response.data.meta.max_items);
 					me.library_view.update(response.data.items);
 					me.command_view.render();
-					if (me.show_control) me.toggle_controls();
+					if (me.show_control) me.switcher_view.switch_controls();
 				})
 				.fail(function (response) {
 					me.library_view.update([]);
@@ -1751,6 +1822,29 @@ define([
 		switch_media_type: function (what) {
 			if (this._request_in_progress) return false;
 			this.load(what.to_request_json());
+		},
+		update_model: function (selected) {
+			// checking on all models on current page
+			for ( var key in selected.models ) {
+				var model = selected.models[key],
+					modelAttributes = ((model || {}).attributes || {})
+					index = ActiveFilters.current_keys.indexOf(modelAttributes.ID)
+				;
+				if( index == -1 ) {
+					// inserting selected media models on the list
+					if( modelAttributes.selected ) {
+						ActiveFilters.current_keys.push(modelAttributes.ID);
+						ActiveFilters.current_models.push(model);
+					}
+				} else {
+					// removing media models on the list
+					if( !modelAttributes.selected || modelAttributes.selected === undefined ) {
+						ActiveFilters.current_keys.splice(index, 1);
+						ActiveFilters.current_models.splice(index, 1);
+					}
+				}
+			}
+			Upfront.Events.trigger("media_manager:active_filters:updated");
 		}
 	});
 
@@ -1765,6 +1859,10 @@ define([
 			var button_text = this.options.button_text,
 				button_text_multiple = this.options.button_text_multiple,
 				pagination = new MediaManager_Pagination(),
+				use = false
+			;
+			pagination.render();
+			if (this.options.show_insert) {
 				use = this.options.ck_insert 
 					? new MediaManager_BottomCommand_UseSelection_MultiDialog({
 							button_text: button_text,
@@ -1774,19 +1872,15 @@ define([
 							button_text: button_text,
 							button_text_multiple: button_text_multiple
 						})
-			;
-			pagination.render();
-			use.render();
+				use.render();
+			}
 			this.$el.empty()
 				.append(pagination.$el)
-				.append(use.$el)
+				.append(use !== false ? use.$el : '')
 			;
 		},
 		switch_to_upload: function (e) {
 			this.trigger("media_manager:switcher:to_upload");
-		},
-		toggle_button: function () {
-			this.$el.find('.use_selection_container').toggle();
 		}
 	});
 
@@ -1856,7 +1950,7 @@ define([
 			},
 			initialize: function (opts) {
 				this.options = opts;
-				Upfront.Events.on("media:item:selection_changed", this.update_model, this);
+				this.listenTo(Upfront.Events, "media_manager:active_filters:updated", this.render);
 			},
 			render: function () {
 				this.$el.empty();
@@ -1866,29 +1960,6 @@ define([
 				else if ( ActiveFilters.current_models.length > 1 ) {
 					this.$el.append('<a href="#use" class="use">' + ( this.options.button_text_multiple || l10n.ok ) + '</a>');
 				}
-			},
-			update_model: function (selected) {
-				// checking on all models on current page
-				for ( var key in selected.models ) {
-					var model = selected.models[key],
-						modelAttributes = ((model || {}).attributes || {})
-						index = ActiveFilters.current_keys.indexOf(modelAttributes.ID)
-					;
-					if( index == -1 ) {
-						// inserting selected media models on the list
-						if( modelAttributes.selected ) {
-							ActiveFilters.current_keys.push(modelAttributes.ID);
-							ActiveFilters.current_models.push(model);
-						}
-					} else {
-						// removing media models on the list
-						if( !modelAttributes.selected || modelAttributes.selected === undefined ) {
-							ActiveFilters.current_keys.splice(index, 1);
-							ActiveFilters.current_models.splice(index, 1);
-						}
-					}
-				}
-				this.render();
 			},
 			use_selection: function (e) {
 				e.preventDefault();
@@ -2241,7 +2312,6 @@ define([
 
 			// running again change event to apply persistent list
 			var selected_model = new MediaCollection_Selection(ActiveFilters.current_models);
-			console.log(ActiveFilters.current_models)
 			Upfront.Events.trigger("media:item:selection_changed", selected_model);
 		},
 		remove: function() {
@@ -2323,6 +2393,7 @@ define([
 				this.$el.find(".thumbnail .upfront-image-upload-placeholder").replaceWith(this.model.get("thumbnail"));
 				this.$el.find('.upfront-media-progress-bar').remove();
 
+				this.model.set({selected: true});
 				// adding it on persistent list
 				ActiveFilters.current_models.push(this.model);
 				// Only do if regular media.
@@ -2330,7 +2401,7 @@ define([
 					// Add as current keys so uploads are selected.
 					ActiveFilters.current_keys.push(this.model.attributes.ID);
 					// redraw media gallery
-					manager.render_library();
+					//manager.render_library();
 				}
 			},
 			remove: function() {

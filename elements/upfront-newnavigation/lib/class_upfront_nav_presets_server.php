@@ -5,6 +5,7 @@ if (!class_exists('Upfront_Presets_Server')) {
 }
 
 class Upfront_Nav_Presets_Server extends Upfront_Presets_Server {
+	protected $isNavigationServer = true;
 	private static $instance;
 
 	public function get_element_name() {

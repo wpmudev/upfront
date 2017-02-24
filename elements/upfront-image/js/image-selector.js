@@ -342,11 +342,10 @@ define([
 		},
 		openMediaGallery: function(e) {
 			var me = this,
-				opts = {
+				opts = _.extend({
 					multiple_selection: this.options.multiple,
-					multiple_sizes: this.options.multiple_sizes,
 					media_type:['images']
-				}
+				}, this.options)
 			;
 			e.preventDefault();
 

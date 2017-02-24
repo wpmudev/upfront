@@ -89,11 +89,13 @@ class Upfront_MediaServer extends Upfront_Server {
 			'selected' => __('%s selected', 'upfront'),
 			'selected_no_label' => __('%s selected, they do not share any common labels.', 'upfront'),
 			'media_title' => __("Media Title", 'upfront'),
+			'media_alt' => __("Media Alt", 'upfront'),
 			'natural_size' => __("Natural Size", 'upfront'), // remove
 			'information' => __("Information", 'upfront'),
 			'px_label' => __("px", 'upfront'),
 			'width_label' => __("w", 'upfront'),
 			'height_label' => __("h", 'upfront'),
+			'copy_url' => __("Copy File URL", 'upfront'),
 			'add_labels' => __("Add Label(s)", 'upfront'),
 			'media_labels' => __("Media Labels", 'upfront'),
 			'current_labels' => __("Current Label(s)", 'upfront'),
@@ -142,7 +144,7 @@ class Upfront_MediaServer extends Upfront_Server {
 			'image_title' => __('Image Title', 'upfront'),
 			'your_image_title' => __('Your image title', 'upfront'),
 			'n_of_x' => _x("of", "N of X", 'upfront'),
-			'entity_list_info' => __('{{items}} Media Files', 'upfront'),
+			'entity_list_info' => __('{{items}} Media', 'upfront'),
 			'filter' => array(
 				'images' => __('Images', 'upfront'),
 				'videos' => __('Videos', 'upfront'),
@@ -162,7 +164,8 @@ class Upfront_MediaServer extends Upfront_Server {
 			'confirm_delete_items' => __("Are you sure you want to delete selected items?", 'upfront'),
 			'on_this_page' => __("on this page", 'upfront'),
 			'display' => __('Display', 'upfront'),
-			'info' => __('Info', 'upfront')
+			'info' => __('Info', 'upfront'),
+			'full_size' => __('Full size', 'upfront')
 		);
 		return !empty($key)
 			? (!empty($l10n[$key]) ? $l10n[$key] : $key)

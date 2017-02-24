@@ -78,6 +78,10 @@
 		// Next and previous navigation
 		if ( data.control_next_prev )
 			this.prev_next_navigation();
+		
+		// Control slides with arrow keys
+		if ( data.keyboard_control )
+			this.keyboard_controls();
 
 		this.slider_switch(data.starting_slide);
 		this.update_auto_slide();
@@ -222,6 +226,26 @@
 					me.pause = true;
 				});
 			}
+		},
+		
+		keyboard_controls: function() {
+			var me = this,
+				data = this.opts,
+				$slider = this.$slider.closest('.uslider')
+			;
+			
+			// Handle key press
+			$slider.keydown(function(e) {
+				// Previous slide
+				if (e.which == 37) {
+					me.prev();
+				}
+				
+				// Next slide
+				if (e.which == 39) {
+					me.next();
+				}
+			});
 		},
 
 		prev_next_navigation: function(){
