@@ -48,9 +48,54 @@
 #page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.gravatar img {
 	<?php if(!empty($properties['gravatar-border-width']) && !empty($properties['gravatar-border-type']) && !empty($properties['gravatar-border-color'])) { ?>border: <?php echo $properties['gravatar-border-width'] ?>px <?php echo $properties['gravatar-border-type'] ?> <?php echo $properties['gravatar-border-color'] ?>;<?php } ?>
 	
-	<?php if(!empty($properties['gravatar-radius']) { ?>
+	<?php if(!empty($properties['gravatar-radius'])) { ?>
 		border-radius: <?php echo $properties['gravatar-radius'] ?>px;
 	<?php } ?>
+}
+
+<?php } ?>
+
+/* Part Content */
+
+<?php if(!empty($properties['content-use-typography']) && $properties['content-use-typography'] == 'yes') { ?>
+
+#page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.content, #page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.content a {
+	<?php if(!empty($properties['content-font-family'])) { ?>font-family: <?php echo $properties['content-font-family']  ?>; <?php } ?>
+    <?php if(!empty($properties['content-font-size'])) { ?>font-size: <?php echo $properties['content-font-size']  ?>px; <?php } ?>
+    <?php if(!empty($properties['content-weight'])) { ?>font-weight: <?php echo $properties['content-weight']  ?>;<?php } ?>
+    <?php if(!empty($properties['content-style'])) { ?>font-style: <?php echo $properties['content-style']  ?>;<?php } ?>
+    <?php if(!empty($properties['content-line-height'])) { ?>line-height: <?php echo $properties['content-line-height']  ?>;<?php } ?>
+	<?php if(!empty($properties['content-font-color'])) { ?>color: <?php echo $properties['content-font-color']  ?>; <?php } ?>
+}
+
+<?php } ?>
+
+/* Part Title */
+
+<?php if(!empty($properties['title-use-typography']) && $properties['title-use-typography'] == 'yes') { ?>
+
+#page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.title, #page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.title a {
+	<?php if(!empty($properties['title-font-family'])) { ?>font-family: <?php echo $properties['title-font-family']  ?>; <?php } ?>
+    <?php if(!empty($properties['title-font-size'])) { ?>font-size: <?php echo $properties['title-font-size']  ?>px; <?php } ?>
+    <?php if(!empty($properties['title-weight'])) { ?>font-weight: <?php echo $properties['title-weight']  ?>;<?php } ?>
+    <?php if(!empty($properties['title-style'])) { ?>font-style: <?php echo $properties['title-style']  ?>;<?php } ?>
+    <?php if(!empty($properties['title-line-height'])) { ?>line-height: <?php echo $properties['title-line-height']  ?>;<?php } ?>
+	<?php if(!empty($properties['title-font-color'])) { ?>color: <?php echo $properties['title-font-color']  ?>; <?php } ?>
+}
+
+<?php } ?>
+
+/* Part Read more */
+
+<?php if(!empty($properties['read_more-use-typography']) && $properties['read_more-use-typography'] == 'yes') { ?>
+
+#page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.read_more, #page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.read_more a {
+	<?php if(!empty($properties['read_more-font-family'])) { ?>font-family: <?php echo $properties['read_more-font-family']  ?>; <?php } ?>
+    <?php if(!empty($properties['read_more-font-size'])) { ?>font-size: <?php echo $properties['read_more-font-size']  ?>px; <?php } ?>
+    <?php if(!empty($properties['read_more-weight'])) { ?>font-weight: <?php echo $properties['read_more-weight']  ?>;<?php } ?>
+    <?php if(!empty($properties['read_more-style'])) { ?>font-style: <?php echo $properties['read_more-style']  ?>;<?php } ?>
+    <?php if(!empty($properties['read_more-line-height'])) { ?>line-height: <?php echo $properties['read_more-line-height']  ?>;<?php } ?>
+	<?php if(!empty($properties['read_more-font-color'])) { ?>color: <?php echo $properties['read_more-font-color']  ?>; <?php } ?>
 }
 
 <?php } ?>

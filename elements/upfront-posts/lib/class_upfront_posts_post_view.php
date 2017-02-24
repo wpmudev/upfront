@@ -292,10 +292,15 @@ class Upfront_Posts_PostView {
 	}
 
 	public function expand_content_template () {
-		$length = isset($this->_data['content_length'])
-			? (int)$this->_data['content_length']
-			: (int)Upfront_Posts_PostsData::get_default('content_length')
-		;
+		if(isset($this->_data['content-type']) && $this->_data['content-type'] == "excerpt") {
+			$length = isset($this->_data['content-length'])
+				? (int)$this->_data['content-length']
+				: (int)Upfront_Posts_PostsData::get_default('content-length')
+			;
+		} else {
+			$length = (int)Upfront_Posts_PostsData::get_default('content-length');
+		}
+
 		$content = $this->_get_content_value($length);
 		$content_type = $this->_get_content_type();
 
