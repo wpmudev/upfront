@@ -1718,7 +1718,8 @@ var Application = new (Backbone.Router.extend({
 						pluginName: data.pluginName,
 						content: data.sampleContents[page.content] ? data.sampleContents[page.content] : '',
 						title: page.title ? page.title : '',
-						killPostSettings: page.killPostSettings || false
+						killPostSettings: page.killPostSettings || false,
+						bodyclass: data.bodyclass || false
 					};
 				}
 			});
@@ -1730,20 +1731,38 @@ var Application = new (Backbone.Router.extend({
 						pluginName: data.pluginName,
 						content: data.sampleContents[layout.content] ? data.sampleContents[layout.content] : '',
 						title: layout.title ? layout.title : '',
-						killPostSettings: layout.killPostSettings || false
+						killPostSettings: layout.killPostSettings || false,
+						bodyclass: data.bodyclass || false
 					};
 				} else if (layout.item === currentLayout.item) {
 					result = {
 						pluginName: data.pluginName,
 						content: data.sampleContents[layout.content] ? data.sampleContents[layout.content] : '',
 						title: layout.title ? layout.title : '',
-						killPostSettings: layout.killPostSettings || false
+						killPostSettings: layout.killPostSettings || false,
+						bodyclass: data.bodyclass || false
 					};
 				}
 			});
 		});
 		return result;
+	},
+
+	plugin_body_classes: false,
+
+	remove_plugin_body_classes: function() {
+		var self = this;
+		if (this.plugin_body_classes === false) {
+			this.plugin_body_classes = [];
+			_.each(Upfront.mainData.pluginsLayouts, function(data, plugin) {
+				if (data.bodyclass) self.plugin_body_classes.push(data.bodyclass);
+			});
+		}
+		if (this.plugin_body_classes.length) {
+			$('body').removeClass(this.plugin_body_classes.join(' '));
+		}
 	}
+
 }))();
 
 return {

@@ -43,6 +43,12 @@
 						this.panels = _.omit(this.panels, 'post_editor');
 					}
 				}
+
+				// Putting this here for now
+				if (pluginLayout && pluginLayout.bodyclass)
+					$('body').addClass(pluginLayout.bodyclass);
+				else
+					Upfront.Application.remove_plugin_body_classes();
 			},
 			render: function () {
 				var me = this;
