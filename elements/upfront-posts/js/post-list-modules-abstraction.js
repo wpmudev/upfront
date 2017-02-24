@@ -145,7 +145,7 @@
 			spawn_editor: function () {
 				var me = this,
 					tpl_name = 'post-part-' + this.data_part,
-					template = this.model.get(tpl_name),
+					template = stripslashes(this.model.get(tpl_name)),
 					embed_object = ('meta' === this.options.part ? Meta.Embed : Inserts.inserts.embed),
 					editor = new embed_object({data: {code: template}, model: this.model}),
 					manager = false,
