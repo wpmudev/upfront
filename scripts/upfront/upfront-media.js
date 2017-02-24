@@ -43,7 +43,9 @@ define([
 				tmp_shared = {}
 			;
 			this.each(function (item) {
-				tmp_shared[item.get("ID")] = item.get("labels") || [];
+				var labels = item.get("labels") || [];
+				labels = _.map(labels, function(each){ return parseInt(each, 10); });
+				tmp_shared[item.get("ID")] = labels;
 			});
 			selected_labels = _.intersection.apply(this, _(tmp_shared).values());
 			known_labels.each(function (label) {
@@ -182,7 +184,8 @@ define([
 		current_page: 1,
 		max_pages: 1,
 		max_items: 1,
-		media_limit: 20,
+		media_limit: 60,
+		current_filter_control: 0,
 		initialize: function () {
 			this.to_defaults();
 			Upfront.Events.on("media_manager:media:filters_updated", this.update_active_filters, this);
@@ -221,6 +224,7 @@ define([
 
 			this.themeImages =false;
 			this.current_page = 1;
+			this.current_filter_control = 0;
 
 			this.set_labels_to_defaults();
 		},
@@ -339,12 +343,17 @@ define([
             this.options = args.options;
 		},
 		render: function () {
+			if (!this.options.show_insert) {
+				this.$el.addClass('upfront-media-controls-no-insert');
+			}
 			this.render_filters();
 		},
 		render_filters: function () {
+			this.search = new MediaManager_SearchControl();
 			this.control = this.is_search_active ? new MediaManager_SearchFiltersControl() : new MediaManager_FiltersControl();
+			this.search.render();
 			this.control.render();
-			this.$el.empty().append(this.control.$el);
+			this.$el.empty().append(this.search.$el).append(this.control.$el);
 			if ( this.is_search_active ) this.$el.removeClass('upfront-media-controls-search-selected').addClass('upfront-media-controls-search');
 			else this.$el.removeClass('upfront-media-controls-search');
 		},
@@ -384,25 +393,25 @@ define([
 			Upfront.Events.on("media:item:selection_changed", this.switch_controls, this);
 		},
 		render: function () {
-			this.render_selection();
+			//this.render_selection();
 		},
-		render_selection: function () {
+		/*render_selection: function () {
 			var selection_control = new MediaManager_SelectionControl({model: this.model});
 			selection_control.render();
 			this.$el.empty().append(selection_control.$el);
 			this.$el.removeClass('upfront-media-aux_controls-has-select');
-		},
+		},*/
 		render_delete: function (selected) {
 			var delete_control = new MediaManager_DeleteControl({model: new MediaCollection_Selection(selected)});
 			delete_control.render();
-			this.render_selection();
-			this.$el.append(delete_control.$el);
+			//this.render_selection();
+			this.$el.empty().append(delete_control.$el);
 			this.$el.addClass('upfront-media-aux_controls-has-select');
 		},
 		switch_controls: function (media_collection) {
 			var positive = media_collection && media_collection.where ? media_collection.where({selected: true}) : [];
 			if (positive.length) this.render_delete(positive);
-			else this.render_selection();
+			//else this.render_selection();
 		},
 		remove: function() {
 			Upfront.Events.off("media:item:selection_changed", this.switch_controls);
@@ -481,7 +490,7 @@ define([
 			}
 		});
 		var MediaManager_DeleteControl = Backbone.View.extend({
-			className: "delete_control_container",
+			className: "delete_control_container upfront-icon upfront-icon-trash",
 			events: {
 				click: "delete_selection"
 			},
@@ -532,60 +541,65 @@ define([
                 this.options = _.extend( this.options, opts.options );
 			},
 			render: function () {
-                var self = this,
-                    sections = _([
-                        'change_title',
-						'change_alt',
+				var self = this,
+					sections = _([
 						'size_hints',
-                        'add_labels',
-                        'existing_labels',
-                        'insert_options',
-                        'additional_sizes'
-                    ]),
-                    renderers = _([
-                        'render_title',
-						'render_alt',
+						'change_title',
+						'change_alt',
+						'copy_url',
+						//'existing_labels',
+						'add_labels',
+						'insert_options',
+						'additional_sizes'
+					]),
+					renderers = _([
 						'render_size_hint',
-                        'render_labels_adding',
-                        'render_shared_labels',
-                        'render_additional_sizes',
-                        'render_insert_options'
-                    ]);
+						'render_title',
+						'render_alt',
+						'render_copy_url',
+						//'render_shared_labels',
+						'render_labels_adding',
+						'render_insert_options',
+						'render_additional_sizes'
+					]);
 
-                // remove prev sections
-                this.$el.empty();
+				// remove prev sections
+				this.$el.empty();
 
-                // if insert_options is false remove insert options section
-                if( !this.options.insert_options ){
-                    sections = _( sections.reject(function(section){
-                        return section === "insert_options";
-                    }) );
+				// if insert_options is false remove insert options section
+				if( !this.options.insert_options ){
+					sections = _( sections.reject(function(section){
+						return section === "insert_options";
+					}) );
 
-                    renderers =  _( renderers.reject(function(renderer){
-                        return renderer === "render_insert_options";
-                    }) );
-                }
-
-				if (_.indexOf(this.options.media_type, 'videos') !== -1) {
-                    sections = _( sections.reject(function(section){
-                        return section === "additional_sizes";
-                    }) );
-
-                    renderers =  _( renderers.reject(function(renderer){
-                        return renderer === "render_additional_sizes";
-                    }) );
+					renderers =  _( renderers.reject(function(renderer){
+						return renderer === "render_insert_options";
+					}) );
 				}
 
-                // add sections
-                sections.each(function(section){
-                    self.$el.append( '<div class="' + section +  '" />' );
-                });
+				if (_.indexOf(this.options.media_type, 'videos') !== -1) {
+					sections = _( sections.reject(function(section){
+						return section === "additional_sizes";
+					}) );
 
-                // render sections
-                renderers.each(function(renderer){
-                    self[renderer]();
-                });
+					renderers =  _( renderers.reject(function(renderer){
+						return renderer === "render_additional_sizes";
+					}) );
+				}
 
+				// add sections
+				sections.each(function(section){
+					self.$el.append( '<div class="' + section +  '" />' );
+				});
+
+				// render sections
+				renderers.each(function(renderer){
+					self[renderer]();
+				});
+
+			},
+			_find_gcd: function (a, b) {
+				return (b == 0) ? a : this._find_gcd(b, a%b);
 			},
 			render_size_hint: function() {
 				var me = this,
@@ -597,14 +611,22 @@ define([
 
 				if(this.model.length === 1) {
 					var image = this.model.at(0).get('image'),
-						$container = $('<div class="upfront-size-hints upfront-field-wrap upfront-field-wrap-text"><label class="upfront-field-label upfront-field-label-block">'+ l10n.natural_size +'</label></div>')
+						$container = $('<div class="upfront-size-hints upfront-field-wrap upfront-field-wrap-text"><label class="upfront-field-label upfront-field-label-block">'+ l10n.information +'</label></div>')
 					;
 					if ( image !== undefined ) {
 						var iwidth = parseInt((image || {}).width, 10),
-							iheight = parseInt((image || {}).height, 10)
+							iheight = parseInt((image || {}).height, 10),
+							gcd = me._find_gcd(iwidth, iheight)
 						;
 						// Only render size hint if we're actually able to
 						if (iwidth && iheight) {
+							$container.append(
+								'<span class="upfront-size-hint-ratio">' +
+									(iwidth/gcd) +
+								':' +
+									(iheight/gcd) +
+								'</span>'
+							);
 							$container.append(
 								'<span class="upfront-size-hint-width">' +
 									l10n.width_label +
@@ -631,9 +653,7 @@ define([
 
 
 				$hub.empty();
-				if (this.model.length > 1) {
-					$hub.append('<span class="selected_length">' + l10n.files_selected.replace(/%d/, this.model.length) + '</span>');
-				} else {
+				if (this.model.length === 1) {
 					this.alt_field = new Upfront.Views.Editor.Field.Text({
 						model: this.model.at(0),
 						label: l10n.media_alt,
@@ -648,14 +668,20 @@ define([
 			},
 			render_title: function () {
 				var	me = this,
-					$hub = this.$el.find(".change_title");
+					$hub = this.$el.find(".change_title")
+				;
 				$hub.empty();
 				if (this.model.length > 1) {
-					$hub.append('<span class="selected_length">' + l10n.files_selected.replace(/%d/, this.model.length) + '</span>');
+					var files = '<span class="selected_files">' + l10n.files.replace(/%d/, this.model.length) + '</span>',
+						shared_labels = this.model.get_shared_labels()
+					;
+					$hub.append('<label class="upfront-field-label upfront-field-label-block">'+ l10n.information +'</label>');
+					$hub.append('<span class="selected_length">' + ( shared_labels.length > 0 ? l10n.selected.replace(/%s/, files) : l10n.selected_no_label.replace(/%s/, files) ) + '</span>');
 				} else {
 					this.title_field = new Upfront.Views.Editor.Field.Text({
 						model: this.model.at(0),
 						label: l10n.media_title,
+						compact: true,
 						name: 'post_title',
 						change: function(){
 							me.change_title();
@@ -665,12 +691,28 @@ define([
 					$hub.append(this.title_field.$el);
 				}
 			},
+			render_copy_url: function () {
+				var	$hub = this.$el.find(".copy_url");
+				if (this.model.length > 1) return false;
+				
+				this.copy_url = new Upfront.Views.Editor.Field.Button({
+					model: this.model.at(0),
+					label: l10n.copy_url,
+					compact: true,
+					name: "document_url",
+					on_click: function () {
+						Upfront.Util.add_to_clipboard(this.model.get('document_url'));
+					}
+				});
+				this.copy_url.render();
+				$hub.append(this.copy_url.$el);
+			},
 			render_labels_adding: function () {
 				var me = this,
 					$hub = this.$el.find(".add_labels"),
 					container = new MediaManager_ItemControl_LabelsContainer({model: this.model})
 				;
-				$hub.empty().append(this.templates.caption({title: l10n.add_labels}));
+				$hub.empty().append(this.templates.caption({title: l10n.media_labels}));
 				container.render();
 				$hub.append(container.$el);
 				this.$el.on("click", function (e) {
@@ -692,53 +734,38 @@ define([
 				});
 			},
 			render_additional_sizes: function () {
-                var me = this,
-                    $hub = this.$el.find(".additional_sizes"),
-                    additional_sizes = this.model.get_additional_sizes(),
-                    title = l10n.additional_sizes,
-                    sizes = []
-                    ;
-                $hub.empty();
+				var me = this,
+					$hub = this.$el.find(".additional_sizes"),
+					additional_sizes = this.model.get_additional_sizes(),
+					title = l10n.additional_sizes,
+					sizes = []
+					;
+				$hub.empty();
 
-                if( ( this.options.insert_options &&  this.model.at(0).get("insert_option") === INSERT_OPTIONS.wp_insert) || ( !this.options.hide_sizes  && !this.options.insert_options )    ) {
-                    if (!additional_sizes.length) return false;
-                    _(additional_sizes).each(function (size) {
-                        sizes.push({ label: (size === MEDIA_SIZES.FULL ? l10n.size_full : size), value: size });
-                    });
-                    this.size_field = new Upfront.Views.Editor.Field.Select({
-                        model: this.model.at(0),
-                        label: title,
-                        name: 'selected_size',
-                        width: '100%',
-                        values: sizes,
-                        default_value: MEDIA_SIZES.FULL,
-                        change: function(){
-                            me.select_size();
-                        }
-                    });
-                    this.size_field.render();
-                    $hub.append(this.size_field.$el);
-                    this.size_field.$el.on("click", function (e) {
-                        e.stopPropagation();
-                    });
-                }
-
-
-                if (this.model.length < 2) {
-                    this.add_url_label($hub);
-                }
+				if( ( this.options.insert_options &&  this.model.at(0).get("insert_option") === INSERT_OPTIONS.wp_insert) || ( !this.options.hide_sizes  && !this.options.insert_options )    ) {
+					if (!additional_sizes.length) return false;
+					_(additional_sizes).each(function (size) {
+						if (size === MEDIA_SIZES.FULL) return;
+						sizes.push({ label: size, value: size });
+					});
+					this.size_field = new Upfront.Views.Editor.Field.Radios({
+						model: this.model.at(0),
+						name: 'selected_size',
+						width: '100%',
+						values: sizes,
+						default_value: additional_sizes[0],
+						change: function(){
+							me.select_size();
+						}
+					});
+					this.size_field.render();
+					$hub.append(this.size_field.$el);
+					this.size_field.$el.on("click", function (e) {
+						e.stopPropagation();
+					});
+				}
 
 			},
-            add_url_label: function($hub){
-                // Add URL label
-                var url_field = new Upfront.Views.Editor.Field.Text({
-                    model: this.model.at(0),
-                    label: l10n.url,
-                    name: "document_url"
-                });
-                url_field.render();
-                $hub.append(url_field.$el);
-            },
 			select_size: function (e) {
 				//e.stopPropagation();
 				var size = this.size_field.get_value() || MEDIA_SIZES.FULL;
@@ -805,82 +832,111 @@ define([
 				selection: '',
 				events: {
 					"click :text": "stop_prop",
-					"click .title": "show_labels",
-					"keyup .search_labels :text": "update_selection",
-					"click .add_labels a": "add_new_labels"
+					"keyup .labels_filter :text.filter": "update_selection",
+					"click .new_labels .toggle-add-label": "show_add_label",
+					"click .new_labels .submit-label": "add_new_labels",
+					"focus :text.filter": "add_focus_state",
+					"blur :text.filter": "remove_focus_state",
+					"keyup .new_labels :text.add-label": "enter_new_labels"
 				},
-				stop_prop: function (e) { e.stopPropagation(); },
-				show_labels: function (e) {
+				initialize: function () {
+					this.listenTo(Upfront.Events, "media_manager:media:labels_updated", this.render);
+					this._adding_label = false;
+				},
+				stop_prop: function (e) {
 					e.stopPropagation();
-					e.preventDefault();
-					this.$el.addClass("active");
 				},
-				hide_labels: function (e) {
-					this.$el.removeClass("active");
+				add_focus_state: function (e) {
+					this.$el.addClass('focus');
+				},
+				remove_focus_state: function (e) {
+					this.$el.removeClass('focus');
 				},
 				render: function () {
+					var sel = this.selection || '';
 					this.$el.empty()
-						.append('<div class="title">' + l10n.please_select_labels + '</div>')
-						.append('<div class="search_labels" />')
+						.append('<div class="title">' + l10n.assigned_labels + '</div>')
+						.append('<div class="labels_filter"><ul></ul><input type="text" class="filter upfront-field upfront-field-text" value="' + sel + '" placeholder="' + l10n.type_labels_pick + '" /></div>')
 						.append('<div class="labels_list"><ul></ul></div>')
-						.append('<div class="add_labels" />')
+						.append('<div class="title">' + l10n.create_new_label + '</div>')
+						.append('<div class="new_labels"><a class="toggle-add-label upfront-icon-control upfront-icon-label-add"></a><input type="text" class="add-label upfront-field upfront-field-text" placeholder="' + l10n.type_labels_add + '" /><a class="submit-label upfront-icon-control upfront-icon-label-add-alt"></a></div>')
 					;
-					this.render_search();
+					this.render_existing_labels();
 					this.render_labels();
-					this.render_addition();
-					this.on("filters:selection:click", function () {
-						this.hide_labels();
-					}, this);
 				},
-				render_search: function () {
-					var $hub = this.$el.find(".search_labels");
-					$hub.empty().append('<input type="text" class="upfront-field upfront-field-text" value="' + this.selection + '"/>');
+				render_existing_labels: function () {
+					var me = this,
+						$hub = this.$el.find("div.labels_filter ul")
+					;
+					$hub.empty();
+					
+					_.each(this.model.get_shared_labels(), function (label) {
+						var item = new MediaManager_ItemControl_LabelItem({model: label});
+						item.media_items = me.model;
+						item.render();
+						$hub.append(item.$el);
+					});
 				},
 				render_labels: function () {
 					var me = this,
 						$hub = this.$el.find(".labels_list ul"),
 						known_labels = ActiveFilters.get("label"),
 						shared_labels = this.model.get_shared_labels(),
-						has_selection = false
+						has_selection = false,
+						match = 0
 					;
 					$hub.empty();
+					if (!this.selection) return false;
+					
 					known_labels.each(function (label) {
 						var item = new MediaManager_ItemControl_LabelItem({model: label});
 						item.shared = shared_labels;
 						item.media_items = me.model;
 						item.selection = me.selection;
 						item.render();
-						if ( item.$el.find('input').size() > 0 ){
-							has_selection = true;
+						if (item.matched) {
 							$hub.append(item.$el);
+							match++;
 						}
 					});
-					if ( has_selection ) $hub.removeClass('empty');
-					else $hub.addClass('empty');
-				},
-				render_addition: function () {
-					var $hub = this.$el.find(".add_labels");
-					$hub.empty();
-					if (this.selection) $hub.append('<b class="add_value">' + this.selection + '</b> <a class="add_link" href="#add">' + l10n.add + '</a>').removeClass('empty');
-					else $hub.addClass('empty');
+					if (match > 0) this.$el.addClass('has_match');
+					else this.$el.removeClass('has_match');
 				},
 				update_selection: function (e) {
 					e.preventDefault();
 					e.stopPropagation();
-					var $text = this.$el.find(".search_labels :text"),
+					var $text = this.$el.find(".labels_filter :text.filter"),
 						selection = $text.val()
 					;
 					this.selection = selection;
 
 					this.render_labels();
-					this.render_addition();
 				},
-				add_new_labels: function (e) {
+				show_add_label: function (e) {
 					e.preventDefault();
 					e.stopPropagation();
-					var $text = this.$el.find(".search_labels :text"),
+					var $hub = this.$el.find(".new_labels"),
+						$text = this.$el.find(".new_labels :text.add-label")
+					;
+					$hub.addClass('active');
+					$text.focus();
+				},
+				enter_new_labels: function (e) {
+					if (e.which == 13) {
+						this.add_new_labels();
+					}
+				},
+				add_new_labels: function (e) {
+					if (e) {
+						e.preventDefault();
+						e.stopPropagation();
+					}
+					if (this._adding_label) return;
+					var $text = this.$el.find(".new_labels :text.add-label"),
 						selection = $text.val()
 					;
+					this._adding_label = true;
+					$text.attr('disabled', true);
 					this.model.add_new_label(selection);
 				}
 			});
@@ -897,11 +953,13 @@ define([
 							free = _.template('<input type="checkbox" id="{{id}}" class="upfront-field-checkbox" value="{{value}}" />'),
 							label = _.template('<label for="{{id}}">{{name}}</label>'),
 							name = this.model.get("filter") || '',
-							match_rx = this.selection ? new RegExp('^(' + this.selection + ')', 'i') : false,
+							match_rx = this.selection ? new RegExp('(' + this.selection + ')', 'i') : false,
 							obj = this.model.toJSON()
 						;
+						this.matched = false;
 						this.$el.empty();
-						if (!name.match(match_rx)) return false;
+						if (match_rx && !name.match(match_rx)) return false;
+						this.matched = true;
 						obj.id = this.cid;
 						obj.name = name.replace(match_rx, '<span class="selection">$1</span>');
 						this.$el
@@ -950,14 +1008,14 @@ define([
 			},
 			initialize: function () {
 				this.filter_selection = new MediaManager_FiltersSelectionControl();
-				this.filters_selected = new MediaManager_FiltersSelectedControl({model: ActiveFilters});
+				//this.filters_selected = new MediaManager_FiltersSelectedControl({model: ActiveFilters});
 			},
 			render: function () {
 				this.filter_selection.render();
-				this.filters_selected.render();
+				//this.filters_selected.render();
 				this.$el.empty()
 					.append(this.filter_selection.$el)
-					.append(this.filters_selected.$el)
+					//.append(this.filters_selected.$el)
 				;
 			},
 			toggle_titles: function (e) {
@@ -965,7 +1023,8 @@ define([
 				Upfront.Events.trigger("media_manager:media:toggle_titles");
 			},
 			remove: function() {
-				this.filters_selected.remove();
+				this.filter_selection.remove();
+				//this.filters_selected.remove();
 			}
 		});
 
@@ -1042,7 +1101,7 @@ define([
 				this.controls = _([
 					new Control_MediaType(),
 					//new Control_MediaDate(),
-					new Control_MediaFileName(),
+					//new Control_MediaFileName(),
 					//new Control_MediaRecent(),
 					new Control_MediaLabels()
 				]);
@@ -1055,7 +1114,7 @@ define([
 			render: function () {
 				var me = this,
 					tpl = _.template("<li style='display:none'><a href='#' data-idx='{{idx}}'>{{name}}</a></li>"),
-					values = [{label: l10n.select_filter, value: 'false'}]
+					values = []
 				;
 				this.controls.each(function (ctl, idx) {
 					values.push({label: ctl.get_name(), value: idx});
@@ -1066,24 +1125,26 @@ define([
 				this.$el.append('<div class="upfront-filter_control" />');
 				this.$control = this.$el.find("div.upfront-filter_control");
 
-				this.control_field = new Upfront.Views.Editor.Field.Select({
+				this.control_field = new Upfront.Views.Editor.Field.Radios({
 					label: l10n.filter_label,
 					name: "filter-selection",
-					width: '100%',
+					className: "upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios upfront-filter_selection-tab",
 					values: values,
 					multiple: false,
-					default_value: 'false',
+					default_value: ActiveFilters.current_filter_control,
 					change: function(){
 						me.select_control(this.get_value());
 					}
 				});
 				this.control_field.render();
 				this.$el.prepend(this.control_field.$el);
+				this.control_field.trigger('changed');
 			},
 			select_control: function (idx) {
 				this.$control.empty();
 				if ('false' === idx) return false;
 
+				ActiveFilters.current_filter_control = idx;
 
 				var control = this.controls.toArray()[idx];
 				control.render();
@@ -1138,14 +1199,20 @@ define([
 			className: "upfront-additive_multiselection",
 			events: {
 				click: "stop_prop",
-				"keyup :text.filter": "show_matching_labels"
+				"keyup :text.filter": "show_matching_labels",
+				"focus :text.filter": "add_focus_state",
+				"blur :text.filter": "remove_focus_state"
 			},
 			stop_prop: function (e) {
 				e.stopPropagation();
-				this.$el.addClass("active");
+				// Also let's focus the text field
+				this.$el.find(":text.filter").focus();
 			},
-			update_state: function (e) {
-				this.$el.removeClass("active");
+			add_focus_state: function (e) {
+				this.$el.addClass('focus');
+			},
+			remove_focus_state: function (e) {
+				this.$el.removeClass('focus');
 			},
 			render: function () {
 				var me = this,
@@ -1153,30 +1220,52 @@ define([
 				;
 				this.$el
 					.empty()
-					.append('<div class="title">' + l10n.please_select_labels + '</div>')
-					.append('<input type="text" class="filter upfront-field upfront-field-text" value="' + sel + '" />')
+					.append('<div class="title">' + l10n.filter_by_labels + '</div>')
+					.append('<div class="labels_filter"><ul></ul><input type="text" class="filter upfront-field upfront-field-text" value="' + sel + '" placeholder="' + l10n.type_labels + '" /></div>')
 					.append('<div class="labels_list"><ul></ul></div>')
 				;
+				this.render_filtered_items();
 				this.render_items();
-				this.on("filters:selection:click", function () {
-					this.update_state();
-				}, this);
+			},
+			render_filtered_items: function () {
+				var me = this,
+					$hub = this.$el.find("div.labels_filter ul")
+				;
+				$hub.empty();
+				
+				this.model.each(function (model) {
+					if (me.allowed_values && me.allowed_values.indexOf(model.get("value")) < 0) return false;
+					if (!model.get("state")) return false;
+					var item = new Media_FilterSelection_AdditiveMultiselection_Item({model: model});
+					item.render();
+					$hub.append(item.$el);
+				});
 			},
 			render_items: function () {
 				var me = this,
-					$hub = this.$el.find("div.labels_list ul")
+					$hub = this.$el.find("div.labels_list ul"),
+					match = 0
 				;
 				$hub.empty();
-				if (!this.$el.is(".active")) return false; // Only actually render this if we can see it - it takes *a while* to do so
+				if (!this.selection) {
+					this.$el.removeClass('has_match');
+					return false;
+				}
+				//if (!this.$el.is(".active")) return false; // Only actually render this if we can see it - it takes *a while* to do so
 
 				this.model.each(function (model) {
 					if (me.allowed_values && me.allowed_values.indexOf(model.get("value")) < 0) return false;
+					if (model.get("state")) return false;
 					var item = new Media_FilterSelection_AdditiveMultiselection_Item({model: model});
 					item.selection = me.selection;
 					item.render();
-					model.on("change:state", me.update_state, me);
-					$hub.append(item.$el);
+					if (item.matched) {
+						$hub.append(item.$el);
+						match++;
+					}
 				});
+				if (match > 0) this.$el.addClass('has_match');
+				else this.$el.removeClass('has_match');
 			},
 			show_matching_labels: function (e) {
 				var $text = this.$el.find(":text.filter"),
@@ -1204,7 +1293,7 @@ define([
 					if (item.get("value") != model.get("value")) item.set({state: false}, {silent: true});
 				});
 				model.set({state: true}, {silent: true});
-				this.apply_changes();
+				this.apply_changes(model);
 				this.render();
 			}
 		});
@@ -1245,11 +1334,13 @@ define([
 						unchecked = _.template('<input type="checkbox" for="{{id}}" class="upfront-field-checkbox" name="{{filter}}" value="{{value}}" />'),
 						label = _.template('<label for="{{id}}">{{name}}</label>'),
 						name = this.model.get("filter") || '',
-						match_rx = this.selection ? new RegExp('^(' + this.selection + ')', 'i') : false,
+						match_rx = this.selection ? new RegExp('(' + this.selection + ')', 'i') : false,
 						obj = this.model.toJSON()
 					;
+					this.matched = false;
 					this.$el.empty();
 					if (match_rx && !name.match(match_rx)) return false;
+					this.matched = true;
 					obj.id = this.cid;
 					obj.name = name.replace(match_rx, '<span class="selection">$1</span>');
 					this.$el
@@ -1277,15 +1368,40 @@ define([
 				}
 			});
 
-		var Control_MediaType = Media_FilterSelection_Multiselection.extend({
+		var Control_MediaType = Media_FilterSelection_Uniqueselection.extend({
 			initialize: function () {
-				this.filter_name = l10n.media_type;
+				this.filter_name = l10n.by_type;
 				this.filter_type = "type";
 				this.initialize_model();
 				Upfront.Events.on("media_manager:media:filters_updated", this.update_selection, this);
 				Upfront.Events.on("media_manager:media:filters_reset", this.initialize_model, this);
 			},
-			apply_changes: function (model) {
+			render: function () {
+				var me = this,
+					values = [],
+					has_all = (this.model.indexOf("other") >= 0)
+				;
+				this.$el.empty();
+				this.model.each(function (model) {
+					if (me.allowed_values && me.allowed_values.indexOf(model.get("value")) < 0) return false;
+					values.push({label: model.get("filter"), value: model.get("value")});
+				});
+				this.select_field = new Upfront.Views.Editor.Field.Select({
+					name: "filter-type",
+					values: values,
+					multiple: false,
+					default_value: has_all ? "other" : this.model.findWhere({state: true}).get("value"),
+					change: function(){
+						var model = me.model.findWhere({value: this.get_value()});
+						model.set({state: !model.get("state")}, {silent: true});
+						me.change_state(model);
+					}
+				});
+				this.select_field.render();
+				this.$el.append(this.select_field.$el);
+			},
+			/*apply_changes: function (model) {
+				return;
 				var all = this.model.where({state: true}),
 					other = this.model.where({value: 'other'}),
 					edited = model.previousAttributes()
@@ -1301,9 +1417,9 @@ define([
 					other.set({state: !no_other}, {silent: true});
 				} else if (other.get("state")) other.set({state: false}, {silent: true});
 
-				Media_FilterSelection_Multiselection.prototype.apply_changes.call(this);
+				Media_FilterSelection_Uniqueselection.prototype.apply_changes.call(this);
 
-			}
+			}*/
 		});
 
 		var Control_MediaFileName = Media_FilterSelection_Uniqueselection.extend({
@@ -1319,7 +1435,7 @@ define([
 
 		var Control_MediaLabels = Media_FilterSelection_AdditiveMultiselection.extend({
 			initialize: function () {
-				this.filter_name = l10n.labels;
+				this.filter_name = l10n.by_labels;
 				this.filter_type = "label";
 				this.initialize_model();
 				Upfront.Events.on("media_manager:media:filters_updated", this.update_selection, this);
@@ -1332,87 +1448,151 @@ define([
 			}
 		});
 
+		
+
+	var MediaManager_SearchControl = Backbone.View.extend({
+		className: "upfront-search-control",
+		events: {
+			"click .clear": "clear_search",
+			"keyup :text": "on_keyup"
+		},
+		render: function () {
+			var me = this,
+				active = ActiveFilters.get("search"),
+				search = !!active.length ? active.first() : false,
+				has_search = !!search && search.get("state")
+			;
+			if ( _.isUndefined(this.search_field) ) {
+				this.search_field = new Upfront.Views.Editor.Field.Text({
+					label: l10n.search_media,
+					name: 'search',
+					placeholder: l10n.search_placeholder,
+					default_value: has_search && search ? search.get("value") : ''
+				});
+			}
+			if ( _.isUndefined(this.search_button) ) {
+				this.search_button = new Upfront.Views.Editor.Field.Button({
+					label: l10n.search,
+					classname: 'upfront-media-search-button',
+					compact: true,
+					on_click: function(e) {
+						e.preventDefault();
+						e.stopPropagation();
+						me.do_search();
+					}
+				});
+			}
+			this.search_field.render();
+			this.search_button.render();
+			this.$el.empty()
+				.append(this.search_field.$el)
+				.append(this.search_button.$el)
+			;
+			if (has_search) {
+				this.$el.addClass("has_search");
+			}
+			else {
+				this.$el.removeClass("has_search");
+			}
+		},
+		do_search: function () {
+			var text = this.search_field.get_value(),
+				search = new MediaFilter_Item({filter: text, value: text, state: true})
+			;
+			if (!text) {
+				search = new MediaFilter_Item({filter: false, value: false, state: false});
+			}
+
+			ActiveFilters.to_defaults();
+			ActiveFilters.current_keys = [];
+			ActiveFilters.current_models = [];
+			ActiveFilters.set("search", new MediaFilter_Collection([search]));
+			Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+			Upfront.Events.trigger("media:search:requested", search);
+			this.render();
+
+			var selected_model = new MediaCollection_Selection(ActiveFilters.current_models);
+			Upfront.Events.trigger("media:item:selection_changed", selected_model);
+		},
+		clear_search: function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			this.search_field.set_value('');
+			this.do_search(e);
+		},
+		on_keyup: function (e) {
+			if ( e.keyCode == 13 )
+				this.search_button.$el.trigger('click');
+			//else if ( e.keyCode == 27 )
+			//	this.$el.find('.clear').trigger('click');
+		}
+	});
 
 	/**
-	 * Top-level tabs switching and control.
+	 * Top-level controls
 	 */
 	var MediaManager_Switcher = Backbone.View.extend({
 		events: {
-			"click .library": "switch_to_library",
-			//"click .embed": "switch_to_embed",
-			"click .upload": "switch_to_upload",
-			"click .shortcode": "switch_to_shortcode",
-			"click .markup": "switch_to_markup"
+			"click .media-upload": "switch_to_upload",
+			"click .media-info": "switch_controls"
 		},
-		switch_template: _.template(
-			'<ul class="upfront-tabs upfront-media_manager-tabs"> <li class="library">' + l10n.library + '</li> <li class="embed">' + l10n.embed + '</li> </ul> '
+		info_template: _.template(
+			'<button type="button" class="media-info upfront-icon-control upfront-icon-media-info">' + l10n.info + '</button>'
 		),
 		upload_template: _.template(
-			'<button type="button" class="upload">' + l10n.upload + '</button>'
+			'<button type="button" class="media-upload upfront-icon-control upfront-icon-media-upload">' + l10n.upload + '</button>'
 		),
 		initialize: function () {
-			Upfront.Events.on("media_manager:media:show_library", this.switch_to_library, this);
+			Upfront.Events.on("media:item:selection_changed", this.switch_delete, this);
 		},
 		render: function () {
 			this.$el.empty().append(
-				this.switch_template({}) +
+				this.info_template({}) +
 				(ActiveFilters.has_upload() ? this.upload_template({}) : '')
 			);
 			this.$el.addClass('clearfix');
-			this.switch_to_library();
 		},
 		remove: function () {
 			this.undelegateEvents();
-			this.$el.empty();
-		},
-		switch_to_library: function (e) {
-			var data = {};
-			this.$el
-				.find("li").removeClass("active")
-				.filter(".library").addClass("active")
-			;
-			if (e && e.preventDefault) {
-				e.preventDefault();
-				e.stopPropagation();
-			} else if (e) {
-				data = e;
+			if (this.delete_control) {
+				this.delete_control.remove();
+				this.delete_control = false;
 			}
-			this.trigger("media_manager:switcher:to_library", data);
-		},
-		switch_to_embed: function (e) {
-			return false;
-			/*
-			e.preventDefault();
-			e.stopPropagation();
-			this.$el
-				.find("li").removeClass("active")
-				.filter(".embed").addClass("active")
-			;
-			this.trigger("media_manager:switcher:to_embed");
-			*/
+			Upfront.Events.off("media:item:selection_changed", this.switch_delete, this);
+			this.$el.empty();
 		},
 		switch_to_upload: function (e) {
 			e.preventDefault();
 			e.stopPropagation();
             this.trigger("media_manager:switcher:to_upload");
 		},
-		switch_to_shortcode: function (e) {
-			e.preventDefault();
-			e.stopPropagation();
-			this.$el
-				.find("li").removeClass("active")
-				.filter(".shortcode").addClass("active")
-			;
-			this.trigger("media_manager:switcher:to_shortcode");
+		switch_controls: function (e) {
+			if (e) {
+				e.preventDefault();
+				e.stopPropagation();
+			}
+			this.$el.find('.media-info').toggleClass('media-info-active');
+            this.trigger("media_manager:switcher:toggle_controls");
 		},
-		switch_to_markup: function (e) {
-			e.preventDefault();
-			e.stopPropagation();
-			this.$el
-				.find("li").removeClass("active")
-				.filter(".markup").addClass("active")
-			;
-			this.trigger("media_manager:switcher:to_markup");
+		switch_delete: function (media_collection) {
+			var positive = media_collection && media_collection.where ? media_collection.where({selected: true}) : [];
+			if (positive.length) {
+				this.render_delete(positive);
+			}
+			else {
+				if (this.delete_control) {
+					this.delete_control.remove();
+					this.delete_control = false;
+				}
+			}
+		},
+		render_delete: function (selected) {
+			if ( this.delete_control ) this.delete_control.remove();
+			this.delete_control = new MediaManager_DeleteControl({model: new MediaCollection_Selection(selected)});
+			this.delete_control.render();
+			//this.render_selection();
+			this.$el.append(this.delete_control.$el);
+			this.$el.addClass('upfront-media-manager-has-select');
 		},
 		/**
 		 * Boolean helper for determining if we're in some sort of a free-form or text editing mode
@@ -1431,26 +1611,34 @@ define([
 		initialize: function (data) {
 			data = _.extend({
 				type: "PostImage",
-				multiple_selection: false
+				multiple_selection: false,
+				show_control: true,
+				show_insert: true
 			}, data);
 
 			var type = data.type,
 				multiple_selection = data.multiple_selection,
-				button_text = data.button_text
+				button_text = data.button_text,
+				button_text_multiple = data.button_text_multiple
 			;
 
 			this.popup_data = data.data;
+			this.show_control = data.show_control;
 
 			ActiveFilters.to_defaults();
 			this.switcher_view = new MediaManager_Switcher({el: this.popup_data.$top});
 
-            this.listenTo(this.switcher_view, "media_manager:switcher:to_library", this.render_library, this);
-            this.listenTo(this.switcher_view, "media_manager:switcher:to_embed", this.render_embed, this);
             this.listenTo(this.switcher_view, "media_manager:switcher:to_upload", this.render_upload, this);
-            this.listenTo(this.switcher_view, "media_manager:switcher:to_shortcode", this.render_shortcode, this);
-            this.listenTo(this.switcher_view, "media_manager:switcher:to_markup", this.render_markup, this);
+            this.listenTo(this.switcher_view, "media_manager:switcher:toggle_controls", this.toggle_controls, this);
 
-			this.command_view = new MediaManager_BottomCommand({el: this.popup_data.$bottom, button_text: button_text, ck_insert: data.ck_insert});
+			this.command_view = new MediaManager_BottomCommand({
+				el: this.popup_data.$bottom,
+				button_text: button_text,
+				button_text_multiple: button_text_multiple,
+				ck_insert: data.ck_insert,
+				show_insert: data.show_insert
+			});
+			
 			this.library_view = new MediaManager_PostImage_View(data.collection, data);
 			//this.embed_view = new MediaManager_EmbedMedia({});
 
@@ -1460,6 +1648,8 @@ define([
 				ActiveFilters.themeImages = true;
 				this.library_view.multiple_selection = false;
 			}
+			
+			this.listenTo(Upfront.Events, "media:item:selection_changed", this.update_model);
 		},
 		remove: function() {
 			this.library_view.remove();
@@ -1482,15 +1672,6 @@ define([
 			this.library_view.render();
 
 			this.$el.empty().append(this.library_view.$el);
-			if (arguments.length) {
-				var sel = arguments[0], me = this;
-				if ("ID" in sel) {
-					this.library_view.media_collection.once("reset", function () {
-						var found = me.library_view.media_collection.where({ID: sel.ID});
-						if (found.length) found[0].set({selected: true});
-					});
-				}
-			}
 		},
 		render_embed: function () {
 			return false;
@@ -1514,7 +1695,10 @@ define([
 			}
 
 			var me = this,
-				uploaded = 0, progressing = 0, done =0,
+				uploaded = 0,
+				progressing = 0,
+				done = 0,
+				processed = 0,
 				new_media = [],
 				media_library_view = me.library_view._subviews.media,
 				uploadUrl = ActiveFilters.themeImages ? _upfront_media_upload.theme : _upfront_media_upload.normal
@@ -1529,7 +1713,7 @@ define([
 						count = uploaded,
 						name = media.name || 'tmp'
 					;
-					uploaded +=1;
+					uploaded++;
 					new_media[count] = new MediaItem_Model({progress: 0});
 					new_media[count].set({post_title: name});
 					media_library_view.model.add(new_media[count], {at: 0});
@@ -1553,16 +1737,22 @@ define([
 				},
 				progressall: function (e, data) {
 					var count = progressing;
-					progressing+=1;
+					progressing++;
 					var progress = parseInt(data.loaded / data.total * 100, 10);
 					if (new_media[count]) new_media[count].trigger("upload:progress", progress);
 				},
 				done: function (e, data) {
 					var count = done;
-					done +=1;
+					done++;
+					processed++;
 					if(ActiveFilters.themeImages){
 						new_media[count].set(data.result.data, {silent: true});
-						return new_media[count].trigger("upload:finish", me);
+						new_media[count].trigger("upload:finish", me);
+						if (processed == uploaded) { // Refresh when all images has processed
+							ActiveFilters.to_defaults();
+							Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+						}
+						return;
 					}
 
 					var result = data.result.data || [],
@@ -1576,13 +1766,20 @@ define([
 					}).done(function (response) {
 						new_media[count].set(response.data, {silent:true});
 						new_media[count].trigger("upload:finish", me);
-					}).fail(function () {
-						Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+					}).always(function () {
+						if (processed == uploaded) { // Refresh when all images has processed
+							ActiveFilters.to_defaults();
+							Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+						}
 					});
 				},
 				fail: function (e, data) {
+					processed++;
 					if (data.jqXHR.responseJSON && data.jqXHR.responseJSON.error) Upfront.Views.Editor.notify(data.jqXHR.responseJSON.error, 'error');
-					Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+					if (processed == uploaded) { // Refresh when all images has processed
+						ActiveFilters.to_defaults();
+						Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
+					}
 				}
 			}).trigger("click");
 
@@ -1592,6 +1789,11 @@ define([
 		},
 		render_markup: function () {
 			//console.log("MARKUP YAY");
+		},
+		toggle_controls: function () {
+			if (!this.library_view) return false;
+			this.library_view.toggle_controls();
+			this.show_control = false;
 		},
 		load: function (data) {
 			this._request_in_progress = true;
@@ -1606,6 +1808,7 @@ define([
 					ActiveFilters.set_max_items(response.data.meta.max_items);
 					me.library_view.update(response.data.items);
 					me.command_view.render();
+					if (me.show_control) me.switcher_view.switch_controls();
 				})
 				.fail(function (response) {
 					me.library_view.update([]);
@@ -1619,6 +1822,29 @@ define([
 		switch_media_type: function (what) {
 			if (this._request_in_progress) return false;
 			this.load(what.to_request_json());
+		},
+		update_model: function (selected) {
+			// checking on all models on current page
+			for ( var key in selected.models ) {
+				var model = selected.models[key],
+					modelAttributes = ((model || {}).attributes || {})
+					index = ActiveFilters.current_keys.indexOf(modelAttributes.ID)
+				;
+				if( index == -1 ) {
+					// inserting selected media models on the list
+					if( modelAttributes.selected ) {
+						ActiveFilters.current_keys.push(modelAttributes.ID);
+						ActiveFilters.current_models.push(model);
+					}
+				} else {
+					// removing media models on the list
+					if( !modelAttributes.selected || modelAttributes.selected === undefined ) {
+						ActiveFilters.current_keys.splice(index, 1);
+						ActiveFilters.current_models.splice(index, 1);
+					}
+				}
+			}
+			Upfront.Events.trigger("media_manager:active_filters:updated");
 		}
 	});
 
@@ -1631,17 +1857,26 @@ define([
 		},
 		render: function () {
 			var button_text = this.options.button_text,
+				button_text_multiple = this.options.button_text_multiple,
 				pagination = new MediaManager_Pagination(),
-				search = new MediaManager_BottomCommand_Search(),
-				use = this.options.ck_insert ? new MediaManager_BottomCommand_UseSelection_MultiDialog({button_text: button_text}) : new MediaManager_BottomCommand_UseSelection({button_text: button_text})
+				use = false
 			;
 			pagination.render();
-			search.render();
-			use.render();
+			if (this.options.show_insert) {
+				use = this.options.ck_insert 
+					? new MediaManager_BottomCommand_UseSelection_MultiDialog({
+							button_text: button_text,
+							button_text_multiple: button_text_multiple
+						}) 
+					: new MediaManager_BottomCommand_UseSelection({
+							button_text: button_text,
+							button_text_multiple: button_text_multiple
+						})
+				use.render();
+			}
 			this.$el.empty()
 				.append(pagination.$el)
-				.append(use.$el)
-				.append(search.$el)
+				.append(use !== false ? use.$el : '')
 			;
 		},
 		switch_to_upload: function (e) {
@@ -1708,67 +1943,6 @@ define([
 			}
 		});
 
-		var MediaManager_BottomCommand_Search = Backbone.View.extend({
-			className: "search_container clearfix",
-			events: {
-				"click .search": "do_search",
-				"click .clear": "clear_search",
-				"keyup :text": "on_keyup"
-			},
-			render: function () {
-				var active = ActiveFilters.get("search"),
-					search = !!active.length ? active.first() : false,
-					has_search = !!search && search.get("state")
-				;
-				this.$el.empty()
-					.append('<input type="text" placeholder="' + l10n.search + '" value="' + (has_search && search ? search.get("value") : '') + '" />')
-				;
-				if (has_search) {
-					this.$el.append('<a href="#clear" class="clear upfront-icon upfront-icon-popup-search-clear"></a>');
-					this.$el.addClass("has_search");
-				}
-				else {
-					this.$el.removeClass("has_search");
-				}
-				this.$el.append('<div class="search upfront-icon upfront-icon-popup-search" id="upfront-search_action"></div>');
-			},
-			do_search: function (e) {
-				e.preventDefault();
-				e.stopPropagation();
-				var $text = this.$el.find(":text"),
-					text = $text.val(),
-					search = new MediaFilter_Item({filter: text, value: text, state: true})
-				;
-				if (!text) {
-					search = new MediaFilter_Item({filter: false, value: false, state: false});
-				}
-
-				ActiveFilters.to_defaults();
-				ActiveFilters.current_keys = [];
-				ActiveFilters.current_models = [];
-				ActiveFilters.set("search", new MediaFilter_Collection([search]));
-				Upfront.Events.trigger("media_manager:media:list", ActiveFilters);
-				Upfront.Events.trigger("media:search:requested", search);
-				this.render();
-
-				var selected_model = new MediaCollection_Selection(ActiveFilters.current_models);
-				Upfront.Events.trigger("media:item:selection_changed", selected_model);
-			},
-			clear_search: function (e) {
-				e.preventDefault();
-				e.stopPropagation();
-				var $text = this.$el.find(":text");
-				$text.val('');
-				this.do_search(e);
-			},
-			on_keyup: function (e) {
-				if ( e.keyCode == 13 )
-					this.$el.find('.search').trigger('click');
-				else if ( e.keyCode == 27 )
-					this.$el.find('.clear').trigger('click');
-			}
-		});
-
 		var MediaManager_BottomCommand_UseSelection = Backbone.View.extend({
 			className: "use_selection_container",
 			events: {
@@ -1776,32 +1950,15 @@ define([
 			},
 			initialize: function (opts) {
 				this.options = opts;
-				Upfront.Events.on("media:item:selection_changed", this.update_model, this);
+				this.listenTo(Upfront.Events, "media_manager:active_filters:updated", this.render);
 			},
 			render: function () {
-				var button_text = this.options.button_text || "Ok";
-				this.$el.empty().append('<a href="#use" class="use">' + button_text + '</a>');
-			},
-			update_model: function (selected) {
-				// checking on all models on current page
-				for ( var key in selected.models ) {
-					var model = selected.models[key],
-						modelAttributes = ((model || {}).attributes || {})
-						index = ActiveFilters.current_keys.indexOf(modelAttributes.ID)
-					;
-					if( index == -1 ) {
-						// inserting selected media models on the list
-						if( modelAttributes.selected ) {
-							ActiveFilters.current_keys.push(modelAttributes.ID);
-							ActiveFilters.current_models.push(model);
-						}
-					} else {
-						// removing media models on the list
-						if( !modelAttributes.selected || modelAttributes.selected === undefined ) {
-							ActiveFilters.current_keys.splice(index, 1);
-							ActiveFilters.current_models.splice(index, 1);
-						}
-					}
+				this.$el.empty();
+				if ( ActiveFilters.current_models.length == 1 ) {
+					this.$el.append('<a href="#use" class="use">' + ( this.options.button_text || l10n.ok )+ '</a>');
+				}
+				else if ( ActiveFilters.current_models.length > 1 ) {
+					this.$el.append('<a href="#use" class="use">' + ( this.options.button_text_multiple || l10n.ok ) + '</a>');
 				}
 			},
 			use_selection: function (e) {
@@ -2006,6 +2163,7 @@ define([
 			aux: false,
 			controls: false
 		},
+		show_controls: false,
 		initialize: function (collection, opts) {
 			var data = data || {};
 			if((collection || {}).models)
@@ -2022,10 +2180,10 @@ define([
 			}
 			var media = this._subviews.media;
 
-			if (!this._subviews.aux) {
+			/*if (!this._subviews.aux) {
 				this._subviews.aux = new MediaManager_AuxControls_View({model: this.media_collection});
 			}
-			var aux = this._subviews.aux;
+			var aux = this._subviews.aux;*/
 
 			if (!this._subviews.controls) {
 				this._subviews.controls = new MediaManager_Controls_View({model: this.media_collection, options: this.options });
@@ -2035,14 +2193,15 @@ define([
 			media.multiple_selection = this.multiple_selection;
 
 			controls.render();
-			aux.render();
+			//aux.render();
 			media.render();
 			this.$el
 				.empty()
 				.append(controls.$el)
-				.append(aux.$el)
+				//.append(aux.$el)
 				.append(media.$el)
 			;
+			controls.$el.hide(); // Hide controls by default
 			this.media_view = media;
 			this.media_view.start_loading();
 		},
@@ -2052,6 +2211,11 @@ define([
 			this.media_view.end_loading(function(){
 				me.media_view.render();
 			});
+		},
+		toggle_controls: function () {
+			this.show_controls = !this.show_controls;
+			this._subviews.controls.$el.toggle();
+			this.$el.toggleClass('upfront-media_manager-show_controls');
 		},
 		remove: function() {
 			_.each(this._subviews, function(subview, idx) {
@@ -2229,6 +2393,7 @@ define([
 				this.$el.find(".thumbnail .upfront-image-upload-placeholder").replaceWith(this.model.get("thumbnail"));
 				this.$el.find('.upfront-media-progress-bar').remove();
 
+				this.model.set({selected: true});
 				// adding it on persistent list
 				ActiveFilters.current_models.push(this.model);
 				// Only do if regular media.
@@ -2236,7 +2401,7 @@ define([
 					// Add as current keys so uploads are selected.
 					ActiveFilters.current_keys.push(this.model.attributes.ID);
 					// redraw media gallery
-					manager.render_library();
+					//manager.render_library();
 				}
 			},
 			remove: function() {
@@ -2500,7 +2665,8 @@ define([
 				media_type: ["images"],
 				multiple_sizes: true,
 				multiple_selection: true,
-				button_text: l10n.ok,
+				button_text: l10n.insert_media_file,
+				button_text_multiple: l10n.insert_media_files,
 				ck_insert: false,
 				hold_editor: false
 			}, options);
@@ -2508,8 +2674,7 @@ define([
 			var me = this,
 				popup = false,
 				media_type = options.media_type,
-				multiple_selection = options.multiple_selection,
-				button_text = options.button_text
+				multiple_selection = options.multiple_selection
 			;
 			ActiveFilters.allowed_media_types = media_type;
 			ActiveFilters.multiple_sizes = options.multiple_sizes;

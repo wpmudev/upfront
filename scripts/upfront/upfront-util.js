@@ -876,6 +876,27 @@ define([
 			parsed = JSON.parse(inflated);
 			// console.timeEnd('extracting');
 			return parsed;
+		},
+
+		/**
+		 * Add string to clipboard, this must be called from user initiated action
+		 * 
+		 * @param text
+		 */
+		add_to_clipboard: function (text) {
+			var textarea = document.createElement("textarea");
+			
+			textarea.value = text;
+			document.body.appendChild(textarea);
+			textarea.select();
+			
+			try {
+			  	document.execCommand('copy');
+			} catch (err) {
+			    console.log('Copy failed', err);
+			}
+			
+			document.body.removeChild(textarea);
 		}
 	};
 
