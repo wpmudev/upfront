@@ -834,7 +834,7 @@ define([
 		 * @returns {string} base64 encoded string
 		 */
 		compress: function (data, options) {
-			console.time('compressing');
+			// console.time('compressing');
 			var default_options = { to: 'string', level: Upfront.mainData.save_compression_level },
 				stringified, raw, encoded
 			;
@@ -850,8 +850,8 @@ define([
 			raw = pako.deflateRaw(stringified, options);
 			// Base64 encode it so we can work with string
 			encoded = btoa(raw);
-			console.log('compressed length:' + encoded.length, 'compressed ratio:' + Math.round(encoded.length/stringified.length*100)/100);
-			console.timeEnd('compressing');
+			// console.log('compressed length:' + encoded.length, 'compressed ratio:' + Math.round(encoded.length/stringified.length*100)/100);
+			// console.timeEnd('compressing');
 			return {
 				result: encoded,
 				original_length: stringified.length,
@@ -869,7 +869,7 @@ define([
 		 * @returns extracted data, with the same type before compression
 		 */
 		extract: function (compressed, options, compressed_length, original_length) {
-			console.time('extracting');
+			// console.time('extracting');
 			if ( compressed_length && compressed_length !== compressed.length ) return false;
 			var default_options = { to: 'string' },
 				decoded, inflated, parsed
@@ -889,8 +889,29 @@ define([
 
 			// Finally, parse it to get back original value
 			parsed = JSON.parse(inflated);
-			console.timeEnd('extracting');
+			// console.timeEnd('extracting');
 			return parsed;
+		},
+
+		/**
+		 * Add string to clipboard, this must be called from user initiated action
+		 * 
+		 * @param text
+		 */
+		add_to_clipboard: function (text) {
+			var textarea = document.createElement("textarea");
+			
+			textarea.value = text;
+			document.body.appendChild(textarea);
+			textarea.select();
+			
+			try {
+			  	document.execCommand('copy');
+			} catch (err) {
+			    console.log('Copy failed', err);
+			}
+			
+			document.body.removeChild(textarea);
 		}
 	};
 

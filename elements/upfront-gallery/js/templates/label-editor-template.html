@@ -1,13 +1,20 @@
 <div class="ugallery-magnific-labels upfront-ui">
-	<div class="ugallery-magnific-panel upfront-media-controls">
-		<div class="ugallery-magnific-wrapper existing_labels">
-			{{labels}}
+	<div class="ugallery-magnific-panel upfront-media-controls upfront-additive_multiselection">
+		<div class="ugallery-magnific-wrapper">
+			<span class="existing-labels-title">{{l10n.image_labels}}</span>
+			<div class="labels_filter {{labelsCount ? '' : 'empty'}}">
+				<ul>{{labels}}</ul>
+				<input type="text" class="filter upfront-field upfront-field-text" value="{{selection}}" placeholder="{{l10n.pick_label}}"/>
+			</div>
+			<div class="labels_list"></div>
 		</div>
 		<div class="ugallery-magnific-add">
-			<span class="ugallery-magnific-addform label_selector">
-				<input type="text" class="ugallery-addlabels" class="upfront-field-text" name="ugallery-image-labels" placeholder="{{ l10n.add_label }}"><div class="ugallery-magnific-addbutton">{{ l10n.add_label }}</div>
-				<span class="labels_list"></span>
-			</span>
+			<label>{{l10n.create_label}}</label>
+			<div class="new_labels">
+				<a class="toggle-add-label upfront-icon-control upfront-icon-label-add"></a>
+				<input type="text" class="add-label upfront-field upfront-field-text" placeholder="{{l10n.type_label}}" />
+				<a class="submit-label upfront-icon-control upfront-icon-label-add-alt"></a>
+			</div>
 		</div>
 	</div>
 </div>

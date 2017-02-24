@@ -234,6 +234,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 			),
 			dirname(dirname(__FILE__)) . '/tpl/this-post.php'
 		);
+
 		return $markup;
 	}
 

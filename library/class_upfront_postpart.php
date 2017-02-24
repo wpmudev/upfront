@@ -356,6 +356,8 @@ abstract class Upfront_PostPart_View {
 		the_content();
 		$content = ob_get_clean();
 		wp_reset_postdata();
+
+		$content = apply_filters('upfront-post_data-get_content-after', $content);
 		return $content;
 	}
 

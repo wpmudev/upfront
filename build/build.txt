@@ -364,9 +364,9 @@ C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-posts/js/post
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-posts/js/post-list-meta-views.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-posts/js/post-list-settings-parts.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-posts/js/post-list-modules-abstraction.js
+text!elements/upfront-posts/tpl/preset-style.html
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-posts/js/post-list-settings-modules.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-posts/js/post-list-settings-panels.js
-text!elements/upfront-widget/tpl/preset-style.html
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-posts/js/post-list-settings.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-posts/js/posts-list.js
 text!elements/upfront-search/tpl/usearch.html
@@ -404,6 +404,7 @@ C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-post-data/js/
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-post-data/js/post-data-settings.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-post-data/js/post-data.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-this-page/js/this_page.js
+text!elements/upfront-widget/tpl/preset-style.html
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-widget/js/settings.js
 C:/xampp/htdocs/upfront/wp-content/themes/upfront/elements/upfront-widget/js/uwidget.js
 text!elements/upfront-youtube/tpl/youtube.html
