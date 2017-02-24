@@ -5,6 +5,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	protected $isPostPartServer = false;
 	protected $isThisPostServer = false;
 	protected $isCommentServer = false;
+	protected $isNavigationServer = false;
 
 	protected function __construct() {
 		parent::__construct();
@@ -290,6 +291,10 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 				if($this->isCommentServer) {
 					$preset['preset_style'] = str_replace('.default', '.default.upfront-comment', $preset['preset_style']);
+				}
+				
+				if($this->isNavigationServer) {
+					$preset['preset_style'] = str_replace('div.responsive_nav_toggler', '.responsive_nav_toggler', $preset['preset_style']);
 				}
 			}
 
