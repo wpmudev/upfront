@@ -95,6 +95,22 @@ class Upfront_Compat_CoursePress {
 		add_filter('upfront-post_data-get_content-before', array($this, 'kill_double_discussion_querying'));
 		add_filter('upfront-post_data-get_content-after', array($this, 'balance_out_tags_in_discussion_content'));
 		add_filter('upfront-post_data-get_content-after', array($this, 'wrap_with_coursepress_css_class'), 99);
+		add_filter('body_class', array($this, 'add_cp_class_to_body'));
+	}
+
+	/**
+	 * Adds CoursePress css class to body element on live for easier styling.
+	 */
+	public function add_cp_class_to_body($classes) {
+		$layout = Upfront_Layout::get_parsed_cascade();
+
+		$i = str_replace('single-', '', $layout['item']);
+
+		if (empty($this->cp_layouts[$i])) return $classes;
+
+		$classes[] = 'coursepress';
+
+		return $classes;
 	}
 
 	/**
@@ -218,7 +234,8 @@ class Upfront_Compat_CoursePress {
 		$layouts['course-press'] = array(
 			'pluginName' => 'CoursePress',
 			'sampleContents' => $sampleContents,
-			'layouts' => $cpLayouts
+			'layouts' => $cpLayouts,
+			'bodyclass' => 'coursepress'
 		);
 
 		return $layouts;
