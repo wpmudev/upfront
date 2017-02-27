@@ -1757,7 +1757,6 @@ var Application = new (Backbone.Router.extend({
 					if (layout.bodyclass) self.plugin_body_classes.push(layout.bodyclass);
 				});
 			});
-			console.log(self.plugin_body_classes);
 		}
 		if (this.plugin_body_classes.length) {
 			$('body').removeClass(this.plugin_body_classes.join(' '));
