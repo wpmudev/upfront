@@ -2615,11 +2615,11 @@ div#page.upfront-layout-view.upfront-layout-view .upfront-editable_entity.upfron
   text-indent: 0px; }
 
 .video-insert-controls {
-  width: 26px;
-  height: 18px;
-  background-image: url("../img/uf-core-el-sprite.svg");
+  width: 28px;
+  height: 28px;
+  background-image: url(../img/uf-core-el-sprite.svg);
   border-radius: 3px;
-  background-position: -287px -491px;
+  background-position: -286px -486px;
   background-color: #f2f9ff;
   position: absolute;
   top: 15px;
@@ -2644,13 +2644,13 @@ div#page.upfront-layout-view.upfront-layout-view .upfront-editable_entity.upfron
   width: 100%;
   font-size: 0.8em;
   padding: 10px 10px 10px 10px;
-  margin-top: 16px;
+  margin-top: 29px;
   background-color: #f2f9ff;
   color: #ADADAD;
   box-shadow: 0px 2px 10px 0px #223240;
   border: none;
   z-index: 2000000000000;
-  right: 96px;
+  right: 95px;
   position: relative;
   text-align: right; }
 
@@ -2663,6 +2663,16 @@ div#page.upfront-layout-view.upfront-layout-view .upfront-editable_entity.upfron
 .upfront-output-layout .uinsert-video-insert .video-insert-controls,
 .upfront-output-layout .uinsert-video-insert .ueditor-insert-remove {
   display: none; }
+
+.swap-video-insert-button {
+  background: transparent; }
+
+.video-insert-controls-panel .image-crop-edit-button:before {
+  background-position: -380px -100px;
+  top: 6px;
+  left: 6px;
+  width: 13px;
+  height: 13px; }
 
 span.role_check_mark:before {
   color: #1abc9c;
