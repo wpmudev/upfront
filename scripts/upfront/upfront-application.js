@@ -1709,43 +1709,37 @@ var Application = new (Backbone.Router.extend({
 			}
 		}
 
-		var result;
-		_.each(Upfront.mainData.pluginsLayouts, function(data, plugin) {
-			if (result) return; // save cycles
+		var layoutData, pluginData, bodyclass;
+		_.each(Upfront.mainData.pluginsLayouts, function(data) {
+			if (layoutData) return; // save cycles
 			_.each(data.pagesById, function(page) {
 				if (parseInt(page.pageId, 10) === parseInt(postId, 10)) {
-					result = {
-						pluginName: data.pluginName,
-						content: data.sampleContents[page.content] ? data.sampleContents[page.content] : '',
-						title: page.title ? page.title : '',
-						killPostSettings: page.killPostSettings || false,
-						bodyclass: data.bodyclass || false
-					};
+					layoutData = page;
+					pluginData = data;
 				}
 			});
-			if (result) return; // save cycles
+			if (layoutData) return; // save cycles
 			_.each(data.layouts, function(layout) {
-				if (result) return; // save cycles
-				if (layout.specificity && currentLayout.specificity && currentLayout.specificity === layout.specificity) {
-					result = {
-						pluginName: data.pluginName,
-						content: data.sampleContents[layout.content] ? data.sampleContents[layout.content] : '',
-						title: layout.title ? layout.title : '',
-						killPostSettings: layout.killPostSettings || false,
-						bodyclass: data.bodyclass || false
-					};
-				} else if (layout.item === currentLayout.item) {
-					result = {
-						pluginName: data.pluginName,
-						content: data.sampleContents[layout.content] ? data.sampleContents[layout.content] : '',
-						title: layout.title ? layout.title : '',
-						killPostSettings: layout.killPostSettings || false,
-						bodyclass: data.bodyclass || false
-					};
+				if (layoutData) return; // save cycles
+				if (
+						(layout.specificity && currentLayout.specificity && currentLayout.specificity === layout.specificity) ||
+						(layout.item === currentLayout.item)
+				) {
+					layoutData = layout;
+					pluginData = data;
 				}
 			});
 		});
-		return result;
+
+		if (!layoutData) return;
+		bodyclass = layoutData.bodyclass || pluginData.bodyclass;
+		return {
+			pluginName: pluginData.pluginName,
+			content: pluginData.sampleContents[layoutData.content] ? pluginData.sampleContents[layoutData.content] : '',
+			title: layoutData.title ? layoutData.title : '',
+			killPostSettings: layoutData.killPostSettings || false,
+			bodyclass: bodyclass || false
+		};
 	},
 
 	plugin_body_classes: false,
@@ -1756,7 +1750,14 @@ var Application = new (Backbone.Router.extend({
 			this.plugin_body_classes = [];
 			_.each(Upfront.mainData.pluginsLayouts, function(data, plugin) {
 				if (data.bodyclass) self.plugin_body_classes.push(data.bodyclass);
+				_.each(data.pagesById, function(page) {
+					if (page.bodyclass) self.plugin_body_classes.push(page.bodyclass);
+				});
+				_.each(data.layouts, function(layout) {
+					if (layout.bodyclass) self.plugin_body_classes.push(layout.bodyclass);
+				});
 			});
+			console.log(self.plugin_body_classes);
 		}
 		if (this.plugin_body_classes.length) {
 			$('body').removeClass(this.plugin_body_classes.join(' '));

@@ -45,10 +45,9 @@
 				}
 
 				// Putting this here for now
+				Upfront.Application.remove_plugin_body_classes();
 				if (pluginLayout && pluginLayout.bodyclass)
 					$('body').addClass(pluginLayout.bodyclass);
-				else
-					Upfront.Application.remove_plugin_body_classes();
 			},
 			render: function () {
 				var me = this;
