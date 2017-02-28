@@ -44,6 +44,7 @@
                 });
 						},
 						get_status_values: function(values) {
+							// If each status does not have value, use the name.
 							return _.mapObject(values, function(value) {
 								if (typeof value.value === 'undefined') {
 									value.value = value.name;
@@ -51,23 +52,67 @@
 								return value;
 							});
 						},
+						get_date_values: function(values) {
+							return values;
+						},
+						get_category_values: function(values) {
+							// If each status does not have value, use the name.
+							return _.mapObject(values, function(value) {
+								if (typeof value.value === 'undefined') {
+									value.value = value.term_id;
+								}
+								if (typeof value.label === 'undefined') {
+									value.label = value.name;
+								}
+								return value;
+							});
+						},
+						// Add dropdowns to filter panel (same as links in wp-admin/edit.php).
 						add_filter_dropdowns: function() {
 							var me = this;
 							new Upfront.Collections.FilterList([], {postType: this.postType}).fetch({postType: this.postType}).done(function(data){
+								var status_value,
+									date_value,
+									category_value
+								;
 								var status_dropdown = new Fields.Select({
-									model: this.model,
-									//property: 'background_type', // We have our own behavior, so let's not use the default field one
-									//use_breakpoint_property: true,
-									name: 'post_status',
-									default_value: '0',
+									model: me.model,
+									name: 'upfront_post_status_filter',
+									default_value: status_value ? status_value : 0,
 									values: me.get_status_values(data.data.statuses),
 									change: function () {
 										me.handle_filter_request();
 									}
 								});
 
+								var date_dropdown = new Fields.Select({
+									model: me.model,
+									name: 'upfront_post_date_filter',
+									default_value: date_value ? date_value : 0,
+									values: me.get_date_values(data.data.dates),
+									change: function () {
+										me.handle_filter_request();
+									}
+								});
+
+								var category_dropdown= new Fields.Select({
+									model: me.model,
+									name: 'upfront_post_category_filter',
+									default_value: category_value ? category_value : 0,
+									values: me.get_category_values(data.data.categories),
+									change: function () {
+										me.handle_filter_request();
+									}
+								});
+
+								// Render Dropdowns.
 								status_dropdown.render();
-								me.$el.prepend(status_dropdown.$el);
+								date_dropdown.render();
+								category_dropdown.render();
+								// Add Dropdowns to start of filter panel.
+								me.$el.children().prepend(category_dropdown.$el);
+								me.$el.children().prepend(date_dropdown.$el);
+								me.$el.children().prepend(status_dropdown.$el);
 						});
 					}
     	});

@@ -127,8 +127,8 @@ input.upfront-field-text:hover,
 */
 /* end chrome input[type=number] styling */
 .upfront-field-select, .upfront-field-select-options {
-	background: rgb(242, 249, 255);
-	border: 1px solid rgb(183, 201, 217);
+	background: rgb(255, 255, 255);
+	border: 1px solid #e1e1e1;
 	border-radius: 3px;
 }
 .upfront-field-select {
@@ -190,14 +190,19 @@ input.upfront-field-text:hover,
 	border-color: rgb(96, 127, 153);
 }
 .upfront-field-select:after {
-	content: " ";
+	content: "\f347";
 	display: block;
 	position: absolute;
-	top: 11px;
-	right: 11px;
-	border-top: 4px solid rgb(96, 127, 153);
-	border-left: 4px solid transparent;
-	border-right: 4px solid transparent;
+	top: 0;
+	right: 4px;
+	border-top: 0;
+	border-right: 0;
+	border-left: 1px solid #e1e1e1;
+	padding-left: 4px;
+	font-family: dashicons;
+	font-size: 8px;
+	color: #000;
+	line-height: 22px;
 }
 .upfront-field-select-disabled:after {
 	border-top-color: rgb(153, 181, 204);

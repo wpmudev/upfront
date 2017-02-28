@@ -238,9 +238,18 @@ class Upfront_Editor_Ajax extends Upfront_Server {
         $month_count = count( $months );
 		// Array to return with values and labels of dates.
 		$date_values_and_labels = array();
+		$l10n = Upfront_EditorL10n_Server::add_l10n_strings(array());
+		$l10n = $l10n['global']['content'];
  
         if ( !$month_count || ( 1 == $month_count && 0 == $months[0]->month ) )
             return;
+
+		// Add All Dates option.
+		$date_values_and_labels[] = array(
+			'value' => 0,
+			'name' => 'all',
+			'label' => $l10n['all_dates'],
+		);
 
 		foreach ( $months as $arc_row ) {
             if ( 0 == $arc_row->year )
@@ -253,6 +262,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
             $label = sprintf( __( '%1$s %2$d' ), $wp_locale->get_month( $month ), $year );
 			$date_values_and_labels[] = array(
 				'value' => $value,
+				'name' => $value,
 				'label' => $label,
 			);
 		}
@@ -288,7 +298,6 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$defaults['selected'] = ( is_category() ) ? get_query_var( 'cat' ) : 0;
 
 		$r = wp_parse_args( $args, $defaults );
-		$option_none_value = $r['option_none_value'];
 
 		if ( ! isset( $r['pad_counts'] ) && $r['show_count'] && $r['hierarchical'] ) {
 			$r['pad_counts'] = true;
@@ -306,12 +315,18 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		unset( $get_terms_args['name'] );
 		$categories = get_terms( $r['taxonomy'], $get_terms_args );
 
-		$name = esc_attr( $r['name'] );
-		$class = esc_attr( $r['class'] );
-		$id = $r['id'] ? esc_attr( $r['id'] ) : $name;
-		$required = $r['required'] ? 'required' : '';
-		return $categories;
+		// Add All Categories option.
+		$l10n = Upfront_EditorL10n_Server::add_l10n_strings(array());
+		$l10n = $l10n['global']['content'];
+		$all_option = (object) array(
+			'name' => 'all',
+			'l10n' => $l10n['all_categories'],
+			'value' => 0
+		);
+		// Prepend all categories option to categories array.
+		array_unshift($categories, $all_option);
 
+		return $categories;
 	}
 
 

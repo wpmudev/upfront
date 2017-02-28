@@ -61,6 +61,20 @@
 	height: 44px;
 }
 
+.upfront-popup-posts .upfront-field-wrap-select {
+	width: 120px;
+	display: inline-block;
+	margin: 0;
+	margin-right: 12px;
+}
+
+.upfront-popup-posts .upfront-field-select {
+	height: 22px;
+	max-height: 22px;
+	font-size: 10px;
+	line-height: 20px;
+}
+
 .upfront-popup-posts #upfront-entity_list-search {
 	float: none;
 	display: none;
@@ -915,7 +929,6 @@ a.editaction.trash {
 	font-family: dashicons;
 	font-weight: bold;
 	position: relative;
-	top: -4px;
 }
 
 .upfront-popup-posts .upfront-pagination_item-prev:before {
@@ -931,6 +944,7 @@ a.editaction.trash {
 	width: 50px;
 	margin-left: 32px;
 	color: rgb(156,155,156);
+	text-align: center;
 }
 
 .upfront-popup-posts #upfront-entity_list-pagination.upfront-single-page-pagination small {

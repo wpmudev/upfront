@@ -147,6 +147,8 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'all_posts' => __('All Posts', 'upfront'),
 				'all_pages' => __('All Pages', 'upfront'),
 				'all_cpts' => __('All CPTs', 'upfront'),
+				'all_dates' => __('All dates', 'upfront'),
+				'all_categories' => __('All categories', 'upfront'),
 				'deleted_post' => __('Deleted', 'upfront'),
 				'public_post' => __('Public', 'upfront'),
 				'sticky' => __('Sticky', 'upfront'),
