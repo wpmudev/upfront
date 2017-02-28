@@ -3,7 +3,7 @@
 
 /**
  * Individual post item markup generation.
- * Takes care of the post parts template expanstion.
+ * Takes care of the post parts template expansion.
  */
 abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 
@@ -32,7 +32,7 @@ abstract class Upfront_Post_Data_PartView extends Upfront_PostPart_View {
 		$this->_post = $post;
 		$this->_editor = $editor;
 
-		// Allow compat layer to force only needed parts
+		// Allow compatibility layer to force only needed parts
 		$post_parts = apply_filters('upfront-override_post_parts', false, $post->post_type);
 		if (empty($post_parts)) {
 			$post_parts = self::get_default_parts($this->_data);

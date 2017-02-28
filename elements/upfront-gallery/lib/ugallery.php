@@ -432,6 +432,10 @@ class Upfront_UgalleryView extends Upfront_Object {
 				'add_new_label' => __('Add a new label', 'upfront'),
 				'label_sorting_nag' => __('Turn on \'Label Sorting\' in the settings to display gallery labels.', 'upfront'),
 				'add_label' => __('Add', 'upfront'),
+				'image_labels' => __('Image labels', 'upfront'),
+				'create_label' => __('Create new label', 'upfront'),
+				'type_label' => __('Type to create label', 'upfront'),
+				'pick_label' => __('Type to pick label', 'upfront'),
 			),
 			'lightbox' => array(
 				'title' => 'Gallery Lightbox',

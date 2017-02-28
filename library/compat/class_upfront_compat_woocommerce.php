@@ -7,7 +7,10 @@ class Upfront_Compat_WooCommerce {
 	}
 
 	public function add_hooks() {
-		if (class_exists('woocommerce') === false) return;
+		if (class_exists('woocommerce') === false) {
+			add_filter('upfront-builder_skip_exported_layouts', array($this, 'skip_layouts_when_inactive'), 10, 2);
+			return;
+		}
 
 		add_action('after_setup_theme', array($this, 'add_woocommerce_support'));
 		add_filter('template_include', array($this, 'override_single_product_tpl'), 99, 3);
@@ -23,15 +26,34 @@ class Upfront_Compat_WooCommerce {
 		add_filter('upfront-forbidden_post_data_types', array($this, 'forbidden_post_data_types'));
 	}
 
-public function forbidden_post_data_types($types) {
-	$post = get_post();
-	if (is_null($post)) return $types;
+	/**
+	 * Hides CoursePress layouts in builder exported layouts if "Layouts" popup when CoursePress is not active.
+	 */
+	public function skip_layouts_when_inactive($skip, $layout) {
+		$woo_layouts = array(
+			'single-product',
+			'archive-product_cat',
+			'archive-product_tag',
+			'archive-product',
+			'single-page-woocart',
+			'single-page-woomyaccount',
+			'single-page-woocheckout',
+		);
+		if (in_array($layout['specificity'], $woo_layouts)) return true;
 
-	if (self::is_woo_page($post)) {
-		$types = array('title', 'date_posted', 'comment_form', 'comment_count', 'comments', 'comments_pagination');
+		return $skip;
 	}
-	return $types;
-}
+
+
+	public function forbidden_post_data_types($types) {
+		$post = get_post();
+		if (is_null($post)) return $types;
+
+		if (self::is_woo_page($post)) {
+			$types = array('title', 'date_posted', 'comment_form', 'comment_count', 'comments', 'comments_pagination');
+		}
+		return $types;
+	}
 
 
 	/**
@@ -195,59 +217,70 @@ public function forbidden_post_data_types($types) {
 			'pagesById' => array(
 				array(
 					'pageId' => wc_get_page_id('shop'),
-					'content' => 'shop'
+					'content' => 'shop',
+					'bodyclass' => 'woocommerce woocommerce-page'
 				),
 				array(
 					'pageId' => wc_get_page_id('cart'),
-					'content' => 'cart'
+					'content' => 'cart',
+					'bodyclass' => 'woocommerce-cart woocommerce-page'
 				),
 				array(
 					'pageId' => wc_get_page_id('checkout'),
-					'content' => 'checkout'
+					'content' => 'checkout',
+					'bodyclass' => 'woocommerce-checkout woocommerce-page'
 				),
 				array(
 					'pageId' => wc_get_page_id('myaccount'),
-					'content' => 'myaccount'
+					'content' => 'myaccount',
+					'bodyclass' => 'woocommerce-account woocommerce-page'
 				)
 			),
 			'layouts' => array(
 				array(
 					'item' => 'archive-product',
 					'type' => 'archive',
-					'content' => 'archive-product'
+					'content' => 'archive-product',
+					'bodyclass' => 'woocommerce woocommerce-page'
 				),
 				array(
 					'item' => 'single-product',
 					'specificity' => 'single-product',
 					'type' => 'single',
-					'content' => 'single-product'
+					'content' => 'single-product',
+					'bodyclass' => 'woocommerce woocommerce-page'
 				),
 				array(
 					'item' => 'archive-product_cat',
 					'specificity' => 'archive-product_cat',
 					'type' => 'archive',
-					'content' => 'archive-product'
+					'content' => 'archive-product',
+					'bodyclass' => 'woocommerce woocommerce-page'
 				),
 				array(
 					'item' => 'archive-product_tag',
 					'specificity' => 'archive-product_tag',
 					'type' => 'archive',
-					'content' => 'archive-product'
+					'content' => 'archive-product',
+					'bodyclass' => 'woocommerce woocommerce-page'
 				),
 				array(
 					'item' => 'single-page-woocart',
 					'specificity' => 'single-page-woocart',
-					'content' => 'cart'
+					'content' => 'cart',
+					'bodyclass' => 'woocommerce-cart woocommerce-page'
 				),
 				array(
 					'item' => 'single-page-woocheckout',
 					'specificity' => 'single-page-woocheckout',
-					'content' => 'checkout'
+					'content' => 'checkout',
+					'bodyclass' => 'woocommerce-checkout woocommerce-page'
 				),
 				array(
 					'item' => 'single-page-woomyaccount',
 					'specificity' => 'single-page-woomyaccount',
-					'content' => 'myaccount'
+					'content' => 'myaccount',
+					'bodyclass' => 'woocommerce-account woocommerce-page'
 				),
 			)
 		);
@@ -328,6 +361,15 @@ public function forbidden_post_data_types($types) {
 		if ($specificity === 'single-page-woocheckout' || $specificity === 'woocheckout') {
 			return __('WooCommerce Checkout Page', 'upfront');
 		}
+
+		if ($specificity === 'archive-product_cat') {
+			return __('WooCommerce Product Category', 'upfront');
+		}
+
+		if ($specificity === 'archive-product_tag') {
+			return __('WooCommerce Product Tag', 'upfront');
+		}
+
 
 		return $layout_name;
 	}

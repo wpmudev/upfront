@@ -2,7 +2,7 @@
 
 abstract class Upfront_Entity {
 
-    protected static $_video_index = 0;
+	protected static $_video_index = 0;
 
 	protected $_data;
 	protected $_tag = 'div';
@@ -274,10 +274,10 @@ abstract class Upfront_Entity {
 				'center' => $this->_get_breakpoint_property('background_map_center', $breakpoint_id),
 				'zoom' => $this->_get_breakpoint_property('background_map_zoom', $breakpoint_id),
 				'style' => $this->_get_breakpoint_property('background_map_style', $breakpoint_id),
-        		'controls' => $this->_get_breakpoint_property('background_map_controls', $breakpoint_id),
-        		'styles' => $this->_get_breakpoint_property('map_styles', $breakpoint_id),
-        		'use_custom_map_code' => $this->_get_breakpoint_property('background_use_custom_map_code', $breakpoint_id),
-        		'show_markers' => $this->_get_breakpoint_property('background_show_markers', $breakpoint_id),
+				'controls' => $this->_get_breakpoint_property('background_map_controls', $breakpoint_id),
+				'styles' => $this->_get_breakpoint_property('map_styles', $breakpoint_id),
+				'use_custom_map_code' => $this->_get_breakpoint_property('background_use_custom_map_code', $breakpoint_id),
+				'show_markers' => $this->_get_breakpoint_property('background_show_markers', $breakpoint_id),
 			);
 			$attr .= 'data-bg-map="' . esc_attr( json_encode($data) ) . '"';
 		}
@@ -306,11 +306,11 @@ abstract class Upfront_Entity {
 				$slide_attr .= " data-control_next_prev='1'";
 			}
 
-	    	foreach ( $images as $image ){
-	    		//$src = wp_get_attachment_image($image, 'full');
-	    		$src = upfront_get_attachment_image_lazy($image, 'full');
+			foreach ( $images as $image ){
+				//$src = wp_get_attachment_image($image, 'full');
+				$src = upfront_get_attachment_image_lazy($image, 'full');
 				$slides[] = "<div class='upfront-default-slider-item'>{$src}</div>";
-	    	}
+			}
 			$slides_markup = join('', $slides);
 			$markup = "<div class='upfront-bg-slider' {$slide_attr}>{$slides_markup}</div>";
 		}
@@ -339,7 +339,7 @@ abstract class Upfront_Entity {
 					// hack additional attributes
 					$vid_attrs = array(
 						'.*?vimeo\.' => ($loop === 1 ? '&amp;loop=1' : 'loop=0') . $autoplay_attr . ( $mute == 1 ? '&amp;api=1&amp;player_id=' . $video_id : '' ),
-						'.*?youtube\.com\/(v|embed)\/(.+?)(\/|\?).*?$' =>  '&amp;controls=0&amp;showinfo=0&amp;rel=0&amp;wmode=transparent&amp;html5=1&amp;modestbranding=1' . ($loop === 1 ? '&amp;loop=1&amp;enablejsapi=1' : 'loop=0') . $autoplay_attr . ( $mute == 1 ? '&amp;enablejsapi=1' /*. '&amp;origin=' . site_url()*/ : '' ),
+						'.*?youtube\.com\/(v|embed)\/(.+?)(\/|\?).*?$' => '&amp;controls=0&amp;showinfo=0&amp;rel=0&amp;wmode=transparent&amp;html5=1&amp;modestbranding=1' . ($loop === 1 ? '&amp;loop=1&amp;enablejsapi=1' : 'loop=0') . $autoplay_attr . ( $mute == 1 ? '&amp;enablejsapi=1' /*. '&amp;origin=' . site_url()*/ : '' ),
 						'.*?wistia\.' => ($loop === 1 ? 'endVideoBehavior=loop' : '') . ( $autoplay == 1 ? '&amp;autoPlay=true' : '' ) . ( $mute == 1 ? '&amp;volume=0' : '' )
 					);
 					$vid_attr = '';
@@ -356,7 +356,7 @@ abstract class Upfront_Entity {
 								break;
 							}
 						}
-						$embed = $match[1] . $match[2] . ( strpos($match[2], '?') > 0  ? '&amp;' : '?' ) . $vid_attr . $match[3] . $embed_attr . $match[4];
+						$embed = $match[1] . $match[2] . ( strpos($match[2], '?') > 0 ? '&amp;' : '?' ) . $vid_attr . $match[3] . $embed_attr . $match[4];
 					}
 					$markup = "<script class='video-embed-code' type='text/html'>{$embed}</script>";
 				}

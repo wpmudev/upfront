@@ -76,6 +76,10 @@ define("content", deps, function(postTpl, ContentTools) {
 		 * public method in constructor
 		 */
 		_reboot: function () {
+			if (!this.contentEditor) {
+				return;
+			}
+
 			this.trigger('loaded', this.contentEditor);
 
 			this.stopListening(this.contentEditor, 'cancel');

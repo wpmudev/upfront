@@ -451,7 +451,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		if($post){
 			if(!empty($data['filterContent'])){
 				$post->post_content = apply_filters('the_content', $post->post_content);
-				$post->post_title = apply_filters('the_title', $post->post_title);
+				$post->post_title = apply_filters('the_title', $post->post_title, $post->ID);
 				$post->post_excerpt = apply_filters('the_excerpt', $post->post_excerpt);
 			}
 			if(!empty($data['withAuthor'])){
@@ -510,7 +510,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			for ($i=0; $i < sizeof($posts); $i++) {
 				if(!empty($data['filterContent'])){
 					$posts[$i]->post_content = apply_filters('the_content', $posts[$i]->post_content);
-					$posts[$i]->post_title = apply_filters('the_title', $posts[$i]->post_title);
+					$posts[$i]->post_title = apply_filters('the_title', $posts[$i]->post_title, $posts[$i]->ID);
 					$posts[$i]->post_excerpt = apply_filters('the_excerpt', $posts[$i]->post_excerpt);
 				}
 

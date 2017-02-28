@@ -43,7 +43,11 @@ define(function(){
 		},
 		upload_image: function () {
 			var me = this;
-			Upfront.Views.Editor.ImageSelector.open().done(function(images){
+			Upfront.Views.Editor.ImageSelector.open({
+				hide_sizes: true,
+				insert_options: false,
+				multiple: false
+			}).done(function(images){
 				var sizes = {},
 					image_id;
 				_.each(images, function(image, id){

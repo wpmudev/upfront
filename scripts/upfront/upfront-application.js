@@ -893,6 +893,13 @@ var Application = new (Backbone.Router.extend({
 				app.setup_edit_layout();
 			}
 		});
+
+		Upfront.Events.on('upfront:renderingqueue:done', function () {
+			// Call mode context dialog - this is what pops up the explaining
+			// dialog for the users (only if Exporter plugin is active)
+			var modeContextDialog = Upfront.plugins.call('mode-context-dialog');
+		});
+
 		app.loading.render();
 		$('body').append(app.loading.$el);
 
@@ -1099,6 +1106,7 @@ var Application = new (Backbone.Router.extend({
 		this.layout = new Upfront.Models.Layout(data);
 		this.current_subapplication.layout = this.layout;
 		this.sidebar.model.set(this.layout.toJSON());
+		window._upfront_post_data.layout = layoutData.data.cascade;
 
 		if(typeof layoutData.data.post !== "undefined" && layoutData.data.post !== null) {
 			if((layoutData.data.post.ID !== "undefined" && layoutData.data.query.post_count) || (layoutData.data.post.ID !== "undefined" && layoutData.data.cascade.type === "single") || layoutData.data.query.is_singular) {
@@ -1113,8 +1121,6 @@ var Application = new (Backbone.Router.extend({
 		var shadow = this.layout.get('regions').get_by_name("shadow");
 		if(shadow)
 			this.layout.get('regions').remove(shadow);
-
-		window._upfront_post_data.layout = layoutData.data.cascade;
 
 		Upfront.Events.trigger("upfront:layout:loaded");
 		if (me.current_subapplication && me.current_subapplication.start)
@@ -1703,35 +1709,60 @@ var Application = new (Backbone.Router.extend({
 			}
 		}
 
-		var result;
-		_.each(Upfront.mainData.pluginsLayouts, function(data, plugin) {
-			if (result) return; // save cycles
+		var layoutData, pluginData, bodyclass;
+		_.each(Upfront.mainData.pluginsLayouts, function(data) {
+			if (layoutData) return; // save cycles
 			_.each(data.pagesById, function(page) {
 				if (parseInt(page.pageId, 10) === parseInt(postId, 10)) {
-					result = {
-						pluginName: data.pluginName,
-						content: data.sampleContents[page.content] ? data.sampleContents[page.content] : ''
-					};
+					layoutData = page;
+					pluginData = data;
 				}
 			});
-			if (result) return; // save cycles
+			if (layoutData) return; // save cycles
 			_.each(data.layouts, function(layout) {
-				if (result) return; // save cycles
-				if (layout.specificity && currentLayout.specificity && _.isNull(currentLayout.specificity.match(layout.specificity)) === false) {
-					result = {
-						pluginName: data.pluginName,
-						content: data.sampleContents[layout.content] ? data.sampleContents[layout.content] : ''
-					};
-				} else if (layout.item === currentLayout.item) {
-					result = {
-						pluginName: data.pluginName,
-						content: data.sampleContents[layout.content] ? data.sampleContents[layout.content] : ''
-					};
+				if (layoutData) return; // save cycles
+				if (
+						(layout.specificity && currentLayout.specificity && currentLayout.specificity === layout.specificity) ||
+						(layout.item === currentLayout.item)
+				) {
+					layoutData = layout;
+					pluginData = data;
 				}
 			});
 		});
-		return result;
+
+		if (!layoutData) return;
+		bodyclass = layoutData.bodyclass || pluginData.bodyclass;
+		return {
+			pluginName: pluginData.pluginName,
+			content: pluginData.sampleContents[layoutData.content] ? pluginData.sampleContents[layoutData.content] : '',
+			title: layoutData.title ? layoutData.title : '',
+			killPostSettings: layoutData.killPostSettings || false,
+			bodyclass: bodyclass || false
+		};
+	},
+
+	plugin_body_classes: false,
+
+	remove_plugin_body_classes: function() {
+		var self = this;
+		if (this.plugin_body_classes === false) {
+			this.plugin_body_classes = [];
+			_.each(Upfront.mainData.pluginsLayouts, function(data, plugin) {
+				if (data.bodyclass) self.plugin_body_classes.push(data.bodyclass);
+				_.each(data.pagesById, function(page) {
+					if (page.bodyclass) self.plugin_body_classes.push(page.bodyclass);
+				});
+				_.each(data.layouts, function(layout) {
+					if (layout.bodyclass) self.plugin_body_classes.push(layout.bodyclass);
+				});
+			});
+		}
+		if (this.plugin_body_classes.length) {
+			$('body').removeClass(this.plugin_body_classes.join(' '));
+		}
 	}
+
 }))();
 
 return {

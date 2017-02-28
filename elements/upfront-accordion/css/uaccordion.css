@@ -60,6 +60,9 @@
 	padding: 7px 15px;
 }
 
+.accordion-panel-title:focus {
+	outline: #2ea3f2 auto 5px;
+}
 
 #page .upfront-accordion-container .upfront-entity_meta {
 	top: 52px;

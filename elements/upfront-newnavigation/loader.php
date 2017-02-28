@@ -34,8 +34,8 @@ function unewnavigation_initialize () {
 	require_once (dirname(__FILE__) . '/lib/unewnavigation.php');
 	require_once (dirname(__FILE__) . '/lib/class_upfront_nav_presets_server.php');
 
-    // Include the backend support stuff
-    require_once( ABSPATH . 'wp-admin/includes/nav-menu.php' );
+	// Include the backend support stuff
+	require_once( ABSPATH . 'wp-admin/includes/nav-menu.php' );
 
 	// Add element defaults to data object
 	add_action('upfront_data', array('Upfront_UnewnavigationView', 'add_js_defaults'));
@@ -45,8 +45,6 @@ function unewnavigation_initialize () {
 	upfront_add_layout_editor_entity('unewnavigation', upfront_relative_element_url('js/unewnavigation', __FILE__));
 
 	add_action('wp_enqueue_scripts', array('Upfront_UnewnavigationView', 'add_styles_scripts'));
-    // Add the public stylesheet
-//    add_action('wp_enqueue_scripts', array('Upfront_UnewnavigationView', 'add_public_dependencies'));	
 }
 // Initialize the entity when Upfront is good and ready
 add_action('upfront-core-initialized', 'unewnavigation_initialize');
