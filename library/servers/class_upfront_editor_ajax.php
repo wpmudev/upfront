@@ -187,43 +187,30 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 	// Based off of core's method: WP_Posts_List_Table::get_views()
 	private function _get_status_filter_data ($post_type) {
-/*
- *        $num_posts = wp_count_posts( $post_type, 'readable' );
- *        $statuses = array();
- *
- *        if ( $mine ) {
- *            $statuses['mine'] = $mine;
- *        }
- */
+		$statuses = array();
+		$num_posts = wp_count_posts( $post_type );
+		$total_posts = array_sum( (array) $num_posts );
+		// Subtract post types that are not included in the admin all list.
+        foreach ( get_post_stati( array( 'show_in_admin_all_list' => false ) ) as $state ) {
+            $total_posts -= $num_posts->$state;
+        }
 
-/*
- *        foreach ( get_post_stati(array('show_in_admin_status_list' => true), 'objects') as $status ) {
- *            $class = '';
- *
- *            $status_name = $status->name;
- *
- *            if ( ! in_array( $status_name, $avail_post_stati ) || empty( $num_posts->$status_name ) ) {
- *                continue;
- *            }
- *
- *            if ( isset($_REQUEST['post_status']) && $status_name === $_REQUEST['post_status'] ) {
- *                $class = 'current';
- *            }
- *
- *            $status_args = array(
- *                'post_status' => $status_name,
- *                'post_type' => $post_type,
- *            );
- *
- *            $status_label = sprintf(
- *                translate_nooped_plural( $status->label_count, $num_posts->$status_name ),
- *                number_format_i18n( $num_posts->$status_name )
- *            );
- *
- *            $statuses[ $status_name ] = $this->get_edit_link( $status_args, $status_label, $class );
- *        }
- */
-		return get_post_stati(array('show_in_admin_status_list' => true), 'objects');
+
+		$l10n = Upfront_EditorL10n_Server::add_l10n_strings(array());
+		$l10n = $l10n['global']['content'];
+		if ($post_type === 'post') {
+			$label = $l10n['all_posts'];
+		} elseif ($post_type === 'page') {
+			$label = $l10n['all_posts'];
+		} else {
+			$label = $l10n['all_cpts'];
+		}
+		// Add All status option.
+		$statuses['all'] = array(
+			'label' => $label . ' ' . $total_posts,
+			'name' => 0,
+		);
+		return array_merge($statuses, get_post_stati(array('show_in_admin_status_list' => true), 'objects'));
 	}
 
 	// Based off of core's method: WP_List_Table::months_dropdown()

@@ -118,7 +118,6 @@
 										collection = new Upfront.Collections.PostList([], {postType: 'post'});
 										collection.orderby = 'post_date';
 										fetchOptions = {filterContent: true, withAuthor: true, limit: 15, post_status: 'any'};
-console.log(new Upfront.Collections.FilterList([], {postType: 'post'}).fetch({postType: 'post'}));
 								}
 								else if(panel == 'pages'){
 										collection = new Upfront.Collections.PostList([], {postType: 'page'});
@@ -169,7 +168,7 @@ console.log(new Upfront.Collections.FilterList([], {postType: 'post'}).fetch({po
 														collection.on('reset sort', me.render_panel, me);
 														views = {
 																view: new ContentEditor.Posts({collection: collection, $popup: me.$popup}),
-																search: new ContentEditor.Search({collection: collection}),
+																search: new ContentEditor.Search({collection: collection, postType: 'post'}),
 																pagination: new ContentEditor.Pagination({collection: collection, postType: l10n.posts})
 														};
 														me.views.posts = views;
@@ -191,7 +190,7 @@ console.log(new Upfront.Collections.FilterList([], {postType: 'post'}).fetch({po
 														collection.on('reset sort', me.render_panel, me);
 														views = {
 																view: new ContentEditor.Pages({collection: collection, $popup: me.$popup}),
-																search: new ContentEditor.Search({collection: collection}),
+																search: new ContentEditor.Search({collection: collection, postType: 'page'}),
 																pagination: new ContentEditor.Pagination({collection: collection, postType: l10n.pages})
 														};
 														me.views.pages = views;
@@ -222,7 +221,7 @@ console.log(new Upfront.Collections.FilterList([], {postType: 'post'}).fetch({po
 														collection.on('reset sort', me.render_panel, me);
 														views = {
 																view: new ContentEditor.Cpt({collection: collection, $popup: me.$popup}),
-																search: new ContentEditor.Search({collection: collection}),
+																search: new ContentEditor.Search({collection: collection, postType: postTypeNames}),
 																pagination: new ContentEditor.Pagination({collection: collection, postType: l10n.cpts})
 														};
 														me.views.cpts = views;

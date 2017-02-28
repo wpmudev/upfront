@@ -1655,7 +1655,6 @@ var _alpha = "alpha",
 		model: Filter,
 		collectionName: 'filter_data',
 		initialize: function(models, options){
-			console.log(models, options)
 		},
 	}),
 
