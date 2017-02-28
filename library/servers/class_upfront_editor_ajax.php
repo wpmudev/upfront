@@ -207,7 +207,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		}
 		// Add All status option.
 		$statuses['all'] = array(
-			'label' => $label . ' ' . $total_posts,
+			'label' => "$label ($total_posts)",
 			'name' => 0,
 		);
 		return array_merge($statuses, get_post_stati(array('show_in_admin_status_list' => true), 'objects'));

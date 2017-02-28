@@ -41,10 +41,7 @@
                 this.collection.fetch();
 						},
 						get_status_values: function(values) {
-							var all_value;
-							console.log(values)
 							return values;
-							return values.unshift(all_value);
 						},
 						add_filter_dropdowns: function() {
 							var me = this;
