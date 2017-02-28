@@ -32,16 +32,24 @@
                 var text = $("#upfront-search_container input").val();
                 this.collection.fetch({search: text});
             },
-						handle_filter_request: function (e) {
-                e.preventDefault();
+						handle_filter_request: function () {
               	var status,
               		date,
               		category
               	;
-                this.collection.fetch();
+                this.collection.fetch({
+                  //status: status,
+                  //date: date,
+                  //category: category
+                });
 						},
 						get_status_values: function(values) {
-							return values;
+							return _.mapObject(values, function(value) {
+								if (typeof value.value === 'undefined') {
+									value.value = value.name;
+								}
+								return value;
+							});
 						},
 						add_filter_dropdowns: function() {
 							var me = this;
@@ -51,10 +59,10 @@
 									//property: 'background_type', // We have our own behavior, so let's not use the default field one
 									//use_breakpoint_property: true,
 									name: 'post_status',
-									default_value: 'all',
+									default_value: '0',
 									values: me.get_status_values(data.data.statuses),
-									change: function (e) {
-										me.handle_filter_request(e);
+									change: function () {
+										me.handle_filter_request();
 									}
 								});
 
