@@ -831,7 +831,7 @@ define([
 				className: "upfront-additive_multiselection",
 				selection: '',
 				events: {
-					"click :text": "stop_prop",
+					"click .labels_filter": "stop_prop",
 					"keyup .labels_filter :text.filter": "update_selection",
 					"click .new_labels .toggle-add-label": "show_add_label",
 					"click .new_labels .submit-label": "add_new_labels",
@@ -845,6 +845,8 @@ define([
 				},
 				stop_prop: function (e) {
 					e.stopPropagation();
+					// Also let's focus the text field
+					this.$el.find(":text.filter").focus();
 				},
 				add_focus_state: function (e) {
 					this.$el.addClass('focus');
@@ -866,7 +868,8 @@ define([
 				},
 				render_existing_labels: function () {
 					var me = this,
-						$hub = this.$el.find("div.labels_filter ul")
+						$hub = this.$el.find("div.labels_filter ul"),
+						count = 0
 					;
 					$hub.empty();
 					
@@ -875,7 +878,13 @@ define([
 						item.media_items = me.model;
 						item.render();
 						$hub.append(item.$el);
+						count++;
 					});
+					
+					if (count > 0) {
+						// Remove placeholder
+						this.$el.find(".labels_filter :text.filter").attr('placeholder', '');
+					}
 				},
 				render_labels: function () {
 					var me = this,
@@ -889,6 +898,8 @@ define([
 					if (!this.selection) return false;
 					
 					known_labels.each(function (label) {
+						if (me.model.is_used_label(label)) return;
+						
 						var item = new MediaManager_ItemControl_LabelItem({model: label});
 						item.shared = shared_labels;
 						item.media_items = me.model;
@@ -1229,7 +1240,8 @@ define([
 			},
 			render_filtered_items: function () {
 				var me = this,
-					$hub = this.$el.find("div.labels_filter ul")
+					$hub = this.$el.find("div.labels_filter ul"),
+					count = 0
 				;
 				$hub.empty();
 				
@@ -1239,7 +1251,13 @@ define([
 					var item = new Media_FilterSelection_AdditiveMultiselection_Item({model: model});
 					item.render();
 					$hub.append(item.$el);
+					count++;
 				});
+				
+				if (count > 0) {
+					// Remove placeholder
+					this.$el.find(":text.filter").attr('placeholder', '');
+				}
 			},
 			render_items: function () {
 				var me = this,
