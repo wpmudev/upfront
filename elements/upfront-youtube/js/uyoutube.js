@@ -69,7 +69,9 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 		var autoplay = this.model.get_property_value_by_name('autoplay').length > 0 ? true : false;
 		// Enable or Disable Looping/Autoplay.
 		props.loop_string = loop ? '&loop=1&playlist=' + video_id : '';
-		props.autoplay_string = autoplay ? '&autoplay=1' : '';
+		// Autoplay should never happen in editor! This is called only in editor
+		// props.autoplay_string = autoplay ? '&autoplay=1' : '';
+		props.autoplay_string = '';
 
 		rendered = this.youtubeTpl(props);
 
@@ -125,7 +127,7 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 
 		//Call resize function to match player width with object width
 		me.onResizeStop();
-		
+
 		// wait for the video to be added before showing the settings
 		this.listenTo(Upfront.Events, "upfront:youtube:added:done", function(){
 			me.on_settings_click();
@@ -530,7 +532,7 @@ var YoutubeSettings = ElementSettings.extend({
 
 	initialize: function (options) {
 		this.constructor.__super__.initialize.call(this, options);
-		
+
 		this.listenTo(Upfront.Events, "upfront:youtube:added", this.multipleVideos);
 	},
 

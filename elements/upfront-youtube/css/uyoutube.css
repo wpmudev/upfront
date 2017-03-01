@@ -302,3 +302,42 @@ input.upfront-like-box_url:-ms-input-placeholder {
 .multiple_video_section .upfront-settings-item-title {
 	margin-top: -10px;
 }
+.ytp-large-play-button {
+	border: none;
+	background-color: transparent;
+	padding: 0;
+	color: inherit;
+	text-align: inherit;
+	font-size: 100%;
+	font-family: inherit;
+	cursor: default;
+	line-height: inherit;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 68px;
+	height: 48px;
+	margin-left: -34px;
+	margin-top: -24px;
+	-moz-transition: opacity .25s cubic-bezier(0.0,0.0,0.2,1);
+	-webkit-transition: opacity .25s cubic-bezier(0.0,0.0,0.2,1);
+	transition: opacity .25s cubic-bezier(0.0,0.0,0.2,1);
+}
+.ufyt_main-video-placeholder {
+	position: relative;
+	overflow: hidden;
+}
+.ufyt_main-video-thumb {
+	width: 100%;
+}
+.ufyt_main-video-placeholder:hover .ytp-large-play-button-bg {
+	-moz-transition: fill .1s cubic-bezier(0.0,0.0,0.2,1),fill-opacity .1s cubic-bezier(0.0,0.0,0.2,1);
+	-webkit-transition: fill .1s cubic-bezier(0.0,0.0,0.2,1),fill-opacity .1s cubic-bezier(0.0,0.0,0.2,1);
+	transition: fill .1s cubic-bezier(0.0,0.0,0.2,1),fill-opacity .1s cubic-bezier(0.0,0.0,0.2,1);
+	fill: #cc181e;
+	fill-opacity: 1;
+}
+.upfront-youtube-container[data-first-hidden="true"] .uyoutube-list-item:first-child,
+.upfront-youtube-container[data-first-hidden="true"] .uyoutube-gallery-item:first-child {
+	display: none;
+}

@@ -1,59 +1,59 @@
-<div class="upfront-youtube-container <?php if ($multiple_videos && count($multiple_videos) < 2) { ?>uyoutube-single<?php } else { ?>uyoutube-multiple-<?php echo $display_style ?><?php } ?>">
-    <?php if ($multiple_videos && count($multiple_videos) == 1) { ?>
-		<?php if(!empty($multiple_videos[0]['id'])) { ?>
-		<iframe src="https://www.youtube.com/embed/<?php echo $multiple_videos[0]['id'] ?>?modestbranding=1<?php echo $loop_string ?><?php echo $autoplay_string ?>" height="<?php echo $player_height ?>" width="<?php echo $player_width ?>"></iframe>
-			<?php if(!empty($multiple_show_title[0])){ ?>
-				<h3><?php echo $multiple_videos[0]['title'] ?></h3>
-			<?php } ?>
-		<?php } else { ?>
-			<div class="uyoutube-player" style="width: <?php echo $player_width ?>px; height: <?php echo $player_height ?>px;"></div>
-		<?php } ?>
+<div class="upfront-youtube-container <?php if ($multiple_videos && count($multiple_videos) < 2) { ?>uyoutube-single<?php } else { ?>uyoutube-multiple-<?php echo $display_style ?><?php } ?>"
+	<?php if(count($multiple_videos) > 0) { ?>
+		<?php if(empty($first_to_thumbnails[0])) { ?>data-first-hidden="true"<?php } ?>
 	<?php } ?>
-	
-	<?php if (count($multiple_videos) > 1) { ?>
-    <div class="uyoutube-main-video">
-      <?php if ( !empty($multiple_videos[0] ) ) { ?>
-      <iframe src="https://www.youtube.com/embed/<?php echo $multiple_videos[0]['id'] ?>?modestbranding=1<?php echo $loop_string ?><?php echo $autoplay_string ?>" height="<?php echo $player_height ?>" width="<?php echo $player_width ?>"></iframe>
+	>
+
+	<!-- Main video -->
+	<div class="uyoutube-main-video">
+		<?php if ( !empty($multiple_videos[0] ) ) { ?>
+			<?php if ( !empty($autoplay_string) ) { ?>
+			<!-- Video if autoplay -->
+			<iframe src="https://www.youtube.com/embed/<?php echo $multiple_videos[0]['id'] ?>?modestbranding=1<?php echo $loop_string ?><?php echo $autoplay_string ?>" height="<?php echo $player_height ?>" width="<?php echo $player_width ?>"></iframe>
+			<?php } else { ?>
+			<!-- Video placeholder -->
+			<div class="ufyt_main-video-placeholder" style="width:<?php echo $player_width ?>px; height:<?php echo $player_height ?>px" data-loop="<?php echo $loop_string ?>" data-width="<?php echo $player_width ?>" data-height="<?php echo $player_height ?>" data-video-id="<?php echo $multiple_videos[0]['id'] ?>">
+				<button class="ytp-large-play-button ytp-button"><svg height="100%" version="1.1" viewBox="0 0 68 48" width="100%"><path class="ytp-large-play-button-bg" d="m .66,37.62 c 0,0 .66,4.70 2.70,6.77 2.58,2.71 5.98,2.63 7.49,2.91 5.43,.52 23.10,.68 23.12,.68 .00,-1.3e-5 14.29,-0.02 23.81,-0.71 1.32,-0.15 4.22,-0.17 6.81,-2.89 2.03,-2.07 2.70,-6.77 2.70,-6.77 0,0 .67,-5.52 .67,-11.04 l 0,-5.17 c 0,-5.52 -0.67,-11.04 -0.67,-11.04 0,0 -0.66,-4.70 -2.70,-6.77 C 62.03,.86 59.13,.84 57.80,.69 48.28,0 34.00,0 34.00,0 33.97,0 19.69,0 10.18,.69 8.85,.84 5.95,.86 3.36,3.58 1.32,5.65 .66,10.35 .66,10.35 c 0,0 -0.55,4.50 -0.66,9.45 l 0,8.36 c .10,4.94 .66,9.45 .66,9.45 z" fill="#1f1f1e" fill-opacity="0.81"></path><path d="m 26.96,13.67 18.37,9.62 -18.37,9.55 -0.00,-19.17 z" fill="#fff"></path><path d="M 45.02,23.46 45.32,23.28 26.96,13.67 43.32,24.34 45.02,23.46 z" fill="#ccc"></path></svg></button>
+				<img class="ufyt_main-video-thumb" src="https://img.youtube.com/vi/<?php echo $multiple_videos[0]['id'] ?>/hqdefault.jpg">
+			</div>
+			<?php } ?>
 		<h3><?php echo $multiple_videos[0]['title'] ?></h3>
-	  <?php } else { ?>
-        <div class="uyoutube-player" style="height:<?php echo $player_height ?>px; width:<?php echo $player_width ?>px;"></div>
-      <?php } ?>
-    </div>
-	<div class="uyoutube-thumbnails">
-    <?php if ($display_style == 'gallery') { ?>
-      <?php if ($multiple_videos && count( $multiple_videos )  ) {  ?>
-        <?php for ($i = 0; $i < count( $multiple_videos ); $i++) {  ?>
-		<?php if(empty($first_to_thumbnails[0]) && $i == 0) { continue; } ?>
-          <div class="uyoutube-thumbnail uyoutube-gallery-item <?php if(empty($first_to_thumbnails[0])) { ?>firstHidden<?php } ?>" data-video-id="<?php echo $multiple_videos[$i]['id'] ?>" style="width:<?php echo $thumbWidth ?>px;">
-            <div class="uyoutube-thumb-mask" style="width:<?php echo $thumbWidth ?>px;height:<?php echo $thumbHeight ?>px"><!-- add width height dynamicly -->
-				<img class="uyoutube-thumb" src="https://img.youtube.com/vi/<?php echo $multiple_videos[$i]['id'] ?>/hqdefault.jpg" style="width:<?php echo $thumbWidth ?>px; margin-top: -<?php echo $thumbOffset ?>px;">
-            </div>
-            <?php if(!empty($multiple_show_title[0])){ ?>
-            <h4 class="uyoutube-title"><?php echo $multiple_videos[$i]['title'] ?></h4>
-            <?php } ?>
-          </div>
-        <?php } ?>
-      <?php } ?>
-    <?php } ?>
-    <?php if ($display_style == 'list') { ?>
-      <?php if ($multiple_videos) { ?>
-        <?php for ($i = 0; $i < count( $multiple_videos ); $i++) { ?>
-		<?php if(empty($first_to_thumbnails[0]) && $i == 0) { continue; } ?>
-        <div class="uyoutube-thumbnail uyoutube-list-item <?php if(empty($first_to_thumbnails[0])) { ?>firstHidden<?php } ?>" data-video-id="<?php echo $multiple_videos[$i]['id'] ?>">
-            <div class="uyoutube-thumb-holder" style="width:<?php echo $thumbWidth ?>px;">
-              <div class="uyoutube-thumb-mask" style="width:<?php echo $thumbWidth ?>px;height:<?php echo $thumbHeight ?>px">
-                <img class="uyoutube-thumb" style="width:<?php echo $thumbWidth ?>px; margin-top: -<?php echo $thumbOffset ?>px" src="http://img.youtube.com/vi/<?php echo $multiple_videos[$i]['id'] ?>/hqdefault.jpg" width="80">
-              </div>
-            </div>
-            <div class="uyoutube-content-holder">
-              <?php if ($multiple_show_title[0]) { ?>
-                <h4 class="uyoutube-title"><?php echo $multiple_videos[$i]['title'] ?></h4>
-              <?php } ?>
-            </div>
-          </div>
-        <?php } ?>
-      <?php }  ?>
-    <?php } ?>
+		<?php } else { ?>
+		<!-- Element Placeholder -->
+		<div class="uyoutube-player" style="height:<?php echo $player_height ?>px; width:<?php echo $player_width ?>px;"></div>
+		<?php } ?>
 	</div>
-  <?php } ?>
+
+	<!-- Thumbnails -->
+	<?php if (count($multiple_videos) > 1) { ?>
+		<div class="uyoutube-thumbnails">
+
+			<?php for ($i = 0; $i < count( $multiple_videos ); $i++) {  ?>
+					<?php if ($display_style == 'gallery') { ?>
+					<div class="uyoutube-thumbnail uyoutube-gallery-item" data-video-id="<?php echo $multiple_videos[$i]['id'] ?>" style="width:<?php echo $thumbWidth ?>px;">
+					<?php } else { ?>
+					<div class="uyoutube-thumbnail uyoutube-list-item" data-video-id="<?php echo $multiple_videos[$i]['id'] ?>">
+						<div class="uyoutube-thumb-holder" style="width:<?php echo $thumbWidth ?>px;">
+					<?php } ?>
+
+						<div class="uyoutube-thumb-mask" style="width:<?php echo $thumbWidth ?>px;height:<?php echo $thumbHeight ?>px">
+							<img class="uyoutube-thumb" src="https://img.youtube.com/vi/<?php echo $multiple_videos[$i]['id'] ?>/hqdefault.jpg" style="width:<?php echo $thumbWidth ?>px; margin-top: -<?php echo $thumbOffset ?>px;">
+						</div>
+
+					<?php if ($display_style == 'list') { ?>
+						</div>
+						<div class="uyoutube-content-holder">
+					<?php } ?>
+
+						<?php if(!empty($multiple_show_title[0])){ ?>
+						<h4 class="uyoutube-title"><?php echo $multiple_videos[$i]['title'] ?></h4>
+						<?php } ?>
+					</div>
+				<?php if ($display_style == 'list') { ?>
+					</div>
+				<?php } ?>
+			<?php } ?>
+
+		</div>
+	<?php } ?>
 </div>
