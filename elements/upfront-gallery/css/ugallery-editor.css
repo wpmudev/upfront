@@ -89,6 +89,9 @@
 	margin-bottom: 0;
 	line-height: inherit;
 }
+.ugallery-magnific-panel .labels_filter {
+	width: 100%;
+}
 .ugallery-magnific-panel .labels_filter ul li {
 	position: relative;
 }
@@ -101,14 +104,15 @@
 	margin-right: 4px;
 }
 .ugallery-magnific-panel.upfront-additive_multiselection .labels_filter input[type=text] {
-    background: #fff;
-    border: 1px solid #e5e5e5;
-    height: 22px;
-    font-size: 11px;
-    opacity: 1;
-    border-radius: 3px;
-	width: auto;
-	margin-top: 2px;
+    background: none;
+	color: #909090;
+	max-width: 100%;
+}
+.upfront-additive_multiselection .labels_filter ul li.labels_search {
+	background: none;
+}
+.upfront-additive_multiselection .labels_filter ul li.labels_search:after {
+	display: none;
 }
 .ugallery-magnific-panel.upfront-additive_multiselection .labels_filter.empty input[type=text] {
 	margin-top: 0px;

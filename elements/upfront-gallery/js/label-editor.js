@@ -11,9 +11,9 @@ define([
 		labelSelectorTpl: _.template(labelSelectorTpl),
 
 		events: {
-			'keyup .labels_filter .filter': 'fill_suggestion_list',
-			'keydown .labels_filter .filter': 'on_field_keydown',
-			'click .labels_filter .filter': 'on_field_click',
+			'keyup .labels_filter .uf-labels-filter-field': 'fill_suggestion_list',
+			'keydown .labels_filter .uf-labels-filter-field': 'on_field_keydown',
+			'click .labels_filter .uf-labels-filter-field': 'on_field_click',
 			'click .labels_filter li': 'remove_label',
 			'click .ugallery-magnific-addbutton': 'focus_name_field',
 			'click .new_labels .toggle-add-label': 'show_add_label',
@@ -39,7 +39,7 @@ define([
 		},
 
 		update_labels: function() {
-			this.$el.find('.labels_filter ul').html(_.template(labelsTpl, {labels: this.labels, l10n: l10n.template}));
+			this.$el.find('.labels_filter ul').html(_.template(labelsTpl, {labels: this.labels, l10n: l10n.template, selection: this.selection}));
 			if (this.labels.length) {
 				this.$el.parents('.inline-panel-control-dialog')
 					.siblings('.upfront-icon-region-edit-labels-no-labels')
@@ -61,8 +61,31 @@ define([
 				l10n: l10n.template,
 				selection: this.selection
 			}));
+			
+			this.handle_search_field();
 
 			return this;
+		},
+		
+		handle_search_field: function() {
+			var $search_field = this.$el.find('.labels_search input'),
+				fakeWidth = 25,
+				style_block = "position:absolute; left: -1000px; top: -1000px; display:none;",
+				div = $('<div />', { 'style': style_block }),
+				content = $search_field.val().length > 0 ? $search_field.val() : $search_field.prop("placeholder")
+			;
+			
+			if(this.labels.length > 0) {
+				content = $search_field.val();
+			}
+			
+			// Calculate text width
+			div.text(content);
+			$('body').append(div);
+			fakeWidth = div.width() + 25;
+			div.remove();
+			
+			$search_field.width(fakeWidth);
 		},
 		
 		show_add_label: function (e) {
@@ -128,6 +151,8 @@ define([
 					}
 				}
 			});
+
+			this.handle_search_field();
 
 			if (labels.length > 0) this.$el.find('.upfront-additive_multiselection').addClass('has_match');
 				else this.$el.find('.upfront-additive_multiselection').removeClass('has_match');
@@ -265,6 +290,8 @@ define([
 			if (!$label.is( "li" )) {
 				$label = $label.closest('li');
 			}
+			
+			if($label.hasClass('labels_search')) return;
 			
 			var	me = this,
 				labelId = $label.find('label').data('idx'),
