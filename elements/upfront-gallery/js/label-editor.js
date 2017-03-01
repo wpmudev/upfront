@@ -18,6 +18,7 @@ define([
 			'click .ugallery-magnific-addbutton': 'focus_name_field',
 			'click .new_labels .toggle-add-label': 'show_add_label',
 			'click label': 'on_label_click',
+			'click .labels_filter': 'on_field_focus',
 			'click .submit-label': 'on_label_add'
 		},
 
@@ -27,7 +28,12 @@ define([
 			this.labels = options.labels;
 			this.imageId = options.imageId;
 		},
-
+		
+		on_field_focus: function(event) {
+			// Focus filter input
+			this.$el.find('.labels_search input').focus();
+		},
+		
 		/*?
 		 * Prevent crazy click hijack that navigates and reloads the page.
 		 */
@@ -40,6 +46,7 @@ define([
 
 		update_labels: function() {
 			this.$el.find('.labels_filter ul').html(_.template(labelsTpl, {labels: this.labels, l10n: l10n.template, selection: this.selection}));
+			this.$el.find('.labels_filter ul').append('<li class="labels_search"><input type="text" class="uf-labels-filter-field" style="width:25px;"/></li>');
 			if (this.labels.length) {
 				this.$el.parents('.inline-panel-control-dialog')
 					.siblings('.upfront-icon-region-edit-labels-no-labels')
@@ -157,7 +164,7 @@ define([
 			if (labels.length > 0) this.$el.find('.upfront-additive_multiselection').addClass('has_match');
 				else this.$el.find('.upfront-additive_multiselection').removeClass('has_match');
 
-			this.$el.find('.labels_list').html(me.labelSelectorTpl({labels: labels, l10n: l10n.template}));
+			this.$el.find('.labels_list').html(me.labelSelectorTpl({labels: labels, l10n: l10n.template, selection: this.selection}));
 		},
 
 		select_next_suggestion: function() {
