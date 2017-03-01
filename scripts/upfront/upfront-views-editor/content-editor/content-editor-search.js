@@ -33,14 +33,15 @@
                 this.collection.fetch({search: text});
             },
 						handle_filter_request: function () {
-              	var status,
-              		date,
-              		category
+							// filters are set on change of field.
+              	var status = (this.status ? this.status : false),
+              		date = (this.date ? this.date : false),
+              		category = (this.category ? this.category : false)
               	;
                 this.collection.fetch({
-                  //status: status,
-                  //date: date,
-                  //category: category
+									post_status: status,
+									post_date: date,
+									cat: category
                 });
 						},
 						get_status_values: function(values) {
@@ -71,16 +72,18 @@
 						add_filter_dropdowns: function() {
 							var me = this;
 							new Upfront.Collections.FilterList([], {postType: this.postType}).fetch({postType: this.postType}).done(function(data){
-								var status_value,
-									date_value,
-									category_value
+								var options = me.collection.lastFetchOptions,
+									status_value = (options.post_status ? options.post_status : false),
+									date_value = (options.post_date ? options.post_date : false),
+									category_value = (options.cat ? options.cat : false)
 								;
 								var status_dropdown = new Fields.Select({
 									model: me.model,
 									name: 'upfront_post_status_filter',
 									default_value: status_value ? status_value : 0,
 									values: me.get_status_values(data.data.statuses),
-									change: function () {
+									change: function (e) {
+										me.status = e;
 										me.handle_filter_request();
 									}
 								});
@@ -90,7 +93,8 @@
 									name: 'upfront_post_date_filter',
 									default_value: date_value ? date_value : 0,
 									values: me.get_date_values(data.data.dates),
-									change: function () {
+									change: function (e) {
+										me.date = e;
 										me.handle_filter_request();
 									}
 								});
@@ -100,11 +104,17 @@
 									name: 'upfront_post_category_filter',
 									default_value: category_value ? category_value : 0,
 									values: me.get_category_values(data.data.categories),
-									change: function () {
+									change: function (e) {
+										me.category = e;
 										me.handle_filter_request();
 									}
 								});
 
+								me.filter_dropdowns = [
+									status_dropdown,
+									date_dropdown,
+									category_dropdown
+								];
 								// Render Dropdowns.
 								status_dropdown.render();
 								date_dropdown.render();

@@ -935,6 +935,8 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$page = isset($data['page']) ? (int)$data['page'] + 1 : 1;
 		$search = !empty($data['search']) ? $data['search'] : false;
 		$status = !empty($data['post_status']) ? $data['post_status'] : false;
+		$date = !empty($data['post_date']) ? $data['post_date'] : false;
+		$category = !empty($data['cat']) ? $data['cat'] : false;
 
 		$args = array(
 			'orderby' => $sort,
@@ -943,6 +945,8 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			'posts_per_page' => $limit,
 			'paged' => $page,
 			'post_status' => $status,
+			'post_date' => $date,
+			'cat' => $category,
 		);
 		if ($search) $args['s'] = $search;
 
