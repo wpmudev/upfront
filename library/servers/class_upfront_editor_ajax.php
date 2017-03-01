@@ -319,8 +319,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$l10n = Upfront_EditorL10n_Server::add_l10n_strings(array());
 		$l10n = $l10n['global']['content'];
 		$all_option = (object) array(
-			'name' => 'all',
-			'l10n' => $l10n['all_categories'],
+			'name' => $l10n['all_categories'],
 			'value' => 0
 		);
 		// Prepend all categories option to categories array.
