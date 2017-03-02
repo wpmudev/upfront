@@ -126,6 +126,15 @@ input.upfront-field-text:hover,
 }
 */
 /* end chrome input[type=number] styling */
+.upfront-field-wrap-select {
+	opacity: 0.75;
+}
+.upfront-field-wrap-select:hover {
+	opacity: 0.85;
+}
+.upfront-field-wrap-select-expanded {
+	opacity: 1;
+}
 .upfront-field-select, .upfront-field-select-options {
 	background: rgb(255, 255, 255);
 	border: 1px solid rgb(144,144,144);
@@ -186,7 +195,6 @@ input.upfront-field-text:hover,
 	margin-bottom: -1px;
 }*/
 .upfront-field-select:hover {
-	opacity: 0.85;
 }
 .upfront-field-select:after {
 	content: "\f347";

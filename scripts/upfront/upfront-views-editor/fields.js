@@ -853,7 +853,7 @@
 
         var Field_Select = Field_Multiple.extend(_.extend({}, Mixins.Upfront_Scroll_Mixin, {
             events: {
-                'click .upfront-field-select-value': 'openOptions',
+                'click .upfront-field-select': 'openOptions',
                 'mouseup .upfront-field-select': 'onMouseUp',
                 'change .upfront-field-select-option input': 'onChange',
                 'click .upfront-field-select-option label': 'onOptionClick'
@@ -884,6 +884,7 @@
                 $('.upfront-field-select-expanded').removeClass('upfront-field-select-expanded');
                 this.$el.find('.upfront-field-select').css('min-width', '').css('min-width', this.$el.find('.upfront-field-select').width());
                 this.$el.find('.upfront-field-select').addClass('upfront-field-select-expanded');
+                this.$el.addClass('upfront-field-wrap-select-expanded');
 
                 // Make sure all select options are visible in scroll panel i.e. scroll scroll panel as needed
                 var me = this;
