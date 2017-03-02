@@ -16,6 +16,7 @@
             on_click: function () {
                 Upfront.Media.Manager.open({
                     media_type: ["images", "videos", "audios", "other"],
+                    can_toggle_control: true,
                     show_control: false,
 					show_insert: false
                 });
