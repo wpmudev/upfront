@@ -2,8 +2,9 @@
 define([
 	'text!elements/upfront-gallery/js/templates/label-editor-template.html',
 	'text!elements/upfront-gallery/js/templates/label-selector-template.html',
-	'text!elements/upfront-gallery/js/templates/labels-template.html'
-], function(labelEditorTpl, labelSelectorTpl, labelsTpl) {
+	'text!elements/upfront-gallery/js/templates/labels-template.html',
+	'scripts/perfect-scrollbar/perfect-scrollbar'
+], function(labelEditorTpl, labelSelectorTpl, labelsTpl, perfectScrollbar) {
 	var l10n = Upfront.Settings.l10n.gallery_element;
 
 	var LabelEditor = Backbone.View.extend({
@@ -19,7 +20,9 @@ define([
 			'click .new_labels .toggle-add-label': 'show_add_label',
 			'click label': 'on_label_click',
 			'click .labels_filter': 'on_field_focus',
-			'click .submit-label': 'on_label_add'
+			'click .submit-label': 'on_label_add',
+			'blur .labels_filter .uf-labels-filter-field': 'on_blur_filter',
+			'focus .labels_filter .uf-labels-filter-field': 'on_focus_filter'
 		},
 
 		initialize: function(options) {
@@ -32,6 +35,48 @@ define([
 		on_field_focus: function(event) {
 			// Focus filter input
 			this.$el.find('.labels_search input').focus();
+		},
+		
+		on_focus_filter: function(event) {
+			var me = this,
+				allLabels = _.keys(Upfront.data.ugallery.label_names),
+				labels = [];
+
+			_.each(allLabels, function(label){
+				var lab = Upfront.data.ugallery.label_names[label];
+
+				if(!_.findWhere(me.labels, { id: lab.id + '' }) && !_.findWhere(me.labels, { id: parseInt(lab.id, 10)})){
+					labels.push({
+						id: lab.id,
+						text: lab.text
+					});
+				}
+			});
+
+			if (labels.length > 0) this.$el.find('.upfront-additive_multiselection').addClass('has_match');
+				else this.$el.find('.upfront-additive_multiselection').removeClass('has_match');
+
+			this.$el.find('.labels_list').html(me.labelSelectorTpl({labels: labels, l10n: l10n.template, selection: this.selection}));
+			this.labels_list_scrollbar();
+		},
+		
+		labels_list_scrollbar: function() {
+			// Add JS Scrollbar.
+			perfectScrollbar.withDebounceUpdate(
+				// Element.
+				this.$el.find('.labels_list'),
+				// Run First.
+				true,
+				// Event.
+				false,
+				// Initialize.
+				true
+			);
+		},
+		
+		on_blur_filter: function(event) {
+			this.$el.find('.upfront-additive_multiselection').removeClass('has_match');
+			return $('.labels_list').html('');
 		},
 		
 		/*?
@@ -89,7 +134,7 @@ define([
 			// Calculate text width
 			div.text(content);
 			$('body').append(div);
-			fakeWidth = div.width() + 25;
+			fakeWidth = div.width() + 20;
 			div.remove();
 			
 			$search_field.width(fakeWidth);
@@ -141,11 +186,6 @@ define([
 				allLabels = _.keys(Upfront.data.ugallery.label_names),
 				labels = [];
 
-			if(val.length < 2) {
-				this.$el.find('.upfront-additive_multiselection').removeClass('has_match');
-				return $('.labels_list').html('');
-			}
-
 			_.each(allLabels, function(label){
 				if(label.indexOf(val) !== -1){
 					var lab = Upfront.data.ugallery.label_names[label];
@@ -165,6 +205,7 @@ define([
 				else this.$el.find('.upfront-additive_multiselection').removeClass('has_match');
 
 			this.$el.find('.labels_list').html(me.labelSelectorTpl({labels: labels, l10n: l10n.template, selection: this.selection}));
+			this.labels_list_scrollbar();
 		},
 
 		select_next_suggestion: function() {
@@ -316,6 +357,8 @@ define([
 			this.labels = _.without(this.labels, label);
 
 			this.gallery.deleteLabel(labelId, this.imageId);
+			
+			if(!this.labels.length) this.$el.find('.labels_search input').attr('placeholder', l10n.pick_label);
 			
 			$label.fadeOut('fast', function(){
 				$(this).remove();
