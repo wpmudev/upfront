@@ -63,8 +63,8 @@ define([
 		labels_list_scrollbar: function() {
 			// Add JS Scrollbar.
 			perfectScrollbar.withDebounceUpdate(
-				// Element.
-				this.$el.find('.labels_list'),
+				// Element. Reference the DOM element instead of the jquery object
+				this.$el.find('.labels_list')[0],
 				// Run First.
 				true,
 				// Event.
