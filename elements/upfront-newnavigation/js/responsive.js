@@ -161,6 +161,22 @@ jQuery(document).ready(function($) {
 	
 	hasNavInit();
 	
+	function NavDropDownInit() {
+		var timer;
+		
+		$('div.upfront-navigation ul li').on("mouseenter", function() {
+			clearTimeout(timer);
+			$(this).find('.sub-menu').addClass("upfront-dropdown-active");
+		}).on("mouseleave", function() {
+			var $me = $(this);
+			timer = setTimeout(function() {
+				$me.parent().find('.sub-menu').removeClass("upfront-dropdown-active");
+			}, 500);
+		});
+	}
+	
+	NavDropDownInit();
+
 	// Show burger nav on enter
 	$('.responsive_nav_toggler, .burger_nav_close').keydown(function(e) {
 		if (e.which == 13) {
