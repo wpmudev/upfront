@@ -195,13 +195,12 @@ class Upfront_Editor_Ajax extends Upfront_Server {
             $total_posts -= $num_posts->$state;
         }
 
-
 		$l10n = Upfront_EditorL10n_Server::add_l10n_strings(array());
 		$l10n = $l10n['global']['content'];
 		if ($post_type === 'post') {
 			$label = $l10n['all_posts'];
 		} elseif ($post_type === 'page') {
-			$label = $l10n['all_posts'];
+			$label = $l10n['all_pages'];
 		} else {
 			$label = $l10n['all_cpts'];
 		}
@@ -209,7 +208,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$statuses['all'] = array(
 			'label' => "$label ($total_posts)",
 			'name' => 'all',
-			'value' => 0,
+			'value' => 'any',
 		);
 		return array_merge($statuses, get_post_stati(array('show_in_admin_status_list' => true), 'objects'));
 	}
@@ -225,10 +224,19 @@ class Upfront_Editor_Ajax extends Upfront_Server {
             $extra_checks = $wpdb->prepare( ' AND post_status = %s', $_GET['post_status'] );
         }
 
+		// Prepare Array for SQL via placeholders for post types.
+		if (gettype($post_type) === 'array' && count($post_type) > 1) {
+			$post_type_count = count($post_type);
+			$string_placeholders = array_fill(0, $post_type_count, '%s');
+			$post_type_placeholders = implode(', ', $string_placeholders);
+		} else {
+			$post_type_placeholders = '%s';
+		}
+
 		$months = $wpdb->get_results( $wpdb->prepare( "
             SELECT DISTINCT YEAR( post_date ) AS year, MONTH( post_date ) AS month
             FROM $wpdb->posts
-            WHERE post_type = %s
+            WHERE post_type IN ($post_type_placeholders)
             $extra_checks
             ORDER BY post_date DESC
         ", $post_type ) );
@@ -935,7 +943,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$page = isset($data['page']) ? (int)$data['page'] + 1 : 1;
 		$search = !empty($data['search']) ? $data['search'] : false;
 		$status = !empty($data['post_status']) ? $data['post_status'] : false;
-		$date = !empty($data['post_date']) ? $data['post_date'] : false;
+		$date = !empty($data['m']) ? $data['m'] : false;
 		$category = !empty($data['cat']) ? $data['cat'] : false;
 
 		$args = array(
@@ -945,7 +953,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			'posts_per_page' => $limit,
 			'paged' => $page,
 			'post_status' => $status,
-			'post_date' => $date,
+			'm' => $date,
 			'cat' => $category,
 		);
 		if ($search) $args['s'] = $search;

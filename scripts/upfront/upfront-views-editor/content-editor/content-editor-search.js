@@ -33,14 +33,15 @@
                 this.collection.fetch({search: text});
             },
 						handle_filter_request: function () {
-							// filters are set on change of field.
+								// filters are set on change of field.
+								// use each filter value so multiple can be set.
               	var status = (this.status ? this.status : false),
               		date = (this.date ? this.date : false),
               		category = (this.category ? this.category : false)
               	;
                 this.collection.fetch({
 									post_status: status,
-									post_date: date,
+									m: date,
 									cat: category
                 });
 						},
@@ -57,7 +58,7 @@
 							return values;
 						},
 						get_category_values: function(values) {
-							// If each status does not have value, use the name.
+							// If each category does not have value or label, fix that.
 							return _.mapObject(values, function(value) {
 								if (typeof value.value === 'undefined') {
 									value.value = value.term_id;
@@ -72,17 +73,19 @@
 						add_filter_dropdowns: function() {
 							var me = this;
 							new Upfront.Collections.FilterList([], {postType: this.postType}).fetch({postType: this.postType}).done(function(data){
+								// Get previous fetch data to set selected values.
 								var options = me.collection.lastFetchOptions,
 									status_value = (options.post_status ? options.post_status : false),
-									date_value = (options.post_date ? options.post_date : false),
+									date_value = (options.m ? options.m : false),
 									category_value = (options.cat ? options.cat : false)
 								;
 								var status_dropdown = new Fields.Select({
 									model: me.model,
 									name: 'upfront_post_status_filter',
-									default_value: status_value ? status_value : 0,
+									default_value: status_value ? status_value : 'any',
 									values: me.get_status_values(data.data.statuses),
 									change: function (e) {
+										// Set the status so handle_filter_request can update it and other filter selections.
 										me.status = e;
 										me.handle_filter_request();
 									}
@@ -94,6 +97,7 @@
 									default_value: date_value ? date_value : 0,
 									values: me.get_date_values(data.data.dates),
 									change: function (e) {
+										// Set the date so handle_filter_request can update it and other filter selections.
 										me.date = e;
 										me.handle_filter_request();
 									}
@@ -105,6 +109,7 @@
 									default_value: category_value ? category_value : 0,
 									values: me.get_category_values(data.data.categories),
 									change: function (e) {
+										// Set the category so handle_filter_request can update it and other filter selections.
 										me.category = e;
 										me.handle_filter_request();
 									}
