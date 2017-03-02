@@ -75,8 +75,11 @@ define([
 		},
 		
 		on_blur_filter: function(event) {
-			this.$el.find('.upfront-additive_multiselection').removeClass('has_match');
-			return $('.labels_list').html('');
+			var me = this;
+			setTimeout(function() {
+				me.$el.find('.upfront-additive_multiselection').removeClass('has_match');
+				$('.labels_list').html('');
+			}, 150);
 		},
 		
 		/*?
@@ -332,6 +335,7 @@ define([
 
 		remove_label: function(e){
 			e.preventDefault();
+			e.stopPropagation();
 
 			var $label = $(e.target);
 			
