@@ -86,7 +86,7 @@ class Upfront_Compat_CoursePress {
 		}
 
 		// Force always loading CP styles in builder
-		if (upfront_exporter_is_running() && class_exists('CoursePress_Core')) CoursePress_Core::$is_cp_page = true;
+		if (function_exists('upfront_exporter_is_running') && upfront_exporter_is_running() && class_exists('CoursePress_Core')) CoursePress_Core::$is_cp_page = true;
 
 		add_filter('upfront-plugins_layouts', array($this, 'add_plugins_layouts'));
 		add_filter('upfront-forbidden_post_data_types', array($this, 'forbidden_post_data_types'));
