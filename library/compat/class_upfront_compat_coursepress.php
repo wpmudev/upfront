@@ -125,7 +125,7 @@ class Upfront_Compat_CoursePress {
 		if ($this->modal_template_counter === 0) {
 			$this->modal_template_counter = 1;
 		} else {
-			$post = get_post( $course_id );
+			$post = get_post();
 			if (is_a( $post, 'WP_Post' ) ) {
 				if (isset( $post->coursepress_enrollment_templates_was_already_loaded ))
 					$post->coursepress_enrollment_templates_was_already_loaded = false;
