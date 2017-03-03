@@ -93,6 +93,7 @@ class Upfront_Compat_CoursePress {
 		add_filter('upfront-layout_to_name', array($this, 'layout_to_name'), 10, 4);
 		add_filter('upfront-builder_available_layouts', array($this, 'add_builder_available_layouts'));
 		add_filter('upfront-post_data-get_content-before', array($this, 'kill_double_discussion_querying'));
+		add_filter('upfront-post_data-get_content-before', array($this, 'fix_modal_template_not_loading'));
 		add_filter('upfront-post_data-get_content-after', array($this, 'balance_out_tags_in_discussion_content'));
 		add_filter('upfront-post_data-get_content-after', array($this, 'wrap_with_coursepress_css_class'), 99);
 		add_filter('body_class', array($this, 'add_cp_class_to_body'));
@@ -111,6 +112,27 @@ class Upfront_Compat_CoursePress {
 		$classes[] = 'coursepress';
 
 		return $classes;
+	}
+
+	/**
+	 * Fix modal template not loading because CP tries to make sure it's not loaded twice and upfront loads
+	 * it on second attempt.
+	 * For more info look at kill_double_discussion_querying, but in this case do the opossite,
+	 * don't load on the first but on the second call.
+	 */
+	private $modal_template_counter = 0;
+	public function fix_modal_template_not_loading($content) {
+		if ($this->modal_template_counter === 0) {
+			$this->modal_template_counter = 1;
+		} else {
+			$post = get_post( $course_id );
+			if (is_a( $post, 'WP_Post' ) ) {
+				if (isset( $post->coursepress_enrollment_templates_was_already_loaded ))
+					$post->coursepress_enrollment_templates_was_already_loaded = false;
+			}
+		}
+
+		return $content;
 	}
 
 	/**
