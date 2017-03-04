@@ -49,9 +49,10 @@
 			/**
 			 * Checks if color style was generated at least once for theme color with given index.
 			 * @param {Number} - theme color index
+			 * @return {Boolean} - if style is generated at least once
 			 */
 			color_style_is_initialized: function(index) {
-				return this.color_styles[index];
+				return typeof this.color_styles[index] !== 'undefined';
 			},
 			/**
 			 * Checks if color has been changed since editor was loaded.
@@ -68,6 +69,7 @@
 			 * @return {Boolean} if color is updated
 			 */
 			color_is_updated: function(model, color) {
+				// Look in previous for prev value, because at this point both prev and color have same value in attributes
 				return this.color_is_original(model) === false && model.previous('prev') !== color;
 			},
 			/**
@@ -87,13 +89,14 @@
 			 */
 			generate_theme_color_style: function(model, index, color) {
 				var style = '';
+				var hovcol = model.get_hover_color();
 
 				style += " .upfront_theme_color_" + index +"{ color: " + color + ";}";
-				style += " a .upfront_theme_color_" + index +":hover{ color: " + model.get_hover_color() + ";}";
-				style += " button .upfront_theme_color_" + index +":hover{ color: " + model.get_hover_color() + ";}";
+				style += " a .upfront_theme_color_" + index +":hover{ color: " + hovcol + ";}";
+				style += " button .upfront_theme_color_" + index +":hover{ color: " + hovcol + ";}";
 				style += " .upfront_theme_bg_color_" + index +"{ background-color: " + color + ";}";
-				style += " a .upfront_theme_bg_color_" + index +":hover{ background-color: " + model.get_hover_color() + ";}";
-				style += " button .upfront_theme_bg_color_" + index +":hover{ background-color: " + model.get_hover_color() + ";}";
+				style += " a .upfront_theme_bg_color_" + index +":hover{ background-color: " + hovcol + ";}";
+				style += " button .upfront_theme_bg_color_" + index +":hover{ background-color: " + hovcol + ";}";
 
 				return style;
 			},
@@ -101,8 +104,8 @@
 				var self = this;
 				Theme_Colors.colors.each(function( item, index ){
 					var color = self.theme_color_to_string(item);
-					// Only do this (very expansive DOM changes) if color is actually updated!!!
-					// Look in previous for prev value, because at this point both prev and color have same value
+					// Only do this (very expansive DOM changes) if color is actually updated or
+					// styles need to be initialized!!!
 					if (false === self.color_is_updated(item, color) && self.color_style_is_initialized(index)) return;
 
 					self.color_styles[index] = self.generate_theme_color_style(item, index, color);
