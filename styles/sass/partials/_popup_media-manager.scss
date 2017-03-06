@@ -650,8 +650,7 @@
 }
 
 .upfront-popup-meta .search_container,
-.upfront-popup-meta .upload_media_container,
-.upfront-popup-meta .use_selection_container {
+.upfront-popup-meta .upload_media_container {
 	float: left;
 }
 
@@ -726,10 +725,7 @@
 	margin: auto;
 	z-index: 11;
 }
-
-.upfront-popup-meta .use_selection_container {
-	float: right;
-	text-align: center;
+.media-manager .upfront-popup-meta .use_selection_container {
 	width: 38.3%;
 	height: 90px;
 	padding: 30px;
@@ -737,16 +733,15 @@
 	position: relative;
 	background: #f2f2f2;
 }
-.upfront-popup-meta .use_selection_container.inactive {
+.media-manager .upfront-popup-meta .use_selection_container.inactive {
 	background: #cee1f2;
 }
 
-.upfront-popup-meta .use_selection_container.inactive a{
+.media-manager .upfront-popup-meta .use_selection_container.inactive a{
 	color: #99b3cc;
 	cursor: default;
 }
-.upfront-popup-meta .use_selection_container a {
-	display: block;
+.media-manager .upfront-popup-meta .use_selection_container a {
 	background: #1691fb;
 	height: 30px;
 	line-height: 30px;
