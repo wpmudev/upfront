@@ -7,71 +7,112 @@ class Upfront_Compat_CoursePress {
 			'display_name' => 'CoursePress Course',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'l10n' => array(
+				'layout_type' => 'Course',
+				'layout_type_plural' => 'Courses',
+			)
 		),
 		'course_archive'                => array(
 			'display_name' => 'CoursePress All Courses',
 			'type' => 'single',
 			'title' => 'All Courses',
+			'forbid_save_as' => true
 		),
 		'unit_archive'                  => array(
 			'display_name' => 'CoursePress Course Units',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'l10n' => array(
+				'layout_type' => 'Course Units Archive',
+				'layout_type_plural' => 'Course Units Archives',
+			)
 		),
 		'unit'                          => array(
 			'display_name' => 'CoursePress Course Unit',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'l10n' => array(
+				'layout_type' => 'Course Unit',
+				'layout_type_plural' => 'Course Units',
+			)
 		),
 		'course_notifications_archive'  => array(
 			'display_name' => 'CoursePress Course Notifications',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'l10n' => array(
+				'layout_type' => 'Course Notifications Archive',
+				'layout_type_plural' => 'Course Notifications Archives',
+			)
 		),
 		'course_discussion_archive'     => array(
 			'display_name' => 'CoursePress Course All Discussions',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'l10n' => array(
+				'layout_type' => 'Course Discussions Archive',
+				'layout_type_plural' => 'Course Discussions Archives',
+			)
 		),
 		'course_discussion'             => array(
 			'display_name' => 'CoursePress Course Discussion',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'l10n' => array(
+				'layout_type' => 'Course Discussion',
+				'layout_type_plural' => 'Course Discussions',
+			)
 		),
 		'course_workbook'               => array(
 			'display_name' => 'CoursePress Course Workbook',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'l10n' => array(
+				'layout_type' => 'Course Workbook',
+				'layout_type_plural' => 'Course Workbooks',
+			),
 		),
 		'course_grades_archive'         => array(
 			'display_name' => 'CoursePress Course Grades',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'l10n' => array(
+				'layout_type' => 'Course Grades Page',
+				'layout_type_plural' => 'Course Grades Pages',
+			),
 		),
 		'coursepress_student_login'     => array(
 			'display_name' => 'CoursePress Student Login',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'forbid_save_as' => true
 		),
 		'coursepress_student_signup'    => array(
 			'display_name' => 'CoursePress Student Signup',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'forbid_save_as' => true
 		),
 		'coursepress_student_dashboard' => array(
 			'display_name' => 'CoursePress Courses Dashboard',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'forbid_save_as' => true
 		),
 		'coursepress_student_settings'  => array(
 			'display_name' => 'CoursePress Student Settings',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'forbid_save_as' => true
 		),
 		'coursepress_instructor'  => array(
 			'display_name' => 'CoursePress Instructor',
 			'type' => 'single',
 			'title' => 'Instructor A',
+			'l10n' => array(
+				'layout_type' => 'Course Instructor',
+				'layout_type_plural' => 'Course Instructors',
+			),
 		),
 	);
 
@@ -250,6 +291,8 @@ class Upfront_Compat_CoursePress {
 				'title' => __($info['title'], 'upfront'),
 				'display_name' => __($info['display_name'], 'upfront'),
 				'killPostSettings' => __('This is virtual page handled by CoursePress.', 'upfront'),
+				'l10n' => empty($info['l10n']) ? false : $info['l10n'],
+				'forbid_save_as' => empty($info['forbid_save_as']) ? false : true,
 			);
 		}
 
