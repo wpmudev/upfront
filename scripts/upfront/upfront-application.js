@@ -1745,7 +1745,7 @@ var Application = new (Backbone.Router.extend({
 			killPostSettings: layoutData.killPostSettings || false,
 			bodyclass: bodyclass || false,
 			l10n: layoutData.l10n || false,
-			forbid_save_as: layoutData.forbid_save_as || false
+			forbid_save_as: !!layoutData.forbid_save_as || false
 		};
 	},
 
