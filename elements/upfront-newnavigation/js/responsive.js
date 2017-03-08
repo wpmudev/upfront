@@ -164,12 +164,35 @@ jQuery(document).ready(function($) {
 	function NavDropDownInit() {
 		var timer;
 
+		// Handle sub-menu on hover
 		$('div.upfront-navigation ul li').on("mouseenter", function() {
 			$(this).find('.sub-menu').addClass("upfront-dropdown-active");
 		}).on("mouseleave", function() {
 			var $me = $(this);
 			timer = setTimeout(function() {
 				$me.find('.sub-menu').removeClass("upfront-dropdown-active");
+			}, 500);
+		});
+		
+		// Handle sub-menu on focus
+		$('div.upfront-navigation ul li a').on("focus", function() {
+			$(this).parent().find('.sub-menu').addClass("upfront-dropdown-active");
+		}).on("blur", function() {
+			var $me = $(this),
+				$li = $me.parent()
+			;
+			
+			timer = setTimeout(function() {
+				// Don't close dropdown when focus childs
+				if($li.hasClass('menu-item-has-children') && !$li.is(":last-child")) return;
+				
+				// Close dropdown if latest li child
+				if($li.is(":last-child")) {
+					$li.closest('.menu-item-has-children').find('.sub-menu').removeClass("upfront-dropdown-active");
+				}
+				
+				// Close dropdown
+				$li.find('.sub-menu').removeClass("upfront-dropdown-active");
 			}, 500);
 		});
 	}
