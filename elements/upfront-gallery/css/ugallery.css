@@ -443,55 +443,53 @@ div.preset-manager-panel .caption-height-number input {
 
 .upfront-object-content .ugallery-onclick a,
 .upfront-object-content .ugallery-onclick a:link{
-	color: #4F6477 !important;
+	color: #595959 !important;
 	display: inline-block;
-	width: 80px;
-	margin: 10px;
+	width: auto;
+	height: 31px;
+	margin: 20px;
 	font-size: 14px;
-	line-height: 1.2em;
+	line-height: 28px;
 	text-decoration: none;
 	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
-	font-weight: normal;
+	font-weight: bold;
 	font-style: normal;
+	padding: 0px 18px;
+	border: 1px solid #acacac;
+	border-radius: 3px;
+	line-height: 28px;
 }
 .upfront-object-content .ugallery-onclick a:hover{
 	color: #1fcd8f !important;
 }
 .ugallery-onclick a:before {
-	background: transparent url(../../../img/uf-core-el-sprite.svg) no-repeat;
-	display: block;
-	width: 50px;
-	height: 50px;
+	background: transparent url(../../../img/uf-core-el-sprite_new.svg) no-repeat;
+	display: inline-block;
+	width: 20px;
+	height: 20px;
 	margin: auto;
 	content: '';
+	position: relative;
+    left: -6px;
+    top: 5px;
 }
-
 a.ugallery-lager_image:before {
-	background-position: -1579px -270px;
+	background-position: -482px -106px;
 }
 
 a.ugallery-linked_page:before {
-	background-position: -1573px -340px;
+	background-position: -383px -41px;
 }
-
-a.ugallery-lager_image:hover:before {
-	background-position: -1687px -270px;
-}
-
-a.ugallery-linked_page:hover:before {
-	background-position: -1681px -340px;
-}
-
 .upfront-ui .ugallery-onclick-dialog {
-	width: 300px;
+	width: 600px;
 	margin: auto;
 	padding: 20px;
 	bottom:0;
 	top:0;
 	left:0;
 	right: 0;
-	height: 180px;
-	color: #4F6477;
+	height: 130px;
+	color: #212121;
 	position: absolute;
 	background: #fff;
 }
