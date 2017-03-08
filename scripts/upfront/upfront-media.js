@@ -229,10 +229,10 @@ define([
 			this.set_labels_to_defaults();
 		},
 		set_max_pages: function (max) {
-			this.max_pages = max || 1;
+			this.max_pages = !_.isUndefined(max) ? max : 1;
 		},
 		set_max_items: function (max) {
-			this.max_items = max || 1;
+			this.max_items = !_.isUndefined(max) ? max : 1;
 		},
 		prev_page: function () {
 			if (this.current_page > 1) return this.set_page(this.current_page-1);
@@ -342,6 +342,7 @@ define([
 		initialize: function (args) {
 			this.listenTo(Upfront.Events, "media:item:selection_changed", this.switch_controls);
 			this.listenTo(Upfront.Events, "media:search:requested", this.switch_to_search);
+			this.listenTo(Upfront.Events, "media_manager:load:done", this.render_filters);
             this.options = args.options;
 		},
 		render: function () {
@@ -382,7 +383,7 @@ define([
 		},
 		switch_to_search: function (search) {
 			this.is_search_active = search && search.get("state");
-			this.render_filters();
+			//this.render_filters(); // This will be rendered later in another event to prevent double rendering in a row
 		},
 		remove: function() {
 			if (this.control) this.control.remove();
@@ -1831,6 +1832,7 @@ define([
 			this.show_control = false;
 		},
 		load: function (data) {
+			Upfront.Events.trigger("media_manager:load:start", data);
 			this._request_in_progress = true;
 			data = data && data.type ? data : ActiveFilters.to_request_json();
 			data.media_limit = ActiveFilters.media_limit;
@@ -1844,10 +1846,12 @@ define([
 					me.library_view.update(response.data.items);
 					me.command_view.render();
 					if (me.show_control) me.switcher_view.show_controls();
+					Upfront.Events.trigger("media_manager:load:done", response);
 				})
 				.fail(function (response) {
 					me.library_view.update([]);
 					me.command_view.render();
+					Upfront.Events.trigger("media_manager:load:fail", response);
 				})
 				.always(function () {
 					me._request_in_progress = false;
