@@ -121,8 +121,7 @@
 								}
 								else if(panel == 'pages'){
 										collection = new Upfront.Collections.PostList([], {postType: 'page'});
-										collection.orderby = 'post_date';
-										fetchOptions = {limit: 15};
+										fetchOptions = {limit: 15, hierarchical: true};
 								}
 								else if(panel == 'cpts'){
 										var postTypes = Upfront.mainData.content_settings.post_types

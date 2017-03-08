@@ -524,7 +524,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			$this->_out(new Upfront_JsonResponse_Error("Invalid post type."));
 
 		$query = $this->_spawn_query($data['postType'], $data);
-		$posts = $query->posts;
+		$posts = isset($data['hierarchical']) ? $this->walker($query->posts) : $query->posts;
 		$limit = isset($data['limit']) ? (int)$data['limit'] : 10;
 		$page = isset($data['page']) ? (int)$data['page'] : 0;
 
@@ -560,6 +560,13 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			)
 		)));
 
+	}
+
+	function walker($posts) {
+		require_once(dirname(dirname(__FILE__)) . '/class_upfront_posts_walker.php');
+		// Order by page hierarchy.
+		$walker = new Upfront_Posts_Walker();
+		return $walker->walk($posts, 0);
 	}
 
 	function fetch_page_templates($data){
