@@ -357,7 +357,7 @@ define([
 			var i;
 			$items.each(function() {
 				var itemData = _.findWhere(
-					oldItems, {'menu-item-object-id': $(this).data('menuItemObjectId')}
+					oldItems, {'menu-item-db-id': $(this).data('menuItemDbId')}
 				);
 				var itemDepth = $(this).data('menuItemDepth');
 
@@ -383,7 +383,7 @@ define([
 
 				// Must be done in the end
 				position = position + 1;
-				prevItemId = itemData['menu-item-object-id'];
+				prevItemId = itemData['menu-item-db-id'];
 			});
 
 			Upfront.Util.post({
@@ -424,9 +424,7 @@ define([
 			}).done(
 
 					function(response) {
-
 						newItem['menu-item-db-id'] = response.data.itemId;
-						newItem['menu-item-object-id'] = response.data.itemId + '';
 
 						// Gotta do this to save item now with id to make it published
 						Upfront.Util.post({

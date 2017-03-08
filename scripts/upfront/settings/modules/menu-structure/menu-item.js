@@ -36,7 +36,7 @@ define([
 				title: this.model.get('menu-item-title'),
 				type:  this.getLinkTypeLabel(Upfront.Util.guessLinkType(this.model.get('menu-item-url')))
 			}));
-			this.$el.data('menu-item-object-id', this.model.get('menu-item-object-id'));
+			this.$el.data('menu-item-db-id', this.model.get('menu-item-db-id'));
 			this.$el.data('menu-item-depth', this.depth);
 			this.$el.addClass('menu-structure-item-depth-' + this.depth);
 
