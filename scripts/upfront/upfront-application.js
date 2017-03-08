@@ -1,6 +1,9 @@
 (function ($) {
 
-define(['models', 'views', 'editor_views', 'behaviors', 'upfront-data', 'jquery-df', 'jquery-simulate', 'scripts/backbone-query-parameters/backbone-query-parameters', 'responsive', 'findandreplace'], function (models, views, editor, behaviors, data, findandreplace) {
+define([
+		'models', 'views', 'editor_views', 'behaviors', 'upfront-data', 'upfront/plugins-layouts',
+		'jquery-df', 'jquery-simulate', 'scripts/backbone-query-parameters/backbone-query-parameters', 'responsive', 'findandreplace'
+	], function (models, views, editor, behaviors, data, plugins_layouts, findandreplace) {
   _.extend(Upfront, data);
   Upfront.Events.trigger('data:ready');
   _.extend(Upfront, models);
@@ -1694,82 +1697,8 @@ var Application = new (Backbone.Router.extend({
 		return false;
 	},
 
-	/**
-	 * Checks if current layout is layout handled by plugin and return plugin data.
-	 *
-	 * @params {mixed} postId - id of current post, can be number or string
-	 *
-	 * @return {String} plugin name if found
-	 */
-	is_plugin_layout: function(postId) {
-		var currentLayout = Upfront.Application.current_subapplication.get_layout_data().layout;
-
-		if (typeof postId === 'undefined') {
-			// Try to get post id from layout
-			if (currentLayout.item && currentLayout.item === 'single-page' && currentLayout.specificity && currentLayout.specificity.match('single-page-')) {
-				var pageNumber = currentLayout.specificity.match(/\d+/);
-				if (_.isNull(pageNumber) === false && pageNumber.length === 1) {
-					postId = pageNumber[0];
-				}
-			}
-		}
-
-		var layoutData, pluginData, bodyclass;
-		_.each(Upfront.mainData.pluginsLayouts, function(data) {
-			if (layoutData) return; // save cycles
-			_.each(data.pagesById, function(page) {
-				if (parseInt(page.pageId, 10) === parseInt(postId, 10)) {
-					layoutData = page;
-					pluginData = data;
-				}
-			});
-			if (layoutData) return; // save cycles
-			_.each(data.layouts, function(layout) {
-				if (layoutData) return; // save cycles
-				if (
-						(layout.specificity && currentLayout.specificity && currentLayout.specificity === layout.specificity) ||
-						(layout.item === currentLayout.item)
-				) {
-					layoutData = layout;
-					pluginData = data;
-				}
-			});
-		});
-
-		if (!layoutData) return;
-		bodyclass = layoutData.bodyclass || pluginData.bodyclass;
-		return {
-			pluginName: pluginData.pluginName,
-			content: pluginData.sampleContents[layoutData.content] ? pluginData.sampleContents[layoutData.content] : '',
-			title: layoutData.title ? layoutData.title : '',
-			killPostSettings: layoutData.killPostSettings || false,
-			bodyclass: bodyclass || false,
-			l10n: layoutData.l10n || false,
-			forbid_save_as: !!layoutData.forbid_save_as || false
-		};
-	},
-
-	plugin_body_classes: false,
-
-	remove_plugin_body_classes: function() {
-		var self = this;
-		if (this.plugin_body_classes === false) {
-			this.plugin_body_classes = [];
-			_.each(Upfront.mainData.pluginsLayouts, function(data, plugin) {
-				if (data.bodyclass) self.plugin_body_classes.push(data.bodyclass);
-				_.each(data.pagesById, function(page) {
-					if (page.bodyclass) self.plugin_body_classes.push(page.bodyclass);
-				});
-				_.each(data.layouts, function(layout) {
-					if (layout.bodyclass) self.plugin_body_classes.push(layout.bodyclass);
-				});
-			});
-		}
-		if (this.plugin_body_classes.length) {
-			$('body').removeClass(this.plugin_body_classes.join(' '));
-		}
-	}
-
+	is_plugin_layout: plugins_layouts.is_plugin_layout,
+	remove_plugin_body_classes: plugins_layouts.remove_plugin_body_classes
 }))();
 
 return {
