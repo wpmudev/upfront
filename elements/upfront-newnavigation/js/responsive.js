@@ -163,14 +163,13 @@ jQuery(document).ready(function($) {
 	
 	function NavDropDownInit() {
 		var timer;
-		
+
 		$('div.upfront-navigation ul li').on("mouseenter", function() {
-			clearTimeout(timer);
 			$(this).find('.sub-menu').addClass("upfront-dropdown-active");
 		}).on("mouseleave", function() {
 			var $me = $(this);
 			timer = setTimeout(function() {
-				$me.parent().find('.sub-menu').removeClass("upfront-dropdown-active");
+				$me.find('.sub-menu').removeClass("upfront-dropdown-active");
 			}, 500);
 		});
 	}
