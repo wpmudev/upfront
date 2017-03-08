@@ -116,7 +116,7 @@ define([
 					"post_ids": this.invoke("get", "ID")
 				}
 			;
-			Upfront.Util.post(data)
+			return Upfront.Util.post(data)
 				.success(function (response) {
 					me.each(function (model) {
 						var labels = response.data[model.get("ID")];
@@ -944,12 +944,24 @@ define([
 						e.stopPropagation();
 					}
 					if (this._adding_label) return;
-					var $text = this.$el.find(".new_labels :text.add-label"),
+					var me = this,
+						$hub = this.$el.find(".new_labels"),
+						$text = this.$el.find(".new_labels :text.add-label"),
 						selection = $text.val()
 					;
 					this._adding_label = true;
 					$text.attr('disabled', true);
-					this.model.add_new_label(selection);
+					this.model.add_new_label(selection)
+						.always(function(){
+							me._adding_label = false;
+							$text.val('').attr('disabled', false);
+						})
+						.fail(function(jqxhr){
+							var response = jqxhr.responseJSON;
+							if (response && response.error) {
+								Upfront.Views.Editor.notify(response.error, 'error');
+							}
+						});
 				}
 			});
 

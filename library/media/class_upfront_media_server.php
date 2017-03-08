@@ -234,7 +234,7 @@ class Upfront_MediaServer extends Upfront_Server {
 		if (!$term) $this->_out(new Upfront_JsonResponse_Error("No term"));
 
 		$res = wp_insert_term($term, 'media_label');
-		if (is_wp_error($res)) $this->_out(new Upfront_JsonResponse_Error("Something went wrong" . $res->get_error_message()));
+		if (is_wp_error($res)) $this->_out(new Upfront_JsonResponse_Error("Something went wrong. " . $res->get_error_message()));
 
 		if ($post_ids) {
 			$result = array();
