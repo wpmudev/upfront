@@ -45,7 +45,9 @@ class Upfront_UimageView extends Upfront_Object {
 			$data['imgWidth'] = '';
 			$data['stretchClass'] = '';
 		}
-
+		
+		// Retrieve Image ALT
+		$data['alternative_text'] = get_post_meta($data['image_id'], '_wp_attachment_image_alt', true);
 		$data['containerWidth'] = min($data['size']['width'], $data['element_size']['width']);
 
 		if($data['vstretch'])

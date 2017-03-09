@@ -31,8 +31,13 @@ var LayoutEditorSubapplication = Subapplication.extend({
 	},
 
 	save_layout_as: function () {
+		var plugin_layout = Upfront.Application.is_plugin_layout();
 		if ( _upfront_post_data.layout.type == 'archive' ) {
 			Upfront.Behaviors.LayoutEditor.save_dialog(this._save_layout, this, true, true);
+		} else if ( plugin_layout && plugin_layout.forbid_save_as === false ) {
+			Upfront.Behaviors.LayoutEditor.save_dialog(this._save_layout, this, true, false, plugin_layout);
+		} else if ( plugin_layout && plugin_layout.forbid_save_as === true ) {
+			Upfront.Events.trigger("command:layout:save");
 		}
 	},
 
@@ -897,7 +902,7 @@ var Application = new (Backbone.Router.extend({
 		Upfront.Events.on('upfront:renderingqueue:done', function () {
 			// Call mode context dialog - this is what pops up the explaining
 			// dialog for the users (only if Exporter plugin is active)
-			var modeContextDialog = Upfront.plugins.call('mode-context-dialog');
+			Upfront.plugins.call('mode-context-dialog');
 		});
 
 		app.loading.render();
@@ -1709,43 +1714,39 @@ var Application = new (Backbone.Router.extend({
 			}
 		}
 
-		var result;
-		_.each(Upfront.mainData.pluginsLayouts, function(data, plugin) {
-			if (result) return; // save cycles
+		var layoutData, pluginData, bodyclass;
+		_.each(Upfront.mainData.pluginsLayouts, function(data) {
+			if (layoutData) return; // save cycles
 			_.each(data.pagesById, function(page) {
 				if (parseInt(page.pageId, 10) === parseInt(postId, 10)) {
-					result = {
-						pluginName: data.pluginName,
-						content: data.sampleContents[page.content] ? data.sampleContents[page.content] : '',
-						title: page.title ? page.title : '',
-						killPostSettings: page.killPostSettings || false,
-						bodyclass: data.bodyclass || false
-					};
+					layoutData = page;
+					pluginData = data;
 				}
 			});
-			if (result) return; // save cycles
+			if (layoutData) return; // save cycles
 			_.each(data.layouts, function(layout) {
-				if (result) return; // save cycles
-				if (layout.specificity && currentLayout.specificity && currentLayout.specificity === layout.specificity) {
-					result = {
-						pluginName: data.pluginName,
-						content: data.sampleContents[layout.content] ? data.sampleContents[layout.content] : '',
-						title: layout.title ? layout.title : '',
-						killPostSettings: layout.killPostSettings || false,
-						bodyclass: data.bodyclass || false
-					};
-				} else if (layout.item === currentLayout.item) {
-					result = {
-						pluginName: data.pluginName,
-						content: data.sampleContents[layout.content] ? data.sampleContents[layout.content] : '',
-						title: layout.title ? layout.title : '',
-						killPostSettings: layout.killPostSettings || false,
-						bodyclass: data.bodyclass || false
-					};
+				if (layoutData) return; // save cycles
+				if (
+						(layout.specificity && currentLayout.specificity && currentLayout.specificity === layout.specificity) ||
+						(layout.item === currentLayout.item)
+				) {
+					layoutData = layout;
+					pluginData = data;
 				}
 			});
 		});
-		return result;
+
+		if (!layoutData) return;
+		bodyclass = layoutData.bodyclass || pluginData.bodyclass;
+		return {
+			pluginName: pluginData.pluginName,
+			content: pluginData.sampleContents[layoutData.content] ? pluginData.sampleContents[layoutData.content] : '',
+			title: layoutData.title ? layoutData.title : '',
+			killPostSettings: layoutData.killPostSettings || false,
+			bodyclass: bodyclass || false,
+			l10n: layoutData.l10n || false,
+			forbid_save_as: !!layoutData.forbid_save_as || false
+		};
 	},
 
 	plugin_body_classes: false,
@@ -1756,6 +1757,12 @@ var Application = new (Backbone.Router.extend({
 			this.plugin_body_classes = [];
 			_.each(Upfront.mainData.pluginsLayouts, function(data, plugin) {
 				if (data.bodyclass) self.plugin_body_classes.push(data.bodyclass);
+				_.each(data.pagesById, function(page) {
+					if (page.bodyclass) self.plugin_body_classes.push(page.bodyclass);
+				});
+				_.each(data.layouts, function(layout) {
+					if (layout.bodyclass) self.plugin_body_classes.push(layout.bodyclass);
+				});
 			});
 		}
 		if (this.plugin_body_classes.length) {

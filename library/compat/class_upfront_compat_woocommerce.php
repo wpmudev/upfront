@@ -17,7 +17,7 @@ class Upfront_Compat_WooCommerce {
 		add_filter('upfront-entity_resolver-entity_ids', array($this, 'override_entity_ids'));
 		add_filter('upfront-post_data-get_content-before', array($this, 'override_single_product_filter'));
 		add_filter('upfront-posts-get_markup-before', array($this, 'override_posts_markup_filter'));
-		add_filter('upfront-plugins_layoucartts', array($this, 'add_woocommerce_layouts'));
+		add_filter('upfront-plugins_layouts', array($this, 'add_woocommerce_layouts'));
 		add_filter('upfront-postdata_get_markup_before', array($this, 'override_postdata_content'), 10, 2);
 		add_filter('upfront-override_post_parts', array($this, 'override_post_parts'), 10, 2);
 		add_filter('upfront-widget_plugins_widgets', array($this, 'declare_plugins_widgets'));
@@ -217,59 +217,70 @@ class Upfront_Compat_WooCommerce {
 			'pagesById' => array(
 				array(
 					'pageId' => wc_get_page_id('shop'),
-					'content' => 'shop'
+					'content' => 'shop',
+					'bodyclass' => 'woocommerce woocommerce-page'
 				),
 				array(
 					'pageId' => wc_get_page_id('cart'),
-					'content' => 'cart'
+					'content' => 'cart',
+					'bodyclass' => 'woocommerce-cart woocommerce-page'
 				),
 				array(
 					'pageId' => wc_get_page_id('checkout'),
-					'content' => 'checkout'
+					'content' => 'checkout',
+					'bodyclass' => 'woocommerce-checkout woocommerce-page'
 				),
 				array(
 					'pageId' => wc_get_page_id('myaccount'),
-					'content' => 'myaccount'
+					'content' => 'myaccount',
+					'bodyclass' => 'woocommerce-account woocommerce-page'
 				)
 			),
 			'layouts' => array(
 				array(
 					'item' => 'archive-product',
 					'type' => 'archive',
-					'content' => 'archive-product'
+					'content' => 'archive-product',
+					'bodyclass' => 'woocommerce woocommerce-page'
 				),
 				array(
 					'item' => 'single-product',
 					'specificity' => 'single-product',
 					'type' => 'single',
-					'content' => 'single-product'
+					'content' => 'single-product',
+					'bodyclass' => 'woocommerce woocommerce-page'
 				),
 				array(
 					'item' => 'archive-product_cat',
 					'specificity' => 'archive-product_cat',
 					'type' => 'archive',
-					'content' => 'archive-product'
+					'content' => 'archive-product',
+					'bodyclass' => 'woocommerce woocommerce-page'
 				),
 				array(
 					'item' => 'archive-product_tag',
 					'specificity' => 'archive-product_tag',
 					'type' => 'archive',
-					'content' => 'archive-product'
+					'content' => 'archive-product',
+					'bodyclass' => 'woocommerce woocommerce-page'
 				),
 				array(
 					'item' => 'single-page-woocart',
 					'specificity' => 'single-page-woocart',
-					'content' => 'cart'
+					'content' => 'cart',
+					'bodyclass' => 'woocommerce-cart woocommerce-page'
 				),
 				array(
 					'item' => 'single-page-woocheckout',
 					'specificity' => 'single-page-woocheckout',
-					'content' => 'checkout'
+					'content' => 'checkout',
+					'bodyclass' => 'woocommerce-checkout woocommerce-page'
 				),
 				array(
 					'item' => 'single-page-woomyaccount',
 					'specificity' => 'single-page-woomyaccount',
-					'content' => 'myaccount'
+					'content' => 'myaccount',
+					'bodyclass' => 'woocommerce-account woocommerce-page'
 				),
 			)
 		);
@@ -350,6 +361,15 @@ class Upfront_Compat_WooCommerce {
 		if ($specificity === 'single-page-woocheckout' || $specificity === 'woocheckout') {
 			return __('WooCommerce Checkout Page', 'upfront');
 		}
+
+		if ($specificity === 'archive-product_cat') {
+			return __('WooCommerce Product Category', 'upfront');
+		}
+
+		if ($specificity === 'archive-product_tag') {
+			return __('WooCommerce Product Tag', 'upfront');
+		}
+
 
 		return $layout_name;
 	}

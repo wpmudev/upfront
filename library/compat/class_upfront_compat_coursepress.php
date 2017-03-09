@@ -7,71 +7,112 @@ class Upfront_Compat_CoursePress {
 			'display_name' => 'CoursePress Course',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'l10n' => array(
+				'layout_type' => 'Course',
+				'layout_type_plural' => 'Courses',
+			)
 		),
 		'course_archive'                => array(
 			'display_name' => 'CoursePress All Courses',
 			'type' => 'single',
 			'title' => 'All Courses',
+			'forbid_save_as' => true
 		),
 		'unit_archive'                  => array(
 			'display_name' => 'CoursePress Course Units',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'l10n' => array(
+				'layout_type' => 'Course Units Archive',
+				'layout_type_plural' => 'Course Units Archives',
+			)
 		),
 		'unit'                          => array(
 			'display_name' => 'CoursePress Course Unit',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'l10n' => array(
+				'layout_type' => 'Course Unit',
+				'layout_type_plural' => 'Course Units',
+			)
 		),
 		'course_notifications_archive'  => array(
 			'display_name' => 'CoursePress Course Notifications',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'l10n' => array(
+				'layout_type' => 'Course Notifications Archive',
+				'layout_type_plural' => 'Course Notifications Archives',
+			)
 		),
 		'course_discussion_archive'     => array(
 			'display_name' => 'CoursePress Course All Discussions',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'l10n' => array(
+				'layout_type' => 'Course Discussions Archive',
+				'layout_type_plural' => 'Course Discussions Archives',
+			)
 		),
 		'course_discussion'             => array(
 			'display_name' => 'CoursePress Course Discussion',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'l10n' => array(
+				'layout_type' => 'Course Discussion',
+				'layout_type_plural' => 'Course Discussions',
+			)
 		),
 		'course_workbook'               => array(
 			'display_name' => 'CoursePress Course Workbook',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'l10n' => array(
+				'layout_type' => 'Course Workbook',
+				'layout_type_plural' => 'Course Workbooks',
+			),
 		),
 		'course_grades_archive'         => array(
 			'display_name' => 'CoursePress Course Grades',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'l10n' => array(
+				'layout_type' => 'Course Grades Page',
+				'layout_type_plural' => 'Course Grades Pages',
+			),
 		),
 		'coursepress_student_login'     => array(
 			'display_name' => 'CoursePress Student Login',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'forbid_save_as' => true
 		),
 		'coursepress_student_signup'    => array(
 			'display_name' => 'CoursePress Student Signup',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'forbid_save_as' => true
 		),
 		'coursepress_student_dashboard' => array(
 			'display_name' => 'CoursePress Courses Dashboard',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'forbid_save_as' => true
 		),
 		'coursepress_student_settings'  => array(
 			'display_name' => 'CoursePress Student Settings',
 			'type' => 'single',
 			'title' => 'Course Number One',
+			'forbid_save_as' => true
 		),
 		'coursepress_instructor'  => array(
 			'display_name' => 'CoursePress Instructor',
 			'type' => 'single',
 			'title' => 'Instructor A',
+			'l10n' => array(
+				'layout_type' => 'Course Instructor',
+				'layout_type_plural' => 'Course Instructors',
+			),
 		),
 	);
 
@@ -86,13 +127,14 @@ class Upfront_Compat_CoursePress {
 		}
 
 		// Force always loading CP styles in builder
-		if (upfront_exporter_is_running() && class_exists('CoursePress_Core')) CoursePress_Core::$is_cp_page = true;
+		if (function_exists('upfront_exporter_is_running') && upfront_exporter_is_running() && class_exists('CoursePress_Core')) CoursePress_Core::$is_cp_page = true;
 
 		add_filter('upfront-plugins_layouts', array($this, 'add_plugins_layouts'));
 		add_filter('upfront-forbidden_post_data_types', array($this, 'forbidden_post_data_types'));
 		add_filter('upfront-layout_to_name', array($this, 'layout_to_name'), 10, 4);
 		add_filter('upfront-builder_available_layouts', array($this, 'add_builder_available_layouts'));
 		add_filter('upfront-post_data-get_content-before', array($this, 'kill_double_discussion_querying'));
+		add_filter('upfront-post_data-get_content-before', array($this, 'fix_modal_template_not_loading'));
 		add_filter('upfront-post_data-get_content-after', array($this, 'balance_out_tags_in_discussion_content'));
 		add_filter('upfront-post_data-get_content-after', array($this, 'wrap_with_coursepress_css_class'), 99);
 		add_filter('body_class', array($this, 'add_cp_class_to_body'));
@@ -111,6 +153,27 @@ class Upfront_Compat_CoursePress {
 		$classes[] = 'coursepress';
 
 		return $classes;
+	}
+
+	/**
+	 * Fix modal template not loading because CP tries to make sure it's not loaded twice and upfront loads
+	 * it on second attempt.
+	 * For more info look at kill_double_discussion_querying, but in this case do the opossite,
+	 * don't load on the first but on the second call.
+	 */
+	private $modal_template_counter = 0;
+	public function fix_modal_template_not_loading($content) {
+		if ($this->modal_template_counter === 0) {
+			$this->modal_template_counter = 1;
+		} else {
+			$post = get_post();
+			if (is_a( $post, 'WP_Post' ) ) {
+				if (isset( $post->coursepress_enrollment_templates_was_already_loaded ))
+					$post->coursepress_enrollment_templates_was_already_loaded = false;
+			}
+		}
+
+		return $content;
 	}
 
 	/**
@@ -228,6 +291,8 @@ class Upfront_Compat_CoursePress {
 				'title' => __($info['title'], 'upfront'),
 				'display_name' => __($info['display_name'], 'upfront'),
 				'killPostSettings' => __('This is virtual page handled by CoursePress.', 'upfront'),
+				'l10n' => empty($info['l10n']) ? false : $info['l10n'],
+				'forbid_save_as' => empty($info['forbid_save_as']) ? false : true,
 			);
 		}
 
