@@ -332,19 +332,33 @@ class Upfront_Posts_PostView {
 	public function expand_tags_template () {
 		if (empty($this->_post->ID)) return '';
 
-		$tags = get_the_tag_list('', ', ', '', $this->_post->ID);
-		if (empty($tags)) return '';
+		$tags = is_numeric($this->_post->ID)
+			? get_the_tag_list('', ', ', '', $this->_post->ID)
+			: $this->_stub_tag_list_for_builder()
+		;
+		if (empty($tags)) return defined('DOING_AJAX') && DOING_AJAX && Upfront_Permissions::current(Upfront_Permissions::BOOT)
+			// In editor and no tags output
+			? __('This post has no tags assigned', 'upfront')
+			// No tags output, but also not in editor
+			: ''
+		;
 
-		$length = isset($this->_data['tags_limit'])
-			? (int)$this->_data['tags_limit']
+		$length = isset($this->_data['tags-show-max'])
+			? (int)$this->_data['tags-show-max']
 			: (int)Upfront_Posts_PostsData::get_default('tags_limit')
 		;
 
-		if ($length) {
-			$list = array_map('trim', explode(',', $tags));
-			$tags = join(', ', array_slice($list, 0, $length));
-		}
+		$separator = isset($this->_data['tags-separator'])
+			? '<span>'.$this->_data['tags-separator'].'</span>'
+			: '<span>, </span>'
+		 ;
 
+		$list = array_map('trim', explode(',', $tags));
+		$length = (int)$length > 0
+			? (int)$length
+			: count($list)
+		;
+		$tags = trim(join($separator, array_slice($list, 0, $length)));
 
 		$out = $this->_get_template('tags');
 
@@ -356,18 +370,29 @@ class Upfront_Posts_PostView {
 	public function expand_categories_template () {
 		if (empty($this->_post->ID)) return '';
 
-		$categories = get_the_category_list(', ', '', $this->_post->ID);
+		$categories = is_numeric($this->_post->ID)
+			? get_the_category_list(', ', '', $this->_post->ID)
+			: $this->_stub_category_list_for_builder()
+		;
+		
 		if (empty($categories)) return '';
 
-		$length = isset($this->_data['categories_limit'])
-			? (int)$this->_data['categories_limit']
-			: (int)Upfront_Posts_PostsData::get_default('categories_limit')
+		$length = isset($this->_data['category-show-max'])
+			? (int)$this->_data['category-show-max']
+		 	: (int)Upfront_Posts_PostsData::get_default('categories_limit')
 		;
 
-		if ($length) {
-			$list = array_map('trim', explode(',', $categories));
-			$categories = join(', ', array_slice($list, 0, $length));
-		}
+		$separator = isset($this->_data['category-separator'])
+			? '<span>' . $this->_data['category-separator']. '</span>'
+			: '<span> | </span>'
+		;
+
+		$list = array_map('trim', explode(',', $categories));
+		$length = (int)$length > 0
+			? (int)$length
+			: count($list)
+		;
+		$categories = join($separator, array_slice($list, 0, $length));
 
 		$out = $this->_get_template('categories');
 
