@@ -553,7 +553,7 @@ define([
 					type: "Select",
 					label: l10n.modules.date_format,
 					multiple: false,
-					property: "date-format",
+					property: "predefined-date-format",
 					values: [
 						{ label: l10n.modules.wp_date, value: "wp_date" },
 						{ label: l10n.modules.dMY, value: "d M Y" },
@@ -562,14 +562,22 @@ define([
 						{ label: l10n.modules.mdY, value: "m d Y" },
 						{ label: l10n.modules.custom_format, value: "0" }
 					],
-					default_value: "wp_date"
+					default_value: "wp_date",
+					show: function(value, $el) {
+						var $wrapper = $el.closest('.upfront-settings-post-wrapper');
+						if(value === "0" || value === "") {
+							$wrapper.find('.php-date-format').show();
+						} else {
+							$wrapper.find('.php-date-format').hide();
+						}
+					},
 				},
 				{
 					type: "Text",
 					label: l10n.modules.php_format,
 					className: 'php-date-format',
 					label_style: 'inline',
-					property: "date-posted-format"
+					property: "php-date-format"
 				},
 				{
 					type: "Button",
