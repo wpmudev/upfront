@@ -237,8 +237,8 @@ class Upfront_Posts_PostView {
 	}
 
 	public function expand_comment_count_template () {
-		$hide_empty = isset($this->_data['comment_count_hide'])
-			? (int)$this->_data['comment_count_hide']
+		$hide_empty = isset($this->_data['comments-hide-if-empty'])
+			? (int)$this->_data['comments-hide-if-empty']
 			: (int)Upfront_Posts_PostsData::get_default('comment_count_hide')
 		;
 
@@ -256,7 +256,7 @@ class Upfront_Posts_PostView {
 
 		$thumbnail_size = isset($this->_data['featured-image-size'])
 			? $this->_data['featured-image-size']
-			: Upfront_Posts_PostsData::get_default('featured-image-size')
+			: Upfront_Posts_PostsData::get_default('thumbnail_size')
 		;
 		
 		if($thumbnail_size == "custom_size") {
