@@ -158,6 +158,14 @@
 				{[ if(!pages.length){ ]}
 				<p class="upfront-no-results">{{Upfront.Settings.l10n.global.content.no_posts}}</p>
 				{[ } else { ]}
+				<div class="upfront-list_item-post upfront-list_item clearfix" data-post_id="home">
+					<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ Upfront.Settings.l10n.global.content.home_link }}</div>
+					<div class="upfront-list_item-component upfront-editactions">
+						<a href="{{ Upfront.mainData.siteUrl }}?editmode=true" class="editaction edit">
+							<i class="upfront-icon upfront-icon-region-labelEdit"></i>
+						</a>
+					</div>
+				</div>
 				{[ _.each(pages, function (post){ ]}
 				<div class="upfront-list_item-post upfront-list_item clearfix status-{{ post.get("post_status") }}" data-post_id="{{ post.get("ID") }}" style="margin-left: {{32 + (parseInt(post.get("depth"), 10) * 22)}}px; width: calc(100% - {{47 + (parseInt(post.get("depth"), 10) * 22)}}px)">
 					<div class="upfront-list_item-component upfront-date post-status-{{ post.get("post_status") }}" title="{[ if(post.get("post_status") == "publish") { ]}Published{[ } else if(post.get("post_status") == "future") { ]}Scheduled{[ } else { ]}Draft{[ } ]}">{[ if(post.get("post_status") == "future") { ]}sched. for{[ } ]}

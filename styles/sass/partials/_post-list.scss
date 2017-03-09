@@ -216,6 +216,36 @@
 	height: 40px;
 }
 
+/* Homepage Item */
+.upfront-popup-posts #upfront-list.upfront-page-list .upfront-list-items .upfront-list_item[data-post_id="home"] {
+	height: 50px;
+	margin: 0;
+	width: 100%;
+	padding: 5px 32px;
+}
+
+/* Homepage Icon */
+.upfront-popup-posts #upfront-list.upfront-page-list .upfront-list-items .upfront-list_item[data-post_id="home"]:before {
+	content: "\f102";
+	width: 12px;
+	height: 12px;
+	float: left;
+	margin-top: 11px;
+	margin-right: 7px;
+	font-family: dashicons;
+	font-size: 14px;
+}
+
+/* Homepage Title */
+.upfront-popup-posts #upfront-list.upfront-page-list .upfront-list-items .upfront-list_item[data-post_id="home"] .upfront-title {
+	line-height: 33px;
+}
+
+/* Homepage editaction Button */
+.upfront-popup-posts #upfront-list.upfront-page-list .upfront-list-items .upfront-list_item[data-post_id="home"] .upfront-editactions {
+	margin: 6px 15px;
+}
+
 #upfront-list .upfront-list_item:first-child:hover{
 	border-top: 1px solid transparent;
 }
@@ -659,7 +689,7 @@ a.editaction.trash {
 }
 
 .upfront-popup-posts #upfront-list .upfront-delete-confirm button {
-	color: #595959;
+	color: rgb(90,90,90);
 	width: auto;
 	border: 1px solid #677780;
 	border-radius: 0;

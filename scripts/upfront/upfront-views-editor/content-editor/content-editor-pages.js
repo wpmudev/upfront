@@ -107,7 +107,11 @@
 								e.preventDefault();
 								var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
 								if(_upfront_post_data) _upfront_post_data.post_id = postId;
-								Upfront.Application.navigate('/edit/page/' + postId, {trigger: true});
+								if (postId === 'home') {
+									Upfront.Application.navigate('?editmode=true', {trigger: true});
+								} else {
+									Upfront.Application.navigate('/edit/page/' + postId, {trigger: true});
+								}
 								Upfront.Events.trigger('click:edit:navigate', postId);
 						},
 						handle_post_view: function (e) {
