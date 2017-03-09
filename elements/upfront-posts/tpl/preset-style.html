@@ -130,6 +130,55 @@
 
 <?php } ?>
 
+/* Part Tags */
+
+<?php if(!empty($properties['tags-display-type'])) { ?>
+#page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.post_tags a, #page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.post_tags span {
+	<?php if($properties['tags-display-type'] == "block") { ?>
+		display: inline-block; 
+	<?php } else { ?>
+		display: inline;
+	<?php } ?>
+}
+<?php } ?>
+
+<?php if(!empty($properties['tags-use-typography']) && $properties['tags-use-typography'] == 'yes') { ?>
+
+#page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.post_tags a, #page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.post_tags span {
+	<?php if(!empty($properties['tags-font-family'])) { ?>font-family: <?php echo $properties['tags-font-family']  ?>; <?php } ?>
+    <?php if(!empty($properties['tags-font-size'])) { ?>font-size: <?php echo $properties['tags-font-size']  ?>px; <?php } ?>
+    <?php if(!empty($properties['tags-weight'])) { ?>font-weight: <?php echo $properties['tags-weight']  ?>;<?php } ?>
+    <?php if(!empty($properties['tags-style'])) { ?>font-style: <?php echo $properties['tags-style']  ?>;<?php } ?>
+    <?php if(!empty($properties['tags-line-height'])) { ?>line-height: <?php echo $properties['tags-line-height']  ?>;<?php } ?>
+	<?php if(!empty($properties['tags-font-color'])) { ?>color: <?php echo $properties['tags-font-color']  ?>; <?php } ?>
+}
+
+<?php } ?>
+
+/* Part Categories */
+
+<?php if(!empty($properties['tags-display-type'])) { ?>
+#page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.post_tags a, #page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.post_tags span {
+	<?php if($properties['tags-display-type'] == "block") { ?>
+		display: inline-block; 
+	<?php } else { ?>
+		display: inline;
+	<?php } ?>
+}
+<?php } ?>
+
+<?php if(!empty($properties['category-use-typography']) && $properties['category-use-typography'] == 'yes') { ?>
+
+#page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.post_categories a, #page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.post_categories span{
+	<?php if(!empty($properties['category-font-family'])) { ?>font-family: <?php echo $properties['category-font-family']  ?>; <?php } ?>
+    <?php if(!empty($properties['category-font-size'])) { ?>font-size: <?php echo $properties['category-font-size']  ?>px; <?php } ?>
+    <?php if(!empty($properties['category-weight'])) { ?>font-weight: <?php echo $properties['category-weight']  ?>;<?php } ?>
+    <?php if(!empty($properties['category-style'])) { ?>font-style: <?php echo $properties['category-style']  ?>;<?php } ?>
+    <?php if(!empty($properties['category-line-height'])) { ?>line-height: <?php echo $properties['category-line-height']  ?>;<?php } ?>
+	<?php if(!empty($properties['category-font-color'])) { ?>color: <?php echo $properties['category-font-color']  ?>; <?php } ?>
+}
+
+<?php } ?>
 
 /* Custom CSS */
 

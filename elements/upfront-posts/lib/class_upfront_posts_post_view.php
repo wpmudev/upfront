@@ -350,7 +350,7 @@ class Upfront_Posts_PostView {
 
 		$separator = isset($this->_data['tags-separator'])
 			? '<span>'.$this->_data['tags-separator'].'</span>'
-			: '<span>, </span>'
+			: ''
 		 ;
 
 		$list = array_map('trim', explode(',', $tags));
@@ -384,7 +384,7 @@ class Upfront_Posts_PostView {
 
 		$separator = isset($this->_data['category-separator'])
 			? '<span>' . $this->_data['category-separator']. '</span>'
-			: '<span> | </span>'
+			: ''
 		;
 
 		$list = array_map('trim', explode(',', $categories));
