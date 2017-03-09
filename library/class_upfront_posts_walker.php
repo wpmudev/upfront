@@ -5,8 +5,16 @@ class Upfront_Posts_Walker extends Walker_Page {
 	// Instead of $output, lets keep it an array for a JSON response.
 	public $list = array();
 
+	// Custom walk method.
 	public function walk($elements, $max_depth = 0) {
 		parent::walk($elements, $max_depth);
+		// Return the list instead of $output.
+		return $this->list;
+	}
+
+	// Custom paged_walk method to work with pagination.
+	public function paged_walk( $elements, $max_depth, $page_num, $per_page ) {
+		parent::paged_walk($elements, $max_depth, $page_num, $per_page);
 		// Return the list instead of $output.
 		return $this->list;
 	}

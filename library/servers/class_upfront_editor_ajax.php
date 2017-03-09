@@ -524,9 +524,10 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			$this->_out(new Upfront_JsonResponse_Error("Invalid post type."));
 
 		$query = $this->_spawn_query($data['postType'], $data);
-		$posts = isset($data['hierarchical']) ? $this->walker($query->posts) : $query->posts;
 		$limit = isset($data['limit']) ? (int)$data['limit'] : 10;
 		$page = isset($data['page']) ? (int)$data['page'] : 0;
+		// If hierarchical, pass through query to walker.
+		$posts = isset($data['hierarchical']) ? $this->walker($query->posts, $limit, $page) : $query->posts;
 
 		if($posts) {
 			for ($i=0; $i < sizeof($posts); $i++) {
@@ -562,11 +563,13 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 	}
 
-	function walker($posts) {
+	function walker($posts, $limit, $page) {
 		require_once(dirname(dirname(__FILE__)) . '/class_upfront_posts_walker.php');
 		// Order by page hierarchy.
 		$walker = new Upfront_Posts_Walker();
-		return $walker->walk($posts, 0);
+		// Pages start with one.
+		// Post pagination is handled by paged_walk.
+		return $walker->paged_walk($posts, 0, $page + 1, $limit);
 	}
 
 	function fetch_page_templates($data){
@@ -947,6 +950,9 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$sort = !empty($data['orderby']) ? str_replace('post_', '', $data['orderby']) : 'date';
 		$direction = !empty($data['order']) ? $data['order'] : 'desc';
 		$limit = isset($data['limit']) ? (int)$data['limit'] : 10;
+		$hierarchical = !empty($data['hierarchical']) ? true : false;
+		// Only use limit if not hierarchical (post limit then is handled by walker class).
+		$posts_per_page = ($hierarchical ? -1 : $limit);
 		$page = isset($data['page']) ? (int)$data['page'] + 1 : 1;
 		$search = !empty($data['search']) ? $data['search'] : false;
 		$status = !empty($data['post_status']) ? $data['post_status'] : false;
@@ -957,7 +963,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			'orderby' => $sort,
 			'order' => strtoupper($direction),
 			'post_type' => $post_type,
-			'posts_per_page' => $limit,
+			'posts_per_page' => $posts_per_page,
 			'paged' => $page,
 			'post_status' => $status,
 			'm' => $date,
