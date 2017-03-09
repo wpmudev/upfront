@@ -285,13 +285,26 @@ define([
 					label_style: 'inline',
 					property: 'featured-image-size',
 					values: [
+						{label: l10n.thumbnail_size_thumbnail, value: 'thumbnail'},
+						{label: l10n.thumbnail_size_medium, value: 'medium'},
+						{label: l10n.thumbnail_size_large, value: 'large'},
+						{label: l10n.thumbnail_size_post_feature, value: 'uf_post_featured_image'},
 						{label: l10n.modules.custom_size, value: 'custom_size'},
-					]
+					],
+					show: function(value, $el){
+						if(value === "custom_size") {
+							$el.siblings('.uf-posts-image-custom-width').show();
+							$el.siblings('.uf-posts-image-custom-height').show();
+						} else {
+							$el.siblings('.uf-posts-image-custom-width').hide();
+							$el.siblings('.uf-posts-image-custom-height').hide();
+						}
+					},
 				},
 				{
 					type: "Text",
 					label: l10n.modules.custom_width,
-					className: 'image-custom-width',
+					className: 'uf-posts-image-custom-width',
 					label_style: 'inline',
 					property: "featured-custom-width",
 					suffix: l10n.px,
@@ -299,7 +312,7 @@ define([
 				{
 					type: "Text",
 					label: l10n.modules.custom_height,
-					className: 'image-custom-height',
+					className: 'uf-posts-image-custom-height',
 					label_style: 'inline',
 					property: "featured-custom-height",
 					suffix: l10n.px,

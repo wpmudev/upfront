@@ -254,10 +254,16 @@ class Upfront_Posts_PostView {
 	public function expand_featured_image_template () {
 		if (empty($this->_post->ID)) return '';
 
-		$thumbnail_size = isset($this->_data['thumbnail_size'])
-			? $this->_data['thumbnail_size']
-			: Upfront_Posts_PostsData::get_default('thumbnail_size')
+		$thumbnail_size = isset($this->_data['featured-image-size'])
+			? $this->_data['featured-image-size']
+			: Upfront_Posts_PostsData::get_default('featured-image-size')
 		;
+		
+		if($thumbnail_size == "custom_size") {
+			$custom_width = $this->_data['featured-custom-width'] ? $this->_data['featured-custom-width'] : 0;
+			$custom_height = $this->_data['featured-custom-width'] ? $this->_data['featured-custom-width'] : 0;
+			$thumbnail_size = array($custom_width, $custom_height);
+		}
 
 		$thumbnail = upfront_get_edited_post_thumbnail($this->_post->ID, false, $thumbnail_size);
 		if (empty($thumbnail)) return '';
