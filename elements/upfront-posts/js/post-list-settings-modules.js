@@ -10,6 +10,7 @@ define([
 	Modules.element_wrapper = Panel.Toggleable.extend({
 		title: l10n.modules.element_wrapper,
 		data_part: 'element_wrapper',
+		slug: 'element-wrapper',
 		get_modules: function () {
 			var modules = [],
 				me = this,
@@ -55,6 +56,7 @@ define([
 	Modules.post_wrapper = Panel.Toggleable.extend({
 		title: l10n.modules.post_wrapper,
 		data_part: 'post_wrapper',
+		slug: 'post-wrapper',
 		get_modules: function () {
 			var modules = [],
 				me = this,
@@ -118,6 +120,7 @@ define([
 	Modules.part_author = Panel.Toggleable.extend({
 		title: l10n.modules.author_title,
 		data_part: 'author',
+		slug: 'author',
 		get_modules: function () {
 			var modules = [],
 				me = this,
@@ -277,6 +280,7 @@ define([
 	Modules.part_featured_image = Panel.Toggleable.extend({
 		title: l10n.modules.featured_image_title,
 		data_part: 'featured_image',
+		slug: 'featured_image',
 		get_fields: function () {
 			return [
 				{
@@ -336,6 +340,7 @@ define([
 	Modules.part_comment_count = Panel.Toggleable.extend({
 		title: l10n.modules.comment_count_title,
 		data_part: 'comment_count',
+		slug: 'comment_count',
 		get_fields: function () {
 			return [
 				{
@@ -350,6 +355,7 @@ define([
 	Modules.part_content = Panel.Toggleable.extend({
 		title: l10n.modules.content_title,
 		data_part: 'content',
+		slug: 'content',
 		get_fields: function () {
 			return [
 				{
@@ -393,6 +399,7 @@ define([
 	Modules.part_tags = Panel.Toggleable.extend({
 		title: l10n.modules.tags_title,
 		data_part: 'tags',
+		slug: 'tags',
 		get_fields: function () {
 			return [
 				{
@@ -548,6 +555,7 @@ define([
 	Modules.part_date_posted = Panel.Toggleable.extend({
 		title: l10n.modules.date_posted_title,
 		data_part: 'date_posted',
+		slug: 'date_posted',
 		get_fields: function () {
 			return [
 				{
@@ -602,11 +610,13 @@ define([
 	Modules.part_title = Panel.Toggleable.extend({
 		title: l10n.modules.title_title,
 		data_part: 'title',
+		slug: 'title'
 	});
 	
 	Modules.part_categories = Panel.Toggleable.extend({
 		title: l10n.modules.categories_title,
 		data_part: 'categories',
+		slug: 'category',
 		get_fields: function () {
 			return [
 				{
@@ -761,7 +771,8 @@ define([
 	
 	Modules.part_read_more = Panel.Toggleable.extend({
 		title: l10n.modules.read_more_title,
-		data_part: 'read_more'
+		data_part: 'read_more',
+		slug: 'read_more'
 	});
 
 	return Modules;

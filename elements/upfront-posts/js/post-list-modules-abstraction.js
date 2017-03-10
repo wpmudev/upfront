@@ -225,12 +225,12 @@
 			},
 			updatePreview: function() {
 				var me = this,
-					useBorder = this.model.get(this.data_part + '-use-border'),
-					borderWidth = this.model.get(this.data_part + '-border-width'),
-					borderType = this.model.get(this.data_part + '-border-type'),
-					borderColor = this.model.get(this.data_part + '-border-color'),
-					backgroundColor = this.model.get(this.data_part + '-background-color'),
-					fontColor = this.model.get(this.data_part + '-font-color')
+					useBorder = this.model.get(this.slug + '-use-border'),
+					borderWidth = this.model.get(this.slug + '-border-width'),
+					borderType = this.model.get(this.slug + '-border-type'),
+					borderColor = this.model.get(this.slug + '-border-color'),
+					backgroundColor = this.model.get(this.slug + '-background-color'),
+					fontColor = this.model.get(this.slug + '-font-color')
 				;
 
 				setTimeout( function () {
