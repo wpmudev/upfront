@@ -509,6 +509,7 @@ define([
 				options: {
 					label: l10n.modules.single_tag,
 					property: 'tags-single-use',
+					name: 'tags-single-use',
 					default_value: 1,
 					as_field: false,
 					classStyle: 'tags-single-use',
@@ -722,6 +723,7 @@ define([
 				options: {
 					label: l10n.modules.single_category,
 					property: 'category-single-use',
+					name: 'category-single-use',
 					default_value: 1,
 					as_field: false,
 					classStyle: 'category-single-use',

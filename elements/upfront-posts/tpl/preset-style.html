@@ -142,6 +142,16 @@
 }
 <?php } ?>
 
+<?php if(!empty($properties['tags-display-type']) && $properties['tags-display-type'] == "block") { ?>
+#page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.post_categories a {
+	<?php if(!empty($properties['tags-single-use']) && $properties['tags-single-use'] == 'yes') { ?>
+		padding: <?php if(!empty($properties['tags-padding-top-bottom'])) { ?> <?php echo $properties['tags-padding-top-bottom'] ?>px <?php } else { ?> 0px <?php } ?> <?php if(!empty($properties['tags-padding-left-right'])) { ?> <?php echo $properties['tags-padding-left-right'] ?>px <?php } else { ?> 0px <?php } ?>;
+		margin: <?php if(!empty($properties['tags-margin-top-bottom'])) { ?> <?php echo $properties['tags-margin-top-bottom'] ?>px <?php } else { ?> 0px <?php } ?> <?php if(!empty($properties['tags-margin-left-right'])) { ?> <?php echo $properties['tags-margin-left-right'] ?>px <?php } else { ?> 0px <?php } ?>;
+		<?php if(!empty($properties['tags-background'])) { ?>background-color: <?php echo $properties['tags-background'] ?>; <?php } ?>
+	<?php } ?>
+}
+<?php } ?>
+
 <?php if(!empty($properties['tags-use-typography']) && $properties['tags-use-typography'] == 'yes') { ?>
 
 #page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.post_tags a, #page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.post_tags span {
@@ -157,12 +167,22 @@
 
 /* Part Categories */
 
-<?php if(!empty($properties['tags-display-type'])) { ?>
-#page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.post_tags a, #page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.post_tags span {
-	<?php if($properties['tags-display-type'] == "block") { ?>
+<?php if(!empty($properties['category-display-type'])) { ?>
+#page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.post_categories a, #page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.post_categories span {
+	<?php if($properties['category-display-type'] == "block") { ?>
 		display: inline-block; 
 	<?php } else { ?>
 		display: inline;
+	<?php } ?>
+}
+<?php } ?>
+
+<?php if(!empty($properties['category-display-type']) && $properties['category-display-type'] == "block") { ?>
+#page .<?php echo $properties['id'] ?> .uf-posts .uposts-part.post_categories a {
+	<?php if(!empty($properties['category-single-use']) && $properties['category-single-use'] == 'yes') { ?>
+		padding: <?php if(!empty($properties['category-padding-top-bottom'])) { ?> <?php echo $properties['category-padding-top-bottom'] ?>px <?php } else { ?> 0px <?php } ?> <?php if(!empty($properties['category-padding-left-right'])) { ?> <?php echo $properties['category-padding-left-right'] ?>px <?php } else { ?> 0px <?php } ?>;
+		margin: <?php if(!empty($properties['category-margin-top-bottom'])) { ?> <?php echo $properties['category-margin-top-bottom'] ?>px <?php } else { ?> 0px <?php } ?> <?php if(!empty($properties['category-margin-left-right'])) { ?> <?php echo $properties['category-margin-left-right'] ?>px <?php } else { ?> 0px <?php } ?>;
+		<?php if(!empty($properties['category-background'])) { ?>background-color: <?php echo $properties['category-background'] ?>; <?php } ?>
 	<?php } ?>
 }
 <?php } ?>
