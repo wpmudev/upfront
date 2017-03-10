@@ -104,6 +104,30 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		$this->_out(new Upfront_JsonResponse_Success($resetpreset));
 	}
+	
+	public function handle_post_parts($presets) {
+		$new_presets = array();
+
+		if(!empty($presets)) {
+			foreach($presets as $preset) {
+				foreach($preset as $key => $prop) {
+					// Check if posts part
+					if (0 === strpos($key, 'post-part-')) {
+						// WARNING!!! This is added to prevent enourmos amount of slashes in preset_style
+						$preset[$key] = str_replace("\\\\\\\\\\", "\\", $prop);
+						// Do it twice just in case we have multiple slashes
+						$preset[$key] = str_replace("\\\\\\\\\\", "\\", $prop);
+						// Finally clear slashes
+						$preset[$key] = stripslashes($prop);
+					}
+				}
+				
+				$new_presets[] = $preset;
+			}
+		}
+
+		return $new_presets;
+	}
 
 	public function replace_new_lines($presets) {
 		$new_presets = array();
@@ -181,6 +205,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		);
 
 		$presets = $this->replace_new_lines($presets);
+		$presets = $this->handle_post_parts($presets);
 		$presets = $this->_expand_passive_relative_url($presets);
 
 		// Fail-safe
