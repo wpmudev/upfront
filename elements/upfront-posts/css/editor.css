@@ -293,7 +293,7 @@ div.preset-manager-panel .upfront-settings-post-wrapper {
 	position: fixed;
 	width: 240px;
 	margin-left: -5px;
-	z-index: 999;
+	z-index: 99999999;
 	background: #f7fbff;
 	border-radius: 3px;
 	margin-top: 5px;
