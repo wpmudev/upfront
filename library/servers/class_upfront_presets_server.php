@@ -471,6 +471,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			$this->migrate_presets($updatedPresets)
 		);
 		$updatedPresets = $this->_expand_passive_relative_url($updatedPresets);
+		$updatedPresets = $this->handle_post_parts($updatedPresets);
 
 		$updatedPresets = json_encode($updatedPresets);
 
