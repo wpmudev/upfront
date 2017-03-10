@@ -29,7 +29,10 @@
             },
             handle_search_request: function (e) {
                 e.preventDefault();
-                var text = $("#upfront-search_container input").val();
+                var text = this.$el.find("#upfront-search_container input").val();
+              	// Add or remove class for styling.
+								this.toggle_search_class(text); 
+              	// Get results.
                 this.collection.fetch({search: text});
             },
 						handle_filter_request: function () {
@@ -44,6 +47,27 @@
 									m: date,
 									cat: category
                 });
+						},
+						// Show or Hide homepage item for pages list.
+						toggle_search_class: function(text) {
+							if (text === '') {
+								// Remove class for styling when search is run.
+								this.$el.parent().removeClass('upfront-popup-content-search-ran');
+              } else {
+								// Add class for styling when search is run.
+								this.$el.parent().addClass('upfront-popup-content-search-ran');
+              }
+						},
+						update_search_header: function(values) {
+							this.$el.find('.upfront-search-results-header #upfront-search-results-count').html();
+						},
+						clear_search: function() {
+								// Empty search input.
+                this.$el.find("#upfront-search_container input").val('');
+              	// Remove class for styling.
+								this.toggle_search_class('');
+              	// Get all results again.
+                this.collection.fetch({search: ''});
 						},
 						get_status_values: function(values) {
 							// If each status does not have value, use the name.
@@ -125,9 +149,9 @@
 								date_dropdown.render();
 								category_dropdown.render();
 								// Add Dropdowns to start of filter panel.
-								me.$el.children().prepend(category_dropdown.$el);
-								me.$el.children().prepend(date_dropdown.$el);
-								me.$el.children().prepend(status_dropdown.$el);
+								me.$el.children('.upfront-list-filter-container').prepend(category_dropdown.$el);
+								me.$el.children('.upfront-list-filter-container').prepend(date_dropdown.$el);
+								me.$el.children('.upfront-list-filter-container').prepend(status_dropdown.$el);
 						});
 					}
     	});

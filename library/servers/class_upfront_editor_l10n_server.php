@@ -555,6 +555,8 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'button' => __('Button', 'upfront'),
 				'posts' => __('Posts', 'upfront'),
 				'search' => __('Search', 'upfront'),
+				'clear' => __('Clear', 'upfront'),
+				'showing_results_for' => __('Showing %s results for', 'upfront'),
 				'slider' => __('Slider', 'upfront'),
 				'social' => __('Social', 'upfront'),
 				'tabs' => __('Tabs', 'upfront'),

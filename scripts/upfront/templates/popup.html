@@ -13,6 +13,13 @@
 			</div>
 
 		</div>
+		<div class="upfront-search-results-header">
+			<span>{{
+				Upfront.Settings.l10n.global.views.showing_results_for.replace(/%s/, '<b id="upfront-search-results-count">' + (this.collection.pagination.totalElements ? this.collection.pagination.totalElements: '0') + '</b>')
+				}} <b id="upfront-search-results-query">{{ query ? query : ''}}</b>
+			</span>
+			<button>{{Upfront.Settings.l10n.global.views.clear}}</button>
+		</div>
 	</script>
 
 	<script type="text/template" id="upfront-post-list-tpl">

@@ -36,8 +36,9 @@
 	cursor: pointer;
 }
 
-.upfront-popup-posts #upfront-popup-top .upfront-icon-popup-search:hover {
-	background: #e1e1e1;
+.upfront-popup-posts #upfront-popup-top .upfront-icon-popup-search:hover, .upfront-popup-posts #upfront-popup-top .upfront-icon-popup-search.upfront-popup-icon-search-open {
+	background: rgb(230, 230, 230);
+	border: rgb(217, 217, 217);
 }
 
 .upfront-popup-posts #upfront-popup-top .upfront-icon-popup-search:before {
@@ -118,6 +119,16 @@
 	margin-left: 2px;
 }
 
+/* Search Header */
+/* Only show search header after search is run */
+.upfront-popup-posts .upfront-search-results-header {
+	display: none;
+}
+
+.upfront-popup-posts .upfront-popup-content-search-ran .upfront-search-results-header {
+	display: block;
+}
+
 /* Entities(Posts) list */
 .upfront-popup-posts #upfront-popup-content {
 	background: #fff;
@@ -128,6 +139,10 @@
 
 .upfront-popup-posts #upfront-popup-content.upfront-filter-panel-open {
 	max-height: 484px;
+}
+
+.upfront-popup-posts .upfront-popup-content-search-ran .upfront-list-items .upfront-list_item[data-post_id="home"] {
+	display: none;
 }
 
 .upfront-entity_list-posts {

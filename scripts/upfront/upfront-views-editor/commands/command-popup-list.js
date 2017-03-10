@@ -82,10 +82,14 @@
 							var filterSection = $(e.target).parents('.upfront-popup-posts').find('#upfront-entity_list-search');
 							var contentSection = filterSection.parent();
 							if (filterSection.css('display') === 'none') {
-								contentSection.addClass('upfront-filter-panel-open');
+								// Keep button darker when clicked.
+								$(e.target).addClass('upfront-popup-icon-search-open');
 								// Add class for correct height.
+								contentSection.addClass('upfront-filter-panel-open');
 								return filterSection.slideToggle('fast');
 							}
+							// Keep button lighter when clicked.
+							$(e.target).removeClass('upfront-popup-icon-search-open');
 							// Remove class for correct height.
 							contentSection.removeClass('upfront-filter-panel-open');
 							return filterSection.slideToggle('fast');
