@@ -6993,6 +6993,8 @@ define([
 				if ( ! this.allow_edit || ! this.model.active_region )
 					return;
 				$('.upfront-region-active').removeClass('upfront-region-active');
+				// Fix sidebar after closing region settings.
+				$('#sidebar-ui').removeClass('region-settings-activated');
 				$('.upfront-region-container-active').removeClass('upfront-region-container-active');
 				this.model.active_region = null;
 			},

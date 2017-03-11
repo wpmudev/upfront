@@ -2,11 +2,11 @@
 
 class Upfront_Admin_General extends Upfront_Admin_Page {
 
-    function __construct(){
+	function __construct(){
 		if ($this->_can_access( Upfront_Permissions::SEE_USE_DEBUG )) {
-			add_submenu_page( Upfront_Admin::$menu_slugs['main'], __("General Settings", Upfront::TextDomain),  __("General", Upfront::TextDomain), 'manage_options', Upfront_Admin::$menu_slugs['main'], array($this, "render_page") );
+			add_submenu_page( Upfront_Admin::$menu_slugs['main'], __("General Settings", Upfront::TextDomain), __("General", Upfront::TextDomain), 'manage_options', Upfront_Admin::$menu_slugs['main'], array($this, "render_page") );
 		}
-   }
+	}
 
 	public function render_page() {
 		$core_version = $child_version = '0.0.0';
@@ -23,7 +23,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 		}
 		?>
 		<div class="wrap upfront_admin upfront-general-settings">
-            <h1><?php esc_html_e("General Settings", Upfront::TextDomain); ?><span class="upfront_logo"></span></h1>
+			<h1><?php esc_html_e("General Settings", Upfront::TextDomain); ?><span class="upfront_logo"></span></h1>
 			<div class="upfront-col-left">
 				<div class="postbox-container version-info">
 					<div class='postbox'>

@@ -54,14 +54,23 @@ var Views = {
 			var pluginLayout = Upfront.Application.is_plugin_layout(data.post_id);
 			if (pluginLayout)  {
 				var showContent;
+				var title = pluginLayout.title;
+				var showTitle;
 				this.model.get('objects').each(function(object) {
 					if (object.get_property_value_by_name('part_type') === 'content') showContent = true;
+					if (title && object.get_property_value_by_name('part_type') === 'title') showTitle = true;
 				});
+				if (showTitle) {
+					title = '<div class="upostdata-part title"><h1>' + title + '</h1></div>';
+					setTimeout( function() {
+						me.element.$el.find('.part-title .upfront-object-content').first().empty().append(title);
+					}, 100);
+				}
 				if (showContent) {
 					var content = '<div>Below is sample content for ' + pluginLayout.pluginName + '. Use it as a reference for styling.</div>' + pluginLayout.content;
-					// For some reason this.$el is not working when Settings are opened and canceled, use this.element instead
+					// For some reason this.$el is not working when Settings are opened and canceled, use me.element instead
 					setTimeout( function() {
-						me.element.$el.find('.upfront-object-content').first().empty().append(content);
+						me.element.$el.find('.part-content .upfront-object-content').first().empty().append(content);
 					}, 100);
 				}
 				return;

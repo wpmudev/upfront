@@ -498,6 +498,12 @@
 	opacity: 1;
 }
 
+#sidebar-ui .sidebar-commands-control .command-trash:before {
+	left: 8px; 
+	top: 7px; 
+	position: absolute;
+}
+
 #sidebar-ui .sidebar-panels {
 	color: #395773;
 	border-right: none;

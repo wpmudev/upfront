@@ -89,3 +89,54 @@
 	margin-bottom: 0;
 	line-height: inherit;
 }
+.ugallery-magnific-panel .labels_filter ul li {
+	position: relative;
+}
+.ugallery-magnific-panel .labels_filter ul li:after {
+	position: absolute;
+	right: 4px;
+	top: 0px;
+}
+.ugallery-magnific-panel .labels_filter ul li label {
+	margin-right: 4px;
+}
+.ugallery-magnific-panel.upfront-additive_multiselection .labels_filter input[type=text] {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    height: 22px;
+    font-size: 11px;
+    opacity: 1;
+    border-radius: 3px;
+	width: auto;
+	margin-top: 2px;
+}
+.ugallery-magnific-panel.upfront-additive_multiselection .labels_filter.empty input[type=text] {
+	margin-top: 0px;
+}
+.ugallery-magnific-panel .new_labels {
+	position: relative;
+}
+.ugallery-magnific-panel .new_labels.active .submit-label {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}
+.ugallery-magnific-add .new_labels {
+	margin-top: 5px;
+}
+.ugallery-magnific-panel .new_labels.active .submit-label {
+	height: 22px;
+}
+.ugallery-controls .uimage-control-panel-item {
+	z-index: 60;
+}
+.ugallery-magnific-panel input.add-label {
+	height: 22px;
+	border: none;
+}
+.ugallery-magnific-panel .labels_list {
+    position: absolute;
+    width: 90%;
+    z-index: 999;
+	margin-top: -3px;
+}

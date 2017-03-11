@@ -150,6 +150,32 @@ box-shadow: inset 0 2px 0 0 #fff;
 	background: #e5f3fe;
 }
 
+
+.upfront-popup-meta .use_selection_container {
+	float: right;
+	text-align: center;
+	background: rgb(31, 205, 143);
+	height: 50px;
+	line-height: 50px;
+}
+.upfront-popup-meta .use_selection_container:hover {
+	background: #3ea;
+}
+.upfront-popup-meta .use_selection_container.inactive {
+	background: #cee1f2;
+}
+
+.upfront-popup-meta .use_selection_container.inactive a{
+	color: #99b3cc;
+	cursor: default;
+}
+.upfront-popup-meta .use_selection_container a {
+	display: block;
+	padding: 0 32px;
+	color: #fff;
+	text-decoration: none;
+}
+
 /* Warning Popup */
 #upfront-popup.warning_img {
 	width:360px;

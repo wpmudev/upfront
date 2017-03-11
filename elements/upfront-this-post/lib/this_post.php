@@ -4,8 +4,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 	public static $PARTNAMES = array(
 		'EXCERPT' => 'excerpt',
 		'AUTHOR' => 'author',
-        'AUTHOR_GRAVATAR' => 'author_gravatar',
-        'CATEGORIES' => 'categories',
+		'AUTHOR_GRAVATAR' => 'author_gravatar',
+		'CATEGORIES' => 'categories',
 		'COMMENTS' => 'comments_count',
 		'CONTENTS' => 'contents',
 		'DATE' => 'date',
@@ -64,8 +64,6 @@ class Upfront_ThisPostView extends Upfront_Object {
 				}
 
 				break;
-
-                break;
 			case self::$PARTNAMES['CATEGORIES']:
 				$replacements['%categories%'] = get_the_category_list();
 				break;
@@ -75,18 +73,18 @@ class Upfront_ThisPostView extends Upfront_Object {
 				break;
 
 			case self::$PARTNAMES['CONTENTS']:
-                $limit = isset($options['limit']) ? $options['limit'] : 1000;
+				$limit = isset($options['limit']) ? $options['limit'] : 1000;
 
-                if (!empty($post->ID) && is_numeric($post->ID)) {
+				if (!empty($post->ID) && is_numeric($post->ID)) {
 					ob_start();
 					the_content();
 					$replacements['%contents%'] = ob_get_clean();
 					$replacements['%excerpt%'] = self::excerpt( $limit );
-                } else {
-                	$post = apply_filters('upfront-this_post-unknown_post', $post, $options);
+				} else {
+					$post = apply_filters('upfront-this_post-unknown_post', $post, $options);
 					$replacements['%contents%'] = apply_filters('the_content', $post->post_content);
 					$replacements['%excerpt%'] = self::excerpt( $limit );
-                }
+				}
 
 				if(!empty($options['excerpt']))
 					$replacements['%contents%'] = $replacements['%excerpt%'];
@@ -95,11 +93,11 @@ class Upfront_ThisPostView extends Upfront_Object {
 				$replacements['%offset%'] = $offset;
 				break;
 
-            case self::$PARTNAMES['EXCERPT']:
-                $limit = isset($options['limit']) ? $options['limit'] : 1000;
-                $replacements['%excerpt%'] = self::excerpt( $limit );
-                //$replacements['%excerpt%'] = $limit; // Why???
-                break;
+			case self::$PARTNAMES['EXCERPT']:
+				$limit = isset($options['limit']) ? $options['limit'] : 1000;
+				$replacements['%excerpt%'] = self::excerpt( $limit );
+				//$replacements['%excerpt%'] = $limit; // Why???
+				break;
 
 			case self::$PARTNAMES['DATE']:
 				$format = isset($options['format']) ? $options['format'] : 'd M Y';
@@ -107,11 +105,11 @@ class Upfront_ThisPostView extends Upfront_Object {
 				$replacements['%date_iso%'] = get_the_date('c');
 				break;
 
-            case self::$PARTNAMES['UPDATE']:
-                $format = isset($options['format']) ? $options['format'] : 'd M Y';
-                $replacements['%update%'] = self::_format_post_date( $format, "update" );
-                $replacements['%date_iso%'] = get_the_modified_date('c');
-                break;
+			case self::$PARTNAMES['UPDATE']:
+				$format = isset($options['format']) ? $options['format'] : 'd M Y';
+				$replacements['%update%'] = self::_format_post_date( $format, "update" );
+				$replacements['%date_iso%'] = get_the_modified_date('c');
+				break;
 
 			case self::$PARTNAMES['IMAGE']:
 				if ( isset($properties['hide_featured_image']) && $properties['hide_featured_image'] == 1 ){
@@ -130,8 +128,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 				break;
 
 			case self::$PARTNAMES['TAGS']:
-                $sep = isset($options['tag_separator']) ? $options['tag_separator'] : ', ';
-                $tags = get_the_tag_list('', $sep);
+				$sep = isset($options['tag_separator']) ? $options['tag_separator'] : ', ';
+				$tags = get_the_tag_list('', $sep);
 				$replacements['%tags%'] = !empty($tags) ? $tags : '';
 				break;
 
@@ -176,7 +174,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 	}
 
 	private static function _format_post_date( $format, $type = "date" ){
-		$func = $type === "update" ?  "get_the_modified_date" : "get_the_date";
+		$func = $type === "update" ? "get_the_modified_date" : "get_the_date";
 		/**
 		 * label each part
 		 */
@@ -197,17 +195,18 @@ class Upfront_ThisPostView extends Upfront_Object {
 		return $date;
 	}
 
-	protected static  function excerpt( $limit ) {
-        $excerpt = explode(' ', get_the_excerpt(), $limit);
-        if (count($excerpt)>=$limit) {
-	        array_pop($excerpt);
-            $excerpt = implode(" ",$excerpt).'...';
-        } else {
-            $excerpt = implode(" ",$excerpt);
-        }
-        $excerpt = preg_replace('`\[[^\]]*\]`','',$excerpt);
-        return $excerpt;
-    }
+	protected static function excerpt( $limit ) {
+		$excerpt = explode(' ', get_the_excerpt(), $limit);
+		if (count($excerpt)>=$limit) {
+			array_pop($excerpt);
+			$excerpt = implode(" ",$excerpt).'...';
+		} else {
+			$excerpt = implode(" ",$excerpt);
+		}
+		$excerpt = preg_replace('`\[[^\]]*\]`','',$excerpt);
+		return $excerpt;
+	}
+
 	protected static function replace($text, $replacements){
 		return str_replace(array_keys($replacements), array_values($replacements), $text);
 	}
@@ -225,16 +224,17 @@ class Upfront_ThisPostView extends Upfront_Object {
 	}
 
 	public static function get_template_markup($post, $properties) {
-        $post = !empty($post) ? $post : new WP_Post(new StdClass);
-        $markup = Upfront_ThisPostView::get_post_markup($post->ID, $post->post_type, $properties);
+		$post = !empty($post) ? $post : new WP_Post(new StdClass);
+		$markup = Upfront_ThisPostView::get_post_markup($post->ID, $post->post_type, $properties);
 		$markup = upfront_get_template(
 			'this-post',
 			array(
 				'post' => $post,
-                "markup" => $markup
+				"markup" => $markup
 			),
 			dirname(dirname(__FILE__)) . '/tpl/this-post.php'
 		);
+
 		return $markup;
 	}
 
@@ -320,7 +320,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		return $post;
 	}
 
-  	private static function _part_style_class($options, $slug){
+	private static function _part_style_class($options, $slug){
 		return isset( $options[$slug] ) && isset( $options[$slug]["theme_style"] ) ? " " . $options[$slug]["theme_style"] : "";
 	}
 
@@ -365,8 +365,8 @@ class Upfront_ThisPostView extends Upfront_Object {
 				$layout['wrappers'][$i]['objects'][$k]['markup'] = !empty($markups['tpl']) ? $markups['tpl'] : false;
 				$layout['extraClasses'][$o['slug']] = isset($opts['extraClasses']) ? $opts['extraClasses'] : '';
 
-			    $part_style_class = self::_part_style_class( $options,  $o["slug"] );
-			  	$layout['extraClasses'][$o['slug']] .= $part_style_class;
+				$part_style_class = self::_part_style_class( $options, $o["slug"] );
+				$layout['extraClasses'][$o['slug']] .= $part_style_class;
 
 				if (empty($markups['classes'])) $markups['classes'] = array();
 				$layout['extraClasses'][$o['slug']] .= ' ' . join(' ', $markups['classes']);
@@ -395,7 +395,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 	public static function find_postlayout($type, $post_type, $id){
 		$key = get_stylesheet() . '-postlayout-' . $type . '-';
-		$cascade = array($key . $id,  $key . $post_type);
+		$cascade = array($key . $id, $key . $post_type);
 		$found = false;
 		$i = 0;
 		while(!$found && $i < sizeof($cascade)){
@@ -448,7 +448,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 
 	public static function find_partTemplates($type, $post_type, $id){
 		$key = get_stylesheet() . '-parttemplates-' . $type . '-';
-		$cascade = array($key . $id,  $key . $post_type);
+		$cascade = array($key . $id, $key . $post_type);
 		$found = false;
 		$i = 0;
 		$defaults = self::get_templates();
@@ -578,7 +578,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 			'id_slug' => 'this_post',
 			'row' => 10,
 			'preset' => 'default',
-			'post_data' => array('author', 'date', 'comments_count', 'featured_image') // also: categories,  tags
+			'post_data' => array('author', 'date', 'comments_count', 'featured_image') // also: categories, tags
 		);
 	}
 
@@ -615,12 +615,12 @@ class Upfront_ThisPostView extends Upfront_Object {
 				'selector' => 'div.post_content',
 			);
 		}
-        if (!in_array('excerpt', $types)) {
-            $selectors[] = array(
-                'type' => 'excerpt',
-                'selector' => 'div.post_excerpt',
-            );
-        }
+		if (!in_array('excerpt', $types)) {
+			$selectors[] = array(
+				'type' => 'excerpt',
+				'selector' => 'div.post_excerpt',
+			);
+		}
 		if (!in_array('thumbnail', $types)) {
 			$selectors[] = array(
 				'type' => 'thumbnail',
@@ -684,10 +684,10 @@ class Upfront_ThisPostView extends Upfront_Object {
 	public static function get_post_image_markup($data) {
 		global $post;
 		if( !is_object( $post ) ) return;
-		$style_variant =  Upfront_ChildTheme::get_image_variant_by_id( $data->uf_variant );
-        // if no variant is found, default to the first variant
-        $style_variant =  (object) ( $style_variant === array() ? reset( $style_variant )  : $style_variant );
-		$style_variant->label_id = !empty( $style_variant->label ) ? "ueditor-image-style-" . str_replace(" ", "-", trim(strtolower( $style_variant->label )))  : $style_variant->vid;
+		$style_variant = Upfront_ChildTheme::get_image_variant_by_id( $data->uf_variant );
+		// if no variant is found, default to the first variant
+		$style_variant = (object) ( $style_variant === array() ? reset( $style_variant ) : $style_variant );
+		$style_variant->label_id = !empty( $style_variant->label ) ? "ueditor-image-style-" . str_replace(" ", "-", trim(strtolower( $style_variant->label ))) : $style_variant->vid;
 
 		$layout_data = Upfront_ThisPostView::find_postlayout("single", $post->post_type, $post->ID);
 		$options = !empty($layout_data['partOptions']) ? $layout_data['partOptions'] : array();
@@ -747,9 +747,9 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$href_reg = preg_match('/href="([^"]+)"/', $content, $anchor_arr);
 
 		$data = (object) shortcode_atts( array(
-			'id'	  => '',
+			'id' => '',
 			'caption' => '',
-			'class'   => '',
+			'class' => '',
 			'uf_variant' => '',
 			'uf_isLocal' => true,
 			'uf_show_caption' => true,
@@ -832,7 +832,7 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 
 		$post = !empty($post_id) && is_numeric($post_id)
 			? get_post($post_id)
-			:  apply_filters('upfront-this_post-unknown_post', (object)array(), array('post_id' => $post_id));
+			: apply_filters('upfront-this_post-unknown_post', (object)array(), array('post_id' => $post_id));
 		;
 
 
@@ -887,10 +887,9 @@ class Upfront_ThisPostAjax extends Upfront_Server {
 			}
 		} else if($data['post_type']) {
 			$post = Upfront_ThisPostView::get_new_post($data['post_type']);
-		} else{
-
-            $this->_out(new Upfront_JsonResponse_Error('Not enough data.'));
-        }
+		} else {
+			$this->_out(new Upfront_JsonResponse_Error('Not enough data.'));
+		}
 
 		Upfront_ThisPostView::prepare_post($post);
 		$content = Upfront_ThisPostView::get_template_markup($post, $data['properties']);

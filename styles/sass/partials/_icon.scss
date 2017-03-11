@@ -24,7 +24,6 @@
 .position-select-wrap .position-select:checked,
 .upfront-field-checkbox:checked,
 .upfront-ui .upfront-region-field-icon:before,
-#upfront-popup-top.upfront-popup-meta .upload:before,
 .upfront-icon-button-hide:before,
 .upfront-entity-hide_trigger:before {
 	content: " ";
@@ -399,11 +398,6 @@
 	height: 20px;
 	background-position: -970px -83px;
 }
-.upfront-icon-media-label-delete:before {
-	width: 10px;
-	height: 10px;
-	background-position: -977px -124px;
-}
 .upfront-icon-media-upload-placeholder:before {
 	width: 254px;
 	height: 181px;
@@ -517,9 +511,6 @@
     background-position: -665px -78px !important;
     width: 10px;
     height: 14px;
-    left: 8px;
-    top: 7px;
-	position: absolute;
 }
 .upfront-icon-undo:before {
 	background-position: -197px -44px;
@@ -543,6 +534,28 @@
 .upfront-icon-grid:hover:before, .upfront-icon-grid-active:before {
 	background-position: -342px -178px;
 }
+.upfront-icon-media-info:before {
+	width: 14px;
+	height: 14px;
+	background-position: -484px -140px;
+}
+.upfront-icon-media-upload:before {
+	width: 18px;
+	height: 16px;
+	background-position: -514px -171px;
+}
+.upfront-icon-label-add:before {
+	width: 8px;
+	height: 8px;
+	background-position: -519px -207px;
+}
+.upfront-icon-label-add-alt:before {
+	width: 8px;
+	height: 8px;
+	background-position: -519px -239px;
+}
+
+
 .upfront-icon-button:before {
 	width: 18px;
 	height: 18px;
