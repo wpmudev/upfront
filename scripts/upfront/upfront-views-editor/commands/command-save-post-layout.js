@@ -8,7 +8,7 @@
     ], function ( Command_SaveLayout ) {
 
         return Command_SaveLayout.extend({
-            "className": "command-save",
+            "className": "command-save sidebar-commands-button blue",
             render: function () {
                 this.$el.addClass('upfront-icon upfront-icon-save');
                 this.$el.html(l10n.save_layout);
