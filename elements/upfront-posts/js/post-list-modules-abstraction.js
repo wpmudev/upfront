@@ -38,15 +38,18 @@
 					object_model.set_property(key, value);
 				});
 				
-				fields.push({
-					type: "Button",
-					label: l10n.edit_template,
-					className: 'edit_post_markup edit_preset_css',
-					compact: true,
-					on_click: function () {
-						me.spawn_editor();
-					}
-				});
+				// We can edit markup only for post parts
+				if(this.options.panel !== 'wrapper') {
+					fields.push({
+						type: "Button",
+						label: l10n.edit_template,
+						className: 'edit_post_markup edit_preset_css',
+						compact: true,
+						on_click: function () {
+							me.spawn_editor();
+						}
+					});
+				}
 
 				return _.map(fields, function (field) {
 					var options = _.extend(field, {change: function (value) {
