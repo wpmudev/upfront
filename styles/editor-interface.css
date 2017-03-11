@@ -426,13 +426,6 @@ em {
 
 #sidebar-ui .sidebar-commands-primary .command-new-page,
 #sidebar-ui .sidebar-commands-primary .command-new-post {
-  line-height: 28px;
-  font-size: 12px;
-  height: 30px;
-  opacity: 0.75;
-  background: #fff;
-  font-family: "Open Sans";
-  border: 1px solid #909090;
   font-weight: bold;
   width: 200px;
   text-align: center;
@@ -613,19 +606,6 @@ em {
 #sidebar-ui .sidebar-commands-control .command-redo {
   margin-left: 4px; }
 
-#sidebar-ui .sidebar-commands-control .command-save {
-  background: #1fcd8f;
-  box-shadow: 0 1px 0 rgba(37, 58, 77, 0.5);
-  color: #f1f8ff;
-  font-size: 18px;
-  float: right;
-  margin: 10px 15px 0 0;
-  padding: 0 10px 0 10px;
-  line-height: 36px;
-  height: 36px;
-  width: 94px;
-  text-align: center; }
-
 #sidebar-ui .sidebar-commands-control .command-save:before {
   margin-top: 8px; }
 
@@ -643,13 +623,6 @@ em {
 
 #sidebar-ui .sidebar-commands-control .command-start-responsive:before {
   opacity: 1; }
-
-#sidebar-ui .sidebar-commands-control .command-save:hover {
-  border-color: #3ea;
-  background: #3ea; }
-
-#sidebar-ui .sidebar-commands-control .command-edit-background-area {
-  margin-bottom: 15px; }
 
 #sidebar-ui .sidebar-commands-control .command-grid {
   border: 1px solid #a7a7a7;
@@ -1350,6 +1323,77 @@ span.draggable-post-element.element-dragging {
 .upfront-sidebar-content_editor-sidebar_command i {
   font-size: 14px;
   color: #6C92B1; }
+
+/* Normal Buttons */
+#sidebar-ui .sidebar-commands li.sidebar-commands-button {
+  font-size: 13px;
+  opacity: .75;
+  margin: 5px;
+  padding: 0px 10px;
+  line-height: 30px;
+  height: 30px;
+  text-align: center;
+  border-radius: 3px;
+  box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.05); }
+
+#sidebar-ui .sidebar-commands li.sidebar-commands-button:hover {
+  opacity: 1; }
+
+#sidebar-ui .sidebar-commands li.sidebar-commands-button:active {
+  opacity: .75; }
+
+#sidebar-ui .sidebar-commands li.sidebar-commands-button.disabled {
+  opacity: .4; }
+
+#sidebar-ui .sidebar-commands li.sidebar-commands-button.light {
+  background: white;
+  border: 1px solid #b6b6b6;
+  color: #484848; }
+
+#sidebar-ui .sidebar-commands li.sidebar-commands-button.light:active {
+  background: #e6e6e6; }
+
+#sidebar-ui .sidebar-commands li.sidebar-commands-button.blue {
+  background: #1793ff;
+  border: 1px solid #0e85ed;
+  color: #fff; }
+
+#sidebar-ui .sidebar-commands li.sidebar-commands-button.command-save {
+  float: right;
+  padding: 0px 30px;
+  margin: 10px 15px; }
+
+#sidebar-ui .sidebar-commands li.sidebar-commands-button.command-new-post,
+#sidebar-ui .sidebar-commands li.sidebar-commands-button.command-new-page {
+  font-size: 12px; }
+
+/* Small Buttons */
+#sidebar-ui .sidebar-commands li.sidebar-commands-small-button {
+  font-size: 13px;
+  opacity: .75;
+  margin: 5px;
+  padding: 0px 10px;
+  line-height: 22px;
+  height: 22px;
+  text-align: center;
+  border-radius: 3px;
+  background: white;
+  border: 1px solid #b6b6b6;
+  color: #484848;
+  box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.05); }
+
+#sidebar-ui .sidebar-commands li.sidebar-commands-small-button.icon-button {
+  padding-left: 5px; }
+
+#sidebar-ui .sidebar-commands li.sidebar-commands-small-button:hover {
+  opacity: 1; }
+
+#sidebar-ui .sidebar-commands li.sidebar-commands-small-button:active {
+  background: #e6e6e6;
+  opacity: .75; }
+
+#sidebar-ui .sidebar-commands li.sidebar-commands-button.disabled {
+  opacity: .4; }
 
 /* Height Media Queries Fixes
 	========================== */
