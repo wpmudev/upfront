@@ -110,7 +110,7 @@
 	position: absolute;
 	z-index: 1;
 	top: 0px;
-	right: 16px;
+	right: 22px;
 	border: none;
 	font-weight: normal;
 	font-size: 20px;
@@ -118,6 +118,7 @@
 
 #element-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title:before {
 	content: "\2013";
+	top: -2px;
 }
 
 #element-settings-sidebar .upfront-settings-item {

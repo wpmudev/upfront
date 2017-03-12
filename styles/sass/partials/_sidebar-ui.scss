@@ -53,12 +53,22 @@
 	-webkit-box-sizing: border-box;
 }
 
-#sidebar-ui .sidebar-commands-header {
+#sidebar-ui .sidebar-commands-header,
+#element-settings-sidebar .sidebar-commands-header {
 	background: rgb(247, 247, 247);
 	overflow: hidden;
 }
 
-#sidebar-ui .sidebar-commands-header.more-menu-open {
+#element-settings-sidebar .sidebar-commands-header {
+	position: absolute;
+	right: 0px;
+	top: -2px;
+	overflow: visible;
+	cursor: pointer;
+}
+
+#sidebar-ui .sidebar-commands-header.more-menu-open,
+#element-settings-sidebar  .sidebar-commands-header.more-menu-open {
 	overflow: visible;
 }
 
@@ -78,7 +88,8 @@
 	opacity:.6;
 }
 
-#sidebar-ui .command-more-menu {
+#sidebar-ui .command-more-menu,
+#element-settings-sidebar .command-more-menu {
 	float: right;
 	width: 26px;
 	height: 18px;
@@ -89,16 +100,19 @@
 	background: #fdfdfd;
 }
 
-#sidebar-ui .command-more-menu:hover {
+#sidebar-ui .command-more-menu:hover,
+#element-settings-sidebar .command-more-menu:hover {
 	opacity: 0.8;
 }
 
-#sidebar-ui .command-more-menu.menu-open {
+#sidebar-ui .command-more-menu.menu-open,
+#element-settings-sidebar .command-more-menu.menu-open {
 	opacity: 1;
 	overflow: visible;
 }
 
-#sidebar-ui .command-more-menu .upfront-icon-more-menu {
+#sidebar-ui .command-more-menu .upfront-icon-more-menu,
+#element-settings-sidebar .command-more-menu .upfront-icon-more-menu {
 	display: block;
 	width: 26px;
 	height: 18px;
@@ -110,16 +124,19 @@
 	border: 1px solid rgba(140, 140, 140, 0.5);
 }
 
-#sidebar-ui .command-more-menu.menu-open .upfront-icon-more-menu {
+#sidebar-ui .command-more-menu.menu-open .upfront-icon-more-menu,
+#element-settings-sidebar .command-more-menu.menu-open .upfront-icon-more-menu {
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
 }
 
-#sidebar-ui .command-more-menu .upfront-icon-more-menu:before {
+#sidebar-ui .command-more-menu .upfront-icon-more-menu:before,
+#element-settings-sidebar .command-more-menu .upfront-icon-more-menu:before {
 	margin: -3px 0 0;
 }
 
-#sidebar-ui .command-more-menu .command-more-menu-list {
+#sidebar-ui .command-more-menu .command-more-menu-list,
+#element-settings-sidebar .command-more-menu .command-more-menu-list {
 	display: block;
 	position: absolute;
 	top: 18px;
@@ -133,13 +150,15 @@
 	display: none;
 }
 
-#sidebar-ui .command-more-menu.menu-open .command-more-menu-list {
+#sidebar-ui .command-more-menu.menu-open .command-more-menu-list,
+#element-settings-sidebar .command-more-menu.menu-open .command-more-menu-list {
 	display: block;
 	border-top-right-radius: 0;
 	box-shadow: 0 0 10px rgba(39,58,76,.8);
 }
 
-#sidebar-ui .command-more-menu .command-more-menu-list li {
+#sidebar-ui .command-more-menu .command-more-menu-list li,
+#element-settings-sidebar .command-more-menu .command-more-menu-list li {
 	display: block;
 	height: 25px;
 	line-height: 25px;
@@ -153,7 +172,8 @@
 	cursor: pointer;
 }
 
-#sidebar-ui .command-more-menu .command-more-menu-list li:hover {
+#sidebar-ui .command-more-menu .command-more-menu-list li:hover,
+#element-settings-sidebar .command-more-menu .command-more-menu-list li:hover {
 	color: #fff;
 	background: #3aa3e3;
 }

@@ -2,8 +2,9 @@
 define([
 	'scripts/upfront/preset-settings/preset-manager',
 	'scripts/upfront/element-settings/advanced-settings',
-	'scripts/perfect-scrollbar/perfect-scrollbar'
-], function (PresetManager, AdvancedSettings, perfectScrollbar) {
+	'scripts/perfect-scrollbar/perfect-scrollbar',
+	'scripts/upfront/upfront-views-editor/commands',
+], function (PresetManager, AdvancedSettings, perfectScrollbar, Commands) {
 	var l10n = Upfront.Settings && Upfront.Settings.l10n
 		? Upfront.Settings.l10n.global.views
 		: Upfront.mainData.l10n.global.views
@@ -128,13 +129,21 @@ define([
 		},
 
 		render: function () {
-			var me = this;
+			var me = this,
+				menu = new Commands.Command_Menu({"model": this.model})
+			;
 
 			this.$el
 				.html(
-					'<div class="upfront-settings-title">' + this.title + '</div><div id="sidebar-scroll-wrapper" />'
+					'<div class="upfront-settings-title">' + this.title + ' <ul class="sidebar-commands sidebar-commands-header"></ul></div><div id="sidebar-scroll-wrapper" />'
 				)
 			;
+			
+			// Render menu
+			menu.render();
+			
+			// Append command menu
+			this.$el.find('.upfront-settings-title ul').append(menu.$el);
 
 			/*
 			 * This event is broadcast so that other plugins can register their

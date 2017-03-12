@@ -261,11 +261,20 @@ em {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box; }
 
-#sidebar-ui .sidebar-commands-header {
+#sidebar-ui .sidebar-commands-header,
+#element-settings-sidebar .sidebar-commands-header {
   background: #f7f7f7;
   overflow: hidden; }
 
-#sidebar-ui .sidebar-commands-header.more-menu-open {
+#element-settings-sidebar .sidebar-commands-header {
+  position: absolute;
+  right: 0px;
+  top: -2px;
+  overflow: visible;
+  cursor: pointer; }
+
+#sidebar-ui .sidebar-commands-header.more-menu-open,
+#element-settings-sidebar .sidebar-commands-header.more-menu-open {
   overflow: visible; }
 
 #sidebar-ui .command-logo {
@@ -281,7 +290,8 @@ em {
   float: right;
   opacity: .6; }
 
-#sidebar-ui .command-more-menu {
+#sidebar-ui .command-more-menu,
+#element-settings-sidebar .command-more-menu {
   float: right;
   width: 26px;
   height: 18px;
@@ -291,14 +301,17 @@ em {
   position: relative;
   background: #fdfdfd; }
 
-#sidebar-ui .command-more-menu:hover {
+#sidebar-ui .command-more-menu:hover,
+#element-settings-sidebar .command-more-menu:hover {
   opacity: 0.8; }
 
-#sidebar-ui .command-more-menu.menu-open {
+#sidebar-ui .command-more-menu.menu-open,
+#element-settings-sidebar .command-more-menu.menu-open {
   opacity: 1;
   overflow: visible; }
 
-#sidebar-ui .command-more-menu .upfront-icon-more-menu {
+#sidebar-ui .command-more-menu .upfront-icon-more-menu,
+#element-settings-sidebar .command-more-menu .upfront-icon-more-menu {
   display: block;
   width: 26px;
   height: 18px;
@@ -309,14 +322,17 @@ em {
   opacity: 0.4;
   border: 1px solid rgba(140, 140, 140, 0.5); }
 
-#sidebar-ui .command-more-menu.menu-open .upfront-icon-more-menu {
+#sidebar-ui .command-more-menu.menu-open .upfront-icon-more-menu,
+#element-settings-sidebar .command-more-menu.menu-open .upfront-icon-more-menu {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0; }
 
-#sidebar-ui .command-more-menu .upfront-icon-more-menu:before {
+#sidebar-ui .command-more-menu .upfront-icon-more-menu:before,
+#element-settings-sidebar .command-more-menu .upfront-icon-more-menu:before {
   margin: -3px 0 0; }
 
-#sidebar-ui .command-more-menu .command-more-menu-list {
+#sidebar-ui .command-more-menu .command-more-menu-list,
+#element-settings-sidebar .command-more-menu .command-more-menu-list {
   display: block;
   position: absolute;
   top: 18px;
@@ -329,12 +345,14 @@ em {
   z-index: 1000;
   display: none; }
 
-#sidebar-ui .command-more-menu.menu-open .command-more-menu-list {
+#sidebar-ui .command-more-menu.menu-open .command-more-menu-list,
+#element-settings-sidebar .command-more-menu.menu-open .command-more-menu-list {
   display: block;
   border-top-right-radius: 0;
   box-shadow: 0 0 10px rgba(39, 58, 76, 0.8); }
 
-#sidebar-ui .command-more-menu .command-more-menu-list li {
+#sidebar-ui .command-more-menu .command-more-menu-list li,
+#element-settings-sidebar .command-more-menu .command-more-menu-list li {
   display: block;
   height: 25px;
   line-height: 25px;
@@ -347,7 +365,8 @@ em {
   text-transform: uppercase;
   cursor: pointer; }
 
-#sidebar-ui .command-more-menu .command-more-menu-list li:hover {
+#sidebar-ui .command-more-menu .command-more-menu-list li:hover,
+#element-settings-sidebar .command-more-menu .command-more-menu-list li:hover {
   color: #fff;
   background: #3aa3e3; }
 
@@ -7423,13 +7442,14 @@ span.upfront-settings-item-title:after {
   position: absolute;
   z-index: 1;
   top: 0px;
-  right: 16px;
+  right: 22px;
   border: none;
   font-weight: normal;
   font-size: 20px; }
 
 #element-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title:before {
-  content: "\2013"; }
+  content: "\2013";
+  top: -2px; }
 
 #element-settings-sidebar .upfront-settings-item {
   padding-top: 0; }
