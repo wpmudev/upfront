@@ -1321,7 +1321,8 @@ span.draggable-post-element.element-dragging
 
 /* Normal Buttons */
 
-#sidebar-ui .sidebar-commands li.sidebar-commands-button {
+#sidebar-ui .sidebar-commands li.sidebar-commands-button,
+#element-settings-sidebar .sidebar-commands-button {
 	font-size: 13px;
 	opacity: .75;
 	margin: 5px;
@@ -1333,29 +1334,35 @@ span.draggable-post-element.element-dragging
 	box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.05);
 }
 
-#sidebar-ui .sidebar-commands li.sidebar-commands-button:hover {
+#sidebar-ui .sidebar-commands li.sidebar-commands-button:hover,
+#element-settings-sidebar .sidebar-commands-button:hover {
 	opacity: 1;
 }
 
-#sidebar-ui .sidebar-commands li.sidebar-commands-button:active {
+#sidebar-ui .sidebar-commands li.sidebar-commands-button:active,
+#element-settings-sidebar .sidebar-commands-button:active {
 	opacity: .75;
 }
 
-#sidebar-ui .sidebar-commands li.sidebar-commands-button.disabled {
+#sidebar-ui .sidebar-commands li.sidebar-commands-button.disabled,
+#element-settings-sidebar .sidebar-commands-button.disabled {
 	opacity: .4;
 }
 
-#sidebar-ui .sidebar-commands li.sidebar-commands-button.light {
+#sidebar-ui .sidebar-commands li.sidebar-commands-button.light,
+#element-settings-sidebar .sidebar-commands-button.light {
 	background: rgb(255, 255, 255);
 	border: 1px solid rgb(182, 182, 182);
 	color: #484848;
 }
 
-#sidebar-ui .sidebar-commands li.sidebar-commands-button.light:active {
+#sidebar-ui .sidebar-commands li.sidebar-commands-button.light:active,
+#element-settings-sidebar .sidebar-commands-button.light:active {
 	background: rgb(230, 230, 230);
 }
 
-#sidebar-ui .sidebar-commands li.sidebar-commands-button.blue {
+#sidebar-ui .sidebar-commands li.sidebar-commands-button.blue,
+#element-settings-sidebar .sidebar-commands-button.blue {
 	background: rgb(23, 147, 255);
 	border: 1px solid rgb(14, 133, 237);
 	color: #fff;
@@ -1374,7 +1381,8 @@ span.draggable-post-element.element-dragging
 
 /* Small Buttons */
 
-#sidebar-ui .sidebar-commands li.sidebar-commands-small-button {
+#sidebar-ui .sidebar-commands li.sidebar-commands-small-button,
+#element-settings-sidebar .sidebar-commands-small-button {
 	font-size: 13px;
 	opacity: .75;
 	margin: 5px;
@@ -1389,20 +1397,24 @@ span.draggable-post-element.element-dragging
 	box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.05);
 }
 
-#sidebar-ui .sidebar-commands li.sidebar-commands-small-button.icon-button {
+#sidebar-ui .sidebar-commands li.sidebar-commands-small-button.icon-button,
+#element-settings-sidebar sidebar-commands-small-button.icon-button {
 	padding-left: 5px;
 }
 
-#sidebar-ui .sidebar-commands li.sidebar-commands-small-button:hover {
+#sidebar-ui .sidebar-commands li.sidebar-commands-small-button:hover,
+#element-settings-sidebar .sidebar-commands-small-button:hover {
 	opacity: 1;
 }
 
-#sidebar-ui .sidebar-commands li.sidebar-commands-small-button:active {
+#sidebar-ui .sidebar-commands li.sidebar-commands-small-button:active,
+#element-settings-sidebar .sidebar-commands-small-button:active {
 	background: rgb(230, 230, 230);
 	opacity: .75;
 }
 
-#sidebar-ui .sidebar-commands li.sidebar-commands-button.disabled {
+#sidebar-ui .sidebar-commands li.sidebar-commands-button.disabled,
+#element-settings-sidebar .sidebar-commands-button.disabled {
 	opacity: .4;
 }
 

@@ -179,8 +179,8 @@ define([
 			this.$el.addClass('upfront-ui');
 			this.$el.append(
 				"<div class='upfront-settings-button_panel'>" +
-					"<button type='button' class='upfront-cancel_settings'>" + l10n.cancel + "</button>" +
-					"<button type='button' class='upfront-save_settings'><i class='icon-ok'></i> " + l10n.save_element + "</button>" +
+					"<button type='button' class='upfront-cancel_settings sidebar-commands-button light'>" + l10n.cancel + "</button>" +
+					"<button type='button' class='upfront-save_settings sidebar-commands-button blue'><i class='icon-ok'></i> " + l10n.save_element + "</button>" +
 				'</div>'
 			);
 		},
