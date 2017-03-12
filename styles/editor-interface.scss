@@ -436,5 +436,8 @@
 @import 'sass/partials/visit-link';
 @import 'sass/partials/fix-theme-style-messes-ui';
 @import 'sass/partials/_preset-manager.scss';
+@import 'sass/partials/preset-manager/_preset-selector.scss';
+@import 'sass/partials/preset-manager/_preset-styles-editor.scss';
+@import 'sass/partials/preset-manager/_preset-default-overlay.scss';
 @import 'sass/partials/_inline-panels.scss';
 @import 'sass/partials/_upgrade_notice.scss';

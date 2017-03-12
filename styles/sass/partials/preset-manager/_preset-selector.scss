@@ -1,0 +1,92 @@
+div.preset-manager-panel a.upfront-preset-edit {
+	font-size: 12px;
+	color: #212121;
+	text-decoration: underline;
+}
+
+#settings div.preset-manager-panel .upfront-settings_panel,
+#settings div.preset-manager-panel .select-presets,
+#settings .select-presets {
+	background: #e7e7e7;
+}
+
+#settings .select-presets {
+	padding-bottom: 10px;
+}
+
+#settings .select-presets .upfront-settings-item-title {
+	display: none;
+}
+
+div.preset-manager-panel .delete_preset {
+	position: relative;
+	z-index: 9;
+	top: -19px;
+}
+
+div.preset-manager-panel .delete_preset input,
+#settings .delete-menu-button input {
+	font-size: 13px;
+	padding: 1px 5px 1px;
+}
+
+div.preset-manager-panel .delete_preset input,
+#settings .delete-menu-button input {
+	background-color: #d86c6b !important;
+	color:#fff;
+	float: right;
+	margin-top: -25px;
+}
+
+div.preset-manager-panel .upfront-preset-add {
+	display: block;
+	position: absolute;
+	border-left: 1px solid #a4bfd8;
+	width: 40px;
+	height: 23px;
+	top: 5px;
+	right: 6px;
+	background: #f1f8fe;
+	color: #4d6c8e;
+	text-align: center;
+}
+
+div.preset-manager-panel .chosen-search {
+	position: relative;
+}
+
+div.preset-manager-panel div.select-preset-field {
+	padding-bottom: 9px;
+}
+
+div.preset-manager-panel div.select-preset-field label,
+#settings .select-menu-field label {
+	font-weight: normal;
+	color: #7d99b3;
+	font-family: Tahoma;
+	margin-bottom: 3px;
+	padding-left: 2px;
+}
+
+div.preset-manager-panel div.new_preset input {
+	background: transparent;
+	border: 2px #818d96 solid;
+	font-size: 12px;
+	padding: 3px 16px;
+}
+
+div.preset-manager-panel div.new_preset_name{
+	width: 140px;
+	margin-right: 10px;
+	display: inline-block;
+}
+
+div.preset-manager-panel div.new_preset {
+	display: inline-block;
+	width: 80px;
+	margin-top: 10px;
+}
+
+div.preset-manager-panel div.preset {
+	margin-top: 8px;
+}

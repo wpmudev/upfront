@@ -1,9 +1,5 @@
 /* Preset manager panels in elements' settings */
-div.preset-manager-panel a.upfront-preset-edit {
-	font-size: 12px;
-	color: #009a68;
-	text-decoration: underline;
-}
+
 div.preset-manager-panel .hover_preset,
 div.preset-manager-panel .state_settings_button,
 div.preset-manager-panel .static_preset {
@@ -19,11 +15,7 @@ div.preset-manager-panel .delete_preset input,
 	padding: 0px 5px 2px;
 	border-radius: 5px;
 }
-div.preset-manager-panel .delete_preset input,
-#settings .delete-menu-button input {
-	font-size: 13px;
-	padding: 1px 5px 1px;
-}
+
 div.preset-manager-panel .hover_preset input,
 div.preset-manager-panel .state_settings_button input,
 div.preset-manager-panel .static_preset input {
@@ -56,38 +48,7 @@ div.preset-manager-panel .state_settings_button.active input {
 	color: #86a3c3;
 	border-color: #e5eef8;
 }
-div.preset-manager-panel .delete_preset input,
-#settings .delete-menu-button input {
-	background-color: #d86c6b !important;
-	color:#fff;
-	float: right;
-	margin-top: -25px;
-}
-#settings div.preset-manager-panel .upfront-settings_panel,
-#settings div.preset-manager-panel .select-presets,
-#settings .select-presets {
-	background: #dae6f2;
-}
-#settings .select-presets {
-	padding-bottom: 10px;
-}
-#settings .select-presets .upfront-settings-item-title {
-	display: none;
-}
-div.preset-manager-panel .upfront-settings-css {
-	padding: 0px;
-	background: #f7fbff;
-}
-div.preset-manager-panel .delete_preset {
-	position: relative;
-	z-index: 9;
-	top: -19px;
-}
-#settings .delete-menu-button input {
-	position: relative;
-	z-index: 9;
-	top: 3px;
-}
+
 div.preset-manager-panel div.preset_specific {
 	background: #fff;
 	padding-top: 10px;
@@ -109,11 +70,7 @@ div.preset-manager-panel div.state_settings_button_wrapper {
 div.preset-manager-panel div.state_settings div.upfront-settings-item {
 	padding: 0px;
 }
-#settings .menu_structure_module {
-	position: relative;
-}
-div.preset-manager-panel div.preset_specific:before,
-#settings .menu_structure_module:before {
+div.preset-manager-panel div.preset_specific:before {
 	content: "";
 	position: absolute;
 	width: 0; 
@@ -123,9 +80,6 @@ div.preset-manager-panel div.preset_specific:before,
 	border-left: 5px solid transparent;
 	border-right: 5px solid transparent;
 	border-bottom: 5px solid #f7fbff;
-}
-#settings .menu_structure_module:before {
-	top: -20px;
 }
 div.preset-manager-panel div.upfront-settings_panel_scroll {
 	padding: 0px !important;
@@ -154,32 +108,6 @@ div.preset-manager-panel div.preset_specific .upfront-settings-item-content .upf
 	display: block;
 	color: #2f475f;
 	margin-bottom: 5px;
-}
-div.preset-manager-panel .upfront-preset-add {
-	display: block;
-	position: absolute;
-	border-left: 1px solid #a4bfd8;
-	width: 40px;
-	height: 23px;
-	top: 5px;
-	right: 6px;
-	background: #f1f8fe;
-	color: #4d6c8e;
-	text-align: center;
-}
-div.preset-manager-panel .chosen-search {
-	position: relative;
-}
-div.preset-manager-panel div.select-preset-field {
-	padding-bottom: 9px;
-}
-div.preset-manager-panel div.select-preset-field label,
-#settings .select-menu-field label {
-	font-weight: normal;
-	color: #7d99b3;
-	font-family: Tahoma;
-	margin-bottom: 3px;
-	padding-left: 2px;
 }
 div.preset-manager-panel div.preset_specific div.border_radius input,
 div.preset-manager-panel div.preset_specific div.inline-number input,
@@ -310,25 +238,6 @@ div.preset-manager-panel div.preset_specific div.transition .upfront-field-selec
 div.preset-manager-panel div.preset_specific div.font_face > label {
 	position: relative;
 	left: 6px;
-}
-div.preset-manager-panel div.new_preset input {
-	background: transparent;
-	border: 2px #818d96 solid;
-	font-size: 12px;
-	padding: 3px 16px;
-}
-div.preset-manager-panel div.new_preset_name{
-	width: 140px;
-	margin-right: 10px;
-	display: inline-block;
-}
-div.preset-manager-panel div.new_preset {
-	display: inline-block;
-	width: 80px;
-	margin-top: 10px;
-}
-div.preset-manager-panel div.preset {
-	margin-top: 8px;
 }
 div.preset-manager-panel div.or_divider div.upfront-settings-item-title {
 	text-align: center;
@@ -534,65 +443,6 @@ div.preset-manager-panel .transition .upfront-field-select-single .upfront-field
 div.preset-manager-panel .backgroundcolor-hover, div.preset-manager-panel .typography-hover {
 	padding-top: 11px;
 }
-#element-settings-sidebar .upfront-css-edit,
-div.preset-manager-panel .edit_preset_css {
-	position: relative;
-	margin-top: -12px;
-	left: 90px;
-}
-#element-settings-sidebar .edit-preset-css-label,
-div.preset-manager-panel .edit_preset_label {
-	font-weight: bold;
-	font-size: 13px;
-	color: #2f475f;
-	text-transform: uppercase;
-}
-#element-settings-sidebar .edit-preset-css-label input,
-div.preset-manager-panel .edit_preset_label input {
-	cursor: default;
-	position: relative;
-	top: 15px;
-}
-#element-settings-sidebar .upfront-css-edit {
-	position: relative;
-}
-.edit_preset_css input,
-#element-settings-sidebar .upfront-css-edit input {
-	background-image: linear-gradient(-179deg, #fafdff 0%, #f3faff 100%);
-	border: 1px solid #a2bfda;
-	border-radius: 2px;
-	font-size: 14px;
-	color: #7c86a6;
-	padding: 4px 8px;
-	position: relative;
-	padding-left: 32px;
-}
-.edit_preset_css input:hover,
-#element-settings-sidebar .upfront-css-edit input:hover {
-	border: 1px solid #607f99;
-}
-#element-settings-sidebar .upfront-css-edit {
-	margin-bottom: 10px;
-}
-.upfront-settings-css .upfront-settings-item-content {
-	padding-left: 10px !important;
-}
-.upfront-social-services-item .upfront-settings-css {
-	margin-left: -15px;
-}
-div.preset-manager-panel .edit_preset_css:before,
-#element-settings-sidebar .upfront-css-edit:before {
-	background-image: url(../img/uf-core-el-sprite.svg);
-	background-position: -660px -44px;
-	width: 18px;
-	height: 15px;
-	content: "";
-    display: block;
-	position: absolute;
-	z-index: 11;
-	top: 6px;
-	left: 8px;
-}
 div.preset-manager-panel .module-color-field {
 	padding-top: 5px;
 	height: 25px;
@@ -724,78 +574,8 @@ div.preset-manager-panel .border_selectElement {
 	margin-left: 80px;
 	margin-top: 10px;
 }
-
-div.preset-manager-panel .upfront-settings-css {
-	padding-bottom: 15px;
-}
 div.preset-manager-panel .upfront-settings-item-title {
 	line-height: 16px;
-}
-
-/* Default overlay */
-
-div.preset-manager-panel .default-overlay-wrapper {
-	position: relative;
-	min-height: 300px;
-}
-div.preset-manager-panel .default-overlay {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	background-image: linear-gradient(-180deg, #FFFFFF 0%, rgba(255,255,255,0.85) 100%);
-	z-index: 999;
-	padding: 30px 15px;
-	font-family:Open Sans, Helvetica Neueu, Helvetica, Arial, sans-serif;
-}
-
-div.preset-manager-panel .overlay-title:before {
-	content: '';
-	width: 20px;
-	height: 19px;
-	background-image: url('../img/uf-ui-sprite.svg');
-	background-position: -193px -247px;
-	left: 17px;
-	top: 32px;
-	opacity: .8;
-	position: absolute;
-	display: block;
-}
-
-div.preset-manager-panel .overlay-title {
-	padding-left: 30px;
-	color:rgba(47,71,95,.8);
-	font-size:14px;
-	font-weight:600;
-}
-
-div.preset-manager-panel .overlay-text p {
-	font-size: 12px;
-	display: inline-block;
-	color: #596c7f;
-	position: relative;
-	font-weight: normal;
-	line-height: 1.4;
-	padding-top: 12px;
-}
-div.preset-manager-panel .overlay-text p strong {
-	font-weight:600;
-}
-
-div.preset-manager-panel .overlay-button-input {
-	width: 85%;
-	margin: 20px auto 0;
-	display: block;
-	border: 1px solid rgba(151,163,174, 0.5);
-	padding:6px;
-	font-size:14px;
-	color: rgba(47,71,95, .85);
-}
-
-div.preset-manager-panel .overlay-button-input:hover {
-	border: 1px solid rgba(151,163,174, 1);
-	color: rgba(47,71,95, 1);
 }
 
 div.preset-manager-panel .checkbox-module,
