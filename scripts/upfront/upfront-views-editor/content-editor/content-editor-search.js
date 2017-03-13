@@ -13,6 +13,10 @@
             searchTpl: _.template($(popup_tpl).find('#upfront-filter-tpl').html()),
             events: {
                 "click #upfront-search_action": "handle_search_request",
+              	// Clear button (X) in search input.
+                "click #upfront-search_container button": "clear_search",
+								// Clear button in search header.
+                "click .upfront-search-results-header button": "clear_search",
                 "keydown #upfront-list-search_input": "dispatch_search_enter"
             },
           	initialize: function(options) {
@@ -61,13 +65,19 @@
 						update_search_header: function(values) {
 							this.$el.find('.upfront-search-results-header #upfront-search-results-count').html();
 						},
-						clear_search: function() {
-								// Empty search input.
-                this.$el.find("#upfront-search_container input").val('');
-              	// Remove class for styling.
-								this.toggle_search_class('');
+						clear_search: function(e) {
+							e.preventDefault();
+							// Empty search input.
+              this.$el.find("#upfront-search_container input").val('');
+              // Remove class for styling.
+							this.toggle_search_class('');
+							// Make sure default collection has proper fetch options (hierarchy).
+              if (this.collection.postType === 'page') {
               	// Get all results again.
-                this.collection.fetch({search: ''});
+              	return this.collection.fetch({search: '', hierarchical: true});
+              }
+              // Get all results again.
+              return this.collection.fetch({search: ''});
 						},
 						get_status_values: function(values) {
 							// If each status does not have value, use the name.

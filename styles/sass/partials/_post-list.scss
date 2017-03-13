@@ -85,6 +85,7 @@
 	float: none;
 	display: inline-block;
 	height: 22px;
+	position: relative;
 }
 
 .upfront-popup-posts .search_container {
@@ -101,6 +102,34 @@
 	color: #464646;
 	border: 1px solid #e1e1e1;
 	letter-spacing: 0.3px;
+	font-weight: 600;
+}
+
+#upfront-popup.upfront-popup-posts .search_container div button {
+	border: 1px solid transparent;
+	background-color: transparent;
+	display: inline-block;
+	vertical-align: middle;
+	outline: 0;
+	cursor: pointer;
+	border-radius: 0;
+	width: 1rem;
+	position: absolute;
+	right: 5px;
+	top: 0;
+	height: 22px;
+	line-height: normal;
+	padding: 0;
+}
+
+/* Keep empty input from displaying clear button (needs required attribute on input) */
+#upfront-popup.upfront-popup-posts .search_container div input:not(:valid) ~ button {
+	display: none;
+}
+
+#upfront-popup.upfront-popup-posts .search_container div button:before {
+	content: '×';
+	color: rgb(126,126,126);
 }
 
 #upfront-popup.upfront-popup-posts button.search {
@@ -127,6 +156,33 @@
 
 .upfront-popup-posts .upfront-popup-content-search-ran .upfront-search-results-header {
 	display: block;
+	padding: 13px 0;
+	border-bottom: 1px solid #e1e1e1;
+	margin: 0 32px;
+}
+
+.upfront-popup-posts .upfront-search-results-header span {
+	font-size: 14px;
+	font-style: italic;
+}
+
+.upfront-popup-posts .upfront-search-results-header b {
+	font-weight: bold;
+}
+
+.upfront-popup-posts#upfront-popup .upfront-search-results-header button {
+	display: inline-block;
+	width: 42px;
+	height: 18px;
+	text-transform: none;
+	font-size: 10px;
+	padding: 0;
+	line-height: normal;
+	margin-left: 28px;
+	background: rgb(216,216,216);
+	border: none;
+	color: #fff;
+	outline: none;
 }
 
 /* Entities(Posts) list */
