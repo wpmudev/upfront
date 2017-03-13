@@ -57,8 +57,8 @@ class Upfront_Posts_PostView {
 		$preset_id = self::get_preset_id($data);
 		
 		// If we have post parts from AJAX call use it
-		if (isset($data['preset_post_parts']) && !empty($data['preset_post_parts'])) {
-			return $data['preset_post_parts'];
+		if (isset($data['enabled_post_parts']) && !empty($data['enabled_post_parts'])) {
+			return $data['enabled_post_parts'];
 		}
 			
 		if (!empty($preset_id)) {
