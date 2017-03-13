@@ -114,11 +114,13 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 					// Check if posts part
 					if (0 === strpos($key, 'post-part-')) {
 						// WARNING!!! This is added to prevent enourmos amount of slashes in preset_style
-						$preset[$key] = str_replace("\\\\\\\\\\", "\\", $prop);
+						$preset[$key] = str_replace("\\\\\\\\\\\\", "\\", $preset[$key]);
 						// Do it twice just in case we have multiple slashes
-						$preset[$key] = str_replace("\\\\\\\\\\", "\\", $prop);
+						$preset[$key] = str_replace("\\\\\\\\\\\\", "\\", $preset[$key]);
+						// Do it twice just in case we have multiple slashes
+						$preset[$key] = str_replace("\\\\\\\\\\\\", "\\", $preset[$key]);
 						// Finally clear slashes
-						$preset[$key] = stripslashes($prop);
+						$preset[$key] = stripslashes_deep($preset[$key]);
 					}
 				}
 				
