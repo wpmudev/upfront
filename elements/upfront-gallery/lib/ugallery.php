@@ -44,7 +44,13 @@ class Upfront_UgalleryView extends Upfront_Object {
 				$images[$index]['imageLinkUrl'] = $image['url'];
 				$images[$index]['imageLinkTarget'] = $image['linkTarget'];
 			}
+			
+			// Retrieve image ALT
+			if(isset($image['id'])) {
+				$images[$index]['alt'] = get_post_meta($image['id'], '_wp_attachment_image_alt', true);
+			}
 		}
+
 		$data['images'] = $images;
 
 		$data['imagesLength'] = sizeof($images);
@@ -432,6 +438,10 @@ class Upfront_UgalleryView extends Upfront_Object {
 				'add_new_label' => __('Add a new label', 'upfront'),
 				'label_sorting_nag' => __('Turn on \'Label Sorting\' in the settings to display gallery labels.', 'upfront'),
 				'add_label' => __('Add', 'upfront'),
+				'image_labels' => __('Image labels', 'upfront'),
+				'create_label' => __('Create new label', 'upfront'),
+				'type_label' => __('Type to create label', 'upfront'),
+				'pick_label' => __('Type to pick label', 'upfront'),
 			),
 			'lightbox' => array(
 				'title' => 'Gallery Lightbox',

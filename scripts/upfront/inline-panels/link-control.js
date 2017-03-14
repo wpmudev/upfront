@@ -31,7 +31,7 @@ define([
 		
 		save: function() {
 			// If lightbox type do not close linkpanel 
-			if(this.options.model.get('type') === 'lightbox' && this.$el.find('.js-ulinkpanel-lightbox-input').val() !== '') return;
+			if(typeof this.options.model !== "undefined" && this.options.model.get('type') === 'lightbox' && this.$el.find('.js-ulinkpanel-lightbox-input').val() !== '') return;
 			
 			this.close();
 		},

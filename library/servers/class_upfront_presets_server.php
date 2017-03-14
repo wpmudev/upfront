@@ -5,6 +5,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	protected $isPostPartServer = false;
 	protected $isThisPostServer = false;
 	protected $isCommentServer = false;
+	protected $isNavigationServer = false;
 
 	protected function __construct() {
 		parent::__construct();
@@ -291,6 +292,10 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				if($this->isCommentServer) {
 					$preset['preset_style'] = str_replace('.default', '.default.upfront-comment', $preset['preset_style']);
 				}
+				
+				if($this->isNavigationServer) {
+					$preset['preset_style'] = str_replace('div.responsive_nav_toggler', '.responsive_nav_toggler', $preset['preset_style']);
+				}
 			}
 
 			$args = array('properties' => $preset);
@@ -392,14 +397,14 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	}
 
 	public function properties_columns($array, $column) {
-        $result = array();
-        foreach ($array as $item) {
+		$result = array();
+		foreach ($array as $item) {
 			if (!is_array($item)) continue; // Not an array, nothing to do here
-            if (array_key_exists($column, $item)) {
-                $result[] = $item[$column];
+			if (array_key_exists($column, $item)) {
+				$result[] = $item[$column];
 			}
 		}
-        return $result;
+		return $result;
 	}
 
 	public function get_presets_javascript_server() {
@@ -524,7 +529,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			'static-'.$part.'-style' => $defaults['style'],
 			'static-'.$part.'-font-size' => $defaults['size'],
 			'static-'.$part.'-line-height' => $defaults['line_height'],
- 			'static-'.$part.'-font-color' => $defaults['color'],
+			'static-'.$part.'-font-color' => $defaults['color'],
 		);
 
 		return $typography;

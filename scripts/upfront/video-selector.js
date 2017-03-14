@@ -24,8 +24,8 @@ define([
 			this.setup_upload_form();
 		},
 		setup_upload_form : function(){
-				var me = this;
-				if ($('#upfront-upload-video').length === 0) {
+			var me = this;
+			if ($('#upfront-upload-video').length === 0) {
 				$('body').append(me.formTpl({url: Upfront.Settings.ajax_url, l10n: l10n.template}));
 
 				$('body').bind( 'keyup', function( event ) {
@@ -93,6 +93,8 @@ define([
 					}
 				});
 			}
+			// Form never needs to be seen
+			$('#upfront-upload-video').hide();
 		},
 
 		onFileUploadDone: function(response) {

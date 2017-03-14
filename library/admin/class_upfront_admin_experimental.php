@@ -4,57 +4,57 @@ class Upfront_Admin_Experimental extends Upfront_Admin_Page {
 
 	const FORM_NONCE_KEY = "upfront_experimental_wpnonce";
 
-    const FORM_NONCE_ACTION = "upfront_experimental_save";
+	const FORM_NONCE_ACTION = "upfront_experimental_save";
 
-    public function __construct () {
+	public function __construct () {
 		if ($this->_can_access( Upfront_Permissions::SEE_USE_DEBUG )) {
-			add_submenu_page( "upfront", __("Experimental Features", Upfront::TextDomain),  __("Experimental", Upfront::TextDomain), 'manage_options', Upfront_Admin::$menu_slugs['experimental'], array($this, "render_page") );
+			add_submenu_page( "upfront", __("Experimental Features", Upfront::TextDomain), __("Experimental", Upfront::TextDomain), 'manage_options', Upfront_Admin::$menu_slugs['experimental'], array($this, "render_page") );
 		}
 	}
 
-    /**
-     * Validates and saves data submitted via POST request
-     *
-     * @return bool
-     */
-    private function _save_settings () {
-    	if (empty($_POST)) return false;
-    	if (!current_user_can('manage_options')) return false;
+	/**
+	 * Validates and saves data submitted via POST request
+	 *
+	 * @return bool
+	 */
+	private function _save_settings () {
+		if (empty($_POST)) return false;
+		if (!current_user_can('manage_options')) return false;
 
-    	$input = stripslashes_deep($_POST);
-    	
-    	// Check required fields
-    	if (!isset($input['upront_experiments_submit']) || empty($input[self::FORM_NONCE_KEY])) return false;
-    	if (!wp_verify_nonce($input[self::FORM_NONCE_KEY], self::FORM_NONCE_ACTION)) return false;
+		$input = stripslashes_deep($_POST);
 
-    	$compression = Upfront_Behavior::compression();
-    	$options = $compression->get_options();
+		// Check required fields
+		if (!isset($input['upront_experiments_submit']) || empty($input[self::FORM_NONCE_KEY])) return false;
+		if (!wp_verify_nonce($input[self::FORM_NONCE_KEY], self::FORM_NONCE_ACTION)) return false;
 
-    	$all_levels = $compression->get_known_compression_levels();
-    	$options['level'] = !empty($input['experimental_optimization']) && in_array($input['experimental_optimization'], array_keys($all_levels))
-    		? $input['experimental_optimization']
-    		: false
-    	;
+		$compression = Upfront_Behavior::compression();
+		$options = $compression->get_options();
 
-    	$options['compression'] = !empty($input['experimental_compress_response']);
+		$all_levels = $compression->get_known_compression_levels();
+		$options['level'] = !empty($input['experimental_optimization']) && in_array($input['experimental_optimization'], array_keys($all_levels))
+			? $input['experimental_optimization']
+			: false
+		;
 
-    	$result = $compression->set_options($options);
+		$options['compression'] = !empty($input['experimental_compress_response']);
 
-    	// Re-parse options on successful save
-    	if (!empty($result)) $compression->reload();
+		$result = $compression->set_options($options);
 
-    	return $result;
-    }
+		// Re-parse options on successful save
+		if (!empty($result)) $compression->reload();
 
-    public function render_page () {
-    	if (!current_user_can('manage_options')) wp_die('Nope.');
-    	$this->_save_settings();
+		return $result;
+	}
 
-    	$compression = Upfront_Behavior::compression();
+	public function render_page () {
+		if (!current_user_can('manage_options')) wp_die('Nope.');
+		$this->_save_settings();
 
-        ?>
-        <div class="wrap upfront_admin upfront_admin_experimental">
-            <h1><?php _e("Experimental Features", Upfront::TextDomain); ?><span class="upfront_logo"></span></h1>
+		$compression = Upfront_Behavior::compression();
+
+		?>
+		<div class="wrap upfront_admin upfront_admin_experimental">
+			<h1><?php _e("Experimental Features", Upfront::TextDomain); ?><span class="upfront_logo"></span></h1>
 						<div class="upfront_admin_experimental_contents">
 								<p class="info">
 									<?php esc_html_e("These are various Experimental Features available to Upfront. Please be careful, some of those settings might interfere with plugins.", Upfront::TextDomain ); ?>
@@ -128,7 +128,7 @@ class Upfront_Admin_Experimental extends Upfront_Admin_Page {
 										<button type="submit" name="upront_experiments_submit" id="upront_restrictions_submit"><?php esc_html_e("Save Changes", Upfront::TextDomain); ?></button>
 								</form>
 						</div>
-        </div>
-        <?php
-    }
+		</div>
+		<?php
+	}
 }

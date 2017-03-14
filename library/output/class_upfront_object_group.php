@@ -46,40 +46,40 @@ class Upfront_Object_Group extends Upfront_Container {
 		$style = $style ? "style='{$style}'" : '';
 		$element_id = $element_id ? "id='{$element_id}'" : '';
 		return "{$pre}<{$this->_tag} data-preset_map='" . esc_attr(!empty($preset_map) ? json_encode($preset_map) : '') . "' class='{$class}' {$style} {$element_id} {$attr}>{$out}</{$this->_tag}>{$post}";
-    }
-    
-    public function get_css_class () {
-        $classes = parent::get_css_class();
-        $classes .= ' upfront-object-group';
+	}
+
+	public function get_css_class () {
+		$classes = parent::get_css_class();
+		$classes .= ' upfront-object-group';
 		$propagated = $this->get_propagated_classes();
 		if (!empty($propagated)) $classes .= ' ' . join(' ', $propagated);
 
-        $theme_style = $this->_get_property('theme_style');
-        if ($theme_style) $classes .= ' ' . strtolower($theme_style);
-        return $classes;
-    }
-    
-    public function get_attr () {
-        $theme_style = $this->_get_property('theme_style');
-        $link = $this->_get_property('href');
-        $linkTarget = $this->_get_property('linkTarget');
-        if($theme_style)
-            $theme_style = strtolower($theme_style);
-        $theme_styles = array( 'default' => $theme_style );
-        foreach ( Upfront_Output::$grid->get_breakpoints(true) as $breakpoint ) {
-            $theme_styles[$breakpoint->get_id()] = $this->_get_breakpoint_property('theme_style', $breakpoint->get_id());
-        }
-				
-        $link_attributes = '';
-        if(!empty($link)) {
-        	$link_attributes = "data-group-link='".$link."'";
-        	if(!empty($linkTarget)) {
-        		$link_attributes .= "data-group-target='".$linkTarget."'";
-        	}
-        }
+		$theme_style = $this->_get_property('theme_style');
+		if ($theme_style) $classes .= ' ' . strtolower($theme_style);
+		return $classes;
+	}
 
-        return " data-theme-styles='" . json_encode($theme_styles) . "' ".$link_attributes;
-    }
+	public function get_attr () {
+		$theme_style = $this->_get_property('theme_style');
+		$link = $this->_get_property('href');
+		$linkTarget = $this->_get_property('linkTarget');
+		if($theme_style)
+			$theme_style = strtolower($theme_style);
+		$theme_styles = array( 'default' => $theme_style );
+		foreach ( Upfront_Output::$grid->get_breakpoints(true) as $breakpoint ) {
+			$theme_styles[$breakpoint->get_id()] = $this->_get_breakpoint_property('theme_style', $breakpoint->get_id());
+		}
+
+		$link_attributes = '';
+		if(!empty($link)) {
+			$link_attributes = "data-group-link='".$link."'";
+			if(!empty($linkTarget)) {
+				$link_attributes .= "data-group-target='".$linkTarget."'";
+			}
+		}
+
+		return " data-theme-styles='" . json_encode($theme_styles) . "' ".$link_attributes;
+	}
 
 	public function instantiate_child ($child_data, $idx) {
 		$key = md5(serialize($child_data));

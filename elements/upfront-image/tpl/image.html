@@ -6,16 +6,16 @@
 	<?php } ?>
 		<div class="upfront-image-caption-container" style="margin-top:<?php echo $marginTop ?>px">
 			<?php if($url && !$in_editor) { ?>
-			<a href="<?php echo $url ?>" target="<?php echo $link_target ?>">
-				<?php } ?>
-				<?php if($src){ ?>
-				<div class="upfront-image-container" <?php if ($containerWidth) { ?>style="width:<?php echo $containerWidth ?>px;"<?php } ?>>
+				<a href="<?php echo $url ?>" target="<?php echo $link_target ?>">
+			<?php } ?>
+			<?php if($src){ ?>
+			<div class="upfront-image-container" <?php if ($containerWidth) { ?>style="width:<?php echo $containerWidth ?>px;"<?php } ?>>
 				<img src="<?php echo $src ?>" alt="<?php echo $alternative_text ?>" title="<?php echo $image_title ?>" <?php if($imgWidth) { ?>style="width:<?php echo $imgWidth ?>;"<?php } ?>/>
-		</div>
-		<?php } else { ?>
-		<div class="upfront-image-starting_placeholder"><p>Image placeholder</p></div>
-		<?php } ?>
-
+			</div>
+			<?php } else { ?>
+				<div class="upfront-image-starting_placeholder"><p>Image placeholder</p></div>
+			<?php } ?>
+	
 		<?php if($usingNewAppearance !== true) { ?>
 			<?php if($include_image_caption) { ?>
 				<div class="wp-caption uimage-<?php echo $caption_alignment ?> uimage-<?php echo $caption_trigger ?> uimage-padded-caption" style="background:<?php echo $captionBackground == '1' ? $background : 'rgba(255, 255, 255, 0)' ?>; ">
