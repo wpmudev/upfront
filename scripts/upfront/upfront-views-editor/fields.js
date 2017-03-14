@@ -1124,6 +1124,8 @@
                 $('.sidebar-panel-content, #sidebar-scroll-wrapper').on('scroll', this, this.closeChosen);
 
                 me.$el.find('.chosen-drop').show();
+              	// style differently than when closed.
+                this.$el.addClass('upfront-field-wrap-select-expanded');
             },
             closeChosen: function(e) {
                 var me = e.data;
@@ -1133,6 +1135,8 @@
                 if(in_sidebar == 1 || in_settings == 1) {
                     me.$el.find('.chosen-drop').css('display', 'none');
                 }
+              	// style differently than when closed.
+                this.$el.removeClass('upfront-field-wrap-select-expanded');
                 me.$el.find('select').trigger("chosen:close");
 
                 me.allowMouseWheel();
