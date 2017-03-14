@@ -130,7 +130,8 @@ input.upfront-field-text:hover,
 	opacity: 0.75;
 }
 .upfront-field-wrap-select:hover {
-	opacity: 0.85;
+	/* Causes flickering issues */
+	/* opacity: 0.85; */
 }
 .upfront-field-wrap-select-expanded {
 	opacity: 1;
