@@ -177,12 +177,64 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$statuses = $this->_get_status_filter_data($post_type);
 		$dates = $this->_get_date_filter_data($post_type);
 		$categories = $this->_get_category_filter_data($post_type);
+		// For CPTs filtering.
+		$post_types = $this->_get_post_type_filter_data($post_type);
 
 		return $this->_out(new Upfront_JsonResponse_Success(array(
 			'statuses' => $statuses,
 			'dates' => $dates,
 			'categories' => $categories,
+			'post_types' => $post_types,
 		)));
+	}
+
+	private function _get_post_type_filter_data($post_type) {
+		// Quit fetching if not cpt.
+		if ($post_type === 'post' || $post_type === 'page') return array();
+
+		$args = array(
+			// Only get public Pts.
+			'public' => true,
+			// Exclude WP core post types.
+			'_builtin' => false,
+		);
+		// List of CPT objects.
+		$post_types = get_post_types($args, 'objects');
+		// Simplify and include counts.
+		$pts_with_counts = array();
+		// Total count of all CPTs.
+		$total_count = 0;
+		// Get data for each CPT.
+		foreach($post_types as $pt) {
+			$name = $pt->name;
+
+			// Count total number of posts.
+			$counts = wp_count_posts($name, 'readable');
+			$count = 0;
+			$count += (int)$counts->publish;
+			$count += (int)$counts->future;
+			$count += (int)$counts->draft;
+			// Total count of all CPTs.
+			$total_count += (int)$count;
+
+			// PT data to Return.
+			$pts_with_counts[] = array(
+				'value' => $name,
+				'label' => $pt->label . " ($count)",
+			);
+		}
+
+		$l10n = Upfront_EditorL10n_Server::add_l10n_strings(array());
+		$l10n = $l10n['global']['content'];
+		$all_cpts_option = array(
+			'value' => 'any',
+			'label' => $l10n['all_cpts'] . " ($total_count)",
+		);
+		// Add All CPTs option to start of array.
+		array_unshift($pts_with_counts, $all_cpts_option);
+	
+		// Return all CPTs options.
+		return $pts_with_counts;
 	}
 
 	// Based off of core's method: WP_Posts_List_Table::get_views()

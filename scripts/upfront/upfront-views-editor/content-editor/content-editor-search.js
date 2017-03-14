@@ -52,14 +52,17 @@
 						handle_filter_request: function () {
 								// filters are set on change of field.
 								// use each filter value so multiple can be set.
-              	var status = (this.status ? this.status : false),
+              	var status = (this.status ? this.status : 'any'),
               		date = (this.date ? this.date : false),
-              		category = (this.category ? this.category : false)
+              		category = (this.category ? this.category : false),
+									// Use set value in dropdown or (if none), default postType set in initialize().
+									postType = ((this.post_type && this.post_type !== 'any') ? this.post_type : this.postType)
               	;
                 this.collection.fetch({
 									post_status: status,
 									m: date,
-									cat: category
+									cat: category,
+									postType: postType
                 });
 						},
 						// Show or Hide homepage item for pages list.
@@ -98,6 +101,9 @@
 								return value;
 							});
 						},
+						get_pt_values: function(values) {
+							return values;
+						},
 						get_date_values: function(values) {
 							return values;
 						},
@@ -119,64 +125,117 @@
 							// Prevent duplicate dropdowns.
 							this.$el.find('#upfront-list-filter-dropdowns-container').empty();
 							new Upfront.Collections.FilterList([], {postType: this.postType}).fetch({postType: this.postType}).done(function(data){
-								// Get previous fetch data to set selected values.
-								var options = me.collection.lastFetchOptions,
-									status_value = (options.post_status ? options.post_status : false),
-									date_value = (options.m ? options.m : false),
-									category_value = (options.cat ? options.cat : false)
-								;
-								var status_dropdown = new Fields.Select({
-									model: me.model,
-									name: 'upfront_post_status_filter',
-									default_value: status_value ? status_value : 'any',
-									values: me.get_status_values(data.data.statuses),
-									change: function (e) {
-										// Set the status so handle_filter_request can update it and other filter selections.
-										me.status = e;
-										me.handle_filter_request();
-									}
-								});
+								// Use normal filter dropdowns if not CPT.
+								if (me.postType === 'post' || me.postType === 'page') {
+									return me.normal_filter_dropdowns(data);
+								}
+								// If custom post type, use different filter dropdowns.
+								return me.cpt_filter_dropdowns(data);
+							});
+						},
 
-								var date_dropdown = new Fields.Select({
-									model: me.model,
-									name: 'upfront_post_date_filter',
-									default_value: date_value ? date_value : 0,
-									values: me.get_date_values(data.data.dates),
-									change: function (e) {
-										// Set the date so handle_filter_request can update it and other filter selections.
-										me.date = e;
-										me.handle_filter_request();
-									}
-								});
+  					normal_filter_dropdowns: function(data) {
+  						var me = this;
+							// Get previous fetch data to set selected values.
+							var options = me.collection.lastFetchOptions,
+								status_value = (options.post_status ? options.post_status : 'any'),
+								date_value = (options.m ? options.m : false),
+								category_value = (options.cat ? options.cat : false)
+							;
+							var status_dropdown = new Fields.Select({
+								model: me.model,
+								name: 'upfront_post_status_filter',
+								default_value: status_value ? status_value : 'any',
+								values: me.get_status_values(data.data.statuses),
+								change: function (e) {
+									// Set the status so handle_filter_request can update it and other filter selections.
+									me.status = e;
+									me.handle_filter_request();
+								}
+							});
 
-								var category_dropdown= new Fields.Select({
-									model: me.model,
-									name: 'upfront_post_category_filter',
-									default_value: category_value ? category_value : 0,
-									values: me.get_category_values(data.data.categories),
-									change: function (e) {
-										// Set the category so handle_filter_request can update it and other filter selections.
-										me.category = e;
-										me.handle_filter_request();
-									}
-								});
+							var date_dropdown = new Fields.Select({
+								model: me.model,
+								name: 'upfront_post_date_filter',
+								default_value: date_value ? date_value : 0,
+								values: me.get_date_values(data.data.dates),
+								change: function (e) {
+									// Set the date so handle_filter_request can update it and other filter selections.
+									me.date = e;
+									me.handle_filter_request();
+								}
+							});
 
-								me.filter_dropdowns = [
-									status_dropdown,
-									date_dropdown,
-									category_dropdown
-								];
-								// Render Dropdowns.
-								status_dropdown.render();
-								date_dropdown.render();
-								category_dropdown.render();
-								// Add Dropdowns to start of filter panel.
-								me.$el.find('#upfront-list-filter-dropdowns-container').append(status_dropdown.$el);
-								me.$el.find('#upfront-list-filter-dropdowns-container').append(date_dropdown.$el);
-								me.$el.find('#upfront-list-filter-dropdowns-container').append(category_dropdown.$el);
-						});
-					}
-    	});
+							var category_dropdown= new Fields.Select({
+								model: me.model,
+								name: 'upfront_post_category_filter',
+								default_value: category_value ? category_value : 0,
+								values: me.get_category_values(data.data.categories),
+								change: function (e) {
+									// Set the category so handle_filter_request can update it and other filter selections.
+									me.category = e;
+									me.handle_filter_request();
+								}
+							});
 
+							me.filter_dropdowns = [
+								status_dropdown,
+								date_dropdown,
+								category_dropdown
+							];
+							// Render Dropdowns.
+							status_dropdown.render();
+							date_dropdown.render();
+							category_dropdown.render();
+							// Add Dropdowns to start of filter panel.
+							me.$el.find('#upfront-list-filter-dropdowns-container').append(status_dropdown.$el);
+							me.$el.find('#upfront-list-filter-dropdowns-container').append(date_dropdown.$el);
+							me.$el.find('#upfront-list-filter-dropdowns-container').append(category_dropdown.$el);
+  					},
+
+  					cpt_filter_dropdowns: function(data) {
+							var me = this;
+							// Get previous fetch data to set selected values.
+							var options = me.collection.lastFetchOptions,
+								// if pt is array/object, default to any pt option.
+								pt_value = ((options.postType && typeof options.postType !== 'object') ? options.postType : 'any'),
+								date_value = (options.m ? options.m : false)
+							;
+							var post_types_dropdown = new Fields.Select({
+								model: me.model,
+								name: 'upfront_post_types_filter',
+								default_value: pt_value ? pt_value : 'any',
+								values: me.get_pt_values(data.data.post_types),
+								change: function (e) {
+									// Set the pt so handle_filter_request can update it and other filter selections.
+									me.post_type = e;
+									me.handle_filter_request();
+								}
+							});
+
+							var date_dropdown = new Fields.Select({
+								model: me.model,
+								name: 'upfront_post_date_filter',
+								default_value: date_value ? date_value : 0,
+								values: me.get_date_values(data.data.dates),
+								change: function (e) {
+									// Set the date so handle_filter_request can update it and other filter selections.
+									me.date = e;
+									me.handle_filter_request();
+								}
+							});
+
+							me.filter_dropdowns = [
+								post_types_dropdown,
+								date_dropdown,
+							];
+							// Render Dropdowns.
+							post_types_dropdown.render();
+							date_dropdown.render();
+							// Add Dropdowns to start of filter panel.
+							me.$el.find('#upfront-list-filter-dropdowns-container').append(post_types_dropdown.$el);
+							me.$el.find('#upfront-list-filter-dropdowns-container').append(date_dropdown.$el);
+  					}
     });
+  });
 }(jQuery));
