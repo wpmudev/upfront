@@ -707,7 +707,7 @@ var LayoutEditor = {
 		Upfront.Application.layout_view.render();
 	},
 
-	save_dialog: function (on_complete, context, layout_changed, is_archive) {
+	save_dialog: function (on_complete, context, layout_changed, is_archive, plugin_layout) {
 		$("body").append("<div id='upfront-save-dialog-background' />");
 		$("body").append("<div id='upfront-save-dialog' />");
 		var $dialog = $("#upfront-save-dialog"),
@@ -717,11 +717,21 @@ var LayoutEditor = {
 		;
 		is_archive = true === is_archive;
 
+		var bl = Upfront.Settings.l10n.global.behaviors;
+
 		if ( is_archive ) {
-			html += '<p>' + Upfront.Settings.l10n.global.behaviors.this_archive_only + '</p>';
-		}
-		else {
-			html += '<p>' + Upfront.Settings.l10n.global.behaviors.this_post_only + '</p>';
+			html += '<p>' + bl.this_archive_only + '</p>';
+		} else if (typeof plugin_layout !== 'undefined') {
+			var lt, ltp, message;
+			var pll = plugin_layout.l10n || {};
+			lt = pll.layout_type || bl.layout;
+			ltp = pll.layout_type_plural || bl.layouts_of_this_type;
+			message = bl.this_layout_only
+					.replace('LAYOUT_TYPE_PLURAL', ltp)
+					.replace(/LAYOUT_TYPE/g, lt);
+			html += '<p>' + message + '</p>';
+		} else {
+			html += '<p>' + bl.this_post_only + '</p>';
 		}
 		$.each(_upfront_post_data.layout, function (idx, el) {
 			//var checked = el == current ? "checked='checked'" : '';
@@ -877,7 +887,7 @@ var LayoutEditor = {
 			'global-region-manager'
 		);
 	},
-	
+
 	open_theme_fonts_manager: function() {
 		var me = {};
 		var textFontsManager = new Upfront.Views.Editor.Fonts.Text_Fonts_Manager({ collection: Upfront.Views.Editor.Fonts.theme_fonts_collection });

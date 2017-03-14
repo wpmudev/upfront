@@ -234,7 +234,7 @@ class Upfront_MediaServer extends Upfront_Server {
 		if (!$term) $this->_out(new Upfront_JsonResponse_Error("No term"));
 
 		$res = wp_insert_term($term, 'media_label');
-		if (is_wp_error($res)) $this->_out(new Upfront_JsonResponse_Error("Something went wrong" . $res->get_error_message()));
+		if (is_wp_error($res)) $this->_out(new Upfront_JsonResponse_Error("Something went wrong. " . $res->get_error_message()));
 
 		if ($post_ids) {
 			$result = array();
@@ -626,8 +626,14 @@ class Upfront_MediaServer extends Upfront_Server {
 
 		$id = !empty($data['ID']) ? $data['ID'] : false;
 		if (!$id) $this->_out(new Upfront_JsonResponse_Error("Invalid item ID"));
+		
+		$alt = !empty($data['alt']) ? $data['alt'] : false;
 
 		$updated = wp_update_post($data);
+		
+		// Now, update the attachment alt
+		update_post_meta($id, '_wp_attachment_image_alt', $alt);
+		
 		if (!empty($updated)) $this->_out(new Upfront_JsonResponse_Success($updated));
 		else $this->_out(new Upfront_JsonResponse_Error("Error updating the media item"));
 	}

@@ -44,7 +44,13 @@ class Upfront_UgalleryView extends Upfront_Object {
 				$images[$index]['imageLinkUrl'] = $image['url'];
 				$images[$index]['imageLinkTarget'] = $image['linkTarget'];
 			}
+			
+			// Retrieve image ALT
+			if(isset($image['id'])) {
+				$images[$index]['alt'] = get_post_meta($image['id'], '_wp_attachment_image_alt', true);
+			}
 		}
+
 		$data['images'] = $images;
 
 		$data['imagesLength'] = sizeof($images);
