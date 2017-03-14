@@ -5,9 +5,10 @@
 	-->
 	<script type="text/template" id="upfront-filter-tpl">
 		<div id="upfront-list-meta" class="upfront-list-filter-container">
+			<div id="upfront-list-filter-dropdowns-container"></div>
 			<div class="search_container">
 				<div id="upfront-search_container">
-					<input type="text" id="upfront-list-search_input" value="{{ query ? query : '' }}" required placeholder="{{Upfront.Settings.l10n.global.content.search_posts}}"/>
+					<input type="text" id="upfront-list-search_input" value="{{ query ? query : '' }}" required placeholder="{{placeholder}}"/>
 					<button id="upfront-list-reset_button"></button>
 				</div>
 				<button id="upfront-search_action" class="search">{{Upfront.Settings.l10n.global.views.search}}</button>
@@ -175,7 +176,7 @@
 					</div>
 				</div>
 				{[ _.each(pages, function (post){ ]}
-				<div class="upfront-list_item-post upfront-list_item clearfix status-{{ post.get("post_status") }}" data-post_id="{{ post.get("ID") }}" style="margin-left: {{32 + (parseInt(post.get("depth"), 10) * 22)}}px; width: calc(100% - {{47 + (parseInt(post.get("depth"), 10) * 22)}}px)">
+				<div class="upfront-list_item-post upfront-list_item clearfix status-{{ post.get("post_status") }}" data-post_id="{{ post.get("ID") }}" style="margin-left: {{32 + (parseInt(post.get("depth"), 10) * 22)}}px; width: calc(100% - {{64 + (parseInt(post.get("depth"), 10) * 22)}}px)">
 					<div class="upfront-list_item-component upfront-date post-status-{{ post.get("post_status") }}" title="{[ if(post.get("post_status") == "publish") { ]}Published{[ } else if(post.get("post_status") == "future") { ]}Scheduled{[ } else { ]}Draft{[ } ]}">{[ if(post.get("post_status") == "future") { ]}sched. for{[ } ]}
 					{{ Upfront.Util.format_date(post.get("post_date")) }}</div>
 					<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ post.get("post_title") }}</div>

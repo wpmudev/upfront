@@ -105,6 +105,7 @@
 								window.location.href = this.collection.get(postId).get('permalink');
 						},
 						trash_confirm: function(e) {
+							e.preventDefault();
 							// Show delete confirmation.
 							$(e.target).parents('.upfront-list_item').find('.upfront-delete-confirm').show();
 						},

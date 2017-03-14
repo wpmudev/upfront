@@ -24,9 +24,19 @@
           	},
             render: function () {
                 var query = this.collection.lastFetchOptions ? this.collection.lastFetchOptions.search : false;
-                this.$el.html(this.searchTpl({query: query}));
+								var placeholder = this.get_placeholder();
+                this.$el.html(this.searchTpl({query: query, placeholder: placeholder}));
             		this.add_filter_dropdowns();
             },
+						get_placeholder: function() {
+							if (this.postType === 'post') {
+								return Upfront.Settings.l10n.global.content.search_posts;
+							} else if (this.postType === 'page') {
+								return Upfront.Settings.l10n.global.content.search_pages;
+							} else {
+								return Upfront.Settings.l10n.global.content.search_cpts;
+							}
+						},
             dispatch_search_enter: function (e) {
                 if(e.which == 13)
                     return this.handle_search_request(e);
@@ -106,6 +116,8 @@
 						// Add dropdowns to filter panel (same as links in wp-admin/edit.php).
 						add_filter_dropdowns: function() {
 							var me = this;
+							// Prevent duplicate dropdowns.
+							this.$el.find('#upfront-list-filter-dropdowns-container').empty();
 							new Upfront.Collections.FilterList([], {postType: this.postType}).fetch({postType: this.postType}).done(function(data){
 								// Get previous fetch data to set selected values.
 								var options = me.collection.lastFetchOptions,
@@ -159,9 +171,9 @@
 								date_dropdown.render();
 								category_dropdown.render();
 								// Add Dropdowns to start of filter panel.
-								me.$el.children('.upfront-list-filter-container').prepend(category_dropdown.$el);
-								me.$el.children('.upfront-list-filter-container').prepend(date_dropdown.$el);
-								me.$el.children('.upfront-list-filter-container').prepend(status_dropdown.$el);
+								me.$el.find('#upfront-list-filter-dropdowns-container').append(status_dropdown.$el);
+								me.$el.find('#upfront-list-filter-dropdowns-container').append(date_dropdown.$el);
+								me.$el.find('#upfront-list-filter-dropdowns-container').append(category_dropdown.$el);
 						});
 					}
     	});
