@@ -624,13 +624,14 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		require_once(dirname(dirname(__FILE__)) . '/class_upfront_posts_walker.php');
 		// Order by page hierarchy.
 		$walker = new Upfront_Posts_Walker();
-		$number_of_parents = round($walker->get_number_of_root_elements($posts) / $limit);
+		// Get number of parent pages divided by pagination limit rounded up.
+		$pages = ceil($walker->get_number_of_root_elements($posts) / $limit);
 		return array(
 			// Pages start with one.
 			// Post order and pagination is handled by paged_walk.
 			'posts' => $walker->paged_walk($posts, 0, $page + 1, $limit),
 			// Max number of pagination pages.
-			'pages' => $number_of_parents,
+			'pages' => $pages,
 		);
 	}
 
@@ -1011,7 +1012,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 	private function _spawn_query ($post_type, $data=array()) {
 		$sort = !empty($data['orderby']) ? str_replace('post_', '', $data['orderby']) : 'date';
 		$direction = !empty($data['order']) ? $data['order'] : 'desc';
-		$limit = isset($data['limit']) ? (int)$data['limit'] : 10;
+		$limit = isset($data['limit']) ? (int)$data['limit'] : 25;
 		$hierarchical = !empty($data['hierarchical']) ? true : false;
 		// Only use limit if not hierarchical (post limit then is handled by walker class).
 		$posts_per_page = ($hierarchical ? -1 : $limit);
