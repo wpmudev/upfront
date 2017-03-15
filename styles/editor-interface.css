@@ -9083,6 +9083,29 @@ i.upfront-field-icon-burger-trigger {
 #upfront-popup-content .upfront-settings-item-title span {
   background: #e5f3fe; }
 
+.upfront-popup-meta .use_selection_container {
+  float: right;
+  text-align: center;
+  background: #1fcd8f;
+  height: 50px;
+  line-height: 50px; }
+
+.upfront-popup-meta .use_selection_container:hover {
+  background: #3ea; }
+
+.upfront-popup-meta .use_selection_container.inactive {
+  background: #cee1f2; }
+
+.upfront-popup-meta .use_selection_container.inactive a {
+  color: #99b3cc;
+  cursor: default; }
+
+.upfront-popup-meta .use_selection_container a {
+  display: block;
+  padding: 0 32px;
+  color: #fff;
+  text-decoration: none; }
+
 /* Warning Popup */
 #upfront-popup.warning_img {
   width: 360px;
@@ -9980,7 +10003,7 @@ a.upfront-post-layout-trigger:before {
   left: 0;
   background-color: transparent;
   height: 1px;
-  z-index: 10001999; }
+  z-index: 100019999; }
 
 #upfront-notice {
   width: 500px;
@@ -10945,8 +10968,7 @@ a.upfront-post-layout-trigger:before {
   opacity: .5; }
 
 .upfront-popup-meta .search_container,
-.upfront-popup-meta .upload_media_container,
-.upfront-popup-meta .use_selection_container {
+.upfront-popup-meta .upload_media_container {
   float: left; }
 
 .upfront-popup-meta .upload_media_container {
@@ -11019,9 +11041,7 @@ a.upfront-post-layout-trigger:before {
   margin: auto;
   z-index: 11; }
 
-.upfront-popup-meta .use_selection_container {
-  float: right;
-  text-align: center;
+.media-manager .upfront-popup-meta .use_selection_container {
   width: 38.3%;
   height: 90px;
   padding: 30px;
@@ -11029,15 +11049,14 @@ a.upfront-post-layout-trigger:before {
   position: relative;
   background: #f2f2f2; }
 
-.upfront-popup-meta .use_selection_container.inactive {
+.media-manager .upfront-popup-meta .use_selection_container.inactive {
   background: #cee1f2; }
 
-.upfront-popup-meta .use_selection_container.inactive a {
+.media-manager .upfront-popup-meta .use_selection_container.inactive a {
   color: #99b3cc;
   cursor: default; }
 
-.upfront-popup-meta .use_selection_container a {
-  display: block;
+.media-manager .upfront-popup-meta .use_selection_container a {
   background: #1691fb;
   height: 30px;
   line-height: 30px;

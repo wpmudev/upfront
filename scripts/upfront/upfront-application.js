@@ -31,8 +31,13 @@ var LayoutEditorSubapplication = Subapplication.extend({
 	},
 
 	save_layout_as: function () {
+		var plugin_layout = Upfront.Application.is_plugin_layout();
 		if ( _upfront_post_data.layout.type == 'archive' ) {
 			Upfront.Behaviors.LayoutEditor.save_dialog(this._save_layout, this, true, true);
+		} else if ( plugin_layout && plugin_layout.forbid_save_as === false ) {
+			Upfront.Behaviors.LayoutEditor.save_dialog(this._save_layout, this, true, false, plugin_layout);
+		} else if ( plugin_layout && plugin_layout.forbid_save_as === true ) {
+			Upfront.Events.trigger("command:layout:save");
 		}
 	},
 
@@ -1738,7 +1743,9 @@ var Application = new (Backbone.Router.extend({
 			content: pluginData.sampleContents[layoutData.content] ? pluginData.sampleContents[layoutData.content] : '',
 			title: layoutData.title ? layoutData.title : '',
 			killPostSettings: layoutData.killPostSettings || false,
-			bodyclass: bodyclass || false
+			bodyclass: bodyclass || false,
+			l10n: layoutData.l10n || false,
+			forbid_save_as: !!layoutData.forbid_save_as || false
 		};
 	},
 
