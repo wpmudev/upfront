@@ -446,6 +446,13 @@
 .upfront-popup-posts  .ps-container.ps-active-x > .ps-scrollbar-x-rail, .upfront-popup-posts .ps-container.ps-active-y > .ps-scrollbar-y-rail {
 	background: rgb(248,248,248);
 	border-left: 1px solid rgb(217,217,217);
+	width: 14px;
+}
+
+.ps-container > .ps-scrollbar-y-rail > .ps-scrollbar-y,
+.ps-container > .ps-scrollbar-y-rail:hover > .ps-scrollbar-y,
+.ps-container > .ps-scrollbar-y-rail:active > .ps-scrollbar-y {
+	width: 7px;
 }
 
 /* Post Edit Actions */
