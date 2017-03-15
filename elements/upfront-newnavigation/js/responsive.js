@@ -166,12 +166,25 @@ jQuery(document).ready(function($) {
 
 		// Handle sub-menu on hover
 		$('div.upfront-navigation ul li').on("mouseenter", function() {
-			$(this).find('.sub-menu').addClass("upfront-dropdown-active");
+			var $me = $(this),
+				$submenu = $me.find('.sub-menu')
+			;
+			
+			// If sub-menu opened, keep it opened
+			if($submenu.hasClass("upfront-dropdown-active")) {
+				clearTimeout(timer); 
+			}
+			
+			// Open sub-menu
+			$submenu.addClass("upfront-dropdown-active");
 		}).on("mouseleave", function() {
 			var $me = $(this);
-			timer = setTimeout(function() {
-				$me.find('.sub-menu').removeClass("upfront-dropdown-active");
-			}, 500);
+			
+			if($me.find('.sub-menu').length) {
+				timer = setTimeout(function() {
+					$me.find('.sub-menu').removeClass("upfront-dropdown-active");
+				}, 500);
+			}
 		});
 		
 		// Handle sub-menu on focus
