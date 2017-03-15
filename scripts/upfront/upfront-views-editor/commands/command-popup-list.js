@@ -121,11 +121,11 @@
 								if(panel == 'posts'){
 										collection = new Upfront.Collections.PostList([], {postType: 'post'});
 										collection.orderby = 'post_date';
-										fetchOptions = {filterContent: true, withAuthor: true, limit: 15, post_status: 'any'};
+										fetchOptions = {filterContent: true, withAuthor: true, limit: 25, post_status: 'any'};
 								}
 								else if(panel == 'pages'){
 										collection = new Upfront.Collections.PostList([], {postType: 'page'});
-										fetchOptions = {limit: 15, hierarchical: true};
+										fetchOptions = {limit: 25, hierarchical: true};
 								}
 								else if(panel == 'cpts'){
 										var postTypes = Upfront.mainData.content_settings.post_types
@@ -140,7 +140,7 @@
 										});
 										collection = new Upfront.Collections.PostList([], {postType: postTypeNames});
 										collection.orderby = 'post_date';
-										fetchOptions = {limit: 15, withThumbnail: true};
+										fetchOptions = {limit: 25, withThumbnail: true};
 								}
 								else{
 										var post_id = Upfront.data.currentPost && Upfront.data.currentPost.id

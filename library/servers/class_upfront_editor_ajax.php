@@ -576,10 +576,14 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			$this->_out(new Upfront_JsonResponse_Error("Invalid post type."));
 
 		$query = $this->_spawn_query($data['postType'], $data);
-		$limit = isset($data['limit']) ? (int)$data['limit'] : 10;
+		$limit = isset($data['limit']) ? (int)$data['limit'] : 25;
 		$page = isset($data['page']) ? (int)$data['page'] : 0;
+		// For pages hierarchy.
+		$walker = $this->walker($query->posts, $limit, $page);
 		// If hierarchical, pass through query to walker.
-		$posts = isset($data['hierarchical']) ? $this->walker($query->posts, $limit, $page) : $query->posts;
+		$posts = isset($data['hierarchical']) ? $walker['posts'] : $query->posts;
+		// If hierarchical, pass through pages number to walker.
+		$pages = (isset($data['hierarchical']) ? $walker['pages'] : (int)$query->found_posts / $limit);
 
 		if($posts) {
 			for ($i=0; $i < sizeof($posts); $i++) {
@@ -610,6 +614,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 				"total" => $query->found_posts,
 				"page_size" => $limit,
 				"page" => $page,
+				"pages" => $pages,
 			)
 		)));
 
@@ -619,9 +624,14 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		require_once(dirname(dirname(__FILE__)) . '/class_upfront_posts_walker.php');
 		// Order by page hierarchy.
 		$walker = new Upfront_Posts_Walker();
-		// Pages start with one.
-		// Post pagination is handled by paged_walk.
-		return $walker->paged_walk($posts, 0, $page + 1, $limit);
+		$number_of_parents = round($walker->get_number_of_root_elements($posts) / $limit);
+		return array(
+			// Pages start with one.
+			// Post order and pagination is handled by paged_walk.
+			'posts' => $walker->paged_walk($posts, 0, $page + 1, $limit),
+			// Max number of pagination pages.
+			'pages' => $number_of_parents,
+		);
 	}
 
 	function fetch_page_templates($data){

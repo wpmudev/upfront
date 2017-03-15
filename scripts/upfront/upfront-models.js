@@ -970,7 +970,8 @@ var _alpha = "alpha",
 							me.pagination = {
 								totalElements: pagination.total,
 								pageSize: pagination.page_size,
-								pages: Math.ceil(pagination.total / pagination.page_size),
+								// If pages total is given use that. Otherwise calculate it.
+								pages: (pagination.pages ? Math.ceil(pagination.pages) : Math.ceil(pagination.total / pagination.page_size)),
 								currentPage: pagination.page,
 								loaded: postdata.flush ? {} : me.pagination.loaded
 							};

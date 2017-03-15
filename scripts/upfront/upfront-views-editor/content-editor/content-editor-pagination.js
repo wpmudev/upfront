@@ -24,7 +24,7 @@
             	this.hide_extra_ui();
             },
 						hide_extra_ui: function() {
-              if (this.collection.pagination.pages === 1) {
+              if (this.collection.pagination.pages <= 1) {
               	this.$el.children('div').addClass('upfront-single-page-pagination');
               }
 						},

@@ -123,8 +123,8 @@
 						add_filter_dropdowns: function() {
 							var me = this;
 							// Prevent duplicate dropdowns.
-							this.$el.find('#upfront-list-filter-dropdowns-container').empty();
 							new Upfront.Collections.FilterList([], {postType: this.postType}).fetch({postType: this.postType}).done(function(data){
+								$(me.el).find('#upfront-list-filter-dropdowns-container').empty();
 								// Use normal filter dropdowns if not CPT.
 								if (me.postType === 'post' || me.postType === 'page') {
 									return me.normal_filter_dropdowns(data);
