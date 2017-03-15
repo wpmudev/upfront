@@ -123,15 +123,14 @@
 						add_filter_dropdowns: function() {
 							var me = this;
 							// Prevent duplicate dropdowns.
-							new Upfront.Collections.FilterList([], {postType: this.postType}).fetch({postType: this.postType}).done(function(data){
-								$(me.el).find('#upfront-list-filter-dropdowns-container').empty();
-								// Use normal filter dropdowns if not CPT.
-								if (me.postType === 'post' || me.postType === 'page') {
-									return me.normal_filter_dropdowns(data);
-								}
-								// If custom post type, use different filter dropdowns.
-								return me.cpt_filter_dropdowns(data);
-							});
+							var filter_data = this.collection.filtering;
+							$(me.el).find('#upfront-list-filter-dropdowns-container').empty();
+							// Use normal filter dropdowns if not CPT.
+							if (me.postType === 'post' || me.postType === 'page') {
+								return me.normal_filter_dropdowns(filter_data);
+							}
+							// If custom post type, use different filter dropdowns.
+							return me.cpt_filter_dropdowns(filter_data);
 						},
 
   					normal_filter_dropdowns: function(data) {
@@ -146,7 +145,7 @@
 								model: me.model,
 								name: 'upfront_post_status_filter',
 								default_value: status_value ? status_value : 'any',
-								values: me.get_status_values(data.data.statuses),
+								values: me.get_status_values(data.statuses),
 								change: function (e) {
 									// Set the status so handle_filter_request can update it and other filter selections.
 									me.status = e;
@@ -158,7 +157,7 @@
 								model: me.model,
 								name: 'upfront_post_date_filter',
 								default_value: date_value ? date_value : 0,
-								values: me.get_date_values(data.data.dates),
+								values: me.get_date_values(data.dates),
 								change: function (e) {
 									// Set the date so handle_filter_request can update it and other filter selections.
 									me.date = e;
@@ -170,7 +169,7 @@
 								model: me.model,
 								name: 'upfront_post_category_filter',
 								default_value: category_value ? category_value : 0,
-								values: me.get_category_values(data.data.categories),
+								values: me.get_category_values(data.categories),
 								change: function (e) {
 									// Set the category so handle_filter_request can update it and other filter selections.
 									me.category = e;
@@ -205,7 +204,7 @@
 								model: me.model,
 								name: 'upfront_post_types_filter',
 								default_value: pt_value ? pt_value : 'any',
-								values: me.get_pt_values(data.data.post_types),
+								values: me.get_pt_values(data.post_types),
 								change: function (e) {
 									// Set the pt so handle_filter_request can update it and other filter selections.
 									me.post_type = e;
@@ -217,7 +216,7 @@
 								model: me.model,
 								name: 'upfront_post_date_filter',
 								default_value: date_value ? date_value : 0,
-								values: me.get_date_values(data.data.dates),
+								values: me.get_date_values(data.dates),
 								change: function (e) {
 									// Set the date so handle_filter_request can update it and other filter selections.
 									me.date = e;

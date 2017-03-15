@@ -180,12 +180,12 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		// For CPTs filtering.
 		$post_types = $this->_get_post_type_filter_data($post_type);
 
-		return $this->_out(new Upfront_JsonResponse_Success(array(
+		return array(
 			'statuses' => $statuses,
 			'dates' => $dates,
 			'categories' => $categories,
 			'post_types' => $post_types,
-		)));
+		);
 	}
 
 	private function _get_post_type_filter_data($post_type) {
@@ -584,6 +584,8 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$posts = isset($data['hierarchical']) ? $walker['posts'] : $query->posts;
 		// If hierarchical, pass through pages number to walker.
 		$pages = (isset($data['hierarchical']) ? $walker['pages'] : (int)$query->found_posts / $limit);
+		// Filtering dropdown data for post list.
+		$filtering = $this->fetch_filter_data($data);
 
 		if($posts) {
 			for ($i=0; $i < sizeof($posts); $i++) {
@@ -610,6 +612,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			"results" => $posts,
+			"filtering" => $filtering,
 			"pagination" => array(
 				"total" => $query->found_posts,
 				"page_size" => $limit,

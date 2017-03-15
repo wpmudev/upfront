@@ -993,9 +993,12 @@ var _alpha = "alpha",
 							});
 							me.trigger('reset', me);
 						}
-					}
-					else
+					} else
 						me.reset(response.data.results);
+					if (response.data.filtering) {
+						// Filtering dropdown data for post list.
+						me.filtering = response.data.filtering;
+					}
 				}
 			);
 		},
@@ -1645,20 +1648,6 @@ var _alpha = "alpha",
 		}
 	}),
 
-	Filter = Backbone.Model.extend({
-		defaults: {
-			value: '',
-			label: ''
-		},
-	}),
-
-	FilterList = WPCollection.extend({
-		model: Filter,
-		collectionName: 'filter_data',
-		initialize: function(models, options){
-		},
-	}),
-
 	Term =  WPModel.extend({
 		modelName: 'term',
 		defaults: {
@@ -1811,7 +1800,6 @@ return {
       "Comment": Comment,
       "Comments": Comments,
       "Meta": Meta,
-      "Filter": Filter,
       "Term": Term,
       "User": User,
       "ImageVariant" : ImageVariant
@@ -1824,7 +1812,6 @@ return {
       "Wrappers": Wrappers,
       "CommentList": CommentList,
       "MetaList": MetaList,
-      "FilterList": FilterList,
       "PostList": PostList,
       "TermList": TermList,
       "ImageVariants" : ImageVariants,
