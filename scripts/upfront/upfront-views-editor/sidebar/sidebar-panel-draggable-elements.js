@@ -20,6 +20,10 @@
                     new SidebarPanel_Settings_Section_PluginsElements({"model": this.model})
                 ]);
 
+								if (!this.reset_modules) {
+									this.reset_modules = _.debounce(this._reset_modules, 500);
+								}
+
                 this.elements = _([]);
                 Upfront.Events.on("command:layout:save", this.on_save, this);
                 Upfront.Events.on("command:layout:save_as", this.on_save, this);
@@ -45,6 +49,9 @@
             },
             on_render: function () {
                 var me = this;
+								if (!this.reset_modules) {
+									this.reset_modules = _.debounce(this._reset_modules, 500);
+								}
                 this.reset_modules();
 								if (false === Upfront.plugins.isForbiddenByPlugin('toggle first sidebar panel')) {
                     setTimeout( function() {
@@ -90,11 +97,15 @@
                     this.$el.find('.sidebar-panel-tabspane').removeClass('sidebar-panel-tabspane-hidden');
                 }
             },
-            reset_modules: function () {
+						elements_are_initialized: function(elements) {
+							return elements.size() > 0;
+						},
+            _reset_modules: function () {
                 var regions = this.model.get("regions"),
                     region = regions ? regions.get_by_name('shadow') : false,
                     elements = this.get_elements()
                     ;
+								if (false === this.elements_are_initialized(elements)) return;
                 this.update_sections();
                 if (!regions) return false;
                 if ( ! region ){
@@ -105,20 +116,20 @@
                     });
                     this.model.get('regions').add( region );
                 }
-                //console.log(elements.value())
-                if ( region.get("modules").length != elements.size() ) {
-                    var modules = region.get("modules");
-                    elements.each(function (element) {
-                        var found = false;
-                        modules.forEach(function(module){
-                            if ( module.get('shadow') == element.shadow_id )
-                                found = true;
-                        });
-                        if ( ! found ){
-                            element.add_element();
-                        }
-                    }, this);
-                }
+								if ( region.get("modules").length === elements.size()) return;
+								var self = this;
+								var modules = region.get("modules");
+								elements.each(function (element) {
+									var found = false;
+									modules.forEach(function(module){
+										if ( module.get('shadow') == element.shadow_id )
+											found = true;
+									});
+									if ( ! found ){
+										element.add_element();
+									}
+								}, self);
+								$('#elements_panel_temp_overlay').remove();
             }
         });
 
