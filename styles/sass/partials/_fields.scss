@@ -198,19 +198,18 @@ input.upfront-field-text:hover,
 .upfront-field-select:hover {
 }
 .upfront-field-select:after {
-	content: "\f347";
+	content: "";
 	display: block;
 	position: absolute;
 	top: 0;
-	right: 4px;
+	right: 0;
 	border-top: 0;
 	border-right: 0;
-	border-left: 1px solid rgb(144,144,144);
-	padding-left: 4px;
-	font-family: dashicons;
-	font-size: 8px;
-	color: rgb(33,33,33);
-	line-height: 22px;
+	border-left: 1px solid #909090;
+	height: 22px;
+	background: url(../img/uf-core-el-sprite_new.svg);
+	background-position: -515px -41px;
+	width: 16px;
 }
 .upfront-field-select-disabled:after {
 }

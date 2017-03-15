@@ -45,14 +45,19 @@
 	float: none;
 	display: inline-block;
 	margin: 0;
+	background: url(../img/uf-core-el-sprite_new.svg);
+	background-position: -442px -342px;
+	transform: scaleX(-1);
 }
 
 .upfront-popup-posts #upfront-popup-top .upfront-icon-popup-search:after {
-	content: "\f347";
-	font-size: 8px;
+	content: "";
 	float: right;
-	line-height: 22px;
-	font-family: dashicons;
+	background: url(../img/uf-core-el-sprite_new.svg);
+	background-position: -519px -47px;
+	width: 8px;
+	height: 8px;
+	margin-top: 5px;
 	margin-right: -2px;
 }
 
@@ -301,14 +306,15 @@
 
 /* Homepage Icon */
 .upfront-popup-posts #upfront-list.upfront-page-list .upfront-list-items .upfront-list_item[data-post_id="home"]:before {
-	content: "\f102";
+	content: "";
 	width: 12px;
 	height: 12px;
 	float: left;
-	margin-top: 11px;
-	margin-right: 7px;
-	font-family: dashicons;
+	margin-top: 14px;
+	margin-right: 9px;
 	font-size: 14px;
+	background: url(../img/uf-core-el-sprite_new.svg);
+	background-position: -414px -284px;
 }
 
 /* Homepage Title */
@@ -548,31 +554,28 @@ a.editaction.trash {
 	display: block;
 	width:15px;
 	height:100%;
-	background-image: url(../img/uf-ui-sprite.svg);
+	background-image: url('../img/uf-core-el-sprite_new.svg');
 }
 
 .upfront-list_item-component.upfront-date.post-status-publish:before {
-	background-position: -1231px -224px;
+	content: none;
 }
 
 .upfront-list_item:hover .upfront-list_item-component.upfront-date.post-status-publish:before {
-	background-position: -1231px -260px;
 }
 
 .upfront-list_item-component.upfront-date.post-status-draft:before {
-	background-position: -1336px -224px;
+	background-position: -1437px -325px;
 }
 
 .upfront-list_item:hover .upfront-list_item-component.upfront-date.post-status-draft:before {
-	background-position: -1336px -260px;
 }
 
 .upfront-list_item-component.upfront-date.post-status-future:before {
-	background-position: -1441px -224px;
+	background-position: -1433px -294px;
 }
 
 .upfront-list_item:hover .upfront-list_item-component.upfront-date.post-status-future:before {
-	background-position: -1441px -260px;
 }
 
 .upfront-list_item-component.upfront-date.post-status-trash:before {
