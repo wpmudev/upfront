@@ -28,17 +28,17 @@
 	border: 1px solid #f0f0f0;
 	border-radius: 3px;
 	width: 44px;
-	height: 30px;
+	height: 27px;
 	padding: 4px 9px;
 	display: inline-block;
-	margin: 10px;
+	margin: 12px;
 	margin-left: 50px;
 	cursor: pointer;
 }
 
 .upfront-popup-posts #upfront-popup-top .upfront-icon-popup-search:hover, .upfront-popup-posts #upfront-popup-top .upfront-icon-popup-search.upfront-popup-icon-search-open {
 	background: rgb(230, 230, 230);
-	border: rgb(217, 217, 217);
+	border: 1px solid rgb(217, 217, 217);
 }
 
 .upfront-popup-posts #upfront-popup-top .upfront-icon-popup-search:before {
@@ -572,7 +572,7 @@ a.editaction.trash {
 }
 
 .upfront-list_item-component.upfront-date.post-status-future:before {
-	background-position: -1433px -294px;
+	background-position: -1436px -294px;
 }
 
 .upfront-list_item:hover .upfront-list_item-component.upfront-date.post-status-future:before {
