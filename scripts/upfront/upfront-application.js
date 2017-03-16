@@ -320,86 +320,87 @@ var LayoutEditorSubapplication = Subapplication.extend({
 
 
 	set_up_event_plumbing_before_render: function () {
+		var ue = Upfront.Events;
+		var gr_ed = Upfront.Behaviors.GridEditor;
+		var lay_ed = Upfront.Behaviors.LayoutEditor;
 		// Set up behavior
-		this.listenTo(Upfront.Events, "entity:module:after_render", Upfront.Behaviors.GridEditor.create_resizable);
-		this.listenTo(Upfront.Events, "entity:module:after_render", Upfront.Behaviors.GridEditor.create_draggable);
-		this.listenTo(Upfront.Events, "entity:module_group:after_render", Upfront.Behaviors.GridEditor.create_resizable);
-		this.listenTo(Upfront.Events, "entity:module_group:after_render", Upfront.Behaviors.GridEditor.create_draggable);
-		this.listenTo(Upfront.Events, "entity:wrapper:after_render", Upfront.Behaviors.GridEditor.create_wrapper_resizable);
-		this.listenTo(Upfront.Events, "entity:object:after_render", Upfront.Behaviors.GridEditor.create_resizable);
-		this.listenTo(Upfront.Events, "entity:object:after_render", Upfront.Behaviors.GridEditor.create_draggable);
+		this.listenTo(ue, "entity:module:after_render", gr_ed.create_resizable);
+		this.listenTo(ue, "entity:module:after_render", gr_ed.create_draggable);
+		this.listenTo(ue, "entity:module_group:after_render", gr_ed.create_resizable);
+		this.listenTo(ue, "entity:module_group:after_render", gr_ed.create_draggable);
+		this.listenTo(ue, "entity:wrapper:after_render", gr_ed.create_wrapper_resizable);
+		this.listenTo(ue, "entity:object:after_render", gr_ed.create_resizable);
+		this.listenTo(ue, "entity:object:after_render", gr_ed.create_draggable);
 		// Enable resizables and draggables
 		//Upfront.Behaviors.GridEditor.toggle_resizables(true);
 		//Upfront.Behaviors.GridEditor.toggle_draggables(true);
 
-		this.listenTo(Upfront.Events, "entity:region:after_render", Upfront.Behaviors.GridEditor.create_region_resizable);
-		this.listenTo(Upfront.Events, "entity:region:after_render", Upfront.Behaviors.GridEditor.create_region_draggable);
-		this.listenTo(Upfront.Events, "entity:region_container:after_render", Upfront.Behaviors.LayoutEditor.create_mergeable);
-		this.listenTo(Upfront.Events, "entity:region_container:after_render", Upfront.Behaviors.GridEditor.create_region_container_resizable);
-		this.listenTo(Upfront.Events, "entity:region_sub_container:after_render", Upfront.Behaviors.GridEditor.create_region_container_resizable);
+		this.listenTo(ue, "entity:region:after_render", gr_ed.create_region_resizable);
+		this.listenTo(ue, "entity:region:after_render", gr_ed.create_region_draggable);
+		this.listenTo(ue, "entity:region_container:after_render", lay_ed.create_mergeable);
+		this.listenTo(ue, "entity:region_container:after_render", gr_ed.create_region_container_resizable);
+		this.listenTo(ue, "entity:region_sub_container:after_render", gr_ed.create_region_container_resizable);
 
-		if ( !Upfront.Behaviors.GridEditor.grid ) {
-			Upfront.Behaviors.GridEditor.init();
+		if ( !gr_ed.grid ) {
+			gr_ed.init();
 		}
-		this.listenTo(Upfront.Events, "layout:after_render", Upfront.Behaviors.GridEditor.init);
+		this.listenTo(ue, "layout:after_render", gr_ed.init);
 		if ( false === Upfront.plugins.isForbiddenByPlugin('show import image dialog') ) {
-			this.listenTo(Upfront.Events, "layout:after_render", Upfront.Behaviors.LayoutEditor.import_image_dialog);
+			this.listenTo(ue, "layout:after_render", lay_ed.import_image_dialog);
 		}
 	},
 
 	set_up_event_plumbing_after_render: function () {
-		// Set up properties
-		//this.listenTo(Upfront.Events, "entity:activated", this.create_properties);
-		//this.listenTo(Upfront.Events, "entity:deactivated", this.destroy_properties);
+		var ue = Upfront.Events;
+		var gr_ed = Upfront.Behaviors.GridEditor;
+		var lay_ed = Upfront.Behaviors.LayoutEditor;
+		var gl10n = Upfront.Settings.l10n.global.application;
 
 		// Layout manipulation
-		this.listenTo(Upfront.Events, "command:exit", this.destroy_editor);
-		this.listenTo(Upfront.Events, "command:layout:save", this.save_layout);
-		this.listenTo(Upfront.Events, "command:layout:save_post_layout", this.save_post_layout);
-		this.listenTo(Upfront.Events, "command:layout:save_meta", this.save_layout_meta);
-		this.listenTo(Upfront.Events, "command:layout:delete_layout", this.delete_layout);
-		this.listenTo(Upfront.Events, "command:layout:reset_changes", this.reset_changes);
-		this.listenTo(Upfront.Events, "command:layout:layout_changes", this.save_layout_changes);
-		this.listenTo(Upfront.Events, "command:layout:save_as", this.save_layout_as);
-		this.listenTo(Upfront.Events, "command:layout:preview", this.preview_layout);
-		this.listenTo(Upfront.Events, "command:layout:publish", this.publish_layout);
+		this.listenTo(ue, "command:exit", this.destroy_editor);
+		this.listenTo(ue, "command:layout:save", this.save_layout);
+		this.listenTo(ue, "command:layout:save_post_layout", this.save_post_layout);
+		this.listenTo(ue, "command:layout:save_meta", this.save_layout_meta);
+		this.listenTo(ue, "command:layout:delete_layout", this.delete_layout);
+		this.listenTo(ue, "command:layout:reset_changes", this.reset_changes);
+		this.listenTo(ue, "command:layout:layout_changes", this.save_layout_changes);
+		this.listenTo(ue, "command:layout:save_as", this.save_layout_as);
+		this.listenTo(ue, "command:layout:preview", this.preview_layout);
+		this.listenTo(ue, "command:layout:publish", this.publish_layout);
 
 		// Region
-		this.listenTo(Upfront.Events, "command:region:edit_toggle", Upfront.Behaviors.GridEditor.toggle_region_resizable);
-		this.listenTo(Upfront.Events, "command:region:fixed_edit_toggle", Upfront.Behaviors.GridEditor.toggle_region_resizable);
-		this.listenTo(Upfront.Events, "command:region:fixed_edit_toggle", Upfront.Behaviors.GridEditor.toggle_region_draggable);
+		this.listenTo(ue, "command:region:edit_toggle", gr_ed.toggle_region_resizable);
+		this.listenTo(ue, "command:region:fixed_edit_toggle", gr_ed.toggle_region_resizable);
+		this.listenTo(ue, "command:region:fixed_edit_toggle", gr_ed.toggle_region_draggable);
 
 		// Selection
-		this.listenTo(Upfront.Events, "command:selection:remove", Upfront.Behaviors.LayoutEditor.remove_selections);
+		this.listenTo(ue, "command:selection:remove", lay_ed.remove_selections);
 
 		// Undo / Redo
-		this.listenTo(Upfront.Events, "entity:activated", Upfront.Behaviors.LayoutEditor.create_undo);
-		this.listenTo(Upfront.Events, "entity:resize_start", Upfront.Behaviors.LayoutEditor.create_undo);
-		this.listenTo(Upfront.Events, "entity:drag_start", Upfront.Behaviors.LayoutEditor.create_undo);
-		this.listenTo(Upfront.Events, "entity:removed:before", Upfront.Behaviors.LayoutEditor.create_undo);
-		this.listenTo(Upfront.Events, "entity:region:activated", Upfront.Behaviors.LayoutEditor.create_undo);
+		this.listenTo(ue, "entity:activated", lay_ed.create_undo);
+		this.listenTo(ue, "entity:resize_start", lay_ed.create_undo);
+		this.listenTo(ue, "entity:drag_start", lay_ed.create_undo);
+		this.listenTo(ue, "entity:removed:before", lay_ed.create_undo);
+		this.listenTo(ue, "entity:region:activated", lay_ed.create_undo);
 
-		this.listenTo(Upfront.Events, "command:undo", Upfront.Behaviors.LayoutEditor.apply_history_change);
-		this.listenTo(Upfront.Events, "command:redo", Upfront.Behaviors.LayoutEditor.apply_history_change);
+		this.listenTo(ue, "command:undo", lay_ed.apply_history_change);
+		this.listenTo(ue, "command:redo", lay_ed.apply_history_change);
 
 		// Set up entity settings (modules, for now)
-		this.listenTo(Upfront.Events, "entity:settings:activate", this.create_settings);
-		this.listenTo(Upfront.Events, "entity:settings:deactivate", this.destroy_settings);
-		this.listenTo(Upfront.Events, "entity:removed:after", this.destroy_settings);
+		this.listenTo(ue, "entity:settings:activate", this.create_settings);
+		this.listenTo(ue, "entity:settings:deactivate", this.destroy_settings);
+		this.listenTo(ue, "entity:removed:after", this.destroy_settings);
 
 		// Set up entity context menu
-		this.listenTo(Upfront.Events, "entity:contextmenu:activate", this.create_menu);
-		this.listenTo(Upfront.Events, "entity:contextmenu:deactivate", this.destroy_menu);
-		//this.listenTo(Upfront.Events, "entity:removed:after", this.destroy_settings);
-
-		//this.layout_views.listenTo(Upfront.Events, "upfront:posts:post:post_updated", this.layout_view.render);
+		this.listenTo(ue, "entity:contextmenu:activate", this.create_menu);
+		this.listenTo(ue, "entity:contextmenu:deactivate", this.destroy_menu);
 
 		// Showing the "busy" overlay on saving.
 		var loading = false,
 			start = function () {
 				loading = new Upfront.Views.Editor.Loading({
-					loading: Upfront.Settings.l10n.global.application.saving,
-					done: Upfront.Settings.l10n.global.application.saving_success,
+					loading: gl10n.saving,
+					done: gl10n.saving_success,
 					fixed: true
 				});
 				loading.render();
@@ -410,26 +411,26 @@ var LayoutEditorSubapplication = Subapplication.extend({
 			},
 			stop = function (success) {
 				if (!success) {
-					loading.update_loading_text(Upfront.Settings.l10n.global.application.saving_error);
+					loading.update_loading_text(gl10n.saving_error);
 				}
 				loading.on_finish(function(){
-					Upfront.Events.trigger("command:layout:save_done", success);
+					ue.trigger("command:layout:save_done", success);
 				});
 				if (!success) {
-					loading.done(false, Upfront.Settings.l10n.global.application.saving_error);
+					loading.done(false, gl10n.saving_error);
 				} else {
 					loading.done();
 				}
 			}
 		;
-		this.listenTo(Upfront.Events, "command:layout:save_start", start);
-		this.listenTo(Upfront.Events, "command:layout:save_success", function(){ stop(true); });
-		this.listenTo(Upfront.Events, "command:layout:save_error", function(){ stop(false); });
-		this.listenTo(Upfront.Events, "command:themefontsmanager:open", Upfront.Behaviors.LayoutEditor.open_theme_fonts_manager);
-		this.listenTo(Upfront.Events, "command:layout:edit_global_regions", Upfront.Behaviors.LayoutEditor.open_global_region_manager);
+		this.listenTo(ue, "command:layout:save_start", start);
+		this.listenTo(ue, "command:layout:save_success", function(){ stop(true); });
+		this.listenTo(ue, "command:layout:save_error", function(){ stop(false); });
+		this.listenTo(ue, "command:themefontsmanager:open", lay_ed.open_theme_fonts_manager);
+		this.listenTo(ue, "command:layout:edit_global_regions", lay_ed.open_global_region_manager);
 
-		this.listenTo(Upfront.Events, "command:layout:save_success", Upfront.Behaviors.LayoutEditor.clean_region_css);
-		this.listenTo(Upfront.Events, "command:layout:save_success", Upfront.Behaviors.LayoutEditor.clean_global_regions);
+		this.listenTo(ue, "command:layout:save_success", lay_ed.clean_region_css);
+		this.listenTo(ue, "command:layout:save_success", lay_ed.clean_global_regions);
 	},
 
 	create_properties: function (view, model) {
@@ -819,7 +820,8 @@ var Application = new (Backbone.Router.extend({
 		$(document).trigger("upfront-load");
 	},
 
-	start: function (mode) {
+	upfront_initialized: false,
+	initialize_upfront: function() {
 		// Replace _.template only when we actually boot Upfront, otherwise some other scripts using it might break
 		var _tpl = _.template;
 		_.template = function (tpl, data) {
@@ -844,13 +846,26 @@ var Application = new (Backbone.Router.extend({
 				$('#upfront-main-css').remove();
 			});
 
+		$('#wpadminbar').hide();
+		$('html').attr('style', 'margin-top: 0 !important;');
+	},
+
+	start_previous: function() {
+		this.start(this.mode.last);
+	},
+
+	start: function (mode) {
+		if (false === this.upfront_initialized) {
+			this.initialize_upfront();
+			this.upfront_initialized = true;
+		}
+
 		if (!mode) mode = this.MODE.DEFAULT;
 		if (this.mode.current == mode) return false;
 
-		$('#wpadminbar').hide();
-		$('html').attr('style', 'margin-top: 0 !important;');
 
 		this.set_current(mode);
+
 		if (!(this.current_subapplication && this.current_subapplication.start)) {
 			Upfront.Util.log("Can't boot invalid subapplication");
 		}
