@@ -142,7 +142,7 @@
 
                 this.$el.html(this.template);
                 this.$el.find('.sidebar-panel-content').html(typography_section.el);
-				
+
 				var $sidebar_panel_content = this.$el.find('.sidebar-panel-content');
 				// Add JS Scrollbar.
 				perfectScrollbar.withDebounceUpdate(
@@ -155,7 +155,7 @@
 					// Initialize.
 					true
 				);
-	
+
 				var me = this;
 				// When color spectrum is shown, set positions
 				Upfront.Events.on("color:spectrum:show", function() {
@@ -210,13 +210,19 @@
             "className": "sidebar-commands sidebar-commands-responsive-control sidebar-commands-control",
             initialize: function () {
                 if (Upfront.Application.user_can_modify_layout()) {
-                    this.commands = _([
-                        new Commands.Command_ResponsiveUndo({"model": this.model}),
-                        new Commands.Command_ResponsiveRedo({"model": this.model}),
-                        new Commands.Command_ToggleGrid({"model": this.model}),
-                        new Commands.Command_SaveLayout(),
-                        new Commands.Command_StopResponsiveMode()
-                    ]);
+									var cs = [
+										new Commands.Command_ResponsiveUndo({"model": this.model}),
+										new Commands.Command_ResponsiveRedo({"model": this.model}),
+										new Commands.Command_ToggleGrid({"model": this.model})
+									];
+
+									if (false === Upfront.plugins.isForbiddenByPlugin('show save layout command')) {
+										cs.push(new Commands.Command_SaveLayout());
+									}
+									Upfront.plugins.call('insert-responsive-save-buttons', {commands: cs, model: this.model});
+
+									cs.push(new Commands.Command_StopResponsiveMode());
+									this.commands = _(cs);
                 } else {
                     this.commands = _([
                         new Commands.Command_StopResponsiveMode()
