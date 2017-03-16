@@ -94,6 +94,16 @@
 							contentSection.removeClass('upfront-filter-panel-open');
 							return filterSection.slideToggle('fast');
 						},
+	
+						// Close filter panel and button styling.
+						hide_filter_panel: function() {
+							var filterSection = $('#upfront-entity_list-search');
+							var contentSection = filterSection.parent();
+							contentSection.removeClass('upfront-filter-panel-open');
+							$('.upfront-popup-icon-search-open').removeClass('upfront-popup-icon-search-open');
+							filterSection.hide();
+						},
+
 						dispatch_panel_creation: function (data) {
 								var me = this,
 										$el = data ? $(data) : me.$popup.top.find('.upfront-tabs li.active'),
@@ -107,6 +117,9 @@
 
 								me.$popup.top.find('.upfront-tabs li').removeClass('active');
 								$el.addClass('active');
+
+								// Reset filter panel on panel change.
+								this.hide_filter_panel();
 
 								this.currentPanel = panel;
 
@@ -258,41 +271,7 @@
 										me.$popup.bottom.html(views.pagination.$el);
 										views.pagination.setElement(views.pagination.$el);
 								}
-						},
-						// Handle filtering.
-						handle_filter: function(e) {
-							// Get values of filters UI.
-							var filterValues = this.get_filter_values();
-							// Store Original Models.
-							if (typeof this.originalModels === 'undefined') {
-								this.originalModels = this.collection.models;
-							}
-							// Object for fetching posts.
-							filterObject = {
-								post_status: filterValues.post_status,
-								post_date: filterValues.post_date,
-								category: filterValues.category
-							};
-							filterObject[name] = value;
-							// Get models that match filter.
-							var newModels = this.collection.where(filterObject);
-							this.collection.reset(newModels);
-						},
-
-					get_filter_values: function() {
-							//temp
-							post_status = 'draft';
-							//temp
-							post_date = 'all';
-							//temp
-							category = 'all';
-							return {
-								post_status: post_status,
-								post_date: post_date,
-								category: category
-							};
-						},
-
+						}
 						
 				});
 
