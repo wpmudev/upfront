@@ -480,6 +480,8 @@ div.preset-manager-panel div.borderColor.gravatar_border_color {
 	margin-top: -7px;
 }
 
+/* Content part styles */
+
 div.preset-manager-panel .uf-posts-content-length {
 	font-size: 11px;
     display: block;
@@ -497,6 +499,8 @@ div.preset-manager-panel .uf-posts-content-length input {
 	margin-right: 3px;
 	display: inline-block;
 }
+
+/* Date part styles */
 
 div.preset-manager-panel .php-date-format {
 	width: 140px;
@@ -516,6 +520,44 @@ div.preset-manager-panel .php-date-reference {
 	float: left;
 	position: relative;
 	top: 25px;
+}
+
+/* Author part styles */
+
+div.preset-manager-panel .gravatar-size {
+	position: relative;
+    border-left: 2px solid #dae6f2;
+    padding-left: 10px;
+	width: 75px;
+	top: 5px;
+}
+
+div.preset-manager-panel .gravatar-size input {
+	width: 75px;
+	position: relative;
+	top: -4px;
+}
+
+div.preset-manager-panel .gravatar-size label {
+	color: #96acc3;
+}
+
+div.preset-manager-panel .gravatar-border-width {
+	font-size: 11px;
+}
+
+div.preset-manager-panel .gravatar-border-width,
+div.preset-manager-panel .gravatar-border-type
+div.preset-manager-panel .gravatar-border-color {
+	padding-top: 10px;
+}
+
+div.preset-manager-panel .gravatar-border-color .sp-replacer {
+	top: 12px;
+}
+
+div.preset-manager-panel .gravatar-radius-number {
+	top: 13px;
 }
 
 .reorder-overlay {

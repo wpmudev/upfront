@@ -128,25 +128,6 @@ define([
 			;
 			
 			modules.push({
-				moduleType: 'Toggle',
-				options: {
-					label: l10n.modules.gravatar_title,
-					name: 'gravatar-use',
-					default_value: 1,
-					as_field: false,
-					classStyle: 'gravatar-use',
-					fields: [
-						'gravatar-size', // Part property
-						'gravatar-border-width',
-						'gravatar-border-type',
-						'gravatar-border-color',
-						'gravatar-radius',
-						'gravatar-radius-number'
-					]
-				}
-			});
-			
-			modules.push({
 				moduleType: 'Typography',
 				options: {
 					toggle: true,
@@ -164,6 +145,25 @@ define([
 				}
 			});
 			
+			modules.push({
+				moduleType: 'Toggle',
+				options: {
+					label: l10n.modules.gravatar_title,
+					name: 'gravatar-use',
+					default_value: 1,
+					as_field: false,
+					classStyle: 'gravatar-use',
+					fields: [
+						'gravatar-size', // Part property
+						'gravatar-border-width',
+						'gravatar-border-type',
+						'gravatar-border-color',
+						'gravatar-radius',
+						'gravatar-radius-number'
+					]
+				}
+			});
+
 			return modules;
 		},
 		get_fields: function () {
