@@ -17,7 +17,7 @@
 	top: 15px;
 	right: 33px;
 	color: #737373;
-	font-weight: 400;
+	font-weight: 500;
 	font-size: 24px;
 }
 
@@ -46,7 +46,7 @@
 	display: inline-block;
 	margin: 0;
 	background: url(../img/uf-core-el-sprite_new.svg);
-	background-position: -442px -342px;
+	background-position: -442px -343px;
 	transform: scaleX(-1);
 }
 
@@ -794,6 +794,7 @@ a.editaction.trash {
 	text-transform: none;
 	padding: 0 9px;
 	float: none;
+	font-weight: 600;
 }
 
 
