@@ -739,6 +739,7 @@ define([
 				options: {
 					label: l10n.modules.single_category,
 					property: 'category-single-use',
+					module_class: 'category-padding-margin',
 					name: 'category-single-use',
 					default_value: 1,
 					as_field: false,

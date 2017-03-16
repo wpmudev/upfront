@@ -599,13 +599,94 @@ div.preset-manager-panel .uf-posts-image-resize {
 
 div.preset-manager-panel .category-show-max,
 div.preset-manager-panel .category-separate {
-	width: 48%;
+	width: 50%;
 	display: inline-block;
 }
 
+div.preset-manager-panel .category-show-max inline,
+div.preset-manager-panel .category-separate inline {
+	width: 95%;
+}
+
 div.preset-manager-panel .category-show-max label,
-div.preset-manager-panel .category-separate label {
+div.preset-manager-panel .category-separate label,
+div.preset-manager-panel .category-padding-top-bottom label,
+div.preset-manager-panel .category-margin-top-bottom label,
+div.preset-manager-panel .category-background label {
 	color: #96acc3;
+}
+
+div.preset-manager-panel .category-padding-top-bottom,
+div.preset-manager-panel .category-margin-top-bottom {
+	width: 48%;
+	float: left;
+	border-left: 2px solid #dae6f2;
+    padding-left: 10px;
+	clear: left;
+	font-size: 11px;
+	position: relative;
+}
+
+div.preset-manager-panel .category-background {
+	border-left: 2px solid #dae6f2;
+    padding-left: 10px;
+}
+
+div.preset-manager-panel .category-background label {
+	position: relative;
+	top: 5px;
+}
+
+div.preset-manager-panel .category-padding-left-right,
+div.preset-manager-panel .category-margin-left-right {
+	width: 48%;
+	float: left;
+	font-size: 11px;
+	margin-top: 28px;
+	position: relative;
+}
+
+div.preset-manager-panel .category-margin-left-right {
+	margin-top: 24px;
+}
+
+div.preset-manager-panel .category-padding-top-bottom {
+	top: 5px;
+}
+
+div.preset-manager-panel .category-padding-top-bottom input,
+div.preset-manager-panel .category-margin-top-bottom input,
+div.preset-manager-panel .category-padding-left-right input,
+div.preset-manager-panel .category-margin-left-right input {
+	margin-left: 15px;
+	width: 45px;
+}
+
+div.preset-manager-panel .category-padding-top-bottom:before,
+div.preset-manager-panel .category-margin-top-bottom:before,
+div.preset-manager-panel .category-padding-left-right:before,
+div.preset-manager-panel .category-margin-left-right:before {
+	background-image: url(../../../img/uf-core-el-sprite_new.svg);
+    width: 21px;
+    height: 15px;
+    content: "";
+    display: block;
+    position: absolute;
+    z-index: 11;
+}
+
+div.preset-manager-panel .category-padding-top-bottom:before,
+div.preset-manager-panel .category-margin-top-bottom:before {
+	background-position: -660px -204px;
+	top: 29px;
+    left: 3px;
+}
+
+div.preset-manager-panel .category-padding-left-right:before,
+div.preset-manager-panel .category-margin-left-right:before {
+	background-position: -660px -236px;
+	top: 5px;
+	left: -7px;
 }
 
 .reorder-overlay {
@@ -618,6 +699,10 @@ div.preset-manager-panel .category-separate label {
 	height: 100%;
 	top:0;
 	left:0;
+}
+
+div.preset-manager-panel .category-padding-margin {
+	margin-top: 10px;
 }
 
 .reorder-overlay p:hover {
