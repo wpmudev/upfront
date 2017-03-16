@@ -126,18 +126,28 @@ input.upfront-field-text:hover,
 }
 */
 /* end chrome input[type=number] styling */
+.upfront-field-wrap-select {
+	opacity: 0.75;
+}
+.upfront-field-wrap-select:hover {
+	/* Causes flickering issues */
+	/* opacity: 0.85; */
+}
+.upfront-field-wrap-select-expanded {
+	opacity: 1;
+}
 .upfront-field-select, .upfront-field-select-options {
-	background: rgb(242, 249, 255);
-	border: 1px solid rgb(183, 201, 217);
+	background: rgb(255, 255, 255);
+	border: 1px solid rgb(144,144,144);
 	border-radius: 3px;
 }
 .upfront-field-select {
 	display: block;
-	height: 26px;
-	max-height: 26px;
+	height: 22px;
+	max-height: 22px;
 	margin: 0;
-	color: #2F475F;
-	font-size: 11px;
+	color: rgb(33,33,33);
+	font-size: 10px;
 	font-family: Verdana, sans-serif;
 	line-height: 22px;
 	position: relative;
@@ -149,7 +159,7 @@ input.upfront-field-text:hover,
 	color: rgb(96, 127, 153);
 	font-size: 11px;
 	font-family: verdana, sans-serif;
-	line-height: 22px;
+	line-height: 20px;
 }
 .ulinkpanel-dark .upfront-field-multiple label,
 .ulinkpanel .upfront-field-multiple label {
@@ -175,8 +185,7 @@ input.upfront-field-text:hover,
 }
 
 .upfront-field-select-disabled {
-	border-color: rgb(153, 181, 204);
-	color: rgb(153, 181, 204);
+	opacity: 0.4;
 }
 .upfront-field-select-expanded {
 	overflow: visible;
@@ -187,20 +196,22 @@ input.upfront-field-text:hover,
 	margin-bottom: -1px;
 }*/
 .upfront-field-select:hover {
-	border-color: rgb(96, 127, 153);
 }
 .upfront-field-select:after {
-	content: " ";
+	content: "";
 	display: block;
 	position: absolute;
-	top: 11px;
-	right: 11px;
-	border-top: 4px solid rgb(96, 127, 153);
-	border-left: 4px solid transparent;
-	border-right: 4px solid transparent;
+	top: 0;
+	right: 0;
+	border-top: 0;
+	border-right: 0;
+	border-left: 1px solid #909090;
+	height: 22px;
+	background: url(../img/uf-core-el-sprite_new.svg);
+	background-position: -515px -41px;
+	width: 16px;
 }
 .upfront-field-select-disabled:after {
-	border-top-color: rgb(153, 181, 204);
 }
 .upfront-field-select-expanded:after,
 .upfront-field-select-multiple:hover:after {
@@ -208,9 +219,8 @@ input.upfront-field-text:hover,
 }
 .upfront-field-select .upfront-field-select-value {
 	margin: 0;
-	padding: 0px 20px 0px 10px;
-	height: 24px;
-	box-shadow: inset 0 2px 0 rgb(242, 249, 255);
+	padding: 0px 20px 0px 5px;
+	height: 21px;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
@@ -222,13 +232,11 @@ input.upfront-field-text:hover,
 .upfront-field-select-options {
 	list-style: none;
 	/*float: left;*/
-	background: #fafdff;
-	box-shadow: 0 0 3px rgba(96, 127, 153, 0.5);
-	border-color: #7d99b3;
-	padding: 5px 0 !important;
+	background: #fff;
+	border-color: rgb(144,144,144);
 	margin: 10px -1px 0 !important;
 	position: relative;
-	max-height: 26px;
+	max-height: 22px;
 	z-index: 10;
 	overflow-x: hidden;
 	overflow-y: scroll;
@@ -267,7 +275,7 @@ input.upfront-field-text:hover,
 	content:normal;
 }
 .upfront-field-select-option label {
-	font:normal 11px/2 Verdana, sans-serif;
+	font:normal 10px/2 Verdana, sans-serif;
 }
 .upfront-field-select-single .upfront-field-select-option-selected {
 
@@ -285,21 +293,24 @@ input.upfront-field-text:hover,
 	margin: auto;
 }
 .upfront-field-select-zebra .upfront-field-select-option-even {
-	background: rgb(218, 231, 242);
 }
 .upfront-object-content div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap ul .upfront-field-select-option:hover label,
 .upfront-field-select-option:hover {
-	background: #d4dee8;
-	color: #8899a9;
+	background: rgb(231,234,235);
+	color: rgb(33,33,33);
 }
 .upfront-field-select-option label {
 	display: block;
 	font-weight: normal;
-	padding: 2px 20px 2px 10px;
+	padding: 0 20px 0 5px;
 	margin: 0;
+	color: rgb(168,168,168);
+}
+.upfront-field-select-option:hover label {
+	color: rgb(33,33,33);
 }
 .upfront-field-select-option-selected label {
-  color: #99b5cc;
+	color: rgb(168,168,168);
 }
 .upfront-field-select-option label .upfront-field-icon {
 	margin-top: 0;
@@ -308,7 +319,7 @@ input.upfront-field-text:hover,
 .upfront-field-select-option-disabled,
 .upfront-field-select-option-disabled:hover {
 	background: none;
-	color: rgb(153, 181, 204);
+	opacity: 0.4;
 }
 .upfront-field-checkbox, .upfront-field-radio {
 	width: 12px;
@@ -421,7 +432,7 @@ input.upfront-field-text:hover,
 .upfront-field-multiple label .upfront-field-label-text {
 	display: table-cell;
 	vertical-align: middle;
-    cursor: pointer;
+	cursor: pointer;
 }
 .upfront-field-multiple-vertical label {
 	display: block;
@@ -432,7 +443,7 @@ input.upfront-field-text:hover,
 	max-height: 30px;
 	padding: 3px 0;
 	overflow: hidden;
-    line-height: 13px;
+	line-height: 13px;
 }
 .upfront-field-icon {
 	display: inline-block;
@@ -471,18 +482,18 @@ input.upfront-field-text:hover,
 }
 /*.upfront-additive_multiselection {
 	color: rgb(96, 127, 153);
-    cursor: pointer;
-    display: inline-block;
-    font-family: verdana,sans-serif;
-    font-size: 11px;
-    margin: 0;
-    overflow: hidden;
-    position: relative;
-    background: none repeat scroll 0 0 #e6f3fe;
-    border: 1px solid rgb(163, 191, 217);
-    border-radius: 3px;
-    padding: 0 4px;
-    width: 100%;
+	cursor: pointer;
+	display: inline-block;
+	font-family: verdana,sans-serif;
+	font-size: 11px;
+	margin: 0;
+	overflow: hidden;
+	position: relative;
+	background: none repeat scroll 0 0 #e6f3fe;
+	border: 1px solid rgb(163, 191, 217);
+	border-radius: 3px;
+	padding: 0 4px;
+	width: 100%;
 }
 .add_labels .upfront-additive_multiselection {
 	padding-bottom: 2px;
@@ -494,24 +505,24 @@ input.upfront-field-text:hover,
 	border: none;
 }
 .upfront-additive_multiselection .title {
-    padding: 1px 30px 1px 10px;
+	padding: 1px 30px 1px 10px;
 }
 .upfront-additive_multiselection .title:after {
 	border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 4px solid rgb(96, 127, 153);
-    border-bottom: none;
-    content: " ";
-    display: block;
-    position: absolute;
-    right: 11px;
-    top: 11px;
+	border-right: 4px solid transparent;
+	border-top: 4px solid rgb(96, 127, 153);
+	border-bottom: none;
+	content: " ";
+	display: block;
+	position: absolute;
+	right: 11px;
+	top: 11px;
 }
 .upfront-additive_multiselection.active .title:after {
 	border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-bottom: 4px solid rgb(96, 127, 153);
-    border-top: none;
+	border-right: 4px solid transparent;
+	border-bottom: 4px solid rgb(96, 127, 153);
+	border-top: none;
 
 }
 .upfront-additive_multiselection .labels_list,
@@ -552,7 +563,7 @@ input.upfront-field-text:hover,
 /*.upfront-additive_multiselection .labels_list li label {
 	font-weight: normal;
 	font-family: verdana,sans-serif;
-    font-size: 11px;
+	font-size: 11px;
 }*/
 .upfront-suggest-list .upfront-field-checkbox/*,
 .upfront-additive_multiselection .labels_list .upfront-field-checkbox*/  {
