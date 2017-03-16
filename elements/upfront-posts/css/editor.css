@@ -560,6 +560,41 @@ div.preset-manager-panel .gravatar-radius-number {
 	top: 13px;
 }
 
+/* Featured image part styles */
+
+div.preset-manager-panel .uf-posts-image-custom-width,
+div.preset-manager-panel .uf-posts-image-custom-height {
+	width: 45%;
+	font-size: 11px;
+	float: left;
+}
+
+div.preset-manager-panel .uf-posts-image-custom-height {
+	float: right;
+}
+
+div.preset-manager-panel .uf-posts-image-custom-width input,
+div.preset-manager-panel .uf-posts-image-custom-height input {
+	width: 80%;
+}
+
+div.preset-manager-panel .uf-posts-image-custom-width label,
+div.preset-manager-panel .uf-posts-image-custom-height label {
+	top: 4px;
+	position: relative;
+}
+
+div.preset-manager-panel .uf-posts-image-custom-size label.upfront-field-label-inline,
+div.preset-manager-panel .uf-posts-image-custom-width label,
+div.preset-manager-panel .uf-posts-image-custom-height label {
+	color: #96acc3;
+}
+
+div.preset-manager-panel .uf-posts-image-resize {
+	clear: both;
+	padding-top: 10px;
+}
+
 .reorder-overlay {
 	background: rgba(255, 255, 255, 0.6);
 	display: none;

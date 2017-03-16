@@ -300,7 +300,8 @@ class Upfront_Posts_PostsData {
 				'margin' => __('Margin', 'upfront'),
 				'single_category' => __('Single category', 'upfront'),
 				'single_tag' => __('Single tag', 'upfront'),
-				'background' => __('Background', 'upfront')
+				'background' => __('Background', 'upfront'),
+				'load_image_size' => __('Load This Image Size', 'upfront')
 			),
 			'css' => array(
 				'container_label' => __('Element container', 'upfront'),

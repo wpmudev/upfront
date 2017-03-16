@@ -285,7 +285,8 @@ define([
 			return [
 				{
 					type: 'Select',
-					label: l10n.modules.image_size,
+					label: l10n.modules.load_image_size,
+					className: 'uf-posts-image-custom-size',
 					label_style: 'inline',
 					property: 'featured-image-size',
 					values: [
@@ -306,24 +307,25 @@ define([
 					},
 				},
 				{
-					type: "Text",
+					type: "Number",
 					label: l10n.modules.custom_width,
 					className: 'uf-posts-image-custom-width',
 					label_style: 'inline',
 					property: "featured-custom-width",
-					suffix: l10n.px,
+					suffix: l10n.px
 				},
 				{
-					type: "Text",
+					type: "Number",
 					label: l10n.modules.custom_height,
 					className: 'uf-posts-image-custom-height',
 					label_style: 'inline',
 					property: "featured-custom-height",
-					suffix: l10n.px,
+					suffix: l10n.px
 				},
 				{
 					type: "Checkboxes",
 					property: "feature-resize",
+					className: 'uf-posts-image-resize',
 					multiple: false,
 					default_value: 0,
 					values: [{ label: l10n.modules.resize_to_fit, value: '1' }]
