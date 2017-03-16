@@ -434,6 +434,7 @@ define([
 				{
 					type: 'Number',
 					property: 'tags-show-max',
+					className: 'tags-show-max',
 					label: l10n.modules.show_max,
 					min: 0,
 					max: 1000,
@@ -442,6 +443,7 @@ define([
 				},
 				{
 					type: "Text",
+					className: 'tags-separate',
 					label: l10n.modules.separate_with,
 					label_style: 'inline',
 					property: "tags-separator"
