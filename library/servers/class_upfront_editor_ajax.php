@@ -583,6 +583,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		// If hierarchical, pass through query to walker.
 		$posts = isset($data['hierarchical']) ? $walker['posts'] : $query->posts;
 		// If hierarchical, pass through pages number to walker.
+		// This is because child pages are placed on parent page despite page limit.
 		$pages = (isset($data['hierarchical']) ? $walker['pages'] : (int)$query->found_posts / $limit);
 		// Filtering dropdown data for post list.
 		$filtering = $this->fetch_filter_data($data);

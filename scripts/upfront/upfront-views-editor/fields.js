@@ -853,6 +853,7 @@
 
         var Field_Select = Field_Multiple.extend(_.extend({}, Mixins.Upfront_Scroll_Mixin, {
             events: {
+								// closing dropdown is in global-event-handlers.js
                 'click .upfront-field-select': 'openOptions',
                 'mouseup .upfront-field-select': 'onMouseUp',
                 'change .upfront-field-select-option input': 'onChange',
@@ -915,6 +916,8 @@
 
                 this.trigger('focus');
             },
+						// Note that closing dropdown is in global-event-handlers.js
+	
             on_scroll: function(e) {
                 var me = e.data;
                 me.$el.find('.upfront-field-select').removeClass('upfront-field-select-expanded');

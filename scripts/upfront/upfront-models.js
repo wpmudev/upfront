@@ -971,6 +971,7 @@ var _alpha = "alpha",
 								totalElements: pagination.total,
 								pageSize: pagination.page_size,
 								// If pages total is given use that. Otherwise calculate it.
+								// This is because hierarchical child pages are placed on parent page despite page limit. Thus it is calculated elsewhere if hierarchical.
 								pages: (pagination.pages ? Math.ceil(pagination.pages) : Math.ceil(pagination.total / pagination.page_size)),
 								currentPage: pagination.page,
 								loaded: postdata.flush ? {} : me.pagination.loaded
