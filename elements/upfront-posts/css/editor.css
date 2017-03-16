@@ -595,6 +595,19 @@ div.preset-manager-panel .uf-posts-image-resize {
 	padding-top: 10px;
 }
 
+/* Category & Tags parts styling */
+
+div.preset-manager-panel .category-show-max,
+div.preset-manager-panel .category-separate {
+	width: 48%;
+	display: inline-block;
+}
+
+div.preset-manager-panel .category-show-max label,
+div.preset-manager-panel .category-separate label {
+	color: #96acc3;
+}
+
 .reorder-overlay {
 	background: rgba(255, 255, 255, 0.6);
 	display: none;

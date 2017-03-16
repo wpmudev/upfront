@@ -653,6 +653,7 @@ define([
 				{
 					type: 'Number',
 					property: 'category-show-max',
+					className: 'category-show-max',
 					label: l10n.modules.show_max,
 					min: 0,
 					max: 1000,
@@ -661,6 +662,7 @@ define([
 				},
 				{
 					type: "Text",
+					className: 'category-separate',
 					label: l10n.modules.separate_with,
 					label_style: 'inline',
 					property: "category-separator"
