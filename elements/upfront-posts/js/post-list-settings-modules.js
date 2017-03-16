@@ -576,8 +576,10 @@ define([
 						var $wrapper = $el.closest('.upfront-settings-post-wrapper');
 						if(value === "0" || value === "") {
 							$wrapper.find('.php-date-format').show();
+							$wrapper.find('.php-date-reference').show();
 						} else {
 							$wrapper.find('.php-date-format').hide();
+							$wrapper.find('.php-date-reference').hide();
 						}
 					},
 				},

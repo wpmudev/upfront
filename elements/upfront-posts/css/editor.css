@@ -480,6 +480,44 @@ div.preset-manager-panel div.borderColor.gravatar_border_color {
 	margin-top: -7px;
 }
 
+div.preset-manager-panel .uf-posts-content-length {
+	font-size: 11px;
+    display: block;
+    font-family: verdana, sans-serif;
+	margin-top: 8px;
+}
+
+div.preset-manager-panel .uf-posts-content-length label {
+	width: 45px;
+	display: inline-block;
+}
+
+div.preset-manager-panel .uf-posts-content-length input {
+	width: 100px;
+	margin-right: 3px;
+	display: inline-block;
+}
+
+div.preset-manager-panel .php-date-format {
+	width: 140px;
+	float: left;
+}
+
+div.preset-manager-panel .php-date-format label {
+	top: 4px;
+    position: relative;
+}
+
+div.preset-manager-panel .php-date-reference {
+	font-size: 11px;
+	width: 60px;
+	margin-left: 10px;
+	color: #3cd8a8;
+	float: left;
+	position: relative;
+	top: 25px;
+}
+
 .reorder-overlay {
 	background: rgba(255, 255, 255, 0.6);
 	display: none;
