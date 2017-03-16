@@ -15,8 +15,12 @@ define([
 
 			var me = this;
 			
-			if(this.options.as_field === true) {
+			if(typeof this.options.as_field !== "undefined" && this.options.as_field === true) {
 				this.className = this.classStyle + ' uf_as_field';
+			}
+			
+			if(typeof this.options.module_class !== "undefined") {
+				this.className = this.className + ' ' + this.options.module_class;
 			}
 
 			this.fields = _([
