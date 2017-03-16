@@ -432,7 +432,7 @@ input.upfront-field-text:hover,
 .upfront-field-multiple label .upfront-field-label-text {
 	display: table-cell;
 	vertical-align: middle;
-    cursor: pointer;
+	cursor: pointer;
 }
 .upfront-field-multiple-vertical label {
 	display: block;
@@ -443,7 +443,7 @@ input.upfront-field-text:hover,
 	max-height: 30px;
 	padding: 3px 0;
 	overflow: hidden;
-    line-height: 13px;
+	line-height: 13px;
 }
 .upfront-field-icon {
 	display: inline-block;
@@ -482,18 +482,18 @@ input.upfront-field-text:hover,
 }
 /*.upfront-additive_multiselection {
 	color: rgb(96, 127, 153);
-    cursor: pointer;
-    display: inline-block;
-    font-family: verdana,sans-serif;
-    font-size: 11px;
-    margin: 0;
-    overflow: hidden;
-    position: relative;
-    background: none repeat scroll 0 0 #e6f3fe;
-    border: 1px solid rgb(163, 191, 217);
-    border-radius: 3px;
-    padding: 0 4px;
-    width: 100%;
+	cursor: pointer;
+	display: inline-block;
+	font-family: verdana,sans-serif;
+	font-size: 11px;
+	margin: 0;
+	overflow: hidden;
+	position: relative;
+	background: none repeat scroll 0 0 #e6f3fe;
+	border: 1px solid rgb(163, 191, 217);
+	border-radius: 3px;
+	padding: 0 4px;
+	width: 100%;
 }
 .add_labels .upfront-additive_multiselection {
 	padding-bottom: 2px;
@@ -505,24 +505,24 @@ input.upfront-field-text:hover,
 	border: none;
 }
 .upfront-additive_multiselection .title {
-    padding: 1px 30px 1px 10px;
+	padding: 1px 30px 1px 10px;
 }
 .upfront-additive_multiselection .title:after {
 	border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 4px solid rgb(96, 127, 153);
-    border-bottom: none;
-    content: " ";
-    display: block;
-    position: absolute;
-    right: 11px;
-    top: 11px;
+	border-right: 4px solid transparent;
+	border-top: 4px solid rgb(96, 127, 153);
+	border-bottom: none;
+	content: " ";
+	display: block;
+	position: absolute;
+	right: 11px;
+	top: 11px;
 }
 .upfront-additive_multiselection.active .title:after {
 	border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-bottom: 4px solid rgb(96, 127, 153);
-    border-top: none;
+	border-right: 4px solid transparent;
+	border-bottom: 4px solid rgb(96, 127, 153);
+	border-top: none;
 
 }
 .upfront-additive_multiselection .labels_list,
@@ -563,7 +563,7 @@ input.upfront-field-text:hover,
 /*.upfront-additive_multiselection .labels_list li label {
 	font-weight: normal;
 	font-family: verdana,sans-serif;
-    font-size: 11px;
+	font-size: 11px;
 }*/
 .upfront-suggest-list .upfront-field-checkbox/*,
 .upfront-additive_multiselection .labels_list .upfront-field-checkbox*/  {

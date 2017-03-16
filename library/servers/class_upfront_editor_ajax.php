@@ -243,9 +243,9 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$num_posts = wp_count_posts( $post_type );
 		$total_posts = array_sum( (array) $num_posts );
 		// Subtract post types that are not included in the admin all list.
-        foreach ( get_post_stati( array( 'show_in_admin_all_list' => false ) ) as $state ) {
-            $total_posts -= $num_posts->$state;
-        }
+		foreach ( get_post_stati( array( 'show_in_admin_all_list' => false ) ) as $state ) {
+			$total_posts -= $num_posts->$state;
+		}
 
 		$l10n = Upfront_EditorL10n_Server::add_l10n_strings(array());
 		$l10n = $l10n['global']['content'];
@@ -270,11 +270,11 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		global $wpdb, $wp_locale;
 
 		$extra_checks = "AND post_status != 'auto-draft'";
-        if ( ! isset( $_GET['post_status'] ) || 'trash' !== $_GET['post_status'] ) {
-            $extra_checks .= " AND post_status != 'trash'";
-        } elseif ( isset( $_GET['post_status'] ) ) {
-            $extra_checks = $wpdb->prepare( ' AND post_status = %s', $_GET['post_status'] );
-        }
+		if ( ! isset( $_GET['post_status'] ) || 'trash' !== $_GET['post_status'] ) {
+			$extra_checks .= " AND post_status != 'trash'";
+		} elseif ( isset( $_GET['post_status'] ) ) {
+			$extra_checks = $wpdb->prepare( ' AND post_status = %s', $_GET['post_status'] );
+		}
 
 		// Prepare Array for SQL via placeholders for post types.
 		if (gettype($post_type) === 'array' && count($post_type) > 1) {
@@ -286,23 +286,23 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		}
 
 		$months = $wpdb->get_results( $wpdb->prepare( "
-            SELECT DISTINCT YEAR( post_date ) AS year, MONTH( post_date ) AS month
-            FROM $wpdb->posts
-            WHERE post_type IN ($post_type_placeholders)
-            $extra_checks
-            ORDER BY post_date DESC
-        ", $post_type ) );
+			SELECT DISTINCT YEAR( post_date ) AS year, MONTH( post_date ) AS month
+			FROM $wpdb->posts
+			WHERE post_type IN ($post_type_placeholders)
+			$extra_checks
+			ORDER BY post_date DESC
+		", $post_type ) );
 
 		$months = apply_filters( 'months_dropdown_results', $months, $post_type );
  
-        $month_count = count( $months );
+		$month_count = count( $months );
 		// Array to return with values and labels of dates.
 		$date_values_and_labels = array();
 		$l10n = Upfront_EditorL10n_Server::add_l10n_strings(array());
 		$l10n = $l10n['global']['content'];
  
-        if ( !$month_count || ( 1 == $month_count && 0 == $months[0]->month ) )
-            return;
+		if ( !$month_count || ( 1 == $month_count && 0 == $months[0]->month ) )
+			return;
 
 		// Add All Dates option.
 		$date_values_and_labels[] = array(
@@ -312,14 +312,14 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		);
 
 		foreach ( $months as $arc_row ) {
-            if ( 0 == $arc_row->year )
-                continue;
+			if ( 0 == $arc_row->year )
+				continue;
  
-            $month = zeroise( $arc_row->month, 2 );
-            $year = $arc_row->year;
+			$month = zeroise( $arc_row->month, 2 );
+			$year = $arc_row->year;
  
-            $value = esc_attr( $year . $month );
-            $label = sprintf( __( '%1$s %2$d' ), $wp_locale->get_month( $month ), $year );
+			$value = esc_attr( $year . $month );
+			$label = sprintf( __( '%1$s %2$d' ), $wp_locale->get_month( $month ), $year );
 			$date_values_and_labels[] = array(
 				'value' => $value,
 				'name' => $value,

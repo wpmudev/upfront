@@ -1,33 +1,33 @@
 (function($){
-    var l10n = Upfront.Settings && Upfront.Settings.l10n
-            ? Upfront.Settings.l10n.global.views
-            : Upfront.mainData.l10n.global.views
-        ;
-    define([
-        "text!upfront/templates/popup.html",
+		var l10n = Upfront.Settings && Upfront.Settings.l10n
+						? Upfront.Settings.l10n.global.views
+						: Upfront.mainData.l10n.global.views
+				;
+		define([
+				"text!upfront/templates/popup.html",
 				'scripts/upfront/upfront-views-editor/fields',
-    ], function ( popup_tpl, Fields ) {
+		], function ( popup_tpl, Fields ) {
 
-        return Backbone.View.extend({
-            id: "upfront-entity_list-search",
-            searchTpl: _.template($(popup_tpl).find('#upfront-filter-tpl').html()),
-            events: {
-                "click #upfront-search_action": "handle_search_request",
-              	// Clear button (X) in search input.
-                "click #upfront-search_container button": "clear_search",
+				return Backbone.View.extend({
+						id: "upfront-entity_list-search",
+						searchTpl: _.template($(popup_tpl).find('#upfront-filter-tpl').html()),
+						events: {
+								"click #upfront-search_action": "handle_search_request",
+								// Clear button (X) in search input.
+								"click #upfront-search_container button": "clear_search",
 								// Clear button in search header.
-                "click .upfront-search-results-header button": "clear_search",
-                "keydown #upfront-list-search_input": "dispatch_search_enter"
-            },
-          	initialize: function(options) {
-            	this.postType = options.postType;
-          	},
-            render: function () {
-                var query = this.collection.lastFetchOptions ? this.collection.lastFetchOptions.search : false;
+								"click .upfront-search-results-header button": "clear_search",
+								"keydown #upfront-list-search_input": "dispatch_search_enter"
+						},
+						initialize: function(options) {
+							this.postType = options.postType;
+						},
+						render: function () {
+								var query = this.collection.lastFetchOptions ? this.collection.lastFetchOptions.search : false;
 								var placeholder = this.get_placeholder();
-                this.$el.html(this.searchTpl({query: query, placeholder: placeholder}));
-            		this.add_filter_dropdowns();
-            },
+								this.$el.html(this.searchTpl({query: query, placeholder: placeholder}));
+								this.add_filter_dropdowns();
+						},
 						get_placeholder: function() {
 							if (this.postType === 'post') {
 								return Upfront.Settings.l10n.global.content.search_posts;
@@ -37,33 +37,33 @@
 								return Upfront.Settings.l10n.global.content.search_cpts;
 							}
 						},
-            dispatch_search_enter: function (e) {
-                if(e.which == 13)
-                    return this.handle_search_request(e);
-            },
-            handle_search_request: function (e) {
-                e.preventDefault();
-                var text = this.$el.find("#upfront-search_container input").val();
-              	// Add or remove class for styling.
+						dispatch_search_enter: function (e) {
+								if(e.which == 13)
+										return this.handle_search_request(e);
+						},
+						handle_search_request: function (e) {
+								e.preventDefault();
+								var text = this.$el.find("#upfront-search_container input").val();
+								// Add or remove class for styling.
 								this.toggle_search_class(text); 
-              	// Get results.
-                this.collection.fetch({search: text});
-            },
+								// Get results.
+								this.collection.fetch({search: text});
+						},
 						handle_filter_request: function () {
 								// filters are set on change of field.
 								// use each filter value so multiple can be set.
-              	var status = (this.status ? this.status : 'any'),
-              		date = (this.date ? this.date : false),
-              		category = (this.category ? this.category : false),
+								var status = (this.status ? this.status : 'any'),
+									date = (this.date ? this.date : false),
+									category = (this.category ? this.category : false),
 									// Use set value in dropdown or (if none), default postType set in initialize().
 									postType = ((this.post_type && this.post_type !== 'any') ? this.post_type : this.postType)
-              	;
-                this.collection.fetch({
+								;
+								this.collection.fetch({
 									post_status: status,
 									m: date,
 									cat: category,
 									postType: postType
-                });
+								});
 								// Hide search results header.
 								this.toggle_search_class('');
 						},
@@ -72,10 +72,10 @@
 							if (text === '') {
 								// Remove class for styling when search is run.
 								this.$el.parent().removeClass('upfront-popup-content-search-ran');
-              } else {
+							} else {
 								// Add class for styling when search is run.
 								this.$el.parent().addClass('upfront-popup-content-search-ran');
-              }
+							}
 						},
 						update_search_header: function(values) {
 							this.$el.find('.upfront-search-results-header #upfront-search-results-count').html();
@@ -83,16 +83,16 @@
 						clear_search: function(e) {
 							e.preventDefault();
 							// Empty search input.
-              this.$el.find("#upfront-search_container input").val('');
-              // Remove class for styling.
+							this.$el.find("#upfront-search_container input").val('');
+							// Remove class for styling.
 							this.toggle_search_class('');
 							// Make sure default collection has proper fetch options (hierarchy).
-              if (this.collection.postType === 'page') {
-              	// Get all results again.
-              	return this.collection.fetch({search: '', hierarchical: true});
-              }
-              // Get all results again.
-              return this.collection.fetch({search: ''});
+							if (this.collection.postType === 'page') {
+								// Get all results again.
+								return this.collection.fetch({search: '', hierarchical: true});
+							}
+							// Get all results again.
+							return this.collection.fetch({search: ''});
 						},
 						get_status_values: function(values) {
 							// If each status does not have value, use the name.
@@ -135,8 +135,8 @@
 							return me.cpt_filter_dropdowns(filter_data);
 						},
 
-  					normal_filter_dropdowns: function(data) {
-  						var me = this;
+						normal_filter_dropdowns: function(data) {
+							var me = this;
 							// Get previous fetch data to set selected values.
 							var options = me.collection.lastFetchOptions,
 								status_value = (options.post_status ? options.post_status : 'any'),
@@ -192,9 +192,9 @@
 							me.$el.find('#upfront-list-filter-dropdowns-container').append(status_dropdown.$el);
 							me.$el.find('#upfront-list-filter-dropdowns-container').append(date_dropdown.$el);
 							me.$el.find('#upfront-list-filter-dropdowns-container').append(category_dropdown.$el);
-  					},
+						},
 
-  					cpt_filter_dropdowns: function(data) {
+						cpt_filter_dropdowns: function(data) {
 							var me = this;
 							// Get previous fetch data to set selected values.
 							var options = me.collection.lastFetchOptions,
@@ -236,7 +236,7 @@
 							// Add Dropdowns to start of filter panel.
 							me.$el.find('#upfront-list-filter-dropdowns-container').append(post_types_dropdown.$el);
 							me.$el.find('#upfront-list-filter-dropdowns-container').append(date_dropdown.$el);
-  					}
-    });
-  });
+						}
+		});
+	});
 }(jQuery));
