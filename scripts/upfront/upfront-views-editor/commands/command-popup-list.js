@@ -99,9 +99,14 @@
 						hide_filter_panel: function() {
 							var filterSection = $('#upfront-entity_list-search');
 							var contentSection = filterSection.parent();
+							// Adjust popup height.
 							contentSection.removeClass('upfront-filter-panel-open');
+							// Reset Filter panel toggle button.
 							$('.upfront-popup-icon-search-open').removeClass('upfront-popup-icon-search-open');
+							// Hide filter panel.
 							filterSection.hide();
+							// Hide search results header.
+							$('.upfront-popup-content-search-ran').removeClass('upfront-popup-content-search-ran');
 						},
 
 						dispatch_panel_creation: function (data) {

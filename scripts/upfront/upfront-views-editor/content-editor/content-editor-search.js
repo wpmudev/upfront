@@ -64,6 +64,8 @@
 									cat: category,
 									postType: postType
                 });
+								// Hide search results header.
+								this.toggle_search_class('');
 						},
 						// Show or Hide homepage item for pages list.
 						toggle_search_class: function(text) {
