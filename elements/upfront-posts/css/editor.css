@@ -344,6 +344,10 @@ div.preset-manager-panel .upfront-add-post-module .upfront-field-select-options 
 	border-radius: 6px;
 }
 
+div.preset-manager-panel .upfront-add-post-module .upfront-field-select-options li label {
+	cursor: pointer;
+}
+
 div.preset-manager-panel .upfront-add-post-module .upfront-field-select-value:before {
 	content: '+';
 	width: 10px;

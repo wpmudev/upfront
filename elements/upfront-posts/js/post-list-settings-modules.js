@@ -246,6 +246,7 @@ define([
 					type: "Slider",
 					className: 'gravatar-radius upfront-field-wrap upfront-field-wrap-slider radius-slider uf-module-label-title',
 					label: l10n.modules.round_corners,
+					label_style: 'inline',
 					suffix: l10n.px,
 					min: 0,
 					name: "gravatar-radius",
@@ -326,6 +327,7 @@ define([
 					type: "Checkboxes",
 					property: "feature-resize",
 					className: 'uf-posts-image-resize',
+					label_style: 'inline',
 					multiple: false,
 					default_value: 0,
 					values: [{ label: l10n.modules.resize_to_fit, value: '1' }]
@@ -348,6 +350,7 @@ define([
 				{
 					type: 'Checkboxes',
 					property: 'comments-hide-if-empty',
+					label_style: 'inline',
 					values: [{ label: l10n.modules.hide_if_no_comments, value: '1' }]
 				}
 			];
@@ -565,6 +568,7 @@ define([
 				{
 					type: "Select",
 					label: l10n.modules.date_format,
+					label_style: 'inline',
 					multiple: false,
 					property: "predefined-date-format",
 					values: [
