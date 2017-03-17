@@ -279,7 +279,7 @@ div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-setting
 	width: 10px;
 	height: 10px;
 	font-weight: bold;
-	line-height: 5px;
+	line-height: 6px;
 	font-size: 12px;
 	text-align: center;
 	color: #fff;
@@ -350,7 +350,7 @@ div.preset-manager-panel .upfront-add-post-module .upfront-field-select-value:be
 	height: 10px;
 	position: absolute;
 	z-index: 10;
-	margin-top: -2px;
+	margin-top: -1px;
     margin-left: 4px;
 	color: #44698d;
 	font-size: 18px;
