@@ -66,9 +66,12 @@ class Upfront_Posts_PostsData {
 			// Parts markup goes here
 			'preset' => 'default'
 		);
-
-		$defaults = self::apply_preset($defaults);
-
+		
+		// Add post part markup as default for fallback
+		foreach($default_parts as $part) {
+			$defaults['part-' . $part] = self::get_template($part);
+		}
+		
 		return $defaults;
 	}
 

@@ -149,6 +149,7 @@
 				var me = this,
 					tpl_name = 'post-part-' + this.data_part,
 					template = stripslashes(this.model.get(tpl_name)),
+					template = template === "undefined" ? this.panel.model.get_property_value_by_name('part-' + this.data_part) : template,
 					embed_object = ('meta' === this.options.part ? Meta.Embed : Inserts.inserts.embed),
 					editor = new embed_object({data: {code: template}, model: this.model}),
 					manager = false,
