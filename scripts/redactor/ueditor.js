@@ -1110,13 +1110,14 @@ Ueditor.prototype = {
 		this.active = true;
 
         this.$el.on('keyup', function(e) {
-            /**
-             * Make sure return doesn't delete the last charactor
-             */
-            if (13 === e.keyCode && !e.shiftKey && (self || {}).redactor && !self.redactor.keydown.pre && !self.redactor.$air.is(":visible") ) {
-                self.redactor.utils.removeEmpty();
-                $(self.redactor.selection.getCurrent()).append("&#x200b;");
-            }
+          /**
+           * Make sure return doesn't delete the last charactor
+           */
+          if (13 === e.keyCode && !e.shiftKey && (self || {}).redactor && !self.redactor.keydown.pre && !self.redactor.$air.is(":visible") ) {
+            self.redactor.utils.removeEmpty();
+            // Add extra space to end of previous paragraph to prevent backspace deleting last character.
+            $(self.redactor.selection.getCurrent()).prev().append("&#x200b;");
+          }
         });
 
 	},
