@@ -2,7 +2,7 @@
 define("ueditor", [ // For require to include scripts in build and not load them separately they must be passes as an array and not variable that points to array
 	'text!scripts/redactor/ueditor-templates.html',
 	'scripts/redactor/ueditor-inserts',
-    'redactor_plugins',
+		'redactor_plugins',
 	'scripts/upfront/inline-panels/inline-tooltip'
 ], function(tpl, Inserts, redactor_plugins, InlineTooltip){
 var hackedRedactor = false;
@@ -52,23 +52,23 @@ $.fn.ueditor = function(options){
 
 var hackRedactor = function(){
 
-    /*
-    // Deprecated, moved to override methods
-    var clean = $.Redactor.prototype.clean();
+		/*
+		// Deprecated, moved to override methods
+		var clean = $.Redactor.prototype.clean();
 
-    clean.savePreFormatting = function(html) {
-        return html;
-    };
+		clean.savePreFormatting = function(html) {
+				return html;
+		};
 
-   $.Redactor.prototype.clean = function () { return clean };
-   */
+	 $.Redactor.prototype.clean = function () { return clean };
+	 */
 
 	// Make click consistent
 	$.Redactor.prototype.airBindHide = function () {
 		if (!this.opts.air || !this.$toolbar) return;
 
 		var self = this,
-            hideHandler = $.proxy(function(doc) {
+						hideHandler = $.proxy(function(doc) {
 			$(doc).on('mouseup.redactor', $.proxy(function (e) {
 				if ($(e.target).closest(this.$toolbar).length === 0
 					&& $(e.target).parents("#upfront-popup.upfront-postselector-popup").length === 0)
@@ -103,93 +103,93 @@ var hackRedactor = function(){
 
 	//Change the position of the air toolbar
 	$.Redactor.prototype.airShow = function (e, keyboard)
-    {
-        if( typeof e !== "undefined" && ( $(e.target).parents().is(".uimage-control-panel") || $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button") || ( !_.isUndefined(e.target.contentEditable) && e.target.contentEditable === "false" ) || $(e.target).closest(".redactor-editor").attr("contentEditable") === "false"  ) ) return;
-        //if( $(e.target).parents().is(".uimage-control-panel") || $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button")) return;
+		{
+				if( typeof e !== "undefined" && ( $(e.target).parents().is(".uimage-control-panel") || $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button") || ( !_.isUndefined(e.target.contentEditable) && e.target.contentEditable === "false" ) || $(e.target).closest(".redactor-editor").attr("contentEditable") === "false"  ) ) return;
+				//if( $(e.target).parents().is(".uimage-control-panel") || $(e.target).is(".upfront-icon") || $(e.target).is(".upfront-icon-button")) return;
 
-        if (!this.opts.air || !( this.opts.buttons.length || this.opts.airButtons.length ) || !this.$toolbar) return;
+				if (!this.opts.air || !( this.opts.buttons.length || this.opts.airButtons.length ) || !this.$toolbar) return;
 
 		if(this.$element.closest('li').hasClass('menu-item')) {
-    		var menu_item = this.$element.closest('li.menu-item').data('backboneview');
+				var menu_item = this.$element.closest('li.menu-item').data('backboneview');
 
-    		menu_item.model['being-edited'] = true;
-    	}
-
-
-        //var sel = Upfront.Util.clone(this.sel);
-        //var range = Upfront.Util.clone( this.range );
-        $('.redactor_air').hide();
-        this.selection.createMarkers();
+				menu_item.model['being-edited'] = true;
+			}
 
 
-
-        var width = this.$air.width(),
-            node1 = this.$editor.find('span#selection-marker-1'),
-            node2 = this.$editor.find('span#selection-marker-2'),
-            m1 = node1.offset(),
-            m2 = node2.offset()
-        ;
-
-        /**
-         * Restore selections in safari
-         */
-        if( this.utils.browser("safari")){
-            if (node1.length !== 0 && node2.length !== 0)
-            {
-                this.caret.set(node1, 0, node2, 0);
-            }
-            else if (node1.length !== 0)
-            {
-                this.caret.set(node1, 0, node1, 0);
-            }
-            else
-            {
-                this.$editor.focus();
-            }
-        }
+				//var sel = Upfront.Util.clone(this.sel);
+				//var range = Upfront.Util.clone( this.range );
+				$('.redactor_air').hide();
+				this.selection.createMarkers();
 
 
-        // Make sure we have both dimentions before proceeding
-        if (!m1 || !m2) {
-            return false;
-        }
 
-        var bounds = m2.top < m1.top ? {top: m2.top - 55, left: m2.left, right: m1.left, i:2} : {top: m1.top - 55, left: m1.left, right: m2.left, i:1},
-            atRight = false,
-            $win = $(window),
-            winRight = $win.width() + $win.scrollLeft(),
-            center, parent
-        ;
-        //Hack to place the bar correctly with floating images
-        if(m1.top != m2.top && bounds.left > bounds.right)
-            bounds.right = bounds.left + 50;
+				var width = this.$air.width(),
+						node1 = this.$editor.find('span#selection-marker-1'),
+						node2 = this.$editor.find('span#selection-marker-2'),
+						m1 = node1.offset(),
+						m2 = node2.offset()
+				;
 
-        if(!this.airWidth){
-            this.airWidth = width;
-            this.$air.width(width);
-        }
-        if(bounds.right < bounds.left || bounds.right > winRight){
-            parent = this.$editor.find('#selection-marker-' + bounds.i).parent();
-            bounds.right =  Math.min(winRight, parent.offset().left + parent.width());
-        }
+				/**
+				 * Restore selections in safari
+				 */
+				if( this.utils.browser("safari")){
+						if (node1.length !== 0 && node2.length !== 0)
+						{
+								this.caret.set(node1, 0, node2, 0);
+						}
+						else if (node1.length !== 0)
+						{
+								this.caret.set(node1, 0, node1, 0);
+						}
+						else
+						{
+								this.$editor.focus();
+						}
+				}
 
-        center = Math.floor((bounds.right + bounds.left + 1) / 2);
 
-        if(center + width / 2 > winRight){
-            this.$air.addClass('at-right');
-            if(center > winRight)
-                center = winRight - 5;
-            bounds.left = center - width;
-        }
-        else {
-            this.$air.removeClass('at-right');
-            bounds.left = center - Math.floor((width + 1) / 2);
-        }
+				// Make sure we have both dimentions before proceeding
+				if (!m1 || !m2) {
+						return false;
+				}
 
-        this.$air.css({
-            left: bounds.left  + 'px',
-            top: bounds.top + 'px'
-        }).show();
+				var bounds = m2.top < m1.top ? {top: m2.top - 55, left: m2.left, right: m1.left, i:2} : {top: m1.top - 55, left: m1.left, right: m2.left, i:1},
+						atRight = false,
+						$win = $(window),
+						winRight = $win.width() + $win.scrollLeft(),
+						center, parent
+				;
+				//Hack to place the bar correctly with floating images
+				if(m1.top != m2.top && bounds.left > bounds.right)
+						bounds.right = bounds.left + 50;
+
+				if(!this.airWidth){
+						this.airWidth = width;
+						this.$air.width(width);
+				}
+				if(bounds.right < bounds.left || bounds.right > winRight){
+						parent = this.$editor.find('#selection-marker-' + bounds.i).parent();
+						bounds.right =  Math.min(winRight, parent.offset().left + parent.width());
+				}
+
+				center = Math.floor((bounds.right + bounds.left + 1) / 2);
+
+				if(center + width / 2 > winRight){
+						this.$air.addClass('at-right');
+						if(center > winRight)
+								center = winRight - 5;
+						bounds.left = center - width;
+				}
+				else {
+						this.$air.removeClass('at-right');
+						bounds.left = center - Math.floor((width + 1) / 2);
+				}
+
+				this.$air.css({
+						left: bounds.left  + 'px',
+						top: bounds.top + 'px'
+				}).show();
 
 		var buttons = this.$air.find('.redactor-toolbar > li');
 		
@@ -211,346 +211,346 @@ var hackRedactor = function(){
 			panel: 'colorPicker'
 		});
 		
-        /**
-         * If redactor is to high for the user to see it, show it under the selected text
-         */
-        if( this.$air.offset().top < 0 ){
-            var ey = e && e.clientY ? e.clientY : this.$box.height();
-            this.$air.css({
-                top : ey + 14 + this.$box.position().top + "px"
-            });
-            this.$air.addClass("under");
-        }else{
-            this.$air.removeClass("under");
-        }
+				/**
+				 * If redactor is to high for the user to see it, show it under the selected text
+				 */
+				if( this.$air.offset().top < 0 ){
+						var ey = e && e.clientY ? e.clientY : this.$box.height();
+						this.$air.css({
+								top : ey + 14 + this.$box.position().top + "px"
+						});
+						this.$air.addClass("under");
+				}else{
+						this.$air.removeClass("under");
+				}
 
-        this.airBindHide();
-        this.$air.trigger('show');
-        this.dropdown.hideAll();
-        UeditorEvents.trigger("ueditor:air:show", this);
-        this.selection.removeMarkers();
-    };
+				this.airBindHide();
+				this.$air.trigger('show');
+				this.dropdown.hideAll();
+				UeditorEvents.trigger("ueditor:air:show", this);
+				this.selection.removeMarkers();
+		};
 
 
 	hackedRedactor = true;
 
-    /**
-     * Overrides Redactor internal methods
-     *
-     * Override redactor methods by adding them in here and then change the body of method
-     *
-     * @type {{inline: {format: Overriden_Methods.inline.format}}}
-     */
-    var Overriden_Methods = {
-        selection: function() // porting from Redactor 10.2.5
-        {
-            return {
-                getPrev: function()
-                {
-                    return  window.getSelection().anchorNode.previousSibling;
-                },
-                getNext: function()
-                {
-                    return window.getSelection().anchorNode.nextSibling;
-                },
-                getBlocks: function(nodes)
-                {
-                    this.selection.get();
+		/**
+		 * Overrides Redactor internal methods
+		 *
+		 * Override redactor methods by adding them in here and then change the body of method
+		 *
+		 * @type {{inline: {format: Overriden_Methods.inline.format}}}
+		 */
+		var Overriden_Methods = {
+				selection: function() // porting from Redactor 10.2.5
+				{
+						return {
+								getPrev: function()
+								{
+										return  window.getSelection().anchorNode.previousSibling;
+								},
+								getNext: function()
+								{
+										return window.getSelection().anchorNode.nextSibling;
+								},
+								getBlocks: function(nodes)
+								{
+										this.selection.get();
 
-                    if (this.range && this.range.collapsed)
-                    {
-                        return [this.selection.getBlock()];
-                    }
+										if (this.range && this.range.collapsed)
+										{
+												return [this.selection.getBlock()];
+										}
 
-                    var blocks = [];
-                    nodes = (typeof nodes == 'undefined') ? this.selection.getNodes() : nodes;
+										var blocks = [];
+										nodes = (typeof nodes == 'undefined') ? this.selection.getNodes() : nodes;
 
-                    $.each(nodes, $.proxy(function(i,node)
-                    {
-                        if (this.utils.isBlock(node))
-                        {
-                            blocks.push(node);
-                        }
+										$.each(nodes, $.proxy(function(i,node)
+										{
+												if (this.utils.isBlock(node))
+												{
+														blocks.push(node);
+												}
 
-                    }, this));
+										}, this));
 
-                    return (blocks.length === 0) ? [this.selection.getBlock()] : blocks;
-                },
-                getNodes: function()
-                {
-                    this.selection.get();
+										return (blocks.length === 0) ? [this.selection.getBlock()] : blocks;
+								},
+								getNodes: function()
+								{
+										this.selection.get();
 
-                    var startNode = this.selection.getNodesMarker(1);
-                    var endNode = this.selection.getNodesMarker(2);
+										var startNode = this.selection.getNodesMarker(1);
+										var endNode = this.selection.getNodesMarker(2);
 
-                    if (this.range.collapsed === false)
-                    {
-                        if (window.getSelection) {
-                            var sel = window.getSelection();
-                            if (sel.rangeCount > 0) {
+										if (this.range.collapsed === false)
+										{
+												if (window.getSelection) {
+														var sel = window.getSelection();
+														if (sel.rangeCount > 0) {
 
-                                var range = sel.getRangeAt(0);
-                                var startPointNode = range.startContainer, startOffset = range.startOffset;
+																var range = sel.getRangeAt(0);
+																var startPointNode = range.startContainer, startOffset = range.startOffset;
 
-                                var boundaryRange = range.cloneRange();
-                                boundaryRange.collapse(false);
-                                boundaryRange.insertNode(endNode);
-                                boundaryRange.setStart(startPointNode, startOffset);
-                                boundaryRange.collapse(true);
-                                boundaryRange.insertNode(startNode);
+																var boundaryRange = range.cloneRange();
+																boundaryRange.collapse(false);
+																boundaryRange.insertNode(endNode);
+																boundaryRange.setStart(startPointNode, startOffset);
+																boundaryRange.collapse(true);
+																boundaryRange.insertNode(startNode);
 
-                                // Reselect the original text
-                                range.setStartAfter(startNode);
-                                range.setEndBefore(endNode);
-                                sel.removeAllRanges();
-                                sel.addRange(range);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        this.selection.setNodesMarker(this.range, startNode, true);
-                        endNode = startNode;
-                    }
+																// Reselect the original text
+																range.setStartAfter(startNode);
+																range.setEndBefore(endNode);
+																sel.removeAllRanges();
+																sel.addRange(range);
+														}
+												}
+										}
+										else
+										{
+												this.selection.setNodesMarker(this.range, startNode, true);
+												endNode = startNode;
+										}
 
-                    var nodes = [];
-                    var counter = 0;
+										var nodes = [];
+										var counter = 0;
 
-                    var self = this;
-                    this.$editor.find('*').each(function()
-                    {
-                        if (this == startNode)
-                        {
-                            var parent = $(this).parent();
-                            if (parent.length !== 0 && parent[0].tagName != 'BODY' && self.utils.isRedactorParent(parent[0]))
-                            {
-                                nodes.push(parent[0]);
-                            }
+										var self = this;
+										this.$editor.find('*').each(function()
+										{
+												if (this == startNode)
+												{
+														var parent = $(this).parent();
+														if (parent.length !== 0 && parent[0].tagName != 'BODY' && self.utils.isRedactorParent(parent[0]))
+														{
+																nodes.push(parent[0]);
+														}
 
-                            nodes.push(this);
-                            counter = 1;
-                        }
-                        else
-                        {
-                            if (counter > 0)
-                            {
-                                nodes.push(this);
-                                counter = counter + 1;
-                            }
-                        }
+														nodes.push(this);
+														counter = 1;
+												}
+												else
+												{
+														if (counter > 0)
+														{
+																nodes.push(this);
+																counter = counter + 1;
+														}
+												}
 
-                        if (this == endNode)
-                        {
-                            return false;
-                        }
+												if (this == endNode)
+												{
+														return false;
+												}
 
-                    });
+										});
 
-                    var finalNodes = [];
-                    var len = nodes.length;
-                    for (var i = 0; i < len; i++)
-                    {
-                        if (nodes[i].id != 'nodes-marker-1' && nodes[i].id != 'nodes-marker-2')
-                        {
-                            finalNodes.push(nodes[i]);
-                        }
-                    }
+										var finalNodes = [];
+										var len = nodes.length;
+										for (var i = 0; i < len; i++)
+										{
+												if (nodes[i].id != 'nodes-marker-1' && nodes[i].id != 'nodes-marker-2')
+												{
+														finalNodes.push(nodes[i]);
+												}
+										}
 
-                    this.selection.removeNodesMarkers();
+										this.selection.removeNodesMarkers();
 
-                    return finalNodes;
+										return finalNodes;
 
-                },
-                setNodesMarker: function(range, node, type)
-                {
-                    range = range.cloneRange();
+								},
+								setNodesMarker: function(range, node, type)
+								{
+										range = range.cloneRange();
 
-                    try {
-                        range.collapse(type);
-                        range.insertNode(node);
-                    }
-                    catch (e) {}
-                },
-                fromPoint: function(start, end)
-                {
-                    this.caret.setOffset(start, end);
-                },
-                selectElement: function(node)
-                {
-                    if (this.utils.browser('mozilla'))
-                    {
-                        node = node[0] || node;
+										try {
+												range.collapse(type);
+												range.insertNode(node);
+										}
+										catch (e) {}
+								},
+								fromPoint: function(start, end)
+								{
+										this.caret.setOffset(start, end);
+								},
+								selectElement: function(node)
+								{
+										if (this.utils.browser('mozilla'))
+										{
+												node = node[0] || node;
 
-                        var range = document.createRange();
-                        range.selectNodeContents(node);
-                    }
-                    else
-                    {
-                        this.caret.set(node, 0, node, 1);
-                    }
-                },
-                restore: function()
-                {
-                    var node1 = this.$editor.find('span#selection-marker-1');
-                    var node2 = this.$editor.find('span#selection-marker-2');
+												var range = document.createRange();
+												range.selectNodeContents(node);
+										}
+										else
+										{
+												this.caret.set(node, 0, node, 1);
+										}
+								},
+								restore: function()
+								{
+										var node1 = this.$editor.find('span#selection-marker-1');
+										var node2 = this.$editor.find('span#selection-marker-2');
 
-                    if (this.utils.browser('mozilla'))
-                    {
-                        this.$editor.focus();
-                    }
+										if (this.utils.browser('mozilla'))
+										{
+												this.$editor.focus();
+										}
 
-                    if (node1.length !== 0 && node2.length !== 0)
-                    {
-                        this.caret.set(node1, 0, node2, 0);
-                    }
-                    else if (node1.length !== 0)
-                    {
-                        this.caret.set(node1, 0, node1, 0);
-                    }
-                    else
-                    {
-                        this.$editor.focus();
-                    }
+										if (node1.length !== 0 && node2.length !== 0)
+										{
+												this.caret.set(node1, 0, node2, 0);
+										}
+										else if (node1.length !== 0)
+										{
+												this.caret.set(node1, 0, node1, 0);
+										}
+										else
+										{
+												this.$editor.focus();
+										}
 
-                    this.selection.removeMarkers();
-                    this.savedSel = false;
+										this.selection.removeMarkers();
+										this.savedSel = false;
 
-                },
-                removeMarkers: function()
-                {
-                    this.$editor.find('span.redactor-selection-marker').each(function(i,s)
-                    {
-                        var text = $(s).text().replace(/\u200B/g, '');
-                        if (text === '') $(s).remove();
-                        else $(s).replaceWith(function() { return $(this).contents(); });
-                    });
-                },
-                replaceSelection: function(html)
-                {
-                    this.selection.get();
-                    this.range.deleteContents();
-                    var div = document.createElement("div");
-                    div.innerHTML = html;
-                    var frag = document.createDocumentFragment(), child;
-                    while ((child = div.firstChild)) {
-                        frag.appendChild(child);
-                    }
+								},
+								removeMarkers: function()
+								{
+										this.$editor.find('span.redactor-selection-marker').each(function(i,s)
+										{
+												var text = $(s).text().replace(/\u200B/g, '');
+												if (text === '') $(s).remove();
+												else $(s).replaceWith(function() { return $(this).contents(); });
+										});
+								},
+								replaceSelection: function(html)
+								{
+										this.selection.get();
+										this.range.deleteContents();
+										var div = document.createElement("div");
+										div.innerHTML = html;
+										var frag = document.createDocumentFragment(), child;
+										while ((child = div.firstChild)) {
+												frag.appendChild(child);
+										}
 
-                    this.range.insertNode(frag);
-                },
-                replaceWithHtml: function(html)
-                {
-                    html = this.selection.getMarkerAsHtml(1) + html + this.selection.getMarkerAsHtml(2);
+										this.range.insertNode(frag);
+								},
+								replaceWithHtml: function(html)
+								{
+										html = this.selection.getMarkerAsHtml(1) + html + this.selection.getMarkerAsHtml(2);
 
-                    this.selection.get();
+										this.selection.get();
 
-                    if (window.getSelection && window.getSelection().getRangeAt)
-                    {
-                        this.selection.replaceSelection(html);
-                    }
-                    else if (document.selection && document.selection.createRange)
-                    {
-                        this.range.pasteHTML(html);
-                    }
+										if (window.getSelection && window.getSelection().getRangeAt)
+										{
+												this.selection.replaceSelection(html);
+										}
+										else if (document.selection && document.selection.createRange)
+										{
+												this.range.pasteHTML(html);
+										}
 
-                    this.selection.restore();
-                    this.code.sync();
-                }
-            };
-        },
-        utils: {
-            isEndOfElement: function(element){
-                if (typeof element == 'undefined')
-                {
-                    element = this.$element;
-                    if (!element) return false;
-                }
+										this.selection.restore();
+										this.code.sync();
+								}
+						};
+				},
+				utils: {
+						isEndOfElement: function(element){
+								if (typeof element == 'undefined')
+								{
+										element = this.$element;
+										if (!element) return false;
+								}
 
-                var offset = this.caret.getOffsetOfElement(element);
-                var text = $.trim($(element).text()).replace(/\n\r\n/g, '');
+								var offset = this.caret.getOffsetOfElement(element);
+								var text = $.trim($(element).text()).replace(/\n\r\n/g, '');
 
-                return (offset == text.length) ? true : false;
-            }
-        },
-        inline: {
-            format: function(tag, type, value)
-            {
-                // Stop formatting pre and headers
-                //if (this.utils.isCurrentOrParent('PRE') || this.utils.isCurrentOrParentHeader()) return;
+								return (offset == text.length) ? true : false;
+						}
+				},
+				inline: {
+						format: function(tag, type, value)
+						{
+								// Stop formatting pre and headers
+								//if (this.utils.isCurrentOrParent('PRE') || this.utils.isCurrentOrParentHeader()) return;
 
-                var tags = ['b', 'bold', 'i', 'italic', 'underline', 'strikethrough', 'deleted', 'superscript', 'subscript'];
-                var replaced = ['strong', 'strong', 'em', 'em', 'u', 'del', 'del', 'sup', 'sub'];
+								var tags = ['b', 'bold', 'i', 'italic', 'underline', 'strikethrough', 'deleted', 'superscript', 'subscript'];
+								var replaced = ['strong', 'strong', 'em', 'em', 'u', 'del', 'del', 'sup', 'sub'];
 
-                for (var i = 0; i < tags.length; i++)
-                {
-                    if (tag == tags[i]) tag = replaced[i];
-                }
+								for (var i = 0; i < tags.length; i++)
+								{
+										if (tag == tags[i]) tag = replaced[i];
+								}
 
-                this.inline.type = type || false;
-                this.inline.value = value || false;
+								this.inline.type = type || false;
+								this.inline.value = value || false;
 
-                this.buffer.set();
+								this.buffer.set();
 
-                if (!this.utils.browser('msie'))
-                {
-                    this.$editor.focus();
-                }
+								if (!this.utils.browser('msie'))
+								{
+										this.$editor.focus();
+								}
 
-                 this.selection.get();
+								 this.selection.get();
 
-                if (this.range.collapsed)
-                {
-                    this.inline.formatCollapsed(tag);
-                }
-                else
-                {
-                    this.inline.formatMultiple(tag);
-                }
+								if (this.range.collapsed)
+								{
+										this.inline.formatCollapsed(tag);
+								}
+								else
+								{
+										this.inline.formatMultiple(tag);
+								}
 
-                if( tag && -1 !== _.indexOf( ["em", "italic"],tag.toLowerCase() ) ){ // add fix for em to make it work with list tags
-                        this.selection.selectElement( $(this.selection.getInlines()).find("em") );
-                }
+								if( tag && -1 !== _.indexOf( ["em", "italic"],tag.toLowerCase() ) ){ // add fix for em to make it work with list tags
+												this.selection.selectElement( $(this.selection.getInlines()).find("em") );
+								}
 
-                if( tag &&  -1 !== _.indexOf( ["strong", "bold"], tag.toLowerCase() )  ){ //  add fix for strong to make it work with list tags
-                    this.selection.selectElement( $(this.selection.getInlines()).find("strong") );
-                }
-            }
-        },
-        keydown: {
-            /**
-             * Overridden method from redactor core (@line 4849)
-             *
-             * We're overriding this method because of buggy logic in current redactor core.
-             * The `this.selection.getBlock()` method can just as easily return a (bool)false,
-             * and the original implementation doesn't account for that.
-             *
-             * @return {Boolean} Doesn't really matter, side-effects method
-             */
-            replaceDivToBreakLine: function()
-            {
-                var blockElem = this.selection.getBlock();
-                if (!(blockElem || {}).innerHTML) return false; // so yeah, selection.getBlock() got us nowhere, bail out
-                var blockHtml = blockElem.innerHTML.replace(/<br\s?\/?>/gi, '');
-                if ((blockElem.tagName === 'DIV' || blockElem.tagName === 'P') && blockHtml === '' && !$(blockElem).hasClass('redactor-editor'))
-                {
-                    var br = document.createElement('br');
+								if( tag &&  -1 !== _.indexOf( ["strong", "bold"], tag.toLowerCase() )  ){ //  add fix for strong to make it work with list tags
+										this.selection.selectElement( $(this.selection.getInlines()).find("strong") );
+								}
+						}
+				},
+				keydown: {
+						/**
+						 * Overridden method from redactor core (@line 4849)
+						 *
+						 * We're overriding this method because of buggy logic in current redactor core.
+						 * The `this.selection.getBlock()` method can just as easily return a (bool)false,
+						 * and the original implementation doesn't account for that.
+						 *
+						 * @return {Boolean} Doesn't really matter, side-effects method
+						 */
+						replaceDivToBreakLine: function()
+						{
+								var blockElem = this.selection.getBlock();
+								if (!(blockElem || {}).innerHTML) return false; // so yeah, selection.getBlock() got us nowhere, bail out
+								var blockHtml = blockElem.innerHTML.replace(/<br\s?\/?>/gi, '');
+								if ((blockElem.tagName === 'DIV' || blockElem.tagName === 'P') && blockHtml === '' && !$(blockElem).hasClass('redactor-editor'))
+								{
+										var br = document.createElement('br');
 
-                    $(blockElem).replaceWith(br);
-                    this.caret.setBefore(br);
+										$(blockElem).replaceWith(br);
+										this.caret.setBefore(br);
 
-                    this.code.sync();
+										this.code.sync();
 
-                    return false;
-                }
-            }
-        },
-        clean: {
-            // These lines override the Redactor's prefFormatting
-            savePreFormatting: function(html) {
-                return html;
-            }
-        }
-    };
+										return false;
+								}
+						}
+				},
+				clean: {
+						// These lines override the Redactor's prefFormatting
+						savePreFormatting: function(html) {
+								return html;
+						}
+				}
+		};
 
 	$.Redactor.prototype.events = UeditorEvents;
 
@@ -567,271 +567,271 @@ var hackRedactor = function(){
 
 	$.Redactor.prototype.button = function() {
 		return {
-            build: function(btnName, btnObject)
-            {
-                var $button = $('<a href="#" class="re-icon re-' + btnName + '" rel="' + btnName + '" title="'+btnObject.title+'" />').attr('tabindex', '-1');
+						build: function(btnName, btnObject)
+						{
+								var $button = $('<a href="#" class="re-icon re-' + btnName + '" rel="' + btnName + '" title="'+btnObject.title+'" />').attr('tabindex', '-1');
 
-                if (btnObject.func || btnObject.command || btnObject.dropdown)
-                {
-                    $button.on('touchstart click', $.proxy(function(e)
-                    {
-                        if ($button.hasClass('redactor-button-disabled')) return false;
+								if (btnObject.func || btnObject.command || btnObject.dropdown)
+								{
+										$button.on('touchstart click', $.proxy(function(e)
+										{
+												if ($button.hasClass('redactor-button-disabled')) return false;
 
-                        var type = 'func';
-                        var callback = btnObject.func;
-                        if (btnObject.command)
-                        {
-                            type = 'command';
-                            callback = btnObject.command;
-                        }
-                        else if (btnObject.dropdown)
-                        {
-                            type = 'dropdown';
-                            callback = false;
-                        }
+												var type = 'func';
+												var callback = btnObject.func;
+												if (btnObject.command)
+												{
+														type = 'command';
+														callback = btnObject.command;
+												}
+												else if (btnObject.dropdown)
+												{
+														type = 'dropdown';
+														callback = false;
+												}
 
-                        this.button.onClick(e, btnName, type, callback);
+												this.button.onClick(e, btnName, type, callback);
 
-                    }, this));
-                }
+										}, this));
+								}
 
-                // dropdown
-                if (btnObject.dropdown)
-                {
-                    var $dropdown = $('<div class="redactor-dropdown redactor-dropdown-box-' + btnName + '" style="display: none;">');
-                    $button.data('dropdown', $dropdown);
-                    this.dropdown.build(btnName, $dropdown, btnObject.dropdown);
-                }
+								// dropdown
+								if (btnObject.dropdown)
+								{
+										var $dropdown = $('<div class="redactor-dropdown redactor-dropdown-box-' + btnName + '" style="display: none;">');
+										$button.data('dropdown', $dropdown);
+										this.dropdown.build(btnName, $dropdown, btnObject.dropdown);
+								}
 
 
 
-                return $button;
-            },
+								return $button;
+						},
 
-            onClick: function(e, btnName, type, callback)
-            {
-                this.button.caretOffset = this.caret.getOffset();
+						onClick: function(e, btnName, type, callback)
+						{
+								this.button.caretOffset = this.caret.getOffset();
 
-                e.preventDefault();
+								e.preventDefault();
 
-                if (this.utils.browser('msie')) e.returnValue = false;
+								if (this.utils.browser('msie')) e.returnValue = false;
 
-                if (type == 'command')
-                {
-                    this.inline.format(callback);
-                }
-                else if (type == 'dropdown')
-                {
-                    this.dropdown.show(e, btnName);
-                }
-                else
-                {
-                    var func;
+								if (type == 'command')
+								{
+										this.inline.format(callback);
+								}
+								else if (type == 'dropdown')
+								{
+										this.dropdown.show(e, btnName);
+								}
+								else
+								{
+										var func;
 
-                    if ($.isFunction(callback))
-                    {
-                        callback.call(this, btnName);
-                        this.observe.buttons(e, btnName);
-                    }
-                    else if (callback.search(/\./) != '-1')
-                    {
-                        func = callback.split('.');
-                        if (typeof this[func[0]] != 'undefined')
-                        {
-                            this[func[0]][func[1]](btnName);
-                            this.observe.buttons(e, btnName);
-                        }
-                    }
-                    else
-                    {
-                        this[callback](btnName);
-                        this.observe.buttons(e, btnName);
-                    }
-                }
-            },
-            get: function(key)
-            {
-                return this.$toolbar.find('a.re-' + key);
-            },
-            setActive: function(key)
-            {
-                this.button.get(key).addClass('redactor-act');
-            },
-            setInactive: function(key)
-            {
-                this.button.get(key).removeClass('redactor-act');
-            },
-            setInactiveAll: function(key)
-            {
-                if (typeof key == 'undefined')
-                {
-                    this.$toolbar.find('a.re-icon').removeClass('redactor-act');
-                }
-                else
-                {
-                    this.$toolbar.find('a.re-icon').not('.re-' + key).removeClass('redactor-act');
-                }
-            },
-            setActiveInVisual: function()
-            {
-                this.$toolbar.find('a.re-icon').not('a.re-html').removeClass('redactor-button-disabled');
-            },
-            setInactiveInCode: function()
-            {
-                this.$toolbar.find('a.re-icon').not('a.re-html').addClass('redactor-button-disabled');
-            },
-            changeIcon: function(key, classname)
-            {
-                this.button.get(key).addClass('re-' + classname);
-            },
-            removeIcon: function(key, classname)
-            {
-                this.button.get(key).removeClass('re-' + classname);
-            },
-            setAwesome: function(key, name)
-            {
-                var $button = this.button.get(key);
-                $button.removeClass('redactor-btn-image').addClass('fa-redactor-btn');
-                $button.html('<i class="fa ' + name + '"></i>');
-            },
-            addCallback: function($btn, callback)
-            {
-                var type = (callback == 'dropdown') ? 'dropdown' : 'func';
-                var key = $btn.attr('rel');
-                $btn.on('touchstart click', $.proxy(function(e)
-                {
-                    if ($btn.hasClass('redactor-button-disabled')) return false;
-                    this.button.onClick(e, key, type, callback);
+										if ($.isFunction(callback))
+										{
+												callback.call(this, btnName);
+												this.observe.buttons(e, btnName);
+										}
+										else if (callback.search(/\./) != '-1')
+										{
+												func = callback.split('.');
+												if (typeof this[func[0]] != 'undefined')
+												{
+														this[func[0]][func[1]](btnName);
+														this.observe.buttons(e, btnName);
+												}
+										}
+										else
+										{
+												this[callback](btnName);
+												this.observe.buttons(e, btnName);
+										}
+								}
+						},
+						get: function(key)
+						{
+								return this.$toolbar.find('a.re-' + key);
+						},
+						setActive: function(key)
+						{
+								this.button.get(key).addClass('redactor-act');
+						},
+						setInactive: function(key)
+						{
+								this.button.get(key).removeClass('redactor-act');
+						},
+						setInactiveAll: function(key)
+						{
+								if (typeof key == 'undefined')
+								{
+										this.$toolbar.find('a.re-icon').removeClass('redactor-act');
+								}
+								else
+								{
+										this.$toolbar.find('a.re-icon').not('.re-' + key).removeClass('redactor-act');
+								}
+						},
+						setActiveInVisual: function()
+						{
+								this.$toolbar.find('a.re-icon').not('a.re-html').removeClass('redactor-button-disabled');
+						},
+						setInactiveInCode: function()
+						{
+								this.$toolbar.find('a.re-icon').not('a.re-html').addClass('redactor-button-disabled');
+						},
+						changeIcon: function(key, classname)
+						{
+								this.button.get(key).addClass('re-' + classname);
+						},
+						removeIcon: function(key, classname)
+						{
+								this.button.get(key).removeClass('re-' + classname);
+						},
+						setAwesome: function(key, name)
+						{
+								var $button = this.button.get(key);
+								$button.removeClass('redactor-btn-image').addClass('fa-redactor-btn');
+								$button.html('<i class="fa ' + name + '"></i>');
+						},
+						addCallback: function($btn, callback)
+						{
+								var type = (callback == 'dropdown') ? 'dropdown' : 'func';
+								var key = $btn.attr('rel');
+								$btn.on('touchstart click', $.proxy(function(e)
+								{
+										if ($btn.hasClass('redactor-button-disabled')) return false;
+										this.button.onClick(e, key, type, callback);
 
-                }, this));
-            },
-            addDropdown: function($btn, dropdown)
-            {
-                var key = $btn.attr('rel');
-                this.button.addCallback($btn, 'dropdown');
+								}, this));
+						},
+						addDropdown: function($btn, dropdown)
+						{
+								var key = $btn.attr('rel');
+								this.button.addCallback($btn, 'dropdown');
 
-                var $dropdown = $('<div class="redactor-dropdown redactor-dropdown-box-' + key + '" style="display: none;">');
-                $btn.data('dropdown', $dropdown);
+								var $dropdown = $('<div class="redactor-dropdown redactor-dropdown-box-' + key + '" style="display: none;">');
+								$btn.data('dropdown', $dropdown);
 
-                if (dropdown)
-                {
-                    this.dropdown.build(key, $dropdown, dropdown);
-                }
+								if (dropdown)
+								{
+										this.dropdown.build(key, $dropdown, dropdown);
+								}
 
-                return $dropdown;
-            },
-            add: function(key, title)
-            {
-                if (!this.opts.toolbar) return;
+								return $dropdown;
+						},
+						add: function(key, title)
+						{
+								if (!this.opts.toolbar) return;
 
-                var btn = this.button.build(key, { title: title });
-                btn.addClass('redactor-btn-image');
+								var btn = this.button.build(key, { title: title });
+								btn.addClass('redactor-btn-image');
 
-                this.$toolbar.append($('<li>').append(btn));
+								this.$toolbar.append($('<li>').append(btn));
 
-                return btn;
-            },
-            addFirst: function(key, title)
-            {
-                if (!this.opts.toolbar) return;
+								return btn;
+						},
+						addFirst: function(key, title)
+						{
+								if (!this.opts.toolbar) return;
 
-                var btn = this.button.build(key, { title: title });
-                this.$toolbar.prepend($('<li>').append(btn));
+								var btn = this.button.build(key, { title: title });
+								this.$toolbar.prepend($('<li>').append(btn));
 
-                return btn;
-            },
-            addAfter: function(afterkey, key, title)
-            {
-                if (!this.opts.toolbar) return;
+								return btn;
+						},
+						addAfter: function(afterkey, key, title)
+						{
+								if (!this.opts.toolbar) return;
 
-                var btn = this.button.build(key, { title: title });
-                var $btn = this.button.get(afterkey);
+								var btn = this.button.build(key, { title: title });
+								var $btn = this.button.get(afterkey);
 
-                if ($btn.size() !== 0) $btn.parent().after($('<li>').append(btn));
-                else this.$toolbar.append($('<li>').append(btn));
+								if ($btn.size() !== 0) $btn.parent().after($('<li>').append(btn));
+								else this.$toolbar.append($('<li>').append(btn));
 
-                return btn;
-            },
-            addBefore: function(beforekey, key, title)
-            {
-                if (!this.opts.toolbar) return;
+								return btn;
+						},
+						addBefore: function(beforekey, key, title)
+						{
+								if (!this.opts.toolbar) return;
 
-                var btn = this.button.build(key, { title: title });
-                var $btn = this.button.get(beforekey);
+								var btn = this.button.build(key, { title: title });
+								var $btn = this.button.get(beforekey);
 
-                if ($btn.size() !== 0) $btn.parent().before($('<li>').append(btn));
-                else this.$toolbar.append($('<li>').append(btn));
+								if ($btn.size() !== 0) $btn.parent().before($('<li>').append(btn));
+								else this.$toolbar.append($('<li>').append(btn));
 
-                return btn;
-            },
-            remove: function(key)
-            {
-                this.button.get(key).remove();
-            }
-        };
+								return btn;
+						},
+						remove: function(key)
+						{
+								this.button.get(key).remove();
+						}
+				};
 	};
 
 
-    $.Redactor.prototype.bindModuleMethods =  function(module)
-    {
+		$.Redactor.prototype.bindModuleMethods =  function(module)
+		{
 
-        if (typeof this[module] == 'undefined') return;
+				if (typeof this[module] == 'undefined') return;
 
-        // init module
-        this[module] = this[module]();
+				// init module
+				this[module] = this[module]();
 
-        var methods = this.getModuleMethods(this[module]);
-        var len = methods.length;
+				var methods = this.getModuleMethods(this[module]);
+				var len = methods.length;
 
-        // bind methods
-        for (var z = 0; z < len; z++)
-        {
-            var method = this[module][methods[z]];
-            if( Overriden_Methods[module] && Overriden_Methods[module][methods[z]] )
-                method =  Overriden_Methods[module][methods[z]];
+				// bind methods
+				for (var z = 0; z < len; z++)
+				{
+						var method = this[module][methods[z]];
+						if( Overriden_Methods[module] && Overriden_Methods[module][methods[z]] )
+								method =  Overriden_Methods[module][methods[z]];
 
-            this[module][methods[z]] = method.bind(this);
-        }
-    };
+						this[module][methods[z]] = method.bind(this);
+				}
+		};
 
-    var l10n = Upfront.Settings && Upfront.Settings.l10n
-        ? Upfront.Settings.l10n.global.ueditor
-        : Upfront.mainData.l10n.global.ueditor
-    ;
+		var l10n = Upfront.Settings && Upfront.Settings.l10n
+				? Upfront.Settings.l10n.global.ueditor
+				: Upfront.mainData.l10n.global.ueditor
+		;
 
-    /**
-     * Proxy the Redactor l10n
-     * This is so we're using Redactor string handling
-     * with our own delivery mechanism.
-     */
-    $.Redactor.opts.langs['upfront'] = $.extend({}, $.Redactor.opts.langs['en'], {
-        bold: l10n.bold,
-        italic: l10n.italic
-    });
+		/**
+		 * Proxy the Redactor l10n
+		 * This is so we're using Redactor string handling
+		 * with our own delivery mechanism.
+		 */
+		$.Redactor.opts.langs['upfront'] = $.extend({}, $.Redactor.opts.langs['en'], {
+				bold: l10n.bold,
+				italic: l10n.italic
+		});
 
 
 };
 
 var Ueditor = function($el, options) {
-    this.active = false;
+		this.active = false;
 	//Allow user disable plugins
 	var plugins = this.pluginList(options),
-        self = this,
-        unique_id = Upfront.Util.get_unique_id("redactor");
-    this.$el = $el;
-    this.$air = $("<div class='redactor_air upfront-panels-shadow upfront-ui'></div>").attr("id", unique_id ).hide();
-    $("body").append(this.$air);
-    if( !_.isEmpty(options.airButtons) ){
-        options.buttons = options.airButtons;
-    }
-    this.options = $.extend({
+				self = this,
+				unique_id = Upfront.Util.get_unique_id("redactor");
+		this.$el = $el;
+		this.$air = $("<div class='redactor_air upfront-panels-shadow upfront-ui'></div>").attr("id", unique_id ).hide();
+		$("body").append(this.$air);
+		if( !_.isEmpty(options.airButtons) ){
+				options.buttons = options.airButtons;
+		}
+		this.options = $.extend({
 			// Ueditor options
 			autostart: true, //If false ueditor start on dblclick and stops on blur
-            autoexit: false,
+						autoexit: false,
 			stateButtons: {},
-            toolbarExternal: "#" + unique_id,
-            // toolbarFixedTopOffset: 100,
-        	// Redactor options
+						toolbarExternal: "#" + unique_id,
+						// toolbarFixedTopOffset: 100,
+					// Redactor options
 			air:true,
 			linebreaks: true,
 			disableLineBreak: false,
@@ -839,25 +839,25 @@ var Ueditor = function($el, options) {
 			cleanup: false,
 			plugins: plugins,
 			airButtons: ['upfrontFormatting', 'bold', 'italic', 'blockquote', 'upfrontLink', 'stateLists', 'stateAlign', 'upfrontColor', 'upfrontIcons'],
-            buttons: [ 'upfrontFormatting', 'bold', 'italic', 'blockquote', 'upfrontLink', 'stateLists', 'stateAlign', 'upfrontColor', 'upfrontIcons'],
+						buttons: [ 'upfrontFormatting', 'bold', 'italic', 'blockquote', 'upfrontLink', 'stateLists', 'stateAlign', 'upfrontColor', 'upfrontIcons'],
 			//buttons: ['formatting', 'bold', 'italic', 'deleted'],
 			buttonsCustom: {},
 			activeButtonsAdd: {},
 			observeLinks: false,
 			observeImages: false,
 			formattingTags: ['h1', 'h2', 'h3', 'h4', 'p', 'pre'],
-            inserts: Upfront.Settings.Application.PERMS.EMBED ? ["image", "embed", "video"] : ["image", "video"],
-            linkTooltip: false,
-            cleanOnPaste: true, // font icons copy and paste wont work without this set to true - BUT, with it set to true, paste won't work AT ALL!!!
-            replaceDivs: false,
-            pastePlainText: false,
+						inserts: Upfront.Settings.Application.PERMS.EMBED ? ["image", "embed", "video"] : ["image", "video"],
+						linkTooltip: false,
+						cleanOnPaste: true, // font icons copy and paste wont work without this set to true - BUT, with it set to true, paste won't work AT ALL!!!
+						replaceDivs: false,
+						pastePlainText: false,
 			imageEditable: false,
-            //cleanStyleOnEnter: false,
-            //removeDataAttr: false,
-            removeEmpty: false,
-            imageResizable: false,
-            lang: 'upfront', // <-- This is IMPORTANT. See the l10n proxying bit in `hackRedactor`,
-            direction: Upfront.Util.isRTL() ? 'rtl' : 'ltr'
+						//cleanStyleOnEnter: false,
+						//removeDataAttr: false,
+						removeEmpty: false,
+						imageResizable: false,
+						lang: 'upfront', // <-- This is IMPORTANT. See the l10n proxying bit in `hackRedactor`,
+						direction: Upfront.Util.isRTL() ? 'rtl' : 'ltr'
 		}, options)
 	;
 	/* --- Redactor allows for single callbacks - let's dispatch events instead --- */
@@ -899,32 +899,32 @@ var Ueditor = function($el, options) {
 	//this.startPlaceholder();
 	this.options.pasteCallback = function (html) {
 
-        /**
-         * When pasting unformatted text with line breaks, the lines get wrapped
-         * in DIV tags. This is due to browser's handling of pasted content inside
-         * div having contenteditable=true. For our requirement, we have to replace
-         * it with P tags instead, in addition we have to make custom replacements
-         * for different use cases.
-         */
-        html = html.replace(/<div>/g, "<p>").replace(/<\/div>/g,"</p>");
+				/**
+				 * When pasting unformatted text with line breaks, the lines get wrapped
+				 * in DIV tags. This is due to browser's handling of pasted content inside
+				 * div having contenteditable=true. For our requirement, we have to replace
+				 * it with P tags instead, in addition we have to make custom replacements
+				 * for different use cases.
+				 */
+				html = html.replace(/<div>/g, "<p>").replace(/<\/div>/g,"</p>");
 
-        // release br caught within empty p tags
-        html = html.replace(/<p><br><\/p>/g, "<br>");
-        html = html.replace(/<p ([^>]*)><br><\/p>/g, "<br>");
+				// release br caught within empty p tags
+				html = html.replace(/<p><br><\/p>/g, "<br>");
+				html = html.replace(/<p ([^>]*)><br><\/p>/g, "<br>");
 
-        // if two consecutive paragraphs without a line break inbetween
-        // merge the paragraphs and sepearate text with a br
-        html = html.replace(/<\/p><p>/g, "<br>");
-        html = html.replace(/<\/p><p ([^>]*)>/g, "<br>");
+				// if two consecutive paragraphs without a line break inbetween
+				// merge the paragraphs and sepearate text with a br
+				html = html.replace(/<\/p><p>/g, "<br>");
+				html = html.replace(/<\/p><p ([^>]*)>/g, "<br>");
 
-        // if a single line break between two paragraph
-        // take out the line break
-        html = html.replace(/<\/p><br><p>/g, "</p><p>");
-        html = html.replace(/<\/p><br><p ([^>]*)>/g, "</p><p $1>");
+				// if a single line break between two paragraph
+				// take out the line break
+				html = html.replace(/<\/p><br><p>/g, "</p><p>");
+				html = html.replace(/<\/p><br><p ([^>]*)>/g, "</p><p $1>");
 
-        // if multile breaks between 2 paragraphs, replace with blank paragraph
-        html = html.replace(/<\/p>([<br>])*<p>/g, "</p><p></p><p>");
-        html = html.replace(/<\/p>([<br>])*<p ([^>]*)>/g, "</p><p></p><p $1>");
+				// if multile breaks between 2 paragraphs, replace with blank paragraph
+				html = html.replace(/<\/p>([<br>])*<p>/g, "</p><p></p><p>");
+				html = html.replace(/<\/p>([<br>])*<p ([^>]*)>/g, "</p><p></p><p $1>");
 
 
 
@@ -937,71 +937,71 @@ var Ueditor = function($el, options) {
 		return html;
 	};
 
-    // Enter callback inside lists
-    this.options.enterCallback = function (e) {
-        // Current Block is a list item
-        if(this.keydown.block.tagName === 'LI') {
-            var current = this.selection.getCurrent(),
-                $parent = $(current).closest('li'),
-                $list = $parent.parent('ul,ol'),
-                $listlist = $list.parent('li').parent('ul,ol'),
-                emptyList = '<li>&#x200b;</li>',
+		// Enter callback inside lists
+		this.options.enterCallback = function (e) {
+				// Current Block is a list item
+				if(this.keydown.block.tagName === 'LI') {
+						var current = this.selection.getCurrent(),
+								$parent = $(current).closest('li'),
+								$list = $parent.parent('ul,ol'),
+								$listlist = $list.parent('li').parent('ul,ol'),
+								emptyList = '<li>&#x200b;</li>',
 				node
-            ;
+						;
 
-            // Sublist to list
-            if (
-                $parent.length !== 0 &&
-                $listlist.length !== 0 &&
-                this.utils.isEmpty($parent.html()) &&
-                $list.next().length === 0
-            ) {
-                node = $(emptyList);
-                $listlist.append(node);
-                this.caret.setStart(node);
-                $parent.remove();
+						// Sublist to list
+						if (
+								$parent.length !== 0 &&
+								$listlist.length !== 0 &&
+								this.utils.isEmpty($parent.html()) &&
+								$list.next().length === 0
+						) {
+								node = $(emptyList);
+								$listlist.append(node);
+								this.caret.setStart(node);
+								$parent.remove();
 
-                return false;
-            }
-            // List to paragraph
-            else if (
-                $parent.length !== 0 &&
-                this.utils.isEmpty($parent.html()) &&
-                $list.next().length === 0
-            ) {
-                node = $(this.opts.emptyHtml);
-                $list.after(node);
-                this.caret.setStart(node);
-                $parent.remove();
+								return false;
+						}
+						// List to paragraph
+						else if (
+								$parent.length !== 0 &&
+								this.utils.isEmpty($parent.html()) &&
+								$list.next().length === 0
+						) {
+								node = $(this.opts.emptyHtml);
+								$list.after(node);
+								this.caret.setStart(node);
+								$parent.remove();
 
-                return false;
-            }
-            // List
-            else {
-                UeditorEvents.trigger("ueditor:enter", this, e);
-            }
+								return false;
+						}
+						// List
+						else {
+								UeditorEvents.trigger("ueditor:enter", this, e);
+						}
 
 
-            /**
-             * Allow user to exit lists on double enter
-             */
-            if( this.utils.isEmpty( this.keydown.block.innerText ) ){
-                $(this.selection.getBlock()).remove();
-                if( $list.next().is("p") && this.utils.isEmpty( $list.next().text() ) ){
-                    node = $list.next("p");
-                }else{
-                    node = $(this.opts.emptyHtml);
-                    $list.after(node);
-                }
-                this.caret.setStart(node);
-            }
-        }
-        // Default
-        else {
-            UeditorEvents.trigger("ueditor:enter", this, e);
-        }
+						/**
+						 * Allow user to exit lists on double enter
+						 */
+						if( this.utils.isEmpty( this.keydown.block.innerText ) ){
+								$(this.selection.getBlock()).remove();
+								if( $list.next().is("p") && this.utils.isEmpty( $list.next().text() ) ){
+										node = $list.next("p");
+								}else{
+										node = $(this.opts.emptyHtml);
+										$list.after(node);
+								}
+								this.caret.setStart(node);
+						}
+				}
+				// Default
+				else {
+						UeditorEvents.trigger("ueditor:enter", this, e);
+				}
 
-    };
+		};
 
 };
 
@@ -1010,9 +1010,9 @@ var Ueditor = function($el, options) {
  * Make sure selection of text show's the air buttons
  */
 UeditorEvents.on("ueditor:key:up", function(redactor){
-    if( !_.isEmpty( redactor.selection.getText() ) ){
-        redactor.airShow();
-    }
+		if( !_.isEmpty( redactor.selection.getText() ) ){
+				redactor.airShow();
+		}
 });
 
 
@@ -1024,15 +1024,15 @@ Ueditor.prototype = {
 		var self = this;
 		this.stopPlaceholder();
 		this.hideLinkFlags();
-        this.$el.addClass('ueditable')
+				this.$el.addClass('ueditable')
 			.removeClass('ueditable-inactive')
 			.attr('title', '')
 			.redactor(this.options)
 		;
 		this.$el.trigger('start', this);
 		this.redactor = this.$el.data('redactor');
-        this.redactor.$air = this.$air;
-        this.redactor.ueditor = this;
+				this.redactor.$air = this.$air;
+				this.redactor.ueditor = this;
 		this.preventDraggable();
 		UeditorEvents.trigger('ueditor:start', this.redactor);
 
@@ -1049,15 +1049,15 @@ Ueditor.prototype = {
 			self.cmdKeyA = false;
 			self.cmdKey = false;
 
-            /**
-             * Clean unverified spans and remove their style attr
-             */
-            _.delay(function() {
-                if (e.keyCode === 8) {
-                    self.redactor.clean.clearUnverified();
-                    self.redactor.$editor.find('span').not('[data-verified="redactor"]').removeAttr('style');
-                }
-            }, 2);
+						/**
+						 * Clean unverified spans and remove their style attr
+						 */
+						_.delay(function() {
+								if (e.keyCode === 8) {
+										self.redactor.clean.clearUnverified();
+										self.redactor.$editor.find('span').not('[data-verified="redactor"]').removeAttr('style');
+								}
+						}, 2);
 
 			setTimeout(function(){
 				if(e.keyCode === 65 && e.metaKey ){
@@ -1073,8 +1073,8 @@ Ueditor.prototype = {
 				}
 			});
 
-            // Expand known text patterns
-            if (32 === e.keyCode) self.expand_known_text_patterns();
+						// Expand known text patterns
+						if (32 === e.keyCode) self.expand_known_text_patterns();
 
 			if( ( e.keyCode != 37 && e.keyCode != 39 ) && self.redactor ) {
 				var current = $(self.redactor.selection.getCurrent());
@@ -1090,7 +1090,7 @@ Ueditor.prototype = {
 		});
 
 
-        // Open air when selecting text with keyboard
+				// Open air when selecting text with keyboard
 		this.$el.on('keyup', function(e){
 			if(self.redactor && self.redactor.selection.getText() &&  [37, 38, 39, 40].indexOf( e.keyCode ) !== -1 || (e.keyCode === 65 && e.ctrlKey) || (self.cmdKeyA)  ){
 				self.redactor.airShow(e);
@@ -1109,16 +1109,16 @@ Ueditor.prototype = {
 
 		this.active = true;
 
-        this.$el.on('keyup', function(e) {
-          /**
-           * Make sure return doesn't delete the last charactor
-           */
-          if (13 === e.keyCode && !e.shiftKey && (self || {}).redactor && !self.redactor.keydown.pre && !self.redactor.$air.is(":visible") ) {
-            self.redactor.utils.removeEmpty();
-            // Add extra space to end of previous paragraph to prevent backspace deleting last character.
-            $(self.redactor.selection.getCurrent()).prev().append("&#x200b;");
-          }
-        });
+				this.$el.on('keyup', function(e) {
+					/**
+					 * Make sure return doesn't delete the last charactor
+					 */
+					if (13 === e.keyCode && !e.shiftKey && (self || {}).redactor && !self.redactor.keydown.pre && !self.redactor.$air.is(":visible") ) {
+						self.redactor.utils.removeEmpty();
+						// Add extra space to end of previous paragraph to prevent backspace deleting last character.
+						$(self.redactor.selection.getCurrent()).prev().append("&#x200b;");
+					}
+				});
 
 	},
 	stopOnEscape: function(e) {
@@ -1127,113 +1127,113 @@ Ueditor.prototype = {
 			}
 	},
 
-    /**
-     * Expand the known text patterns in current block element
-     */
-    expand_known_text_patterns: function (e) {
-        var redactor = this.redactor,
-            rpl = {
-                '##': {tag: 'h2'},
-                '###': {tag: 'h3'},
-                '####': {tag: 'h4'},
-                '#####': {tag: 'h5'},
-                '######': {tag: 'h6'},
-                '>': {tag: 'blockquote'},
-                '-': {tag: 'ul', nest: 'li'},
-                '*': {tag: 'ul', nest: 'li'},
-                '1.': {tag: 'ol', nest: 'li'},
-                '1)': {tag: 'ol', nest: 'li'}
-            }
-        ;
-        if (!redactor) return;
+		/**
+		 * Expand the known text patterns in current block element
+		 */
+		expand_known_text_patterns: function (e) {
+				var redactor = this.redactor,
+						rpl = {
+								'##': {tag: 'h2'},
+								'###': {tag: 'h3'},
+								'####': {tag: 'h4'},
+								'#####': {tag: 'h5'},
+								'######': {tag: 'h6'},
+								'>': {tag: 'blockquote'},
+								'-': {tag: 'ul', nest: 'li'},
+								'*': {tag: 'ul', nest: 'li'},
+								'1.': {tag: 'ol', nest: 'li'},
+								'1)': {tag: 'ol', nest: 'li'}
+						}
+				;
+				if (!redactor) return;
 
-        redactor.selection.get();
+				redactor.selection.get();
 
-        var node = redactor.selection.getBlock(),
-            caret, $el, check
-        ;
-        if (!node) return;
+				var node = redactor.selection.getBlock(),
+						caret, $el, check
+				;
+				if (!node) return;
 
-        caret = redactor.caret.getOffsetOfElement(node);
-        if (!caret) return;
+				caret = redactor.caret.getOffsetOfElement(node);
+				if (!caret) return;
 
-        $el = $(node).clone();
-        check = $el.text().substr(0, caret);
+				$el = $(node).clone();
+				check = $el.text().substr(0, caret);
 
-        if (!check) return;
+				if (!check) return;
 
-        $.each(rpl, function (src, target) {
-            if (src !== check) return true;
+				$.each(rpl, function (src, target) {
+						if (src !== check) return true;
 
-            var $node = $(node),
-                rx = new RegExp('^' + src.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1") + ' ?'),
-                text = $node.html().replace(rx, ''),
+						var $node = $(node),
+								rx = new RegExp('^' + src.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1") + ' ?'),
+								text = $node.html().replace(rx, ''),
 				new_caret
-            ;
+						;
 
 			// Since we're using `.html()`, we want to make sure
 			// the converted entities are properly replaced
 			if ('>' === src) text = text.replace(/&gt;/, ''); // No "g" modifier, so we replace the first instance
 
-            // Let's not do nested lists
-            // or expansion within lists in general
-            // or in PRE tags
-            if ($node.is("li,ul,ol,pre")) return false;
+						// Let's not do nested lists
+						// or expansion within lists in general
+						// or in PRE tags
+						if ($node.is("li,ul,ol,pre")) return false;
 
-            // Replace the selection tag with the one from the replacement map
-            if ("nest" in target && target.nest) {
-                $node.html(
-                    '<' + target.tag + '><' + target.nest + '>' +
-                        text +
-                    '</' + target.nest + '></' + target.tag + '>'
-                );
+						// Replace the selection tag with the one from the replacement map
+						if ("nest" in target && target.nest) {
+								$node.html(
+										'<' + target.tag + '><' + target.nest + '>' +
+												text +
+										'</' + target.nest + '></' + target.tag + '>'
+								);
 
 				new_caret = $node.find(target.nest).last().get();
-            } else {
-                var _node = document.createElement(target.tag);
-                _node.innerHTML = text;
-                $node.replaceWith(_node);
+						} else {
+								var _node = document.createElement(target.tag);
+								_node.innerHTML = text;
+								$node.replaceWith(_node);
 
 				new_caret = _node;
-            }
+						}
 
 			// Set caret position to end of the target and sync
 			redactor.caret.setEnd(new_caret);
-            redactor.code.sync();
+						redactor.code.sync();
 
-            /**
-             * Make sure the created node doesn't contain the space created by the spacebar!
-             */
-            _.delay( function(){
-               $(redactor.selection.getBlock()).html(text);
+						/**
+						 * Make sure the created node doesn't contain the space created by the spacebar!
+						 */
+						_.delay( function(){
+							 $(redactor.selection.getBlock()).html(text);
 
 			   // Re-set caret position to end of the target and re-sync
 			   redactor.caret.setEnd(new_caret);
-               redactor.code.sync();
-            }, 3 );
+							 redactor.code.sync();
+						}, 3 );
 
-            return false;
-        });
-    },
+						return false;
+				});
+		},
 
 	stop: function(){
 		if(this.redactor){
 			UeditorEvents.trigger('ueditor:stop', this.redactor);
 			this.$el.trigger('stop');
 			this.restoreDraggable();
-            if( this.redactor.$toolbar )
+						if( this.redactor.$toolbar )
 			    this.redactor.core.destroy();
-            this.$air.remove();
-            this.$el.removeClass('ueditable');
-            this.redactor.events.trigger('cleanUpListeners');
-            this.$el.data("ueditor", false);
-            //this.redactor = false;
+						this.$air.remove();
+						this.$el.removeClass('ueditable');
+						this.redactor.events.trigger('cleanUpListeners');
+						this.$el.data("ueditor", false);
+						//this.redactor = false;
 		}
 		if ("undefined" !== typeof Upfront.data.Ueditor) delete Upfront.data.Ueditor.instances[this.id];
 		this.startPlaceholder();
 		$("html").off('mousedown', this.stopOnOutsideClick);
 		$(document).off('keyup', this.stopOnEscape);
-        this.active = false;
+				this.active = false;
 
 	},
 
@@ -1242,7 +1242,7 @@ Ueditor.prototype = {
 
 		me.$el.addClass('ueditable-inactive')
 			.attr('title', 'Double click to edit the text')
-            .addClass('uf-click-to-edit-text')
+						.addClass('uf-click-to-edit-text')
 			.one('dblclick', function(e){
 				e.preventDefault();
 				e.stopPropagation();
@@ -1268,12 +1268,12 @@ Ueditor.prototype = {
 			});
 		}
 
-        // Add warning flags to all the lightbox links if the lightbox is missing
-        this.$el.find('a').each(function(){
-            var href = $(this).attr('href');
-            if(href && href.indexOf('#ltb-') > -1 && !Upfront.Util.checkLightbox(href))
-                $(this).addClass('missing-lightbox-warning');
-        });
+				// Add warning flags to all the lightbox links if the lightbox is missing
+				this.$el.find('a').each(function(){
+						var href = $(this).attr('href');
+						if(href && href.indexOf('#ltb-') > -1 && !Upfront.Util.checkLightbox(href))
+								$(this).addClass('missing-lightbox-warning');
+				});
 	},
 	displayLinkFlags: function() {
 		var me = this;
@@ -1319,29 +1319,29 @@ Ueditor.prototype = {
 		else
 			window.open(url);
 	},
-    /*validateEmail: function (email) {
-        var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(email);
-    },*/
-    guessLinkTypeTag: function(item){
-        return item.data('upfront-link-type');
-    },
+		/*validateEmail: function (email) {
+				var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+				return re.test(email);
+		},*/
+		guessLinkTypeTag: function(item){
+				return item.data('upfront-link-type');
+		},
 	guessLinkType: function(url){
-        var anchor = false;
+				var anchor = false;
 		if(!$.trim(url) || $.trim(url) == '#')
 			return 'unlink';
 
-        if(url.indexOf('#') > -1) {
-            anchor =this.getUrlanchor(url);
-        }
+				if(url.indexOf('#') > -1) {
+						anchor =this.getUrlanchor(url);
+				}
 
 		if(anchor) {
 			return url.indexOf('ltb-') > -1 ? 'lightbox' : 'anchor';
-        }
-        // is it an email.
-        if(url.indexOf('mailto:') === 0) {
-            return 'email';
-        }
+				}
+				// is it an email.
+				if(url.indexOf('mailto:') === 0) {
+						return 'email';
+				}
 
 		if(url.substring(0, location.origin.length) == location.origin)
 			return 'entry';
@@ -1355,11 +1355,11 @@ Ueditor.prototype = {
 		regions.each(function (r) {
 			r.get("modules").each(function (module) {
 				if(module.get("objects")) {
-                    module.get("objects").each(function (object) {
-    					var anchor = object.get_property_value_by_name("anchor");
-    					if (anchor && anchor.length) anchors[anchor] = object;
-    				});
-                }
+										module.get("objects").each(function (object) {
+							var anchor = object.get_property_value_by_name("anchor");
+							if (anchor && anchor.length) anchors[anchor] = object;
+						});
+								}
 			});
 		});
 		return anchors;
@@ -1449,19 +1449,19 @@ Ueditor.prototype = {
 		if( !( $(e.target).hasClass("redactor_box")
 				|| $(e.target).parents().hasClass("redactor-box")
 				|| $(e.target).parents().hasClass("redactor_air")
-                || $(e.target).parents().hasClass("redactor-toolbar")
-                || $(e.target).parents().hasClass("use_selection_container") // Todo Sam:, make this more general
-                || $(e.target).parents().is("#upfront-popup")
-                || $(e.target).parents().hasClass("upfront-inserts-markup-editor")
+								|| $(e.target).parents().hasClass("redactor-toolbar")
+								|| $(e.target).parents().hasClass("use_selection_container") // Todo Sam:, make this more general
+								|| $(e.target).parents().is("#upfront-popup")
+								|| $(e.target).parents().hasClass("upfront-inserts-markup-editor")
 				|| $(e.target).parents().hasClass("redactor-dropdown"))
 			&& $(e.target).parents("#upfront-popup.upfront-postselector-popup").length === 0)
 		{
-            if(e.data.ueditor.$el.closest('a.menu_item').length > 0) { // blur on the menu item, dont stop the editor yet
-                e.data.ueditor.$el.trigger('blur');
-            }
-            else {
-    			e.data.ueditor.stop();
-            }
+						if(e.data.ueditor.$el.closest('a.menu_item').length > 0) { // blur on the menu item, dont stop the editor yet
+								e.data.ueditor.$el.trigger('blur');
+						}
+						else {
+					e.data.ueditor.stop();
+						}
 		}
 	},
 	callMethod: function(method){
@@ -1557,10 +1557,10 @@ Ueditor.prototype = {
 		});
 
 		$(document).one('mouseup', function(e){
-            if(!me.redactor)
-                return;
+						if(!me.redactor)
+								return;
 			//var is_selection = ((Math.abs(e.pageX-me.lastmousedown.x) + Math.abs(e.pageY-me.lastmousedown.y)) > 2);
-            var is_selection = !!me.redactor.selection.getText();
+						var is_selection = !!me.redactor.selection.getText();
 
 			if((is_selection || me.clickcount > 1) && me.redactor && me.redactor.waitForMouseUp && me.redactor.selection.getText()){
 				me.redactor.airShow(e);
@@ -1570,7 +1570,7 @@ Ueditor.prototype = {
 				$('.redactor_air').hide();
 
 			if($(e.target).hasClass('uf_font_icon')) {
-                // Todo Gagan: had to comment the following to allow the font icon to be selected, hope this doesn't brean anything
+								// Todo Gagan: had to comment the following to allow the font icon to be selected, hope this doesn't brean anything
 				//if(e.pageX < ($(e.target).offset().left + $(e.target).width()/2))
 				//	me.redactor.caret.setBefore($(e.target));
 				//else
@@ -1583,19 +1583,19 @@ Ueditor.prototype = {
 		var html = this.redactor.$element.html();
 		if(this.insertManager) {
 			html = this.insertManager.insertExport(html, is_simple_element);
-            $html =  $("<div>").html( html );
+						$html =  $("<div>").html( html );
 		}
 
-        $html.find(".redactor-selection-marker").remove();
-        /**
-         * Make sure the wrapping .plain-text-container is not being returned as html
-         */
-        return $.trim(
-            // Conditionally nuke the wrapper - only if we actually have it
-            $html.find(".plain-text-container").length
-                ? $html.find(".plain-text-container").last().html()
-                : $html.html()
-        );
+				$html.find(".redactor-selection-marker").remove();
+				/**
+				 * Make sure the wrapping .plain-text-container is not being returned as html
+				 */
+				return $.trim(
+						// Conditionally nuke the wrapper - only if we actually have it
+						$html.find(".plain-text-container").length
+								? $html.find(".plain-text-container").last().html()
+								: $html.html()
+				);
 	},
 	getInsertsData: function(){
 		var insertsData = {};
@@ -1638,118 +1638,118 @@ Ueditor.prototype = {
 };
 
 var InsertManagerInserts = Backbone.View.extend({
-    tpl: _.template($(tpl).find('#insert-manager-tooltip-tpl').html()),
-    className: "ueditor-post-insert-manager",
-    $block: false,
-    initialize: function(options){
+		tpl: _.template($(tpl).find('#insert-manager-tooltip-tpl').html()),
+		className: "ueditor-post-insert-manager",
+		$block: false,
+		initialize: function(options){
 
-        if ( options.inserts && options.inserts.constructor === Array && !Upfront.Settings.Application.PERMS.EMBED ) {
+				if ( options.inserts && options.inserts.constructor === Array && !Upfront.Settings.Application.PERMS.EMBED ) {
 					options.inserts = _.without(options.inserts, "embed");
-        }
+				}
 
-        this._inserts = options._inserts || {};
-        this.insertsData = options.insertsData || {};
-        this.inserts = options.inserts || {};
-        this.redactor = options.redactor;
-        this.onRemoveInsert = options.onRemoveInsert;
-        this.listenTo( UeditorEvents, "ueditor:insert:relocate", this.insert_relocate );
+				this._inserts = options._inserts || {};
+				this.insertsData = options.insertsData || {};
+				this.inserts = options.inserts || {};
+				this.redactor = options.redactor;
+				this.onRemoveInsert = options.onRemoveInsert;
+				this.listenTo( UeditorEvents, "ueditor:insert:relocate", this.insert_relocate );
 				var me = this;
 				this.listenTo( UeditorEvents, 'cleanUpListeners', function() {
 					me.stopListening();
 				});
-    },
-    events:{
-        "click .uinsert-selector-option": "on_insert_click",
-        "click .upfront-post-media-trigger": "toggle_inserts"
-    },
-    render: function(){
-      this.$el.html( this.tpl( { inserts: _.pick(Inserts.inserts, this.inserts), names: Inserts.NAMES } ) );
-    },
-    insert_relocate: function( $current ){
-      this.$block = $current;
-    },
-    toggle_inserts: function(e){
-        e.preventDefault();
-        e.stopPropagation();
-        this.$el.find(".uinsert-selector").toggle();
-    },
-    on_insert_click: function( e ){
-        e.preventDefault();
-        e.stopPropagation();
-        var type = $(e.target).data('insert'),
-            insert = new Inserts.inserts[type](),
-            self = this
-            ;
+		},
+		events:{
+				"click .uinsert-selector-option": "on_insert_click",
+				"click .upfront-post-media-trigger": "toggle_inserts"
+		},
+		render: function(){
+			this.$el.html( this.tpl( { inserts: _.pick(Inserts.inserts, this.inserts), names: Inserts.NAMES } ) );
+		},
+		insert_relocate: function( $current ){
+			this.$block = $current;
+		},
+		toggle_inserts: function(e){
+				e.preventDefault();
+				e.stopPropagation();
+				this.$el.find(".uinsert-selector").toggle();
+		},
+		on_insert_click: function( e ){
+				e.preventDefault();
+				e.stopPropagation();
+				var type = $(e.target).data('insert'),
+						insert = new Inserts.inserts[type](),
+						self = this
+						;
 
-        /**
-         * Todo Sam: remove __insert and try to find why sometimes insert doesn't get found inside the done event
-         */
-        this.__insert = insert;
-        insert.start( this.$el, this.redactor.$editor )
-            .done(function(args, resolved_insert){
+				/**
+				 * Todo Sam: remove __insert and try to find why sometimes insert doesn't get found inside the done event
+				 */
+				this.__insert = insert;
+				insert.start( this.$el, this.redactor.$editor )
+						.done(function(args, resolved_insert){
 				var popup, results, insert;
 
-                /**
-                 * Allows to get resolved insert from inserts with insert managers
-                 */
-                if(_.isArray(args) ){
-                    popup = args[0];
-                    results = args[0];
-                    insert = resolved_insert;
-                }else{
-                    popup = args;
-                    results = resolved_insert;
-                    insert = insert || self.__insert;
-                }
+								/**
+								 * Allows to get resolved insert from inserts with insert managers
+								 */
+								if(_.isArray(args) ){
+										popup = args[0];
+										results = args[0];
+										insert = resolved_insert;
+								}else{
+										popup = args;
+										results = resolved_insert;
+										insert = insert || self.__insert;
+								}
 
-                // if(!results) Let's allow promises without result for now!
-                //	return;
-                self._inserts[insert.data.id] = insert;
-                //Allow to undo
-                //this.trigger('insert:prechange'); // "this" is the embedded image object
-                //self.trigger('insert:prechange'); // "self" is the view
-                //Create the insert
-                //insert.render();
-                if( self.is_last_p() ){
+								// if(!results) Let's allow promises without result for now!
+								//	return;
+								self._inserts[insert.data.id] = insert;
+								//Allow to undo
+								//this.trigger('insert:prechange'); // "this" is the embedded image object
+								//self.trigger('insert:prechange'); // "self" is the view
+								//Create the insert
+								//insert.render();
+								if( self.is_last_p() ){
 					self.$block.before(insert.$el);
-                }else{
+								}else{
 
-                    if(self.redactor.$element.find(self.$block).length < 1) {
+										if(self.redactor.$element.find(self.$block).length < 1) {
 /*                        if(self.redactor.$element.hasClass('redactor-placeholder')) {
 
-                            var f = jQuery.Event("keydown");
-                            f.which = 65;
-                            f.keyCode = 65;// # Some key code value
+														var f = jQuery.Event("keydown");
+														f.which = 65;
+														f.keyCode = 65;// # Some key code value
 
 
 
-                            self.redactor.$element.trigger(f);
+														self.redactor.$element.trigger(f);
 
-                        }
+												}
 */
-                        self.redactor.$element.append(self.$block);
-                    }
+												self.redactor.$element.append(self.$block);
+										}
 
-                    self.$block.replaceWith(insert.$el);
+										self.$block.replaceWith(insert.$el);
 				}
 
-                self.$block.prev("br").remove();
-                //self.trigger('insert:added', insert);
-                self.insertsData[insert.data.id] = insert.data.toJSON();
-                self.listenTo(insert.data, 'change add remove update', function(){
-                    self.insertsData[insert.data.id] = insert.data.toJSON();
-                });
+								self.$block.prev("br").remove();
+								//self.trigger('insert:added', insert);
+								self.insertsData[insert.data.id] = insert.data.toJSON();
+								self.listenTo(insert.data, 'change add remove update', function(){
+										self.insertsData[insert.data.id] = insert.data.toJSON();
+								});
 
-                setTimeout(function(){
-                    $(".uinsert-selector").hide();
-                    $(".ueditor-post-insert-manager").hide();
-                }, 100);
+								setTimeout(function(){
+										$(".uinsert-selector").hide();
+										$(".ueditor-post-insert-manager").hide();
+								}, 100);
 
-                self.redactor.code.sync();
-                self.listenTo(insert, 'remove', self.onRemoveInsert);
-            })
-        ;
-    },
+								self.redactor.code.sync();
+								self.listenTo(insert, 'remove', self.onRemoveInsert);
+						})
+				;
+		},
 	is_last_p: function(  ){
 		var $ps = this.redactor.$element.find("p");
 		return _.indexOf( $ps, this.$block[0] ) === ( $ps.length - 1 );
@@ -1757,11 +1757,11 @@ var InsertManagerInserts = Backbone.View.extend({
 
 });
 var InsertManager = Backbone.View.extend({
-    tpl: _.template($(tpl).find('#insert-manager-tpl').html()),
+		tpl: _.template($(tpl).find('#insert-manager-tpl').html()),
 	initialize: function(opts){
 		this.inserts = opts.inserts || {};
-        this._inserts = {};
-        this.ueditor = opts.ueditor;
+				this._inserts = {};
+				this.ueditor = opts.ueditor;
 		this.onRemoveInsert = _.bind(this.removeInsert, this);
 		this.insertsData = opts.insertsData || {};
 		this.deletedInserts = {};
@@ -1781,37 +1781,37 @@ var InsertManager = Backbone.View.extend({
 			me.stopListening();
 		});
 	},
-    render_tooltips: function(){
-        if( !this.ueditor.options.inserts ||  this.ueditor.options.inserts.length === 0 ) return;
+		render_tooltips: function(){
+				if( !this.ueditor.options.inserts ||  this.ueditor.options.inserts.length === 0 ) return;
 
-        var self = this,
-            tooltips = new InsertManagerInserts({
+				var self = this,
+						tooltips = new InsertManagerInserts({
 			_inserts: this._inserts, // This the inserted object
-            insertsData: this.insertsData,
-            inserts: this.inserts,
-            redactor: this.ueditor.redactor,
-            onRemoveInsert: this.onRemoveInsert
-        });
-        tooltips.render();
-        this.ueditor.$el.after( tooltips.$el );
-        this.$tooltips = tooltips.$el;
-    },
-    position_tooltips: function(redactor){
-        if( !this.$tooltips ) return;
+						insertsData: this.insertsData,
+						inserts: this.inserts,
+						redactor: this.ueditor.redactor,
+						onRemoveInsert: this.onRemoveInsert
+				});
+				tooltips.render();
+				this.ueditor.$el.after( tooltips.$el );
+				this.$tooltips = tooltips.$el;
+		},
+		position_tooltips: function(redactor){
+				if( !this.$tooltips ) return;
 
-        var $current = $( redactor.selection.getCurrent() ),
+				var $current = $( redactor.selection.getCurrent() ),
 			$position = $( redactor.selection.getBlock() ).position();
 
-        if( this.show_tooltip_in_this_location( redactor ) ){
+				if( this.show_tooltip_in_this_location( redactor ) ){
 			if( typeof $current[0] === "undefined" ) return;
-            var css = _.extend( $position, { marginLeft: _.isArray($current)  ?   $current.css("padding-left") : 0 } );
-            this.$tooltips.css( css );
-            this.$tooltips.show();
-            UeditorEvents.trigger("ueditor:insert:relocate", $current);
-        }else{
-            this.$tooltips.hide();
-        }
-    },
+						var css = _.extend( $position, { marginLeft: _.isArray($current)  ?   $current.css("padding-left") : 0 } );
+						this.$tooltips.css( css );
+						this.$tooltips.show();
+						UeditorEvents.trigger("ueditor:insert:relocate", $current);
+				}else{
+						this.$tooltips.hide();
+				}
+		},
 	bindTriggerEvents: function (redactor) {
 		var me = this,
 			parent = this.$el.parent(),
@@ -1999,7 +1999,7 @@ var InsertManager = Backbone.View.extend({
 	},
 	show_tooltip_in_this_location: function(redactor){
 		var current = redactor.selection.getCurrent(),
-            $block = $( current ),
+						$block = $( current ),
 			$prevBlock = $block.parent().prev(),
 			indexPosition = redactor.range.startOffset;
 
