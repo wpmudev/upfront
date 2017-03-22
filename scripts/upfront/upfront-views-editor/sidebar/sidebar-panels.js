@@ -44,6 +44,9 @@
 					}
 				}
 
+				// Hide tooltip upon navigation.
+				$('#upfront-inline-tooltip').hide();
+
 				// Putting this here for now
 				Upfront.Application.remove_plugin_body_classes();
 				if (pluginLayout && pluginLayout.bodyclass)
