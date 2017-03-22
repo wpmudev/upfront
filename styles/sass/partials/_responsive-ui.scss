@@ -10,6 +10,13 @@
   z-index: 2;
 }
 
+/* Adjust sidebar width for small screen layout. */
+@media screen and (max-width: 1366px) {
+	#upfront-ui-topbar {
+		left: 130px;
+	}
+}
+
 /* Breakpoints toggler */
 .breakpoints-toggler {
   text-align: center;

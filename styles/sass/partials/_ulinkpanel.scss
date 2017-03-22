@@ -311,7 +311,9 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 	font-size: 12px;
 }
 
-
+.link-control-panel .upfront-field-icon {
+	padding: 0 4px;
+}
 .upfront-field-icon-link-homepage:before {
 	background-position: -412px -282px;
 }
@@ -406,6 +408,8 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 	background: #fff;
 	border: 1px solid #e5e5e5;
 	margin-top: 1px;
+	height: 26px;
+	max-height: 26px;
 }
 .link-control-panel .upfront-field-select-options,
 .link-control-panel .upfront-settings-link-field {
@@ -460,6 +464,7 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 	border: none;
 	right: 6px;
 	pointer-events: none;
+	top: 11px;
 }
 .link-control-panel .upfront-link-select .upfront-field-select-option:hover {
 	background: #e5e5e5;
