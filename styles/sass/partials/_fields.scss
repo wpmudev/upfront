@@ -1,6 +1,13 @@
-/* Fields */
-/* @TODO all fields styling here */
-/* @TODO !important stuff is temporary, need to remove */
+/* General */
+
+.upfront-field-wrap {
+	color: rgb(48, 71, 94);
+	font-size: 11px;
+	line-height: 16px;
+	font-weight: normal;
+	font-family: verdana, sans-serif;
+	margin: 13px 0 0;
+}
 .upfront-field-text, .upfront-field-checkbox, .upfront-field-radio {
 	-webkit-appearance: none;
 	-moz-appearance: none;
@@ -12,14 +19,45 @@
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 }
-input.upfront-field-text[type], /* add type attribute to add more specificity, fix input[type] rewrite */
+
+.upfront-field-wrap .upfront-field-label,
+.upfront-field-label {
+	font-weight: normal;
+	margin: 0;
+}
+.upfront-field-wrap .upfront-field-label-block,
+.upfront-field-label-block {
+	display: block;
+	color: rgb(96, 127, 153);
+	font-size: 11px;
+	font-weight: bold;
+	font-family: verdana, sans-serif;
+	line-height: 1;
+	margin: 0;
+	margin-bottom: 8px;
+}
+.upfront-field-wrap-optional span {
+	margin: 20px 0 0 0;
+}
+.upfront-field-icon {
+	display: inline-block;
+	vertical-align: middle;
+	margin: 2px 5px 0 5px;
+	width:20px;
+	height:20px;
+}
+
+/* Field text */
+
+input.upfront-field-text[type],
+input.upfront-field-number[type=number],
 textarea.upfront-field-text.upfront-field-textarea {
-	border: 1px solid rgb(163, 191, 217);
+	border: 1px solid rgb(144, 144, 144);
 	background: #fff;
-	color: rgb(38, 58, 77);
-	height: 26px;
+	color: rgb(33, 33, 33);
+	height: 22px;
 	width: 100%;
-	padding: 0px 10px;
+	padding: 0px 5px;
 	font-size: 11px;
 	font-family: verdana, sans-serif;
 	line-height: 1;
@@ -31,119 +69,278 @@ textarea.upfront-field-text.upfront-field-textarea {
 	height: auto;
 }
 input.upfront-field-text::-webkit-input-placeholder {
-	color: rgb(124, 158, 191);
+	color: rgb(144, 144, 144);
 }
 input.upfront-field-text:-moz-placeholder {
-	color: rgb(124, 158, 191);
+	color: rgb(144, 144, 144);
 }
 input.upfront-field-text::-moz-placeholder {
-	color: rgb(124, 158, 191);
+	color: rgb(144, 144, 144);
 }
 input.upfront-field-text:-ms-input-placeholder {
-	color: rgb(124, 158, 191);
+	color: rgb(144, 144, 144);
 }
-.upfront-field-empty {
-	opacity: 0.7;
+.upfront-field-empty,
+.upfront-field-number[type=number] {
+	opacity: .75;
 }
 input.upfront-field-text:hover,
-.upfront-field-text:focus {
+.upfront-field-number[type=number]:hover,
+.upfront-field-select:hover {
+	opacity: .85;
+	outline: none;
+}
+.upfront-field-text:focus,
+.upfront-field-number[type=number]:focus,
+.upfront-field-select:focus {
 	opacity: 1;
 	outline: none;
 }
 .upfront-field-textarea {
 	height: auto;
 }
+.upfront-field-disabled {
+	opacity: .4;
+}
+
+/* Number field */
+
 .upfront-field-number[type=number] {
-	border: 1px solid rgb(163, 191, 217);
-	background: #fff;
-	color: rgb(38, 58, 77);
-	width: auto;
-	height: 30px;
-	padding: 0 0 0 5px;
-  border-radius:2px;
-  opacity:.9;
+	padding-right: 0px !important;
+	border-radius: 3px;
 }
-.upfront-field-number[type=number]:hover {
-	border: 1px solid rgb(163, 191, 217);
-	opacity:1;
-}
-.upfront-field-number[type=number]:focus {
-	outline:none;
-	border-color: rgb(124, 152, 179);
-}
+
 /* chrome input[type=number] styling */
-.upfront-field-number[type=number]::-webkit-inner-spin-button {
+
+.upfront-field-number[type=number]::-webkit-inner-spin-button,
+.typography-panel .upfront-field-number[type=number]::-webkit-inner-spin-button  {
 	-webkit-appearance:none;
-	width:14px;
-	padding:0;
-	margin:0;
-	height:28px;
-	background-color:#D8EDFF;
-	display:inline-block;
-	position:relative;
-	border-left:1px solid #A1C3E5;
-	cursor: pointer;
-	background-image: url('../img/uf-ui-sprite.svg');
-	background-position: -345px -242px;
-}
-.typography-panel .upfront-field-number[type=number]::-webkit-inner-spin-button {
-	-webkit-appearance:none;
-	width:14px;
+	width:16px;
 	padding:0;
 	margin:0;
 	height:24px;
-	background-color:#D8EDFF;
+	background-color: rgb(255, 255, 255);
 	display:inline-block;
 	position:relative;
-	border-left:1px solid #A1C3E5;
+	border-left: 1px solid rgb(144, 144, 144);
 	cursor: pointer;
-	background-image: url('../img/uf-ui-sprite.svg');
-	background-position: -345px -244px;
+	background-image: url('../img/uf-core-el-sprite_new.svg');
+	background-position: -514px -71px;
+	-webkit-border-top-right-radius: 3px;
+	-webkit-border-bottom-right-radius: 3px;
+	-moz-border-radius-topright: 3px;
+	-moz-border-radius-bottomright: 3px;
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
 }
-/* Google chrome dont support :before & :after for inner-spin anymore */
-/*
-.upfront-field-number[type=number]::-webkit-inner-spin-button:before {
-	content: ' ';
-	position:absolute;
-	width:0;
-	height: 0;
-	border-left: 4px solid transparent;
-	border-right: 4px solid transparent;
-	border-top: 4px solid #6B8EB2;
-	bottom:2px;
-	left:3px;
-}
-.upfront-field-number[type=number]::-webkit-inner-spin-button:after {
-	content: ' ';
-	position:absolute;
-	width:0;
-	height: 0;
-	border-left: 4px solid transparent;
-	border-right: 4px solid transparent;
-	border-bottom: 4px solid #6B8EB2;
-	top:4px;
-	left:3px;
-}
-*/
-/* end chrome input[type=number] styling */
+
+/**** Select field ********/
+
 .upfront-field-select, .upfront-field-select-options {
-	background: rgb(242, 249, 255);
-	border: 1px solid rgb(183, 201, 217);
+	background: rgb(255, 255, 255);
+	border: 1px solid rgb(144, 144, 144);
 	border-radius: 3px;
 }
 .upfront-field-select {
 	display: block;
-	height: 26px;
-	max-height: 26px;
+	height: 22px;
+	max-height: 22px;
 	margin: 0;
-	color: #2F475F;
+	color: rgb(33, 33, 33);
 	font-size: 11px;
 	font-family: Verdana, sans-serif;
 	line-height: 22px;
 	position: relative;
 	overflow: hidden;
 	cursor: pointer;
+	opacity: .7;
 }
+.upfront-field-select-disabled {
+	opacity: .4;
+}
+.upfront-field-select-expanded {
+	overflow: visible;
+}
+.upfront-field-select:after {
+	content: " ";
+	display: block;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	border-left: 1px solid rgb(144, 144, 144);
+	height: 22px;
+	width: 18px;
+    background-image: url(../img/uf-core-el-sprite_new.svg);
+    background-position: -514px -42px;
+	
+}
+.upfront-field-select-expanded:after,
+.upfront-field-select-multiple:hover:after {
+	display: none;
+}
+.upfront-field-select .upfront-field-select-value {
+	margin: 0;
+	padding: 0px 20px 0px 10px;
+	height: 24px;
+	box-shadow: inset 0 2px 0 rgb(242, 249, 255);
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+.upfront-field-select .upfront-field-select-value .upfront-field-icon,
+.upfront-field-select-option label .upfront-field-icon {
+	margin-left: -5px;
+}
+.upfront-field-select-options {
+	list-style: none;
+	background: rgb(255, 255, 255);
+	box-shadow: 0 0 3px rgba(96, 127, 153, 0.5);
+	border-color: rgb(144, 144, 144);
+	padding: 5px 0px;
+	margin: 10px -1px 0;
+	position: relative;
+	max-height: 22px;
+	z-index: 10;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	-webkit-transition: max-height 0.3s;
+	-moz-transition: max-height 0.3s;
+	-ms-transition: max-height 0.3s;
+	-o-transition: max-height 0.3s;
+	transition: max-height 0.3s;
+}
+.upfront-field-wrap-select {
+	z-index: 999;
+	position: relative;
+}
+.upfront-field-select-expanded,
+.upfront-field-select-expanded:hover,
+.upfront-field-select-expanded:focus {
+	opacity: 1;
+}
+.upfront-field-select-expanded .upfront-field-select-options {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	max-height: 142px;
+	z-index: 21;
+}
+#sidebar-ui .upfront-field-select-expanded .upfront-field-select-options,
+#element-settings-sidebar .upfront-field-select-expanded .upfront-field-select-options,
+#region-settings-sidebar .upfront-field-select-expanded .upfront-field-select-options {
+	position: fixed;
+	display: none;
+}
+.upfront-field-select-option {
+	margin: 0 10px 0 0;
+	position: relative;
+	width:100%;
+}
+.upfront-field-select-expanded .upfront-field-select-option {
+	margin: 0;
+}
+.upfront-field-select-expanded .upfront-field-select-option:before,
+.upfront-field-select-expanded .upfront-field-select-option:after {
+	background-color: transparent;
+	content: normal;
+}
+.upfront-field-select-option label {
+	font:normal 11px/2 Verdana, sans-serif;
+}
+.upfront-field-select-option .upfront-field-radio {
+	display: none;
+}
+.upfront-field-select-option .upfront-field-checkbox {
+	float: none;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: auto;
+	right: 5px;
+	margin: auto;
+}
+.upfront-field-select-zebra .upfront-field-select-option-even {
+	background: rgb(218, 231, 242);
+}
+.upfront-object-content div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap ul .upfront-field-select-option:hover label,
+.upfront-field-select-option:hover {
+	background: #d4dee8;
+	color: #8899a9;
+}
+.upfront-field-select-option label {
+	display: block;
+	font-weight: normal;
+	padding: 2px 20px 2px 10px;
+	margin: 0;
+}
+.upfront-field-select-option-selected label {
+	color: #99b5cc;
+}
+.upfront-field-select-option label .upfront-field-icon {
+	margin-top: 0;
+	vertical-align: top;
+}
+.upfront-field-select-option-disabled,
+.upfront-field-select-option-disabled:hover {
+	background: none;
+	color: rgb(153, 181, 204);
+}
+
+/* Checkbox & Radio Fields */
+
+.upfront-field-checkbox, .upfront-field-radio {
+	width: 12px;
+	height: 12px;
+	border: 2px solid rgb(157, 172, 186);
+	margin: 0 10px 0 0;
+	cursor: pointer;
+	float: none;
+}
+.upfront-ui .upfront-field-checkbox:hover, .upfront-ui .upfront-field-radio:hover {
+	border: 2px solid rgb(157, 172, 186);
+}
+.upfront-field-radio {
+	border-radius: 6px;
+}
+.upfront-field-radio:focus {
+	border-width: 3px;
+	outline: none;
+}
+.upfront-field-radio:checked,
+.upfront-field-radio:checked:hover {
+  border-width: 3px;
+  border-color: rgb(38, 58, 77);
+	background: rgb(31, 205, 143);
+}
+
+.upfront-field-checkbox {
+	border-radius: 2px;
+}
+.upfront-field-checkbox:checked {
+	border-width: 0;
+	background: rgb(38, 58, 77);
+}
+.upfront-field-checkbox:checked:hover {
+	border-width:0;
+}
+
+.upfront-field-wrap-checkboxes .checkbox-info:before,
+.upfront-settings-item-title .checkbox-info:before {
+	display: inline-block;
+	content: "";
+	width: 15px;
+	height: 15px;
+	background-image: url('../img/uf-core-el-sprite_new.png');
+	background-image: url('../img/uf-core-el-sprite_new.svg');
+	background-position: -483px -140px;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-bottom: -4px;
+}
+
+/* Link Panel */
+
 .upfront-object-content .ulinkpanel-dark ul,
 .upfront-object-content .ulinkpanel ul {
 	color: rgb(96, 127, 153);
@@ -173,179 +370,6 @@ input.upfront-field-text:hover,
 	color: rgb(83, 97, 109);
 	font-weight:normal;
 }
-
-.upfront-field-select-disabled {
-	border-color: rgb(153, 181, 204);
-	color: rgb(153, 181, 204);
-}
-.upfront-field-select-expanded {
-	overflow: visible;
-}
-/*.upfront-field-select-multiple:hover {
-	height: auto;
-	overflow: visible;
-	margin-bottom: -1px;
-}*/
-.upfront-field-select:hover {
-	border-color: rgb(96, 127, 153);
-}
-.upfront-field-select:after {
-	content: " ";
-	display: block;
-	position: absolute;
-	top: 11px;
-	right: 11px;
-	border-top: 4px solid rgb(96, 127, 153);
-	border-left: 4px solid transparent;
-	border-right: 4px solid transparent;
-}
-.upfront-field-select-disabled:after {
-	border-top-color: rgb(153, 181, 204);
-}
-.upfront-field-select-expanded:after,
-.upfront-field-select-multiple:hover:after {
-	display: none;
-}
-.upfront-field-select .upfront-field-select-value {
-	margin: 0;
-	padding: 0px 20px 0px 10px;
-	height: 24px;
-	box-shadow: inset 0 2px 0 rgb(242, 249, 255);
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-}
-.upfront-field-select .upfront-field-select-value .upfront-field-icon,
-.upfront-field-select-option label .upfront-field-icon {
-  margin-left: -5px;
-}
-.upfront-field-select-options {
-	list-style: none;
-	/*float: left;*/
-	background: #fafdff;
-	box-shadow: 0 0 3px rgba(96, 127, 153, 0.5);
-	border-color: #7d99b3;
-	padding: 5px 0 !important;
-	margin: 10px -1px 0 !important;
-	position: relative;
-	max-height: 26px;
-	z-index: 10;
-	overflow-x: hidden;
-	overflow-y: scroll;
-	-webkit-transition: max-height 0.3s;
-	-moz-transition: max-height 0.3s;
-	-ms-transition: max-height 0.3s;
-	-o-transition: max-height 0.3s;
-	transition: max-height 0.3s;
-}
-.upfront-field-select-expanded .upfront-field-select-options {
-	margin-top: -1px !important;
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	max-height: 142px;
-	z-index: 21;
-}
-#sidebar-ui .upfront-field-select-expanded .upfront-field-select-options,
-#element-settings-sidebar .upfront-field-select-expanded .upfront-field-select-options,
-#region-settings-sidebar .upfront-field-select-expanded .upfront-field-select-options {
-	position: fixed;
-	display: none;
-}
-.upfront-field-select-option {
-	margin: 0 10px 0 0 !important;
-	position: relative;
-	width:100%;
-}
-.upfront-field-select-expanded .upfront-field-select-option {
-	margin: 0 !important;
-}
-.upfront-field-select-expanded .upfront-field-select-option:before,
-.upfront-field-select-expanded .upfront-field-select-option:after {
-	background-color:transparent;
-	content:normal;
-}
-.upfront-field-select-option label {
-	font:normal 11px/2 Verdana, sans-serif;
-}
-.upfront-field-select-single .upfront-field-select-option-selected {
-
-}
-.upfront-field-select-option .upfront-field-radio {
-	display: none;
-}
-.upfront-field-select-option .upfront-field-checkbox {
-	float: none !important;
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: auto;
-	right: 5px;
-	margin: auto;
-}
-.upfront-field-select-zebra .upfront-field-select-option-even {
-	background: rgb(218, 231, 242);
-}
-.upfront-object-content div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap ul .upfront-field-select-option:hover label,
-.upfront-field-select-option:hover {
-	background: #d4dee8;
-	color: #8899a9;
-}
-.upfront-field-select-option label {
-	display: block;
-	font-weight: normal;
-	padding: 2px 20px 2px 10px;
-	margin: 0;
-}
-.upfront-field-select-option-selected label {
-  color: #99b5cc;
-}
-.upfront-field-select-option label .upfront-field-icon {
-	margin-top: 0;
-	vertical-align: top;
-}
-.upfront-field-select-option-disabled,
-.upfront-field-select-option-disabled:hover {
-	background: none;
-	color: rgb(153, 181, 204);
-}
-.upfront-field-checkbox, .upfront-field-radio {
-	width: 12px;
-	height: 12px;
-	border: 2px solid rgb(157, 172, 186);
-	margin: 0 10px 0 0;
-	cursor: pointer;
-	float: none;
-}
-.upfront-ui .upfront-field-checkbox:hover, .upfront-ui .upfront-field-radio:hover {
-	border: 2px solid rgb(157, 172, 186);
-}
-
-.upfront-field-radio {
-	border-radius: 6px;
-}
-.upfront-field-radio:focus {
-	border-width: 3px;
-	outline: none;
-}
-.upfront-field-radio:checked,
-.upfront-field-radio:checked:hover {
-  border-width: 3px;
-  border-color: rgb(38, 58, 77);
-	background: rgb(31, 205, 143);
-}
-
-.upfront-field-checkbox {
-	border-radius: 2px;
-}
-.upfront-field-checkbox:checked {
-	border-width: 0;
-	background: rgb(38, 58, 77);
-}
-.upfront-field-checkbox:checked:hover {
-	border-width:0;
-}
 .tile-select {
 	width: 16px;
 	height: 16px;
@@ -358,6 +382,9 @@ input.upfront-field-text:hover,
 	border-color: #263a4d;
 	background-color: #263a4d;
 }
+
+/* Multiple Field */
+
 .upfront-field-multiple {
 	display: block;
 	opacity: 0.8;
@@ -434,13 +461,6 @@ input.upfront-field-text:hover,
 	overflow: hidden;
     line-height: 13px;
 }
-.upfront-field-icon {
-	display: inline-block;
-	vertical-align: middle;
-	margin: 2px 5px 0 5px;
-	width:20px;
-	height:20px;
-}
 .upfront-field-multiple-vertical .upfront-field-icon {
 	margin: 0 auto;
 }
@@ -469,93 +489,13 @@ input.upfront-field-text:hover,
 	overflow-x: hidden;
 	overflow-y: scroll;
 }
-/*.upfront-additive_multiselection {
-	color: rgb(96, 127, 153);
-    cursor: pointer;
-    display: inline-block;
-    font-family: verdana,sans-serif;
-    font-size: 11px;
-    margin: 0;
-    overflow: hidden;
-    position: relative;
-    background: none repeat scroll 0 0 #e6f3fe;
-    border: 1px solid rgb(163, 191, 217);
-    border-radius: 3px;
-    padding: 0 4px;
-    width: 100%;
-}
-.add_labels .upfront-additive_multiselection {
-	padding-bottom: 2px;
-}
-.add_labels .upfront-field-label {
-	margin-top: .6em;
-}
-.add_labels .upfront-additive_multiselection .add_labels {
-	border: none;
-}
-.upfront-additive_multiselection .title {
-    padding: 1px 30px 1px 10px;
-}
-.upfront-additive_multiselection .title:after {
-	border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 4px solid rgb(96, 127, 153);
-    border-bottom: none;
-    content: " ";
-    display: block;
-    position: absolute;
-    right: 11px;
-    top: 11px;
-}
-.upfront-additive_multiselection.active .title:after {
-	border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-bottom: 4px solid rgb(96, 127, 153);
-    border-top: none;
-
-}
-.upfront-additive_multiselection .labels_list,
-.upfront-additive_multiselection input
- {
-	display: none;
-}
-.upfront-additive_multiselection.active .labels_list,
-.upfront-additive_multiselection.active input {
-	display: block;
-}
-.upfront-additive_multiselection {
-	overflow: hidden;
-	-webkit-transition: max-height 0.3s;
-	-moz-transition: max-height 0.3s;
-	-ms-transition: max-height 0.3s;
-	-o-transition: max-height 0.3s;
-	transition: max-height 0.3s;
-}
-.upfront-additive_multiselection .labels_list ul {
-	margin: 0;
-	padding: 0;
-	max-height: 113px;
-	overflow-x: hidden;
-	overflow-y: scroll;
-}
-.upfront-additive_multiselection .labels_list ul.empty {
-	border: none;
-	display: none;
-}*/
-.upfront-suggest-list/*,
-.upfront-additive_multiselection .labels_list li*/ {
+.upfront-suggest-list {
 	padding: 0;
 	margin: 0 !important;
 	line-height: 14px;
 	position: relative;
 }
-/*.upfront-additive_multiselection .labels_list li label {
-	font-weight: normal;
-	font-family: verdana,sans-serif;
-    font-size: 11px;
-}*/
-.upfront-suggest-list .upfront-field-checkbox/*,
-.upfront-additive_multiselection .labels_list .upfront-field-checkbox*/  {
+.upfront-suggest-list .upfront-field-checkbox {
 	float: none;
 	position: absolute;
 	top: 0;
@@ -564,101 +504,57 @@ input.upfront-field-text:hover,
 	right: 10px;
 	margin: auto;
 }
-.upfront-suggest-list label/*,
-.upfront-additive_multiselection .labels_list li label*/ {
+.upfront-suggest-list label {
 	display: block;
 	padding: 7px 30px 7px 10px;
 }
-
-/*.upfront-additive_multiselection .upfront-field-checkbox { border: none; }*/
-
-.upfront-suggest-match/*,
-.upfront-additive_multiselection .labels_list .selection*/ {
+.upfront-suggest-match  {
 	background: rgb(31, 205, 143);
 	box-shadow: 0 0 0 1px rgb(31, 205, 143), 0 2px 0 rgb(27, 179, 125), 0 0 0 2px rgb(31, 205, 143);
 	border-radius: 1px;
 	color: rgb(255, 255, 255);
 }
-.upfront-field-wrap {
-	color: rgb(48, 71, 94);
-	font-size: 11px;
-	line-height: 16px;
-	font-weight: normal;
-	font-family: verdana, sans-serif;
-	margin: 13px 0 0;
-}
-
 .inline-radios {
 	margin: 15px 0 0;
 }
 .inline-radios .upfront-field-multiple {
   margin-bottom: 0;
 }
-
 .upfront-field-wrap-multiple {
 	margin-right: -15px;
 }
-.upfront-suggest-add-wrap/*,
-.upfront-additive_multiselection .add_labels*/ {
+.upfront-suggest-add-wrap {
 	border: 1px solid rgb(163, 191, 217);
 	border-top: none;
 	background: rgb(204, 230, 255);
 	line-height: 16px;
 	position: relative;
 }
-/*.upfront-additive_multiselection .add_labels.empty {
-	border: none;
-}*/
-.upfront-suggest-add-value/*,
-.upfront-additive_multiselection .add_labels .add_value*/ {
+.upfront-suggest-add-value {
 	display: block;
 	font-weight: bold;
 	padding: 6px 0 6px 12px;
 }
-.upfront-suggest-add/*,
-.upfront-additive_multiselection .add_labels .add_link*/ {
+.upfront-suggest-add {
 	display: block;
 	position: absolute;
 	top: 6px;
 	right: 10px;
 	cursor: pointer;
 }
-.upfront-field-wrap .upfront-field-label,
-.upfront-field-label {
-	font-weight: normal;
-	margin: 0;
-}
-.upfront-field-wrap .upfront-field-label-block,
-.upfront-field-label-block {
-	display: block;
-  color: rgb(96, 127, 153);
-	font-size: 11px;
-  font-weight: bold;
-	font-family: verdana, sans-serif;
-	line-height: 1;
-	margin: 0;
-  margin-bottom: 8px;
-}
-
-.upfront-field-wrap-optional span {
-	margin: 20px 0 0 0;
-}
+/* Color Field */
 
 .upfront-field-wrap-color {
 	clear: both;
-  vertical-align: middle;
-  line-height: 24px;
+	vertical-align: middle;
+	line-height: 24px;
 }
-
 .upfront-field-wrap-color label {
-	/* float: left; */
-  float: none;
+	float: none;
 }
-
 .upfront-field-wrap-color .upfront-settings-item {
 	margin-bottom:10px;
 }
-
 .upfront-field-wrap-color .sp-preview {
 	display: inline-block;
 	width:18px;
@@ -671,14 +567,13 @@ input.upfront-field-text:hover,
 	border:1px solid #A2BFDA;
 	box-shadow: inset 0 0 0 1px #fff;
 }
-
 .upfront-field-wrap-color .sp-replacer {
 	line-height: 30px;
 }
-
 .upfront-field-wrap-color .sp-texthint {
 }
 
+/* Slider field */
 
 .upfront-field-slider{
 	height:2px;
@@ -717,15 +612,16 @@ input.upfront-field-text:hover,
 	left: -5px;
 	top: auto;
 }
-
 .upfront-field-wrap-slider .upfront-field-info {
 	margin-bottom: 10px;
 }
 
 .upfront-field-slider-value {
 	margin-top: 6px;
-  text-align: center;
+	text-align: center;
 }
+
+/* Date picker Field */
 
 .upfront-date_picker {
 	background: #F2F9FF;
@@ -735,82 +631,59 @@ input.upfront-field-text:hover,
 	display: none;
 	position: absolute;
 	z-index: 10000;
-	text-transform: none !important;
-	text-decoration: none !important;
+	text-transform: none;
+	text-decoration: none;
 }
-
 .upfront-date_picker .ui-datepicker-header {
 	padding: 5px 10px;
 	border-bottom: 1px solid #accae6;
 	text-align: center
 }
-
 .upfront-date_picker table{
 	margin: 5px 10px;
 }
-
 .upfront-date_picker thead{
 	color: #395269;
 }
-
 .upfront-date_picker select{
 	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 	margin: 0 2px;
 }
-
 .upfront-date_picker .ui-datepicker-prev,
 .upfront-date_picker .ui-datepicker-next {
 	display: none;
 }
-
 .upfront-date_picker .ui-datepicker-prev {
 	float: left;
 }
 .upfront-date_picker .ui-datepicker-next {
 	float: right;
 }
-
 .upfront-date_picker td,
-.upfront-date_picker th{
+.upfront-date_picker th {
 	text-align: center;
 }
-
-div.upfront-date_picker td a{
+div.upfront-date_picker td a {
 	padding: 2px 4px;
 	color: #607F99;
 }
-
-.upfront-date_picker td a:hover{
+.upfront-date_picker td a:hover {
 	padding: 2px 4px;
 	background: #1fcd8f;
-	color: #fff !important;
+	color: #fff;
 	text-decoration: none;
 }
-
 .upfront-date_picker a.ui-state-active {
 	background: #607F99;
-	color: #F2F9FF !important;
+	color: #F2F9FF;
 }
-
 .upfront-time_picker {
 	padding: 5px 10px;
 	border-top: 1px solid #accae6;
 	text-align: center;
 }
 
-.upfront-field-wrap-checkboxes .checkbox-info:before,
-.upfront-settings-item-title .checkbox-info:before {
-	display: inline-block;
-	content: "";
-	width: 15px;
-	height: 15px;
-	background-image: url('../img/uf-core-el-sprite_new.png');
-	background-image: url('../img/uf-core-el-sprite_new.svg');
-	background-position: -483px -140px;
-	margin-left: 5px;
-	margin-right: 5px;
-	margin-bottom: -4px;
-}
+/* FIlter */
 
 .upfront-filter_display_control {
 	display: inline-block;
