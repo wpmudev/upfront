@@ -487,21 +487,24 @@
 
             toggleSidebar: function(instant){
                 var me = this,
-                    margined_css = {marginLeft: "260px"};
-                unmargined_css = {marginLeft: "0px"};
-                _margin = Upfront.Util.isRTL() ? "marginRight" : "marginLeft";
+									// Use adjusted sidebar width for margins on small screens.
+                	sidebar_margin = (window.innerWidth < 1366 ? '130px' : '260px'),
+                  margined_css = {marginLeft: sidebar_margin};
+                	unmargined_css = {marginLeft: "0px"};
+                	_margin = Upfront.Util.isRTL() ? "marginRight" : "marginLeft";
 
                 if(!this.visible){
                     if( Upfront.Util.isRTL())
-                        margined_css = { marginRight: "260px" };
+                        margined_css = { marginRight: sidebar_margin };
 
+										// Use full sidebar width (260px), not adjusted width for margins.
                     $('#sidebar-ui').removeClass('collapsed').stop().animate({width: '260px'}, 300);
                     //Remove collapsed class always after region editor is closed
                     $('#element-settings-sidebar').removeClass('collapsed');
 
                     //Bring back element-settings only if it was opened before
                     if($('#element-settings-sidebar').contents().length !== 0) {
-                        $('#element-settings-sidebar').removeClass('collapsed').stop().animate({width: '260px'}, 300);
+                        $('#element-settings-sidebar').removeClass('collapsed').stop().animate({width: sidebar_margin}, 300);
                     }
 
                     $('#page').stop().animate(margined_css, 300, function(){ Upfront.Events.trigger('sidebar:toggle:done', me.visible); });
