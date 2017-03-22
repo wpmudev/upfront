@@ -891,7 +891,7 @@
                     var in_sidebar = me.$el.parents('#sidebar-ui').length,
                         in_settings = me.$el.parents('#element-settings-sidebar').length,
 						in_region = me.$el.parents('#region-settings-sidebar').length,
-                        settingsTitleHeight = 46;
+                        settingsTitleHeight = 2;
 
                     // Apply if select field is in sidebar or settings sidebar
                     if(in_sidebar == 1 || in_settings == 1 || in_region == 1) {
@@ -1103,7 +1103,7 @@
                 _.delay(function() { // Delay because opening animation causes wrong outerHeight results
                     var in_sidebar = me.$el.parents('#sidebar-ui').length,
                         in_settings = me.$el.parents('#element-settings-sidebar').length,
-                        settingsTitleHeight = 44;
+                        settingsTitleHeight = 2;
 
                     // Apply if select field is in sidebar or settings sidebar
                     if(in_sidebar == 1 || in_settings == 1) {
