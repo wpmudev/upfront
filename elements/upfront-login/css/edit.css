@@ -190,66 +190,6 @@ div.upfront-login_element-module.upfront-module-active .upfront_login.upfront_lo
   width: 90%;
 }
 
-#element-settings-sidebar .upfront_toggle {
-	position: relative;
-	width: 40px;
-	display: inline-table;
-	vertical-align: middle;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	&.hide {
-			display: none;
-	}
-}
-
-#element-settings-sidebar input.upfront_toggle_checkbox {
-	display: none;
-}
-
-#element-settings-sidebar .upfront_toggle_switch {
-	display: block;
-	width: 13px;
-	height: 13px;
-	background-color: #fff;
-	border-radius: 15px;
-	border: 1px solid rgba(0, 0, 0, 0.2);
-	position: absolute;
-	top: 1px;
-	bottom: 0;
-	right: initial;
-	left: 3px;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
-	box-sizing: border-box;
-	will-change: transform;
-	-webkit-transition: transform 0.2s;
-	transition: transform 0.2s;
-}
-
-#element-settings-sidebar .upfront_toggle_label {
-	position: relative;
-	display: block;
-	cursor: pointer;
-	border-radius: 50px;
-	border: 0;
-	width: 40px;
-	height: 15px;
-	background: #ddd;
-	margin-left: 3px;
-	margin-top: 10px;
-}
-
-#element-settings-sidebar .upfront_toggle_checkbox:checked + .upfront_toggle_label {
-	background: #1fcd8f;
-}
-
-#element-settings-sidebar .upfront_toggle_checkbox:checked + .upfront_toggle_label .upfront_toggle_switch {
-	-webkit-transform: translateX(22px);
-	transform: translateX(22px);
-	border-color: #1abc9c;
-}
 
 #element-settings-sidebar .upfront-field-wrap.offset {
 	width: 50%;
