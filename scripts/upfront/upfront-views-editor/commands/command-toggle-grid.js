@@ -9,7 +9,7 @@
     ], function ( Command, overlay_grid_tpl ) {
 
         return Command.extend({
-            className: "command-grid",
+            className: "command-grid sidebar-commands-small-button",
             render: function () {
                 this.$el.addClass('upfront-icon upfront-icon-grid');
                 this.$el.prop("title", l10n.toggle_grid);
