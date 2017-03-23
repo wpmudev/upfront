@@ -1372,6 +1372,40 @@
             type: 'checkbox',
             multiple: true
         });
+		
+		var Field_Toggles = Field_Checkboxes.extend({
+            className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-toggle',
+            type: 'toggle',
+			multiple: false,
+			get_value_html: function (value, index) {
+				var id = this.get_field_id() + '-' + index;
+				var classes = "upfront-field-multiple";
+				var attr = {
+					'type': this.type,
+					'id': id,
+					'name': this.get_field_name(),
+					'value': value.value,
+					'class': 'upfront_toggle_checkbox upfront-field-' + this.type
+				};
+				var saved_value = this.get_saved_value();
+				var icon_class = this.options.icon_class ? this.options.icon_class : null;
+				if ( this.options.layout ) classes += ' upfront-field-multiple-'+this.options.layout;
+				if ( value.disabled ) {
+					attr.disabled = 'disabled';
+					classes += ' upfront-field-multiple-disabled';
+				}
+				if ( this.multiple && _.contains(saved_value, value.value) ) {
+					attr.checked = 'checked';
+				} else if ( ! this.multiple && saved_value == value.value ) {
+					attr.checked = 'checked';
+				}
+				if (value.checked) attr.checked = 'checked';
+				if ( attr.checked ) {
+					classes += ' upfront-field-multiple-selected';
+				}
+				return '<div class="' + classes + ' upfront_toggle"><span class="upfront-field-label-text">' + value.label + '</span><input ' + this.get_field_attr_html(attr) + ' />' + '<label for="' + id + '" class="upfront_toggle_label"><span class="upfront_toggle_switch"></span></label></div>';
+			}
+        });
 
         var OptionalField = Field_Checkboxes.extend({
             className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes upfront-field-wrap-optional',
@@ -1703,6 +1737,7 @@
             "Select": Field_Select,
             "Radios": Field_Radios,
             "Checkboxes": Field_Checkboxes,
+			"Toggle": Field_Toggles,
             "Hidden": Field_Hidden,
             "Anchor": Field_Anchor,
             "Optional": OptionalField,
