@@ -8,21 +8,22 @@
 {
 	margin: 0;
 	text-decoration: none;
-	color: #4e4770;
+	color: rgb(33, 33, 33);
 	font-size: 11px;
 	box-shadow: inset 0 2px 0 #f2f9ff;
 	font-family: Verdana, sans-serif;
 	line-height: 22px;
-	background: rgb(242, 249, 255);
-	border: 1px solid rgb(183, 201, 217);
+	background: rgb(255, 255, 255);
+	border: 1px solid rgb(144, 144, 144);
 	border-radius: 3px;
-	height: 24px;
-	max-height: 24px;
+	height: 22px;
+	max-height: 22px;
+	opacity: .75;
 }
 #sidebar-ui .upfront-page-template-dropdown .chosen-container-single .chosen-single {
-	height: 27px;
-	min-height: 27px;
-	line-height: 25px;
+	height: 22px;
+	min-height: 22px;
+	line-height: 22px;
 }
 #sidebar-ui .upfront-page-template-dropdown .chosen-container-single .chosen-single span.dot:before {
 	content: ' ';
@@ -43,7 +44,7 @@
 .preset-manager-panel .chosen-container-single .chosen-single:hover,
 #sidebar-ui .upfront-taxonomy-chosen .chosen-container-single .chosen-single:hover
 {
-	border-color: rgb(96, 127, 153);
+	opacity: .85;
 }
 #insert-font-widget .chosen-with-drop .chosen-single,
 #sidebar-ui .chosen-with-drop .chosen-single,
@@ -58,9 +59,7 @@
 #sidebar-ui .upfront-taxonomy-chosen .chosen-with-drop .chosen-single,
 #sidebar-ui .upfront-taxonomy-chosen .chosen-with-drop .chosen-single:hover
 {
-	border-color: rgb(163, 191, 217);
-	border-bottom-left-radius: 0;
-	border-bottom-right-radius: 0;
+	opacity: 1;
 }
 #upfront-popup .chosen-container-multi .chosen-choices .search-choice {
 	display: none;
@@ -72,10 +71,10 @@
 .preset-manager-panel .chosen-container .chosen-results li,
 #sidebar-ui .upfront-taxonomy-chosen .chosen-container .chosen-results li
 {
-	margin: 0 0 0 5px;
+	margin: 0px;
 }
 .chosen-with-drop .chosen-single {
-	background: #fafdff !important;
+	background: rgb(255, 255, 255);
 }
 #insert-font-widget .chosen-container-single .chosen-drop,
 #sidebar-ui .chosen-container-single .chosen-drop,
@@ -91,9 +90,9 @@
 .preset-manager-panel .chosen-container-multi .chosen-drop,
 #sidebar-ui .upfront-taxonomy-chosen .chosen-container-multi .chosen-drop
 {
-	background: #fafdff;
+	background: rgb(255, 255, 255);
 	box-shadow: 0 0 3px rgba(96, 127, 153, 0.5);
-	border-color: #7d99b3;
+	border-color: rgb(144, 144, 144);
 	font-size: 11px;
 	font-family: Verdana, sans-serif;
 	box-shadow: none;
@@ -106,7 +105,6 @@
 #sidebar-ui .upfront-taxonomy-chosen .chosen-container .chosen-results
 {
 	max-height: 150px;
-	margin-right: 5px;
 }
 #sidebar-ui .chosen-container .chosen-results,
 #settings .chosen-container .chosen-results,
@@ -123,8 +121,8 @@
 .preset-manager-panel .chosen-container .chosen-results li.highlighted,
 #sidebar-ui .upfront-taxonomy-chosen .chosen-container .chosen-results li.highlighted
 {
-	background: #d4dee8;
-	color: #2f475f;
+	background: rgb(231, 234, 235);
+	color: rgb(0, 0, 0);
 }
 #insert-font-widget .chosen-container-single .chosen-search,
 #sidebar-ui .chosen-container-single .chosen-search,
@@ -157,11 +155,11 @@
 #sidebar-ui .upfront-taxonomy-chosen .chosen-container-multi .chosen-choices input[type=text]
 {
 	background: rgb(255,255,255);
-	border-color: rgb(162, 191, 218);
+	border-color: rgb(144, 144, 144);
 	font-weight: normal;
 	font-size: 11px;
 	font-family: Verdana, sans-serif;
-	color: #4e475f;
+	color: rgb(33, 33, 33);
 	padding:5px;
 	/* Prevents chosen sprite image from displaying */
 	background-image:none!important;
@@ -181,7 +179,7 @@
 #sidebar-ui .upfront-taxonomy-chosen .chosen-container-multi .chosen-results::-webkit-scrollbar
 {
 	background: #d4dee8;
-  width: 5px;
+	width: 5px;
 }
 #insert-font-widget .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
 #sidebar-ui .chosen-container-single .chosen-results::-webkit-scrollbar-thumb,
@@ -199,6 +197,18 @@
 {
 	background-color: #1fcd8f;
 }
+#insert-font-widget .chosen-container-single .chosen-single div,
+#sidebar-ui .chosen-container-single .chosen-single div,
+#settings .chosen-container-single .chosen-single div,
+#upfront-popup .chosen-container-single .chosen-single div,
+.preset-manager-panel .chosen-container-single .chosen-single div,
+#sidebar-ui .upfront-taxonomy-chosen .chosen-container-single .chosen-single div {
+	border-left: 1px solid rgb(144, 144, 144);
+	height: 22px;
+	width: 18px;
+    background-image: url(../img/uf-core-el-sprite_new.svg);
+    background-position: -514px -42px;
+}
 #insert-font-widget .chosen-container-single .chosen-single div b,
 #sidebar-ui .chosen-container-single .chosen-single div b,
 #settings .chosen-container-single .chosen-single div b,
@@ -206,16 +216,11 @@
 .preset-manager-panel .chosen-container-single .chosen-single div b,
 #sidebar-ui .upfront-taxonomy-chosen .chosen-container-single .chosen-single div b
 {
-	display: block;
-	width: 0;
-	height: 0;
-	background: none;
-	border-top: 4px solid rgb(96, 127, 153);
-	border-left: 4px solid transparent;
-	border-right: 4px solid transparent;
-	margin-top: 9px;
+	height: 22px;
+	width: 18px;
+    background-image: url(../img/uf-core-el-sprite_new.svg);
+    background-position: -514px -42px;
 }
-
 #sidebar-ui .upfront-page-template-dropdown .chosen-container-single .chosen-single div b {
 	margin-top: 12px;
 }
@@ -227,7 +232,7 @@
 #sidebar-ui .upfront-taxonomy-chosen .chosen-with-drop .chosen-single div b
 {
 	border-top: 0 none transparent;
-	border-bottom: 4px solid rgb(96, 127, 153);
+	border-bottom: 0 none transparent;
 }
 .upfront-select-font .chosen-container-single .chosen-single {
 	font-size: 13px;
@@ -256,7 +261,7 @@
 	border-color: rgb(162, 191, 218) !important;
 }
 .chosen-container-active .chosen-choices, .chosen-container .chosen-drop {
-	border-color: rgb(162, 191, 218) !important;
+	border-color: rgb(144, 144, 144);
 }
 .chosen-container-multi:after {
 	content: " ";
@@ -275,8 +280,8 @@
 	z-index: 19;
 }
 .chosen-container .chosen-results li.highlighted {
-	background: #d8e0e8 !important;
-	color: #2F475F !important;
+	background: rgb(231, 234, 235);
+	color: rgb(0, 0, 0);
 }
 .chosen-container-multi .chosen-choices li.search-choice .search-choice-close {
 	background-image: url('../img/uf-ui-sprite.svg') !important;
@@ -290,6 +295,7 @@
 #element-settings-sidebar .chosen-with-drop .chosen-drop {
 	position: fixed;
 	display: none;
+	margin-top: -21px;
 }
 
 .chosen-container:not(.chosen-with-drop) .chosen-drop {
