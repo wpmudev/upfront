@@ -287,6 +287,72 @@ input.upfront-field-text:hover,
 	color: rgb(153, 181, 204);
 }
 
+/* Toggle Field */
+
+
+.upfront-field-wrap-toggle .upfront_toggle {
+	position: relative;
+	width: 40px;
+	display: inline-table;
+	vertical-align: middle;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	&.hide {
+			display: none;
+	}
+}
+
+.upfront-field-wrap-toggle input.upfront_toggle_checkbox {
+	display: none;
+}
+
+.upfront-field-wrap-toggle .upfront_toggle_switch {
+	display: block;
+	width: 13px;
+	height: 13px;
+	background-color: #fff;
+	border-radius: 15px;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	position: absolute;
+	top: 1px;
+	bottom: 0;
+	right: initial;
+	left: 3px;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	will-change: transform;
+	-webkit-transition: transform 0.2s;
+	transition: transform 0.2s;
+}
+
+.upfront-field-wrap-toggle .upfront_toggle_label {
+	position: relative;
+	display: block;
+	cursor: pointer;
+	border-radius: 50px;
+	border: 0;
+	width: 40px;
+	height: 15px;
+	background: #87959a;
+	margin-left: 3px;
+	margin-top: 10px;
+	border: 1px solid #71838a;
+}
+
+.upfront-field-wrap-toggle .upfront_toggle_checkbox:checked + .upfront_toggle_label {
+	background: #fff;
+	border: 1px solid #e1e1e1;
+}
+
+.upfront-field-wrap-toggle .upfront_toggle_checkbox:checked + .upfront_toggle_label .upfront_toggle_switch {
+	-webkit-transform: translateX(22px);
+	transform: translateX(22px);
+	background: #abb4b8;
+}
+
 /* Checkbox & Radio Fields */
 
 .upfront-field-checkbox, .upfront-field-radio {
