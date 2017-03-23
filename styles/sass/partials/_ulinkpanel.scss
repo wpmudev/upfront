@@ -273,6 +273,10 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 	margin-top: 0;
 }
 
+.ulinkpanel-dark .upfront-field-select-option label {
+	padding: 2px 20px 2px 6px;
+}
+
 /* dark UI overwrtites */
 
 .ulinkpanel-dark .upfront-field-select,
@@ -475,8 +479,9 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 	background: #fff;
 	max-height: 250px;
 	top: 24px;
-    box-shadow: none;
-    border-top: none;
+	box-shadow: none;
+	border-top: none;
+	padding: 5px 0;
 }
 .link-control-panel .upfront-link-select .upfront-field-select-options:before {
 	content: " ";
