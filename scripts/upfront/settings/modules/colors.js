@@ -143,7 +143,7 @@ define([
 					field.set_value(color);
 					field.update_input_border_color(Upfront.Util.colors.to_color_value(color));
 				}
-      });
+			});
 		}
 	});
 

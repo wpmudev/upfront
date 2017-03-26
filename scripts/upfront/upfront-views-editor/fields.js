@@ -476,7 +476,7 @@
 					b : 0,
 					a : 0
 				};
-				
+
 				this.spectrumOptions = spectrumOptions;
 
 				spectrumOptions.move = _.bind( this.on_spectrum_move, this ) ;
@@ -591,7 +591,7 @@
 					input_val = $input.val()
 				;
 
-				if( !_.isEmpty( color ) ){
+				if( !_.isEmpty( color ) ) {
 					this.color = color;
 					var rgb = color.toRgbString();
 					this.rgba = _.extend(this.rgba, color.toRgb());
@@ -602,7 +602,6 @@
 				if( !_.isEmpty( input_val) && !this.is_hex( input_val )){
 					var t_color = tinycolor( input_val );
 					$input.val(t_color.toRgbString());
-					console.log('TCOLOR: ' + t_color);
 				}
 				//this.spectrumOptions = spectrumOptions;
 
@@ -698,13 +697,13 @@
 					if ( this.use_breakpoint_property )
 						return Upfront.Util.colors.to_color_value(this.model.get_breakpoint_property_value(this.property_name, true));
 					else
-						return this.property.get('value');
+						return Upfront.Util.colors.to_color_value(this.property.get('value'));
 				}
 				else if ( this.model ){
 					var value = this.model.get(this.name);
-					return value ? value : this.default_value;
+					return value ? Upfront.Util.colors.to_color_value(value) : Upfront.Util.colors.to_color_value(this.default_value);
 				}
-				return this.default_value;
+				return Upfront.Util.colors.to_color_value(this.default_value);
 			},
 			update_input_border_color : function(rgb){
 				var spPreview = this.$el.find(".sp-preview"),
