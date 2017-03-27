@@ -149,6 +149,7 @@
 					className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch theme_color_swatch_empty',
 					hide_label : true,
 					default_value: '#ffffff',
+					hide_alpha: true,
 					blank_alpha: 0,
 					spectrum: {
 						choose: function (color) {
@@ -175,6 +176,7 @@
 					className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch',
 					hide_label : true,
 					default_value: '#ffffff', // Need to not be transparent, because theme colors can't be transparent
+					hide_alpha: true,
 					blank_alpha: 0,
 					spectrum: {
 						choose: function (color) {
@@ -219,6 +221,7 @@
 							className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch',
 							hide_label : true,
 							default_value: color,
+							hide_alpha: true,
 							blank_alpha: 0,
 							spectrum: {
 								change: function (color) {
@@ -270,17 +273,18 @@
 				}
 
 				var self = this,
-				model = this.theme_colors.colors.add({
-					color : color.toHexString(),
-					prev : color.toHexString(),
-					highlight : self.color_luminance( color.toHex(), percentage ),
-					shade : self.color_luminance( color.toHex(), (percentage * -1) ),
-					alpha: color.alpha
-				}),
+					model = this.theme_colors.colors.add({
+						color : color.toHexString(),
+						prev : color.toHexString(),
+						highlight : self.color_luminance( color.toHex(), percentage ),
+						shade : self.color_luminance( color.toHex(), (percentage * -1) ),
+						alpha: color.alpha
+					}),
 					new_color_picker = new Fields.Color({
 						className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch theme-colors-color-picker',
 						hide_label : true,
 						default_value: color.toRgbString(),
+						hide_alpha: true,
 						blank_alpha: 0,
 						change: function (color){
 							var percentage = parseInt( Theme_Colors.range, 10) / 100 || 0;
@@ -300,8 +304,8 @@
 						}
 					}),
 					colorIndex = Theme_Colors.colors.length - 1,
-						$wrapper = $('<span class="theme-colors-color-picker color-' + colorIndex + '" data-index="' + colorIndex + '" data-color="' + color.toHexString() + '"><span class="theme-colors-color-name">ufc' + colorIndex + '</span></span>')
-							;
+					$wrapper = $('<span class="theme-colors-color-picker color-' + colorIndex + '" data-index="' + colorIndex + '" data-color="' + color.toHexString() + '"><span class="theme-colors-color-name">ufc' + colorIndex + '</span></span>')
+				;
 
 				new_color_picker.render();
 				new_color_picker.$(".sp-preview").css({
