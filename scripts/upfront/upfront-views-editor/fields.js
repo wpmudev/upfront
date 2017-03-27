@@ -536,7 +536,7 @@
 				if(me.options.spectrum && me.options.spectrum.choose && me.color)
 					me.options.spectrum.choose(me.color);
 
-					if( me.options.autoHide !== true ){
+					if( me.options.autoHide === true ){
 						setTimeout( function() {
 							me.$(".sp-replacer").removeClass("sp-active");
 							me.$(".sp-container").addClass("sp-hidden");
