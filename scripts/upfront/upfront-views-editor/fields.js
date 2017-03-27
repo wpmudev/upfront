@@ -822,9 +822,20 @@
 
 				var $alpha = this.$(".sp-alpha");
 				
-				// Always display alpha slider
-				$alpha.removeClass("sp-alpha-disabled sp-alpha-lower-opacity");
-				this.$(".sp-alpha-overlay").remove();
+				if( typeof this.options.hide_alpha !== "undefined" && this.options.hide_alpha ){
+					$alpha.addClass("sp-alpha-disabled sp-alpha-lower-opacity");
+					$overlay = $("<span class='sp-alpha-overlay' title='"+ l10n.theme_colors_opacity_disabled +"'>"+ l10n.theme_colors_opacity_disabled +"</span>")
+						.on("click", function(e){
+							e.stopPropagation();
+							e.preventDefault();
+						});
+					if( !this.$(".sp-alpha-overlay").length ){
+						$alpha.before($overlay);
+					}
+				} else {
+					$alpha.removeClass("sp-alpha-disabled sp-alpha-lower-opacity");
+					this.$(".sp-alpha-overlay").remove();
+				}
 			}
 		});
 
