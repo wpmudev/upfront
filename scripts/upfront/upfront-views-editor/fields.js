@@ -543,7 +543,6 @@
 						});
 		
 						Upfront.Events.trigger("color:spectrum:hide");
-						
 					}
 				});
 
@@ -564,8 +563,8 @@
 					this.color = color;
 					var rgb = color.toRgbString();
 					$('.sp-dragger').css({
-							'border-top-color': rgb,
-							'border-right-color': rgb
+						'border-top-color': rgb,
+						'border-right-color': rgb
 					});
 					this.update_input_border_color( color.toRgbString() );
 					this.update_input_val( rgb );
@@ -734,8 +733,8 @@
 				var self = this;
 				this.$(".color_picker_rgb_container").html(this.sidebar_template(rgba));
 				this.$(".upfront_color_picker_reset").on("click", function(e){
-						e.preventDefault();
-						self.set_to_blank();
+					e.preventDefault();
+					self.set_to_blank();
 				});
 			},
 			rgba_sidebar_changed : function(e){
@@ -822,23 +821,10 @@
 				if( _.isEmpty( color ) ) return;
 
 				var $alpha = this.$(".sp-alpha");
-
-				if( Upfront.Views.Theme_Colors.colors.is_theme_color( color ) ){
-
-					$alpha.addClass("sp-alpha-disabled sp-alpha-lower-opacity");
-					$overlay = $("<span class='sp-alpha-overlay' title='"+ l10n.theme_colors_opacity_disabled +"'>"+ l10n.theme_colors_opacity_disabled +"</span>")
-						.on("click", function(e){
-							e.stopPropagation();
-							e.preventDefault();
-						});
-					if( !this.$(".sp-alpha-overlay").length ){
-						$alpha.before($overlay);
-					}
-
-				} else {
-					$alpha.removeClass("sp-alpha-disabled sp-alpha-lower-opacity");
-					this.$(".sp-alpha-overlay").remove();
-				}
+				
+				// Always display alpha slider
+				$alpha.removeClass("sp-alpha-disabled sp-alpha-lower-opacity");
+				this.$(".sp-alpha-overlay").remove();
 			}
 		});
 
