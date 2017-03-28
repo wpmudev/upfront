@@ -8,7 +8,7 @@ class Upfront_PostsLists_Presets_Server extends Upfront_Presets_Server {
 	private static $instance;
 
 	public function get_element_name() {
-		return 'posts';
+		return 'postslists';
 	}
 
 	public static function serve () {
