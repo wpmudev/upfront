@@ -159,7 +159,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 					'comments' => Upfront_Comments_Presets_Server::get_instance()->get_presets_ids(),
 					'meta' => Upfront_Meta_Presets_Server::get_instance()->get_presets_ids()
 				),
-				'PostsModel' => Upfront_Posts_Presets_Server::get_instance()->get_presets_ids(),
+				'PostsListsModel' => Upfront_PostsLists_Presets_Server::get_instance()->get_presets_ids(),
 				'PlainTxtModel' => Upfront_Text_Presets_Server::get_instance()->get_presets_ids(),
 				'UimageModel' => Upfront_Image_Presets_Server::get_instance()->get_presets_ids(),
 				'UaccordionModel' => Upfront_Accordion_Presets_Server::get_instance()->get_presets_ids(),
