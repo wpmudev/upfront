@@ -44,14 +44,14 @@ class Upfront_PostsList extends Upfront_Server {
 		require_once (dirname(__FILE__) . '/lib/class_upfront_posts_frontend_view.php');
 		require_once (dirname(__FILE__) . '/lib/class_upfront_posts_presets_server.php');
 
-		upfront_add_layout_editor_entity('upostslist', upfront_relative_element_url('js/posts-list', __FILE__));
+		upfront_add_layout_editor_entity('upostslists', upfront_relative_element_url('js/posts-list', __FILE__));
 		upfront_add_element_style('upfront-postslist', array('css/public.css', __FILE__));
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			upfront_add_element_style('upfront-postslist-editor', array('css/editor.css', __FILE__));
 		}
 
-		add_filter('upfront_data', array('Upfront_PostsList_PostsData', 'add_js_defaults'));
-		add_filter('upfront_l10n', array('Upfront_PostsList_PostsData', 'add_l10n_strings'));
+		add_filter('upfront_data', array('Upfront_PostsLists_PostsData', 'add_js_defaults'));
+		add_filter('upfront_l10n', array('Upfront_PostsLists_PostsData', 'add_l10n_strings'));
 
 		upfront_add_ajax('upfront_postslist-load', array($this, "load_posts"));
 		upfront_add_ajax('upfront_postslist-data', array($this, "load_data"));
@@ -92,11 +92,11 @@ class Upfront_PostsList extends Upfront_Server {
 	}
 
 	public function handle_legacy_data ($data, $type) {
-		if ('Uposts' !== $type) return $data;
-		return Upfront_Posts_PostsData::get_defaults();
+		if ('Upostslist' !== $type) return $data;
+		return Upfront_PostsLists_PostsData::get_defaults();
 	}
 	public function handle_legacy_output ($msg, $view_class) {
-		if ('Upfront_UpostsView' !== $view_class) return $msg;
+		if ('Upfront_UpostsListsView' !== $view_class) return $msg;
 		return '';
 	}
 
@@ -108,12 +108,12 @@ class Upfront_PostsList extends Upfront_Server {
 		$compat = !empty($request['compat']) ? ($request['compat'] == 1) : false;
 		if (!empty($request['query'])) $data['query'] = $request['query'];
 
-		$posts = $compat ? Upfront_Posts_PostsView::get_posts_markup($data) : Upfront_Posts_PostsView::get_posts_part_markup($data, true);
+		$posts = $compat ? Upfront_PostsLists_PostsView::get_posts_markup($data) : Upfront_PostsLists_PostsView::get_posts_part_markup($data, true);
 		$order = array_keys($posts);
 
 		$this->_out(new Upfront_JsonResponse_Success(array(
-			'posts' => $compat ? Upfront_Posts_PostsView::get_posts_markup($data) : Upfront_Posts_PostsView::get_posts_part_markup($data, true),
-			'pagination' => Upfront_Posts_PostsView::get_pagination($data),
+			'posts' => $compat ? Upfront_PostsLists_PostsView::get_posts_markup($data) : Upfront_PostsLists_PostsView::get_posts_part_markup($data, true),
+			'pagination' => Upfront_PostsLists_PostsView::get_pagination($data),
 			'order' => $order
 		)));
 	}
@@ -123,17 +123,17 @@ class Upfront_PostsList extends Upfront_Server {
 		$data = !empty($request['props']) ? $this->to_data_array($request['props']) : array();
 		if (!empty($request['query'])) $data['query'] = $request['query'];
 
-		$fields = Upfront_Posts_Model::get_meta_fields($data);
+		$fields = Upfront_PostsLists_Model::get_meta_fields($data);
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			'fields' => $fields,
 		)));
 	}
 
 	public function load_data () {
-		$raw_post_types = apply_filters('upfront_posts-list-post_types', get_post_types(array(
+		$raw_post_types = apply_filters('upfront_postslists-list-post_types', get_post_types(array(
 			'public' => true,
 		), 'objects'));
-		$raw_taxonomies = apply_filters('upfront_posts-list-taxonomies', get_taxonomies(array(
+		$raw_taxonomies = apply_filters('upfront_postslists-list-taxonomies', get_taxonomies(array(
 			'public' => true,
 		), 'objects'));
 
@@ -144,14 +144,14 @@ class Upfront_PostsList extends Upfront_Server {
 		);
 
 		foreach ($raw_post_types as $type => $obj) {
-			if (apply_filters('upfront_posts-list-skip_post_type-' . $type, false, $obj)) continue;
+			if (apply_filters('upfront_postslists-list-skip_post_type-' . $type, false, $obj)) continue;
 			$data["post_types"][$type] = $obj->labels->name;
 		}
 		// Allow for "any" post type to be used in tax queries
 		$data["post_types"]["*"] = __("Any", "upfront");
 
 		foreach ($raw_taxonomies as $tax => $obj) {
-			if (apply_filters('upfront_posts-list-skip_taxonomy-' . $tax, false, $obj)) continue;
+			if (apply_filters('upfront_postslists-list-skip_taxonomy-' . $tax, false, $obj)) continue;
 			$data['taxonomies'][$tax] = $obj->labels->name;
 		}
 		$this->_out(new Upfront_JsonResponse_Success($data));

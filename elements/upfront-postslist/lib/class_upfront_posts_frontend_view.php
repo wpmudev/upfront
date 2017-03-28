@@ -189,7 +189,7 @@ class Upfront_PostsListView extends Upfront_Object_Group {
 				}
 			}
 		}
-		upfront_set_property_value('view_class', 'PostsEachView', $new_object);
+		upfront_set_property_value('view_class', 'PostsListsEachView', $new_object);
 		return $new_object;
 	}
 
@@ -229,7 +229,7 @@ class Upfront_PostsListView extends Upfront_Object_Group {
 
 		// Copying post part layouts with all new ids
 		$object = $this->_data;
-		upfront_set_property_value('view_class', 'PostsCompatView', $object);
+		upfront_set_property_value('view_class', 'PostsListsCompatView', $object);
 		upfront_set_property_value('class', $classes, $object);
 		upfront_set_property_value('element_id', $this->_get_property('element_id') . '-compat', $object);
 		upfront_set_property_value('wrapper_id', $wrapper_id, $object);
@@ -433,7 +433,7 @@ class Upfront_PostsListsPartView extends Upfront_Object {
 
 		$props = !empty($parent_data['properties'])
 			? upfront_properties_to_array($parent_data['properties'])
-			: Upfront_Posts_PostsData::get_defaults()
+			: Upfront_PostsLists_PostsData::get_defaults()
 		;
 
 		//$props['preset'] = $this->_parent->get_preset();

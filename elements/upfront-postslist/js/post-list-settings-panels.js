@@ -1,18 +1,18 @@
 (function ($) {
 define([
-	'text!elements/upfront-posts/tpl/views.html',
-	'elements/upfront-posts/js/post-list-settings-parts',
+	'text!elements/upfront-postslist/tpl/views.html',
+	'elements/upfront-postslist/js/post-list-settings-parts',
 	'scripts/upfront/element-settings/root-settings-panel',
 	'scripts/upfront/preset-settings/preset-manager',
 	'scripts/upfront/preset-settings/util',
-	'elements/upfront-posts/js/post-list-settings-modules',
+	'elements/upfront-postslist/js/post-list-settings-modules',
 ], function(tpl, Parts, RootSettingsPanel, PresetManager, Util, Posts_Modules) {
 
-var l10n = Upfront.Settings.l10n.posts_element;
+var l10n = Upfront.Settings.l10n.postslist_element;
 var $template = $(tpl);
 
 Upfront.Util.post({
-	"action": "upfront_posts-data"
+	"action": "upfront_postslists-data"
 }).success(function (initialData) {
 	Panels._initial = initialData.data;
 }); // End response wrap
@@ -464,7 +464,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 		}
 
 		Upfront.Util.post({
-			"action": "upfront_posts-terms",
+			"action": "upfront_postslists-terms",
 			"taxonomy": taxonomy}
 		).success(function (terms) {
 			var term_values = [];
@@ -626,8 +626,8 @@ Panels.PostParts = PresetManager.extend({
 			elementDefaults
 		;
 		// Include default settings from Upfront.mainData
-		if(typeof Upfront.mainData.presetDefaults['posts_element'] !== "undefined") {
-			elementDefaults = _.extend(data_type_defaults, Upfront.mainData.presetDefaults['posts_element']);
+		if(typeof Upfront.mainData.presetDefaults['postslist_element'] !== "undefined") {
+			elementDefaults = _.extend(data_type_defaults, Upfront.mainData.presetDefaults['postslist_element']);
 		}
 
 		_.extend(this, {
@@ -849,9 +849,9 @@ Panels.PostParts = PresetManager.extend({
 						]
 					})
 				;
-				object = new Upfront.Models.PostsPartModel({
+				object = new Upfront.Models.PostsListsPartModel({
 					properties: [
-						{ name: 'view_class', value: 'PostsPartView' },
+						{ name: 'view_class', value: 'PostsListsPartView' },
 						{ name: 'part_type', value: type },
 						{ name: 'has_settings', value: 0 },
 						{ name: 'class', value: 'c24 upfront-posts-part' },

@@ -1,14 +1,14 @@
 (function ($) {
 define([
-	'elements/upfront-posts/js/post-list-settings-panels',
+	'elements/upfront-postslist/js/post-list-settings-panels',
 	'scripts/upfront/element-settings/settings',
 	'scripts/upfront/element-settings/advanced-settings',
 	'scripts/upfront/preset-settings/util',
 ], function(Panels, ElementSettings, AdvancedSettings, Util) {
 
-var l10n = Upfront.Settings.l10n.posts_element;
+var l10n = Upfront.Settings.l10n.postslist_element;
 
-var PostsSettings = ElementSettings.extend({
+var PostsListsSettings = ElementSettings.extend({
 	panels: {},
 
 	initialize: function (opts) {
@@ -62,14 +62,14 @@ var PostsSettings = ElementSettings.extend({
 		});
 	},
 
-	title: l10n.posts_settings,
+	title: l10n.postslist_element,
 
 	get_title: function () {
 		return l10n.settings;
 	}
 });
 
-return PostsSettings;
+return PostsListsSettings;
 
 });
 })(jQuery);

@@ -4,7 +4,7 @@ define(function() {
 
 	var _initial = {};
 
-	var l10n = Upfront.Settings.l10n.posts_element;
+	var l10n = Upfront.Settings.l10n.postslist_element;
 
 
 	Upfront.Util.post({
@@ -568,7 +568,7 @@ define(function() {
 	// The definitions part is over.
 	// Now, to tie it all up and expose to the Subapplication.
 
-	Upfront.Application.LayoutEditor.add_object("Uposts", {
+	Upfront.Application.LayoutEditor.add_object("Upostslists", {
 		"Model": UpostsModel,
 		"View": UpostsView,
 		"Element": UpostsElement,

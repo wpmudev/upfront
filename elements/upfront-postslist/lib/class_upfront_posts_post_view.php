@@ -250,7 +250,7 @@ class Upfront_PostsLists_PostView {
 	public function expand_comment_count_template () {
 		$hide_empty = isset($this->_data['comments-hide-if-empty'])
 			? (int)$this->_data['comments-hide-if-empty']
-			: (int)Upfront_Posts_PostsData::get_default('comment_count_hide')
+			: (int)Upfront_PostsLists_PostsData::get_default('comment_count_hide')
 		;
 
 		if ($hide_empty && empty($this->_post->comment_count)) return '';

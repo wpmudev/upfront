@@ -7,10 +7,10 @@
 		/**
 		 * @todo Refactor this to a different, shared location
 		 */
-		'elements/upfront-posts/js/post-list-meta-views'
+		'elements/upfront-postslist/js/post-list-meta-views'
 	], function (BaseModule, FieldFactory, StateSettings, Inserts, Meta) {
 
-		var l10n = Upfront.Settings.l10n.posts_element;
+		var l10n = Upfront.Settings.l10n.postslist_element;
 
 		var OptionsModule = BaseModule.extend({
 			initialize: function (options) {

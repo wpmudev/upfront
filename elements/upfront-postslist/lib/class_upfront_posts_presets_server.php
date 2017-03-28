@@ -36,7 +36,7 @@ class Upfront_PostsLists_Presets_Server extends Upfront_Presets_Server {
 	}
 
 	protected function get_style_template_path() {
-		return realpath(Upfront::get_root_dir() . '/elements/upfront-posts/tpl/preset-style.html');
+		return realpath(Upfront::get_root_dir() . '/elements/upfront-postslist/tpl/preset-style.html');
 	}
 	
 	public static function get_preset_defaults() {

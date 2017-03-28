@@ -1,10 +1,10 @@
 (function ($) {
 define([
-	'text!elements/upfront-posts/tpl/views.html',
+	'text!elements/upfront-postslist/tpl/views.html',
 	'scripts/redactor/ueditor-inserts'
 ], function(tpl, Inserts) {
 
-	var l10n = Upfront.Settings.l10n.posts_element;
+	var l10n = Upfront.Settings.l10n.postslist_element;
 	var $template = $(tpl);
 
 	var Meta = {
@@ -41,7 +41,7 @@ define([
 				if (!this.meta_fields || !this.meta_fields.length) {
 					Upfront.Util
 						.post({
-							action: 'upfront_posts-list_meta',
+							action: 'upfront_postslists-list_meta',
 							data: {
 								props: props,
 								query: query

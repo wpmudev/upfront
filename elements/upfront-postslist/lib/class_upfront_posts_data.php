@@ -1,6 +1,6 @@
 <?php
 
-class Upfront_PostsList_PostsData {
+class Upfront_PostsLists_PostsData {
 
 	/**
 	 * Fetch all default values for properties.
@@ -10,7 +10,7 @@ class Upfront_PostsList_PostsData {
 		static $defaults;
 		if (!empty($defaults)) return $defaults;
 
-		$default_parts = Upfront_PostsList_PostView::get_default_parts();
+		$default_parts = Upfront_PostsLists_PostView::get_default_parts();
 		$default_parts = apply_filters('upfront_postslists-defaults-default_parts', $default_parts);
 
 		// Enabled parts are a subset of default ones
@@ -22,11 +22,11 @@ class Upfront_PostsList_PostsData {
 		$enabled_parts = apply_filters('upfront_postslists-defaults-enabled_parts', $enabled_parts);
 
 		$defaults = array(
-			'type' => 'PostsModel',
-			'view_class' => 'PostsView',
+			'type' => 'PostsListsModel',
+			'view_class' => 'PostsListsView',
 			'has_settings' => 1,
 			'class' => 'c24 uposts-object',
-			'id_slug' => 'posts',
+			'id_slug' => 'postslist',
 
 			'display_type' => '', // single, list or '' (initial)
 			'list_type' => 'generic', // custom, taxonomy or generic
@@ -84,10 +84,10 @@ class Upfront_PostsList_PostsData {
 		if (!empty($part_defaults)) return $part_defaults;
 
 		$part_defaults = array(
-			'type' => 'PostsPartModel',
-			'view_class' => 'PostsPartView',
+			'type' => 'PostsListsPartModel',
+			'view_class' => 'PostsListsPartView',
 			'has_settings' => 0,
-			'class' => 'c24 uposts-part-object',
+			'class' => 'c24 upostslist-part-object',
 			'id_slug' => 'posts-part',
 
 			'part_type' => ''
@@ -196,8 +196,8 @@ class Upfront_PostsList_PostsData {
 	}
 
 	public static function add_l10n_strings ($strings) {
-		if (!empty($strings['posts_element'])) return $strings;
-		$strings['posts_element'] = self::_get_l10n();
+		if (!empty($strings['postslist_element'])) return $strings;
+		$strings['postslist_element'] = self::_get_l10n();
 		return $strings;
 	}
 

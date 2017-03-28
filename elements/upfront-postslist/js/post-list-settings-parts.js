@@ -1,11 +1,11 @@
 (function ($) {
 define([
-	'text!elements/upfront-posts/tpl/views.html',
+	'text!elements/upfront-postslist/tpl/views.html',
 	'scripts/redactor/ueditor-inserts',
-	'elements/upfront-posts/js/post-list-meta-views'
+	'elements/upfront-postslist/js/post-list-meta-views'
 ], function(tpl, Inserts, Meta) {
 
-var l10n = Upfront.Settings.l10n.posts_element;
+var l10n = Upfront.Settings.l10n.postslist_element;
 var $template = $(tpl);
 
 

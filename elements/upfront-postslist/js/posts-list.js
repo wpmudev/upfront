@@ -1,18 +1,18 @@
 (function ($) {
 define([
-	'text!elements/upfront-posts/tpl/views.html',
-	'elements/upfront-posts/js/post-list-views',
-	'elements/upfront-posts/js/post-list-settings'
-], function(tpl, Views, PostsSettings) {
+	'text!elements/upfront-postslist/tpl/views.html',
+	'elements/upfront-postslist/js/post-list-views',
+	'elements/upfront-postslist/js/post-list-settings'
+], function(tpl, Views, PostsListsSettings) {
 
-var l10n = Upfront.Settings.l10n.posts_element;
+var l10n = Upfront.Settings.l10n.postslist_element;
 var $template = $(tpl);
 
 
-var PostsPartModel = Upfront.Models.ObjectModel.extend({
+var PostsListsPartModel = Upfront.Models.ObjectModel.extend({
 	init: function () {
-		var properties = Upfront.data.upfront_posts_part
-			? _.clone(Upfront.data.upfront_posts_part)
+		var properties = Upfront.data.upfront_postslists_part
+			? _.clone(Upfront.data.upfront_postslists_part)
 			: {}
 		;
 		properties.element_id = Upfront.Util.get_unique_id(properties.id_slug + '-object');
@@ -20,10 +20,10 @@ var PostsPartModel = Upfront.Models.ObjectModel.extend({
 	}
 });
 
-var PostsModel = Upfront.Models.ObjectGroup.extend({
+var PostsListsModel = Upfront.Models.ObjectGroup.extend({
 	init: function () {
-		var properties = Upfront.data.upfront_posts
-			? _.clone(Upfront.data.upfront_posts)
+		var properties = Upfront.data.upfront_postslists
+			? _.clone(Upfront.data.upfront_postslists)
 			: {}
 		;
 		properties.element_id = Upfront.Util.get_unique_id(properties.id_slug + '-object');
@@ -32,7 +32,7 @@ var PostsModel = Upfront.Models.ObjectGroup.extend({
 });
 
 
-var PostsPartView = Upfront.Views.ObjectView.extend({
+var PostsListsPartView = Upfront.Views.ObjectView.extend({
 	init: function () {
 		this.events = _.extend({}, this.events, {
 			'click a' : 'disable_default',
@@ -178,7 +178,7 @@ var PostsPartView = Upfront.Views.ObjectView.extend({
 	}
 });
 
-var PostsEachView = Upfront.Views.ObjectGroup.extend({
+var PostsListsEachView = Upfront.Views.ObjectGroup.extend({
 
 	tagName: "article",
 	className: "upfront-object-group-view upfront-posts-each",
@@ -278,7 +278,7 @@ var PostsEachView = Upfront.Views.ObjectGroup.extend({
 
 });
 
-var PostsObjectsView = Upfront.Views.Objects.extend({
+var PostsListsObjectsView = Upfront.Views.Objects.extend({
 
 	tagName: "ul",
 	className: "upfront-editable_entities_container uf-posts",
@@ -293,12 +293,12 @@ var PostsObjectsView = Upfront.Views.Objects.extend({
 	},
 
 	create_wrapper_view: function (wrapper) {
-		return new PostsEachWrapper({ model: wrapper });
+		return new PostsListsEachWrapper({ model: wrapper });
 	}
 
 });
 
-var PostsEachWrapper = Upfront.Views.Wrapper.extend({
+var PostsListsEachWrapper = Upfront.Views.Wrapper.extend({
 
 	tagName: "li",
 	attributes: function(){
@@ -314,7 +314,7 @@ var PostsEachWrapper = Upfront.Views.Wrapper.extend({
 });
 
 
-var PostsView = Upfront.Views.ObjectGroup.extend({
+var PostsListsView = Upfront.Views.ObjectGroup.extend({
 
 	_posts_model: false,
 	_is_compat: false,
@@ -444,7 +444,7 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 	get_child_objects: function (include_spacer) {
 		return this.model.get('objects').filter(function(object){
 			var view_class = object.get_property_value_by_name('view_class');
-			if ( 'PostsPartView' == view_class ) return true;
+			if ( 'PostsListsPartView' == view_class ) return true;
 			else return ( include_spacer === true );
 		});
 	},
@@ -528,7 +528,7 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 			model.set_property('class', post_class);
 			model.set_property('post_id', post_id);
 			model.set_property('wrapper_id', wrapper_id);
-			model.set_property('element_id', Upfront.Util.get_unique_id(Upfront.data.upfront_posts.id_slug + '-object'));
+			model.set_property('element_id', Upfront.Util.get_unique_id(Upfront.data.upfront_postslists.id_slug + '-object'));
 			wrappers.add(wrapper, {silent: true});
 			objects.add(model, {post_id: post_id, data: data, editable: is_editable});
 		}
@@ -569,7 +569,7 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 
 	clone_model: function (model, unique) {
 		var cloned = Upfront.Util.clone(Upfront.Util.model_to_json(model)),
-			new_model = new PostsModel(cloned)
+			new_model = new PostsListsModel(cloned)
 		;
 		if ( unique ) {
 			new_model.get('wrappers').each(function(wrapper){
@@ -582,7 +582,7 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 					if ( object.get_wrapper_id() !== wrapper_id ) return;
 					var object_id = object.get_element_id();
 					object.set_property('wrapper_id', new_wrapper_id);
-					object.set_property('element_id', Upfront.Util.get_unique_id(Upfront.data.upfront_posts_part.id_slug + '-object'));
+					object.set_property('element_id', Upfront.Util.get_unique_id(Upfront.data.upfront_postslists_part.id_slug + '-object'));
 					object.set_property('ref_element_id', object_id);
 				});
 			});
@@ -592,7 +592,7 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 			new_model.set('wrappers', model.get('wrappers'));
 			new_model.set('objects', model.get('objects'));
 		}
-		new_model.set_property('view_class', 'PostsEachView');
+		new_model.set_property('view_class', 'PostsListsEachView');
 		return new_model;
 	},
 
@@ -718,7 +718,7 @@ var PostsView = Upfront.Views.ObjectGroup.extend({
 });
 
 
-var PostsElement = Upfront.Views.Editor.Sidebar.Element.extend({
+var PostsListsElement = Upfront.Views.Editor.Sidebar.Element.extend({
 	_post_parts: [
 		'date_posted',
 		'author',
@@ -747,7 +747,7 @@ var PostsElement = Upfront.Views.Editor.Sidebar.Element.extend({
 			wrappers = []
 		;
 
-		var presets = (Upfront.mainData || {})["postsPresets"] || [],
+		var presets = (Upfront.mainData || {})["postsListsPresets"] || [],
 			post_parts = (_.findWhere(presets, {id: "default"}) || {}).enabled_post_parts || []
 		;
 
@@ -775,9 +775,9 @@ var PostsElement = Upfront.Views.Editor.Sidebar.Element.extend({
 					{ name: 'class', value: 'c24' }
 				]
 			}),
-			object = new PostsPartModel({
+			object = new PostsListsPartModel({
 				properties: [
-					{ name: 'view_class', value: 'PostsPartView' },
+					{ name: 'view_class', value: 'PostsListsPartView' },
 					{ name: 'part_type', value: type },
 					{ name: 'has_settings', value: 0 },
 					{ name: 'class', value: 'c24 upfront-posts-part part-' + type },
@@ -793,7 +793,7 @@ var PostsElement = Upfront.Views.Editor.Sidebar.Element.extend({
 
 	add_element: function () {
 		var part_objects = this.create_part_objects(this._post_parts),
-			object = new PostsModel({
+			object = new PostsListsModel({
 				objects: part_objects.objects,
 				wrappers: part_objects.wrappers
 			}),
@@ -814,11 +814,11 @@ var PostsElement = Upfront.Views.Editor.Sidebar.Element.extend({
 });
 
 
-Upfront.Application.LayoutEditor.add_object("Uposts", {
-	"Model": PostsModel,
-	"View": PostsView,
-	"Element": PostsElement,
-	"Settings": PostsSettings,
+Upfront.Application.LayoutEditor.add_object("Upostslists", {
+	"Model": PostsListsModel,
+	"View": PostsListsView,
+	"Element": PostsListsElement,
+	"Settings": PostsListsSettings,
 	cssSelectors: {
 		'.uposts-object ul': {label: l10n.css.container_label, info: l10n.css.container_info},
 		'.uposts-object li': {label: l10n.css.post_label, info: l10n.css.post_info},
@@ -833,13 +833,13 @@ Upfront.Application.LayoutEditor.add_object("Uposts", {
 		'.uposts-object li .thumbnail': {label: l10n.css.thumbnail_label, info: l10n.css.thumbnail_info},
 		'.uposts-object li .title': {label: l10n.css.title_label, info: l10n.css.title_info}
 	},
-	cssSelectorsId: Upfront.data.upfront_posts.type
+	cssSelectorsId: Upfront.data.upfront_postslists.type
 });
-Upfront.Models.PostsModel = PostsModel;
-Upfront.Views.PostsView = PostsView;
-Upfront.Views.PostsEachView = PostsEachView;
-Upfront.Models.PostsPartModel = PostsPartModel;
-Upfront.Views.PostsPartView = PostsPartView;
+Upfront.Models.PostsListsModel = PostsListsModel;
+Upfront.Views.PostsListsView = PostsListsView;
+Upfront.Views.PostsListsEachView = PostsListsEachView;
+Upfront.Models.PostsListsPartModel = PostsListsPartModel;
+Upfront.Views.PostsListsPartView = PostsListsPartView;
 
 
 });

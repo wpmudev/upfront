@@ -1,9 +1,9 @@
 (function ($) {
 define([
-	'text!elements/upfront-posts/tpl/views.html'
+	'text!elements/upfront-postslist/tpl/views.html'
 ], function(tpl) {
 
-var l10n = Upfront.Settings.l10n.posts_element;
+var l10n = Upfront.Settings.l10n.postslist_element;
 var $template = $(tpl);
 
 var Views = {
@@ -76,7 +76,7 @@ var Views = {
 			var me = this,
 				model = Upfront.Util.model_to_json(this.model),
 				preset = this.model.get_property_value_by_name('preset'),
-				presets = (Upfront.mainData || {})["postsPresets"] || [],
+				presets = (Upfront.mainData || {})["postsListsPresets"] || [],
 				preset_props = (_.findWhere(presets, {id: preset}) || {}),
 				props = model.properties || {}, 
 				query = {}
