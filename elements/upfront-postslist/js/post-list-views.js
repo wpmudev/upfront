@@ -81,13 +81,13 @@ var Views = {
 				props = model.properties || {}, 
 				query = {}
 			;
-			
+
 			if (window._upfront_get_current_query) query = window._upfront_get_current_query();
 			//console.log(query);
 			silent = _.isUndefined(silent) ? false : silent;
 			this._posts_load = Upfront.Util
 				.post({
-					action: "upfront_posts-load",
+					action: "upfront_postslist-load",
 					data: {
 						props: props,
 						preset_props: preset_props,

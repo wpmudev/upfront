@@ -41,7 +41,7 @@ define([
 				if (!this.meta_fields || !this.meta_fields.length) {
 					Upfront.Util
 						.post({
-							action: 'upfront_postslists-list_meta',
+							action: 'upfront_postslist-list_meta',
 							data: {
 								props: props,
 								query: query
