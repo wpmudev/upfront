@@ -354,7 +354,7 @@ var PostsListsView = Upfront.Views.ObjectGroup.extend({
 
 		// Setup views and models that will render individual posts, this model won't be saved as it only serve to render posts
 		this._posts_model = new Upfront.Models.ObjectGroup();
-		this._objects_view = new PostsObjectsView({model: this._posts_model.get('objects')});
+		this._objects_view = new PostsListsObjectsView({model: this._posts_model.get('objects')});
 
 		Upfront.Views.ObjectGroup.prototype.render.call(this);
 	},
