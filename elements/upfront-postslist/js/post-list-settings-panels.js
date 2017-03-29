@@ -686,7 +686,8 @@ Panels.PostParts = PresetManager.extend({
 
 			var me = this;
 			this.listenTo(pnl, "update:preset", function (part_type, enable) {
-				this.update_parts();
+				// We do not need to update parts when re-render
+				//this.update_parts();
 				this.updatePreset(this.preset_model.toJSON()); // Update: actually *still* needed, because presets aren't necessarily being saved on preset save...
 				this.render();
 			}, this);
@@ -743,8 +744,6 @@ Panels.PostParts = PresetManager.extend({
 		var enabled_post_parts = this.preset_model.get('enabled_post_parts') || [];
 		enabled_post_parts.push(part);
 		this.preset_model.set('enabled_post_parts', enabled_post_parts);
-		this.update_parts();
-
 		this.updatePreset(this.preset_model.toJSON());
 	},
 	
