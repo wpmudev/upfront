@@ -21,32 +21,32 @@
 .uposts-object {
 	min-height: 220px;
 }
-.upfront_posts-initial-wrapper {
+.upfront_posts-list-initial-wrapper {
     position: relative;
 	top: 0; bottom: 0; right: 0; left: 0;
 }
-.upfront_posts-initial-content {
+.upfront_posts-list-initial-content {
     margin: auto;
     text-align: center;
 }
-.upfront_posts-initial-content .upfront-field-wrap {
+.upfront_posts-list-initial-content .upfront-field-wrap {
     margin: 0;
 }
-.upfront_posts-initial-content .upfront-field-wrap-radios .upfront-field-label-block {
+.upfront_posts-list-initial-content .upfront-field-wrap-radios .upfront-field-label-block {
     font-size: 14px;
     font-weight: normal;
     margin: 0 0 20px;
 }
-.upfront_posts-initial-content .upfront-field-multiple-horizontal-inline {
+.upfront_posts-list-initial-content .upfront-field-multiple-horizontal-inline {
     margin: 0 20px;
 }
-.upfront_posts-initial-content .options {
+.upfront_posts-list-initial-content .options {
     padding: 8px 0 0;
     margin: 0 0 15px;
 }
-.upfront-object-content .upfront_posts-initial-content a.continue,
-.upfront-object-content .upfront_posts-initial-content a.continue:link,
-.upfront-object-content .upfront_posts-initial-content a.continue:visited {
+.upfront-object-content .upfront_posts-list-initial-content a.continue,
+.upfront-object-content .upfront_posts-list-initial-content a.continue:link,
+.upfront-object-content .upfront_posts-list-initial-content a.continue:visited {
     display: inline-block;
     border: 2px solid #99c3e9;
     padding: 8px 25px;
@@ -778,13 +778,13 @@ div.preset-manager-panel .category-padding-margin {
 	display: block;
 }
 
-.upfront_posts-initial {
+.upfront_posts-list-initial {
 	background: #fff;
 	text-align: center;
 	padding-top: 50px;
 }
 
-.upfront_posts-initial-content input {
+.upfront_posts-list-initial-content input {
 	background-image: -ms-linear-gradient(top, #F8FBFF 0%, #f3faff 100%);
 	background-image: -moz-linear-gradient(top, #F8FBFF 0%, #f3faff 100%);
 	background-image: -o-linear-gradient(top, #F8FBFF 0%, #f3faff 100%);
@@ -803,7 +803,7 @@ div.preset-manager-panel .category-padding-margin {
 	font: 600 14px/100% "Open Sans", Helvetica Neue, Helvetica, Arial, Sans-serif;
 }
 
-.upfront_posts-initial-content input:hover {
+.upfront_posts-list-initial-content input:hover {
 	background-image: -ms-linear-gradient(top, #E8F4FF 0%, #F3FAFF 100%);
 	background-image: -moz-linear-gradient(top, #E8F4FF 0%, #F3FAFF 100%);
 	background-image: -o-linear-gradient(top, #E8F4FF 0%, #F3FAFF 100%);
@@ -812,12 +812,12 @@ div.preset-manager-panel .category-padding-margin {
 	background-image: linear-gradient(to bottom, #E8F4FF 0%, #F3FAFF 100%);
 }
 
-.upfront_posts-initial-content  .upfront-field-wrap-button {
+.upfront_posts-list-initial-content  .upfront-field-wrap-button {
 	display: inline-block;
 	margin: 25px 15px;
 }
 
-.upfront_posts-initial-wrapper .upfront_posts-initial-heading {
+.upfront_posts-list-initial-wrapper .upfront_posts-list-initial-heading {
 	color: #5b6e81;
 	font: 200 24px/100% "Open Sans", Helvetica Neue, Helvetica, Arial, Sans-serif;
 }

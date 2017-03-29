@@ -12,7 +12,7 @@ var Views = {
 
 
 	initial: Backbone.View.extend({
-		className: 'upfront_posts-initial',
+		className: 'upfront_posts-list-initial',
 		tpl: _.template($template.filter("#initial").html()),
 		events: {
 			'click [href="#continue"]': "dispatch"
@@ -51,7 +51,7 @@ var Views = {
 			if (Upfront.Application.user_can_modify_layout()) {
 				this.$el.empty().append(this.tpl({l10n: l10n}));
 				this.$el.css('min-height', ( height > 150 ? height : 150 ));
-				this.$el.find('.upfront_posts-initial-content').empty().append(single.$el).append(list.$el);
+				this.$el.find('.upfront_posts-list-initial-content').empty().append(single.$el).append(list.$el);
 			} else {
 				this.$el.empty();
 				this.$el.removeClass('upfront-initial-overlay-wrapper');
