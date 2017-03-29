@@ -30,11 +30,11 @@ class Upfront_PostsLists_PostsView {
 	 * @param array $data The properties data array
 	 * @return array Array of parsed markup items for each post in the list.
 	 */
-	public static function get_posts_markup ($data) {
+	public static function get_posts_markup ($data, $ajax_call = false) {
 		$posts = Upfront_PostsLists_Model::get_posts($data);
 		$posts_markup = array();
 
-		$view = new Upfront_PostsLists_PostView($data);
+		$view = new Upfront_PostsLists_PostView($data, $ajax_call);
 
 		foreach($posts as $idx => $post) {
 			$posts_markup[$post->ID] = $view->get_markup($post);

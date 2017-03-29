@@ -108,11 +108,11 @@ class Upfront_PostsList extends Upfront_Server {
 		$compat = !empty($request['compat']) ? ($request['compat'] == 1) : false;
 		if (!empty($request['query'])) $data['query'] = $request['query'];
 
-		$posts = $compat ? Upfront_PostsLists_PostsView::get_posts_markup($data) : Upfront_PostsLists_PostsView::get_posts_part_markup($data, true);
+		$posts = $compat ? Upfront_PostsLists_PostsView::get_posts_markup($data, true) : Upfront_PostsLists_PostsView::get_posts_part_markup($data, true);
 		$order = array_keys($posts);
 
 		$this->_out(new Upfront_JsonResponse_Success(array(
-			'posts' => $compat ? Upfront_PostsLists_PostsView::get_posts_markup($data) : Upfront_PostsLists_PostsView::get_posts_part_markup($data, true),
+			'posts' => $compat ? Upfront_PostsLists_PostsView::get_posts_markup($data, true) : Upfront_PostsLists_PostsView::get_posts_part_markup($data, true),
 			'pagination' => Upfront_PostsLists_PostsView::get_pagination($data),
 			'order' => $order
 		)));
