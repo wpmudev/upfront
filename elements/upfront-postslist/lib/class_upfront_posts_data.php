@@ -167,7 +167,8 @@ class Upfront_PostsLists_PostsData {
 		$slug = self::_get_normalized_slug($slug);
 
 		$data_key = self::_slug_to_part_key($slug);
-		if (!empty($data) && isset($data[$data_key])) return stripslashes($data[$data_key]);
+		// NOTE: We have to use stripslashes twice to make sure we clear all the slashes
+		if (!empty($data) && isset($data[$data_key])) return stripslashes_deep(stripslashes_deep($data[$data_key]));
 
 		return upfront_get_template("posts-{$slug}", $data, dirname(dirname(__FILE__)) . '/tpl/parts/posts-' . $slug . '.php');
 	}
