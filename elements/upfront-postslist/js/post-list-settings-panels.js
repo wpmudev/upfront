@@ -631,11 +631,11 @@ Panels.PostParts = PresetManager.extend({
 		}
 
 		_.extend(this, {
-			mainDataCollection: 'postsListsPresets',
+			mainDataCollection: 'postslistsPresets',
 			styleElementPrefix: 'postslists-preset',
 			ajaxActionSlug: 'postslists',
 			styleTpl: Posts_Modules.template,
-			presetDefaults: Upfront.mainData.presetDefaults.posts
+			presetDefaults: Upfront.mainData.presetDefaults.postslists
 		});
 
 		PresetManager.prototype.initialize.apply(this, arguments);

@@ -747,7 +747,7 @@ var PostsListsElement = Upfront.Views.Editor.Sidebar.Element.extend({
 			wrappers = []
 		;
 
-		var presets = (Upfront.mainData || {})["postsListsPresets"] || [],
+		var presets = (Upfront.mainData || {})["postslistsPresets"] || [],
 			post_parts = (_.findWhere(presets, {id: "default"}) || {}).enabled_post_parts || []
 		;
 
