@@ -2,6 +2,59 @@ Change Log
 ============
 
 
+1.8 - 2017-03-29
+-------------------------------------------------------------------------------
+- Add: media manager redesign
+- Add: CoursePress compatibility
+- Add: accessibility support options
+- Add: hierarchy data for later indentation
+- Add: option to slide with arrow keys
+- Add: mode context dialog
+
+- Fix: hide picker alpha for theme color settings
+- Fix: color picker hide when autohide off
+- Fix: assigned color gets re-set when color picker is initiated
+- Fix: prevent gap between responsive body and sidebar for small screen sizes.
+- Fix: prevent tooltip from staying visible after navigation.
+- Fix: save after exiting responsive mode
+- Fix: slider side caption under image
+- Fix: YT video doesn't stop playing when Lightbox closes
+- Fix: issue with chosen select dropdown being partially transparent.
+- Fix: issue with dropdown fields flickering upon hover.
+- Fix: add homepage item to pages list.
+- Fix: show error message when adding label that already existed
+- Fix: media manager search result not displaying number properly
+- Fix: posts/pages popup when linking
+- Fix: notifier z-index behind media popup
+- Fix: contact form not sent on PHP 7
+- Fix: gallery image alt is not displayed
+- Fix: print image element ALT on front-end
+- Fix: image element alt not saved
+- Fix: improve bodyclass for plugins compatibility
+- Fix: burger preset styles for existing presets in DB
+- Fix: selected media item issue after upload
+- Fix: remove compress console.logs
+- Fix: image selection for background image
+- Fix: labels list not hidden when no match
+- Fix: multiple posts generic limit doesn't work
+- Fix: missing l10n labels
+- Fix: prevent navigation menu from getting smaller than nine columns.
+- Fix: menu item loses html tags after change in editor
+- Fix: the list/single numeric tax settings.
+- Fix: show local lightboxes on edit global regions again and allow them to be deleted.
+- Fix: full screen region background glitch when scrolling
+- Fix: Editing removes custom classes from menu
+- Fix: hide region settings upon changing breakpoints.
+- Fix: close settings panel properly when region is deleted.
+- Fix: only show global lightboxes on edit global regions modal.
+- Fix: allow global lightboxes to be deleted.
+- Fix: update slider resize Hint upon Resizing.
+- Fix: update group resize hint upon resizing.
+- Fix: incorrect label for post data elements in groups and width inconsistencies.
+- Fix: issue with slider captions not aligning properly.
+- Fix: select boxes in region settings
+- Fix: issue with overlapping elements with top menu.
+
 1.7 - 2017-01-10
 -------------------------------------------------------------------------------
 - Add: new design for interaction panels.
