@@ -3,7 +3,7 @@
 /**
  * Front-end rendering class.
  */
-class Upfront_PostsListView extends Upfront_Object_Group {
+class Upfront_PostsListsView extends Upfront_Object_Group {
 
 	private $_post;
 	protected $_children = 'post_objects';

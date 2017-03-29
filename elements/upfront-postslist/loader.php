@@ -96,7 +96,7 @@ class Upfront_PostsList extends Upfront_Server {
 		return Upfront_PostsLists_PostsData::get_defaults();
 	}
 	public function handle_legacy_output ($msg, $view_class) {
-		if ('Upfront_UpostsListsView' !== $view_class) return $msg;
+		if ('Upfront_UpostsView' !== $view_class) return $msg;
 		return '';
 	}
 
