@@ -116,7 +116,7 @@ class Upfront_PostsListsView extends Upfront_Object_Group {
 	}
 
 	protected function wrap_posts ($out) {
-		return "<ul class='uf-posts'>" . $out . "</ul>";
+		return "<ul class='uf-posts-list'>" . $out . "</ul>";
 	}
 
 	protected function create_post_object ($id) {

@@ -281,7 +281,7 @@ var PostsListsEachView = Upfront.Views.ObjectGroup.extend({
 var PostsListsObjectsView = Upfront.Views.Objects.extend({
 
 	tagName: "ul",
-	className: "upfront-editable_entities_container uf-posts",
+	className: "upfront-editable_entities_container uf-posts-list",
 
 	render: function () {
 		this.wrappers_collection = ( this.object_group_view && this.object_group_view._posts_model )
