@@ -25,7 +25,7 @@ class Upfront_PostsLists_PostsData {
 			'type' => 'PostsListsModel',
 			'view_class' => 'PostsListsView',
 			'has_settings' => 1,
-			'class' => 'c24 uposts-object',
+			'class' => 'c24 upostslist-object',
 			'id_slug' => 'postslist',
 
 			'display_type' => '', // single, list or '' (initial)
