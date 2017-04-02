@@ -40,6 +40,7 @@ define([
 					multiple: false,
 					single: true,
 					toggle: false,
+					noborder: true,
 					abccolors: [
 						{
 							name: name('background-color'),
@@ -104,6 +105,7 @@ define([
 					multiple: false,
 					single: true,
 					toggle: false,
+					noborder: true,
 					abccolors: [
 						{
 							name: name('background-color'),
@@ -132,6 +134,7 @@ define([
 				options: {
 					toggle: true,
 					state: 'static',
+					noborder: true,
 					fields: {
 						use: name('use-typography'),
 						typeface: name('font-family'),
