@@ -137,10 +137,14 @@ var Views = {
 									}
 								})
 							;
+							
+							me.element.render_controls();
 						}
 						else {
 							// Object rendering
 							me.render_objects_view(response.data.posts, response.data.order, silent);
+							
+							me.element.render_controls();
 
 							if ( me._do_cache ) {
 								me._cached_data = response.data.posts;
