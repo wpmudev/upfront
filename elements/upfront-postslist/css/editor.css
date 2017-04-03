@@ -548,6 +548,7 @@ div.preset-manager-panel .gravatar-size label {
 
 div.preset-manager-panel .gravatar-border-width {
 	font-size: 11px;
+	top: -5px;
 }
 
 div.preset-manager-panel .gravatar-border-width,
@@ -558,6 +559,14 @@ div.preset-manager-panel .gravatar-border-color {
 
 div.preset-manager-panel .gravatar-border-color .sp-replacer {
 	top: 12px;
+}
+
+div.preset-manager-panel .gravatar-radius {
+	margin-top: 5px;
+}
+
+div.preset-manager-panel .gravatar-radius label {
+	margin-bottom: 10px;
 }
 
 div.preset-manager-panel .gravatar-radius-number {
@@ -820,4 +829,10 @@ div.preset-manager-panel .category-padding-margin {
 .upfront_posts-list-initial-wrapper .upfront_posts-list-initial-heading {
 	color: #5b6e81;
 	font: 200 24px/100% "Open Sans", Helvetica Neue, Helvetica, Arial, Sans-serif;
+}
+
+/* Remove space under last element in wrappers */
+div.preset-manager-panel .settings_module.module_no_border.colors_settings_item {
+	padding-bottom: 0px;
+	padding-top: 13px;
 }

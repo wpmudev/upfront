@@ -19378,7 +19378,7 @@ div.preset-manager-panel div.borderWidth, div.preset-manager-panel div.borderTyp
 div.preset-manager-panel div.borderWidth {
   padding: 5px 0px 5px 10px;
   position: relative;
-  top: 0px;
+  top: -5px;
   border-left: 2px solid #dae6f2; }
 
 div.preset-manager-panel div.borderWidth input {
