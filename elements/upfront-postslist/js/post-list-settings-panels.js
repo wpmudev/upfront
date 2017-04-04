@@ -6,7 +6,7 @@ define([
 	'scripts/upfront/preset-settings/preset-manager',
 	'scripts/upfront/preset-settings/util',
 	'elements/upfront-postslist/js/post-list-settings-modules',
-], function(tpl, Parts, RootSettingsPanel, PresetManager, Util, Posts_Modules) {
+], function(tpl, Parts, RootSettingsPanel, PresetManager, Util, PostsLists_Modules) {
 
 var l10n = Upfront.Settings.l10n.postslist_element;
 var $template = $(tpl);
@@ -19,7 +19,7 @@ Upfront.Util.post({
 
 var Modules = _.extend(
 	{},
-	_.omit(Posts_Modules, 'template')
+	_.omit(PostsLists_Modules, 'template')
 );
 
 var Panels = {
@@ -634,7 +634,7 @@ Panels.PostParts = PresetManager.extend({
 			mainDataCollection: 'postslistsPresets',
 			styleElementPrefix: 'postslists-preset',
 			ajaxActionSlug: 'postslists',
-			styleTpl: Posts_Modules.template,
+			styleTpl: PostsLists_Modules.template,
 			presetDefaults: Upfront.mainData.presetDefaults.postslists
 		});
 
@@ -875,7 +875,7 @@ Panels.PostParts = PresetManager.extend({
 	}
 });
 
-Util.generatePresetsToPage('posts', Posts_Modules.template);
+Util.generatePresetsToPage('postslists', PostsLists_Modules.template);
 
 return Panels;
 
