@@ -45,6 +45,7 @@
                 ButtonModel: {label: l10n.button, id: 'ubutton'},
                 //UpostsModel: {label: l10n.posts, id: 'uposts'},
                 PostsModel: {label: l10n.posts, id: 'uposts'},
+				PostsListsModel: {label: l10n.posts, id: 'postslists'},
                 UsearchModel: {label: l10n.search, id: 'usearch'},
                 USliderModel: {label: l10n.slider, id: 'uslider'},
                 SocialMediaModel: {label: l10n.social, id: 'SocialMedia'},

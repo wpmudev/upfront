@@ -260,7 +260,7 @@ class Upfront_Grid {
 					foreach ($objects as $object) {
 						// See if this is posts/this post element, then add 'row' to exceptions list and disable height rendering
 						$type = upfront_get_property_value('type', $object);
-						if ( preg_match("/(PostsModel|ThisPostModel|PostDataPartModel|PostDataModel|PostsPartModel)/", $type) ) {
+						if ( preg_match("/(PostsModel|PostsListsModel|ThisPostModel|PostDataPartModel|PostDataModel|PostsPartModel)/", $type) ) {
 							if ( 'PostDataPartModel' == $type ) {
 								$part_type = upfront_get_property_value('part_type', $object);
 								if ( 'content' == $part_type || 'comments' == $part_type ) {

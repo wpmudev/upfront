@@ -2125,6 +2125,7 @@ define([
 					UnewnavigationModel: { id: 'nav'},
 					ButtonModel: { id: 'button'},
 					PostsModel: { id: 'posts'},
+					PostsListsModel: { id: 'postslists' },
 					UsearchModel: { id: 'search'},
 					USliderModel: { id: 'slider'},
 					SocialMediaModel: { id: 'social'},
@@ -2229,6 +2230,7 @@ define([
 						UnewnavigationModel: 'nav',
 						ButtonModel: 'button',
 						PostsModel: 'posts',
+						PostsListsModel: 'postslists',
 						USliderModel: 'slider',
 						UtabsModel: 'tabs',
 						UwidgetModel: 'widget'
