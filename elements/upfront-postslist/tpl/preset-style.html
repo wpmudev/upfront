@@ -23,7 +23,10 @@
 		<?php if(!empty($properties['post-wrapper-lock-margin'])) { ?>
 			margin: <?php echo $properties['post-wrapper-top-margin'] ?>px;
 		<?php } else { ?>
-			margin: <?php echo $properties['post-wrapper-top-margin'] ?>px <?php echo $properties['post-wrapper-right-margin'] ?>px <?php echo $properties['post-wrapper-bottom-margin'] ?>px <?php echo $properties['post-wrapper-left-margin'] ?>px;
+			margin: <?php if($properties['post-wrapper-top-margin']) { ?> <?php echo $properties['post-wrapper-top-margin'] ?>px <?php } else { ?>  0px <?php } ?> 
+					<?php if($properties['post-wrapper-right-margin']) { ?> <?php echo $properties['post-wrapper-right-margin'] ?>px <?php } else { ?>  0px <?php } ?> 
+					<?php if($properties['post-wrapper-bottom-margin']) { ?> <?php echo $properties['post-wrapper-bottom-margin'] ?>px <?php } else { ?>  0px <?php } ?> 
+					<?php if($properties['post-wrapper-left-margin']) { ?> <?php echo $properties['post-wrapper-left-margin'] ?>px <?php } else { ?>  0px <?php } ?>;
 		<?php } ?>
 	<?php } ?>
 }
