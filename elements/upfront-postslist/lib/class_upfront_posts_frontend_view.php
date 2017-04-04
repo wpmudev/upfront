@@ -84,8 +84,6 @@ class Upfront_PostsListsView extends Upfront_Object_Group {
 		
 		$classes = Upfront_Container::get_css_class();
 		$classes .= ' upfront-object-group';
-		$propagated = $this->get_propagated_classes();
-		if (!empty($propagated)) $classes .= ' ' . join(' ', $propagated);
 
 		return $classes;
 	}
@@ -388,15 +386,6 @@ class Upfront_PostsListsEachView extends Upfront_Object_Group {
 		return $this->_child_instances[$key];
 	}
 
-	public function get_propagated_classes () {
-		$classes = array();
-		foreach ($this->_child_instances as $part_view) {
-			if (!is_callable(array($part_view, 'get_propagated_classes'))) continue;
-			$classes = array_merge($classes, $part_view->get_propagated_classes());
-		}
-		return array_unique($classes);
-	}
-
 	public function get_attr () {
 		$attr = parent::get_attr();
 		$propagated = array($attr);
@@ -458,35 +447,6 @@ class Upfront_PostsListsPartView extends Upfront_Object {
 
 	public function get_part_type () {
 		return $this->_part_type;
-	}
-
-	public function get_propagated_classes () {
-		$part_type = $this->get_part_type();
-
-		$cls[] = $part_type;
-
-		// Add `upost-data-object-{part type}` class to allow applying custom css per post part type
-		// For each type there are part parts that need to be translated to element type class
-		// Post data
-		if (in_array($part_type, array('title', 'date_posted', 'content') )) {
-			$cls[] = 'upostslist-object-post_data';
-			// Post taxonomy
-		} else if (in_array($part_type, array('categories', 'tags') )) {
-			$cls[] = 'upostslist-object-taxonomy';
-			// Post author
-		} else if (in_array($part_type, array('author', 'author-email', 'author-url', 'author-bio', 'gravatar') )) {
-			$cls[] = 'upostslist-object-author';
-			// Post comments
-		} else if (in_array($part_type, array('comment_count', 'comments', 'comment_form', 'comment_pagination') )) {
-			$cls[] = 'upostslist-object-comments';
-		} else {
-			// Meta and featured image have single class that matches type
-			$cls[] = 'upostslist-object-' . $part_type;
-		}
-		// We apply preset class on ObjectGroup, commented this so we are not adding double class
-		//if (!empty($this->_preset_id)) $cls[] = esc_attr($this->_preset_id);
-
-		return $cls;
 	}
 
 	public function get_style_for($point, $scope, $col = false) {
