@@ -28,9 +28,3 @@ li.upostslist-post #upfront-title {
 	border: none;
 }
 */
-ul.upostslist-posts {
-	list-style: none !important;
-	margin: 0 !important;
-	padding: 0 !important;
-}
-

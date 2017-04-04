@@ -836,3 +836,15 @@ div.preset-manager-panel .settings_module.module_no_border.colors_settings_item 
 	padding-bottom: 0px;
 	padding-top: 13px;
 }
+
+#page.upfront-layout-view .upostslist-object ul {
+	list-style: none !important;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+#page.upfront-layout-view .upostslist-object .upfront-object {
+	padding: 0px;
+}
+#page.upfront-layout-view .upostslist-object .uf-post article {
+	margin: 10px;
+}

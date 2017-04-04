@@ -32,3 +32,15 @@
 .upostslist-part.thumbnail[data-resize="1"] img {
     max-width: none;
 }
+.upostslist-object ul {
+	list-style: none !important;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+.upostslist-object .upfront-output-object {
+	padding: 0px;
+}
+.upostslist-object .uf-post article {
+	margin: 10px;
+}
+
