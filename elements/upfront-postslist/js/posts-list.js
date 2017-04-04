@@ -377,8 +377,6 @@ var PostsListsView = Upfront.Views.ObjectGroup.extend({
 		}
 
 		var type = this.model.get_property_value_by_name("display_type");
-		
-		console.log('Called')
 
 		this.render_view(type);
 		// Let's not render min-height (remove it)
