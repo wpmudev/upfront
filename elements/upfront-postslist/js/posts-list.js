@@ -320,9 +320,11 @@ var PostsListsView = Upfront.Views.ObjectGroup.extend({
 	_is_compat: false,
 
 	init: function () {
-		this.listenTo(this.model.get('objects'), 'change', this.on_render);
-		this.listenTo(this.model.get('objects'), 'add', this.on_render);
-		this.listenTo(this.model.get('objects'), 'remove', this.on_render);
+		this.debouncedOnRender = _.debounce(this.on_render, 1000);
+		
+		this.listenTo(this.model.get('objects'), 'change', this.debouncedOnRender);
+		this.listenTo(this.model.get('objects'), 'add', this.debouncedOnRender);
+		this.listenTo(this.model.get('objects'), 'remove', this.debouncedOnRender);
 		
 		this.listenTo(Upfront.Events, 'posts:settings:dispatched', this.settings_dispatch);
 
@@ -375,6 +377,8 @@ var PostsListsView = Upfront.Views.ObjectGroup.extend({
 		}
 
 		var type = this.model.get_property_value_by_name("display_type");
+		
+		console.log('Called')
 
 		this.render_view(type);
 		// Let's not render min-height (remove it)
