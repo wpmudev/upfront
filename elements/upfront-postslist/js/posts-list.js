@@ -834,18 +834,18 @@ Upfront.Application.LayoutEditor.add_object("Upostslists", {
 	"Element": PostsListsElement,
 	"Settings": PostsListsSettings,
 	cssSelectors: {
-		'.uposts-object ul': {label: l10n.css.container_label, info: l10n.css.container_info},
-		'.uposts-object li': {label: l10n.css.post_label, info: l10n.css.post_info},
-		'.uposts-object li .date_posted': {label: l10n.css.date_label, info: l10n.css.date_info},
-		'.uposts-object li .author': {label: l10n.css.author_label, info: l10n.css.author_info},
-		'.uposts-object li .post_categories': {label: l10n.css.categories_label, info: l10n.css.categories_info},
-		'.uposts-object li .comment_count': {label: l10n.css.comment_count_label, info: l10n.css.comment_count_info},
-		'.uposts-object li .content': {label: l10n.css.content_label, info: l10n.css.content_info},
-		'.uposts-object li .gravatar': {label: l10n.css.gravatar_label, info: l10n.css.gravatar_info},
-		'.uposts-object li .read_more': {label: l10n.css.read_more_label, info: l10n.css.read_more_info},
-		'.uposts-object li .post_tags': {label: l10n.css.post_tags_label, info: l10n.css.post_tags_info},
-		'.uposts-object li .thumbnail': {label: l10n.css.thumbnail_label, info: l10n.css.thumbnail_info},
-		'.uposts-object li .title': {label: l10n.css.title_label, info: l10n.css.title_info}
+		'.upostslist-object ul': {label: l10n.css.container_label, info: l10n.css.container_info},
+		'.upostslist-object li': {label: l10n.css.post_label, info: l10n.css.post_info},
+		'.upostslist-object li .date_posted': {label: l10n.css.date_label, info: l10n.css.date_info},
+		'.upostslist-object li .author': {label: l10n.css.author_label, info: l10n.css.author_info},
+		'.upostslist-object li .post_categories': {label: l10n.css.categories_label, info: l10n.css.categories_info},
+		'.upostslist-object li .comment_count': {label: l10n.css.comment_count_label, info: l10n.css.comment_count_info},
+		'.upostslist-object li .content': {label: l10n.css.content_label, info: l10n.css.content_info},
+		'.upostslist-object li .gravatar': {label: l10n.css.gravatar_label, info: l10n.css.gravatar_info},
+		'.upostslist-object li .read_more': {label: l10n.css.read_more_label, info: l10n.css.read_more_info},
+		'.upostslist-object li .post_tags': {label: l10n.css.post_tags_label, info: l10n.css.post_tags_info},
+		'.upostslist-object li .thumbnail': {label: l10n.css.thumbnail_label, info: l10n.css.thumbnail_info},
+		'.upostslist-object li .title': {label: l10n.css.title_label, info: l10n.css.title_info}
 	},
 	cssSelectorsId: Upfront.data.upfront_postslists.type
 });

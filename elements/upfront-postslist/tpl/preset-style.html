@@ -32,7 +32,7 @@
 
 <?php if(!empty($properties['author-use-typography']) && $properties['author-use-typography'] == 'yes') { ?>
 
-#page .<?php echo $properties['id'] ?> .uf-posts-list .uposts-part.author, #page .<?php echo $properties['id'] ?> .uf-posts-list .uposts-part.author a {
+#page .<?php echo $properties['id'] ?> .uf-posts-list .upostslist-part.author, #page .<?php echo $properties['id'] ?> .uf-posts-list .upostslist-part.author a {
 	<?php if(!empty($properties['author-font-family'])) { ?>font-family: <?php echo $properties['author-font-family']  ?>; <?php } ?>
     <?php if(!empty($properties['author-font-size'])) { ?>font-size: <?php echo $properties['author-font-size']  ?>px; <?php } ?>
     <?php if(!empty($properties['author-weight'])) { ?>font-weight: <?php echo $properties['author-weight']  ?>;<?php } ?>
@@ -45,7 +45,7 @@
 
 <?php if(!empty($properties['gravatar-use']) && $properties['gravatar-use'] == 'yes') { ?>
 
-#page .<?php echo $properties['id'] ?> .uf-posts-list .uposts-part.gravatar img {
+#page .<?php echo $properties['id'] ?> .uf-posts-list .upostslist-part.gravatar img {
 	<?php if(!empty($properties['gravatar-border-width']) && !empty($properties['gravatar-border-type']) && !empty($properties['gravatar-border-color'])) { ?>border: <?php echo $properties['gravatar-border-width'] ?>px <?php echo $properties['gravatar-border-type'] ?> <?php echo $properties['gravatar-border-color'] ?>;<?php } ?>
 	
 	<?php if(!empty($properties['gravatar-radius'])) { ?>
@@ -59,7 +59,7 @@
 
 <?php if(!empty($properties['content-use-typography']) && $properties['content-use-typography'] == 'yes') { ?>
 
-#page .<?php echo $properties['id'] ?> .uf-posts-list .uposts-part.content, #page .<?php echo $properties['id'] ?> .uf-posts-list .uposts-part.content p {
+#page .<?php echo $properties['id'] ?> .uf-posts-list .upostslist-part.content, #page .<?php echo $properties['id'] ?> .uf-posts-list .upostslist-part.content p {
 	<?php if(!empty($properties['content-font-family'])) { ?>font-family: <?php echo $properties['content-font-family']  ?>; <?php } ?>
     <?php if(!empty($properties['content-font-size'])) { ?>font-size: <?php echo $properties['content-font-size']  ?>px; <?php } ?>
     <?php if(!empty($properties['content-weight'])) { ?>font-weight: <?php echo $properties['content-weight']  ?>;<?php } ?>
@@ -74,7 +74,7 @@
 
 <?php if(!empty($properties['title-use-typography']) && $properties['title-use-typography'] == 'yes') { ?>
 
-#page .<?php echo $properties['id'] ?> .uf-posts-list .uposts-part.title, #page .<?php echo $properties['id'] ?> .uf-posts-list .uposts-part.title a {
+#page .<?php echo $properties['id'] ?> .uf-posts-list .upostslist-part.title, #page .<?php echo $properties['id'] ?> .uf-posts-list .upostslist-part.title a {
 	<?php if(!empty($properties['title-font-family'])) { ?>font-family: <?php echo $properties['title-font-family']  ?>; <?php } ?>
     <?php if(!empty($properties['title-font-size'])) { ?>font-size: <?php echo $properties['title-font-size']  ?>px; <?php } ?>
     <?php if(!empty($properties['title-weight'])) { ?>font-weight: <?php echo $properties['title-weight']  ?>;<?php } ?>
@@ -89,7 +89,7 @@
 
 <?php if(!empty($properties['read_more-use-typography']) && $properties['read_more-use-typography'] == 'yes') { ?>
 
-#page .<?php echo $properties['id'] ?> .uf-posts-list .uposts-part.read_more, #page .<?php echo $properties['id'] ?> .uf-posts-list .uposts-part.read_more a {
+#page .<?php echo $properties['id'] ?> .uf-posts-list .upostslist-part.read_more, #page .<?php echo $properties['id'] ?> .uf-posts-list .upostslist-part.read_more a {
 	<?php if(!empty($properties['read_more-font-family'])) { ?>font-family: <?php echo $properties['read_more-font-family']  ?>; <?php } ?>
     <?php if(!empty($properties['read_more-font-size'])) { ?>font-size: <?php echo $properties['read_more-font-size']  ?>px; <?php } ?>
     <?php if(!empty($properties['read_more-weight'])) { ?>font-weight: <?php echo $properties['read_more-weight']  ?>;<?php } ?>
@@ -104,7 +104,7 @@
 
 <?php if(!empty($properties['comment_count-use-typography']) && $properties['comment_count-use-typography'] == 'yes') { ?>
 
-#page .<?php echo $properties['id'] ?> .uf-posts-list .uposts-part.comment_count, #page .<?php echo $properties['id'] ?> .uf-posts-list .uposts-part.comment_count a {
+#page .<?php echo $properties['id'] ?> .uf-posts-list .upostslist-part.comment_count, #page .<?php echo $properties['id'] ?> .uf-posts-list .upostslist-part.comment_count a {
 	<?php if(!empty($properties['comment_count-font-family'])) { ?>font-family: <?php echo $properties['comment_count-font-family']  ?>; <?php } ?>
     <?php if(!empty($properties['comment_count-font-size'])) { ?>font-size: <?php echo $properties['comment_count-font-size']  ?>px; <?php } ?>
     <?php if(!empty($properties['comment_count-weight'])) { ?>font-weight: <?php echo $properties['comment_count-weight']  ?>;<?php } ?>
@@ -119,7 +119,7 @@
 
 <?php if(!empty($properties['date_posted-use-typography']) && $properties['date_posted-use-typography'] == 'yes') { ?>
 
-#page .<?php echo $properties['id'] ?> .uf-posts-list .uposts-part.date_posted, #page .<?php echo $properties['id'] ?> .uf-posts-list .uposts-part.date_posted a {
+#page .<?php echo $properties['id'] ?> .uf-posts-list .upostslist-part.date_posted, #page .<?php echo $properties['id'] ?> .uf-posts-list .upostslist-part.date_posted a {
 	<?php if(!empty($properties['date_posted-font-family'])) { ?>font-family: <?php echo $properties['date_posted-font-family']  ?>; <?php } ?>
     <?php if(!empty($properties['date_posted-font-size'])) { ?>font-size: <?php echo $properties['date_posted-font-size']  ?>px; <?php } ?>
     <?php if(!empty($properties['date_posted-weight'])) { ?>font-weight: <?php echo $properties['date_posted-weight']  ?>;<?php } ?>
@@ -133,7 +133,7 @@
 /* Part Tags */
 
 <?php if(!empty($properties['tags-display-type'])) { ?>
-#page .<?php echo $properties['id'] ?> .uf-posts-list .uposts-part.post_tags a, #page .<?php echo $properties['id'] ?> .uf-posts-list .uposts-part.post_tags span {
+#page .<?php echo $properties['id'] ?> .uf-posts-list .upostslist-part.post_tags a, #page .<?php echo $properties['id'] ?> .uf-posts-list .upostslist-part.post_tags span {
 	<?php if($properties['tags-display-type'] == "block") { ?>
 		display: inline-block; 
 	<?php } else { ?>
@@ -143,7 +143,7 @@
 <?php } ?>
 
 <?php if(!empty($properties['tags-display-type']) && $properties['tags-display-type'] == "block") { ?>
-#page .<?php echo $properties['id'] ?> .uf-posts-list .uposts-part.post_categories a {
+#page .<?php echo $properties['id'] ?> .uf-posts-list .upostslist-part.post_categories a {
 	<?php if(!empty($properties['tags-single-use']) && $properties['tags-single-use'] == 'yes') { ?>
 		padding: <?php if(!empty($properties['tags-padding-top-bottom'])) { ?> <?php echo $properties['tags-padding-top-bottom'] ?>px <?php } else { ?> 0px <?php } ?> <?php if(!empty($properties['tags-padding-left-right'])) { ?> <?php echo $properties['tags-padding-left-right'] ?>px <?php } else { ?> 0px <?php } ?>;
 		margin: <?php if(!empty($properties['tags-margin-top-bottom'])) { ?> <?php echo $properties['tags-margin-top-bottom'] ?>px <?php } else { ?> 0px <?php } ?> <?php if(!empty($properties['tags-margin-left-right'])) { ?> <?php echo $properties['tags-margin-left-right'] ?>px <?php } else { ?> 0px <?php } ?>;
@@ -154,7 +154,7 @@
 
 <?php if(!empty($properties['tags-use-typography']) && $properties['tags-use-typography'] == 'yes') { ?>
 
-#page .<?php echo $properties['id'] ?> .uf-posts-list .uposts-part.post_tags a, #page .<?php echo $properties['id'] ?> .uf-posts-list .uposts-part.post_tags span {
+#page .<?php echo $properties['id'] ?> .uf-posts-list .upostslist-part.post_tags a, #page .<?php echo $properties['id'] ?> .uf-posts-list .upostslist-part.post_tags span {
 	<?php if(!empty($properties['tags-font-family'])) { ?>font-family: <?php echo $properties['tags-font-family']  ?>; <?php } ?>
     <?php if(!empty($properties['tags-font-size'])) { ?>font-size: <?php echo $properties['tags-font-size']  ?>px; <?php } ?>
     <?php if(!empty($properties['tags-weight'])) { ?>font-weight: <?php echo $properties['tags-weight']  ?>;<?php } ?>
@@ -168,7 +168,7 @@
 /* Part Categories */
 
 <?php if(!empty($properties['category-display-type'])) { ?>
-#page .<?php echo $properties['id'] ?> .uf-posts-list .uposts-part.post_categories a, #page .<?php echo $properties['id'] ?> .uf-posts-list .uposts-part.post_categories span {
+#page .<?php echo $properties['id'] ?> .uf-posts-list .upostslist-part.post_categories a, #page .<?php echo $properties['id'] ?> .uf-posts-list .upostslist-part.post_categories span {
 	<?php if($properties['category-display-type'] == "block") { ?>
 		display: inline-block; 
 	<?php } else { ?>
@@ -178,7 +178,7 @@
 <?php } ?>
 
 <?php if(!empty($properties['category-display-type']) && $properties['category-display-type'] == "block") { ?>
-#page .<?php echo $properties['id'] ?> .uf-posts-list .uposts-part.post_categories a {
+#page .<?php echo $properties['id'] ?> .uf-posts-list .upostslist-part.post_categories a {
 	<?php if(!empty($properties['category-single-use']) && $properties['category-single-use'] == 'yes') { ?>
 		padding: <?php if(!empty($properties['category-padding-top-bottom'])) { ?> <?php echo $properties['category-padding-top-bottom'] ?>px <?php } else { ?> 0px <?php } ?> <?php if(!empty($properties['category-padding-left-right'])) { ?> <?php echo $properties['category-padding-left-right'] ?>px <?php } else { ?> 0px <?php } ?>;
 		margin: <?php if(!empty($properties['category-margin-top-bottom'])) { ?> <?php echo $properties['category-margin-top-bottom'] ?>px <?php } else { ?> 0px <?php } ?> <?php if(!empty($properties['category-margin-left-right'])) { ?> <?php echo $properties['category-margin-left-right'] ?>px <?php } else { ?> 0px <?php } ?>;
@@ -189,7 +189,7 @@
 
 <?php if(!empty($properties['category-use-typography']) && $properties['category-use-typography'] == 'yes') { ?>
 
-#page .<?php echo $properties['id'] ?> .uf-posts-list .uposts-part.post_categories a, #page .<?php echo $properties['id'] ?> .uf-posts-list .uposts-part.post_categories span{
+#page .<?php echo $properties['id'] ?> .uf-posts-list .upostslist-part.post_categories a, #page .<?php echo $properties['id'] ?> .uf-posts-list .upostslist-part.post_categories span{
 	<?php if(!empty($properties['category-font-family'])) { ?>font-family: <?php echo $properties['category-font-family']  ?>; <?php } ?>
     <?php if(!empty($properties['category-font-size'])) { ?>font-size: <?php echo $properties['category-font-size']  ?>px; <?php } ?>
     <?php if(!empty($properties['category-weight'])) { ?>font-weight: <?php echo $properties['category-weight']  ?>;<?php } ?>
