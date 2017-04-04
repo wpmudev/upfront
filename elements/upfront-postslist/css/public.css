@@ -13,22 +13,22 @@
     -webkit-box-sizing: border-box;
 }
 
-.uposts-part {
+.upostslist-part {
     margin: 0 0 15px;
 }
-.uposts-part.gravatar img {
+.upostslist-part.gravatar img {
     max-width: 100%;
 }
-.uposts-part.thumbnail {
+.upostslist-part.thumbnail {
     overflow: hidden;
 }
-.uposts-part.thumbnail img {
+.upostslist-part.thumbnail img {
     display: block;
     max-width: 100%;
     max-height: none;
     height: auto;
     margin: 0 auto;
 }
-.uposts-part.thumbnail[data-resize="1"] img {
+.upostslist-part.thumbnail[data-resize="1"] img {
     max-width: none;
 }

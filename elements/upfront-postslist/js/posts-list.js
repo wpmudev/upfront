@@ -786,7 +786,7 @@ var PostsListsElement = Upfront.Views.Editor.Sidebar.Element.extend({
 			wrapper = new Upfront.Models.Wrapper({
 				properties: [
 					{ name: 'wrapper_id', value: wrapper_id },
-					{ name: 'class', value: 'c24' }
+					{ name: 'class', value: 'c24 upostslist-object' }
 				]
 			}),
 			object = new PostsListsPartModel({

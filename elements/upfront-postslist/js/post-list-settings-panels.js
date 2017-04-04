@@ -845,7 +845,7 @@ Panels.PostParts = PresetManager.extend({
 					wrapper = new Upfront.Models.Wrapper({
 						properties: [
 							{ name: 'wrapper_id', value: wrapper_id },
-							{ name: 'class', value: 'c24 clr' }
+							{ name: 'class', value: 'c24 upostslist-object clr' }
 						]
 					})
 				;

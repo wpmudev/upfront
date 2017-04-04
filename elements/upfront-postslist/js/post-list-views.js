@@ -119,7 +119,7 @@ var Views = {
 								})
 							;
 							// Unbind title clicks
-							me.$el.find(".uposts-part.title a")
+							me.$el.find(".upostslist-part.title a")
 								.off("click")
 								.on("click", function (e) {
 

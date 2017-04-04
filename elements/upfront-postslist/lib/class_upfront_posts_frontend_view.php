@@ -77,8 +77,11 @@ class Upfront_PostsListsView extends Upfront_Object_Group {
 
 
 	public function get_css_class () {
-		if ( !$this->_is_compat ) return parent::get_css_class();
-
+		if ( !$this->_is_compat ) {
+			// We need object class to attach preset styles
+			return parent::get_css_class() . ' upostslist-object';
+		}
+		
 		$classes = Upfront_Container::get_css_class();
 		$classes .= ' upfront-object-group';
 		$propagated = $this->get_propagated_classes();
@@ -126,7 +129,7 @@ class Upfront_PostsListsView extends Upfront_Object_Group {
 		if ( !is_numeric($post_col) || $post_col == 0 ) {
 			$post_col = 24;
 		}
-		$post_class = 'c' .  $post_col;
+		$post_class = ' c' .  $post_col;
 		$index = count($this->_data['post_objects']);
 		$post_per_row = $column >= $post_col ? floor($column/$post_col) : 1;
 		if ( $index === 0 || $index % $post_per_row === 0 ) {
@@ -466,19 +469,19 @@ class Upfront_PostsListsPartView extends Upfront_Object {
 		// For each type there are part parts that need to be translated to element type class
 		// Post data
 		if (in_array($part_type, array('title', 'date_posted', 'content') )) {
-			$cls[] = 'uposts-object-post_data';
+			$cls[] = 'upostslist-object-post_data';
 			// Post taxonomy
 		} else if (in_array($part_type, array('categories', 'tags') )) {
-			$cls[] = 'uposts-object-taxonomy';
+			$cls[] = 'upostslist-object-taxonomy';
 			// Post author
 		} else if (in_array($part_type, array('author', 'author-email', 'author-url', 'author-bio', 'gravatar') )) {
-			$cls[] = 'uposts-object-author';
+			$cls[] = 'upostslist-object-author';
 			// Post comments
 		} else if (in_array($part_type, array('comment_count', 'comments', 'comment_form', 'comment_pagination') )) {
-			$cls[] = 'uposts-object-comments';
+			$cls[] = 'upostslist-object-comments';
 		} else {
 			// Meta and featured image have single class that matches type
-			$cls[] = 'uposts-object-' . $part_type;
+			$cls[] = 'upostslist-object-' . $part_type;
 		}
 		// We apply preset class on ObjectGroup, commented this so we are not adding double class
 		//if (!empty($this->_preset_id)) $cls[] = esc_attr($this->_preset_id);
