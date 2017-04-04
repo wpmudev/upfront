@@ -1,3 +1,3 @@
-<div class="uposts-part thumbnail" data-resize="{{resize}}">
+<div class="upostslist-part thumbnail" data-resize="{{resize}}">
 	{{thumbnail}}
 </div>

@@ -1,3 +1,3 @@
-<div class="uposts-part date_posted">
+<div class="upostslist-part date_posted">
 	<?php _e('Posted on <span class="datetime">{{datetime}}</span>', 'upfront'); ?>
 </div>

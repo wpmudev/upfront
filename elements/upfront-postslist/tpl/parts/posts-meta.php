@@ -1,3 +1,3 @@
-<div class="uposts-part meta">
+<div class="upostslist-part meta">
 	
 </div>

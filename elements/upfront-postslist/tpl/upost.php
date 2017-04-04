@@ -1,4 +1,4 @@
-<span class='uposts-tumbnail_container'>
+<span class='upostslist-tumbnail_container'>
 	<?php if (!empty($properties['post_data']) && in_array('featured_image', $properties['post_data'])) { ?>
 	<div class="post_thumbnail">
 		 <?php the_post_thumbnail(); ?>

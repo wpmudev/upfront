@@ -3,7 +3,7 @@
 	$classes = $properties['featured_image'] ? 'show-thumbnail ' : '';
 	$classes .= 'clearfix ';
 ?>
-<ul class='uposts-posts'>
+<ul class='upostslists-posts'>
 <?php
 	$posts_array = array();
 	while(have_posts()): the_post();
@@ -11,7 +11,7 @@
 		$posts_array[$post->ID] = $post->post_type;
 	endwhile;
 	foreach($posts_array as $id => $type) {
-		$classes = 'uposts-post uposts-posts-' . $id . ' ';
+		$classes = 'upostslist-post upostslist-posts-' . $id . ' ';
 ?>
 	<li <?php apply_filters('upfront_postslists_post_classes', post_class($classes), $post) ?> data-post_id="<?php echo $id ?>">
 		<?php echo Upfront_ThisPostView::get_post_markup($id, $type, $properties, $layout, true); ?>
@@ -23,7 +23,7 @@ $wp_query->is_single = false;
 ?>
 </ul>
 <?php if ($properties['pagination']): ?>
-<div class="uposts-pagination upfront-pagination <?php echo $properties['pagination'] ?>">
+<div class="upostslist-pagination upfront-pagination <?php echo $properties['pagination'] ?>">
 	<?php
 		if ($properties['pagination'] == 'prevnext') {
 			posts_nav_link( $sep, $prelabel, $nextlabel );

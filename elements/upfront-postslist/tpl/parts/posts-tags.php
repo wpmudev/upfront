@@ -1,3 +1,3 @@
-<div class="uposts-part post_tags">
+<div class="upostslist-part post_tags">
 	{{tags}}
 </div>
