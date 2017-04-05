@@ -377,7 +377,7 @@ class Upfront_UcontactView extends Upfront_Object {
 		return base64_encode(json_encode($entities));
 	}
 
-	private function get_settings_from_ajax (){
+	private static function get_settings_from_ajax (){
 		$entity_ids = array();
 		try {
 			$entity_ids = (array)json_decode(base64_decode($_POST['entity_ids']));

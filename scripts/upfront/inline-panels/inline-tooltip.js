@@ -75,6 +75,16 @@ define([], function () {
 					top: elementPosition.top + 4,
 					left: elementPosition.left + element.outerWidth() + 5
 				}
+			} else if(typeof this.options.panel !== "undefined" && this.options.panel === 'postEditor') {
+				// Post Editor Popup Inline Tooltips
+				element = $(e.currentTarget).closest('.upfront-editactions');
+				elementPosition = element.offset();
+				tooltipPosition = {
+					top: elementPosition.top - 21,
+					left: elementPosition.left,
+					// Show in front of Post Popup.
+					zIndex: 100010059
+				}
 			} else if(typeof this.options.panel !== "undefined" && this.options.panel === 'colorPicker') {
 				// Color Picker Tooltips
 				element = $(e.currentTarget).closest('.uf-color-picker-wrapper');

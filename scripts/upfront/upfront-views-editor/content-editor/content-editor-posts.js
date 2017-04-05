@@ -10,16 +10,17 @@
 
 
 				return Backbone.View.extend({
-						className: "upfront-entity_list-posts bordered-bottom",
+						className: "upfront-entity_list-posts",
 						postListTpl: _.template($(popup_tpl).find('#upfront-post-list-tpl').html()),
 						postSingleTpl: _.template($(popup_tpl).find('#upfront-post-single-tpl').html()),
 						paginationTpl: _.template($(popup_tpl).find('#upfront-pagination-tpl').html()),
 						events: {
-								"click #upfront-list-meta .upfront-list_item-component": "handle_sort_request",
+								//"click #upfront-list-meta .upfront-list_item-component": "handle_sort_request",
 								"click .editaction.edit": "handle_post_edit",
-								"click .editaction.view": "handle_post_view",
 								"click #upfront-list-page-path a.upfront-path-back": "handle_return_to_posts",
-								"click .editaction.trash": "trash_post"
+								"click .editaction.trash": "trash_confirm",
+								"click .upfront-posts-delete-cancel-button": "trash_cancel",
+								"click .upfront-posts-delete-button": "trash_post"
 						},
 						initialize: function(options){
 								this.collection.on('change reset', this.render, this);
@@ -48,7 +49,25 @@
 									true
 								);
 
-								//this.mark_sort_order();
+								// Add tooltips to inline edit/trash buttons.
+								this.add_tooltips();
+						},
+
+						// Add tooltips to inline edit/trash buttons.
+						add_tooltips: function() {
+								// Add Edit tooltip.
+								this.$el.find('.editaction.edit').utooltip({
+									fromTitle: false,
+									content: Upfront.Settings.l10n.global.content.edit_post,
+									panel: 'postEditor'
+								});
+
+								// Add trash tooltip.
+								this.$el.find('.editaction.trash').utooltip({
+									fromTitle: false,
+									content: Upfront.Settings.l10n.global.content.trash_post,
+									panel: 'postEditor'
+								});
 						},
 
 						handle_sort_request: function (e) {
@@ -61,6 +80,7 @@
 										this.collection.reSort(sortby, order);
 								}
 						},
+
 						/*
 						 handle_post_reveal: function (e) {
 						 var me = this,
@@ -84,16 +104,26 @@
 								var postId = $(e.currentTarget).closest('.upfront-list_item-post').attr('data-post_id');
 								window.location.href = this.collection.get(postId).get('permalink');
 						},
+						trash_confirm: function(e) {
+							e.preventDefault();
+							// Show delete confirmation.
+							$(e.target).parents('.upfront-list_item').find('.upfront-delete-confirm').show();
+						},
+						trash_cancel: function(e) {
+							// Hide delete confirmation.
+							$(e.target).parents('.upfront-delete-confirm').hide();
+						},
 						trash_post: function (e) {
 								var me = this;
 								var postelement = $(e.currentTarget).closest('.upfront-list_item-post.upfront-list_item');
 								var postId = postelement.attr('data-post_id');
-								if(confirm( Upfront.Settings.l10n.global.content.delete_confirm.replace(/%s/, this.collection.get(postId).get('post_type')))) {
-										this.collection.get(postId).set('post_status', 'trash').save().done(function(){
-												me.collection.remove(me.collection.get(postId));
+								// Hide delete confirmation.
+								$(e.target).parents('.upfront-delete-confirm').hide();
+								// Delete Post.
+								this.collection.get(postId).set('post_status', 'trash').save().done(function(){
+										me.collection.remove(me.collection.get(postId));
 
-										});
-								}
+								});
 						},
 						expand_post: function(post){
 								var me = this;
@@ -146,7 +176,7 @@
 								});
 								$("#upfront-list-page").hide();
 						}
-				});
 
+				});
 		});
 }(jQuery));

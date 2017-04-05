@@ -4,6 +4,7 @@ define(function() {
 	// Close select dropdown on outside click
 	$('body').on('mouseup', function() {
 		$('.upfront-field-select').removeClass('upfront-field-select-expanded');
+		$('.upfront-field-select').parent().removeClass('upfront-field-wrap-select-expanded');
 	});
 
 

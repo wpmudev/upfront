@@ -11,7 +11,8 @@ define([
 
 		events: {
 			'click .upfront-icon': 'onClickControl',
-			'click button': 'onClickOk'
+			'click button': 'onClickOk',
+			'click': 'onClick'
 		},
 
 		initialize: function(options) {
@@ -99,6 +100,15 @@ define([
 		bindEvents: function(){
 			this.panel.find('button').on('click', function(){
 			});
+		},
+		
+		onClick: function(e) {
+			// If hide on click disabled stopPropagation
+			if (!this.hideOnClick) {
+				e.preventDefault();
+				e.stopPropagation();
+				return;
+			}
 		},
 
 		open: function() {

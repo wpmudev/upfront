@@ -16,7 +16,7 @@
             on_click: function () {
                 $('li.desktop-breakpoint-activate').trigger('click');
                 Upfront.Events.trigger('upfront:exit:responsive');
-                Upfront.Application.start(Upfront.Application.mode.last);
+                Upfront.Application.start_previous();
             }
         });
 

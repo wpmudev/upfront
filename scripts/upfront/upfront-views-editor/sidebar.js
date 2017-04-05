@@ -142,13 +142,20 @@
 
                 this.$el.html(this.template);
                 this.$el.find('.sidebar-panel-content').html(typography_section.el);
-				
+
 				var $sidebar_panel_content = this.$el.find('.sidebar-panel-content');
 				// Add JS Scrollbar.
-				perfectScrollbar.initialize($sidebar_panel_content[0], {
-					suppressScrollX: true
-				});
-				
+				perfectScrollbar.withDebounceUpdate(
+					// Element.
+					$sidebar_panel_content[0],
+					// Run First.
+					true,
+					// Event.
+					false,
+					// Initialize.
+					true
+				);
+
 				var me = this;
 				// When color spectrum is shown, set positions
 				Upfront.Events.on("color:spectrum:show", function() {
@@ -203,13 +210,19 @@
             "className": "sidebar-commands sidebar-commands-responsive-control sidebar-commands-control",
             initialize: function () {
                 if (Upfront.Application.user_can_modify_layout()) {
-                    this.commands = _([
-                        new Commands.Command_ResponsiveUndo({"model": this.model}),
-                        new Commands.Command_ResponsiveRedo({"model": this.model}),
-                        new Commands.Command_ToggleGrid({"model": this.model}),
-                        new Commands.Command_SaveLayout(),
-                        new Commands.Command_StopResponsiveMode()
-                    ]);
+									var cs = [
+										new Commands.Command_ResponsiveUndo({"model": this.model}),
+										new Commands.Command_ResponsiveRedo({"model": this.model}),
+										new Commands.Command_ToggleGrid({"model": this.model})
+									];
+
+									if (false === Upfront.plugins.isForbiddenByPlugin('show save layout command')) {
+										cs.push(new Commands.Command_SaveLayout());
+									}
+									Upfront.plugins.call('insert-responsive-save-buttons', {commands: cs, model: this.model});
+
+									cs.push(new Commands.Command_StopResponsiveMode());
+									this.commands = _(cs);
                 } else {
                     this.commands = _([
                         new Commands.Command_StopResponsiveMode()
@@ -475,21 +488,24 @@
 
             toggleSidebar: function(instant){
                 var me = this,
-                    margined_css = {marginLeft: "260px"};
-                unmargined_css = {marginLeft: "0px"};
-                _margin = Upfront.Util.isRTL() ? "marginRight" : "marginLeft";
+									// Use adjusted sidebar width for margins on small screens.
+                	sidebar_margin = (window.innerWidth < 1366 ? '130px' : '260px'),
+                  margined_css = {marginLeft: sidebar_margin};
+                	unmargined_css = {marginLeft: "0px"};
+                	_margin = Upfront.Util.isRTL() ? "marginRight" : "marginLeft";
 
                 if(!this.visible){
                     if( Upfront.Util.isRTL())
-                        margined_css = { marginRight: "260px" };
+                        margined_css = { marginRight: sidebar_margin };
 
+										// Use full sidebar width (260px), not adjusted width for margins.
                     $('#sidebar-ui').removeClass('collapsed').stop().animate({width: '260px'}, 300);
                     //Remove collapsed class always after region editor is closed
                     $('#element-settings-sidebar').removeClass('collapsed');
 
                     //Bring back element-settings only if it was opened before
                     if($('#element-settings-sidebar').contents().length !== 0) {
-                        $('#element-settings-sidebar').removeClass('collapsed').stop().animate({width: '260px'}, 300);
+                        $('#element-settings-sidebar').removeClass('collapsed').stop().animate({width: sidebar_margin}, 300);
                     }
 
                     $('#page').stop().animate(margined_css, 300, function(){ Upfront.Events.trigger('sidebar:toggle:done', me.visible); });

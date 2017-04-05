@@ -13,6 +13,9 @@ class Upfront_UFC_Utils {
 	 * @return bool
 	 */
 	public function is_hex( $color ) {
+		if ( '#' === $color[0] ) {
+			$color = substr( $color, 1 );
+		}
 		return ctype_xdigit( $color );
 	}
 
@@ -24,11 +27,8 @@ class Upfront_UFC_Utils {
 	 * @return bool
 	 */
 	public function is_rgb( $color ) {
-		if ( $this->is_hex( $color ) ) return false;
-
-		$color = preg_replace('/\s+/', '', $color);
-		$color = explode(",", $color);
-		return count($color) === 3;
+		$colors = $this->csv_color_to_numeric_rbg($color, 3);
+		return !empty($colors);
 	}
 
 	/**
@@ -39,7 +39,34 @@ class Upfront_UFC_Utils {
 	 * @return bool
 	 */
 	public function is_rgba( $color ) {
-		return !$this->is_rgb( $color );
+		$colors = $this->csv_color_to_numeric_rbg($color, 4);
+		return !empty($colors);
+	}
+
+	/**
+	 * Converts color string to numeric RGB(A) array
+	 *
+	 * @param string $color Color string
+	 * @param int $length Expected length (3 for RBG, 4 for RGBA)
+	 *
+	 * @return array|false Numeric RGB array on success, (bool)false on failure
+	 */
+	private function csv_color_to_numeric_rbg ($color, $length=3) {
+		if ( $this->is_hex( $color ) ) return false;
+
+		$color = preg_replace('/\s+/', '', preg_replace('/[^.,0-9]/', '', $color));
+		$colors = explode(",", $color);
+		if (count($colors) !== $length) return false;
+
+		$colors = array_map('floatval', $colors);
+
+		foreach ($colors as $color) {
+			if ($color < 0 || $color > 255) return false;
+		}
+
+		if ($length > 3 && $colors[3] > 1) return false;
+
+		return $colors;
 	}
 
 	/**

@@ -1076,6 +1076,14 @@ jQuery(document).ready(function($){
 				close.html('').remove()
 				overlay.remove();
 				lightbox.hide();
+				
+				// Stop YT video if any
+				var yt_video = lightbox.find('.upfront-youtube-container iframe');
+				
+				if(yt_video.length) {
+					var yt_src = yt_video.attr('src');
+					yt_video.attr('src', '').attr('src', yt_src);
+				}
 			}
 			return;
 		}

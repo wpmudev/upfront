@@ -4,6 +4,7 @@ require_once('compat/class_upfront_compat_converter.php');
 require_once('compat/class_upfront_compat_parser.php');
 require_once('compat/class_upfront_compat_woocommerce.php');
 require_once('compat/class_upfront_compat_marketpress.php');
+require_once('compat/class_upfront_compat_coursepress.php');
 
 class Upfront_Compat implements IUpfront_Server {
 
@@ -89,9 +90,10 @@ class Upfront_Compat implements IUpfront_Server {
 		add_filter('wphb_combine_resource', array($this, 'is_upfront_resource_skippable_with_hummingbird'), 10, 3);
 		add_filter('wphb_minify_resource', array($this, 'is_upfront_resource_skippable_with_hummingbird'), 10, 3);
 
-		// WooCommerce compat
+		// Plugins compatibility
 		$this->enable_wc_compat();
 		$this->enable_mp_compat();
+		$this->enable_cp_compat();
 	}
 
 	/**
@@ -334,6 +336,15 @@ class Upfront_Compat implements IUpfront_Server {
 	private function enable_mp_compat() {
 		if (class_exists('Upfront_Compat_MarketPress')) {
 			new Upfront_Compat_MarketPress();
+		}
+	}
+
+	/**
+	 * Loads CoursePress compatibility class.
+	 */
+	private function enable_cp_compat() {
+		if (class_exists('Upfront_Compat_CoursePress')) {
+			new Upfront_Compat_CoursePress();
 		}
 	}
 }

@@ -7,7 +7,10 @@ class Upfront_Compat_MarketPress {
 	}
 
 	public function add_hooks() {
-		if (class_exists('MarketPress') === false) return;
+		if (class_exists('MarketPress') === false) {
+			add_filter('upfront-builder_skip_exported_layouts', array($this, 'skip_layouts_when_inactive'), 10, 2);
+			return;
+		}
 
 		// Just-in-time check for content filter rebinding
 		add_filter('upfront-post_data-get_content-before', array($this, 'ensure_mp_product_filtering'));
@@ -20,6 +23,25 @@ class Upfront_Compat_MarketPress {
 		add_filter('upfront-plugins_layouts', array($this, 'add_layouts'));
 		add_filter('upfront-postdata_get_markup_after', array($this, 'add_class'), 10, 2);
 		add_filter('mp-do_grid_with_js', array($this, 'disable_mp_js_grid'), 10, 2);
+	}
+
+	/**
+	 * Hides MarketPress layouts in builder exported layouts if "Layouts" popup when MarketPress is not active.
+	 */
+	public function skip_layouts_when_inactive($skip, $layout) {
+		$mp_layouts = array(
+			'single-mpproduct',
+			'archive-mpproduct_category',
+			'archive-mpproduct_tag',
+			'single-page-mpstore',
+			'single-page-mpcheckout',
+			'single-page-mporderstatus',
+			'single-page-mpcart',
+			'single-page-mpproducts',
+		);
+		if (in_array($layout['specificity'], $mp_layouts)) return true;
+
+		return $skip;
 	}
 
 	/**
@@ -39,7 +61,7 @@ class Upfront_Compat_MarketPress {
 	public function ensure_mp_product_filtering ($str) {
 		if (!class_exists('MP_Public')) return $str;
 		if (!self::is_product(get_post())) return $str;
-		
+
 		$callback = array(MP_Public::get_instance(), 'single_product_content');
 		if (has_filter('the_content', $callback)) return $str; // We're good here
 

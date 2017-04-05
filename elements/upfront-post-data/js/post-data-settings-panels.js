@@ -205,7 +205,7 @@ define([
 							{ name: 'view_class', value: 'PostDataPartView' },
 							{ name: 'part_type', value: type },
 							{ name: 'has_settings', value: 0 },
-							{ name: 'class', value: 'c24 upfront-post-data-part' },
+							{ name: 'class', value: 'c24 upfront-post-data-part part-'+type },
 							{ name: 'wrapper_id', value: wrapper_id }
 						]
 					});
