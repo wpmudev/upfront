@@ -837,6 +837,10 @@ div.preset-manager-panel .settings_module.module_no_border.colors_settings_item 
 	padding-top: 13px;
 }
 
+#page.upfront-layout-view .upostslist-object .upfront-object-view {
+	position: relative;
+}
+
 #page.upfront-layout-view .upostslist-object ul {
 	list-style: none !important;
 	margin: 0 !important;
