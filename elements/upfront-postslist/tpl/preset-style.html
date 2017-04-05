@@ -90,18 +90,27 @@
 
 /* Part Read more */
 
-<?php if(!empty($properties['read_more-use-typography']) && $properties['read_more-use-typography'] == 'yes') { ?>
 
+<?php if(!empty($properties['read_more-use-typography']) && $properties['read_more-use-typography'] == 'yes') { ?>
 #page .<?php echo $properties['id'] ?>.upostslist-object .upostslist-part.read_more, #page .<?php echo $properties['id'] ?>.upostslist-object .upostslist-part.read_more a {
 	<?php if(!empty($properties['read_more-font-family'])) { ?>font-family: <?php echo $properties['read_more-font-family']  ?>; <?php } ?>
-    <?php if(!empty($properties['read_more-font-size'])) { ?>font-size: <?php echo $properties['read_more-font-size']  ?>px; <?php } ?>
-    <?php if(!empty($properties['read_more-weight'])) { ?>font-weight: <?php echo $properties['read_more-weight']  ?>;<?php } ?>
-    <?php if(!empty($properties['read_more-style'])) { ?>font-style: <?php echo $properties['read_more-style']  ?>;<?php } ?>
-    <?php if(!empty($properties['read_more-line-height'])) { ?>line-height: <?php echo $properties['read_more-line-height']  ?>;<?php } ?>
+	<?php if(!empty($properties['read_more-font-size'])) { ?>font-size: <?php echo $properties['read_more-font-size']  ?>px; <?php } ?>
+	<?php if(!empty($properties['read_more-weight'])) { ?>font-weight: <?php echo $properties['read_more-weight']  ?>;<?php } ?>
+	<?php if(!empty($properties['read_more-style'])) { ?>font-style: <?php echo $properties['read_more-style']  ?>;<?php } ?>
+	<?php if(!empty($properties['read_more-line-height'])) { ?>line-height: <?php echo $properties['read_more-line-height']  ?>;<?php } ?>
 	<?php if(!empty($properties['read_more-font-color'])) { ?>color: <?php echo $properties['read_more-font-color']  ?>; <?php } ?>
 }
-
 <?php } ?>
+
+#page .<?php echo $properties['id'] ?>.upostslist-object .upostslist-part.read_more {
+	<?php if(!empty($properties['read_more-background-color'])) { ?>background-color: <?php echo $properties['read_more-background-color'] ?>; <?php } ?>
+
+    <?php if(!empty($properties['read_more-use-border'])) { ?>
+		<?php if(!empty($properties['read_more-border-width']) && !empty($properties['read_more-border-type']) && !empty($properties['read_more-border-color'])) { ?>border: <?php echo $properties['read_more-border-width'] ?>px <?php echo $properties['read_more-border-type'] ?> <?php echo $properties['read_more-border-color'] ?>;<?php } ?>
+    <?php } else { ?>
+		border: none;
+    <?php } ?>
+}
 
 /* Part Comment Count */
 

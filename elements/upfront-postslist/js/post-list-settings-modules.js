@@ -183,7 +183,7 @@ define([
 						{label: l10n.modules.last_first, value: 'last_first'},
 						{label: l10n.modules.nickname, value: 'nickname'},
 						{label: l10n.modules.username, value: 'username'}
-					]
+					],
 				},
 				{
 					type: 'Select',
@@ -788,7 +788,66 @@ define([
 	Modules.part_read_more = Panel.Toggleable.extend({
 		title: l10n.modules.read_more_title,
 		data_part: 'read_more',
-		slug: 'read_more'
+		slug: 'read_more',
+		get_modules: function () {
+			var modules = [],
+				me = this,
+				name = function (name) { return 'read_more-' + name; }
+			;
+			
+			modules.push({
+				moduleType: 'Typography',
+				options: {
+					toggle: true,
+					state: 'static',
+					fields: {
+						use: name('use-typography'),
+						typeface: name('font-family'),
+						weight: name('weight'),
+						fontstyle: name('fontstyle'),
+						style: name('style'),
+						size: name('font-size'),
+						line_height: name('line-height'),
+						color: name('font-color')
+					}
+				}
+			});
+		
+			modules.push({
+				moduleType: 'Border',
+				options: {
+					toggle: true,
+					state: 'static',
+					showLabel: false,
+					fields: {
+						use: name('use-border'),
+						width: name('border-width'),
+						type: name('border-type'),
+						color: name('border-color')
+					}
+				}
+			});	
+
+			modules.push({
+				moduleType: 'Colors',
+				options: {
+					toggle: true,
+					state: 'static',
+					multiple: false,
+					single: true,
+					toggle: false,
+					noborder: true,
+					abccolors: [
+						{
+							name: name('background-color'),
+							label: l10n.modules.bg_label
+						}
+					]
+				}
+			});
+			
+			return modules;
+		}
 	});
 
 	return Modules;
