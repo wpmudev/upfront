@@ -273,7 +273,7 @@
 				this.$el.find(".upfront-settings-item-title").removeClass('active-panel');
 				
 				// Hide content
-				$content.hide()
+				$content.hide();
 				
 				// Set modules height to initial
 				this.$el.closest('.upfront-post-modules').css('height', 'initial');
@@ -324,7 +324,7 @@
 			},
 			update_settings_position: function(firstTime) {
 				var me = this,
-					settingsTitleHeight = 68,
+					settingsTitleHeight = 26,
 					setting_dropdown = me.$el.find('.upfront-settings-post-wrapper'),
 					select = setting_dropdown.parent(),
 					dropDownTop = select.offset().top - $('#element-settings-sidebar').offset().top,
@@ -338,12 +338,22 @@
 				if (availableBelow > settingsHeight) {
 					// Available space below setting is enough
 					setting_dropdown.css('top', dropDownTop + "px");
+
+					// Update wrapper classes
+                    this.update_settings_classes(setting_dropdown, 'below');
 				} else if (availableAbove > settingsHeight) {
 					// Available space below is not enough but fine above
-					setting_dropdown.css('top', (dropDownTop - settingsHeight - 30) + "px");
+					setting_dropdown.css('top', (dropDownTop - settingsHeight - 38) + "px");
+
+                    // Update wrapper classes
+                    this.update_settings_classes(setting_dropdown, 'above');
+
 				} else {
 					// There is no space above and below
 					setting_dropdown.css('top', dropDownTop + "px");
+
+                    // Update wrapper classes
+                    this.update_settings_classes(setting_dropdown, 'below');
 
 					if(me.$el.closest('.upfront-post-modules').length) {
 						me.$el.closest('.upfront-post-modules').height(settingsHeight - settingsTitleHeight);
@@ -351,6 +361,10 @@
 				}
 				
 				setting_dropdown.css("width", select.width() + 10);
+			},
+			update_settings_classes: function($el, new_class) {
+				// Clear classes
+				$el.removeClass('below above').addClass(new_class);
 			},
 			hide_all: function() {
 				var $wrapper = this.$el.parent();
