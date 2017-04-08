@@ -1060,8 +1060,19 @@ jQuery(document).ready(function($){
 					lightboxhide();
 				});
 			}
-			//translate width in columns to width in pixels as per the total width of upfront-grid-layout being 24 cols
-			lightbox.css('width', $('div.upfront-grid-layout').first().width()*lightbox.data('col')/24);
+			var is_reponsive = false;
+			if (typeof $('.uf-responsive')[0] !== 'undefined') {
+				is_reponsive = true;
+			}
+			grid = Upfront.Settings.LayoutEditor.Grid,
+			// If responsive breakpoint, change to 80%.
+			if (is_reponsive) {
+				lightbox.css({width: '80%', left: '10% !important'});
+			} else {
+				// Otherwise translate width in columns to width in pixels as per the total width of upfront-grid-layout being 24 cols
+				var lightboxWidth = grid.column_width * lightbox.data('col');
+				lightbox.css('width', lightboxWidth);
+			}
 			lightbox.show().css({'margin-left': -(parseInt(lightbox.width()/2)), 'margin-top': -(parseInt(lightbox.height()/2))});
 
 			/* elements can subscribe to the following event to
