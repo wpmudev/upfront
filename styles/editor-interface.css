@@ -19681,6 +19681,15 @@ div.preset-manager-panel .upfront-settings-post-wrapper .typography_settings_ite
 div.preset-manager-panel .upfront-settings-post-wrapper .typography_settings_item .fontColor label {
   display: none; }
 
+div.preset-manager-panel .upfront-settings-post-wrapper.content .typography_settings_item,
+div.preset-manager-panel .upfront-settings-post-wrapper.author .typography_settings_item,
+div.preset-manager-panel .upfront-settings-post-wrapper.date_posted .typography_settings_item,
+div.preset-manager-panel .upfront-settings-post-wrapper.tags .typography_settings_item,
+div.preset-manager-panel .upfront-settings-post-wrapper.categories .typography_settings_item,
+div.preset-manager-panel .upfront-settings-post-wrapper.comment_count .typography_settings_item {
+  border-top: 1px solid #e5ecf4;
+  margin-top: 5px; }
+
 div.preset-manager-panel .typography_settings_item .upfront-settings-item-content .upfront-field-label-inline {
   position: relative;
   top: 5px;

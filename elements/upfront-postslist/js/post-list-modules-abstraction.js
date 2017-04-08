@@ -81,6 +81,7 @@
 
 				var $module_content = this.$el.find('.upfront-settings-post-wrapper');
 				$module_content.append('<div class="upfront-settings-item-content"></div>');
+				$module_content.addClass(this.options.panel);
 				var $content = this.$el.find('.upfront-settings-item-content');
 				
 				this.fields.each(function(field){
