@@ -230,20 +230,22 @@
 			updatePreview: function() {
 				var me = this,
 					useBorder = this.model.get(this.slug + '-use-border'),
-					borderWidth = this.model.get(this.slug + '-border-width'),
-					borderType = this.model.get(this.slug + '-border-type'),
 					borderColor = this.model.get(this.slug + '-border-color'),
 					backgroundColor = this.model.get(this.slug + '-background-color'),
 					fontColor = this.model.get(this.slug + '-font-color')
 				;
 
 				setTimeout( function () {
-					if(useBorder) {
+					if(typeof useBorder !== "undefined" && useBorder !== '') {
 						me.$el.find('.upfront-posts-preview .styles-holder').css({
 							'borderStyle': 'solid',
 							'borderWidth': '1px',
 							'borderColor': borderColor
 						});
+					} else {
+                        me.$el.find('.upfront-posts-preview .styles-holder').css({
+                            'borderWidth': '0px'
+                        });
 					}
 					
 					me.$el.find('.upfront-posts-preview .styles-holder').css({
