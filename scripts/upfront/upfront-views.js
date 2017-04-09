@@ -1051,7 +1051,8 @@ define([
 				//this.apply_paddings($el);
 			},
 			apply_paddings: function ($el) {
-				var top_padding_use = this.model.get_breakpoint_property_value('top_padding_use', true),
+				var use_padding = this.model.get_breakpoint_property_value('use_padding', false),
+					top_padding_use = this.model.get_breakpoint_property_value('top_padding_use', true),
 					bottom_padding_use = this.model.get_breakpoint_property_value('bottom_padding_use', true),
 					left_padding_use = this.model.get_breakpoint_property_value('left_padding_use', true),
 					right_padding_use = this.model.get_breakpoint_property_value('right_padding_use', true),
@@ -1060,11 +1061,12 @@ define([
 					left_padding_num = this.model.get_breakpoint_property_value('left_padding_num', true),
 					right_padding_num = this.model.get_breakpoint_property_value('right_padding_num', true)
 				;
+
 				$el.css({
-					paddingTop: top_padding_use && top_padding_num !== false ? top_padding_num + 'px' : '',
-					paddingBottom: bottom_padding_use && bottom_padding_num !== false ? bottom_padding_num + 'px' : '',
-					paddingLeft: left_padding_use && left_padding_num !== false ? left_padding_num + 'px' : '',
-					paddingRight: right_padding_use && right_padding_num !== false ? right_padding_num + 'px' : ''
+					paddingTop: ((use_padding || top_padding_use) && top_padding_num !== false) ? top_padding_num + 'px' : '',
+					paddingBottom: ((use_padding || bottom_padding_use) && bottom_padding_num !== false) ? bottom_padding_num + 'px' : '',
+					paddingLeft: ((use_padding || left_padding_use) && left_padding_num !== false) ? left_padding_num + 'px' : '',
+					paddingRight: ((use_padding || right_padding_use) && right_padding_num !== false) ? right_padding_num + 'px' : ''
 				});
 
 			},
