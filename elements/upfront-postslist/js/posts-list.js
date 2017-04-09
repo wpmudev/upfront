@@ -187,6 +187,8 @@ var PostsListsEachView = Upfront.Views.ObjectGroup.extend({
 	render: function (options) {
 		this.editable = !!(options.editable);
 
+		var me = this;
+
 		// Listen to object edit toggle if in ObjectGroup
 		if ( this.editable && this.object_group_view ) {
 			this.stopListening(this.object_group_view, 'toggle_object_edit');
@@ -202,7 +204,9 @@ var PostsListsEachView = Upfront.Views.ObjectGroup.extend({
 			this.wrapper_view.$el.resizable('option', 'disabled', true);
 		} else {
 			// Prevent multiple Done buttons
-			this.$el.find('.upfront-object-group-finish-edit').remove();
+			setTimeout( function() {
+				me.$el.find('.upfront-object-group-finish-edit').remove();
+			}, 50);
 		}
 		
 		Upfront.Views.ObjectGroup.prototype.render.call(this, options);
