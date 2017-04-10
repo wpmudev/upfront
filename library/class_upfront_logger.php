@@ -132,8 +132,8 @@ abstract class Upfront_Logger {
 	 * @return bool
 	 */
 	public function is_loggable_level ($level) {
-		$level = $this->get_level();
-		return $this->get_active_level() <= $level;
+		$level = $this->get_level($level);
+		return $this->get_active_level() >= $level;
 	}
 
 	/**
