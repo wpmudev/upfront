@@ -15,19 +15,15 @@ class DependencyCacheTest  extends WP_UnitTestCase {
 		);
 
 		$this->assertTrue(
-			is_callable(array('Upfront_DependencyCache_Server', 'get')),
+			is_callable(array('Upfront_DependencyCache_Server', 'get_instance')),
 			'Caching server class is also a singleton'
 		);
-		$cache = Upfront_DependencyCache_Server::get();
+		$cache = Upfront_DependencyCache_Server::get_instance();
 		$this->assertTrue(
 			$cache instanceof Upfront_DependencyCache_Server,
 			'Siingleton getter returns proper object instance'
 		);
 
-		$this->assertFalse(
-			$cache->is_running(),
-			'Cache server does not run by default'
-		);
 		Upfront_DependencyCache_Server::serve();
 		$this->assertTrue(
 			$cache->is_running(),
@@ -38,16 +34,11 @@ class DependencyCacheTest  extends WP_UnitTestCase {
 			!!has_filter('upfront-output-experimental-done', array($cache, 'handle_cached_output')),
 			'Dependency cache hooks up to experiments output filtering'
 		);
-		$deps = Upfront_CoreDependencies_Registry::get_instance();
-		$this->assertTrue(
-			apply_filters('upfront-output-experimental-done', false, $deps),
-			'Dependency cache takes over output properly'
-		);
 
 	}
 
 	public function test_paths_resolution () {
-		$cache = Upfront_DependencyCache_Server::get();
+		$cache = Upfront_DependencyCache_Server::get_instance();
 		$this->assertTrue(
 			file_exists($cache->get_cache_dir()),
 			'Cache root directory exists, or gets created'
@@ -93,7 +84,7 @@ class DependencyCacheTest  extends WP_UnitTestCase {
 	}
 
 	public function test_dynamic_resources () {
-		$cache = Upfront_DependencyCache_Server::get();
+		$cache = Upfront_DependencyCache_Server::get_instance();
 		$ajax = admin_url('admin-ajax.php');
 
 		$this->assertTrue(
@@ -111,7 +102,7 @@ class DependencyCacheTest  extends WP_UnitTestCase {
 	}
 
 	public function test_protocol_stripping () {
-		$cache = Upfront_DependencyCache_Server::get();
+		$cache = Upfront_DependencyCache_Server::get_instance();
 		$checks = array(
 			'http://test' => '//test',
 			'https://test' => '//test',
@@ -127,7 +118,7 @@ class DependencyCacheTest  extends WP_UnitTestCase {
 	}
 
 	public function test_url_to_path_resolution () {
-		$cache = Upfront_DependencyCache_Server::get();
+		$cache = Upfront_DependencyCache_Server::get_instance();
 		$checks = array(
 			Upfront::get_root_url() . '/scripts/chosen/chosen.min.css' => Upfront::get_root_dir() . '/scripts/chosen/chosen.min.css',
 			home_url('test') => false, // Because we're only considering upfront resources
@@ -144,7 +135,7 @@ class DependencyCacheTest  extends WP_UnitTestCase {
 	}
 
 	public function test_content_getting () {
-		$cache = Upfront_DependencyCache_Server::get();
+		$cache = Upfront_DependencyCache_Server::get_instance();
 		$checks = array(
 			Upfront::get_root_url() . '/scripts/chosen/chosen.min.css' => file_get_contents(Upfront::get_root_dir() . '/scripts/chosen/chosen.min.css'),
 			admin_url('/scripts/chosen/chosen.min.css') => '',
@@ -161,7 +152,7 @@ class DependencyCacheTest  extends WP_UnitTestCase {
 
 	public function test_caching_output () {
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
-		$cache = Upfront_DependencyCache_Server::get();
+		$cache = Upfront_DependencyCache_Server::get_instance();
 
 		$dynamic = admin_url('admin-ajax.php?action=upfront_load_editor_grid');
 		$link_urls = array(
@@ -176,13 +167,9 @@ class DependencyCacheTest  extends WP_UnitTestCase {
 		}
 
 		$output = $cache->get_resources_output($deps->get_styles());
-		$this->assertTrue(
+		$this->assertFalse(
 			is_array($output),
-			'Raw cached output is an array'
-		);
-		$this->assertNotEquals(
-			count($link_urls), count($output),
-			'Cached all styles successfully, excluding the dynamic URL'
+			'Raw cached output is NOT an array when we have non-previously-cached dynamic URL resource'
 		);
 
 		$status = $cache->set_cached_resource($dynamic, 'Some test content');

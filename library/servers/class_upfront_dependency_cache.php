@@ -29,7 +29,7 @@ class Upfront_DependencyCache_Server implements IUpfront_Server {
 	 * @return bool
 	 */
 	public static function serve () {
-		$me = self::get();
+		$me = self::get_instance();
 		if (!$me->is_running()) $me->_add_hooks();
 
 		return $me->is_running();
@@ -40,7 +40,7 @@ class Upfront_DependencyCache_Server implements IUpfront_Server {
 	 *
 	 * @return object Upfront_DependencyCache_Server instance
 	 */
-	public static function get () {
+	public static function get_instance () {
 		if (empty(self::$_instance)) {
 			self::$_instance = new self;
 		}
@@ -69,7 +69,6 @@ class Upfront_DependencyCache_Server implements IUpfront_Server {
 	 * @return int Time during which cache is valid, in seconds
 	 */
 	public function get_cache_ttl () {
-		return 120;
 		return HOUR_IN_SECONDS;
 	}
 
