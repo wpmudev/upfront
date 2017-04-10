@@ -117,3 +117,4 @@ require_once('servers/class_upfront_server_post_image_variants.php');
 require_once('servers/class_upfront_markup_server.php');
 require_once('servers/class_upfront_editor_l10n_server.php');
 require_once('servers/class_upfront_server_metadata.php');
+require_once('servers/class_upfront_dependency_cache.php');

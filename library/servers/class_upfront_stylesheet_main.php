@@ -70,6 +70,14 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		// style is edited in editor (e.g. some property is removed) inconsistencies may occur
 		// especially with rules removal since those would still be defined in main style.
 		if ($base_only) {
+			/**
+			 * Filter the styles just before we use them
+			 *
+			 * @param string $style Gathered styles
+			 * @param bool $base_only Only base styles (@since v1.9)
+			 */
+			$style = apply_filters('upfront-dependencies-main-styles', $style, $base_only);
+
 			$this->_out(new Upfront_JsonResponse_Success(array('styles' => $style)));
 			return;
 		}
@@ -92,8 +100,9 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		 * Filter the styles just before we use them
 		 *
 		 * @param string $style Gathered styles
+		 * @param bool $base_only Only base styles (@since v1.9)
 		 */
-		$style = apply_filters('upfront-dependencies-main-styles', $style);
+		$style = apply_filters('upfront-dependencies-main-styles', $style, $base_only);
 
 		$this->_out(new Upfront_CssResponse_Success($style), !$bootable); // Serve cacheable styles for visitors
 	}

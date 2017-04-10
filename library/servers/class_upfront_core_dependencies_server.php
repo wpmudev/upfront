@@ -9,12 +9,31 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	private function _add_hooks () {
 		add_action('upfront-core-inject_dependencies', array($this, 'dispatch_dependencies_output'));
 		add_action('wp_head', array($this, 'dispatch_fonts_loading'));
+		add_action('wp_head', array($this, 'dispatch_header_dependencies_output'));
 		add_action('admin_head', array($this, 'dispatch_fonts_loading'));
 
 		upfront_add_ajax('wp_scripts', array($this, 'wp_scripts_load'));
 
 		// We're serously playing with fire here
 		add_action('wp_enqueue_scripts', array($this, 'setup_hard_experiments'));
+	}
+
+	public function dispatch_header_dependencies_output () {
+		$deps = Upfront_CoreDependencies_Registry::get_instance();
+
+		if (Upfront_Behavior::compression()->has_experiments()) {
+			if (apply_filters('upfront-output-experimental-header-done', false, $deps)) return true;
+		}
+
+		$resources = $deps->get_header_styles();
+		if (!empty($resources) && is_array($resources)) foreach($resources as $resource) {
+			echo '<link type="text/css" rel="stylesheet" href="' . esc_url($resource) . '" />';
+		}
+
+		$resources = $deps->get_header_scripts();
+		if (!empty($resources) && is_array($resources)) foreach($resources as $resource) {
+			echo '<script type="text/javascript" src="' . esc_url($resource) . '"></script>';
+		}
 	}
 
 	/**
@@ -124,6 +143,9 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	 */
 	private function _output_experimental ($deps) {
 		$this->_output_api_keys();
+
+		// Is this already handled?
+		if (apply_filters('upfront-output-experimental-done', false, $deps)) return true;
 
 		// Yeah, so we need jQuery here. If it's not done, drop it from the queue and get the default one
 		if (!wp_script_is('jquery', 'done')) {
