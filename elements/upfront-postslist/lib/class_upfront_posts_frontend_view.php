@@ -327,7 +327,7 @@ class Upfront_PostsListsEachView extends Upfront_Object_Group {
 	protected $_breakpoint = false;
 	protected $_wrapper_obj = false;
 
-	public function __construct ($data, $post_id, $markup, $parent_obj = false, $breakpoint = false) {
+	public function __construct ($data, $post_id, $markup = false, $parent_obj = false, $breakpoint = false) {
 		$this->_breakpoint = $breakpoint;
 		$this->_post_id = $post_id;
 		$this->_markup = $markup;
