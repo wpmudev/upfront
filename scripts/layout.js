@@ -1064,16 +1064,16 @@ jQuery(document).ready(function($){
 			if (typeof $('.uf-responsive')[0] !== 'undefined') {
 				is_reponsive = true;
 			}
-			grid = Upfront.Settings.LayoutEditor.Grid,
-			// If responsive breakpoint, change to 80%.
-			if (is_reponsive) {
-				lightbox.css({width: '80%', left: '10% !important'});
-			} else {
-				// Otherwise translate width in columns to width in pixels as per the total width of upfront-grid-layout being 24 cols
-				var lightboxWidth = grid.column_width * lightbox.data('col');
-				lightbox.css('width', lightboxWidth);
-			}
-			lightbox.show().css({'margin-left': -(parseInt(lightbox.width()/2)), 'margin-top': -(parseInt(lightbox.height()/2))});
+			var settings = Upfront.Settings;
+			// If Grid exists, use that. Otherwise default to 45px per column.
+			var column_width = settings ? settings.LayoutEditor.Grid.column_width : 45;
+			// Note that max-width and max-height are set in global.css for responsive design.
+			// translate width in columns to width in pixels
+			var lightbox_width = column_width * lightbox.data('col');
+			var lightbox_height = lightbox.data('height');
+			lightbox.show().css({'width': lightbox_width, 'height': lightbox_height, 'min-height': 200});
+			// Based upon above CSS.
+			lightbox.css({'margin-left': -(parseInt(lightbox.width()/2)), 'margin-top': -(parseInt(lightbox.height()/2))});
 
 			/* elements can subscribe to the following event to
 			 * to render their content based
