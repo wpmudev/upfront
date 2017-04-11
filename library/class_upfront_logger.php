@@ -22,6 +22,15 @@ abstract class Upfront_Logger {
 	private $_section;
 
 	/**
+	 * Currently active log level
+	 *
+	 * One of the log level class constants above
+	 *
+	 * @var int
+	 */
+	private $_level;
+
+	/**
 	 * Actual logging method
 	 *
 	 * To be implemented in concrete implementations
@@ -96,7 +105,7 @@ abstract class Upfront_Logger {
 	 * @return int Log level
 	 */
 	public function get_default_level () {
-		return self::LVL_WARNING;
+		return self::LVL_INFO;
 	}
 
 	/**
@@ -107,7 +116,21 @@ abstract class Upfront_Logger {
 	 * @return int Log level
 	 */
 	public function get_active_level () {
-		return self::LVL_NOTICE;
+		return !empty($this->_level)
+			? $this->get_level($this->_level)
+			: self::LVL_NOTICE
+		;
+	}
+
+	/**
+	 * Sets active log level for the object
+	 *
+	 * @param int $level New log level
+	 *
+	 * @return bool Status
+	 */
+	public function set_log_level ($level) {
+		return !!$this->_level = $this->get_level($level);
 	}
 
 	/**
@@ -248,15 +271,20 @@ class Upfront_Log {
 	 * Concrete implementation getter
 	 *
 	 * @param string $impl Optional concrete implementation (see class constants)
+	 * @param string $section Optional section
 	 *
 	 * @return Upfront_Logger concrete implementation object
 	 */
-	public static function get ($impl=false) {
+	public static function get ($impl=false, $section=false) {
 		$cname = !empty($impl)
 			? 'Upfront_Logger_' . ucfirst(strtolower($impl))
 			: self::get_default_logger()
 		;
-		return new $cname;
+		$logger = new $cname;
+		if (!empty($section)) {
+			$logger->set_section($section);
+		}
+		return $logger;
 	}
 
 	/**
