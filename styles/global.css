@@ -531,6 +531,7 @@ div.upfront-region-lightbox, div.upfront-region-side-lightbox,
   overflow: auto;
   max-height: 100%;
   max-height: 80vh;
+  height: inherit;
 }
 .upfront-lightbox-bg {
   position:fixed;

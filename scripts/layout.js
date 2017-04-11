@@ -1060,20 +1060,15 @@ jQuery(document).ready(function($){
 					lightboxhide();
 				});
 			}
-			var is_reponsive = false;
-			if (typeof $('.uf-responsive')[0] !== 'undefined') {
-				is_reponsive = true;
-			}
-			var settings = Upfront.Settings;
 			// If Grid exists, use that. Otherwise default to 45px per column.
-			var column_width = settings ? settings.LayoutEditor.Grid.column_width : 45;
+			var column_width = typeof Upfront !== 'undefined' && Upfront.Settings ? Upfront.Settings.LayoutEditor.Grid.column_width : 45;
 			// Note that max-width and max-height are set in global.css for responsive design.
 			// translate width in columns to width in pixels
 			var lightbox_width = column_width * lightbox.data('col');
 			var lightbox_height = lightbox.data('height');
 			lightbox.show().css({'width': lightbox_width, 'height': lightbox_height, 'min-height': 200});
 			// Based upon above CSS.
-			lightbox.css({'margin-left': -(parseInt(lightbox.width()/2)), 'margin-top': -(parseInt(lightbox.height()/2))});
+			lightbox.css({'margin-left': -(parseInt(lightbox.width()/2, 10)), 'margin-top': -(parseInt(lightbox.height()/2, 10))});
 
 			/* elements can subscribe to the following event to
 			 * to render their content based
