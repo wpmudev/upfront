@@ -241,6 +241,7 @@ class Upfront_PostsLists_PostsData {
 			'add_custom_post' => __('Add a custom post', 'upfront'),
 			'resize_featured' => __('Re-size featured image to fit container', 'upfront'),
 			'general_settings' => __('General Settings', 'upfront'),
+			'postslist_element' => __('Posts Element', 'upfront'),
 			'post_part_settings' => __('Post Parts Settings', 'upfront'),
 			'edit_template' => __('Edit markup', 'upfront'),
 			'px' => __('px', 'upfront'),
