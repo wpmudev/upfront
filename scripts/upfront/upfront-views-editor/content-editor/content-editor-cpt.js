@@ -10,9 +10,8 @@
 
 
 				return Backbone.View.extend({
-						className: "upfront-entity_list-posts",
-						postListTpl: _.template($(popup_tpl).find('#upfront-post-list-tpl').html()),
-						postSingleTpl: _.template($(popup_tpl).find('#upfront-post-single-tpl').html()),
+						className: "upfront-entity_list-cpt",
+						postListTpl: _.template($(popup_tpl).find('#upfront-cpt-list-tpl').html()),
 						paginationTpl: _.template($(popup_tpl).find('#upfront-pagination-tpl').html()),
 						events: {
 								//"click #upfront-list-meta .upfront-list_item-component": "handle_sort_request",
@@ -27,13 +26,21 @@
 								this.listenTo(Upfront.Events, 'post:saved', this.post_saved);
 						},
 						render: function () {
+								var postTypeList = Upfront.mainData.content_settings.post_types;
+								var postTypes = {};
+								postTypeList.map(function(type) {
+									// Ignore WP post types.
+									if (name === 'attachment' || name === 'post' || name === 'page') return;
+									postTypes[type.name] = type.label;
+								});
 								this.$el.empty().append(
 										this.postListTpl({
 												posts: this.collection.getPage(this.collection.pagination.currentPage),
 												orderby: this.collection.orderby,
 												order: this.collection.order,
 												canEdit: Upfront.Application.user_can("EDIT"),
-												canEditOwn: Upfront.Application.user_can("EDIT_OWN")
+												canEditOwn: Upfront.Application.user_can("EDIT_OWN"),
+												postTypes: postTypes
 										})
 								);
 

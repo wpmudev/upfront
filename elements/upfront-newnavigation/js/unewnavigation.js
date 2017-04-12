@@ -546,7 +546,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 		properties = this.get_preset_properties();
 
 		if ( !menu_id ) {
-			if(typeof(menu_slug != 'undefined') && menu_slug !== '') this.set_menu_id_from_slug(menu_slug);
+			// If menu slug has been chosen but no ID is set, get the ID.
+			if (menu_slug && typeof menu_slug !== 'undefined' && menu_slug !== '') this.set_menu_id_from_slug(menu_slug);
 			return "";
 		}
 		

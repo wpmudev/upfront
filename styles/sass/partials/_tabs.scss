@@ -1,44 +1,46 @@
 /* Tabs */
 .upfront-popup-meta {
-	height: 38px;
+	height: 50px;
+	width: 100%;
 }
+
 .upfront-popup-meta .upfront-tabs {
 	list-style: none;
-	position: absolute;
-	top: 0;
-	left: 0;
-	margin: 0; padding: 0;
+	margin: 0;
+	padding: 0;
+	display: block;
+	float: left;
 }
 .upfront-popup-meta .upfront-tabs.upfront-media_manager-tabs {
 	display: none;
 }
+.upfront-popup-posts .upfront-popup-meta .upfront-tabs li {
+	font-size: 12px;
+}
 .upfront-popup-meta .upfront-tabs li {
 	display: inline-block;
-	padding: 0 32px;
-	height: 36px;
-	background: #a4b9cb;
-	font-size: 20px;
-	line-height: 38px;
 	text-align: center;
-	color: #4e5e6d;
-	margin-right: 1px;
+	color: #9b9b9b;
 	cursor: pointer;
-	margin-left: -2px;
+	font-size: 10px;
+	text-transform: uppercase;
+	padding: 19px 0;
+	margin: 0 0 0 32px;
+	line-height: 10px;
+}
+.upfront-popup-meta .upfront-tabs li[data-type="cpts"] {
+	text-transform: none;
 }
 .upfront-popup-meta .upfront-tabs li:hover {
-	border-top: 1px solid #2ecc90;
-	height: 37px;
 }
 
+.upfront-popup-posts .upfront-popup-meta .upfront-tabs li.active {
+	font-weight: bold;
+}
 
 .upfront-popup-meta .upfront-tabs li.active {
-	background: #e5f3fe;
-	border-top: 2px solid #e5f3fe;
-	position:relative;
-	margin-left: -1px;
-	margin-right: 0;
-	color: #2F475F;
-	height: 38px;
+	color: #212121;
+	border-bottom: 2px solid #212121;
 }
 
 .upfront-popup-meta .upfront-tabs li.active:hover {
@@ -46,5 +48,5 @@
 }
 
 .upfront-popup-meta ul.upfront-tabs li:first-child {
-	margin-left:0;
+
 }

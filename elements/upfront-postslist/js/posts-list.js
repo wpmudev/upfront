@@ -832,7 +832,7 @@ var PostsListsElement = Upfront.Views.Editor.Sidebar.Element.extend({
 });
 
 
-Upfront.Application.LayoutEditor.add_object("Upostslists", {
+Upfront.Application.LayoutEditor.add_object("Upostslist", {
 	"Model": PostsListsModel,
 	"View": PostsListsView,
 	"Element": PostsListsElement,

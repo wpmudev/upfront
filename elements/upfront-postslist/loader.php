@@ -44,7 +44,7 @@ class Upfront_PostsList extends Upfront_Server {
 		require_once (dirname(__FILE__) . '/lib/class_upfront_posts_frontend_view.php');
 		require_once (dirname(__FILE__) . '/lib/class_upfront_posts_presets_server.php');
 
-		upfront_add_layout_editor_entity('upostslists', upfront_relative_element_url('js/posts-list', __FILE__));
+		upfront_add_layout_editor_entity('upostslist', upfront_relative_element_url('js/posts-list', __FILE__));
 		upfront_add_element_style('upfront-postslist', array('css/public.css', __FILE__));
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			upfront_add_element_style('upfront-postslist-editor', array('css/editor.css', __FILE__));

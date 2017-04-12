@@ -58,50 +58,50 @@
 
 <style type="text/css">
 	/*<?php if($captionUseBackground) { ?>
-	.uslide .uslide-caption {
+	#page .uslide .uslide-caption {
 		padding: 5px 15px;
 	}
 	<?php } ?>*/
-	#uslider-<?php echo $element_id ?> {
+	#page #uslider-<?php echo $element_id ?> {
 		width: 100%;
 	}
-	#uslider-<?php echo $element_id ?> .uslide-left .uslide-caption,
-	#uslider-<?php echo $element_id ?> .uslide-right .uslide-caption {
+	#page #uslider-<?php echo $element_id ?> .uslide-left .uslide-caption,
+	#page #uslider-<?php echo $element_id ?> .uslide-right .uslide-caption {
 		width: <?php echo $textWidth ?>;
 	}
-	#uslider-<?php echo $element_id ?> .uslide-right .uslide-caption {
+	#page #uslider-<?php echo $element_id ?> .uslide-right .uslide-caption {
 		margin-left: <?php echo $imageWidth ?>;
 	}
 
-	#uslider-<?php echo $element_id ?> .uslide-right .uslide-image {
+	#page #uslider-<?php echo $element_id ?> .uslide-right .uslide-image {
 		float: left;
 	}
 
-	#uslider-<?php echo $element_id ?> .uslide-left .uslide-caption {
+	#page #uslider-<?php echo $element_id ?> .uslide-left .uslide-caption {
 		float: left;
 	}
 
-	#uslider-<?php echo $element_id ?> .uslide-left .uslide-image {
+	#page #uslider-<?php echo $element_id ?> .uslide-left .uslide-image {
 		margin-left: <?php echo $textWidth ?>
 	}
-	#uslider-<?php echo $element_id ?> .uslide-left .uslide-caption,
-	#uslider-<?php echo $element_id ?> .uslide-right .uslide-caption {
+	#page #uslider-<?php echo $element_id ?> .uslide-left .uslide-caption,
+	#page #uslider-<?php echo $element_id ?> .uslide-right .uslide-caption {
 		height: <?php echo $imageHeight ?>px;
 	}
 
-	#uslider-<?php echo $element_id ?> .uslide-left .uslide-image,
-	#uslider-<?php echo $element_id ?> .uslide-right .uslide-image {
+	#page #uslider-<?php echo $element_id ?> .uslide-left .uslide-image,
+	#page #uslider-<?php echo $element_id ?> .uslide-right .uslide-image {
 		width: <?php echo $imageWidth ?>;
 	}
 
-	#uslider-<?php echo $element_id ?> .uslide-image {
+	#page #uslider-<?php echo $element_id ?> .uslide-image {
 		height: <?php echo $imageHeight ?>px;
 		position: relative;
 		overflow: hidden;
 	}
 
 	<?php if ($usingNewAppearance === false) { ?>
-	#uslider-<?php echo $element_id ?> .uslide-caption {
+	#page #uslider-<?php echo $element_id ?> .uslide-caption {
 		background-color:<?php echo !empty($captionBackground) ? $captionBackground : 'transparent' ?>;
 	}
 	<?php } ?>

@@ -10,12 +10,15 @@
 
         return Command.extend({
             className: "command-grid",
+						initialize: function() {
+							this.constructor.__super__.initialize.apply(this, arguments);
+							this.listenTo(Upfront.Events, "entity:region:added", this.update_grid);
+							this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.update_grid);
+							this.listenTo(Upfront.Events, "grid:toggle", this.on_click);
+						},
             render: function () {
                 this.$el.addClass('upfront-icon upfront-icon-grid');
                 this.$el.prop("title", l10n.toggle_grid);
-                this.listenTo(Upfront.Events, "entity:region:added", this.update_grid);
-                this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.update_grid);
-                this.listenTo(Upfront.Events, "grid:toggle", this.on_click);
             },
             on_click: function () {
                 if (!$('.upfront-overlay-grid').size()) this.create_grid();

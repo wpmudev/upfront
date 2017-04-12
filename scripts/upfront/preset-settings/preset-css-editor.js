@@ -73,7 +73,13 @@ define([
 			});
 
 			this.resizeHandler = this.resizeHandler || function(){
-				me.$el.width($(window).width() - $('#sidebar-ui').width() -1);
+				// If small screen, avoid gap between sidebar.
+				if (window.innerWidth < 1366) {
+					me.$el.width($(window).width() - 130);
+				} else {
+					// Otherwise, fill screen except sidebar width.
+					me.$el.width($(window).width() - $('#sidebar-ui').width() -1);
+				}
 			};
 
 			//Destroy editor when Cancel or Save button is clicked
