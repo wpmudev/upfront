@@ -135,6 +135,7 @@ define([
 					toggle: true,
 					state: 'static',
 					noborder: true,
+					global_typography: 'p',
 					fields: {
 						use: name('use-typography'),
 						typeface: name('font-family'),
@@ -529,6 +530,7 @@ define([
 					name: 'tags-single-use',
 					default_value: 1,
 					as_field: false,
+					global_typography: 'a',
 					classStyle: 'tags-single-use',
 					fields: [
 						'tags-padding-top-bottom',
@@ -768,6 +770,7 @@ define([
 				options: {
 					toggle: true,
 					state: 'static',
+					global_typography: 'a',
 					fields: {
 						use: name('use-typography'),
 						typeface: name('font-family'),
@@ -800,6 +803,7 @@ define([
 				options: {
 					toggle: true,
 					state: 'static',
+					global_typography: 'a',
 					fields: {
 						use: name('use-typography'),
 						typeface: name('font-family'),

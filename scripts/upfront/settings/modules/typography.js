@@ -26,7 +26,16 @@ define([
 			this.currentElement = '';
 			var me = this,
 				state = this.options.state,
-				toggleClass = 'no-toggle';
+				toggleClass = 'no-toggle'
+			;
+
+			var globalFont = {
+				typeFace: '',
+				fontStyle: '',
+				fontSize: '',
+				lineHeight: '',
+				fontColor: ''
+			};
 
 			//Increase field counter if inner elements
 			if(typeof me.options.elements !== "undefined") {
@@ -48,12 +57,25 @@ define([
 				toggleClass = 'element-toggled';
 			}
 
+			if(typeof this.options.global_typography !== "undefined") {
+				var font_settings = Upfront.mainData.global_typography[this.options.global_typography];
+
+				// Set global font properties
+				globalFont = {
+					typeFace: font_settings.font_face,
+					fontStyle: font_settings.weight + ' ' + font_settings.style,
+					fontSize: font_settings.size,
+					lineHeight: font_settings.line_height,
+					fontColor: font_settings.color
+				};
+			}
+
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Typeface_Chosen_Select({
 					name: this.currentElement + this.options.fields.typeface,
 					model: this.model,
 					values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_fonts_for_select(),
-					default_value: this.model.get(this.currentElement + this.options.fields.typeface),
+					default_value: this.model.get(this.currentElement + this.options.fields.typeface) || globalFont.typeFace,
 					label: l10n.typeface,
 					select_width: '225px',
 					label_style: 'inline',
@@ -94,7 +116,7 @@ define([
 					model: this.model,
 					name: this.currentElement + this.options.fields.fontstyle,
 					values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(me.model.get(this.currentElement + me.options.fields.typeface)),
-					default_value: this.model.get(this.currentElement + this.options.fields.fontstyle),
+					default_value: this.model.get(this.currentElement + this.options.fields.fontstyle) || globalFont.fontStyle,
 					label: l10n.weight_style,
 					font_family: me.model.get(this.options.fields.typeface),
 					select_width: '225px',
@@ -119,7 +141,7 @@ define([
 					model: this.model,
 					className: state + '-font-size fontSize ' + toggleClass,
 					name: this.currentElement + this.options.fields.size,
-					default_value: this.model.get(this.currentElement + this.options.fields.size),
+					default_value: this.model.get(this.currentElement + this.options.fields.size) || globalFont.fontSize,
 					label: l10n.size,
 					label_style: 'inline',
 					suffix: l10n.px,
@@ -134,7 +156,7 @@ define([
 					name: this.currentElement + this.options.fields.line_height,
 					label: l10n.line_height,
 					label_style: 'inline',
-					default_value: this.model.get(this.currentElement + this.options.fields.line_height),
+					default_value: this.model.get(this.currentElement + this.options.fields.line_height) || globalFont.lineHeight,
 					min: 0,
 					step: 0.1,
 					change: function(value) {
@@ -146,7 +168,7 @@ define([
 					model: this.model,
 					className: state + '-font-color upfront-field-wrap upfront-field-wrap-color sp-cf fontColor ' + toggleClass,
 					name: this.currentElement + this.options.fields.color,
-					default_value: this.model.get(this.currentElement + this.options.fields.color),
+					default_value: this.model.get(this.currentElement + this.options.fields.color) || globalFont.fontColor,
 					blank_alpha : 0,
 					label_style: 'inline',
 					label: l10n.color,
