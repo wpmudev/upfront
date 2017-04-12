@@ -139,6 +139,10 @@
 	font-weight: normal;
 }
 
+#sidebar-scroll-wrapper .upfront-post-settings {
+	margin-bottom: 10px;
+}
+
 #sidebar-scroll-wrapper .custom_posts li:hover {
 	background: #e6edf2;
 }

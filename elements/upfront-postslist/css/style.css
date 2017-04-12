@@ -1,30 +1,4 @@
-/*
-ul.upostslist-posts {
-	list-style: none !important;
-	margin: 0 !important;
-	padding: 0 !important;
+/* Remove all dynamic padding */
+.upostslist-object .upfront-object-group {
+	padding: 0px !important;
 }
-li.upostslist-post {
-	padding-bottom: 5px;
-	margin-bottom: 15px;
-	border-bottom: 1px solid #ccc;
-}
-span.upostslist-tumbnail_container {
-	float: left;
-	margin-right: 5px;
-}
-li.upostslist-post h3 {
-	margin: 0;
-	padding: 0;
-}
-li.upostslist-post h3 a {
-	text-decoration: none;
-	text-transform: uppercase;
-	font-family: serif;
-	color: #009;
-}
-li.upostslist-post #upfront-title {
-	outline: none;
-	border: none;
-}
-*/
