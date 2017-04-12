@@ -43,7 +43,80 @@ class Upfront_PostsLists_Presets_Server extends Upfront_Presets_Server {
 		$defaults = array(
 			'id' => 'default',
 			'name' => self::$instance->get_l10n('default_preset'),
-			'enabled_post_parts' => array('title', 'content')
+			'enabled_post_parts' => array('title', 'content'),
+
+            // Element wrapper defaults
+            'element-wrapper-use-border' => '',
+            'element-wrapper-border-width' => 1,
+            'element-wrapper-border-type' => 'solid',
+            'element-wrapper-border-color' => 'rgb(0, 0, 0)',
+            'element-wrapper-background-color' => 'rgba(0, 0, 0, 0)',
+
+            // Post wrapper defaults
+            'post-wrapper-use-margin' => '',
+            'post-wrapper-lock-margin' => '',
+            'post-wrapper-left-margin' => '10',
+            'post-wrapper-top-margin' => '10',
+            'post-wrapper-right-margin' => '10',
+            'post-wrapper-bottom-margin' => '10',
+            'post-wrapper-use-border' => '',
+            'post-wrapper-border-width' => 1,
+            'post-wrapper-border-type' => 'solid',
+            'post-wrapper-border-color' => 'rgb(0, 0, 0)',
+            'post-wrapper-background-color' => 'rgba(0, 0, 0, 0)',
+
+            // Author defaults
+			'author-display-name' => 'display_name',
+			'author-link' => 'website',
+			'author-target' => '_blank',
+			'gravatar-use' => 'yes',
+			'gravatar-size' => '50',
+			'gravatar-border-width' => '0',
+			'gravatar-border-type' => 'solid',
+			'gravatar-border-color' => 'rgba(0, 0, 0, 0)',
+			'gravatar-radius' => '0',
+			'gravatar-radius-number' => '0',
+
+			// Featured image defaults
+			'featured-image-size' => 'custom_size',
+			'featured-custom-width' => 600,
+			'featured-custom-height' => 400,
+
+			// Content defaults
+			'content-type' => 'full',
+
+			// Tags defaults
+			'tags-display-type' => 'inline',
+			'tags-show-max' => 3,
+			'tags-separate' => ',',
+			'tags-padding-top-bottom' => 0,
+			'tags-padding-left-right' => 0,
+			'tags-margin-top-bottom' => 0,
+			'tags-margin-left-right' => 0,
+			'tags-background' => 'rgba(0, 0, 0, 0)',
+			'tags-single-use' => '',
+
+			// Categories defaults
+			'category-display-type' => 'inline',
+			'category-show-max' => 3,
+			'category-separate' => ',',
+			'category-padding-top-bottom' => 0,
+			'category-padding-left-right' => 0,
+			'category-margin-top-bottom' => 0,
+			'category-margin-left-right' => 0,
+			'category-background' => 'rgba(0, 0, 0, 0)',
+			'category-single-use' => '',
+
+			// Date posted defaults
+			'predefined-date-format' => 0,
+			'php-date-format' => 'd M Y',
+
+			// Read more defaults
+			'read_more-use-border' => '',
+			'read_more-border-width' => '1',
+			'read_more-border-type' => 'solid',
+			'read_more-border-color' => 'rgba(0, 0, 0, 0)',
+			'read_more-background-color' => 'rgba(0, 0, 0, 0)',
 		);
 		
 		$default_parts = Upfront_PostsLists_PostView::get_default_parts();
