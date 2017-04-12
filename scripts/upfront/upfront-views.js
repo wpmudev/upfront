@@ -6668,6 +6668,14 @@ define([
 
 				this.$el.show();
 
+				// Add margins to center lightbox properly considering the sidebar.
+				// This is added after showing the lightbox so the width and height is calculated properly.
+				var css = {};
+				// Lightbox width plus margin for #page from sidebar.
+				css['margin-left'] = -(parseInt(this.$el.width() / 2, 10) - parseInt($('#page').css('marginLeft'), 10) / 2);
+				css['margin-top'] = parseInt(-(this.$el.height() / 2), 10);
+				this.$el.css(css);
+
 				/** Because it is a lightbox, the following rendering specific function
 					should be applied on the modules once the contents of the lightbox show up
 				**/
@@ -6683,7 +6691,6 @@ define([
 			},
 			refresh_background: function () {
 				this.constructor.__super__.refresh_background.call(this);
-
 			},
 			update: function() {
 				this.constructor.__super__.update.call(this);
@@ -6753,15 +6760,12 @@ define([
 
 				var css = {
 						width: width || 225,
-						minHeight: parseInt(height, 10) || 225
+						height: parseInt(height, 10) || 225
 					};
-
-				css['margin-left'] = parseInt(-(width/2)+$('#sidebar-ui').width()/2, 10);
-				css['margin-top'] = parseInt(-(height/2), 10);
 
 				this.$el.find('> .upfront-region-wrapper > .upfront-modules_container').css( {
 					width: Math.floor(css.width/grid.column_width) * grid.column_width,
-					'minHeight': css.minHeight
+					'height': css.height
 				});
 				this.$el.css(css);
 			},
