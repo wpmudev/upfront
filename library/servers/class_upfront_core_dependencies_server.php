@@ -21,9 +21,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	public function dispatch_header_dependencies_output () {
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
 
-		if (Upfront_Behavior::compression()->has_experiments()) {
-			if (apply_filters('upfront-output-experimental-header-done', false, $deps)) return true;
-		}
+		if (apply_filters('upfront-output-dependencies-header-done', false, $deps)) return true;
 
 		$resources = $deps->get_header_styles();
 		if (!empty($resources) && is_array($resources)) foreach($resources as $resource) {

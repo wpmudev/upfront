@@ -69,7 +69,11 @@ class Upfront_DependencyCache_Server implements IUpfront_Server {
 	 * @return int Time during which cache is valid, in seconds
 	 */
 	public function get_cache_ttl () {
-		return HOUR_IN_SECONDS;
+		$ttl = Upfront_Behavior::compression()->get_option('freeze_time', DAY_IN_SECONDS);
+		return !empty($ttl) && is_numeric($ttl)
+			? (int)$ttl
+			: DAY_IN_SECONDS
+		;
 	}
 
 	/**
@@ -84,6 +88,26 @@ class Upfront_DependencyCache_Server implements IUpfront_Server {
 		return false;
 	}
 
+	private function _output_styles ($resources) {
+		if (empty($resources) || !is_array($resources)) return true;
+		$cache_url = $this->get_cache_url($resources);
+		if (!empty($cache_url)) {
+			echo '<link type="text/css" rel="stylesheet" href="' . esc_url($cache_url) . '" />';
+			return true;
+		}
+		return false;
+	}
+
+	private function _output_scripts ($resources) {
+		if (empty($resources) || !is_array($resources)) return true;
+		$cache_url = $this->get_cache_url($resources);
+		if (!empty($cache_url)) {
+			echo '<script type="text/javascript" src="' . esc_url($cache_url) . '"></script>';
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 * Handles header dependencies loading output
 	 *
@@ -93,19 +117,8 @@ class Upfront_DependencyCache_Server implements IUpfront_Server {
 	 * @return bool
 	 */
 	public function handle_cached_header_output ($hndl, $deps) {
-		$resources = $deps->get_header_styles();
-		if (!empty($resources)) {
-			$cache_url = $this->get_cache_url($resources);
-			if (!empty($cache_url)) echo '<link type="text/css" rel="stylesheet" href="' . esc_url($cache_url) . '" />';
-			else return false;
-		}
-
-		$resources = $deps->get_header_scripts();
-		if (!empty($resources)) {
-			$cache_url = $this->get_cache_url($resources);
-			if (!empty($cache_url)) echo '<script type="text/javascript" src="' . esc_url($cache_url) . '"></script>';
-			else return false;
-		}
+		if (!$this->_output_styles($deps->get_header_styles())) return false;
+		if (!$this->_output_scripts($deps->get_header_scripts())) return false;
 
 		return true;
 	}
@@ -627,7 +640,7 @@ class Upfront_DependencyCache_Server implements IUpfront_Server {
 		// Main dependencies enqueueing replacement (styles, fonts, scripts)
 		add_filter('upfront-output-experimental-done', array($this, 'handle_cached_output'), 10, 2);
 		// Header dependencies replacement (styles, scripts)
-		add_filter('upfront-output-experimental-header-done', array($this, 'handle_cached_header_output'), 10, 2);
+		add_filter('upfront-output-dependencies-header-done', array($this, 'handle_cached_header_output'), 10, 2);
 		// Element dependencies (styles, scripts)
 		add_filter('upfront-dependencies-enqueueing_url', array($this, 'handle_cached_eldeps_output'), 10, 3);
 
@@ -640,4 +653,3 @@ class Upfront_DependencyCache_Server implements IUpfront_Server {
 		$this->_is_running = true;
 	}
 }
-Upfront_DependencyCache_Server::serve();

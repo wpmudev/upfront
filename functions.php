@@ -99,6 +99,10 @@ class Upfront {
 	 * Add basic set of hooks
 	 */
 	private function _add_hooks () {
+		if (Upfront_Behavior::compression()->get_option('freeze')) {
+			Upfront_DependencyCache_Server::serve();
+		}
+
 		add_filter('body_class', array($this, 'inject_grid_scope_class'));
 		add_action('wp_head', array($this, "inject_global_dependencies"), 0);
 		add_action('wp_footer', array($this, "inject_upfront_dependencies"), 99);
