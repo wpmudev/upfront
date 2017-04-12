@@ -527,6 +527,7 @@ div.upfront-region-lightbox, div.upfront-region-side-lightbox,
   max-height: 80vh;
   max-width: 80%;
 }
+.upfront-region-side-lightbox .upfront-region-wrapper,
 .upfront-region-lightbox .upfront-region-wrapper {
   overflow: auto;
   max-height: 100%;
