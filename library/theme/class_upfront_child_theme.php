@@ -74,7 +74,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_get_text_presets', array($this, 'getTextPresets'), 10, 2);
 		add_filter('upfront_get_widget_presets', array($this, 'getWidgetPresets'), 10, 2);
 		add_filter('upfront_get_posts_presets', array($this, 'getPostsPresets'), 10, 2);
-		add_filter('upfront_get_posts_presets', array($this, 'getPostsListsPresets'), 10, 2);
+		add_filter('upfront_get_postslists_presets', array($this, 'getPostsListsPresets'), 10, 2);
 		add_filter('upfront_get_thispost_presets', array($this, 'getPostPresets'), 10, 2);
 		add_filter('upfront_get_ucomment_presets', array($this, 'getCommentPresets'), 10, 2);
 		add_filter('upfront_get_login_presets', array($this, 'getLoginPresets'), 10, 2);
@@ -694,6 +694,12 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		$as_array = false;
 		if (isset($args['as_array']) && $args['as_array']) {
 			$as_array = true;
+		}
+
+		// If no presets, use preset defaults to prevent empty objects
+		if(empty($presets)) {
+			$new_presets[] = Upfront_PostsLists_Presets_Server::get_instance()->get_preset_defaults();
+			$presets = json_encode($new_presets);
 		}
 
 		return json_decode($presets, $as_array);
