@@ -12,7 +12,7 @@ var l10n = Upfront.Settings.l10n.postslist_element;
 var $template = $(tpl);
 
 Upfront.Util.post({
-	"action": "upfront_postslists-data"
+	"action": "upfront_postslist-data"
 }).success(function (initialData) {
 	Panels._initial = initialData.data;
 }); // End response wrap
