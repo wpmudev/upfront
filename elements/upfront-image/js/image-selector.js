@@ -183,7 +183,8 @@ define([
 			var placeholder = $('#upront-image-placeholder'),
 				uploading = $('#upfront-image-uploading'),
 				phcss = {},
-				left = $('#sidebar-ui').width(),
+				// Compensate positioning for sidebar.
+				left = parseInt($('#page').css('marginLeft'), 10),
 				style = {
 					left: left,
 					width: $(window).width() - left,
