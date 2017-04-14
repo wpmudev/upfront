@@ -277,7 +277,7 @@ define([
 			var appearance = new LoginSettings_Field_DisplayAppearance({model: this.model}),
 				behavior = new LoginSettings_Field_DisplayBehavior({model: this.model}),
 				// trigger = new LoginSettings_Field_DisplayTrigger({model: this.model}),
-				me = this,
+				me = this
 			;
 
 			this.preview_check_field = new Upfront.Views.Editor.Field.Toggle({
