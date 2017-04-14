@@ -531,7 +531,9 @@
                 this.$spectrum.on("reflow.spectrum move.spectrum change", this.l10n_update);
 
                 this.$(".sp-container").append("<div class='color_picker_rgb_container'></div>");
+				this.$(".sp-replacer").append("<div class='color_picker_rgb_preview'></div>");
                 this.update_input_border_color(this.get_saved_value());
+				this.update_color_picker_preview(this.get_saved_value());
                 this.$(".sp-container").data("field_color", this);
                 this.$(".sp-container").data("$spectrum", this.$spectrum );
                 this.$spectrum.on("change.spectrum", function(e) {
@@ -569,6 +571,7 @@
                         'border-right-color': rgb
                     });
                     this.update_input_border_color( color.toRgbString() );
+					this.update_color_picker_preview( color.toRgbString() );
                     this.update_input_val( rgb );
                     this.rgba = _.extend(this.rgba, color.toRgb());
                     this.render_sidebar_rgba(this.rgba);
@@ -587,7 +590,7 @@
             on_spectrum_show: function(color){
 				
 				Upfront.Events.trigger("color:spectrum:show");
-				
+
                 var $input = $(".sp-input"),
                     input_val = $input.val();
 
@@ -596,6 +599,7 @@
                     var rgb = color.toRgbString();
                     this.rgba = _.extend(this.rgba, color.toRgb());
                     this.update_input_border_color( color.toRgbString() );
+					this.update_color_picker_preview( color.toRgbString() );
                     this.render_sidebar_rgba(this.rgba);
                     this.update_input_val( rgb );
                 }
@@ -672,8 +676,10 @@
                 if(this.options.spectrum && typeof this.options.spectrum.change === "function")
                     this.options.spectrum.change(this.color);// Explicitly cancel
 
-                if( this.color && this.color.toRgbString )
+                if( this.color && this.color.toRgbString ) {
                     this.update_input_border_color(this.color.toRgbString); // Set input color
+					this.update_color_picker_preview( this.color.toRgbString() );
+                }
             },
             update_palette: function () {
                 if (this.$spectrum && this.$spectrum.spectrum) {
@@ -692,6 +698,7 @@
                     'name': this.get_field_name(),
                     'value': this.get_saved_value()
                 };
+
                 return ' <input ' + this.get_field_attr_html(attr) + ' /> ' + (this.options.suffix ? this.options.suffix : '');
             },
             get_saved_value: function () {
@@ -739,6 +746,15 @@
                     self.set_to_blank();
                 });
             },
+			update_color_picker_preview: function(color) {
+				// If hex convert to rgb string
+            	if(this.is_hex(color)) {
+					var color_object = tinycolor(color);
+					color = color_object.toRgbString();
+				}
+
+				this.$(".color_picker_rgb_preview").html(color);
+			},
             rgba_sidebar_changed : function(e){
                 var $el = $(e.target),
                     type = $el.data("type"),
@@ -750,6 +766,7 @@
                 // Set the new color
                 this.$spectrum.spectrum("set", color.toRgbString());
                 this.update_input_border_color( color.toRgbString() );
+				this.update_color_picker_preview( color.toRgbString() );
                 this.update_input_val( color.toRgbString() );
                 this.render_sidebar_rgba(  color.toRgb() );
                 // Trigger move event
@@ -776,6 +793,7 @@
                 }
                 //Update preview color
                 this.update_input_border_color(color.toRgbString);
+				this.update_color_picker_preview(color.toRgbString());
             },
             set_to_blank : function(){
                 var blank_color = 'rgba(0, 0, 0, ' + ( _.isUndefined( this.options.blank_alpha ) ? 1 : this.options.blank_alpha ) + ')',
@@ -784,6 +802,7 @@
                 this.rgba = {r: 0, g: 0, b:0, a: 0};
                 this.$spectrum.spectrum("set", color.toRgbString() );
                 this.update_input_border_color( blank_color );
+				this.update_color_picker_preview( blank_color );
                 this.update_input_val( "#000000" );
                 this.render_sidebar_rgba(  this.rgba );
 
