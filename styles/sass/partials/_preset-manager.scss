@@ -12,7 +12,7 @@ div.preset-manager-panel .static_preset input,
 div.preset-manager-panel .delete_preset input,
 #settings .delete-menu-button input {
 	font-size: 12px;
-	padding: 0px 5px 2px;
+	padding: 0 5px 2px;
 	border-radius: 5px;
 }
 
@@ -51,7 +51,6 @@ div.preset-manager-panel .state_settings_button.active input {
 
 div.preset-manager-panel div.preset_specific {
 	background: #fff;
-	padding-top: 10px;
 	padding: 0px;
 	position: relative;
 }
@@ -109,139 +108,6 @@ div.preset-manager-panel div.preset_specific .upfront-settings-item-content .upf
 	color: #2f475f;
 	margin-bottom: 5px;
 }
-div.preset-manager-panel div.preset_specific div.border_radius input,
-div.preset-manager-panel div.preset_specific div.inline-number input,
-div.preset-manager-panel div.preset_specific div.font input,
-div.preset-manager-panel div.preset_specific div.duration input
-{
-	width: 45px;
-	font-size: 12px;
-}
-div.preset-manager-panel .settings_module.corner_radius_settings_item {
-	padding-bottom: 11px;
-}
-div.preset-manager-panel div.preset_specific div.border_radius {
-	display: inline-block;
-	position: relative;
-	margin-top: 0px;
-}
-div.preset-manager-panel div.preset_specific div.border_radius label {
-	display: none;
-}
-div.preset-manager-panel div.preset_specific div.border_radius1 {
-	top: -6px;
-	padding: 7px 0px 0px 10px;
-	position: relative;
-	border-left: 2px solid #dae6f2;
-}
-div.preset-manager-panel div.preset_specific div.border_radius1 label {
-	position: absolute;
-	top: -20px;
-	width: 150px;
-}
-div.preset-manager-panel div.preset_specific div.border_radius2 {
-	left: 15px;
-	top: -6px;
-}
-div.preset-manager-panel div.preset_specific div.border_radius3 {
-	padding: 15px 0px 9px 10px;
-	position: relative;
-	border-left: 2px solid #dae6f2;
-	left: -147px;
-	top: 39px;
-	margin-bottom: 39px;
-}
-div.preset-manager-panel div.preset_specific div.border_radius4 {
-	left: -30px;
-	top: 39px;
-	position: relative;
-	margin-bottom: 10px;
-}
-div.preset-manager-panel div.border_radius_lock {
-	position: relative;
-	margin-top: -19px;
-	left: 85px;
-}
-div.preset-manager-panel div.radius-slider {
-	top: -11px;
-	padding-top: 10px;
-	padding-bottom: 17px;
-	position: relative;
-	border-left: 2px solid #dae6f2;
-	padding-left: 10px;
-	width: 130px;
-	float: left;
-}
-div.preset-manager-panel div.radius-slider .upfront-field-slider-value {
-	display: none;
-}
-div.preset-manager-panel div.border_radius_number, div.preset-manager-panel div.border_radius_number input {
-	width: 60px;
-	float: left;
-	position: relative;
-	margin-left: 15px;
-}
-div.preset-manager-panel div.preset_specific div.bg-color {
-	display: inline-block;
-	vertical-align: text-bottom;
-	margin-left: 70px;
-	margin-bottom: -2px;
-	position: relative;
-}
-div.preset-manager-panel div.preset_specific div.border-color {
-	margin-left: 28px;
-}
-div.preset-manager-panel div.preset_specific div.font {
-	margin-top: 52px;
-	display: inline-block;
-	float: left;
-	clear: left;
-	vertical-align: text-bottom;
-}
-div.preset-manager-panel div.preset_specific div.font.hover {
-	margin-top: -21px;
-}
-div.preset-manager-panel div.preset_specific div.font_face div.upfront-field-select {
-	width: 110px !important;
-	margin-bottom: -2px;
-	margin-left:20px;
-}
-div.preset-manager-panel div.preset_specific div.font_color {
-	float: right;
-	margin-top: -30px;
-}
-div.preset-manager-panel div.preset_specific div.duration {
-	margin-top: 5px;
-}
-div.preset-manager-panel div.preset_specific div.transition{
-	margin-top: -27px;
-	margin-left: 80px;
-	width: 135px;
-}
-div.preset-manager-panel div.preset_specific div.font_face > label,
-div.preset-manager-panel div.preset_specific div.transition label {
-	font-size: 12px;
-	display: inline;
-	vertical-align: top;
-}
-div.preset-manager-panel div.preset_specific div.transition > label {
-	margin-left:-30px;
-	margin-right: 10px;
-}
-div.preset-manager-panel div.preset_specific div.transition.element-toggled > label {
-	margin-left:-20px;
-	margin-right: 30px;
-}
-div.preset-manager-panel div.preset_specific div.transition .upfront-field-select-single {
-	margin-left: 10px;
-}
-div.preset-manager-panel div.preset_specific div.font_face > label {
-	position: relative;
-	left: 6px;
-}
-div.preset-manager-panel div.or_divider div.upfront-settings-item-title {
-	text-align: center;
-}
 div.preset-manager-panel div.or_divider div.upfront-settings-item-title > span {
 	display: inline-block;
 	background-color:#84a8ce;
@@ -257,37 +123,6 @@ div.preset-manager-panel div.or_divider div.upfront-settings-item-title > span {
 div.preset-manager-panel div.upfront-settings-common_panel {
 	padding-bottom: 15px;
 }
-div.preset-manager-panel div.upfront-settings-padding_panel {
-	border-bottom: 1px solid #a3bfd9;
-	padding-bottom: 0;
-}
-div.preset-manager-panel div.border_radius_lock input[type=checkbox] {
-	position: relative;
-	left: 36px;
-	top: 6px;
-}
-div.preset-manager-panel div.border_radius_lock input[type=checkbox]:checked {
-	float:none !important;
-	left: 38px;
-	top: 7px;
-}
-div.preset-manager-panel div.border_radius_lock input[type=checkbox]:after {
-	content: '';
-	display: block;
-	height: 15px;
-	width: 15px;
-	background-image: url('../img/uf-core-el-sprite.png');
-	background-image: url('../img/uf-core-el-sprite.svg'), none;
-	background-position: -661px -172px;
-	background-color: rgb(255, 255, 255);
-	left: -3px;
-	top: -3px;
-	position: relative;
-}
-div.preset-manager-panel div.border_radius_lock input[type=checkbox]:checked:after {
-	background-position: -661px -140px;
-}
-
 #settings .preset_specific .upfront-settings-item-content .upfront-settings-item-content {
 	margin: 0;
 	padding: 0;
@@ -296,169 +131,17 @@ div.preset-manager-panel div.border_radius_lock input[type=checkbox]:checked:aft
 	display: inline-block;
 	vertical-align: bottom;
 }
-.font_settings_item .font-size {
-	width: 70px;
-}
-.font_settings_item .font-size input {
-	width: 50px;
-}
-.font_settings_item .font-size label {
-	white-space: nowrap;
-}
-.font_settings_item .font-face {
-	width: 125px;
-}
-.font_settings_item .font-face .upfront-field-select {
-	vertical-align: bottom;
-}
-.font_settings_item .font-color {
-}
-.select-preset-field .upfront-field-select {
-	width: 150px;
-}
-.colors_settings_item .upfront-settings-item-title span {
-	padding: 0;
-	margin: 0;
-}
-.colors_settings_item .upfront-field-wrap-color {
-	float: left;
-	clear: none;
-	margin-right: 10px;
-}
 .state_settings > .upfront-settings-item-content > div {
 	margin-top: 20px;
-}
-div.preset-manager-panel div.borderWidth, div.preset-manager-panel div.borderType, div.preset-manager-panel div.borderColor {
-	display: inline-block;
-	margin-top: 5px;
-}
-div.preset-manager-panel div.borderWidth {
-	padding: 5px 0px 5px 10px;
-	position: relative;
-	top: 0px;
-	border-left: 2px solid #dae6f2;
-}
-div.preset-manager-panel div.borderWidth input{
-	width: 40px;
-}
-div.preset-manager-panel div.borderWidth label {
-	display: none;
-}
-div.preset-manager-panel div.borderType {
-	width: 70px;
-	margin-left: 13px;
-	margin-right: 14px;
-}
-div.preset-manager-panel div.borderType .upfront-field-select {
-	position: relative;
-	top: 7px;
-}
-div.preset-manager-panel div.borderColor {
-	margin-top: -32px;
-}
-div.preset-manager-panel .backgroundColor {
-	padding-top: 8px;
-}
-div.preset-manager-panel .backgroundColor .sp-replacer  {
-	margin-top: -50px;
-	margin-left: 130px;
 }
 div.preset-manager-panel .upfront-field-label-inline {
 	font-size: 11px;
 	display: block;
 	font-family: verdana, sans-serif;
 }
-div.preset-manager-panel .fontSize, div.preset-manager-panel .lineHeight, div.preset-manager-panel .fontColor {
-	display: inline-block;
-	margin-top: 0px;
-	margin-right: 12px;
-}
-
-div.preset-manager-panel .fontSize,
-div.preset-manager-panel .fontSize input,
-div.preset-manager-panel .lineHeight input {
-	font-size: 12px;
-}
-
-div.preset-manager-panel .fontSize input {
-	width: 50px;
-}
-div.preset-manager-panel .lineHeight input {
-	width: 60px;
-}
-div.preset-manager-panel div.fontColor {
-	margin-top: -30px;
-	color: #000;
-	margin-right: 0px;
-}
-div.preset-manager-panel div.fontColor label,
-div.preset-manager-panel div.borderColor label {
-	position: relative;
-	top: 25px !important;
-	left: 25px;
-	color: #7d99b6;
-}
 div.preset-manager-panel div.preset-separator {
 	border-bottom: 1px solid #e1edf8;
 	margin-top: 0px;
-}
-div.preset-manager-panel .separator-background {
-	position: relative;
-	top: -15px;
-}
-div.preset-manager-panel .separator-corners {
-	position: relative;
-	top: 0px;
-}
-div.preset-manager-panel .separator-corners-hov {
-	position: relative;
-	top: 2px;
-}
-div.preset-manager-panel .useRadius {
-	padding-top: 15px;
-}
-div.preset-manager-panel .typography-heading {
-	margin-top: 0px;
-}
-div.preset-manager-panel .selectElement {
-	width: 225px;
-}
-div.preset-manager-panel .selectElement.element-toggled {
-	margin-top: 5px;
-}
-div.preset-manager-panel .useBorder {
-	margin-top: 15px;
-}
-div.preset-manager-panel .useBorderSeparator {
-	top: 8px;
-	position: relative;
-}
-div.preset-manager-panel .transition .upfront-field-select {
-	margin-top: -24px;
-}
-div.preset-manager-panel .transition .upfront-field-select-single .upfront-field-select-option-selected label:before {
-	left: 12px;
-	position: relative;
-}
-div.preset-manager-panel .backgroundcolor-hover, div.preset-manager-panel .typography-hover {
-	padding-top: 11px;
-}
-div.preset-manager-panel .module-color-field {
-	padding-top: 5px;
-	height: 25px;
-}
-div.preset-manager-panel .module-color-field .upfront-field-label-inline {
-	font-size: 11px;
-	display: inline;
-	font-family: verdana, sans-serif;
-	text-align: left;
-	color: #7d99b3;
-	position: relative;
-	top: -5px;
-	padding-left: 5px;
-}
-div.preset-manager-panel .module-color-field .sp-replacer {
-	float: left;
 }
 div.preset-manager-panel .color-module.two {
 	width: 45%;
@@ -469,65 +152,15 @@ div.preset-manager-panel .color-module.single {
 	width: 100%;
 	margin-top: -3px;
 }
-div.preset-manager-panel .checkbox-title span,
-#element-settings-sidebar .checkbox-title span {
-	text-transform: uppercase;
-	font-weight: bold;
-	margin: 0px;
-}
 div.preset-manager-panel .settings_module {
 	border-bottom: 1px solid #e5ecf4;
 	margin: 0px -15px;
 	padding-left: 15px;
 	padding-bottom: 15px;
 }
-div.preset-manager-panel .colors_settings_item {
-	padding-bottom: 12px;
-}
-div.preset-manager-panel .image_style {
-	width: 215px;
-}
 div.preset-manager-panel .selectbox_settings_item .upfront-field-label {
 	font-weight: normal;
 	margin-top: 10px;
-}
-div.preset-manager-panel .colors_settings_item, 
-div.preset-manager-panel .selectbox_settings_item, 
-div.preset-manager-panel .typography_settings_item, 
-div.preset-manager-panel .hov_animation_settings_item {
-	padding-top: 15px;
-}
-div.preset-manager-panel .checkbox_settings_item {
-	padding-bottom: 7px;
-}
-div.preset-manager-panel .typography_settings_item .element-toggled.selectElement,
-div.preset-manager-panel .typography_settings_item .element-toggled.typeFace, 
-div.preset-manager-panel .typography_settings_item .element-toggled.weightStyle,
-div.preset-manager-panel .typography_settings_item .element-toggled.fontSize,
-div.preset-manager-panel .hov_animation_settings_item .element-toggled.duration,
-div.preset-manager-panel .colors_settings_item .element-toggled.single,
-div.preset-manager-panel .colors_settings_item .element-toggled.two:nth-child(even) {
-	border-left: 2px solid #dae6f2;
-	padding: 5px 0px 5px 10px;
-}
-div.preset-manager-panel .typography_settings_item .element-toggled.lineHeight,
-div.preset-manager-panel .typography_settings_item .element-toggled.fontColor,
-div.preset-manager-panel .typography_settings_item .element-toggled.selectElement,
-div.preset-manager-panel .typography_settings_item .element-toggled.typeFace, 
-div.preset-manager-panel .typography_settings_item .element-toggled.weightStyle,
-div.preset-manager-panel .typography_settings_item .element-toggled.fontSize,
-div.preset-manager-panel .hov_animation_settings_item .element-toggled.duration,
-div.preset-manager-panel .colors_settings_item .element-toggled.single,
-div.preset-manager-panel .colors_settings_item .element-toggled.two:nth-child(even),
-div.preset-manager-panel .colors_settings_item .element-toggled.two  {
-	top: 5px;
-	position: relative;
-}
-div.preset-manager-panel .typography_settings_item .element-toggled.fontColor {
-	top: 11px;
-}
-div.preset-manager-panel .typography_settings_item .element-toggled .upfront-field-label-inline {
-	margin-top: -10px;
 }
 div.preset-manager-panel .colors_settings_item .element-toggled.single,
 div.preset-manager-panel .colors_settings_item .element-toggled.two {
@@ -537,58 +170,6 @@ div.preset-manager-panel .colors_settings_item .element-toggled.two {
 div.preset-manager-panel .colors_settings_item .element-toggled.two:nth-child(even) { 
 	clear: left;
 }
-div.preset-manager-panel .typography_settings_item .element-toggled.typeFace .chosen-container, 
-div.preset-manager-panel .typography_settings_item .element-toggled.weightStyle .chosen-container {
-	width: 213px !important;
-}
-div.preset-manager-panel .typography_settings_item .upfront-settings-item-content .upfront-field-label-inline {
-	position: relative;
-	top: 5px;
-	color: #7d99b6;
-}
-div.preset-manager-panel .typography_settings_item .upfront-settings-item-content {
-	margin-top: -6px !important;
-}
-div.preset-manager-panel .typography_settings_item .useTypography label {
-	color: #2f475f;
-	top: 0px;
-	margin-top: 6px;
-}
-div.preset-manager-panel .typography_settings_item .upfront-settings-item-title {
-	margin-top: -3px;
-}
-div.preset-manager-panel .useTypography .upfront-field-multiple-selected {
-	margin-bottom: 5px;
-}
-div.preset-manager-panel .useColors .upfront-field-multiple-selected {
-	margin-bottom: 8px;
-}
-div.preset-manager-panel .border-with-fields {
-	padding-top: 10px !important;
-}
-div.preset-manager-panel .border_selectElement {
-	width: 145px;
-	z-index: 9;
-	position: relative;
-	margin-bottom: -34px;
-	margin-left: 80px;
-	margin-top: 10px;
-}
 div.preset-manager-panel .upfront-settings-item-title {
 	line-height: 16px;
-}
-
-div.preset-manager-panel .checkbox-module,
-div.preset-manager-panel .tooltip-icon {
-	display: inline-block;
-}
-
-div.preset-manager-panel .checkbox-tooltip {
-	position: relative;
-	top: 4px;
-	left: 8px;
-	opacity: .8;
-	width: 16px;
-	height: 14px;
-	background: url(../img/uf-core-el-sprite.svg) no-repeat -484px -300px;
 }
