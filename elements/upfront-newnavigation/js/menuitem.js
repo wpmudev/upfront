@@ -50,14 +50,15 @@ return (function ($) {
 						new Upfront.Views.ContextMenuItem({
 							get_label: function() {
 								var linktype = me.model.link.type;
+								var content_l10n = Upfront.Settings.l10n.global.content;
 								if(linktype == 'lightbox')
-									return 'Open Lightbox';
+									return content_l10n.open_lightbox;
 								else if(linktype == 'anchor')
-									return 'Scroll to Anchor';
+									return content_l10n.scroll_to_anchor;
 								else if(linktype == 'entry')
-									return 'Visit Post/Page';
+									return content_l10n.go_to_post;
 								else
-									return 'Visit Link';
+									return content_l10n.open_ext_link;
 							},
 							action: function() {
 								Upfront.Util.visitLink(me.model.link.url);
