@@ -4,7 +4,7 @@ define(function() {
 
 		initialize: function(options) {
 			this.options = options || {};
-			this.label = this.options.state;
+			this.label = this.options.state.toUpperCase();
 			this.options.compact = true;
 			this.$el.addClass('state_settings_button_' + this.options.state.toLowerCase());
 		},

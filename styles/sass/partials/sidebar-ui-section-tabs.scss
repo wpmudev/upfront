@@ -12,10 +12,12 @@
 #sidebar-ui .expanded ul.sidebar-panel-tabspane-hidden {
 	display: none;
 }
-.sidebar-panel-tabspane li:last-of-type {
+.sidebar-panel-tabspane li:last-of-type,
+.state_settings_button:last-of-type {
 	margin-right: 0;
 }
-.sidebar-panel-tabspane li {
+.sidebar-panel-tabspane li,
+.state_settings_button {
 	display: inline-block;
 	margin-left: 5px;
 	margin-right: 25px;
@@ -23,6 +25,11 @@
 	cursor: pointer;
 	font-size: 9px;
 	margin-bottom: 0;
+	letter-spacing: 0.5px;
+	line-height: 27px;
+	height: 27px;
+}
+.state_settings_button input {
 	letter-spacing: 0.5px;
 	line-height: 27px;
 	height: 27px;
@@ -41,7 +48,8 @@
 .panel-setting-theme-colors-shades-range-labels li:last-child {
 	float: right;
 }
-.sidebar-panel-tabspane li.active{
+.sidebar-panel-tabspane li.active,
+.state_settings_button.active {
 	color:#212121;
 	font-weight: bold;
 	border-bottom: 2px solid black;

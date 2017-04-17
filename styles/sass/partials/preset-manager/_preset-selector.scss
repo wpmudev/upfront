@@ -32,10 +32,18 @@ div.preset-manager-panel .delete_preset input,
 
 div.preset-manager-panel .delete_preset input,
 #settings .delete-menu-button input {
-	background-color: #d86c6b !important;
-	color:#fff;
+	background-color: rgb(144, 144, 144) !important;
+	color: #fff;
+	text-transform: uppercase;
 	float: right;
 	margin-top: -25px;
+}
+
+div.preset-manager-panel .delete_preset input,
+#settings .delete-menu-button input {
+	font-size: 12px;
+	padding: 0 5px 2px;
+	border-radius: 25px;
 }
 
 div.preset-manager-panel .upfront-preset-add {
@@ -62,8 +70,6 @@ div.preset-manager-panel div.select-preset-field {
 div.preset-manager-panel div.select-preset-field label,
 #settings .select-menu-field label {
 	font-weight: normal;
-	color: #7d99b3;
-	font-family: Tahoma;
 	margin-bottom: 3px;
 	padding-left: 2px;
 }
