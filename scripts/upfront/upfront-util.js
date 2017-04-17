@@ -1130,6 +1130,8 @@ define([
 
 				Upfront.Events.off("command:layout:save_success", clear);
 				Upfront.Events.on("command:layout:save_success", clear);
+
+				Cache.Request.listen();
 			},
 			set_data = function () {
 				_layout_data = Upfront.Util.model_to_json(_layout);

@@ -5,21 +5,54 @@ define([
 
 	/**
 	 * List of cacheable AJAX actions
-	 * @var {Array}
+	 *
+	 * @var {Object}
 	 */
-	var WHITELISTED_ACTIONS = [
-		'__whitelisted__',
-		'upfront_list_google_fonts',
-		'upfront-wp-model',
-		'upfront-edia-get_labels',
-		'upfront-post_data-post-specific',
-		'upfront_posts-load',
-		'upfront_posts-data',
-		'upfront_new_menu_from_slug',
-		'upfront_new_load_menu_array',
-		'upfront-media-list_media',
-		'upfront_post-data-load',
-	];
+	var WHITELISTED_ACTIONS = {
+		'__whitelisted__': 'test',
+		'upfront_list_google_fonts': 'fonts',
+		'upfront-wp-model': 'wp',
+		'upfront-media-get_labels': 'media',
+		'upfront-post_data-post-specific': 'post',
+		'upfront_posts-load': 'post',
+		'upfront_posts-data': 'post',
+		'upfront_new_menu_from_slug': 'menu',
+		'upfront_new_load_menu_array': 'menu',
+		'upfront-media-list_media': 'media',
+		'upfront_post-data-load': 'post'
+	};
+
+	/**
+	 * List of actions that will be trapped
+	 *
+	 * Used for cache purgning on certain AJAX actions
+	 *
+	 * @var {Object}
+	 */
+	var TRAPPED_ACTIONS = {
+		'__trapped__': 'test',
+
+		'upfront_new_create_menu': 'menu',
+		'upfront_new_delete_menu': 'menu',
+		'upfront_new_update_menu_order': 'menu',
+		'upfront_new_delete_menu_item': 'menu',
+		'upfront_new_update_menu_item': 'menu',
+		'upfront_update_single_menu_item': 'menu',
+
+		'upfront-media-add_label': 'media',
+		'upfront-media-remove_item': 'media',
+		'upfront-media-remove_theme_item': 'media',
+		'upfront-media-update_media_item': 'media',
+		'upfront-media-update_media_item': 'media',
+		'upfront-media-remove_item': 'media',
+		'upfront-media-embed': 'media',
+		'upfront-media-add_label': 'media',
+		'upfront-media-upload-theme-image': 'media',
+		'upfront-media-upload': 'media',
+		'upfront-save-video-info': 'media',
+		'upfront-media-associate_label': 'media',
+		'upfront-media-disassociate_label': 'media'
+	};
 
 	var Request = {
 
@@ -67,7 +100,13 @@ define([
 		 */
 		get_response: function (request, data_type) {
 			var action = (request || {}).action || false;
-			if (!action || !Request.is_whitelisted_action(action)) return Request.send(request, data_type);
+			if (!action) return Request.send(request, data_type);
+
+			if (Request.is_trapped_action(action)) {
+				Upfront.Events.trigger('cache:request:action', action);
+			}
+
+			if (!Request.is_whitelisted_action(action)) return Request.send(request, data_type);
 
 			var cache_key = Storage.get_valid_key(request),
 				cached = Request.get_cached(request),
@@ -113,9 +152,9 @@ define([
 			if (!action || !Request.is_whitelisted_action(action)) return false;
 
 			var key = Storage.get_valid_key(payload);
-			if (!Storage.has(key, Request.BUCKET)) return false;
+			if (!Storage.has(key, this.get_bucket(action))) return false;
 
-			return Storage.get(key, Request.BUCKET);
+			return Storage.get(key, this.get_bucket(action));
 		},
 
 		/**
@@ -132,7 +171,7 @@ define([
 			var action = (payload || {}).action || false;
 			if (!action || !Request.is_whitelisted_action(action)) return false;
 
-			return Storage.set(payload, value, Request.BUCKET);
+			return Storage.set(payload, value, this.get_bucket(action));
 		},
 
 		/**
@@ -148,7 +187,7 @@ define([
 			var action = (payload || {}).action || false;
 			if (!action || !Request.is_whitelisted_action(action)) return false;
 
-			return Storage.unset(payload, Request.BUCKET);
+			return Storage.unset(payload, this.get_bucket(action));
 		},
 
 		/**
@@ -157,7 +196,22 @@ define([
 		 * @return {Boolean} Status
 		 */
 		purge: function () {
-			return Storage.purge_bucket(Request.BUCKET);
+			var status = true;
+			_.each(Request.get_buckets(), function (bucket) {
+				if (!Storage.purge_bucket(bucket)) status = false;
+			});
+			return status;
+		},
+
+		/**
+		 * Purges specific bucket shard
+		 *
+		 * @param {String} action Action to clear
+		 *
+		 * @return {Boolean} Status
+		 */
+		purge_bucket: function (action) {
+			return Storage.purge_bucket(Request.get_bucket(action));
 		},
 
 		/**
@@ -168,7 +222,76 @@ define([
 		 * @return {Boolean}
 		 */
 		is_whitelisted_action: function (action) {
-			return WHITELISTED_ACTIONS.indexOf(action) >= 0;
+			return _(WHITELISTED_ACTIONS).keys().indexOf(action) >= 0;
+		},
+
+		/**
+		 * Checks if a given action is to be trapped
+		 *
+		 * @param {String} action Action to check
+		 *
+		 * @return {Boolean}
+		 */
+		is_trapped_action: function (action) {
+			return _(TRAPPED_ACTIONS).keys().indexOf(action) >= 0;
+		},
+
+		/**
+		 * Gets cache bucket shard
+		 *
+		 * @param {String} action Action to check
+		 *
+		 * @return {String|Boolean} Cache bucket shard or (bool)false on failure
+		 */
+		get_shard: function (action) {
+			return WHITELISTED_ACTIONS[action] || TRAPPED_ACTIONS[action];
+		},
+
+		/**
+		 * Gets all known cache bucket shards
+		 *
+		 * @return {Array} List of known bucket shards
+		 */
+		get_shards: function () {
+			return _.uniq(_(WHITELISTED_ACTIONS).values());
+		},
+
+		/**
+		 * Gets sharded bucket name
+		 *
+		 * @param {String} action Action to get a shard from
+		 *
+		 * @return {String} Proper bucket name
+		 */
+		get_bucket: function (action) {
+			var shard = this.get_shard(action) || 'general';
+			return this.get_sharded_bucket(shard);
+		},
+
+		/**
+		 * Gets sharded bucket name
+		 *
+		 * @param {String} shard Shard suffix
+		 *
+		 * @return {String} Proper bucket name
+		 */
+		get_sharded_bucket: function (shard) {
+			shard = shard || 'general';
+			return Request.BUCKET + '-' + shard;
+		},
+
+		/**
+		 * Gets all known bucket shards
+		 *
+		 * @return {Array} List of known bucket shards as strings
+		 */
+		get_buckets: function () {
+			var buckets = [];
+			_.each(Request.get_shards(), function (shard) {
+				buckets.push(Request.get_sharded_bucket(shard));
+			});
+			buckets.push(this.get_sharded_bucket('general'));
+			return buckets;
 		},
 
 		/**
@@ -179,9 +302,7 @@ define([
 		listen: function () {
 			Request.stop_listening();
 
-			Upfront.Events.on("menu_element:menu_deleted", Request.purge);
-			Upfront.Events.on("menu_element:menu_created", Request.purge);
-			Upfront.Events.on("menu_element:edit", Request.purge);
+			Upfront.Events.on('cache:request:action', this.purge_bucket, this);
 
 			return true;
 		},
@@ -192,12 +313,9 @@ define([
 		 * @return {Boolean} Status
 		 */
 		stop_listening: function () {
-			Storage.purge_bucket(Request.BUCKET);
+			//Storage.purge_bucket(Request.BUCKET);
 
-			Upfront.Events.off("menu_element:menu_deleted", Request.purge);
-			Upfront.Events.off("menu_element:menu_created", Request.purge);
-			Upfront.Events.off("menu_element:edit", Request.purge);
-
+			Upfront.Events.off('cache:request:action', this.purge_bucket);
 
 			return false;
 		}

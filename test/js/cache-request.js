@@ -45,7 +45,28 @@ describe('Cache', function () {
 			global.window = {};
 			global.Upfront = {
 				Settings: {ajax_url: ''},
-				Util: { log: function () {} }
+				Util: { log: function () {} },
+				Events: {
+					on: function (nme, cback) {
+						this._queue = this._queue || {};
+						this._queue[nme] = this._queue[nme] || [];
+						this._queue[nme].push(cback);
+					},
+					off: function (nme, cback) {
+						this._queue = this._queue || {};
+						this._queue[nme] = this._queue[nme] || [];
+						var idx = this._queue[nme].indexOf(cback);
+						if (idx < 0) return false;
+						delete this._queue[nme][idx];
+					},
+					trigger: function (nme) {
+						this._queue = this._queue || {};
+						this._queue[nme] = this._queue[nme] || [];
+						this._queue[nme].forEach(function (cb) {
+							cb.apply(this, []);
+						});
+					}
+				}
 			};
 			var Cache = {};
 			/**
@@ -157,6 +178,20 @@ describe('Cache', function () {
 					done();
 				});
 			});
+		});
+
+		it('should recognize trappable actions', function () {
+			assert.ok(Testable.Request.is_trapped_action('__trapped__'));
+		});
+
+		it('should fire event on trappable actions', function (done) {
+			Upfront.Events.on('cache:request:action', function () {
+				assert.ok(true);
+				done();
+			});
+			Testable.Request.listen();
+			Testable.Request.get_response({action: '__trapped__'});
+			Testable.Request.stop_listening();
 		});
 
 	});
