@@ -28,8 +28,10 @@ var rAFPollyfill = function(callback){
 
 
 define([
-	"pako"
-], function ( pako ){
+	"pako",
+	'scripts/upfront/upfront-cache'
+], function ( pako, Cache ){
+
 	var guessLinkType = function(url) {
 		if(!$.trim(url) || $.trim(url) == '#' || $.trim(url) === '') {
 			return 'unlink';
@@ -155,7 +157,8 @@ define([
 			// Was request made from the builder
 			request.isbuilder = Upfront.Application.is_builder();
 
-			return $.post(Upfront.Settings.ajax_url, request, function () {}, data_type ? data_type : "json");
+			//return $.post(Upfront.Settings.ajax_url, request, function () {}, data_type ? data_type : "json");
+			return Cache.Request.get_response(request, data_type);
 		},
 		is_able_to_debug: function(){
 			if( Upfront.Settings.Application.PERMS.DEBUG ) return true;
