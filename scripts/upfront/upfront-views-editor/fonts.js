@@ -157,7 +157,7 @@
             /*
              * Returns deferred that resolves to fonts collection containing all Google fonts.
              */
-            this.get_fonts = function() {
+            var get_fonts = function() {
                 if (fonts) return fonts;
 
                 var request = Upfront.Util.post({action: "upfront_list_google_fonts"});
@@ -173,6 +173,9 @@
 
                 return request;
             };
+
+						// Prevent multiple requests from being made while waiting for AJAX response.
+						this.get_fonts = _.debounce(get_fonts, 100);
         };
 
         var google_fonts_storage = new Google_Fonts_Storage();
