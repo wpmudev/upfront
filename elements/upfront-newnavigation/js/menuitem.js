@@ -540,7 +540,7 @@ return (function ($) {
 		},
 
 		closeTooltip: function(){
-			var tooltip = $('#unewnavigation-tooltip');
+			var tooltip = $('#upfront-inline-tooltip');
 			tooltip.hide().trigger('closed');
 			setTimeout(function(){
 				tooltip.remove();
