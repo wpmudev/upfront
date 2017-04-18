@@ -4,28 +4,51 @@ define([
 ], function (Storage) {
 
 	/**
-	 * List of cacheable AJAX actions
+	 * Hash of cacheable AJAX actions
+	 * and their corresponding bucket shards
+	 *
+	 * Used for request queueing and caching
 	 *
 	 * @var {Object}
 	 */
 	var WHITELISTED_ACTIONS = {
 		'__whitelisted__': 'test',
 		'upfront_list_google_fonts': 'fonts',
-		'upfront-wp-model': 'wp',
+
 		'upfront-media-get_labels': 'media',
+		'upfront-media-list_media': 'media',
+
 		'upfront-post_data-post-specific': 'post',
 		'upfront_posts-load': 'post',
+		'upfront_posts-terms': 'post',
 		'upfront_posts-data': 'post',
+		'upfront_posts-list_meta': 'post',
+		'upfront_post-data-load': 'post',
+		'upfront-wp-model': 'post',
+		'this_post-get_thumbnail': 'post',
+
 		'upfront_new_menu_from_slug': 'menu',
 		'upfront_new_load_menu_array': 'menu',
-		'upfront-media-list_media': 'media',
-		'upfront_post-data-load': 'post'
+
+		'upfront_get_breakpoints': 'responsive',
+
+		'upfront_get_post_image_variants': 'image',
+		'upfront-media-image_sizes': 'image',
+		'upfront-media-video_info': 'image',
+
+		'upfront_get_theme_color': 'theme-color',
+
+		'upfront-login_element-get_markup': 'elements',
+		'uwidget_load_widget_list': 'elements',
+		'uwidget_get_widget_markup': 'elements',
+		'uwidget_get_widget_admin_form': 'elements',
 	};
 
 	/**
-	 * List of actions that will be trapped
+	 * Hash of actions that will be trapped
+	 * and their corresponding bucket shards
 	 *
-	 * Used for cache purgning on certain AJAX actions
+	 * Used for cache purging on certain AJAX actions
 	 *
 	 * @var {Object}
 	 */
@@ -51,7 +74,24 @@ define([
 		'upfront-media-upload': 'media',
 		'upfront-save-video-info': 'media',
 		'upfront-media-associate_label': 'media',
-		'upfront-media-disassociate_label': 'media'
+		'upfront-media-disassociate_label': 'media',
+
+		'upfront-edit-publish': 'post',
+		'upfront-edit-draft': 'post',
+		'upfront-post-update_slug': 'post',
+		'upfront-post-update_status': 'post',
+		'upfront-post-update_password': 'post',
+		'upfront-wp-model:save_post': 'post',
+
+		'upfront_update_breakpoints': 'responsive',
+
+		'upfront_update_post_image_variants': 'image',
+		'upfront-media-image-create-size': 'image',
+		'upfront-media-save-images': 'image',
+
+		'upfront_update_theme_colors': 'theme-color',
+
+		'upfront_save_layout': 'elements',
 	};
 
 	var Request = {
@@ -104,6 +144,15 @@ define([
 
 			if (Request.is_trapped_action(action)) {
 				Upfront.Events.trigger('cache:request:action', action);
+			} else {
+				// Allow normalized action trapping to catch the wp-model insanity
+				var normalized_action = 'upfront-wp-model' === action && (request || {}).model_action
+					? action + ':' + request.model_action
+					: false
+				;
+				if (Request.is_trapped_action(normalized_action)) {
+					Upfront.Events.trigger('cache:request:action', normalized_action);
+				}
 			}
 
 			if (!Request.is_whitelisted_action(action)) return Request.send(request, data_type);
@@ -113,6 +162,8 @@ define([
 				dfr = $.Deferred(),
 				me = this
 			;
+			// Set up request queue, if not already present.
+			// This is tp handle multiple requests for the same thing being fired over and over again
 			me.__waiting = me.__waiting || {};
 
 			if (cached) {
@@ -124,17 +175,28 @@ define([
 			}
 
 			if (me.__waiting[cache_key]) {
+				// FFS just give it a sec and wait for the current one to finish pl0x.
+				// Patience is a virtue, they say.
+				Upfront.Util.log("Keep calm and GTFO \\mm/", action);
 				return Request.get_promise(me.__waiting[cache_key]);
 			}
 
-			me.__waiting[cache_key] = dfr;
 			dfr = Request.send(request, data_type);
+
+			// Add me to "bear with me" queue
+			me.__waiting[cache_key] = dfr;
+
 			dfr.done(function (data) {
+				// I'm done, and I wanna be cached
 				Request.set_cached(request, data);
 			});
+
 			dfr.always(function () {
+				// I don't care about my status, and this is all I got.
+				// Just drop me from the "bear with me" queue.
 				delete me.__waiting[cache_key];
 			});
+
 			return dfr;
 		},
 
