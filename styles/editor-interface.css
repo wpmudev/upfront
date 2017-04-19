@@ -1347,7 +1347,7 @@ span.draggable-post-element.element-dragging {
   opacity: .75;
   margin: 5px;
   padding: 0px 10px;
-  line-height: 30px;
+  line-height: 27px;
   height: 30px;
   text-align: center;
   border-radius: 3px;
@@ -1392,12 +1392,14 @@ span.draggable-post-element.element-dragging {
 
 /* Small Buttons */
 #sidebar-ui .sidebar-commands li.sidebar-commands-small-button,
-#element-settings-sidebar .sidebar-commands-small-button {
+#element-settings-sidebar .sidebar-commands-small-button,
+#sidebar-ui .upfront-small-button .upfront-field-button,
+#element-settings-sidebar .upfront-small-button .upfront-field-button {
   font-size: 13px;
   opacity: .75;
   margin: 5px;
   padding: 0px 10px;
-  line-height: 22px;
+  line-height: 19px;
   height: 22px;
   text-align: center;
   border-radius: 3px;
@@ -1407,20 +1409,28 @@ span.draggable-post-element.element-dragging {
   box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.05); }
 
 #sidebar-ui .sidebar-commands li.sidebar-commands-small-button.icon-button,
-#element-settings-sidebar sidebar-commands-small-button.icon-button {
+#element-settings-sidebar sidebar-commands-small-button.icon-button,
+#sidebar-ui .upfront-small-button .upfront-field-button.icon-button,
+#element-settings-sidebar .upfront-small-button .upfront-field-button.icon-button {
   padding-left: 5px; }
 
 #sidebar-ui .sidebar-commands li.sidebar-commands-small-button:hover,
-#element-settings-sidebar .sidebar-commands-small-button:hover {
+#element-settings-sidebar .sidebar-commands-small-button:hover,
+#sidebar-ui .upfront-small-button .upfront-field-button:hover,
+#element-settings-sidebar .upfront-small-button .upfront-field-button:hover {
   opacity: 1; }
 
 #sidebar-ui .sidebar-commands li.sidebar-commands-small-button:active,
-#element-settings-sidebar .sidebar-commands-small-button:active {
+#element-settings-sidebar .sidebar-commands-small-button:active,
+#sidebar-ui .upfront-small-button .upfront-field-button:active,
+#element-settings-sidebar .upfront-small-button .upfront-field-button:active {
   background: #e6e6e6;
   opacity: .75; }
 
 #sidebar-ui .sidebar-commands li.sidebar-commands-button.disabled,
-#element-settings-sidebar .sidebar-commands-button.disabled {
+#element-settings-sidebar .sidebar-commands-button.disabled,
+#sidebar-ui .upfront-small-button .upfront-field-button.disabled,
+#element-settings-sidebar .upfront-small-button .upfront-field-button.disabled {
   opacity: .4; }
 
 /* Height Media Queries Fixes
@@ -19131,21 +19141,6 @@ div.preset-manager-panel .edit_preset_label input {
 #element-settings-sidebar .upfront-css-edit {
   position: relative; }
 
-.edit_preset_css input,
-#element-settings-sidebar .upfront-css-edit input {
-  background-image: linear-gradient(-179deg, #fafdff 0%, #f3faff 100%);
-  border: 1px solid #a2bfda;
-  border-radius: 2px;
-  font-size: 14px;
-  color: #7c86a6;
-  padding: 4px 8px;
-  position: relative;
-  padding-left: 32px; }
-
-.edit_preset_css input:hover,
-#element-settings-sidebar .upfront-css-edit input:hover {
-  border: 1px solid #607f99; }
-
 #element-settings-sidebar .upfront-css-edit {
   margin-bottom: 10px; }
 
@@ -19154,19 +19149,6 @@ div.preset-manager-panel .edit_preset_label input {
 
 .upfront-social-services-item .upfront-settings-css {
   margin-left: -15px; }
-
-div.preset-manager-panel .edit_preset_css:before,
-#element-settings-sidebar .upfront-css-edit:before {
-  background-image: url(../img/uf-core-el-sprite.svg);
-  background-position: -660px -44px;
-  width: 18px;
-  height: 15px;
-  content: "";
-  display: block;
-  position: absolute;
-  z-index: 11;
-  top: 6px;
-  left: 8px; }
 
 div.preset-manager-panel .upfront-settings-css {
   padding-bottom: 15px; }

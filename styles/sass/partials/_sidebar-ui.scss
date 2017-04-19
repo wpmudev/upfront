@@ -1319,7 +1319,7 @@ span.draggable-post-element.element-dragging
 	opacity: .75;
 	margin: 5px;
 	padding: 0px 10px;
-	line-height: 30px;
+	line-height: 27px;
 	height: 30px;
 	text-align: center;
 	border-radius: 3px;
@@ -1374,12 +1374,14 @@ span.draggable-post-element.element-dragging
 /* Small Buttons */
 
 #sidebar-ui .sidebar-commands li.sidebar-commands-small-button,
-#element-settings-sidebar .sidebar-commands-small-button {
+#element-settings-sidebar .sidebar-commands-small-button,
+#sidebar-ui .upfront-small-button .upfront-field-button,
+#element-settings-sidebar .upfront-small-button .upfront-field-button {
 	font-size: 13px;
 	opacity: .75;
 	margin: 5px;
 	padding: 0px 10px;
-	line-height: 22px;
+	line-height: 19px;
 	height: 22px;
 	text-align: center;
 	border-radius: 3px;
@@ -1390,23 +1392,31 @@ span.draggable-post-element.element-dragging
 }
 
 #sidebar-ui .sidebar-commands li.sidebar-commands-small-button.icon-button,
-#element-settings-sidebar sidebar-commands-small-button.icon-button {
+#element-settings-sidebar sidebar-commands-small-button.icon-button,
+#sidebar-ui .upfront-small-button .upfront-field-button.icon-button,
+#element-settings-sidebar .upfront-small-button .upfront-field-button.icon-button {
 	padding-left: 5px;
 }
 
 #sidebar-ui .sidebar-commands li.sidebar-commands-small-button:hover,
-#element-settings-sidebar .sidebar-commands-small-button:hover {
+#element-settings-sidebar .sidebar-commands-small-button:hover,
+#sidebar-ui .upfront-small-button .upfront-field-button:hover,
+#element-settings-sidebar .upfront-small-button .upfront-field-button:hover {
 	opacity: 1;
 }
 
 #sidebar-ui .sidebar-commands li.sidebar-commands-small-button:active,
-#element-settings-sidebar .sidebar-commands-small-button:active {
+#element-settings-sidebar .sidebar-commands-small-button:active,
+#sidebar-ui .upfront-small-button .upfront-field-button:active,
+#element-settings-sidebar .upfront-small-button .upfront-field-button:active {
 	background: rgb(230, 230, 230);
 	opacity: .75;
 }
 
 #sidebar-ui .sidebar-commands li.sidebar-commands-button.disabled,
-#element-settings-sidebar .sidebar-commands-button.disabled {
+#element-settings-sidebar .sidebar-commands-button.disabled,
+#sidebar-ui .upfront-small-button .upfront-field-button.disabled,
+#element-settings-sidebar .upfront-small-button .upfront-field-button.disabled {
 	opacity: .4;
 }
 

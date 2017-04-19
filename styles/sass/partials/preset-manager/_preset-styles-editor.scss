@@ -29,23 +29,6 @@ div.preset-manager-panel .edit_preset_label input {
 	position: relative;
 }
 
-.edit_preset_css input,
-#element-settings-sidebar .upfront-css-edit input {
-	background-image: linear-gradient(-179deg, #fafdff 0%, #f3faff 100%);
-	border: 1px solid #a2bfda;
-	border-radius: 2px;
-	font-size: 14px;
-	color: #7c86a6;
-	padding: 4px 8px;
-	position: relative;
-	padding-left: 32px;
-}
-
-.edit_preset_css input:hover,
-#element-settings-sidebar .upfront-css-edit input:hover {
-	border: 1px solid #607f99;
-}
-
 #element-settings-sidebar .upfront-css-edit {
 	margin-bottom: 10px;
 }
@@ -56,20 +39,6 @@ div.preset-manager-panel .edit_preset_label input {
 
 .upfront-social-services-item .upfront-settings-css {
 	margin-left: -15px;
-}
-
-div.preset-manager-panel .edit_preset_css:before,
-#element-settings-sidebar .upfront-css-edit:before {
-	background-image: url(../img/uf-core-el-sprite.svg);
-	background-position: -660px -44px;
-	width: 18px;
-	height: 15px;
-	content: "";
-    display: block;
-	position: absolute;
-	z-index: 11;
-	top: 6px;
-	left: 8px;
 }
 
 div.preset-manager-panel .upfront-settings-css {
