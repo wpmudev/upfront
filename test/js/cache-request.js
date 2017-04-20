@@ -78,12 +78,15 @@ describe('Cache', function () {
 					cback = args.pop()
 				;
 				var obj = cback.apply(this, []);
-				if ('get_hash' in obj) Cache = obj;
+				if ('get_hash' in obj) Cache.Stub = obj;
+				if ('get_storage' in obj) Cache.Storage = cback.apply(this, [Cache.Stub]);
 				else {
-					Testable.Request = cback.apply(this, [Cache]);
+					Testable.Request = cback.apply(this, [Cache.Storage]);
 				}
 			};
 
+			delete require.cache[require.resolve('../../scripts/upfront/cache/storage-stub')];
+			require('../../scripts/upfront/cache/storage-stub');
 			delete require.cache[require.resolve('../../scripts/upfront/cache/storage-memory')];
 			require('../../scripts/upfront/cache/storage-memory');
 			require('../../scripts/upfront/cache/request');

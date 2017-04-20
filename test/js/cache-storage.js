@@ -10,11 +10,16 @@ describe('Cache', function () {
 			 */
 			global.define = function () {
 				var args = Array.prototype.slice.call(arguments),
-					cback = args.pop()
+					cback = args.pop(),
+					obj = false
 				;
-				Testable.Storage = cback.apply(this, []);
+				obj = cback.apply(this, []);
+				if (obj.get_hash) Testable.Stub = obj;
+				else Testable.Storage = cback.apply(this, [Testable.Stub]);
 			};
 
+			delete require.cache[require.resolve('../../scripts/upfront/cache/storage-stub')];
+			require('../../scripts/upfront/cache/storage-stub');
 			delete require.cache[require.resolve('../../scripts/upfront/cache/storage-memory')];
 			require('../../scripts/upfront/cache/storage-memory');
 		});
@@ -122,6 +127,14 @@ describe('Cache', function () {
 
 			assert.equal(Testable.Storage.get(key, 'bucket 1'), false);
 			assert.equal(Testable.Storage.get(key, 'bucket 2'), false);
+		});
+
+		it('listens to events', function () {
+			assert.ok(Testable.Storage.listen());
+			assert.equal(Testable.Storage.is_listening(), true);
+
+			assert.ok(Testable.Storage.stop_listening());
+			assert.equal(Testable.Storage.is_listening(), false);
 		});
 
 	});
