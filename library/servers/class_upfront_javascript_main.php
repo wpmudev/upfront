@@ -405,6 +405,8 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			apply_filters('upfront-plugins_layouts', $plugins_layouts)
 		);
 
+		$fe_cache_level = preg_replace('/[^a-z]/', '', get_option('upfront-response_cache-level', ''));
+
 		$main = <<<EOMainJs
 // Set up the global namespace
 var Upfront = window.Upfront || {};
@@ -422,6 +424,8 @@ Upfront.mainData = {
 	applicationModes: {$application_modes},
 	ALLOW_REVISIONS: {$allow_revisions},
 	readOnly: {$read_only},
+
+	response_cache_level: '{$fe_cache_level}',
 
 	PERMS: {$permissions},
 

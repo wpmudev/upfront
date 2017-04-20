@@ -4,6 +4,7 @@ include_once "admin/class_upfront_admin_general.php";
 include_once "admin/class_upfront_admin_restrictions.php";
 include_once "admin/class_upfront_admin_experimental.php";
 include_once "admin/class_upfront_admin_api_keys.php";
+include_once "admin/class_upfront_admin_response_cache.php";
 
 /**
  * Constructs Upfront admin pages
