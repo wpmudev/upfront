@@ -822,6 +822,7 @@ define([
 				this.$el.addClass("upfront-active_entity");
 				this.adjust_top_settings_panel_position();
 			},
+			
 			// Stub handlers
 			on_meta_click: function () {},
 			on_delete_click: function () {
@@ -1861,6 +1862,8 @@ define([
 				this.listenTo(Upfront.Events, 'layout:after_render', this.on_after_layout_render);
 				this.listenTo(Upfront.Events, 'layout:after_render', this.checkUiOffset);
 				this.listenTo(Upfront.Events, 'element:preset:deleted', this.on_preset_deleted);
+				// Update the size hint for all elements within lightboxes upon showing lightbox (height is 0 sometimes before showing lightboxes).
+				this.listenTo(Upfront.Events, 'upfront:lightbox:show', this.on_lightbox_showing);
 
 				this.on('entity:resize_start', this.on_resize_start);
 				this.on('entity:resizing', this.on_resizing);
@@ -2202,6 +2205,15 @@ define([
 					this.render();
 				}
 				Upfront.Events.trigger('entity:object:update', this, this.model);
+			},
+
+			// Make method name a little different to avoid conflicts with similar triggered methods.
+			on_lightbox_showing: function() {
+				// Make sure elements are children of lightbox.
+				if (this.$el.parents('.upfront-region-side-lightbox').length > 0) {
+					// Update the size hint for all elements within lightboxes.
+					this.update_size_hint();
+				}
 			},
 
 			add_multiple_module_class: function ($object) {
