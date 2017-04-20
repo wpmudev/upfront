@@ -43,6 +43,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 				</div>
 				<?php $this->_render_under_construction_box(); ?>
 				<?php $this->_render_api_options(); ?>
+				<?php $this->_render_response_cache_options(); ?>
 				<?php $this->_render_debug_options(); ?>
 			</div>
 			<div class="upfront-col-right">
@@ -100,6 +101,40 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 				foreach ($services as $service => $label) {
 					$admin_keys->render_key_box($service);
 				}
+				$admin_keys->render_footer();
+				?>
+				<p>
+					<button class="upfront_button">
+						<?php esc_html_e('Save', 'upfront'); ?>
+					</button>
+				</p>
+			</form>
+		</div>
+	</div>
+</div>
+		<?php
+	}
+
+	private function _render_response_cache_options () {
+		$admin = new Upfront_Admin_ResponseCache;
+		if (!$admin->can_access()) return false;
+
+		$levels = $admin->get_levels();
+		if (empty($levels)) return false;
+
+		$admin->process_submissions();
+
+		?>
+<div class="postbox-container response_caching">
+	<div class='postbox'>
+		<h2 class="title"><?php esc_html_e("Request queueing and caching strategy", Upfront::TextDomain) ?></h2>
+		<div class="inside api_keys">
+			<form method="POST">
+				<?php
+				foreach ($levels as $level => $label) {
+					$admin->render_level_box($level);
+				}
+				$admin->render_footer();
 				?>
 				<p>
 					<button class="upfront_button">
