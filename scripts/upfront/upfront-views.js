@@ -6776,8 +6776,7 @@ define([
 					};
 
 				this.$el.find('> .upfront-region-wrapper > .upfront-modules_container').css( {
-					width: Math.floor(css.width/grid.column_width) * grid.column_width,
-					'height': css.height
+					width: Math.floor(css.width/grid.column_width) * grid.column_width
 				});
 				this.$el.css(css);
 			},
