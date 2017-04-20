@@ -3,9 +3,10 @@
 ], function (Stub) {
 
 	/**
-	 * In-memory cache implementation
+	 * Permanent cache implementation
 	 *
-	 * Cached data will not survive page reload.
+	 * Cached data persists across page reloads,
+	 * as well as window/tab closing
 	 */
 	return _.extend({}, Stub, {
 
@@ -15,7 +16,7 @@
 		 * @return {Object} Internal storage representation
 		 */
 		get_storage: function () {
-			return window[Stub.get_storage_id()] || {};
+			return JSON.parse(localStorage.getItem(Stub.get_storage_id()) || '{}')
 		},
 
 		/**
@@ -24,8 +25,7 @@
 		 * @return {Boolean} Status
 		 */
 		set_storage: function (obj) {
-			window[Stub.get_storage_id()] = obj;
-			return true;
+			return localStorage.setItem(Stub.get_storage_id(), JSON.stringify(obj));
 		}
 	});
 });
