@@ -22,7 +22,7 @@ class Upfront_Admin_ResponseCache extends Upfront_Admin_Page {
 		if (empty($data[self::FORM_NONCE_KEY])) return false;
 
 
-		if (!wp_verify_nonce($_POST[self::FORM_NONCE_KEY], self::FORM_NONCE_ACTION)) continue;
+		if (!wp_verify_nonce($_POST[self::FORM_NONCE_KEY], self::FORM_NONCE_ACTION)) return false;
 
 		$levels = $this->get_levels();
 		$level = !empty($data['fe_cache-level'])
