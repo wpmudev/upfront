@@ -801,6 +801,7 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		if ( !this.is_featured_image_set() ) return;
 		// Retrieve image data from post meta
 		var imageData = Upfront.Views.PostDataEditor.post.meta.getValue('_thumbnail_data');
+
 		if ( typeof imageData === 'undefined' ) return;
 		// Store variables used in resize event handlers
 		this.resizingData = {
@@ -846,6 +847,8 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 
 		this.$('.thumbnail').find('img').css('min-height', 'auto');
 
+		if(typeof this.resizingData === "undefined") return;
+
 		if(this.resizingData.data.checkSize === "small" && is_locked === false) {
 			// Update data
 			this.resizingData.data.position = { left: 0, top: 0 };
@@ -875,6 +878,8 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		if(typeof this.resizingData === "undefined") {
 			this.get_thumb_data();
 		}
+
+		if(typeof this.resizingData === "undefined") return;
 
 		var data = this.resizingData.data,
 			img = this.$el.find('.thumbnail img'),
@@ -1030,6 +1035,8 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 			this.get_thumb_data();
 		}
 
+		if(typeof this.resizingData === "undefined") return;
+
 		// Check if featured image element
 		var type = this.model.get_property_value_by_name("data_type"),
 			objects = this.get_child_objects(false),
@@ -1136,6 +1143,8 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		if(typeof this.resizingData === "undefined") {
 			this.get_thumb_data();
 		}
+
+		if(typeof this.resizingData === "undefined") return;
 
 		var me = this,
 			img = this.$el.find('.thumbnail img'),
@@ -1296,6 +1305,8 @@ var PostDataView = Upfront.Views.ObjectGroup.extend({
 		if(typeof this.resizingData === "undefined") {
 			this.get_thumb_data();
 		}
+
+		if(typeof this.resizingData === "undefined") return;
 
 		var me = this,
 			crop = {},
