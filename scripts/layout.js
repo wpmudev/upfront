@@ -767,6 +767,7 @@ jQuery(document).ready(function($){
 				$(this).data('sticky-top', offset.top);
 				if ( is_sub_container ) {
 					$(this).closest('.upfront-region-container-bg').css( ( is_top ? 'padding-top' : 'padding-bottom' ), $(this).height() );
+						$(this).find('.upfront-region-container-bg').css({position: 'fixed', top: 0});
 				}
 				else {
 					$(this).next('.upfront-output-region-container').css('padding-top', $(this).height());
@@ -879,8 +880,22 @@ jQuery(document).ready(function($){
 				}
 				else if ( is_sub_container ) {
 					css.position = 'relative';
-					if ( is_top )
+					if ( is_top ) {
 						css.top = container_height - win_height + top;
+					}
+
+					// If sticky subregion.
+					if ($(this).data('sticky') === 1) {
+						// If scrolled to top of page, switch to position relative.
+						if ($(window).scrollTop() < body_off.top) {
+							$(this).find('.upfront-region-container-bg').css({position: 'relative', top: 0});
+							// Make sure subregion is on top of page (scrolling fast made it forget to go to the top).
+							css.top = 0;
+						} else {
+							// Else switch to fixed position.
+							$(this).find('.upfront-region-container-bg').css({position: 'fixed', top: body_off.top});
+						}
+					}
 					css.bottom = '';
 					css.left = '';
 					css.right = '';
