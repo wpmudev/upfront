@@ -18997,9 +18997,13 @@ div.preset-manager-panel div.upfront-settings-common_panel {
 
 div.preset-manager-panel .upfront-field-label-inline {
   font-size: 11px;
+  line-height: 15px;
   display: block;
-  font-family: verdana, sans-serif;
-  color: #4f4f4f; }
+  font-weight: 400;
+  font-family: "Open Sans";
+  color: rgba(33, 33, 33, 0.8);
+  margin-bottom: 2px;
+  margin-top: 5px; }
 
 div.preset-manager-panel div.preset-separator {
   border-bottom: 1px solid #e1edf8;
