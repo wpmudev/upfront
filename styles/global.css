@@ -618,21 +618,18 @@ body .upfront-edit_layout a {
 .upfront-object h4 a, .upfront-output-object h4 a,
 .upfront-object h5 a, .upfront-output-object h5 a,
 .upfront-object h6 a, .upfront-output-object h6 a,
-.upfront-object p a, .upfront-output-object p a,
 .upfront-object h1 a:link, .upfront-output-object h1 a:link,
 .upfront-object h2 a:link, .upfront-output-object h2 a:link,
 .upfront-object h3 a:link, .upfront-output-object h3 a:link,
 .upfront-object h4 a:link, .upfront-output-object h4 a:link,
 .upfront-object h5 a:link, .upfront-output-object h5 a:link,
 .upfront-object h6 a:link, .upfront-output-object h6 a:link,
-.upfront-object p a:link, .upfront-output-object p a:link,
 .upfront-object h1 a:hover, .upfront-output-object h1 a:hover,
 .upfront-object h2 a:hover, .upfront-output-object h2 a:hover,
 .upfront-object h3 a:hover, .upfront-output-object h3 a:hover,
 .upfront-object h4 a:hover, .upfront-output-object h4 a:hover,
 .upfront-object h5 a:hover, .upfront-output-object h5 a:hover,
-.upfront-object h6 a:hover, .upfront-output-object h6 a:hover,
-.upfront-object p a:hover, .upfront-output-object p a:hover  {
+.upfront-object h6 a:hover, .upfront-output-object h6 a:hover {
   font-family: inherit;
   font-size: inherit;
   font-weight: inherit;
@@ -667,7 +664,7 @@ body .upfront-edit_layout a {
     right: 17px;
     cursor: pointer;
   }
-  
+
   input[type=checkbox] + label.upfront_toggle_label:before {
 	display: none;
   }
@@ -699,7 +696,7 @@ body .upfront-edit_layout a {
   #element-settings-sidebar .border_radius_lock input[type=checkbox]:checked + label:before {
     background-position: -661px -140px
   }
-	
+
   #element-settings-sidebar .padding-lock input[type=checkbox] + label:before,
   #element-settings-sidebar .gallery-padding-lock input[type=checkbox] + label:before {
 	display: none;
