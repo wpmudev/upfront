@@ -110,17 +110,6 @@ define([
 					}
 				});
 
-				// Avoid doing this, let the Double Click editor functionality do it's thing
-				// If tab is already active start editor if not started already
-				// if ($tab.hasClass('tabs-tab-active')) {
-					// var ed = $tab.find('.inner-box').data('ueditor');
-					// if(ed && !ed.active) {
-						// ed.start();
-					// }
-
-					// return;
-				// }
-
 				// Otherwise stop all tab editors just in case
 				this.$el.find('.tabs-tab:not(.tabs-tab-active) .inner-box').each(function() {
 					var ed = $(this).data('ueditor');
@@ -263,7 +252,7 @@ define([
 						 $content.text(l10n.tab_label + ' ' + count);
 					 }, 50);
 					} else {
-					 me.property('tabs')[id].title =  editor.getValue(true).trim();
+					 me.property('tabs')[id].title =  editor.getValue(true).trim().replace(/<p.*?>/, '').replace('</p>', '');
 					}
 					Upfront.Events.trigger('upfront:element:edit:stop');
 					me.currentTabId = $content.closest('.tabs-tab-active').data('content-id');
