@@ -157,6 +157,7 @@ text!upfront/templates/overlay_grid.html
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/content-editor/content-editor-pagination.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/content-editor/content-editor-posts.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/content-editor/content-editor-pages.js
+/var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/content-editor/content-editor-cpt.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/content-editor/content-editor-comments.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/content-editor.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command-popup-list.js
