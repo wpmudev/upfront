@@ -6567,6 +6567,9 @@ define([
 					e.stopPropagation();
 				}
 			},
+			// Empty method to prevent errors with closing modal method in parent class.
+			on_modal_close: function () {
+			},
 			close_edit: function (e) {
 				var container_view = this.parent_view.get_container_view(this.model);
 				container_view.close_edit();
