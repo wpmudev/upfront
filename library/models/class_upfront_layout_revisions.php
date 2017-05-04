@@ -1,5 +1,8 @@
 <?php
 
+// Get cache utilities class.
+require_once dirname(dirname(__FILE__)) . "/class_upfront_cache_utils.php";
+
 class Upfront_LayoutRevisions {
 
 	const REVISION_TYPE = 'upfront_layout_rvsn';
@@ -47,17 +50,20 @@ class Upfront_LayoutRevisions {
 
 	/**
 	 * Fetches a single revision, as determined by supplied layout ID key.
-	 * @param string $layotu_id_key Requested revision key
+	 * @param string $layout_id_key Requested revision key
 	 * @return mixed (Upfront_Layout)revision on success, (bool)false on failure
 	 */
 	public function get_revision ($layout_id_key) {
-		$query = new WP_Query(array(
-			"name" => $layout_id_key,
-			"post_type" => self::REVISION_TYPE,
-			"posts_per_page" => 1,
-			'suppress_filters' => true,
-
-		));
+		$query = Upfront_Cache_Utils::wp_query(
+			$layout_id_key, 
+			array(
+				"name" => $layout_id_key,
+				"post_type" => self::REVISION_TYPE,
+				"posts_per_page" => 1,
+				'suppress_filters' => true,
+			),
+			'upfront_revisions'
+		);
 		return !empty($query->posts[0]) && !empty($query->posts[0]->post_content)
 			? unserialize(base64_decode($query->posts[0]->post_content))
 			: false
@@ -77,7 +83,7 @@ class Upfront_LayoutRevisions {
 			'post_status' => self::REVISION_STATUS,
 		));
 		$args["title"] = self::to_string($entity_cascade);
-		$query = new WP_Query($args);
+		$query = Upfront_Cache_Utils::wp_query($entity_cascade, $args, 'upfront_revisions'); 
 		return $query->posts;
 	}
 
@@ -96,7 +102,7 @@ class Upfront_LayoutRevisions {
 				'before' => "-1 day",
 			)),
 		));
-		$query = new WP_Query($args);
+		$query = Upfront_Cache_Utils::wp_query('upfront_deprecated_' . self::REVISION_TYPE . '_'. self::REVISION_STATUS, $args, 'upfront_revisions');
 		return $query->posts;
 	}
 
@@ -112,5 +118,4 @@ class Upfront_LayoutRevisions {
 		if (self::REVISION_TYPE !== $rev->post_type) return false;
 		return (bool)wp_delete_post($revision_id, true);
 	}
-
 }
