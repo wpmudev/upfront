@@ -2,6 +2,14 @@ Change Log
 ============
 
 
+1.8.1 - 2017-05-xx
+-------------------------------------------------------------------------------
+- Fix: bug that prevented deleting fixed (floating) regions.
+- Fix: formatting Link in builder
+- Fix: tabs element reverting settings when edited in builder
+- Fix: issue with sticky subregion not working for full screen regions
+- Fix: cannot edit post featured image layout
+
 1.8 - 2017-03-29
 -------------------------------------------------------------------------------
 - Add: media manager redesign
