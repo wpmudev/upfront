@@ -6695,6 +6695,10 @@ span.upfront-settings-item-title:after {
   right: 0;
   z-index: 10001004; }
 
+/* Resolve fixed region CSS editor z-index issues */
+.upfront-modal-bg-settings-fixed {
+  z-index: 10001000; }
+
 .upfront-inline-modal-wrap {
   margin: auto;
   width: 50%;
