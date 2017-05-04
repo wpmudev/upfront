@@ -31,7 +31,7 @@ class Upfront_Cache_Utils {
  	 * @param string $key The key to the cached data to delete.
  	 * @return bool The success of deleting the cache.
  	 */
-	public static function clear_cache($key, $group) {
+	public static function clear_cache($key, $group = '') {
 		return wp_cache_delete($key, $group);
 	}
 

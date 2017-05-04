@@ -102,7 +102,7 @@ class Upfront_LayoutRevisions {
 				'before' => "-1 day",
 			)),
 		));
-		$query = Upfront_Cache_Utils::wp_query('upfront_deprecated_' . self::REVISION_TYPE . '_'. self::REVISION_STATUS, $args, 'upfront_revisions');
+		$query = new WP_Query($args);
 		return $query->posts;
 	}
 
