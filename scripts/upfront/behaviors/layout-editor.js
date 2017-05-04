@@ -990,8 +990,19 @@ var LayoutEditor = {
 			// don't propagate scroll
 			Upfront.Views.Mixins.Upfront_Scroll_Mixin.stop_scroll_propagation($content);
 		});
+		// Remove previous event listener.
+		$el.off('click', '.region-list-edit');
 		$el.on('click', '.region-list-edit', function(e){
 			e.preventDefault();
+			e.stopPropagation();
+			
+			// Close region manager
+			Upfront.Popup.close();
+
+			// Open lightbox
+			var name = $(this).attr('data-name');
+			Upfront.Application.LayoutEditor.openLightboxRegion(name);
+
 		});
 		// Remove previous event listener.
 		$el.off('click', '.region-list-trash');
@@ -1064,8 +1075,11 @@ var LayoutEditor = {
 				'<li class="' + classes.join(' ') + '">' +
 					'<span class="region-list-name">' + region.title + '</span>' +
 					'<span class="region-list-control">' +
-						//'<a href="#" class="region-list-edit" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.edit + '</a>' +
 						(
+							type === 'lightbox' ?
+							'<a href="#" class="region-list-edit" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.edit + '</a>' :
+							''
+						) + (
 							false === Upfront.plugins.isForbiddenByPlugin('show region list trash') ?
 							'<a href="#" class="region-list-trash" data-name="' + region.name + '" data-scope="' + region.scope + '">' + Upfront.Settings.l10n.global.behaviors.trash + '</a>' :
 							''
