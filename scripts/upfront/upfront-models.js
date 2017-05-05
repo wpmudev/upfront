@@ -809,28 +809,28 @@ var _alpha = "alpha",
 		 */
 		get: function(attr){
 			var value = this.attributes[attr],
-                dates = [
-                    "post_date",
-                    "post_date_gmt",
-                    'post_modified',
-                    "post_modified_gmt"
-                ];
+								dates = [
+										"post_date",
+										"post_date_gmt",
+										'post_modified',
+										"post_modified_gmt"
+								];
 //			if(_.isString(value) && value.match(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/)) {
 //				return new Date(Date.parse(value.replace(/ /, 'T')));
 //			}
 
-            if( _.indexOf(dates, attr) !== -1 ){
-                //return new Date( value  ); // <-- Breaks in FF
-                var raw_offset = (new Date()).getTimezoneOffset(),
-                	tz_offset = raw_offset / 60,
-                	offset = tz_offset > 0 ? '-' : '+', // Reversed because Date.getTimezoneOffset() returns reversed values...
-                	hours = parseInt(Math.abs(tz_offset), 10),
-                	mins = parseInt((Math.abs(tz_offset) - hours) * 60, 10),
-                	timestamp = value.replace(/ /, 'T')
-                ;
-                hours = hours >= 10 ? '' + hours : '0' + hours;
-                mins = mins >= 10 ? '' + mins : '0' + mins;
-                if (timestamp && hours.length && mins.length) timestamp += offset + hours + mins;
+						if( _.indexOf(dates, attr) !== -1 ){
+								//return new Date( value  ); // <-- Breaks in FF
+								var raw_offset = (new Date()).getTimezoneOffset(),
+									tz_offset = raw_offset / 60,
+									offset = tz_offset > 0 ? '-' : '+', // Reversed because Date.getTimezoneOffset() returns reversed values...
+									hours = parseInt(Math.abs(tz_offset), 10),
+									mins = parseInt((Math.abs(tz_offset) - hours) * 60, 10),
+									timestamp = value.replace(/ /, 'T')
+								;
+								hours = hours >= 10 ? '' + hours : '0' + hours;
+								mins = mins >= 10 ? '' + mins : '0' + mins;
+								if (timestamp && hours.length && mins.length) timestamp += offset + hours + mins;
 
 
 				//return new Date(Date.parse(timestamp)); // <-- We need this to instantiate Date object in Firefox. @See "batman bug" in Asana.
@@ -842,7 +842,7 @@ var _alpha = "alpha",
 				var a = timestamp.split(/[^0-9]/);
 				return new Date (a[0],a[1]-1,a[2],a[3],a[4],a[5]);
 
-            }
+						}
 			return this.attributes[attr];
 		},
 		/**
@@ -970,7 +970,9 @@ var _alpha = "alpha",
 							me.pagination = {
 								totalElements: pagination.total,
 								pageSize: pagination.page_size,
-								pages: Math.ceil(pagination.total / pagination.page_size),
+								// If pages total is given use that. Otherwise calculate it.
+								// This is because hierarchical child pages are placed on parent page despite page limit. Thus it is calculated elsewhere if hierarchical.
+								pages: (pagination.pages ? Math.ceil(pagination.pages) : Math.ceil(pagination.total / pagination.page_size)),
 								currentPage: pagination.page,
 								loaded: postdata.flush ? {} : me.pagination.loaded
 							};
@@ -992,9 +994,12 @@ var _alpha = "alpha",
 							});
 							me.trigger('reset', me);
 						}
-					}
-					else
+					} else
 						me.reset(response.data.results);
+					if (response.data.filtering) {
+						// Filtering dropdown data for post list.
+						me.filtering = response.data.filtering;
+					}
 				}
 			);
 		},
@@ -1481,7 +1486,8 @@ var _alpha = "alpha",
 		postType: 'post',
 		withMeta: false,
 		withAuthor: false,
-		fetchAttributes: ['postId', 'postType', 'withMeta', 'withAuthor'],
+		withThumbnail: false,
+		fetchAttributes: ['postId', 'postType', 'withMeta', 'withAuthor', 'withThumbnail'],
 		initialize: function(models, options){
 			if(options){
 				if(options.postId)
@@ -1492,6 +1498,8 @@ var _alpha = "alpha",
 					this.withMeta = options.withMeta;
 				if(options.withAuthor)
 					this.withAuthor = options.withAuthor;
+				if(options.withThumbnail)
+					this.withThumbnail = options.withThumbnail;
 			}
 		}
 	});
@@ -1738,9 +1746,9 @@ var _alpha = "alpha",
 		}
 	}),
 
-    ImageVariant = Backbone.Model.extend({
-        defaults : function () {
-        	return {
+		ImageVariant = Backbone.Model.extend({
+				defaults : function () {
+					return {
 	            vid   : "",
 	            label : "Variant Label",
 	            group : {
@@ -1768,49 +1776,49 @@ var _alpha = "alpha",
 	                row: 10,
 	                clear: true
 	            }
-        	};
-        }
-    }),
-    ImageVariants = Backbone.Collection.extend({
-        model : ImageVariant
-    }),
+					};
+				}
+		}),
+		ImageVariants = Backbone.Collection.extend({
+				model : ImageVariant
+		}),
 _omega = 'omega';
 
 return {
-    "Models": {
-      "Property": Property,
-      "ObjectModel": ObjectModel,
-      "ObjectGroup": ObjectGroup,
-      "Module": Module,
-      "ModuleGroup": ModuleGroup,
-      "Region": Region,
-      "Wrapper": Wrapper,
-      "Layout": Layout,
-      "Taxonomy": Taxonomy,
-      "Post": Post,
-      "Posts": Posts,
-      "Pages": Pages,
-      "Comment": Comment,
-      "Comments": Comments,
-      "Meta": Meta,
-      "Term": Term,
-      "User": User,
-      "ImageVariant" : ImageVariant
-    },
-    "Collections": {
-      "Properties": Properties,
-      "Objects": Objects,
-      "Modules": Modules,
-      "Regions": Regions,
-      "Wrappers": Wrappers,
-      "CommentList": CommentList,
-      "MetaList": MetaList,
-      "PostList": PostList,
-      "TermList": TermList,
-      "ImageVariants" : ImageVariants,
-      "PageTemplateList" : PageTemplateList
-    }
-  };
+		"Models": {
+			"Property": Property,
+			"ObjectModel": ObjectModel,
+			"ObjectGroup": ObjectGroup,
+			"Module": Module,
+			"ModuleGroup": ModuleGroup,
+			"Region": Region,
+			"Wrapper": Wrapper,
+			"Layout": Layout,
+			"Taxonomy": Taxonomy,
+			"Post": Post,
+			"Posts": Posts,
+			"Pages": Pages,
+			"Comment": Comment,
+			"Comments": Comments,
+			"Meta": Meta,
+			"Term": Term,
+			"User": User,
+			"ImageVariant" : ImageVariant
+		},
+		"Collections": {
+			"Properties": Properties,
+			"Objects": Objects,
+			"Modules": Modules,
+			"Regions": Regions,
+			"Wrappers": Wrappers,
+			"CommentList": CommentList,
+			"MetaList": MetaList,
+			"PostList": PostList,
+			"TermList": TermList,
+			"ImageVariants" : ImageVariants,
+			"PageTemplateList" : PageTemplateList
+		}
+	};
 });
 
 })(jQuery);

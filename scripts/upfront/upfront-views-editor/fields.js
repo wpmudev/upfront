@@ -1,161 +1,159 @@
 (function($){
-    var l10n = Upfront.Settings && Upfront.Settings.l10n
-            ? Upfront.Settings.l10n.global.views
-            : Upfront.mainData.l10n.global.views
-        ;
-    define([
-        "scripts/upfront/upfront-views-editor/mixins",
-        "scripts/upfront/upfront-views-editor/theme-colors",
-        "text!upfront/templates/color_picker.html"
-    ], function (Mixins, Theme_Colors, color_picker_tpl) {
-        var Field = Backbone.View.extend({
-            className: 'upfront-field-wrap',
-            initialize: function (opts) {
-                this.options = opts;
-                this.multiple = typeof this.options.multiple != 'undefined' ? this.options.multiple : (typeof this.multiple != 'undefined' ? this.multiple : false);
-                this.label = typeof this.options.label != 'undefined' ? this.options.label : '';
-                this.default_value = typeof this.options.default_value != 'undefined' ? this.options.default_value : (this.multiple ? [] : '');
-                if ( this.options.property ) {
-                    this.property = this.model.get_property_by_name(this.options.property);
-                    if ( this.property === false ) {
-                        this.model.init_property(this.options.property, this.default_value);
-                        this.property = this.model.get_property_by_name(this.options.property);
-                    }
-                    this.property_name = this.options.property;
-                    if ( typeof this.options.use_breakpoint_property != 'undefined' )
-                        this.use_breakpoint_property = this.options.use_breakpoint_property;
-                }
-                else {
-                    this.property = false;
-                }
-                this.name = this.options.name ? this.options.name : this.cid;
-                this.selected_state = this.selected_state ? this.selected_state : '';
-                if ( this.options.init )
-                    this.options.init();
+	var l10n = Upfront.Settings && Upfront.Settings.l10n
+			? Upfront.Settings.l10n.global.views
+			: Upfront.mainData.l10n.global.views
+		;
+	define([
+		"scripts/upfront/upfront-views-editor/mixins",
+		"scripts/upfront/upfront-views-editor/theme-colors",
+		"text!upfront/templates/color_picker.html"
+	], function (Mixins, Theme_Colors, color_picker_tpl) {
+		var Field = Backbone.View.extend({
+			className: 'upfront-field-wrap',
+			initialize: function (opts) {
+				this.options = opts;
+				this.multiple = typeof this.options.multiple != 'undefined' ? this.options.multiple : (typeof this.multiple != 'undefined' ? this.multiple : false);
+				this.label = typeof this.options.label != 'undefined' ? this.options.label : '';
+				this.default_value = typeof this.options.default_value != 'undefined' ? this.options.default_value : (this.multiple ? [] : '');
+				if ( this.options.property ) {
+					this.property = this.model.get_property_by_name(this.options.property);
+					if ( this.property === false ) {
+						this.model.init_property(this.options.property, this.default_value);
+						this.property = this.model.get_property_by_name(this.options.property);
+					}
+					this.property_name = this.options.property;
+					if ( typeof this.options.use_breakpoint_property != 'undefined' )
+						this.use_breakpoint_property = this.options.use_breakpoint_property;
+				}
+				else {
+					this.property = false;
+				}
+				this.name = this.options.name ? this.options.name : this.cid;
+				this.selected_state = this.selected_state ? this.selected_state : '';
+				if ( this.options.init )
+					this.options.init();
 
-                if ( this.init )
-                    this.init();
-                if ( this.options.change )
-                    this.on('changed', this.options.change, this);
-                if ( this.options.show )
-                    this.on('changed rendered', this.dispatch_show, this);
-                if ( this.options.focus )
-                    this.on('focus', this.options.focus, this);
-                if ( this.options.blur )
-                    this.on('blur', this.options.blur, this);
-                if ( this.options.rendered )
-                    this.on('rendered', this.options.rendered, this);
-                if (this.options.on_click)
-                    this['on_click'] = this.options.on_click;
-                this.once('rendered', function(){
-                    var me = this;
-                    this.get_field().on('focus', function(){
-                        me.trigger('focus');
-                    }).on('blur', function(){
-                        me.trigger('blur');
-                    });
-                }, this);
+				if ( this.init )
+					this.init();
+				if ( this.options.change )
+					this.on('changed', this.options.change, this);
+				if ( this.options.show )
+					this.on('changed rendered', this.dispatch_show, this);
+				if ( this.options.focus )
+					this.on('focus', this.options.focus, this);
+				if ( this.options.blur )
+					this.on('blur', this.options.blur, this);
+				if ( this.options.rendered )
+					this.on('rendered', this.options.rendered, this);
+				if (this.options.on_click)
+					this['on_click'] = this.options.on_click;
+				this.once('rendered', function(){
+					var me = this;
+					this.get_field().on('focus', function(){
+						me.trigger('focus');
+					}).on('blur', function(){
+						me.trigger('blur');
+					});
+				}, this);
+			},
+			dispatch_show: function () {
+				var me = this;
+				setTimeout(function() {
+					me.options.show(me.get_value(), me.$el);
+				}, 100);
+			},
+			get_name: function () {
+				return this.property ? this.property.get('name') : this.name;
+			},
+			get_saved_value: function () {
+				if ( this.property ){
+					if ( this.use_breakpoint_property )
+						return this.model.get_breakpoint_property_value(this.property_name, true);
+					else
+						return this.property.get('value');
+				}
+				else if ( this.model ){
+					var value = this.model.get(this.name);
+					return value ? value : this.default_value;
+				}
+				return this.default_value;
+			},
+			get_value: function () {
+				var $field = this.get_field();
+				if ( ! this.multiple || ($field.size() == 1 && $field.is('select')) )
+					return $field.val();
+				else
+					return _.map($field, function (el) { return $(el).val(); });
+				return false;
+			},
+			set_value: function (value) {
+				this.get_field().val(value);
+			},
+			get_field_id: function () {
+				return this.cid + '-' + this.get_name();
+			},
+			get_field_name: function () {
+				return this.get_name();
+			},
+			get_field: function () {
+				return this.$el.find( '[name=' + this.get_field_name() + ']' + (this.selected_state ? ':'+this.selected_state : '') );
+			},
+			get_label_html: function () {
+				if (this.options.hide_label === true) return '';
+				var attr = {
+					'for': this.get_field_id(),
+					'class': 'upfront-field-label ' + ( this.options.label_style == 'inline' ? 'upfront-field-label-inline' : 'upfront-field-label-block' )
+				};
+				return '<label ' + this.get_field_attr_html(attr) + '>' + this.label + '</label>';
+			},
+			get_field_attr_html: function (attr) {
+				return _.map(attr, function(value, att){
+					return att + '="' + value + '"';
+				}).join(' ');
+			}
+		});
 
-
-            },
-            dispatch_show: function () {
-                var me = this;
-                setTimeout(function() {
-                    me.options.show(me.get_value(), me.$el);
-                }, 100);
-            },
-            get_name: function () {
-                return this.property ? this.property.get('name') : this.name;
-            },
-            get_saved_value: function () {
-                if ( this.property ){
-                    if ( this.use_breakpoint_property )
-                        return this.model.get_breakpoint_property_value(this.property_name, true);
-                    else
-                        return this.property.get('value');
-                }
-                else if ( this.model ){
-                    var value = this.model.get(this.name);
-                    return value ? value : this.default_value;
-                }
-                return this.default_value;
-            },
-            get_value: function () {
-                var $field = this.get_field();
-                if ( ! this.multiple || ($field.size() == 1 && $field.is('select')) )
-                    return $field.val();
-                else
-                    return _.map($field, function (el) { return $(el).val(); });
-                return false;
-            },
-            set_value: function (value) {
-                this.get_field().val(value);
-            },
-            get_field_id: function () {
-                return this.cid + '-' + this.get_name();
-            },
-            get_field_name: function () {
-                return this.get_name();
-            },
-            get_field: function () {
-                return this.$el.find( '[name=' + this.get_field_name() + ']' + (this.selected_state ? ':'+this.selected_state : '') );
-            },
-            get_label_html: function () {
-                if (this.options.hide_label === true) return '';
-                var attr = {
-                    'for': this.get_field_id(),
-                    'class': 'upfront-field-label ' + ( this.options.label_style == 'inline' ? 'upfront-field-label-inline' : 'upfront-field-label-block' )
-                };
-                return '<label ' + this.get_field_attr_html(attr) + '>' + this.label + '</label>';
-            },
-            get_field_attr_html: function (attr) {
-                return _.map(attr, function(value, att){
-                    return att + '="' + value + '"';
-                }).join(' ');
-            }
-        });
-
-        var Field_Text = Field.extend({
-            className: 'upfront-field-wrap upfront-field-wrap-text',
-            render: function () {
-                this.$el.html('');
-                if ( !this.options.compact )
-                    this.$el.append(this.get_label_html());
-                this.$el.append(this.get_field_html());
-                var me = this;
-                this.get_field().keyup(function(){
-                    if ( '' === $(this).val() ){
-                        $(this).addClass('upfront-field-empty');
-                    }
-                    else if ( $(this).hasClass('upfront-field-empty') ) {
-                        $(this).removeClass('upfront-field-empty');
-                    }
-                }).trigger('keyup').change(function(){
-                    me.trigger('changed', me.get_value());
-                });
-                this.trigger('rendered');
-            },
-            get_field_html: function () {
-                var attr = {
-                    'type': 'text',
-                    'class': 'upfront-field upfront-field-text',
-                    'id': this.get_field_id(),
-                    'name': this.get_field_name(),
-                    'value': this.get_saved_value()
-                };
-                if ( this.options.compact ) {
-                    attr.placeholder = this.label;
-                    this.$el.attr('title', this.label);
-                }
-                else if ( this.options.placeholder ) {
-                    attr.placeholder = this.options.placeholder;
-                }
-                return '<input ' + this.get_field_attr_html(attr) + ' />';
-            }
-        });
+		var Field_Text = Field.extend({
+			className: 'upfront-field-wrap upfront-field-wrap-text',
+			render: function () {
+				this.$el.html('');
+				if ( !this.options.compact )
+					this.$el.append(this.get_label_html());
+				this.$el.append(this.get_field_html());
+				var me = this;
+				this.get_field().keyup(function(){
+					if ( '' === $(this).val() ){
+							$(this).addClass('upfront-field-empty');
+					}
+					else if ( $(this).hasClass('upfront-field-empty') ) {
+							$(this).removeClass('upfront-field-empty');
+					}
+				}).trigger('keyup').change(function(){
+					me.trigger('changed', me.get_value());
+				});
+				this.trigger('rendered');
+			},
+			get_field_html: function () {
+				var attr = {
+					'type': 'text',
+					'class': 'upfront-field upfront-field-text',
+					'id': this.get_field_id(),
+					'name': this.get_field_name(),
+					'value': this.get_saved_value()
+				};
+				if ( this.options.compact ) {
+					attr.placeholder = this.label;
+					this.$el.attr('title', this.label);
+				}
+				else if ( this.options.placeholder ) {
+					attr.placeholder = this.options.placeholder;
+				}
+				return '<input ' + this.get_field_attr_html(attr) + ' />';
+			}
+		});
 
 		var Field_Title = Field.extend({
-            className: 'upfront-field-wrap upfront-field-wrap-title',
+			className: 'upfront-field-wrap upfront-field-wrap-title',
 			render: function () {
 				this.$el.html('');
 
@@ -164,295 +162,294 @@
 				}
 			},
 
-            get_field_html: function () {
-                return '';
-            }
-        });
+			get_field_html: function () {
+				return '';
+			}
+		});
 
-        /**
-         * Start in initially not editable state.
-         * Used for things such as permalink fields in "New Page" dialog.
-         * Not exposed globally.
-         */
-        var Field_ToggleableText = Field_Text.extend({
-            is_edited: false,
-            className: 'upfront-field-wrap upfront-field-wrap-text upfront-field-wrap-toggleable',
-            render: function () {
-                Field_Text.prototype.render.call(this);
-                if (this.is_edited) return false;
-                this.$el.append(
-                    ' ' +
-                    '<a href="#" class="upfront-toggleable-button">Edit</a>'
-                );
-                var me = this;
-                this.$el.on('click', '.upfront-toggleable-button', function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    var $me = $(this),
-                        $el = me.get_field()
-                        ;
-                    $me.hide();
-                    $el.replaceWith(me.get_editable_html());
-                    me.is_edited = true;
-                });
-            },
-            has_been_edited: function () {
-                return this.is_edited;
-            },
-            reset_state: function () {
-                this.is_edited = Field_ToggleableText.prototype.is_edited;
-            },
-            get_field_html: function () {
-                return this.is_edited
-                    ? this.get_editable_html()
-                    : this.get_toggleable_html()
-                    ;
-            },
-            get_field: function () {
-                return this.is_edited
-                    ? Field_Text.prototype.get_field.call(this)
-                    : this.$el.find(".upfront-field-toggleable-value")
-                    ;
-            },
-            get_value: function () {
-                return this.is_edited
-                    ? Field_Text.prototype.get_value.call(this)
-                    : $.trim(this.get_field().text())
-                    ;
-            },
-            set_value: function (value) {
-                return this.is_edited
-                    ? this.get_field().val(value)
-                    : this.get_field().text(value)
-                    ;
-            },
-            get_toggleable_html: function () {
-                var value = this.get_value() || this.get_saved_value();
-                return '<span class="upfront-field-toggleable-value">' + value + '</span>';
-            },
-            get_editable_html: function () {
-                var attr = {
-                    'type': 'text',
-                    'class': 'upfront-field upfront-field-text upfront-field-toggleable',
-                    'id': this.get_field_id(),
-                    'name': this.get_field_name(),
-                    'value': this.get_value() || this.get_saved_value()
-                };
-                if ('inline' === this.options.label_style) attr['class'] += ' upfront-has_inline_label';
-                if ( this.options.compact ) {
-                    attr.placeholder = this.label;
-                    this.$el.attr('title', this.label);
-                }
-                else if ( this.options.placeholder ) {
-                    attr.placeholder = this.options.placeholder;
-                }
-                return '<input ' + this.get_field_attr_html(attr) + ' />';
-            }
-        });
+		/**
+		 * Start in initially not editable state.
+		 * Used for things such as permalink fields in "New Page" dialog.
+		 * Not exposed globally.
+		 */
+		var Field_ToggleableText = Field_Text.extend({
+			is_edited: false,
+			className: 'upfront-field-wrap upfront-field-wrap-text upfront-field-wrap-toggleable',
+			render: function () {
+				Field_Text.prototype.render.call(this);
+				if (this.is_edited) return false;
+				this.$el.append(
+						' ' +
+						'<a href="#" class="upfront-toggleable-button">Edit</a>'
+				);
+				var me = this;
+				this.$el.on('click', '.upfront-toggleable-button', function (e) {
+						e.preventDefault();
+						e.stopPropagation();
+						var $me = $(this),
+								$el = me.get_field()
+								;
+						$me.hide();
+						$el.replaceWith(me.get_editable_html());
+						me.is_edited = true;
+				});
+			},
+			has_been_edited: function () {
+				return this.is_edited;
+			},
+			reset_state: function () {
+				this.is_edited = Field_ToggleableText.prototype.is_edited;
+			},
+			get_field_html: function () {
+				return this.is_edited
+					? this.get_editable_html()
+					: this.get_toggleable_html()
+					;
+			},
+			get_field: function () {
+				return this.is_edited
+					? Field_Text.prototype.get_field.call(this)
+					: this.$el.find(".upfront-field-toggleable-value")
+					;
+			},
+			get_value: function () {
+				return this.is_edited
+					? Field_Text.prototype.get_value.call(this)
+					: $.trim(this.get_field().text())
+					;
+			},
+			set_value: function (value) {
+				return this.is_edited
+					? this.get_field().val(value)
+					: this.get_field().text(value)
+					;
+			},
+			get_toggleable_html: function () {
+				var value = this.get_value() || this.get_saved_value();
+				return '<span class="upfront-field-toggleable-value">' + value + '</span>';
+			},
+			get_editable_html: function () {
+				var attr = {
+					'type': 'text',
+					'class': 'upfront-field upfront-field-text upfront-field-toggleable',
+					'id': this.get_field_id(),
+					'name': this.get_field_name(),
+					'value': this.get_value() || this.get_saved_value()
+				};
+				if ('inline' === this.options.label_style) attr['class'] += ' upfront-has_inline_label';
+				if ( this.options.compact ) {
+					attr.placeholder = this.label;
+					this.$el.attr('title', this.label);
+				}
+				else if ( this.options.placeholder ) {
+					attr.placeholder = this.options.placeholder;
+				}
+				return '<input ' + this.get_field_attr_html(attr) + ' />';
+			}
+		});
 
-        var Field_Button = Field.extend({
-            className: 'upfront-field-wrap upfront-field-wrap-button',
-            events: {
-                'click' : 'on_click'
-            },
-            render: function () {
-                this.$el.html('');
-                if ( !this.options.compact )
-                    this.$el.append(this.get_label_html());
-                if ( this.options.info) {
-                    this.$el.append(this.get_info_html());
-                }
-                this.$el.append(this.get_field_html());
-                var me = this;
+		var Field_Button = Field.extend({
+			className: 'upfront-field-wrap upfront-field-wrap-button',
+			events: {
+				'click' : 'on_click'
+			},
+			render: function () {
+				this.$el.html('');
+				if ( !this.options.compact )
+					this.$el.append(this.get_label_html());
+				if ( this.options.info) {
+					this.$el.append(this.get_info_html());
+				}
+				this.$el.append(this.get_field_html());
+				var me = this;
 
-                if (this.options.classname) this.$el.addClass(this.options.classname);
+				if (this.options.classname) this.$el.addClass(this.options.classname);
 
-                this.trigger('rendered');
-                this.delegateEvents();
-            },
-            get_info_html: function() {
-                return '<span class="button-info">' + this.options.info + '</span>';
-            },
-            get_field_html: function () {
-                var attr = {
-                    'type': 'button',
-                    'class': 'upfront-field upfront-field-button',
-                    'id': this.get_field_id(),
-                    'name': this.get_field_name(),
-                    'value': this.label
-                };
-                if ( this.options.compact ) {
-                    attr.placeholder = this.label;
-                    this.$el.attr('title', this.label);
-                }
-                else if ( this.options.placeholder ) {
-                    attr.value = this.options.placeholder;
-                }
-                return '<input ' + this.get_field_attr_html(attr) + ' />';
-            }
-        });
+				this.trigger('rendered');
+				this.delegateEvents();
+			},
+			get_info_html: function() {
+				return '<span class="button-info">' + this.options.info + '</span>';
+			},
+			get_field_html: function () {
+				var attr = {
+					'type': 'button',
+					'class': 'upfront-field upfront-field-button',
+					'id': this.get_field_id(),
+					'name': this.get_field_name(),
+					'value': this.label
+				};
+				if ( this.options.compact ) {
+					attr.placeholder = this.label;
+					this.$el.attr('title', this.label);
+				}
+				else if ( this.options.placeholder ) {
+					attr.value = this.options.placeholder;
+				}
+				return '<input ' + this.get_field_attr_html(attr) + ' />';
+			}
+		});
 
-        var Field_Email = Field_Text.extend({
-            get_field_html: function () {
-                var attr = {
-                    'type': 'email',
-                    'class': 'upfront-field upfront-field-text upfront-field-email',
-                    'id': this.get_field_id(),
-                    'name': this.get_field_name(),
-                    'value': this.get_saved_value()
-                };
-                if ( this.options.compact ) {
-                    attr.placeholder = this.label;
-                    this.$el.attr('title', this.label);
-                }
-                else if ( this.options.placeholder ) {
-                    attr.placeholder = this.options.placeholder;
-                }
-                return '<input ' + this.get_field_attr_html(attr) + ' />';
-            }
-        });
+		var Field_Email = Field_Text.extend({
+			get_field_html: function () {
+				var attr = {
+					'type': 'email',
+					'class': 'upfront-field upfront-field-text upfront-field-email',
+					'id': this.get_field_id(),
+					'name': this.get_field_name(),
+					'value': this.get_saved_value()
+				};
+				if ( this.options.compact ) {
+					attr.placeholder = this.label;
+					this.$el.attr('title', this.label);
+				}
+				else if ( this.options.placeholder ) {
+					attr.placeholder = this.options.placeholder;
+				}
+				return '<input ' + this.get_field_attr_html(attr) + ' />';
+			}
+		});
 
-        var Field_Textarea = Field_Text.extend({
-            className: 'upfront-field-wrap upfront-field-wrap-text upfront-field-wrap-textarea',
-            get_field_html: function () {
-                var attr = {
-                    'cols': '40',
-                    'rows': '5',
-                    'class': 'upfront-field upfront-field-text upfront-field-textarea',
-                    'id': this.get_field_id(),
-                    'name': this.get_field_name()
-                };
-                if ( this.options.compact ) {
-                    attr.placeholder = this.label;
-                    this.$el.attr('title', this.label);
-                }
-                else if ( this.options.placeholder ) {
-                    attr.placeholder = this.options.placeholder;
-                }
-                return '<textarea ' + this.get_field_attr_html(attr) + '>' + this.get_saved_value() + '</textarea>';
-            }
-        });
+		var Field_Textarea = Field_Text.extend({
+			className: 'upfront-field-wrap upfront-field-wrap-text upfront-field-wrap-textarea',
+			get_field_html: function () {
+				var attr = {
+					'cols': '40',
+					'rows': '5',
+					'class': 'upfront-field upfront-field-text upfront-field-textarea',
+					'id': this.get_field_id(),
+					'name': this.get_field_name()
+				};
+				if ( this.options.compact ) {
+					attr.placeholder = this.label;
+					this.$el.attr('title', this.label);
+				}
+				else if ( this.options.placeholder ) {
+					attr.placeholder = this.options.placeholder;
+				}
+				return '<textarea ' + this.get_field_attr_html(attr) + '>' + this.get_saved_value() + '</textarea>';
+			}
+		});
 
-        var Field_Number = Field_Text.extend({
-            className: 'upfront-field-wrap upfront-field-wrap-number',
-            get_field_html: function () {
-                var attr = {
-                    'type': 'number',
-                    'class': 'upfront-field upfront-field-number',
-                    'id': this.get_field_id(),
-                    'name': this.get_field_name(),
-                    'value': this.get_saved_value()
-                };
-                if ( typeof this.options.min != 'undefined' )
-                    attr.min = this.options.min;
-                if ( typeof this.options.max != 'undefined' )
-                    attr.max = this.options.max;
-                if ( typeof this.options.step != 'undefined' )
-                    attr.step = this.options.step;
-                return ' <input ' + this.get_field_attr_html(attr) + ' /> ' + (this.options.suffix ? this.options.suffix : '');
-            }
-        });
+		var Field_Number = Field_Text.extend({
+			className: 'upfront-field-wrap upfront-field-wrap-number',
+			get_field_html: function () {
+				var attr = {
+					'type': 'number',
+					'class': 'upfront-field upfront-field-number',
+					'id': this.get_field_id(),
+					'name': this.get_field_name(),
+					'value': this.get_saved_value()
+				};
+				if ( typeof this.options.min != 'undefined' )
+					attr.min = this.options.min;
+				if ( typeof this.options.max != 'undefined' )
+					attr.max = this.options.max;
+				if ( typeof this.options.step != 'undefined' )
+					attr.step = this.options.step;
+				return ' <input ' + this.get_field_attr_html(attr) + ' /> ' + (this.options.suffix ? this.options.suffix : '');
+			}
+		});
 
+		var Field_Slider = Field_Text.extend(_.extend({}, Mixins.Upfront_Icon_Mixin, {
+			className: 'upfront-field-wrap upfront-field-wrap-slider',
+			initialize: function(opts) {
+				this.options = opts;
+				Field_Slider.__super__.initialize.apply(this, arguments);
 
-        var Field_Slider = Field_Text.extend(_.extend({}, Mixins.Upfront_Icon_Mixin, {
-            className: 'upfront-field-wrap upfront-field-wrap-slider',
-            initialize: function(opts) {
-                this.options = opts;
-                Field_Slider.__super__.initialize.apply(this, arguments);
+				var me = this,
+					options = {
+							range: this.getOption('range', 'min'),
+							min: this.getOption('min', 0),
+							max: this.getOption('max', 0),
+							step: this.getOption('step', 1),
+							orientation: this.getOption('orientation', 'horizontal'),
+							value: this.get_saved_value()
+					}
+				;
 
-                var me = this,
-                    options = {
-                        range: this.getOption('range', 'min'),
-                        min: this.getOption('min', 0),
-                        max: this.getOption('max', 0),
-                        step: this.getOption('step', 1),
-                        orientation: this.getOption('orientation', 'horizontal'),
-                        value: this.get_saved_value()
-                    }
-                    ;
+				this.value = this.get_saved_value();
+				if(typeof this.value == 'undefined')
+					this.value = options.min;
 
-                this.value = this.get_saved_value();
-                if(typeof this.value == 'undefined')
-                    this.value = options.min;
+				if(this.options.callbacks)
+					_.extend(options, this.options.callbacks);
 
-                if(this.options.callbacks)
-                    _.extend(options, this.options.callbacks);
+				options.slide = function(e, ui){
+					var valueText = ui.value;
+					me.value = valueText;
 
-                options.slide = function(e, ui){
-                    var valueText = ui.value;
-                    me.value = valueText;
+					me.$('input').val(me.value).trigger('change');
 
-                    me.$('input').val(me.value).trigger('change');
+					if(me.options.valueTextFilter)
+						valueText = me.options.valueTextFilter(valueText);
 
-                    if(me.options.valueTextFilter)
-                        valueText = me.options.valueTextFilter(valueText);
+					me.$('.upfront-field-slider-value').text(valueText);
 
-                    me.$('.upfront-field-slider-value').text(valueText);
+					if(me.options.callbacks && me.options.callbacks.slide)
+						me.options.callbacks.slide(e, ui);
+				};
 
-                    if(me.options.callbacks && me.options.callbacks.slide)
-                        me.options.callbacks.slide(e, ui);
-                };
+				this.on('rendered', function(){
+					var $field = me.$('#' + me.get_field_id());
+					if ( options.orientation == 'vertical' ){
+						$field.addClass('upfront-field-slider-vertical');
+					}
+					$field.slider(options);
+				});
+			},
+			get_field_html: function () {
+				var output = '<input type="hidden" name="' + this.get_field_name() + '" value="' + this.value + '">',
+					value = this.value
+				;
 
-                this.on('rendered', function(){
-                    var $field = me.$('#' + me.get_field_id());
-                    if ( options.orientation == 'vertical' ){
-                        $field.addClass('upfront-field-slider-vertical');
-                    }
-                    $field.slider(options);
-                });
-            },
-            get_field_html: function () {
-                var output = '<input type="hidden" name="' + this.get_field_name() + '" value="' + this.value + '">',
-                    value = this.value
-                    ;
+				if(this.options.info)
+					output += '<div class="upfront-field-info">' + this.options.info + '</div>';
 
-                if(this.options.info)
-                    output += '<div class="upfront-field-info">' + this.options.info + '</div>';
+				output += '<div class="upfront-field upfront-field-slider" id="' + this.get_field_id() + '"></div>';
 
-                output += '<div class="upfront-field upfront-field-slider" id="' + this.get_field_id() + '"></div>';
+				if(this.options.valueTextFilter)
+					value = this.options.valueTextFilter(value);
 
-                if(this.options.valueTextFilter)
-                    value = this.options.valueTextFilter(value);
+				output += '<div class="upfront-field-slider-value"> ' + value + '</div>';
+				return output;
+			},
 
-                output += '<div class="upfront-field-slider-value"> ' + value + '</div>';
-                return output;
-            },
+			getOption: function(option, def){
+				return this.options[option] ? this.options[option] : def;
+			}
+		}));
 
-            getOption: function(option, def){
-                return this.options[option] ? this.options[option] : def;
-            }
-        }));
+		var Field_Hidden = Field_Text.extend({
+			className: 'upfront-field-wrap upfront-field-wrap-hidden',
+			get_field_html: function(){
+				var attr = {
+					type: 'hidden',
+					id: this.get_field_id(),
+					name: this.get_field_name(),
+					'class': 'upfront-field upfront-field-hidden',
+					'value': this.get_saved_value()
+				};
+				return ' <input ' + this.get_field_attr_html(attr) + ' /> ';
+			}
+		});
 
-        var Field_Hidden = Field_Text.extend({
-            className: 'upfront-field-wrap upfront-field-wrap-hidden',
-            get_field_html: function(){
-                var attr = {
-                    type: 'hidden',
-                    id: this.get_field_id(),
-                    name: this.get_field_name(),
-                    'class': 'upfront-field upfront-field-hidden',
-                    'value': this.get_saved_value()
-                };
-                return ' <input ' + this.get_field_attr_html(attr) + ' /> ';
-            }
-        });
-
-        var Field_Color = Field_Text.extend({
-            className: 'upfront-field-wrap upfront-field-wrap-color sp-cf',
-            defaults : {
-                blank_alpha : 1,
-                autoHide: true,
-                hideOnOuterClick: true
-            },
-            spectrumDefaults: {
-                clickoutFiresChange: true,
-                showSelectionPalette: true,
-                showAlpha: true,
-                showPalette: true,
-                localStorageKey: "spectrum.recent_colors",
-                palette: Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : [],
-                maxSelectionSize: 10,
-                preferredFormat: "hex",
+		var Field_Color = Field_Text.extend({
+			className: 'upfront-field-wrap upfront-field-wrap-color sp-cf',
+			defaults : {
+				blank_alpha : 1,
+				autoHide: true,
+				hideOnOuterClick: true
+			},
+			spectrumDefaults: {
+				clickoutFiresChange: true,
+				showSelectionPalette: true,
+				showAlpha: true,
+				showPalette: true,
+				localStorageKey: "spectrum.recent_colors",
+				palette: Theme_Colors.colors.pluck("color").length ? Theme_Colors.colors.pluck("color") : [],
+				maxSelectionSize: 10,
+				preferredFormat: "hex",
 				showButtons: false,
                 showInput: true,
                 allowEmpty:true,
@@ -545,7 +542,7 @@
 							me.$(".sp-replacer").removeClass("sp-active");
 							me.$(".sp-container").addClass("sp-hidden");
 						});
-						
+		
 						Upfront.Events.trigger("color:spectrum:hide");
                     }
                 });
@@ -629,45 +626,45 @@
 						input_val_color = tinycolor( color );
 
 					// We need a delay to load if color is theme color
-				    setTimeout( function() {
+					setTimeout( function() {
 						me.toggle_alpha_selector( color );
 					}, 100);
-                }
+				}
 
-                if( this.options.spectrum && !this.options.spectrum.flat && ( !this.field_options || !this.field_options.flat ) && this.field_options.hideOnOuterClick )
-                    $("html").on('mousedown', _.bind( this.hide_on_outer_click, this ) );
-            },
-            on_spectrum_beforeShow: function(color){
-                if( color instanceof Object ){
-                    $.extend(color, tinycolor.prototype);
-                }
-                this.color = color;
-                this.update_palette(); // Make sure we're up to date
-                this.$('input[name=' + this.get_field_name() + ']').spectrum("option", "palette", this.options.palette);
-                if(this.options.spectrum && this.options.spectrum.beforeShow) this.options.spectrum.beforeShow(color);
+				if( this.options.spectrum && !this.options.spectrum.flat && ( !this.field_options || !this.field_options.flat ) && this.field_options.hideOnOuterClick )
+					$("html").on('mousedown', _.bind( this.hide_on_outer_click, this ) );
+			},
+			on_spectrum_beforeShow: function(color){
+				if( color instanceof Object ){
+					$.extend(color, tinycolor.prototype);
+				}
+				this.color = color;
+				this.update_palette(); // Make sure we're up to date
+				this.$('input[name=' + this.get_field_name() + ']').spectrum("option", "palette", this.options.palette);
+				if(this.options.spectrum && this.options.spectrum.beforeShow) this.options.spectrum.beforeShow(color);
 
-                this.$(".sp-container").data("sp-options", this.options.spectrum );
-            },
-            render: function () {
-                Field_Color.__super__.render.apply(this, arguments);
-                // Re-bind debounced listeners for theme color updates
-                this.stopListening(Upfront.Events, "theme_colors:update");
-                var cback = _.debounce(this.update_palette, 200);
-                this.listenTo(Upfront.Events, "theme_colors:update", cback, this);
-            },
-            /**
-             * Hides picker on outer click
-             *
-             * @param e event
-             */
-            hide_on_outer_click: function(e){
-                if( this.$(".sp-container").hasClass("sp-hidden") ) return;
+				this.$(".sp-container").data("sp-options", this.options.spectrum );
+			},
+			render: function () {
+				Field_Color.__super__.render.apply(this, arguments);
+				// Re-bind debounced listeners for theme color updates
+				this.stopListening(Upfront.Events, "theme_colors:update");
+				var cback = _.debounce(this.update_palette, 200);
+				this.listenTo(Upfront.Events, "theme_colors:update", cback, this);
+			},
+			/**
+			 * Hides picker on outer click
+			 *
+			 * @param e event
+			 */
+			hide_on_outer_click: function(e){
+				if( this.$(".sp-container").hasClass("sp-hidden") ) return;
 
-                var $target = $(e.target);
-                if( $target.is(".sp-container") || $target.parents(".sp-container").length ) return;
+				var $target = $(e.target);
+				if( $target.is(".sp-container") || $target.parents(".sp-container").length ) return;
 
-                this.revert();
-                this.$(".sp-container").addClass("sp-hidden"); //  hide
+				this.revert();
+				this.$(".sp-container").addClass("sp-hidden"); //  hide
 				Upfront.Events.trigger("color:spectrum:hide");
                 $("html").off('mousedown', _.bind( this.hide_on_outer_click, this ) );
             },
@@ -717,7 +714,7 @@
             update_input_border_color : function(rgb){
                 var spPreview = this.$el.find(".sp-preview"),
 					me = this;
-				
+
 				setTimeout( function() {
 					me.$el.find(".upfront_color_picker_rgb_main").css({
 						backgroundColor: rgb
