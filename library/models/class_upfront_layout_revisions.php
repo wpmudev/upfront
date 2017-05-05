@@ -1,8 +1,5 @@
 <?php
 
-// Get cache utilities class.
-require_once dirname(dirname(__FILE__)) . "/class_upfront_cache_utils.php";
-
 class Upfront_LayoutRevisions {
 
 	const REVISION_TYPE = 'upfront_layout_rvsn';
