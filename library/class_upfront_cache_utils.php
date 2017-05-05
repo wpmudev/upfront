@@ -4,7 +4,13 @@
  * Upfront cache helper class
  */
 class Upfront_Cache_Utils {
+
+	/*
+ 	 * The Default Expiration Time in seconds for object cache.
+ 	 * Note that a value of 0 means no expiration.
+ 	 */
 	public static $expire = 180;
+
 	/**
  	 * Checks cache for query data first.
  	 * If none, makes query and caches it.
@@ -23,8 +29,10 @@ class Upfront_Cache_Utils {
 		// Query DB.
 		$result = new WP_Query($args);
 	
-		// Cache results.
-		wp_cache_set($key, $result, $group, $expire);
+		// Cache results if not empty.
+		if (!empty($result)) {
+			wp_cache_set($key, $result, $group, $expire);
+		}
 		// Return results.
 		return $result;
 	}
@@ -33,9 +41,10 @@ class Upfront_Cache_Utils {
  	 * Checks cache for option data first.
  	 * If none, gets option and caches it.
  	 * @param string $key The key to the cached data.
+ 	 * @param mixed $default The default value to return if no option.
  	 * @return mixed $result
  	 */
-	public static function get_option($key) {
+	public static function get_option($key, $default = false) {
 		$group = 'upfront_options';
 		// Use default expiration.
 		$expire = self::$expire;
@@ -44,10 +53,12 @@ class Upfront_Cache_Utils {
 		if ($cached) return $cached;
 
 		// Get the option.
-		$result = get_option($key);
+		$result = get_option($key, $default);
 
-		// Cache results.
-		wp_cache_set($key, $result, $group, $expire);
+		// Cache results if not empty.
+		if (!empty($result)) {
+			wp_cache_set($key, $result, $group, $expire);
+		}
 	
 		// Return results.
 		return $result;
@@ -56,14 +67,15 @@ class Upfront_Cache_Utils {
 	/**
  	 * Deletes cache then updates the option.
  	 * @param string $key The key to the cached data.
+ 	 * @param mixed $value The value to save as the option.
  	 * @return boolean success of deletion.
  	 */
-	public static function update_option($key, $value) {
+	public static function update_option($key, $value, $autoload = null) {
 		$group = 'upfront_options';
 		// Delete the cache.
 		self::clear_cache($key, $group);
 		// Delete the actual option.
-		return update_option($key, $value);
+		return update_option($key, $value, $autoload);
 	}
 
 	/**
@@ -79,7 +91,7 @@ class Upfront_Cache_Utils {
 		return delete_option($key);
 	}
 
-	/*
+	/**
  	 * Clear cache by key.
  	 * @param string $key The key to the cached data to delete.
  	 * @param string $group The group of the cached data to delete.
