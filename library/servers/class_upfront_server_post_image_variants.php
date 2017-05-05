@@ -13,7 +13,7 @@ class Upfront_Server_PostImageVariants extends Upfront_Server {
 	}
 
 	public function get() {
-		$variants = get_option('upfront_' . get_stylesheet() . '_post_image_variants');
+		$variants = Upfront_Cache_Utils::get_option('upfront_' . get_stylesheet() . '_post_image_variants');
 		if (empty($variants)) $variants = array();
 		$this->_out(new Upfront_JsonResponse_Success($variants));
 	}
@@ -30,7 +30,7 @@ class Upfront_Server_PostImageVariants extends Upfront_Server {
 		do_action('upfront_save_post_image_variants', $data);
 
 		if (!has_action('upfront_update_post_image_variants')) {
-			update_option('upfront_' . get_stylesheet() . '_post_image_variants', json_encode($data));
+			Upfront_Cache_Utils::update_option('upfront_' . get_stylesheet() . '_post_image_variants', json_encode($data));
 		}
 
 		$this->_out(new Upfront_JsonResponse_Success(get_stylesheet() . ' post image variants updated'));

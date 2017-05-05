@@ -141,7 +141,7 @@ class Upfront_Posts_Model {
 			|| 
 			!empty($data['sticky']) && 'prepend' === $data['sticky'] && $has_pages // If we're prepending stickies, drop them on subsequent pages
 		) {
-			$args['post__not_in'] = get_option('sticky_posts');
+			$args['post__not_in'] = Upfront_Cache_Utils::get_option('sticky_posts');
 		}
 
 		// Prepend if requested

@@ -26,7 +26,7 @@ abstract class Upfront_VirtualPage extends Upfront_Server {
 	}
 
 	public static function redirect ($request) {
-		$url = get_option('permalink_structure')
+		$url = Upfront_Cache_Utils::get_option('permalink_structure')
 			? home_url($request)
 			: home_url() . '?name=' . $request
 		;
@@ -35,7 +35,7 @@ abstract class Upfront_VirtualPage extends Upfront_Server {
 	}
 
 	private function _parse_request ($render = true) {
-		$raw_request = get_option('permalink_structure')
+		$raw_request = Upfront_Cache_Utils::get_option('permalink_structure')
 			? $this->_parse_pretty_permalink_request()
 			: $this->_parse_default_request()
 		;
@@ -69,7 +69,7 @@ abstract class Upfront_VirtualPage extends Upfront_Server {
 			? 'https'
 			: 'http'
 		;
-		return get_option('permalink_structure')
+		return Upfront_Cache_Utils::get_option('permalink_structure')
 			? home_url($request, $scheme)
 			: home_url('', $scheme) . '?name=' . $request
 		;
@@ -105,7 +105,7 @@ abstract class Upfront_VirtualSubpage {
 class Upfront_Maintenance_Page_Interceptor {
 	
 	public static function intercept_page () {
-		$maintenance_data = get_option(Upfront_Server::MAINTENANCE_MODE, false);
+		$maintenance_data = Upfront_Cache_Utils::get_option(Upfront_Server::MAINTENANCE_MODE, false);
 		if ( $maintenance_data ) {
 			$maintenance_data = json_decode($maintenance_data);
 			if ( $maintenance_data && is_object($maintenance_data) ) {

@@ -173,7 +173,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 	 * Renders the site under construction box
 	 */
 	private function _render_under_construction_box () {
-		$maintenance_mode = get_option(Upfront_Server::MAINTENANCE_MODE, false);
+		$maintenance_mode = Upfront_Cache_Utils::get_option(Upfront_Server::MAINTENANCE_MODE, false);
 		$enable_maintenance_mode = false;
 		if ( $maintenance_mode ) {
 			$maintenance_mode = json_decode($maintenance_mode);
@@ -285,7 +285,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 	private function _get_changelog () {
 		$entries = $this->_get_raw_changelog_entries();
 		$changelog = array();
-		$df = get_option('date_format');
+		$df = Upfront_Cache_Utils::get_option('date_format');
 		foreach ($entries as $version => $entry) {
 			if (empty($entry)) continue;
 

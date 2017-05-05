@@ -605,7 +605,7 @@ class Upfront_newMenuSetting extends Upfront_Server {
 			// Remove nonexistent/deleted menus
 			if( isset($nav_menu_option['auto_add']) )
 				$nav_menu_option['auto_add'] = array_intersect( $nav_menu_option['auto_add'], wp_get_nav_menus( array( 'fields' => 'ids' ) ) );
-			$response = update_option( 'nav_menu_options', $nav_menu_option );
+			$response = Upfront_Cache_Utils::update_option( 'nav_menu_options', $nav_menu_option );
 			$this->_out(new Upfront_JsonResponse_Success($response));
 		}
 		$this->_out(new Upfront_JsonResponse_Error(Upfront_UnewnavigationView::_get_l10n('cant_update_auto')));
