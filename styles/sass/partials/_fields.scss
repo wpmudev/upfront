@@ -5,7 +5,7 @@
 	font-size: 11px;
 	line-height: 16px;
 	font-weight: normal;
-	font-family: verdana, sans-serif;
+	font-family: "Open Sans";
 	margin: 13px 0 0;
 }
 
@@ -33,7 +33,7 @@
 	color: rgb(79, 79, 79);
 	font-size: 11px;
 	font-weight: bold;
-	font-family: verdana, sans-serif;
+	font-family: "Open Sans";
 	line-height: 1;
 	margin: 0;
 	margin-bottom: 8px;
@@ -63,7 +63,7 @@ textarea.upfront-field-text.upfront-field-textarea {
 	width: 100%;
 	padding: 0px 5px;
 	font-size: 11px;
-	font-family: verdana, sans-serif;
+	font-family: "Open Sans";
 	line-height: 1;
 }
 
@@ -92,20 +92,23 @@ input.upfront-field-text:-ms-input-placeholder {
 }
 
 .upfront-field-empty,
-.upfront-field-number[type=number] {
+.upfront-field-number[type=number],
+.upfront-field-wrap-color .sp-replacer {
 	opacity: .75;
 }
 
 input.upfront-field-text:hover,
 .upfront-field-number[type=number]:hover,
-.upfront-field-select:hover {
+.upfront-field-select:hover,
+.upfront-field-wrap-color .sp-replacer:hover {
 	opacity: .85;
 	outline: none;
 }
 
 .upfront-field-text:focus,
 .upfront-field-number[type=number]:focus,
-.upfront-field-select:focus {
+.upfront-field-select:focus,
+.upfront-field-wrap-color .sp-replacer:focus {
 	opacity: 1;
 	outline: none;
 }
@@ -164,7 +167,7 @@ input.upfront-field-text:hover,
 	margin: 0;
 	color: rgb(33, 33, 33);
 	font-size: 11px;
-	font-family: Verdana, sans-serif;
+	font-family: "Open Sans";
 	line-height: 22px;
 	position: relative;
 	overflow: hidden;
@@ -275,7 +278,7 @@ input.upfront-field-text:hover,
 }
 
 .upfront-field-select-option label {
-	font: normal 11px/2 Verdana, sans-serif;
+	font: normal 11px/2 "Open Sans";
 }
 
 .upfront-field-select-option .upfront-field-radio {
@@ -456,7 +459,7 @@ input.upfront-field-text:hover,
 .upfront-object-content .ulinkpanel ul {
 	color: rgb(96, 127, 153);
 	font-size: 11px;
-	font-family: verdana, sans-serif;
+	font-family: "Open Sans";
 	line-height: 22px;
 }
 
@@ -464,7 +467,7 @@ input.upfront-field-text:hover,
 .ulinkpanel .upfront-field-multiple label {
 	color: rgb(83, 97, 109);
 	font-size: 11px;
-	font-family: verdana, sans-serif;
+	font-family: "Open Sans";
 }
 
 .ulinkpanel input.upfront-field-text[type], .ulinkpanel textarea.upfront-field-text.upfront-field-textarea {
@@ -707,25 +710,60 @@ input.upfront-field-text:hover,
 .upfront-field-wrap-color .sp-replacer {
 	display: inline-block;
 	width: 100%;
-	height: 18px;
+	height: 22px;
 	vertical-align: bottom;
 	margin: 0;
 	border-radius: 3px;
 	top: 0px;
 	background: rgb(255, 255, 255);
 	position: relative;
-	border: 1px solid rgb(233, 233, 233);
+	border: 1px solid rgb(144, 144, 144);
 	box-shadow: inset 0 0 0 1px #fff;
+	color: rgb(33, 33, 33);
+	font-size: 11px;
+	font-family: "Open Sans";
+	line-height: 1;
 }
 
 .upfront-field-wrap-color .sp-replacer {
-	line-height: 30px;
+	line-height: 20px;
+}
+
+.upfront-field-wrap-color .sp-replacer:hover, .upfront-field-wrap-color .sp-replacer.sp-active {
+	border: 1px solid rgb(144, 144, 144);
 }
 
 .upfront-field-wrap-color .sp-preview {
 	width: 10px;
 	height: 20px;
 	float: left;
+	border-radius: 0;
+	border: none;
+}
+
+.upfront-field-wrap-color .sp-preview:before {
+	content: '';
+	/* magic happens below */
+	background-color: #d2d2d2;
+	background-image:
+			linear-gradient(to top right, #F7F7F7 25%, transparent 25%, transparent 75%, #F7F7F7 75%, #F7F7F7),
+			linear-gradient(to top right, #F7F7F7 25%, transparent 25%, transparent 75%, #F7F7F7 75%, #F7F7F7);
+	
+	-webkit-background-size: 8px 8px;
+	-moz-background-size: 8px 8px;
+	background-size: 8px 8px;
+	
+	background-position: 4px 4px, 8px 8px;
+	width: 10px;
+	height: 20px;
+	position: absolute;
+	z-index: 98;
+}
+
+.upfront-field-wrap-color .sp-preview-inner {
+	display: block !important;
+	position: absolute;
+	z-index: 99;
 }
 
 .upfront-field-wrap-color .sp-texthint {
