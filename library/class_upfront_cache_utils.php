@@ -75,11 +75,14 @@ class Upfront_Cache_Utils {
 		// Use default expiration.
 		$expire = self::$expire;
 
-		// Delete the cache.
+		// Delete the old cache item.
 		self::clear_cache($key, $group);
 	
+		// Update the actual option.
 		$result = update_option($key, $value, $autoload);
 		// Cache results if not empty/false.
+		// Caching on update removes the need to run another call for first get_option.
+		// Caching should only take place if update_option does not fail.
 		if (!empty($result) && $result !== '[]' && $result !== '{}') {
 			wp_cache_set($key, $value, $group, $expire);
 		}
