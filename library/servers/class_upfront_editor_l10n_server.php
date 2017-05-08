@@ -792,7 +792,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'image_variation' => __('Image Variation', 'upfront'),
 				'slider_transition' => __('Slide Transition', 'upfront'),
 				'no_colors_click_plus' => __('No colors defined for this theme. Click (+) below to define a color', 'upfront'),
-				'theme_colors_explanation' => __('You can use theme colors in your CSS by using their variables as you would HEX values eg.', 'upfront'),
+				'theme_colors_explanation' => __('You can use theme colors in your <strong>CSS</strong> by using their variables as you would HEX values eg.', 'upfront'),
 				'click_hilite_shade' => __('Click either Highlight or Shade swatch to choose it. Hover for original color.', 'upfront'),
 				'define_swatch_hovers' => __('Define <span class="hovers">:hovers</span> for your swatches ?', 'upfront'),
 				'hilite' => __('Highlight', 'upfront'),

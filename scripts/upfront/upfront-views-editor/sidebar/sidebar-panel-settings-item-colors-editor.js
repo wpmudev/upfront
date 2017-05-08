@@ -167,8 +167,7 @@
 					}
 				});
 				empty_picker.render();
-				this.$(".theme_colors_empty_picker").html(empty_picker.$el)
-					.prepend('<span class="theme-colors-color-name">ufc' + index + '</span>');
+				this.$(".theme_colors_empty_picker").html(empty_picker.$el);
 			},
 			add_unset_color : function(index){
 				var self = this,
@@ -178,6 +177,7 @@
 					default_value: '#ffffff', // Need to not be transparent, because theme colors can't be transparent
 					hide_alpha: true,
 					blank_alpha: 0,
+					ufc_index: index,
 					spectrum: {
 						choose: function (color) {
 							if (!_.isObject(color)) return false;
@@ -205,11 +205,10 @@
 				empty_picker.render();
 
 				empty_picker.$(".sp-preview").addClass("uf-unset-color");
+				empty_picker.$(".sp-replacer").addClass("uf-unset-color-wrapper");
 
 				this.$('#theme-colors-swatches').append( empty_picker.$el );
 				empty_picker.$el.wrap( '<span class="theme-colors-color-picker color-index">'.replace( "index", index) );
-				empty_picker.$el.closest('.theme-colors-color-picker').prepend( '<span class="theme-colors-color-name">ufcindex</span>'.replace( "index", index) );
-
 			},
 			add_previous_pickers : function(){
 				var self = this;
@@ -223,6 +222,7 @@
 							default_value: color,
 							hide_alpha: true,
 							blank_alpha: 0,
+							ufc_index: index,
 							spectrum: {
 								change: function (color) {
 									self.update_colors(this, color, index);
@@ -248,12 +248,14 @@
 					});
 					if( model.get( 'color' ) === '#000000' && model.get( 'alpha' ) == 0 ) {
 						picker.$(".sp-preview").addClass( 'uf-unset-color' );
+						picker.$(".sp-replacer").addClass("uf-unset-color-wrapper");
 					}
 					else {
 						picker.$(".sp-preview").removeClass( 'uf-unset-color' );
+						picker.$(".sp-replacer").removeClass("uf-unset-color-wrapper");
 					}
+
 					$this.html( picker.$el );
-					$this.prepend('<span class="theme-colors-color-name">ufc' + index + '</span>');
 				});
 			},
 			add_new_color : function( color, index ){
@@ -314,9 +316,11 @@
 				});
 				if( color.toHexString() === '#000000' && color.alpha == 0 ) {
 					new_color_picker.$(".sp-preview").addClass( 'uf-unset-color' );
+					new_color_picker.$(".sp-replacer").addClass("uf-unset-color-wrapper");
 				}
 				else {
 					new_color_picker.$(".sp-preview").removeClass( 'uf-unset-color' );
+					new_color_picker.$(".sp-replacer").removeClass("uf-unset-color-wrapper");
 				}
 				$wrapper.append(new_color_picker.$el);
 
@@ -429,9 +433,11 @@
 					});
 					if( color.toHexString() === '#000000' && color.alpha == 0 ) {
 						$(picker).parent().find(".sp-preview").addClass( 'uf-unset-color' );
+						$(picker).parent().find(".sp-replacer").addClass("uf-unset-color-wrapper");
 					}
 					else {
 						$(picker).parent().find(".sp-preview").removeClass( 'uf-unset-color' );
+						$(picker).parent().find(".sp-replacer").removeClass("uf-unset-color-wrapper");
 					}
 					picker.default_value = color.toRgbString();
 					this.render_bottom();

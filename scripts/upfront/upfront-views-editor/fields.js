@@ -468,7 +468,8 @@
                 this.sidebar_template = _.template(color_picker_tpl);
                 var me = this,
                     spectrumOptions = typeof this.options.spectrum == 'object' ? _.extend({}, this.spectrumDefaults, this.options.spectrum) : this.spectrumDefaults
-                    ;
+				;
+
                 this.rgba = {
                     r : 0,
                     g : 0,
@@ -727,9 +728,11 @@
 
                 if( rgb !== 'rgba(0, 0, 0, 0)' ) {
                     spPreview.removeClass('uf-unset-color');
+					this.$el.find(".sp-replacer").removeClass("uf-unset-color-wrapper");
                 }
                 else if( spPreview.closest( '.theme_colors_empty_picker' ).length === 0 ) {
                     spPreview.addClass('uf-unset-color');
+					this.$el.find(".sp-replacer").addClass("uf-unset-color-wrapper");
                 }
             },
             update_input_val : function(hex){
@@ -750,7 +753,12 @@
 					color = color_object.toRgbString();
 				}
 
-				this.$(".color_picker_rgb_preview").html(color);
+				if(typeof this.field_options.ufc_index !== "undefined") {
+            		// Use UFC index number instead of color value for theme colors
+					this.$(".color_picker_rgb_preview").html("#ufc" + this.field_options.ufc_index);
+				} else {
+					this.$(".color_picker_rgb_preview").html(color);
+				}
 			},
             rgba_sidebar_changed : function(e){
                 var $el = $(e.target),
@@ -849,7 +857,7 @@
                         $alpha.before($overlay);
                     }
 
-                }else{
+                } else {
                     $alpha.removeClass("sp-alpha-disabled sp-alpha-lower-opacity");
                     this.$(".sp-alpha-overlay").remove();
                 }
