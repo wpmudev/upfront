@@ -122,7 +122,7 @@ var Views = {
 							.removeClass('upfront_post-data-loading');
 					}
 					// Notify all part views that we have finished loading
-					me.element.toggle_child_objects_loading(false);
+					me.element.toggle_child_objects_loading(false);                    
 				})
 				.error(function () {
 					me.$el
@@ -169,6 +169,11 @@ var Views = {
 				view.render_view(data[type]);
 				Upfront.Events.trigger('entity:object:refresh', view);
 			});
+            
+            // Hustle compatibility
+            if ( typeof Hustle !== 'undefined' && typeof Hustle.Events !== 'undefined' ) {
+                Hustle.Events.trigger('upfront:editor:shortcode:render', this);
+            }
 		},
 
 		tpl: {
