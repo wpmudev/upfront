@@ -30,7 +30,7 @@ class Upfront_Cache_Utils {
 		$result = new WP_Query($args);
 	
 		// Cache results if not empty.
-		if (!empty($result)) {
+		if (!empty($result) && $result !== '[]' && $result !== '{}') {
 			wp_cache_set($key, $result, $group, $expire);
 		}
 		// Return results.
@@ -50,16 +50,16 @@ class Upfront_Cache_Utils {
 		$expire = self::$expire;
 		$cached = wp_cache_get($key, $group);
 		// If cached, use that.
-		if ($cached) return $cached;
+		if (!empty($cached)) return $cached;
 
 		// Get the option.
 		$result = get_option($key, $default);
 
 		// Cache results if not empty.
-		if (!empty($result)) {
+		if (!empty($result) && $result !== '[]' && $result !== '{}') {
 			wp_cache_set($key, $result, $group, $expire);
 		}
-	
+
 		// Return results.
 		return $result;
 	}
@@ -72,10 +72,20 @@ class Upfront_Cache_Utils {
  	 */
 	public static function update_option($key, $value, $autoload = null) {
 		$group = 'upfront_options';
+		// Use default expiration.
+		$expire = self::$expire;
+
 		// Delete the cache.
 		self::clear_cache($key, $group);
-		// Delete the actual option.
-		return update_option($key, $value, $autoload);
+	
+		$result = update_option($key, $value, $autoload);
+		// Cache results if not empty/false.
+		if (!empty($result) && $result !== '[]' && $result !== '{}') {
+			wp_cache_set($key, $value, $group, $expire);
+		}
+
+		// Return the option updating success.
+		return $result;
 	}
 
 	/**

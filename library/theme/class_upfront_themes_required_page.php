@@ -28,7 +28,7 @@ class Upfront_Themes_RequiredPage {
 	 */
 	public function exists () {
 		if (empty($this->_key)) return false;
-		return Upfront_Cache_Utils::get_option($this->_key, false);
+		return get_option($this->_key, false);
 	}
 
 	/**

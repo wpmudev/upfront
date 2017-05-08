@@ -9,6 +9,7 @@
 
 require_once(dirname(__FILE__) . '/library/upfront_functions.php');
 require_once(dirname(__FILE__) . '/library/upfront_functions_theme.php');
+require_once(dirname(__FILE__) . '/library/class_upfront_cache_utils.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_permissions.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_registry.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_debug.php');
@@ -29,7 +30,6 @@ require_once(dirname(__FILE__) . '/library/class_upfront_compat.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_postpart.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_admin.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_compression.php');
-require_once(dirname(__FILE__) . '/library/class_upfront_cache_utils.php');
 
 
 Upfront_Behavior::debug()->set_baseline();
