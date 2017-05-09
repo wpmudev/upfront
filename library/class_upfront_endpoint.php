@@ -26,7 +26,7 @@ abstract class Upfront_VirtualPage extends Upfront_Server {
 	}
 
 	public static function redirect ($request) {
-		$url = Upfront_Cache_Utils::get_option('permalink_structure')
+		$url = get_option('permalink_structure')
 			? home_url($request)
 			: home_url() . '?name=' . $request
 		;
@@ -35,7 +35,7 @@ abstract class Upfront_VirtualPage extends Upfront_Server {
 	}
 
 	private function _parse_request ($render = true) {
-		$raw_request = Upfront_Cache_Utils::get_option('permalink_structure')
+		$raw_request = get_option('permalink_structure')
 			? $this->_parse_pretty_permalink_request()
 			: $this->_parse_default_request()
 		;
@@ -69,7 +69,7 @@ abstract class Upfront_VirtualPage extends Upfront_Server {
 			? 'https'
 			: 'http'
 		;
-		return Upfront_Cache_Utils::get_option('permalink_structure')
+		return get_option('permalink_structure')
 			? home_url($request, $scheme)
 			: home_url('', $scheme) . '?name=' . $request
 		;

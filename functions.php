@@ -199,7 +199,7 @@ class Upfront {
 				'class' => 'upfront-edit_layout upfront-editable_trigger',
 			),
 		);
-		$permalinks_on = Upfront_Cache_Utils::get_option('permalink_structure');
+		$permalinks_on = get_option('permalink_structure');
 
 		if (!$permalinks_on) {
 			// We're checking WP priv directly because we need an admin for this

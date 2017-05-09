@@ -180,7 +180,7 @@ class Upfront_Server_Admin implements IUpfront_Server {
 	 * Cry out on missing pretty permalinks.
 	 */
 	private function _permalink_setup_check_notice () {
-		if (Upfront_Cache_Utils::get_option('permalink_structure')) return false;
+		if (get_option('permalink_structure')) return false;
 		$msg = sprintf(
 			__('Upfront requires Pretty Permalinks to work. Please enable them <a href="%s">here</a>', 'upfront'),
 			admin_url('/options-permalink.php')
