@@ -1681,7 +1681,7 @@ input.upfront-field-text:hover,
   box-shadow: 0 0 3px rgba(96, 127, 153, 0.5);
   border-color: #909090;
   padding: 5px 0px;
-  margin: 10px -1px 0;
+  margin: 0px -1px 0;
   position: relative;
   max-height: 22px;
   z-index: 10;
@@ -1694,7 +1694,6 @@ input.upfront-field-text:hover,
   transition: max-height 0.3s; }
 
 .upfront-field-wrap-select {
-  z-index: 999;
   position: relative; }
 
 .upfront-field-select-expanded,
