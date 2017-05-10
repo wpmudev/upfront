@@ -1391,6 +1391,11 @@
             type: 'radio'
         });
 
+		var Field_Radios_Inline = Field_Radios.extend({
+			className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios-inline',
+			type: 'radio'
+		});
+
         var Field_Checkboxes = Field_Multiple_Input.extend({
             className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes',
             type: 'checkbox',
@@ -1761,6 +1766,7 @@
             "Slider": Field_Slider,
             "Select": Field_Select,
             "Radios": Field_Radios,
+			"Radios_Inline": Field_Radios_Inline,
             "Checkboxes": Field_Checkboxes,
 			"Toggle": Field_Toggles,
             "Hidden": Field_Hidden,
