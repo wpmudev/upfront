@@ -1,4 +1,5 @@
 <?php
+require_once(dirname(dirname(__FILE__)) . '/class_upfront_cache_utils.php');
 
 class Upfront_Themes_RequiredPage {
 
