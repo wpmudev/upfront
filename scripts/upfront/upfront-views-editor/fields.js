@@ -1399,11 +1399,12 @@
 		
 		var Field_Toggles = Field_Checkboxes.extend({
             className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-toggle',
-            type: 'toggle',
+            type: 'checkbox',
 			multiple: false,
+
 			get_value_html: function (value, index) {
 				var id = this.get_field_id() + '-' + index;
-				var classes = "upfront-field-multiple";
+				var classes = "upfront-field-multiple upfront-field-wrap-toggle";
 				var attr = {
 					'type': this.type,
 					'id': id,
@@ -1427,7 +1428,7 @@
 				if ( attr.checked ) {
 					classes += ' upfront-field-multiple-selected';
 				}
-				return '<div class="' + classes + ' upfront_toggle"><span class="upfront-field-label-text">' + value.label + '</span><input ' + this.get_field_attr_html(attr) + ' />' + '<label for="' + id + '" class="upfront_toggle_label"><span class="upfront_toggle_switch"></span></label></div>';
+				return '<div class="' + classes + ' upfront_toggle_field"><input ' + this.get_field_attr_html(attr) + ' />' + '<label for="' + id + '" class="upfront_toggle_field_label"><span class="upfront_toggle_field_inner"></span><span class="upfront_toggle_field_switch"></span></label><span class="upfront-field-label-text">' + value.label + '</span></div>';
 			}
         });
 
