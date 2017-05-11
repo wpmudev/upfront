@@ -2,7 +2,7 @@ Change Log
 ============
 
 
-1.8.1 - 2017-05-xx
+1.8.1 - 2017-05-11
 -------------------------------------------------------------------------------
 - Fix: bug that prevented deleting fixed (floating) regions.
 - Fix: formatting Link in builder
