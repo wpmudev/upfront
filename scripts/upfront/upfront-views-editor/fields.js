@@ -351,6 +351,54 @@
 			}
 		});
 
+		var Field_Number_Unit = Field_Text.extend({
+			className: 'upfront-field-wrap upfront-field-wrap-number-unit',
+			initialize: function(opts) {
+				Field_Text.prototype.initialize.call(this, opts);
+				this.options = opts;
+
+				var dropdown_opts = {
+					model: this.options.model,
+					className: 'upfront-field-wrap upfront-field-wrap-select upfront-number-unit-select',
+					values: [
+						{ label: l10n.percent, value: "%" },
+						{ label: l10n.px, value: "px" },
+						{ label: l10n.em, value: "em" },
+					],
+					name: opts.name + '-unit',
+					change: function (value) {
+						this.model.set(opts.name + '-unit', value);
+					}
+				};
+
+				this.dropdown = new Field_Select(dropdown_opts);
+			},
+			render: function() {
+				Field_Text.prototype.render.call(this, this.options);
+
+				this.dropdown.render();
+
+				this.$el.find('.upfront-field-number-unit-wrapper').append(this.dropdown.$el);
+			},
+			get_field_html: function () {
+				var attr = {
+					'type': 'number',
+					'class': 'upfront-field upfront-field-number-unit',
+					'id': this.get_field_id(),
+					'name': this.get_field_name(),
+					'value': this.get_saved_value()
+				};
+				if ( typeof this.options.min != 'undefined' )
+					attr.min = this.options.min;
+				if ( typeof this.options.max != 'undefined' )
+					attr.max = this.options.max;
+				if ( typeof this.options.step != 'undefined' )
+					attr.step = this.options.step;
+
+				return '<div class="upfront-field-number-unit-wrapper"><input ' + this.get_field_attr_html(attr) + ' /></div>';
+			}
+		});
+
 		var Field_Slider = Field_Text.extend(_.extend({}, Mixins.Upfront_Icon_Mixin, {
 			className: 'upfront-field-wrap upfront-field-wrap-slider',
 			initialize: function(opts) {
@@ -1763,6 +1811,7 @@
             "Typeface_Style_Chosen_Select": Field_Typeface_Style_Chosen_Select,
             "Multiple_Chosen_Select": Field_Multiple_Chosen_Select,
             "Number": Field_Number,
+			"Number_Unit": Field_Number_Unit,
             "Slider": Field_Slider,
             "Select": Field_Select,
             "Radios": Field_Radios,

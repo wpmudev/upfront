@@ -1540,6 +1540,7 @@ span.draggable-post-element.element-dragging {
 /* Field text */
 input.upfront-field-text[type],
 input.upfront-field-number[type=number],
+input.upfront-field-number-unit[type=number],
 textarea.upfront-field-text.upfront-field-textarea {
   border: 1px solid #909090;
   background: #fff;
@@ -1571,11 +1572,13 @@ input.upfront-field-text:-ms-input-placeholder {
 
 .upfront-field-empty,
 .upfront-field-number[type=number],
+.upfront-field-number-unit[type=number],
 .upfront-field-wrap-color .sp-replacer {
   opacity: .75; }
 
 input.upfront-field-text:hover,
 .upfront-field-number[type=number]:hover,
+.upfront-field-number-unit[type=number]:hover,
 .upfront-field-select:hover,
 .upfront-field-wrap-color .sp-replacer:hover {
   opacity: .85;
@@ -1583,6 +1586,7 @@ input.upfront-field-text:hover,
 
 .upfront-field-text:focus,
 .upfront-field-number[type=number]:focus,
+.upfront-field-number-unit[type=number]:focus,
 .upfront-field-select:focus,
 .upfront-field-wrap-color .sp-replacer:focus {
   opacity: 1;
@@ -1595,12 +1599,32 @@ input.upfront-field-text:hover,
   opacity: .4; }
 
 /* Number field */
-.upfront-field-number[type=number] {
+.upfront-field-number[type=number],
+.upfront-field-number-unit[type=number] {
   padding-right: 0px !important;
   border-radius: 3px; }
 
+/* Number unit field */
+.upfront-field-number-unit-wrapper {
+  position: relative; }
+
+.upfront-field-wrap-select.upfront-number-unit-select {
+  position: absolute;
+  top: 6px;
+  right: 21px;
+  margin: 0px; }
+
+.upfront-number-unit-select .upfront-field-select {
+  height: 16px;
+  width: 30px;
+  border-radius: none; }
+
+.upfront-number-unit-select .upfront-field-select:after {
+  display: none; }
+
 /* chrome input[type=number] styling */
 .upfront-field-number[type=number]::-webkit-inner-spin-button,
+.upfront-field-number-unit[type=number]::-webkit-inner-spin-button,
 .typography-panel .upfront-field-number[type=number]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   width: 16px;
