@@ -142,11 +142,11 @@
 				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					bg_type = this.model.get_property_value_by_name('background_type'),
 					types = [
-						{ label: l10n.solid_color, value: 'color', icon: 'color' },
-						{ label: l10n.image, value: 'image', icon: 'image' },
-						{ label: l10n.video, value: 'video', icon: 'video' },
-						{ label: l10n.image_slider, value: 'slider', icon: 'slider' },
-						{ label: l10n.map, value: 'map', icon: 'map' }
+						{ label: l10n.solid_color, value: 'color' },
+						{ label: l10n.image, value: 'image' },
+						{ label: l10n.video, value: 'video' },
+						{ label: l10n.image_slider, value: 'slider' },
+						{ label: l10n.map, value: 'map' }
 					]
 				;
 
