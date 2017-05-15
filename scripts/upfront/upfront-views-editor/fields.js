@@ -377,6 +377,7 @@
 				Field_Text.prototype.render.call(this, this.options);
 
 				this.dropdown.render();
+				this.dropdown.delegateEvents();
 
 				this.$el.find('.upfront-field-number-unit-wrapper').append(this.dropdown.$el);
 			},
