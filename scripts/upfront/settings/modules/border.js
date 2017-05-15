@@ -64,7 +64,7 @@ define([
 						}
 					}
 				}),
-				new Upfront.Views.Editor.Field.Number({
+				new Upfront.Views.Editor.Field.Number_Unit({
 					model: this.model,
 					className: state + '-border-width borderWidth ' + custom_class,
 					name: this.currentElement + me.options.fields.width,
@@ -90,9 +90,9 @@ define([
 					name: this.currentElement + me.options.fields.type,
 					default_value: "solid",
 					values: [
-						{ label: l10n.solid, value: 'solid' },
-						{ label: l10n.dashed, value: 'dashed' },
-						{ label: l10n.dotted, value: 'dotted' }
+						{ label: '―', value: 'solid' },
+						{ label: '┅', value: 'dashed' },
+						{ label: '⋯', value: 'dotted' }
 					],
 					change: function(value) {
 						me.model.set(me.currentElement + me.options.fields.type, value);
