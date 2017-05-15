@@ -128,7 +128,7 @@ define([
 					}
 				}),
 
-				new Upfront.Views.Editor.Field.Number({
+				new Upfront.Views.Editor.Field.Number_Unit({
 					model: this.model,
 					className: state + '-font-lineheight lineHeight ' + toggleClass,
 					name: this.currentElement + this.options.fields.line_height,
@@ -137,6 +137,7 @@ define([
 					default_value: this.model.get(this.currentElement + this.options.fields.line_height),
 					min: 0,
 					step: 0.1,
+
 					change: function(value) {
 						me.model.set(me.currentElement + me.options.fields.line_height, value);
 					}
