@@ -1235,17 +1235,17 @@ a.upfront-region-name-edit-trigger:hover {
 	display: inline-block;
 }
 .upfront-region-bg-setting-region-nav {
-	width: 45%;
-	float: right;
+	width: 100%;
+	float: none;
 	margin: 0 0 20px;
 }
 
 #region-settings-sidebar .upfront-region-bg-setting-region-behavior, #region-settings-sidebar .upfront-region-bg-setting-region-nav {
-	padding: 16px;
+	padding: 0 16px 16px;
 	margin: 0;
 }
 
-#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-bg-setting-label, #region-settings-sidebar .upfront-region-bg-setting-region-nav .upfront-bg-setting-label {
+#region-settings-sidebar .upfront-region-bg-setting-region-nav .upfront-bg-setting-label {
 	font-size: 11px;
 	text-transform: uppercase;
 	line-height: normal;
@@ -1254,10 +1254,42 @@ a.upfront-region-name-edit-trigger:hover {
 	font-weight: 700;
 	position: relative;
 	letter-spacing: 0.34px;
+	cursor: pointer;
 }
 
 #region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple, #region-settings-sidebar .upfront-region-bg-setting-region-nav .upfront-field-multiple {
-	margin: 0 15px 5px 0;
+}
+
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple {
+	background: #fff;
+	width: calc(50% - 10px);
+	margin: 0;
+	height: 22px;
+	line-height: 20px;
+	border-radius: 0 3px 3px 0;
+	border: 1px solid transparent;
+}
+
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple:first-of-type {
+	border-radius: 3px 0 0 3px;
+}
+
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple.upfront-field-multiple-selected {
+	border: 1px solid #71848c;
+	background: #87959a;
+}
+
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple label span {
+	color: #212121;
+}
+
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple.upfront-field-multiple-selected label span {
+	color: #fff;
+}
+
+/* Hide radio circle */
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple input.upfront-field-radio {
+		opacity: 0;
 }
 
 #region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple label,
@@ -1270,8 +1302,7 @@ a.upfront-region-name-edit-trigger:hover {
 }
 
 #region-settings-sidebar .upfront-region-bg-setting-region-behavior {
-	padding-right: 0;
-	width: 55%;
+	width: 100%;
 }
 
 .upfront-region-bg-setting-region-behavior {

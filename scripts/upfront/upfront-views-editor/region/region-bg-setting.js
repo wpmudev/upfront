@@ -419,15 +419,15 @@
 					}),
 					// backward compatible with old nav_region property
 					region_nav_value = this.model.get_property_value_by_name('nav_region'),
-					region_nav = new Fields.Checkboxes({
+					region_nav = new Fields.Toggle({
 						model: this.model,
 						property: 'sub_regions',
 						default_value: !this.model.get_property_value_by_name('sub_regions') ? [region_nav_value] : [],
 						layout: 'horizontal-inline',
 						multiple: true,
 						values: [
-							{ label: l10n.top, value: 'top' },
-							{ label: l10n.bottom, value: 'bottom' }
+							{ label: l10n.sub_top, value: 'top' },
+							{ label: l10n.sub_bottom, value: 'bottom' }
 						],
 						change: function () {
 							var value = this.get_value(),
