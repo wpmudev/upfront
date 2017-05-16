@@ -28,7 +28,7 @@
 }
 
 #region-settings-sidebar .upfront-region-modal-bg {
-	background: #3d5266;
+	background: #f7f7f7;
 	width: 260px;
 	margin-top: 46px;
 	position: fixed;
@@ -1646,6 +1646,11 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 	.upfront-field-wrap-number.uf-bgsettings-image-size {
 		position: static;
 		padding-left: 15px;
+		background: #e7e7e7;
+		padding: 11px;
+		border-radius: 3px;
+		margin: 0 5px;
+		color: #888888;
 		
 		label.upfront-field-label {
 			&:after {
@@ -1660,7 +1665,6 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 		margin-right: 20px;
 		
 		.sp-replacer.sp-light {
-			display: block;
 			margin-top: 2px;
 		}
 	}

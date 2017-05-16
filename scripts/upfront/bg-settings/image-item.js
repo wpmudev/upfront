@@ -515,12 +515,12 @@ define([
 		},
 		get_bg_style_values: function () {
 			var values = [
-				{ label: l10n.full_width_bg, value: 'full', icon: 'bg-image-full' },
-				{ label: l10n.tiled_pattern, value: 'tile', icon: 'bg-image-tile' },
-				{ label: l10n.fixed_position, value: 'fixed', icon: 'bg-image-fixed' }
+				{ label: l10n.full_width_bg, value: 'full' },
+				{ label: l10n.tiled_pattern, value: 'tile' },
+				{ label: l10n.fixed_position, value: 'fixed' }
 			];
 			if ( this.model instanceof Upfront.Models.Region ) {
-				values.push({ label: l10n.parallax, value: 'parallax', icon: 'bg-image-full' });
+				values.push({ label: l10n.parallax, value: 'parallax' });
 			}
 			return values;
 		}
