@@ -1875,7 +1875,11 @@ input.upfront-field-text:hover,
 
 .upfront-toggle-wrapper {
   background: #e7e7e7;
-  border-radius: 5px; }
+  border-radius: 5px;
+  margin: -5px -10px;
+  padding: 10px;
+  clear: both;
+  overflow: hidden; }
 
 /* Inline Radio Field */
 .upfront-field-wrap-radios-inline {
@@ -19439,6 +19443,39 @@ div.preset-manager-panel .colors_settings_item .element-toggled.two:nth-child(ev
 
 div.preset-manager-panel .upfront-settings-item-title {
   line-height: 16px; }
+
+/* Border Module */
+div.preset-manager-panel .borderWidth,
+div.preset-manager-panel .borderType,
+div.preset-manager-panel .borderColor {
+  display: block;
+  float: left;
+  position: relative;
+  margin-left: 15px; }
+
+div.preset-manager-panel .borderWidth {
+  width: 70px;
+  margin-left: 0px;
+  margin-top: -3px; }
+
+div.preset-manager-panel .borderWidth .upfront-field-label,
+div.preset-manager-panel .borderColor .upfront-field-label {
+  display: none; }
+
+div.preset-manager-panel .borderType {
+  width: 50px; }
+
+div.preset-manager-panel .borderType .upfront-field-select-value {
+  text-align: center; }
+
+div.preset-manager-panel .borderType {
+  font-weight: bold !important;
+  font-size: 18px !important; }
+
+div.preset-manager-panel .borderColor {
+  margin-top: -2px;
+  width: 80px;
+  clear: right; }
 
 div.preset-manager-panel a.upfront-preset-edit {
   font-size: 12px;

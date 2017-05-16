@@ -31,7 +31,7 @@ define([
 
 			// Wrap toggleable fields
 			if(this.options.toggle === true) {
-				$content.children('div').not(':first-child').wrapAll('<div class="upfront-toggle-wrapper" />');
+				$content.children('div').not(':first-child').wrapAll('<div class="'+ this.options.state +'-toggle-wrapper upfront-toggle-wrapper" />');
 			}
 
 			this.trigger('rendered');
