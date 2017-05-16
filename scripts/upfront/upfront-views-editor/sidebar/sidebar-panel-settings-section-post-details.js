@@ -61,9 +61,9 @@
             },
             get_title: function () {
 				if ( Upfront.Application.is_single( "page" ) ) {
-        						return Upfront.Settings.l10n.global.content.general;
+                    return Upfront.Settings.l10n.global.content.general;
                 }
-        return Upfront.Settings.l10n.global.content.general;
+                return Upfront.Settings.l10n.global.content.general;
             },
 
             on_render: function () {

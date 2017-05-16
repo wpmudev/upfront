@@ -10,7 +10,7 @@
 
         return Command.extend({
             tagName: 'div',
-            className: "command-edit-css upfront-icon upfront-icon-edit-css",
+            className: "command-edit-css upfront-icon upfront-icon-edit-css sidebar-commands-small-button",
             initialize: function() {
                 this.lazy_save_styles = _.debounce(function(styles) {
                     this.model.set({ styles: styles });

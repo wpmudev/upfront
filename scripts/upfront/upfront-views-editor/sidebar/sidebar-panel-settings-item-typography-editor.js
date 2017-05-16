@@ -136,7 +136,7 @@
                     chooseButton = new Fields.Button({
                         label: l10n.select_fonts_to_use,
                         compact: true,
-                        classname: 'open-theme-fonts-manager',
+                        classname: 'open-theme-fonts-manager sidebar-commands-small-button',
 
                         on_click: function(e){
                             Upfront.Events.trigger('command:themefontsmanager:open');
@@ -155,7 +155,6 @@
 
                 if ( !this.fields.length ) {
                     this.fields = {
-                        start_font_manager: chooseButton,
                         element: new Fields.Select({
                             label: l10n.type_element,
                             default_value: 'h1',
@@ -259,7 +258,8 @@
                                     me.update_typography();
                                 }
                             }
-                        })
+                        }),
+						start_font_manager: chooseButton,
                     };
                 }
                 this.$el.html('');
