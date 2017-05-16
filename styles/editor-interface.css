@@ -1669,7 +1669,7 @@ input.upfront-field-text:hover,
   color: #212121;
   font-size: 11px;
   font-family: "Open Sans";
-  line-height: 22px;
+  line-height: 20px;
   position: relative;
   overflow: hidden;
   cursor: pointer;
@@ -1715,7 +1715,7 @@ input.upfront-field-text:hover,
   box-shadow: 0 0 3px rgba(96, 127, 153, 0.5);
   border-color: #909090;
   padding: 5px 0px;
-  margin: 0px -1px 0;
+  margin: -1px 0 0 0;
   position: relative;
   max-height: 22px;
   z-index: 10;
@@ -17836,7 +17836,7 @@ li#new-custom-breakpoint {
 #sidebar-ui .upfront-page-template-dropdown .chosen-container-single .chosen-single {
   height: 22px;
   min-height: 22px;
-  line-height: 22px; }
+  line-height: 20px; }
 
 #sidebar-ui .upfront-page-template-dropdown .chosen-container-single .chosen-single span.dot:before {
   content: ' ';
