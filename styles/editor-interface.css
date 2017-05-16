@@ -1620,6 +1620,12 @@ input.upfront-field-text:hover,
   width: 30px;
   border-radius: none; }
 
+.upfront-number-unit-select .upfront-field-select .upfront-field-select-value {
+  height: 16px; }
+
+.upfront-number-unit-select .upfront-field-select .upfront-field-select-value span {
+  line-height: 14px; }
+
 .upfront-number-unit-select .upfront-field-select:after {
   display: none; }
 
@@ -1663,7 +1669,7 @@ input.upfront-field-text:hover,
   color: #212121;
   font-size: 11px;
   font-family: "Open Sans";
-  line-height: 22px;
+  line-height: 20px;
   position: relative;
   overflow: hidden;
   cursor: pointer;
@@ -1709,7 +1715,7 @@ input.upfront-field-text:hover,
   box-shadow: 0 0 3px rgba(96, 127, 153, 0.5);
   border-color: #909090;
   padding: 5px 0px;
-  margin: 0px -1px 0;
+  margin: -1px 0 0 0;
   position: relative;
   max-height: 22px;
   z-index: 10;
@@ -1837,6 +1843,7 @@ input.upfront-field-text:hover,
   -webkit-transform: translateX(11px);
   transform: translateX(11px);
   background-color: #fff;
+  will-change: transform;
   -webkit-transition: transform 0.5s;
   transition: transform 0.5s; }
 
@@ -1865,6 +1872,14 @@ input.upfront-field-text:hover,
   line-height: 15px;
   color: rgba(33, 33, 33, 0.8);
   font-weight: 600; }
+
+.upfront-toggle-wrapper {
+  background: #e7e7e7;
+  border-radius: 5px;
+  margin: -5px -10px;
+  padding: 10px;
+  clear: both;
+  overflow: hidden; }
 
 /* Inline Radio Field */
 .upfront-field-wrap-radios-inline {
@@ -4075,9 +4090,6 @@ a.upfront-region-name-edit-trigger:hover {
   font-weight: 300;
   margin-bottom: 8px; }
 
-.upfront-region-bg-setting-region-style-container .upfront-field-label:after, .upfront-region-bg-setting-auto-resize span:after {
-  content: ':'; }
-
 .upfront-region-bg-setting-region-type {
   width: 139px;
   display: inline-block; }
@@ -4156,12 +4168,13 @@ a.upfront-region-name-edit-trigger:hover {
 .auto-resize-off, .auto-resize-on {
   display: inline-block;
   float: none;
-  width: 40px;
+  width: 26px;
   height: 16px;
-  padding: 3px 4px;
+  padding: 2px 2px;
   margin: 5px 0 0;
   border-radius: 8px;
-  background: #98a8b8; }
+  background: #fff;
+  border: 1px solid #c9cdce; }
 
 .auto-resize-off:after, .auto-resize-on:after {
   content: " ";
@@ -4170,13 +4183,15 @@ a.upfront-region-name-edit-trigger:hover {
   width: 10px;
   height: 10px;
   border-radius: 5px;
-  background: #f5f5f5; }
+  background: #abb4b8; }
 
 .auto-resize-on {
-  background: #00ce8d; }
+  background: #87959a;
+  border: 1px solid #71848c; }
 
 .auto-resize-on:after {
-  float: right; }
+  float: right;
+  background: #f5f5f5; }
 
 .upfront-region-bg-setting-edit-css:before {
   clear: both; }
@@ -17821,7 +17836,7 @@ li#new-custom-breakpoint {
 #sidebar-ui .upfront-page-template-dropdown .chosen-container-single .chosen-single {
   height: 22px;
   min-height: 22px;
-  line-height: 22px; }
+  line-height: 20px; }
 
 #sidebar-ui .upfront-page-template-dropdown .chosen-container-single .chosen-single span.dot:before {
   content: ' ';
@@ -19428,6 +19443,39 @@ div.preset-manager-panel .colors_settings_item .element-toggled.two:nth-child(ev
 
 div.preset-manager-panel .upfront-settings-item-title {
   line-height: 16px; }
+
+/* Border Module */
+div.preset-manager-panel .borderWidth,
+div.preset-manager-panel .borderType,
+div.preset-manager-panel .borderColor {
+  display: block;
+  float: left;
+  position: relative;
+  margin-left: 15px; }
+
+div.preset-manager-panel .borderWidth {
+  width: 70px;
+  margin-left: 0px;
+  margin-top: -3px; }
+
+div.preset-manager-panel .borderWidth .upfront-field-label,
+div.preset-manager-panel .borderColor .upfront-field-label {
+  display: none; }
+
+div.preset-manager-panel .borderType {
+  width: 50px; }
+
+div.preset-manager-panel .borderType .upfront-field-select-value {
+  text-align: center; }
+
+div.preset-manager-panel .borderType {
+  font-weight: bold !important;
+  font-size: 18px !important; }
+
+div.preset-manager-panel .borderColor {
+  margin-top: -2px;
+  width: 80px;
+  clear: right; }
 
 div.preset-manager-panel a.upfront-preset-edit {
   font-size: 12px;

@@ -15,6 +15,7 @@ define([
 		},
 
 		render: function () {
+			var me = this;
 			this.$el.html('');
 			if (this.options.title && this.options.toggle !== true) {
 				this.$el.append('<div class="upfront-settings-item-title">' + this.options.title + '</div>');
@@ -27,6 +28,11 @@ define([
 				field.delegateEvents();
 				$content.append(field.el);
 			});
+
+			// Wrap toggleable fields
+			if(this.options.toggle === true) {
+				$content.children('div').not(':first-child').wrapAll('<div class="'+ this.options.state +'-toggle-wrapper upfront-toggle-wrapper" />');
+			}
 
 			this.trigger('rendered');
 		},

@@ -6,8 +6,9 @@
     define([
         'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel',
         'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-typography',
-        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-colors'
-    ], function ( SidebarPanel, SidebarPanel_Settings_Section_Typography, SidebarPanel_Settings_Section_Colors ) {
+        'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-colors',
+		'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-misc'
+    ], function ( SidebarPanel, SidebarPanel_Settings_Section_Typography, SidebarPanel_Settings_Section_Colors, SidebarPanel_Settings_Section_Misc ) {
 
         return SidebarPanel.extend({
             "className": "sidebar-panel sidebar-panel-settings",
@@ -16,14 +17,15 @@
                 this.global_option = true;
                 this.sections = _([
                     new SidebarPanel_Settings_Section_Typography({"model": this.model}),
-                    new SidebarPanel_Settings_Section_Colors({"model": this.model})
+                    new SidebarPanel_Settings_Section_Colors({"model": this.model}),
+					new SidebarPanel_Settings_Section_Misc({"model": this.model}),
                 ]);
             },
             get_title: function () {
                 return l10n.theme_settings;
             },
             on_render: function () {
-							Upfront.plugins.call('do-action-after-sidebar-settings-render', {settingsEl: this.$el});
+                Upfront.plugins.call('do-action-after-sidebar-settings-render', {settingsEl: this.$el});
             }
         });
 

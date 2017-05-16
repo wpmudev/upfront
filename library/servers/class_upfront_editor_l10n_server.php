@@ -819,6 +819,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'toggle_grid' => __("Toggle grid (Alt + G)", 'upfront'),
 				'theme_settings' => __("Theme Settings", 'upfront'),
 				'colors_section' => __("Colors", 'upfront'),
+				'misc_section' => __("Misc", 'upfront'),
 				'style_name' => __('Style name', 'upfront'),
 				'select_post_type' => __('Select a post type:', 'upfront'),
 				'upload_icon_font' => __('Upload Icon Font', 'upfront'),
