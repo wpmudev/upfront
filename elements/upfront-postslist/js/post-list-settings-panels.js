@@ -635,13 +635,39 @@ Panels.PostParts = PresetManager.extend({
 			styleElementPrefix: 'postslists-preset',
 			ajaxActionSlug: 'postslists',
 			styleTpl: PostsLists_Modules.template,
-			presetDefaults: Upfront.mainData.presetDefaults.postslists
+			presetDefaults: Upfront.mainData.presetDefaults.postslists,
+			renderRequiredFields: [
+				'author-gravatar-use',
+				'author-author-display-name',
+				'author-author-link',
+				'author-author-target',
+				'author-gravatar-size',
+				'featured-image-size',
+				'featured-custom-width',
+				'featured-custom-height',
+				'feature-resize',
+				'comments-hide-if-empty',
+				'content-type',
+				'content-length',
+				'tags-display-type',
+				'tags-show-max',
+				'tags-separate',
+				'category-display-type',
+				'category-show-max',
+				'category-separate',
+				'predefined-date-format',
+				'php-date-format'
+			]
 		});
 
 		PresetManager.prototype.initialize.apply(this, arguments);
 
-		this.listenTo(this.model, 'preset:updated', function () {
+		// Re-render required
+		this.listenTo(this.model, 'preset:updated:rerender', function () {
 			this.model.get("objects").trigger("change");
+		}, this);
+
+		this.listenTo(this.model, 'preset:updated', function () {
 			Upfront.Events.trigger('posts:element:preset:updated');
 		}, this);
 
