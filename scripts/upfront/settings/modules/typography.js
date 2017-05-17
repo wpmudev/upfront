@@ -60,6 +60,8 @@ define([
 			if(typeof this.options.global_typography !== "undefined") {
 				var font_settings = Upfront.mainData.global_typography[this.options.global_typography];
 
+				if(typeof font_settings === "undefined") return;
+
 				// Set global font properties
 				globalFont = {
 					typeFace: font_settings.font_face,
