@@ -1367,7 +1367,7 @@ span.draggable-post-element.element-dragging {
   background: #e6e6e6; }
 
 #sidebar-ui .sidebar-commands li.sidebar-commands-button.blue,
-#sidebar-ui .sidebar-commands-button.blue
+#sidebar-ui .sidebar-commands-button.blue,
 #element-settings-sidebar .sidebar-commands-button.blue {
   background: #1793ff;
   border: 1px solid #0e85ed;
@@ -8073,12 +8073,9 @@ span.upfront-settings-item-title:after {
 .upfront-icon-control:before,
 .upfront-ui .upfront-field-icon:before,
 .upfront-ui .upfront-structure-field-icon:before,
-.upfront-ui .upfront-region-field-icon:before,
 .upfront-util-icon:before,
 .region-lock-switch:before,
-.upfront-icon-control-region:before,
 .upfront-ui .upfront-icon:before,
-.panel-setting-dialog-region:before, .panel-setting-dialog-info:before,
 .upfront-ui .upfront-icon.upfront-icon-edit-css:before,
 .upfront-ui .upfront-icon.upfront-icon-region-add:before,
 .upfront-ui .upfront-icon.upfront-icon-more-menu:before {
@@ -8091,8 +8088,13 @@ span.upfront-settings-item-title:after {
 
 .upfront-logo,
 .position-select-wrap .position-select:checked,
+.upfront-icon-control-region:before,
+.upfront-ui .upfront-region-field-icon:before,
+.panel-setting-dialog-region:before,
+.panel-setting-dialog-info:before,
 .upfront-field-checkbox:checked,
 .upfront-icon-button-hide:before,
+.upfront-icon-ui:before,
 .upfront-entity-hide_trigger:before {
   content: " ";
   background-image: url("../img/uf-ui-sprite.png");
