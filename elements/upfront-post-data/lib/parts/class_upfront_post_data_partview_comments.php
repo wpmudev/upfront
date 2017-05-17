@@ -371,7 +371,7 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	 * @return bool
 	 */
 	private function _is_paginated () {
-		$actual = (bool)get_option('page_comments');
+		$actual = (bool)Upfront_Cache_Utils::get_option('page_comments');
 		return $this->_is_fake_data()
 			? true
 			: $actual
@@ -437,7 +437,7 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	private function _get_limit () {
 		if (!$this->_is_paginated()) return 0;
 
-		$opt = (int)get_option('comments_per_page');
+		$opt = (int)Upfront_Cache_Utils::get_option('comments_per_page');
 
 		$limit = !empty($this->_data['limit']) && is_numeric($this->_data['limit'])
 			? (int)$this->_data['limit']
@@ -457,7 +457,7 @@ class Upfront_Post_Data_PartView_Comments extends Upfront_Post_Data_PartView {
 	private function _get_order () {
 		$allowed = array('ASC', 'DESC');
 		// Defaults first
-		$opt = get_option('default_comments_page') === 'oldest' ? 'ASC' : 'DESC';
+		$opt = Upfront_Cache_Utils::get_option('default_comments_page') === 'oldest' ? 'ASC' : 'DESC';
 
 		$direction = !empty($this->_data['direction']) && in_array(strtoupper($this->_data['direction']), $allowed)
 			? strtoupper($this->_data['direction'])

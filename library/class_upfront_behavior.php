@@ -81,7 +81,7 @@ class Upfront_CompressionBehavior {
 	 * @return array
 	 */
 	public function get_options () {
-		$options = get_option(self::OPTIONS_KEY, array());
+		$options = Upfront_Cache_Utils::get_option(self::OPTIONS_KEY, array());
 		return !empty($options) && is_array($options)
 			? $options
 			: array()
@@ -101,7 +101,7 @@ class Upfront_CompressionBehavior {
 		$options = $this->get_options();
 		$options = wp_parse_args($data, $options);
 
-		return !!update_option(self::OPTIONS_KEY, $options, false);
+		return !!Upfront_Cache_Utils::update_option(self::OPTIONS_KEY, $options, false);
 	}
 
 	/**

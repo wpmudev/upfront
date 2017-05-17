@@ -13,7 +13,7 @@ class Upfront_Server_ThemeColorsServer extends Upfront_Server {
 	}
 
 	public function get() {
-		$theme_colors = get_option('upfront_' . get_stylesheet() . '_theme_colors');
+		$theme_colors = Upfront_Cache_Utils::get_option('upfront_' . get_stylesheet() . '_theme_colors');
 		if (empty($theme_colors)) $theme_colors = array();
 		$this->_out(new Upfront_JsonResponse_Success($theme_colors));
 	}
@@ -33,7 +33,7 @@ class Upfront_Server_ThemeColorsServer extends Upfront_Server {
 		do_action('upfront_save_theme_colors', $data);
 
 		if (!has_action('upfront_update_theme_colors')) {
-			update_option('upfront_' . get_stylesheet() . '_theme_colors', json_encode($data));
+			Upfront_Cache_Utils::update_option('upfront_' . get_stylesheet() . '_theme_colors', json_encode($data));
 		}
 
 		$this->_out(new Upfront_JsonResponse_Success(get_stylesheet() . ' theme colors updated'));

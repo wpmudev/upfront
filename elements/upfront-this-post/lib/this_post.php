@@ -399,7 +399,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$found = false;
 		$i = 0;
 		while(!$found && $i < sizeof($cascade)){
-			$found = get_option($cascade[$i]);
+			$found = Upfront_Cache_Utils::get_option($cascade[$i]);
 			$i++;
 		}
 		if(!$found) $found = self::get_theme_layout($type, $post_type, $id);
@@ -453,7 +453,7 @@ class Upfront_ThisPostView extends Upfront_Object {
 		$i = 0;
 		$defaults = self::get_templates();
 		while(!$found && $i < sizeof($cascade)){
-			$found = get_option($cascade[$i]);
+			$found = Upfront_Cache_Utils::get_option($cascade[$i]);
 			$i++;
 		}
 		if(!$found)

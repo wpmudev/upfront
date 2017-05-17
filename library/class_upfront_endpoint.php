@@ -105,7 +105,7 @@ abstract class Upfront_VirtualSubpage {
 class Upfront_Maintenance_Page_Interceptor {
 	
 	public static function intercept_page () {
-		$maintenance_data = get_option(Upfront_Server::MAINTENANCE_MODE, false);
+		$maintenance_data = Upfront_Cache_Utils::get_option(Upfront_Server::MAINTENANCE_MODE, false);
 		if ( $maintenance_data ) {
 			$maintenance_data = json_decode($maintenance_data);
 			if ( $maintenance_data && is_object($maintenance_data) ) {

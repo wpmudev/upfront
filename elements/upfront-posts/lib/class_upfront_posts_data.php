@@ -55,7 +55,7 @@ class Upfront_Posts_PostsData {
 			'default_parts' => $default_parts,
 
 			// Part options
-			'date_posted_format' => get_option('date_format') . ' ' . get_option('time_format'),
+			'date_posted_format' => Upfront_Cache_Utils::get_option('date_format') . ' ' . Upfront_Cache_Utils::get_option('time_format'),
 			'categories_limit' => 3,
 			'tags_limit' => 3,
 			'comment_count_hide' => 0,

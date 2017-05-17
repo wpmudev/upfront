@@ -22,7 +22,7 @@ class Upfront_Grid {
 	}
 
 	private function _instantiate_breakpoints () {
-		$responsive_settings = json_decode(get_option('upfront_' . get_stylesheet() . '_responsive_settings', "{}"), true);
+		$responsive_settings = json_decode(Upfront_Cache_Utils::get_option('upfront_' . get_stylesheet() . '_responsive_settings', "{}"), true);
 		$responsive_settings = apply_filters('upfront_get_responsive_settings', $responsive_settings);
 
 

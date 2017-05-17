@@ -243,7 +243,7 @@ function upfront_switch_stylesheet ($stylesheet) {
 		$upfront_stylesheet = $stylesheet;
 		add_filter('stylesheet', '_upfront_stylesheet');
 		// Prevent theme mods to current theme being used on theme being previewed
-		add_filter('pre_option_theme_mods_' . get_option( 'stylesheet' ), '__return_empty_array');
+		add_filter('pre_option_theme_mods_' . Upfront_Cache_Utils::get_option( 'stylesheet' ), '__return_empty_array');
 		return true;
 	}
 	return false;
@@ -578,7 +578,7 @@ function upfront_is_maintenance_page ($current_page_id = false) {
 	if ( !$current_page_id ) {
 		$current_page_id = is_singular() ? apply_filters('upfront-data-post_id', get_the_ID()) : false;
 	}
-	$maintenance_data = get_option(Upfront_Server::MAINTENANCE_MODE, false);
+	$maintenance_data = Upfront_Cache_Utils::get_option(Upfront_Server::MAINTENANCE_MODE, false);
 	if ( $maintenance_data ) {
 		$maintenance_data = json_decode($maintenance_data);
 		if ( $maintenance_data && is_object($maintenance_data) ) {
