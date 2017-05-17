@@ -739,26 +739,7 @@
 	padding: 0;
 }
 
-#sidebar-ui .command-open-font-manager span,
-#sidebar-ui .command-edit-css span {
-	display: inline-block;
-	color: #0F9969;
-	font-family: "Verdana";
-	font-size: 11px;
-	border-bottom: 1px solid #1fcd8f;
-	line-height: 20px;
-	cursor: pointer;
-	max-width: 210px;
-	height:17px;
-	margin-top: 2px;
-	overflow: hidden;
-	white-space: nowrap;
-}
-
 #sidebar-ui .command-link {
-	color: #0F9969;
-	font:normal 11px/14px Verdana, sans-serif;
-	text-decoration: underline;
 	display: inline;
 	cursor: pointer;
 }
@@ -1317,28 +1298,30 @@ span.draggable-post-element.element-dragging
 	text-align: center;
 	border-radius: 3px;
 	box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.05);
+	display: inline-block;
+	cursor: pointer;
 }
 
 #sidebar-ui .sidebar-commands li.sidebar-commands-button:hover,
-#sidebar-ui .sidebar-commands-button:hover
+#sidebar-ui .sidebar-commands-button:hover,
 #element-settings-sidebar .sidebar-commands-button:hover {
 	opacity: 1;
 }
 
 #sidebar-ui .sidebar-commands li.sidebar-commands-button:active,
-#sidebar-ui .sidebar-commands-button:active
+#sidebar-ui .sidebar-commands-button:active,
 #element-settings-sidebar .sidebar-commands-button:active {
 	opacity: .75;
 }
 
 #sidebar-ui .sidebar-commands li.sidebar-commands-button.disabled,
-#sidebar-ui.sidebar-commands-button.disabled
+#sidebar-ui.sidebar-commands-button.disabled,
 #element-settings-sidebar .sidebar-commands-button.disabled {
 	opacity: .4;
 }
 
 #sidebar-ui .sidebar-commands li.sidebar-commands-button.light,
-#sidebar-ui .sidebar-commands-button.light
+#sidebar-ui .sidebar-commands-button.light,
 #element-settings-sidebar .sidebar-commands-button.light {
 	background: rgb(255, 255, 255);
 	border: 1px solid rgb(182, 182, 182);
@@ -1346,7 +1329,7 @@ span.draggable-post-element.element-dragging
 }
 
 #sidebar-ui .sidebar-commands li.sidebar-commands-button.light:active,
-#sidebar-ui .sidebar-commands-button.light:active
+#sidebar-ui .sidebar-commands-button.light:active,
 #element-settings-sidebar .sidebar-commands-button.light:active {
 	background: rgb(230, 230, 230);
 }
@@ -1380,7 +1363,7 @@ span.draggable-post-element.element-dragging
 	font-size: 13px;
 	opacity: .75;
 	margin: 5px;
-	padding: 0px 3px;
+	padding: 0px 10px;
 	line-height: 19px;
 	height: 22px;
 	text-align: center;
@@ -1389,6 +1372,8 @@ span.draggable-post-element.element-dragging
 	border: 1px solid rgb(182, 182, 182);
 	color: #484848;
 	box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.05);
+	display: inline-block;
+	cursor: pointer;
 }
 
 #sidebar-ui .sidebar-commands li.sidebar-commands-small-button.icon-button,
@@ -1396,7 +1381,7 @@ span.draggable-post-element.element-dragging
 #sidebar-ui .sidebar-commands-small-button.icon-button,
 #sidebar-ui .upfront-small-button .upfront-field-button.icon-button,
 #element-settings-sidebar .upfront-small-button .upfront-field-button.icon-button {
-	padding-left: 5px;
+	padding-left: 3px;
 }
 
 #sidebar-ui .sidebar-commands li.sidebar-commands-small-button:hover,

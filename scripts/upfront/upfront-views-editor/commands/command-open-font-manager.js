@@ -9,7 +9,7 @@
 
         return Command.extend({
             tagName: 'div',
-            className: "command-open-font-manager upfront-icon upfront-icon-open-font-manager",
+            className: "command-open-font-manager sidebar-commands-small-button",
             render: function (){
                 this.$el.html('<span title="'+ l10n.theme_font_manager +'">' + l10n.theme_font_manager + '</span>');
             },

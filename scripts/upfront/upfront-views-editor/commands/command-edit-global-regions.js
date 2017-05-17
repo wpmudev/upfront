@@ -9,7 +9,7 @@
 
         return Command.extend({
             tagName: 'div',
-            className: "command-link command-edit-global-regions",
+            className: "command-link command-edit-global-regions sidebar-commands-small-button",
             render: function (){
                 this.$el.text(l10n.edit_global_regions);
                 this.$el.prop("title", l10n.edit_global_regions);
