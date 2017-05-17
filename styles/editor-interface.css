@@ -2238,7 +2238,7 @@ input.upfront-field-text:hover,
 /* Slider field */
 .upfront-field-slider {
   height: 2px;
-  background: #C2D5E6;
+  background: #909090;
   position: relative;
   cursor: pointer; }
 
@@ -2258,8 +2258,8 @@ input.upfront-field-text:hover,
   left: 0; }
 
 .upfront-field-slider .ui-slider-handle {
-  border: 3px solid #263A4D;
-  background: #ADC4D9;
+  border: 1px solid #87959a;
+  background: #fff;
   width: 12px;
   height: 12px;
   border-radius: 6px;
@@ -2985,7 +2985,7 @@ input.upfront_toggle_checkbox {
   box-shadow: none; }
 
 #region-settings-sidebar .upfront-region-modal-bg {
-  background: #3d5266;
+  background: #f7f7f7;
   width: 260px;
   margin-top: 46px;
   position: fixed;
@@ -4095,26 +4095,50 @@ a.upfront-region-name-edit-trigger:hover {
   display: inline-block; }
 
 .upfront-region-bg-setting-region-nav {
-  width: 45%;
-  float: right;
+  width: 100%;
+  float: none;
   margin: 0 0 20px; }
 
 #region-settings-sidebar .upfront-region-bg-setting-region-behavior, #region-settings-sidebar .upfront-region-bg-setting-region-nav {
-  padding: 16px;
+  padding: 0 16px 16px;
   margin: 0; }
 
-#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-bg-setting-label, #region-settings-sidebar .upfront-region-bg-setting-region-nav .upfront-bg-setting-label {
+#region-settings-sidebar .upfront-region-bg-setting-region-nav .upfront-bg-setting-label {
   font-size: 11px;
   text-transform: uppercase;
   line-height: normal;
-  color: #2f475f;
+  color: #9e9e9e;
   font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   font-weight: 700;
   position: relative;
-  letter-spacing: 0.34px; }
+  letter-spacing: 0.34px;
+  cursor: pointer; }
 
-#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple, #region-settings-sidebar .upfront-region-bg-setting-region-nav .upfront-field-multiple {
-  margin: 0 15px 5px 0; }
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple {
+  background: #fff;
+  width: calc(50% - 10px);
+  margin: 0;
+  height: 22px;
+  line-height: 20px;
+  border-radius: 0 3px 3px 0;
+  border: 1px solid transparent; }
+
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple:first-of-type {
+  border-radius: 3px 0 0 3px; }
+
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple.upfront-field-multiple-selected {
+  border: 1px solid #71848c;
+  background: #87959a; }
+
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple label span {
+  color: #212121; }
+
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple.upfront-field-multiple-selected label span {
+  color: #fff; }
+
+/* Hide radio circle */
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple input.upfront-field-radio {
+  opacity: 0; }
 
 #region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple label,
 #region-settings-sidebar .upfront-region-bg-setting-region-nav .upfront-field-multiple label {
@@ -4125,8 +4149,7 @@ a.upfront-region-name-edit-trigger:hover {
   font-weight: normal; }
 
 #region-settings-sidebar .upfront-region-bg-setting-region-behavior {
-  padding-right: 0;
-  width: 55%; }
+  width: 100%; }
 
 .upfront-region-bg-setting-region-behavior {
   width: 50%;
@@ -4417,7 +4440,12 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
     padding-left: 10px; }
   #region-settings-sidebar .uf-region-bg-settings-panel-content .uf-bgsettings-imageitem .upfront-field-wrap-number.uf-bgsettings-image-size {
     position: static;
-    padding-left: 15px; }
+    padding-left: 15px;
+    background: #e7e7e7;
+    padding: 11px;
+    border-radius: 3px;
+    margin: 0 5px;
+    color: #888888; }
     #region-settings-sidebar .uf-region-bg-settings-panel-content .uf-bgsettings-imageitem .upfront-field-wrap-number.uf-bgsettings-image-size label.upfront-field-label:after {
       content: none; }
   #region-settings-sidebar .uf-region-bg-settings-panel-content .uf-bgsettings-imageitem .uf-bgsettings-image-color {
@@ -4425,7 +4453,6 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
     margin-top: -36px;
     margin-right: 20px; }
     #region-settings-sidebar .uf-region-bg-settings-panel-content .uf-bgsettings-imageitem .uf-bgsettings-image-color .sp-replacer.sp-light {
-      display: block;
       margin-top: 2px; }
 
 #region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num {
@@ -4841,11 +4868,11 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 
 .uf-bgsettings-image-pick {
   display: inline-block;
-  background: #e6f3ff;
+  background: #fff;
   height: 26px;
   max-height: 26px;
-  border: 1px solid #a3bfd9;
-  border-radius: 3px; }
+  border: 1px solid #e2e2e2;
+  border-radius: 2px; }
 
 .upfront-modal-bg-settings-fixed .upfront-bg-setting-tab-primary .uf-bgsettings-image-pick {
   position: static;
@@ -5097,11 +5124,16 @@ div.upfront-bg-setting-tab-primary .uf-bgsettings-image-style .upfront-field-lab
   top: 80px; }
 
 div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-block {
-  margin-bottom: 3px;
-  color: #96acc1;
+  margin-bottom: 0;
+  color: #4a4a4a;
   font-size: 11px;
   font-family: verdana, sans-serif;
-  padding: 0; }
+  padding: 0;
+  line-height: inherit; }
+
+#region-settings-sidebar .upfront-settings-item-content .uf-bgsettings-slider-control,
+#region-settings-sidebar .upfront-settings-item-content .uf-bgsettings-slider-control-style {
+  margin: 7px 0 0; }
 
 .uf-bgsettings-slideritem label span {
   font-weight: normal; }
@@ -5169,16 +5201,13 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 
 .upfront-bg-setting-tab-image .uf-bgsettings-item .upfront-field-wrap .upfront-field-label-block,
 .uf-bgsettings-image-color label {
-  color: #96acc1;
+  color: #4a4a4a;
   font-size: 11px;
   font-family: verdana, sans-serif;
-  padding: 0; }
-
-.upfront-bg-setting-type .upfront-bg-setting-label:after,
-.uf-bgsettings-image-size label.upfront-field-label:after,
-.uf-bgsettings-image-pos-y label.upfront-field-label-block:after,
-.uf-bgsettings-image-style > label:after {
-  content: ':'; }
+  padding: 0;
+  margin-bottom: 0;
+  margin-left: 0;
+  float: none; }
 
 .upfront-field-wrap.uf-bgsettings-image-color .upfront-field-label-block {
   color: #96acc1;
@@ -5207,6 +5236,9 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
   margin-left: 157px;
   right: 10px;
   margin-bottom: 165px; }
+
+#region-settings-sidebar .uf-bgsettings-image-size input {
+  width: 3rem; }
 
 .upfront-modal-bg-settings-global .upfront-field-wrap.upfront-field-wrap-number.uf-bgsettings-image-size {
   right: 156px;
@@ -5294,10 +5326,12 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 
 .uf-bgsettings-slideritem .uf-bgsettings-slider-time {
   display: inline-block;
-  position: relative;
-  top: -2px;
-  margin-left: 5px;
-  margin-top: 0; }
+  margin-left: 15px;
+  margin-top: 0;
+  width: 50%; }
+
+#region-settings-sidebar .uf-bgsettings-slider-time input {
+  width: 50%; }
 
 .upfront-modal-bg-settings-fixed .uf-bgsettings-slideritem .uf-bgsettings-slider-time {
   margin-right: 10px; }
@@ -5453,6 +5487,9 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 .upfront-modal-bg-settings-global .uf-bgsettings-color-pick label:after {
   content: ":"; }
 
+#region-settings-sidebar .upfront-settings-item-title {
+  color: #9e9e9e; }
+
 .upfront-region-modal-bg span.upfront-settings-item-title {
   border: none;
   box-shadow: none;
@@ -5501,7 +5538,7 @@ span.upfront-settings-item-title:after {
   color: #7d99b3; }
 
 .upfront-bg-setting-tab-secondary {
-  padding: 10px 0 0;
+  padding: 0;
   clear: both; }
 
 .upfront-bg-setting-theme-body {
@@ -5515,7 +5552,7 @@ span.upfront-settings-item-title:after {
 
 #region-settings-sidebar .upfront-bg-setting-label,
 #region-settings-sidebar div.upfront-bg-setting-tab-primary .upfront-field-wrap .upfront-field-label-block {
-  color: #96acc1;
+  color: #4a4a4a;
   font-size: 11px;
   font-family: verdana, sans-serif;
   margin: 0;
@@ -5542,38 +5579,38 @@ span.upfront-settings-item-title:after {
 /* Cancel Button */
 #region-settings-sidebar .upfront-inline-modal-cancel {
   position: absolute;
-  bottom: -48px;
+  bottom: -56px;
   left: 16px;
   color: #fff;
-  font-weight: 100;
-  font-size: 14px; }
-
-#region-settings-sidebar .upfront-inline-modal-cancel:before {
-  display: inline-block;
-  content: '';
-  width: 20px;
-  height: 15px;
-  background-image: url("../img/uf-ui-sprite.svg");
-  background-position: -735px -236px;
-  opacity: 0.7;
-  position: relative;
-  top: 3px; }
+  font-weight: 800;
+  font-size: 11px;
+  background: white;
+  border: 1px solid #b6b6b6;
+  color: #484848;
+  height: 30px;
+  width: 90px; }
 
 /* Save Button */
 #region-settings-sidebar .upfront-inline-modal-save, #region-settings-sidebar .upfront-inline-modal-save:hover {
   position: absolute;
   bottom: -56px;
-  right: 15px;
+  right: 16px;
   color: #f1f8ff;
-  font-size: 18px;
-  height: 40px;
-  font-weight: 300;
-  line-height: 40px;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 12px;
   padding: 0;
-  background: #2ecb90;
-  border: none;
-  border-bottom: 1px solid rgba(27, 45, 63, 0.5);
-  width: 70px; }
+  background: #1793ff;
+  border: 1px solid #0e85ed;
+  color: #fff;
+  height: 30px;
+  width: 90px; }
+
+#region-settings-sidebar .upfront-inline-modal-save {
+  opacity: 0.75; }
+
+#region-settings-sidebar .upfront-inline-modal-save:hover {
+  opacity: 1; }
 
 .upfront-region-bg-setting-padding .upfront-field-wrap-number .upfront-field-number {
   width: 45px;
