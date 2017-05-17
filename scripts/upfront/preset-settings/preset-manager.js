@@ -75,6 +75,15 @@ define([
 			// Let's not flood server on some nuber property firing changes like crazy
 			this.debouncedSavePreset = _.debounce(savePreset, 1000);
 
+			var renderParts  = function(render) {
+				if(render) {
+					me.model.trigger("preset:updated:rerender", properties.id);
+				}
+			}
+
+			// Prevent multiple re-render
+			this.debouncedRenderParts= _.debounce(renderParts, 1000);
+
 			this.createBackup();
 
 			this.defaultOverlay();
@@ -315,7 +324,7 @@ define([
 			this.updateMainDataCollectionPreset(properties);
 		},
 
-		updatePreset: function(properties) {
+		updatePreset: function(properties, render) {
 			var index,
 				styleElementId,
 			 	currentBreakpoint,
@@ -338,6 +347,8 @@ define([
 			Util.updatePresetStyle(this.styleElementPrefix.replace(/-preset/, ''), properties, this.styleTpl);
 
 			this.debouncedSavePreset(properties);
+
+			this.debouncedRenderParts(render);
 
 			this.updateMainDataCollectionPreset(properties);
 		},
