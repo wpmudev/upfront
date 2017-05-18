@@ -9,7 +9,7 @@
     ], function ( Command, overlay_grid_tpl ) {
 
         return Command.extend({
-            className: "command-grid sidebar-commands-small-button",
+            className: "command-grid sidebar-commands-small-button icon-button",
 
             initialize: function() {
                 this.constructor.__super__.initialize.apply(this, arguments);

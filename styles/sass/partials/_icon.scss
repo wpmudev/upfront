@@ -5,11 +5,12 @@
 .upfront-ui .upfront-field-icon:before,
 .upfront-ui .upfront-structure-field-icon:before,
 .upfront-util-icon:before,
+.region-lock-switch:before,
+.upfront-ui .upfront-icon:before,
 .upfront-ui .upfront-icon.upfront-icon-edit-css:before,
 .upfront-ui .upfront-icon.upfront-icon-region-add:before,
 .upfront-ui .upfront-icon.upfront-icon-more-menu:before {
 	content: " ";
-	/* background-image: url('../img/uf-core-el-sprite.svg?v=20131127'); */
 	background-image: url('../img/uf-core-el-sprite_new.png');
     background-image: url('../img/uf-core-el-sprite_new.svg');
 	background-repeat: no-repeat;
@@ -17,17 +18,18 @@
 	display: block;
 }
 .upfront-logo,
-.upfront-ui .upfront-icon:before,
-.region-lock-switch:before,
-.upfront-icon-control-region:before,
-.panel-setting-dialog-region:before, .panel-setting-dialog-info:before,
 .position-select-wrap .position-select:checked,
-.upfront-field-checkbox:checked,
+.upfront-icon-control-region:before,
 .upfront-ui .upfront-region-field-icon:before,
+.panel-setting-dialog-region:before,
+.panel-setting-dialog-info:before,
+.upfront-field-checkbox:checked,
 .upfront-icon-button-hide:before,
+.upfront-icon-ui:before,
 .upfront-entity-hide_trigger:before {
 	content: " ";
-	background-image: url('../img/uf-ui-sprite.svg?v=20131127');
+	background-image: url('../img/uf-ui-sprite.png');
+	background-image: url('../img/uf-ui-sprite.svg');
 	background-repeat: no-repeat;
 	float: left;
 	display: block;
@@ -188,10 +190,10 @@
 	margin-top: 10px;
 }
 .upfront-icon-browse:before {
-	width: 10px;
+	width: 13px;
 	margin-right: 5px;
-	background-position: -736px -70px;
-	opacity:.5;
+	background-position: -263px -370px;
+	opacity: 1;
 }
 .upfront-icon-collapse:before,
 .upfront-icon-expand:before {
@@ -211,7 +213,7 @@
 }
 .upfront-icon-start-responsive:before,
 .upfront-icon-panel-settings:before {
-	background-position: -41px -415px;
+	background-position: -439px -130px;
 	opacity:.75;
 }
 .upfront-icon-themes:before {
@@ -502,7 +504,7 @@
 	background-position: -42px -145px;
 }
 .upfront-icon-undo:before, .upfront-icon-redo:before {
-	width: 10px;
+	width: 14px;
 	height: 24px;
 	margin: 0 6px 0 0;
 }
@@ -513,26 +515,26 @@
     height: 14px;
 }
 .upfront-icon-undo:before {
-	background-position: -197px -44px;
-	height: 14px;
+	background-position: -264px -430px;
+	height: 18px;
 }
 .upfront-icon-undo:hover:before {
-	background-position: -197px -78px;
+	background-position: -264px -430px;
 }
 .upfront-icon-redo:before {
-	background-position: -196px -112px;
-	height: 14px;
+	background-position: -264px -460px;
+	height: 18px;
 }
 .upfront-icon-redo:hover:before {
-	background-position: -196px -146px;
+	background-position: -264px -460px;
 }
 .upfront-icon-grid:before {
 	width: 20px;
 	height: 20px;
-	background-position: -342px -144px;
+	background-position: -411px -160px;
 }
 .upfront-icon-grid:hover:before, .upfront-icon-grid-active:before {
-	background-position: -342px -178px;
+	background-position: -411px -160px;
 }
 .upfront-icon-media-info:before {
 	width: 14px;
@@ -1049,5 +1051,5 @@ i.upfront-field-icon-burger-trigger {
 .upfront-icon-redo:before, .upfront-icon-undo:before {
 	position: relative;
     top: 0px;
-    left: 7px;
+    left: 3px;
 }

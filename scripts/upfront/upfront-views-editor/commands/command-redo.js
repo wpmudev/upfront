@@ -8,7 +8,7 @@
     ], function ( Command ) {
 
         return Command.extend({
-            "className": "command-redo sidebar-commands-small-button",
+            "className": "command-redo sidebar-commands-small-button icon-button",
             initialize: function () {
                 //Upfront.Events.on("entity:activated", this.activate, this);
                 //Upfront.Events.on("entity:deactivated", this.deactivate, this);

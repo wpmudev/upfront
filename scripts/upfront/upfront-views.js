@@ -5062,7 +5062,7 @@ define([
 					type = this._get_region_type(),
 					data = _.extend(this.model.toJSON(), {size_class: grid['class'], max_col: this.max_col, available_col: this.available_col}),
 					template = _.template(_Upfront_Templates["region_container"], data),
-					$edit = $('<div class="upfront-region-edit-trigger upfront-ui" title="' + l10n.change_background + '"><i class="upfront-icon upfront-icon-region-edit"></i></div>')
+					$edit = $('<div class="upfront-region-edit-trigger upfront-ui" title="' + l10n.change_background + '"><i class="upfront-icon-ui upfront-icon-region-edit"></i></div>')
 				;
 				Upfront.Events.trigger("entity:region_container:before_render", this, this.model);
 				this.$el.html(template);

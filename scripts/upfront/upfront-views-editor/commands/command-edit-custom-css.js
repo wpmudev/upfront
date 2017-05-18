@@ -9,9 +9,9 @@
 
         return Command.extend({
             tagName: 'div',
-            className: "command-edit-css upfront-icon upfront-icon-edit-css",
+            className: "command-edit-css sidebar-commands-small-button",
             render: function (){
-                this.$el.html('<span>' + l10n.add_custom_css_rules + '</span>');
+                this.$el.html(l10n.add_custom_css_rules);
                 this.$el.prop("title", l10n.add_custom_css_rules);
             },
             on_click: function () {
