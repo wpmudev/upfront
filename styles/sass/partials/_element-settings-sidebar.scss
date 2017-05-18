@@ -56,6 +56,7 @@
 	min-width: 255px;
 }
 
+#region-settings-sidebar #settings .upfront-settings_panel,
 #element-settings-sidebar #settings .upfront-settings_panel {
 	position: relative;
 	left: 0;
@@ -81,7 +82,8 @@
 	height: 50px;
 }
 
-#element-settings-sidebar .uf-settings-panel__title {
+#element-settings-sidebar .uf-settings-panel__title,
+#region-settings-sidebar .uf-settings-panel__title {
 	height: 30px;
 	background: #fff;
 	line-height: 30px;
@@ -95,13 +97,15 @@
 	text-transform: uppercase;
 }
 
-#element-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title {
+#element-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title,
+#region-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title {
 	border-bottom: 1px solid #e7e7e7;
 	background: #e7e7e7;
 	color: #212121;
 }
 
-#element-settings-sidebar .uf-settings-panel__title:before {
+#element-settings-sidebar .uf-settings-panel__title:before,
+#region-settings-sidebar .uf-settings-panel__title:before {
 	content: '+';
 	width: 0;
 	height: 0;
@@ -115,7 +119,8 @@
 	font-size: 20px;
 }
 
-#element-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title:before {
+#element-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title:before,
+#region-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title:before {
 	content: "\2013";
 	top: -2px;
 }

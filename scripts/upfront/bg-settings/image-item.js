@@ -80,7 +80,7 @@ define([
 							this.$el.addClass('uf-bgsettings-image-style');
 						}
 					}),
-					bg_tile: new Upfront.Views.Editor.Field.Checkboxes({
+					bg_tile: new Upfront.Views.Editor.Field.Toggle({
 						model: this.model,
 						layout: 'horizontal-inline',
 						default_value: ['y', 'x'],

@@ -111,7 +111,7 @@ define([
 							this.$el.addClass('uf-bgsettings-map-controls');
 						}
 					}),
-					show_markers: new Upfront.Views.Editor.Field.Checkboxes({
+					show_markers: new Upfront.Views.Editor.Field.Toggle({
 						model: this.model,
 						label: l10n.show_markers,
 						property: "background_show_markers",
@@ -124,7 +124,7 @@ define([
 							this.$el.addClass('uf-bgsettings-map-show-marker');
 						}
 					}),
-					custom_map_code: new Upfront.Views.Editor.Field.Checkboxes({
+					custom_map_code: new Upfront.Views.Editor.Field.Toggle({
 						model: this.model,
 						label: l10n.custom_map_code,
 						property: "background_use_custom_map_code",
@@ -150,7 +150,7 @@ define([
 					open_map_code_panel: new Upfront.Views.Editor.Field.Button({
 						model: me.model,
 						label: l10n.open_map_code_panel,
-						className: "open-map-code-panel-button",
+						className: "open-map-code-panel-button upfront-small-button",
 						compact: true
 					})
 				};

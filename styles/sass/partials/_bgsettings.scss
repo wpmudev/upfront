@@ -75,8 +75,8 @@
 .uf-bgsettings-image-pick {
   	display: inline-block;
   	background: #fff;
-  	height: 26px;
-  	max-height: 26px;
+  	height: 22px;
+  	max-height: 22px;
 	border: 1px solid #e2e2e2;
 	border-radius: 2px;
 }
@@ -148,14 +148,13 @@
 }
 
 #region-settings-sidebar .uf-bgsettings-image-pick .upfront-field-button {
-	height: 26px;
+	height: 22px;
 	padding: 0 10px;
 }
 
 .uf-bgsettings-imageitem .uf-bgsettings-image-tile {
 	height: 24px;
 	padding: 0 10px;
-	background-image: linear-gradient(-179deg, #fafdff 0%, #f3faff 100%);
 	font-size: 14px;
 	color: #7c86a6;
 	padding: 4px 15px;
@@ -175,8 +174,15 @@
 
 #region-settings-sidebar .uf-bgsettings-imageitem .uf-bgsettings-image-tile {
 	clear: both;
-	padding: 5px 16px;
+	padding: 15px 12px;
 	margin: 0;
+	div {
+		width: 50%;
+		margin: 0;
+		span {
+			margin: 0 0 0 1px;
+		}
+	}
 }
 
 .uf-bgsettings-image-tile label {
@@ -753,9 +759,9 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 
 .upfront-bg-setting-tab-video span label,
 .upfront-bg-setting-tab-video .uf-bgsettings-item .upfront-field-wrap > label {
-	color: #96acc1;
+	color: #4a4a4a;
 	font-size: 11px;
-	font-family: verdana, sans-serif;
+	font-family: "Open Sans", verdana, sans-serif;
 	font-weight: normal;
 	margin: 0;
 	padding: 0;
@@ -767,22 +773,26 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 }
 
 .uf-bgsettings-video-color {
-	width: 66%;
+	width: 100%;
 }
 
 .upfront-modal-bg-settings-global .uf-bgsettings-video-color {
 	width: 150px;
 }
 
+.uf-bgsettings-video-color .sp-replacer.sp-light {
+	width: 60%;
+}
+
 .upfront-bg-setting-tab-video .uf-bgsettings-item .uf-bgsettings-video-color > label {
 	float: right;
 	line-height: 25px;
-	width: 7.3rem;
+	width: 4.3rem;
 }
 
-.uf-bgsettings-video-mute, .uf-bgsettings-video-autoplay {
+.uf-bgsettings-video-mute, .uf-bgsettings-video-autoplay, .uf-bgsettings-video-loop {
 	display: inline-block;
-	width: 50%;
+	width: 53%;
 	margin-top: 0;
 }
 
@@ -880,7 +890,7 @@ span.upfront-settings-item-title:after {
 #region-settings-sidebar div.upfront-bg-setting-tab-primary .upfront-field-wrap .upfront-field-label-block {
 	color: #4a4a4a;
 	font-size: 11px;
-	font-family: verdana, sans-serif;
+	font-family: "Open Sans", verdana, sans-serif;
 	margin: 0;
 	padding: 0;
 	line-height: 10px;
@@ -1086,12 +1096,16 @@ span.upfront-settings-item-title:after {
 
 .background-video-style-field {
 	margin-top: 0;
+	width: 60%;
+	display: inline-block;
+	margin-bottom: 10px;
 }
 
 .uf-bgsettings-video-pick {
-	margin-bottom: 5px;
-	width: 100%;
+	margin: 12px 0 0;
+	vertical-align: top;
+	float: right;
 }
 .uf-bgsettings-video-pick input {
-	width: 100%;
+	display: block;
 }

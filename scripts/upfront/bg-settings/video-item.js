@@ -18,7 +18,7 @@ define([
 			var videoSelector = new VideoSelector();
 
 			var pickVideoButton = new Upfront.Views.Editor.Field.Button({
-				label: l10n.pick_video,
+				label: l10n.browse,
 				model: this.model,
 				compact: true,
 				classname: 'uf-button-alt uf-bgsettings-image-pick uf-bgsettings-video-pick',
@@ -95,7 +95,7 @@ define([
 					}),
 					pick_video: pickVideoButton,
 					video: videoUrlInput,
-					mute: new Upfront.Views.Editor.Field.Checkboxes({
+					mute: new Upfront.Views.Editor.Field.Toggle({
 						model: this.model,
 						property: 'background_video_mute',
 						use_breakpoint_property: true,
@@ -111,7 +111,7 @@ define([
 							this.$el.addClass('uf-bgsettings-video-mute');
 						}
 					}),
-					autoplay: new Upfront.Views.Editor.Field.Checkboxes({
+					autoplay: new Upfront.Views.Editor.Field.Toggle({
 						model: this.model,
 						property: 'background_video_autoplay',
 						use_breakpoint_property: true,
@@ -127,7 +127,7 @@ define([
 							this.$el.addClass('uf-bgsettings-video-autoplay');
 						}
 					}),
-					loop: new Upfront.Views.Editor.Field.Checkboxes({
+					loop: new Upfront.Views.Editor.Field.Toggle({
 						model: this.model,
 						property: 'background_video_loop',
 						use_breakpoint_property: true,
@@ -224,8 +224,8 @@ define([
 		},
 		get_bg_style_values: function () {
 			var values = [
-				{ label: 'Upload', value: 'upload', icon: 'bg-image-full' },
-				{ label: 'Video Service', value: 'service', icon: 'bg-image-tile' }
+				{ label: 'Upload', value: 'upload' },
+				{ label: 'Video Service', value: 'service' }
 			];
 			return values;
 		},
