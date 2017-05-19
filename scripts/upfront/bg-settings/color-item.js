@@ -34,7 +34,7 @@ define([
 				}
 			}
 			if (options.hideLabel !== true) {
-				colorFieldOptions.label = l10n.bg_color_short;
+				colorFieldOptions.label = l10n.region_bg_short;
 			}
 
 			options.fields = [

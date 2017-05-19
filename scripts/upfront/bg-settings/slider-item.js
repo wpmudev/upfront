@@ -228,7 +228,7 @@ define([
 								backgroundSize: '100% auto'
 							});
 						}
-						$image.append('<span href="#" class="upfront-bg-slider-delete-image">&times;</span>');
+						$image.append('<span href="#" class="upfront-bg-slider-delete-image"></span>');
 						$wrap.append($image);
 					});
 					if ( $wrap.hasClass('ui-sortable') )

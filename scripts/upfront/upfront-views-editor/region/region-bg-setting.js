@@ -158,7 +158,7 @@
 					)
 				) {
 					if ( !Upfront.Application.is_single('404_page') ) {
-						types.push({ label: l10n.featured_image, value: 'featured', icon: 'feat' });
+						types.push({ label: l10n.featured_image, value: 'featured' });
 					}
 				}
 				return types;
@@ -528,16 +528,21 @@
 
 				if ( !is_responsive && ( this.model.is_main() || sub == 'top' || sub == 'bottom' ) ) {
 					this.render_sticky_settings($region_sticky);
+
+					$region_footer.find('.upfront-region-bg-setting-edit-css').on('click', function(e){
+						e.preventDefault();
+						e.stopPropagation();
+						me.trigger_edit_css();
+					});
+					$region_footer.find('.upfront-region-bg-setting-trash').on('click', function(e){
+						e.preventDefault();
+						e.stopPropagation();
+						me.trigger_trash();
+					});
 				}
 				else {
 					$region_sticky.hide();
 				}
-
-				$region_footer.find('.upfront-region-bg-setting-edit-css').on('click', function(e){
-					e.preventDefault();
-					e.stopPropagation();
-					me.trigger_edit_css();
-				});
 			},
 
 			render_sticky_settings: function ($region_sticky) {
@@ -815,6 +820,96 @@
 				});
 
 				this.listenTo(Upfront.Application.cssEditor, 'updateStyles', this.adjust_grid_padding);
+			},
+			trigger_trash: function () {
+				var main, main_view;
+
+				if(typeof(e) != 'undefined')
+					e.preventDefault();
+
+
+				if ( confirm(l10n.section_delete_nag) ){
+					// Destroy parallax first if exists
+					var $overlay = this.$el.closest('.upfront-region-container-bg').children('.upfront-region-bg-overlay');
+					if ( $overlay.length > 0 ) {
+						if ( $overlay.data('uparallax') ) {
+							$overlay.uparallax('destroy');
+						}
+					}
+
+					var parent_view = this.parent_view; // reserve parent_view before removal as we use it later
+					// if ( this.model.get('container') ){
+						// main = this.model.collection.get_by_name(this.model.get('container'));
+						// main_view = Upfront.data.region_views[main.cid];
+					// }
+					if(this.model.get('type') == 'lightbox')
+						this.hide();
+
+					var thecollection = this.model.collection || this.collection;
+
+					// Make sure sub-regions is also removed if it's main region
+					if ( this.model.is_main() ) {
+						var sub_regions = this.model.get_sub_regions();
+						_.each(sub_regions, function(sub_model, sub){
+							if ( _.isArray(sub_model) )
+								_.each(sub_model, function(sub_model2){ thecollection.remove(sub_model2); });
+							else if ( _.isObject(sub_model) )
+								thecollection.remove(sub_model);
+						});
+					}
+	
+					// Close settings and edit mode.
+					this.close();
+
+					if( 'fixed' === this.model.get('type')  ){ //  If it's a floating region!
+						this.parent_view.get_container_view(this.model).close_edit();
+						thecollection.remove(this.model);
+						//this.remove();
+					}else{
+						thecollection.remove(this.model);
+					}
+
+					var total_container = thecollection.total_container(['shadow', 'lightbox']); // don't include shadow and lightbox region
+					if ( total_container == 0 ) {
+						if ( parent_view.$el.find('#no_region_add_one').length < 1 ) {
+							parent_view.$el.append($('<a>').attr('id', 'no_region_add_one').text(l10n.no_region_add).one('click', function() {
+								var new_title = false,
+									name = 'main',
+									title = l10n.main_area;
+								if ( thecollection.get_by_name(name) ) {
+									new_title = thecollection.get_new_title("Main ", 2);
+									title = new_title.title;
+									name = new_title.name;
+								}
+								var new_region = new Upfront.Models.Region(_.extend(_.clone(Upfront.data.region_default_args), {
+									"name": name,
+									"container": name,
+									"title": title
+								}));
+
+								var options = {};
+								new_region.set_property('row', Upfront.Util.height_to_row($(window).height())); // default to screen height worth of row
+								new_region.add_to(thecollection, 0, options);
+
+								$(this).remove();
+							}));
+
+						}
+
+					}
+
+
+
+					// For single post if floating region is removed, parent region will not re-render and will appear as if everything was removed
+					//if (floating) parent_view.render();
+
+					// if ( main_view ){
+						// Upfront.Events.trigger('command:region:edit_toggle', true);
+						// main_view.trigger('activate_region', main_view);
+					// }
+				}
+				// run layout change event
+				Upfront.Events.trigger('entity:layout:change');
 			},
 			toggle_advanced_settings: function() {
 				// toggle advanced settings content
