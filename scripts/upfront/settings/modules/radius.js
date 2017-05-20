@@ -30,6 +30,9 @@ define([
 			var me = this,
 				state = this.options.state;
 
+			// Radius toggle is always true
+			this.options.toggle = true;
+
 			var sliderOnChange = function () {
 				//Update border radius
 				var value = this.get_value();
@@ -53,25 +56,6 @@ define([
 			var throttledSliderOnChange = _.throttle(sliderOnChange, 16);
 
 			var radiusOnChange = function(value) {
-/*
-// --- Don't do any of this - it's duplicated code and will fail to update properly as a result ---
-				me.model.set(me.options.fields.radius_number, value);
-				//Update border radius
-				var data = {};
-				data[me.options.fields.radius1] = value;
-				data[me.options.fields.radius2] = value;
-				data[me.options.fields.radius3] = value;
-				data[me.options.fields.radius4] = value;
-				data[me.options.fields.radius] = value;
-				me.model.set(data, {silent: true});
-
-				me.$el.find("input[name="+ me.options.fields.radius1 +"]").val(value);
-				me.$el.find("input[name="+ me.options.fields.radius2 +"]").val(value);
-				me.$el.find("input[name="+ me.options.fields.radius3 +"]").val(value);
-				me.$el.find("input[name="+ me.options.fields.radius4 +"]").val(value);
-				me.$el.find("input[name="+ me.options.fields.radius +"]").val(value);
-*/
-// --- Instead, just update slider value and deal with changes there ---
 				//Update slider value
 				s = me.fields._wrapped[2];
 				s.$el.find('#'+s.get_field_id()).slider('value', value);
@@ -90,9 +74,9 @@ define([
 			var throttledRadiusOnChange = _.throttle(radiusOnChange, 16);
 
 			this.fields = _([
-				new Upfront.Views.Editor.Field.Checkboxes({
+				new Upfront.Views.Editor.Field.Toggle({
 					model: this.model,
-					className: 'useRadius checkbox-title',
+					className: 'useRadius upfront-toggle-field checkbox-title',
 					name: me.options.fields.use,
 					label: '',
 					default_value: 1,
@@ -105,14 +89,16 @@ define([
 						me.reset_fields(value);
 					},
 					show: function(value, $el) {
-						var stateSettings = $el.closest('.state_modules');
+						var stateSettings = $el.closest('.upfront-settings-item-content');
 						var lock = me.model.get(me.options.fields.lock);
 						//Toggle border radius fields
 						if(value == "yes") {
 							if(lock == "yes") {
+								stateSettings.find('.' + state + '-toggle-wrapper').show();
 								stateSettings.find('.'+ state +'-radius-slider').show();
 								stateSettings.find('.'+ state +'-radius-slider-number').show();
 							} else {
+								stateSettings.find('.' + state + '-toggle-wrapper').show();
 								stateSettings.find('.'+ state +'-radius-slider').hide();
 								stateSettings.find('.'+ state +'-radius-slider-number').hide();
 								stateSettings.find('.'+ state +'-radius1').show();
@@ -121,6 +107,7 @@ define([
 								stateSettings.find('.'+ state +'-radius4').show();
 							}
 						} else {
+							stateSettings.find('.' + state + '-toggle-wrapper').hide();
 							stateSettings.find('.'+ state +'-radius1').hide();
 							stateSettings.find('.'+ state +'-radius2').hide();
 							stateSettings.find('.'+ state +'-radius3').hide();

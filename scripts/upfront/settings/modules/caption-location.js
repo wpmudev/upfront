@@ -11,10 +11,13 @@ define([
 			var me = this,
 				state = this.options.state;
 
+			// Caption toggle is always true
+			this.options.toggle = true;
+
 			this.fields = _([
-				new Upfront.Views.Editor.Field.Checkboxes({
+				new Upfront.Views.Editor.Field.Toggle({
 					model: this.model,
-					className: 'useCaptions checkbox-title',
+					className: 'useCaptions checkbox-title upfront-toggle-field',
 					name: 'use_captions',
 					label: '',
 					default_value: 1,
@@ -26,14 +29,12 @@ define([
 						me.model.set('use_captions', value);
 					},
 					show: function(value, $el) {
-						var stateSettings = $el.closest('.state_modules');
+						var stateSettings = $el.closest('.upfront-settings-item-content');
 						//Toggle color fields
 						if(value == "yes") {
-							stateSettings.find('.'+ state +'-caption-select').show();
-							stateSettings.find('.'+ state +'-caption-trigger').show();
+							stateSettings.find('.' + state + '-toggle-wrapper').show();
 						} else {
-							stateSettings.find('.'+ state +'-caption-select').hide();
-							stateSettings.find('.'+ state +'-caption-trigger').hide();
+							stateSettings.find('.' + state + '-toggle-wrapper').hide();
 						}
 					}
 				}),

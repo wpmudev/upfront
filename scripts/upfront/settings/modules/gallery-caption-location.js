@@ -11,10 +11,13 @@ define([
 			var me = this,
 				state = this.options.state;
 
+			// Gallery caption toggle is always true
+			this.options.toggle = true;
+
 			this.fields = _([
-				new Upfront.Views.Editor.Field.Checkboxes({
+				new Upfront.Views.Editor.Field.Toogle({
 					model: this.model,
-					className: 'useCaptions checkbox-title',
+					className: 'useCaptions checkbox-title upfront-toggle-field',
 					name: 'use_captions',
 					label: '',
 					default_value: 1,
@@ -26,20 +29,16 @@ define([
 						me.model.set('use_captions', value);
 					},
 					show: function(value, $el) {
-						var stateSettings = $el.closest('.state_modules');
+						var stateSettings = $el.closest('.upfront-settings-item-content');
 						//Toggle color fields
 						if(value == "yes") {
-							stateSettings.find('.'+ state +'-caption-select').show();
-							stateSettings.find('.'+ state +'-caption-trigger').show();
-							stateSettings.find('.'+ state +'-caption-height').show();
+							stateSettings.find('.' + state + '-toggle-wrapper').show();
 							var height_type = me.model.get('caption-height', value);
 							if(height_type === "fixed") {
 								stateSettings.find('.'+ state +'-caption-height-number').show();
 							}
 						} else {
-							stateSettings.find('.'+ state +'-caption-select').hide();
-							stateSettings.find('.'+ state +'-caption-trigger').hide();
-							stateSettings.find('.'+ state +'-caption-height').hide();
+							stateSettings.find('.' + state + '-toggle-wrapper').hide();
 							stateSettings.find('.'+ state +'-caption-height-number').hide();
 						}
 					}

@@ -198,9 +198,9 @@ define([
 			if(this.options.toggle === true) {
 				this.group = false;
 				this.fields.unshift(
-					new Upfront.Views.Editor.Field.Checkboxes({
+					new Upfront.Views.Editor.Field.Toggle({
 						model: this.model,
-						className: 'useTypography checkbox-title ' + toggleClass,
+						className: 'useTypography upfront-toggle-field checkbox-title ' + toggleClass,
 						name: me.options.fields.use,
 						label: '',
 						multiple: false,
@@ -217,22 +217,12 @@ define([
 							me.reset_fields(value);
 						},
 						show: function(value, $el) {
-							var stateSettings = $el.closest('.state_modules');
+							var stateSettings = $el.closest('.upfront-settings-item-content');
 							//Toggle typography fields
 							if(value == "yes") {
-								stateSettings.find('.'+ state +'-select-element').show();
-								stateSettings.find('.'+ state +'-font-face').show();
-								stateSettings.find('.'+ state +'-font-style').show();
-								stateSettings.find('.'+ state +'-font-size').show();
-								stateSettings.find('.'+ state +'-font-lineheight').show();
-								stateSettings.find('.'+ state +'-font-color').show();
+								stateSettings.find('.'+ state +'-toggle-wrapper').show();
 							} else {
-								stateSettings.find('.'+ state +'-select-element').hide();
-								stateSettings.find('.'+ state +'-font-face').hide();
-								stateSettings.find('.'+ state +'-font-style').hide();
-								stateSettings.find('.'+ state +'-font-size').hide();
-								stateSettings.find('.'+ state +'-font-lineheight').hide();
-								stateSettings.find('.'+ state +'-font-color').hide();
+								stateSettings.find('.'+ state +'-toggle-wrapper').hide();
 							}
 						}
 					})
