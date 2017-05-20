@@ -743,25 +743,6 @@ div.preset-manager-panel .caption_select {
 	margin-top: 5px;
 	width: 215px;
 }
-div.preset-manager-panel .caption_select, div.preset-manager-panel .field-caption_trigger {
-	border-left: 2px solid #dae6f2;
-	padding: 5px 0px 5px 10px;
-	position: relative;
-	top: 0px;
-}
-div.preset-manager-panel .caption_select label, div.preset-manager-panel .field-caption_trigger label {
-	font-weight: normal;
-}
-div.preset-manager-panel .field-caption_trigger {
-	margin-top: 0px;
-	padding-top: 10px;
-	position: relative;
-    top: 0px;
-}
-div.preset-manager-panel .image-caption-location .field-caption_trigger {
-	top: 5px;
-}
-
 div.preset-manager-panel .image_style .upfront-field-label,
 div.preset-manager-panel .caption_select .upfront-field-label {
 	top: 4px;
