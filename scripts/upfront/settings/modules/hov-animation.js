@@ -60,9 +60,9 @@ define([
 			if(this.options.toggle === true) {
 				this.group = false;
 				this.fields.unshift(
-					new Upfront.Views.Editor.Field.Checkboxes({
+					new Upfront.Views.Editor.Field.Toggle({
 						model: this.model,
-						className: 'useAnimation checkbox-title',
+						className: 'useAnimation checkbox-title upfront-toggle-field',
 						name: me.options.fields.use,
 						label: '',
 						default_value: 1,
@@ -74,14 +74,12 @@ define([
 							me.model.set(me.options.fields.use, value);
 						},
 						show: function(value, $el) {
-							var stateSettings = $el.closest('.state_modules');
+							var stateSettings = $el.closest('.upfront-settings-item-content');
 							//Toggle color fields
 							if(value == "yes") {
-								stateSettings.find('.'+ state +'-transition').show();
-								stateSettings.find('.'+ state +'-duration').show();
+								stateSettings.find('.' + state + '-toggle-wrapper').show();
 							} else {
-								stateSettings.find('.'+ state +'-transition').hide();
-								stateSettings.find('.'+ state +'-duration').hide();
+								stateSettings.find('.' + state + '-toggle-wrapper').hide();
 							}
 						}
 					})
