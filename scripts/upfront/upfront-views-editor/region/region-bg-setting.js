@@ -554,7 +554,7 @@
 						default_value: '',
 						layout: 'horizontal-inline',
 						values: [
-							{ label: l10n.sticky_region + ':', value: '1' }
+							{ label: l10n.sticky_region, value: '1' }
 						],
 						change: function () {
 							var value = this.get_value();

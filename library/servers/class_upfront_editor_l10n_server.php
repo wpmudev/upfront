@@ -781,7 +781,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'change_image' => __('Change Image', 'upfront'),
 				'edit_region_css' => __('Region CSS', 'upfront'),
 				'trash_region' => __('Trash Region', 'upfront'),
-				'auto_resize' => __('Auto-resize', 'upfront'),
+				'auto_resize' => __('Auto resize', 'upfront'),
 				'auto_resize_disabled_title' => __('Not applicable for Full Screen Regions', 'upfront'),
 				'roles_label' => __('Aria Landmark Roles', 'upfront'),
 				'roles_select_label' => __('Set role for this region:', 'upfront'),
