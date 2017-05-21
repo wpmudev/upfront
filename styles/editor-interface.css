@@ -1851,7 +1851,10 @@ input.upfront-field-text:hover,
 
 .upfront-field-wrap-toggle .upfront_toggle_checkbox:checked + .upfront_toggle_field_label {
   background-color: #859398;
-  border-color: #73858c; }
+  border-color: #73858c;
+  will-change: transform;
+  -webkit-transition: transform 0.5s;
+  transition: transform 0.5s; }
 
 .upfront-field-wrap-toggle .upfront-field-label-text {
   position: relative;
@@ -1862,7 +1865,8 @@ input.upfront-field-text:hover,
   font-size: 11px;
   line-height: 15px;
   color: rgba(33, 33, 33, 0.8);
-  font-weight: 600; }
+  font-weight: 600;
+  cursor: pointer; }
 
 .upfront-toggle-wrapper {
   background: #e7e7e7;

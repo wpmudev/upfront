@@ -1464,9 +1464,20 @@
         });
 		
 		var Field_Toggles = Field_Checkboxes.extend({
+			events: {
+				'click .upfront-field-label-text': 'click_label'
+			},
+
             className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-toggle',
             type: 'checkbox',
 			multiple: false,
+
+			click_label: function(e) {
+				e.preventDefault();
+
+				// Simulate label click
+				this.$el.find('.upfront_toggle_checkbox').click();
+			},
 
 			get_value_html: function (value, index) {
 				var id = this.get_field_id() + '-' + index;
