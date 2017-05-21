@@ -701,6 +701,19 @@
 				this.stopListening(Upfront.Events, "theme_colors:update");
 				var cback = _.debounce(this.update_palette, 200);
 				this.listenTo(Upfront.Events, "theme_colors:update", cback, this);
+
+				if(this.options.label_position === "right") {
+					var $colorbox = this.$el.find('.sp-replacer'),
+						$label = this.$el.find('.upfront-field-label')
+					;
+
+					// Move label after color box
+					$label.insertAfter($colorbox);
+
+					// Add classes for inline label position
+					$label.addClass('upfront-color-field-label-right');
+					$colorbox.addClass('upfront-color-field-right');
+				}
 			},
 			/**
 			 * Hides picker on outer click
@@ -910,8 +923,7 @@
                     $alpha.removeClass("sp-alpha-disabled sp-alpha-lower-opacity");
                     this.$(".sp-alpha-overlay").remove();
                 }
-            }
-
+            },
         });
 
 

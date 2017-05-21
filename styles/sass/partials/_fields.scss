@@ -459,6 +459,9 @@ input.upfront-field-text:hover,
 	overflow: hidden;
 }
 
+.upfront-toggle-wrapper .upfront-field-wrap-color {
+	margin-bottom: 0px;
+}
 
 /* Inline Radio Field */
 
@@ -817,13 +820,14 @@ input.upfront-field-text:hover,
 	clear: both;
 	vertical-align: middle;
 	line-height: 24px;
+	overflow: hidden;
 }
 
 .upfront-field-wrap-color label {
 	float: none;
 }
 
-.upfront-field-wrap-color .upfront-settings-item {
+.upfront-field-wrap-color {
 	margin-bottom: 10px;
 }
 
@@ -886,7 +890,22 @@ input.upfront-field-text:hover,
 	z-index: 99;
 }
 
-.upfront-field-wrap-color .sp-texthint {
+.upfront-field-wrap-color .upfront-color-field-right {
+	width: 56%;
+	display: block;
+	float: left;
+}
+
+.upfront-field-wrap-color .upfront-color-field-label-right {
+	margin-left: 4%;
+	width: 40%;
+	/* We need important to overwrite preset label styles */
+	font-weight: bold !important;
+	margin-top: 0px !important;
+	line-height: 21px !important;
+	display: block;
+	float: left;
+	height: 20px;
 }
 
 /* Slider field */

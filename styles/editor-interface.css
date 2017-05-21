@@ -1872,6 +1872,9 @@ input.upfront-field-text:hover,
   clear: both;
   overflow: hidden; }
 
+.upfront-toggle-wrapper .upfront-field-wrap-color {
+  margin-bottom: 0px; }
+
 /* Inline Radio Field */
 .upfront-field-wrap-radios-inline {
   display: flex;
@@ -2169,12 +2172,13 @@ input.upfront-field-text:hover,
 .upfront-field-wrap-color {
   clear: both;
   vertical-align: middle;
-  line-height: 24px; }
+  line-height: 24px;
+  overflow: hidden; }
 
 .upfront-field-wrap-color label {
   float: none; }
 
-.upfront-field-wrap-color .upfront-settings-item {
+.upfront-field-wrap-color {
   margin-bottom: 10px; }
 
 .upfront-field-wrap-color .sp-replacer {
@@ -2225,6 +2229,22 @@ input.upfront-field-text:hover,
   display: block !important;
   position: absolute;
   z-index: 99; }
+
+.upfront-field-wrap-color .upfront-color-field-right {
+  width: 56%;
+  display: block;
+  float: left; }
+
+.upfront-field-wrap-color .upfront-color-field-label-right {
+  margin-left: 4%;
+  width: 40%;
+  /* We need important to overwrite preset label styles */
+  font-weight: bold !important;
+  margin-top: 0px !important;
+  line-height: 21px !important;
+  display: block;
+  float: left;
+  height: 20px; }
 
 /* Slider field */
 .upfront-field-slider {
@@ -5072,7 +5092,17 @@ div.upfront-bg-setting-tab-primary .uf-bgsettings-image-style .upfront-field-lab
 
 .upfront-modal-bg-settings-fixed .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num:not(.uf-bgsettings-origin-pos-y-num) {
   top: -20px;
-  left: -155px; }
+  left: -155px;
+  width: 14rem; }
+
+.upfront-modal-bg-settings-global .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num input, .upfront-modal-bg-settings-global .uf-bgsettings-imageitem .uf-bgsettings-image-pos-x-num input {
+  width: 3rem; }
+
+.upfront-modal-bg-settings-fixed .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num:not(.uf-bgsettings-origin-pos-y-num) input, .upfront-modal-bg-settings-fixed .uf-bgsettings-imageitem .uf-bgsettings-image-pos-x-num:not(.uf-bgsettings-origin-pos-x-num) input {
+  width: 3rem; }
+
+.upfront-modal-bg-settings-fixed .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num input, .upfront-modal-bg-settings-fixed .uf-bgsettings-imageitem .uf-bgsettings-image-pos-x-num input {
+  width: 3rem; }
 
 .upfront-modal-bg-settings-fixed .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num {
   margin-top: -105px;
@@ -5200,6 +5230,9 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
   left: 40px;
   position: relative; }
 
+.upfront-modal-bg-settings-global .uf-bgsettings-image-color .sp-replacer {
+  width: 8rem; }
+
 .uf-bgsettings-imageitem .uf-bgsettings-image-default-image ~ .uf-bgsettings-image-pos-y {
   clear: both; }
 
@@ -5228,8 +5261,7 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 
 .upfront-modal-bg-settings-fixed .uf-bgsettings-image-color {
   width: 75px;
-  margin: 0;
-  padding-top: 11px; }
+  margin: 0; }
 
 .upfront-bg-setting-tab-image .uf-bgsettings-item .upfront-field-wrap .upfront-field-label-block,
 .uf-bgsettings-image-color label {
@@ -5279,6 +5311,12 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 .upfront-modal-bg-settings-fixed .upfront-field-wrap.upfront-field-wrap-number.uf-bgsettings-image-size {
   top: 12px;
   left: 150px; }
+
+.upfront-modal-bg-settings-fixed .uf-bgsettings-image-size input {
+  width: 3rem; }
+
+.upfront-modal-bg-settings-global .uf-bgsettings-use-image-size {
+  margin-top: 30px; }
 
 .upfront-modal-bg-settings-fixed .upfront-bg-setting-tab.upfront-bg-setting-tab-map {
   clear: both; }
@@ -5487,8 +5525,14 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 #region-settings-sidebar .upfront-bg-setting-tab-video .upfront-bg-setting-tab-secondary {
   padding: 0; }
 
+.upfront-modal-bg-settings-fixed .upfront-bg-setting-tab-secondary {
+  padding: 15px 0 0; }
+
 #region-settings-sidebar .upfront-bg-setting-tab-video {
   padding: 0 16px 10px; }
+
+.upfront-modal-bg-settings-global .uf-bgsettings-videoitem .upfront-settings-item-content {
+  padding: 15px 0; }
 
 .uf-bgsettings-video-url {
   margin: 10px 0 5px; }
@@ -5558,6 +5602,15 @@ span.upfront-settings-item-title:after {
 .upfront-bg-setting-tab .sp-replacer {
   float: none;
   width: auto; }
+
+.upfront-modal-bg-settings-global .uf-bgsettings-coloritem .uf-bgsettings-color-pick {
+  width: 9rem; }
+
+.upfront-modal-bg-settings-global .uf-bgsettings-coloritem .uf-bgsettings-color-pick {
+  width: 9rem; }
+
+.upfront-modal-bg-settings-fixed .uf-bgsettings-color-pick .sp-light {
+  top: -3px; }
 
 .upfront-bg-setting-tab-primary {
   width: 66%;
@@ -5787,6 +5840,9 @@ span.upfront-settings-item-title:after {
   margin: 12px 0 0;
   vertical-align: top;
   float: right; }
+
+.upfront-modal-bg-settings-fixed .uf-bgsettings-video-pick {
+  padding: 2px 10px; }
 
 .uf-bgsettings-video-pick input {
   display: block; }
@@ -19481,7 +19537,7 @@ div.preset-manager-panel div.preset_specific .upfront-settings-item-title span {
 div.preset-manager-panel div.preset_specific .upfront-settings-item-content .upfront-settings-item-title {
   display: block;
   color: #a6a6a6;
-  margin-bottom: 2px;
+  margin-bottom: 5px;
   margin-top: 10px; }
 
 div.preset-manager-panel div.or_divider div.upfront-settings-item-title > span {
@@ -19519,6 +19575,9 @@ div.preset-manager-panel .upfront-field-label-inline {
   color: rgba(33, 33, 33, 0.8);
   margin-bottom: 2px;
   margin-top: 5px; }
+
+div.preset-manager-panel .upfront-toggle-wrapper .upfront-field-label-inline {
+  margin-top: 0px; }
 
 div.preset-manager-panel div.preset-separator {
   border-bottom: 1px solid #e1edf8;

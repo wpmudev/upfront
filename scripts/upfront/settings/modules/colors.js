@@ -37,6 +37,7 @@ define([
 					name: color.name,
 					default_value: me.model.get(color.name),
 					label_style: 'inline',
+					label_position: me.options.label_position || 'right',
 					label: color.label,
 					spectrum: {
 						preferredFormat: 'hex',
