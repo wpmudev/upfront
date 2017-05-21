@@ -20,6 +20,7 @@ div.preset-manager-panel div.global_modules {
 div.preset-manager-panel div.state_settings_button_wrapper {
 	background: rgb(242, 242, 242);
 	margin: -3px -15px;
+	margin-bottom: 0px;
 	padding-top: 5px;
 	padding-left: 15px;
 	border-bottom: 1px solid rgb(232, 232, 232);
@@ -65,8 +66,7 @@ div.preset-manager-panel div.preset_specific .upfront-settings-item-title span {
 div.preset-manager-panel div.preset_specific .upfront-settings-item-content .upfront-settings-item-title {
 	display: block;
 	color: rgb(166, 166, 166);
-	margin-bottom: 5px;
-	margin-top: 10px;
+	margin: 13px 0px;
 }
 div.preset-manager-panel div.or_divider div.upfront-settings-item-title > span {
 	display: inline-block;
@@ -90,9 +90,6 @@ div.preset-manager-panel div.upfront-settings-common_panel {
 .font_settings_item .upfront-settings-item-content > div {
 	display: inline-block;
 	vertical-align: bottom;
-}
-.state_settings > .upfront-settings-item-content > div {
-	margin-top: 20px;
 }
 div.preset-manager-panel .upfront-field-label-inline {
 	font-size: 11px;
@@ -130,7 +127,6 @@ div.preset-manager-panel .selectbox_settings_item .upfront-field-label {
 div.preset-manager-panel .colors_settings_item .element-toggled.single,
 div.preset-manager-panel .colors_settings_item .element-toggled.two {
 	margin-top: 0px;
-	padding-bottom: 5px;
 }
 div.preset-manager-panel .colors_settings_item .element-toggled.two:nth-child(even) { 
 	clear: left;

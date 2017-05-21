@@ -735,10 +735,6 @@ a.image-edit-button.deactivated:hover {
 .upfront-field-icon-bottomCover:before {
 	background-position: -409px -308px;
 }
-
-div.preset-manager-panel .caption_location {
-	padding-top: 15px;
-}
 div.preset-manager-panel .caption_select {
 	margin-top: 5px;
 	width: 215px;
