@@ -1435,16 +1435,18 @@ span.draggable-post-element.element-dragging {
 
 #sidebar-ui .field-grid-half,
 #element-settings-sidebar .field-grid-half {
+  clear: left;
   width: 48%;
   float: left; }
 
-#sidebar-ui .field-grid-half:nth-child(even),
-#element-settings-sidebar .field-grid-half:nth-child(even) {
+#sidebar-ui .field-grid-half-last,
+#element-settings-sidebar .field-grid-half-last {
+  float: left;
   margin-left: 2%;
   clear: right; }
 
 /* Height Media Queries Fixes
-		========================== */
+	========================== */
 @media screen and (max-height: 650px) {
   #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content {
     height: 149px; }

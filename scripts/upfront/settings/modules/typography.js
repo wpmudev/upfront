@@ -129,7 +129,7 @@ define([
 
 				new Upfront.Views.Editor.Field.Number_Unit({
 					model: this.model,
-					className: state + '-font-lineheight field-grid-half ' + toggleClass,
+					className: state + '-font-lineheight field-grid-half field-grid-half-last ' + toggleClass,
 					name: this.currentElement + this.options.fields.line_height,
 					label: l10n.line_height,
 					label_style: 'inline',

@@ -1412,12 +1412,14 @@ span.draggable-post-element.element-dragging
 
 #sidebar-ui .field-grid-half,
 #element-settings-sidebar .field-grid-half {
+	clear: left;
 	width: 48%;
 	float: left;
 }
 
-#sidebar-ui .field-grid-half:nth-child(even),
-#element-settings-sidebar .field-grid-half:nth-child(even) {
+#sidebar-ui .field-grid-half-last,
+#element-settings-sidebar .field-grid-half-last {
+	float: left;
 	margin-left: 2%;
 	clear: right;
 }
