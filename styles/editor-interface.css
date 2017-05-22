@@ -7361,9 +7361,6 @@ span.upfront-settings-item-title:after {
   margin-left: -5px;
   margin-right: -10px; }
 
-#settings .general_settings_item .upfront-settings-item-title {
-  color: #2f475f; }
-
 #settings .general_settings_item label {
   font-weight: normal; }
 
@@ -7520,7 +7517,7 @@ span.upfront-settings-item-title:after {
   font-size: 11px;
   text-transform: uppercase;
   line-height: 35px;
-  color: #2f475f;
+  color: #a6a6a6;
   font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   font-weight: 700;
   position: relative;
@@ -7529,7 +7526,6 @@ span.upfront-settings-item-title:after {
 .upfront-field-title span,
 .upfront-settings-item-title span,
 .upfront-global-social-settings .upfront-settings-item-title span {
-  background-color: #f2f9ff;
   padding: 0 5px 0;
   position: relative;
   z-index: 1;
@@ -19771,7 +19767,13 @@ div.preset-manager-panel .edit_preset_label {
 div.preset-manager-panel .edit_preset_label input {
   cursor: default;
   position: relative;
-  top: 15px; }
+  top: 15px;
+  color: #a6a6a6;
+  font-size: 11px;
+  text-transform: uppercase;
+  font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.34px; }
 
 #element-settings-sidebar .upfront-css-edit {
   position: relative; }
