@@ -115,14 +115,13 @@ define([
 					}
 				}),
 
-				new Upfront.Views.Editor.Field.Number({
+				new Upfront.Views.Editor.Field.Number_Unit({
 					model: this.model,
-					className: state + '-font-size fontSize ' + toggleClass,
+					className: state + '-font-size field-grid-half fontSize ' + toggleClass,
 					name: this.currentElement + this.options.fields.size,
 					default_value: this.model.get(this.currentElement + this.options.fields.size),
 					label: l10n.size,
 					label_style: 'inline',
-					suffix: l10n.px,
 					change: function(value) {
 						me.model.set(me.currentElement + me.options.fields.size, value);
 					}
@@ -130,7 +129,7 @@ define([
 
 				new Upfront.Views.Editor.Field.Number_Unit({
 					model: this.model,
-					className: state + '-font-lineheight lineHeight ' + toggleClass,
+					className: state + '-font-lineheight field-grid-half ' + toggleClass,
 					name: this.currentElement + this.options.fields.line_height,
 					label: l10n.line_height,
 					label_style: 'inline',
@@ -150,6 +149,7 @@ define([
 					default_value: this.model.get(this.currentElement + this.options.fields.color),
 					blank_alpha : 0,
 					label_style: 'inline',
+					label_position: 'right',
 					label: l10n.color,
 					spectrum: {
 						preferredFormat: 'rgb',

@@ -1410,6 +1410,18 @@ span.draggable-post-element.element-dragging
 	opacity: .4;
 }
 
+#sidebar-ui .field-grid-half,
+#element-settings-sidebar .field-grid-half {
+	width: 48%;
+	float: left;
+}
+
+#sidebar-ui .field-grid-half:nth-child(even),
+#element-settings-sidebar .field-grid-half:nth-child(even) {
+	margin-left: 2%;
+	clear: right;
+}
+	
 /* Height Media Queries Fixes
 	========================== */
 

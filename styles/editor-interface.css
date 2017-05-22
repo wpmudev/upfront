@@ -1433,8 +1433,18 @@ span.draggable-post-element.element-dragging {
 #element-settings-sidebar .upfront-small-button .upfront-field-button.disabled {
   opacity: .4; }
 
+#sidebar-ui .field-grid-half,
+#element-settings-sidebar .field-grid-half {
+  width: 48%;
+  float: left; }
+
+#sidebar-ui .field-grid-half:nth-child(even),
+#element-settings-sidebar .field-grid-half:nth-child(even) {
+  margin-left: 2%;
+  clear: right; }
+
 /* Height Media Queries Fixes
-	========================== */
+		========================== */
 @media screen and (max-height: 650px) {
   #sidebar-ui .sidebar-panel.expanded .sidebar-panel-content {
     height: 149px; }
@@ -1851,10 +1861,7 @@ input.upfront-field-text:hover,
 
 .upfront-field-wrap-toggle .upfront_toggle_checkbox:checked + .upfront_toggle_field_label {
   background-color: #859398;
-  border-color: #73858c;
-  will-change: transform;
-  -webkit-transition: transform 0.5s;
-  transition: transform 0.5s; }
+  border-color: #73858c; }
 
 .upfront-field-wrap-toggle .upfront-field-label-text {
   position: relative;
@@ -2238,13 +2245,13 @@ input.upfront-field-text:hover,
   z-index: 99; }
 
 .upfront-field-wrap-color .upfront-color-field-right {
-  width: 56%;
+  width: 60%;
   display: block;
   float: left; }
 
 .upfront-field-wrap-color .upfront-color-field-label-right {
   margin-left: 4%;
-  width: 40%;
+  width: 36%;
   /* We need important to overwrite preset label styles */
   font-weight: bold !important;
   margin-top: 0px !important;
@@ -19645,6 +19652,10 @@ div.preset-manager-panel .borderColor {
   margin-top: -2px;
   width: 80px;
   clear: right; }
+
+/* Typography module */
+.upfront-field-wrap-color.fontColor {
+  padding-top: 10px; }
 
 div.preset-manager-panel a.upfront-preset-edit {
   font-size: 12px;
