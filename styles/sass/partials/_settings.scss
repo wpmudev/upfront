@@ -59,10 +59,9 @@
 	z-index: inherit;
 }
 #settings .general_settings_item {
-	border-bottom: 1px solid rgb(229, 236, 244);
-	padding: 0 0 15px 5px;
-	margin-left: -5px;
-	margin-right: -10px;
+	border-bottom: 1px solid rgb(224, 224, 224);
+	margin: 0 15px 0px 15px;
+	padding-bottom: 10px;
 }
 #settings .general_settings_item label {
 	font-weight: normal;
@@ -80,7 +79,7 @@
 }
 
 #settings .upfront-settings-item-content {
-	padding: 2px 15px;
+	padding: 2px 0px;
 }
 
 #settings .upfront-settings_panel_scroll {
@@ -207,6 +206,10 @@
 	margin-right: 15px;
 }
 
+.upfront-field-padding-top {
+	padding-top: 10px;
+}
+
 #settings .upfront-cancel_settings:before {
 	background-position: -735px -236px !important;
 	display: block;
@@ -235,10 +238,9 @@
 .upfront-field-title span,
 .upfront-settings-item-title span,
 .upfront-global-social-settings .upfront-settings-item-title span {
-	padding:0 5px 0;
+	padding: 0;
 	position: relative;
 	z-index: 1;
-	margin-left: 10px;
 }
 
 .general_settings_item .upfront-settings-item-title {

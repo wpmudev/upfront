@@ -7356,10 +7356,9 @@ span.upfront-settings-item-title:after {
   z-index: inherit; }
 
 #settings .general_settings_item {
-  border-bottom: 1px solid #e5ecf4;
-  padding: 0 0 15px 5px;
-  margin-left: -5px;
-  margin-right: -10px; }
+  border-bottom: 1px solid #e0e0e0;
+  margin: 0 15px 0px 15px;
+  padding-bottom: 10px; }
 
 #settings .general_settings_item label {
   font-weight: normal; }
@@ -7377,7 +7376,7 @@ span.upfront-settings-item-title:after {
   display: none; }
 
 #settings .upfront-settings-item-content {
-  padding: 2px 15px; }
+  padding: 2px 0px; }
 
 #settings .upfront-settings_panel_scroll {
   padding: 15px 5px;
@@ -7500,6 +7499,9 @@ span.upfront-settings-item-title:after {
   padding-left: 20px;
   margin-right: 15px; }
 
+.upfront-field-padding-top {
+  padding-top: 10px; }
+
 #settings .upfront-cancel_settings:before {
   background-position: -735px -236px !important;
   display: block;
@@ -7526,10 +7528,9 @@ span.upfront-settings-item-title:after {
 .upfront-field-title span,
 .upfront-settings-item-title span,
 .upfront-global-social-settings .upfront-settings-item-title span {
-  padding: 0 5px 0;
+  padding: 0;
   position: relative;
-  z-index: 1;
-  margin-left: 10px; }
+  z-index: 1; }
 
 .general_settings_item .upfront-settings-item-title {
   top: 5px;
