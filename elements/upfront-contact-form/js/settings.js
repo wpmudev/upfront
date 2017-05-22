@@ -267,7 +267,7 @@ define([
 							options: {
 								title: l10n.colors_label,
 								multiple: false,
-								single: false,
+								single: true,
 								abccolors: [
 									{
 										name: 'static-field-bg',

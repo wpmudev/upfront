@@ -50,6 +50,7 @@ define([
 							toggle: false,
 							options: {
 								title: l10n.colors_label,
+								single: true,
 								abccolors: [
 									{
 										name: 'static-header-bg-color',
