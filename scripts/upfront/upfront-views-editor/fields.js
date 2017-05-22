@@ -1454,7 +1454,13 @@
 
 		var Field_Radios_Inline = Field_Radios.extend({
 			className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios-inline',
-			type: 'radio'
+			type: 'radio',
+			render: function() {
+				Field_Radios.prototype.render.call(this);
+
+				// Wrap inline radio fields
+				this.$el.find('.upfront-field-multiple').wrapAll('<div class="upfront-field-wrap-radios-wrapper" />');
+			},
 		});
 
         var Field_Checkboxes = Field_Multiple_Input.extend({

@@ -1893,47 +1893,49 @@ input.upfront-field-text:hover,
 
 /* Inline Radio Field */
 .upfront-field-wrap-radios-inline {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: center;
   margin: 0px !important; }
 
-.upfront-field-wrap-radios-inline input {
+.upfront-field-wrap-radios-wrapper {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center; }
+
+.upfront-field-wrap-radios-wrapper input {
   display: none; }
 
-.upfront-field-wrap-radios-inline .upfront-field-multiple {
+.upfront-field-wrap-radios-wrapper .upfront-field-multiple {
   width: 100%;
   margin: auto;
   padding: 0px; }
 
-.upfront-field-wrap-radios-inline .upfront-field-multiple:first-child label {
+.upfront-field-wrap-radios-wrapper .upfront-field-multiple:first-child label {
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px; }
 
-.upfront-field-wrap-radios-inline .upfront-field-multiple:last-child label {
+.upfront-field-wrap-radios-wrapper .upfront-field-multiple:last-child label {
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px; }
 
-.upfront-field-wrap-radios-inline .upfront-field-multiple label {
+.upfront-field-wrap-radios-wrapper .upfront-field-multiple label {
   display: block;
   height: 22px;
   width: 100%;
   background: #ffffff;
   border: 1px solid #e1e1e1; }
 
-.upfront-field-wrap-radios-inline .upfront-field-multiple-selected label {
+.upfront-field-wrap-radios-wrapper .upfront-field-multiple-selected label {
   background: #87959a;
   border: 1px solid #6c8088;
   color: #fff; }
 
-.upfront-field-wrap-radios-inline .upfront-field-multiple label .upfront-field-label-text {
+.upfront-field-wrap-radios-wrapper .upfront-field-multiple label .upfront-field-label-text {
   display: block;
   text-align: center;
   line-height: 20px;
   font-family: "Open Sans", sans-serif;
   font-weight: 600; }
 
-.upfront-field-wrap-radios-inline .upfront-field-multiple-selected label .upfront-field-label-text {
+.upfront-field-wrap-radios-wrapper .upfront-field-multiple-selected label .upfront-field-label-text {
   color: #ffffff; }
 
 /* Checkbox & Radio Fields */
@@ -19657,6 +19659,12 @@ div.preset-manager-panel .borderColor {
 
 /* Typography module */
 .upfront-field-wrap-color.fontColor {
+  padding-top: 10px; }
+
+/* Caption location module */
+div.preset-manager-panel .field-caption_trigger,
+div.preset-manager-panel .field-caption-height,
+div.preset-manager-panel .caption-height-number {
   padding-top: 10px; }
 
 div.preset-manager-panel a.upfront-preset-edit {
