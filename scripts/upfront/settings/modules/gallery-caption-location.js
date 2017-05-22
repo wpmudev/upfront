@@ -15,7 +15,7 @@ define([
 			this.options.toggle = true;
 
 			this.fields = _([
-				new Upfront.Views.Editor.Field.Toogle({
+				new Upfront.Views.Editor.Field.Toggle({
 					model: this.model,
 					className: 'useCaptions checkbox-title upfront-toggle-field',
 					name: 'use_captions',
@@ -48,6 +48,7 @@ define([
 					className: state + '-caption-select caption_select',
 					name: 'captionType',
 					default_value: 'below',
+					label_style: 'inline',
 					label: l10n.panel.caption_location,
 					values: [
 						{value: 'over', label: l10n.panel.over, icon: 'over'},
@@ -71,11 +72,12 @@ define([
 					}
 				}),
 
-				new Upfront.Views.Editor.Field.Radios({
-					className: state + '-caption-trigger field-caption_trigger gallery-caption-on-hover upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
+				new Upfront.Views.Editor.Field.Radios_Inline({
+					className: state + '-caption-trigger field-caption_trigger gallery-caption-on-hover upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios-inline over_image_field',
 					model: this.model,
 					name: 'showCaptionOnHover',
-					label: '',
+					label: l10n.panel.caption_show,
+					label_style: 'inline',
 					layout: 'horizontal-inline',
 					values: [
 						{
@@ -92,10 +94,11 @@ define([
 					}
 				}),
 
-				new Upfront.Views.Editor.Field.Radios({
-					className: state + '-caption-height field-caption-height upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
+				new Upfront.Views.Editor.Field.Radios_Inline({
+					className: state + '-caption-height field-caption-height upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios-inline',
 					model: this.model,
 					name: 'caption-height',
+					label_style: 'inline',
 					label: l10n.panel.caption_height,
 					layout: 'horizontal-inline',
 					values: [
@@ -126,12 +129,13 @@ define([
 					}
 				}),
 
-				new Upfront.Views.Editor.Field.Number({
+				new Upfront.Views.Editor.Field.Number_Unit({
 					model: this.model,
 					className: state + '-caption-height-number caption-height-number',
 					name: 'thumbCaptionsHeight',
+					label_style: 'inline',
 					min: 1,
-					label: '',
+					label: l10n.panel.caption_height,
 					default_value: 20,
 					values: [
 						{ label: 'px', value: '1' }
@@ -145,20 +149,15 @@ define([
 			this.listenToOnce(this, 'rendered', function() {
 				setTimeout( function() {
 					if(me.model.get('use_captions') === 'yes') {
-						me.$el.find('.'+ state +'-caption-select').show();
-						me.$el.find('.'+ state +'-caption-trigger').show();
-						me.$el.find('.'+ state +'-caption-height').show();
-						var height_type = me.model.get('caption-height');
+						me.$el.find('.' + state + '-toggle-wrapper').show();
+						var height_type = me.model.get('caption-height', value);
 						if(height_type === "fixed") {
 							me.$el.find('.'+ state +'-caption-height-number').show();
 						}
 					} else {
-						me.$el.find('.'+ state +'-caption-select').hide();
-						me.$el.find('.'+ state +'-caption-trigger').hide();
-						me.$el.find('.'+ state +'-caption-height').hide();
+						me.$el.find('.' + state + '-toggle-wrapper').hide();
 						me.$el.find('.'+ state +'-caption-height-number').hide();
 					}
-
 				}, 500);
 			});
 		}
