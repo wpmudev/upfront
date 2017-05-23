@@ -24,14 +24,11 @@ define([
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
-					className: state + '-duration duration ' + toggleClass,
+					className: state + '-duration duration field-grid-half ' + toggleClass,
 					name: me.options.fields.duration,
 					min: 0,
-					label: l10n.animate_hover_changes,
 					step: 0.1,
-					values: [
-						{ label: '', value: '12' }
-					],
+					label: '',
 					change: function(value) {
 						me.model.set(me.options.fields.duration, value);
 					}
@@ -39,9 +36,7 @@ define([
 				new Upfront.Views.Editor.Field.Select({
 					model: this.model,
 					name: me.options.fields.easing,
-					label: l10n.sec,
 					step: 0.1,
-					label_style: 'inline',
 					values: [
 						{ label: 'ease', value: 'ease' },
 						{ label: 'linear', value: 'linear' },
@@ -49,7 +44,7 @@ define([
 						{ label: 'ease-out', value: 'ease-out' },
 						{ label: 'ease-in-out', value: 'ease-in-out' }
 					],
-					className: state + '-transition transition ' + toggleClass,
+					className: state + '-transition transition field-grid-half field-grid-half-last ' + toggleClass,
 					change: function(value) {
 						me.model.set(me.options.fields.easing, value);
 					}
