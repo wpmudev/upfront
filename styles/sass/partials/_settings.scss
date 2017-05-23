@@ -63,6 +63,9 @@
 	margin: 0 15px 0px 15px;
 	padding-bottom: 10px;
 }
+#settings .general_settings_item:last-of-type {
+	border-bottom: none;
+}
 #settings .general_settings_item label {
 	font-weight: normal;
 }

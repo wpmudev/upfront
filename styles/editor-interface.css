@@ -7360,6 +7360,9 @@ span.upfront-settings-item-title:after {
   margin: 0 15px 0px 15px;
   padding-bottom: 10px; }
 
+#settings .general_settings_item:last-of-type {
+  border-bottom: none; }
+
 #settings .general_settings_item label {
   font-weight: normal; }
 
@@ -19515,6 +19518,9 @@ div.preset-manager-panel div.state_settings_button_wrapper {
 div.preset-manager-panel div.state_settings div.upfront-settings-item {
   padding: 0px; }
 
+#settings div.preset-manager-panel .upfront-settings-item-content {
+  padding: 2px 15px; }
+
 div.preset-manager-panel div.preset_specific:before {
   content: "";
   position: absolute;
@@ -19762,7 +19768,8 @@ div.preset-manager-panel .edit_preset_label {
   font-weight: bold;
   font-size: 13px;
   color: #2f475f;
-  text-transform: uppercase; }
+  text-transform: uppercase;
+  margin-left: 7px; }
 
 #element-settings-sidebar .edit-preset-css-label input,
 div.preset-manager-panel .edit_preset_label input {

@@ -28,6 +28,9 @@ div.preset-manager-panel div.state_settings_button_wrapper {
 div.preset-manager-panel div.state_settings div.upfront-settings-item {
 	padding: 0px;
 }
+#settings div.preset-manager-panel .upfront-settings-item-content {
+	padding: 2px 15px;
+}
 div.preset-manager-panel div.preset_specific:before {
 	content: "";
 	position: absolute;
