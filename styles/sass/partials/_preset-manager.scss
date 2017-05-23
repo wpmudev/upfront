@@ -192,3 +192,14 @@ div.preset-manager-panel .field-caption-height,
 div.preset-manager-panel .caption-height-number {
 	padding-top: 10px;
 }
+
+/* Animate Hover */
+
+div.preset-manager-panel .duration {
+	display: block;
+	margin-top: -3px;
+}
+
+div.preset-manager-panel .duration label {
+	display: none;
+}

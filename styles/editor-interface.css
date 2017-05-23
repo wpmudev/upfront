@@ -7381,6 +7381,9 @@ span.upfront-settings-item-title:after {
 #settings .upfront-settings-item-content {
   padding: 2px 0px; }
 
+#settings .advanced-settings .upfront-settings-item-content {
+  padding: 2px 15px; }
+
 #settings .upfront-settings_panel_scroll {
   padding: 15px 5px;
   min-width: 270px;
@@ -19669,6 +19672,14 @@ div.preset-manager-panel .field-caption_trigger,
 div.preset-manager-panel .field-caption-height,
 div.preset-manager-panel .caption-height-number {
   padding-top: 10px; }
+
+/* Animate Hover */
+div.preset-manager-panel .duration {
+  display: block;
+  margin-top: -3px; }
+
+div.preset-manager-panel .duration label {
+  display: none; }
 
 div.preset-manager-panel a.upfront-preset-edit {
   font-size: 12px;
