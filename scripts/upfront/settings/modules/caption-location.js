@@ -39,52 +39,20 @@ define([
 					}
 				}),
 
-				new Upfront.Views.Editor.Field.Radios({
-					className: state + '-caption-trigger field-caption_trigger upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
-					model: this.model,
-					name: 'caption-trigger',
-					label: '',
-					layout: 'horizontal-inline',
-					values: [
-						{
-							label: l10n.settings.always,
-							value: 'always_show'
-						},
-						{
-							label: l10n.settings.hover,
-							value: 'hover_show'
-						}
-					],
-					change: function(value) {
-						me.model.set('caption-trigger', value);
-					},
-					init: function(){
-						me.listenTo(this.model, "change", me.render);
-					},
-					rendered: function(){
-						_.delay(this.options.disable_hover_show, 200);
-					},
-					disable_hover_show: function(){
-						me.$el.find("[value='hover_show']").attr("disabled", false);
-						if( 'below_image' ===  me.model.get("caption-position") )
-							me.$el.find("[value='hover_show']").attr("disabled", true);
-
-					}
-				}),
-
 				new Upfront.Views.Editor.Field.Select({
 					model: this.model,
 					className: state + '-caption-select caption_select',
 					name: 'caption-position-value',
 					default_value: 'topOver',
 					label: l10n.ctrl.caption_position,
+					label_style: 'inline',
 					values: [
-						{ label: l10n.ctrl.over_top, value: 'topOver', icon: 'topOver' },
-						{ label: l10n.ctrl.over_bottom, value: 'bottomOver', icon: 'bottomOver' },
-						{ label: l10n.ctrl.cover_top, value: 'topCover', icon: 'topCover' },
-						{ label: l10n.ctrl.cover_middle, value: 'middleCover', icon: 'middleCover' },
-						{ label: l10n.ctrl.cover_bottom, value: 'bottomCover', icon: 'bottomCover' },
-						{ label: l10n.ctrl.below, value: 'below', icon: 'below' }
+						{ label: l10n.ctrl.over_top, value: 'topOver' },
+						{ label: l10n.ctrl.over_bottom, value: 'bottomOver' },
+						{ label: l10n.ctrl.cover_top, value: 'topCover' },
+						{ label: l10n.ctrl.cover_middle, value: 'middleCover' },
+						{ label: l10n.ctrl.cover_bottom, value: 'bottomCover' },
+						{ label: l10n.ctrl.below, value: 'below' }
 					],
 					change: function(value) {
 						me.model.set('caption-position-value', value);
@@ -115,7 +83,41 @@ define([
 								me.model.set('caption-trigger', "always_show");
 						}
 					}
-				})
+				}),
+
+				new Upfront.Views.Editor.Field.Radios_Inline({
+					className: state + '-caption-trigger field-caption_trigger upfront-field-wrap-multiple upfront-field-wrap-radios-inline over_image_field',
+					model: this.model,
+					name: 'caption-trigger',
+					label: l10n.ctrl.show_caption,
+					label_style: 'inline',
+					layout: 'horizontal-inline',
+					values: [
+						{
+							label: l10n.settings.always,
+							value: 'always_show'
+						},
+						{
+							label: l10n.settings.hover,
+							value: 'hover_show'
+						}
+					],
+					change: function(value) {
+						me.model.set('caption-trigger', value);
+					},
+					init: function(){
+						me.listenTo(this.model, "change", me.render);
+					},
+					rendered: function(){
+						_.delay(this.options.disable_hover_show, 200);
+					},
+					disable_hover_show: function(){
+						me.$el.find("[value='hover_show']").attr("disabled", false);
+						if( 'below_image' ===  me.model.get("caption-position") )
+							me.$el.find("[value='hover_show']").attr("disabled", true);
+
+					}
+				}),
 			]);
 		}
 	});
