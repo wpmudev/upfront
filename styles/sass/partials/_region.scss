@@ -153,12 +153,22 @@
 .upfront-region-bg-map {
 	position: absolute !important;
 }
+
 #region-settings-sidebar .open-map-code-panel-button {
+	font-size: 11px;
+	line-height: 20px;
 	border-left: none;
+	padding: 0;
 }
+
+#region-settings-sidebar .open-map-code-panel-button .upfront-field-button {
+	margin: 5px 0;
+}
+
 .upfront-region-bg-video {
 	overflow: hidden;
 }
+
 .upfront-region-edit-trigger {
 	position: absolute;
 	top: 0;
@@ -1744,7 +1754,7 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 	
 	.uf-bgsettings-use-image-size {
 		padding-left: 0;
-		margin: 15px 0;
+		margin: 15px 0 0;
 	}
 	
 	.upfront-field-wrap-number.uf-bgsettings-image-size {

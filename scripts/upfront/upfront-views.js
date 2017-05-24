@@ -275,7 +275,7 @@ define([
 						me.$el.children('.feature_image_selector').length < 1 &&
 						false === Upfront.plugins.isForbiddenByPlugin('initialize featured image selector')
 				) {
-					var feature_selector = $('<a href="#" class="feature_image_selector">Add Feature Image</a>');
+					var feature_selector = $('<a href="#" class="feature_image_selector">' + l10n.add_featured_image + '</a>');
 					feature_selector.bind('click', function() {
 						Upfront.Views.Editor.ImageSelector.open().done(function(images){
 							var sizes = {},

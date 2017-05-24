@@ -20,7 +20,7 @@ define([
 				fields = {
 					transition: new Upfront.Views.Editor.Field.Select({
 						model: this.model,
-						label: l10n.slider_transition + ':',
+						label: l10n.slider_transition,
 						property: 'background_slider_transition',
 						use_breakpoint_property: true,
 						default_value: 'crossfade',
@@ -42,7 +42,7 @@ define([
 						property: 'background_slider_control',
 						use_breakpoint_property: true,
 						default_value: 'always',
-						label: l10n.show_ctrl + ':',
+						label: l10n.show_ctrl,
 						values: [
 							{ label: l10n.always, value: 'always' },
 							{ label: l10n.on_hover, value: 'hover' }
@@ -57,7 +57,7 @@ define([
 						property: 'background_slider_control_style',
 						use_breakpoint_property: true,
 						default_value: 'both',
-						label: l10n.controls_style + ':',
+						label: l10n.controls_style,
 						values: [
 							{ label: Upfront.Settings.l10n.slider_element.dots, value: 'dots' },
 							{ label: Upfront.Settings.l10n.slider_element.arrows, value: 'arrows' },
@@ -107,7 +107,7 @@ define([
 			// Also add the slides item to the panel settings
 			this.slides_item = new SliderSlidesItem({
 				model: this.model,
-				title: l10n.slides_order + ":"
+				title: l10n.slides_order
 			});
 			if ( !_.isUndefined(options.slides_item_el) ){
 				this.slides_item.render();
