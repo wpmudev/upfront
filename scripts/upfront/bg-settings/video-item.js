@@ -46,7 +46,7 @@ define([
 				property: 'background_video',
 				use_breakpoint_property: true,
 				default_value: '',
-				placeholder: l10n.video_source,
+				placeholder: l10n.video_url,
 				change: function () {
 					var value = this.get_value();
 					if ( value ){
@@ -72,7 +72,7 @@ define([
 			fields = {
 					bg_style: new Upfront.Views.Editor.Field.Select({
 						model: this.model,
-						label: 'Video Source',
+						label: l10n.video_source,
 						className: 'upfront-field-wrap upfront-field-wrap-select background-video-style-field',
 						property: 'background_style',
 						use_breakpoint_property: true,
@@ -81,13 +81,15 @@ define([
 						values: this.get_bg_style_values(),
 						change: function () {
 							var value = this.get_value();
-							if ( value == 'upload' ){
+							if ( value === 'upload' ){
 								videoUrlInput.$el.hide();
 								pickVideoButton.$el.show();
+								me.$el.find('.upfront-field-select').css('minWidth', '138px');
 							}
-							else if ( value == 'service' ) {
+							else if ( value === 'service' ) {
 								pickVideoButton.$el.hide();
 								videoUrlInput.$el.show();
+								me.$el.find('.upfront-field-select').css('minWidth', '100%');
 							}
 							me._bg_style = value;
 							me.update_video();
@@ -145,6 +147,7 @@ define([
 					}),
 					style: new Upfront.Views.Editor.Field.Select({
 						model: this.model,
+						label: l10n.video_cropping_method,
 						property: 'background_video_style',
 						use_breakpoint_property: true,
 						layout: 'horizontal-inline',
@@ -206,13 +209,16 @@ define([
 				if ( currentStyle === 'upload' ){
 					videoUrlInput.$el.hide();
 					pickVideoButton.$el.show();
+					me.$el.find('.upfront-field-select').css('minWidth', '138px');
 				} else if (currentStyle === 'service' ) {
 					pickVideoButton.$el.hide();
 					videoUrlInput.$el.show();
+					me.$el.find('.upfront-field-select').css('minWidth', '100%');
 				} else {
 					me.model.set_breakpoint_property('background_style', 'upload');
 					videoUrlInput.$el.hide();
 					pickVideoButton.$el.show();
+					me.$el.find('.upfront-field-select').css('minWidth', '138px');
 				}
 			}, 50);
 		},
@@ -224,8 +230,8 @@ define([
 		},
 		get_bg_style_values: function () {
 			var values = [
-				{ label: 'Upload', value: 'upload' },
-				{ label: 'Video Service', value: 'service' }
+				{ label: l10n.uploaded_video, value: 'upload' },
+				{ label: l10n.video_service, value: 'service' }
 			];
 			return values;
 		},

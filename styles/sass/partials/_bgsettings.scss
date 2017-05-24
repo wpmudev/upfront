@@ -48,6 +48,10 @@
 	margin-top: 3px;
 }
 
+#region-settings-sidebar .upfront-bg-setting-tab-color .upfront-bg-setting-tab-primary .upfront-field-wrap {
+	margin-top: 4px;
+}
+
 .upfront-modal-bg-settings-fixed .uf-bgsettings-color-pick label:after {
 	content: ':';
 }
@@ -74,7 +78,7 @@
 #region-settings-sidebar .upfront-bg-setting-tab-primary .uf-bgsettings-image-pick {
 	top: -30px;
 	bottom: auto;
-	right: 26px;
+	right: 16px;
 }
 
 #region-settings-sidebar .upfront-bg-setting-tab-featured .upfront-bg-setting-tab-primary .uf-bgsettings-image-pick {
@@ -171,6 +175,7 @@
 	height: 22px;
 	padding: 0 10px;
 	line-height: 22px;
+	font-weight: 700;
 }
 
 .uf-bgsettings-imageitem .uf-bgsettings-image-tile {
@@ -197,13 +202,18 @@
 	clear: both;
 	padding: 15px 12px;
 	margin: 0;
+	padding-top: 0;
 	div {
-		width: 47%;
+		width: 50%;
 		margin: 0;
 		span {
 			margin: 0 0 0 1px;
 		}
 	}
+}
+
+#region-settings-sidebar .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-image-tile div {
+	width: 47%;
 }
 
 .uf-bgsettings-image-tile label {
@@ -429,7 +439,7 @@ div.upfront-bg-setting-tab-primary .uf-bgsettings-image-style .upfront-field-lab
 	font-size: 11px;
 	font-family: "Open Sans", verdana, sans-serif;
 	padding: 0;
-	line-height: 11px;
+	line-height: 10px;
 	margin-bottom: 3px;
 }
 
@@ -517,7 +527,7 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 
 #region-settings-sidebar .uf-bgsettings-image-color {
 	float: right;
-	width: 28%;
+	width: 114px;
 	position: absolute;
 	top: -49px;
 	right: 16px;
@@ -816,6 +826,16 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 	margin-top: 7px;
 }
 
+#region-bg-settings .background-type-field .upfront-field-select,
+#region-bg-settings .background-image-field .upfront-field-select {
+	max-width: inherit;
+}
+
+#region-bg-settings .background-type-field.upfront-field-half-width .upfront-field-select,
+#region-bg-settings .background-image-field.upfront-field-half-width .upfront-field-select {
+	max-width: 50%;
+}
+
 #region-settings-sidebar .upfront-bg-setting-type {
 	width: 100%;
 	padding: 20px 16px 8px;
@@ -859,6 +879,7 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 
 #region-settings-sidebar .uf-bgsettings-video-url {
 	margin-top: 0;
+	margin-bottom: 10px;
 }
 
 .upfront-bg-setting-tab-video span label,
