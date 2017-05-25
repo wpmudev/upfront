@@ -195,7 +195,7 @@ class Upfront_MediaServer extends Upfront_Server {
 	 * Serve thumbnail custom sizes if was set on Uposts element
 	 */
 	public function serve_custom_size () {
-		$custom_size = get_option('upfront_custom_thumbnail_size', array());
+		$custom_size = Upfront_Cache_Utils::get_option('upfront_custom_thumbnail_size', array());
 
 		if ( !empty($custom_size) ) {
 			$thumbnail_size = json_decode($custom_size);

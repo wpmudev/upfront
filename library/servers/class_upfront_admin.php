@@ -210,9 +210,9 @@ class Upfront_Server_Admin implements IUpfront_Server {
 
 		$active_widgets = array();
 		//Theme Tester Plugin
-		$original_theme = get_option( 'tt_orig_stylesheet' );
+		$original_theme = Upfront_Cache_Utils::get_option( 'tt_orig_stylesheet' );
 		if(isset($original_theme) && !empty($original_theme)) {
-			$original_widgets = get_option('theme_mods_'.$original_theme);
+			$original_widgets = Upfront_Cache_Utils::get_option('theme_mods_'.$original_theme);
 			if(isset($original_widgets['sidebars_widgets']['data'])) {
 				foreach($original_widgets['sidebars_widgets']['data'] as $id=>$widget) {
 					if (strpos($id,'orphaned') !== false || $id == "wp_inactive_widgets") {
@@ -231,19 +231,19 @@ class Upfront_Server_Admin implements IUpfront_Server {
 						$active_widgets[ $id ][] = $wid;
 					}
 				}
-				update_option( 'sidebars_widgets', $active_widgets );
+				Upfront_Cache_Utils::update_option( 'sidebars_widgets', $active_widgets );
 			}
 		}
 
 		//A/B Theme Testing
-		$theme_testing = get_option('ab_theme_testing');
+		$theme_testing = Upfront_Cache_Utils::get_option('ab_theme_testing');
 		if(isset($theme_testing['testing_enable']) && $theme_testing['testing_enable'] == 1) {
 			if(!isset($theme_testing['tracking_themes']) && empty($theme_testing['tracking_themes'])) { return; }
 
 			foreach($theme_testing['tracking_themes'] as $themes) {
 				$explode_theme_name = explode('|', $themes);
 				if(isset($explode_theme_name[0]) && !empty($explode_theme_name[0])) {
-					$original_widgets = get_option('theme_mods_'.$explode_theme_name[0]);
+					$original_widgets = Upfront_Cache_Utils::get_option('theme_mods_'.$explode_theme_name[0]);
 
 					if(isset($original_widgets['sidebars_widgets']['data'])) {
 						foreach($original_widgets['sidebars_widgets']['data'] as $id=>$widget) {
@@ -263,7 +263,7 @@ class Upfront_Server_Admin implements IUpfront_Server {
 								$active_widgets[ $id ][] = $wid;
 							}
 						}
-						update_option( 'sidebars_widgets', $active_widgets );
+						Upfront_Cache_Utils::update_option( 'sidebars_widgets', $active_widgets );
 					}
 				}
 			}

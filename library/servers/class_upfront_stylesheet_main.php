@@ -110,7 +110,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		if (isset($_POST['dev']) && $_POST['dev'] === 'true' && strpos($storage_key, '_dev') === false) $storage_key = $storage_key . '_dev';
 
 		$db_option = $storage_key . '_' . get_stylesheet() . '_styles';
-		$current_styles = get_option($db_option, array());
+		$current_styles = Upfront_Cache_Utils::get_option($db_option, array());
 		$current_styles = apply_filters('upfront_get_theme_styles', $current_styles);
 
 		$styles = apply_filters('upfront-save_styles', $styles, $name, $element_type);
@@ -121,7 +121,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$current_styles[$element_type][$name] = $styles;
 
 		global $wpdb;
-		update_option($db_option, $current_styles);
+		Upfront_Cache_Utils::update_option($db_option, $current_styles);
 
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			'name' => $name,
@@ -139,14 +139,14 @@ class Upfront_StylesheetMain extends Upfront_Server {
 			$this->_out(new Upfront_JsonResponse_Error('No element type or style to delete.'));
 
 		$db_option = Upfront_Layout::get_storage_key() . '_' . get_stylesheet() . '_styles';
-		$current_styles = get_option($db_option);
+		$current_styles = Upfront_Cache_Utils::get_option($db_option);
 
 		if(!$current_styles || !isset($current_styles[$elementType]) || !isset($current_styles[$elementType][$styleName]))
 			$this->_out(new Upfront_JsonResponse_Error("The style doesn\'t exist."));
 
 		unset($current_styles[$elementType][$styleName]);
 
-		update_option($db_option, $current_styles);
+		Upfront_Cache_Utils::update_option($db_option, $current_styles);
 
 		$this->_out(new Upfront_JsonResponse_Success(array()));
 	}
@@ -155,7 +155,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		// Fix storage key missing _dev in dev mode. This is called from ajax calls so use POST.
 		$storage_key = Upfront_Layout::get_storage_key();
 		if (isset($_POST['dev']) && $_POST['dev'] === 'true' && strpos($storage_key, '_dev') === false) $storage_key = $storage_key . '_dev';
-		$styles = get_option($storage_key . '_' . get_stylesheet() . '_styles');
+		$styles = Upfront_Cache_Utils::get_option($storage_key . '_' . get_stylesheet() . '_styles');
 		$styles = apply_filters('upfront_get_theme_styles', $styles);
 
 		$this->_out(new Upfront_JsonResponse_Success(array(
@@ -180,7 +180,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$storage_key = Upfront_Layout::get_storage_key();
 		if (isset($_GET['load_dev']) && $_GET['load_dev'] == 1 && strpos($storage_key, '_dev') === false) $storage_key = $storage_key . '_dev';
 
-		$styles = get_option($storage_key . '_' . get_stylesheet() . '_styles', array());
+		$styles = Upfront_Cache_Utils::get_option($storage_key . '_' . get_stylesheet() . '_styles', array());
 		$out = '';
 		//$layout = Upfront_Layout::get_cascade();
 		$layout = Upfront_Layout::get_parsed_cascade(); // Use pure static method instead
@@ -380,7 +380,7 @@ class Upfront_StylesheetMain extends Upfront_Server {
 		$styles = trim(stripslashes($_POST['styles']));
 		$styles = apply_filters('upfront-save_theme_colors_styles', $styles);
 
-		update_option("upfront_" . get_stylesheet() . "_theme_colors_styles", $styles);
+		Upfront_Cache_Utils::update_option("upfront_" . get_stylesheet() . "_theme_colors_styles", $styles);
 
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			'styles' => $styles
@@ -388,6 +388,6 @@ class Upfront_StylesheetMain extends Upfront_Server {
 	}
 
 	private function _get_theme_colors_styles(){
-		return apply_filters('upfront_get_theme_colors_styles', get_option("upfront_" . get_stylesheet() . "_theme_colors_styles"));
+		return apply_filters('upfront_get_theme_colors_styles', Upfront_Cache_Utils::get_option("upfront_" . get_stylesheet() . "_theme_colors_styles"));
 	}
 }

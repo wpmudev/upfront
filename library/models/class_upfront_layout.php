@@ -118,7 +118,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 
 	public static function from_id ($id, $storage_key = '') {
 		$regions_data = self::get_regions_data();
-		$data = json_decode( get_option($id, json_encode(array())), true );
+		$data = json_decode( Upfront_Cache_Utils::get_option($id, json_encode(array())), true );
 
 		if ( ! empty($data) ) {
 			// Make sure default theme version is cleared if we load from db
@@ -287,7 +287,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 	}
 
 	public static function get_layout_properties ($data = array()) {
-		$properties = json_decode( get_option(self::_get_layout_properties_id(), json_encode(array())), true );
+		$properties = json_decode( Upfront_Cache_Utils::get_option(self::_get_layout_properties_id(), json_encode(array())), true );
 		$properties = apply_filters('upfront_get_layout_properties', $properties);
 
 		// Simulate layout data to use get/set_property_value function
@@ -317,7 +317,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$regions = array();
 		if ( $region['scope'] != 'local' ){
 			if ( empty(self::$scope_data[$region['scope']]) ) {
-				$region_scope_data = json_decode( get_option(self::_get_scope_id($region['scope']), json_encode(array())), true );
+				$region_scope_data = json_decode( Upfront_Cache_Utils::get_option(self::_get_scope_id($region['scope']), json_encode(array())), true );
 				self::$scope_data[$region['scope']] = apply_filters('upfront_get_global_regions', $region_scope_data, self::_get_scope_id($region['scope']));
 			}
 			if ( empty(self::$scope_data[$region['scope']]) ){
@@ -443,7 +443,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 	public static function list_scoped_regions ($scope, $storage_key = '') {
 		self::set_storage_key($storage_key);
 		$storage_key = self::get_storage_key();
-		$region_scope_data = json_decode( get_option(self::_get_scope_id($scope), json_encode(array())), true );
+		$region_scope_data = json_decode( Upfront_Cache_Utils::get_option(self::_get_scope_id($scope), json_encode(array())), true );
 		$region_scope_data = apply_filters('upfront_get_global_regions', $region_scope_data, $scope);
 		$return = array();
 		foreach ( $region_scope_data as $region){
@@ -460,7 +460,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 	public static function get_scoped_regions ($name, $scope, $storage_key = '') {
 		self::set_storage_key($storage_key);
 		$storage_key = self::get_storage_key();
-		$region_scope_data = json_decode( get_option(self::_get_scope_id($scope), json_encode(array())), true );
+		$region_scope_data = json_decode( Upfront_Cache_Utils::get_option(self::_get_scope_id($scope), json_encode(array())), true );
 		$region_scope_data = apply_filters('upfront_get_global_regions', $region_scope_data, $scope);
 		$total = count($region_scope_data);
 
@@ -537,7 +537,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 	public static function delete_scoped_regions ($name, $scope, $storage_key = '') {
 		self::set_storage_key($storage_key);
 		$storage_key = self::get_storage_key();
-		$region_scope_data = json_decode( get_option(self::_get_scope_id($scope), json_encode(array())), true );
+		$region_scope_data = json_decode( Upfront_Cache_Utils::get_option(self::_get_scope_id($scope), json_encode(array())), true );
 		$return = array();
 		foreach ( $region_scope_data as $i => $region){
 			if ( $region['name'] != $name && $region['container'] != $name )
@@ -550,7 +550,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 				'trashed' => 1
 			);
 		}
-		update_option(self::_get_scope_id($scope), json_encode($region_scope_data));
+		Upfront_Cache_Utils::update_option(self::_get_scope_id($scope), json_encode($region_scope_data));
 		return $return;
 	}
 
@@ -604,7 +604,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		$key = $this->get_id();
 		$this->save_global_region();
 		if ( $this->_data['properties'] ) {
-			update_option(self::_get_layout_properties_id(), json_encode($this->_data['properties']));
+			Upfront_Cache_Utils::update_option(self::_get_layout_properties_id(), json_encode($this->_data['properties']));
 		}
 
 		// Delete custom post layout for current post when Save for all posts clicked
@@ -614,11 +614,11 @@ class Upfront_Layout extends Upfront_JsonModel {
 				$specific_layout = $stylesheet . "-". $this->_data['layout']['specificity'];
 
 				// Delete option
-				delete_option( $specific_layout );
+				Upfront_Cache_Utils::delete_option( $specific_layout );
 			}
 		}
 
-		update_option($key, $this->to_json());
+		Upfront_Cache_Utils::update_option($key, $this->to_json());
 
 		return $key;
 	}
@@ -635,7 +635,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 		}
 
 		foreach ( $scopes as $scope => $data ) {
-			$current_scope = json_decode( get_option(self::_get_scope_id($scope), json_encode(array())), true );
+			$current_scope = json_decode( Upfront_Cache_Utils::get_option(self::_get_scope_id($scope), json_encode(array())), true );
 			$current_scope = apply_filters('upfront_get_global_regions', $current_scope, self::_get_scope_id($region['scope']));
 			$scope_data = $data;
 			if ( $current_scope ){ // merge with current scope if it's exist
@@ -657,7 +657,7 @@ class Upfront_Layout extends Upfront_JsonModel {
 						$scope_data[] = $current_region;
 				}
 			}
-			update_option(self::_get_scope_id($scope), json_encode($scope_data));
+			Upfront_Cache_Utils::update_option(self::_get_scope_id($scope), json_encode($scope_data));
 		}
 	}
 
@@ -670,10 +670,10 @@ class Upfront_Layout extends Upfront_JsonModel {
 				}
 			}
 			foreach ( $scopes as $scope )
-				delete_option(self::_get_scope_id($scope));
-			delete_option(self::_get_layout_properties_id());
+				Upfront_Cache_Utils::delete_option(self::_get_scope_id($scope));
+			Upfront_Cache_Utils::delete_option(self::_get_layout_properties_id());
 		}
-		return delete_option($this->get_id());
+		return Upfront_Cache_Utils::delete_option($this->get_id());
 	}
 
 	public function get_element_data($id) {

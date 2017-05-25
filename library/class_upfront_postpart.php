@@ -84,8 +84,8 @@ abstract class Upfront_PostPart_View {
 		$out = Upfront_Codec::get()->expand($out, "datetime", date($date_format, $time));
 		$out = Upfront_Codec::get()->expand($out, "timestamp", $time);
 
-		$out = Upfront_Codec::get()->expand($out, "date", date(get_option('date_format'), $time));
-		$out = Upfront_Codec::get()->expand($out, "time", date(get_option('time_format'), $time));
+		$out = Upfront_Codec::get()->expand($out, "date", date(Upfront_Cache_Utils::get_option('date_format'), $time));
+		$out = Upfront_Codec::get()->expand($out, "time", date(Upfront_Cache_Utils::get_option('time_format'), $time));
 
 		return $out;
 	}

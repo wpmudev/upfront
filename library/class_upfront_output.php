@@ -319,7 +319,7 @@ class Upfront_Output {
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
 
 		// Load theme fonts
-		$theme_fonts = json_decode(get_option('upfront_' . get_stylesheet() . '_theme_fonts'));
+		$theme_fonts = json_decode(Upfront_Cache_Utils::get_option('upfront_' . get_stylesheet() . '_theme_fonts'));
 		$theme_fonts = apply_filters('upfront_get_theme_fonts', $theme_fonts, array());
 		if ( $theme_fonts ) {
 			foreach ($theme_fonts as $theme_font) {

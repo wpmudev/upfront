@@ -230,7 +230,7 @@ class Upfront_Compat implements IUpfront_Server {
 		$updated = $cache->get('upfront-updated', 'upfront-core');
 
 		if ($updated === false) {
-			$updated_flag = get_option('upfront_is_updated_install');
+			$updated_flag = Upfront_Cache_Utils::get_option('upfront_is_updated_install');
 			if (empty($updated_flag)) {
 				global $wpdb;
 				$theme_key = $wpdb->esc_like('_transient_' . Upfront_Model::get_storage_key()) . '%ver1.0.0'; // Check transition caches
@@ -240,7 +240,7 @@ class Upfront_Compat implements IUpfront_Server {
 				$updated = !empty($result) ? 'yes' : 'no';
 
 				if (empty($result)) {
-					update_option('upfront_is_updated_install', 'no');
+					Upfront_Cache_Utils::update_option('upfront_is_updated_install', 'no');
 				}
 
 				$cache->set('upfront-updated', 'upfront-core', $updated);
@@ -267,7 +267,7 @@ class Upfront_Compat implements IUpfront_Server {
 	 * @return bool
 	 */
 	private function _is_update_notice_dismissed_for ($version) {
-		$done = get_option(self::get_upgrade_notice_key(), '0');
+		$done = Upfront_Cache_Utils::get_option(self::get_upgrade_notice_key(), '0');
 		return version_compare($version, $done, 'le');
 	}
 
@@ -288,7 +288,7 @@ class Upfront_Compat implements IUpfront_Server {
 	 * @return bool
 	 */
 	private function _dismiss_update_notice_for ($version) {
-		return update_option(self::get_upgrade_notice_key(), $version);
+		return Upfront_Cache_Utils::update_option(self::get_upgrade_notice_key(), $version);
 	}
 
 	/**

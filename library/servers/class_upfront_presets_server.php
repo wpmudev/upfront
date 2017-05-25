@@ -195,7 +195,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	 * @return array saved presets
 	 */
 	public function get_presets() {
-		$presets = json_decode(get_option($this->db_key, '[]'), true);
+		$presets = json_decode(Upfront_Cache_Utils::get_option($this->db_key, '[]'), true);
 
 		$presets = apply_filters(
 			'upfront_get_' . $this->elementName . '_presets',
@@ -223,7 +223,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		$isbuilder = isset($_POST['isbuilder']) ? stripslashes($_POST['isbuilder']) : false;
 
 		if($isbuilder != 'true') {
-			update_option($this->db_key, json_encode($presets));
+			Upfront_Cache_Utils::update_option($this->db_key, json_encode($presets));
 		}
 	}
 
@@ -435,7 +435,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	}
 
 	public function get_presets_javascript_server() {
-		$presets = get_option('upfront_' . get_stylesheet() . '_' . $this->elementName . '_presets');
+		$presets = Upfront_Cache_Utils::get_option('upfront_' . get_stylesheet() . '_' . $this->elementName . '_presets');
 		$presets = apply_filters(
 			'upfront_get_' . $this->elementName . '_presets',
 			$presets,
