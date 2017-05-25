@@ -23,11 +23,14 @@ define([
 			this.$el.append('<div class="upfront-settings-item-content"></div>');
 
 			var $content = this.$el.find('.upfront-settings-item-content');
-			this.fields.each(function(field){
-				field.render();
-				field.delegateEvents();
-				$content.append(field.el);
-			});
+
+			if(typeof this.fields !== "undefined") {
+				this.fields.each(function (field) {
+					field.render();
+					field.delegateEvents();
+					$content.append(field.el);
+				});
+			}
 
 			// Wrap toggleable fields
 			if(this.options.toggle === true) {
