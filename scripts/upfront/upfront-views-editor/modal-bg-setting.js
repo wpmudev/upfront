@@ -110,7 +110,13 @@
 							// Resize Select if image.
 							if (value === 'image' || value === 'featured') {
 								this.$el.addClass('upfront-bg-setting-type-image');
-								this.$el.find('.upfront-field-select').css({'min-width': '140px'});
+								// Narrow select for browse button.
+								if (value === 'image') {
+									this.$el.find('.upfront-field-select').css({'min-width': '140px', 'max-width': '140px'});
+								} else {
+									// Wide select without browse button.
+									this.$el.find('.upfront-field-select').css({'min-width': '100%', 'max-width': '100%'});
+								}
 							} else {
 								this.$el.removeClass('upfront-bg-setting-type-image');
 							}

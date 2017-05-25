@@ -46,7 +46,7 @@ define([
 								_.each(tile_fields, function(key){ fields[key].$el.show(); });
 								_.each(fixed_fields, function(key){ fields[key].$el.hide(); });
 								_.each(parallax_fields, function(key){ fields[key].$el.hide(); });
-								this.$el.find('.upfront-field-select').css('minWidth', '100%');
+								this.$el.children('.upfront-field-select').css('minWidth', '100%');
 							} else if ( value === 'fixed' ){
 								_.each(tile_fields, function(key){ fields[key].$el.hide(); });
 								_.each(parallax_fields, function(key){ fields[key].$el.hide(); });
@@ -58,7 +58,7 @@ define([
 											fields[key].$el.show(); 
 										}
 								});
-								this.$el.find('.upfront-field-select').css({width: '100px', minWidth: '100px'});
+								this.$el.children('.upfront-field-select').css({width: '100px', minWidth: '100px'});
 							} else if (value === 'parallax') {
 								_.each(tile_fields, function(key){ fields[key].$el.hide(); });
 								_.each(fixed_fields, function(key){ fields[key].$el.hide(); });
@@ -70,12 +70,12 @@ define([
 										fields[key].$el.show(); 
 									}
 								});
-								this.$el.find('.upfront-field-select').css('minWidth', '100%');
+								this.$el.children('.upfront-field-select').css('minWidth', '100%');
 							} else {
 								_.each(tile_fields, function(key){ fields[key].$el.hide(); });
 								_.each(fixed_fields, function(key){ fields[key].$el.hide(); });
 								_.each(parallax_fields, function(key){ fields[key].$el.hide(); });
-								this.$el.find('.upfront-field-select').css('minWidth', '100%');
+								this.$el.children('.upfront-field-select').css('minWidth', '100%');
 							}
 							me._bg_style = value;
 							me.update_image();
@@ -392,6 +392,7 @@ define([
 							else {
 								this.$el.addClass('uf-bgsettings-image-default-hide');
 							}
+							this.$el.children('upfront-field-select-single').css({'maxWidth': '100%'});
 						}
 					}),
 					featured_fallback_bg_color: new Upfront.Views.Editor.Field.Color({
@@ -487,7 +488,7 @@ define([
 			;
 			if ( style == 'full' ) {
 				this.model.set_breakpoint_property('background_style', 'full');
-				this.$el.find('.upfront-field-select').css({minWidth: '100%'});
+				this.$el.children('.upfront-field-select').css({minWidth: '100%'});
 			} else {
 				if ( style == 'tile' ) {
 					this.model.set_breakpoint_property('background_style', 'tile');
@@ -503,21 +504,21 @@ define([
 					else {
 						this.model.set_breakpoint_property('background_repeat', 'no-repeat');
 					}
-					this.$el.find('.upfront-field-select').css({minWidth: '100%'});
+					this.$el.children('.upfront-field-select').css({minWidth: '100%'});
 				} else if ( style == 'fixed' ) {
 					this.model.set_breakpoint_property('background_style', 'fixed');
 					this.model.set_breakpoint_property('background_repeat', 'no-repeat');
 					this.model.set_breakpoint_property('background_position', pos_x + '% ' + pos_y + '%');
 					this.model.set_breakpoint_property('background_size', ( bg_size == 'auto' ) ? bg_size : (bg_size + '%') );
-					this.$el.find('.upfront-field-select').css({width: '100px', minWidth: '100px'});
+					this.$el.children('.upfront-field-select').css({width: '100px', minWidth: '100px'});
 				} else if (style === 'parallax') {
 					this.model.set_breakpoint_property('background_style', 'parallax');
 					this.model.set_breakpoint_property('background_position', this._origin_position_x + '% ' + this._origin_position_y + '%');
 					this.model.set_breakpoint_property('background_size', ( bg_size == 'auto' ) ? bg_size : (bg_size + '%') );
-					this.$el.find('.upfront-field-select').css({minWidth: '100%'});
+					this.$el.children('.upfront-field-select').css({minWidth: '100%'});
 				} else {
 					this.model.set_breakpoint_property('background_style', style);
-					this.$el.find('.upfront-field-select').css({minWidth: '100%'});
+					this.$el.children('.upfront-field-select').css({minWidth: '100%'});
 				}
 			}
 		},

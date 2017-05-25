@@ -84,12 +84,14 @@ define([
 							if ( value === 'upload' ){
 								videoUrlInput.$el.hide();
 								pickVideoButton.$el.show();
-								me.$el.find('.upfront-field-select').css('minWidth', '138px');
+								me.$el.find('.background-video-style-field').css({'minWidth': '138px', 'maxWidth': '138px'});
+								me.$el.find('.background-video-style-field .upfront-field-select').css({'minWidth': '138px', 'maxWidth': '138px'});
 							}
 							else if ( value === 'service' ) {
 								pickVideoButton.$el.hide();
 								videoUrlInput.$el.show();
-								me.$el.find('.upfront-field-select').css('minWidth', '100%');
+								me.$el.find('.background-video-style-field').css('minWidth', '100%');
+								me.$el.find('.background-video-style-field .upfront-field-select').css({'minWidth': '100%', 'maxWidth': '100%'});
 							}
 							me._bg_style = value;
 							me.update_video();
