@@ -1551,12 +1551,15 @@ a.upfront-region-name-edit-trigger:hover {
 .upfront-region-bg-setting-sticky .upfront-field-multiple input {
 	display: none;
 }
-div.upfront-region-bg-setting-footer .upfront-field-multiple-selected .upfront-bg-setting-sticky-toggle {
-	background: #00ce8d;
-}
 
+/* Selected */
 .upfront-field-multiple.upfront-field-multiple-selected .upfront-bg-setting-sticky-toggle:after {
 	float: right;
+	background: #f5f5f5;
+}
+
+/* Not Selected */
+.upfront-field-multiple .upfront-bg-setting-sticky-toggle {
 }
 
 .upfront-field-multiple .upfront-bg-setting-sticky-toggle:after {
@@ -1566,18 +1569,25 @@ div.upfront-region-bg-setting-footer .upfront-field-multiple-selected .upfront-b
 	width: 10px;
 	height: 10px;
 	border-radius: 5px;
-	background: #f5f5f5;
+	background: #abb4b8;
 }
 
 .upfront-bg-setting-sticky-toggle {
 	display: inline-block;
 	float: none;
-	width: 40px;
+	width: 26px;
 	height: 16px;
-	padding: 3px 4px;
+	padding: 2px 2px;
 	margin: 4px 0 0 7px;
 	border-radius: 8px;
-	background: #98a8b8;
+	border: 1px solid #c9cdce;
+	background: #fff;
+}
+
+/* Selected */
+div.upfront-region-bg-setting-footer .upfront-field-multiple-selected .upfront-bg-setting-sticky-toggle {
+	border: 1px solid #71848c;
+	background: #87959a;
 }
 
 .upfront-modal-bg-settings-fixed div.upfront-region-bg-setting-floating-restrict {

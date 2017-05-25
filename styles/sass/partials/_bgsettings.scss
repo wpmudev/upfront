@@ -751,6 +751,7 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 .upfront-bg-slider-image {
 	position: relative;
 	cursor: move;
+	border: 1px solid transparent;
 }
 
 .upfront-bg-slider-image:hover {
@@ -794,10 +795,10 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 
 .upfront-bg-slider-delete-image {
 	position: absolute;
-	top: -8px;
-	right: -8px;
-	width: 16px;
-	height: 16px;
+	top: -5px;
+	right: -5px;
+	width: 11px;
+	height: 11px;
 	line-height: 15px;
 	border-radius: 8px;
 	background: #000;
@@ -814,9 +815,14 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 }
 
 .upfront-bg-slider-delete-image:before {
-	content: "\2015";
+	content: "–";
 	color: #fff;
 	opacity: 1;
+	color: white;
+	font-family: "Open Sans";
+	font-size: 13px;
+	line-height: 8px;
+	display: block;
 }
 
 .background-type-field .upfront-field-select,
