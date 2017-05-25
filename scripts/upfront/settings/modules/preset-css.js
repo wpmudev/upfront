@@ -33,7 +33,7 @@ define([
 		},
 
 		onPresetUpdate: function(preset) {
-			this.trigger('upfront:presets:update', preset);
+			this.trigger('upfront:presets:update', preset, false);
 		},
 
 		updateCss: function(preset, newCss, me) {

@@ -1,7 +1,22 @@
 (function ($) {
-
 window.empty = function (what) { return "undefined" === typeof what ? true : !what; };
 window.count = function (what) { return "undefined" === typeof what ? 0 : (what && what.length ? what.length : 0); };
+window.stripslashes = function (what) {
+	return (what + '')
+	.replace(/\\(.?)/g, function (s, n1) {
+		switch (n1) {
+			case '\\':
+				return '\\'
+			case '0':
+				return '\u0000'
+			case '':
+				return ''
+			default:
+				return n1
+		}
+	});
+};
+
 _.mixin({
 	isTrue: function( val ) {
 		if( typeof val === "undefined")

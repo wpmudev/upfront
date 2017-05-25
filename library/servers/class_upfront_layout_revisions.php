@@ -185,7 +185,7 @@ class Upfront_Server_LayoutRevisions extends Upfront_Server {
 		if (empty($revisions)) $this->_out(new Upfront_JsonResponse_Error("No revisions for this entity"));
 
 		$out = array();
-		$datetime = get_option("date_format") . "@" . get_option("time_format");
+		$datetime = Upfront_Cache_Utils::get_option("date_format") . "@" . Upfront_Cache_Utils::get_option("time_format");
 		foreach ($revisions as $revision) {
 			$display_name = '';
 			if (!empty($revision->post_author)) {

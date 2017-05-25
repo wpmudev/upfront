@@ -39,6 +39,7 @@ define([
 			ButtonModel: {label: l10n.button, id: 'button', preset_container: 'inline'},
 			//UpostsModel: {label: l10n.posts, id: 'uposts'},WW
 			PostsModel: {label: l10n.posts, id: 'posts', preset_container: 'inline'},
+			PostsListsModel: {label: l10n.posts, id: 'postslists', preset_container: 'inline'},
 			UsearchModel: {label: l10n.search, id: 'search'},
 			USliderModel: {label: l10n.slider, id: 'slider'},
 			SocialMediaModel: {label: l10n.social, id: 'SocialMedia'},

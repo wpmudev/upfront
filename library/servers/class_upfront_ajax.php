@@ -45,10 +45,10 @@ class Upfront_Ajax extends Upfront_Server {
 	}
 
 	public function user_done_font_intro() {
-		$users = get_option('upfront_users_done_font_intro', array());
+		$users = Upfront_Cache_Utils::get_option('upfront_users_done_font_intro', array());
 		$current_user = wp_get_current_user();
 		if (!in_array($current_user->user_login, $users)) $users[] = $current_user->user_login;
-		update_option('upfront_users_done_font_intro', $users);
+		Upfront_Cache_Utils::update_option('upfront_users_done_font_intro', $users);
 	}
 
 	// STUB LOADING
@@ -578,13 +578,13 @@ class Upfront_Ajax extends Upfront_Server {
 							if( $stylesheet_dev ){
 								$layout_key = $stylesheet_dev . "-" . $template_slug;
 								$alternative_layout_key = wp_get_theme($stylesheet)->get("Name") . "_dev-" . $template_slug;
-								delete_option( $layout_key );
-								delete_option( $alternative_layout_key );
+								Upfront_Cache_Utils::delete_option( $layout_key );
+								Upfront_Cache_Utils::delete_option( $alternative_layout_key );
 							}else{
 								$layout_key = $store_key . "-" . $template_slug;
 								$alternative_layout_key = wp_get_theme($stylesheet)->get("Name") . "-" . $template_slug;
-								delete_option( $layout_key );
-								delete_option( $alternative_layout_key );
+								Upfront_Cache_Utils::delete_option( $layout_key );
+								Upfront_Cache_Utils::delete_option( $alternative_layout_key );
 							}
 						}
 					}
@@ -714,8 +714,8 @@ class Upfront_Ajax extends Upfront_Server {
 				$this->_reset_global_layout_from_options($layout_key);
 				$this->_reset_global_layout_from_options($alternative_layout_key);
 			}
-			delete_option( $layout_key );
-			delete_option( $alternative_layout_key );
+			Upfront_Cache_Utils::delete_option( $layout_key );
+			Upfront_Cache_Utils::delete_option( $alternative_layout_key );
 			$this->_out(new Upfront_JsonResponse_Success("Layout {$layout} reset"));
 		}
 	}
@@ -742,7 +742,7 @@ class Upfront_Ajax extends Upfront_Server {
 		if (Upfront_Behavior::debug()->is_dev() && current_user_can('switch_themes') && apply_filters('upfront-enable-dev-saving', true)) {
 			$save_storage_key .= '_dev';
 		}
-		$layout_data = get_option($layout_key, false);
+		$layout_data = Upfront_Cache_Utils::get_option($layout_key, false);
 		if ( $layout_data ) {
 			$layout_data = json_decode($layout_data);
 			$regions_added = array();
@@ -927,7 +927,7 @@ class Upfront_Ajax extends Upfront_Server {
 		if( empty($thumbnail_size->thumbnail_height) )
 			return $this->_out(new Upfront_JsonResponse_Error("No thumbnail height given"));
 
-		update_option('upfront_custom_thumbnail_size', $data['thumbnail_size']);
+		Upfront_Cache_Utils::update_option('upfront_custom_thumbnail_size', $data['thumbnail_size']);
 
 		$this->_out(new Upfront_JsonResponse_Success("Custom thumbnail size saved"));
 	}
@@ -935,11 +935,11 @@ class Upfront_Ajax extends Upfront_Server {
 	function update_insertcount() {
 		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
 
-		$insertcount = get_option('ueditor_insert_count');
+		$insertcount = Upfront_Cache_Utils::get_option('ueditor_insert_count');
 		if(!$insertcount)
 			$insertcount = 0;
 		$insertcount++;
-		update_option('ueditor_insert_count', $insertcount);
+		Upfront_Cache_Utils::update_option('ueditor_insert_count', $insertcount);
 		$this->_out(new Upfront_JsonResponse_Success("Insert count updated"));
 	}
 	
@@ -954,7 +954,7 @@ class Upfront_Ajax extends Upfront_Server {
 			return $this->_out(new Upfront_JsonResponse_Error("No mode given"));
 		
 		$maintenance_mode = ( is_numeric($data['enable_maintenance']) && $data['enable_maintenance'] == 1 ) ? true : false;
-		$maintenance_data = get_option(Upfront_Server::MAINTENANCE_MODE, array());
+		$maintenance_data = Upfront_Cache_Utils::get_option(Upfront_Server::MAINTENANCE_MODE, array());
 		if ( empty($maintenance_data) ) {
 			$maintenance_post = (array)$this->_create_maintenance_page();
 		} else {
@@ -968,7 +968,7 @@ class Upfront_Ajax extends Upfront_Server {
 			$maintenance_data['permalink'] = get_permalink($maintenance_post['ID']);
 		}		
 		$maintenance_data['enabled'] = ( $maintenance_mode ) ? 1 : 0 ;
-		update_option(Upfront_Server::MAINTENANCE_MODE, json_encode($maintenance_data));
+		Upfront_Cache_Utils::update_option(Upfront_Server::MAINTENANCE_MODE, json_encode($maintenance_data));
 		
 		$this->_out(new Upfront_JsonResponse_Success("All is well"));
 	}
@@ -985,11 +985,11 @@ class Upfront_Ajax extends Upfront_Server {
 	
 	private function _delete_under_construction() {
 		// deleting maintenance page and options
-		$maintenance_data = get_option(Upfront_Server::MAINTENANCE_MODE, false);
+		$maintenance_data = Upfront_Cache_Utils::get_option(Upfront_Server::MAINTENANCE_MODE, false);
 		if ( $maintenance_data ) {
 			$maintenance_data = json_decode($maintenance_data);
 			wp_delete_post($maintenance_data->page_id);
-			delete_option(Upfront_Server::MAINTENANCE_MODE);
+			Upfront_Cache_Utils::delete_option(Upfront_Server::MAINTENANCE_MODE);
 		}
 	}
 }

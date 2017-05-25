@@ -98,14 +98,15 @@ function upfront_array_to_properties ($the_array, $map=null) {
  *
  * @param string $prop Property name
  * @param array $data Data array
- * @param object $breakpoint Breakpoint object
+ * @param object|string $breakpoint Breakpoint object/id
  * @param bool $return_default Whether to fall back to the default property value
  *
  * @return mixed Breakpoint property value, or (optionally) default property value, or (bool)false
  */
 function upfront_get_breakpoint_property_value ($prop, $data, $breakpoint, $return_default = false) {
 	$model_breakpoint = upfront_get_property_value('breakpoint', $data);
-	$breakpoint_data = $model_breakpoint && !empty($model_breakpoint[$breakpoint->get_id()]) ? $model_breakpoint[$breakpoint->get_id()] : false;
+	$breakpoint_id = is_string($breakpoint) ? $breakpoint : $breakpoint->get_id();
+	$breakpoint_data = $model_breakpoint && !empty($model_breakpoint[$breakpoint_id]) ? $model_breakpoint[$breakpoint_id] : false;
 	if ($breakpoint_data && isset($breakpoint_data[$prop])) {
 		return $breakpoint_data[$prop];
 	}
@@ -121,15 +122,16 @@ function upfront_get_breakpoint_property_value ($prop, $data, $breakpoint, $retu
  * @param string $prop Property name
  * @param mixed $value Value to set
  * @param array $data Data array
- * @param object $breakpoint Breakpoint object
+ * @param object|string $breakpoint Breakpoint object or id
  *
  * @return array
  */
 function upfront_set_breakpoint_property_value ($prop, $value, &$data, $breakpoint) {
 	$model_breakpoint = upfront_get_property_value('breakpoint', $data);
-	$breakpoint_data = $model_breakpoint && !empty($model_breakpoint[$breakpoint->get_id()]) ? $model_breakpoint[$breakpoint->get_id()] : array();
+	$breakpoint_id = is_string($breakpoint) ? $breakpoint : $breakpoint->get_id();
+	$breakpoint_data = $model_breakpoint && !empty($model_breakpoint[$breakpoint_id]) ? $model_breakpoint[$breakpoint_id] : array();
 	$breakpoint_data[$prop] = $value;
-	$model_breakpoint[$breakpoint->get_id()] = $breakpoint_data;
+	$model_breakpoint[$breakpoint_id] = $breakpoint_data;
 	upfront_set_property_value('breakpoint', $model_breakpoint, $data);
 	return $data;
 }
@@ -243,7 +245,7 @@ function upfront_switch_stylesheet ($stylesheet) {
 		$upfront_stylesheet = $stylesheet;
 		add_filter('stylesheet', '_upfront_stylesheet');
 		// Prevent theme mods to current theme being used on theme being previewed
-		add_filter('pre_option_theme_mods_' . get_option( 'stylesheet' ), '__return_empty_array');
+		add_filter('pre_option_theme_mods_' . Upfront_Cache_Utils::get_option( 'stylesheet' ), '__return_empty_array');
 		return true;
 	}
 	return false;
@@ -578,7 +580,7 @@ function upfront_is_maintenance_page ($current_page_id = false) {
 	if ( !$current_page_id ) {
 		$current_page_id = is_singular() ? apply_filters('upfront-data-post_id', get_the_ID()) : false;
 	}
-	$maintenance_data = get_option(Upfront_Server::MAINTENANCE_MODE, false);
+	$maintenance_data = Upfront_Cache_Utils::get_option(Upfront_Server::MAINTENANCE_MODE, false);
 	if ( $maintenance_data ) {
 		$maintenance_data = json_decode($maintenance_data);
 		if ( $maintenance_data && is_object($maintenance_data) ) {

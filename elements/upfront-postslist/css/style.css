@@ -1,0 +1,4 @@
+/* Remove all dynamic padding */
+.upostslist-object .upfront-object-group {
+	padding: 0px !important;
+}
