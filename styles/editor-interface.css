@@ -608,7 +608,7 @@ em {
   padding: 0 0 0 10px; }
 
 #sidebar-ui .sidebar-commands-control {
-  padding: 15px 3px 0;
+  padding: 10px 5px 10px 0;
   border-top: 1px solid #e4e4e4;
   border-bottom: 1px solid #e4e4e4; }
 
@@ -630,6 +630,9 @@ em {
   width: 26px;
   height: 26px; }
 
+#sidebar-ui .sidebar-commands-control .command-undo {
+  margin-left: 10px !important; }
+
 #sidebar-ui .sidebar-commands-control .command-redo {
   margin-left: 4px; }
 
@@ -646,7 +649,7 @@ em {
   max-height: 26px;
   border: 1px solid #a7a7a7;
   border-radius: 2px;
-  margin-left: 10px; }
+  margin-left: 15px !important; }
 
 #sidebar-ui .sidebar-commands-control .command-start-responsive:before {
   opacity: 1; }
@@ -690,7 +693,6 @@ em {
   letter-spacing: 0.5px;
   height: 30px;
   background: #fff;
-  border-bottom: 1px solid #e8e8e8;
   color: #969696;
   padding: 0 0 0 15px;
   margin: 0;
@@ -1376,7 +1378,7 @@ span.draggable-post-element.element-dragging {
 #sidebar-ui .sidebar-commands li.sidebar-commands-button.command-save {
   float: right;
   padding: 0px 30px;
-  margin: 10px 15px; }
+  margin: 25px 15px; }
 
 #sidebar-ui .sidebar-commands li.sidebar-commands-button.command-new-post,
 #sidebar-ui .sidebar-commands li.sidebar-commands-button.command-new-page {
