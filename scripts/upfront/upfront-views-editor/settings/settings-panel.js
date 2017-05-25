@@ -38,7 +38,7 @@
 
                     new Upfront.Views.Editor.Field.Button({
                         model: this.model,
-                        className: 'upfront-css-edit',
+                        className: 'upfront-css-edit upfront-small-button',
                         compact: true,
                         name: 'preset_css',
                         label: l10n.edit_css
