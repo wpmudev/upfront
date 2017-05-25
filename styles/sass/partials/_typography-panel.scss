@@ -1,4 +1,12 @@
 /* Typography panel */
+.typography-panel {
+	clear: both;
+	overflow: hidden;
+	padding-bottom: 12px;
+	margin-bottom: 12px;
+	padding-top: 10px;
+	border-bottom: 1px solid rgb(229, 229, 229);
+}
 .typography-panel .upfront-field-select {
 	width: 230px;
 	height: 24px;

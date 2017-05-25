@@ -136,7 +136,7 @@
                     chooseButton = new Fields.Button({
                         label: l10n.select_fonts_to_use,
                         compact: true,
-                        classname: 'open-theme-fonts-manager sidebar-commands-small-button',
+                        classname: 'open-theme-fonts-manager sidebar-commands-small-button field-grid-half',
 
                         on_click: function(e){
                             Upfront.Events.trigger('command:themefontsmanager:open');

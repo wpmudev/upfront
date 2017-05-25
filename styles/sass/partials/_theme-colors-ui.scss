@@ -1,20 +1,18 @@
 /*---------------------- Settings Theme colors -------------------------*/
 
 #theme-colors-no-color-notice {
-    height: 60px;
-    padding-top: 10px;
-    font:normal 11px verdana, sans-serif;
-    line-height: 18px;
-    color: #607F99;
+    font: normal 11px/1.5 "Open Sans", sans-serif;
+    color: #000000;
+    padding: 15px 5px 0px 5px;
 }
 
 #theme-colors-no-color-notice:before {
     content: "";
-    background-image: url('../img/uf-core-el-sprite.svg');
-    background-position: -469px -139px;
+    background-image: url('../img/uf-core-el-sprite_new.svg');
+    background-position: -477px -136px;
     display: block;
     height: 30px;
-    width: 34px;
+    width: 27px;
 }
 
 .sp-replacer.uf-unset-color-wrapper {
@@ -112,8 +110,6 @@
 
 #sidebar-ui #theme-colors-swatches .upfront-field-wrap {
     margin: 0px;
-    height: 14px;
-    line-height: 14px;
 }
 
 #sidebar-ui .theme_colors_unset_color span.theme-colors-color-no-color span{

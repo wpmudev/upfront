@@ -1437,7 +1437,8 @@ span.draggable-post-element.element-dragging {
 #element-settings-sidebar .field-grid-half {
   clear: left;
   width: 48%;
-  float: left; }
+  float: left;
+  margin: 0; }
 
 #sidebar-ui .field-grid-half-last,
 #element-settings-sidebar .field-grid-half-last {
@@ -17937,19 +17938,17 @@ li#new-custom-breakpoint {
 
 /*---------------------- Settings Theme colors -------------------------*/
 #theme-colors-no-color-notice {
-  height: 60px;
-  padding-top: 10px;
-  font: normal 11px verdana, sans-serif;
-  line-height: 18px;
-  color: #607F99; }
+  font: normal 11px/1.5 "Open Sans", sans-serif;
+  color: #000000;
+  padding: 15px 5px 0px 5px; }
 
 #theme-colors-no-color-notice:before {
   content: "";
-  background-image: url("../img/uf-core-el-sprite.svg");
-  background-position: -469px -139px;
+  background-image: url("../img/uf-core-el-sprite_new.svg");
+  background-position: -477px -136px;
   display: block;
   height: 30px;
-  width: 34px; }
+  width: 27px; }
 
 .sp-replacer.uf-unset-color-wrapper {
   opacity: .4; }
@@ -18027,9 +18026,7 @@ li#new-custom-breakpoint {
   padding: 0px 5px; }
 
 #sidebar-ui #theme-colors-swatches .upfront-field-wrap {
-  margin: 0px;
-  height: 14px;
-  line-height: 14px; }
+  margin: 0px; }
 
 #sidebar-ui .theme_colors_unset_color span.theme-colors-color-no-color span {
   display: block; }
@@ -18065,6 +18062,14 @@ li#new-custom-breakpoint {
   line-height: 13px; }
 
 /* Typography panel */
+.typography-panel {
+  clear: both;
+  overflow: hidden;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  padding-top: 10px;
+  border-bottom: 1px solid #e5e5e5; }
+
 .typography-panel .upfront-field-select {
   width: 230px;
   height: 24px; }
@@ -19278,6 +19283,9 @@ html {
 .command-open-font-manager:before {
   margin: 2px 5px 0 0; }
 
+.command-open-font-manager, .command-edit-css {
+  margin-bottom: 10px !important; }
+
 a.upfront-css-font {
   display: block;
   padding: 0px 5px;
@@ -19299,32 +19307,22 @@ a.upfront-css-font {
   height: 500px; }
 
 .sidebar-info-notice {
-  padding-top: 10px;
-  font: normal 11px verdana, sans-serif;
-  line-height: 18px;
-  color: #607F99;
+  padding: 10px 0px;
+  font: normal 11px/1.5 "Open Sans", sans-serif;
+  color: #000000;
   position: relative;
-  padding-left: 18px;
-  line-height: 13px; }
+  padding-left: 24px; }
 
 .sidebar-info-notice:before {
   content: "";
-  background-image: url("../img/uf-core-el-sprite.svg") !important;
-  background-position: -484px -141px;
+  background-image: url("../img/uf-core-el-sprite_new.svg");
+  background-position: -483px -138px;
   display: block;
   position: absolute;
   height: 16px;
-  width: 14px;
+  width: 20px;
   left: 0px;
   top: 11px; }
-
-.open-theme-fonts-manager input,
-.open-theme-fonts-manager input:hover {
-  line-height: 36px;
-  border: 2px solid #1fcd8f;
-  margin-top: 13px;
-  font-size: 14px;
-  width: 228px; }
 
 .fonts-manager-panel-title {
   text-align: center;
