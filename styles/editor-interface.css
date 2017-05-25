@@ -860,6 +860,9 @@ em {
   margin-top: 3px;
   padding: 0; }
 
+#sidebar-ui .command-edit-bg, #sidebar-ui .command-edit-global-regions {
+  margin-top: 10px !important; }
+
 #sidebar-ui .command-link {
   display: inline;
   cursor: pointer; }
