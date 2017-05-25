@@ -487,8 +487,8 @@ define([
 			;
 			if ( style == 'full' ) {
 				this.model.set_breakpoint_property('background_style', 'full');
-			}
-			else {
+				this.$el.find('.upfront-field-select').css({minWidth: '100%'});
+			} else {
 				if ( style == 'tile' ) {
 					this.model.set_breakpoint_property('background_style', 'tile');
 					if ( is_repeat_x && is_repeat_y ) {
@@ -503,6 +503,7 @@ define([
 					else {
 						this.model.set_breakpoint_property('background_repeat', 'no-repeat');
 					}
+					this.$el.find('.upfront-field-select').css({minWidth: '100%'});
 				} else if ( style == 'fixed' ) {
 					this.model.set_breakpoint_property('background_style', 'fixed');
 					this.model.set_breakpoint_property('background_repeat', 'no-repeat');
