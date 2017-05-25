@@ -19847,6 +19847,63 @@ div.preset-manager-panel .duration {
 div.preset-manager-panel .duration label {
   display: none; }
 
+/* Border Radius module */
+#element-settings-sidebar .upfront-radius-container .upfront-field-number[type=number] {
+  width: 65px; }
+
+#element-settings-sidebar .upfront-radius-container .upfront-field-wrap {
+  margin: 0px; }
+
+#element-settings-sidebar .upfront-radius-container .upfront-radius-container-top-left,
+#element-settings-sidebar .upfront-radius-container .upfront-radius-container-top-right,
+#element-settings-sidebar .upfront-radius-container .upfront-radius-container-bottom-left,
+#element-settings-sidebar .upfront-radius-container .upfront-radius-container-bottom-right {
+  position: relative;
+  z-index: 91; }
+
+#element-settings-sidebar .upfront-radius-container {
+  position: relative; }
+
+#element-settings-sidebar .upfront-radius-container .upfront-toggle-wrapper {
+  text-align: center;
+  padding: 0px 30px 10px 30px; }
+
+#element-settings-sidebar .upfront-radius-container .radius-lock input[type=checkbox] {
+  position: relative;
+  left: 36px;
+  top: 6px; }
+
+#element-settings-sidebar .upfront-radius-container .radius-lock input[type=checkbox]:checked {
+  float: none !important;
+  left: 38px;
+  top: 7px; }
+
+#element-settings-sidebar .upfront-radius-container .radius-lock input[type=checkbox] {
+  display: none; }
+
+#element-settings-sidebar .upfront-radius-container .radius-lock label {
+  display: block;
+  height: 25px;
+  width: 25px;
+  background-image: url("../img/uf-core-el-sprite_new.png");
+  background-image: url("../img/uf-core-el-sprite_new.svg"), none;
+  background-position: -658px -169px;
+  left: -4px;
+  top: 8px;
+  position: relative;
+  cursor: pointer; }
+
+#element-settings-sidebar .upfront-radius-container .radius-lock .upfront-field-multiple-selected label {
+  background-position: -658px -137px;
+  border-radius: 50%; }
+
+#element-settings-sidebar .upfront-radius-container .radius-lock {
+  position: absolute;
+  margin-top: 0px;
+  left: 90px;
+  top: 57px;
+  z-index: 100; }
+
 div.preset-manager-panel a.upfront-preset-edit {
   font-size: 12px;
   color: #212121;
