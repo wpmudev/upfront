@@ -1883,7 +1883,8 @@ input.upfront-field-text:hover,
   margin: -5px -10px;
   padding: 10px;
   clear: both;
-  overflow: hidden; }
+  overflow: hidden;
+  display: none; }
 
 .upfront-toggle-wrapper .upfront-field-wrap-color {
   margin-bottom: 0px; }
