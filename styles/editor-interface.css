@@ -1245,14 +1245,11 @@ span.draggable-post-element.element-dragging {
 
 #sidebar-ui .upfront-typography-fields-left {
   float: left;
-  width: 60%; }
+  width: 48%; }
 
 #sidebar-ui .upfront-typography-fields-right {
   float: right;
-  width: 40%; }
-
-#sidebar-ui .sidebar-panel-settings .upfront-field-number[type=number] {
-  width: 52px; }
+  width: 48%; }
 
 /* Context menu */
 /* Page */
@@ -18070,14 +18067,10 @@ li#new-custom-breakpoint {
 .typography-panel {
   clear: both;
   overflow: hidden;
-  padding-bottom: 12px;
+  padding-bottom: 2px;
   margin-bottom: 12px;
   padding-top: 10px;
   border-bottom: 1px solid #e5e5e5; }
-
-.typography-panel .upfront-field-select {
-  width: 230px;
-  height: 24px; }
 
 #sidebar-ui .typography-panel .upfront-field-wrap {
   margin-top: 4px; }
@@ -18085,18 +18078,11 @@ li#new-custom-breakpoint {
 #sidebar-ui .typography-panel .upfront-field-wrap:first-child {
   margin-top: 0; }
 
-#sidebar-ui .typography-panel .upfront-typography-fields-left,
-#sidebar-ui .typography-panel .upfront-typography-fields-right {
-  margin-top: 4px; }
+#sidebar-ui .typography-panel label {
+  margin-bottom: 3px; }
 
-#sidebar-ui .typography-panel .upfront-typography-fields-left .upfront-field-select {
-  width: 120px; }
-
-.typography-panel .upfront-typography-fields-right .upfront-field-wrap:first-child label {
-  margin-bottom: 2px; }
-
-.typography-panel .upfront-field-wrap-number label {
-  margin-bottom: 5px; }
+#sidebar-ui .typography-panel .upfront-typography-fields-right .upfront-field-wrap-color label {
+  margin-bottom: 1px; }
 
 .typography-panel .upfront-field-number[type=number] {
   height: 22px;
@@ -18107,6 +18093,9 @@ li#new-custom-breakpoint {
 
 #sidebar-ui .typography-section-content .sp-container.sp-light.sp-alpha-enabled {
   z-index: 99999999; }
+
+#sidebar-ui .typography-panel .upfront-field-wrap {
+  margin-bottom: 10px; }
 
 /* Chosen */
 #insert-font-widget .chosen-container-single .chosen-single,
