@@ -27,10 +27,10 @@ define([
 							name: 'primaryStyle'
 						},
 						values: [
-							{ label: l10n.notxt, value: 'notext', icon: 'nocaption' },
-							{ label: l10n.txtb, value: 'below', icon: 'below' },
-							{ label: l10n.txto, value: 'over', icon: 'bottomOver' },
-							{ label: l10n.txts, value: 'side', icon: 'right' }
+							{ label: l10n.notxt, value: 'notext' },
+							{ label: l10n.txtb, value: 'below' },
+							{ label: l10n.txto, value: 'over' },
+							{ label: l10n.txts, value: 'side' }
 						]
 					}
 				},
@@ -85,7 +85,7 @@ define([
 				className: 'general_settings_item uslider-rotate-settings',
 				fields: [
 					{
-						type: 'Checkboxes',
+						type: 'Toggle',
 						property: 'rotate',
 						layout: 'horizontal-inline',
 						className: 'rotate',
@@ -118,11 +118,11 @@ define([
 						className: 'uslider-transition-setting rotate-effect',
 						default_value: 'crossfade',
 						values: [
-							{ label: l10n.slide_down, value: 'slide-down', icon: 'bg-slider-slide-down' },
-							{ label: l10n.slide_up, value: 'slide-up', icon: 'bg-slider-slide-up' },
-							{ label: l10n.slide_right, value: 'slide-right', icon: 'bg-slider-slide-right' },
-							{ label: l10n.slide_left, value: 'slide-left', icon: 'bg-slider-slide-left' },
-							{ label: l10n.crossfade, value: 'crossfade', icon: 'bg-slider-crossfade' }
+							{ label: l10n.slide_down, value: 'slide-down' },
+							{ label: l10n.slide_up, value: 'slide-up' },
+							{ label: l10n.slide_right, value: 'slide-right' },
+							{ label: l10n.slide_left, value: 'slide-left' },
+							{ label: l10n.crossfade, value: 'crossfade' }
 						]
 					}
 				]
@@ -146,11 +146,13 @@ define([
 						]
 					},
 					{
-						type: 'Radios',
+						type: 'Radios_Inline',
 						property: 'controlsWhen',
 						layout: 'horizontal-inline',
 						default_value: 'hover',
-						className: 'uslider-controlswhen-setting upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
+						label: l10n.show_controls,
+						label_style: 'inline',
+						className: 'uslider-controlswhen-setting upfront-field-wrap upfront-field-wrap-multiple upfront-field-padding-top upfront-field-wrap-radios-inline',
 						values: [
 							{ label: l10n.on_hover, value: 'hover' },
 							{ label: l10n.always, value: 'always' }
@@ -166,7 +168,7 @@ define([
 				className: 'general_settings_item',
 				fields: [
 					{
-						type: 'Checkboxes',
+						type: 'Toggle',
 						property: 'keyboardControls',
 						layout: 'horizontal-inline',
 						className: 'keyboardControls',

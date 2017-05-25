@@ -26,7 +26,7 @@ class Upfront_Compression {
 	 */
 	static public function is_enabled () {
 		if ( defined("UPFRONT_DISABLE_SAVE_COMPRESSION") && UPFRONT_DISABLE_SAVE_COMPRESSION ) return false;
-		$disable_compression = get_option('upfront_disable_save_compression');
+		$disable_compression = Upfront_Cache_Utils::get_option('upfront_disable_save_compression');
 		if ( !empty($disable_compression) ) return false;
 		if ( "zlib" === self::$method ) return extension_loaded('zlib');
 		return false;

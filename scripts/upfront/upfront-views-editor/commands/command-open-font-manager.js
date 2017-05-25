@@ -9,7 +9,7 @@
 
         return Command.extend({
             tagName: 'div',
-            className: "command-open-font-manager sidebar-commands-small-button",
+            className: "command-open-font-manager sidebar-commands-small-button field-grid-half",
             render: function (){
                 this.$el.html('<span title="'+ l10n.theme_font_manager +'">' + l10n.theme_font_manager + '</span>');
             },

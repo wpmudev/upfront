@@ -74,6 +74,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 		add_filter('upfront_get_text_presets', array($this, 'getTextPresets'), 10, 2);
 		add_filter('upfront_get_widget_presets', array($this, 'getWidgetPresets'), 10, 2);
 		add_filter('upfront_get_posts_presets', array($this, 'getPostsPresets'), 10, 2);
+		add_filter('upfront_get_postslists_presets', array($this, 'getPostsListsPresets'), 10, 2);
 		add_filter('upfront_get_thispost_presets', array($this, 'getPostPresets'), 10, 2);
 		add_filter('upfront_get_ucomment_presets', array($this, 'getCommentPresets'), 10, 2);
 		add_filter('upfront_get_login_presets', array($this, 'getLoginPresets'), 10, 2);
@@ -138,7 +139,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	 * Make sure this runs on initial theme setup
 	 */
 	public function initial_theme_setup () {
-		update_option('show_on_front', 'posts'); // Make sure we're showing our own archive page as home.
+		Upfront_Cache_Utils::update_option('show_on_front', 'posts'); // Make sure we're showing our own archive page as home.
 	}
 
 	/**
@@ -683,6 +684,26 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 		return json_decode($presets, $as_array);
 	}
+	
+	public function getPostsListsPresets($presets, $args) {
+		if (empty($presets) === false) return $presets;
+
+		$presets = $this->get_theme_settings()->get('postslists_presets');
+		if (isset($args['json']) && $args['json']) return $presets;
+
+		$as_array = false;
+		if (isset($args['as_array']) && $args['as_array']) {
+			$as_array = true;
+		}
+
+		// If no presets, use preset defaults to prevent empty objects
+		if(empty($presets)) {
+			$new_presets[] = Upfront_PostsLists_Presets_Server::get_instance()->get_preset_defaults();
+			$presets = json_encode($new_presets);
+		}
+
+		return json_decode($presets, $as_array);
+	}
 
 	public function getPostPresets($presets, $args) {
 		if (empty($presets) === false) return $presets;
@@ -970,7 +991,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 
 	protected function _import_images ($path) {
 		$key = $this->get_prefix() . '-imported_images';
-		$imported_attachments = get_option($key);
+		$imported_attachments = Upfront_Cache_Utils::get_option($key);
 		if (!empty($imported_attachments)) return $imported_attachments;
 
 		$imported_attachments = array();
@@ -1001,14 +1022,14 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 			$imported_attachments[] = $attach_id;
 		}
 		if (!empty($imported_attachments)) {
-			update_option($key, $imported_attachments);
+			Upfront_Cache_Utils::update_option($key, $imported_attachments);
 		}
 		return $imported_attachments;
 	}
 
 	protected function _insert_posts ($limit, $thumbnail_images=array()) {
 		$key = $this->get_prefix() . '-posts_created';
-		$posts_created = get_option($key, array());
+		$posts_created = Upfront_Cache_Utils::get_option($key, array());
 		if (!empty($posts_created)) return $posts_created;
 
 		if (!is_array($thumbnail_images)) $thumbnail_images = array();
@@ -1049,9 +1070,9 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 				if (!empty($thumbnail_images[$i])) set_post_thumbnail($post_id, $thumbnail_images[$i]);
 				$theme_posts[] = $post_id;
 			}
-			update_option($key, $theme_posts);
+			Upfront_Cache_Utils::update_option($key, $theme_posts);
 		}
-		return get_option($key, array());
+		return Upfront_Cache_Utils::get_option($key, array());
 	}
 
 /* --- Public interface --- */
@@ -1319,7 +1340,7 @@ abstract class Upfront_ChildTheme implements IUpfront_Server {
 	 * @return mixed|void
 	 */
 	public static function get_post_image_variants_from_db( $key = null ){
-		return get_option( self::_get_post_image_variant_key( $key ) );
+		return Upfront_Cache_Utils::get_option( self::_get_post_image_variant_key( $key ) );
 	}
 
 	/**
@@ -1364,7 +1385,7 @@ VRT;
 	 */
 	function update_prev_stylesheet($value, $old_value){
 		if( $value != $old_value ){
-			update_option("uf_prev_stylesheet", $old_value);
+			Upfront_Cache_Utils::update_option("uf_prev_stylesheet", $old_value);
 		}
 		return $value;
 	}
@@ -1375,7 +1396,7 @@ VRT;
 	 * @return mixed|void previous theme's stylesheet name | false
 	 */
 	public static function get_prev_stylesheet(){
-		return get_option( 'uf_prev_stylesheet', false);
+		return Upfront_Cache_Utils::get_option( 'uf_prev_stylesheet', false);
 	}
 
 
@@ -1387,7 +1408,7 @@ VRT;
 	 * @return string $value new theme stylesheet name
 	 */
 	function update_post_image_variants(){
-	   update_option(self::_get_post_image_variant_key(), self::get_post_image_variants_from_settings() );
+	   Upfront_Cache_Utils::update_option(self::_get_post_image_variant_key(), self::get_post_image_variants_from_settings() );
 	}
 
 	public static function get_prev_post_image_variants($args = null){

@@ -338,13 +338,13 @@ define([
 							options: {
 								title: l10n.colors_label,
 								multiple: false,
-								single: false,
 								toggle: true,
 								prepend: 'hover-',
 								prefix: 'static',
 								fields: {
 									use: 'hover-use-color'
 								},
+								single: true,
 								abccolors: [
 									{
 										name: 'hover-field-bg',
@@ -436,7 +436,7 @@ define([
 							options: {
 								title: l10n.colors_label,
 								multiple: false,
-								single: false,
+								single: true,
 								toggle: true,
 								prepend: 'focus-',
 								prefix: 'static',

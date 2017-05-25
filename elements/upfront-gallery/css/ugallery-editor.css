@@ -11,18 +11,18 @@
 .gallery-padding-lock input[type=checkbox]:after {
 	content: '';
 	display: block;
-	height: 15px;
-	width: 15px;
-	background-image: url('../../../img/uf-core-el-sprite.png');
-	background-image: url('../../../img/uf-core-el-sprite.svg'), none;
-	background-position: -661px -172px;
-	background-color: rgb(247, 251, 255);
+	height: 18px;
+	width: 18px;
+	background-image: url('../../../img/uf-core-el-sprite_new.png');
+	background-image: url('../../../img/uf-core-el-sprite_new.svg'), none;
+	background-position: -661px -170px;
+	background-color: rgb(242, 242, 242);
 	left: -3px;
 	top: -3px;
 	position: relative;
 }
 .gallery-padding-lock input[type=checkbox]:checked:after {
-	background-position: -661px -140px;
+	background-position: -661px -138px;
 }
 .gallery-padding-lock {
 	position: relative;

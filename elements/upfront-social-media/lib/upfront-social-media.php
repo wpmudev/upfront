@@ -120,14 +120,14 @@ class Upfront_SocialMediaView extends Upfront_Object {
 
 	//Add properties to Upfront.data
 	public static function add_upfront_data ($data) {
-		$globals = get_option('upfront_social_media_global_settings', false);
+		$globals = Upfront_Cache_Utils::get_option('upfront_social_media_global_settings', false);
 
 
 		// if by any chance the global data in the database is corrupt, then reset
 		$globals_array = Upfront_SocialMedia_Setting::properties_to_array(json_decode($globals));
 
 		if(!isset($globals_array['services']) || sizeof($globals_array['services']) < 1) {
-			delete_option('upfront_social_media_global_settings');
+			Upfront_Cache_Utils::delete_option('upfront_social_media_global_settings');
 			$globals = false;
 		}
 
@@ -395,7 +395,7 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
 	}
 
 	public static function get_globals(){
-		$glob = get_option('upfront_social_media_global_settings', false);
+		$glob = Upfront_Cache_Utils::get_option('upfront_social_media_global_settings', false);
 		if($glob)
 			return self::properties_to_array(json_decode($glob));
 		return false;
@@ -418,7 +418,7 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
 	}
 
 	public static function get_value_by_name($url){
-		$upfront_social_media_global_settings = get_option('upfront_social_media_global_settings');
+		$upfront_social_media_global_settings = Upfront_Cache_Utils::get_option('upfront_social_media_global_settings');
 		if($upfront_social_media_global_settings){
 			$settings = json_decode($upfront_social_media_global_settings);
 			return self::array_search_i($url,$settings);
@@ -434,8 +434,8 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
 			$option_name = 'upfront_social_media_global_settings' ;
 			$new_value = $social_media_global_settings;
 
-			if ( get_option( $option_name ) != $new_value ) {
-				$response = update_option( $option_name, $new_value );
+			if ( Upfront_Cache_Utils::get_option( $option_name ) != $new_value ) {
+				$response = Upfront_Cache_Utils::update_option( $option_name, $new_value );
 			} else {
 				$response = add_option( 'upfront_social_media_global_settings', $new_value, '', 'yes' );
 			}
@@ -572,7 +572,7 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
 
 	protected static function get_twitter_token($element_id, $key, $secret){
 		$option = 'social_twitter_token_' . $element_id;
-		$token = get_option($option);
+		$token = Upfront_Cache_Utils::get_option($option);
 
 		//From option
 		if($token && $token['key'] == $key && $token['secret'] == $secret)
@@ -607,7 +607,7 @@ class Upfront_SocialMedia_Setting extends Upfront_Server {
 				'key' => $key,
 				'secret' => $secret
 			);
-			update_option($option, $option_value);
+			Upfront_Cache_Utils::update_option($option, $option_value);
 			return $keys->access_token;
 		}
 
@@ -625,7 +625,7 @@ Upfront_SocialMedia_Setting::serve();
 
 function upfront_social ($data) {
 	$data['social'] = array(
-		"settings" => get_option('upfront_social_media_global_settings')
+		"settings" => Upfront_Cache_Utils::get_option('upfront_social_media_global_settings')
 	);
 	return $data;
 }

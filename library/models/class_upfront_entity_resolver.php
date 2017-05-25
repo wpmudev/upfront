@@ -66,10 +66,10 @@ abstract class Upfront_EntityResolver {
 
 		$wp_entity = array();
 
-		if (!empty($query->is_home) && 'posts' === get_option('show_on_front')) {
+		if (!empty($query->is_home) && 'posts' === Upfront_Cache_Utils::get_option('show_on_front')) {
 			// (1) Home page (recent posts)
 			$wp_entity = self::_to_entity('home');
-		} else if (is_front_page() && 'posts' !== get_option('show_on_front')) {
+		} else if (is_front_page() && 'posts' !== Upfront_Cache_Utils::get_option('show_on_front')) {
 			// (2) Home page (static front-page)
 			return self::resolve_singular_entity($query);
 		} else if (!empty($query->is_search)) {

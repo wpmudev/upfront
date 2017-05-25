@@ -13,7 +13,7 @@ class Upfront_ButtonView extends Upfront_Object {
 			);
 		}
 		$data['id'] = $this->_get_property('element_id');
-		$button_presets = get_option('upfront_' . get_stylesheet() . '_button_presets');
+		$button_presets = Upfront_Cache_Utils::get_option('upfront_' . get_stylesheet() . '_button_presets');
 		$button_presets = apply_filters(
 			'upfront_get_button_presets',
 			$button_presets,

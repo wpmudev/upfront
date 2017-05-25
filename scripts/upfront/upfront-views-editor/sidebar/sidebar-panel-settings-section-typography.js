@@ -51,7 +51,11 @@
 					me.$el.closest('.sidebar-panel-content.ps-theme-default').css('position', 'relative');
 					me.$el.closest('.sidebar-panel-settings').css('position', 'static');
 				});
-            }
+
+				// Move theme fonts manager button to bottom
+				this.$el.find('.open-theme-fonts-manager').after(this.$el.find('.command-edit-css'));
+				this.$el.find('.command-edit-css').before(this.$el.find('.command-open-font-manager'));
+			}
         });
     });
 }(jQuery));

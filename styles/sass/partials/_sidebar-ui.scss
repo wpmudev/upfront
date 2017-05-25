@@ -447,7 +447,7 @@
 }
 
 #sidebar-ui .sidebar-commands-control {
-	padding: 15px 3px 0;
+	padding: 10px 5px 10px 0;
 	border-top: 1px solid rgb(228, 228, 228);
 	border-bottom: 1px solid rgb(228, 228, 228);
 }
@@ -472,6 +472,10 @@
 	height: 26px;
 }
 
+#sidebar-ui .sidebar-commands-control .command-undo {
+	margin-left: 10px !important;
+}
+
 #sidebar-ui .sidebar-commands-control .command-redo {
 	margin-left: 4px;
 }
@@ -490,7 +494,7 @@
 	max-height: 26px;
 	border: 1px solid #a7a7a7;
 	border-radius: 2px;
-	margin-left: 10px;
+	margin-left: 15px !important;
 }
 
 #sidebar-ui .sidebar-commands-control .command-start-responsive:before {
@@ -541,7 +545,6 @@
 	letter-spacing: 0.5px;
 	height: 30px;
 	background: #fff;
-	border-bottom: 1px solid #e8e8e8;
 	color: #969696;
 	padding: 0 0 0 15px;
 	margin: 0;
@@ -737,6 +740,10 @@
 	clear: both;
 	margin-top: 3px;
 	padding: 0;
+}
+
+#sidebar-ui .command-edit-bg, #sidebar-ui .command-edit-global-regions {
+	margin-top: 10px !important;
 }
 
 #sidebar-ui .command-link {
@@ -1187,16 +1194,12 @@ span.draggable-post-element.element-dragging
 
 #sidebar-ui .upfront-typography-fields-left {
 	float: left;
-	width: 60%;
+	width: 48%;
 }
 
 #sidebar-ui .upfront-typography-fields-right {
 	float: right;
-	width: 40%;
-}
-
-#sidebar-ui .sidebar-panel-settings .upfront-field-number[type=number] {
-	width: 52px;
+	width: 48%;
 }
 
 /* Context menu */
@@ -1345,7 +1348,7 @@ span.draggable-post-element.element-dragging
 #sidebar-ui .sidebar-commands li.sidebar-commands-button.command-save {
 	float: right;
 	padding: 0px 30px;
-	margin: 10px 15px;
+	margin: 25px 15px;
 }
 
 #sidebar-ui .sidebar-commands li.sidebar-commands-button.command-new-post,
@@ -1415,6 +1418,7 @@ span.draggable-post-element.element-dragging
 	clear: left;
 	width: 48%;
 	float: left;
+	margin: 0;
 }
 
 #sidebar-ui .field-grid-half-last,

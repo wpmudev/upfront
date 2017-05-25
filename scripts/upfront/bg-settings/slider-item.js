@@ -206,7 +206,7 @@ define([
 		update_slider_slides: function () {
 			var me = this,
 				slide_images = me.model.get_breakpoint_property_value('background_slider_images', true),
-				$add = $('<div class="upfront-bg-slider-add-image upfront-icon upfront-icon-region-add-slide"></div>'),
+				$add = $('<div class="upfront-bg-slider-add-image upfront-icon upfront-icon-add-slide"></div>'),
 				$wrap = this.$el.find('.upfront-settings-item-content');
 			$wrap.html('');
 			

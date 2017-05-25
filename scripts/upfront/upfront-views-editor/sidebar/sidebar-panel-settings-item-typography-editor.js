@@ -136,7 +136,7 @@
                     chooseButton = new Fields.Button({
                         label: l10n.select_fonts_to_use,
                         compact: true,
-                        classname: 'open-theme-fonts-manager sidebar-commands-small-button',
+                        classname: 'open-theme-fonts-manager sidebar-commands-small-button field-grid-half',
 
                         on_click: function(e){
                             Upfront.Events.trigger('command:themefontsmanager:open');
@@ -199,7 +199,7 @@
                             label: l10n.typeface,
                             values: Fonts.theme_fonts_collection.get_fonts_for_select(),
                             default_value: me.typefaces['h1'],
-                            select_width: '225px',
+                            select_width: '230px',
                             change: function () {
                                 var value = this.get_value(),
                                     element = me.current_element;
@@ -229,11 +229,10 @@
                                 }
                             }
                         }),
-                        size: new Fields.Number({
+                        size: new Fields.Number_Unit({
                             label: l10n.size,
                             min: 0,
                             max: 100,
-                            suffix: l10n.px,
                             default_value: me.sizes['h1'],
                             change: function () {
                                 var value = this.get_value(),
@@ -244,7 +243,7 @@
                                 }
                             }
                         }),
-                        line_height: new Fields.Number({
+                        line_height: new Fields.Number_Unit({
                             label: l10n.line_height,
                             min: 0,
                             max: 10,
@@ -295,7 +294,7 @@
                     values: this.get_styles(),
                     default_value: me.get_styles_field_default_value(),
                     font_family: typeface,
-                    select_width: '120px',
+                    select_width: '110px',
                     change: function () {
                         var value = this.get_value(),
                             element = me.current_element;

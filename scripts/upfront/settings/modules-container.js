@@ -59,6 +59,12 @@ define([
 			this.modules.each(function(module){
 				module.render();
 				module.delegateEvents();
+				
+				// Add option to remove borders
+				if(module.options.noborder === true) {
+					module.$el.addClass('module_no_border');
+				}
+				
 				$content.append(module.el);
 			});
 		},

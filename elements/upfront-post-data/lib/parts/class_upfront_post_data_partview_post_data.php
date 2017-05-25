@@ -37,8 +37,8 @@ class Upfront_Post_Data_PartView_Post_data extends Upfront_Post_Data_PartView {
 			: false
 		;
 
-		$wp_date = get_option('date_format');
-		$wp_time = get_option('time_format');
+		$wp_date = Upfront_Cache_Utils::get_option('date_format');
+		$wp_time = Upfront_Cache_Utils::get_option('time_format');
 		$date_format = false;
 		if (!empty($predefined_format)) {
 			$date_format = $predefined_format;

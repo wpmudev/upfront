@@ -51,8 +51,8 @@ define([
 					label_style: 'inline',
 					label: l10n.panel.caption_location,
 					values: [
-						{value: 'over', label: l10n.panel.over, icon: 'over'},
-						{value: 'below', label: l10n.panel.under, icon: 'below'}
+						{value: 'over', label: l10n.panel.over},
+						{value: 'below', label: l10n.panel.under}
 					],
 					change: function(value) {
 						me.model.set('captionType', value);

@@ -1,9 +1,9 @@
 /* General */
 
 .upfront-field-wrap {
-	color: rgb(48, 71, 94);
+	color: rgba(33, 33, 33, 0.8);
 	font-size: 11px;
-	line-height: 16px;
+	line-height: 15px;
 	font-weight: normal;
 	font-family: "Open Sans";
 	margin: 13px 0 0;
@@ -30,7 +30,7 @@
 .upfront-field-wrap .upfront-field-label-block,
 .upfront-field-label-block {
 	display: block;
-	color: rgb(79, 79, 79);
+	color: rgba(33, 33, 33, 0.8);
 	font-size: 11px;
 	font-weight: bold;
 	font-family: "Open Sans";
@@ -120,7 +120,6 @@ input.upfront-field-text:hover,
 .upfront-field-textarea {
 	height: auto;
 }
-
 .upfront-field-disabled {
 	opacity: .4;
 }
@@ -458,9 +457,14 @@ input.upfront-field-text:hover,
 	padding: 10px;
 	clear: both;
 	overflow: hidden;
+	display: none;
 }
 
 .upfront-toggle-wrapper .upfront-field-wrap-color {
+	margin-bottom: 7px;
+}
+
+.upfront-toggle-wrapper .upfront-field-wrap-color:last-of-type {
 	margin-bottom: 0px;
 }
 

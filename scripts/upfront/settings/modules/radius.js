@@ -14,7 +14,7 @@ define([
 ], function(BaseModule) {
 	var l10n = Upfront.Settings.l10n.preset_manager;
 	var RadiusSettingsModule = BaseModule.extend({
-		className: 'settings_module corner_radius_settings_item clearfix',
+		className: 'settings_module corner_radius_settings_item upfront-radius-container clearfix',
 		group: false,
 
 		get_title: function() {
@@ -33,45 +33,26 @@ define([
 			// Radius toggle is always true
 			this.options.toggle = true;
 
-			var sliderOnChange = function () {
-				//Update border radius
-				var value = this.get_value();
-				var data = {};
-				data[me.options.fields.radius1] = value;
-				data[me.options.fields.radius2] = value;
-				data[me.options.fields.radius3] = value;
-				data[me.options.fields.radius4] = value;
-				data[me.options.fields.radius] = value;
-				me.model.set(data, {silent: true});
-				me.model.set(me.options.fields.radius_number, value);
-				me.$el.find("input[name="+ me.options.fields.radius1 +"]").val(value);
-				me.$el.find("input[name="+ me.options.fields.radius2 +"]").val(value);
-				me.$el.find("input[name="+ me.options.fields.radius3 +"]").val(value);
-				me.$el.find("input[name="+ me.options.fields.radius4 +"]").val(value);
-				me.$el.find("input[name="+ me.options.fields.radius_number +"]").val(value);
-
-				//Set opacity to 1
-				me.$el.closest('.state_modules').find('.'+ state +'-radius-slider').css('opacity', 1);
-			};
-			var throttledSliderOnChange = _.throttle(sliderOnChange, 16);
-
 			var radiusOnChange = function(value) {
-				//Update slider value
-				s = me.fields._wrapped[2];
-				s.$el.find('#'+s.get_field_id()).slider('value', value);
-				s.get_field().val(value);
+				var data = {},
+					lock = me.model.get(me.options.fields.lock)
+				;
 
-				// Now, once we updated the slider value, let that handler take care of it
-				sliderOnChange.apply(s);
+				if(lock == "yes") {
+					data[me.options.fields.radius1] = value;
+					data[me.options.fields.radius2] = value;
+					data[me.options.fields.radius3] = value;
+					data[me.options.fields.radius4] = value;
 
-				//Lower opacity if value is bigger than the slider MAX_VALUE
-				if(value > me.options.max_value) {
-					me.$el.closest('.state_modules').find('.'+ state +'-radius-slider').css('opacity', 0.6);
-				} else {
-					me.$el.closest('.state_modules').find('.'+ state +'-radius-slider').css('opacity', 1);
+					me.model.set(data, {silent: true});
+
+					me.$el.find("input[name=" + me.options.fields.radius1 + "]").val(value);
+					me.$el.find("input[name=" + me.options.fields.radius2 + "]").val(value);
+					me.$el.find("input[name=" + me.options.fields.radius3 + "]").val(value);
+					me.$el.find("input[name=" + me.options.fields.radius4 + "]").val(value);
 				}
 			};
-			var throttledRadiusOnChange = _.throttle(radiusOnChange, 16);
+			var throttledRadiusOnChange = _.throttle(radiusOnChange, 5);
 
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Toggle({
@@ -93,34 +74,16 @@ define([
 						var lock = me.model.get(me.options.fields.lock);
 						//Toggle border radius fields
 						if(value == "yes") {
-							if(lock == "yes") {
-								stateSettings.find('.' + state + '-toggle-wrapper').show();
-								stateSettings.find('.'+ state +'-radius-slider').show();
-								stateSettings.find('.'+ state +'-radius-slider-number').show();
-							} else {
-								stateSettings.find('.' + state + '-toggle-wrapper').show();
-								stateSettings.find('.'+ state +'-radius-slider').hide();
-								stateSettings.find('.'+ state +'-radius-slider-number').hide();
-								stateSettings.find('.'+ state +'-radius1').show();
-								stateSettings.find('.'+ state +'-radius2').show();
-								stateSettings.find('.'+ state +'-radius3').show();
-								stateSettings.find('.'+ state +'-radius4').show();
-							}
+							stateSettings.find('.' + state + '-toggle-wrapper').show();
 						} else {
 							stateSettings.find('.' + state + '-toggle-wrapper').hide();
-							stateSettings.find('.'+ state +'-radius1').hide();
-							stateSettings.find('.'+ state +'-radius2').hide();
-							stateSettings.find('.'+ state +'-radius3').hide();
-							stateSettings.find('.'+ state +'-radius4').hide();
-							stateSettings.find('.'+ state +'-radius-slider').hide();
-							stateSettings.find('.'+ state +'-radius-slider-number').hide();
 						}
 					}
 				}),
 
 				new Upfront.Views.Editor.Field.Checkboxes({
 					model: this.model,
-					className: state + '-radius-lock border_radius_lock',
+					className: state + '-radius-lock border_radius_lock radius-lock',
 					name: me.options.fields.lock,
 					label: "",
 					default_value: 0,
@@ -131,67 +94,14 @@ define([
 					show: function(value) {
 						me.model.set(me.options.fields.lock, value);
 
-						var stateSettings = me.$el.closest('.state_modules');
-						var useRadius = me.model.get(me.options.fields.use);
-
-						//Toggle border radius fields
-						if(value == "yes" && useRadius == "yes") {
-							stateSettings.find('.'+ state +'-radius-slider').show();
-							stateSettings.find('.'+ state +'-radius-slider-number').show();
-							stateSettings.find('.'+ state +'-radius1').hide();
-							stateSettings.find('.'+ state +'-radius2').hide();
-							stateSettings.find('.'+ state +'-radius3').hide();
-							stateSettings.find('.'+ state +'-radius4').hide();
-						} else {
-							if(useRadius == "yes") {
-								stateSettings.find('.'+ state +'-radius-slider').hide();
-								stateSettings.find('.'+ state +'-radius-slider-number').hide();
-								stateSettings.find('.'+ state +'-radius1').show();
-								stateSettings.find('.'+ state +'-radius2').show();
-								stateSettings.find('.'+ state +'-radius3').show();
-								stateSettings.find('.'+ state +'-radius4').show();
-							}
-						}
-					}
-				}),
-
-
-				new Upfront.Views.Editor.Field.Slider({
-					className: state + '-radius-slider upfront-field-wrap upfront-field-wrap-slider radius-slider',
-					model: this.model,
-					name: me.options.fields.radius,
-					suffix: l10n.px,
-					min: 0,
-					max: me.options.max_value,
-					step: 10,
-					change: throttledSliderOnChange,
-					show: function() {
-						var value = me.model.get(me.options.fields.radius_number);
-						if(value > me.options.max_value) {
-							me.$el.closest('.state_modules').find('.'+ state +'-radius-slider').css('opacity', 0.6);
-						} else {
-							me.$el.closest('.state_modules').find('.'+ state +'-radius-slider').css('opacity', 1);
-						}
+						var radius_value = me.model.get(me.options.fields.radius1);
+						throttledRadiusOnChange(radius_value);
 					}
 				}),
 
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
-					className: state + '-radius-slider-number border_radius_number',
-					name: me.options.fields.radius_number,
-					label: '',
-					min: 0,
-					max: 1000,
-					default_value: 0,
-					values: [
-						{ label: "", value: '0' }
-					],
-					change: throttledRadiusOnChange
-				}),
-
-				new Upfront.Views.Editor.Field.Number({
-					model: this.model,
-					className: state + '-radius1 border_radius border_radius1',
+					className: state + '-radius1 border_radius border_radius1 upfront-radius-container-top-left field-grid-half',
 					name: me.options.fields.radius1,
 					label: '',
 					min: 0,
@@ -202,12 +112,13 @@ define([
 					],
 					change: function(value) {
 						me.model.set(me.options.fields.radius1, value);
+						throttledRadiusOnChange(value);
 					}
 				}),
 
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
-					className: state + '-radius2 border_radius border_radius2 border_radius2_static',
+					className: state + '-radius2 border_radius border_radius2 upfront-radius-container-top-right field-grid-half field-grid-half-last',
 					name: me.options.fields.radius2,
 					label: '',
 					min: 0,
@@ -218,28 +129,13 @@ define([
 					],
 					change: function(value) {
 						me.model.set(me.options.fields.radius2, value);
-					}
-				}),
-
-				new	Upfront.Views.Editor.Field.Number({
-					model: this.model,
-					className: state + '-radius4 border_radius border_radius4',
-					name: me.options.fields.radius4,
-					label: '',
-					min: 0,
-					max: 1000,
-					default_value: 0,
-					values: [
-						{ label: "", value: '0' }
-					],
-					change: function(value) {
-						me.model.set(me.options.fields.radius4, value);
+						throttledRadiusOnChange(value);
 					}
 				}),
 
 				new Upfront.Views.Editor.Field.Number({
 					model: this.model,
-					className: state + '-radius3 border_radius border_radius3',
+					className: state + '-radius3 border_radius border_radius3 upfront-radius-container-bottom-right field-grid-half',
 					name: me.options.fields.radius3,
 					label: '',
 					min: 0,
@@ -250,16 +146,32 @@ define([
 					],
 					change: function(value) {
 						me.model.set(me.options.fields.radius3, value);
+						throttledRadiusOnChange(value);
+					}
+				}),
+
+				new	Upfront.Views.Editor.Field.Number({
+					model: this.model,
+					className: state + '-radius4 border_radius border_radius4 upfront-radius-container-bottom-left field-grid-half field-grid-half-last',
+					name: me.options.fields.radius4,
+					label: '',
+					min: 0,
+					max: 1000,
+					default_value: 0,
+					values: [
+						{ label: "", value: '0' }
+					],
+					change: function(value) {
+						me.model.set(me.options.fields.radius4, value);
+						throttledRadiusOnChange(value);
 					}
 				})
-
-
 			]);
 		},
+
 		reset_fields: function(value) {
 			if(typeof value !== "undefined" && value === "yes") {
 				var settings = this.get_static_field_values(value, this.options.prepend);
-				this.update_fields(value, settings);
 				this.save_static_values(value, settings);
 				this.$el.empty();
 				this.render();
@@ -269,8 +181,6 @@ define([
 		save_static_values: function(value, settings) {
 			//Save preset values from static state
 			this.model.set(this.options.fields.lock, settings.lock);
-			this.model.set(this.options.fields.radius, settings.radius);
-			this.model.set(this.options.fields.radius_number, settings.radius_number);
 			this.model.set(this.options.fields.radius1, settings.radius1);
 			this.model.set(this.options.fields.radius2, settings.radius2);
 			this.model.set(this.options.fields.radius3, settings.radius3);
@@ -286,8 +196,6 @@ define([
 			}
 
 			settings.lock = this.model.get(this.clear_prepend(prefix + this.options.fields.lock, prepend)) || '';
-			settings.radius = this.model.get(this.clear_prepend(prefix + this.options.fields.radius, prepend)) || '';
-			settings.radius_number = this.model.get(this.clear_prepend(prefix + this.options.fields.radius_number, prepend)) || '';
 			settings.radius1 = this.model.get(this.clear_prepend(prefix + this.options.fields.radius1, prepend)) || '';
 			settings.radius2 = this.model.get(this.clear_prepend(prefix + this.options.fields.radius2, prepend)) || '';
 			settings.radius3 = this.model.get(this.clear_prepend(prefix + this.options.fields.radius3, prepend)) || '';
@@ -298,15 +206,8 @@ define([
 
 		clear_prepend: function(field, prepend) {
 			return field.replace(prepend, '');
-		},
-
-		update_fields: function(value, settings) {
-			//Update slider value
-			s = this.fields._wrapped[2];
-			s.$el.find('#'+s.get_field_id()).slider('value', settings.radius);
-			s.get_field().val(settings.radius);
-			s.trigger('changed');
 		}
+
 	});
 
 	return RadiusSettingsModule;

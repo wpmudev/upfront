@@ -9,7 +9,7 @@
 
         return Command.extend({
             tagName: 'div',
-            className: "command-edit-css sidebar-commands-small-button",
+            className: "command-edit-css sidebar-commands-small-button field-grid-half field-grid-half-last",
             render: function (){
                 this.$el.html(l10n.add_custom_css_rules);
                 this.$el.prop("title", l10n.add_custom_css_rules);

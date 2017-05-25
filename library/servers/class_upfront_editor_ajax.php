@@ -776,17 +776,17 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			$is_sticky = is_sticky($id);
 			if ($data['sticky'] && !$is_sticky) {
 				// Make post sticky
-				$posts = get_option('sticky_posts');
+				$posts = Upfront_Cache_Utils::get_option('sticky_posts');
 				if ($posts) $posts[] = $id;
 				else $posts = array($id);
 				add_option('sticky_posts', $posts);
 			} else if (!$data['sticky'] && $is_sticky) {
 				// Make previously non-sticky post sticky
-				$posts = get_option('sticky_posts');
+				$posts = Upfront_Cache_Utils::get_option('sticky_posts');
 				$index = array_search($id, $posts);
 				if ($index !== false) {
 					array_splice($posts, $index, 1);
-					if (!sizeof($posts)) delete_option('sticky_posts');
+					if (!sizeof($posts)) Upfront_Cache_Utils::delete_option('sticky_posts');
 					else add_option('sticky_posts', $posts);
 				}
 			}

@@ -280,7 +280,7 @@
 							}
 						}),
 
-						new Fields.Checkboxes({
+						new Fields.Toggle({
 							model: this.model,
 							className: 'show-friends',
 							property: 'show_friends',
@@ -293,7 +293,7 @@
 							}
 						}),
 
-						new Fields.Checkboxes({
+						new Fields.Toggle({
 							model: this.model,
 							className: 'small-header',
 							property: 'small_header',
@@ -306,7 +306,7 @@
 							}
 						}),
 
-						new Fields.Checkboxes({
+						new Fields.Toggle({
 							model: this.model,
 							className: 'hide-cover',
 							property: 'hide_cover',
@@ -319,7 +319,7 @@
 							}
 						}),
 
-						new Fields.Checkboxes({
+						new Fields.Toggle({
 							model: this.model,
 							className: 'show-posts',
 							property: 'show_posts',
