@@ -1887,6 +1887,9 @@ input.upfront-field-text:hover,
   display: none; }
 
 .upfront-toggle-wrapper .upfront-field-wrap-color {
+  margin-bottom: 7px; }
+
+.upfront-toggle-wrapper .upfront-field-wrap-color:last-of-type {
   margin-bottom: 0px; }
 
 .upfront-toggle-field {
@@ -3042,7 +3045,7 @@ input.upfront_toggle_checkbox {
   width: auto; }
 
 #region-settings-sidebar .upfront-bg-setting-type > div:first-of-type {
-  height: 11px; }
+  height: 14px; }
 
 #region-settings-sidebar .upfront-bg-setting-type .upfront-bg-setting-label {
   float: left;
@@ -3125,7 +3128,19 @@ input.upfront_toggle_checkbox {
   position: absolute !important; }
 
 #region-settings-sidebar .open-map-code-panel-button {
-  border-left: none; }
+  font-size: 11px;
+  line-height: 20px;
+  border-left: none;
+  padding: 0;
+  width: 107%;
+  background: #e7e7e7;
+  padding: 6px 11px;
+  margin: 0 -9px; }
+
+#region-settings-sidebar .open-map-code-panel-button .upfront-field-button {
+  margin: 5px 0;
+  font-size: 11px;
+  font-weight: 600; }
 
 .upfront-region-bg-video {
   overflow: hidden; }
@@ -4005,7 +4020,7 @@ input.upfront_toggle_checkbox {
 
 #region-settings-sidebar .upfront-region-bg-setting-header {
   margin: 0;
-  padding: 10px 16px;
+  padding: 13px 16px;
   border-bottom: 1px solid #e0e0e0;
   position: relative;
   background: #f7f7f7; }
@@ -4014,7 +4029,8 @@ input.upfront_toggle_checkbox {
   color: #212121; }
 
 .upfront-region-name-edit-value {
-  font-size: 15px; }
+  font-size: 15px;
+  font-weight: 300; }
 
 .upfront-region-type-icon {
   width: 24px;
@@ -4058,22 +4074,24 @@ input.upfront_toggle_checkbox {
 
 a.upfront-region-name-edit-trigger {
   display: none;
-  border: 1px solid #a2bfda;
+  border: 1px solid #a8a8a8;
   border-radius: 2px;
   width: 52px;
   height: 20px;
-  background: #f6fbff;
-  color: #6486a6;
+  background: #fff;
+  color: #212121;
   font-size: 13px;
   text-align: center;
   line-height: 19px;
   box-sizing: border-box;
   position: absolute;
   right: 10px;
-  top: 12px; }
+  top: 15px;
+  opacity: 0.75; }
 
 a.upfront-region-name-edit-trigger:hover {
-  border: 1px solid #a2bfda; }
+  border: 1px solid #a8a8a8;
+  opacity: 1; }
 
 .upfront-region-bg-setting-name-edit .upfront-field-wrap-text {
   width: 100px;
@@ -4105,18 +4123,22 @@ a.upfront-region-name-edit-trigger:hover {
 
 .upfront-region-bg-setting-name-edit .upfront-region-bg-setting-name-save {
   float: right;
-  background: #e6f3ff;
+  background: #fff;
   height: 26px;
   line-height: 26px;
-  border: 1px solid #a2bfda;
-  border-radius: 3px;
+  border: 1px solid #a8a8a8;
+  border-radius: 2px;
   padding: 0 10px;
-  color: #6486a6;
-  text-transform: capitalize; }
+  color: #212121;
+  text-transform: capitalize;
+  opacity: 0.75; }
+
+.upfront-region-bg-setting-name-edit .upfront-region-bg-setting-name-save:hover {
+  opacity: 1; }
 
 .upfront-region-bg-setting-region-style-container {
   background: #e7e7e7;
-  padding: 12px 16px 10px; }
+  padding: 16px 16px 10px; }
 
 .upfront-region-bg-setting-region-style-container .upfront-field-wrap-select .upfront-field-label-block,
 .upfront-region-bg-setting-region-style-container .upfront-field-label, .upfront-region-bg-setting-auto-resize span {
@@ -4136,14 +4158,17 @@ a.upfront-region-name-edit-trigger:hover {
   margin: 0 0 20px; }
 
 #region-settings-sidebar .upfront-region-bg-setting-region-behavior, #region-settings-sidebar .upfront-region-bg-setting-region-nav {
-  padding: 0 16px 16px;
+  padding: 0 16px 11px;
   margin: 0;
   background: #e7e7e7; }
+
+#region-settings-sidebar .upfront-region-bg-setting-region-nav {
+  padding: 0 16px 16px; }
 
 #region-settings-sidebar .upfront-region-bg-setting-region-nav .upfront-bg-setting-label {
   font-size: 11px;
   text-transform: uppercase;
-  line-height: normal;
+  line-height: 10px;
   color: #9e9e9e;
   font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   font-weight: 700;
@@ -4158,7 +4183,8 @@ a.upfront-region-name-edit-trigger:hover {
   height: 22px;
   line-height: 20px;
   border-radius: 0 3px 3px 0;
-  border: 1px solid transparent; }
+  border: 1px solid transparent;
+  padding: 0; }
 
 #region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple:first-of-type {
   border-radius: 3px 0 0 3px; }
@@ -4170,8 +4196,12 @@ a.upfront-region-name-edit-trigger:hover {
 #region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple label span {
   color: #212121; }
 
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple label span, #region-settings-sidebar .upfront-region-bg-setting-region-nav .upfront-field-multiple label span {
+  font-family: "Open Sans", verdana; }
+
 #region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple.upfront-field-multiple-selected label span {
-  color: #fff; }
+  color: #fff;
+  font-weight: 700; }
 
 /* Hide radio circle */
 #region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple input.upfront-field-radio {
@@ -4181,24 +4211,31 @@ a.upfront-region-name-edit-trigger:hover {
 #region-settings-sidebar .upfront-region-bg-setting-region-nav .upfront-field-multiple label {
   color: #96acc1;
   font-size: 11px;
-  font-family: verdana, sans-serif;
+  font-family: "Open Sans", Verdana, sans-serif;
   padding: 0;
   font-weight: normal; }
 
+#region-settings-sidebar .upfront-region-bg-setting-region-behavior .upfront-field-multiple label {
+  margin: auto; }
+
 #region-settings-sidebar .upfront-region-bg-setting-region-behavior {
-  width: 100%; }
+  width: 100%;
+  padding: 0 16px 16px; }
 
 .upfront-region-bg-setting-region-behavior {
   width: 50%;
   float: left;
-  margin: 0 0 20px; }
+  margin: 0 0 10px; }
 
 #region-settings-sidebar .upfront-region-bg-setting-footer {
   color: #1f2f3f;
   font-size: 11px;
-  margin: 0 16px;
+  margin: 10px 16px 0;
   padding: 15px 0;
   border-top: 1px solid #dcdcdc; }
+
+#region-settings-sidebar .upfront-region-bg-setting-footer .upfront-region-bg-setting-sticky {
+  margin-bottom: 10px; }
 
 .upfront-region-bg-setting-sticky > div {
   margin: 0; }
@@ -4471,19 +4508,20 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
   border-color: #1abc9c; }
 
 #region-settings-sidebar .uf-region-bg-settings-panel-content .uf-bgsettings-imageitem {
-  position: static; }
+  position: static;
+  margin-top: 12px; }
   #region-settings-sidebar .uf-region-bg-settings-panel-content .uf-bgsettings-imageitem:after {
     content: '';
     display: table;
     clear: both; }
   #region-settings-sidebar .uf-region-bg-settings-panel-content .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num {
-    margin-top: -115px;
-    margin-left: 32px;
+    margin-top: -107px;
+    margin-left: 38px;
     position: static;
     float: left; }
   #region-settings-sidebar .uf-region-bg-settings-panel-content .uf-bgsettings-imageitem .uf-bgsettings-image-pos-x-num {
     margin-top: -75px;
-    margin-left: 30px;
+    margin-left: 38px;
     position: static;
     float: left; }
   #region-settings-sidebar .uf-region-bg-settings-panel-content .uf-bgsettings-imageitem .uf-bgsettings-use-image-size {
@@ -4501,10 +4539,11 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
       content: none; }
   #region-settings-sidebar .uf-region-bg-settings-panel-content .uf-bgsettings-imageitem .uf-bgsettings-image-color {
     position: static;
-    margin-top: -40px;
-    margin-right: 20px; }
+    margin-top: -53px;
+    margin-right: 16px; }
     #region-settings-sidebar .uf-region-bg-settings-panel-content .uf-bgsettings-imageitem .uf-bgsettings-image-color .sp-replacer.sp-light {
-      margin-top: 0; }
+      margin-top: 0;
+      width: 100%; }
 
 #region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num {
   margin-top: -100px;
@@ -4516,45 +4555,56 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 
 #region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-use-image-size {
   padding-left: 0;
-  margin: 15px 0; }
+  margin: 15px 0 0; }
 
 #region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .upfront-field-wrap-number.uf-bgsettings-image-size {
   padding-left: 5px; }
 
 #region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-image-color {
   position: static;
-  margin-top: -36px;
+  margin-top: -54px;
   margin-right: 0; }
   #region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-image-color .sp-replacer.sp-light {
-    width: 18px;
-    float: left; }
+    width: 100px; }
 
 #region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-image-tile {
   padding-left: 0;
-  padding-right: 0; }
+  padding-right: 0;
+  padding: 0;
+  width: 253px; }
 
 #region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-image-default:before {
   width: 260px;
   content: '';
   display: block;
-  padding-bottom: 15px;
-  margin-top: 5px;
+  padding-bottom: 0;
+  margin-top: 0;
   margin-left: -15px;
   margin-right: -15px; }
 
 #region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-featured-fallback-image-color {
-  width: 75px; }
+  width: 186px; }
   #region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-featured-fallback-image-color label.upfront-field-label-block {
     float: right;
     margin-top: 7px; }
 
+#region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem #region-settings-sidebar .uf-bgsettings-featured-fallback-image-pick {
+  position: absolute;
+  right: 16px;
+  bottom: 111px; }
+
 #region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-featured-fallback-image-pick input.upfront-field-button {
   padding: 0 10px;
-  background: #e6f3ff;
-  height: 26px;
-  max-height: 26px;
-  border: 1px solid #a3bfd9;
-  border-radius: 3px; }
+  background: #fff;
+  height: 22px;
+  max-height: 22px;
+  border: 1px solid #a8a8a8;
+  color: #212121;
+  border-radius: 2px;
+  opacity: 0.75; }
+
+#region-settings-sidebar .uf-region-bg-settings-panel-content .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-featured-fallback-image-pick input.upfront-field-button:hover {
+  opacity: 1; }
 
 .upfront-region-bg-setting-padding .upfront-field-select-single {
   width: 215px;
@@ -4898,6 +4948,9 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
   margin-left: 16px;
   margin-top: 3px; }
 
+#region-settings-sidebar .upfront-bg-setting-tab-color .upfront-bg-setting-tab-primary .upfront-field-wrap {
+  margin-top: 4px; }
+
 .upfront-modal-bg-settings-fixed .uf-bgsettings-color-pick label:after {
   content: ':'; }
 
@@ -4915,9 +4968,9 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
   bottom: 49px; }
 
 #region-settings-sidebar .upfront-bg-setting-tab-primary .uf-bgsettings-image-pick {
-  top: auto;
-  bottom: 46px;
-  right: -68px; }
+  top: -30px;
+  bottom: auto;
+  right: 16px; }
 
 #region-settings-sidebar .upfront-bg-setting-tab-featured .upfront-bg-setting-tab-primary .uf-bgsettings-image-pick {
   top: -36px;
@@ -4930,8 +4983,13 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
   background: #fff;
   height: 22px;
   max-height: 22px;
-  border: 1px solid #e2e2e2;
-  border-radius: 2px; }
+  border: 1px solid #a8a8a8;
+  border-radius: 2px;
+  opacity: 0.75;
+  color: #4a4a4a; }
+
+.uf-bgsettings-image-pick:hover {
+  opacity: 1; }
 
 .upfront-modal-bg-settings-fixed .upfront-bg-setting-tab-primary .uf-bgsettings-image-pick {
   position: static;
@@ -4964,13 +5022,15 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 
 #region-settings-sidebar .upfront-bg-setting-tab.upfront-bg-setting-tab-image {
   background: #f2f2f2;
-  padding: 0; }
+  padding: 0;
+  position: relative; }
 
 #region-settings-sidebar .upfront-bg-setting-tab-image .upfront-bg-setting-tab-primary {
   float: none;
   background: none;
   position: relative;
-  padding: 0 16px; }
+  padding: 0 16px;
+  width: auto; }
 
 .upfront-modal-bg-settings-global .upfront-bg-setting-tab-primary .uf-bgsettings-image-pick {
   top: 135px;
@@ -4988,7 +5048,9 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 
 #region-settings-sidebar .uf-bgsettings-image-pick .upfront-field-button {
   height: 22px;
-  padding: 0 10px; }
+  padding: 0 10px;
+  line-height: 22px;
+  font-weight: 700; }
 
 .uf-bgsettings-imageitem .uf-bgsettings-image-tile {
   height: 24px;
@@ -5010,12 +5072,16 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 #region-settings-sidebar .uf-bgsettings-imageitem .uf-bgsettings-image-tile {
   clear: both;
   padding: 15px 12px;
-  margin: 0; }
+  margin: 0;
+  padding-top: 0; }
   #region-settings-sidebar .uf-bgsettings-imageitem .uf-bgsettings-image-tile div {
     width: 50%;
     margin: 0; }
     #region-settings-sidebar .uf-bgsettings-imageitem .uf-bgsettings-image-tile div span {
       margin: 0 0 0 1px; }
+
+#region-settings-sidebar .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-image-tile div {
+  width: 47%; }
 
 .uf-bgsettings-image-tile label {
   font-weight: normal;
@@ -5040,7 +5106,11 @@ div.upfront-bg-setting-tab-primary .uf-bgsettings-image-style .upfront-field-lab
 #region-settings-sidebar .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y {
   padding: 0 16px;
   margin: 0;
-  width: 155px; }
+  width: 155px;
+  margin-bottom: 9px; }
+
+#region-settings-sidebar .uf-bgsettings-image-pos-y .upfront-field-slider {
+  margin-top: 12px; }
 
 #region-settings-sidebar .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num {
   top: 85px;
@@ -5188,33 +5258,37 @@ div.upfront-bg-setting-tab-primary .uf-bgsettings-image-style .upfront-field-lab
   width: auto; }
 
 #region-settings-sidebar div.upfront-bg-setting-tab-primary .upfront-field-wrap.uf-bgsettings-slider-transition .upfront-field-label-block {
-  margin-bottom: 3px; }
+  margin-bottom: 7px; }
 
 #region-settings-sidebar .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .upfront-field-wrap > label {
   color: #4a4a4a;
   font-size: 11px;
   font-family: "Open Sans", verdana, sans-serif;
   padding: 0;
-  line-height: 11px;
+  line-height: 10px;
   margin-bottom: 3px; }
 
 #region-settings-sidebar .upfront-bg-setting-tab-featured .uf-bgsettings-imageitem .upfront-field-wrap.uf-bgsettings-image-color > label {
-  line-height: 25px; }
+  line-height: normal;
+  float: none; }
 
 #region-settings-sidebar .upfront-bg-setting-tab-featured .uf-bgsettings-image-size {
   top: 80px; }
 
 div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-block {
-  margin-bottom: 0;
+  margin-bottom: 4px;
   color: #4a4a4a;
   font-size: 11px;
-  font-family: verdana, sans-serif;
+  font-family: "Open Sans", verdana, sans-serif;
   padding: 0;
   line-height: inherit; }
 
 #region-settings-sidebar .upfront-settings-item-content .uf-bgsettings-slider-control,
 #region-settings-sidebar .upfront-settings-item-content .uf-bgsettings-slider-control-style {
-  margin: 7px 0 0; }
+  margin: 5px 0 0; }
+
+#region-settings-sidebar .uf-bgsettings-slider-slidesitem .upfront-settings-item {
+  border-top: 1px solid #dcdcdc; }
 
 .uf-bgsettings-slideritem label span {
   font-weight: normal; }
@@ -5264,7 +5338,7 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 
 #region-settings-sidebar .uf-bgsettings-image-color {
   float: right;
-  width: 28%;
+  width: 114px;
   position: absolute;
   top: -49px;
   right: 16px; }
@@ -5286,7 +5360,7 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 .uf-bgsettings-image-color label {
   color: #4a4a4a;
   font-size: 11px;
-  font-family: verdana, sans-serif;
+  font-family: "Open Sans", verdana, sans-serif;
   padding: 0;
   margin-bottom: 0;
   margin-left: 0;
@@ -5361,12 +5435,12 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 .uf-bgsettings-mapitem label span {
   color: #4a4a4a;
   font-size: 11px;
-  font-family: verdana, sans-serif;
+  font-family: "Open Sans", verdana, sans-serif;
   font-weight: normal;
   margin: 0;
   padding: 0;
   line-height: 10px;
-  margin-bottom: 3px; }
+  margin-bottom: 7px; }
 
 .uf-bgsettings-mapitem .upfront-field-slider-value {
   display: none; }
@@ -5419,8 +5493,12 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
   margin-top: 0;
   width: 50%; }
 
+#region-settings-sidebar .uf-bgsettings-slider-time {
+  color: #909090; }
+
 #region-settings-sidebar .uf-bgsettings-slider-time input {
-  width: 50%; }
+  width: 50%;
+  margin-right: 2px; }
 
 .upfront-modal-bg-settings-fixed .uf-bgsettings-slideritem .uf-bgsettings-slider-time {
   margin-right: 10px; }
@@ -5441,7 +5519,7 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 .upfront-bg-slider-slides .upfront-settings-item-content,
 .uf-bgsettings-slider-slidesitem .upfront-settings-item-content {
   position: relative;
-  margin: 20px -7px 0; }
+  margin: 18px -7px 0; }
 
 .upfront-bg-slider-image-loading {
   min-height: 126px; }
@@ -5520,11 +5598,19 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 .background-type-field .upfront-field-select,
 .background-image-field .upfront-field-select {
   max-width: 140px;
-  margin-top: 3px; }
+  margin-top: 7px; }
+
+#region-bg-settings .background-type-field .upfront-field-select,
+#region-bg-settings .background-image-field .upfront-field-select {
+  max-width: inherit; }
+
+#region-bg-settings .background-type-field.upfront-field-half-width .upfront-field-select,
+#region-bg-settings .background-image-field.upfront-field-half-width .upfront-field-select {
+  max-width: 50%; }
 
 #region-settings-sidebar .upfront-bg-setting-type {
   width: 100%;
-  padding: 10px 16px;
+  padding: 20px 16px 8px;
   background: #f2f2f2;
   clear: both;
   position: relative; }
@@ -5556,6 +5642,10 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 .uf-bgsettings-video-url {
   margin: 10px 0 5px; }
 
+#region-settings-sidebar .uf-bgsettings-video-url {
+  margin-top: 0;
+  margin-bottom: 10px; }
+
 .upfront-bg-setting-tab-video span label,
 .upfront-bg-setting-tab-video .uf-bgsettings-item .upfront-field-wrap > label {
   color: #4a4a4a;
@@ -5567,10 +5657,13 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
   line-height: 10px; }
 
 .upfront-bg-setting-tab-video .uf-bgsettings-item .upfront-field-wrap > label {
-  margin-bottom: 3px; }
+  margin-bottom: 7px; }
 
 .uf-bgsettings-video-color {
   width: 100%; }
+
+#region-settings-sidebar .uf-bgsettings-video-color {
+  margin-bottom: 0; }
 
 .upfront-modal-bg-settings-global .uf-bgsettings-video-color {
   width: 150px; }
@@ -5581,7 +5674,9 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 .upfront-bg-setting-tab-video .uf-bgsettings-item .uf-bgsettings-video-color > label {
   float: right;
   line-height: 25px;
-  width: 4.3rem; }
+  width: 5.1rem;
+  font-weight: 600;
+  margin-bottom: 0; }
 
 .uf-bgsettings-video-mute, .uf-bgsettings-video-autoplay, .uf-bgsettings-video-loop {
   display: inline-block;
@@ -5622,6 +5717,9 @@ span.upfront-settings-item-title:after {
   float: none;
   width: auto; }
 
+#region-settings-sidebar .uf-bgsettings-featured-fallback-image-color .sp-replacer {
+  width: 8rem; }
+
 .upfront-modal-bg-settings-global .uf-bgsettings-coloritem .uf-bgsettings-color-pick {
   width: 9rem; }
 
@@ -5637,7 +5735,8 @@ span.upfront-settings-item-title:after {
 
 #region-settings-sidebar .upfront-bg-setting-tab-featured .upfront-bg-setting-tab-primary {
   float: none;
-  position: relative; }
+  position: relative;
+  width: 50%; }
 
 #region-settings-sidebar .upfront-bg-setting-tab-featured {
   padding: 0 16px; }
@@ -5853,10 +5952,13 @@ span.upfront-settings-item-title:after {
   margin-top: 0;
   width: 60%;
   display: inline-block;
-  margin-bottom: 10px; }
+  margin-bottom: 9px; }
+
+#region-settings-sidebar .uf-bgsettings-video-style {
+  margin-top: 15px; }
 
 .uf-bgsettings-video-pick {
-  margin: 12px 0 0;
+  margin: 17px 0 0;
   vertical-align: top;
   float: right; }
 
