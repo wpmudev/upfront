@@ -19904,6 +19904,26 @@ div.preset-manager-panel .duration label {
   top: 57px;
   z-index: 100; }
 
+/* Slider module */
+#element-settings-sidebar .upfront-icon-add-slide {
+  color: #1f2f3e;
+  font-size: 11px;
+  font-family: Verdana, sans-serif;
+  text-align: center;
+  width: 63px;
+  height: 37px;
+  float: left;
+  margin: 0 0 15px;
+  cursor: pointer;
+  padding-top: 6px; }
+
+#element-settings-sidebar .upfront-icon-add-slide:before {
+  background-image: url("../img/uf-core-el-sprite.svg");
+  background-position: -258px -128px;
+  background-color: #1691fb;
+  border-radius: 50%;
+  transform: scale(0.8); }
+
 div.preset-manager-panel a.upfront-preset-edit {
   font-size: 12px;
   color: #212121;
