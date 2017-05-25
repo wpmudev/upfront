@@ -389,9 +389,33 @@
 .upfront-add-region-container-active .upfront-icon-control-region-resize-s {
 	display: none;
 }
+
+.upfront-region-container .upfront-icon-control-region-resize-n:before,
+.upfront-region-container .upfront-icon-control-region-resize-e:before,
+.upfront-region-container .upfront-icon-control-region-resize-s:before,
+.upfront-region-container .upfront-icon-control-region-resize-w:before {
+	width: 100%;
+	height: 5px;
+	background: #fff;
+	border: 1px solid rgb(33,33,33);
+	border-radius: 2px;
+	max-width: 50px;
+}
+
+.upfront-region-container .upfront-icon-control-region-resize-e:before,
+.upfront-region-container .upfront-icon-control-region-resize-w:before {
+	height: 100%;
+	max-height: 50px;
+	width: 5px;
+}
+
+.upfront-region-container .upfront-panels-shadow {
+	box-shadow: none;
+}
+
 .upfront-region-resize-handle {
 	position: absolute;
-	bottom: -14px;
+	bottom: -3px;
 	left: 0;
 	right: 0;
 	width: auto;
@@ -410,14 +434,14 @@
 	top: 0;
 	bottom: 0;
 	left: auto;
-	right: -13px;
+	right: -22px;
 	width: 24px;
 	cursor: ew-resize;
 }
 .upfront-region-resize-handle-w {
 	top: 0;
 	bottom: 0;
-	left: -13px;
+	left: -3px;
 	right: auto;
 	width: 24px;
 	cursor: ew-resize;
@@ -1024,7 +1048,7 @@
 	font:normal 11px/2.7 Verdana, sans serif;
 }
 .upfront-region-panel-item-add-region .upfront-icon {
-	padding: 2px;
+	padding: 6px;
 }
 .upfront-inline-panel-item .upfront-icon:before {
 	float: none !important;
