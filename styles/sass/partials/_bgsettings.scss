@@ -766,8 +766,8 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 	font-size: 11px;
 	font-family: Verdana, sans-serif;
 	text-align: center;
-	width: 63px;
-	margin: 0 0 15px;
+	width: 42px;
+	margin: 0 0 15px 8px;
 	cursor: pointer;
 	padding-top: 6px;
 }
@@ -776,6 +776,20 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 	display: block;
 	margin: 0 auto;
 }
+
+#region-settings-sidebar .upfront-bg-slider-add-image.upfront-icon:before {
+	content: "+";
+	font-size: 12px;
+	color: #fff;
+	font-weight: 800;
+	background: rgb(22,145,251);
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	line-height: 16px;
+	padding-left: 0;
+}
+
 .upfront-bg-slider-image img {
 	width: 100%;
 	position: absolute;
