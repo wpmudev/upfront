@@ -118,29 +118,14 @@
 	height: 470px;
 	max-height: 470px;
 }
-#settings .uyoutube-settings .field-display_style .upfront-field-multiple {
-	display: inline-block;
-}
-#settings .uyoutube-settings .field-display_style .upfront-field-multiple:first-child {
-	margin-right: 50px;
-}
 
 #settings .uyoutube-settings .upfront-settings-item-tab-content {
 	overflow-y: auto;
 	max-height: 370px;
 }
 
-#settings .uyoutube-settings .upfront-settings-item-tab-content .multiple_video_section .upfront-settings-item {
-	margin-bottom: 15px;
-}
-
 .multiple_video_section {
 	margin-top: 15px;
-}
-
-.upfront-field-wrap-multiple span.upfront-field-multiple-horizontal {
-	margin-right: 15px;
-	margin-top: 5px;
 }
 
 .multiple_settings .upfront-settings-item-title {
@@ -154,10 +139,6 @@
 
 .multiple_settings .upfront-field-wrap-checkboxes {
 	margin-top: 0px;
-}
-
-.multiple_sources.yt_first_video {
-	margin-top: 15px;
 }
 
 /* Starting */
@@ -295,10 +276,18 @@ input.upfront-like-box_url:-ms-input-placeholder {
 	margin-bottom: 3px;
 }
 
+.multiple_video_section {
+	padding-top: 10px;
+}
+
 .multiple_video_section .upfront-settings-item {
 	padding-top: 10px;
 }
 
 .multiple_video_section .upfront-settings-item-title {
 	margin-top: -10px;
+}
+
+.first-video-to-thumbnails .upfront_toggle_field {
+	margin-bottom: 0px;
 }
