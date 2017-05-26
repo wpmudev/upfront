@@ -136,12 +136,13 @@
 #element-settings-sidebar .upfront-settings-item .login-general-settings-description:before {
 	content: ' ';
 	display: block;
-	background: url('../img/uf-core-el-sprite_new.png') no-repeat -484px -142px;;
-	background: url('../img/uf-core-el-sprite_new.svg') no-repeat -484px -142px;;
-	width: 15px;
-	height: 14px;
+	background: url('../img/uf-core-el-sprite_new.png') no-repeat -483px -140px;
+	background: url('../img/uf-core-el-sprite_new.svg') no-repeat -483px -140px;
+	width: 16px;
+	height: 15px;
 	margin-right: 5px;
-	margin-top: 2px;
+	margin-top: 3px;
+	margin-bottom: 20px;
 	float: left;
 }
 

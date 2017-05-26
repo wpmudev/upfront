@@ -305,7 +305,7 @@ define([
 					fields: [
 						this.preview_check_field,
 						new Upfront.Views.Editor.Field.Radios_Inline({
-							className: "upfront_login-logout_style upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios-inline clear-after",
+							className: "upfront_login-logout_style upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios-inline upfront-field-padding-top clear-after",
 							model: this.model,
 							property: "logout_style",
 							layout: 'horizontal-inline',
@@ -483,6 +483,7 @@ define([
 	});
 
 	var LoginSettings_Field_DisplayAppearance = Login_SettingsItem_ComplexItem.extend({
+		className: 'general_settings_item',
 		initialize: function () {
 			var me = this;
 			var styles = [
@@ -494,6 +495,7 @@ define([
 					model: this.model,
 					property: "style",
 					layout: 'horizontal-inline',
+					className: 'upfront-field-padding-top',
 					values: styles,
 					change: function() { me.register_change(me); }
 				})

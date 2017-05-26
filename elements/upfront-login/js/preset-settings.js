@@ -42,6 +42,7 @@ define([
 						title: '',
 						multiple: false,
 						single: true,
+						className: 'upfront-field-padding-top',
 						state: 'form_wrapper_settings',
 						abccolors: [
 							{
@@ -90,6 +91,7 @@ define([
 						state: 'field_labels_settings',
 						title: Upfront.Settings.l10n.global.views.typography,
 						toggle: true,
+						className: 'upfront-field-padding-top',
 						global_typography: false,
 						fields: {
 							typeface: 'field_labels_font_face',
@@ -173,6 +175,7 @@ define([
 						title: '',
 						multiple: false,
 						single: true,
+						className: 'upfront-field-padding-top',
 						state: 'button_settings',
 						abccolors: [
 							{
@@ -237,6 +240,7 @@ define([
 						title: '',
 						multiple: false,
 						single: true,
+						className: 'upfront-field-padding-top',
 						state: 'lost_password_text_settings',
 						abccolors: [
 							{
@@ -271,6 +275,7 @@ define([
 						title: '',
 						multiple: false,
 						single: true,
+						className: 'upfront-field-padding-top',
 						state: 'login_trigger_settings',
 						abccolors: [
 							{
@@ -335,6 +340,7 @@ define([
 						title: '',
 						multiple: false,
 						single: true,
+						className: 'upfront-field-padding-top',
 						state: 'logout_link_settings',
 						abccolors: [
 							{
