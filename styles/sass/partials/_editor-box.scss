@@ -118,10 +118,9 @@
 #sidebar-ui .ueditor-save-post-data, #sidebar-ui #upfront-tax-add_term {
 	width: 42px;
 	height: 26px;
-	background-color: #1fcd8f;
-	border: solid 1px #1bb37d;
+	background-color: #909090;
+	border: solid 1px #909090;
 	font-family: Open Sans;
-	font-weight: 400;
 	font-size: 11px;
 	color: #ffffff;
 	display: inline-block;
@@ -680,6 +679,10 @@ div#ui-datepicker-div td a{
   margin: 0 0 -10px 0;
   opacity: 0.5;
 }
+.select-taxonomy-chosen label {
+	font-size: 11px;
+	color: rgba(33, 33, 33, .8);
+}
 .ueditor-box-wrapper label#post-status-display-label:before{
   background-position: -562px -385px;
 }
@@ -691,7 +694,7 @@ div#ui-datepicker-div td a{
 }
 .ueditor-bix-top-buttons{
   margin: 15px 15px 15px;
-  border-top:1px solid rgba(184, 207, 230, 0.3);
+  border-top:1px solid rgba(228, 228, 228, 1);
   margin-top: 10px;
 }
 a.ueditor-action-trash{
@@ -799,8 +802,12 @@ a.ueditor-action-trash:before {
 }
 
 .upfront-taxonomy-tab-wrapper #upfront-taxonomy-list {
-	background: #e5ecf2;
+	background: #e7e7e7;
 	padding: 7px;
+}
+
+.taxonomy-panel-content {
+	margin-top: -1px;
 }
 
 .upfront-taxonomy-tab {
@@ -808,7 +815,7 @@ a.ueditor-action-trash:before {
 	text-align: center;
 	background: none;
     font-weight: normal;
-    font-family: Tahoma;
+	font-family: Open Sans, Hevletica Neueu, Helvetica, sans-serif;
 	font-size: 11px;
 	color: #374456;
 	display: inline-block;
@@ -818,9 +825,9 @@ a.ueditor-action-trash:before {
 .upfront-taxonomy-tab.active {
 	padding: 2px 15px;
 	text-align: center;
-	background: #e5ecf2;
+	background: #e7e7e7;
     font-weight: normal;
-    font-family: Tahoma;
+	font-family: Open Sans, Hevletica Neueu, Helvetica, sans-serif;
 	font-size: 11px;
 	color: #374456;
 }
@@ -841,15 +848,11 @@ a.ueditor-action-trash:before {
 
 .ueditor-taxonomy-wrapper {
 	margin-top: 5px;
-	border-bottom: 1px solid rgba(184, 207, 230, 0.5);
+	border-bottom: 1px solid rgba(228, 228, 228, 1);
 	padding-bottom: 10px;
 }
 
 .select-taxonomy-chosen label {
-	font-weight: normal;
-    color: #7d99b3;
-    font-family: Tahoma;
-    margin-bottom: 3px;
     padding-left: 2px;
 }
 
