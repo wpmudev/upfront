@@ -49,10 +49,10 @@
 	margin-left: 165px;
 }
 .menu-item-editor {
-	background: #f5f9ff;
+	background: rgb(255, 255, 255);
 	line-height: 16px;
 	padding: 10px;
-	border: 1px solid #b8cfe6;
+	border: 1px solid rgb(170, 170, 170);
 	border-radius: 2px;
 	border-top: 0 none;
 	border-top-left-radius: 0;
@@ -68,11 +68,11 @@
 }
 .menu-item-header {
 	line-height: 24px;
-	background: #e6f2ff;
-	border: 1px solid #b8cfe6;
+	background: rgb(255, 255, 255);
+	border: 1px solid rgb(170, 170, 170);
 	padding: 0 98px 0 8px;
-	color: #2f475f;
-	border-radius: 2px;
+	color: rgba(33, 33, 33, .8);
+	border-radius: 3px;
 	position: relative;
 	cursor: pointer;
 }
@@ -141,7 +141,7 @@
 	border-top: 0 none;
 	border-right: 4px solid transparent;
 	border-left: 4px solid transparent;
-	border-bottom: 4px solid #6a8db4;
+	border-bottom: 4px solid rgba(33, 33, 33, .8);
 }
 .menu-item-header .menu-item-title {
 	font-weight: bold;
@@ -157,7 +157,7 @@
 }
 .menu-item-header .menu-item-type {
 	float: right;
-	color: #667a8f;
+	color: rgba(33, 33, 33, .8);
 	margin-right: -70px;
 	margin-top: -24px;
 }
@@ -184,24 +184,9 @@
 .menu-structure-item-depth-15 .menu-item-type {
 	display: none;
 }
-.menu-item-editor label {
-	color: #7d99b3;
-}
-.menu-item-editor input,
-.menu-item-editor input:hover {
-	line-height: 24px;
-	border: 1px solid #a2bfda;
-	border-radius: 2px;
-	background: white;
-	padding: 0 5px;
-	color: #2f475f;
-	width: 100%;
-	margin-bottom: 12px;
-}
 .menu-settings .menu-item-editor .upfront-field-wrap {
 	margin-top: 0;
 }
-
 .menu-item-editor .menu-item-type-editor {
 	margin-top: 5px;
 }
@@ -212,28 +197,26 @@
 .menu-structure-header span {
 	line-height: 26px;
 }
-.menu-structure-header .add-menu-item {
-	float: right;
-	line-height: 24px;
-	color: #6486a6;
-	padding: 0 15px;
-	border-radius: 3px;
-	border: 1px solid #a2bfda;
-	cursor: pointer;
-}
 .menu-item-editor .menu-item-entry-display {
 	display: block;
 }
 .menu-item-editor .menu-item-entry-input {
-	color: #00dc8d;
+	color: #fff;
 	line-height: 17px;
 	padding: 0 8px;
 	cursor: pointer;
-	border-radius: 2px;
-	background: #2f475f;
+	border-radius: 3px;
+	background: #909090;
+}
+#element-settings-sidebar .add-menu-item {
+	margin-left: 44px;
+	margin-right: 0px;
+}
+#element-settings-sidebar .add-menu-label {
+	margin-left: 5px;
 }
 .menu-item-target-label {
-	margin-top: 17px;
+	margin-top: 10px;
 }
 #settings .select-menu-field,
 #settings .select-menu-field .upfront-field-select {
