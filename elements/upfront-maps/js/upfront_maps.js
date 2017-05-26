@@ -64,7 +64,7 @@ define([
 			);
 		},
 		get_field_html: function () {
-			return '<button type="button"><img src="' + Upfront.data.upfront_maps.root_url + 'img/refresh.png" /></button>';
+			return '<button type="button upfront_map-refresh"></button>';
 		},
 		propagate_activation_request: function (e) {
 			e.preventDefault();
@@ -772,7 +772,7 @@ define([
 					values: controls,
 					change: function () { this.property.set({value: this.get_value()}); }
 				}),
-				new Upfront.Views.Editor.Field.Checkboxes({
+				new Upfront.Views.Editor.Field.Toggle({
 					model: this.model,
 					label: l10n.draggable_map,
 					property: "draggable",
@@ -782,7 +782,7 @@ define([
 					multiple: false,
 					change: function () { this.property.set({value: this.get_value()}); }
 				}),
-				new Upfront.Views.Editor.Field.Checkboxes({
+				new Upfront.Views.Editor.Field.Toggle({
 					model: this.model,
 					label: l10n.hide_markers,
 					className: 'markers-checkbox',
@@ -792,7 +792,7 @@ define([
 					multiple: false,
 					change: function () { this.property.set({value: this.get_value()}); }
 				}),
-				new Upfront.Views.Editor.Field.Checkboxes({
+				new Upfront.Views.Editor.Field.Toggle({
 					model: this.model,
 					label: l10n.use_custom_map_code,
 					property: "use_custom_map_code",
@@ -817,7 +817,7 @@ define([
 				new Upfront.Views.Editor.Field.Button({
 					model: this.model,
 					label: l10n.open_map_code_panel,
-					className: "open-map-code-panel-button",
+					className: "open-map-code-panel-button sidebar-commands-small-button",
 					compact: true
 				})
 			]);

@@ -301,11 +301,11 @@ define([
 				new Upfront.Views.Editor.Settings.Item({
 					model: this.model,
 					title: l10n.logged_in_preview,
-					className: 'upfront-settings-item relative',
+					className: 'upfront-settings-item general_settings_item relative',
 					fields: [
 						this.preview_check_field,
-						new Upfront.Views.Editor.Field.Radios({
-							className: "upfront_login-logout_style upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios clear-after",
+						new Upfront.Views.Editor.Field.Radios_Inline({
+							className: "upfront_login-logout_style upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios-inline clear-after",
 							model: this.model,
 							property: "logout_style",
 							layout: 'horizontal-inline',
@@ -490,7 +490,7 @@ define([
 				{label: l10n.dropdown, value: "dropdown"}
 			];
 			this.fields = _([
-				new Upfront.Views.Editor.Field.Radios({
+				new Upfront.Views.Editor.Field.Radios_Inline({
 					model: this.model,
 					property: "style",
 					layout: 'horizontal-inline',

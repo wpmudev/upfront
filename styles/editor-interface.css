@@ -18409,7 +18409,7 @@ li#new-custom-breakpoint {
 
 .chosen-container-multi .chosen-choices {
   background-image: none !important;
-  border-color: #a2bfda !important; }
+  border-color: #909090 !important; }
 
 .chosen-container-active .chosen-choices, .chosen-container .chosen-drop {
   border-color: #909090; }
