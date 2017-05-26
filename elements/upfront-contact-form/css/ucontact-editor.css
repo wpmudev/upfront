@@ -44,13 +44,16 @@ div.no-title div.upfront-settings-item-title {
   text-transform: uppercase;
 }
 
-.smtp-configuration .upfront-field-wrap-text label.upfront-field-label-block {
-  font-weight:normal;
+.smtp_settings_item {
+	margin: 0 15px 0px 15px;
 }
 
-.smtp-authentication .upfront-settings-item-content {
-    margin-left: 15px;
-    border-left: 2px solid #e5ecf4;
+.smtp_settings_item .smtp_username {
+	margin-top: -5px;
+}
+
+.smtp-configuration .upfront-field-wrap-text label.upfront-field-label-block {
+  font-weight:normal;
 }
 
 /* pixel perfection for SMTP settings*/
