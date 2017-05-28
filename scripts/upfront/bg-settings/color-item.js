@@ -17,7 +17,8 @@ define([
 				model: this.model,
 				property: 'background_color',
 				use_breakpoint_property: true,
-				default_value: '#ffffff',
+				default_value: 'transparent', // default to transparent color
+				blank_alpha: 0,
 				spectrum: {
 					move: function (color) {
 						me.preview_color(color);
