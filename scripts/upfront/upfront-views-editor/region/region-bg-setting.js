@@ -526,7 +526,7 @@
 					$region_sticky = $region_footer.find('.upfront-region-bg-setting-sticky')
 				;
 
-				if ( !is_responsive && ( this.model.is_main() || sub == 'top' || sub == 'bottom' ) ) {
+				if ( !is_responsive ) {
 					this.render_sticky_settings($region_sticky);
 
 					$region_footer.find('.upfront-region-bg-setting-edit-css').on('click', function(e){
