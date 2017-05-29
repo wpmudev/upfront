@@ -1140,7 +1140,7 @@
 						me.$el.find('.chosen-drop').css('display', 'none');
 					}
 					// style differently than when closed.
-					this.$el.removeClass('upfront-field-wrap-select-expanded');
+					me.$el.removeClass('upfront-field-wrap-select-expanded');
 					me.$el.find('select').trigger("chosen:close");
 
 					me.allowMouseWheel();
