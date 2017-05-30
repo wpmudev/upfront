@@ -119,6 +119,7 @@
 								}
 							} else {
 								this.$el.removeClass('upfront-bg-setting-type-image');
+								this.$el.find('.upfront-field-select').css({'min-width': '100%', 'max-width': '100%'});
 							}
 							Upfront.Events.trigger("region:background:type:changed");
 						}
