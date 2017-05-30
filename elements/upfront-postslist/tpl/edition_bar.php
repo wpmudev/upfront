@@ -2,12 +2,12 @@
 	<div class="ueditor-bar-buttons">
 		<a href="#" class="ueditor-bar-show_advanced ueditor-bar-icon ueditor-bar-icon-only" title="{{Upfront.Settings.l10n.global.content.advanced_tools}}"></a>
 		{[ if(cancelButton){ ]}
-		<a class="ueditor-action-cancel ueditor-bar-icon" href="#">{{Upfront.Settings.l10n.global.content.cancel}}</a>
+		<a class="ueditor-action-cancel sidebar-commands-button light ueditor-bar-icon" href="#">{{Upfront.Settings.l10n.global.content.cancel}}</a>
 		{[ } ]}
 		{[ if(draftButton){ ]}
-		<a class="ueditor-action-draft" href="#">{{Upfront.Settings.l10n.global.content.save_draft}}</a>
+		<a class="ueditor-action-draft sidebar-commands-button light" href="#">{{Upfront.Settings.l10n.global.content.save_draft}}</a>
 		{[ } ]}
-		<a class="ueditor-action-publish ueditor-bar-icon" href="#">{{buttonText}}</a>
+		<a class="ueditor-action-publish sidebar-commands-button light ueditor-bar-icon" href="#">{{buttonText}}</a>
 	</div>
 	<div class="ueditor-bar-advanced">
 		<div class="ueditor-row-item">
