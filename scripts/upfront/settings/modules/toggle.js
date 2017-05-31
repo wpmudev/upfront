@@ -24,9 +24,9 @@ define([
 			}
 
 			this.fields = _([
-				new Upfront.Views.Editor.Field.Checkboxes({
+				new Upfront.Views.Editor.Field.Toggle({
 					model: this.model,
-					className: me.options.classStyle + ' checkbox-title',
+					className: me.options.classStyle + ' checkbox-title upfront-toggle-field',
 					name: me.options.name,
 					label: '',
 					default_value: me.options.default_value,
@@ -39,7 +39,7 @@ define([
 					},
 					show: function(value, $el) {
 						var $wrapper = $el.closest('.upfront-settings-post-wrapper');
-						
+
 						if(value == "yes") {
 							_.each(me.options.fields, function(field) {
 								$wrapper.find('.' + field).show();

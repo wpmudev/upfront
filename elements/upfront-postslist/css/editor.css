@@ -542,6 +542,7 @@ div.preset-manager-panel .uf-posts-content-length input {
 div.preset-manager-panel .php-date-format {
 	width: 140px;
 	float: left;
+	margin-bottom: 15px;
 }
 
 div.preset-manager-panel .php-date-format label {
@@ -641,7 +642,8 @@ div.preset-manager-panel .category-show-max,
 div.preset-manager-panel .category-separate,
 div.preset-manager-panel .tags-show-max,
 div.preset-manager-panel .tags-separate {
-	width: 50%;
+	width: 46%;
+	margin-right: 2%;
 	display: inline-block;
 }
 
@@ -652,23 +654,23 @@ div.preset-manager-panel .tags-separate inline {
 	width: 95%;
 }
 
+div.upfront-posts-part .borderType, div.upfront-posts-part .borderColor {
+	margin-left: 10px !important;
+}
+
+div.upfront-posts-part .borderWidth {
+	width: 60px;
+}
+
 div.preset-manager-panel .category-padding-top-bottom,
 div.preset-manager-panel .category-margin-top-bottom,
 div.preset-manager-panel .tags-padding-top-bottom,
 div.preset-manager-panel .tags-margin-top-bottom {
 	width: 48%;
 	float: left;
-	border-left: 2px solid #dae6f2;
-    padding-left: 10px;
 	clear: left;
 	font-size: 11px;
 	position: relative;
-}
-
-div.preset-manager-panel .category-background,
-div.preset-manager-panel .tags-background {
-	border-left: 2px solid #dae6f2;
-    padding-left: 10px;
 }
 
 div.preset-manager-panel .category-background label,
@@ -684,13 +686,13 @@ div.preset-manager-panel .tags-margin-left-right {
 	width: 48%;
 	float: left;
 	font-size: 11px;
-	margin-top: 28px;
+	margin-top: 22px;
 	position: relative;
 }
 
 div.preset-manager-panel .category-margin-left-right,
 div.preset-manager-panel .tags-margin-left-right {
-	margin-top: 24px;
+	margin-top: 16px;
 }
 
 div.preset-manager-panel .category-padding-top-bottom,
@@ -731,16 +733,16 @@ div.preset-manager-panel .category-padding-top-bottom:before,
 div.preset-manager-panel .category-margin-top-bottom:before,
 div.preset-manager-panel .tags-padding-top-bottom:before,
 div.preset-manager-panel .tags-margin-top-bottom:before {
-	background-position: -660px -204px;
-	top: 29px;
-    left: 3px;
+	background-position: -666px -201px;
+	top: 24px;
+	left: 0px;
 }
 
 div.preset-manager-panel .category-padding-left-right:before,
 div.preset-manager-panel .category-margin-left-right:before,
 div.preset-manager-panel .tags-padding-left-right:before,
 div.preset-manager-panel .tags-margin-left-right:before {
-	background-position: -660px -236px;
+	background-position: -660px -232px;
 	top: 5px;
 	left: -7px;
 }

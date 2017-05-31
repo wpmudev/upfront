@@ -819,7 +819,6 @@
             		// Use UFC index number instead of color value for theme colors
 					this.$(".color_picker_rgb_preview").html("#ufc" + this.field_options.ufc_index);
 				} else {
-					$alpha.removeClass("sp-alpha-disabled sp-alpha-lower-opacity");
 					this.$(".sp-alpha-overlay").remove();
 				}
 			}
