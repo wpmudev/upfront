@@ -849,7 +849,7 @@ define([
 		},
 
 		addGridLines: function(initialPoint, maskHeight){
-			var step = breakpointColumnPadding,
+			var step = breakpointColumnPadding === 0 ? 1 : breakpointColumnPadding,
 				height = maskHeight - this.bordersWidth,
 				current = this.bordersWidth / 2
 			;

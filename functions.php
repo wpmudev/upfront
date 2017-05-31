@@ -9,6 +9,7 @@
 
 require_once(dirname(__FILE__) . '/library/upfront_functions.php');
 require_once(dirname(__FILE__) . '/library/upfront_functions_theme.php');
+require_once(dirname(__FILE__) . '/library/class_upfront_cache_utils.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_permissions.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_registry.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_debug.php');

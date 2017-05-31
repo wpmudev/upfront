@@ -1,4 +1,5 @@
 <?php
+require_once(dirname(dirname(__FILE__)) . '/class_upfront_cache_utils.php');
 
 class Upfront_Themes_RequiredPage {
 
@@ -59,7 +60,7 @@ class Upfront_Themes_RequiredPage {
 			$this->_wp_template = 'page_tpl-' . $this->_page_data['page_slug'] . '.php';
 		}
 		if (!empty($this->_wp_template)) update_post_meta($post_id, '_wp_page_template', $this->_wp_template);
-		update_option($this->_key, $post_id);
+		Upfront_Cache_Utils::update_option($this->_key, $post_id);
 		$this->_post_id = $post_id;
 	}
 	public function get_post_id() {
