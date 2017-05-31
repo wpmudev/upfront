@@ -213,6 +213,7 @@
 									var cs = [
 										new Commands.Command_ResponsiveUndo({"model": this.model}),
 										new Commands.Command_ResponsiveRedo({"model": this.model}),
+										new Commands.Command_StopResponsiveMode({"model": this.model}),
 										new Commands.Command_ToggleGrid({"model": this.model})
 									];
 
@@ -221,7 +222,7 @@
 									}
 									Upfront.plugins.call('insert-responsive-save-buttons', {commands: cs, model: this.model});
 
-									cs.push(new Commands.Command_StopResponsiveMode());
+
 									this.commands = _(cs);
                 } else {
                     this.commands = _([

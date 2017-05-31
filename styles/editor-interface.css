@@ -1097,7 +1097,7 @@ span.draggable-post-element.element-dragging {
   font-size: 15px;
   padding: 5px 0 15px;
   margin: 0 15px;
-  border-bottom: 1px solid #8fa9bf; }
+  border-bottom: 1px solid #e4e4e4; }
 
 #sidebar-ui .panel-section:last-child {
   margin-bottom: 0;
@@ -1799,7 +1799,7 @@ input.upfront-field-text:hover,
   color: #212121; }
 
 .upfront-field-select-option-selected label {
-  color: #99b5cc; }
+  color: #212121; }
 
 .upfront-field-select-option label .upfront-field-icon {
   margin-top: 0;
@@ -7708,22 +7708,12 @@ span.upfront-settings-item-title:after {
 #settings .upfront-cancel_settings {
   position: relative;
   color: #fff;
-  padding-left: 20px;
-  margin-right: 15px; }
+  left: 15px;
+  float: left;
+  min-width: 90px; }
 
 .upfront-field-padding-top {
   padding-top: 10px; }
-
-#settings .upfront-cancel_settings:before {
-  background-position: -735px -236px !important;
-  display: block;
-  content: "";
-  background: transparent url(../img/uf-ui-sprite.svg);
-  width: 12px !important;
-  height: 12px !important;
-  position: absolute;
-  left: 0px;
-  top: 6px; }
 
 .upfront-field-title,
 .upfront-settings-item-title,
@@ -7810,7 +7800,8 @@ span.upfront-settings-item-title:after {
   color: #eff8ff;
   border-radius: 0;
   max-width: 286px;
-  overflow: hidden; }
+  overflow: hidden;
+  min-width: 90px; }
 
 .upfront-ui .upfront-save_settings:hover {
   background: #00bf80; }
@@ -17666,20 +17657,8 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before {
 #sidebar-ui .sidebar-commands-responsive .sidebar-panel.expanded .sidebar-panel-content .sp-container.sp-light.sp-alpha-enabled {
   z-index: 99999999; }
 
-#sidebar-ui .sidebar-commands-responsive-control .exit-responsive {
-  margin-top: 10px;
-  padding: 2px 5px;
-  width: 100%;
-  max-width: 120px;
-  overflow: hidden;
-  white-space: nowrap;
-  line-height: 34px;
-  font-size: 15px;
-  height: 36px;
-  opacity: .8;
-  background: #54708C;
-  box-shadow: 0px 1px 0px 0px #2F3E4D, inset 0px 2px 0px 0px rgba(255, 255, 255, 0.1);
-  text-align: center; }
+#sidebar-ui .sidebar-commands-responsive-control .command-save {
+  margin-top: 60px; }
 
 #sidebar-ui .command-browse-layout-responsive {
   overflow: hidden;
@@ -17823,7 +17802,12 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before {
 li.activate-breakpoints-dropdown {
   margin: 15px 0 10px 15px;
   height: 23px;
-  max-width: 230px; }
+  max-width: 230px;
+  position: relative;
+  z-index: 999; }
+
+li.activate-breakpoints-dropdown .upfront-field-select {
+  opacity: 1; }
 
 .activate-breakpoints-dropdown .upfront-field-select-options {
   max-height: 30px;
@@ -19394,7 +19378,7 @@ html {
   margin: 2px 5px 0 0; }
 
 .command-open-font-manager, .command-edit-css {
-  margin-bottom: 10px !important; }
+  margin: 0 0 10px 5px !important; }
 
 a.upfront-css-font {
   display: block;

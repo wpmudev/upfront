@@ -9,7 +9,7 @@
 
         return Command.extend({
             enabled: true,
-            className: 'exit-responsive',
+            className: 'exit-responsive sidebar-commands-small-button',
             render: function () {
                 this.$el.html("<span title='"+ l10n.exit_responsive  +"'>" + l10n.exit_responsive + "</span>");
             },

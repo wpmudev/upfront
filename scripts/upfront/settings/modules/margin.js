@@ -8,12 +8,14 @@ define([
 		initialize: function(options) {
 			this.options = options || {};
 			var me = this,
-				column_margin = Upfront.Settings.LayoutEditor.Grid.column_margin;
+				column_margin = Upfront.Settings.LayoutEditor.Grid.column_margin,
+				state = this.options.state
+			;
 
 			this.fields = _([
-				new Upfront.Views.Editor.Field.Checkboxes({
+				new Upfront.Views.Editor.Field.Toggle({
 					model: this.model,
-					className: 'use-margin checkbox-title',
+					className: 'use-margin checkbox-title upfront-toggle-field',
 					use_breakpoint_property: true,
 					name: me.options.fields.use,
 					label: '',
@@ -34,22 +36,10 @@ define([
 								stateSettings.find('.margin-bottom').find('input').prop( "disabled", true ).css('opacity', 0.4);
 								stateSettings.find('.margin-right').find('input').prop( "disabled", true ).css('opacity', 0.4);
 							}
-							
-							stateSettings.find('.margin-top').show();
-							stateSettings.find('.margin-bottom').show();
-							stateSettings.find('.margin-left').show();
-							stateSettings.find('.margin-right').show();
-							stateSettings.find('.margin-lock').show();
-							stateSettings.find('.margin-reset-posts-length').show();
-							stateSettings.find('.margin-reset-posts').show();
+
+							stateSettings.find('.' + state + '-toggle-wrapper').show();
 						} else {
-							stateSettings.find('.margin-top').hide();
-							stateSettings.find('.margin-bottom').hide();
-							stateSettings.find('.margin-left').hide();
-							stateSettings.find('.margin-right').hide();
-							stateSettings.find('.margin-lock').hide();
-							stateSettings.find('.margin-reset-posts-length').hide();
-							stateSettings.find('.margin-reset-posts').hide();
+							stateSettings.find('.' + state + '-toggle-wrapper').hide();
 						}
 					}
 				}),

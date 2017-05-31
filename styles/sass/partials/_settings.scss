@@ -209,24 +209,13 @@
 #settings .upfront-cancel_settings {
 	position: relative;
 	color: #fff;
-	padding-left: 20px;
-	margin-right: 15px;
+	left: 15px;
+	float: left;
+	min-width: 90px;
 }
 
 .upfront-field-padding-top {
 	padding-top: 10px;
-}
-
-#settings .upfront-cancel_settings:before {
-	background-position: -735px -236px !important;
-	display: block;
-	content: "";
-	background: transparent url(../img/uf-ui-sprite.svg);
-	width: 12px !important;
-	height: 12px !important;
-	position: absolute;
-	left: 0px;
-	top: 6px;
 }
 
 .upfront-field-title,
@@ -325,6 +314,7 @@
 	border-radius: 0;
     max-width: 286px;
     overflow: hidden;
+	min-width: 90px;
 }
 .upfront-ui .upfront-save_settings:hover {
 	background: rgb(0, 191, 128);
