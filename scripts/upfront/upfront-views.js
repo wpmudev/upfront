@@ -20,17 +20,17 @@ define([
 	"text!upfront/templates/layout.html",
 	"text!upfront/templates/api_key_overlay_region.html"
 ], function (RenderQueue, RenderQueueReporter) {
-  var _template_files = [
-    "text!upfront/templates/object.html",
-    "text!upfront/templates/object_group.html",
-    "text!upfront/templates/module.html",
-    "text!upfront/templates/module_group.html",
-    "text!upfront/templates/region_container.html",
-    "text!upfront/templates/region.html",
-    "text!upfront/templates/wrapper.html",
-    "text!upfront/templates/layout.html",
-    "text!upfront/templates/api_key_overlay_region.html"
-];
+	var _template_files = [
+		"text!upfront/templates/object.html",
+		"text!upfront/templates/object_group.html",
+		"text!upfront/templates/module.html",
+		"text!upfront/templates/module_group.html",
+		"text!upfront/templates/region_container.html",
+		"text!upfront/templates/region.html",
+		"text!upfront/templates/wrapper.html",
+		"text!upfront/templates/layout.html",
+		"text!upfront/templates/api_key_overlay_region.html"
+	];
 
 	// Auto-assign the template contents to internal variable
 	var _template_args = _.rest(arguments, 2),
@@ -822,7 +822,7 @@ define([
 				this.$el.addClass("upfront-active_entity");
 				this.adjust_top_settings_panel_position();
 			},
-			
+
 			// Stub handlers
 			on_meta_click: function () {},
 			on_delete_click: function () {
@@ -1139,24 +1139,24 @@ define([
 			updateControls: function() {
 				var elementControlsTpl = '<div class="upfront-element-controls upfront-ui"></div>',
 					exists = false;
-				
+
 				if (!this.$control_el || this.$control_el.length === 0) {
 					this.$control_el = this.$el;
 				}
-				
+
 				exists = (this.$control_el.find('>.upfront-element-controls').length > 0);
 
 				if(this.paddingControl && typeof this.paddingControl.isOpen !== 'undefined' && this.paddingControl.isOpen) {
 					if (exists) return;
 					else this.paddingControl.close();
 				}
-				
+
 				if (!this.controls) {
 					this.controls = this.createControls();
 				}
 
 				if (this.controls === false) return;
-				
+
 
 				this.controls.render();
 				if (!exists) {
@@ -1843,6 +1843,7 @@ define([
 				"click .upfront-object-hidden-toggle > a.upfront-entity-hide_trigger": "on_hide_click",
 				"click .upfront-object > .upfront-entity_meta": "on_meta_click",
 				"click": "on_click",
+				"mouseover": "fully_render",
 				//"dblclick": "on_edit",
 				"contextmenu": "on_context_menu"
 			},
@@ -1889,7 +1890,39 @@ define([
 			close_settings: function () {
 				Upfront.Events.trigger("entity:settings:deactivate");
 			},
+			/**
+			 * Some elements are not suitable for dummy rendering since they have
+			 * too much dependent events on render, skip those.
+			 */
+			skip_dummy_render: function() {
+				var view_class = this.model.get_property_value_by_name('view_class');
+				return view_class === 'UnewnavigationView' || view_class === 'PostsView' ||
+					view_class === 'PostDataPartView';
+			},
+			is_dummy_rendered: false,
+			is_full_rendered: false,
+			/**
+			 * Trigger full render of element on mouse over. Just render elements that are going to be
+			 * actually used.
+			 */
+			fully_render: function() {
+				if (this.skip_dummy_render()) return;
+				if (this.is_fully_rendered) return;
+				this.render();
+			},
 			render: function () {
+				// Try to get cached element html and add it to initial render. This should be done
+				// only once on layout load.
+				if (false == this.skip_dummy_render() && false === this.is_dummy_rendered) {
+					this.is_dummy_rendered = true;
+					var cached_html = this.model.get_property_value_by_name('cached_html');
+					if (cached_html) {
+						this.$el.html(cached_html);
+						return;
+					}
+				}
+				// If this line is hit full render is done either way.
+				this.is_fully_rendered = true;
 				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					grid = Upfront.Settings.LayoutEditor.Grid,
 					props = {},
@@ -2067,6 +2100,11 @@ define([
 				//	me.adjust_top_settings_panel_position();
 				//}, 150);
 
+				// Cache element html. It will be saved when layout is saved so it can be retrieved
+				// on future layout loads.
+				if (false == this.skip_dummy_render()) {
+					this.model.set_property('cached_html', this.$el.html(), true);
+				}
 			},
 			check_if_preset_exist: function() {
 				var preset = this.model.get_property_value_by_name('preset'),
@@ -2586,7 +2624,7 @@ define([
 			remove_region_class: function (classname, container) {
 				this.toggle_region_class(classname, false, container);
 			},
-			
+
 			get_resize_min_col: function () {
 				return false;
 			},
@@ -2611,8 +2649,8 @@ define([
 			get_element_size_px: function (real) {
 				real = typeof real == 'undefined' ? true : real;
 				var ed = Upfront.Behaviors.GridEditor,
-					size = this.get_element_size(real)
-				;
+				size = this.get_element_size(real)
+					;
 				return {
 					col: size.col * ed.col_size,
 					row: size.row * ed.baseline
@@ -2626,8 +2664,8 @@ define([
 			},
 			get_element_max_size: function ( axis ) {
 				var ed = Upfront.Behaviors.GridEditor,
-					$el = this.parent_module_view.$el.find('.upfront-module'),
-					$region = this.$el.closest('.upfront-region'); //this.parent_module_view.region_view.$el; // @TODO parent_module_view.region_view didn't updated when changing region
+				$el = this.parent_module_view.$el.find('.upfront-module'),
+				$region = this.$el.closest('.upfront-region'); //this.parent_module_view.region_view.$el; // @TODO parent_module_view.region_view didn't updated when changing region
 				ed.start(this.parent_module_view, this.parent_module_view.model);
 				return ed.get_max_size(ed.get_el($el), ed.els, ed.get_region($region), axis);
 			},
@@ -2639,7 +2677,7 @@ define([
 			},
 			get_element_max_size_px: function ( axis ) {
 				var ed = Upfront.Behaviors.GridEditor,
-					max = this.get_element_max_size(axis);
+				max = this.get_element_max_size(axis);
 				return {
 					col: max.col * ed.col_size,
 					row: max.row * ed.baseline
@@ -2679,7 +2717,7 @@ define([
 			className: "upfront-object-group-view",
 			events: {
 				"click .upfront-object-group > .upfront-entity_meta > a.upfront-entity-settings_trigger": "on_settings_click",
-                "click .upfront-object-group > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
+				"click .upfront-object-group > .upfront-entity_meta > a.upfront-entity-delete_trigger": "on_delete_click",
 				"click .upfront-object-group > .upfront-entity_meta": "on_meta_click",
 				"click > .upfront-object-group-finish-edit": "on_finish",
 				"click": "on_click",
@@ -2696,13 +2734,13 @@ define([
 
 			render: function () {
 				var me = this,
-					grid = Upfront.Settings.LayoutEditor.Grid,
-					objects_view = this._objects_view || new Objects({"model": this.model.get("objects")}),
-					props = {},
-					buttons = (this.get_buttons ? this.get_buttons() : ''),
-					extra_buttons = (this.get_extra_buttons ? this.get_extra_buttons() : ''),
-					height, model, template, module_col, col
-				;
+				grid = Upfront.Settings.LayoutEditor.Grid,
+				objects_view = this._objects_view || new Objects({"model": this.model.get("objects")}),
+				props = {},
+				buttons = (this.get_buttons ? this.get_buttons() : ''),
+				extra_buttons = (this.get_extra_buttons ? this.get_extra_buttons() : ''),
+				height, model, template, module_col, col
+					;
 
 				// Id the element by anchor, if anchor is defined
 				var the_anchor = this.model.get_property_value_by_name("anchor");
@@ -2794,9 +2832,9 @@ define([
 
 				// var prev_value = prop._previousAttributes.value,
 				var value = prop.get('value'),
-					$me = this.$el.find('.upfront-editable_entity:first'),
-					grid = Upfront.Settings.LayoutEditor.Grid
-				;
+				$me = this.$el.find('.upfront-editable_entity:first'),
+				grid = Upfront.Settings.LayoutEditor.Grid
+					;
 				if ( prop.id == 'row' ){
 					// row change
 					var height = value * grid.baseline;
@@ -2807,7 +2845,7 @@ define([
 					var classes = $me.attr('class');
 					_.each([grid['class'], grid.left_margin_class, grid.top_margin_class, grid.bottom_margin_class, grid.right_margin_class], function(class_name){
 						var rx = new RegExp('\\b' + class_name + '(\\d+)'),
-							val = value.match(rx);
+						val = value.match(rx);
 						if ( val && val[1] )
 							Upfront.Behaviors.GridEditor.update_class($me, class_name, val[1]);
 					});
@@ -2816,9 +2854,9 @@ define([
 					this.update_position();
 
 					var current_property = value.current_property,
-						breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
-						val = value[breakpoint.id] && value[breakpoint.id][current_property] ? value[breakpoint.id][current_property] : false
-					;
+					breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
+					val = value[breakpoint.id] && value[breakpoint.id][current_property] ? value[breakpoint.id][current_property] : false
+						;
 
 					if( current_property && val ) {
 						if( current_property === 'top_padding_num' ) this.show_top_padding_hint(val);
@@ -2845,18 +2883,18 @@ define([
 
 			get_module_cols: function () {
 				var me = this,
-					module = this.parent_module_view.model,
-					module_class = module.get_property_value_by_name('class'),
-					grid = Upfront.Settings.LayoutEditor.Grid,
-					ed = Upfront.Behaviors.GridEditor,
-					breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled(),
-					cols = {}
+				module = this.parent_module_view.model,
+				module_class = module.get_property_value_by_name('class'),
+				grid = Upfront.Settings.LayoutEditor.Grid,
+				ed = Upfront.Behaviors.GridEditor,
+				breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled(),
+				cols = {}
 				;
 				cols['default'] = ed.get_class_num(module_class, grid['class']);
 				_.each(breakpoints, function(each){
 					var breakpoint = each.toJSON(),
-						container_col = ed.get_container_col(me._objects_view, breakpoint)
-					;
+					container_col = ed.get_container_col(me._objects_view, breakpoint)
+						;
 					cols[breakpoint.id] = container_col;
 				});
 				return cols;
@@ -2874,7 +2912,7 @@ define([
 				if ( !this.parent_module_view || this.parent_module_view != view ) return;
 				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					module_cols = this.get_module_cols()
-				;
+						;
 				if ( Upfront.Application.layout_ready ) {
 					prev_col = ( !breakpoint || breakpoint['default'] ) ? this._module_cols['default'] : this._module_cols[breakpoint.id];
 					col = ( !breakpoint || breakpoint['default'] ) ? module_cols['default'] : module_cols[breakpoint.id];
@@ -2892,7 +2930,7 @@ define([
 					ed = Upfront.Behaviors.GridEditor,
 					$module = this.parent_module_view.$el.find('> .upfront-module'),
 					col = ( !breakpoint || breakpoint['default'] ) ? ed.get_class_num($module, ed.grid['class']) : $module.data('breakpoint_col')
-				;
+						;
 				this._objects_view.normalize_child_modules(col, prev_col, this.model.get('wrappers'));
 			},
 
@@ -2984,13 +3022,13 @@ define([
 			on_entity_remove: function(e, view) {
 				Upfront.Events.trigger("entity:object:removed:before");
 				var wrapper_id = view.model.get_wrapper_id(),
-					me = this
-				;
+				me = this
+					;
 				if ( wrapper_id && this.object_group_view ){
 					var wrappers = this.object_group_view.model.get('wrappers'),
 						wrapper = wrappers.get_by_wrapper_id(wrapper_id),
 						wrapper_module = 0
-					;
+							;
 					if ( wrapper ){
 						// check if this wrapper has another module
 						this.model.each(function(module){
@@ -3011,8 +3049,8 @@ define([
 
 			render: function () {
 				var $el = this.$el,
-					me = this
-				;
+				me = this
+					;
 				//$el.html('');
 				$el.find('>.upfront-wrapper').detach();
 
@@ -3032,18 +3070,18 @@ define([
 			},
 			render_object: function (obj, options) {
 				var $el = this.$el,
-					index = options && typeof options.index != 'undefined' ? options.index-1 : -2,
-					$el_index = index >= 0 ? $el.find('> .upfront-wrapper > .upfront-object-view, > .upfront-wrapper > .upfront-object-group').eq(index) : false,
-					wrappers = this.object_group_view && this.object_group_view.model ? this.object_group_view.model.get('wrappers') : false,
-					view_class_prop = obj.get("properties").where({"name": "view_class"}),
-					is_obj_group = obj.get("objects") ? true : false,
-					default_view_class = is_obj_group ? "ObjectGroup" : "ObjectView",
-					view_class = view_class_prop.length ? view_class_prop[0].get("value") : default_view_class,
-					local_view = Upfront.Views[view_class] ? Upfront.data.object_views[obj.cid] || new Upfront.Views[view_class]({model: obj}) : false,
-					wrapper_id = obj.get_wrapper_id(),
-					wrapper = wrappers && wrapper_id ? wrappers.get_by_wrapper_id(wrapper_id) : false,
-					wrapper_view, wrapper_el
-				;
+				index = options && typeof options.index != 'undefined' ? options.index-1 : -2,
+				$el_index = index >= 0 ? $el.find('> .upfront-wrapper > .upfront-object-view, > .upfront-wrapper > .upfront-object-group').eq(index) : false,
+				wrappers = this.object_group_view && this.object_group_view.model ? this.object_group_view.model.get('wrappers') : false,
+				view_class_prop = obj.get("properties").where({"name": "view_class"}),
+				is_obj_group = obj.get("objects") ? true : false,
+				default_view_class = is_obj_group ? "ObjectGroup" : "ObjectView",
+				view_class = view_class_prop.length ? view_class_prop[0].get("value") : default_view_class,
+				local_view = Upfront.Views[view_class] ? Upfront.data.object_views[obj.cid] || new Upfront.Views[view_class]({model: obj}) : false,
+				wrapper_id = obj.get_wrapper_id(),
+				wrapper = wrappers && wrapper_id ? wrappers.get_by_wrapper_id(wrapper_id) : false,
+				wrapper_view, wrapper_el
+					;
 				if ( wrappers && !wrapper ) return; // If wrappers exists, don't render object without wrapper
 				if(local_view) {
 					local_view.parent_view = this;
@@ -3158,7 +3196,7 @@ define([
 					col = breakpoint['default']
 						? ed.get_class_num(module_view.$el.find('>.upfront-module'), ed.grid['class'])
 						: module_view.model.get_breakpoint_property_value('col')
-				;
+						;
 				this.fix_wrapper_height(this.model, wrappers, col);
 			},
 			apply_adapt_to_breakpoints: function () {
@@ -3173,13 +3211,13 @@ define([
 					ed = Upfront.Behaviors.GridEditor,
 					wrappers = this.object_group_view.model.get('wrappers'),
 					breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled()
-				;
+						;
 				_.each(breakpoints, function(each){
 					var breakpoint = each.toJSON();
 					if ( breakpoint['default'] ) return;
 					var col = ed.get_class_num(module_view.$el.find('> .upfront-module'), ed.grid['class']),
 						breakpoint_data = module_view.model.get_property_value_by_name('breakpoint')
-					;
+							;
 					if ( _.isObject(breakpoint_data) && _.isObject(breakpoint_data[breakpoint.id]) && !_.isUndefined(breakpoint_data[breakpoint.id].col) ) {
 						col = breakpoint_data[breakpoint.id].col;
 					}
@@ -3320,25 +3358,25 @@ define([
 			},
 			render: function () {
 				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
-					grid = Upfront.Settings.LayoutEditor.Grid,
-					props = {},
-					is_parent_group = ( typeof this.group_view != 'undefined' ),
-					run = this.model.get("properties").each(function (prop) {
-						props[prop.get("name")] = prop.get("value");
-					}),
-					height = ( props.row ) ? props.row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
-					col = Upfront.Behaviors.GridEditor.get_class_num(props['class'], grid['class']),
-					default_hide = "default_hide" in props ? props.default_hide : 0,
-					hide = "hide" in props ? props.hide : default_hide,
-					model = _.extend(this.model.toJSON(), {
-						"properties": props,
-						"height": height,
-						"hide": hide,
-						"parent_group_class": is_parent_group ? 'upfront-module-parent-group' : ''
-					}),
-					template = _.template(_Upfront_Templates["module"], model),
-					$module
-				;
+				grid = Upfront.Settings.LayoutEditor.Grid,
+				props = {},
+				is_parent_group = ( typeof this.group_view != 'undefined' ),
+				run = this.model.get("properties").each(function (prop) {
+					props[prop.get("name")] = prop.get("value");
+				}),
+				height = ( props.row ) ? props.row * Upfront.Settings.LayoutEditor.Grid.baseline : 0,
+				col = Upfront.Behaviors.GridEditor.get_class_num(props['class'], grid['class']),
+				default_hide = "default_hide" in props ? props.default_hide : 0,
+				hide = "hide" in props ? props.hide : default_hide,
+				model = _.extend(this.model.toJSON(), {
+					"properties": props,
+					"height": height,
+					"hide": hide,
+					"parent_group_class": is_parent_group ? 'upfront-module-parent-group' : ''
+				}),
+				template = _.template(_Upfront_Templates["module"], model),
+				$module
+					;
 				Upfront.Events.trigger("entity:module:before_render", this, this.model);
 
 				// Listen to wrapper update position
@@ -3371,10 +3409,10 @@ define([
 			},
 			update: function (prop, options) {
 				var prev_value = prop._previousAttributes.value,
-					value = prop.get('value'),
-					$me = this.$el.find('.upfront-editable_entity:first'),
-					grid = Upfront.Settings.LayoutEditor.Grid
-				;
+				value = prop.get('value'),
+				$me = this.$el.find('.upfront-editable_entity:first'),
+				grid = Upfront.Settings.LayoutEditor.Grid
+					;
 				if ( prop.id == 'row' ) {
 					// row change
 					var height = value * grid.baseline;
@@ -3384,7 +3422,7 @@ define([
 					var classes = $me.attr('class');
 					_.each([grid['class'], grid.left_margin_class, grid.top_margin_class, grid.bottom_margin_class, grid.right_margin_class], function(class_name){
 						var rx = new RegExp('\\b' + class_name + '(\\d+)'),
-							val = value.match(rx);
+						val = value.match(rx);
 						if ( val && val[1] ) {
 							Upfront.Behaviors.GridEditor.update_class($me, class_name, val[1]);
 							if ( class_name == grid['class'] ) {
@@ -3406,11 +3444,11 @@ define([
 			},
 			update_position: function () {
 				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
-					grid = Upfront.Settings.LayoutEditor.Grid;
+				grid = Upfront.Settings.LayoutEditor.Grid;
 				if ( ! breakpoint ) return;
 				var $module = this.$el.find('> .upfront-module'),
 					$toggle = this.$el.find('> .upfront-module-hidden-toggle')
-				;
+						;
 				this.apply_breakpoint_position($module, $toggle);
 				this.trigger('update_position', this, this.model);
 				Upfront.Events.trigger('entity:module:update_position', this, this.model);
@@ -3466,13 +3504,13 @@ define([
 			},
 			on_click: function (e) {
 				var me = this,
-					ed = Upfront.Behaviors.LayoutEditor,
-					clean_selection = false,
-					$module = this.$el.find('>.upfront-module'),
-					currentEntity = Upfront.data.currentEntity,
-					$current = currentEntity ? currentEntity.$el.closest('.upfront-module') : false,
-					$selected, $selectable, $restricted
-				;
+				ed = Upfront.Behaviors.LayoutEditor,
+				clean_selection = false,
+				$module = this.$el.find('>.upfront-module'),
+				currentEntity = Upfront.data.currentEntity,
+				$current = currentEntity ? currentEntity.$el.closest('.upfront-module') : false,
+				$selected, $selectable, $restricted
+					;
 				if ( this.interaction ) {
 					// Check if shift key is pressed, if it does, try to do selection
 					if ( e && e.shiftKey && this.region_view ) {
@@ -3564,7 +3602,7 @@ define([
 			},
 			on_change_breakpoint: function (breakpoint) {
 				var $delete = this.$el.find('.upfront-module > .upfront-entity_meta > a.upfront-entity-delete_trigger'),
-					$hide = this.$el.find('.upfront-module > .upfront-entity_meta > a.upfront-entity-hide_trigger');
+				$hide = this.$el.find('.upfront-module > .upfront-entity_meta > a.upfront-entity-hide_trigger');
 				if ( !breakpoint['default'] ) {
 					this.disable_interaction(true, false, true, true, true);
 					$delete.hide();
@@ -3586,13 +3624,13 @@ define([
 				if ( ! this._objects_view ) return false;
 				this._objects_view.model.each(function(obj){
 					var view = Upfront.data.object_views[obj.cid],
-						each_min_col
-					;
+					each_min_col
+						;
 					if ( !view ) return;
 					each_min_col = view.get_resize_min_col();
 					min_col = each_min_col > min_col ? each_min_col : min_col;
 				});
-				return min_col > 0 ? min_col : false; 
+				return min_col > 0 ? min_col : false;
 			},
 			remove: function(){
 				if(this._objects_view)
@@ -6128,7 +6166,7 @@ define([
 								thecollection.remove(sub_model);
 						});
 					}
-	
+
 					// Close settings and edit mode.
 					this.on_modal_close();
 

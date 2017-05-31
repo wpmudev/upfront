@@ -661,19 +661,6 @@ var PostContentEditor = new (Subapplication.extend({
 
 		this.contentEditor = contentEditor;
 
-		var $page = $('#page');
-
-		//There is no need of start the application, just set the current one
-		//Application.set_current(Application.MODE.POSTCONTENT);
-		//$page.find('.upfront-module').each(function(){
-		//	if ( $(this).is('.ui-draggable') )
-		//		$(this).draggable('disable');
-		//	if ( $(this).is('.ui-resizable') )
-		//		$(this).resizable('disable');
-		//});
-		//Upfront.Events.trigger('upfront:element:edit:start', 'write', contentEditor.post);
-		//$page.find('.upfront-region-edit-trigger').hide();
-
 		Upfront.Events.on('content:insertcount:updated', this.updateInsertCount);
 	},
 
@@ -923,11 +910,6 @@ var Application = new (Backbone.Router.extend({
 		app.loading.render();
 		$('body').append(app.loading.$el);
 
-		/*setTimeout(function(){
-			if ( app.loading.is_done ) return;
-			app.loading.update_loading_notice(Upfront.Settings.l10n.global.application.long_loading_notice);
-		}, 10000);*/
-
 		app.create_sidebar();
 
 		require(
@@ -1089,7 +1071,6 @@ var Application = new (Backbone.Router.extend({
 				Upfront.Util.log("Error creating layout " + layout_ids);
 				app.loading.cancel(function(){
 					$(Upfront.Settings.LayoutEditor.Selectors.sidebar).hide();
-					//$(".upfront-editable_trigger").show();
 					$('#wpadminbar').show();
 					$('html').removeAttr('style');
 				});
@@ -1152,7 +1133,6 @@ var Application = new (Backbone.Router.extend({
 			me.layout_ready = true;
 		});
 
-		//if (!me.layout_view) {
 		me.layout_view = new Upfront.Views.Layout({
 			"model": me.layout,
 			"el": $(Upfront.Settings.LayoutEditor.Selectors.main)
@@ -1358,7 +1338,6 @@ var Application = new (Backbone.Router.extend({
 				"el": $(Upfront.Settings.LayoutEditor.Selectors.sidebar)
 			});
 		}
-		//this.sidebar.render(); <-- Subapplications do this
 	},
 
 	recursiveExistenceMigration: function(selector, clean_selector) {
@@ -1796,7 +1775,6 @@ return {
 $(function () {
 	$("body").on("click", ".upfront-edit_layout", function (e) {
 		e.preventDefault();
-		// alert(_upfront_please_hold_on);
 	});
 });
 
