@@ -100,43 +100,29 @@
 	position: relative;
 	top: 3px;
 }
-.upfront-settings-item-content .custom_posts a.upfront-add-posts {
-	background-image: linear-gradient(-179deg, #fafdff 0%, #f3faff 100%);
-    border: 1px solid #b7c9d9;
-    border-radius: 3px;
-    font: 600 12px/16px Open Sans, Helvetica Neueu, Helvetica, Arial, sans-serif;
-    color: #6486A6;
-    text-shadow: 0px 1px 0px #FFFFFF;
-    padding: 0px 10px;
-	height: 26px;
-	line-height: 26px;
-	display: inline-block;
-    position: relative;
-	margin: 10px 0px;
-}
-.upfront-settings-item-content .custom_posts a.upfront-add-posts:hover {
-	border: 1px solid #607f99;
-}
 
 /* --- Post settings styles --- */
 
 #sidebar-scroll-wrapper .upfront-display-type-section {
-	border-bottom: 1px solid #e5ecf4;
+	border-bottom: 1px solid rgb(232, 232, 232);
 	padding-bottom: 5px;
+}
+
+#sidebar-scroll-wrapper .upfront-posts-settings-wrapper {
+	margin: 0px 15px;
+}
+
+#sidebar-scroll-wrapper .upfront-posts-settings-wrapper .upfront-field-label-inline {
+	font-size: 11px;
+	display: block;
+	height: auto;
+	line-height: 1;
+	margin-bottom: 3px;
 }
 
 #sidebar-scroll-wrapper .upfront-display-type-section .upfront-settings-item-content .upfront-field-wrap,
 #sidebar-scroll-wrapper .upfront-list-type-section .upfront-settings-item-content .upfront-field-wrap {
 	margin: 0px;
-}
-
-#sidebar-scroll-wrapper .upfront-display-type-section label,
-#sidebar-scroll-wrapper .upfront-post-settings label.upfront-field-label {
-	font-size: 11px;
-    display: block;
-    font-family: verdana, sans-serif;
-	color: #7d99b6;
-	font-weight: normal;
 }
 
 #sidebar-scroll-wrapper .upfront-post-settings {
@@ -175,8 +161,10 @@ div.upfront-post-wrappers {
 }
 
 .upfront-add-post-module .upfront-field-select-value {
-	border: 1px solid #a2bfda;
-	width: 48px;
+	border: 1px solid rgb(147, 147, 147);
+	border-radius: 3px;
+	background: #ffffff;
+	width: 32px;
 	height: 24px;
 	cursor: pointer;
 	float: right;
@@ -195,8 +183,9 @@ div.preset-manager-panel div.preset_specific.upfront-posts-part:before {
 }
 
 div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-settings-item-title {
-	border: 1px solid #a2bfda;
+	border: 1px solid rgb(147, 147, 147);
 	display: block;
+	background: #ffffff;
 	height: 24px;
 	line-height: 22px;
 	border-radius: 3px;
@@ -221,9 +210,9 @@ div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-setting
 
 div.preset-manager-panel div.preset_specific.upfront-posts-part .upfront-settings-item-title .upfront-posts-module-title {
 	display: inline-block;
-	color: #4e4770;
+	color: rgba(33, 33, 33, .8);
     font-size: 11px;
-	font-family: Verdana, sans-serif;
+	font-family: Open Sans, sans-serif;
 	text-decoration: none;
 	font-weight: normal;
 	text-transform: capitalize;
@@ -298,7 +287,7 @@ div.preset-manager-panel .upfront-settings-post-wrapper {
 	width: 240px;
 	margin-left: -5px;
 	z-index: 99999999;
-	background: #f7fbff;
+	background: #ffffff;
 	border-radius: 3px;
 	margin-top: 5px;
 	box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.30);
@@ -331,13 +320,13 @@ div.preset-manager-panel .upfront-settings-post-wrapper.above:before {
 div.preset-manager-panel .upfront-post-wrapper-title {
     font-size: 11px;
 	font-weight: bold;
-    color: #2f475f;
+    color: rgb(166, 166, 166);
     font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 	text-transform: uppercase;
 }
 
 div.preset-manager-panel .upfront-post-wrappers {
-	border-bottom: 1px solid #e5eef8;
+	border-bottom: 1px solid rgb(232, 232, 232);
 	position: relative;
 }
 
@@ -416,12 +405,6 @@ div.preset-manager-panel .upfront-add-post-module .upfront-field-select-value:be
 	margin-top: -7px;
 }
 
-.upfront-display-type-single .upfront-settings-item-content .upfront-post-term,
-.upfront-display-type-single .upfront-settings-item-content .upfront-post-type,
-.upfront-display-type-single .upfront-settings-item-content .upfront-post-taxonomy {
-	margin-top: 10px;
-}
-
 .upfront-display-type-list .upfront-settings-item-content .upfront-post-term {
 	margin-top: 5px;
 }
@@ -438,31 +421,53 @@ div.preset-manager-panel .upfront-add-post-module .upfront-field-select-value:be
 	display: inline-block;
 }
 
-.upfront-post-limit .upfront-field-label-block,
-.upfront-post-type .upfront-field-label-block,
-.upfront-offset-number .upfront-field-label-block,
-.upfront-post-taxonomy .upfront-field-label-block,
-.upfront-post-term .upfront-field-label-block {
+.upfront-post-limit .upfront-field-label-inline,
+.upfront-post-type .upfront-field-label-inline,
+.upfront-offset-number .upfront-field-label-inline,
+.upfront-post-taxonomy .upfront-field-label-inline,
+.upfront-post-term .upfront-field-label-inline {
 	margin-bottom: 3px !important;
 }
 
-.upfront-settings-item-content .upfront-post-limit input,
-.upfront-settings-item-content .upfront-offset-number input {
-	font-size: 12px;
-	height: 26px;
+.upfront-display-type-single .upfront-settings-item-content .upfront-post-term,
+.upfront-display-type-single .upfront-settings-item-content .upfront-post-type,
+.upfront-display-type-single .upfront-settings-item-content .upfront-post-taxonomy,
+.upfront-display-type-single .upfront-settings-item-content .upfront-post-term {
+	margin-top: 10px;
 }
 
 .upfront-settings-item-content .upfront-post-limit,
 .upfront-settings-item-content .upfront-offset-number {
 	width: 65px;
 	position: relative;
-	top: -9px;
+	top: -7px;
 }
 
 .upfront-settings-item-content .upfront-post-type,
 .upfront-settings-item-content .upfront-post-taxonomy {
-	width: 160px;
+	width: 150px;
 	margin-top: 5px;
+	margin-left: 15px;
+}
+
+.upfront-display-type-single .upfront-post-type {
+	margin-left: 0px;
+}
+
+.upfront-add-posts {
+	margin-left: 0px !important;
+}
+
+.edit-post-markup-postslist {
+	left: 125px !important;
+}
+
+.part-module-panel .chosen-container {
+	max-width: 100%;
+}
+
+.part-module-panel .upfront-toggle-wrapper {
+	margin-bottom: 10px;
 }
 
 .upfront-display-type-single .upfront-settings-item-content .upfront-post-type {
@@ -625,12 +630,6 @@ div.preset-manager-panel .uf-posts-image-custom-height label {
 	position: relative;
 }
 
-div.preset-manager-panel .uf-posts-image-custom-size label.upfront-field-label-inline,
-div.preset-manager-panel .uf-posts-image-custom-width label,
-div.preset-manager-panel .uf-posts-image-custom-height label {
-	color: #96acc3;
-}
-
 div.preset-manager-panel .uf-posts-image-resize {
 	clear: both;
 	padding-top: 10px;
@@ -651,19 +650,6 @@ div.preset-manager-panel .category-separate inline,
 div.preset-manager-panel .tags-show-max inline,
 div.preset-manager-panel .tags-separate inline {
 	width: 95%;
-}
-
-div.preset-manager-panel .category-show-max label,
-div.preset-manager-panel .category-separate label,
-div.preset-manager-panel .category-padding-top-bottom label,
-div.preset-manager-panel .category-margin-top-bottom label,
-div.preset-manager-panel .category-background label,
-div.preset-manager-panel .tags-show-max label,
-div.preset-manager-panel .tags-separate label,
-div.preset-manager-panel .tags-padding-top-bottom label,
-div.preset-manager-panel .tags-margin-top-bottom label,
-div.preset-manager-panel .tags-background label {
-	color: #96acc3;
 }
 
 div.preset-manager-panel .category-padding-top-bottom,

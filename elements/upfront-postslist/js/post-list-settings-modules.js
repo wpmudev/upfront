@@ -198,7 +198,7 @@ define([
 					]
 				},
 				{
-					type: 'Checkboxes',
+					type: 'Toggle',
 					property: 'author-target',
 					name: 'author-target',
 					values: [
@@ -328,7 +328,7 @@ define([
 					suffix: l10n.px
 				},
 				{
-					type: "Checkboxes",
+					type: "Toggle",
 					property: "feature-resize",
 					className: 'uf-posts-image-resize',
 					label_style: 'inline',
@@ -352,7 +352,7 @@ define([
 		get_fields: function () {
 			return [
 				{
-					type: 'Checkboxes',
+					type: 'Toggle',
 					property: 'comments-hide-if-empty',
 					label_style: 'inline',
 					values: [{ label: l10n.modules.hide_if_no_comments, value: '1' }]
@@ -372,9 +372,10 @@ define([
 					label: l10n.content_type
 				},
 				{
-					type: 'Radios',
+					type: 'Radios_Inline',
 					property: 'content-type',
 					layout: "horizontal-inline",
+					className: 'upfront-field-padding-top upfront-field-wrap-radios-inline ',
 					values: [
 						{
 							label: l10n.modules.excerpt,
@@ -416,9 +417,10 @@ define([
 					label: l10n.modules.display_settings
 				},
 				{
-					type: 'Radios',
+					type: 'Radios_Inline',
 					property: 'tags-display-type',
 					layout: "horizontal-inline",
+					className: 'upfront-field-padding-top upfront-field-wrap-radios-inline',
 					values: [
 						{
 							label: l10n.modules.inline,
@@ -639,9 +641,10 @@ define([
 					label: l10n.modules.display_settings
 				},
 				{
-					type: 'Radios',
+					type: 'Radios_Inline',
 					property: 'category-display-type',
 					layout: "horizontal-inline",
+					className: 'upfront-field-padding-top upfront-field-wrap-radios-inline',
 					values: [
 						{
 							label: l10n.modules.inline,

@@ -106,23 +106,6 @@
 	position: relative;
 	top: 3px;
 }
-.upfront-settings-item-content .custom_posts a.upfront-add-posts {
-	background-image: linear-gradient(-179deg, #fafdff 0%, #f3faff 100%);
-    border: 1px solid #b7c9d9;
-    border-radius: 3px;
-    font: 600 12px/16px Open Sans, Helvetica Neueu, Helvetica, Arial, sans-serif;
-    color: #6486A6;
-    text-shadow: 0px 1px 0px #FFFFFF;
-    padding: 0px 10px;
-	height: 26px;
-	line-height: 26px;
-	display: inline-block;
-    position: relative;
-	margin: 10px 0px;
-}
-.upfront-settings-item-content .custom_posts a.upfront-add-posts:hover {
-	border: 1px solid #607f99;
-}
 
 /* --- Post settings styles --- */
 
@@ -131,18 +114,21 @@
 	padding-bottom: 5px;
 }
 
+#sidebar-scroll-wrapper .upfront-posts-settings-wrapper {
+	margin: 0px 15px;
+}
+
+#sidebar-scroll-wrapper .upfront-posts-settings-wrapper .upfront-field-label-inline {
+	font-size: 11px;
+	display: block;
+	height: auto;
+	line-height: 1;
+	margin-bottom: 3px;
+}
+
 #sidebar-scroll-wrapper .upfront-display-type-section .upfront-settings-item-content .upfront-field-wrap,
 #sidebar-scroll-wrapper .upfront-list-type-section .upfront-settings-item-content .upfront-field-wrap {
 	margin: 0px;
-}
-
-#sidebar-scroll-wrapper .upfront-display-type-section label,
-#sidebar-scroll-wrapper .upfront-post-settings label.upfront-field-label {
-	font-size: 11px;
-    display: block;
-    font-family: verdana, sans-serif;
-	color: #7d99b6;
-	font-weight: normal;
 }
 
 #sidebar-scroll-wrapper .custom_posts li:hover {
@@ -293,6 +279,13 @@
 	display: inline-block;
 }
 
+.upfront-display-type-single .upfront-settings-item-content .upfront-post-term,
+.upfront-display-type-single .upfront-settings-item-content .upfront-post-type,
+.upfront-display-type-single .upfront-settings-item-content .upfront-post-taxonomy,
+.upfront-display-type-single .upfront-settings-item-content .upfront-post-term{
+	margin-top: 10px;
+}
+
 .upfront-post-limit .upfront-field-label-block,
 .upfront-post-type .upfront-field-label-block,
 .upfront-offset-number .upfront-field-label-block,
@@ -311,13 +304,22 @@
 .upfront-display-type-list .upfront-settings-item-content .upfront-offset-number {
 	width: 65px;
 	position: relative;
-	top: -8px;
+	top: -6px;
 }
 
 .upfront-settings-item-content .upfront-post-type,
 .upfront-display-type-list .upfront-settings-item-content .upfront-post-taxonomy {
-	width: 160px;
+	width: 150px;
 	margin-top: 5px;
+	margin-left: 15px;
+}
+
+.upfront-display-type-single .upfront-post-type {
+	margin-left: 0px;
+}
+
+.upfront-add-posts {
+	margin-left: 0px !important;
 }
 
 .upfront-settings-item-content .post_parts.ui-sortable li .part_action:after {

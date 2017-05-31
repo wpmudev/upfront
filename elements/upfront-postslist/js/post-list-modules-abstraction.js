@@ -43,7 +43,7 @@
 					fields.push({
 						type: "Button",
 						label: l10n.edit_template,
-						className: 'edit_post_markup edit_preset_css sidebar-commands-small-button',
+						className: 'edit_post_markup edit_preset_css edit-post-markup-postslist sidebar-commands-small-button',
 						compact: true,
 						on_click: function () {
 							me.spawn_editor();

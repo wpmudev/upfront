@@ -37,7 +37,7 @@ Panels.General = RootSettingsPanel.extend({
 		this.options = opts;
 		var me = this,
 			query = new QuerySettings({
-				className: 'upfront-post-settings',
+				className: 'upfront-post-settings upfront-posts-settings-wrapper',
 				model: this.model
 			}),
 			/*
@@ -55,13 +55,15 @@ Panels.General = RootSettingsPanel.extend({
 				
 				Upfront.Events.trigger('posts:settings:dispatched', this);
 			},
-			display_type = new Upfront.Views.Editor.Field.Radios({
+			display_type = new Upfront.Views.Editor.Field.Radios_Inline({
 				model: this.model,
-				className: 'upfront-posts-display-type',
+				className: 'upfront-posts-display-type upfront-field-wrap-radios-inline',
 				property: 'display_type',
 				label: '',
+				label_style: 'inline',
 				layout: 'horizontal-inline',
 				icon_class: 'upfront-posts-display_type',
+				default_value: 'single',
 				values: [
 					{label: l10n.single_post, value: 'single'},
 					{label: l10n.post_list, value: 'list'}
@@ -82,13 +84,13 @@ Panels.General = RootSettingsPanel.extend({
 			}),
 			display_type_section = new Upfront.Views.Editor.Settings.Item({
 				model: this.model,
-				className: 'upfront-display-type-section',
+				className: 'upfront-display-type-section upfront-posts-settings-wrapper',
 				title: l10n.query_settings,
 				fields: [display_type]
 			}),
 			list_type_section = new Upfront.Views.Editor.Settings.Item({
 				model: this.model,
-				className: 'upfront-list-type-section',
+				className: 'upfront-list-type-section upfront-posts-settings-wrapper',
 				title: l10n.list_type_label,
 				fields: [list_type]
 			})
@@ -160,7 +162,7 @@ var CustomSelectorField =  Upfront.Views.Editor.Field.Hidden.extend({
 			field += '</ul>';
 		}
 
-		field += '<i class="upfront-posts-custom-add_post"></i> <a href="#add" class="upfront-add-posts">' + string + '</a>';
+		field += '<i class="upfront-posts-custom-add_post"></i> <a href="#add" class="upfront-add-posts sidebar-commands-small-button">' + string + '</a>';
 
 		return '<div class="custom_posts">' + field + '</div>';
 	},
@@ -291,6 +293,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			model: this.model,
 			className: 'upfront-post-type',
 			label: l10n.post_type,
+			label_style: 'inline',
 			property: "post_type",
 			values: types,
 			change: function(value) {
@@ -304,6 +307,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			model: this.model,
 			className: 'upfront-offset-number',
 			label: l10n.offset,
+			label_style: 'inline',
 			property: "offset",
 			min: 1,
 			max: 20,
@@ -317,6 +321,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			model: this.model,
 			className: 'upfront-post-taxonomy',
 			label: l10n.taxonomy,
+			label_style: 'inline',
 			property: "taxonomy",
 			values: taxs,
 			change: function(value) {
@@ -328,6 +333,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			model: this.model,
 			className: 'upfront-post-term',
 			label: l10n.term,
+			label_style: 'inline',
 			compact: true,
 			property: "term",
 			values: [{label:l10n.select_tax, value:"", disabled: true}],
@@ -352,6 +358,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 				className: 'upfront-post-limit',
 				model: this.model,
 				label: l10n.limit,
+				label_style: 'inline',
 				property: "limit",
 				min: 1,
 				max: 20,
@@ -371,6 +378,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			this.fields.push(new Upfront.Views.Editor.Field.Select({
 				model: this.model,
 				label: l10n.pagination,
+				label_style: 'inline',
 				property: "pagination",
 				layout: "horizontal-inline",
 				values: [
@@ -420,6 +428,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 				model: this.model,
 				property: "sticky",
 				label: l10n.sticky_posts,
+				label_style: 'inline',
 				values: [
 					{label: l10n.sticky_ignore, value: ""},
 					{label: l10n.sticky_prepend, value: "prepend"},
@@ -431,10 +440,13 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 				}
 			}));
 		}
-		this.fields.push(new Upfront.Views.Editor.Field.Radios({
+		this.fields.push(new Upfront.Views.Editor.Field.Radios_Inline({
 			model: this.model,
 			label: l10n.result_length,
+			label_style: 'inline',
+			label_style: 'inline',
 			property: "content",
+			className: 'upfront-field-padding-top upfront-field-wrap-radios-inline',
 			layout: "horizontal-inline",
 			values: [
 				{label:l10n.excerpt, value:"excerpt"},
@@ -481,6 +493,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			model: this.model,
 			label: l10n.term,
 			compact: true,
+			label_style: 'inline',
 			property: "term",
 			values: terms,
 			default_value: this.model.get_property_value_by_name('term'),
@@ -510,7 +523,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 });
 
 var ThumbnailSettings = Upfront.Views.Editor.Settings.Item.extend({
-	className: 'upfront-settings-item upfront-thumbnail-size',
+	className: 'upfront-settings-item upfront-thumbnail-size upfront-posts-settings-wrapper',
 
 	events: function () {
 		return _.extend({},
@@ -542,6 +555,7 @@ var ThumbnailSettings = Upfront.Views.Editor.Settings.Item.extend({
 			className: 'upfront-field-wrap upfront-field-wrap-radios upfront-thumbnail-size-choices',
 			property: 'thumbnail_size',
 			label: '',
+			label_style: 'inline',
 			layout: 'horizontal',
 			values: [
 				{label: l10n.thumbnail_size_thumbnail, value: 'thumbnail'},
@@ -576,6 +590,7 @@ var ThumbnailSettings = Upfront.Views.Editor.Settings.Item.extend({
 			className: 'upfront-field-wrap upfront-field-wrap-number upfront-thumbnail-custom-width',
 			property: 'custom_thumbnail_width',
 			label: l10n.thumbnail_size_custom_width,
+			label_style: 'inline',
 			min: 1,
 			change: function (value) {
 				me.model.set_property('custom_thumbnail_width', value);
@@ -588,6 +603,7 @@ var ThumbnailSettings = Upfront.Views.Editor.Settings.Item.extend({
 			className: 'upfront-field-wrap upfront-field-wrap-number upfront-thumbnail-custom-height',
 			property: 'custom_thumbnail_height',
 			label: l10n.thumbnail_size_custom_height,
+			label_style: 'inline',
 			min: 1,
 			change: function (value) {
 				me.model.set_property('custom_thumbnail_height', value);
