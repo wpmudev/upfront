@@ -88,10 +88,6 @@ define([
 
 			this.defaultOverlay();
 
-			this.listenToOnce(Upfront.Events, 'element:settings:canceled', function() {
-				this.updateCanceledPreset(this.backupPreset);
-			});
-
 			// Listen to breakpoint change and close off the interface
 			this.listenToOnce(Upfront.Events, 'upfront:layout_size:change_breakpoint', this.cancelPresetChanges);
 		},
@@ -101,12 +97,16 @@ define([
 				backupModel = this.presets.findWhere({id: preset});
 
 			if(typeof backupModel === "undefined") {
+				preset = 'default';
 				backupModel = this.presets.findWhere({id: 'default'});
 			}
 
 			// Backup preset model properties for later use in reset (on settings cancel)
 			if(typeof this.backupPreset === "undefined") {
-				this.backupPreset = Upfront.Util.clone(backupModel.toJSON());
+				this.backupPreset = {};
+			}
+			if(typeof this.backupPreset[preset] === "undefined") {
+				this.backupPreset[preset] = Upfront.Util.clone(backupModel.toJSON());
 			}
 		},
 
@@ -284,6 +284,13 @@ define([
 				this.editPresetModule,
 				this.presetCssModule
 			]);
+			
+			this.stopListening(Upfront.Events, 'element:settings:canceled');
+			this.listenToOnce(Upfront.Events, 'element:settings:canceled', function() {
+				_.each(this.backupPreset, function (backupPreset) {
+					this.updateCanceledPreset(backupPreset);
+				}, this);
+			});
 		},
 
 		getTitle: function() {
@@ -322,6 +329,8 @@ define([
 			this.debouncedSavePreset(properties);
 
 			this.updateMainDataCollectionPreset(properties);
+			
+			this.presets.findWhere({id: properties.id}).clear().set(properties);
 		},
 
 		updatePreset: function(properties, render) {
@@ -473,6 +482,8 @@ define([
 			// Make sure we don't lose our current preset
 			this.model.encode_preset(preset.id);
 
+			this.createBackup();
+
 			//Notify preset is created
 			Upfront.Views.Editor.notify(l10n.preset_created.replace(/%s/, presetName));
 
@@ -561,6 +572,7 @@ define([
 			//this.setupItems(); // called in render -> getBody
 			this.render();
 
+			this.createBackup();
 			this.defaultOverlay();
 
 			// run layout change event
