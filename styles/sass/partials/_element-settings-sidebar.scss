@@ -25,20 +25,18 @@
 
 #element-settings-sidebar .upfront-settings-title {
 	height: 44px;
-	line-height: 41px;
+	line-height: 43px;
 	background: #f7f7f7;
 	border-bottom: 1px solid #e1e1e1;
 	color: #212121;
-	padding-left: 30px;
+	padding-left: 45px;
 }
 
 #element-settings-sidebar .upfront-settings-title:before {
-	background-position: -823px -44px !important;
-	background-image: url('../img/uf-ui-sprite.svg');
-	left: 10px;
-	top: 14px;
-	width: 15px;
-	height: 14px;
+	left: 11px;
+	top: 10px;
+	width: 25px;
+	height: 25px;
 	content: "";
     display: block;
 	position: absolute;

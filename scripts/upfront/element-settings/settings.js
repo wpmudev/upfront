@@ -128,14 +128,45 @@ define([
 			elementContainer.removeClass('live-preview-hover live-preview-focus live-preview-active');
 		},
 
+		get_element_class: function(type) {
+			var elementTypes = {
+					UaccordionModel: {label: l10n.accordion, id: 'accordion'},
+					UcommentModel: {label: l10n.comments, id: 'comment'},
+					UcontactModel: {label: l10n.contact_form, id: 'contact'},
+					UgalleryModel: {label: l10n.gallery, id: 'gallery'},
+					UimageModel: {label: l10n.image, id: 'image'},
+					LoginModel: {label: l10n.login, id: 'login'},
+					LikeBox: {label: l10n.like_box, id: 'likebox'},
+					MapModel: {label: l10n.map, id: 'maps'},
+					UnewnavigationModel: {label: l10n.navigation, id: 'nav'},
+					ButtonModel: {label: l10n.button, id: 'button'},
+					PostsModel: {label: l10n.posts, id: 'posts'},
+					PostsListsModel: {label: l10n.posts, id: 'posts'},
+					UsearchModel: {label: l10n.search, id: 'search'},
+					USliderModel: {label: l10n.slider, id: 'slider'},
+					SocialMediaModel: {label: l10n.social, id: 'SocialMedia'},
+					UtabsModel: {label: l10n.tabs, id: 'tabs'},
+					ThisPageModel: {label: l10n.page, id: 'this_page'},
+					ThisPostModel: {label: l10n.post, id: 'this_post'},
+					UwidgetModel: {label: l10n.widget, id: 'widget'},
+					UyoutubeModel: {label: l10n.youtube, id: 'youtube'},
+					PlainTxtModel: {label: l10n.text, id:'text'}
+				},
+				element_id = elementTypes[type] || 'default'
+			;
+
+			return 'upfront-icon-element upfront-icon-element-' + element_id.id;
+		},
+
 		render: function () {
 			var me = this,
-				menu = new Commands.Command_Menu({"model": this.model})
+				menu = new Commands.Command_Menu({"model": this.model}),
+				element_type = this.model.get_property_value_by_name('type')
 			;
 
 			this.$el
 				.html(
-					'<div class="upfront-settings-title">' + this.title + ' <ul class="sidebar-commands sidebar-commands-header"></ul></div><div id="sidebar-scroll-wrapper" />'
+					'<div class="upfront-settings-title ' + this.get_element_class(element_type) + '">' + this.title + ' <ul class="sidebar-commands sidebar-commands-header"></ul></div><div id="sidebar-scroll-wrapper" />'
 				)
 			;
 			
