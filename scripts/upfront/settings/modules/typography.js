@@ -60,16 +60,18 @@ define([
 			if(typeof this.options.global_typography !== "undefined") {
 				var font_settings = Upfront.mainData.global_typography[this.options.global_typography];
 
-				if(typeof font_settings === "undefined") return;
+				if(typeof font_settings !== "undefined") {
 
-				// Set global font properties
-				globalFont = {
-					typeFace: font_settings.font_face,
-					fontStyle: font_settings.weight + ' ' + font_settings.style,
-					fontSize: font_settings.size,
-					lineHeight: font_settings.line_height,
-					fontColor: font_settings.color
-				};
+					// Set global font properties
+					globalFont = {
+						typeFace: font_settings.font_face,
+						fontStyle: font_settings.weight + ' ' + font_settings.style,
+						fontSize: font_settings.size,
+						lineHeight: font_settings.line_height,
+						fontColor: font_settings.color
+					};
+
+				}
 			}
 
 			this.fields = _([
