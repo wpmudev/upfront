@@ -19366,6 +19366,9 @@ html {
 .command-open-font-manager, .command-edit-css {
   margin: 0 0 10px 5px !important; }
 
+.command-open-font-manager {
+  margin-left: 0px !important; }
+
 a.upfront-css-font {
   display: block;
   padding: 0px 5px;
