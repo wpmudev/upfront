@@ -354,6 +354,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			'value_field'       => 'term_id',
 			'required'          => false,
 		);
+		$args = array();
 
 		$defaults['selected'] = ( is_category() ) ? get_query_var( 'cat' ) : 0;
 
@@ -376,7 +377,8 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$categories = get_terms( $r['taxonomy'], $get_terms_args );
 
 		// Add All Categories option.
-		$l10n = Upfront_EditorL10n_Server::add_l10n_strings(array());
+		//$l10n = Upfront_EditorL10n_Server::add_l10n_strings(array());
+		$l10n = apply_filters('upfront_l10n', array());
 		$l10n = $l10n['global']['content'];
 		$all_option = (object) array(
 			'name' => $l10n['all_categories'],
