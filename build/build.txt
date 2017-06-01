@@ -190,6 +190,7 @@ upfront/upfront-content.js
 text!upfront/templates/sidebar_settings_theme_colors.html
 /Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-item-colors-editor.js
 /Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-colors.js
+/Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-misc.js
 /Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings.js
 /Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panels.js
 /Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/commands/sidebar-commands-primary-post-type.js

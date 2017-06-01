@@ -1,7 +1,7 @@
 <form>
 	<label>{{Upfront.Settings.l10n.global.content.menu_item_label}}</label>
 	<input type="text" class="menu-item-title upfront-field upfront-field-text" value="{{ title }}">
-	<label class="item-links-to-label">{{Upfront.Settings.l10n.global.content.links_to}}</label>
+	<label class="item-links-to-label upfront-field-padding-top">{{Upfront.Settings.l10n.global.content.links_to}}</label>
 	<div class="menu-item-type-editor">
 		{[if(type == 'external') { ]}
 			<input type="text" class="menu-item-external-input upfront-field upfront-field-text" value="{{url}}" placeholder="{{Upfront.Settings.l10n.global.content.type_link_url}}" >
