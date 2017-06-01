@@ -355,11 +355,6 @@
 				//}
 
 				if ( this.model.is_main() ){
-					$region_auto.on('click', function (e) {
-						e.preventDefault();
-						e.stopPropagation();
-						me.trigger_expand_lock($(this));
-					});
 					this.render_expand_lock($region_auto);
 				}
 				else {
@@ -800,20 +795,18 @@
 					layout: 'horizontal-inline',
 					values: [
 						{ label: l10n.auto_resize, value: true, disabled: disabled }
-					]
+					],
+					change: function() {
+						if (disabled)
+							return;
+						var locked = this.model.get_breakpoint_property_value('expand_lock');
+						this.model.set_breakpoint_property('expand_lock', !locked);
+					}
 				});
 
 				$el.html('');
 				auto_resize.render();
 				$el.append(auto_resize.$el);
-			},
-
-			trigger_expand_lock: function ($el) {
-				if ( $el.hasClass('upfront-region-bg-setting-auto-resize-disabled') )
-					return;
-				var locked = this.model.get_breakpoint_property_value('expand_lock');
-				this.model.set_breakpoint_property('expand_lock', !locked);
-				this.render_expand_lock($el);
 			},
 
 			// Edit CSS trigger
