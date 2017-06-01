@@ -246,6 +246,9 @@ class Upfront_CoreDependencies_Registry extends Upfront_Registry {
 	const WP_SCRIPTS = 'wp_scripts';
 	const WP_STYLES = 'wp_styles';
 
+	const HEADER_STYLES = 'header_styles';
+	const HEADER_SCRIPTS = 'header_scripts';
+
 	/**
 	 * Gets singleton instance
 	 *
@@ -256,6 +259,18 @@ class Upfront_CoreDependencies_Registry extends Upfront_Registry {
 		return self::$_instance;
 	}
 
+	public static function get_all_keys () {
+		return array(
+			self::SCRIPTS,
+			self::STYLES,
+			self::FONTS,
+			self::WP_STYLES,
+			self::WP_SCRIPTS,
+			self::HEADER_STYLES,
+			self::HEADER_SCRIPTS,
+		);
+	}
+
 	/**
 	 * Pushes a value to one of the registered stacks
 	 *
@@ -263,7 +278,7 @@ class Upfront_CoreDependencies_Registry extends Upfront_Registry {
 	 * @param mixed $value Value to set
 	 */
 	public function set ($key, $value) {
-		if (!in_array($key, array(self::SCRIPTS, self::STYLES, self::FONTS, self::WP_STYLES, self::WP_SCRIPTS))) return false;
+		if (!in_array($key, self::get_all_keys())) return false;
 		if (empty($this->_data[$key])) $this->_data[$key] = array();
 
 		$this->_data[$key][] = $value;
@@ -276,7 +291,7 @@ class Upfront_CoreDependencies_Registry extends Upfront_Registry {
 	 * @param mixed $values New stack values
 	 */
 	private function _set_all ($key, $values) {
-		if (!in_array($key, array(self::SCRIPTS, self::STYLES, self::FONTS, self::WP_STYLES, self::WP_SCRIPTS))) return false;
+		if (!in_array($key, self::get_all_keys())) return false;
 		if (empty($this->_data[$key])) $this->_data[$key] = array();
 
 		$this->_data[$key] = $values;
@@ -301,12 +316,30 @@ class Upfront_CoreDependencies_Registry extends Upfront_Registry {
 	}
 
 	/**
+	 * Set individual header script for inclusion.
+	 *
+	 * @param string $handle WP script handle to load
+	 */
+	public function add_header_script ($handle) {
+		return $this->set(self::HEADER_SCRIPTS, $handle);
+	}
+
+	/**
 	 * Set individual style for inclusion.
 	 *
 	 * @param string $url External URL to load the style from
 	 */
 	public function add_style ($url) {
 		return $this->set(self::STYLES, $url);
+	}
+
+	/**
+	 * Set individual header style for inclusion.
+	 *
+	 * @param string $url External URL to load the style from
+	 */
+	public function add_header_style ($url) {
+		return $this->set(self::HEADER_STYLES, $url);
 	}
 
 	/**
@@ -390,6 +423,30 @@ class Upfront_CoreDependencies_Registry extends Upfront_Registry {
 		return empty($this->_data[self::FONTS])
 			? array()
 			: $this->_data[self::FONTS]
+		;
+	}
+
+	/**
+	 * Get all header scripts registered this far.
+	 *
+	 * @return array Ordered list of scripts to include.
+	 */
+	public function get_header_scripts () {
+		return empty($this->_data[self::HEADER_SCRIPTS])
+			? array()
+			: $this->_data[self::HEADER_SCRIPTS]
+		;
+	}
+
+	/**
+	 * Get all header styles registered this far.
+	 *
+	 * @return array Ordered list of styles to include.
+	 */
+	public function get_header_styles () {
+		return empty($this->_data[self::HEADER_STYLES])
+			? array()
+			: $this->_data[self::HEADER_STYLES]
 		;
 	}
 }

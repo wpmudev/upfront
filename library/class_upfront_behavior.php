@@ -13,7 +13,7 @@ class Upfront_CompressionBehavior {
 	private $_experiments;
 
 	private static $_instance;
-	
+
 	private function __construct () {
 		$this->reload();
 	}
@@ -138,10 +138,10 @@ class Upfront_CompressionBehavior {
 	 *
 	 * @return bool True if it actually is, false otherwise
 	 */
-	public function has_compression () { 
-		return (bool)$this->_compression; 
+	public function has_compression () {
+		return (bool)$this->_compression;
 	}
-	
+
 	/**
 	 * Whether or not the load experiments has been enabled at all
 	 *
@@ -167,7 +167,7 @@ class Upfront_CompressionBehavior {
 	public function constant ($which) {
 		$which = preg_replace('/[^a-z]/i', '', strtoupper($which));
 		$const = "Upfront_CompressionBehavior::LEVEL_{$which}";
-		
+
 		return defined($const)
 			? constant($const)
 			: false
