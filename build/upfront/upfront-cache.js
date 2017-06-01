@@ -1,0 +1,1 @@
+define(["scripts/upfront/cache/storage","scripts/upfront/cache/request"],function(e,t){return{Storage:e,Request:t}});

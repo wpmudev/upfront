@@ -167,7 +167,6 @@ define([
 			me.__waiting = me.__waiting || {};
 
 			if (cached) {
-				Upfront.Util.log("Cache HIT! No request will be sent", action);
 				setTimeout(function () {
 					dfr.resolveWith(this, [cached]);
 				});
@@ -177,7 +176,6 @@ define([
 			if (me.__waiting[cache_key]) {
 				// FFS just give it a sec and wait for the current one to finish pl0x.
 				// Patience is a virtue, they say.
-				Upfront.Util.log("Keep calm and GTFO \\mm/", action);
 				return Request.get_promise(me.__waiting[cache_key]);
 			}
 
