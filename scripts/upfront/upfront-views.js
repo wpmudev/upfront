@@ -1899,7 +1899,7 @@ define([
 			skip_dummy_render: function() {
 				var view_class = this.model.get_property_value_by_name('view_class');
 				return view_class === 'UnewnavigationView' || view_class === 'PostsView' ||
-					view_class === 'PostDataPartView';
+					view_class === 'PostDataPartView' || view_class === 'CodeView';
 			},
 			is_dummy_rendered: false,
 			is_full_rendered: false,

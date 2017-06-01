@@ -190,6 +190,7 @@ upfront/upfront-content.js
 text!upfront/templates/sidebar_settings_theme_colors.html
 /Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-item-colors-editor.js
 /Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-colors.js
+/Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-misc.js
 /Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings.js
 /Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panels.js
 /Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/commands/sidebar-commands-primary-post-type.js
@@ -428,6 +429,13 @@ text!elements/upfront-code/tpl/editor.html
 /Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/elements/upfront-spacer/js/uspacer.js
 upfront/upfront-application.js
 pako/pako.min.js
+/Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/cache/storage-stub.js
+/Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/cache/storage-memory.js
+/Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/cache/storage-persistent.js
+/Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/cache/storage-permanent.js
+/Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/cache/storage.js
+/Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/cache/request.js
+/Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/upfront-cache.js
 upfront/upfront-util.js
 /Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/scripts/upfront/plugins.js
 main.js

@@ -314,9 +314,10 @@ class Upfront_Output {
 	 */
 	function add_styles () {
 		$load_style_url = upfront_ajax_url('upfront_load_styles') . '&layout_post_id=' . self::$layout_post_id . '&template_post_id=' . self::$template_post_id;
-		wp_enqueue_style('upfront-main', $load_style_url, array(), Upfront_ChildTheme::get_version(), 'all');
+		//wp_enqueue_style('upfront-main', $load_style_url, array(), Upfront_ChildTheme::get_version(), 'all');
 
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
+		$deps->add_header_style($load_style_url);
 
 		// Load theme fonts
 		$theme_fonts = json_decode(Upfront_Cache_Utils::get_option('upfront_' . get_stylesheet() . '_theme_fonts'));

@@ -715,6 +715,12 @@ var ResponsiveEditor = new (LayoutEditorSubapplication.extend({
 		this.set_up_event_plumbing_after_render();
 		this.listenTo(Upfront.Events, "command:layout:browse", Upfront.Behaviors.LayoutEditor.browse_layout_dialog); // DEPRECATED
 
+		// Move Theme Fonts Manager button to bottom
+		setTimeout( function() {
+			$('.open-theme-fonts-manager').after($('.command-edit-css'));
+			$('.command-edit-css').before($('.command-open-font-manager'));
+		}, 50);
+
 		$("html").removeClass("upfront-edit-content upfront-edit-theme upfront-edit-postlayout upfront-edit-layout").addClass("upfront-edit-responsive");
 	},
 

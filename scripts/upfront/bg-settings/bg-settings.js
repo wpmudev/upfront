@@ -54,7 +54,7 @@ define([
 						this.model.set_breakpoint_property(this.property_name, value);
 					}
 				}),
-				new Upfront.Views.Editor.Field.Checkboxes({
+				new Upfront.Views.Editor.Field.Toggle({
 					model: this.model,
 					property: 'use_padding',
 					className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-settings-item-content upfront-field-wrap-checkboxes padding-bg-checkbox-field',

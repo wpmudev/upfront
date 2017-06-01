@@ -38,6 +38,12 @@ class Upfront_Admin_Experimental extends Upfront_Admin_Page {
 
 		$options['compression'] = !empty($input['experimental_compress_response']);
 
+		$options['freeze'] = !empty($input['experimental_freeze_mode']);
+		$options['freeze_time'] = !empty($input['experimental_freeze_time']) && is_numeric($input['experimental_freeze_time'])
+			? (int)$input['experimental_freeze_time']
+			: 0
+		;
+
 		$result = $compression->set_options($options);
 
 		// Re-parse options on successful save
@@ -108,6 +114,38 @@ class Upfront_Admin_Experimental extends Upfront_Admin_Page {
 																			<span class="upfront_toggle_radio_sub_label"><?php esc_html_e("All built-in dependencies as well as jQuery are debounced & moved to footer. (This mode is very likely to break plugins, please use with caution).", Upfront::TextDomain ); ?></span>
 																		</label>
 																</div>
+														</div>
+														<div class="form_content_group_title">
+															<?php esc_html_e("Assets caching (freeze mode)", Upfront::TextDomain); ?>
+														</div>
+														<div class="form_content_input ">
+															<div class="upfront_toggle">
+																<input type="checkbox" name="experimental_freeze_mode" id="experimental_freeze_mode" <?php checked(true, $compression->get_option('freeze')); ?> value="1" class="upfront_toggle_checkbox" />
+																<label class="upfront_toggle_label" for="experimental_freeze_mode">
+																	<span class="upfront_toggle_inner"></span>
+																	<span class="upfront_toggle_switch"></span>
+																</label>
+															</div>
+															<div class="upfront_toggle_description">
+																<span class="upfront_toggle_checkbox_main_label"><?php esc_html_e("Cache frozen assets", Upfront::TextDomain ); ?></span>
+																<span class="upfront_toggle_checkbox_sub_label"><?php esc_html_e("Freeze all assets in their current state and serve them cached. This option will improve performance and is best used once you're done making changes to your site.", Upfront::TextDomain ); ?></span>
+															</div>
+														</div>
+														<div class="form_content_input ">
+															<label class="upfront_select_label" for="experimental_freeze_time">
+																<span class="upfront_select_main_label"><?php esc_html_e("Freeze time", Upfront::TextDomain ); ?></span>
+																<span class="upfront_select_sub_label"><?php esc_html_e("How long to wait before refreshing the frozen assets cache", Upfront::TextDomain ); ?></span>
+															</label>
+															<select name="experimental_freeze_time" id="experimetal_freeze_time">
+																<option value="120" <?php selected(120, $compression->get_option('freeze_time', DAY_IN_SECONDS)); ?> ><?php esc_html_e('Two minutes (debug)', 'upfront'); ?></option>
+																<option value="3600" <?php selected(3600, $compression->get_option('freeze_time', DAY_IN_SECONDS)); ?> ><?php esc_html_e('One hour', 'upfront'); ?></option>
+																<option value="86400" <?php selected(86400, $compression->get_option('freeze_time', DAY_IN_SECONDS)); ?> ><?php esc_html_e('One day', 'upfront'); ?></option>
+																<option value="<?php echo (int)(DAY_IN_SECONDS * 2); ?>" <?php selected(DAY_IN_SECONDS * 2, $compression->get_option('freeze_time', DAY_IN_SECONDS)); ?> ><?php esc_html_e('Two days', 'upfront'); ?></option>
+																<option value="<?php echo (int)(DAY_IN_SECONDS * 3); ?>" <?php selected(DAY_IN_SECONDS * 3, $compression->get_option('freeze_time', DAY_IN_SECONDS)); ?> ><?php esc_html_e('Three days', 'upfront'); ?></option>
+																<option value="<?php echo (int)(DAY_IN_SECONDS * 7); ?>" <?php selected(DAY_IN_SECONDS * 7, $compression->get_option('freeze_time', DAY_IN_SECONDS)); ?> ><?php esc_html_e('One week', 'upfront'); ?></option>
+																<option value="<?php echo (int)(DAY_IN_SECONDS * 14); ?>" <?php selected(DAY_IN_SECONDS * 14, $compression->get_option('freeze_time', DAY_IN_SECONDS)); ?> ><?php esc_html_e('Two weeks', 'upfront'); ?></option>
+																<option value="<?php echo (int)(DAY_IN_SECONDS * 30); ?>" <?php selected(DAY_IN_SECONDS * 30, $compression->get_option('freeze_time', DAY_IN_SECONDS)); ?> ><?php esc_html_e('One month', 'upfront'); ?></option>
+															</select>
 														</div>
 														<div class="form_content_input compress_response">
 																<div class="upfront_toggle">

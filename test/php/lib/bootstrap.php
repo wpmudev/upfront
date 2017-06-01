@@ -36,7 +36,12 @@ tests_add_filter( 'template', '_manually_load_theme' );
 function _manually_register_theme() {
 	require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/functions.php');
 }
-tests_add_filter( 'muplugins_loaded', '_manually_register_theme' );
+//tests_add_filter( 'muplugins_loaded', '_manually_register_theme' );
+
+function _fix_template_directory_resolution () {
+	return dirname(dirname(dirname(dirname(__FILE__))));
+}
+tests_add_filter( 'template_directory', '_fix_template_directory_resolution' );
 
 require $_tests_dir . '/includes/bootstrap.php';
 

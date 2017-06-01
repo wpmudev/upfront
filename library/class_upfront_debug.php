@@ -1,6 +1,8 @@
 <?php
 
-abstract class Upfront_Debug {
+if (!class_exists('Upfront_Log')) require_once('class_upfront_logger.php');
+
+class Upfront_Debug {
 
 	const ALL = 'all';
 
@@ -18,11 +20,11 @@ abstract class Upfront_Debug {
 
 	private static $_debugger;
 
-	abstract public function log ($msg, $context=false);
+	private $_logger;
 
 	public static function get_debugger () {
 		if (!self::$_debugger) {
-			self::$_debugger = new Upfront_Debug_StreamWriter;
+			self::$_debugger = new self;
 		}
 		return self::$_debugger;
 	}
@@ -33,6 +35,7 @@ abstract class Upfront_Debug {
 			$debug_levels = array_map('trim', explode(',', UPFRONT_DEBUG_LEVELS));
 		}
 		$this->_levels = $debug_levels;
+		$this->_logger = Upfront_Log::get();
 	}
 
 	public function get_levels () {
@@ -65,7 +68,7 @@ abstract class Upfront_Debug {
 	public function constant ($which) {
 		$which = preg_replace('/[^a-z]/i', '', strtoupper($which));
 		$const = "Upfront_Debug::{$which}";
-		
+
 		return defined($const)
 			? constant($const)
 			: false
@@ -85,14 +88,11 @@ abstract class Upfront_Debug {
 	public function is_allowed_to_debug(){
 		return (bool) Upfront_Permissions::current(Upfront_Permissions::SEE_USE_DEBUG);
 	}
-}
-
-class Upfront_Debug_StreamWriter extends Upfront_Debug {
 
 	public function log ($msg, $context=false) {
 		if ($this->is_normal()) return false;
 		if (!empty($context) && !$this->is_active($context)) return false;
-		echo '<pre>' . var_export($msg, 1) . '</pre>';
+		$this->_logger->info($msg);
 	}
-
 }
+

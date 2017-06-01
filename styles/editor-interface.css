@@ -2933,16 +2933,27 @@ input.upfront_toggle_checkbox {
   vertical-align: middle;
   margin-left: 30px; }
 
-.upfront_toggle_description span.upfront_toggle_checkbox_main_label {
+.upfront_toggle_description span.upfront_toggle_checkbox_main_label,
+.upfront_select_label .upfront_select_main_label {
   font-family: 'Roboto';
   font-size: 14px;
   color: #333; }
 
-.upfront_toggle_description span.upfront_toggle_checkbox_sub_label {
+.upfront_toggle_description span.upfront_toggle_checkbox_sub_label,
+.upfront_select_label .upfront_select_sub_label {
   font-family: 'Roboto';
   font-size: 12px;
   color: #777;
   display: block; }
+
+.upfront_select_label {
+  display: inline-block;
+  width: 60%; }
+
+#experimetal_freeze_time {
+  /* Select */
+  width: 120px;
+  display: inline-block; }
 
 .upfront_toggle_radio input {
   display: none; }
@@ -3034,7 +3045,7 @@ input.upfront_toggle_checkbox {
     position: fixed;
     top: 0;
     left: 259px;
-    border-right: 1px solid #1a2d40;
+    border-right: 1px solid transparent;
     z-index: 10001005;
     width: 1px;
     height: 100%; }
@@ -4277,41 +4288,20 @@ a.upfront-region-name-edit-trigger:hover {
   font-family: "Verdana";
   font-size: 11px;
   line-height: 16px;
-  margin: -2px 0 0;
+  margin: 9px 0 0;
   vertical-align: top;
   display: inline-block;
   margin-left: 14px; }
 
-.upfront-region-bg-setting-auto-resize span {
-  display: block; }
-
-.auto-resize-off, .auto-resize-on {
-  display: inline-block;
-  float: none;
-  width: 26px;
-  height: 16px;
-  padding: 2px 2px;
-  margin: 5px 0 0;
-  border-radius: 8px;
-  background: #fff;
-  border: 1px solid #c9cdce; }
-
-.auto-resize-off:after, .auto-resize-on:after {
-  content: " ";
+/* Make label above input */
+.upfront-region-bg-setting-auto-resize .upfront-field-wrap-toggle .upfront-field-label-text {
+  position: absolute;
+  top: -24px;
   display: block;
-  float: left;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
-  background: #abb4b8; }
-
-.auto-resize-on {
-  background: #87959a;
-  border: 1px solid #71848c; }
-
-.auto-resize-on:after {
-  float: right;
-  background: #f5f5f5; }
+  left: 0;
+  font-weight: normal;
+  color: #4a4a4a;
+  margin-left: 0; }
 
 .upfront-region-bg-setting-edit-css:before {
   clear: both; }
@@ -4942,16 +4932,14 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 
 .uf-bgsettings-item .upfront-field-wrap .upfront-field-label-block,
 .upfront-bg-setting-tab-primary .upfront-field-wrap .upfront-field-label-block {
-  color: #3f617f;
   font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
-  font-size: 14px;
-  line-height: 20px;
+  font-size: 11px;
+  line-height: 1;
   font-weight: normal;
-  top: 0px;
-  margin-bottom: 12px; }
+  top: 3px;
+  margin-bottom: 8px; }
 
 #region-settings-sidebar .upfront-bg-setting-tab-primary .upfront-field-wrap .upfront-field-label-block {
-  color: #3f617f;
   font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   font-size: 14px;
   line-height: 20px;
@@ -5229,7 +5217,7 @@ div.upfront-bg-setting-tab-primary .uf-bgsettings-image-style .upfront-field-lab
   left: -155px; }
 
 .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num {
-  margin: -90px 0 5px 30px;
+  margin: -70px 0 5px 30px;
   position: relative;
   top: -50px;
   left: -70px; }
@@ -5423,14 +5411,10 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
   float: none; }
 
 .upfront-field-wrap.uf-bgsettings-image-color .upfront-field-label-block {
-  color: #96acc1;
-  font-size: 10px;
-  font-family: verdana, sans-serif;
   font-weight: normal;
   margin-left: 3px;
   padding: 0;
-  float: right;
-  line-height: 17px; }
+  float: right; }
 
 .upfront-settings_panel .uf-bgsettings-image-color {
   width: 35%;
@@ -5940,12 +5924,8 @@ span.upfront-settings-item-title:after {
 #element-settings-sidebar .uf-bgsettings-item .upfront-field-wrap .upfront-field-label-block {
   font-size: 11px;
   display: inline;
-  font-family: verdana, sans-serif;
   text-align: left;
-  color: #7d99b3;
-  position: relative;
-  top: -3px;
-  padding-left: 5px; }
+  position: relative; }
 
 #element-settings-sidebar .uf-bgsettings-item .sp-replacer {
   float: left; }
@@ -5965,7 +5945,7 @@ span.upfront-settings-item-title:after {
 #element-settings-sidebar .ugroup-settings .uf-bgsettings-imageitem .uf-bgsettings-image-pick {
   position: absolute;
   right: 10px;
-  top: 2px;
+  top: 6px;
   padding: 0px 10px; }
 
 #element-settings-sidebar .ugroup-settings .uf-bgsettings-imageitem .uf-bgsettings-image-pick input {
@@ -5973,8 +5953,8 @@ span.upfront-settings-item-title:after {
   height: 100%; }
 
 #element-settings-sidebar .padding-bg-checkbox-field {
-  border-top: 1px solid #dce7f4;
-  margin: 5px 15px;
+  border-top: 1px solid #e8e8e8;
+  margin: 15px;
   padding: 10px 0px !important;
   display: block; }
 
@@ -5994,16 +5974,19 @@ span.upfront-settings-item-title:after {
   font-family: "Verdana";
   font-size: 11px; }
 
+#settings .ugroup-settings .uf-bgsettings-item {
+  margin: 0px 15px; }
+
 #settings .ugroup-settings .uf-bgsettings-image-color {
   float: right;
-  width: 28%;
+  width: 42%;
   position: absolute;
-  top: -5px;
-  right: 16px; }
+  top: 7px;
+  right: 8px; }
 
 #settings .ugroup-settings .uf-bgsettings-image-color .upfront-field-label {
-  top: 33px;
-  left: 5px; }
+  top: 1px;
+  left: -49px; }
 
 #settings .ugroup-settings .uf-bgsettings-image-size {
   left: 0;
@@ -6034,7 +6017,7 @@ span.upfront-settings-item-title:after {
     margin: 0; }
 
 #settings .ugroup-settings .uf-bgsettings-imageitem .uf-bgsettings-image-pos-x-num {
-  left: -7px; }
+  left: -78px; }
 
 #settings .ugroup-settings .uf-bgsettings-imageitem .uf-bgsettings-image-pos-y-num {
   left: -78px; }
@@ -8471,6 +8454,9 @@ span.upfront-settings-item-title:after {
   width: 24px;
   height: 24px;
   margin: 0 3px 0 0; }
+
+.upfront-icon-element-undefined:before {
+  background-position: -39px -176px; }
 
 .upfront-icon-element-text:before {
   background-position: -39px -40px; }
@@ -19379,6 +19365,9 @@ html {
 
 .command-open-font-manager, .command-edit-css {
   margin: 0 0 10px 5px !important; }
+
+.command-open-font-manager {
+  margin-left: 0px !important; }
 
 a.upfront-css-font {
   display: block;

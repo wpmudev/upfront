@@ -819,9 +819,112 @@
             		// Use UFC index number instead of color value for theme colors
 					this.$(".color_picker_rgb_preview").html("#ufc" + this.field_options.ufc_index);
 				} else {
+					this.$(".color_picker_rgb_preview").html(color);
 					this.$(".sp-alpha-overlay").remove();
 				}
-			}
+			},
+			rgba_sidebar_changed : function(e){
+				var $el = $(e.target),
+					type = $el.data("type"),
+					val = parseFloat($el.val()),
+					color = this.$spectrum.spectrum("get"),
+					selection = {};
+				selection[type] = val;
+				color = tinycolor(_.extend(color.toRgb(), selection));
+				// Set the new color
+				this.$spectrum.spectrum("set", color.toRgbString());
+				this.update_input_border_color( color.toRgbString() );
+				this.update_color_picker_preview( color.toRgbString() );
+				this.update_input_val( color.toRgbString() );
+				this.render_sidebar_rgba(  color.toRgb() );
+				// Trigger move event
+				if(this.options.spectrum && typeof this.options.spectrum.move === "function"){
+					this.options.spectrum.move(color);
+				}
+				// Trigger change event
+				if(this.options.spectrum && typeof this.options.spectrum.change === "function"){
+					this.options.spectrum.change(color);
+				}
+				e.stopPropagation();
+				e.preventDefault();
+				this.$spectrum.trigger("dragstop.spectrum");
+			},
+			sp_input_changed : function(e){
+				var color = tinycolor($(e.target).val());
+				// Trigger move event
+				if(this.options.spectrum && typeof this.options.spectrum.move === "function"){
+					this.options.spectrum.move(color);
+				}
+				// Trigger change event
+				if(this.options.spectrum && typeof this.options.spectrum.change === "function"){
+					this.options.spectrum.change(color);
+				}
+				//Update preview color
+				this.update_input_border_color(color.toRgbString);
+				this.update_color_picker_preview(color.toRgbString());
+			},
+			set_to_blank : function(){
+				var blank_color = 'rgba(0, 0, 0, ' + ( _.isUndefined( this.options.blank_alpha ) ? 1 : this.options.blank_alpha ) + ')',
+					color = tinycolor(blank_color);
+				color.reset = true;
+				this.rgba = {r: 0, g: 0, b:0, a: 0};
+				this.$spectrum.spectrum("set", color.toRgbString() );
+				this.update_input_border_color( blank_color );
+				this.update_color_picker_preview( blank_color );
+				this.update_input_val( "#000000" );
+				this.render_sidebar_rgba(  this.rgba );
+
+				// Trigger move event
+				if(this.options.spectrum && typeof this.options.spectrum.move === "function"){
+					this.options.spectrum.move(color);
+				}
+
+				// Trigger change event
+				if(this.options.spectrum && typeof this.options.spectrum.change === "function"){
+					this.options.spectrum.change(color);
+				}
+
+				// Trigger move event in Theme Color Swatches
+				if(this.options && typeof this.options.move === "function"){
+					this.options.move(color);
+				}
+
+				// Trigger change event in Theme Color Swatches
+				if(this.options && typeof this.options.change === "function"){
+					this.options.change(color);
+				}
+			},
+			get_value : function() {
+				return this.$el.find(".sp-preview-inner").css('background-color');
+			},
+			set_value : function(rgba) {
+				if (Upfront.Util.colors.is_theme_color(rgba)) rgba = Upfront.Util.colors.get_color(rgba);
+				var color = tinycolor(rgba);
+				this.color = color;
+				this.$spectrum.spectrum("set", color );
+			},
+			toggle_alpha_selector: function(color){
+				if( _.isEmpty( color ) ) return;
+
+				var $alpha = this.$(".sp-alpha");
+
+				if( Upfront.Views.Theme_Colors.colors.is_theme_color( color ) ){
+
+					$alpha.addClass("sp-alpha-disabled sp-alpha-lower-opacity");
+					$overlay = $("<span class='sp-alpha-overlay' title='"+ l10n.theme_colors_opacity_disabled +"'>"+ l10n.theme_colors_opacity_disabled +"</span>")
+						.on("click", function(e){
+							e.stopPropagation();
+							e.preventDefault();
+						});
+					if( !this.$(".sp-alpha-overlay").length ){
+						$alpha.before($overlay);
+					}
+
+				} else {
+					$alpha.removeClass("sp-alpha-disabled sp-alpha-lower-opacity");
+					this.$(".sp-alpha-overlay").remove();
+				}
+			},
 		});
 
 
@@ -1152,111 +1255,8 @@
 				if (value.value === saved_value) {
 					selected = ' selected="selected"';
 				}
-			},
-            rgba_sidebar_changed : function(e){
-                var $el = $(e.target),
-                    type = $el.data("type"),
-                    val = parseFloat($el.val()),
-                    color = this.$spectrum.spectrum("get"),
-                    selection = {};
-                selection[type] = val;
-                color = tinycolor(_.extend(color.toRgb(), selection));
-                // Set the new color
-                this.$spectrum.spectrum("set", color.toRgbString());
-                this.update_input_border_color( color.toRgbString() );
-				this.update_color_picker_preview( color.toRgbString() );
-                this.update_input_val( color.toRgbString() );
-                this.render_sidebar_rgba(  color.toRgb() );
-                // Trigger move event
-                if(this.options.spectrum && typeof this.options.spectrum.move === "function"){
-                    this.options.spectrum.move(color);
-                }
-                // Trigger change event
-                if(this.options.spectrum && typeof this.options.spectrum.change === "function"){
-                    this.options.spectrum.change(color);
-                }
-                e.stopPropagation();
-                e.preventDefault();
-                this.$spectrum.trigger("dragstop.spectrum");
-            },
-            sp_input_changed : function(e){
-                var color = tinycolor($(e.target).val());
-                // Trigger move event
-                if(this.options.spectrum && typeof this.options.spectrum.move === "function"){
-                    this.options.spectrum.move(color);
-                }
-                // Trigger change event
-                if(this.options.spectrum && typeof this.options.spectrum.change === "function"){
-                    this.options.spectrum.change(color);
-                }
-                //Update preview color
-                this.update_input_border_color(color.toRgbString);
-				this.update_color_picker_preview(color.toRgbString());
-            },
-            set_to_blank : function(){
-                var blank_color = 'rgba(0, 0, 0, ' + ( _.isUndefined( this.options.blank_alpha ) ? 1 : this.options.blank_alpha ) + ')',
-                    color = tinycolor(blank_color);
-                color.reset = true;
-                this.rgba = {r: 0, g: 0, b:0, a: 0};
-                this.$spectrum.spectrum("set", color.toRgbString() );
-                this.update_input_border_color( blank_color );
-				this.update_color_picker_preview( blank_color );
-                this.update_input_val( "#000000" );
-                this.render_sidebar_rgba(  this.rgba );
-
-                // Trigger move event
-                if(this.options.spectrum && typeof this.options.spectrum.move === "function"){
-                    this.options.spectrum.move(color);
-                }
-
-                // Trigger change event
-                if(this.options.spectrum && typeof this.options.spectrum.change === "function"){
-                    this.options.spectrum.change(color);
-                }
-
-                // Trigger move event in Theme Color Swatches
-                if(this.options && typeof this.options.move === "function"){
-                    this.options.move(color);
-                }
-
-                // Trigger change event in Theme Color Swatches
-                if(this.options && typeof this.options.change === "function"){
-                    this.options.change(color);
-                }
-            },
-            get_value : function() {
-                return this.$el.find(".sp-preview-inner").css('background-color');
-            },
-            set_value : function(rgba) {
-                if (Upfront.Util.colors.is_theme_color(rgba)) rgba = Upfront.Util.colors.get_color(rgba);
-                var color = tinycolor(rgba);
-                this.color = color;
-                this.$spectrum.spectrum("set", color );
-            },
-            toggle_alpha_selector: function(color){
-                if( _.isEmpty( color ) ) return;
-
-                var $alpha = this.$(".sp-alpha");
-
-                if( Upfront.Views.Theme_Colors.colors.is_theme_color( color ) ){
-
-                    $alpha.addClass("sp-alpha-disabled sp-alpha-lower-opacity");
-                    $overlay = $("<span class='sp-alpha-overlay' title='"+ l10n.theme_colors_opacity_disabled +"'>"+ l10n.theme_colors_opacity_disabled +"</span>")
-                        .on("click", function(e){
-                            e.stopPropagation();
-                            e.preventDefault();
-                        });
-                    if( !this.$(".sp-alpha-overlay").length ){
-                        $alpha.before($overlay);
-                    }
-
-                } else {
-                    $alpha.removeClass("sp-alpha-disabled sp-alpha-lower-opacity");
-                    this.$(".sp-alpha-overlay").remove();
-                }
-            },
+			}
         });
-
 
         var Field_Multiple = Field.extend(_.extend({}, Mixins.Upfront_Icon_Mixin, {
             get_values_html: function () {
