@@ -782,25 +782,30 @@
 			render_expand_lock: function ($el) {
 				var locked = this.model.get_breakpoint_property_value('expand_lock', true),
 					type = this.model.get('type'),
-					$status = $('<span />')
+					disabled = false
 				;
+
 				if ( type == 'full' ) {
-					$el.addClass('upfront-region-bg-setting-auto-resize-disabled');
-					$el.attr('title', l10n.auto_resize_disabled_title);
+					disabled = true;
+					//$el.attr('title', l10n.auto_resize_disabled_title);
 				}
 				else {
-					$el.removeClass('upfront-region-bg-setting-auto-resize-disabled');
-					$el.removeAttr('title');
+					disabled = false;
 				}
-				if ( locked ){
-					$status.addClass('auto-resize-off');
-				}
-				else {
-					$status.addClass('auto-resize-on');
-				}
+
+				var auto_resize = new Fields.Toggle({
+					model: this.model,
+					property: 'expand_lock',
+					default_value: locked,
+					layout: 'horizontal-inline',
+					values: [
+						{ label: l10n.auto_resize, value: true, disabled: disabled }
+					]
+				});
+
 				$el.html('');
-				$el.append('<span>' + l10n.auto_resize + '</span>');
-				$el.append($status);
+				auto_resize.render();
+				$el.append(auto_resize.$el);
 			},
 
 			trigger_expand_lock: function ($el) {
