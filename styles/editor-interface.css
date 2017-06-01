@@ -3034,7 +3034,7 @@ input.upfront_toggle_checkbox {
     position: fixed;
     top: 0;
     left: 259px;
-    border-right: 1px solid #1a2d40;
+    border-right: 1px solid transparent;
     z-index: 10001005;
     width: 1px;
     height: 100%; }
@@ -4277,41 +4277,20 @@ a.upfront-region-name-edit-trigger:hover {
   font-family: "Verdana";
   font-size: 11px;
   line-height: 16px;
-  margin: -2px 0 0;
+  margin: 9px 0 0;
   vertical-align: top;
   display: inline-block;
   margin-left: 14px; }
 
-.upfront-region-bg-setting-auto-resize span {
-  display: block; }
-
-.auto-resize-off, .auto-resize-on {
-  display: inline-block;
-  float: none;
-  width: 26px;
-  height: 16px;
-  padding: 2px 2px;
-  margin: 5px 0 0;
-  border-radius: 8px;
-  background: #fff;
-  border: 1px solid #c9cdce; }
-
-.auto-resize-off:after, .auto-resize-on:after {
-  content: " ";
+/* Make label above input */
+.upfront-region-bg-setting-auto-resize .upfront-field-wrap-toggle .upfront-field-label-text {
+  position: absolute;
+  top: -24px;
   display: block;
-  float: left;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
-  background: #abb4b8; }
-
-.auto-resize-on {
-  background: #87959a;
-  border: 1px solid #71848c; }
-
-.auto-resize-on:after {
-  float: right;
-  background: #f5f5f5; }
+  left: 0;
+  font-weight: normal;
+  color: #4a4a4a;
+  margin-left: 0; }
 
 .upfront-region-bg-setting-edit-css:before {
   clear: both; }
