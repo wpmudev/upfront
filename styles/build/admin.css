@@ -214,16 +214,27 @@ input.upfront_toggle_checkbox {
   vertical-align: middle;
   margin-left: 30px; }
 
-.upfront_toggle_description span.upfront_toggle_checkbox_main_label {
+.upfront_toggle_description span.upfront_toggle_checkbox_main_label,
+.upfront_select_label .upfront_select_main_label {
   font-family: 'Roboto';
   font-size: 14px;
   color: #333; }
 
-.upfront_toggle_description span.upfront_toggle_checkbox_sub_label {
+.upfront_toggle_description span.upfront_toggle_checkbox_sub_label,
+.upfront_select_label .upfront_select_sub_label {
   font-family: 'Roboto';
   font-size: 12px;
   color: #777;
   display: block; }
+
+.upfront_select_label {
+  display: inline-block;
+  width: 60%; }
+
+#experimetal_freeze_time {
+  /* Select */
+  width: 120px;
+  display: inline-block; }
 
 .upfront_toggle_radio input {
   display: none; }
