@@ -543,7 +543,7 @@
 			render_sticky_settings: function ($region_sticky) {
 				var collection = this.model.collection,
 					has_sticky = collection.findWhere({sticky: '1'}),
-					region_sticky = new Fields.Checkboxes({
+					region_sticky = new Fields.Toggle({
 						model: this.model,
 						name: 'sticky',
 						default_value: '',
