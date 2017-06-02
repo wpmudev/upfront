@@ -1631,7 +1631,8 @@ input.upfront-field-text:hover,
   height: 16px; }
 
 .upfront-number-unit-select .upfront-field-select .upfront-field-select-value span {
-  line-height: 14px; }
+  line-height: 14px;
+  display: block; }
 
 .upfront-number-unit-select .upfront-field-select:after {
   display: none; }
@@ -4055,7 +4056,7 @@ input.upfront_toggle_checkbox {
 
 #region-settings-sidebar .upfront-region-bg-setting-header {
   margin: 0;
-  padding: 13px 16px;
+  padding: 12px 16px;
   border-bottom: 1px solid #e0e0e0;
   position: relative;
   background: #f7f7f7; }
@@ -4066,6 +4067,11 @@ input.upfront_toggle_checkbox {
 .upfront-region-name-edit-value {
   font-size: 15px;
   font-weight: 300; }
+
+#region-settings-sidebar .upfront-region-name-edit-value {
+  font-size: 12px;
+  font-weight: normal;
+  margin-left: 4px; }
 
 .upfront-region-type-icon {
   width: 24px;
@@ -4078,6 +4084,15 @@ input.upfront_toggle_checkbox {
 
 .upfront-region-type-icon.upfront-region-type-icon-color {
   background-position: -40px -508px; }
+
+.upfront-region-type-icon.upfront-region-type-icon-image-url {
+  background-position: 0 0;
+  background-size: cover;
+  border: 1px solid #212121;
+  border-radius: 3px;
+  width: 22px;
+  height: 22px;
+  margin-top: 2px; }
 
 .upfront-region-type-icon.upfront-region-type-icon-image {
   background-position: -163px -508px; }
@@ -4359,64 +4374,10 @@ a.upfront-region-name-edit-trigger:hover {
   margin-top: 4px;
   margin-right: 7px; }
 
-.upfront-region-bg-setting-sticky .upfront-field-multiple label::before {
-  display: none; }
-
-.upfront-region-bg-setting-sticky label {
-  color: #4a4a4a;
-  font-weight: normal;
-  font-family: "Open Sans", verdana, sans-serif;
-  cursor: pointer; }
-
-#region-settings-sidebar .upfront-region-bg-setting-sticky .upfront-field-label-text {
-  float: right;
-  line-height: 22px;
-  margin-left: 10px;
-  font-size: 11px;
-  font-weight: 500; }
-
 .upfront-region-bg-setting-floating-restrict,
 .upfront-region-bg-setting-sticky {
   float: right;
   margin: 4px 0 10px; }
-
-.upfront-region-bg-setting-sticky span.upfront-field-multiple {
-  padding-left: 0; }
-
-/* Make Sticky a toggle instead of checkbox */
-.upfront-region-bg-setting-sticky .upfront-field-multiple input {
-  display: none; }
-
-/* Selected */
-.upfront-field-multiple.upfront-field-multiple-selected .upfront-bg-setting-sticky-toggle:after {
-  float: right;
-  background: #f5f5f5; }
-
-/* Not Selected */
-.upfront-field-multiple .upfront-bg-setting-sticky-toggle:after {
-  content: " ";
-  display: block;
-  float: left;
-  width: 10px;
-  height: 10px;
-  border-radius: 5px;
-  background: #abb4b8; }
-
-.upfront-bg-setting-sticky-toggle {
-  display: inline-block;
-  float: none;
-  width: 26px;
-  height: 16px;
-  padding: 2px 2px;
-  margin: 4px 0 0 7px;
-  border-radius: 8px;
-  border: 1px solid #c9cdce;
-  background: #fff; }
-
-/* Selected */
-div.upfront-region-bg-setting-footer .upfront-field-multiple-selected .upfront-bg-setting-sticky-toggle {
-  border: 1px solid #71848c;
-  background: #87959a; }
 
 .upfront-modal-bg-settings-fixed div.upfront-region-bg-setting-floating-restrict {
   clear: both;
@@ -19355,6 +19316,7 @@ html {
 
 .command-open-font-manager:before,
 #insert-font-widget:before {
+  background-image: url(../img/uf-ui-sprite.svg?v=20131127);
   background-position: -821px -202px;
   width: 18px;
   height: 16px;
