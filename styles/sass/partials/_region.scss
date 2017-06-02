@@ -1508,33 +1508,10 @@ a.upfront-region-name-edit-trigger:hover {
 	margin-right: 7px;
 }
 
-.upfront-region-bg-setting-sticky .upfront-field-multiple label::before {
-    display: none;
-}
-
-.upfront-region-bg-setting-sticky label {
-	color: #4a4a4a;
-	font-weight: normal;
-	font-family: "Open Sans", verdana, sans-serif;
-	cursor: pointer;
-}
-
-#region-settings-sidebar .upfront-region-bg-setting-sticky .upfront-field-label-text {
-	float: right;
-	line-height: 22px;
-	margin-left: 10px;
-	font-size: 11px;
-	font-weight: 500;
-}
-
 .upfront-region-bg-setting-floating-restrict,
 .upfront-region-bg-setting-sticky {
 	float: right;
 	margin: 4px 0 10px;
-}
-
-.upfront-region-bg-setting-sticky span.upfront-field-multiple {
-	padding-left: 0;
 }
 
 .upfront-modal-bg-settings-fixed div.upfront-region-bg-setting-floating-restrict {
