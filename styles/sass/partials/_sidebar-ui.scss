@@ -1355,12 +1355,21 @@ span.draggable-post-element.element-dragging
 	background: rgb(23, 147, 255);
 	border: 1px solid rgb(14, 133, 237);
 	color: #fff;
+	opacity: 1;
+}
+
+#sidebar-ui .sidebar-commands li.sidebar-commands-button.blue:hover,
+#sidebar-ui .sidebar-commands-button.blue:hover,
+#element-settings-sidebar .sidebar-commands-button.blue:hover {
+	background: rgb(14, 133, 237);
 }
 
 #sidebar-ui .sidebar-commands li.sidebar-commands-button.command-save {
 	float: right;
 	padding: 0px 30px;
 	margin: 25px 15px;
+	font-size: 12px;
+	font-weight: 800;
 }
 
 #sidebar-ui .sidebar-commands li.sidebar-commands-button.command-new-post,
