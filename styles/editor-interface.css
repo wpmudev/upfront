@@ -664,6 +664,10 @@ em {
   padding: 2px;
   margin: 0 0 8px 15px; }
 
+#sidebar-ui .sidebar-commands-control .command-grid.upfront-icon-grid-active {
+  border: 1px solid #D9D9D9;
+  background-color: #E2E2E2; }
+
 #sidebar-ui .sidebar-commands-control .command-trash {
   float: left;
   color: #e75757;
