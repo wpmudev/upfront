@@ -766,6 +766,9 @@ em {
 #sidebar-ui .sidebar-panel-elements.expanded + .sidebar-panel {
   margin-top: -5px; }
 
+#sidebar-ui .sidebar-panel-elements.expanded + .sidebar-panel h3 {
+  border-top: 1px solid #e2e2e2; }
+
 #sidebar-ui-toggler {
   display: none;
   border-left: 3px solid #1fcd8f;

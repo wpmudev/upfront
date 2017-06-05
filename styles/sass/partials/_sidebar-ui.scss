@@ -629,6 +629,10 @@
 	margin-top: -5px;
 }
 
+#sidebar-ui .sidebar-panel-elements.expanded + .sidebar-panel h3 {
+	border-top: 1px solid rgb(226, 226, 226);
+}
+
 #sidebar-ui-toggler{
 	display: none;
 	border-left: 3px solid #1fcd8f;
