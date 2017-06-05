@@ -236,6 +236,7 @@ em {
   font: 16px/24px 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
   z-index: 10001002;
   background: #f7f7f7;
+  box-shadow: 1px 0 5px 1px rgba(44, 44, 44, 0.15);
   /* Disable text selection */
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -7781,7 +7782,8 @@ span.upfront-settings-item-title:after {
   z-index: 10001006;
   bottom: 0;
   background: #f7f7f7;
-  width: 260px; }
+  width: 260px;
+  box-shadow: 1px 0 5px 1px rgba(44, 44, 44, 0.15); }
 
 #element-settings-sidebar #settings {
   position: relative;
