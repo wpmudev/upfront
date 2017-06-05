@@ -100,13 +100,17 @@
 								// Replace icon with new type's icon.
 								var former_class = $content.find('.upfront-region-type-icon')[0];
 								var image_url = this.model.get_breakpoint_property_value('background_image');
+								var color = this.model.get_breakpoint_property_value('background_color');
 								if (value === 'image' && image_url) {
 									former_class = former_class.classList[1];
 									$content.find('.upfront-region-type-icon').addClass('upfront-region-type-icon-image-url').removeClass(former_class).css({'backgroundImage': 'url(' + image_url + ')'});
+								} else if (value === 'color' && color) {
+									former_class = former_class.classList[1];
+									$content.find('.upfront-region-type-icon').addClass('upfront-region-type-icon-color-swatch').removeClass(former_class).css({'backgroundImage': 'none', 'backgroundColor': color});
 								} else if (former_class) {
 									former_class = former_class.classList[1];
-									$content.find('.upfront-region-type-icon').css({'backgroundImage': '', 'backgroundPosition': ''});
-									$content.find('.upfront-region-type-icon').addClass('upfront-region-type-icon-'+value).removeClass(former_class + ' upfront-region-type-icon-image-url');
+									$content.find('.upfront-region-type-icon').css({'backgroundImage': '', 'backgroundPosition': '', backgroundColor: ''});
+									$content.find('.upfront-region-type-icon').addClass('upfront-region-type-icon-'+value).removeClass(former_class + ' upfront-region-type-icon-image-url upfront-region-type-icon-color-swatch');
 								}
 							}
 							if ( !is_responsive ) {

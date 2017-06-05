@@ -25,6 +25,10 @@ define([
 					},
 					change: function (color) {
 						me.update_color(color);
+						// Update color swatch in header.
+						var former_class = $('#region-settings-sidebar .upfront-region-type-icon')[0];
+						former_class = former_class.classList[1];
+						$('#region-settings-sidebar .upfront-region-type-icon').addClass('upfront-region-type-icon-color-swatch').removeClass(former_class).css({'backgroundImage': 'none', 'backgroundColor': '#' + color.toHex()});
 					},
 					hide: function (color) {
 						me.reset_color();

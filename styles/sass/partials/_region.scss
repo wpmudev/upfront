@@ -1179,14 +1179,25 @@
 	/*border: 1px solid #A2BFDA;
 	 *box-shadow: inset 0 0 0 1px #fff;*/
 }
+
+.upfront-region-type-icon.upfront-region-type-icon-color-swatch,
 .upfront-region-type-icon.upfront-region-type-icon-image-url {
-	background-position: 0 0;
-	background-size: cover;
 	border: 1px solid #212121;
-	border-radius: 3px;
+	border-radius: 2px;
 	width: 22px;
 	height: 22px;
 	margin-top: 2px;
+}
+
+.upfront-region-type-icon.upfront-region-type-icon-color-swatch {
+	border: 1px solid #212121;
+	outline: #fff solid thin;
+	outline-offset: -2px;
+}
+
+.upfront-region-type-icon.upfront-region-type-icon-image-url {
+	background-position: 0 0;
+	background-size: cover;
 }
 .upfront-region-type-icon.upfront-region-type-icon-image {
 	background-position: -163px -508px;
