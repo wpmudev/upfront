@@ -1054,6 +1054,11 @@ em {
   display: block;
   margin: 0 auto; }
 
+.draggable-element {
+  text-transform: lowercase;
+  font-weight: 400;
+  color: #000000; }
+
 .draggable-element:active, .draggable-element.element-dragging {
   cursor: move;
   cursor: -moz-grabbing;
@@ -1061,11 +1066,11 @@ em {
 
 .draggable-element:hover {
   background: #FFFFFF;
-  border: 1px solid #E7E7E7; }
+  box-shadow: 0 0 0 1px #f2f2f2 inset, 0 0 0 2px #e7e7e7 inset; }
 
 .draggable-element:hover, .draggable-element.element-dragging {
   background: #FFFFFF;
-  border: 1px solid #E7E7E7;
+  box-shadow: 0 0 0 1px #f2f2f2 inset, 0 0 0 2px #e7e7e7 inset;
   padding-top: 40px;
   z-index: 2; }
 
