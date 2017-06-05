@@ -487,15 +487,16 @@
 
 #sidebar-ui .sidebar-commands-control .command-start-responsive {
 	margin: 0px;
-	font-size: 13px;
 	max-width: 122px;
-	line-height: 26px;
+	line-height: 22px;
 	padding: 0px 6px;
 	height: auto;
-	max-height: 26px;
+	max-height: 22px;
 	border: 1px solid #a7a7a7;
 	border-radius: 2px;
 	margin-left: 15px !important;
+	font-size: 12px;
+	font-weight: 400;
 }
 
 #sidebar-ui .sidebar-commands-control .command-start-responsive:before {
