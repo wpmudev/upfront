@@ -862,6 +862,11 @@ div.preset-manager-panel .settings_module.module_no_border.colors_settings_item 
 	margin: 0 !important;
 	padding: 0 !important;
 }
+
 #page.upfront-layout-view .upostslist-object .upfront-object {
 	padding: 0px;
+}
+
+#page .uf-posts-list .upfront-entity-size-hint {
+	display: none !important;
 }
