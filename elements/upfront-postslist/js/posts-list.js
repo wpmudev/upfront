@@ -337,12 +337,15 @@ var PostsListsView = Upfront.Views.ObjectGroup.extend({
 
 		this.on('posts:layout:edited', this.on_posts_layout_edit);
 
+		$(window).on('scroll', this, this.on_scroll);
+
 		if ( this.model.get('objects').length === 0 ) {
 			this._is_compat = true;
 		}
 		
 		this.events = _.extend({}, this.events, {
 			'click .reorder-overlay p' : 'on_edit_click',
+			'hover .reorder-overlay' : 'on_scroll',
 		});
 		
 		this.delegateEvents();
@@ -417,6 +420,25 @@ var PostsListsView = Upfront.Views.ObjectGroup.extend({
 		controls.push(this.createPaddingControl());
 		controls.push(this.createControl('settings', l10n.settings, 'on_settings_click'));
 		return _(controls);
+	},
+
+	on_scroll: function (e) {
+		var $element = $('.upfront-posts_module'),
+			$element_top = $element.offset().top,
+			$element_bottom  = $element.offset().top + $element.height(),
+			$overlay = $element.find('.reorder-overlay'),
+			viewportTop = $(window).scrollTop()
+		;
+
+		// Check if overlay exist
+		if($overlay.length) {
+			var $overlay_top = $overlay.offset().top;
+			if( (viewportTop > $element_top) &&  (viewportTop < ($element_bottom - 100))) {
+				$overlay.find('p').css({
+					top: (viewportTop - $overlay_top) + 50,
+				});
+			}
+		}
 	},
 	
 	on_edit_click: function (e) {

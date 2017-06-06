@@ -776,7 +776,7 @@ div.preset-manager-panel .category-padding-margin {
 	background-image: linear-gradient(to bottom, #F8FBFF 0%, #f3faff 100%);
 	border: 1px solid #c7d9ea;
 	color: #6f8fad;
-	top:0; bottom:0; left:0; right:0;
+	top: 50px; left:0; right:0;
 	border-radius: 3px;
 	min-width: 230px;
 	max-width: 230px;
