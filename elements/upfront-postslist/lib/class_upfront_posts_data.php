@@ -245,6 +245,7 @@ class Upfront_PostsLists_PostsData {
 			'post_part_settings' => __('Post Parts Settings', 'upfront'),
 			'edit_template' => __('Edit markup', 'upfront'),
 			'px' => __('px', 'upfront'),
+			'modify_first' => __('You can only modify the 1st post. All other posts will follow same format', 'upfront'),
 			'modules' => array(
 				'element_wrapper' => __('Element Wrapper', 'upfront'),
 				'wrappers_label' => __('Wrappers:', 'upfront'),

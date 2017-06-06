@@ -272,12 +272,26 @@ var PostsListsEachView = Upfront.Views.ObjectGroup.extend({
 
 	enable_object_edit: function () {
 		this.toggle_object_edit(true);
+
+		var $wrapper = this.$el.closest('ul.uf-posts-list'),
+			$elements = $wrapper.find('li').not(':first')
+		;
+
+		$elements.wrapAll('<div class="posts-edit-wrapper" />');
+		$wrapper.find('.posts-edit-wrapper').prepend('<div class="posts-edit-wrapper-content"><span>' + l10n.modify_first + '</span></div>');
 	},
 
 	disable_object_edit: function () {
 		if ( !this.editing ) return;
 		this.toggle_object_edit(false);
 		if ( this.object_group_view ) this.object_group_view.trigger('posts:layout:edited');
+
+		var $wrapper = this.$el.closest('ul.uf-posts-list'),
+			$elements = $wrapper.find('li').not(':first')
+		;
+
+		$wrapper.find('.posts-edit-wrapper-content').remove();
+		$elements.unwrap('.posts-edit-wrapper');
 	}
 
 });
@@ -424,13 +438,18 @@ var PostsListsView = Upfront.Views.ObjectGroup.extend({
 
 	on_scroll: function (e) {
 		var $element = $('.upfront-posts_module'),
-			$element_top = $element.offset().top,
+			$overlay = $element.find('.reorder-overlay')
+		;
+
+		// Return if overlay doesn't exist
+		if(!$overlay.length) return;
+
+		var $element_top = $element.offset().top,
 			$element_bottom  = $element.offset().top + $element.height(),
-			$overlay = $element.find('.reorder-overlay'),
 			viewportTop = $(window).scrollTop()
 		;
 
-		// Check if overlay exist
+		// Check if overlay exist just in case
 		if($overlay.length) {
 			var $overlay_top = $overlay.offset().top;
 			if( (viewportTop > $element_top) &&  (viewportTop < ($element_bottom - 100))) {

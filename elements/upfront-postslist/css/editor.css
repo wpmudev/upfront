@@ -870,3 +870,37 @@ div.preset-manager-panel .settings_module.module_no_border.colors_settings_item 
 #page .uf-posts-list .upfront-entity-size-hint {
 	display: none !important;
 }
+
+#page .uf-posts-list .posts-edit-wrapper {
+	position: relative;
+}
+
+#page .uf-posts-list .posts-edit-wrapper-content {
+	content: '';
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0; left: 0; right: 0; bottom: 0;
+	background: rgba(255, 255, 255, .6);
+	z-index: 5;
+	text-align: center;
+}
+
+#page .uf-posts-list .posts-edit-wrapper-content span {
+	display: inline-block;
+	background: #fff;
+	padding: 35px 40px;
+	border-radius: 5px;
+	position: relative;
+	z-index: 10;
+	margin-top: 15%;
+	box-shadow: 1px 0 7px 1px rgba(44, 44, 44, 0.15);
+}
+
+#page .uf-posts-list .posts-edit-wrapper .upfront-posts-part {
+	outline: none !important;
+}
+
+#page .uf-posts-list .posts-edit-wrapper .upfront-resize-handle-element {
+	display: none !important;
+}
