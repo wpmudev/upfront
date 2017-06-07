@@ -4110,14 +4110,22 @@ input.upfront_toggle_checkbox {
 .upfront-region-type-icon.upfront-region-type-icon-color {
   background-position: -40px -508px; }
 
+.upfront-region-type-icon.upfront-region-type-icon-color-swatch,
 .upfront-region-type-icon.upfront-region-type-icon-image-url {
-  background-position: 0 0;
-  background-size: cover;
   border: 1px solid #212121;
-  border-radius: 3px;
+  border-radius: 2px;
   width: 22px;
   height: 22px;
   margin-top: 2px; }
+
+.upfront-region-type-icon.upfront-region-type-icon-color-swatch {
+  border: 1px solid #212121;
+  outline: #fff solid thin;
+  outline-offset: -2px; }
+
+.upfront-region-type-icon.upfront-region-type-icon-image-url {
+  background-position: 0 0;
+  background-size: cover; }
 
 .upfront-region-type-icon.upfront-region-type-icon-image {
   background-position: -163px -508px; }
@@ -14174,6 +14182,11 @@ a.ueditor-select-option:hover {
 #sidebar-ui .upfront-slug_editor-url div:hover p a {
   display: inline-block; }
 
+#sidebar-ui .misc-pub-post-status:hover a,
+#sidebar-ui .misc-pub-visibility:hover a,
+#sidebar-ui .misc-pub-schedule:hover a {
+  display: inline-block; }
+
 #sidebar-ui a.ueditor-action-preview {
   display: inline-block;
   float: right; }
@@ -17218,20 +17231,18 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before {
 #element-settings-sidebar .padding-lock label,
 #element-settings-sidebar .margin-lock label {
   display: block;
-  height: 15px;
-  width: 15px;
-  background-image: url("../img/uf-core-el-sprite.png");
-  background-image: url("../img/uf-core-el-sprite.svg"), none;
-  background-position: -661px -172px;
-  background-color: #f2f2f2;
-  left: 30px;
-  top: 3px;
+  height: 25px;
+  width: 25px;
+  background-image: url(../img/uf-core-el-sprite_new.svg), none;
+  background-position: -658px -169px;
+  left: 29px;
+  top: 0px;
   position: relative;
   cursor: pointer; }
 
 #element-settings-sidebar .padding-lock .upfront-field-multiple-selected label,
 #element-settings-sidebar .margin-lock .upfront-field-multiple-selected label {
-  background-position: -661px -140px; }
+  background-position: -658px -137px; }
 
 #element-settings-sidebar .padding-lock {
   position: relative;
@@ -17241,37 +17252,41 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before {
 
 #element-settings-sidebar .margin-lock {
   position: relative;
-  margin-top: -19px;
-  top: 80px;
-  left: 30px;
+  margin-top: -25px;
+  top: 72px;
+  left: 46px;
   z-index: 9999; }
 
 #element-settings-sidebar .padding-settings input[type=number],
 #element-settings-sidebar .margin-settings input[type=number] {
-  width: 45px;
+  width: 65px;
   font-size: 12px; }
+
+#element-settings-sidebar .padding-settings .padding-top label,
+#element-settings-sidebar .padding-settings .padding-left label,
+#element-settings-sidebar .padding-settings .padding-right label,
+#element-settings-sidebar .padding-settings .padding-bottom label {
+  display: none; }
 
 #element-settings-sidebar .padding-settings .padding-top,
 #element-settings-sidebar .margin-settings .margin-top {
   position: relative;
-  border-left: 2px solid #dae6f2;
-  padding: 1px 10px;
-  padding-left: 60px;
-  top: 2px;
+  padding: 1px 0px;
+  padding-left: 70px;
+  margin-top: -10px;
   z-index: 11; }
 
 #element-settings-sidebar .padding-settings .padding-left,
 #element-settings-sidebar .margin-settings .margin-left {
   position: relative;
-  border-left: 2px solid #dae6f2;
   padding: 1px 10px;
   z-index: 15; }
 
 #element-settings-sidebar .padding-settings .padding-right,
 #element-settings-sidebar .margin-settings .margin-right {
   position: relative;
-  margin-top: -39px;
-  left: 112px;
+  margin-top: -36px;
+  left: 128px;
   z-index: 15; }
 
 #element-settings-sidebar .padding-settings .padding-bottom {
@@ -17285,10 +17300,9 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before {
 
 #element-settings-sidebar .margin-bottom {
   position: relative;
-  border-left: 2px solid #dae6f2;
   padding: 1px 10px;
   padding-bottom: 5px;
-  padding-left: 60px;
+  padding-left: 70px;
   margin-top: 0px;
   z-index: 99; }
 
@@ -17315,13 +17329,24 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before {
   float: left; }
 
 #element-settings-sidebar .margin-reset-posts {
-  border-left: 2px solid #dae6f2;
-  height: 50px; }
+  height: 50px;
+  width: 30px;
+  float: left;
+  margin-left: 10px;
+  padding-top: 19px; }
+
+#element-settings-sidebar .margin-reset-posts-length input {
+  width: 40px !important; }
 
 #element-settings-sidebar .margin-reset-posts-length {
   position: relative;
-  top: -20px;
+  float: left;
+  width: 170px;
+  top: 15px;
   left: 12px; }
+
+#element-settings-sidebar .margin-reset-posts-length label {
+  display: inline-block !important; }
 
 #element-settings-sidebar .margin-reset-posts input {
   top: 20px;

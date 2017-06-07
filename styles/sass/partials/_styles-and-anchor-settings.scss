@@ -138,21 +138,19 @@
 }
 #element-settings-sidebar .padding-lock label,
 #element-settings-sidebar .margin-lock label {
-    display: block;
-    height: 15px;
-    width: 15px;
-    background-image: url('../img/uf-core-el-sprite.png');
-    background-image: url('../img/uf-core-el-sprite.svg'), none;
-    background-position: -661px -172px;
-    background-color: rgb(242, 242, 242);
-    left: 30px;
-    top: 3px;
+	display: block;
+	height: 25px;
+	width: 25px;
+	background-image: url(../img/uf-core-el-sprite_new.svg), none;
+	background-position: -658px -169px;
+	left: 29px;
+	top: 0px;
     position: relative;
     cursor: pointer;
 }
 #element-settings-sidebar .padding-lock .upfront-field-multiple-selected label,
 #element-settings-sidebar .margin-lock .upfront-field-multiple-selected label {
-    background-position: -661px -140px;
+	background-position: -658px -137px;
 }
 #element-settings-sidebar .padding-lock {
     position: relative;
@@ -163,38 +161,42 @@
 
 #element-settings-sidebar .margin-lock {
     position: relative;
-    margin-top: -19px;
-    top: 80px;
-    left: 30px;
+	margin-top: -25px;
+	top: 72px;
+	left: 46px;
     z-index: 9999;
 }
 
 #element-settings-sidebar .padding-settings input[type=number],
 #element-settings-sidebar .margin-settings input[type=number] {
-    width: 45px;
+    width: 65px;
     font-size: 12px;
+}
+#element-settings-sidebar .padding-settings .padding-top label,
+#element-settings-sidebar .padding-settings .padding-left label,
+#element-settings-sidebar .padding-settings .padding-right label,
+#element-settings-sidebar .padding-settings .padding-bottom label {
+	display: none;
 }
 #element-settings-sidebar .padding-settings .padding-top,
 #element-settings-sidebar .margin-settings .margin-top {
     position: relative;
-    border-left: 2px solid #dae6f2;
-    padding: 1px 10px;
-    padding-left: 60px;
-    top: 2px;
+    padding: 1px 0px;
+    padding-left: 70px;
+	margin-top: -10px;
     z-index: 11;
 }
 #element-settings-sidebar .padding-settings .padding-left,
 #element-settings-sidebar .margin-settings .margin-left {
     position: relative;
-    border-left: 2px solid #dae6f2;
     padding: 1px 10px;
     z-index: 15;
 }
 #element-settings-sidebar .padding-settings .padding-right,
 #element-settings-sidebar .margin-settings .margin-right {
     position: relative;
-    margin-top: -39px;
-    left: 112px;
+    margin-top: -36px;
+    left: 128px;
     z-index: 15;
 }
 #element-settings-sidebar .padding-settings .padding-bottom {
@@ -208,10 +210,9 @@
 }
 #element-settings-sidebar .margin-bottom {
     position: relative;
-    border-left: 2px solid #dae6f2;
     padding: 1px 10px;
     padding-bottom: 5px;
-    padding-left: 60px;
+    padding-left: 70px;
     margin-top: 0px;
     z-index: 99;
 }
@@ -239,13 +240,24 @@
     float: left;
 }
 #element-settings-sidebar .margin-reset-posts {
-	border-left: 2px solid #dae6f2;
 	height: 50px;
+	width: 30px;
+	float: left;
+	margin-left: 10px;
+	padding-top: 19px;
+}
+#element-settings-sidebar .margin-reset-posts-length input {
+	width: 40px !important;
 }
 #element-settings-sidebar .margin-reset-posts-length {
 	position: relative;
-    top: -20px;
+	float: left;
+	width: 170px;
+    top: 15px;
 	left: 12px;
+}
+#element-settings-sidebar .margin-reset-posts-length label {
+	display: inline-block !important;
 }
 #element-settings-sidebar .margin-reset-posts input {
 	top: 20px;

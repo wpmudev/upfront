@@ -133,7 +133,7 @@ define([
 					}
 				}),
 				
-				reset_posts = new Upfront.Views.Editor.Field.Checkboxes({
+				reset_posts = new Upfront.Views.Editor.Field.Toggle({
 					model: this.model,
 					className: 'margin-reset-posts',
 					name: me.options.fields.reset_posts,
