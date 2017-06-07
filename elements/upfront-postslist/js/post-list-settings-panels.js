@@ -782,6 +782,7 @@ Panels.PostParts = PresetManager.extend({
 	},
 
 	add_post_part: function (part) {
+		Upfront.Events.trigger('posts:disable:part:edit', false);
 		var enabled_post_parts = this.preset_model.get('enabled_post_parts') || [];
 		enabled_post_parts.push(part);
 		this.preset_model.set('enabled_post_parts', enabled_post_parts);

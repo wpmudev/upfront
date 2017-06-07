@@ -198,6 +198,9 @@ var PostsListsEachView = Upfront.Views.ObjectGroup.extend({
 			this.ref_model = this.object_group_view.model;
 		}
 
+		// Disable object edit when new part is added
+		this.listenTo(Upfront.Events, 'posts:disable:part:edit', this.disable_object_edit);
+
 		this.$el.addClass( this.editable ? 'upfront-object-group-editable' : 'upfront-object-group-uneditable' );
 		
 		if( !this.editable ) {
