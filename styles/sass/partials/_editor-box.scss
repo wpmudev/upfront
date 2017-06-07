@@ -165,6 +165,12 @@
 	display: inline-block;
 }
 
+#sidebar-ui .misc-pub-post-status:hover a,
+#sidebar-ui .misc-pub-visibility:hover a,
+#sidebar-ui .misc-pub-schedule:hover a {
+	display: inline-block;
+}
+
 #sidebar-ui a.ueditor-action-preview {
 	display: inline-block;
 	float: right;
