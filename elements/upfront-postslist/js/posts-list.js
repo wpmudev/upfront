@@ -39,6 +39,18 @@ var PostsListsPartView = Upfront.Views.ObjectView.extend({
 		});
 		this.delegateEvents();
 	},
+
+	attributes: function(){
+		var part_type = this.model.get_property_value_by_name('part_type'),
+			part_title = l10n.modules[part_type + '_title']
+		;
+
+		return {
+			"title": part_title
+		};
+	},
+
+
 	
 	on_render: function () {
 		// Listen to object edit toggle if in ObjectGroup
@@ -280,6 +292,8 @@ var PostsListsEachView = Upfront.Views.ObjectGroup.extend({
 			$elements = $wrapper.find('li').not(':first')
 		;
 
+		this.init_tooltips();
+
 		$elements.wrapAll('<div class="posts-edit-wrapper" />');
 		$wrapper.find('.posts-edit-wrapper').prepend('<div class="posts-edit-wrapper-content"><span>' + l10n.modify_first + '</span></div>');
 	},
@@ -295,6 +309,26 @@ var PostsListsEachView = Upfront.Views.ObjectGroup.extend({
 
 		$wrapper.find('.posts-edit-wrapper-content').remove();
 		$elements.unwrap('.posts-edit-wrapper');
+	},
+
+	init_tooltips: function() {
+		// Add parts tooltips
+		$('.uf-post .upfront-object-view').utooltip({
+			fromTitle: true,
+			panel: 'postslist'
+		});
+
+		$('.uf-post').utooltip({
+			fromTitle: false,
+			panel: 'postslist',
+			content: l10n.modules.post_wrapper
+		});
+
+		$('.upfront-posts_module').utooltip({
+			fromTitle: false,
+			panel: 'postslist',
+			content: l10n.modules.element_wrapper
+		});
 	}
 
 });
