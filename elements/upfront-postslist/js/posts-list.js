@@ -51,7 +51,7 @@ var PostsListsPartView = Upfront.Views.ObjectView.extend({
 	},
 
 
-	
+
 	on_render: function () {
 		// Listen to object edit toggle if in ObjectGroup
 		if ( this.object_group_view ) {
@@ -223,7 +223,7 @@ var PostsListsEachView = Upfront.Views.ObjectGroup.extend({
 				me.$el.find('.upfront-object-group-finish-edit').remove();
 			}, 50);
 		}
-		
+
 		Upfront.Views.ObjectGroup.prototype.render.call(this, options);
 		this.render_object_view(options.data);
 	},
@@ -288,7 +288,9 @@ var PostsListsEachView = Upfront.Views.ObjectGroup.extend({
 	enable_object_edit: function () {
 		this.toggle_object_edit(true);
 
-		var $wrapper = this.$el.closest('ul.uf-posts-list'),
+		var me = this,
+			$posts_module = this.$el.closest('.upfront-posts_module'),
+			$wrapper = this.$el.closest('ul.uf-posts-list'),
 			$elements = $wrapper.find('li').not(':first')
 		;
 
@@ -296,6 +298,8 @@ var PostsListsEachView = Upfront.Views.ObjectGroup.extend({
 
 		$elements.wrapAll('<div class="posts-edit-wrapper" />');
 		$wrapper.find('.posts-edit-wrapper').prepend('<div class="posts-edit-wrapper-content"><span>' + l10n.modify_first + '</span></div>');
+
+		this.$el.before($posts_module.find('.upfront-object-group-finish-edit'));
 	},
 
 	disable_object_edit: function () {
@@ -312,19 +316,21 @@ var PostsListsEachView = Upfront.Views.ObjectGroup.extend({
 	},
 
 	init_tooltips: function() {
+		var $wrapper = this.$el.closest('ul.uf-posts-list');
+
 		// Add parts tooltips
-		$('.uf-post .upfront-object-view').utooltip({
+		$wrapper.find('.uf-post:first-of-type .upfront-object-view').utooltip({
 			fromTitle: true,
 			panel: 'postslist'
 		});
 
-		$('.uf-post').utooltip({
+		$wrapper.find('.uf-post:first-of-type').utooltip({
 			fromTitle: false,
 			panel: 'postslist',
 			content: l10n.modules.post_wrapper
 		});
 
-		$('.upfront-posts_module').utooltip({
+		$wrapper.find('.upfront-posts_module:first-of-type').utooltip({
 			fromTitle: false,
 			panel: 'postslist',
 			content: l10n.modules.element_wrapper
@@ -397,6 +403,7 @@ var PostsListsView = Upfront.Views.ObjectGroup.extend({
 		this.events = _.extend({}, this.events, {
 			'click .reorder-overlay p' : 'on_edit_click',
 			'hover .reorder-overlay' : 'on_scroll',
+			"click  .upfront-object-group-finish-edit": "on_finish",
 		});
 		
 		this.delegateEvents();
