@@ -40,3 +40,6 @@
 .upostslist-object .upfront-output-object {
 	padding: 0px;
 }
+.upostslist-object .uf-pagination {
+	width: 100%;
+}

@@ -117,7 +117,67 @@ class Upfront_PostsListsView extends Upfront_Object_Group {
 	}
 
 	protected function wrap_posts ($out) {
-		return "<ul class='uf-posts-list'>" . $out . "</ul>";
+		return "<ul class='uf-posts-list'>" . $out  . "</ul> " . $this->get_pagination();
+	}
+
+	public function get_pagination () {
+		$data = $this->_properties_to_array();
+
+		if ('list' !== $data['display_type']) return '';
+		if (empty($data['pagination'])) return '';
+
+		$pagination = '';
+		$pagination_type = sanitize_html_class($data['pagination']);
+		if ('numeric' === $pagination_type) $pagination = self::_get_numeric_pagination($data);
+		if ('arrows' === $pagination_type) $pagination = self::_get_arrow_pagination($data);
+
+		return !empty($pagination)
+			? "<div class='uf-pagination {$pagination_type}'>{$pagination}</div>"
+			: ''
+			;
+	}
+
+	private static function _get_numeric_pagination ($data) {
+		global $wp_query;
+
+		$old_query = clone($wp_query);
+		$query = Upfront_PostsLists_Model::spawn_query($data);
+		if (empty($query)) return '';
+
+		$wp_query = $query;
+
+		$big = 999999999999999999;
+		$args = array(
+			'base' => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
+			'format' => '?paged=%#%',
+			'current' => max( 1, get_query_var('paged') ),
+			'total' => $wp_query->max_num_pages
+		);
+		if ($query->is_search) {
+			$args['add_args'] = array(
+				's' => get_query_var('s'),
+			);
+		}
+		$pagination = paginate_links();
+		$wp_query = $old_query;
+
+		return $pagination;
+	}
+
+	private static function _get_arrow_pagination ($data) {
+		global $wp_query, $paged;
+
+		$old_query = clone($wp_query);
+		$query = Upfront_PostsLists_Model::spawn_query($data);
+		if (empty($query)) return '';
+
+		$wp_query = $query;
+		$paged = get_query_var('paged');
+
+		$pagination = get_posts_nav_link();
+		$wp_query = $old_query;
+
+		return $pagination;
 	}
 
 	protected function create_post_object ($id) {
