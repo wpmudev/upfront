@@ -272,8 +272,7 @@ em {
 
 #sidebar-ui .sidebar-commands-header,
 #element-settings-sidebar .sidebar-commands-header {
-  background: #f7f7f7;
-  overflow: hidden; }
+  background: #f7f7f7; }
 
 #element-settings-sidebar .sidebar-commands-header {
   position: absolute;
@@ -554,7 +553,8 @@ em {
   padding: 0 15px 0;
   font: 11px/11px Verdana, sans-serif;
   overflow: hidden;
-  /* reset float */ }
+  /* reset float */
+  clear: both; }
 
 #sidebar-ui .sidebar-profile-avatar {
   float: left;

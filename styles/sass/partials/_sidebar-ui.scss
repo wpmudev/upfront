@@ -57,7 +57,6 @@
 #sidebar-ui .sidebar-commands-header,
 #element-settings-sidebar .sidebar-commands-header {
 	background: rgb(247, 247, 247);
-	overflow: hidden;
 }
 
 #element-settings-sidebar .sidebar-commands-header {
@@ -383,6 +382,7 @@
 	padding: 0 15px 0;
 	font: 11px/11px Verdana, sans-serif;
 	overflow: hidden; /* reset float */
+	clear: both;
 }
 
 #sidebar-ui .sidebar-profile-avatar {
