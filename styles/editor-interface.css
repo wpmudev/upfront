@@ -1809,18 +1809,23 @@ input.upfront-field-text:hover,
 
 .upfront-field-wrap-select.upfront-number-unit-select {
   position: absolute;
-  top: -1px;
+  top: 6px;
   right: 21px;
   margin: 0px; }
+
+.typography-panel .upfront-field-wrap-select.upfront-number-unit-select {
+  top: -1px; }
 
 .upfront-number-unit-select .upfront-field-select {
   height: 16px;
   width: 30px;
   border: 1px solid #ffffff;
   text-align: right;
-  padding: 0 5px 0 0; }
+  padding: 0 5px 0 0;
+  background: none; }
 
-#sidebar-ui .upfront-number-unit-select .upfront-field-select-options {
+#sidebar-ui .upfront-number-unit-select .upfront-field-select-options,
+#element-settings-sidebar .upfront-number-unit-select .upfront-field-select-options {
   width: 30px !important; }
 
 #sidebar-ui .upfront-number-unit-select .upfront-field-select-options label {
@@ -19853,9 +19858,6 @@ div.preset-manager-panel .borderColor .upfront-field-label {
 
 div.preset-manager-panel .borderType {
   width: 50px; }
-
-div.preset-manager-panel .borderType .upfront-field-select-value {
-  text-align: center; }
 
 div.preset-manager-panel .borderType {
   font-weight: bold !important;

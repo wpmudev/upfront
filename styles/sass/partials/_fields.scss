@@ -342,9 +342,13 @@ input.upfront-field-text:hover,
 
 .upfront-field-wrap-select.upfront-number-unit-select {
 	position: absolute;
-	top: -1px;
+	top: 6px;
 	right: 21px;
 	margin: 0px;
+}
+
+.typography-panel .upfront-field-wrap-select.upfront-number-unit-select {
+	top: -1px;
 }
 
 .upfront-number-unit-select .upfront-field-select {
@@ -353,9 +357,11 @@ input.upfront-field-text:hover,
 	border: 1px solid #ffffff;
 	text-align: right;
 	padding: 0 5px 0 0;
+	background: none;
 }
 
-#sidebar-ui .upfront-number-unit-select .upfront-field-select-options {
+#sidebar-ui .upfront-number-unit-select .upfront-field-select-options,
+#element-settings-sidebar .upfront-number-unit-select .upfront-field-select-options {
 	width: 30px !important;
 }
 
