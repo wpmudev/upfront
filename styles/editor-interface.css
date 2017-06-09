@@ -1633,41 +1633,12 @@ input.upfront-field-text:hover,
   padding-right: 0px !important;
   border-radius: 3px; }
 
-/* Number unit field */
-.upfront-field-number-unit-wrapper {
-  position: relative; }
-
-.upfront-field-wrap-select.upfront-number-unit-select {
-  position: absolute;
-  top: 6px;
-  right: 21px;
-  margin: 0px;
-  display: none; }
-
-.upfront-number-unit-select .upfront-field-select {
-  height: 16px;
-  width: 30px;
-  border-radius: none; }
-
-.upfront-number-unit-select .upfront-field-select .upfront-field-select-value {
-  height: 16px; }
-
-.upfront-number-unit-select .upfront-field-select .upfront-field-select-value span {
-  line-height: 14px;
-  display: block; }
-
-.upfront-number-unit-select .upfront-field-select:after {
-  display: none; }
-
-.upfront-field-number-unit-wrapper:hover .upfront-number-unit-select {
-  display: block; }
-
 /* chrome input[type=number] styling */
 .upfront-field-number[type=number]::-webkit-inner-spin-button,
 .upfront-field-number-unit[type=number]::-webkit-inner-spin-button,
 .typography-panel .upfront-field-number[type=number]::-webkit-inner-spin-button {
   -webkit-appearance: none;
-  width: 16px;
+  width: 13px;
   padding: 0;
   margin: 0;
   height: 20px;
@@ -1677,13 +1648,9 @@ input.upfront-field-text:hover,
   border-left: 1px solid #909090;
   cursor: pointer;
   background-image: url("../img/uf-core-el-sprite_new.svg");
-  background-position: -514px -73px;
-  -webkit-border-top-right-radius: 3px;
-  -webkit-border-bottom-right-radius: 3px;
-  -moz-border-radius-topright: 3px;
-  -moz-border-radius-bottomright: 3px;
-  border-top-right-radius: 3px;
-  border-bottom-right-radius: 3px; }
+  background-position: -515px -73px;
+  margin-right: 3px;
+  opacity: 1; }
 
 /**** Select field ********/
 .upfront-field-select, .upfront-field-select-options {
@@ -1835,6 +1802,55 @@ input.upfront-field-text:hover,
 .upfront-field-select-option-disabled:hover {
   background: none;
   opacity: 0.4; }
+
+/* Number unit field */
+.upfront-field-number-unit-wrapper {
+  position: relative; }
+
+.upfront-field-wrap-select.upfront-number-unit-select {
+  position: absolute;
+  top: -1px;
+  right: 21px;
+  margin: 0px; }
+
+.upfront-number-unit-select .upfront-field-select {
+  height: 16px;
+  width: 30px;
+  border: 1px solid #ffffff;
+  text-align: right;
+  padding: 0 5px 0 0; }
+
+#sidebar-ui .upfront-number-unit-select .upfront-field-select-options {
+  width: 30px !important; }
+
+#sidebar-ui .upfront-number-unit-select .upfront-field-select-options label {
+  margin-bottom: 0px !important;
+  height: 16px;
+  line-height: 15px;
+  text-align: right;
+  padding: 0 5px 0 0; }
+
+.upfront-number-unit-select .upfront-field-select:hover {
+  border: 1px solid #909090; }
+
+.upfront-number-unit-select .upfront-field-select-options {
+  margin-top: -1px !important; }
+
+.upfront-number-unit-select .upfront-field-select-options::-webkit-scrollbar {
+  width: 0px; }
+
+.upfront-number-unit-select .upfront-field-select .upfront-field-select-value {
+  height: 16px; }
+
+.upfront-number-unit-select .upfront-field-select .upfront-field-select-value span {
+  line-height: 14px;
+  display: block; }
+
+.upfront-number-unit-select .upfront-field-select:after {
+  display: none; }
+
+.upfront-field-number-unit-wrapper:hover .upfront-number-unit-select {
+  display: block; }
 
 /* Toggle Field */
 .upfront-field-wrap-toggle.upfront_toggle_field {
