@@ -5,7 +5,7 @@
 	<?php } ?>
 
 	<?php if(!empty($properties['useborder'])) { ?>
-        <?php if(!empty($properties['border_width']) && !empty($properties['border_style']) && !empty($properties['border_color'])) { ?>border: <?php echo $properties['border_width'] ?>px <?php echo $properties['border_style'] ?> <?php echo $properties['border_color'] ?>;<?php } ?>
+        <?php if(!empty($properties['border_width']) && !empty($properties['border_style']) && !empty($properties['border_color'])) { ?>border: <?php echo $properties['border_width'] ?><?php if(!empty($properties['border_width-unit'])) { ?><?php echo $properties['border_width-unit'] ?><?php } else { ?>px<?php } ?> <?php echo $properties['border_style'] ?> <?php echo $properties['border_color'] ?>;<?php } ?>
     <?php } else { ?>
         border: none;
     <?php } ?>
@@ -17,126 +17,125 @@
 #page .upfront-object.<?php echo $properties['id'] ?> h1 a, #page .upfront-output-object.<?php echo $properties['id'] ?> h1 a {
 	<?php if(!empty($properties['h1-color'])) { ?>color: <?php echo $properties['h1-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['h1-fontface'])) { ?>font-family: <?php echo $properties['h1-fontface']  ?>; <?php } ?>
-	<?php if(!empty($properties['h1-fontsize'])) { ?>font-size: <?php echo $properties['h1-fontsize']  ?>px; <?php } ?>
+	<?php if(!empty($properties['h1-fontsize'])) { ?>font-size: <?php echo $properties['h1-fontsize']  ?><?php if(!empty($properties['h1-fontsize-unit'])) { ?><?php echo $properties['h1-fontsize-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
 	<?php if(!empty($properties['h1-weight'])) { ?>font-weight: <?php echo $properties['h1-weight']  ?>;<?php } ?>
 	<?php if(!empty($properties['h1-style'])) { ?>font-style: <?php echo $properties['h1-style']  ?>;<?php } ?>
-	<?php if(!empty($properties['h1-lineheight'])) { ?>line-height: <?php echo $properties['h1-lineheight']  ?>;<?php } ?>
+	<?php if(!empty($properties['h1-lineheight'])) { ?>line-height: <?php echo $properties['h1-lineheight']  ?><?php if(!empty($properties['h1-lineheight-unit'])) { ?><?php echo $properties['h1-lineheight-unit'] ?><?php } ?>; <?php } ?>
 }
 
 #page .upfront-object.<?php echo $properties['id'] ?> h2, #page .upfront-output-object.<?php echo $properties['id'] ?> h2,
 #page .upfront-object.<?php echo $properties['id'] ?> h2 a, #page .upfront-output-object.<?php echo $properties['id'] ?> h2 a {
 	<?php if(!empty($properties['h2-color'])) { ?>color: <?php echo $properties['h2-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['h2-fontface'])) { ?>font-family: <?php echo $properties['h2-fontface']  ?>; <?php } ?>
-	<?php if(!empty($properties['h2-fontsize'])) { ?>font-size: <?php echo $properties['h2-fontsize']  ?>px; <?php } ?>
+	<?php if(!empty($properties['h2-fontsize'])) { ?>font-size: <?php echo $properties['h2-fontsize']  ?><?php if(!empty($properties['h2-fontsize-unit'])) { ?><?php echo $properties['h2-fontsize-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
 	<?php if(!empty($properties['h2-weight'])) { ?>font-weight: <?php echo $properties['h2-weight']  ?>;<?php } ?>
 	<?php if(!empty($properties['h2-style'])) { ?>font-style: <?php echo $properties['h2-style']  ?>;<?php } ?>
-	<?php if(!empty($properties['h2-lineheight'])) { ?>line-height: <?php echo $properties['h2-lineheight']  ?>;<?php } ?>
+	<?php if(!empty($properties['h2-lineheight'])) { ?>line-height: <?php echo $properties['h2-lineheight']  ?><?php if(!empty($properties['h2-lineheight-unit'])) { ?><?php echo $properties['h2-lineheight-unit'] ?><?php } ?>; <?php } ?>
 }
 
 #page .upfront-object.<?php echo $properties['id'] ?> h3, #page .upfront-output-object.<?php echo $properties['id'] ?> h3,
 #page .upfront-object.<?php echo $properties['id'] ?> h3 a, #page .upfront-output-object.<?php echo $properties['id'] ?> h3 a {
 	<?php if(!empty($properties['h3-color'])) { ?>color: <?php echo $properties['h3-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['h3-fontface'])) { ?>font-family: <?php echo $properties['h3-fontface']  ?>; <?php } ?>
-	<?php if(!empty($properties['h3-fontsize'])) { ?>font-size: <?php echo $properties['h3-fontsize']  ?>px; <?php } ?>
+	<?php if(!empty($properties['h3-fontsize'])) { ?>font-size: <?php echo $properties['h3-fontsize']  ?><?php if(!empty($properties['h3-fontsize-unit'])) { ?><?php echo $properties['h3-fontsize-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
 	<?php if(!empty($properties['h3-weight'])) { ?>font-weight: <?php echo $properties['h3-weight']  ?>;<?php } ?>
 	<?php if(!empty($properties['h3-style'])) { ?>font-style: <?php echo $properties['h3-style']  ?>;<?php } ?>
-	<?php if(!empty($properties['h3-lineheight'])) { ?>line-height: <?php echo $properties['h3-lineheight']  ?>;<?php } ?>
+	<?php if(!empty($properties['h3-lineheight'])) { ?>line-height: <?php echo $properties['h3-lineheight']  ?><?php if(!empty($properties['h3-lineheight-unit'])) { ?><?php echo $properties['h3-lineheight-unit'] ?><?php } ?>; <?php } ?>
 }
 
 #page .upfront-object.<?php echo $properties['id'] ?> h4, #page .upfront-output-object.<?php echo $properties['id'] ?> h4,
 #page .upfront-object.<?php echo $properties['id'] ?> h4 a, #page .upfront-output-object.<?php echo $properties['id'] ?> h4 a {
 	<?php if(!empty($properties['h4-color'])) { ?>color: <?php echo $properties['h4-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['h4-fontface'])) { ?>font-family: <?php echo $properties['h4-fontface']  ?>; <?php } ?>
-	<?php if(!empty($properties['h4-fontsize'])) { ?>font-size: <?php echo $properties['h4-fontsize']  ?>px; <?php } ?>
+	<?php if(!empty($properties['h4-fontsize'])) { ?>font-size: <?php echo $properties['h4-fontsize']  ?><?php if(!empty($properties['h4-fontsize-unit'])) { ?><?php echo $properties['h4-fontsize-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
 	<?php if(!empty($properties['h4-weight'])) { ?>font-weight: <?php echo $properties['h4-weight']  ?>;<?php } ?>
 	<?php if(!empty($properties['h4-style'])) { ?>font-style: <?php echo $properties['h4-style']  ?>;<?php } ?>
-	<?php if(!empty($properties['h4-lineheight'])) { ?>line-height: <?php echo $properties['h4-lineheight']  ?>;<?php } ?>
+	<?php if(!empty($properties['h4-lineheight'])) { ?>line-height: <?php echo $properties['h4-lineheight']  ?><?php if(!empty($properties['h4-lineheight-unit'])) { ?><?php echo $properties['h4-lineheight-unit'] ?><?php } ?>; <?php } ?>
 }
 
 #page .upfront-object.<?php echo $properties['id'] ?> h5, #page .upfront-output-object.<?php echo $properties['id'] ?> h5,
 #page .upfront-object.<?php echo $properties['id'] ?> h5 a, #page .upfront-output-object.<?php echo $properties['id'] ?> h5 a {
 	<?php if(!empty($properties['h5-color'])) { ?>color: <?php echo $properties['h5-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['h5-fontface'])) { ?>font-family: <?php echo $properties['h5-fontface']  ?>; <?php } ?>
-	<?php if(!empty($properties['h5-fontsize'])) { ?>font-size: <?php echo $properties['h5-fontsize']  ?>px; <?php } ?>
+	<?php if(!empty($properties['h5-fontsize'])) { ?>font-size: <?php echo $properties['h5-fontsize']  ?><?php if(!empty($properties['h5-fontsize-unit'])) { ?><?php echo $properties['h5-fontsize-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
 	<?php if(!empty($properties['h5-weight'])) { ?>font-weight: <?php echo $properties['h5-weight']  ?>;<?php } ?>
 	<?php if(!empty($properties['h5-style'])) { ?>font-style: <?php echo $properties['h5-style']  ?>;<?php } ?>
-	<?php if(!empty($properties['h5-lineheight'])) { ?>line-height: <?php echo $properties['h5-lineheight']  ?>;<?php } ?>
+	<?php if(!empty($properties['h5-lineheight'])) { ?>line-height: <?php echo $properties['h5-lineheight']  ?><?php if(!empty($properties['h5-lineheight-unit'])) { ?><?php echo $properties['h5-lineheight-unit'] ?><?php } ?>; <?php } ?>
 }
 
 #page .upfront-object.<?php echo $properties['id'] ?> h6, #page .upfront-output-object.<?php echo $properties['id'] ?> h6,
 #page .upfront-object.<?php echo $properties['id'] ?> h6 a, #page .upfront-output-object.<?php echo $properties['id'] ?> h6 a {
 	<?php if(!empty($properties['h6-color'])) { ?>color: <?php echo $properties['h6-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['h6-fontface'])) { ?>font-family: <?php echo $properties['h6-fontface']  ?>; <?php } ?>
-	<?php if(!empty($properties['h6-fontsize'])) { ?>font-size: <?php echo $properties['h6-fontsize']  ?>px; <?php } ?>
+	<?php if(!empty($properties['h6-fontsize'])) { ?>font-size: <?php echo $properties['h6-fontsize']  ?><?php if(!empty($properties['h6-fontsize-unit'])) { ?><?php echo $properties['h6-fontsize-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
 	<?php if(!empty($properties['h6-weight'])) { ?>font-weight: <?php echo $properties['h6-weight']  ?>;<?php } ?>
 	<?php if(!empty($properties['h6-style'])) { ?>font-style: <?php echo $properties['h6-style']  ?>;<?php } ?>
-	<?php if(!empty($properties['h6-lineheight'])) { ?>line-height: <?php echo $properties['h6-lineheight']  ?>;<?php } ?>
+	<?php if(!empty($properties['h6-lineheight'])) { ?>line-height: <?php echo $properties['h6-lineheight']  ?><?php if(!empty($properties['h6-lineheight-unit'])) { ?><?php echo $properties['h6-lineheight-unit'] ?><?php } ?>; <?php } ?>
 }
 
 #page .upfront-object.<?php echo $properties['id'] ?> p, #page .upfront-output-object.<?php echo $properties['id'] ?> p,
 #page .upfront-object.<?php echo $properties['id'] ?> p a, #page .upfront-output-object.<?php echo $properties['id'] ?> p a {
 	<?php if(!empty($properties['p-color'])) { ?>color: <?php echo $properties['p-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['p-fontface'])) { ?>font-family: <?php echo $properties['p-fontface']  ?>; <?php } ?>
-	<?php if(!empty($properties['p-fontsize'])) { ?>font-size: <?php echo $properties['p-fontsize']  ?>px; <?php } ?>
+	<?php if(!empty($properties['p-fontsize'])) { ?>font-size: <?php echo $properties['p-fontsize']  ?><?php if(!empty($properties['p-fontsize-unit'])) { ?><?php echo $properties['p-fontsize-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
 	<?php if(!empty($properties['p-weight'])) { ?>font-weight: <?php echo $properties['p-weight']  ?>;<?php } ?>
 	<?php if(!empty($properties['p-style'])) { ?>font-style: <?php echo $properties['p-style']  ?>;<?php } ?>
-	<?php if(!empty($properties['p-lineheight'])) { ?>line-height: <?php echo $properties['p-lineheight']  ?>;<?php } ?>
+	<?php if(!empty($properties['p-lineheight'])) { ?>line-height: <?php echo $properties['p-lineheight']  ?><?php if(!empty($properties['p-lineheight-unit'])) { ?><?php echo $properties['p-lineheight-unit'] ?><?php } ?>; <?php } ?>
 }
 
 #page .upfront-object.<?php echo $properties['id'] ?> a, #page .upfront-output-object.<?php echo $properties['id'] ?> a {
 	<?php if(!empty($properties['a-color'])) { ?>color: <?php echo $properties['a-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['a-fontface'])) { ?>font-family: <?php echo $properties['a-fontface']  ?>; <?php } ?>
-	<?php if(!empty($properties['a-fontsize'])) { ?>font-size: <?php echo $properties['a-fontsize']  ?>px; <?php } ?>
+	<?php if(!empty($properties['a-fontsize'])) { ?>font-size: <?php echo $properties['a-fontsize']  ?><?php if(!empty($properties['a-fontsize-unit'])) { ?><?php echo $properties['a-fontsize-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
 	<?php if(!empty($properties['a-weight'])) { ?>font-weight: <?php echo $properties['a-weight']  ?>;<?php } ?>
 	<?php if(!empty($properties['a-style'])) { ?>font-style: <?php echo $properties['a-style']  ?>;<?php } ?>
-	<?php if(!empty($properties['a-lineheight'])) { ?>line-height: <?php echo $properties['a-lineheight']  ?>;<?php } ?>
+	<?php if(!empty($properties['a-lineheight'])) { ?>line-height: <?php echo $properties['a-lineheight']  ?><?php if(!empty($properties['a-lineheight-unit'])) { ?><?php echo $properties['a-lineheight-unit'] ?><?php } ?>; <?php } ?>
 }
 
 #page .upfront-object.<?php echo $properties['id'] ?> a:hover, #page .upfront-output-object.<?php echo $properties['id'] ?> a:hover {
 	<?php if(!empty($properties['a-hover-color'])) { ?>color: <?php echo $properties['a-hover-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['a-hover-fontface'])) { ?>font-family: <?php echo $properties['a-hover-fontface']  ?>; <?php } ?>
-	<?php if(!empty($properties['a-hover-fontsize'])) { ?>font-size: <?php echo $properties['a-hover-fontsize']  ?>px; <?php } ?>
+	<?php if(!empty($properties['a-hover-fontsize'])) { ?>font-size: <?php echo $properties['a-hover-fontsize']  ?><?php if(!empty($properties['a-hover-fontsize-unit'])) { ?><?php echo $properties['a-hover-fontsize-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
 	<?php if(!empty($properties['a-hover-weight'])) { ?>font-weight: <?php echo $properties['a-hover-weight']  ?>;<?php } ?>
 	<?php if(!empty($properties['a-hover-style'])) { ?>font-style: <?php echo $properties['a-hover-style']  ?>;<?php } ?>
-	<?php if(!empty($properties['a-hover-lineheight'])) { ?>line-height: <?php echo $properties['a-hover-lineheight']  ?>;<?php } ?>
+	<?php if(!empty($properties['a-hover-lineheight'])) { ?>line-height: <?php echo $properties['a-hover-lineheight']  ?><?php if(!empty($properties['a-hover-lineheight-unit'])) { ?><?php echo $properties['a-hover-lineheight-unit'] ?><?php } ?>; <?php } ?>
 }
 
 #page .upfront-object.<?php echo $properties['id'] ?> ul, #page .upfront-output-object.<?php echo $properties['id'] ?> ul {
 	<?php if(!empty($properties['ul-color'])) { ?>color: <?php echo $properties['ul-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['ul-fontface'])) { ?>font-family: <?php echo $properties['ul-fontface']  ?>; <?php } ?>
-	<?php if(!empty($properties['ul-fontsize'])) { ?>font-size: <?php echo $properties['ul-fontsize']  ?>px; <?php } ?>
+	<?php if(!empty($properties['ul-fontsize'])) { ?>font-size: <?php echo $properties['ul-fontsize']  ?><?php if(!empty($properties['ul-fontsize-unit'])) { ?><?php echo $properties['ul-fontsize-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
 	<?php if(!empty($properties['ul-weight'])) { ?>font-weight: <?php echo $properties['ul-weight']  ?>;<?php } ?>
 	<?php if(!empty($properties['ul-style'])) { ?>font-style: <?php echo $properties['ul-style']  ?>;<?php } ?>
-	<?php if(!empty($properties['ul-lineheight'])) { ?>line-height: <?php echo $properties['ul-lineheight']  ?>;<?php } ?>
+	<?php if(!empty($properties['ul-lineheight'])) { ?>line-height: <?php echo $properties['ul-lineheight']  ?><?php if(!empty($properties['ul-lineheight-unit'])) { ?><?php echo $properties['ul-lineheight-unit'] ?><?php } ?>; <?php } ?>
 }
 
 #page .upfront-object.<?php echo $properties['id'] ?> ol, #page .upfront-output-object.<?php echo $properties['id'] ?> ol {
 	<?php if(!empty($properties['ol-color'])) { ?>color: <?php echo $properties['ol-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['ol-fontface'])) { ?>font-family: <?php echo $properties['ol-fontface']  ?>; <?php } ?>
-	<?php if(!empty($properties['ol-fontsize'])) { ?>font-size: <?php echo $properties['ol-fontsize']  ?>px; <?php } ?>
+	<?php if(!empty($properties['ol-fontsize'])) { ?>font-size: <?php echo $properties['ol-fontsize']  ?><?php if(!empty($properties['ol-fontsize-unit'])) { ?><?php echo $properties['ol-fontsize-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
 	<?php if(!empty($properties['ol-weight'])) { ?>font-weight: <?php echo $properties['ol-weight']  ?>;<?php } ?>
 	<?php if(!empty($properties['ol-style'])) { ?>font-style: <?php echo $properties['ol-style']  ?>;<?php } ?>
-	<?php if(!empty($properties['ol-lineheight'])) { ?>line-height: <?php echo $properties['ol-lineheight']  ?>;<?php } ?>
+	<?php if(!empty($properties['ol-lineheight'])) { ?>line-height: <?php echo $properties['ol-lineheight']  ?><?php if(!empty($properties['ol-lineheight-unit'])) { ?><?php echo $properties['ol-lineheight-unit'] ?><?php } ?>; <?php } ?>
 }
 
 #page .upfront-object.<?php echo $properties['id'] ?> blockquote, #page .upfront-output-object.<?php echo $properties['id'] ?> blockquote,
 #page .upfront-object.<?php echo $properties['id'] ?> blockquote a, #page .upfront-output-object.<?php echo $properties['id'] ?> blockquote a {
 	<?php if(!empty($properties['blockquote-color'])) { ?>color: <?php echo $properties['blockquote-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['blockquote-fontface'])) { ?>font-family: <?php echo $properties['blockquote-fontface']  ?>; <?php } ?>
-	<?php if(!empty($properties['blockquote-fontsize'])) { ?>font-size: <?php echo $properties['blockquote-fontsize']  ?>px; <?php } ?>
+	<?php if(!empty($properties['blockquote-fontsize'])) { ?>font-size: <?php echo $properties['blockquote-fontsize']  ?><?php if(!empty($properties['blockquote-fontsize-unit'])) { ?><?php echo $properties['blockquote-fontsize-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
 	<?php if(!empty($properties['blockquote-weight'])) { ?>font-weight: <?php echo $properties['blockquote-weight']  ?>;<?php } ?>
 	<?php if(!empty($properties['blockquote-style'])) { ?>font-style: <?php echo $properties['blockquote-style']  ?>;<?php } ?>
-	<?php if(!empty($properties['blockquote-lineheight'])) { ?>line-height: <?php echo $properties['blockquote-lineheight']  ?>;<?php } ?>
-}
+	<?php if(!empty($properties['blockquote-lineheight'])) { ?>line-height: <?php echo $properties['blockquote-lineheight']  ?><?php if(!empty($properties['blockquote-lineheight-unit'])) { ?><?php echo $properties['blockquote-lineheight-unit'] ?><?php } ?>; <?php } ?>
 
 #page .upfront-object.<?php echo $properties['id'] ?> blockquote.upfront-quote-alternative, #page .upfront-output-object.<?php echo $properties['id'] ?> blockquote.upfront-quote-alternative,
 #page .upfront-object.<?php echo $properties['id'] ?> blockquote.upfront-quote-alternative a, #page .upfront-output-object.<?php echo $properties['id'] ?> blockquote.upfront-quote-alternative a {
 	<?php if(!empty($properties['blockquote-alternative-color'])) { ?>color: <?php echo $properties['blockquote-alternative-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['blockquote-alternative-fontface'])) { ?>font-family: <?php echo $properties['blockquote-alternative-fontface']  ?>; <?php } ?>
-	<?php if(!empty($properties['blockquote-alternative-fontsize'])) { ?>font-size: <?php echo $properties['blockquote-alternative-fontsize']  ?>px; <?php } ?>
+	<?php if(!empty($properties['blockquote-alternative-fontsize'])) { ?>font-size: <?php echo $properties['blockquote-alternative-fontsize']  ?><?php if(!empty($properties['blockquote-alternative--fontsize-unit'])) { ?><?php echo $properties['blockquote-alternative--fontsize-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
 	<?php if(!empty($properties['blockquote-alternative-weight'])) { ?>font-weight: <?php echo $properties['blockquote-alternative-weight']  ?>;<?php } ?>
 	<?php if(!empty($properties['blockquote-alternative-style'])) { ?>font-style: <?php echo $properties['blockquote-alternative-style']  ?>;<?php } ?>
-	<?php if(!empty($properties['blockquote-alternative-lineheight'])) { ?>line-height: <?php echo $properties['blockquote-alternative-lineheight']  ?>;<?php } ?>
+	<?php if(!empty($properties['blockquote-alternative-lineheight'])) { ?>line-height: <?php echo $properties['blockquote-alternative-lineheight']  ?><?php if(!empty($properties['blockquote-alternative-lineheight-unit'])) { ?><?php echo $properties['blockquote-alternative-lineheight-unit'] ?><?php } ?>; <?php } ?>
 }
 
 <?php } ?>
