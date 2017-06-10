@@ -3,7 +3,7 @@
 	<?php if (!empty($properties['static-featured_image-use-border'])) { ?>
 
 		<?php if (!empty($properties['static-featured_image-border-width'])) { ?>
-			border-width: <?php echo $properties['static-featured_image-border-width'] ?>px;
+			border-width: <?php echo $properties['static-featured_image-border-width'] ?><?php if(!empty($properties['static-featured_image-border-width-unit'])) { ?><?php echo $properties['static-featured_image-border-width-unit'] ?><?php } else { ?>px<?php } ?>;
 		<?php } ?>
 
 		<?php if (!empty($properties['static-featured_image-border-type'])) { ?>

@@ -15,7 +15,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-categories-font-size'])) { ?>
-		font-size: <?php echo $properties['static-categories-font-size'] ?>px;
+		font-size: <?php echo $properties['static-categories-font-size'] ?><?php if(!empty($properties['static-categories-font-size-unit'])) { ?><?php echo $properties['static-categories-font-size-unit'] ?><?php } else { ?>px<?php } ?>;
 	<?php } ?>
 
 	<?php if (!empty($properties['static-categories-font-color'])) { ?>
@@ -23,7 +23,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-categories-line-height'])) { ?>
-		line-height: <?php echo $properties['static-categories-line-height'] ?>;
+		line-height: <?php echo $properties['static-categories-line-height'] ?><?php if(!empty($properties['static-categories-line-height-unit'])) { ?><?php echo $properties['static-categories-line-height-unit'] ?><?php } ?>;
 	<?php } ?>
 
 }
@@ -49,7 +49,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-tags-font-size'])) { ?>
-		font-size: <?php echo $properties['static-tags-font-size'] ?>px;
+		font-size: <?php echo $properties['static-tags-font-size'] ?><?php if(!empty($properties['static-tags-font-size-unit'])) { ?><?php echo $properties['static-tags-font-size-unit'] ?><?php } else { ?>px<?php } ?>;
 	<?php } ?>
 
 	<?php if (!empty($properties['static-tags-font-color'])) { ?>
@@ -57,7 +57,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-tags-line-height'])) { ?>
-		line-height: <?php echo $properties['static-tags-line-height'] ?>;
+		line-height: <?php echo $properties['static-tags-line-height'] ?><?php if(!empty($properties['static-tags-line-height-unit'])) { ?><?php echo $properties['static-tags-line-height-unit'] ?><?php } ?>;
 	<?php } ?>
 
 }
