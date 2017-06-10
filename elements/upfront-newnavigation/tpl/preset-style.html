@@ -35,10 +35,10 @@
 #page .<?php echo $properties['id'] ?> ul.menu > li.menu-item > .redactor-box a {
 	<?php if(!empty($properties['static-font-color'])) { ?>color: <?php echo $properties['static-font-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['static-font-family'])) { ?>font-family: <?php echo $properties['static-font-family']  ?>; <?php } ?>
-	<?php if(!empty($properties['static-font-size'])) { ?>font-size: <?php echo $properties['static-font-size']  ?>px; <?php } ?>
+	<?php if(!empty($properties['static-font-size'])) { ?>font-size: <?php echo $properties['static-font-size']  ?><?php if(!empty($properties['static-font-size-unit'])) { ?><?php echo $properties['static-font-size-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
 	<?php if(!empty($properties['static-weight'])) { ?>font-weight: <?php echo $properties['static-weight']  ?>;<?php } ?>
 	<?php if(!empty($properties['static-style'])) { ?>font-style: <?php echo $properties['static-style']  ?>;<?php } ?>
-	<?php if(!empty($properties['static-line-height'])) { ?>line-height: <?php echo $properties['static-line-height']  ?>;<?php } ?>
+	<?php if(!empty($properties['static-line-height'])) { ?>line-height: <?php echo $properties['static-line-height']  ?><?php if(!empty($properties['static-line-height-unit'])) { ?><?php echo $properties['static-line-height-unit'] ?><?php } ?>;<?php } ?>
 }
 
 #page .<?php echo $properties['id'] ?> ul.menu > li.menu-item a:hover,
@@ -46,17 +46,17 @@
 	<?php if(!empty($properties['hover-use-typography'])) { ?>
 		<?php if(!empty($properties['hover-font-color'])) { ?>color: <?php echo $properties['hover-font-color']  ?>; <?php } ?>
 		<?php if(!empty($properties['hover-font-family'])) { ?>font-family: <?php echo $properties['hover-font-family']  ?>; <?php } ?>
-		<?php if(!empty($properties['hover-font-size'])) { ?>font-size: <?php echo $properties['hover-font-size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['hover-font-size'])) { ?>font-size: <?php echo $properties['hover-font-size']  ?><?php if(!empty($properties['hover-font-size-unit'])) { ?><?php echo $properties['hover-font-size-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
 		<?php if(!empty($properties['hover-weight'])) { ?>font-weight: <?php echo $properties['hover-weight']  ?>;<?php } ?>
 		<?php if(!empty($properties['hover-style'])) { ?>font-style: <?php echo $properties['hover-style']  ?>;<?php } ?>
-		<?php if(!empty($properties['hover-line-height'])) { ?>line-height: <?php echo $properties['hover-line-height']  ?>;<?php } ?>
+		<?php if(!empty($properties['hover-line-height'])) { ?>line-height: <?php echo $properties['hover-line-height']  ?><?php if(!empty($properties['hover-line-height-unit'])) { ?><?php echo $properties['hover-line-height-unit'] ?><?php } ?>;<?php } ?>
 	<?php } else { ?>
 		<?php if(!empty($properties['static-font-color'])) { ?>color: <?php echo $properties['static-font-color']  ?>; <?php } ?>
 		<?php if(!empty($properties['static-font-family'])) { ?>font-family: <?php echo $properties['static-font-family']  ?>; <?php } ?>
-		<?php if(!empty($properties['static-font-size'])) { ?>font-size: <?php echo $properties['static-font-size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['static-font-size'])) { ?>font-size: <?php echo $properties['static-font-size']  ?><?php if(!empty($properties['static-font-size'-unit'])) { ?><?php echo $properties['static-font-size'-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
 		<?php if(!empty($properties['static-weight'])) { ?>font-weight: <?php echo $properties['static-weight']  ?>;<?php } ?>
 		<?php if(!empty($properties['static-style'])) { ?>font-style: <?php echo $properties['static-style']  ?>;<?php } ?>
-		<?php if(!empty($properties['static-line-height'])) { ?>line-height: <?php echo $properties['static-line-height']  ?>;<?php } ?>
+		<?php if(!empty($properties['static-line-height'])) { ?>line-height: <?php echo $properties['static-line-height']  ?><?php if(!empty($properties['static-line-height'-unit'])) { ?><?php echo $properties['static-line-height'-unit'] ?><?php } ?>;<?php } ?>
 	<?php } ?>
 }
 
@@ -65,17 +65,17 @@
 	<?php if(!empty($properties['focus-use-typography'])) { ?>
 		<?php if(!empty($properties['focus-font-color'])) { ?>color: <?php echo $properties['focus-font-color']  ?>; <?php } ?>
 		<?php if(!empty($properties['focus-font-family'])) { ?>font-family: <?php echo $properties['focus-font-family']  ?>; <?php } ?>
-		<?php if(!empty($properties['focus-font-size'])) { ?>font-size: <?php echo $properties['focus-font-size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['focus-font-size'])) { ?>font-size: <?php echo $properties['focus-font-size']  ?><?php if(!empty($properties['focus-font-size-unit'])) { ?><?php echo $properties['focus-font-size-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
 		<?php if(!empty($properties['focus-weight'])) { ?>font-weight: <?php echo $properties['focus-weight']  ?>;<?php } ?>
 		<?php if(!empty($properties['focus-style'])) { ?>font-style: <?php echo $properties['focus-style']  ?>;<?php } ?>
-		<?php if(!empty($properties['focus-line-height'])) { ?>line-height: <?php echo $properties['focus-line-height']  ?>;<?php } ?>
+		<?php if(!empty($properties['focus-line-height'])) { ?>line-height: <?php echo $properties['focus-line-height']  ?><?php if(!empty($properties['focus-line-height-unit'])) { ?><?php echo $properties['focus-line-height-unit'] ?><?php } ?>;<?php } ?>
 	<?php } else { ?>
 		<?php if(!empty($properties['static-font-color'])) { ?>color: <?php echo $properties['static-font-color']  ?>; <?php } ?>
 		<?php if(!empty($properties['static-font-family'])) { ?>font-family: <?php echo $properties['static-font-family']  ?>; <?php } ?>
-		<?php if(!empty($properties['static-font-size'])) { ?>font-size: <?php echo $properties['static-font-size']  ?>px; <?php } ?>
+		<?php if(!empty($properties['static-font-size'])) { ?>font-size: <?php echo $properties['static-font-size']  ?><?php if(!empty($properties['static-font-size-unit'])) { ?><?php echo $properties['static-font-size-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
 		<?php if(!empty($properties['static-weight'])) { ?>font-weight: <?php echo $properties['static-weight']  ?>;<?php } ?>
 		<?php if(!empty($properties['static-style'])) { ?>font-style: <?php echo $properties['static-style']  ?>;<?php } ?>
-		<?php if(!empty($properties['static-line-height'])) { ?>line-height: <?php echo $properties['static-line-height']  ?>;<?php } ?>
+		<?php if(!empty($properties['static-line-height'])) { ?>line-height: <?php echo $properties['static-line-height']  ?><?php if(!empty($properties['static-line-height-unit'])) { ?><?php echo $properties['static-line-height-unit'] ?><?php } ?>;<?php } ?>
 	<?php } ?>
 }
 
