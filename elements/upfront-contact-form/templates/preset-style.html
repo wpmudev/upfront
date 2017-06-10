@@ -1,10 +1,10 @@
 /* Contact presets Typography Normal state */
 #page .<?php echo $properties['id'] ?> .upfront-field-container label {
 	<?php if(!empty($properties['field-labels-static-font-family'])) { ?>font-family: <?php echo $properties['field-labels-static-font-family']  ?>; <?php } ?>
-    <?php if(!empty($properties['field-labels-static-font-size'])) { ?>font-size: <?php echo $properties['field-labels-static-font-size']  ?>px; <?php } ?>
+    <?php if(!empty($properties['field-labels-static-font-size'])) { ?>font-size: <?php echo $properties['field-labels-static-font-size']  ?><?php if(!empty($properties['field-labels-static-font-size-unit'])) { ?><?php echo $properties['field-labels-static-font-size-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
     <?php if(!empty($properties['field-labels-static-weight'])) { ?>font-weight: <?php echo $properties['field-labels-static-weight']  ?>;<?php } ?>
     <?php if(!empty($properties['field-labels-static-style'])) { ?>font-style: <?php echo $properties['field-labels-static-style']  ?>;<?php } ?>
-    <?php if(!empty($properties['field-labels-static-line-height'])) { ?>line-height: <?php echo $properties['field-labels-static-line-height']  ?>;<?php } ?>
+    <?php if(!empty($properties['field-labels-static-line-height'])) { ?>line-height: <?php echo $properties['field-labels-static-line-height']  ?><?php if(!empty($properties['field-labels-static-line-height-unit'])) { ?><?php echo $properties['field-labels-static-line-height-unit'] ?><?php } ?>;<?php } ?>
 	<?php if(!empty($properties['field-labels-static-font-color'])) { ?>color: <?php echo $properties['field-labels-static-font-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['hover-use-transition']) && !empty($properties['hover-transition-duration']) && !empty($properties['hover-transition-easing'] )) { ?>
 		transition: all <?php echo $properties['hover-transition-duration'] ?>s <?php echo $properties['hover-transition-easing']  ?>;
@@ -14,10 +14,10 @@
 #page .<?php echo $properties['id'] ?> .upfront-field-container input,
 #page .<?php echo $properties['id'] ?> .upfront-field-container textarea {
 	<?php if(!empty($properties['field-values-static-font-family'])) { ?>font-family: <?php echo $properties['field-values-static-font-family']  ?>; <?php } ?>
-    <?php if(!empty($properties['field-values-static-font-size'])) { ?>font-size: <?php echo $properties['field-values-static-font-size']  ?>px; <?php } ?>
+    <?php if(!empty($properties['field-values-static-font-size'])) { ?>font-size: <?php echo $properties['field-values-static-font-size']  ?><?php if(!empty($properties['field-values-static-font-size-unit'])) { ?><?php echo $properties['field-values-static-font-size-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
     <?php if(!empty($properties['field-values-static-weight'])) { ?>font-weight: <?php echo $properties['field-values-static-weight']  ?>;<?php } ?>
     <?php if(!empty($properties['field-values-static-style'])) { ?>font-style: <?php echo $properties['field-values-static-style']  ?>;<?php } ?>
-    <?php if(!empty($properties['field-values-static-line-height'])) { ?>line-height: <?php echo $properties['field-values-static-line-height']  ?>;<?php } ?>
+    <?php if(!empty($properties['field-values-static-line-height'])) { ?>line-height: <?php echo $properties['field-values-static-line-height']  ?><?php if(!empty($properties['field-values-static-line-height-unit'])) { ?><?php echo $properties['field-values-static-line-height-unit'] ?><?php } ?>;<?php } ?>
 	<?php if(!empty($properties['field-values-static-font-color'])) { ?>color: <?php echo $properties['field-values-static-font-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['hover-use-transition']) && !empty($properties['hover-transition-duration']) && !empty($properties['hover-transition-easing'] )) { ?>
 		transition: all <?php echo $properties['hover-transition-duration'] ?>s <?php echo $properties['hover-transition-easing']  ?>;
@@ -26,10 +26,10 @@
 
 #page .<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button{
 	<?php if(!empty($properties['button-static-font-family'])) { ?>font-family: <?php echo $properties['button-static-font-family']  ?>; <?php } ?>
-    <?php if(!empty($properties['button-static-font-size'])) { ?>font-size: <?php echo $properties['button-static-font-size']  ?>px; <?php } ?>
+    <?php if(!empty($properties['button-static-font-size'])) { ?>font-size: <?php echo $properties['button-static-font-size']  ?><?php if(!empty($properties['button-static-font-size-unit'])) { ?><?php echo $properties['button-static-font-size-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
     <?php if(!empty($properties['button-static-weight'])) { ?>font-weight: <?php echo $properties['button-static-weight']  ?>;<?php } ?>
     <?php if(!empty($properties['button-static-style'])) { ?>font-style: <?php echo $properties['button-static-style']  ?>;<?php } ?>
-    <?php if(!empty($properties['button-static-line-height'])) { ?>line-height: <?php echo $properties['button-static-line-height']  ?>;<?php } ?>
+    <?php if(!empty($properties['button-static-line-height'])) { ?>line-height: <?php echo $properties['button-static-line-height']  ?><?php if(!empty($properties['button-static-line-height-unit'])) { ?><?php echo $properties['button-static-line-height-unit'] ?><?php } ?>;<?php } ?>
 	<?php if(!empty($properties['button-static-font-color'])) { ?>color: <?php echo $properties['button-static-font-color']  ?>; <?php } ?>
 	<?php if(!empty($properties['hover-use-transition']) && !empty($properties['hover-transition-duration']) && !empty($properties['hover-transition-easing'] )) { ?>
 		transition: all <?php echo $properties['hover-transition-duration'] ?>s <?php echo $properties['hover-transition-easing']  ?>;
@@ -42,29 +42,29 @@
 
 #page .<?php echo $properties['id'] ?> .upfront-field-container label:hover {
 	<?php if(!empty($properties['field-labels-hover-font-family'])) { ?>font-family: <?php echo $properties['field-labels-hover-font-family']  ?>; <?php } ?>
-    <?php if(!empty($properties['field-labels-hover-font-size'])) { ?>font-size: <?php echo $properties['field-labels-hover-font-size']  ?>px; <?php } ?>
+    <?php if(!empty($properties['field-labels-hover-font-size'])) { ?>font-size: <?php echo $properties['field-labels-hover-font-size']  ?><?php if(!empty($properties['field-labels-hover-font-size-unit'])) { ?><?php echo $properties['field-labels-hover-font-size-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
     <?php if(!empty($properties['field-labels-hover-weight'])) { ?>font-weight: <?php echo $properties['field-labels-hover-weight']  ?>;<?php } ?>
     <?php if(!empty($properties['field-labels-hover-style'])) { ?>font-style: <?php echo $properties['field-labels-hover-style']  ?>;<?php } ?>
-    <?php if(!empty($properties['field-labels-hover-line-height'])) { ?>line-height: <?php echo $properties['field-labels-hover-line-height']  ?>;<?php } ?>
+    <?php if(!empty($properties['field-labels-hover-line-height'])) { ?>line-height: <?php echo $properties['field-labels-hover-line-height']  ?><?php if(!empty($properties['field-labels-hover-line-height-unit'])) { ?><?php echo $properties['field-labels-hover-line-height-unit'] ?><?php } ?>;<?php } ?>
 	<?php if(!empty($properties['field-labels-hover-font-color'])) { ?>color: <?php echo $properties['field-labels-hover-font-color']  ?>; <?php } ?>
 }
 
 #page .<?php echo $properties['id'] ?> .upfront-field-container input:hover,
 #page .<?php echo $properties['id'] ?> .upfront-field-container textarea:hover {
 	<?php if(!empty($properties['field-values-hover-font-family'])) { ?>font-family: <?php echo $properties['field-values-hover-font-family']  ?>; <?php } ?>
-    <?php if(!empty($properties['field-values-hover-font-size'])) { ?>font-size: <?php echo $properties['field-values-hover-font-size']  ?>px; <?php } ?>
+    <?php if(!empty($properties['field-values-hover-font-size'])) { ?>font-size: <?php echo $properties['field-values-hover-font-size']  ?><?php if(!empty($properties['field-values-hover-font-size-unit'])) { ?><?php echo $properties['field-values-hover-font-size-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
     <?php if(!empty($properties['field-values-hover-weight'])) { ?>font-weight: <?php echo $properties['field-values-hover-weight']  ?>;<?php } ?>
     <?php if(!empty($properties['field-values-hover-style'])) { ?>font-style: <?php echo $properties['field-values-hover-style']  ?>;<?php } ?>
-    <?php if(!empty($properties['field-values-hover-line-height'])) { ?>line-height: <?php echo $properties['field-values-hover-line-height']  ?>;<?php } ?>
+    <?php if(!empty($properties['field-values-hover-line-height'])) { ?>line-height: <?php echo $properties['field-values-hover-line-height']  ?><?php if(!empty($properties['field-values-hover-line-height-unit'])) { ?><?php echo $properties['field-values-hover-line-height-unit'] ?><?php } ?>;<?php } ?>
 	<?php if(!empty($properties['field-values-hover-font-color'])) { ?>color: <?php echo $properties['field-values-hover-font-color']  ?>; <?php } ?>
 }
 
 #page .<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:hover {
 	<?php if(!empty($properties['button-hover-font-family'])) { ?>font-family: <?php echo $properties['button-hover-font-family']  ?>; <?php } ?>
-    <?php if(!empty($properties['button-hover-font-size'])) { ?>font-size: <?php echo $properties['button-hover-font-size']  ?>px; <?php } ?>
+    <?php if(!empty($properties['button-hover-font-size'])) { ?>font-size: <?php echo $properties['button-hover-font-size']  ?><?php if(!empty($properties['button-hover-font-size-unit'])) { ?><?php echo $properties['button-hover-font-size-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
     <?php if(!empty($properties['button-hover-weight'])) { ?>font-weight: <?php echo $properties['button-hover-weight']  ?>;<?php } ?>
     <?php if(!empty($properties['button-hover-style'])) { ?>font-style: <?php echo $properties['button-hover-style']  ?>;<?php } ?>
-    <?php if(!empty($properties['button-hover-line-height'])) { ?>line-height: <?php echo $properties['button-hover-line-height']  ?>;<?php } ?>
+    <?php if(!empty($properties['button-hover-line-height'])) { ?>line-height: <?php echo $properties['button-hover-line-height']  ?><?php if(!empty($properties['button-hover-line-height-unit'])) { ?><?php echo $properties['button-hover-line-height-unit'] ?><?php } ?>;<?php } ?>
 	<?php if(!empty($properties['button-hover-font-color'])) { ?>color: <?php echo $properties['button-hover-font-color']  ?>; <?php } ?>
 }
 
@@ -73,27 +73,27 @@
 /* If typography checkbox is unchecked use normal state settings on hover */
 #page .<?php echo $properties['id'] ?> .upfront-field-container label:hover {
 	<?php if(!empty($properties['field-labels-static-font-family'])) { ?>font-family: <?php echo $properties['field-labels-static-font-family']  ?>; <?php } ?>
-    <?php if(!empty($properties['field-labels-static-font-size'])) { ?>font-size: <?php echo $properties['field-labels-static-font-size']  ?>px; <?php } ?>
+    <?php if(!empty($properties['field-labels-static-font-size'])) { ?>font-size: <?php echo $properties['field-labels-static-font-size']  ?><?php if(!empty($properties['field-labels-static-font-size-unit'])) { ?><?php echo $properties['field-labels-static-font-size-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
     <?php if(!empty($properties['field-labels-static-weight'])) { ?>font-weight: <?php echo $properties['field-labels-static-weight']  ?>;<?php } ?>
     <?php if(!empty($properties['field-labels-static-style'])) { ?>font-style: <?php echo $properties['field-labels-static-style']  ?>;<?php } ?>
-    <?php if(!empty($properties['field-labels-static-line-height'])) { ?>line-height: <?php echo $properties['field-labels-static-line-height']  ?>;<?php } ?>
+    <?php if(!empty($properties['field-labels-static-line-height'])) { ?>line-height: <?php echo $properties['field-labels-static-line-height']  ?><?php if(!empty($properties['field-labels-static-line-height-unit'])) { ?><?php echo $properties['field-labels-static-line-height-unit'] ?><?php } ?>;<?php } ?>
 	<?php if(!empty($properties['field-labels-static-font-color'])) { ?>color: <?php echo $properties['field-labels-static-font-color']  ?>; <?php } ?>
 }
 #page .<?php echo $properties['id'] ?> .upfront-field-container input:hover,
 #page .<?php echo $properties['id'] ?> .upfront-field-container textarea:hover {
 	<?php if(!empty($properties['field-values-static-font-family'])) { ?>font-family: <?php echo $properties['field-values-static-font-family']  ?>; <?php } ?>
-    <?php if(!empty($properties['field-values-static-font-size'])) { ?>font-size: <?php echo $properties['field-values-static-font-size']  ?>px; <?php } ?>
+    <?php if(!empty($properties['field-values-static-font-size'])) { ?>font-size: <?php echo $properties['field-values-static-font-size']  ?><?php if(!empty($properties['field-values-static-font-size-unit'])) { ?><?php echo $properties['field-values-static-font-size-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
     <?php if(!empty($properties['field-values-static-weight'])) { ?>font-weight: <?php echo $properties['field-values-static-weight']  ?>;<?php } ?>
     <?php if(!empty($properties['field-values-static-style'])) { ?>font-style: <?php echo $properties['field-values-static-style']  ?>;<?php } ?>
-    <?php if(!empty($properties['field-values-static-line-height'])) { ?>line-height: <?php echo $properties['field-values-static-line-height']  ?>;<?php } ?>
+    <?php if(!empty($properties['field-values-static-line-height'])) { ?>line-height: <?php echo $properties['field-values-static-line-height']  ?><?php if(!empty($properties['field-values-static-line-height-unit'])) { ?><?php echo $properties['field-values-static-line-height-unit'] ?><?php } ?>;<?php } ?>
 	<?php if(!empty($properties['field-values-static-font-color'])) { ?>color: <?php echo $properties['field-values-static-font-color']  ?>; <?php } ?>
 }
 #page .<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:hover {
 	<?php if(!empty($properties['button-static-font-family'])) { ?>font-family: <?php echo $properties['button-static-font-family']  ?>; <?php } ?>
-    <?php if(!empty($properties['button-static-font-size'])) { ?>font-size: <?php echo $properties['button-static-font-size']  ?>px; <?php } ?>
+    <?php if(!empty($properties['button-static-font-size'])) { ?>font-size: <?php echo $properties['button-static-font-size']  ?><?php if(!empty($properties['button-static-font-size-unit'])) { ?><?php echo $properties['button-static-font-size-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
     <?php if(!empty($properties['button-static-weight'])) { ?>font-weight: <?php echo $properties['button-static-weight']  ?>;<?php } ?>
     <?php if(!empty($properties['button-static-style'])) { ?>font-style: <?php echo $properties['button-static-style']  ?>;<?php } ?>
-    <?php if(!empty($properties['button-static-line-height'])) { ?>line-height: <?php echo $properties['button-static-line-height']  ?>;<?php } ?>
+    <?php if(!empty($properties['button-static-line-height'])) { ?>line-height: <?php echo $properties['button-static-line-height']  ?><?php if(!empty($properties['-unit'])) { ?><?php echo $properties['-unit'] ?><?php } ?>;<?php } ?>
 	<?php if(!empty($properties['button-static-font-color'])) { ?>color: <?php echo $properties['button-static-font-color']  ?>; <?php } ?>
 }
 
@@ -106,19 +106,19 @@
 #page .<?php echo $properties['id'] ?> .upfront-field-container input:focus,
 #page .<?php echo $properties['id'] ?> .upfront-field-container textarea:focus {
 	<?php if(!empty($properties['field-values-focus-font-family'])) { ?>font-family: <?php echo $properties['field-values-focus-font-family']  ?>; <?php } ?>
-    <?php if(!empty($properties['field-values-focus-font-size'])) { ?>font-size: <?php echo $properties['field-values-focus-font-size']  ?>px; <?php } ?>
+    <?php if(!empty($properties['field-values-focus-font-size'])) { ?>font-size: <?php echo $properties['field-values-focus-font-size']  ?><?php if(!empty($properties['field-values-focus-font-size-unit'])) { ?><?php echo $properties['field-values-focus-font-size-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
     <?php if(!empty($properties['field-values-focus-weight'])) { ?>font-weight: <?php echo $properties['field-values-focus-weight']  ?>;<?php } ?>
     <?php if(!empty($properties['field-values-focus-style'])) { ?>font-style: <?php echo $properties['field-values-focus-style']  ?>;<?php } ?>
-    <?php if(!empty($properties['field-values-focus-line-height'])) { ?>line-height: <?php echo $properties['field-values-focus-line-height']  ?>;<?php } ?>
+    <?php if(!empty($properties['field-values-focus-line-height'])) { ?>line-height: <?php echo $properties['field-values-focus-line-height']  ?><?php if(!empty($properties['field-values-focus-line-height-unit'])) { ?><?php echo $properties['field-values-focus-line-height-unit'] ?><?php } ?>;<?php } ?>
 	<?php if(!empty($properties['field-values-focus-font-color'])) { ?>color: <?php echo $properties['field-values-focus-font-color']  ?>; <?php } ?>
 }
 
 #page .<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:focus {
 	<?php if(!empty($properties['button-focus-font-family'])) { ?>font-family: <?php echo $properties['button-focus-font-family']  ?>; <?php } ?>
-    <?php if(!empty($properties['button-focus-font-size'])) { ?>font-size: <?php echo $properties['button-focus-font-size']  ?>px; <?php } ?>
+    <?php if(!empty($properties['button-focus-font-size'])) { ?>font-size: <?php echo $properties['button-focus-font-size']  ?><?php if(!empty($properties['button-focus-font-size-unit'])) { ?><?php echo $properties['button-focus-font-size-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
     <?php if(!empty($properties['button-focus-weight'])) { ?>font-weight: <?php echo $properties['button-focus-weight']  ?>;<?php } ?>
     <?php if(!empty($properties['button-focus-style'])) { ?>font-style: <?php echo $properties['button-focus-style']  ?>;<?php } ?>
-    <?php if(!empty($properties['button-focus-line-height'])) { ?>line-height: <?php echo $properties['button-focus-line-height']  ?>;<?php } ?>
+    <?php if(!empty($properties['button-focus-line-height'])) { ?>line-height: <?php echo $properties['button-focus-line-height']  ?><?php if(!empty($properties['button-focus-line-height-unit'])) { ?><?php echo $properties['button-focus-line-height-unit'] ?><?php } ?>;<?php } ?>
 	<?php if(!empty($properties['button-focus-font-color'])) { ?>color: <?php echo $properties['button-focus-font-color']  ?>; <?php } ?>
 }
 
@@ -128,18 +128,18 @@
 #page .<?php echo $properties['id'] ?> .upfront-field-container input:focus,
 #page .<?php echo $properties['id'] ?> .upfront-field-container textarea:focus {
 	<?php if(!empty($properties['field-values-static-font-family'])) { ?>font-family: <?php echo $properties['field-values-static-font-family']  ?>; <?php } ?>
-    <?php if(!empty($properties['field-values-static-font-size'])) { ?>font-size: <?php echo $properties['field-values-static-font-size']  ?>px; <?php } ?>
+    <?php if(!empty($properties['field-values-static-font-size'])) { ?>font-size: <?php echo $properties['field-values-static-font-size']  ?><?php if(!empty($properties['field-values-static-font-size-unit'])) { ?><?php echo $properties['field-values-static-font-size-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
     <?php if(!empty($properties['field-values-static-weight'])) { ?>font-weight: <?php echo $properties['field-values-static-weight']  ?>;<?php } ?>
     <?php if(!empty($properties['field-values-static-style'])) { ?>font-style: <?php echo $properties['field-values-static-style']  ?>;<?php } ?>
-    <?php if(!empty($properties['field-values-static-line-height'])) { ?>line-height: <?php echo $properties['field-values-static-line-height']  ?>;<?php } ?>
+    <?php if(!empty($properties['field-values-static-line-height'])) { ?>line-height: <?php echo $properties['field-values-static-line-height']  ?><?php if(!empty($properties['field-values-static-line-height-unit'])) { ?><?php echo $properties['field-values-static-line-height-unit'] ?><?php } ?>;<?php } ?>
 	<?php if(!empty($properties['field-values-static-font-color'])) { ?>color: <?php echo $properties['field-values-static-font-color']  ?>; <?php } ?>
 }
 #page .<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:focus {
 	<?php if(!empty($properties['button-static-font-family'])) { ?>font-family: <?php echo $properties['button-static-font-family']  ?>; <?php } ?>
-    <?php if(!empty($properties['button-static-font-size'])) { ?>font-size: <?php echo $properties['button-static-font-size']  ?>px; <?php } ?>
+    <?php if(!empty($properties['button-static-font-size'])) { ?>font-size: <?php echo $properties['button-static-font-size']  ?><?php if(!empty($properties['button-static-font-size-unit'])) { ?><?php echo $properties['button-static-font-size-unit'] ?><?php } else { ?>px<?php } ?>; <?php } ?>
     <?php if(!empty($properties['button-static-weight'])) { ?>font-weight: <?php echo $properties['button-static-weight']  ?>;<?php } ?>
     <?php if(!empty($properties['button-static-style'])) { ?>font-style: <?php echo $properties['button-static-style']  ?>;<?php } ?>
-    <?php if(!empty($properties['button-static-line-height'])) { ?>line-height: <?php echo $properties['button-static-line-height']  ?>;<?php } ?>
+    <?php if(!empty($properties['button-static-line-height'])) { ?>line-height: <?php echo $properties['button-static-line-height']  ?><?php if(!empty($properties['button-static-line-height-unit'])) { ?><?php echo $properties['button-static-line-height-unit'] ?><?php } ?>;<?php } ?>
 	<?php if(!empty($properties['button-static-font-color'])) { ?>color: <?php echo $properties['button-static-font-color']  ?>; <?php } ?>
 }
 
@@ -202,7 +202,7 @@
 #page .<?php echo $properties['id'] ?> .upfront-field-container textarea {
 <?php if(!empty($properties['static-fields-useborder']) && $properties['static-fields-useborder'] == 'yes') { ?>
 	<?php if(!empty($properties['static-fields-borderwidth']) && !empty($properties['static-fields-bordertype']) && !empty($properties['static-fields-bordercolor'])) { ?>
-		border: <?php echo $properties['static-fields-borderwidth'] ?>px <?php echo $properties['static-fields-bordertype'] ?> <?php echo $properties['static-fields-bordercolor'] ?>;
+		border: <?php echo $properties['static-fields-borderwidth'] ?><?php if(!empty($properties['static-fields-borderwidth-unit'])) { ?><?php echo $properties['static-fields-borderwidth-unit'] ?><?php } else { ?>px<?php } ?><?php echo $properties['static-fields-bordertype'] ?> <?php echo $properties['static-fields-bordercolor'] ?>;
 	<?php } ?>
 <?php } else { ?>
 		border: none;
@@ -213,12 +213,12 @@
 #page .<?php echo $properties['id'] ?> .upfront-field-container textarea:hover {
 <?php if(!empty($properties['hover-fields-useborder']) && $properties['hover-fields-useborder'] == 'yes') { ?>
 	<?php if(!empty($properties['hover-fields-borderwidth']) && !empty($properties['hover-fields-bordertype']) && !empty($properties['hover-fields-bordercolor'])) { ?>
-		border: <?php echo $properties['hover-fields-borderwidth'] ?>px <?php echo $properties['hover-fields-bordertype'] ?> <?php echo $properties['hover-fields-bordercolor'] ?>;
+		border: <?php echo $properties['hover-fields-borderwidth'] ?><?php if(!empty($properties['hover-fields-borderwidth-unit'])) { ?><?php echo $properties['hover-fields-borderwidth-unit'] ?><?php } else { ?>px<?php } ?><?php echo $properties['hover-fields-bordertype'] ?> <?php echo $properties['hover-fields-bordercolor'] ?>;
 	<?php } ?>
 <?php } else { ?>
 	<?php if(!empty($properties['static-fields-useborder'])) { ?>
 		<?php if(!empty($properties['static-fields-borderwidth']) && !empty($properties['static-fields-bordertype']) && !empty($properties['static-fields-bordercolor'])) { ?>
-			border: <?php echo $properties['static-fields-borderwidth'] ?>px <?php echo $properties['static-fields-bordertype'] ?> <?php echo $properties['static-fields-bordercolor'] ?>;
+			border: <?php echo $properties['static-fields-borderwidth'] ?><?php if(!empty($properties['static-fields-borderwidth-unit'])) { ?><?php echo $properties['static-fields-borderwidth-unit'] ?><?php } else { ?>px<?php } ?><?php echo $properties['static-fields-bordertype'] ?> <?php echo $properties['static-fields-bordercolor'] ?>;
 		<?php } ?>
 	<?php } else { ?>
 		border: none;
@@ -230,12 +230,12 @@
 #page .<?php echo $properties['id'] ?> .upfront-field-container textarea:focus {
 <?php if(!empty($properties['focus-fields-useborder']) && $properties['focus-fields-useborder'] == 'yes') { ?>
 	<?php if(!empty($properties['focus-fields-borderwidth']) && !empty($properties['focus-fields-bordertype']) && !empty($properties['focus-fields-bordercolor'])) { ?>
-		border: <?php echo $properties['focus-fields-borderwidth'] ?>px <?php echo $properties['focus-fields-bordertype'] ?> <?php echo $properties['focus-fields-bordercolor'] ?>;
+		border: <?php echo $properties['focus-fields-borderwidth'] ?><?php if(!empty($properties['focus-fields-borderwidth-unit'])) { ?><?php echo $properties['focus-fields-borderwidth-unit'] ?><?php } else { ?>px<?php } ?><?php echo $properties['focus-fields-bordertype'] ?> <?php echo $properties['focus-fields-bordercolor'] ?>;
 	<?php } ?>
 <?php } else { ?>
 	<?php if(!empty($properties['static-fields-useborder'])) { ?>
 		<?php if(!empty($properties['static-fields-borderwidth']) && !empty($properties['static-fields-bordertype']) && !empty($properties['static-fields-bordercolor'])) { ?>
-			border: <?php echo $properties['static-fields-borderwidth'] ?>px <?php echo $properties['static-fields-bordertype'] ?> <?php echo $properties['static-fields-bordercolor'] ?>;
+			border: <?php echo $properties['static-fields-borderwidth'] ?><?php if(!empty($properties['static-fields-borderwidth-unit'])) { ?><?php echo $properties['static-fields-borderwidth-unit'] ?><?php } else { ?>px<?php } ?><?php echo $properties['static-fields-bordertype'] ?> <?php echo $properties['static-fields-bordercolor'] ?>;
 		<?php } ?>
 	<?php } else { ?>
 		border: none;
@@ -248,7 +248,7 @@
 #page .<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button {
 <?php if(!empty($properties['static-button-useborder']) && $properties['static-button-useborder'] == 'yes') { ?>
 	<?php if(!empty($properties['static-button-borderwidth']) && !empty($properties['static-button-bordertype']) && !empty($properties['static-button-bordercolor'])) { ?>
-		border: <?php echo $properties['static-button-borderwidth'] ?>px <?php echo $properties['static-button-bordertype'] ?> <?php echo $properties['static-button-bordercolor'] ?>;
+		border: <?php echo $properties['static-button-borderwidth'] ?><?php if(!empty($properties['static-button-borderwidth-unit'])) { ?><?php echo $properties['static-button-borderwidth-unit'] ?><?php } else { ?>px<?php } ?><?php echo $properties['static-button-bordertype'] ?> <?php echo $properties['static-button-bordercolor'] ?>;
 	<?php } ?>
 <?php } else { ?>
 		border: none;
@@ -258,12 +258,12 @@
 #page .<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:hover {
 <?php if(!empty($properties['hover-button-useborder']) && $properties['hover-button-useborder'] == 'yes') { ?>
 	<?php if(!empty($properties['hover-button-borderwidth']) && !empty($properties['hover-button-bordertype']) && !empty($properties['hover-button-bordercolor'])) { ?>
-		border: <?php echo $properties['hover-button-borderwidth'] ?>px <?php echo $properties['hover-button-bordertype'] ?> <?php echo $properties['hover-button-bordercolor'] ?>;
+		border: <?php echo $properties['hover-button-borderwidth'] ?><?php if(!empty($properties['hover-button-borderwidth-unit'])) { ?><?php echo $properties['hover-button-borderwidth-unit'] ?><?php } else { ?>px<?php } ?><?php echo $properties['hover-button-bordertype'] ?> <?php echo $properties['hover-button-bordercolor'] ?>;
 	<?php } ?>
 <?php } else { ?>
 	<?php if(!empty($properties['static-button-useborder'])) { ?>
 		<?php if(!empty($properties['static-button-borderwidth']) && !empty($properties['static-button-bordertype']) && !empty($properties['static-button-bordercolor'])) { ?>
-			border: <?php echo $properties['static-button-borderwidth'] ?>px <?php echo $properties['static-button-bordertype'] ?> <?php echo $properties['static-button-bordercolor'] ?>;
+			border: <?php echo $properties['static-button-borderwidth'] ?><?php if(!empty($properties['static-button-borderwidth-unit'])) { ?><?php echo $properties['static-button-borderwidth-unit'] ?><?php } else { ?>px<?php } ?><?php echo $properties['static-button-bordertype'] ?> <?php echo $properties['static-button-bordercolor'] ?>;
 		<?php } ?>
 	<?php } else { ?>
 		border: none;
@@ -274,12 +274,12 @@
 #page .<?php echo $properties['id'] ?> .upfront-field-container.upfront-submit-container .button:focus {
 <?php if(!empty($properties['focus-button-useborder']) && $properties['focus-button-useborder'] == 'yes') { ?>
 	<?php if(!empty($properties['focus-button-borderwidth']) && !empty($properties['focus-button-bordertype']) && !empty($properties['focus-button-bordercolor'])) { ?>
-		border: <?php echo $properties['focus-button-borderwidth'] ?>px <?php echo $properties['focus-button-bordertype'] ?> <?php echo $properties['focus-button-bordercolor'] ?>;
+		border: <?php echo $properties['focus-button-borderwidth'] ?><?php if(!empty($properties['focus-button-borderwidth-unit'])) { ?><?php echo $properties['focus-button-borderwidth-unit'] ?><?php } else { ?>px<?php } ?><?php echo $properties['focus-button-bordertype'] ?> <?php echo $properties['focus-button-bordercolor'] ?>;
 	<?php } ?>
 <?php } else { ?>
 	<?php if(!empty($properties['static-button-useborder'])) { ?>
 		<?php if(!empty($properties['static-button-borderwidth']) && !empty($properties['static-button-bordertype']) && !empty($properties['static-button-bordercolor'])) { ?>
-			border: <?php echo $properties['static-button-borderwidth'] ?>px <?php echo $properties['static-button-bordertype'] ?> <?php echo $properties['static-button-bordercolor'] ?>;
+			border: <?php echo $properties['static-button-borderwidth'] ?><?php if(!empty($properties['static-button-borderwidth-unit'])) { ?><?php echo $properties['static-button-borderwidth-unit'] ?><?php } else { ?>px<?php } ?><?php echo $properties['static-button-bordertype'] ?> <?php echo $properties['static-button-bordercolor'] ?>;
 		<?php } ?>
 	<?php } else { ?>
 		border: none;
