@@ -1469,14 +1469,14 @@ span.draggable-post-element.element-dragging {
 #sidebar-ui .field-grid-half,
 #element-settings-sidebar .field-grid-half {
   clear: left;
-  width: 48%;
+  width: 46%;
+  padding: 0px;
   float: left;
   margin: 0; }
 
 #sidebar-ui .field-grid-half-last,
 #element-settings-sidebar .field-grid-half-last {
-  float: left;
-  margin-left: 2%;
+  float: right;
   clear: right; }
 
 /* Height Media Queries Fixes
