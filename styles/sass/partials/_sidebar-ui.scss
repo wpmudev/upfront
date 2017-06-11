@@ -757,6 +757,17 @@
 	margin-top: 10px !important;
 }
 
+#sidebar-ui .command-edit-bg,
+#sidebar-ui .command-edit-global-regions {
+	width: 46% !important;
+	padding: 0px !important;
+	margin-top: 15px !important;
+}
+
+#sidebar-ui .command-edit-bg {
+	float: right !important;
+}
+
 #sidebar-ui .command-link {
 	display: inline;
 	cursor: pointer;
