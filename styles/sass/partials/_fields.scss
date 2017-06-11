@@ -896,6 +896,11 @@ input.upfront-field-text:hover,
 	line-height: 20px;
 }
 
+
+.theme-colors-color-picker .upfront-field-wrap-color .sp-replacer {
+	border: 1px solid #e2e2e2;
+}
+
 .upfront-field-wrap-color .sp-replacer:hover, .upfront-field-wrap-color .sp-replacer.sp-active {
 	border: 1px solid rgb(144, 144, 144);
 }
