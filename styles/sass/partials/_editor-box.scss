@@ -159,6 +159,8 @@
 	height: 19px;
 	text-align: center;
 	text-transform: uppercase;
+	float: right;
+	margin-right: 0px;
 }
 
 #sidebar-ui .upfront-slug_editor-url div:hover p a {
@@ -648,7 +650,9 @@ div#ui-datepicker-div td a{
 	display: none;
 }
 .misc-pub-section{
-	padding: 0px 15px;
+	padding: 0px;
+	margin-left: 15px;
+	margin-right: 5px;
 	overflow: hidden;
 	clear: both;
 	font:normal 12px/20px Open Sans, Hevletica Neueu, Helvetica, sans-serif;
@@ -679,7 +683,7 @@ div#ui-datepicker-div td a{
 	background-position: -644px -385px;
 }
 .ueditor-bix-top-buttons{
-	margin: 15px 15px 15px;
+	margin: 10px 5px 15px 15px;
 	border-top:1px solid rgba(228, 228, 228, 1);
 	margin-top: 10px;
 }
