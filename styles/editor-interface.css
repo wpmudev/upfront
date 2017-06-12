@@ -644,7 +644,8 @@ em {
 #sidebar-ui .sidebar-commands-control .command-save:before {
   margin-top: 8px; }
 
-#sidebar-ui .sidebar-commands-control .command-start-responsive {
+#sidebar-ui .sidebar-commands-control .command-start-responsive,
+#sidebar-ui .sidebar-commands-control .exit-responsive {
   margin: 0px;
   max-width: 122px;
   line-height: 22px;
@@ -653,9 +654,13 @@ em {
   max-height: 22px;
   border: 1px solid #a7a7a7;
   border-radius: 2px;
-  margin-left: 15px !important;
+  margin-left: 25px !important;
+  margin-right: 15px !important;
   font-size: 12px;
-  font-weight: 400; }
+  font-weight: 600; }
+
+#sidebar-ui .sidebar-commands-control .exit-responsive {
+  margin-left: 18px !important; }
 
 #sidebar-ui .sidebar-commands-control .command-start-responsive:before {
   opacity: 1; }
@@ -663,14 +668,20 @@ em {
 #sidebar-ui .sidebar-commands-control .command-grid {
   border: 1px solid #a7a7a7;
   border-radius: 2px;
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   padding: 2px;
   margin: 0 0 8px 15px; }
 
 #sidebar-ui .sidebar-commands-control .command-grid.upfront-icon-grid-active {
   border: 1px solid #D9D9D9;
   background-color: #E2E2E2; }
+
+#sidebar-ui .sidebar-commands-control .command-grid,
+#sidebar-ui .sidebar-commands-control .command-undo,
+#sidebar-ui .sidebar-commands-control .command-redo {
+  width: 22px;
+  padding-left: 1px !important; }
 
 #sidebar-ui .sidebar-commands-control .command-trash {
   float: left;
@@ -755,7 +766,8 @@ em {
   opacity: 0;
   padding: 0 10px;
   overflow-x: hidden;
-  overflow-y: auto; }
+  overflow-y: auto;
+  clear: both; }
 
 #sidebar-ui .sidebar-panel-elements .sidebar-panel-content,
 #sidebar-ui .sidebar-panel-elements .sidebar-tab-content .panel-section {
@@ -17668,7 +17680,8 @@ a.upfront-css-edit:before, a.upfront-preset-edit:before {
 
 /* Responsive commands */
 #sidebar-ui .sidebar-commands-responsive li {
-  display: block; }
+  display: block;
+  clear: both; }
 
 #sidebar-ui .sidebar-commands-responsive .panel-section {
   padding-top: 0;
