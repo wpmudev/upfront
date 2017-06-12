@@ -266,9 +266,14 @@
 #sidebar-ui .sidebar-commands-primary .command-new-page,
 #sidebar-ui .sidebar-commands-primary .command-new-post {
 	font-weight: bold;
-	width: 200px;
+	width: 195px;
 	text-align: center;
 	vertical-align: middle;
+	margin: 0px !important;
+}
+
+#sidebar-ui .sidebar-commands-primary .command-new-page {
+	float: right;
 }
 
 #sidebar-ui .sidebar-commands-primary .command-new-layout{
@@ -347,7 +352,7 @@
 }
 
 #sidebar-ui .upfront-icon-open-gallery:before {
-	background-position: -263px -400px;
+	background-position: -263px -399px;
 	width: 14px;
 	margin-right: 4px;
 	display: inline-block;
@@ -1457,7 +1462,7 @@ span.draggable-post-element.element-dragging
 	padding: 0px;
 	float: left;
 	margin: 0;
-}
+}§
 
 #sidebar-ui .field-grid-half-last,
 #element-settings-sidebar .field-grid-half-last {
