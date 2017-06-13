@@ -6105,7 +6105,9 @@ define([
 				this.update_size_hint(parseInt(this.$el.css('width'), 10), parseInt(this.$el.css('height'), 10));
 			},
 			update_size_hint: function (width, height, $helper) {
-				var hint = width + ' &#215; ' + height;
+				// If title, use that in size hint.
+				var title = this.model.get('title') ? this.model.get('title') + ' &mdash; ' : '';
+				var hint = title + width + ' &#215; ' + height;
 				( $helper ? $helper : this.$el ).find('.upfront-region-size-hint').html(hint);
 			},
 			region_resize: function (col) {

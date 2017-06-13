@@ -331,15 +331,20 @@
 .upfront-region-size-hint,
 .upfront-region-position-hint {
 	position: absolute;
-	top: 0;
-	left: 0;
-	background: #3d5266;
-	color: #dcebf8;
-	font-size: 14px !important;
-	padding: 0 5px;
+	top: 11px;
+	left: 11px;
+	color: #fff;
+	font-size: 9px;
+	font-weight: 600;
+	padding: 0 4px;
 	z-index: 10;
 	display: none;
+	border: 1px solid #4d4d4d;
+	background: #212121;
+	border-radius: 5px;
+	line-height: 17px;
 }
+
 .upfront-region-size-hint b,
 .upfront-region-position-hint b {
 	color: #ADC3D8;
