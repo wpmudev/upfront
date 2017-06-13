@@ -1,7 +1,7 @@
 #upfront-image-overlay {
 	position:fixed;
 	width: 100%;
-	background: rgba(37, 58, 78, 0.8);
+	background: rgba(31,33,33,0.85);
 	top:0;
 	z-index: 10001004;
 	font-size: 24px;

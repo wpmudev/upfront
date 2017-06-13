@@ -524,10 +524,10 @@
 .upfront-region-editing .upfront-region-active .upfront-region-active-overlay,
 .upfront-region-side-left.upfront-add-region-ani:after,
 .upfront-region-side-right.upfront-add-region-ani:after {
-	border-top: 3px solid #2f3a44;
-	border-bottom: 3px solid #2f3a44;
-	top: -3px;
-	bottom: -3px;
+	border-top: 1px solid #212121;
+	border-bottom: 1px solid #212121;
+	top: -1px;
+	bottom: -1px;
 }
 .upfront-region-editing .upfront-region-active .upfront-region-title,
 .upfront-region-fixed-editing .upfront-region-active .upfront-region-title {
@@ -537,7 +537,7 @@
 }
 .upfront-region-editing .upfront-region-editing-overlay {
 	z-index: 20;
-	background: rgba(31, 48, 63, 0.8);
+	background: rgba(31,33,33,0.85);
 }
 .upfront-region-editing .upfront-region-container-active .upfront-region-side,
 .upfront-region-editing .upfront-region-container-active .upfront-region-sub-container,
