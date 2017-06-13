@@ -58,6 +58,7 @@ define(function(){
 					Upfront.Views.Editor.ImageSelector.close();
 					me.model.set_breakpoint_property('background_image', sizes.full[0]);
 					me.model.set_breakpoint_property('background_image_ratio', Math.round(sizes.full[2]/sizes.full[1]*100)/100);
+					me.update_settings_header();
 				});
 			});
 		}

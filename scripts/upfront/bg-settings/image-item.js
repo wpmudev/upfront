@@ -206,6 +206,7 @@ define([
 							this.model.set_breakpoint_property(this.property_name, value);
 							me.update_image();
 						},
+						
 						rendered: function (){
 							this.$el.addClass('uf-bgsettings-image-pos-y');
 						}
@@ -521,6 +522,14 @@ define([
 					this.$el.children('.upfront-field-select').css({minWidth: '100%'});
 				}
 			}
+		},
+		update_settings_header: function() {
+			// Update image in header.
+			var image_url = this.model.get_breakpoint_property_value('background_image');
+			$('#region-settings-sidebar .upfront-region-type-icon')
+				.addClass('upfront-region-type-icon-image-url')
+				.removeClass('upfront-region-type-icon-image upfront-region-type-icon-featured')
+				.css({'backgroundImage': 'url(' + image_url + ')'});
 		},
 		get_bg_style_values: function () {
 			var values = [

@@ -198,7 +198,14 @@ define([
 					style = this.model.get_breakpoint_property_value('background_style', true)
 				;
 				if ( data.image ){
+					this.model.set_breakpoint_property('featured_image_url', data.image);
 					$type.css('background-image', "url('" + data.image + "')");
+					// Update Settings Header.
+					$('#region-settings-sidebar .upfront-region-type-icon')
+						.addClass('upfront-region-type-icon-image-url')
+						.removeClass('upfront-region-type-icon-image upfront-region-type-icon-featured')
+						.css({'backgroundImage': 'url(' + data.image + ')'});
+
 					// If parallax, then run parallax first so it applies correct background size
 					if ( style == 'parallax' ) {
 						$overlay.uparallax({
