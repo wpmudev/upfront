@@ -1490,7 +1490,6 @@ span.draggable-post-element.element-dragging {
   float: left;
   margin: 0; }
 
-§
 #sidebar-ui .field-grid-half-last,
 #element-settings-sidebar .field-grid-half-last {
   float: right;
@@ -14355,6 +14354,10 @@ a.ueditor-select-option:hover {
 #sidebar-ui .save-post-template.upfront-select-template-button,
 #sidebar-ui .reset-post-template.upfront-select-template-button {
   display: none; }
+
+#sidebar-ui .reset-post-template {
+  margin-left: 0px;
+  display: inline-block; }
 
 #sidebar-ui .apply-post-template,
 #sidebar-ui .save-post-template {

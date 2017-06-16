@@ -310,6 +310,12 @@
 	display: none;
 }
 
+#sidebar-ui .reset-post-template {
+	margin-left: 0px;
+	display: inline-block !important;
+	margin-top: 1px;
+}
+
 #sidebar-ui .apply-post-template,
 #sidebar-ui .save-post-template {
 	float: right;
