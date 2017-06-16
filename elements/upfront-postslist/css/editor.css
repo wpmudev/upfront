@@ -768,21 +768,18 @@ div.preset-manager-panel .category-padding-margin {
 }
 
 .reorder-overlay p {
-	background-image: -ms-linear-gradient(top, #F8FBFF 0%, #f3faff 100%);
-	background-image: -moz-linear-gradient(top, #F8FBFF 0%, #f3faff 100%);
-	background-image: -o-linear-gradient(top, #F8FBFF 0%, #f3faff 100%);
-	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #F8FBFF), color-stop(100, #f3faff));
-	background-image: -webkit-linear-gradient(top, #F8FBFF 0%, #f3faff 100%);
-	background-image: linear-gradient(to bottom, #F8FBFF 0%, #f3faff 100%);
-	border: 1px solid #c7d9ea;
-	color: #6f8fad;
+	background: #fff;
+	border: 1px solid rgb(169, 169, 169);
+	color: #000;
+	font-weight: 800;
 	top: 50px; left:0; right:0;
 	border-radius: 3px;
-	min-width: 230px;
-	max-width: 230px;
-	min-height: 40px;
-	max-height: 40px;
-	line-height: 40px;
+	min-width: 200px;
+	font-size: 12px;
+	max-width: 200px;
+	min-height: 30px;
+	max-height: 30px;
+	line-height: 30px;
 	margin: auto;
 	-webkit-box-sizing: content-box;
 	-moz-box-sizing: content-box;

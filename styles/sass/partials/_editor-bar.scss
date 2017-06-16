@@ -90,6 +90,12 @@
 	opacity: 0.8;
 }
 
+.ueditor-action-draft,
+.ueditor-action-preview {
+	margin-left: 0px !important;
+	margin-right: 0px !important;
+}
+
 .ueditor-bar-icon:hover {
 	opacity: 1;
 }
