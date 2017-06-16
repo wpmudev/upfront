@@ -683,16 +683,15 @@ em {
   width: 22px;
   padding-left: 1px !important; }
 
-#sidebar-ui .sidebar-commands-control .command-trash {
+#sidebar-ui .sidebar-commands-control .sidebar-commands-button.command-trash {
   float: left;
-  color: #e75757;
   padding: 1px 10px 1px 23px;
-  border: 1px solid #E5575A;
-  border-radius: 3px;
   height: auto;
   position: relative;
-  margin-top: 26px;
-  opacity: 1; }
+  padding-left: 25px;
+  margin: 25px 15px;
+  font-weight: 800;
+  font-size: 11px; }
 
 #sidebar-ui .sidebar-commands-control .command-trash:before {
   left: 8px;
