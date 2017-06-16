@@ -68,7 +68,7 @@
 	width: 172px !important;
 	height: 25px !important;
 	background-color: #ffffff;
-	border: solid 1px #a2bfda;
+	border: solid 1px rgb(169, 169, 169);
 	margin: 0px;
 	display: inline-block;
 }
@@ -87,9 +87,9 @@
 
 #sidebar-ui .upfront-tax-new_term {
 	width: 166px !important;
-	height: 26px !important;
+	height: 22px !important;
 	background-color: #ffffff;
-	border: solid 1px #a2bfda;
+	border: solid 1px rgb(169, 169, 169);
 	margin: 0px;
 	display: inline-block;
 	color: #263a4d;
@@ -108,16 +108,16 @@
 
 #sidebar-ui .upfront-tax-new_term:hover {
 	width: 166px !important;
-	height: 26px !important;
+	height: 22px !important;
 	background-color: #ffffff;
-	border: solid 1px #a2bfda;
+	border: solid 1px rgb(169, 169, 169);
 	margin: 0px;
 	display: inline-block;
 }
 
 #sidebar-ui .ueditor-save-post-data, #sidebar-ui #upfront-tax-add_term {
 	width: 42px;
-	height: 26px;
+	height: 22px;
 	background-color: #909090;
 	border: solid 1px #909090;
 	font-family: Open Sans, Verdana, sans serif;
@@ -207,20 +207,14 @@
 	position: relative;
 }
 
-.upfront-settings-toggled {
-	background-color: #e6edf2;
-	margin: 0px -15px;
-	padding: 0px 15px;
+.upfront-settings-toggled .ueditor-togglable {
+	margin: 0px -10px;
+	padding: 10px;
 }
 
-.ueditor-togglable select, .ueditor-taxonomy-wrapper select {
-	background: #F2F9FF;
-	border: 1px solid #A2BFDA;
-	padding: 0px 5px;
-	margin: 10px 0;
-	height: 26px;
-	color: #607F99;
-	border-radius: 3px;
+.upfront-settings-toggled .ueditor-togglable {
+	background: #e7e7e7;
+	border-radius: 5px;
 }
 
 #sidebar-ui .upfront-page-template-chosen {
@@ -327,7 +321,7 @@
 }
 
 #sidebar-ui .upfront-page-template-action {
-	min-height: 26px;
+	min-height: 22px;
 	padding-bottom: 15px;
 }
 
@@ -359,7 +353,7 @@
 	width: 117px;
 	height: 32px;
 	background: #fff;
-	border: 1px solid #a2bfda;
+	border: 1px solid rgb(169, 169, 169);
 	border-right: none;
 	font-family: Open Sans, Verdana, sans-serif;
 	font-size: 11px;
@@ -516,10 +510,10 @@ div#ui-datepicker-div td a{
 }
 
 #upfront-schedule-datepicker {
-	width: 94px;
-	height: 25px;
+	width: 84px;
+	height: 22px;
 	background-color: #ffffff;
-	border: solid 1px #a2bfda;
+	border: solid 1px rgb(169, 169, 169);
 	font-family: Open Sans, Verdana, sans-serif;
 	font-size: 11px;
 	color: #2f475f;
@@ -527,7 +521,7 @@ div#ui-datepicker-div td a{
 }
 
 #upfront-schedule-datepicker:focus {
-	border: solid 2px #a3bfd9;
+	border: solid 2px rgb(169, 169, 169);
 }
 
 #sticky-span {
@@ -557,9 +551,9 @@ div#ui-datepicker-div td a{
 
 .schedule-hours, .schedule-minutes, .schedule-hours:hover, .schedule-minutes:hover {
 	width: 26px;
-	height: 25px;
+	height: 22px;
 	background-color: #ffffff;
-	border: solid 1px #a2bfda !important;
+	border: solid 1px rgb(169, 169, 169) !important;
 	font-family: Open Sans, Verdana, sans-serif;
 	font-size: 11px;
 	color: #2f475f;
@@ -572,17 +566,17 @@ div#ui-datepicker-div td a{
 
 .ueditor-save-post-date {
 	width: 37px;
-	height: 26px;
+	height: 22px;
 	margin: 0px;
 	position: relative;
 	top: -9px;
 	border-radius: 3px;
-	right: -10px;
+	right: -5px;
 }
 
 .save-post-visibility, .ueditor-save-post-hie-tax {
 	width: 67px;
-	height: 26px;
+	height: 22px;
 	margin: 0px;
 	border-radius: 3px;
 	margin-bottom: 5px !important;
@@ -593,7 +587,7 @@ div#ui-datepicker-div td a{
 }
 
 .upfront-toggleable-content.upfront-settings-toggled {
-	padding: 3px 15px;
+	padding: 3px 10px;
 }
 
 .upfront-toggleable-content .upfront-field-checkbox, .upfront-toggleable-content .upfront-field-radio {
@@ -606,7 +600,7 @@ div#ui-datepicker-div td a{
 
 .add-new-taxonomies-btn {
 	width: 150px;
-	height: 26px;
+	height: 22px;
 	margin: 0px;
 	position: relative;
 	border-radius: 3px;
@@ -615,7 +609,7 @@ div#ui-datepicker-div td a{
 }
 
 .add-new-taxonomies-btn.upfront-add-active {
-	background: #a2bddc !important;
+	background: rgb(169, 169, 169) !important;
 	color: #fff !important;
 	border-color: #97b2d1 !important;
 	text-shadow: 0 1px 0 #ccc !important;
@@ -749,10 +743,10 @@ a.ueditor-action-trash:before {
 #ueditor-box-cats-tags .upfront-tax-new_term,
 #ueditor-box-cats-tags .upfront-flat-tax-new_term {
 	background: #F2F9FF;
-	border: 1px solid #A2BFDA;
+	border: 1px solid rgb(169, 169, 169);
 	padding: 12px;
 	margin: 10px 0;
-	height: 26px;
+	height: 22px;
 	color: #607F99;
 }
 
@@ -860,24 +854,22 @@ a.ueditor-action-trash:before {
 }
 
 #sidebar-ui .ueditor-ok-button {
-	background-image: linear-gradient(to bottom, #fafdff, #f2f9ff);
-	border: solid 1px #a2bfda;
+	background-color: #909090 !important;
+	color: #fff;
 	display: inline-block;
 	text-align: center;
-	line-height: 26px;
+	line-height: 22px;
 	font-family: Open Sans, Hevletica Neueu, Helvetica, sans-serif;
 	font-weight: 400;
-	font-size: 12px;
-	color: #6486a6;
-	text-shadow: 0 1px 0 #ffffff;
+	font-size: 11px;
 	margin: 0px;
+	top: 0px;
 	position: relative;
-	top: 1px;
 }
 
 .save-post-status {
 	width: 37px;
-	height: 26px;
+	height: 22px;
 	margin: 0px;
 	position: relative;
 	top: -9px;
@@ -886,7 +878,7 @@ a.ueditor-action-trash:before {
 }
 
 .ueditor-status-select {
-	width: 170px;
+	width: 160px;
 	display: inline-block;
 }
 
