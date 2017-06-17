@@ -142,9 +142,19 @@ var Views = {
 						}
 						else {
 							// Object rendering
-							me.render_objects_view(response.data.posts, response.data.order, silent);
-							
+							me.render_objects_view(response.data.posts, response.data.order, response.data.pagination, silent);
+
 							me.element.render_controls();
+
+							// Unbind pagination clicks
+							me.$el.find(".uf-pagination a")
+								.off("click")
+								.on("click", function (e) {
+									e.preventDefault();
+									e.stopPropagation();
+									return false;
+								})
+							;
 
 							if ( me._do_cache ) {
 								me._cached_data = response.data.posts;
@@ -168,12 +178,16 @@ var Views = {
 		 * Render the posts object view
 		 * @param {Object} posts
 		 */
-		render_objects_view: function (posts, order, silent) {
+		render_objects_view: function (posts, order, pagination, silent) {
 			var me = this;
 			_.each(order, function (post_id) {
 				var data = posts[post_id];
 				me.element.render_post_view(post_id, data, silent);
 			});
+
+			// Append pagination
+			this.$el.closest('.upostslist-object').append(pagination);
+
 			Upfront.Events.trigger('entity:object:refresh', me);
 		}
 	})
