@@ -272,8 +272,8 @@ class Upfront_PostsLists_PostView {
 		
 		if($thumbnail_size == "custom_size") {
 			$custom_width = $this->_data['featured-custom-width'] ? $this->_data['featured-custom-width'] : 0;
-			$custom_height = $this->_data['featured-custom-width'] ? $this->_data['featured-custom-width'] : 0;
-			$thumbnail_size = array($custom_width, $custom_height);
+			$custom_height = $this->_data['featured-custom-height'] ? $this->_data['featured-custom-height'] : 0;
+			$thumbnail_size = array($custom_width, $custom_height, true);
 		}
 
 		$thumbnail = upfront_get_edited_post_thumbnail($this->_post->ID, false, $thumbnail_size);
