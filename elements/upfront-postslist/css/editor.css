@@ -901,3 +901,7 @@ div.preset-manager-panel .settings_module.module_no_border.colors_settings_item 
 #page .uf-posts-list .posts-edit-wrapper .upfront-resize-handle-element {
 	display: none !important;
 }
+
+#page.upfront-layout-view .upfront-wrapper.upostslist-object {
+	min-height: auto !important;
+}
