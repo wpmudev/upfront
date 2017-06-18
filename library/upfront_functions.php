@@ -488,6 +488,100 @@ function upfront_get_attachment_image_lazy ($attachment_id, $ref_size = 'full') 
 }
 
 /**
+ * Gets cropped version of post thumbnail
+ *
+ * @param int $post_id Optional post ID
+ * @param string $size Optional size
+ * @param bool $size Optional crop
+ *
+ * @return upfront_build_post_thumbnail_html or get_the_post_thumbnail
+ */
+
+function upfront_get_cropped_post_thumbnail ($post_id = null, $crop_size = null, $crop = true) {
+	$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
+
+	// If crop size is array continue, if not fallback to post thumbnail size
+	if(is_array($crop_size)) {
+		$width = $crop_size[0];
+		$height = $crop_size[1];
+	} else {
+		// Fallback, we do not need resize
+		return get_the_post_thumbnail($post_id, $crop_size);
+	}
+
+	$image_id = get_post_thumbnail_id($post_id);
+	$data = get_post_meta($post_id, '_thumbnail_data', true);
+
+	// Check if file exist
+	$image_src = get_attached_file( $image_id );
+	if ( ! file_exists( $image_src ) ) {
+		return false;
+	}
+
+	// Get base URL
+	$image_src_info = pathinfo( $image_src );
+	$upload_dir    = wp_upload_dir();
+	$base_url  = $upload_dir['baseurl'] . str_replace( $upload_dir['basedir'], '', $image_src_info['dirname'] );
+	$original_image = "{$base_url}/{$image_src_info['basename']}";
+
+	// Check if we already have image
+	$image_meta = wp_get_attachment_metadata( $image_id );
+	foreach ( $image_meta['sizes'] as $key => $size ) {
+		if ( $size['width'] == $width && $size['height'] == $height ) {
+			$image = "{$base_url}/{$size['file']}";
+
+			return upfront_build_post_thumbnail_html($image_id, $data, $image);
+		}
+	}
+
+	// Generate cropped new size
+	$resized_image = image_make_intermediate_size( $image_src, $width, $height, $crop );
+
+	if ( $resized_image && ! is_wp_error( $resized_image ) )
+	{
+		$key = sprintf( 'resized-%dx%d', $width, $height );
+		$image_meta['sizes'][$key] = $resized_image;
+		wp_update_attachment_metadata( $image_id, $image_meta );
+		$image = "{$base_url}/{$resized_image['file']}";
+
+		return upfront_build_post_thumbnail_html($image_id, $data, $image);
+	}
+
+	// Return original image
+	return upfront_build_post_thumbnail_html($image_id, $data, $original_image);
+}
+
+/**
+ * Generate post thumbnail html
+ *
+ * @param $image_id
+ * @param $data
+ * @param $image_url
+ *
+ * @return string
+ */
+function upfront_build_post_thumbnail_html ($image_id, $data, $image_url) {
+	// Build image HTML
+	$post_meta = get_post($image_id);
+	$attr = array(
+		'src' => $image_url,
+		'width' => $data['cropSize']['width'],
+		'height' => $data['cropSize']['height'],
+		'alt' => trim(strip_tags( get_post_meta($post_meta, '_wp_attachment_image_alt', true) )),
+	);
+	if ( empty($attr['alt']) )
+		$attr['alt'] = trim(strip_tags( $post_meta->post_excerpt ));
+	if ( empty($attr['alt']) )
+		$attr['alt'] = trim(strip_tags( $post_meta->post_title ));
+	$html = '<img';
+	foreach ( $attr as $name => $value )
+		$html .= ' ' . $name . '="' . $value . '"';
+	$html .= ' />';
+
+	return $html;
+}
+
+/**
  * Gets post thumbnail
  *
  * @param int $post_id Optional post ID
@@ -500,8 +594,9 @@ function upfront_get_edited_post_thumbnail ($post_id = null, $return_src = false
 	$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
 	$image_id = get_post_thumbnail_id($post_id);
 	$data = get_post_meta($post_id, '_thumbnail_data', true);
+
 	if ( true !== (bool)$return_src && (empty($data) || empty( $data['imageId'] ) || $data['imageId'] != $image_id || empty($data['src']) || $size != 'uf_post_featured_image') ) { // no edited thumbnail or don't use edited thumbnail
-		return get_the_post_thumbnail($post_id, $size);
+		return upfront_get_cropped_post_thumbnail($post_id, $size, true);
 	}
 	if ( $return_src ) {
 		if ( !empty($data) && !empty($data['imageId']) && $data['imageId'] == $image_id ) {
@@ -513,22 +608,8 @@ function upfront_get_edited_post_thumbnail ($post_id = null, $return_src = false
 			return '';
 		}
 	}
-	$image = get_post($image_id);
-	$attr = array(
-		'src' => $data['src'],
-		'width' => $data['cropSize']['width'],
-		'height' => $data['cropSize']['height'],
-		'alt' => trim(strip_tags( get_post_meta($image, '_wp_attachment_image_alt', true) )),
-	);
-	if ( empty($attr['alt']) )
-		$attr['alt'] = trim(strip_tags( $image->post_excerpt ));
-	if ( empty($attr['alt']) )
-		$attr['alt'] = trim(strip_tags( $image->post_title ));
-	$html = '<img';
-	foreach ( $attr as $name => $value )
-		$html .= ' ' . $name . '="' . $value . '"';
-	$html .= ' />';
-	return $html;
+
+	return upfront_build_post_thumbnail_html($image_id, $data, $data['src']);
 }
 
 /**
