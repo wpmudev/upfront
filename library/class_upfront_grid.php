@@ -784,6 +784,7 @@ class Upfront_GridBreakpoint {
 			".upfront-grid-layout {width: {$width}px;}" . "\n" .
 			"#page {min-width: {$width}px;}" . "\n" .
 			( $this->is_default() ? ".upfront-output-object {padding: {$column_padding}px;}" . "\n" : "") .
+			( $this->is_default() ? ".upfront-output-object-group.upostslist-object, .upfront-output-object-group.upostslist-object .upfront-object-group, .upfront-output-object-group.upostslist-object .upfront-object-group .upfront-output-wrapper {padding: {$column_padding}px;}" . "\n" : "") .
 			( $this->is_default() ? ".upfront-inserted_image-wrapper .wp-caption-text, .uinsert-image-wrapper {padding: {$column_padding}px;}" . "\n" : "") .
 			( $this->is_default() ? ".plaintxt_padding {padding: {$type_padding}px;}" . "\n" : "") .
 			$styles .
