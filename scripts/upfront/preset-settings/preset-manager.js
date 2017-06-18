@@ -75,7 +75,7 @@ define([
 			// Let's not flood server on some nuber property firing changes like crazy
 			this.debouncedSavePreset = _.debounce(savePreset, 1000);
 
-			var renderParts  = function(render) {
+			var renderParts  = function(render, properties) {
 				if(render) {
 					me.model.trigger("preset:updated:rerender", properties.id);
 				}
@@ -357,7 +357,7 @@ define([
 
 			this.debouncedSavePreset(properties);
 
-			this.debouncedRenderParts(render);
+			this.debouncedRenderParts(render, properties);
 
 			this.updateMainDataCollectionPreset(properties);
 		},
