@@ -186,7 +186,9 @@ var Views = {
 			});
 
 			// Append pagination
-			this.$el.closest('.upostslist-object').append(pagination);
+			var $element = this.$el.closest('.upostslist-object');
+			$element.find('.uf-pagination').remove();
+			$element.append(pagination);
 
 			Upfront.Events.trigger('entity:object:refresh', me);
 		}
