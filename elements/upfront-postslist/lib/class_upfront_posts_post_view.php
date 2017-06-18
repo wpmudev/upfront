@@ -279,8 +279,8 @@ class Upfront_PostsLists_PostView {
 		$thumbnail = upfront_get_edited_post_thumbnail($this->_post->ID, false, $thumbnail_size);
 		if (empty($thumbnail)) return '';
 
-		$resize_featured = isset($this->_data['resize_featured'])
-			? (int)$this->_data['resize_featured']
+		$resize_featured = isset($this->_data['feature-resize'])
+			? (int)$this->_data['feature-resize']
 			: (int)Upfront_PostsLists_PostsData::get_default('resize_featured')
 		;
 		$resize_featured = $resize_featured ? 0 : 1; // Reverse the logic, as per: https://app.asana.com/0/11140166463836/75256787123017
