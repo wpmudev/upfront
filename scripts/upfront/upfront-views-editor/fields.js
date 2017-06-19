@@ -360,6 +360,7 @@
 				var dropdown_opts = {
 					model: this.options.model,
 					className: 'upfront-field-wrap upfront-field-wrap-select upfront-number-unit-select',
+					default_value: 'px',
 					values: [
 						{ label: l10n.percent, value: "%" },
 						{ label: l10n.px, value: "px" },
