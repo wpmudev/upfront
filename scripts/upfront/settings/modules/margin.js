@@ -85,7 +85,7 @@ define([
 					change: function(value) {
 						var lock = me.model.get(me.options.fields.lock);
 						me.model.set(me.options.fields.top_num, value);
-						
+
 						if(lock == "yes") {
 							me.model.set(me.options.fields.left_num, value);
 							me.model.set(me.options.fields.right_num, value);
@@ -132,7 +132,8 @@ define([
 						me.model.set(me.options.fields.bottom_num, value);
 					}
 				}),
-				
+
+				/*
 				reset_posts = new Upfront.Views.Editor.Field.Toggle({
 					model: this.model,
 					className: 'margin-reset-posts',
@@ -168,6 +169,8 @@ define([
 						me.model.set(me.options.fields.reset_posts_length, value);
 					}
 				}),
+
+				*/
 
 			]);
 		},
