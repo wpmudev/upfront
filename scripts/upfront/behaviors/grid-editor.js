@@ -1534,31 +1534,6 @@ var GridEditor = {
 					});
 				});
 
-
-				child_els = [];
-				$me.find(ed.el_selector_direct).each(function () {
-					var child_model = modules.get_by_element_id($(this).attr('id')),
-						child_view = is_object ? Upfront.data.object_views[child_model.cid] : Upfront.data.module_views[child_model.cid]
-					;
-					if ( !child_view ) return;
-					child_els.push({
-						view: child_view,
-						is_group: !is_object ? $(this).hasClass('upfront-module-group') : false,
-						el: ed.get_el($(this))
-					});
-				});
-				_.each(child_els, function (child) {
-					var child_min_col = false;
-					if ( child.is_group ) {
-						child_min_col = ed.get_group_min_col(child.view);
-					}
-					else {
-						child_min_col = child.view.get_resize_min_col();
-					}
-					if ( !child_min_col ) return;
-					min_col = child_min_col > min_col ? child_min_col : min_col;
-				});
-
 				$resize = $('<div class="upfront-resize" style="height:'+me.height+'px;"></div>');
 				$resize.css({
 					height: me.height,
@@ -1580,45 +1555,75 @@ var GridEditor = {
 					});
 				}
 				$('body').append($resize);
-				also_child_els = [];
-				if ( $also_resize && $also_resize.length ) {
-					also_has_group = ( $also_resize.find('> .upfront-module-group').length > 0 );
 
-					$also_resize.find(ed.el_selector_direct).each(function () {
+				if( !$me.hasClass('uf-post') ) {
+
+					child_els = [];
+					$me.find(ed.el_selector_direct).each(function () {
 						var child_model = modules.get_by_element_id($(this).attr('id')),
 							child_view = is_object ? Upfront.data.object_views[child_model.cid] : Upfront.data.module_views[child_model.cid]
 						;
-						if ( !child_view ) return;
-						also_child_els.push({
+						if (!child_view) return;
+						child_els.push({
 							view: child_view,
 							is_group: !is_object ? $(this).hasClass('upfront-module-group') : false,
 							el: ed.get_el($(this))
 						});
 					});
-					_.each(also_child_els, function (child) {
+					_.each(child_els, function (child) {
 						var child_min_col = false;
-						if ( child.is_group ) {
+						if (child.is_group) {
 							child_min_col = ed.get_group_min_col(child.view);
 						}
 						else {
 							child_min_col = child.view.get_resize_min_col();
 						}
-						if ( !child_min_col ) return;
-						also_min_col = child_min_col > also_min_col ? child_min_col : also_min_col;
+						if (!child_min_col) return;
+						min_col = child_min_col > min_col ? child_min_col : min_col;
 					});
 
-					max_col = me.col + also_resize.col;
-					if ( !is_spacer && !also_is_spacer ) {
-						max_col -= also_min_col;
-					}
-					else if ( is_spacer ) {
-						max_col -= also_min_col;
-						min_col = 0;
-					}
-					if ( also_is_spacer ) {
-						also_min_col = 0;
+
+					also_child_els = [];
+					if ($also_resize && $also_resize.length) {
+						also_has_group = ( $also_resize.find('> .upfront-module-group').length > 0 );
+
+						$also_resize.find(ed.el_selector_direct).each(function () {
+							var child_model = modules.get_by_element_id($(this).attr('id')),
+								child_view = is_object ? Upfront.data.object_views[child_model.cid] : Upfront.data.module_views[child_model.cid]
+							;
+							if (!child_view) return;
+							also_child_els.push({
+								view: child_view,
+								is_group: !is_object ? $(this).hasClass('upfront-module-group') : false,
+								el: ed.get_el($(this))
+							});
+						});
+						_.each(also_child_els, function (child) {
+							var child_min_col = false;
+							if (child.is_group) {
+								child_min_col = ed.get_group_min_col(child.view);
+							}
+							else {
+								child_min_col = child.view.get_resize_min_col();
+							}
+							if (!child_min_col) return;
+							also_min_col = child_min_col > also_min_col ? child_min_col : also_min_col;
+						});
+
+						max_col = me.col + also_resize.col;
+						if (!is_spacer && !also_is_spacer) {
+							max_col -= also_min_col;
+						}
+						else if (is_spacer) {
+							max_col -= also_min_col;
+							min_col = 0;
+						}
+						if (also_is_spacer) {
+							also_min_col = 0;
+						}
 					}
 				}
+
 
 				$resize_placeholder = $('<div class="upfront-resize-placeholder"></div>');
 				$resize_placeholder.css({
@@ -1653,6 +1658,7 @@ var GridEditor = {
 				// Clear margin and assign an absolute position, hack into the resizable instance as well
 				var me_pos = $me.position(),
 					also_resize_pos = ( $also_resize ? $also_resize.position() : false );
+
 				$me.css({
 					marginLeft: 0,
 					marginTop: 0,
@@ -1661,7 +1667,7 @@ var GridEditor = {
 					top: me_pos.top,
 					minHeight: ''
 				});
-				if ( $also_resize ) {
+				if ( $also_resize && !$me.hasClass('uf-post') ) {
 					$also_resize.css({
 						marginLeft: 0,
 						marginTop: 0,
@@ -1678,17 +1684,31 @@ var GridEditor = {
 				});
 				$resize_placeholder.insertBefore($me);
 
-				// Trigger child events
-				_.each(child_els, function (child) {
-					child.view.trigger('entity:resize_start', {row: child.el.row, col: child.el.col, height: child.el.height, width: child.el.width, axis: axis}, child.view, child.view.model);
-				});
-				_.each(also_child_els, function (child) {
-					child.view.trigger('entity:resize_start', {row: child.el.row, col: child.el.col, height: child.el.height, width: child.el.width, axis: ( axis == 'w' ? 'e' : 'w' )}, child.view, child.view.model);
-				});
+				if( !$me.hasClass('uf-post') ) {
+					// Trigger child events
+					_.each(child_els, function (child) {
+						child.view.trigger('entity:resize_start', {
+							row: child.el.row,
+							col: child.el.col,
+							height: child.el.height,
+							width: child.el.width,
+							axis: axis
+						}, child.view, child.view.model);
+					});
+					_.each(also_child_els, function (child) {
+						child.view.trigger('entity:resize_start', {
+							row: child.el.row,
+							col: child.el.col,
+							height: child.el.height,
+							width: child.el.width,
+							axis: ( axis == 'w' ? 'e' : 'w' )
+						}, child.view, child.view.model);
+					});
+				}
 
 				// Trigger main event
 				view.trigger('entity:wrapper:resize_start', {row: me.row, col: me.col, height: me.height, width: me.width, axis: axis}, view, view.model);
-				if ( also_view ) {
+				if ( also_view && !$me.hasClass('uf-post') ) {
 					also_view.trigger('entity:wrapper:resize_start', {row: also_resize.row, col: also_resize.col, height: also_resize.height, width: also_resize.width, axis: ( axis == 'w' ? 'e' : 'w' )}, also_view, also_view.model);
 				}
 				Upfront.Events.trigger("entity:wrapper:resize_start", view, view.model, also_view, also_view.model);
@@ -1726,26 +1746,7 @@ var GridEditor = {
 						backgroundColor: 'rgba(200, 0, 0, ' + opacity + ')'
 					});
 				}
-				if ( $also_resize ) {
-					$also_resize.css({
-						width: also_w,
-						minWidth: also_w,
-						maxWidth: also_w
-					});
-					if ( axis == 'e' ) {
-						$also_resize.css('margin-left', also_resize.width - also_w);
-					}
-					$also_resize.data('resize-col', also_col);
-					// Visual feedback for deleting spacer
-					if ( also_is_spacer && also_w < ed.col_size ) {
-						var opacity = 0.5 * Math.round((ed.col_size-also_w)/ed.col_size*100)/100;
-						$spacer_feed.css({
-							left: ( axis == 'w' ? 0 : 'auto' ),
-							right: ( axis == 'w' ? 'auto' : 0 ),
-							backgroundColor: 'rgba(200, 0, 0, ' + opacity + ')'
-						});
-					}
-				}
+
 				$resize.css({
 					height: h,
 					width: rsz_col*ed.col_size,
@@ -1753,17 +1754,53 @@ var GridEditor = {
 					maxWidth: rsz_col*ed.col_size
 				});
 
-				// Trigger child events
-				_.each(child_els, function (child) {
-					child.view.trigger('entity:resizing', {row: child.el.row, col: rsz_col, height: child.el.height, width: rsz_col*ed.col_size, axis: axis}, child.view, child.view.model);
-				});
-				_.each(also_child_els, function (child) {
-					child.view.trigger('entity:resizing', {row: child.el.row, col: also_col, height: child.el.height, width: also_col*ed.col_size, axis: ( axis == 'w' ? 'e' : 'w' )}, child.view, child.view.model);
-				});
+				if( !$me.hasClass('uf-post') ) {
+
+					if ($also_resize) {
+						$also_resize.css({
+							width: also_w,
+							minWidth: also_w,
+							maxWidth: also_w
+						});
+						if (axis == 'e') {
+							$also_resize.css('margin-left', also_resize.width - also_w);
+						}
+						$also_resize.data('resize-col', also_col);
+						// Visual feedback for deleting spacer
+						if (also_is_spacer && also_w < ed.col_size) {
+							var opacity = 0.5 * Math.round((ed.col_size - also_w) / ed.col_size * 100) / 100;
+							$spacer_feed.css({
+								left: ( axis == 'w' ? 0 : 'auto' ),
+								right: ( axis == 'w' ? 'auto' : 0 ),
+								backgroundColor: 'rgba(200, 0, 0, ' + opacity + ')'
+							});
+						}
+					}
+
+					// Trigger child events
+					_.each(child_els, function (child) {
+						child.view.trigger('entity:resizing', {
+							row: child.el.row,
+							col: rsz_col,
+							height: child.el.height,
+							width: rsz_col * ed.col_size,
+							axis: axis
+						}, child.view, child.view.model);
+					});
+					_.each(also_child_els, function (child) {
+						child.view.trigger('entity:resizing', {
+							row: child.el.row,
+							col: also_col,
+							height: child.el.height,
+							width: also_col * ed.col_size,
+							axis: ( axis == 'w' ? 'e' : 'w' )
+						}, child.view, child.view.model);
+					});
+				}
 
 				// Trigger main event
 				view.trigger('entity:wrapper:resizing', {row: me.row, col: rsz_col, height: me.height, width: rsz_col*ed.col_size, axis: axis}, view, view.model);
-				if ( also_view ) {
+				if ( also_view && !$me.hasClass('uf-post') ) {
 					also_view.trigger('entity:wrapper:resizing', {row: also_resize.row, col: also_col, height: also_resize.height, width: also_col*ed.col_size, axis: ( axis == 'w' ? 'e' : 'w' )}, also_view, also_view.model);
 				}
 				ed.time_end('fn wrapper_resize_resizing');
@@ -1785,7 +1822,9 @@ var GridEditor = {
 				// Prevents quick scroll when resizing
 				ed.resizing = false;
 
-				$resize_placeholder.remove();
+				if( $resize_placeholder ) {
+					$resize_placeholder.remove();
+				}
 				$resize.remove();
 
 				// Make sure CSS is reset, to fix bug when it keeps all resize CSS for some reason
@@ -1886,18 +1925,34 @@ var GridEditor = {
 					$also_resize.removeData('resize-col');
 				}
 
-				// Trigger child events
-				_.each(child_els, function (child) {
-					child.view.trigger('entity:resize_stop', {row: child.el.row, col: rsz_col, height: child.el.height, width: rsz_col*ed.col_size, axis: axis}, child.view, child.view.model);
-				});
-				_.each(also_child_els, function (child) {
-					child.view.trigger('entity:resize_stop', {row: child.el.row, col: also_col, height: child.el.height, width: also_col*ed.col_size, axis: ( axis == 'w' ? 'e' : 'w' )}, child.view, child.view.model);
-				});
+				if( child_els ) {
+					// Trigger child events
+					_.each(child_els, function (child) {
+						child.view.trigger('entity:resize_stop', {
+							row: child.el.row,
+							col: rsz_col,
+							height: child.el.height,
+							width: rsz_col * ed.col_size,
+							axis: axis
+						}, child.view, child.view.model);
+					});
+				}
+				if( also_child_els ) {
+					_.each(also_child_els, function (child) {
+						child.view.trigger('entity:resize_stop', {
+							row: child.el.row,
+							col: also_col,
+							height: child.el.height,
+							width: also_col * ed.col_size,
+							axis: ( axis == 'w' ? 'e' : 'w' )
+						}, child.view, child.view.model);
+					});
+				}
 
 				// Trigger main event
 				view.trigger('entity:wrapper:resize_stop', {row: me.row, col: rsz_col, height: me.height, width: rsz_col*ed.col_size, axis: axis}, view, view.model);
 				view.trigger('entity:wrapper:resize', {col: rsz_col}, view, view.model);
-				if ( also_view ) {
+				if ( also_view && !$me.hasClass('uf-post') ) {
 					also_view.trigger('entity:wrapper:resize_stop', {row: also_resize.row, col: also_col, height: also_resize.height, width: rsz_col*ed.col_size, axis: ( axis == 'w' ? 'e' : 'w' )}, also_view, also_view.model);
 					also_view.trigger('entity:wrapper:resize', {col: also_col}, also_view, also_view.model);
 				}
