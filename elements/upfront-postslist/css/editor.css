@@ -774,11 +774,12 @@ div.preset-manager-panel .category-padding-margin {
 	font-weight: 800;
 	top: 50px; left:0; right:0;
 	border-radius: 3px;
-	min-width: 200px;
+	min-width: 160px;
 	font-size: 12px;
 	max-width: 200px;
 	min-height: 30px;
 	max-height: 30px;
+	opacity: .8;
 	line-height: 30px;
 	margin: auto;
 	-webkit-box-sizing: content-box;
@@ -788,12 +789,7 @@ div.preset-manager-panel .category-padding-margin {
 }
 
 .reorder-overlay p:hover {
-	background-image: -ms-linear-gradient(top, #E8F4FF 0%, #F3FAFF 100%);
-	background-image: -moz-linear-gradient(top, #E8F4FF 0%, #F3FAFF 100%);
-	background-image: -o-linear-gradient(top, #E8F4FF 0%, #F3FAFF 100%);
-	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #E8F4FF), color-stop(100, #F3FAFF));
-	background-image: -webkit-linear-gradient(top, #E8F4FF 0%, #F3FAFF 100%);
-	background-image: linear-gradient(to bottom, #E8F4FF 0%, #F3FAFF 100%);
+	opacity: 1;
 }
 
 .uf-post-layout-edit:not(.upfront-object-group-on-edit):hover .reorder-overlay {
@@ -803,35 +799,27 @@ div.preset-manager-panel .category-padding-margin {
 .upfront_posts-list-initial {
 	background: #fff;
 	text-align: center;
-	padding-top: 50px;
+	padding-top: 80px;
 }
 
 .upfront_posts-list-initial-content input {
-	background-image: -ms-linear-gradient(top, #F8FBFF 0%, #f3faff 100%);
-	background-image: -moz-linear-gradient(top, #F8FBFF 0%, #f3faff 100%);
-	background-image: -o-linear-gradient(top, #F8FBFF 0%, #f3faff 100%);
-	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #F8FBFF), color-stop(100, #f3faff));
-	background-image: -webkit-linear-gradient(top, #F8FBFF 0%, #f3faff 100%);
-	background-image: linear-gradient(to bottom, #F8FBFF 0%, #f3faff 100%);
-	border: 1px solid #c7d9ea;
-	color: #6f8fad;
+	background: #fff;
+	border: 1px solid rgb(169, 169, 169);
+	color: #000;
+	font-weight: 800;
 	border-radius: 3px;
-	padding: 0px 30px;
-	height: 40px;
-	line-height: 40px;
-	-webkit-box-sizing: content-box;
-	-moz-box-sizing: content-box;
-	box-sizing: content-box;
-	font: 600 14px/100% "Open Sans", Helvetica Neue, Helvetica, Arial, Sans-serif;
+	min-width: 160px;
+	font-size: 12px;
+	max-width: 200px;
+	min-height: 30px;
+	max-height: 30px;
+	opacity: .8;
+	line-height: 30px;
+	margin: auto;
 }
 
 .upfront_posts-list-initial-content input:hover {
-	background-image: -ms-linear-gradient(top, #E8F4FF 0%, #F3FAFF 100%);
-	background-image: -moz-linear-gradient(top, #E8F4FF 0%, #F3FAFF 100%);
-	background-image: -o-linear-gradient(top, #E8F4FF 0%, #F3FAFF 100%);
-	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #E8F4FF), color-stop(100, #F3FAFF));
-	background-image: -webkit-linear-gradient(top, #E8F4FF 0%, #F3FAFF 100%);
-	background-image: linear-gradient(to bottom, #E8F4FF 0%, #F3FAFF 100%);
+	opacity: 1;
 }
 
 .upfront_posts-list-initial-content  .upfront-field-wrap-button {

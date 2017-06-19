@@ -3330,6 +3330,34 @@ input.upfront_toggle_checkbox {
   white-space: nowrap;
   display: none; }
 
+.upostslist-object .upfront-object-group-finish-edit {
+  position: absolute;
+  bottom: -51px;
+  right: 0;
+  z-index: 1999999;
+  cursor: pointer;
+  white-space: nowrap;
+  display: none;
+  background: #1793ff;
+  padding: 0px;
+  border: 1px solid #0e85ed;
+  color: #fff;
+  opacity: 1;
+  line-height: 27px;
+  height: 30px;
+  text-align: center;
+  border-radius: 3px;
+  box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.05);
+  font-size: 13px;
+  font-weight: 800;
+  min-width: 120px; }
+
+.upostslist-object .upfront-object-group-finish-edit:hover {
+  background: #0e85ed; }
+
+.upostslist-object .upfront-object-group-finish-edit i {
+  display: none; }
+
 .upfront-region-finish-edit .upfront-field-icon {
   margin: 0 7px 0 0; }
 
