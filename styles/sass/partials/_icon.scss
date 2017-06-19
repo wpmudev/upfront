@@ -680,6 +680,24 @@
 	width: 22px;
 	height: 22px;
 }
+.upfront-field-icon-align-left:before {
+	background-position: -350px -519px;
+}
+.upfront-field-icon-align-center:before {
+	background-position: -380px -519px;
+}
+.upfront-field-icon-align-right:before {
+	background-position: -410px -519px;
+}
+.upfront-field-multiple-selected .upfront-field-icon-align-left:before {
+	background-position: -350px -549px;
+}
+.upfront-field-multiple-selected .upfront-field-icon-align-center:before {
+	background-position: -380px -549px;
+}
+.upfront-field-multiple-selected .upfront-field-icon-align-right:before {
+	background-position: -410px -549px;
+}
 .upfront-field-icon-tick:before {
 	background-position: -808px -200px;
 }

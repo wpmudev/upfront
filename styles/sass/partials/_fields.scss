@@ -541,6 +541,12 @@ input.upfront-field-text:hover,
 	width: 100%;
 	background: #ffffff;
 	border: 1px solid rgb(225, 225, 225);
+	text-align: center;
+	cursor: pointer;
+}
+
+.upfront-field-wrap-radios-wrapper .upfront-field-multiple label i {
+	margin: 2px auto;
 }
 
 .upfront-field-wrap-radios-wrapper .upfront-field-multiple-selected label {

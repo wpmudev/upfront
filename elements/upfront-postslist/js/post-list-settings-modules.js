@@ -807,6 +807,7 @@ define([
 					toggle: true,
 					state: 'static',
 					global_typography: 'a',
+					alignment: true,
 					fields: {
 						use: name('use-typography'),
 						typeface: name('font-family'),
@@ -815,7 +816,8 @@ define([
 						style: name('style'),
 						size: name('font-size'),
 						line_height: name('line-height'),
-						color: name('font-color')
+						color: name('font-color'),
+						alignment: name('alignment')
 					}
 				}
 			});

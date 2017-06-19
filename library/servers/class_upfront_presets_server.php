@@ -609,6 +609,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			'weight_style' => __('Weight/Style:', 'upfront'),
 			'size' => __('Size:', 'upfront'),
 			'line_height' => __('Line Height: ', 'upfront'),
+			'text_alignment' => __('Text alignment', 'upfront'),
 			'rounded_corners' => __('Round Corners', 'upfront'),
 			'typography' => __('Typography', 'upfront'),
 			'animate_hover_changes' => __('Animate State Changes', 'upfront'),

@@ -98,7 +98,7 @@
 	<?php if(!empty($properties['read_more-weight'])) { ?>font-weight: <?php echo $properties['read_more-weight']  ?>;<?php } ?>
 	<?php if(!empty($properties['read_more-style'])) { ?>font-style: <?php echo $properties['read_more-style']  ?>;<?php } ?>
 	<?php if(!empty($properties['read_more-line-height'])) { ?>line-height: <?php echo $properties['read_more-line-height']  ?><?php if(!empty($properties['read_more-line-height-unit'])) { ?><?php echo $properties['read_more-line-height-unit'] ?><?php } ?>;<?php } ?>
-	<?php if(!empty($properties['read_more-font-color'])) { ?>color: <?php echo $properties['read_more-font-color']  ?>; <?php } ?>
+	text-align: <?php if(!empty($properties['read_more-alignment'])) { ?><?php echo $properties['read_more-alignment']  ?><?php } else { ?>inherit<?php } ?>;
 }
 <?php } ?>
 

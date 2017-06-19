@@ -470,6 +470,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'post_components' => __('Post components', 'upfront'),
 				'no_defined_fonts' => __('You have not defined any theme fonts yet. Please begin by adding fonts you want to use to the theme.', 'upfront'),
 				'select_fonts_to_use' => __('Manage Fonts', 'upfront'),
+				'text_alignment' => __('Text alignment', 'upfront'),
 				'type_element' => __('Type Element:', 'upfront'),
 				'h1' => __('Main Heading (H1)', 'upfront'),
 				'h2' => __('Sub Heading (H2)', 'upfront'),

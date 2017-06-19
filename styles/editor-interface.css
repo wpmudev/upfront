@@ -1999,7 +1999,12 @@ input.upfront-field-text:hover,
   height: 22px;
   width: 100%;
   background: #ffffff;
-  border: 1px solid #e1e1e1; }
+  border: 1px solid #e1e1e1;
+  text-align: center;
+  cursor: pointer; }
+
+.upfront-field-wrap-radios-wrapper .upfront-field-multiple label i {
+  margin: 2px auto; }
 
 .upfront-field-wrap-radios-wrapper .upfront-field-multiple-selected label {
   background: #87959a;
@@ -9124,6 +9129,24 @@ span.upfront-settings-item-title:after {
 .upfront-field-icon:before {
   width: 22px;
   height: 22px; }
+
+.upfront-field-icon-align-left:before {
+  background-position: -350px -519px; }
+
+.upfront-field-icon-align-center:before {
+  background-position: -380px -519px; }
+
+.upfront-field-icon-align-right:before {
+  background-position: -410px -519px; }
+
+.upfront-field-multiple-selected .upfront-field-icon-align-left:before {
+  background-position: -350px -549px; }
+
+.upfront-field-multiple-selected .upfront-field-icon-align-center:before {
+  background-position: -380px -549px; }
+
+.upfront-field-multiple-selected .upfront-field-icon-align-right:before {
+  background-position: -410px -549px; }
 
 .upfront-field-icon-tick:before {
   background-position: -808px -200px; }

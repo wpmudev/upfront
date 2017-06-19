@@ -57,6 +57,10 @@ define([
 				toggleClass = 'element-toggled';
 			}
 
+			if(this.options.alignment === true) {
+				this.fieldCounter++;
+			}
+
 			if(typeof this.options.global_typography !== "undefined") {
 				var font_settings = Upfront.mainData.global_typography[this.options.global_typography];
 
@@ -194,6 +198,39 @@ define([
 
 			]);
 
+			//Add field positions
+			if(this.options.alignment === true) {
+				this.fields.unshift(
+					new Upfront.Views.Editor.Field.Radios_Inline({
+						className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios-inline',
+						model: this.model,
+						name: me.options.fields.alignment,
+						label: l10n.text_alignment,
+						label_style: 'inline',
+						layout: 'horizontal-inline',
+						values: [
+							{
+								value: 'left',
+								label: '',
+								icon: 'align-left'
+							},
+							{
+								value: 'center',
+								label: '',
+								icon: 'align-center'
+							},
+							{
+								value: 'right',
+								label: '',
+								icon: 'align-right'
+							}
+						],
+						change: function (value) {
+							me.model.set(me.options.fields.alignment, value);
+						}
+					})
+				);
+			}
 
 			//Add fields select box
 			if(typeof me.options.elements !== "undefined") {
@@ -259,6 +296,7 @@ define([
 		reset_fields: function(value) {
 			var settings,
 				me = this;
+
 			if(typeof value !== "undefined" && value === "yes") {
 				if(typeof this.options.elements !== "undefined") {
 					_.each(this.options.elements, function(element) {

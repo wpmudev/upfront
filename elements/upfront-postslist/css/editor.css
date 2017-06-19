@@ -353,11 +353,12 @@ div.preset-manager-panel .upfront-add-post-module .upfront-field-select-options 
 div.preset-manager-panel .upfront-add-post-module .upfront-field-select-options li {
 	color: #7d8186;
 	border-radius: 6px;
+	margin-left: 5px;
 }
 
 div.preset-manager-panel .upfront-add-post-module .upfront-field-select-options li:hover {
-	color: #fff;
-	background: #3aa3e3;
+	color: #000;
+	background: rgb(231, 231, 231);
 	border-radius: 6px;
 }
 
@@ -656,10 +657,13 @@ div.preset-manager-panel .tags-separate inline {
 
 div.upfront-posts-part .borderType, div.upfront-posts-part .borderColor {
 	margin-left: 10px !important;
+	width: 60px !important;
 }
 
 div.upfront-posts-part .borderWidth {
-	width: 60px;
+	width: 55px;
+	position: relative !important;
+	top: 0px !important;
 }
 
 div.preset-manager-panel .category-padding-top-bottom,
