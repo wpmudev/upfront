@@ -291,7 +291,7 @@ var PostsListsEachView = Upfront.Views.ObjectGroup.extend({
 		var me = this,
 			$posts_module = this.$el.closest('.upfront-posts_module'),
 			$wrapper = this.$el.closest('ul.uf-posts-list'),
-			$elements = $wrapper.find('li').not(':first')
+			$elements = $wrapper.find('li').not(':first, :nth-child(2)')
 		;
 
 		this.init_tooltips();
