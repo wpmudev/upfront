@@ -1347,7 +1347,10 @@ div#page .upfront-object.upfront-image .swap-image-overlay p:before {
 
 /* Image Insert Panel Style Fixes */
 .ueditor-insert .upfront-inline-panel-item .upfront-icon {
-	padding: 9px;
+	padding: 0px;
+}
+.ueditor-insert .upfront-inline-panel-item .upfront-icon:before {
+	margin: 5px 0 0 4px;
 }
 .ueditor-insert .upfront-inline-panel-item {
 	background: rgb(245,245,245);
