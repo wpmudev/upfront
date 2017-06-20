@@ -34,7 +34,18 @@ define([
 
 			// Wrap toggleable fields
 			if(this.options.toggle === true) {
-				$content.children('div').not(':first-child').wrapAll('<div class="'+ this.options.state +'-toggle-wrapper upfront-toggle-wrapper" />');
+				var firstField = this.fields._wrapped[0],
+					wrapperStyle = ''
+				;
+
+				// Check if we are dealing with toggle field
+				if(firstField.$el.hasClass('upfront-toggle-field')) {
+					if(firstField.get_value() === 'yes') {
+						wrapperStyle = 'style="display: block"';
+					}
+				}
+
+				$content.children('div').not(':first-child').wrapAll('<div class="'+ this.options.state +'-toggle-wrapper upfront-toggle-wrapper" '+ wrapperStyle +'/>');
 			}
 
 			this.trigger('rendered');
