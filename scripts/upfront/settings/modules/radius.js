@@ -44,7 +44,7 @@ define([
 					data[me.options.fields.radius3] = value;
 					data[me.options.fields.radius4] = value;
 
-					me.model.set(data, {silent: true});
+					me.model.set(data, {silent: false});
 
 					me.$el.find("input[name=" + me.options.fields.radius1 + "]").val(value);
 					me.$el.find("input[name=" + me.options.fields.radius2 + "]").val(value);
