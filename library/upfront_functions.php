@@ -347,9 +347,9 @@ function upfront_ajax_url ($action, $args = '') {
 	$args = wp_parse_args($args);
 	$args['action'] = $action;
 	$entity_ids = Upfront_EntityResolver::get_entity_ids();
-	
+
 	// if maintenance page, bypass the layout
-	if ( upfront_is_maintenance_page() ) $entity_ids = Upfront_Layout::get_maintenance_mode_layout_cascade(); 
+	if ( upfront_is_maintenance_page() ) $entity_ids = Upfront_Layout::get_maintenance_mode_layout_cascade();
 
 	// if page was still draft and viewed on FE, we should show 404 layout
 	if ( !Upfront_Output::get_post_id() && isset($entity_ids['specificity']) && preg_match('/single-page/i', $entity_ids['specificity']) ) {
@@ -565,10 +565,12 @@ function upfront_build_post_thumbnail_html ($image_id, $data, $image_url) {
 	$post_meta = get_post($image_id);
 	$attr = array(
 		'src' => $image_url,
-		'width' => $data['cropSize']['width'],
-		'height' => $data['cropSize']['height'],
 		'alt' => trim(strip_tags( get_post_meta($post_meta, '_wp_attachment_image_alt', true) )),
 	);
+	if (false === empty($data['cropSize'])) {
+		$attr['width'] = $data['cropSize']['width'];
+		$attr['height'] = $data['cropSize']['height'];
+	}
 	if ( empty($attr['alt']) )
 		$attr['alt'] = trim(strip_tags( $post_meta->post_excerpt ));
 	if ( empty($attr['alt']) )
@@ -653,7 +655,7 @@ function upfront_left_shift32 ($number, $steps) {
 
 /**
  * Check if current page is the maintenance page
- * 
+ *
  * @param int $current_page_id page id to check, default is false
  * @return bool
  */
