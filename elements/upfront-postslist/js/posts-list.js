@@ -70,7 +70,7 @@ var PostsListsPartView = Upfront.Views.ObjectView.extend({
 		this.listenTo(Upfront.Events, 'entity:drop:before_render', this.set_prev_region_container);
 		this.update_height();
 	},
-	
+
 	render_view: function (markup) {
 		var me = this,
 			type = this.model.get_property_value_by_name('part_type')
@@ -91,7 +91,7 @@ var PostsListsPartView = Upfront.Views.ObjectView.extend({
 
 		Upfront.Events.trigger('post-data:part:rendered', this, markup);
 	},
-	
+
 	update: function (prop, options) {
 		// Ignore preset changes since post part will have no preset
 		if ( prop && prop.id == 'preset' ) return;
@@ -113,14 +113,14 @@ var PostsListsPartView = Upfront.Views.ObjectView.extend({
 		controls.push(this.createControl('settings', l10n.settings, 'on_child_settings_click'));
 		return _(controls);
 	},
-	
+
 	on_child_settings_click: function () {
 		if( typeof e !== "undefined" ){
 			e.preventDefault();
 		}
-	
+
 		var me = this;
-		
+
 		// Render settings
 		this.object_group_view.object_group_view.on_settings_click();
 
@@ -131,15 +131,15 @@ var PostsListsPartView = Upfront.Views.ObjectView.extend({
 				$preset_parts = $preset_manager.find('.upfront-post-modules'),
 				part_type = me.model.get_property_value_by_name('part_type'),
 				$preset_part = $preset_parts.find('.' + part_type)
-				
+
 			;
-			
+
 			// Open Presets tab
 			$preset_manager.find('.uf-settings-panel__title').click();
-			
+
 			// Close Defautl Preset warning
 			$preset_manager.find('.overlay-button-input').click();
-			
+
 			$('#sidebar-scroll-wrapper').animate({scrollTop: $preset_part.offset().top - 30 }, function() {
 				// Open part settings
 				$preset_part.find('.upfront-settings-item-title').click();
@@ -147,7 +147,7 @@ var PostsListsPartView = Upfront.Views.ObjectView.extend({
 
 		}, 100);
 	},
-	
+
 	update_height: function () {
 		var type = this.model.get_property_value_by_name('part_type');
 		if ( type == 'content' || type == 'comments' || ( type == 'featured_image' && this.object_group_view.mobileMode ) ) {
@@ -165,7 +165,7 @@ var PostsListsPartView = Upfront.Views.ObjectView.extend({
 		if( this.prev_region_container )
 			this.prev_region_container.removeClass( 'upfront-region-container-has-' + type );
 	},
-	
+
 	cleanup: function () {
 		var type = this.model.get_property_value_by_name('part_type');
 		this.remove_region_class('upfront-region-container-has-' + type, true);
@@ -214,7 +214,7 @@ var PostsListsEachView = Upfront.Views.ObjectGroup.extend({
 		this.listenTo(Upfront.Events, 'posts:disable:part:edit', this.disable_object_edit);
 
 		this.$el.addClass( this.editable ? 'upfront-object-group-editable' : 'upfront-object-group-uneditable' );
-		
+
 		if( !this.editable ) {
 			this.wrapper_view.$el.resizable('option', 'disabled', true);
 		} else {
@@ -312,7 +312,7 @@ var PostsListsEachView = Upfront.Views.ObjectGroup.extend({
 		;
 
 		$wrapper.find('.posts-edit-wrapper-content').remove();
-		$elements.unwrap('.posts-edit-wrapper');
+		$elements.last().unwrap('.posts-edit-wrapper');
 	},
 
 	init_tooltips: function() {
@@ -382,11 +382,11 @@ var PostsListsView = Upfront.Views.ObjectGroup.extend({
 
 	init: function () {
 		this.debouncedOnRender = _.debounce(this.on_render, 1000);
-		
+
 		this.listenTo(this.model.get('objects'), 'change', this.debouncedOnRender);
 		this.listenTo(this.model.get('objects'), 'add', this.debouncedOnRender);
 		this.listenTo(this.model.get('objects'), 'remove', this.debouncedOnRender);
-		
+
 		this.listenTo(Upfront.Events, 'posts:settings:dispatched', this.settings_dispatch);
 
 		this.listenTo(Upfront.Events, 'csseditor:open', this.on_csseditor_open);
@@ -399,13 +399,13 @@ var PostsListsView = Upfront.Views.ObjectGroup.extend({
 		if ( this.model.get('objects').length === 0 ) {
 			this._is_compat = true;
 		}
-		
+
 		this.events = _.extend({}, this.events, {
 			'click .reorder-overlay p' : 'on_edit_click',
 			'hover .reorder-overlay' : 'on_scroll',
 			"click  .upfront-object-group-finish-edit": "on_finish",
 		});
-		
+
 		this.delegateEvents();
 	},
 
@@ -425,7 +425,7 @@ var PostsListsView = Upfront.Views.ObjectGroup.extend({
 
 		Upfront.Views.ObjectGroup.prototype.render.call(this);
 	},
-	
+
 	settings_dispatch: function() {
 		this.child_view = false;
 		this.render();
@@ -450,10 +450,10 @@ var PostsListsView = Upfront.Views.ObjectGroup.extend({
 			this.parent_module_view.$el.find('> .upfront-module').css('min-height', '');
 			this.add_region_class('upfront-region-container-has-posts', true);
 		}
-		
+
 		this.render_controls();
 	},
-	
+
 	getControlItems: function(){
 		var me = this,
 			objects = this.get_child_objects(false),
@@ -503,14 +503,14 @@ var PostsListsView = Upfront.Views.ObjectGroup.extend({
 			}
 		}
 	},
-	
+
 	on_edit_click: function (e) {
 		if( typeof e !== "undefined" ){
 			e.preventDefault();
 		}
 		this.enable_object_edit();
 	},
-	
+
 
 	render_controls: function () {
 		var me = this,
@@ -529,7 +529,7 @@ var PostsListsView = Upfront.Views.ObjectGroup.extend({
 			this.$el.removeClass('uf-post-layout-edit');
 			this._multiple = false;
 		}
-		
+
 		if ( this.parent_module_view ) {
 			this.$control_el = this.$el;
 			if ( this.controls && need_rerender ) {
@@ -543,7 +543,7 @@ var PostsListsView = Upfront.Views.ObjectGroup.extend({
 			}, 300);
 		}
 	},
-	
+
 	get_child_objects: function (include_spacer) {
 		return this.model.get('objects').filter(function(object){
 			var view_class = object.get_property_value_by_name('view_class');
@@ -551,7 +551,7 @@ var PostsListsView = Upfront.Views.ObjectGroup.extend({
 			else return ( include_spacer === true );
 		});
 	},
-	
+
 	render_view: function (type) {
 		var me = this;
 
@@ -700,11 +700,11 @@ var PostsListsView = Upfront.Views.ObjectGroup.extend({
 	},
 
 	enable_object_edit: function () {
-		
+
 		if(typeof this._posts_model === "undefined" || this._posts_model === false) {
 			this._posts_model = new Upfront.Models.ObjectGroup();
 		}
-		
+
 		var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 			ed = Upfront.Behaviors.GridEditor,
 			wrappers = this._posts_model.get('wrappers'),
