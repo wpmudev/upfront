@@ -387,6 +387,8 @@ var PostsListsView = Upfront.Views.ObjectGroup.extend({
 		this.listenTo(this.model.get('objects'), 'add', this.debouncedOnRender);
 		this.listenTo(this.model.get('objects'), 'remove', this.debouncedOnRender);
 
+		this.listenTo(Upfront.Events, 'posts:nuke-render', this.renderOnDemand);
+
 		this.listenTo(Upfront.Events, 'posts:settings:dispatched', this.settings_dispatch);
 
 		this.listenTo(Upfront.Events, 'csseditor:open', this.on_csseditor_open);
@@ -413,7 +415,14 @@ var PostsListsView = Upfront.Views.ObjectGroup.extend({
 		return this._is_compat;
 	},
 
+	renderOnDemand: function(modelId) {
+		if (modelId !== this.model.cid)
+		this.render();
+		// Upfront.Events.trigger('posts:nuke-render:after', this.model.cid);
+	},
+
 	render: function () {
+		console.log('rendered');
 		if ( this.is_compat() ) {
 			Upfront.Views.ObjectGroup.prototype.render.call(this);
 			return;

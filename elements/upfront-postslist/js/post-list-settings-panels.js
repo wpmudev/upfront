@@ -52,7 +52,7 @@ Panels.General = RootSettingsPanel.extend({
 				if ('list_type' === this.options.property) {
 					query.dispatch_settings();
 				}
-				
+
 				Upfront.Events.trigger('posts:settings:dispatched', this);
 			},
 			display_type = new Upfront.Views.Editor.Field.Radios_Inline({
@@ -95,9 +95,9 @@ Panels.General = RootSettingsPanel.extend({
 				fields: [list_type]
 			})
 		;
-		
+
 		display_type.on("changed", autorefresh);
-		
+
 		list_type.on("changed", autorefresh);
 		query.on("setting:changed", autorefresh);
 		/* We are moving Thumbnail settings to presets */
@@ -105,11 +105,11 @@ Panels.General = RootSettingsPanel.extend({
 		query.on("post:added", function () {
 			Upfront.Events.trigger('posts:post:added', this);
 		}, this);
-		
+
 		query.on("post:removed", function () {
 			Upfront.Events.trigger('posts:post:removed', this);
 		}, this);
-		
+
 		this.settings = _([
 			display_type_section,
 			list_type_section,
@@ -352,7 +352,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 	populate_limit_items: function () {
 		var me = this,
 			display_type = this.model.get_property_value_by_name("display_type");
-		
+
 		if ("list" === display_type) {
 			this.fields.push(new Upfront.Views.Editor.Field.Number({
 				className: 'upfront-post-limit',
@@ -418,7 +418,7 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 	populate_shared_tax_generic_items: function () {
 		var display_type = this.model.get_property_value_by_name("display_type"),
 			me = this;
-			
+
 		if ("list" === display_type) {
 			this.populate_limit_items();
 		}
@@ -704,19 +704,20 @@ Panels.PostParts = PresetManager.extend({
 		}
 
 		PresetManager.prototype.setupItems.apply(this, arguments);
-		
+
 		// Make sure we update hidden objects on preset change
 		if (this.selectPresetModule) this.listenTo(this.selectPresetModule, 'upfront:presets:change', function () {
-			this.update_parts();
+			me.update_parts();
+			Upfront.Events.trigger('posts:nuke-render', me.model.cid);
 		}, this);
-		
+
 		// Add wrappers
 		var element_wrapper = new Modules['element_wrapper']({ model: this.preset_model, className: 'upfront-posts-part part-module-panel upfront-posts-wrapper', removable: false, panel: 'wrapper'}),
 			post_wrapper = new Modules['post_wrapper']({ model: this.preset_model, className: 'upfront-posts-part part-module-panel upfront-posts-wrapper', removable: false, panel: 'wrapper'});
-		
+
 		this.settings.push(element_wrapper);
 		this.settings.push(post_wrapper);
-		
+
 		var post_parts = this.preset_model.get('enabled_post_parts') || [];
 
 		_.each(post_parts, function (panel, idx) {
@@ -735,13 +736,13 @@ Panels.PostParts = PresetManager.extend({
 
 			this.settings.push(pnl);
 		}, this);
-		
+
 		setTimeout( function() {
 			me.wrap_modules();
 			me.add_module();
 		}, 150);
 	},
-	
+
 	wrap_modules: function() {
 		//Move Edit Preset to bottom
 		this.$el.find('.upfront-settings-css').parent().append(this.$el.find('.upfront-settings-css'));
@@ -749,17 +750,17 @@ Panels.PostParts = PresetManager.extend({
 		// Wrap wrappers
 		this.$el.find( ".upfront-posts-wrapper" ).wrapAll( "<div class='upfront-post-wrappers' />");
 		this.$el.find( ".upfront-post-wrappers" ).prepend("<span class='upfront-post-wrapper-title'>" + l10n.modules.wrappers_label + "</span>");
-		
+
 		// Make sure we always have upfront-posts-module
 		if(this.$el.find( ".upfront-posts-module").length === 0) {
 			this.$el.find('.upfront-post-wrappers').after("<div class='upfront-posts-module'></div>");
 		}
-		
+
 		// Wrap modules
 		this.$el.find( ".upfront-posts-module" ).wrapAll( "<div class='upfront-post-modules' />");
 		this.$el.find( ".upfront-post-modules" ).prepend("<span class='upfront-post-wrapper-title'>" + l10n.modules.modules_label + "</span>");
 	},
-	
+
 	add_module: function() {
 		var me = this;
 		var add_button = new Upfront.Views.Editor.Field.Select({
@@ -769,7 +770,7 @@ Panels.PostParts = PresetManager.extend({
 			multiple: false,
 			values: this.get_unused_modules(me.preset_model),
 			show: function() {
-				
+
 			},
 			change: function(value) {
 				me.add_post_part(value);
@@ -789,7 +790,7 @@ Panels.PostParts = PresetManager.extend({
 		this.updatePreset(this.preset_model.toJSON());
 		this.update_parts();
 	},
-	
+
 	get_unused_modules: function(preset) {
 		var post_parts = this.model.get_property_value_by_name('post_parts'),
 			enabled_post_parts = preset.get('enabled_post_parts') || [],
@@ -800,7 +801,7 @@ Panels.PostParts = PresetManager.extend({
 				unused_parts.push({ value: part, label: l10n['modules'][part + '_title'] });
 			}
 		});
-		
+
 		if(typeof $sortable !== "undefined") {
 			$sortable.sortable({
 				start: function (e, ui) {
@@ -813,10 +814,10 @@ Panels.PostParts = PresetManager.extend({
 				}
 			});
 		}
-		
+
 		return unused_parts;
 	},
-	
+
 	getTitle: function() {
 		return 'Presets';
 	},
@@ -832,7 +833,7 @@ Panels.PostParts = PresetManager.extend({
 		_.each(parts, function (part) {
 			me.update_object(part, enabled_parts.indexOf(part) >= 0);
 		});
-		
+
 		if  ( active_breakpoint['default'] ) {
 			// Also update the responsive part
 			_.each(breakpoints, function (breakpoint) {
