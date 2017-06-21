@@ -249,6 +249,8 @@ var QuerySettings = Upfront.Views.Editor.Settings.Item.extend({
 			this.trigger("post:removed");
 		}, this);
 		this.fields = _([fld]);
+
+		this.populate_shared_tax_generic_items();
 	},
 
 	populate_generic_items: function () {
