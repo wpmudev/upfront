@@ -438,7 +438,7 @@ class Upfront_PostsLists_PostView {
 	 * @return string Content type
 	 */
 	private function _get_content_type () {
-		if (!empty($this->_data['content']) && 'content' === $this->_data['content']) return 'full';
+		if (!empty($this->_data['content-type']) && 'full' === $this->_data['content-type']) return 'full';
 		return !empty($this->_post->post_excerpt)
 			? 'excerpt'
 			: 'generated-excerpt'
@@ -450,7 +450,7 @@ class Upfront_PostsLists_PostView {
 	 * @return string Content or excerpt
 	 */
 	private function _get_content_value ($length) {
-		return !empty($this->_data['content']) && 'content' === $this->_data['content']
+		return !empty($this->_data['content-type']) && 'full' === $this->_data['content-type']
 			? $this->_get_content()
 			: $this->_get_excerpt($length)
 		;
