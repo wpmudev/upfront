@@ -8,9 +8,6 @@
 .upfront-logo, .upfront-ui .upfront-icon:before, .region-lock-switch:before, .upfront-icon-control-region:before, .panel-setting-dialog-region:before, .panel-setting-dialog-info:before, .position-select-wrap .position-select:checked, .upfront-field-checkbox:checked, .upfront-ui .upfront-region-field-icon:before, #upfront-popup-top.upfront-popup-meta .upload:before, .upfront-icon-button-hide:before, .upfront-entity-hide_trigger:before{
     float: right;
 }
-.upfront-icon:before{
-    margin: 0 0 0 3px;
-}
 
 /*-------------- General --------------*/
 div.preset-manager-panel div.preset_specific div.border_radius1{
@@ -45,11 +42,6 @@ div.preset-manager-panel div.preset_specific div.border_radius3{
 .upfront_code-editor{
     left: 0;
     right: auto;
-}
-div.preset-manager-panel .typography_settings_item .element-toggled.selectElement, div.preset-manager-panel .typography_settings_item .element-toggled.typeFace, div.preset-manager-panel .typography_settings_item .element-toggled.weightStyle, div.preset-manager-panel .typography_settings_item .element-toggled.fontSize, div.preset-manager-panel .hov_animation_settings_item .element-toggled.duration, div.preset-manager-panel .colors_settings_item .element-toggled.single, div.preset-manager-panel .colors_settings_item .element-toggled.two:nth-child(even){
-    padding: 5px 10px 5px 0;
-    border-left: none;
-    border-right: 2px solid #dae6f2;
 }
 .chosen-container-multi .chosen-choices li.search-choice{
     margin: 3px 5px 3px 0;
@@ -96,20 +88,9 @@ div.preset-manager-panel .color-module.two{
 .upfront-field-multiple-horizontal-inline{
     margin: 0 0 0 15px;
 }
-.upfront-field-wrap-color .sp-replacer{
-    height: 19px;
-}
-.upfront-field-wrap-color .sp-preview{
-    top: 0px;
-}
 div.preset-manager-panel div.fontColor label, div.preset-manager-panel div.borderColor label{
     left: auto;
     right: 25px;
-}
-div.preset-manager-panel div.borderWidth{
-    padding: 5px 10px 5px 0;
-    border-right: 2px solid #dae6f2;
-    border-left: 0;
 }
 .edit_preset_css input, #element-settings-sidebar .upfront-css-edit input{
     padding-right:32px;
@@ -174,11 +155,10 @@ div.preset-manager-panel .edit_preset_css:before, #element-settings-sidebar .upf
     margin-right: -10px;
 }
 .upfront-field-select:after{
-    left: 11px;
+    left: 0px;
     right: auto;
-}
-.upfront-field-number[type=number]{
-    padding: 0 5px 0 0;
+	border-left: 0px;
+	border-right: 1px solid #909090;
 }
 .chosen-container-single .chosen-single div{
     left: 0;
@@ -233,7 +213,7 @@ div.preset-manager-panel .checkbox-tooltip{
 #sidebar-ui{
     left: auto;
     right: 0;
-    border-left: 1px solid #1a2d40;
+    border-left: none;
     border-right: none;
 }
 #sidebar-ui .command-logo{
@@ -251,7 +231,7 @@ div.preset-manager-panel .checkbox-tooltip{
 }
 #sidebar-ui .sidebar-panel.expanded .sidebar-panel-title:after{
     right: auto;
-    left:21px;
+    left: 21px;
 }
 #sidebar-ui .sidebar-panel-title:after{
     right: auto;
@@ -280,11 +260,7 @@ div.preset-manager-panel .checkbox-tooltip{
     padding: 0 10px 5px 0;
 }
 #element-settings-sidebar .upfront-settings-title{
-    padding-right:30px;
-}
-.sidebar-panel-content .draggable-element{
-    border-left: 1px solid #a3bfd9;
-    border-right: none;
+    padding-right: 30px;
 }
 .draggable-element{
     float: right;
@@ -296,9 +272,6 @@ div.preset-manager-panel .checkbox-tooltip{
 .upfront-ui .upfront-icon-popup-close{
     left: 0;
     right: auto;
-}
-.upfront-pagination_navigation{
-    /*float: left;*/
 }
 #upfront-list .upfront-list_item .upfront-list_item-component{
     float: right;
@@ -357,17 +330,7 @@ div.preset-manager-panel .checkbox-tooltip{
 #sidebar-ui .sidebar-commands-control li{
     margin: 0 6px 8px 6px;
 }
-#sidebar-ui .upfront-typography-fields-left{
-    width: 53%;
-}
-#sidebar-ui .sidebar-panels{
-    border-left: 1px solid #324253;
-    border-right: none;
-}
-#element-settings-sidebar{
-    border-left: 1px solid #334454;
-    border-right: none;
-}
+
 /*-------------- End of Sidebar --------------*/
 
 /*-------------- Element Settings --------------*/
@@ -382,10 +345,6 @@ div.preset-manager-panel .checkbox-tooltip{
 #element-settings-sidebar .uf-settings-panel__title{
     padding-left: auto;
     padding-right: 15px;
-}
-#element-settings-sidebar .uf-settings-panel__title:before{
-    /*left: auto;*/
-    /*right: 16px;*/
 }
 #element-settings-sidebar .uf-settings-panel__title:before,
 #element-settings-sidebar .uf-settings-panel--expanded .uf-settings-panel__title:before{
@@ -818,4 +777,26 @@ div#page.upfront-layout-view .upfront-editable_entity.upfront-module .upfront-ac
 }
 .ueditor-box-wrapper label#publication-time:before{
     background-position: -640px -385px;
+}
+#insert-font-widget .chosen-container-single .chosen-single div, #settings .chosen-container-single .chosen-single div, #sidebar-ui .chosen-container-single .chosen-single div, #sidebar-ui .upfront-taxonomy-chosen .chosen-container-single .chosen-single div, #upfront-popup .chosen-container-single .chosen-single div, .preset-manager-panel .chosen-container-single .chosen-single div {
+	border-right: 1px solid #909090;
+	border-left: none;
+}
+.upfront-field-number[type=number]::-webkit-inner-spin-button,
+.upfront-field-number-unit[type=number]::-webkit-inner-spin-button,
+.typography-panel .upfront-field-number[type=number]::-webkit-inner-spin-button {
+	border-right: 1px solid rgb(144, 144, 144);
+	border-left: none;
+	width: 10px;
+	background-position: -520px -73px;
+}
+.upfront-field-number-unit[type=number], .upfront-field-number[type=number] {
+	padding-right: 5px !important;
+}
+.upfront-field-wrap-select.upfront-number-unit-select {
+	left: 22px;
+	right: initial;
+}
+#element-settings-sidebar #settings .upfront-settings_panel, #region-settings-sidebar #settings .upfront-settings_panel {
+	left: initial !important;
 }
