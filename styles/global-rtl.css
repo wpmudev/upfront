@@ -800,3 +800,25 @@ div#page.upfront-layout-view .upfront-editable_entity.upfront-module .upfront-ac
 #element-settings-sidebar #settings .upfront-settings_panel, #region-settings-sidebar #settings .upfront-settings_panel {
 	left: initial !important;
 }
+
+/* Shrink Sidebar for Low Resolutions */
+@media screen and (max-width: 1366px) {
+	.rtl #sidebar-ui.upfront-sidebar-hover,
+	.rtl #element-settings-sidebar.upfront-sidebar-hover,
+	.rtl #region-settings-sidebar.upfront-sidebar-hover .upfront-region-modal-bg {
+		transform: translateX(0);
+		transition: transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+		overflow: hidden;
+		box-shadow: none;
+	}
+
+	.rtl #sidebar-ui, #element-settings-sidebar,
+	.rtl #region-settings-sidebar .upfront-region-modal-bg {
+		transform: translateX(130px);
+		transition: transform .2s cubic-bezier(0.47, 0, 0.75, 0.72);
+	}
+
+	.upfront-edit-layout #page {
+		margin: 0 130px 0 0;
+	}
+}
