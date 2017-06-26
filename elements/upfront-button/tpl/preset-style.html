@@ -45,7 +45,7 @@
     <?php } ?>
 
     <?php if(!empty($properties['hov_useborder']) && $properties['hov_useborder'] == 'yes') { ?>
-        <?php if(!empty($properties['hov_borderwidth']) && !empty($properties['hov_bordertype']) && !empty($properties['hov_bordercolor'])) { ?>border: <?php echo $properties['hov_borderwidth'] ?><?php if(!empty($properties['hov_borderwidth-unit'])) { ?><?php echo $properties['hov_borderwidth-unit'] ?><?php } else { ?>px<?php } ?><?php echo $properties['hov_bordertype'] ?> <?php echo $properties['hov_bordercolor'] ?>;<?php } ?>
+        <?php if(!empty($properties['hov_borderwidth']) && !empty($properties['hov_bordertype']) && !empty($properties['hov_bordercolor'])) { ?>border: <?php echo $properties['hov_borderwidth'] ?><?php if(!empty($properties['hov_borderwidth-unit'])) { ?><?php echo $properties['hov_borderwidth-unit'] ?><?php } else { ?>px<?php } ?> <?php echo $properties['hov_bordertype'] ?> <?php echo $properties['hov_bordercolor'] ?>;<?php } ?>
     <?php } else { ?>
         <?php if(!empty($properties['useborder'])) { ?>
             <?php if(!empty($properties['borderwidth']) && !empty($properties['bordertype']) && !empty($properties['bordercolor'])) { ?>border: <?php echo $properties['borderwidth'] ?><?php if(!empty($properties['borderwidth-unit'])) { ?><?php echo $properties['borderwidth-unit'] ?><?php } else { ?>px<?php } ?> <?php echo $properties['bordertype'] ?> <?php echo $properties['bordercolor'] ?>;<?php } ?>
@@ -89,7 +89,7 @@
     <?php } ?>
 
     <?php if(!empty($properties['focus_useborder']) && $properties['focus_useborder'] == 'yes') { ?>
-        <?php if(!empty($properties['focus_borderwidth']) && !empty($properties['focus_bordertype']) && !empty($properties['focus_bordercolor'])) { ?>border: <?php echo $properties['focus_borderwidth'] ?><?php if(!empty($properties['focus_borderwidth-unit'])) { ?><?php echo $properties['focus_borderwidth-unit'] ?><?php } else { ?>px<?php } ?><?php echo $properties['focus_bordertype'] ?> <?php echo $properties['focus_bordercolor'] ?>;<?php } ?>
+        <?php if(!empty($properties['focus_borderwidth']) && !empty($properties['focus_bordertype']) && !empty($properties['focus_bordercolor'])) { ?>border: <?php echo $properties['focus_borderwidth'] ?><?php if(!empty($properties['focus_borderwidth-unit'])) { ?><?php echo $properties['focus_borderwidth-unit'] ?><?php } else { ?>px<?php } ?> <?php echo $properties['focus_bordertype'] ?> <?php echo $properties['focus_bordercolor'] ?>;<?php } ?>
     <?php } else { ?>
         <?php if(!empty($properties['useborder'])) { ?>
             <?php if(!empty($properties['borderwidth']) && !empty($properties['bordertype']) && !empty($properties['bordercolor'])) { ?>border: <?php echo $properties['borderwidth'] ?><?php if(!empty($properties['borderwidth-unit'])) { ?><?php echo $properties['borderwidth-unit'] ?><?php } else { ?>px<?php } ?> <?php echo $properties['bordertype'] ?> <?php echo $properties['bordercolor'] ?>;<?php } ?>
