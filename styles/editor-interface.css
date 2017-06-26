@@ -1943,7 +1943,7 @@ input.upfront-field-text:hover,
 .upfront-field-wrap-toggle .upfront-field-label-text {
   position: relative;
   display: inline-block;
-  margin: 0 0 0 5px;
+  margin: 0 5px 0 5px;
   top: -4px;
   font-family: "Open Sans", sans-serif;
   font-size: 11px;

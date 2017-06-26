@@ -10,20 +10,8 @@
 }
 
 /*-------------- General --------------*/
-div.preset-manager-panel div.preset_specific div.border_radius1{
-    padding: 7px 10px 0px 10px;
-}
-div.preset-manager-panel div.preset_specific div.border_radius2{
-    right: 15px;
-    left: auto;
-}
-div.preset-manager-panel div.preset_specific div.border_radius4{
-    left: auto;
-    right: -30px;
-}
-div.preset-manager-panel div.preset_specific div.border_radius3{
-    left: auto;
-    right: -147px;
+.border_radius_lock label {
+	margin-left: 13px;
 }
 .upfront-region-bg-setting-name-edit .upfront-field-wrap{
     float: right;
@@ -148,7 +136,7 @@ div.preset-manager-panel .edit_preset_css:before, #element-settings-sidebar .upf
     float: left;
 }
 .upfront-field-select .upfront-field-select-value{
-    padding: 1px 10px 1px 20px;
+    padding: 0px 10px 1px 20px;
 }
 .upfront-field-select .upfront-field-select-value .upfront-field-icon, .upfront-field-select-option label .upfront-field-icon{
     margin-left: auto;
@@ -260,7 +248,7 @@ div.preset-manager-panel .checkbox-tooltip{
     padding: 0 10px 5px 0;
 }
 #element-settings-sidebar .upfront-settings-title{
-    padding-right: 30px;
+    padding-right: 45px;
 }
 .draggable-element{
     float: right;
@@ -797,8 +785,24 @@ div#page.upfront-layout-view .upfront-editable_entity.upfront-module .upfront-ac
 	left: 22px;
 	right: initial;
 }
-#element-settings-sidebar #settings .upfront-settings_panel, #region-settings-sidebar #settings .upfront-settings_panel {
-	left: initial !important;
+.color_picker_rgb_preview {
+	padding-right: 5px;
+}
+#element-settings-sidebar .sidebar-commands-header {
+	right: initial;
+	left: 0px;
+	margin-left: 15px;
+}
+.upfront-field-wrap-radios-wrapper .upfront-field-multiple:first-child label {
+	border-radius: 0;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+
+.upfront-field-wrap-radios-wrapper .upfront-field-multiple:last-child label {
+	border-radius: 0;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
 }
 
 /* Shrink Sidebar for Low Resolutions */
