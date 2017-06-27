@@ -44,6 +44,7 @@
 	-moz-border-radius: 3px;
 	border-radius: 3px;
 }
+
 .ufm-context-menu-item{
 	padding:0px 10px;
 }
@@ -227,7 +228,7 @@
 .uf_el_map_initial-overlay input[type="text"]:focus {
 	background:rgb(255,255,255);
 	color:rgb(100,100,100);
-	font: 1px solid #d0d0d0;
+	border: 1px solid #d0d0d0;
 }
 
 /* refresh button */
