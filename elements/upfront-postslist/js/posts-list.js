@@ -75,6 +75,19 @@ var PostsListsPartView = Upfront.Views.ObjectView.extend({
 		var me = this,
 			type = this.model.get_property_value_by_name('part_type')
 		;
+		// debugger;
+		// Force columns
+		var parts_columns = (_.findWhere(Upfront.mainData.postslistsPresets, { id: this.object_group_view.model.get_property_value_by_name('preset') || 'default' }) || {}).parts_columns;
+		if (parts_columns) {
+			this.$el.find('.upfront-object').removeClass('c1 c2 c3 c4 c5 c6 c7 c8 c9 c10 c11 c12 c13 c14 c15 c16 c17 c18 c19 c20 c21 c22 c23 c24').addClass(parts_columns[type] || 'c24');
+			this.$el.parent().removeClass('c1 c2 c3 c4 c5 c6 c7 c8 c9 c10 c11 c12 c13 c14 c15 c16 c17 c18 c19 c20 c21 c22 c23 c24').addClass(parts_columns[type] || 'c24');
+		}
+
+		// Move parent to ene
+		var p1 = this.$el.parent();
+		var p2 = this.$el.parent().parent();
+		p1.detach();
+		p2.append(p1);
 
 		this.$el.find('.upfront-object-content').empty().append(markup);
 		//this.adjust_featured_image();
@@ -271,7 +284,25 @@ var PostsListsEachView = Upfront.Views.ObjectGroup.extend({
 	 */
 	render_object_view: function (data) {
 		var me = this;
-		this.model.get('objects').each(function(object){
+
+		var presets = (Upfront.mainData || {})["postslistsPresets"] || [],
+			preset = _.findWhere(presets, {id: this.object_group_view.model.get_property_value_by_name('preset')});
+		;
+		var order = preset._|| [];
+		var objects;
+		if (order.length) {
+			objects = [];
+			_.each(order, function(o) {
+				_.each(me.model.get('objects').models, function(m) {
+					if (m.get_property_value_by_name('part_type') === o) {
+						objects.push(m);
+					}
+				});
+			});
+		} else {
+			objects = this.model.get('objects').models;
+		}
+		_.each(objects, function(object) {
 			var view = Upfront.data.object_views[object.cid],
 				type = object.get_property_value_by_name('part_type')
 			;
@@ -313,6 +344,51 @@ var PostsListsEachView = Upfront.Views.ObjectGroup.extend({
 
 		$wrapper.find('.posts-edit-wrapper-content').remove();
 		$elements.last().unwrap('.posts-edit-wrapper');
+
+		// Parse columns info from element, update preset with column values and save preset
+		var presets = (Upfront.mainData || {})["postslistsPresets"] || [],
+			preset = _.findWhere(presets, {id: this.model.get_property_value_by_name('preset')});
+		;
+		var wrappers = this.$el.find('.upfront-editable_entities_container').children('.upfront-wrapper');
+		var parts_columns = {};
+		var parts_order = [];
+
+		wrappers.each( function(index) {
+			console.log('-------------------');
+			console.log(index);
+			var col_class = $(this).attr('class').match(/c\d+/);
+			if (!col_class) return;
+			var part_type = $(this).find('.upostslist-part, .uposts-part').attr('class');
+			if (part_type) part_type = part_type.match(/(content|title|date_posted|comment_count|author|thumbnail|read_more|post_tags|post_categories)/);
+			if (!part_type) return;
+			console.log(col_class[0], part_type[0]);
+			parts_columns[part_type[0]] = col_class[0];
+			if (part_type[0] === 'post_categories') part_type[0] = 'categories';
+			if (part_type[0] === 'post_tags') part_type[0] = 'tags';
+			if (part_type[0] === 'thumbnail') part_type[0] = 'featured_image';
+			parts_order.push(part_type[0]);
+		});
+		console.log('-------------------');
+		console.log(parts_columns);
+		preset.parts_columns = parts_columns;
+		preset.parts_order = parts_order;
+
+		// Update main collection (nicked from PresetManager, should be extracted to Preset Util)
+		var index;
+
+		_.each(Upfront.mainData['postslistsPresets'], function(p, presetIndex) {
+			if (p.id === preset.id) {
+				index = presetIndex;
+			}
+		});
+
+		if (typeof index !== 'undefined') {
+			Upfront.mainData['postslistsPresets'][index] = preset;
+		} else {
+			Upfront.mainData['postslistsPresets'].push(preset);
+		}
+		// And queue save
+		Upfront.Application.presetSaver.queue(preset, 'postslists');
 	},
 
 	init_tooltips: function() {

@@ -1,10 +1,8 @@
 (function ($) {
 define([
 	'elements/upfront-postslist/js/post-list-settings-panels',
-	'scripts/upfront/element-settings/settings',
-	'scripts/upfront/element-settings/advanced-settings',
-	'scripts/upfront/preset-settings/util',
-], function(Panels, ElementSettings, AdvancedSettings, Util) {
+	'scripts/upfront/element-settings/settings'
+], function(Panels, ElementSettings) {
 
 var l10n = Upfront.Settings.l10n.postslist_element;
 
@@ -12,21 +10,21 @@ var PostsListsSettings = ElementSettings.extend({
 	panels: {},
 
 	initialize: function (opts) {
-		
+
 		this.constructor.__super__.initialize.call(this, opts);
 
 		if (Upfront.Application.is_single() === false && typeof Upfront.Application.is_plugin_layout() !== 'undefined') return;
 
 		this.panels = _.extend({ General: Panels.General, Parts: Panels.PostParts }, this.panels);
-		
+
 		this.stopListening(Upfront.Events, 'posts:settings:dispatched');
 		this.stopListening(Upfront.Events, 'posts:post:added');
 		this.stopListening(Upfront.Events, 'posts:post:removed');
-		
+
 		this.listenTo(Upfront.Events, 'posts:settings:dispatched', this.rerender, this);
 		this.listenTo(Upfront.Events, 'posts:post:added', this.rerender, this);
 		this.listenTo(Upfront.Events, 'posts:post:removed', this.rerender, this);
-		
+
 		ElementSettings.prototype.initialize.apply(this, opts);
 	},
 

@@ -6,7 +6,7 @@ define([
 
 	var Modules = {};
 	Modules.template = template;
-	
+
 	Modules.element_wrapper = Panel.Toggleable.extend({
 		title: l10n.modules.element_wrapper,
 		data_part: 'element_wrapper',
@@ -30,7 +30,7 @@ define([
 						color: name('border-color')
 					}
 				}
-			});	
+			});
 
 			modules.push({
 				moduleType: 'Colors',
@@ -53,7 +53,7 @@ define([
 			return modules;
 		}
 	});
-	
+
 	Modules.post_wrapper = Panel.Toggleable.extend({
 		title: l10n.modules.post_wrapper,
 		data_part: 'post_wrapper',
@@ -63,7 +63,7 @@ define([
 				me = this,
 				name = function (name) { return 'post-wrapper-' + name; }
 			;
-			
+
 			modules.push({
 				moduleType: 'Margin',
 				options: {
@@ -80,8 +80,8 @@ define([
 						bottom_num: name('bottom-margin')
 					}
 				}
-			});	
-			
+			});
+
 			modules.push({
 				moduleType: 'Border',
 				options: {
@@ -95,7 +95,7 @@ define([
 						color: name('border-color')
 					}
 				}
-			});	
+			});
 
 			modules.push({
 				moduleType: 'Colors',
@@ -118,7 +118,7 @@ define([
 			return modules;
 		}
 	});
-	
+
 	Modules.part_author = Panel.Toggleable.extend({
 		title: l10n.modules.author_title,
 		data_part: 'author',
@@ -128,7 +128,7 @@ define([
 				me = this,
 				name = function (name) { return 'author-' + name; }
 			;
-			
+
 			modules.push({
 				moduleType: 'Typography',
 				options: {
@@ -148,7 +148,7 @@ define([
 					}
 				}
 			});
-			
+
 			modules.push({
 				moduleType: 'Toggle',
 				options: {
@@ -272,7 +272,7 @@ define([
 						{ label: "", value: '0' }
 					],
 					change: function() {
-						
+
 					},
 					label_style: 'inline',
 					name: "gravatar-radius-number",
@@ -281,7 +281,7 @@ define([
 			];
 		}
 	});
-	
+
 	Modules.part_featured_image = Panel.Toggleable.extend({
 		title: l10n.modules.featured_image_title,
 		data_part: 'featured_image',
@@ -340,11 +340,11 @@ define([
 		},
 		get_modules: function () {
 			var modules = [];
-			
+
 			return modules;
 		}
 	});
-	
+
 	Modules.part_comment_count = Panel.Toggleable.extend({
 		title: l10n.modules.comment_count_title,
 		data_part: 'comment_count',
@@ -360,7 +360,7 @@ define([
 			];
 		}
 	});
-	
+
 	Modules.part_content = Panel.Toggleable.extend({
 		title: l10n.modules.content_title,
 		data_part: 'content',
@@ -405,7 +405,7 @@ define([
 			];
 		}
 	});
-	
+
 	Modules.part_tags = Panel.Toggleable.extend({
 		title: l10n.modules.tags_title,
 		data_part: 'tags',
@@ -523,7 +523,7 @@ define([
 				me = this,
 				name = function (name) { return 'tags-' + name; }
 			;
-			
+
 			modules.push({
 				moduleType: 'Toggle',
 				options: {
@@ -543,7 +543,7 @@ define([
 					]
 				}
 			});
-			
+
 			modules.push({
 				moduleType: 'Typography',
 				options: {
@@ -561,7 +561,7 @@ define([
 					}
 				}
 			});
-			
+
 			return modules;
 		},
 	});
@@ -623,13 +623,13 @@ define([
 			];
 		}
 	});
-	
+
 	Modules.part_title = Panel.Toggleable.extend({
 		title: l10n.modules.title_title,
 		data_part: 'title',
 		slug: 'title'
 	});
-	
+
 	Modules.part_categories = Panel.Toggleable.extend({
 		title: l10n.modules.categories_title,
 		data_part: 'categories',
@@ -747,7 +747,7 @@ define([
 				me = this,
 				name = function (name) { return 'category-' + name; }
 			;
-			
+
 			modules.push({
 				moduleType: 'Toggle',
 				options: {
@@ -767,7 +767,7 @@ define([
 					]
 				}
 			});
-			
+
 			modules.push({
 				moduleType: 'Typography',
 				options: {
@@ -786,11 +786,11 @@ define([
 					}
 				}
 			});
-			
+
 			return modules;
 		},
 	});
-	
+
 	Modules.part_read_more = Panel.Toggleable.extend({
 		title: l10n.modules.read_more_title,
 		data_part: 'read_more',
@@ -800,7 +800,7 @@ define([
 				me = this,
 				name = function (name) { return 'read_more-' + name; }
 			;
-			
+
 			modules.push({
 				moduleType: 'Typography',
 				options: {
@@ -821,7 +821,7 @@ define([
 					}
 				}
 			});
-		
+
 			modules.push({
 				moduleType: 'Border',
 				options: {
@@ -835,7 +835,7 @@ define([
 						color: name('border-color')
 					}
 				}
-			});	
+			});
 
 			modules.push({
 				moduleType: 'Colors',
@@ -854,7 +854,7 @@ define([
 					]
 				}
 			});
-			
+
 			return modules;
 		}
 	});
