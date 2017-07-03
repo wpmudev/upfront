@@ -120,7 +120,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 						// Do it twice just in case we have multiple slashes
 						$preset[$key] = str_replace("\\\\\\\\\\\\", "\\", $preset[$key]);
 						// Finally clear slashes
-						$preset[$key] = stripslashes_deep($preset[$key]);
+						$preset[$key] = stripslashes_deep(stripslashes($preset[$key]));
 					}
 				}
 				
@@ -243,6 +243,19 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			$properties['preset_style'] = Upfront_UFC::utils()->replace_commented_style_with_variable( $properties['preset_style'] );
 		}
 
+		foreach($properties as $key => $prop) {
+			if (0 === strpos($key, 'post-part-')) {
+				// WARNING!!! This is added to prevent enourmos amount of slashes in preset_style
+				$properties[$key] = str_replace("\\\\\\\\\\\\", "\\", $prop);
+				// Do it twice just in case we have multiple slashes
+				$properties[$key] = str_replace("\\\\\\\\\\\\", "\\", $prop);
+				// Do it twice just in case we have multiple slashes
+				$properties[$key] = str_replace("\\\\\\\\\\\\", "\\", $prop);
+				// Finally clear slashes
+				$properties[$key] = stripslashes_deep(stripslashes($prop));
+			}
+		}
+
 		do_action('upfront_save_' . $this->elementName . '_preset', $properties, $this->elementName);
 
 		if (!has_action('upfront_save_' . $this->elementName . '_preset')) {
@@ -258,10 +271,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				$result[] = $preset;
 			}
 
-
 			$result[] = $properties;
-
-
 
 			$this->update_presets($result);
 		}
