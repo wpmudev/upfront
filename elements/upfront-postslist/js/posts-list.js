@@ -75,7 +75,7 @@ var PostsListsPartView = Upfront.Views.ObjectView.extend({
 		var me = this,
 			type = this.model.get_property_value_by_name('part_type')
 		;
-		// debugger;
+		debugger; // rendering part type check if parent wrapper is correct and available
 		// Force columns
 		var parts_columns = (_.findWhere(Upfront.mainData.postslistsPresets, { id: this.object_group_view.model.get_property_value_by_name('preset') || 'default' }) || {}).parts_columns;
 		if (parts_columns) {
@@ -84,10 +84,10 @@ var PostsListsPartView = Upfront.Views.ObjectView.extend({
 		}
 
 		// Move parent to ene
-		var p1 = this.$el.parent();
-		var p2 = this.$el.parent().parent();
-		p1.detach();
-		p2.append(p1);
+		// var p1 = this.$el.parent();
+		// var p2 = this.$el.parent().parent();
+		// p1.detach();
+		// p2.append(p1);
 
 		this.$el.find('.upfront-object-content').empty().append(markup);
 		//this.adjust_featured_image();
@@ -285,30 +285,93 @@ var PostsListsEachView = Upfront.Views.ObjectGroup.extend({
 	render_object_view: function (data) {
 		var me = this;
 
+		debugger; // here here check all the wrappers are ok
 		var presets = (Upfront.mainData || {})["postslistsPresets"] || [],
 			preset = _.findWhere(presets, {id: this.object_group_view.model.get_property_value_by_name('preset')});
 		;
-		var order = preset._|| [];
-		var objects;
+
+		// Check wrappers presence and order
+		var wrappers = this.$el.find('.upfront-output-postslist .upfront-editable_entities_container').children('.upfront-wrapper');
+		var render_from_scratch = false;
+
+		// First add all wrappers from preset to this model wrappers
+		_.each(preset.wrappers, function(pw) {
+			// w.id;
+			var pw_exists = false;
+			this.model.get('wrappers').each( function(mw) {
+				if (pw_exists) return;
+
+				if (pw.id === mw.get_property_value_by_name('wrapper_id')) {
+					pw_exists = true;
+				}
+			});
+
+			if (pw_exists) return;
+
+			// Wrapper is not present, let's make one
+			render_from_scratch = true;
+			var pw_class = pw.is_spacer ? ' upfront-wrapper-spacer ' : '';
+			pw_class += pw.is_clr ? ' clr ' : '';
+			pw_class += pw.cols;
+			this.model.get('wrappers').add(new Upfront.Models.Wrapper({
+				properties: [
+					{ name: 'wrapper_id', value: pw.id },
+					{ name: 'class', value: pw_class }
+				]
+			}), {silent: true});
+		}, this);
+
+		debugger;
+		// Second remove any wrappers from this model wrappers that are not in preset
+		var to_remove = [];
+		this.model.get('wrappers').each( function(mw) {
+			var remove = true;
+
+			_.each(preset.wrappers, function(pw) {
+				if (pw.id === mw.get_property_value_by_name('wrapper_id')) {
+					remove = false;
+				}
+			});
+
+			if (remove) {
+				to_remove.push(mw.cid);
+			}
+		}, this);
+		_.each(to_remove, function(cid) {
+			this.model.get('wrappers').remove(cid, { silent: true });
+			render_from_scratch = true;
+		}, this);
+
+		//TODO Finally order wrappers in correct order
+
+		debugger;
+
+		var order = preset.parts_order || [];
+		var part_type_objects;
 		if (order.length) {
-			objects = [];
+			part_type_objects = [];
 			_.each(order, function(o) {
 				_.each(me.model.get('objects').models, function(m) {
 					if (m.get_property_value_by_name('part_type') === o) {
-						objects.push(m);
+						part_type_objects.push(m);
 					}
 				});
 			});
 		} else {
-			objects = this.model.get('objects').models;
+			part_type_objects = this.model.get('objects').models;
 		}
-		_.each(objects, function(object) {
-			var view = Upfront.data.object_views[object.cid],
-				type = object.get_property_value_by_name('part_type')
+		_.each(part_type_objects, function(part_type_object) {
+			var part_type_view = Upfront.data.object_views[part_type_object.cid],
+				type = part_type_object.get_property_value_by_name('part_type')
 			;
-			if ( !view || !type || !data[type] ) return;
-			view.render_view(data[type]);
-		});
+			if (!part_type_view) {
+			var view_class = part_type_object.get_property_value_by_name('view_class');
+					part_type_view = new Upfront.Views[view_class]({model: part_type_object});
+					part_type_view.object_group_view = this.object_group_view;
+			}
+			if ( !part_type_view || !type || !data[type] ) return;
+			part_type_view.render_view(data[type]);
+		}, this);
 	},
 
 	on_toggle_object_edit: function (enable) {
@@ -349,29 +412,45 @@ var PostsListsEachView = Upfront.Views.ObjectGroup.extend({
 		var presets = (Upfront.mainData || {})["postslistsPresets"] || [],
 			preset = _.findWhere(presets, {id: this.model.get_property_value_by_name('preset')});
 		;
-		var wrappers = this.$el.find('.upfront-editable_entities_container').children('.upfront-wrapper');
+
+		var wrappers = this.$el.find('.upfront-output-postslist .upfront-editable_entities_container').children('.upfront-wrapper');
 		var parts_columns = {};
 		var parts_order = [];
+		var wrappers_layout = [];
+		var parts_wrappers = {};
 
-		wrappers.each( function(index) {
-			console.log('-------------------');
-			console.log(index);
-			var col_class = $(this).attr('class').match(/c\d+/);
-			if (!col_class) return;
-			var part_type = $(this).find('.upostslist-part, .uposts-part').attr('class');
+		wrappers.each( function(index, wrapper) {
+			var id = $(wrapper).attr('id');
+			var is_spacer = $(wrapper).hasClass('upfront-wrapper-spacer');
+			var is_clr = $(wrapper).hasClass('clr');
+
+			var col_class = $(wrapper).attr('class').match(/c\d+/);
+
+			if (!col_class) col_class = ['c24'];
+			col_class = col_class[0];
+
+			wrappers_layout.push({ id: id, spacer: is_spacer, cols: col_class, clr: is_clr });
+
+			var part_type = $(wrapper).find('.upostslist-part, .uposts-part').attr('class');
 			if (part_type) part_type = part_type.match(/(content|title|date_posted|comment_count|author|thumbnail|read_more|post_tags|post_categories)/);
 			if (!part_type) return;
-			console.log(col_class[0], part_type[0]);
-			parts_columns[part_type[0]] = col_class[0];
-			if (part_type[0] === 'post_categories') part_type[0] = 'categories';
-			if (part_type[0] === 'post_tags') part_type[0] = 'tags';
-			if (part_type[0] === 'thumbnail') part_type[0] = 'featured_image';
-			parts_order.push(part_type[0]);
+
+			part_type = part_type[0];
+
+			console.log(col_class, part_type);
+			parts_columns[part_type] = col_class;
+			if (part_type === 'post_categories') part_type = 'categories';
+			if (part_type === 'post_tags') part_type = 'tags';
+			if (part_type === 'thumbnail') part_type = 'featured_image';
+			parts_order.push(part_type);
+
+			parts_wrappers[part_type] = id;
 		});
-		console.log('-------------------');
 		console.log(parts_columns);
+		preset.wrappers = wrappers_layout;
 		preset.parts_columns = parts_columns;
 		preset.parts_order = parts_order;
+		preset.parts_wrappers = parts_wrappers;
 
 		// Update main collection (nicked from PresetManager, should be extracted to Preset Util)
 		var index;
@@ -682,18 +761,19 @@ var PostsListsView = Upfront.Views.ObjectGroup.extend({
 	render_post_view: function (post_id, data, silent) {
 		var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 			breakpoints = Upfront.Views.breakpoints_storage.get_breakpoints().get_enabled(),
-			wrappers = this._posts_model.get('wrappers'),
-			objects = this._posts_model.get('objects'),
-			object = objects.find(function(obj){
+			post_wrappers = this._posts_model.get('wrappers'),
+			posts = this._posts_model.get('objects'),
+			post = posts.find(function(obj){
 				return parseInt(obj.get_property_value_by_name('post_id'), 10) === parseInt(post_id, 10);
 			}),
-			is_editable = ( objects.length === 0 || (object && objects.indexOf(object) === 0) ), // Only the first object is editable
+			is_editable = ( posts.length === 0 || (post && posts.indexOf(post) === 0) ), // Only the first post is editable
 			model = is_editable ? this.clone_model(this.model, false) : this.clone_model(this.model, true),
-			obj_view = object ? Upfront.data.object_views[object.cid] : false,
+			post_view = post ? Upfront.data.object_views[post.cid] : false,
 			post_col = this.model.get_breakpoint_property_value('post_col', true) || breakpoint['columns'],
 			post_class = Upfront.Settings.LayoutEditor.Grid.class + post_col
 		;
-		if ( !object && breakpoint['default'] ) {
+
+		if ( !post && breakpoint['default'] ) {
 			var wrapper_id = Upfront.Util.get_unique_id("wrapper"),
 				wrapper = new Upfront.Models.Wrapper({
 					properties: [
@@ -717,22 +797,22 @@ var PostsListsView = Upfront.Views.ObjectGroup.extend({
 			model.set_property('post_id', post_id);
 			model.set_property('wrapper_id', wrapper_id);
 			model.set_property('element_id', Upfront.Util.get_unique_id(Upfront.data.upfront_postslists.id_slug + '-object'));
-			wrappers.add(wrapper, {silent: true});
-			objects.add(model, {post_id: post_id, data: data, editable: is_editable});
+			post_wrappers.add(wrapper, {silent: true});
+			posts.add(model, {post_id: post_id, data: data, editable: is_editable});
 		}
-		else if ( object && !silent ) {
-			var wrapper = wrappers.get_by_wrapper_id(object.get_wrapper_id());
+		else if ( post && !silent ) {
+			var wrapper = post_wrappers.get_by_wrapper_id(post.get_wrapper_id());
 			if ( breakpoint['default'] ) {
-				object.replace_class(post_class);
+				post.replace_class(post_class);
 				wrapper.replace_class(post_class);
 			}
 			else {
-				object.set_breakpoint_property('col', post_col);
+				post.set_breakpoint_property('col', post_col);
 				wrapper.set_breakpoint_property('col', post_col);
 			}
 			if ( !is_editable ) { // Reset the objects and wrappers to new updated model
-				var obj_wrappers = object.get('wrappers'),
-					obj_objects = object.get('objects'),
+				var obj_wrappers = post.get('wrappers'),
+					obj_objects = post.get('objects'),
 					obj_wrappers_arr = obj_wrappers.map(function(wrap){ return wrap; }),
 					obj_objects_arr = obj_objects.map(function(obj){ return obj; })
 				;
@@ -749,8 +829,8 @@ var PostsListsView = Upfront.Views.ObjectGroup.extend({
 					obj_objects.add(obj);
 				});
 			}
-			if ( obj_view ) {
-				obj_view.render_object_view(data);
+			if ( post_view ) {
+				post_view.render_object_view(data);
 			}
 		}
 	},
