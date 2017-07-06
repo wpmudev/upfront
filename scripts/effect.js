@@ -370,7 +370,11 @@
 				this.fillCanvas(width, parallaxHeight);
 			}
 
-			this.imgContext.drawImage(this.cache.img, drawX, drawY, drawWidth, drawHeight, position_x, position_y, (width * scale), (parallaxHeight * scale));
+			try {
+				this.imgContext.drawImage(this.cache.img, drawX, drawY, drawWidth, drawHeight, position_x, position_y, (width * scale), (parallaxHeight * scale));
+			} catch (e) {
+				Upfront.Util.log('Broken image provided for Parallax');
+			}
 
 		},
 		refresh: function () {
