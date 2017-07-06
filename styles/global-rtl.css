@@ -2,13 +2,14 @@
 .upfront-edit-layout #page, .upfront-edit-theme #page, .upfront-edit-responsive #page, .upfront-edit-postlayout #page{
     margin: 0 260px 0 0;
 }
+/*
 #upfront-popup-top.upfront-popup-meta .upload{
     float: right;
 }
 .upfront-logo, .upfront-ui .upfront-icon:before, .region-lock-switch:before, .upfront-icon-control-region:before, .panel-setting-dialog-region:before, .panel-setting-dialog-info:before, .position-select-wrap .position-select:checked, .upfront-field-checkbox:checked, .upfront-ui .upfront-region-field-icon:before, #upfront-popup-top.upfront-popup-meta .upload:before, .upfront-icon-button-hide:before, .upfront-entity-hide_trigger:before{
     float: right;
 }
-
+*/
 /*-------------- General --------------*/
 .border_radius_lock label {
 	margin-left: 13px;
@@ -304,10 +305,12 @@ div.preset-manager-panel .checkbox-tooltip{
 .upfront-field-select-option{
     margin: 0 0 0 10px !important;
 }
+/*
 .upfront-icon-redo:before, .upfront-icon-undo:before{
     right: 7px;
     left: auto;
 }
+*/
 #sidebar-ui .sidebar-commands-control .command-save{
     margin: 10px 0 0 15px;
     float: left;
