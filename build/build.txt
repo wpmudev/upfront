@@ -369,16 +369,6 @@ text!elements/upfront-posts/tpl/views.html
 text!elements/upfront-widget/tpl/preset-style.html
 /Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/elements/upfront-posts/js/post-list-settings.js
 /Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/elements/upfront-posts/js/posts-list.js
-text!elements/upfront-postslist/tpl/views.html
-/Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/elements/upfront-postslist/js/post-list-views.js
-/Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/elements/upfront-postslist/js/post-list-meta-views.js
-/Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/elements/upfront-postslist/js/post-list-settings-parts.js
-/Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/elements/upfront-postslist/js/post-list-modules-abstraction.js
-text!elements/upfront-postslist/tpl/preset-style.html
-/Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/elements/upfront-postslist/js/post-list-settings-modules.js
-/Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/elements/upfront-postslist/js/post-list-settings-panels.js
-/Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/elements/upfront-postslist/js/post-list-settings.js
-/Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/elements/upfront-postslist/js/posts-list.js
 text!elements/upfront-search/tpl/usearch.html
 /Applications/MAMP/htdocs/upfront/wp-content/themes/upfront/elements/upfront-search/js/usearch.js
 text!elements/upfront-slider/tpl/uslider.html
