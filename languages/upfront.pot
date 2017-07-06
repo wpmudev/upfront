@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Upfront 1.9-BETA-1\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/theme/style\n"
-"POT-Creation-Date: 2017-06-21 22:33:37+00:00\n"
+"POT-Creation-Date: 2017-07-06 18:35:38+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -91,7 +91,7 @@ msgstr ""
 
 #: elements/upfront-accordion/lib/uaccordion.php:116
 #: library/servers/class_upfront_editor_l10n_server.php:550
-#: library/servers/class_upfront_presets_server.php:622
+#: library/servers/class_upfront_presets_server.php:632
 msgid "Accordion"
 msgstr ""
 
@@ -170,7 +170,6 @@ msgid "The wrapper layer of even panels."
 msgstr ""
 
 #: elements/upfront-accordion/lib/uaccordion.php:136
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:250
 msgid "Element Wrapper"
 msgstr ""
 
@@ -225,9 +224,9 @@ msgstr ""
 #: library/class_upfront_behavior.php:72
 #: library/servers/class_upfront_editor_l10n_server.php:180
 #: library/servers/class_upfront_editor_l10n_server.php:535
-#: library/servers/class_upfront_presets_server.php:593
-#: library/servers/class_upfront_presets_server.php:604
-#: library/servers/class_upfront_presets_server.php:646
+#: library/servers/class_upfront_presets_server.php:603
+#: library/servers/class_upfront_presets_server.php:614
+#: library/servers/class_upfront_presets_server.php:656
 msgid "Default"
 msgstr ""
 
@@ -273,7 +272,7 @@ msgstr ""
 #: elements/upfront-login/lib/upfront_login.php:178
 #: elements/upfront-login/lib/upfront_login.php:226
 #: library/servers/class_upfront_editor_l10n_server.php:559
-#: library/servers/class_upfront_presets_server.php:631
+#: library/servers/class_upfront_presets_server.php:641
 msgid "Button"
 msgstr ""
 
@@ -325,7 +324,7 @@ msgstr ""
 #: elements/upfront-newnavigation/lib/unewnavigation.php:299
 #: elements/upfront-text/lib/upfront_text.php:154
 #: library/servers/class_upfront_editor_l10n_server.php:494
-#: library/servers/class_upfront_presets_server.php:614
+#: library/servers/class_upfront_presets_server.php:624
 msgid "Typography"
 msgstr ""
 
@@ -335,10 +334,9 @@ msgid "Button Background"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:118
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:282
 #: elements/upfront-text/lib/upfront_text.php:129
-#: library/servers/class_upfront_presets_server.php:595
 #: library/servers/class_upfront_presets_server.php:605
+#: library/servers/class_upfront_presets_server.php:615
 msgid "Border"
 msgstr ""
 
@@ -346,74 +344,66 @@ msgstr ""
 #: elements/upfront-contact-form/lib/contact_form.php:553
 #: elements/upfront-image/lib/uimage.php:252
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:171
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:235
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:283
 #: elements/upfront-slider/lib/upfront_slider.php:208
 #: elements/upfront-text/lib/upfront_text.php:130
 #: library/admin/class_upfront_admin_response_cache.php:45
 #: library/class_upfront_logger.php:171
 #: library/media/class_upfront_media_server.php:83
 #: library/servers/class_upfront_editor_l10n_server.php:422
-#: library/servers/class_upfront_presets_server.php:596
+#: library/servers/class_upfront_presets_server.php:606
 msgid "None"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:120
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:284
 #: elements/upfront-text/lib/upfront_text.php:131
-#: library/servers/class_upfront_presets_server.php:597
+#: library/servers/class_upfront_presets_server.php:607
 msgid "Solid"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:121
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:285
 #: elements/upfront-text/lib/upfront_text.php:132
-#: library/servers/class_upfront_presets_server.php:598
+#: library/servers/class_upfront_presets_server.php:608
 msgid "Dashed"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:122
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:286
 #: elements/upfront-text/lib/upfront_text.php:133
-#: library/servers/class_upfront_presets_server.php:599
+#: library/servers/class_upfront_presets_server.php:609
 msgid "Dotted"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:123
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:277
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:287
 #: elements/upfront-text/lib/upfront_text.php:134
 #: library/servers/class_upfront_editor_l10n_server.php:654
-#: library/servers/class_upfront_presets_server.php:600
+#: library/servers/class_upfront_presets_server.php:610
 msgid "Width"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:124
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:288
 #: elements/upfront-text/lib/upfront_text.php:135
 #: library/servers/class_upfront_editor_l10n_server.php:324
 #: library/servers/class_upfront_editor_l10n_server.php:490
-#: library/servers/class_upfront_presets_server.php:601
+#: library/servers/class_upfront_presets_server.php:611
 msgid "Color"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:125
 #: elements/upfront-text/lib/upfront_text.php:136
 #: library/servers/class_upfront_editor_l10n_server.php:683
-#: library/servers/class_upfront_presets_server.php:602
+#: library/servers/class_upfront_presets_server.php:612
 msgid "Background Color"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:126
 #: elements/upfront-text/lib/upfront_text.php:137
 #: elements/upfront-youtube/lib/uyoutube.php:146
-#: library/servers/class_upfront_presets_server.php:603
+#: library/servers/class_upfront_presets_server.php:613
 msgid "Edit Text"
 msgstr ""
 
 #: elements/upfront-code/lib/upfront_code.php:111
 #: library/servers/class_upfront_editor_l10n_server.php:572
-#: library/servers/class_upfront_presets_server.php:643
+#: library/servers/class_upfront_presets_server.php:653
 msgid "Code"
 msgstr ""
 
@@ -454,7 +444,7 @@ msgstr ""
 #: library/servers/class_upfront_editor_l10n_server.php:186
 #: library/servers/class_upfront_editor_l10n_server.php:403
 #: library/servers/class_upfront_editor_l10n_server.php:855
-#: library/servers/class_upfront_presets_server.php:587
+#: library/servers/class_upfront_presets_server.php:597
 msgid "OK"
 msgstr ""
 
@@ -546,7 +536,6 @@ msgstr ""
 #: elements/upfront-comment/lib/upfront_comment.php:246
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:117
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:146
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:208
 #: library/servers/class_upfront_editor_l10n_server.php:128
 #: library/servers/class_upfront_editor_l10n_server.php:607
 msgid "Loading"
@@ -774,7 +763,6 @@ msgstr ""
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:274
 #: elements/upfront-post-data/tpl/upfront-comment-list.php:34
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:223
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:353
 #: library/servers/class_upfront_editor_l10n_server.php:67
 #: library/servers/class_upfront_editor_l10n_server.php:175
 #: library/servers/class_upfront_editor_l10n_server.php:281
@@ -916,12 +904,11 @@ msgid "Form's submit button"
 msgstr ""
 
 #: elements/upfront-contact-form/lib/contact_form.php:501
-#: elements/upfront-like-box/lib/upfront-like-box.php:123
+#: elements/upfront-like-box/lib/upfront-like-box.php:125
 #: elements/upfront-login/lib/upfront_login.php:191
 #: elements/upfront-maps/lib/upfront_maps.php:95
 #: elements/upfront-newnavigation/lib/unewnavigation.php:270
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:179
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:243
 #: elements/upfront-slider/lib/upfront_slider.php:181
 #: elements/upfront-widget/lib/class_upfront_widget_view.php:91
 #: elements/upfront-youtube/lib/uyoutube.php:130
@@ -952,7 +939,6 @@ msgid "Form validation"
 msgstr ""
 
 #: elements/upfront-contact-form/lib/contact_form.php:509
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:301
 msgid "Inline"
 msgstr ""
 
@@ -1098,7 +1084,6 @@ msgstr ""
 #: elements/upfront-contact-form/lib/contact_form.php:559
 #: elements/upfront-login/lib/upfront_login.php:203
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:37
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:294
 msgid "Username"
 msgstr ""
 
@@ -1123,7 +1108,7 @@ msgstr ""
 #: elements/upfront-gallery/lib/ugallery.php:334
 #: elements/upfront-youtube/lib/uyoutube.php:117
 #: library/servers/class_upfront_editor_l10n_server.php:553
-#: library/servers/class_upfront_presets_server.php:625
+#: library/servers/class_upfront_presets_server.php:635
 msgid "Gallery"
 msgstr ""
 
@@ -1360,7 +1345,7 @@ msgstr ""
 #: elements/upfront-image/lib/uimage.php:254
 #: elements/upfront-image/lib/uimage.php:268
 #: elements/upfront-image/lib/uimage.php:299
-#: elements/upfront-like-box/lib/upfront-like-box.php:108
+#: elements/upfront-like-box/lib/upfront-like-box.php:110
 #: elements/upfront-slider/lib/upfront_slider.php:225
 #: library/servers/class_upfront_editor_l10n_server.php:211
 #: library/servers/class_upfront_editor_l10n_server.php:284
@@ -1506,9 +1491,6 @@ msgstr ""
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:262
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:207
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:216
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:261
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:337
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:346
 msgid "Title"
 msgstr ""
 
@@ -1540,7 +1522,7 @@ msgstr ""
 #: library/servers/class_upfront_editor_l10n_server.php:123
 #: library/servers/class_upfront_editor_l10n_server.php:203
 #: library/servers/class_upfront_editor_l10n_server.php:512
-#: library/servers/class_upfront_presets_server.php:586
+#: library/servers/class_upfront_presets_server.php:596
 msgid "Add"
 msgstr ""
 
@@ -1564,7 +1546,7 @@ msgstr ""
 
 #: elements/upfront-image/lib/uimage.php:200
 #: library/servers/class_upfront_editor_l10n_server.php:554
-#: library/servers/class_upfront_presets_server.php:626
+#: library/servers/class_upfront_presets_server.php:636
 msgid "Image"
 msgstr ""
 
@@ -1887,96 +1869,96 @@ msgstr ""
 msgid "Supported formats: mp4/webm"
 msgstr ""
 
-#: elements/upfront-like-box/lib/upfront-like-box.php:101
+#: elements/upfront-like-box/lib/upfront-like-box.php:103
 #: library/servers/class_upfront_editor_l10n_server.php:556
-#: library/servers/class_upfront_presets_server.php:628
+#: library/servers/class_upfront_presets_server.php:638
 msgid "Like Box"
 msgstr ""
 
-#: elements/upfront-like-box/lib/upfront-like-box.php:102
+#: elements/upfront-like-box/lib/upfront-like-box.php:104
 msgid "You need to set a Facebook URL in your global social settings."
 msgstr ""
 
-#: elements/upfront-like-box/lib/upfront-like-box.php:103
+#: elements/upfront-like-box/lib/upfront-like-box.php:105
 msgid "Container"
 msgstr ""
 
-#: elements/upfront-like-box/lib/upfront-like-box.php:104
+#: elements/upfront-like-box/lib/upfront-like-box.php:106
 msgid "Facebook Account"
 msgstr ""
 
-#: elements/upfront-like-box/lib/upfront-like-box.php:105
+#: elements/upfront-like-box/lib/upfront-like-box.php:107
 msgid "Facebook box wrapper layer."
 msgstr ""
 
-#: elements/upfront-like-box/lib/upfront-like-box.php:106
+#: elements/upfront-like-box/lib/upfront-like-box.php:108
 msgid "Enter your Facebook Page URL:"
 msgstr ""
 
-#: elements/upfront-like-box/lib/upfront-like-box.php:107
+#: elements/upfront-like-box/lib/upfront-like-box.php:109
 msgid "facebook.com/yourPageName"
 msgstr ""
 
-#: elements/upfront-like-box/lib/upfront-like-box.php:109
+#: elements/upfront-like-box/lib/upfront-like-box.php:111
 msgid "You need to set a Facebook URL in your"
 msgstr ""
 
-#: elements/upfront-like-box/lib/upfront-like-box.php:110
+#: elements/upfront-like-box/lib/upfront-like-box.php:112
 msgid "global social settings"
 msgstr ""
 
-#: elements/upfront-like-box/lib/upfront-like-box.php:112
+#: elements/upfront-like-box/lib/upfront-like-box.php:114
 #: elements/upfront-social-media/lib/upfront-social-media.php:227
 msgid "Layout Style"
 msgstr ""
 
-#: elements/upfront-like-box/lib/upfront-like-box.php:113
+#: elements/upfront-like-box/lib/upfront-like-box.php:115
 #: elements/upfront-social-media/lib/upfront-social-media.php:228
 msgid "Layout Style settings"
 msgstr ""
 
-#: elements/upfront-like-box/lib/upfront-like-box.php:114
+#: elements/upfront-like-box/lib/upfront-like-box.php:116
 msgid "Your Facebook Page URL"
 msgstr ""
 
-#: elements/upfront-like-box/lib/upfront-like-box.php:115
+#: elements/upfront-like-box/lib/upfront-like-box.php:117
 msgid "https://www.facebook.com/YourPage"
 msgstr ""
 
-#: elements/upfront-like-box/lib/upfront-like-box.php:116
+#: elements/upfront-like-box/lib/upfront-like-box.php:118
 #: elements/upfront-social-media/lib/upfront-social-media.php:241
 msgid "Back to your"
 msgstr ""
 
-#: elements/upfront-like-box/lib/upfront-like-box.php:117
+#: elements/upfront-like-box/lib/upfront-like-box.php:119
 #: elements/upfront-social-media/lib/upfront-social-media.php:242
 msgid "global settings"
 msgstr ""
 
-#: elements/upfront-like-box/lib/upfront-like-box.php:118
+#: elements/upfront-like-box/lib/upfront-like-box.php:120
 msgid "Show Friend's Faces"
 msgstr ""
 
-#: elements/upfront-like-box/lib/upfront-like-box.php:119
+#: elements/upfront-like-box/lib/upfront-like-box.php:121
 msgid "Use Small Header"
 msgstr ""
 
-#: elements/upfront-like-box/lib/upfront-like-box.php:120
+#: elements/upfront-like-box/lib/upfront-like-box.php:122
 msgid "Hide Cover Photo"
 msgstr ""
 
-#: elements/upfront-like-box/lib/upfront-like-box.php:121
+#: elements/upfront-like-box/lib/upfront-like-box.php:123
 msgid "Show Page Posts"
 msgstr ""
 
-#: elements/upfront-like-box/lib/upfront-like-box.php:124
+#: elements/upfront-like-box/lib/upfront-like-box.php:126
 msgid "LikeBox settings"
 msgstr ""
 
 #: elements/upfront-login/lib/upfront_login.php:165
 #: elements/upfront-login/lib/upfront_login.php:207
 #: library/servers/class_upfront_editor_l10n_server.php:555
-#: library/servers/class_upfront_presets_server.php:627
+#: library/servers/class_upfront_presets_server.php:637
 msgid "Login"
 msgstr ""
 
@@ -2072,7 +2054,6 @@ msgstr ""
 
 #: elements/upfront-login/lib/upfront_login.php:192
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:32
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:289
 #: library/media/class_upfront_media_server.php:166
 msgid "Display"
 msgstr ""
@@ -2174,11 +2155,10 @@ msgid "Left Offset"
 msgstr ""
 
 #: elements/upfront-login/lib/upfront_login.php:220
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:247
 #: library/media/class_upfront_media_server.php:95
 #: library/servers/class_upfront_editor_l10n_server.php:660
 #: library/servers/class_upfront_editor_l10n_server.php:835
-#: library/servers/class_upfront_presets_server.php:606
+#: library/servers/class_upfront_presets_server.php:616
 msgid "px"
 msgstr ""
 
@@ -2208,7 +2188,7 @@ msgstr ""
 
 #: elements/upfront-maps/lib/upfront_maps.php:70
 #: library/servers/class_upfront_editor_l10n_server.php:557
-#: library/servers/class_upfront_presets_server.php:629
+#: library/servers/class_upfront_presets_server.php:639
 msgid "Map"
 msgstr ""
 
@@ -2555,7 +2535,7 @@ msgstr ""
 
 #: elements/upfront-newnavigation/lib/unewnavigation.php:272
 #: library/servers/class_upfront_editor_l10n_server.php:441
-#: library/servers/class_upfront_presets_server.php:585
+#: library/servers/class_upfront_presets_server.php:595
 msgid "Delete"
 msgstr ""
 
@@ -2661,8 +2641,6 @@ msgid "Menu Kind"
 msgstr ""
 
 #: elements/upfront-newnavigation/lib/unewnavigation.php:301
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:264
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:309
 #: library/servers/class_upfront_editor_l10n_server.php:768
 msgid "Background"
 msgstr ""
@@ -2680,9 +2658,6 @@ msgstr ""
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:245
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:191
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:212
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:255
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:321
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:342
 #: library/models/class_upfront_entity_resolver.php:225
 #: library/servers/class_upfront_editor_l10n_server.php:75
 #: library/servers/class_upfront_editor_l10n_server.php:183
@@ -2716,46 +2691,36 @@ msgstr ""
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:253
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:199
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:213
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:263
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:329
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:343
 msgid "Gravatar"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:33
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:290
 msgid "Display name"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:34
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:291
 msgid "First &amp; Last Name"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:35
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:292
 msgid "Last &amp; First Name"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:36
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:293
 msgid "Nickname"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:38
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:295
 msgid "Link To"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:39
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:255
 #: elements/upfront-post-data/lib/parts/class_upfront_post_data_partview_author.php:132
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:296
 msgid "Website"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:40
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:297
 msgid "Author page"
 msgstr ""
 
@@ -2770,14 +2735,11 @@ msgstr ""
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:46
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:284
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:231
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:281
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:361
 msgid "Size in px"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:49
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:192
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:256
 msgid "Comment Count"
 msgstr ""
 
@@ -2797,7 +2759,7 @@ msgstr ""
 #: library/servers/class_upfront_editor_l10n_server.php:509
 #: library/servers/class_upfront_editor_l10n_server.php:551
 #: library/servers/class_upfront_editor_l10n_server.php:579
-#: library/servers/class_upfront_presets_server.php:623
+#: library/servers/class_upfront_presets_server.php:633
 msgid "Comments"
 msgstr ""
 
@@ -2837,7 +2799,6 @@ msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:64
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:152
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:257
 #: library/media/class_upfront_media_server.php:116
 #: library/servers/class_upfront_editor_l10n_server.php:184
 #: library/servers/class_upfront_editor_l10n_server.php:275
@@ -2905,8 +2866,6 @@ msgstr ""
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:251
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:189
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:211
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:319
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:341
 msgid "Date posted"
 msgstr ""
 
@@ -2915,47 +2874,38 @@ msgid "Contents"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:90
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:268
 msgid "Date Format"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:91
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:269
 msgid "WordPress date"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:92
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:270
 msgid "30 Jan 2015"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:93
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:271
 msgid "Jan 30 2015"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:94
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:272
 msgid "30 01 2015"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:95
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:273
 msgid "01 30 2015"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:96
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:274
 msgid "Custom PHP Format"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:97
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:275
 msgid "PHP Format"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:98
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:276
 msgid "Reference"
 msgstr ""
 
@@ -2990,9 +2940,6 @@ msgstr ""
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:265
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:203
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:219
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:260
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:333
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:349
 #: elements/upfront-this-post/lib/this_post.php:668
 #: library/servers/class_upfront_editor_l10n_server.php:172
 #: library/servers/class_upfront_editor_l10n_server.php:246
@@ -3000,7 +2947,6 @@ msgid "Tags"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:110
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:303
 msgid "Show max:"
 msgstr ""
 
@@ -3014,31 +2960,26 @@ msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:118
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:151
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:213
 msgid "Oops, something went wrong"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:119
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:157
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:219
 msgid "Post Parts"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:120
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:174
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:238
 msgid "Pick Post Parts to Display"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:121
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:175
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:239
 msgid "Drag to re-order Post Parts"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:122
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:178
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:242
 msgid "Re-size featured image to fit container"
 msgstr ""
 
@@ -3048,58 +2989,47 @@ msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:126
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:183
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:313
 msgid "Element container"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:127
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:184
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:314
 msgid "The container for all posts"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:128
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:185
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:315
 msgid "Individual post"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:129
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:186
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:316
 msgid "The container for each individual post"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:130
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:187
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:317
 msgid "Post part"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:131
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:188
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:318
 msgid "General post part selector"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:133
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:190
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:320
 msgid "Date posted part"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:135
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:192
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:322
 msgid "Author part"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:136
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:193
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:220
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:254
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:323
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:350
 #: elements/upfront-this-post/lib/this_post.php:667
 #: library/servers/class_upfront_editor_l10n_server.php:171
 #: library/servers/class_upfront_editor_l10n_server.php:245
@@ -3109,7 +3039,6 @@ msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:137
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:194
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:324
 msgid "Post categories list part"
 msgstr ""
 
@@ -3117,14 +3046,11 @@ msgstr ""
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:257
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:195
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:214
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:325
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:344
 msgid "Comment count"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:139
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:196
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:326
 msgid "Comments count part"
 msgstr ""
 
@@ -3134,60 +3060,49 @@ msgstr ""
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:263
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:197
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:217
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:327
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:347
 #: elements/upfront-tabs/lib/utabs.php:118
 msgid "Content"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:141
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:198
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:328
 msgid "Main content part"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:143
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:200
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:330
 msgid "Author gravatar part"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:144
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:201
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:331
 msgid "Read more"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:145
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:202
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:332
 msgid "Read more button part"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:147
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:204
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:334
 msgid "Post tags part"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:148
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:205
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:242
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:335
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:372
 #: elements/upfront-youtube/lib/uyoutube.php:142
 msgid "Thumbnail"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:149
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:206
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:336
 msgid "Featured image part"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:151
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:208
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:338
 msgid "Post title part"
 msgstr ""
 
@@ -3377,7 +3292,6 @@ msgstr ""
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:210
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:267
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:221
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:351
 #: library/servers/class_upfront_editor_l10n_server.php:580
 msgid "Meta"
 msgstr ""
@@ -3496,7 +3410,6 @@ msgstr ""
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:247
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:261
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:215
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:345
 #: library/servers/class_upfront_editor_l10n_server.php:178
 #: library/servers/class_upfront_editor_l10n_server.php:577
 #: library/servers/class_upfront_editor_l10n_server.php:622
@@ -3518,8 +3431,6 @@ msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:264
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:218
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:262
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:348
 msgid "Read More"
 msgstr ""
 
@@ -3533,7 +3444,6 @@ msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:275
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:224
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:354
 msgid "Edit HTML"
 msgstr ""
 
@@ -3547,57 +3457,47 @@ msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:278
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:225
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:355
 #: library/servers/class_upfront_editor_l10n_server.php:345
 msgid "Format"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:279
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:226
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:356
 msgid "max. categories"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:280
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:227
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:357
 msgid "max. tags"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:281
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:228
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:358
 msgid "Hide if no comments"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:282
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:229
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:359
 msgid "Limit words"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:283
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:230
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:280
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:360
 msgid "Re-size to fit container"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:286
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:233
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:363
 msgid "Insert meta field"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:287
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:234
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:364
 msgid "Hide hidden fields"
 msgstr ""
 
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:288
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:235
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:365
 msgid "Available meta fields"
 msgstr ""
 
@@ -3610,18 +3510,15 @@ msgid "Edit your part markup to display meta values."
 msgstr ""
 
 #: elements/upfront-post-data/lib/parts/class_upfront_post_data_partview_taxonomy.php:98
-#: elements/upfront-postslist/lib/class_upfront_posts_post_view.php:341
 msgid "This post has no tags assigned"
 msgstr ""
 
 #: elements/upfront-post-data/tpl/parts/post-data-author.php:2
-#: elements/upfront-postslist/tpl/parts/posts-author.php:2
 msgid "By <a href=\"{{url}}\" {{target}}>{{name}}</a>"
 msgstr ""
 
 #: elements/upfront-post-data/tpl/parts/post-data-comment_count.php:2
 #: elements/upfront-posts/tpl/parts/posts-comment_count.php:2
-#: elements/upfront-postslist/tpl/parts/posts-comment_count.php:2
 msgid "No comments"
 msgstr ""
 
@@ -3630,52 +3527,43 @@ msgid "Posted on <span class=\"date\">{{date}}</span>"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:145
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:207
 #: library/servers/class_upfront_editor_l10n_server.php:174
 #: library/servers/class_upfront_editor_l10n_server.php:506
 #: library/servers/class_upfront_editor_l10n_server.php:560
-#: library/servers/class_upfront_presets_server.php:632
+#: library/servers/class_upfront_presets_server.php:642
 msgid "Posts"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:147
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:209
 msgid "Please, select a taxonomy"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:148
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:210
 msgid "Posts settings"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:149
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:211
 msgid "Freshest from"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:150
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:212
 msgid "by Term"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:152
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:214
 msgid "Single post"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:153
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:215
 msgid "Post list"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:154
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:216
 #: library/servers/class_upfront_editor_l10n_server.php:302
 msgid "Continue"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:155
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:217
 #: elements/upfront-social-media/lib/upfront-social-media.php:232
 #: library/admin/class_upfront_admin_general.php:7
 #: library/servers/class_upfront_editor_l10n_server.php:250
@@ -3683,169 +3571,134 @@ msgid "General"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:156
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:218
 msgid "Query Settings"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:158
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:220
 msgid "What to display:"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:159
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:221
 msgid "What should the element display?"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:160
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:222
 msgid "How to display post(s):"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:161
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:223
 msgid "Custom Posts(s)"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:162
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:224
 msgid "Post(s) by Taxonomy"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:163
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:225
 msgid "Generic"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:164
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:226
 msgid "Post type"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:165
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:227
 msgid "No."
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:166
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:228
 msgid "Result Length"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:167
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:229
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:266
 msgid "Excerpt"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:168
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:230
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:267
 msgid "Full Post"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:169
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:231
 msgid "Limit to"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:170
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:234
 msgid "Pagination:"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:172
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:236
 msgid "Prev. / Next Page"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:173
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:237
 msgid "Numeric"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:176
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:240
 msgid "Select custom post"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:177
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:241
 msgid "Add a custom post"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:180
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:245
 msgid "Post Parts Settings"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:237
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:367
 msgid "Sticky posts"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:238
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:368
 msgid "Ignore sticky posts"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:239
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:369
 msgid "Prepend sticky posts"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:240
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:370
 msgid "Exclude sticky posts"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:241
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:371
 #: elements/upfront-youtube/lib/uyoutube.php:123
 msgid "Thumbnail Size"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:243
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:373
 #: elements/upfront-social-media/lib/upfront-social-media.php:238
 #: library/servers/class_upfront_editor_l10n_server.php:846
 msgid "Medium"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:244
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:374
 #: elements/upfront-social-media/lib/upfront-social-media.php:239
 msgid "Large"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:245
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:375
 msgid "Post Feature Image"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:246
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:376
 msgid "Custom <em>(existing not affected)</em>"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:247
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:377
 msgid "Custom Width in px"
 msgstr ""
 
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:248
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:378
 msgid "Custom Height in px"
 msgstr ""
 
 #: elements/upfront-posts/loader.php:135 elements/upfront-posts/loader.php:136
-#: elements/upfront-postslist/loader.php:142
-#: elements/upfront-postslist/loader.php:143
 msgid "Please, select one"
 msgstr ""
 
 #: elements/upfront-posts/loader.php:144
-#: elements/upfront-postslist/loader.php:151
 msgid "Any"
 msgstr ""
 
@@ -3854,114 +3707,13 @@ msgid "By <a href=\"{{url}}\">{{name}}</a>"
 msgstr ""
 
 #: elements/upfront-posts/tpl/parts/posts-date_posted.php:2
-#: elements/upfront-postslist/tpl/parts/posts-date_posted.php:2
 msgid "Posted on <span class=\"datetime\">{{datetime}}</span>"
 msgstr ""
 
 #: elements/upfront-posts/tpl/parts/posts-read_more.php:2
-#: elements/upfront-postslist/tpl/parts/posts-read_more.php:2
 msgid ""
 "<a href=\"{{permalink}}\">Read more <span "
 "class=\"screen-reader-text\">{{title}}</span></a>"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:232
-msgid "words"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:233
-msgid "Content Type"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:244
-msgid "Posts Element"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:246
-msgid "Edit markup"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:248
-msgid "You can only modify the 1st post. All other posts will follow same format"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:251
-msgid "Wrappers:"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:252
-msgid "Post Wrapper"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:253
-msgid "Post Parts:"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:258
-msgid "Excerpt / Content"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:259
-msgid "Feat. Img"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:265
-msgid "Hide if there are no comments"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:278
-#: library/servers/class_upfront_editor_l10n_server.php:655
-msgid "Height"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:279
-msgid "Custom"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:298
-msgid "Open in New Tab"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:299
-msgid "Round corners"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:300
-msgid "Display settings"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:302
-msgid "Block"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:304
-msgid "Separate with:"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:305
-#: library/servers/class_upfront_editor_l10n_server.php:521
-msgid "Padding"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:306
-#: library/servers/class_upfront_presets_server.php:641
-msgid "Margin"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:307
-msgid "Single category"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:308
-msgid "Single tag"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:310
-msgid "Load This Image Size"
-msgstr ""
-
-#: elements/upfront-postslist/lib/class_upfront_posts_data.php:380
-msgid "Edit Post Parts Layout"
 msgstr ""
 
 #: elements/upfront-search/lib/upfront_search.php:54
@@ -3969,7 +3721,7 @@ msgstr ""
 #: library/media/class_upfront_media_server.php:105
 #: library/models/class_upfront_entity_resolver.php:220
 #: library/servers/class_upfront_editor_l10n_server.php:561
-#: library/servers/class_upfront_presets_server.php:633
+#: library/servers/class_upfront_presets_server.php:643
 msgid "Search"
 msgstr ""
 
@@ -4019,7 +3771,7 @@ msgstr ""
 
 #: elements/upfront-slider/lib/upfront_slider.php:159
 #: library/servers/class_upfront_editor_l10n_server.php:564
-#: library/servers/class_upfront_presets_server.php:634
+#: library/servers/class_upfront_presets_server.php:644
 msgid "Slider"
 msgstr ""
 
@@ -4290,7 +4042,7 @@ msgstr ""
 
 #: elements/upfront-social-media/lib/upfront-social-media.php:185
 #: library/servers/class_upfront_editor_l10n_server.php:565
-#: library/servers/class_upfront_presets_server.php:635
+#: library/servers/class_upfront_presets_server.php:645
 msgid "Social"
 msgstr ""
 
@@ -4524,7 +4276,7 @@ msgstr ""
 #: elements/upfront-tabs/lib/utabs.php:114
 #: elements/upfront-tabs/lib/utabs.php:125
 #: library/servers/class_upfront_editor_l10n_server.php:566
-#: library/servers/class_upfront_presets_server.php:636
+#: library/servers/class_upfront_presets_server.php:646
 msgid "Tabs"
 msgstr ""
 
@@ -4613,7 +4365,7 @@ msgstr ""
 
 #: elements/upfront-text/lib/upfront_text.php:119
 #: library/servers/class_upfront_editor_l10n_server.php:571
-#: library/servers/class_upfront_presets_server.php:642
+#: library/servers/class_upfront_presets_server.php:652
 msgid "Text"
 msgstr ""
 
@@ -4700,7 +4452,7 @@ msgstr ""
 
 #: elements/upfront-this-page/lib/this_page.php:50
 #: library/servers/class_upfront_editor_l10n_server.php:567
-#: library/servers/class_upfront_presets_server.php:637
+#: library/servers/class_upfront_presets_server.php:647
 msgid "Page"
 msgstr ""
 
@@ -4782,7 +4534,7 @@ msgstr ""
 #: elements/upfront-widget/lib/class_upfront_widget_view.php:86
 #: elements/upfront-widget/lib/class_upfront_widget_view.php:89
 #: library/servers/class_upfront_editor_l10n_server.php:569
-#: library/servers/class_upfront_presets_server.php:639
+#: library/servers/class_upfront_presets_server.php:649
 msgid "Widget"
 msgstr ""
 
@@ -4835,7 +4587,7 @@ msgstr ""
 
 #: elements/upfront-youtube/lib/uyoutube.php:108
 #: library/servers/class_upfront_editor_l10n_server.php:570
-#: library/servers/class_upfront_presets_server.php:640
+#: library/servers/class_upfront_presets_server.php:650
 msgid "YouTube"
 msgstr ""
 
@@ -4961,7 +4713,7 @@ msgstr ""
 #: layouts/archive-home-full.php:61 layouts/index-full.php:190
 #: layouts/single-full.php:186
 #: library/servers/class_upfront_editor_l10n_server.php:558
-#: library/servers/class_upfront_presets_server.php:630
+#: library/servers/class_upfront_presets_server.php:640
 msgid "Navigation"
 msgstr ""
 
@@ -6278,7 +6030,7 @@ msgid "Ignore"
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:122
-#: library/servers/class_upfront_presets_server.php:589
+#: library/servers/class_upfront_presets_server.php:599
 msgid "Apply"
 msgstr ""
 
@@ -6479,7 +6231,7 @@ msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:187
 #: library/servers/class_upfront_editor_l10n_server.php:429
-#: library/servers/class_upfront_presets_server.php:588
+#: library/servers/class_upfront_presets_server.php:598
 msgid "Cancel"
 msgstr ""
 
@@ -6885,7 +6637,7 @@ msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:319
 #: library/servers/class_upfront_editor_l10n_server.php:473
-#: library/servers/class_upfront_presets_server.php:612
+#: library/servers/class_upfront_presets_server.php:622
 msgid "Text alignment"
 msgstr ""
 
@@ -7200,7 +6952,7 @@ msgid "Edit Element CSS"
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:416
-#: library/servers/class_upfront_presets_server.php:648
+#: library/servers/class_upfront_presets_server.php:658
 msgid "Custom CSS"
 msgstr ""
 
@@ -7387,7 +7139,7 @@ msgid ""
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:474
-#: library/servers/class_upfront_presets_server.php:607
+#: library/servers/class_upfront_presets_server.php:617
 msgid "Type Element:"
 msgstr ""
 
@@ -7499,6 +7251,10 @@ msgstr ""
 msgid "Bottom Padding"
 msgstr ""
 
+#: library/servers/class_upfront_editor_l10n_server.php:521
+msgid "Padding"
+msgstr ""
+
 #: library/servers/class_upfront_editor_l10n_server.php:522
 msgid "Customize Padding"
 msgstr ""
@@ -7604,7 +7360,7 @@ msgid "Choose variant"
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:552
-#: library/servers/class_upfront_presets_server.php:624
+#: library/servers/class_upfront_presets_server.php:634
 msgid "Contact Form"
 msgstr ""
 
@@ -7617,8 +7373,8 @@ msgid "Showing %s results for"
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:568
-#: library/servers/class_upfront_presets_server.php:638
-#: library/servers/class_upfront_presets_server.php:644
+#: library/servers/class_upfront_presets_server.php:648
+#: library/servers/class_upfront_presets_server.php:654
 msgid "Post"
 msgstr ""
 
@@ -7892,6 +7648,10 @@ msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:653
 msgid "Background settings have been updated"
+msgstr ""
+
+#: library/servers/class_upfront_editor_l10n_server.php:655
+msgid "Height"
 msgstr ""
 
 #: library/servers/class_upfront_editor_l10n_server.php:658
@@ -8547,130 +8307,134 @@ msgstr ""
 msgid "Please, select an area"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:582
+#: library/servers/class_upfront_presets_server.php:592
 msgid "Select Preset"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:583
+#: library/servers/class_upfront_presets_server.php:593
 msgid "Preset"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:584
+#: library/servers/class_upfront_presets_server.php:594
 msgid "Choose or Create Preset:"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:590
+#: library/servers/class_upfront_presets_server.php:600
 msgid "Preset name can not be empty."
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:591
+#: library/servers/class_upfront_presets_server.php:601
 msgid "Preset name can contain only numbers, letters and spaces."
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:592
+#: library/servers/class_upfront_presets_server.php:602
 msgid "Invalid preset name. Preset name should start with a letter."
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:594
+#: library/servers/class_upfront_presets_server.php:604
 msgid "Add Preset"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:608
+#: library/servers/class_upfront_presets_server.php:618
 msgid "Typeface:"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:609
+#: library/servers/class_upfront_presets_server.php:619
 msgid "Weight/Style:"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:610
+#: library/servers/class_upfront_presets_server.php:620
 msgid "Size:"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:611
+#: library/servers/class_upfront_presets_server.php:621
 msgid "Line Height: "
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:613
+#: library/servers/class_upfront_presets_server.php:623
 msgid "Round Corners"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:615
+#: library/servers/class_upfront_presets_server.php:625
 msgid "Animate State Changes"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:616
+#: library/servers/class_upfront_presets_server.php:626
 msgid "sec"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:617
+#: library/servers/class_upfront_presets_server.php:627
 msgid "ease"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:618
+#: library/servers/class_upfront_presets_server.php:628
 msgid "linear"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:619
+#: library/servers/class_upfront_presets_server.php:629
 msgid "ease-in"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:620
+#: library/servers/class_upfront_presets_server.php:630
 msgid "ease-out"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:621
+#: library/servers/class_upfront_presets_server.php:631
 msgid "ease-in-out"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:645
+#: library/servers/class_upfront_presets_server.php:651
+msgid "Margin"
+msgstr ""
+
+#: library/servers/class_upfront_presets_server.php:655
 msgid "Reset every"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:647
+#: library/servers/class_upfront_presets_server.php:657
 msgid "Edit Preset CSS"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:649
+#: library/servers/class_upfront_presets_server.php:659
 msgid "Save as Preset"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:650
+#: library/servers/class_upfront_presets_server.php:660
 msgid ""
 "Upfront 1.0 introduces presets, which allow you to save and re-use styling "
 "for any element across your website. Before you can edit this element, "
 "choose one of the following options:"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:651
+#: library/servers/class_upfront_presets_server.php:661
 msgid "Select existing preset (<strong>recommended</strong>):"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:652
+#: library/servers/class_upfront_presets_server.php:662
 msgid "Or save current style as a new preset:"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:653
+#: library/servers/class_upfront_presets_server.php:663
 msgid "Preset changed to %s"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:654
+#: library/servers/class_upfront_presets_server.php:664
 msgid "Preset %s already exist, use another name!"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:655
+#: library/servers/class_upfront_presets_server.php:665
 msgid "Preset %s created succesfully!"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:656
+#: library/servers/class_upfront_presets_server.php:666
 msgid "Preset %s was reset!"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:657
+#: library/servers/class_upfront_presets_server.php:667
 msgid "Editing Default Preset"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:658
+#: library/servers/class_upfront_presets_server.php:668
 msgid ""
 "<p>Please beware, this element is using <strong>Default Preset</strong>, "
 "Modifying Presets will affect every layout where that Preset is "
@@ -8678,7 +8442,7 @@ msgid ""
 "Preset.</p>"
 msgstr ""
 
-#: library/servers/class_upfront_presets_server.php:659
+#: library/servers/class_upfront_presets_server.php:669
 msgid "Edit Default Preset"
 msgstr ""
 
