@@ -346,6 +346,11 @@ DragDrop.prototype = {
 						wrap_me_in_row = _.find(row_wraps, function(row_wrap){ return me_wrap && me_wrap._id == row_wrap._id; })
 					;
 
+					if (!min_row_el || !max_row_el) {
+						Upfront.Util.log('Nothing to wrap');
+						return;
+					}
+
 					if ( wrap_me_in_row && that.current_row_wraps === false ) {
 						that.current_row_wraps = row_wraps;
 					}

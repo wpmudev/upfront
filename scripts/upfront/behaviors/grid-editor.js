@@ -328,6 +328,10 @@ var GridEditor = {
 
 
 	get_wrap_els: function( use_wrap ){
+		if (!use_wrap) {
+			Upfront.Util.log('No wraps provided');
+			return;
+		}
 		var ed = Upfront.Behaviors.GridEditor,
 			$els = use_wrap.$el.find(ed.el_selector_direct);
 		return _.map($els, function(el){
@@ -424,10 +428,10 @@ var GridEditor = {
 			find_model = function (modules) {
 				if ( !modules )
 					return false;
-				
+
 				if ( !modules.get_by_element_id && typeof modules.get_by_element_id !== 'function')
 					return false;
-				
+
 				var module_model = modules.get_by_element_id(element_id),
 					found_model;
 				if ( module_model )
@@ -447,10 +451,10 @@ var GridEditor = {
 			find_object = function (objects) {
 				if ( !objects )
 					return false;
-				
+
 				if ( !objects.get_by_element_id && typeof objects.get_by_element_id !== 'function')
 					return false;
-				
+
 				var object_model = objects.get_by_element_id(element_id),
 					found_object;
 				if ( object_model )
@@ -1981,9 +1985,9 @@ var GridEditor = {
 			line_col = 0,
 			line = 0
 		;
-		
+
 		if(typeof modules === "undefined" || !modules) return;
-		
+
 		modules.each(function(module, i){
 			var wrapper_id = module.get_wrapper_id(),
 				wrapper = wrappers.get_by_wrapper_id(wrapper_id),
