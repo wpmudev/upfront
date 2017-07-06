@@ -141,7 +141,6 @@ define([
 					UnewnavigationModel: {label: l10n.navigation, id: 'nav'},
 					ButtonModel: {label: l10n.button, id: 'button'},
 					PostsModel: {label: l10n.posts, id: 'posts'},
-					PostsListsModel: {label: l10n.posts, id: 'posts'},
 					UsearchModel: {label: l10n.search, id: 'search'},
 					USliderModel: {label: l10n.slider, id: 'slider'},
 					SocialMediaModel: {label: l10n.social, id: 'SocialMedia'},

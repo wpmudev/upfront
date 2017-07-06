@@ -106,8 +106,6 @@ var PostsView = Upfront.Views.ObjectView.extend({
 
 
 var PostsElement = Upfront.Views.Editor.Sidebar.Element.extend({
-	
-	draggable: false,
 
 	render: function () {
 		this.$el.addClass('upfront-icon-element upfront-icon-element-posts');

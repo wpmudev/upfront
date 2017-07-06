@@ -60,10 +60,6 @@ define([], function () {
 			if(typeof this.options.panel !== "undefined" && this.options.panel === 'tooltip') {
 				element = $(e.currentTarget).closest('.image-sub-control');
 			}
-
-			if(typeof this.options.panel !== "undefined" && this.options.panel === 'postslist') {
-				element = $(e.currentTarget).closest('.upfront-wrapper');
-			}
 			
 			if(typeof this.options.panel !== "undefined" && this.options.panel === 'redactor') {
 				element = $(e.currentTarget).closest('.redactor_air');
@@ -79,17 +75,7 @@ define([], function () {
 					top: elementPosition.top + 4,
 					left: elementPosition.left + element.outerWidth() + 5
 				}
-			} else if(typeof this.options.panel !== "undefined" && this.options.panel === 'postslist') {
-				// Post Editor Popup Inline Tooltips
-				element = $(e.currentTarget).closest('.upfront-wrapper');
-				elementPosition = element.offset();
-				tooltipPosition = {
-					top: elementPosition.top - 21,
-					left: elementPosition.left,
-					// Show in front of Post Popup.
-					zIndex: 100010059
-				}
-			}else if(typeof this.options.panel !== "undefined" && this.options.panel === 'postEditor') {
+			} else if(typeof this.options.panel !== "undefined" && this.options.panel === 'postEditor') {
 				// Post Editor Popup Inline Tooltips
 				element = $(e.currentTarget).closest('.upfront-editactions');
 				elementPosition = element.offset();

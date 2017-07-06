@@ -940,7 +940,6 @@ var Application = new (Backbone.Router.extend({
 				"unewnavigation",
 				"ubutton",
 				"uposts",
-				"upostslist",
 				"usearch",
 				"upfront_slider",
 				"upfront-social_media",

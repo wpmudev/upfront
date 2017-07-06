@@ -1906,9 +1906,7 @@ define([
 			skip_dummy_render: function() {
 				var view_class = this.model.get_property_value_by_name('view_class');
 				return view_class === 'UnewnavigationView' || view_class === 'PostsView' ||
-					view_class === 'PostDataPartView' || view_class === 'CodeView' ||
-					view_class === 'PostsListsView' || view_class === 'PostsListsEachView' ||
-					view_class === 'PostsListsPartView';
+					view_class === 'PostDataPartView' || view_class === 'CodeView';
 			},
 			is_dummy_rendered: false,
 			is_full_rendered: false,
@@ -2177,7 +2175,6 @@ define([
 					UnewnavigationModel: { id: 'nav'},
 					ButtonModel: { id: 'button'},
 					PostsModel: { id: 'posts'},
-					PostsListsModel: { id: 'postslists' },
 					UsearchModel: { id: 'search'},
 					USliderModel: { id: 'slider'},
 					SocialMediaModel: { id: 'social'},
@@ -2291,7 +2288,6 @@ define([
 						UnewnavigationModel: 'nav',
 						ButtonModel: 'button',
 						PostsModel: 'posts',
-						PostsListsModel: 'postslists',
 						USliderModel: 'slider',
 						UtabsModel: 'tabs',
 						UwidgetModel: 'widget'
