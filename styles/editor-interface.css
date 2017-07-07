@@ -8302,11 +8302,11 @@ span.upfront-settings-item-title:after {
   display: block;
   position: absolute;
   z-index: 1;
-  top: 11px;
-  right: 14px;
+  top: 10px;
+  right: 8px;
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
-  border-top: 4px solid #6a8db4;
+  border-top: 4px solid #909090;
   border-bottom: 0 none; }
 
 .flexbox-support .menu-item-header {
