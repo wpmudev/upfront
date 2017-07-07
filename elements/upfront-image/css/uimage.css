@@ -68,6 +68,7 @@
 	border: none;
 	margin: 25px;
 	border-radius: 3px;
+	box-shadow: 0 1px 5px 0 rgba(0,0,0,0.10);
 }
 
 #upfront-image-overlay a.open-media-gallery {
