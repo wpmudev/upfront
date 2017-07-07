@@ -553,6 +553,10 @@ a.editaction.trash {
 	padding-left: 0;
 }
 
+.upfront-popup-posts #upfront-list .upfront-list_item .upfront-list_item-component.upfront-date.post-status-future {
+	width: 146px;
+}
+
 .upfront-list_item-component.upfront-date:not(.upfront-header):before {
 	content: '';
 	position: absolute;
