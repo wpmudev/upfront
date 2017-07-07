@@ -1445,7 +1445,7 @@ a.upfront-region-name-edit-trigger:hover {
 #region-settings-sidebar .upfront-region-bg-setting-footer {
 	color: #1f2f3f;
 	font-size: 11px;
-	margin: 10px 16px 0;
+	margin: 12px 16px 0;
 	padding: 15px 0;
 	border-top: 1px solid #dcdcdc;
 }
@@ -1700,9 +1700,16 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 	width: 130px;
 }
 
+#region-settings-sidebar .upfront-settings-item-content {
+	background: #e7e7e7;
+	margin: 0 7px;
+	position: relative;
+	padding: 0 0 1px;
+}
+
 #region-settings-sidebar .uf-region-bg-settings-panel-content .uf-bgsettings-imageitem {
 	position: static;
-	margin-top: 12px;
+	margin-top: 17px;
 	
 	&:after {
 		content: '';
@@ -1727,16 +1734,24 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 	.uf-bgsettings-use-image-size {
 		margin-right: 0px;
 		padding-left: 10px;
+		background: #f2f2f2;
+	}
+
+	.uf-bgsettings-use-image-size .upfront_toggle_field {
+		margin-bottom: 2px;
 	}
 	
 	.upfront-field-wrap-number.uf-bgsettings-image-size {
-		position: static;
 		padding-left: 15px;
 		background: #e7e7e7;
 		padding: 11px;
 		border-radius: 3px;
 		margin: 0 5px;
 		color: #888888;
+		width: 47%;
+		position: absolute;
+		top: 25px;
+		right: 0;
 		
 		label.upfront-field-label {
 			&:after {
@@ -1747,7 +1762,7 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 	
 	.uf-bgsettings-image-color {
 		position: static;
-		margin-top: -52px;
+		margin-top: -57px;
 		margin-right: 16px;
 		
 		.sp-replacer.sp-light {

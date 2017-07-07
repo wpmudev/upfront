@@ -50,27 +50,33 @@ define([
 							} else if ( value === 'fixed' ){
 								_.each(tile_fields, function(key){ fields[key].$el.hide(); });
 								_.each(parallax_fields, function(key){ fields[key].$el.hide(); });
-								_.each(fixed_fields, function(key){
-										if ( fields[key].property_name == 'background_size_percent' ) {
-											var use_bg_size_value = me.model.get_breakpoint_property_value('use_background_size_percent', true) || false;
-											if ( use_bg_size_value !== false ) fields[key].$el.show(); 
-										} else {
-											fields[key].$el.show(); 
-										}
-								});
+								_.each(fixed_fields, function(key){ fields[key].$el.show(); });
+								var use_bg_size_value = me.model.get_breakpoint_property_value('use_background_size_percent', true) || false;
+								var parent = this.$el.parents('.upfront-bg-setting-tab');
+
+								if (use_bg_size_value !== false) {
+									parent.find('.uf-bgsettings-image-pos-y').not('.uf-bgsettings-origin-pos-y').show();
+									parent.find('.uf-bgsettings-image-pos-x').not('.uf-bgsettings-origin-pos-x').show();
+									parent.find('.uf-bgsettings-image-pos-y-num').not('.uf-bgsettings-origin-pos-y-num').show();
+									parent.find('.uf-bgsettings-image-pos-x-num').not('.uf-bgsettings-origin-pos-x-num').show();
+									parent.find('.uf-bgsettings-image-size').show();
+								} else {
+									parent.find('.uf-bgsettings-image-pos-y').hide();
+									parent.find('.uf-bgsettings-image-pos-x').hide();
+									parent.find('.uf-bgsettings-image-pos-y-num').hide();
+									parent.find('.uf-bgsettings-image-pos-x-num').hide();
+									parent.find('.uf-bgsettings-image-size').hide();
+								}
+
 								this.$el.children('.upfront-field-select').css({width: '100px', minWidth: '100px'});
+
 							} else if (value === 'parallax') {
 								_.each(tile_fields, function(key){ fields[key].$el.hide(); });
 								_.each(fixed_fields, function(key){ fields[key].$el.hide(); });
-								_.each(parallax_fields, function(key){
-									if ( fields[key].property_name == 'background_size_percent' ) {
-										var use_bg_size_value = me.model.get_breakpoint_property_value('use_background_size_percent', true) || false;
-										if ( use_bg_size_value !== false ) fields[key].$el.show(); 
-									} else {
-										fields[key].$el.show(); 
-									}
-								});
+								_.each(parallax_fields, function(key){ fields[key].$el.show(); });
+								
 								this.$el.children('.upfront-field-select').css('minWidth', '100%');
+
 							} else {
 								_.each(tile_fields, function(key){ fields[key].$el.hide(); });
 								_.each(fixed_fields, function(key){ fields[key].$el.hide(); });
@@ -82,6 +88,23 @@ define([
 						},
 						rendered: function (){
 							this.$el.addClass('uf-bgsettings-image-style');
+
+							var use_bg_size_value = me.model.get_breakpoint_property_value('use_background_size_percent', true) || false;
+							var parent = this.$el.parent().parent();
+							if (use_bg_size_value !== false) {
+								parent.find('.uf-bgsettings-origin-pos-y').show();
+								parent.find('.uf-bgsettings-origin-pos-x').show();
+								parent.find('.uf-bgsettings-origin-pos-y-num').show();
+								parent.find('.uf-bgsettings-origin-pos-x-num').show();
+								parent.find('.uf-bgsettings-image-size').show();
+							} else {
+								parent.find('.uf-bgsettings-origin-pos-y').hide();
+								parent.find('.uf-bgsettings-origin-pos-x').hide();
+								parent.find('.uf-bgsettings-origin-pos-y-num').hide();
+								parent.find('.uf-bgsettings-origin-pos-x-num').hide();
+								parent.find('.uf-bgsettings-image-size').hide();
+							}
+
 						}
 					}),
 					bg_tile: new Upfront.Views.Editor.Field.Toggle({
@@ -122,6 +145,61 @@ define([
 							this.$el.addClass('uf-bgsettings-image-color');
 						}
 					}),
+					use_bg_size: new Upfront.Views.Editor.Field.Toggle({
+						model: this.model,
+						property: 'use_background_size_percent',
+						label: '',
+						multiple: false,
+						use_breakpoint_property: true,
+						values: [
+							{ label: l10n.adjust_size_position, value: 'yes' }
+						],
+						change: function() {
+							var value = this.get_value(),
+								parallax = me._bg_style === 'parallax',
+								fixed_or_parallax_prefix = parallax ? '.uf-bgsettings-origin-pos-' : '.uf-bgsettings-image-pos-',
+								$bg_image_size = me.$el.find('.uf-bgsettings-image-size'),
+								$image_pos_y = me.$el.parents('.upfront-bg-setting-tab').find(fixed_or_parallax_prefix + 'y'),
+								$image_pos_x = me.$el.parents('.upfront-bg-setting-tab').find(fixed_or_parallax_prefix + 'x'),
+								$image_pos_y_num = me.$el.parents('.upfront-bg-setting-tab').find(fixed_or_parallax_prefix + 'y-num'),
+								$image_pos_x_num = me.$el.parents('.upfront-bg-setting-tab').find(fixed_or_parallax_prefix + 'x-num'),
+								// If fixed, make sure to only show fixed not parallax fields.
+								$image_pos_y = parallax ? $image_pos_y : $image_pos_y.not('.uf-bgsettings-origin-pos-y'),
+								$image_pos_x = parallax ? $image_pos_x : $image_pos_x.not('.uf-bgsettings-origin-pos-x'),
+								$image_pos_y_num = parallax ? $image_pos_y_num : $image_pos_y_num.not('.uf-bgsettings-origin-pos-y-num'),
+								$image_pos_x_num = parallax ? $image_pos_x_num : $image_pos_x_num.not('.uf-bgsettings-origin-pos-x-num'),
+								use_bg_size = value || false
+							;
+							this.model.set_breakpoint_property(this.property_name, value);
+							// update size percent to 100
+							$bg_image_size.find('input[name="background_size_percent"]').val(100);
+							me.model.set_breakpoint_property('background_size_percent', 100);
+							if ( use_bg_size === false ) {
+								$bg_image_size.hide();
+								// update image to auto
+								me._bg_size = 'auto';
+								$image_pos_y.hide();
+								$image_pos_x.hide();
+								$image_pos_y_num.hide();
+								$image_pos_x_num.hide();
+
+								me.update_image();
+							} else {
+								me._bg_size = 100;
+								me.update_image();
+								$bg_image_size.show();
+								$image_pos_y.show();
+								$image_pos_x.show();
+								$image_pos_y_num.show();
+								$image_pos_x_num.show();
+
+							}
+						},
+						rendered: function (){
+							this.$el.addClass('uf-bgsettings-use-image-size');
+						}
+					}),
+
 					bg_position_y: new Upfront.Views.Editor.Field.Slider(_.extend({
 						model: this.model,
 						label: l10n.image_position,
@@ -208,7 +286,7 @@ define([
 						},
 						
 						rendered: function (){
-							this.$el.addClass('uf-bgsettings-image-pos-y');
+							this.$el.addClass('uf-bgsettings-image-pos-y uf-bgsettings-origin-pos-y');
 						}
 					}, {
 							default_value: 50,
@@ -230,7 +308,7 @@ define([
 							me.update_image();
 						},
 						rendered: function (){
-							this.$el.addClass('uf-bgsettings-image-pos-x');
+							this.$el.addClass('uf-bgsettings-image-pos-x uf-bgsettings-origin-pos-x');
 						}
 					}, {
 							default_value: 50,
@@ -282,45 +360,12 @@ define([
 							max: 150,
 							step: 1
 						})),
-					use_bg_size: new Upfront.Views.Editor.Field.Toggle({
-						model: this.model,
-						property: 'use_background_size_percent',
-						label: '',
-						multiple: false,
-						use_breakpoint_property: true,
-						values: [
-							{ label: l10n.resize_image, value: 'yes' }
-						],
-						change: function() {
-							var value = this.get_value(),
-								$bg_image_size = me.$el.find('.uf-bgsettings-image-size'),
-								use_bg_size = value || false
-							;
-							this.model.set_breakpoint_property(this.property_name, value);
-							// update size percent to 100
-							$bg_image_size.find('input[name="background_size_percent"]').val(100);
-							me.model.set_breakpoint_property('background_size_percent', 100);
-							if ( use_bg_size === false ) {
-								$bg_image_size.hide();
-								// update image to auto
-								me._bg_size = 'auto';
-								me.update_image();
-							} else {
-								me._bg_size = 100;
-								me.update_image();
-								$bg_image_size.show();
-							}
-						},
-						rendered: function (){
-							this.$el.addClass('uf-bgsettings-use-image-size');
-						}
-					}),
 					bg_size: new Upfront.Views.Editor.Field.Number(_.extend({
 						model: this.model,
 						property: 'background_size_percent',
-						label: '',
+						label: l10n.image_size,
 						use_breakpoint_property: true,
-						suffix: l10n.resize_image_percent,
+						suffix: l10n.percent,
 						change: function () {
 							var value = this.get_value();
 							me._bg_size = value;
