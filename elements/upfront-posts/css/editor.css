@@ -146,7 +146,7 @@
 	margin-top: 1em;
 }
 .upfront-settings-item-content .post_parts.ui-sortable li {
-	border: 1px solid #9bbfde;
+	border: 1px solid rgb(160, 160, 160);
 	margin: 2px;
 	border-radius: 4px;
 	cursor: move;
@@ -156,19 +156,19 @@
 	display: block;
 	position: absolute;
 	content: "\22EE";
-	background: #9bbfde;
-	width: 14px;
-	height: 22px;
-	line-height: 22px;
-	font-size: 22px;
+	background: rgb(160, 160, 160);
+	width: 13px;
+	height: 20px;
+	line-height: 18px;
+	font-size: 18px;
 	color: #f1f9ff;
 	padding: 0 0 0 2px;
 }
 .upfront-settings-item-content .post_parts.ui-sortable li:hover {
-    border-color: #5984ab;
+    border-color: rgb(130, 130, 130);
 }
 .upfront-settings-item-content .post_parts.ui-sortable li:hover:before {
-    background: #5984ab;
+    background: rgb(130, 130, 130);
 }
 .upfront-settings-item-content .post_parts.ui-sortable li .name_action_wrapper {
 	clear: both; 
@@ -181,12 +181,13 @@
 	display: block;
 	float: left;
 	margin-left: 8px;
+	line-height: 19px;
 }
 
 .upfront-settings-item-content .post_parts.ui-sortable li .options { 
-	min-height: 24px;
-	padding: 1px;
-	background: rgb(218, 231, 244);
+	min-height: 30px;
+	padding: 10px;
+	background: rgb(231, 231, 231);
 }
 .upfront-settings-item-content .post_parts.ui-sortable li .options .option {
 	width: 65%; 
@@ -195,7 +196,7 @@
 	display: block;
 	position: absolute;
 	right: 12px;
-	bottom: 6px;
+	bottom: 10px;
 	background: #00a167;
 	border-radius: 4px;
 	padding: 0 3px;
@@ -224,6 +225,7 @@
 .upfront-settings-item-content .post_parts.ui-sortable li .part_action a {
 	margin-right: 3px;
 	display: none;
+	color: rgb(0, 0, 0);
 }
 .upfront-settings-item-content .post_parts.ui-sortable li:hover .part_action a {
 	display: inline;
@@ -324,16 +326,16 @@
 
 .upfront-settings-item-content .post_parts.ui-sortable li .part_action:after {
 	display: inline-block;
-	background-image: url(../../../img/uf-ui-sprite.png);
+	background-image: url(../../../img/uf-core-el-sprite_new.png);
 	background-repeat: no-repeat;
-	background-position: -43px -112px;
+	background-position: -320px -251px;
 	top: 1px;
 	position: absolute;
 	width: 18px;
 	height: 18px;
-	border-radius: 7px;
 	content: "";
 }
 .upfront-settings-item-content .post_parts.ui-sortable li.active .part_action:after {
-	background-position: -43px -145px;
+	transform: rotate(90deg);
+	background-position: -321px -251px;
 }
