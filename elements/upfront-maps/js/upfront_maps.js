@@ -64,7 +64,7 @@ define([
 			);
 		},
 		get_field_html: function () {
-			return '<button type="button upfront_map-refresh"></button>';
+			return '<button type="button upfront_map-refresh"><img src="' + Upfront.data.upfront_maps.root_url + 'img/refresh.png" /></button>';
 		},
 		propagate_activation_request: function (e) {
 			e.preventDefault();

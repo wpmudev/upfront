@@ -10,11 +10,17 @@
 	width: 80%;
 }
 .upfront_map-fields-simple_location .upfront-field-wrap-refresh button {
-	width: 24px;
-	height: 30px;
-	border: none;
-	background: none;
-	padding: 0;
+	background: rgb(251, 251, 251) !important;
+	border: 1px solid rgb(169, 169, 169);
+	border-left: none;
+	height: 22px;
+	display: inline-block;
+	width: 30px;
+}
+.upfront_map-fields-simple_location .upfront-field-wrap-refresh button img {
+	opacity: 0.7;
+	width: 15px;
+	margin-top: 2px;
 }
 #settings .upfront-settings-item-maps_element-location .upfront-settings-item {
 	border: none;
@@ -235,7 +241,7 @@
 .uf_el_map_initial-overlay button {
 	position: absolute;
 	top: 4px;
-	right: 0;
+	right: 25px;
 	background-color: transparent;
 	padding: 10px;
 	color: rgba(218,224,230,1);
@@ -334,12 +340,6 @@
 
 .draggable-checkbox {
 	margin-top: 15px;
-}
-
-.upfront_map-fields-simple_location .upfront-field-wrap-refresh button img {
-	opacity: 0.7;
-	width: 15px;
-	margin-top: 3px;
 }
 
 .upfront_map-fields-simple_location .upfront-field-wrap-text {
