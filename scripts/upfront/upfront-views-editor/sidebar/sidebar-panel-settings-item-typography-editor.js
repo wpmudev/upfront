@@ -229,7 +229,7 @@
                                 }
                             }
                         }),
-                        size: new Fields.Number_Unit({
+                        size: new Fields.Number({
                             label: l10n.size,
                             min: 0,
                             max: 100,
@@ -243,7 +243,7 @@
                                 }
                             }
                         }),
-                        line_height: new Fields.Number_Unit({
+                        line_height: new Fields.Number({
                             label: l10n.line_height,
                             min: 0,
                             max: 10,
