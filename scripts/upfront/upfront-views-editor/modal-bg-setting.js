@@ -101,12 +101,15 @@
 								var former_class = $content.find('.upfront-region-type-icon')[0];
 								var image_url = this.model.get_breakpoint_property_value('background_image');
 								var color = this.model.get_breakpoint_property_value('background_color');
-								if ((value === 'image' || value === 'featured') && image_url) {
+								if ((value === 'image' || value === 'featured') && image_url && former_class) {
 									former_class = former_class.classList[1];
 									$content.find('.upfront-region-type-icon').addClass('upfront-region-type-icon-image-url').removeClass(former_class).css({'backgroundImage': 'url(' + image_url + ')'});
-								} else if (value === 'color' && color) {
+								} else if (value === 'color' && color && former_class) {
 									former_class = former_class.classList[1];
-									$content.find('.upfront-region-type-icon').addClass('upfront-region-type-icon-color-swatch').removeClass(former_class).css({'backgroundImage': 'none', 'backgroundColor': color});
+									$content.find('.upfront-region-type-icon').addClass('upfront-region-type-icon-color-swatch').removeClass(former_class).css({
+										'backgroundImage': 'none',
+										'backgroundColor': color
+									});
 								} else if (former_class) {
 									former_class = former_class.classList[1];
 									$content.find('.upfront-region-type-icon').css({'backgroundImage': '', 'backgroundPosition': '', backgroundColor: ''});
