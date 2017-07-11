@@ -40,7 +40,7 @@ define([
 							options: {
 								title: l10n.panel.content_area_label,
 								multiple: false,
-								single: false,
+								single: true,
 								abccolors: [
 									{
 										name: 'caption-text',

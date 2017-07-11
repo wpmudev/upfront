@@ -277,11 +277,10 @@ define([
 			var appearance = new LoginSettings_Field_DisplayAppearance({model: this.model}),
 				behavior = new LoginSettings_Field_DisplayBehavior({model: this.model}),
 				// trigger = new LoginSettings_Field_DisplayTrigger({model: this.model}),
-				me = this,
-				preview_check = this.preview_field()
+				me = this
 			;
 
-			this.preview_check_field = new preview_check({
+			this.preview_check_field = new Upfront.Views.Editor.Field.Toggle({
 				model: this.model,
 				className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes float-right',
 				property: 'logged_in_preview',
@@ -302,11 +301,11 @@ define([
 				new Upfront.Views.Editor.Settings.Item({
 					model: this.model,
 					title: l10n.logged_in_preview,
-					className: 'upfront-settings-item relative',
+					className: 'upfront-settings-item general_settings_item relative',
 					fields: [
 						this.preview_check_field,
-						new Upfront.Views.Editor.Field.Radios({
-							className: "upfront_login-logout_style upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios clear-after",
+						new Upfront.Views.Editor.Field.Radios_Inline({
+							className: "upfront_login-logout_style upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios-inline upfront-field-padding-top clear-after",
 							model: this.model,
 							property: "logout_style",
 							layout: 'horizontal-inline',
@@ -341,39 +340,6 @@ define([
 		},
 		get_title: function () {
 			return l10n.display;
-		},
-		preview_field: function () {
-			var previewField = Upfront.Views.Editor.Field.Checkboxes.extend({
-				get_value_html: function (value, index) {
-					var id = this.get_field_id() + '-' + index;
-					var classes = "upfront-field-multiple";
-					var attr = {
-						'type': this.type,
-						'id': id,
-						'name': this.get_field_name(),
-						'value': value.value,
-						'class': 'upfront_toggle_checkbox upfront-field-' + this.type
-					};
-					var saved_value = this.get_saved_value();
-					var icon_class = this.options.icon_class ? this.options.icon_class : null;
-					if ( this.options.layout ) classes += ' upfront-field-multiple-'+this.options.layout;
-					if ( value.disabled ) {
-						attr.disabled = 'disabled';
-						classes += ' upfront-field-multiple-disabled';
-					}
-					if ( this.multiple && _.contains(saved_value, value.value) ) {
-						attr.checked = 'checked';
-					} else if ( ! this.multiple && saved_value == value.value ) {
-						attr.checked = 'checked';
-					}
-					if (value.checked) attr.checked = 'checked';
-					if ( attr.checked ) {
-						classes += ' upfront-field-multiple-selected';
-					}
-					return '<div class="' + classes + ' upfront_toggle"><span class="upfront-field-label-text">' + value.label + '</span><input ' + this.get_field_attr_html(attr) + ' />' + '<label for="' + id + '" class="upfront_toggle_label"><span class="upfront_toggle_switch"></span></label></div>';
-				}
-			});
-			return previewField;
 		}
 	});
 
@@ -517,6 +483,7 @@ define([
 	});
 
 	var LoginSettings_Field_DisplayAppearance = Login_SettingsItem_ComplexItem.extend({
+		className: 'general_settings_item',
 		initialize: function () {
 			var me = this;
 			var styles = [
@@ -524,10 +491,11 @@ define([
 				{label: l10n.dropdown, value: "dropdown"}
 			];
 			this.fields = _([
-				new Upfront.Views.Editor.Field.Radios({
+				new Upfront.Views.Editor.Field.Radios_Inline({
 					model: this.model,
 					property: "style",
 					layout: 'horizontal-inline',
+					className: 'upfront-field-padding-top',
 					values: styles,
 					change: function() { me.register_change(me); }
 				})

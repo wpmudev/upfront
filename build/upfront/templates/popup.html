@@ -1,43 +1,105 @@
 <div>
 	<!--
-        Wrap everything in a div to convert this file's content in a jquery element
-        so it is possible to use $.find.
-    -->
+		Wrap everything in a div to convert this file's content in a jquery element
+		so it is possible to use $.find.
+	-->
+	<script type="text/template" id="upfront-filter-tpl">
+		<div id="upfront-list-meta" class="upfront-list-filter-container">
+			<div id="upfront-list-filter-dropdowns-container"></div>
+			<div class="search_container">
+				<div id="upfront-search_container">
+					<input type="text" id="upfront-list-search_input" value="{{ query ? query : '' }}" required placeholder="{{placeholder}}"/>
+					<button id="upfront-list-reset_button"></button>
+				</div>
+				<button id="upfront-search_action" class="search">{{Upfront.Settings.l10n.global.views.search}}</button>
+			</div>
+
+		</div>
+		<div class="upfront-search-results-header">
+			<span>{{
+				Upfront.Settings.l10n.global.views.showing_results_for.replace(/%s/, '<b id="upfront-search-results-count">' + (this.collection.pagination.totalElements ? this.collection.pagination.totalElements: '0') + '</b>')
+				}} <b id="upfront-search-results-query">{{ query ? query : ''}}</b>
+			</span>
+			<button>{{Upfront.Settings.l10n.global.views.clear}}</button>
+		</div>
+	</script>
+
 	<script type="text/template" id="upfront-post-list-tpl">
 		<div id="upfront-list">
-			<div id="upfront-list-meta" class="upfront-list_item clearfix">
-				<div class="upfront-list_item-component upfront-date upfront-header {{ orderby == 'post_date' ? 'active ordered-' + order : '' }}" data-sortby="post_date">{{Upfront.Settings.l10n.global.content.date}} <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
-				<div class="upfront-list_item-component upfront-title upfront-header {{ orderby == 'post_title' ? 'active ordered-' + order : '' }}"  data-sortby="post_title">Post Title <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
-				<div class="upfront-list_item-component upfront-author upfront-header {{ orderby == 'post_author' ? 'active ordered-' + order : '' }}" data-sortby="post_author">Author <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
-				<div class="upfront-list_item-component upfront-comments-count upfront-header {{ orderby == 'post_comments' ? 'active ordered-' + order : '' }}" data-sortby="post_comments"><i class="icon-post-comments"></i> <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
-			</div>
 			<div class="upfront-list-items upfront-scroll-panel">
 				{[ if(!posts.length){ ]}
 				<p class="upfront-no-results">{{Upfront.Settings.l10n.global.content.no_posts}}</p>
 				{[ } else { ]}
 				{[ _.each(posts, function (post, idx){ ]}
 				<div class="upfront-list_item-post upfront-list_item clearfix status-{{ post.get("post_status") }}" data-post_id="{{ post.get("ID") }}">
-				<div class="upfront-list_item-component upfront-date post-status-{{ post.get("post_status") }}" title="{[ if(post.get("post_status") == "publish") { ]}Published{[ } else if(post.get("post_status") == "future") { ]}Scheduled{[ } else { ]}Draft{[ } ]}">{[ if(post.get("post_status") == "future") { ]}sched. for{[ } ]}
-				{{ Upfront.Util.format_date(post.get("post_date")) }}</div>
-			<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ post.get("post_title") }}</div>
-			<div class="upfront-list_item-component upfront-author">{[ if(post.author.get('data')){ ]} {{ post.author.get('data').display_name }} {[ } ]}</div>
-			<div class="upfront-list_item-component upfront-comments-count">{{ post.get("comment_count") }}</div>
-			<div class="upfront-list_item-component upfront-editactions">
-				{[ if (canEdit || (canEditOwn && parseInt(post.get('post_author'), 10) === Upfront.data.currentUser.id)) { ]}
-				<a href="/edit/post/{{ post.get("ID") }}" class="editaction edit">
-					{{Upfront.Settings.l10n.global.content.edit}}
-				</a>{[ } ]}<a href="{{ post.get("permalink") }}" class="editaction view">
-					{{Upfront.Settings.l10n.global.content.view}}
-				</a>{[ if (canEdit || (canEditOwn && parseInt(post.get('post_author'), 10) === Upfront.data.currentUser.id)) { ]}<a href="#" class="editaction trash">
-					{{Upfront.Settings.l10n.global.content.trash}}
-				</a>
-				{[ } ]}
+					<div class="upfront-list_item-component upfront-avatar upfront-post-thumbnail"><img src="//www.gravatar.com/avatar/{[ if(post.author.get('data')){]}{{ post.author.get('data').gravatar }}{[}]}?s=32" /></div>
+					<div class="upfront-list_item-component upfront-title-and-author">
+						<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ post.get("post_title") }}</div>
+						<div class="upfront-list_item-component upfront-author">{[ if(post.author.get('data')){ ]} {{ post.author.get('data').display_name }} {[ } ]}</div>
+					</div>
+					<div class="upfront-list_item-component upfront-date post-status-{{ post.get("post_status") }}" title="{[ if(post.get("post_status") == "publish") { ]}Published{[ } else if(post.get("post_status") == "future") { ]}Scheduled{[ } else { ]}Draft{[ } ]}">{[ if(post.get("post_status") == "future") { ]}sched. for{[ } ]}
+						{{ Upfront.Util.format_date(post.get("post_date")) }}</div>
+					
+					<div class="upfront-list_item-component upfront-editactions">
+						{[ if (canEdit || (canEditOwn && parseInt(post.get('post_author'), 10) === Upfront.data.currentUser.id)) { ]}
+						<a href="/edit/post/{{ post.get("ID") }}" class="editaction edit">
+							<i class="upfront-icon upfront-icon-region-labelEdit"></i>
+						</a>{[ } ]}{[ if (canEdit || (canEditOwn && parseInt(post.get('post_author'), 10) === Upfront.data.currentUser.id)) { ]}<a href="#" class="editaction trash">
+							<i class="upfront-icon upfront-icon-region-remove"></i>
+						</a>
+						{[ } ]}
+					</div>
+					<div class="upfront-list_item-component upfront-delete-confirm">
+						<div>
+							<span>{{Upfront.Settings.l10n.global.views.post_delete_nag + ' <b>' + post.get("post_title")}}?</b></span>
+							<button class="upfront-posts-delete-button">{{Upfront.Settings.l10n.global.views.yes}}</button>
+							<button class="upfront-posts-delete-cancel-button">{{Upfront.Settings.l10n.global.views.no}}</button>
+						</div>
+					</div>
+				</div>
+				{[ }); } ]}
 			</div>
 		</div>
-		{[ }); } ]}
-		</div>
+	</script>
+
+	<script type="text/template" id="upfront-cpt-list-tpl">
+		<div id="upfront-list">
+			<div class="upfront-list-items upfront-scroll-panel">
+				{[ if(!posts.length){ ]}
+				<p class="upfront-no-results">{{Upfront.Settings.l10n.global.content.no_posts}}</p>
+				{[ } else { ]}
+				{[ _.each(posts, function (post, idx){ ]}
+				<div class="upfront-list_item-post upfront-list_item clearfix status-{{ post.get("post_status") }}" data-post_id="{{ post.get("ID") }}">
+					<div class="upfront-list_item-component upfront-post-thumbnail">{[ if(post.get('thumbnail')){]}{{'<img src="' + post.get('thumbnail')[0] + '" />' }}{[}]}</div>
+					<div class="upfront-list_item-component upfront-title-and-author">
+						<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ post.get("post_title") }}</div>
+						<div class="upfront-list_item-component upfront-author">{[ if(post.get('post_type')){ ]} {{postTypes[post.get('post_type')]}} {[ } ]}</div>
+					</div>
+					<div class="upfront-list_item-component upfront-date post-status-{{ post.get("post_status") }}" title="{[ if(post.get("post_status") == "publish") { ]}Published{[ } else if(post.get("post_status") == "future") { ]}Scheduled{[ } else { ]}Draft{[ } ]}">{[ if(post.get("post_status") == "future") { ]}sched. for{[ } ]}
+						{{ Upfront.Util.format_date(post.get("post_date")) }}</div>
+					
+					<div class="upfront-list_item-component upfront-editactions">
+						{[ if (canEdit || (canEditOwn && parseInt(post.get('post_author'), 10) === Upfront.data.currentUser.id)) { ]}
+						<a href="/edit/post/{{ post.get("ID") }}" class="editaction edit">
+							<i class="upfront-icon upfront-icon-region-labelEdit"></i>
+						</a>{[ } ]}{[ if (canEdit || (canEditOwn && parseInt(post.get('post_author'), 10) === Upfront.data.currentUser.id)) { ]}<a href="#" class="editaction trash">
+							<i class="upfront-icon upfront-icon-region-remove"></i>
+						</a>
+						{[ } ]}
+					</div>
+					<div class="upfront-list_item-component upfront-delete-confirm">
+						<div>
+							<span>{{Upfront.Settings.l10n.global.views.post_delete_nag + ' <b>' + post.get("post_title")}}?</b></span>
+							<button class="upfront-posts-delete-button">{{Upfront.Settings.l10n.global.views.yes}}</button>
+							<button class="upfront-posts-delete-cancel-button">{{Upfront.Settings.l10n.global.views.no}}</button>
+						</div>
+					</div>
+				</div>
+				{[ }); } ]}
+			</div>
 		</div>
 	</script>
+
 
 	<script type="text/template" type="text/template" id="upfront-post-single-tpl">
 		<div id="upfront-list-page" style="display:none">
@@ -100,38 +162,43 @@
 
 
 	<script type="text/template" id="upfront-page-list-tpl">
-		<div id="upfront-list">
-			<div id="upfront-list-meta" class="upfront-list_item clearfix">
-				<div class="upfront-list_item-component upfront-date upfront-header {{ orderby == 'post_date' ? 'active ordered-' + order : '' }}" data-sortby="post_date">{{Upfront.Settings.l10n.global.content.date}} <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
-				<div class="upfront-list_item-component upfront-title upfront-header {{ orderby == 'post_title' ? 'active ordered-' + order : '' }}"  data-sortby="post_title">Page Title <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
-				<div class="upfront-list_item-component upfront-author upfront-header {{ orderby == 'post_author' ? 'active ordered-' + order : '' }}" data-sortby="post_author">Author <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
-				<div class="upfront-list_item-component upfront-comments-count upfront-header {{ orderby == 'post_comments' ? 'active ordered-' + order : '' }}" data-sortby="post_comments"><i class="icon-post-comments"></i> <i class="icon-caret-down">&#9660;</i><i class="icon-caret-up">&#9650;</i></div>
-			</div>
+		<div id="upfront-list" class="upfront-page-list">
 			<div class="upfront-list-items upfront-scroll-panel">
 				{[ if(!pages.length){ ]}
 				<p class="upfront-no-results">{{Upfront.Settings.l10n.global.content.no_posts}}</p>
 				{[ } else { ]}
+				<div class="upfront-list_item-post upfront-list_item clearfix" data-post_id="home">
+					<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ Upfront.Settings.l10n.global.content.home_link }}</div>
+					<div class="upfront-list_item-component upfront-editactions">
+						<a href="{{ Upfront.mainData.siteUrl }}?editmode=true" class="editaction edit">
+							<i class="upfront-icon upfront-icon-region-labelEdit"></i>
+						</a>
+					</div>
+				</div>
 				{[ _.each(pages, function (post){ ]}
-				<div class="upfront-list_item-post upfront-list_item clearfix status-{{ post.get("post_status") }}" data-post_id="{{ post.get("ID") }}">
-				<div class="upfront-list_item-component upfront-date post-status-{{ post.get("post_status") }}" title="{[ if(post.get("post_status") == "publish") { ]}Published{[ } else if(post.get("post_status") == "future") { ]}Scheduled{[ } else { ]}Draft{[ } ]}">{[ if(post.get("post_status") == "future") { ]}sched. for{[ } ]}
-				{{ Upfront.Util.format_date(post.get("post_date")) }}</div>
-			<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ post.get("post_title") }}</div>
-			<div class="upfront-list_item-component upfront-author">{[ if(post.author.get('data')){ ]} {{ post.author.get('data').display_name }} {[ } ]}</div>
-			<div class="upfront-list_item-component upfront-comments-count">{{ post.get("comment_count") }}</div>
-			<div class="upfront-list_item-component upfront-editactions">
-				{[ if (canEdit || (canEditOwn && parseInt(post.get('post_author'), 10) === Upfront.data.currentUser.id)) { ]}
-				<a href="/edit/page/{{ post.get("ID") }}" class="editaction edit">
-					{{Upfront.Settings.l10n.global.content.edit}}
-				</a>{[ } ]}<a href="{{ post.get("permalink") }}" class="editaction view">
-					{{Upfront.Settings.l10n.global.content.view}}
-				</a>{[ if (canEdit || (canEditOwn && parseInt(post.get('post_author'), 10) === Upfront.data.currentUser.id)) { ]}<a href="#" class="editaction trash">
-					{{Upfront.Settings.l10n.global.content.trash}}
-				</a>
-				{[ } ]}
+				<div class="upfront-list_item-post upfront-list_item clearfix status-{{ post.get("post_status") }}" data-post_id="{{ post.get("ID") }}" style="margin-left: {{32 + (parseInt(post.get("depth"), 10) * 22)}}px; width: calc(100% - {{64 + (parseInt(post.get("depth"), 10) * 22)}}px)">
+					<div class="upfront-list_item-component upfront-date post-status-{{ post.get("post_status") }}" title="{[ if(post.get("post_status") == "publish") { ]}Published{[ } else if(post.get("post_status") == "future") { ]}Scheduled{[ } else { ]}Draft{[ } ]}">{[ if(post.get("post_status") == "future") { ]}sched. for{[ } ]}
+					{{ Upfront.Util.format_date(post.get("post_date")) }}</div>
+					<div class="upfront-list_item-component upfront-title upfront-list_item-main">{{ post.get("post_title") }}</div>
+					<div class="upfront-list_item-component upfront-editactions">
+						{[ if (canEdit || (canEditOwn && parseInt(post.get('post_author'), 10) === Upfront.data.currentUser.id)) { ]}
+						<a href="/edit/page/{{ post.get("ID") }}" class="editaction edit">
+							<i class="upfront-icon upfront-icon-region-labelEdit"></i>
+						</a>{[ } ]}{[ if (canEdit || (canEditOwn && parseInt(post.get('post_author'), 10) === Upfront.data.currentUser.id)) { ]}<a href="#" class="editaction trash">
+							<i class="upfront-icon upfront-icon-region-remove"></i>
+						</a>
+						{[ } ]}
+					</div>
+					<div class="upfront-list_item-component upfront-delete-confirm">
+						<div>
+							<span>{{Upfront.Settings.l10n.global.views.post_delete_nag + ' <b>' + post.get("post_title")}}?</b></span>
+							<button class="upfront-posts-delete-button">{{Upfront.Settings.l10n.global.views.yes}}</button>
+							<button class="upfront-posts-delete-cancel-button">{{Upfront.Settings.l10n.global.views.no}}</button>
+						</div>
+					</div>
+				</div>
+				{[ }); } ]}
 			</div>
-		</div>
-		{[ }); } ]}
-		</div>
 		</div>
 	</script>
 
@@ -249,7 +316,7 @@
 
 			<a class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-next"></a>
 
-			<small>{{totalElements}} items</small>
+			<small>{{totalElements}} <span data-posttype="{{this.options.postType.toLowerCase()}}">{{this.options.postType}}</span></small>
 		</div>
 	</script>
 

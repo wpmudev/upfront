@@ -61,8 +61,7 @@ define([
 				
 				// Attempt cleaning up scripts
 				// widget_data = widget_data.replace(/\<script(.|\s)*?\<\/script\>/gm, ''); // Not right now though
-
-				return widget_data;
+                return widget_data;
 		},
 
 		on_render: function () {
@@ -85,7 +84,7 @@ define([
 				this._get_widget_markup(widget);
 				//this.get_widget_settings(widget);
 			}
-
+            this._handle_hustle_widget();
 		},
 		_get_widget_markup: function (widget) {
 			var me = this;
@@ -108,21 +107,22 @@ define([
 						me.loading.done(function(){
 							me.render();
 						});
-					}
-					else {
+					} else {
 						me.render();
 					}
 					Upfront.Events.trigger('entity:object:refresh', me);
-
 				})
 				.error(function (ret) {
 					Upfront.Util.log("Error loading widget");
 
 			});
-		}
-
-
-
+		},
+        _handle_hustle_widget: function() {
+            // Hustle compatibility
+            if ( typeof Hustle !== 'undefined' && typeof Hustle.Events !== 'undefined' ) {
+                Hustle.Events.trigger('upfront:editor:widget:render', this);
+            }
+        }
 	});
 
 	var UwidgetElement = Upfront.Views.Editor.Sidebar.Element.extend({

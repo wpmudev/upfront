@@ -50,6 +50,7 @@ define([
 							toggle: false,
 							options: {
 								title: l10n.colors_label,
+								single: true,
 								abccolors: [
 									{
 										name: 'static-header-bg-color',
@@ -104,6 +105,7 @@ define([
 								fields: {
 									use: 'hover-use-colors'
 								},
+								single: true,
 								abccolors: [
 									{
 										name: 'hover-header-bg-color',
@@ -176,6 +178,7 @@ define([
 								fields: {
 									use: 'active-use-color'
 								},
+								single: true,
 								abccolors: [
 									{
 										name: 'active-header-bg-color',

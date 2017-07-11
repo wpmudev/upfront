@@ -210,7 +210,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 
 		$this->_out($response, true);
 	}
-	
+
 	public function get_closeset_breakpoints($width, $breakpoints) {
 		$prev = $next = false;
 		$prev_width = $next_width = 0;
@@ -231,7 +231,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 			'next' => $next_width
 		);
 	}
-	
+
 	/**
 	 * Serve breakpoint widths array.
 	 */
@@ -243,20 +243,20 @@ class Upfront_ElementStyles extends Upfront_Server {
 			$min_width = $max_width = 0;
 			$width = $point->get_width();
 			$closest = $this->get_closeset_breakpoints($width, $breakpoints);
-			
+
 			if ( $closest['prev'] ){
 				$min_width = $width;
 			}
 			if ( $closest['next'] ){
 				$max_width = $closest['next'] - 1;
 			}
-			
+
 			$breakpoints_array[$point->get_id()] = array(
 				'min_width' => $min_width,
 				'max_width' => $max_width
 			);
 		}
-		
+
 		$js_return .= "jQuery(function($){\n";
 		$js_return .= "window.get_breakpoint_ie8 = function(width) {\n";
 		foreach($breakpoints_array as $id => $breakpoint) {
@@ -270,7 +270,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 		}
 		$js_return .= "}\n";
 		$js_return .= "});\n";
-		
+
 		return $js_return;
 	}
 
@@ -282,9 +282,9 @@ class Upfront_ElementStyles extends Upfront_Server {
 		$key->set_hash(stripslashes($_REQUEST['key']));
 
 		$cache = $this->_cache->get($key);
-		
+
 		$breakpoints = $this->serve_breakpoints_array();
-		
+
 
 		if(!empty($breakpoints)) {
 			$cache = $breakpoints . $cache;
@@ -317,10 +317,7 @@ class Upfront_ElementStyles extends Upfront_Server {
 	 */
 	private function _get_enqueueing_url ($type, $key) {
 		$url = false;
-		$endpoint = self::TYPE_SCRIPT === $type
-			? 'scripts'
-			: 'styles'
-		;
+		$endpoint = self::get_endpoint_by_type($type);
 		if (Upfront_Behavior::debug()->is_active(Upfront_Debug::DEPENDENCIES)) {
 			$url = admin_url("admin-ajax.php?action=upfront-element-{$endpoint}&key={$key}");
 		} else {
@@ -330,7 +327,15 @@ class Upfront_ElementStyles extends Upfront_Server {
 				$key
 			)));
 		}
-		return $url;
+
+		return apply_filters('upfront-dependencies-enqueueing_url', $url, $type, $key);
+	}
+
+	public static function get_endpoint_by_type ($type) {
+		return self::TYPE_SCRIPT === $type
+			? 'scripts'
+			: 'styles'
+		;
 	}
 
 }

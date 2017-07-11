@@ -20,31 +20,62 @@ define([
 				fields = {
 					transition: new Upfront.Views.Editor.Field.Select({
 						model: this.model,
-						label: l10n.slider_transition + ':',
+						label: l10n.slider_transition,
 						property: 'background_slider_transition',
 						use_breakpoint_property: true,
 						default_value: 'crossfade',
 						icon_class: 'upfront-region-field-icon',
 						values: [
-							{ label: l10n.slide_down, value: 'slide-down', icon: 'bg-slider-slide-down' },
-							{ label: l10n.slide_up, value: 'slide-up', icon: 'bg-slider-slide-up' },
-							{ label: l10n.slide_left, value: 'slide-left', icon: 'bg-slider-slide-left' },
-							{ label: l10n.slide_right, value: 'slide-right', icon: 'bg-slider-slide-right' },
-							{ label: l10n.crossfade, value: 'crossfade', icon: 'bg-slider-crossfade' }
+							{ label: l10n.slide_down, value: 'slide-down' },
+							{ label: l10n.slide_up, value: 'slide-up' },
+							{ label: l10n.slide_left, value: 'slide-left' },
+							{ label: l10n.slide_right, value: 'slide-right' },
+							{ label: l10n.crossfade, value: 'crossfade' }
 						],
 						change: set_value,
 						rendered: function (){
 							this.$el.addClass('uf-bgsettings-slider-transition');
 						}
 					}),
-					rotate: new Upfront.Views.Editor.Field.Checkboxes({
+					control: new Upfront.Views.Editor.Field.Select({
+						model: this.model,
+						property: 'background_slider_control',
+						use_breakpoint_property: true,
+						default_value: 'always',
+						label: l10n.show_ctrl,
+						values: [
+							{ label: l10n.always, value: 'always' },
+							{ label: l10n.on_hover, value: 'hover' }
+						],
+						change: set_value,
+						rendered: function (){
+							this.$el.addClass('uf-bgsettings-slider-control');
+						}
+					}),
+					control_style: new Upfront.Views.Editor.Field.Select({
+						model: this.model,
+						property: 'background_slider_control_style',
+						use_breakpoint_property: true,
+						default_value: 'both',
+						label: l10n.controls_style,
+						values: [
+							{ label: Upfront.Settings.l10n.slider_element.dots, value: 'dots' },
+							{ label: Upfront.Settings.l10n.slider_element.arrows, value: 'arrows' },
+							{ label: Upfront.Settings.l10n.slider_element.both, value: 'both' }
+						],
+						change: set_value,
+						rendered: function (){
+							this.$el.addClass('uf-bgsettings-slider-control-style');
+						}
+					}),
+					rotate: new Upfront.Views.Editor.Field.Toggle({
 						model: this.model,
 						property: 'background_slider_rotate',
 						use_breakpoint_property: true,
 						default_value: true,
 						layout: 'horizontal-inline',
 						multiple: false,
-						values: [ { label: l10n.autorotate_each + " ", value: true } ],
+						values: [ { label: l10n.autorotate_each, value: true } ],
 						change: function () {
 							var value = this.get_value();
 							this.property.set({value: value ? true : false});
@@ -61,44 +92,13 @@ define([
 						min: 1,
 						max: 60,
 						step: 1,
-						suffix: 'sec',
+						suffix: l10n.seconds,
 						change: set_value,
 						rendered: function (){
 							this.$el.addClass('uf-bgsettings-slider-time');
 						}
-					}),
-					control: new Upfront.Views.Editor.Field.Select({
-						model: this.model,
-						property: 'background_slider_control',
-						use_breakpoint_property: true,
-						default_value: 'always',
-						label: l10n.show_ctrl + ':',
-						values: [
-							{ label: l10n.always, value: 'always' },
-							{ label: l10n.on_hover, value: 'hover' }
-						],
-						change: set_value,
-						rendered: function (){
-							this.$el.addClass('uf-bgsettings-slider-control');
-						}
-					}),
-					control_style: new Upfront.Views.Editor.Field.Select({
-						model: this.model,
-						property: 'background_slider_control_style',
-						use_breakpoint_property: true,
-						default_value: 'both',
-						label: l10n.controls_style + ':',
-						values: [
-							{ label: Upfront.Settings.l10n.slider_element.dots, value: 'dots' },
-							{ label: Upfront.Settings.l10n.slider_element.arrows, value: 'arrows' },
-							{ label: Upfront.Settings.l10n.slider_element.both, value: 'both' }
-						],
-						change: set_value,
-						rendered: function (){
-							this.$el.addClass('uf-bgsettings-slider-control-style');
-						}
 					})
-				};
+			};
 			
 			this.$el.addClass('uf-bgsettings-item uf-bgsettings-slideritem');
 			
@@ -107,7 +107,7 @@ define([
 			// Also add the slides item to the panel settings
 			this.slides_item = new SliderSlidesItem({
 				model: this.model,
-				title: l10n.slides_order + ":"
+				title: l10n.slides_order
 			});
 			if ( !_.isUndefined(options.slides_item_el) ){
 				this.slides_item.render();
@@ -206,7 +206,7 @@ define([
 		update_slider_slides: function () {
 			var me = this,
 				slide_images = me.model.get_breakpoint_property_value('background_slider_images', true),
-				$add = $('<div class="upfront-bg-slider-add-image upfront-icon upfront-icon-region-add-slide"></div>'),
+				$add = $('<div class="upfront-bg-slider-add-image upfront-icon upfront-icon-add-slide"></div>'),
 				$wrap = this.$el.find('.upfront-settings-item-content');
 			$wrap.html('');
 			
@@ -228,7 +228,7 @@ define([
 								backgroundSize: '100% auto'
 							});
 						}
-						$image.append('<span href="#" class="upfront-bg-slider-delete-image">&times;</span>');
+						$image.append('<span href="#" class="upfront-bg-slider-delete-image"></span>');
 						$wrap.append($image);
 					});
 					if ( $wrap.hasClass('ui-sortable') )

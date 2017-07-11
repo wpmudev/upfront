@@ -9,14 +9,14 @@
 
         return Command.extend({
             enabled: true,
-            className: 'exit-responsive',
+            className: 'exit-responsive sidebar-commands-small-button',
             render: function () {
                 this.$el.html("<span title='"+ l10n.exit_responsive  +"'>" + l10n.exit_responsive + "</span>");
             },
             on_click: function () {
                 $('li.desktop-breakpoint-activate').trigger('click');
                 Upfront.Events.trigger('upfront:exit:responsive');
-                Upfront.Application.start(Upfront.Application.mode.last);
+                Upfront.Application.start_previous();
             }
         });
 

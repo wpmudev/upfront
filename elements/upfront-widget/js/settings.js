@@ -20,6 +20,7 @@ define([
 	 * Widget Specific Settings contain the logic to load widget settings for the current selected widget type.
 	 */
 	var UwidgetSpecific_Settings = Upfront.Views.Editor.Settings.Item.extend({
+		className: 'general_settings_item',
 
 		get_title: function(){
 			for(var i in Upfront.data.uwidget.widgets) {
@@ -76,6 +77,7 @@ define([
 						model: this.model,
 						property: specific_fields[key]['name'],
 						label: specific_fields[key]['label'],
+						label_style: 'inline',
 						values: _.map(specific_fields[key]['options'], function(option, key){ return { label: option, value: key }; }),
 						change: this.clear_cache,
 						default_value: specific_fields[key]['value']
@@ -87,6 +89,7 @@ define([
 						model: this.model,
 						property: specific_fields[key]['name'],
 						label: specific_fields[key]['label'],
+						label_style: 'inline',
 						value: specific_fields[key]['value'],
 						change: this.clear_cache
 					});
@@ -96,15 +99,17 @@ define([
 						model: this.model,
 						property: specific_fields[key]['name'],
 						label: specific_fields[key]['label'],
+						label_style: 'inline',
 						value: specific_fields[key]['value'],
 						change: this.clear_cache
 					});
 				}
 				else if(specific_fields[key]['type'] == 'checkbox') {
-					this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Checkboxes({
+					this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Toggle({
 						model: this.model,
 						property: specific_fields[key]['name'],
 						label: '',
+						label_style: 'inline',
 						values: [{ label: specific_fields[key]['label'], value: specific_fields[key]['value'] }],
 						change: this.clear_cache
 					});
@@ -113,6 +118,7 @@ define([
 					this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Radios({
 						model: this.model,
 						property: specific_fields[key]['name'],
+						label_style: 'inline',
 						label: '',
 						values: [{ label: specific_fields[key]['label'], value: specific_fields[key]['value'] }],
 						change: this.clear_cache
@@ -188,6 +194,7 @@ define([
 			var static_settings = new Upfront.Views.Editor.Settings.Item({
 				model: this.model,
 				title: l10n.widget_select,
+				className: 'general_settings_item',
 				fields: [
 					new Upfront.Views.Editor.Field.Select({
 						model: this.model,

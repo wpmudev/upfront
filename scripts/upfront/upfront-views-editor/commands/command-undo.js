@@ -8,7 +8,7 @@
     ], function ( Command ) {
 
         return Command.extend({
-            "className": "command-undo",
+            "className": "command-undo sidebar-commands-small-button icon-button",
             initialize: function () {
                 //Upfront.Events.on("entity:activated", this.activate, this);
                 //Upfront.Events.on("entity:deactivated", this.deactivate, this);
@@ -29,10 +29,10 @@
                 else this.deactivate();
             },
             activate: function () {
-                this.$el.css("opacity", 1);
+                this.$el.addClass("disabled");
             },
             deactivate: function () {
-                this.$el.css("opacity", 0.5);
+                this.$el.removeClass("disabled");
             },
             on_click: function () {
                 var me = this,

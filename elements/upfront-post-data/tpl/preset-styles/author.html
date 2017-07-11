@@ -15,7 +15,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-author-font-size'])) { ?>
-		font-size: <?php echo $properties['static-author-font-size'] ?>px;
+		font-size: <?php echo $properties['static-author-font-size'] ?><?php if(!empty($properties['static-author-font-size-unit'])) { ?><?php echo $properties['static-author-font-size-unit'] ?><?php } else { ?>px<?php } ?>;
 	<?php } ?>
 
 	<?php if (!empty($properties['static-author-font-color'])) { ?>
@@ -23,7 +23,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-author-line-height'])) { ?>
-		line-height: <?php echo $properties['static-author-line-height'] ?>;
+		line-height: <?php echo $properties['static-author-line-height'] ?><?php if(!empty($properties['static-author-line-height-unit'])) { ?><?php echo $properties['static-author-line-height-unit'] ?><?php } ?>;
 	<?php } ?>
 
 }
@@ -37,7 +37,7 @@
 	<?php if (!empty($properties['static-gravatar-use-border'])) { ?>
 
 		<?php if (!empty($properties['static-gravatar-border-width'])) { ?>
-			border-width: <?php echo $properties['static-gravatar-border-width'] ?>px;
+			border-width: <?php echo $properties['static-gravatar-border-width'] ?><?php if(!empty($properties['static-gravatar-border-width-unit'])) { ?><?php echo $properties['static-gravatar-border-width-unit'] ?><?php } else { ?>px<?php } ?>;
 		<?php } ?>
 
 		<?php if (!empty($properties['static-gravatar-border-type'])) { ?>
@@ -79,7 +79,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-author_email-font-size'])) { ?>
-		font-size: <?php echo $properties['static-author_email-font-size'] ?>px;
+		font-size: <?php echo $properties['static-author_email-font-size'] ?><?php if(!empty($properties['static-author_email-font-size-unit'])) { ?><?php echo $properties['static-author_email-font-size-unit'] ?><?php } else { ?>px<?php } ?>;
 	<?php } ?>
 
 	<?php if (!empty($properties['static-author_email-font-color'])) { ?>
@@ -87,7 +87,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-author_email-line-height'])) { ?>
-		line-height: <?php echo $properties['static-author_email-line-height'] ?>;
+		line-height: <?php echo $properties['static-author_email-line-height'] ?><?php if(!empty($properties['static-author_email-line-height-unit'])) { ?><?php echo $properties['static-author_email-line-height-unit'] ?><?php } ?>;
 	<?php } ?>
 
 }
@@ -112,7 +112,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-author_url-font-size'])) { ?>
-		font-size: <?php echo $properties['static-author_url-font-size'] ?>px;
+		font-size: <?php echo $properties['static-author_url-font-size'] ?><?php if(!empty($properties['static-author_url-font-size-unit'])) { ?><?php echo $properties['static-author_url-font-size-unit'] ?><?php } else { ?>px<?php } ?>;
 	<?php } ?>
 
 	<?php if (!empty($properties['static-author_url-font-color'])) { ?>
@@ -120,7 +120,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-author_url-line-height'])) { ?>
-		line-height: <?php echo $properties['static-author_url-line-height'] ?>;
+		line-height: <?php echo $properties['static-author_url-line-height'] ?><?php if(!empty($properties['static-author_url-line-height-unit'])) { ?><?php echo $properties['static-author_url-line-height-unit'] ?><?php } ?>;
 	<?php } ?>
 
 }
@@ -145,7 +145,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-author_bio-font-size'])) { ?>
-		font-size: <?php echo $properties['static-author_bio-font-size'] ?>px;
+		font-size: <?php echo $properties['static-author_bio-font-size'] ?><?php if(!empty($properties['static-author_bio-font-size-unit'])) { ?><?php echo $properties['static-author_bio-font-size-unit'] ?><?php } else { ?>px<?php } ?>;
 	<?php } ?>
 
 	<?php if (!empty($properties['static-author_bio-font-color'])) { ?>
@@ -153,7 +153,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-author_bio-line-height'])) { ?>
-		line-height: <?php echo $properties['static-author_bio-line-height'] ?>;
+		line-height: <?php echo $properties['static-author_bio-line-height'] ?><?php if(!empty($properties['static-author_bio-line-height-unit'])) { ?><?php echo $properties['static-author_bio-line-height-unit'] ?><?php } ?>;
 	<?php } ?>
 
 }

@@ -176,7 +176,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			apply_filters('upfront-settings-grid_info', $grid_info)
 		);
 
-		$theme_info = get_option('upfront_' . get_stylesheet() . '_responsive_settings');
+		$theme_info = Upfront_Cache_Utils::get_option('upfront_' . get_stylesheet() . '_responsive_settings');
 		$theme_info = apply_filters('upfront_get_responsive_settings', $theme_info);
 		if (is_array($theme_info)) {
 			$theme_info = json_encode($theme_info);
@@ -188,7 +188,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			$theme_info = json_encode(array('breakpoints' => $defaults));
 		}
 
-		$theme_fonts = get_option('upfront_' . get_stylesheet() . '_theme_fonts');
+		$theme_fonts = Upfront_Cache_Utils::get_option('upfront_' . get_stylesheet() . '_theme_fonts');
 		$theme_fonts = apply_filters(
 			'upfront_get_theme_fonts',
 			$theme_fonts,
@@ -198,7 +198,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		);
 		if (empty($theme_fonts)) $theme_fonts = json_encode(array());
 
-		$icon_fonts = get_option('upfront_' . get_stylesheet() . '_icon_fonts');
+		$icon_fonts = Upfront_Cache_Utils::get_option('upfront_' . get_stylesheet() . '_icon_fonts');
 		$icon_fonts = apply_filters(
 			'upfront_get_icon_fonts',
 			$icon_fonts,
@@ -211,11 +211,11 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$additional_fonts = $child_instance ? $child_instance->getAdditionalFonts() : json_encode(array());
 
 		$current_user = wp_get_current_user();
-		$user_done_font_intro = in_array($current_user->user_login, get_option('upfront_users_done_font_intro', array())) ?
+		$user_done_font_intro = in_array($current_user->user_login, Upfront_Cache_Utils::get_option('upfront_users_done_font_intro', array())) ?
 			'true' : 'false';
 
 
-		$theme_colors = get_option('upfront_' . get_stylesheet() . '_theme_colors');
+		$theme_colors = Upfront_Cache_Utils::get_option('upfront_' . get_stylesheet() . '_theme_colors');
 		$theme_colors = apply_filters(
 			'upfront_get_theme_colors',
 			$theme_colors,
@@ -226,7 +226,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 
 		if (empty($theme_colors)) $theme_colors = json_encode(array());
 
-		$post_image_variants = get_option('upfront_' . get_stylesheet() . '_post_image_variants');
+		$post_image_variants = Upfront_Cache_Utils::get_option('upfront_' . get_stylesheet() . '_post_image_variants');
 		$post_image_variants = apply_filters(
 			'upfront_get_post_image_variants',
 			$post_image_variants,
@@ -405,6 +405,8 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			apply_filters('upfront-plugins_layouts', $plugins_layouts)
 		);
 
+		$fe_cache_level = preg_replace('/[^a-z]/', '', get_option('upfront-response_cache-level', ''));
+
 		$main = <<<EOMainJs
 // Set up the global namespace
 var Upfront = window.Upfront || {};
@@ -422,6 +424,8 @@ Upfront.mainData = {
 	applicationModes: {$application_modes},
 	ALLOW_REVISIONS: {$allow_revisions},
 	readOnly: {$read_only},
+
+	response_cache_level: '{$fe_cache_level}',
 
 	PERMS: {$permissions},
 

@@ -121,7 +121,30 @@ define([
 
 		onPresetUpdate: function() {
 			if (!Upfront.Application.user_can("MODIFY_PRESET")) return false;
-			this.trigger('upfront:presets:update', this.model.toJSON());
+
+			// Check if we need re-render
+			var requireRender = this.checkRenderRequired();
+			this.trigger('upfront:presets:update', this.model.toJSON(), requireRender);
+		},
+
+		checkRenderRequired: function() {
+			var changed = _.pairs(this.model.changedAttributes())[0],
+				renderRequired = []
+			;
+
+			// Changed attribute empty, fall back
+			if(typeof changed[0] === "undefined") return;
+
+			// Get fields requiring re-render
+			if(typeof this.panel !== "undefined" && typeof this.panel.renderRequiredFields !== "undefined") {
+				renderRequired = this.panel.renderRequiredFields;
+			}
+
+			if(_.contains(renderRequired, changed[0])) {
+				return true;
+			} else {
+				return false;
+			}
 		},
 
 		deletePreset: function() {

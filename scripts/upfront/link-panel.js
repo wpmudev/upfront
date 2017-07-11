@@ -359,11 +359,11 @@ define([
 				linkUrl = linkModel.get('url');
 
 			if(typeof linkTitle !== "undefined") {
-				linkModel.set('display_title', linkTitle.length > 25 ? linkTitle.substr(0, 25) + '...' : linkTitle);
+				linkModel.set('display_title', linkTitle.length > 25 ? linkTitle.substr(0, 25) + '...' : linkTitle, {silent: true});
 			}
 
 			if(typeof linkUrl !== "undefined") {
-				linkModel.set('display_url', linkUrl.length > 25 ? linkUrl.substr(0, 25) + '...' : linkUrl);
+				linkModel.set('display_url', linkUrl.length > 25 ? linkUrl.substr(0, 25) + '...' : linkUrl, {silent: true});
 			}
 
 			var tplData = {

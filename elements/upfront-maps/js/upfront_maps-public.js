@@ -27,7 +27,7 @@ function init_map ($el) {
 			scaleControl: raw.controls.indexOf("scale") >= 0 || DEFAULTS.controls.scale,
 			streetViewControl: raw.controls.indexOf("street_view") >= 0 || DEFAULTS.controls.street_view,
 			overviewMapControl: raw.controls.indexOf("overview_map") >= 0 || DEFAULTS.controls.overview_map,
-			style_overlay: (raw.use_custom_map_code ? JSON.parse(raw.map_styles) || false : false),
+			style_overlay: (raw.use_custom_map_code && typeof raw.map_styles !== "undefined" ? JSON.parse(raw.map_styles) || false : false),
 			draggable: !!raw.draggable,
 			scrollwheel: !!raw.scrollwheel,
 			hide_markers: !!raw.hide_markers
@@ -36,6 +36,7 @@ function init_map ($el) {
 		height = $el.closest(".upfront-output-module").height(),
 		map = false
 	;
+
 	$el.height(height);
 	map = new google.maps.Map($el.get(0), {
 		center: new google.maps.LatLng(props.center[0], props.center[1]),

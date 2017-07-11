@@ -8,7 +8,7 @@
     ], function ( Command ) {
 
         return Command.extend({
-            className: "command-trash upfront-icon upfront-icon-trash",
+            className: "command-trash sidebar-commands-button light upfront-icon upfront-icon-trash",
             render: function () {
                 this.listenTo(Upfront.Events, 'click:edit:navigate', this.toggle);
                 this.$el.html(l10n.trash);

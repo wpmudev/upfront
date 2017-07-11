@@ -19,7 +19,6 @@ define([
 					max: 100,
 					step: 1
 				},
-				toggle_bg_size = this.toggle_bg_size_field(),
 				tile_fields = ['bg_tile'],
 				fixed_fields = ['bg_color', 'bg_position_x', 'bg_position_y', 'bg_position_x_num', 'bg_position_y_num', 'use_bg_size', 'bg_size'],
 				parallax_fields = ['origin_position_x', 'origin_position_y', 'origin_position_x_num', 'origin_position_y_num', 'use_bg_size', 'bg_size'],
@@ -47,6 +46,7 @@ define([
 								_.each(tile_fields, function(key){ fields[key].$el.show(); });
 								_.each(fixed_fields, function(key){ fields[key].$el.hide(); });
 								_.each(parallax_fields, function(key){ fields[key].$el.hide(); });
+								this.$el.children('.upfront-field-select').css('minWidth', '100%');
 							} else if ( value === 'fixed' ){
 								_.each(tile_fields, function(key){ fields[key].$el.hide(); });
 								_.each(parallax_fields, function(key){ fields[key].$el.hide(); });
@@ -58,6 +58,7 @@ define([
 											fields[key].$el.show(); 
 										}
 								});
+								this.$el.children('.upfront-field-select').css({width: '100px', minWidth: '100px'});
 							} else if (value === 'parallax') {
 								_.each(tile_fields, function(key){ fields[key].$el.hide(); });
 								_.each(fixed_fields, function(key){ fields[key].$el.hide(); });
@@ -69,10 +70,12 @@ define([
 										fields[key].$el.show(); 
 									}
 								});
+								this.$el.children('.upfront-field-select').css('minWidth', '100%');
 							} else {
 								_.each(tile_fields, function(key){ fields[key].$el.hide(); });
 								_.each(fixed_fields, function(key){ fields[key].$el.hide(); });
 								_.each(parallax_fields, function(key){ fields[key].$el.hide(); });
+								this.$el.children('.upfront-field-select').css('minWidth', '100%');
 							}
 							me._bg_style = value;
 							me.update_image();
@@ -81,7 +84,7 @@ define([
 							this.$el.addClass('uf-bgsettings-image-style');
 						}
 					}),
-					bg_tile: new Upfront.Views.Editor.Field.Checkboxes({
+					bg_tile: new Upfront.Views.Editor.Field.Toggle({
 						model: this.model,
 						layout: 'horizontal-inline',
 						default_value: ['y', 'x'],
@@ -203,6 +206,7 @@ define([
 							this.model.set_breakpoint_property(this.property_name, value);
 							me.update_image();
 						},
+						
 						rendered: function (){
 							this.$el.addClass('uf-bgsettings-image-pos-y');
 						}
@@ -278,7 +282,7 @@ define([
 							max: 150,
 							step: 1
 						})),
-					use_bg_size: new toggle_bg_size({
+					use_bg_size: new Upfront.Views.Editor.Field.Toggle({
 						model: this.model,
 						property: 'use_background_size_percent',
 						label: '',
@@ -389,6 +393,7 @@ define([
 							else {
 								this.$el.addClass('uf-bgsettings-image-default-hide');
 							}
+							this.$el.children('upfront-field-select-single').css({'maxWidth': '100%'});
 						}
 					}),
 					featured_fallback_bg_color: new Upfront.Views.Editor.Field.Color({
@@ -472,39 +477,6 @@ define([
 			this.bind_toggles();
 			this.constructor.__super__.initialize.call(this, options);
 		},
-		toggle_bg_size_field: function () {
-			var toggleField = Upfront.Views.Editor.Field.Checkboxes.extend({
-				get_value_html: function (value, index) {
-					var id = this.get_field_id() + '-' + index;
-					var classes = "upfront-field-multiple";
-					var attr = {
-						'type': this.type,
-						'id': id,
-						'name': this.get_field_name(),
-						'value': value.value,
-						'class': 'upfront_toggle_checkbox upfront-field-' + this.type
-					};
-					var saved_value = this.get_saved_value();
-					var icon_class = this.options.icon_class ? this.options.icon_class : null;
-					if ( this.options.layout ) classes += ' upfront-field-multiple-'+this.options.layout;
-					if ( value.disabled ) {
-						attr.disabled = 'disabled';
-						classes += ' upfront-field-multiple-disabled';
-					}
-					if ( this.multiple && _.contains(saved_value, value.value) ) {
-						attr.checked = 'checked';
-					} else if ( ! this.multiple && saved_value == value.value ) {
-						attr.checked = 'checked';
-					}
-					if (value.checked) attr.checked = 'checked';
-					if ( attr.checked ) {
-						classes += ' upfront-field-multiple-selected';
-					}
-					return '<div class="' + classes + ' upfront_toggle"><span class="upfront-field-label-text">' + value.label + '</span><input ' + this.get_field_attr_html(attr) + ' />' + '<label for="' + id + '" class="upfront_toggle_label"><span class="upfront_toggle_switch"></span></label></div>';
-				}
-			});
-			return toggleField;
-		},
 		update_image: function () {
 			var style = this._bg_style,
 				tile = this._bg_tile,
@@ -517,8 +489,8 @@ define([
 			;
 			if ( style == 'full' ) {
 				this.model.set_breakpoint_property('background_style', 'full');
-			}
-			else {
+				this.$el.children('.upfront-field-select').css({minWidth: '100%'});
+			} else {
 				if ( style == 'tile' ) {
 					this.model.set_breakpoint_property('background_style', 'tile');
 					if ( is_repeat_x && is_repeat_y ) {
@@ -533,28 +505,40 @@ define([
 					else {
 						this.model.set_breakpoint_property('background_repeat', 'no-repeat');
 					}
+					this.$el.children('.upfront-field-select').css({minWidth: '100%'});
 				} else if ( style == 'fixed' ) {
 					this.model.set_breakpoint_property('background_style', 'fixed');
 					this.model.set_breakpoint_property('background_repeat', 'no-repeat');
 					this.model.set_breakpoint_property('background_position', pos_x + '% ' + pos_y + '%');
 					this.model.set_breakpoint_property('background_size', ( bg_size == 'auto' ) ? bg_size : (bg_size + '%') );
+					this.$el.children('.upfront-field-select').css({width: '100px', minWidth: '100px'});
 				} else if (style === 'parallax') {
 					this.model.set_breakpoint_property('background_style', 'parallax');
 					this.model.set_breakpoint_property('background_position', this._origin_position_x + '% ' + this._origin_position_y + '%');
 					this.model.set_breakpoint_property('background_size', ( bg_size == 'auto' ) ? bg_size : (bg_size + '%') );
+					this.$el.children('.upfront-field-select').css({minWidth: '100%'});
 				} else {
 					this.model.set_breakpoint_property('background_style', style);
+					this.$el.children('.upfront-field-select').css({minWidth: '100%'});
 				}
 			}
 		},
+		update_settings_header: function() {
+			// Update image in header.
+			var image_url = this.model.get_breakpoint_property_value('background_image');
+			$('#region-settings-sidebar .upfront-region-type-icon')
+				.addClass('upfront-region-type-icon-image-url')
+				.removeClass('upfront-region-type-icon-image upfront-region-type-icon-featured')
+				.css({'backgroundImage': 'url(' + image_url + ')'});
+		},
 		get_bg_style_values: function () {
 			var values = [
-				{ label: l10n.full_width_bg, value: 'full', icon: 'bg-image-full' },
-				{ label: l10n.tiled_pattern, value: 'tile', icon: 'bg-image-tile' },
-				{ label: l10n.fixed_position, value: 'fixed', icon: 'bg-image-fixed' }
+				{ label: l10n.full_width_bg, value: 'full' },
+				{ label: l10n.tiled_pattern, value: 'tile' },
+				{ label: l10n.fixed_position, value: 'fixed' }
 			];
 			if ( this.model instanceof Upfront.Models.Region ) {
-				values.push({ label: l10n.parallax, value: 'parallax', icon: 'bg-image-full' });
+				values.push({ label: l10n.parallax, value: 'parallax' });
 			}
 			return values;
 		}

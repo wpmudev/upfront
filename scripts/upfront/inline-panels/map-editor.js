@@ -29,7 +29,7 @@ define([
 			this.checkJSon(json);
 		},
 
-		on_render: function () {
+		render: function () {
 			this.start_json_editor();
 		},
 

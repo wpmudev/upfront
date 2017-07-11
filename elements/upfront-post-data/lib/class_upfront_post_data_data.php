@@ -76,7 +76,7 @@ class Upfront_Post_Data_Data {
 			
 			switch ( $data_type ){
 				case 'post_data':
-					$defaults['date_posted_format'] = get_option('date_format') . ' ' . get_option('time_format');
+					$defaults['date_posted_format'] = Upfront_Cache_Utils::get_option('date_format') . ' ' . Upfront_Cache_Utils::get_option('time_format');
 					$defaults['content'] = 'content';
 					break;
 				case 'author':
@@ -104,9 +104,9 @@ class Upfront_Post_Data_Data {
 						'comments',
 					);
 					$defaults['order'] = 'comment_date_gmt';
-					$defaults['direction'] = 'oldest' === get_option('default_comments_page') ? 'ASC' : 'DESC';
-					$defaults['limit'] = (int)get_option('comments_per_page');
-					$defaults['paginated'] = (int)get_option('page_comments');
+					$defaults['direction'] = 'oldest' === Upfront_Cache_Utils::get_option('default_comments_page') ? 'ASC' : 'DESC';
+					$defaults['limit'] = (int)Upfront_Cache_Utils::get_option('comments_per_page');
+					$defaults['paginated'] = (int)Upfront_Cache_Utils::get_option('page_comments');
 					break;
 				case 'meta':
 					$defaults['meta'] = 0;
@@ -123,7 +123,7 @@ class Upfront_Post_Data_Data {
 		$defaults = self::apply_preset($defaults);
 		if ('comments' === $data_type) {
 			// Preset has nothing to do with this
-			$defaults['paginated'] = (int)get_option('page_comments');
+			$defaults['paginated'] = (int)Upfront_Cache_Utils::get_option('page_comments');
 		}
 
 		return $defaults;

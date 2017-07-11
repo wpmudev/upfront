@@ -64,7 +64,7 @@ define([
 							options: {
 								title: l10n.settings.content_area_colors_label,
 								multiple: false,
-								single: false,
+								single: true,
 								abccolors: [
 									{
 										name: 'caption-text',

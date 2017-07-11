@@ -1,6 +1,6 @@
 #page .<?php echo $properties['id'] ?> .ugallery_item .ugallery_border {
 	<?php if(!empty($properties['useborder'])) { ?>
-		<?php if(!empty($properties['borderwidth']) && !empty($properties['bordertype']) && !empty($properties['bordercolor'])) { ?>border: <?php echo $properties['borderwidth'] ?>px <?php echo $properties['bordertype'] ?> <?php echo $properties['bordercolor'] ?>;<?php } ?>
+		<?php if(!empty($properties['borderwidth']) && !empty($properties['bordertype']) && !empty($properties['bordercolor'])) { ?>border: <?php echo $properties['borderwidth'] ?><?php if(!empty($properties['borderwidth-unit'])) { ?><?php echo $properties['borderwidth-unit'] ?><?php } else { ?>px<?php } ?> <?php echo $properties['bordertype'] ?> <?php echo $properties['bordercolor'] ?>;<?php } ?>
 	<?php } else { ?>
 		border: none;
 	<?php } ?>
@@ -34,7 +34,7 @@
 {
 	<?php if($properties['caption-height'] == 'fixed' && !empty($properties['thumbCaptionsHeight'])) { ?>
 		overflow: hidden;
-		height: <?php echo $properties['thumbCaptionsHeight'] ?>px;
+		height: <?php echo $properties['thumbCaptionsHeight'] ?> <?php if(!empty($properties['thumbCaptionsHeight-unit'])) { ?><?php echo $properties['thumbCaptionsHeight-unit'] ?><?php } else { ?>px<?php } ?>;
 	<?php } ?>
 }
 

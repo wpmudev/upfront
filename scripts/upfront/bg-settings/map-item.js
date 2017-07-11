@@ -35,7 +35,7 @@ define([
 			var fields = {
 					location: new Upfront.Views.Editor.Field.Text({
 						model: this.model,
-						label: l10n.location + ":",
+						label: l10n.location,
 						property: 'background_map_location',
 						use_breakpoint_property: true,
 						placeholder: "e.g 123 Nice St",
@@ -62,7 +62,7 @@ define([
 					}),
 					zoom: new Upfront.Views.Editor.Field.Slider({
 						model: this.model,
-						label: l10n.zoom + ":",
+						label: l10n.zoom,
 						property: 'background_map_zoom',
 						use_breakpoint_property: true,
 						default_value: 8,
@@ -76,7 +76,7 @@ define([
 					}),
 					style: new Upfront.Views.Editor.Field.Select({
 						model: this.model,
-						label: l10n.map_style + ":",
+						label: l10n.map_style,
 						property: 'background_map_style',
 						use_breakpoint_property: true,
 						values: [
@@ -92,7 +92,7 @@ define([
 					}),
 					controls: new Upfront.Views.Editor.Field.Select({
 						model: this.model,
-						label: l10n.map_controls + ":",
+						label: l10n.map_controls,
 						placeholder: l10n.choose_ctrl,
 						property: 'background_map_controls',
 						use_breakpoint_property: true,
@@ -111,7 +111,7 @@ define([
 							this.$el.addClass('uf-bgsettings-map-controls');
 						}
 					}),
-					show_markers: new Upfront.Views.Editor.Field.Checkboxes({
+					show_markers: new Upfront.Views.Editor.Field.Toggle({
 						model: this.model,
 						label: l10n.show_markers,
 						property: "background_show_markers",
@@ -124,7 +124,7 @@ define([
 							this.$el.addClass('uf-bgsettings-map-show-marker');
 						}
 					}),
-					custom_map_code: new Upfront.Views.Editor.Field.Checkboxes({
+					custom_map_code: new Upfront.Views.Editor.Field.Toggle({
 						model: this.model,
 						label: l10n.custom_map_code,
 						property: "background_use_custom_map_code",
@@ -150,7 +150,7 @@ define([
 					open_map_code_panel: new Upfront.Views.Editor.Field.Button({
 						model: me.model,
 						label: l10n.open_map_code_panel,
-						className: "open-map-code-panel-button",
+						className: "open-map-code-panel-button upfront-small-button",
 						compact: true
 					})
 				};

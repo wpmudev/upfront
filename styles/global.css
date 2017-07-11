@@ -524,6 +524,16 @@ div.upfront-region-lightbox, div.upfront-region-side-lightbox,
   display:none;
   top: 50% !important;
   left: 50% !important;
+  max-height: 80vh;
+  max-width: 80%;
+}
+.upfront-region-side-lightbox .upfront-region-wrapper,
+.upfront-region-lightbox .upfront-region-wrapper {
+  overflow: auto;
+  max-height: 100%;
+  max-height: 80vh;
+  height: inherit;
+  pointer-events: auto;
 }
 .upfront-lightbox-bg {
   position:fixed;
@@ -576,6 +586,16 @@ div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-l
 /* upfront element output resets – defaults */
 
 .upfront-navigation li { display: inline-block;  list-style:none; }
+
+/* Lightbox close button icon at smaller screen size. */
+@media only screen and (max-height: 500px) {
+	div.close_lightbox {
+		top: -40px;
+	}
+	.close_lightbox .upfront-icon-popup-close:before {
+		font-size: 35px;
+	}
+}
 
 .close_lightbox > .upfront-icon-popup-close {
 

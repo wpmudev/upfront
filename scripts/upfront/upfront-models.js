@@ -36,6 +36,7 @@ var _alpha = "alpha",
 		},
 		initialize: function () {
 			var args = arguments;
+
 			if (args && args[0] && args[0]["properties"]) {
 				args[0]["properties"] = args[0]["properties"] instanceof Properties
 					? args[0]["properties"]
@@ -43,6 +44,7 @@ var _alpha = "alpha",
 				;
 				this.set("properties", args[0].properties);
 			} else this.set("properties", new Properties([]));
+
 			if (this.init) this.init();
 
 			// Take care of old preset API
@@ -106,6 +108,7 @@ var _alpha = "alpha",
 				// when on desktop, set `current_preset` to desktop preset
 				current = breakpoint_preset || current || 'default';
 			}
+
 			var actual = breakpoint_preset || current;
 
 			// we have to retain current preset coz will be lose below
@@ -140,7 +143,6 @@ var _alpha = "alpha",
 
 			data[breakpoint_id] = {preset: preset_id};
 			if (!data[default_bp_id]) data[default_bp_id] = {preset: current};
-
 			this.set_property("breakpoint_presets", data, true);
 
 			return data;
@@ -151,6 +153,7 @@ var _alpha = "alpha",
 			this.get("properties").add(new Upfront.Models.Property({"name": name, "value": value}), {"silent": silent});
 			Upfront.Events.trigger("model:property:add", name, value, silent);
 		},
+
 		set_property: function (name, value, silent) {
 			if (!name) return false;
 			if (!silent) silent = false;
@@ -159,6 +162,7 @@ var _alpha = "alpha",
 			prop.set({"value": value}, {"silent": silent});
 			Upfront.Events.trigger("model:property:set", name, value, silent);
 		},
+
 		remove_property: function (name, silent) {
 			if (!name) return false;
 			if (!silent) silent = false;
@@ -167,15 +171,18 @@ var _alpha = "alpha",
 			this.get("properties").remove(prop, {"silent": silent});
 			Upfront.Events.trigger("model:property:remove", name, silent);
 		},
+
 		init_property: function (name, value) {
 			if (!this.has_property(name)) this.add_property(name, value);
 		},
+
 		init_properties: function (hash) {
 			var me = this;
 			_(hash).each(function (value, name) {
 				me.init_property(name, value);
 			});
 		},
+
 	// ----- Magic properties manipulation ----- */
 		get_content: function () {
 			return this.get_property_value_by_name("content");
@@ -320,20 +327,6 @@ var _alpha = "alpha",
 
 		// Basic interface dataset
 	Objects = Backbone.Collection.extend({
-		/*"model": ObjectModel,
-		initialize: function (raw_models) {
-			var models = [];
-			if (!raw_models || !raw_models.length) return false;
-			_(raw_models).each(function (model) {
-				var type_prop = model["properties"] ? _(model["properties"]).where({"name": "type"}) : model.get("properties").where({"name": "type"}),
-					default_type = model["objects"] ? "ObjectGroup" : "ObjectModel",
-					type = type_prop.length ? type_prop[0].value : default_type,
-					instance = Upfront.Models[type] ? new Upfront.Models[type](model) : false
-				;
-				if (Upfront.Models[type] && instance) models.push(instance);
-			});
-			this.reset(models);
-		},*/
 		model: function (attrs, options) {
 			var type_prop = attrs["properties"] ? _(attrs["properties"]).where({"name": "type"}) : attrs.get("properties").where({"name": "type"}),
 				type = type_prop.length ? type_prop[0].value : '';
@@ -416,27 +409,6 @@ var _alpha = "alpha",
 	}),
 
 	Modules = Backbone.Collection.extend({
-		/*
-		"model": Module,
-		initialize: function () {
-			if (!arguments.length) return false;
-			var _modules = [],
-				me = this,
-				args = arguments[0]
-			;
-			_(args).each(function (arg) {
-				var self_class = _(arg.properties).where({"name": "type"}),
-					self_instance =  (self_class.length && self_class[0].value && Upfront.Models[self_class[0].value])
-						? new Upfront.Models[self_class[0].value](arg)
-						: new Upfront.Models.Module(arg)
-				;
-				me.add(self_instance);
-				//_modules.push(self_instance);
-			});
-			//this.reset(_modules);
-			//console.log(this);
-		},
-		*/
 
 		model: function (attrs, options) {
 			if ( attrs.modules )
@@ -809,42 +781,34 @@ var _alpha = "alpha",
 		 */
 		get: function(attr){
 			var value = this.attributes[attr],
-                dates = [
-                    "post_date",
-                    "post_date_gmt",
-                    'post_modified',
-                    "post_modified_gmt"
-                ];
-//			if(_.isString(value) && value.match(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/)) {
-//				return new Date(Date.parse(value.replace(/ /, 'T')));
-//			}
+			dates = [
+				"post_date",
+				"post_date_gmt",
+				'post_modified',
+				"post_modified_gmt"
+			];
 
-            if( _.indexOf(dates, attr) !== -1 ){
-                //return new Date( value  ); // <-- Breaks in FF
-                var raw_offset = (new Date()).getTimezoneOffset(),
-                	tz_offset = raw_offset / 60,
-                	offset = tz_offset > 0 ? '-' : '+', // Reversed because Date.getTimezoneOffset() returns reversed values...
-                	hours = parseInt(Math.abs(tz_offset), 10),
-                	mins = parseInt((Math.abs(tz_offset) - hours) * 60, 10),
-                	timestamp = value.replace(/ /, 'T')
-                ;
-                hours = hours >= 10 ? '' + hours : '0' + hours;
-                mins = mins >= 10 ? '' + mins : '0' + mins;
-                if (timestamp && hours.length && mins.length) timestamp += offset + hours + mins;
+			if( _.indexOf(dates, attr) !== -1 ){
+				//return new Date( value  ); // <-- Breaks in FF
+				var raw_offset = (new Date()).getTimezoneOffset(),
+				tz_offset = raw_offset / 60,
+				offset = tz_offset > 0 ? '-' : '+', // Reversed because Date.getTimezoneOffset() returns reversed values...
+				hours = parseInt(Math.abs(tz_offset), 10),
+				mins = parseInt((Math.abs(tz_offset) - hours) * 60, 10),
+				timestamp = value.replace(/ /, 'T')
+					;
+				hours = hours >= 10 ? '' + hours : '0' + hours;
+				mins = mins >= 10 ? '' + mins : '0' + mins;
+				if (timestamp && hours.length && mins.length) timestamp += offset + hours + mins;
 
-
-				//return new Date(Date.parse(timestamp)); // <-- We need this to instantiate Date object in Firefox. @See "batman bug" in Asana.
-
-				/** Have to do this in order to satisfy safari as well.
-				 * This works with Firefox and chrome too.
-				*/
-
+				// Have to do this in order to satisfy safari as well.
+				// This works with Firefox and chrome too.
 				var a = timestamp.split(/[^0-9]/);
 				return new Date (a[0],a[1]-1,a[2],a[3],a[4],a[5]);
-
-            }
+			}
 			return this.attributes[attr];
 		},
+
 		/**
 		 * Overrides Backbone.Model.set to convert javascript dates in PHP format.
 		 * @param  {String} key     Attribute name
@@ -856,18 +820,17 @@ var _alpha = "alpha",
 			var newval = val,
 				parsedAttrs = {};
 
-			if(_.isObject(key)){
-				for(var attr in key){
+			if (_.isObject(key)) {
+				for (var attr in key) {
 					var value = key[attr];
-					if(val instanceof Date)
+					if (val instanceof Date)
 						parsedAttrs[attr] = Upfront.Util.format_date(value, true, true).replace(/\//g, '-');
 					else
 						parsedAttrs[attr] = value;
 				}
 				Backbone.Model.prototype.set.call(this, parsedAttrs, options);
-			}
-			else{
-				if(val instanceof Date)
+			} else {
+				if (val instanceof Date)
 					newval = Upfront.Util.format_date(val, true, true).replace(/\//g, '-');
 
 				Backbone.Model.prototype.set.call(this, key, newval, options);
@@ -970,7 +933,9 @@ var _alpha = "alpha",
 							me.pagination = {
 								totalElements: pagination.total,
 								pageSize: pagination.page_size,
-								pages: Math.ceil(pagination.total / pagination.page_size),
+								// If pages total is given use that. Otherwise calculate it.
+								// This is because hierarchical child pages are placed on parent page despite page limit. Thus it is calculated elsewhere if hierarchical.
+								pages: (pagination.pages ? Math.ceil(pagination.pages) : Math.ceil(pagination.total / pagination.page_size)),
 								currentPage: pagination.page,
 								loaded: postdata.flush ? {} : me.pagination.loaded
 							};
@@ -992,9 +957,12 @@ var _alpha = "alpha",
 							});
 							me.trigger('reset', me);
 						}
-					}
-					else
+					} else
 						me.reset(response.data.results);
+					if (response.data.filtering) {
+						// Filtering dropdown data for post list.
+						me.filtering = response.data.filtering;
+					}
 				}
 			);
 		},
@@ -1229,22 +1197,6 @@ var _alpha = "alpha",
 
 			if(!options.flush && this.pagination.loaded[pageNumber]){
 				this.pagination.currentPage = pageNumber;
-				/*
-				//All elements loaded, return them following the current order (sorting without fetch)
-				if(this.pagination.totalElements == this.length){
-					var start = this.pagination.currentPage * this.pagination.pageSize,
-						end = start + this.pagination.pageSize
-						results = []
-					;
-
-					this.each(function(result, idx){
-						if(idx >= start && idx < end)
-							results.push(result);
-					});
-
-					return jQuery.Deferred().resolve({results: results});
-				}
-				*/
 
 				var models = this.getPage(pageNumber),
 					results = [];
@@ -1273,21 +1225,6 @@ var _alpha = "alpha",
 			this.order = direction;
 
 			return this.fetch({page: 0, sort: attribute, direction: direction});
-
-
-			/* // Possible changes to not reload when fetched all elements
-			if(this.pagination.totalElements > this.length)
-				return this.fetch({page: 0, sort: attribute, direction: direction});
-
-			this.comparator = function(a, b){
-				var factor = asc ? 1 : -1;
-				return a.get(attribute) < b.get(attribute) ? 1 * factor : -1 * factor;
-			}
-
-			this.sort();
-
-			return jQuery.Deferred().resolve(this.toJSON());
-			*/
 		},
 
 		/**
@@ -1481,7 +1418,8 @@ var _alpha = "alpha",
 		postType: 'post',
 		withMeta: false,
 		withAuthor: false,
-		fetchAttributes: ['postId', 'postType', 'withMeta', 'withAuthor'],
+		withThumbnail: false,
+		fetchAttributes: ['postId', 'postType', 'withMeta', 'withAuthor', 'withThumbnail'],
 		initialize: function(models, options){
 			if(options){
 				if(options.postId)
@@ -1492,6 +1430,8 @@ var _alpha = "alpha",
 					this.withMeta = options.withMeta;
 				if(options.withAuthor)
 					this.withAuthor = options.withAuthor;
+				if(options.withThumbnail)
+					this.withThumbnail = options.withThumbnail;
 			}
 		}
 	});
@@ -1738,79 +1678,79 @@ var _alpha = "alpha",
 		}
 	}),
 
-    ImageVariant = Backbone.Model.extend({
-        defaults : function () {
-        	return {
-	            vid   : "",
-	            label : "Variant Label",
-	            group : {
-					margin_left: 0,
-					margin_right: 0,
-	                col: 24,
-	                row: 50,
-	                left: 0,
-	                "float": "none"
-	            },
-	            image : {
-	            	order: 0,
-	            	col: 24,
-	            	top: 0,
-	            	left: 0,
-	            	row: 40,
-	            	clear: true
-	            },
-	            caption : {
-	                show: 1,
-	                order: 1,
-	                col: 24,
-	                top: 0,
-	                left: 0,
-	                row: 10,
-	                clear: true
-	            }
-        	};
-        }
-    }),
-    ImageVariants = Backbone.Collection.extend({
-        model : ImageVariant
-    }),
+		ImageVariant = Backbone.Model.extend({
+			defaults : function () {
+				return {
+					vid   : "",
+					label : "Variant Label",
+					group : {
+						margin_left: 0,
+						margin_right: 0,
+						col: 24,
+						row: 50,
+						left: 0,
+						"float": "none"
+					},
+					image : {
+						order: 0,
+						col: 24,
+						top: 0,
+						left: 0,
+						row: 40,
+						clear: true
+					},
+					caption : {
+						show: 1,
+						order: 1,
+						col: 24,
+						top: 0,
+						left: 0,
+						row: 10,
+						clear: true
+					}
+				};
+			}
+		}),
+		ImageVariants = Backbone.Collection.extend({
+				model : ImageVariant
+		}),
 _omega = 'omega';
 
 return {
-    "Models": {
-      "Property": Property,
-      "ObjectModel": ObjectModel,
-      "ObjectGroup": ObjectGroup,
-      "Module": Module,
-      "ModuleGroup": ModuleGroup,
-      "Region": Region,
-      "Wrapper": Wrapper,
-      "Layout": Layout,
-      "Taxonomy": Taxonomy,
-      "Post": Post,
-      "Posts": Posts,
-      "Pages": Pages,
-      "Comment": Comment,
-      "Comments": Comments,
-      "Meta": Meta,
-      "Term": Term,
-      "User": User,
-      "ImageVariant" : ImageVariant
-    },
-    "Collections": {
-      "Properties": Properties,
-      "Objects": Objects,
-      "Modules": Modules,
-      "Regions": Regions,
-      "Wrappers": Wrappers,
-      "CommentList": CommentList,
-      "MetaList": MetaList,
-      "PostList": PostList,
-      "TermList": TermList,
-      "ImageVariants" : ImageVariants,
-      "PageTemplateList" : PageTemplateList
-    }
-  };
+		"Models": {
+			"Property": Property,
+			"ObjectModel": ObjectModel,
+			"ObjectGroup": ObjectGroup,
+			"Module": Module,
+			"ModuleGroup": ModuleGroup,
+			"Region": Region,
+			"Wrapper": Wrapper,
+			"Layout": Layout,
+			"Taxonomy": Taxonomy,
+			"Post": Post,
+			"Posts": Posts,
+			"Pages": Pages,
+			"Comment": Comment,
+			"Comments": Comments,
+			"Meta": Meta,
+			"Term": Term,
+			"User": User,
+			"ImageVariant" : ImageVariant
+		},
+		"Collections": {
+			"Properties": Properties,
+			"Objects": Objects,
+			"Modules": Modules,
+			"Regions": Regions,
+			"Wrappers": Wrappers,
+			"CommentList": CommentList,
+			"MetaList": MetaList,
+			"PostList": PostList,
+			"TermList": TermList,
+			"ImageVariants" : ImageVariants,
+			"PageTemplateList" : PageTemplateList
+		}
+	};
 });
 
 })(jQuery);

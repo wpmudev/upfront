@@ -1,6 +1,14 @@
-/* Fields */
-/* @TODO all fields styling here */
-/* @TODO !important stuff is temporary, need to remove */
+/* General */
+
+.upfront-field-wrap {
+	color: rgba(33, 33, 33, 0.8);
+	font-size: 11px;
+	line-height: 15px;
+	font-weight: normal;
+	font-family: "Open Sans";
+	margin: 13px 0 0;
+}
+
 .upfront-field-text, .upfront-field-checkbox, .upfront-field-radio {
 	-webkit-appearance: none;
 	-moz-appearance: none;
@@ -12,223 +20,214 @@
 	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
 }
-input.upfront-field-text[type], /* add type attribute to add more specificity, fix input[type] rewrite */
-textarea.upfront-field-text.upfront-field-textarea {
-	border: 1px solid rgb(163, 191, 217);
-	background: #fff;
-	color: rgb(38, 58, 77);
-	height: 26px;
-	width: 100%;
-	padding: 0px 10px;
+
+.upfront-field-wrap .upfront-field-label,
+.upfront-field-label {
+	font-weight: normal;
+	margin: 0;
+}
+
+.upfront-field-wrap .upfront-field-label-block,
+.upfront-field-label-block {
+	display: block;
+	color: rgba(33, 33, 33, 0.8);
 	font-size: 11px;
-	font-family: verdana, sans-serif;
+	font-weight: bold;
+	font-family: "Open Sans";
+	line-height: 1;
+	margin: 0;
+	margin-bottom: 8px;
+}
+
+.upfront-field-wrap-optional span {
+	margin: 20px 0 0 0;
+}
+
+.upfront-field-icon {
+	display: inline-block;
+	vertical-align: middle;
+	margin: 2px 5px 0 5px;
+	width: 20px;
+	height: 20px;
+}
+
+/* Field text */
+
+input.upfront-field-text[type],
+input.upfront-field-number[type=number],
+input.upfront-field-number-unit[type=number],
+textarea.upfront-field-text.upfront-field-textarea {
+	border: 1px solid rgb(144, 144, 144);
+	background: #fff;
+	color: rgb(33, 33, 33);
+	height: 22px;
+	width: 100%;
+	padding: 0px 5px;
+	font-size: 11px;
+	font-family: "Open Sans";
 	line-height: 1;
 }
+
 input.upfront-field-text.upfront-has_inline_label {
 	width: auto;
 }
+
 textarea.upfront-field-text.upfront-field-textarea {
 	height: auto;
 }
+
 input.upfront-field-text::-webkit-input-placeholder {
-	color: rgb(124, 158, 191);
+	color: rgb(144, 144, 144);
 }
+
 input.upfront-field-text:-moz-placeholder {
-	color: rgb(124, 158, 191);
+	color: rgb(144, 144, 144);
 }
+
 input.upfront-field-text::-moz-placeholder {
-	color: rgb(124, 158, 191);
+	color: rgb(144, 144, 144);
 }
+
 input.upfront-field-text:-ms-input-placeholder {
-	color: rgb(124, 158, 191);
+	color: rgb(144, 144, 144);
 }
-.upfront-field-empty {
-	opacity: 0.7;
+
+.upfront-field-empty,
+.upfront-field-number[type=number],
+.upfront-field-number-unit[type=number],
+.upfront-field-wrap-color .sp-replacer {
+	opacity: .75;
 }
+
 input.upfront-field-text:hover,
-.upfront-field-text:focus {
+.upfront-field-number[type=number]:hover,
+.upfront-field-number-unit[type=number]:hover,
+.upfront-field-select:hover,
+.upfront-field-wrap-color .sp-replacer:hover {
+	opacity: .85;
+	outline: none;
+}
+
+.upfront-field-text:focus,
+.upfront-field-number[type=number]:focus,
+.upfront-field-number-unit[type=number]:focus,
+.upfront-field-select:focus,
+.upfront-field-wrap-color .sp-replacer:focus {
 	opacity: 1;
 	outline: none;
 }
+
 .upfront-field-textarea {
 	height: auto;
 }
-.upfront-field-number[type=number] {
-	border: 1px solid rgb(163, 191, 217);
-	background: #fff;
-	color: rgb(38, 58, 77);
-	width: auto;
-	height: 30px;
-	padding: 0 0 0 5px;
-  border-radius:2px;
-  opacity:.9;
+.upfront-field-disabled {
+	opacity: .4;
 }
-.upfront-field-number[type=number]:hover {
-	border: 1px solid rgb(163, 191, 217);
-	opacity:1;
-}
-.upfront-field-number[type=number]:focus {
-	outline:none;
-	border-color: rgb(124, 152, 179);
-}
-/* chrome input[type=number] styling */
-.upfront-field-number[type=number]::-webkit-inner-spin-button {
-	-webkit-appearance:none;
-	width:14px;
-	padding:0;
-	margin:0;
-	height:28px;
-	background-color:#D8EDFF;
-	display:inline-block;
-	position:relative;
-	border-left:1px solid #A1C3E5;
-	cursor: pointer;
-	background-image: url('../img/uf-ui-sprite.svg');
-	background-position: -345px -242px;
-}
-.typography-panel .upfront-field-number[type=number]::-webkit-inner-spin-button {
-	-webkit-appearance:none;
-	width:14px;
-	padding:0;
-	margin:0;
-	height:24px;
-	background-color:#D8EDFF;
-	display:inline-block;
-	position:relative;
-	border-left:1px solid #A1C3E5;
-	cursor: pointer;
-	background-image: url('../img/uf-ui-sprite.svg');
-	background-position: -345px -244px;
-}
-/* Google chrome dont support :before & :after for inner-spin anymore */
-/*
-.upfront-field-number[type=number]::-webkit-inner-spin-button:before {
-	content: ' ';
-	position:absolute;
-	width:0;
-	height: 0;
-	border-left: 4px solid transparent;
-	border-right: 4px solid transparent;
-	border-top: 4px solid #6B8EB2;
-	bottom:2px;
-	left:3px;
-}
-.upfront-field-number[type=number]::-webkit-inner-spin-button:after {
-	content: ' ';
-	position:absolute;
-	width:0;
-	height: 0;
-	border-left: 4px solid transparent;
-	border-right: 4px solid transparent;
-	border-bottom: 4px solid #6B8EB2;
-	top:4px;
-	left:3px;
-}
-*/
-/* end chrome input[type=number] styling */
-.upfront-field-select, .upfront-field-select-options {
-	background: rgb(242, 249, 255);
-	border: 1px solid rgb(183, 201, 217);
+
+/* Number field */
+
+.upfront-field-number[type=number],
+.upfront-field-number-unit[type=number]
+{
+	padding-right: 0px !important;
 	border-radius: 3px;
 }
+
+/* chrome input[type=number] styling */
+
+.upfront-field-number[type=number]::-webkit-inner-spin-button,
+.upfront-field-number-unit[type=number]::-webkit-inner-spin-button,
+.typography-panel .upfront-field-number[type=number]::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	width: 13px;
+	padding: 0;
+	margin: 0;
+	height: 20px;
+	background-color: rgb(255, 255, 255);
+	display: inline-block;
+	position: relative;
+	border-left: 1px solid rgb(144, 144, 144);
+	cursor: pointer;
+	background-image: url('../img/uf-core-el-sprite_new.svg');
+	background-position: -515px -73px;
+	margin-right: 3px;
+	opacity: 1;
+}
+
+/**** Select field ********/
+
+.upfront-field-select, .upfront-field-select-options {
+	background: rgb(255, 255, 255);
+	border: 1px solid rgb(144, 144, 144);
+	border-radius: 3px;
+}
+
 .upfront-field-select {
 	display: block;
-	height: 26px;
-	max-height: 26px;
+	height: 22px;
+	max-height: 22px;
 	margin: 0;
-	color: #2F475F;
+	color: rgb(33, 33, 33);
 	font-size: 11px;
-	font-family: Verdana, sans-serif;
-	line-height: 22px;
+	font-family: "Open Sans";
+	line-height: 20px;
 	position: relative;
 	overflow: hidden;
 	cursor: pointer;
-}
-.upfront-object-content .ulinkpanel-dark ul,
-.upfront-object-content .ulinkpanel ul {
-	color: rgb(96, 127, 153);
-	font-size: 11px;
-	font-family: verdana, sans-serif;
-	line-height: 22px;
-}
-.ulinkpanel-dark .upfront-field-multiple label,
-.ulinkpanel .upfront-field-multiple label {
-	color: rgb(83, 97, 109);
-	font-size: 11px;
-	font-family: verdana, sans-serif;
-}
-.ulinkpanel input.upfront-field-text[type], .ulinkpanel textarea.upfront-field-text.upfront-field-textarea {
-	border-color: rgb(195, 211, 224);
-}
-.ulinkpanel .upfront-field-wrap-radios > label,
-.ulinkpanel-dark .upfront-field-wrap-radios > label {
-	display: inline-block;
-	margin: 0 15px 0 0;
-}
-.ulinkpanel-dark .upfront-field-wrap-radios > label,
-.ulinkpanel-dark .upfront-field-wrap-radios > .upfront-field-multiple,
-.ulinkpanel .upfront-field-wrap-radios > label,
-.ulinkpanel .upfront-field-wrap-radios > .upfront-field-multiple {
-	vertical-align: top;
-	color: rgb(83, 97, 109);
-	font-weight:normal;
+	opacity: .7;
 }
 
 .upfront-field-select-disabled {
-	border-color: rgb(153, 181, 204);
-	color: rgb(153, 181, 204);
+	opacity: .4;
 }
+
 .upfront-field-select-expanded {
 	overflow: visible;
 }
-/*.upfront-field-select-multiple:hover {
-	height: auto;
-	overflow: visible;
-	margin-bottom: -1px;
-}*/
-.upfront-field-select:hover {
-	border-color: rgb(96, 127, 153);
-}
+
 .upfront-field-select:after {
-	content: " ";
+	content: "";
 	display: block;
 	position: absolute;
-	top: 11px;
-	right: 11px;
-	border-top: 4px solid rgb(96, 127, 153);
-	border-left: 4px solid transparent;
-	border-right: 4px solid transparent;
+	z-index: 8;
+	top: 0px;
+	right: 0px;
+	border-left: 1px solid rgb(144, 144, 144);
+	height: 22px;
+	width: 18px;
+	background-image: url(../img/uf-core-el-sprite_new.svg);
+	background-position: -514px -42px;
 }
-.upfront-field-select-disabled:after {
-	border-top-color: rgb(153, 181, 204);
-}
+
 .upfront-field-select-expanded:after,
 .upfront-field-select-multiple:hover:after {
 	display: none;
 }
+
 .upfront-field-select .upfront-field-select-value {
 	margin: 0;
-	padding: 0px 20px 0px 10px;
-	height: 24px;
-	box-shadow: inset 0 2px 0 rgb(242, 249, 255);
+	padding: 0px 0px 0px 5px;
+	position: relative;
+	z-index: 9;
+	height: 21px;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
+
 .upfront-field-select .upfront-field-select-value .upfront-field-icon,
 .upfront-field-select-option label .upfront-field-icon {
-  margin-left: -5px;
+	margin-left: -5px;
 }
+
 .upfront-field-select-options {
 	list-style: none;
-	/*float: left;*/
-	background: #fafdff;
-	box-shadow: 0 0 3px rgba(96, 127, 153, 0.5);
-	border-color: #7d99b3;
-	padding: 5px 0 !important;
-	margin: 10px -1px 0 !important;
+	background: rgb(255, 255, 255);
+	border-color: rgb(144, 144, 144);
+	padding: 5px 0px;
+	margin: -1px 0 0 0;
 	position: relative;
-	max-height: 26px;
+	max-height: 22px;
 	z-index: 10;
 	overflow-x: hidden;
 	overflow-y: scroll;
@@ -238,8 +237,18 @@ input.upfront-field-text:hover,
 	-o-transition: max-height 0.3s;
 	transition: max-height 0.3s;
 }
+
+.upfront-field-wrap-select {
+	position: relative;
+}
+
+.upfront-field-select-expanded,
+.upfront-field-select-expanded:hover,
+.upfront-field-select-expanded:focus {
+	opacity: 1;
+}
+
 .upfront-field-select-expanded .upfront-field-select-options {
-	margin-top: -1px !important;
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -247,36 +256,40 @@ input.upfront-field-text:hover,
 	max-height: 142px;
 	z-index: 21;
 }
+
 #sidebar-ui .upfront-field-select-expanded .upfront-field-select-options,
 #element-settings-sidebar .upfront-field-select-expanded .upfront-field-select-options,
 #region-settings-sidebar .upfront-field-select-expanded .upfront-field-select-options {
 	position: fixed;
 	display: none;
 }
+
 .upfront-field-select-option {
-	margin: 0 10px 0 0 !important;
+	margin: 0 10px 0 0;
 	position: relative;
-	width:100%;
+	width: 100%;
 }
+
 .upfront-field-select-expanded .upfront-field-select-option {
-	margin: 0 !important;
+	margin: 0;
 }
+
 .upfront-field-select-expanded .upfront-field-select-option:before,
 .upfront-field-select-expanded .upfront-field-select-option:after {
-	background-color:transparent;
-	content:normal;
+	background-color: transparent;
+	content: normal;
 }
-.upfront-field-select-option label {
-	font:normal 11px/2 Verdana, sans-serif;
-}
-.upfront-field-select-single .upfront-field-select-option-selected {
 
+.upfront-field-select-option label {
+	font: normal 11px/2 "Open Sans";
 }
+
 .upfront-field-select-option .upfront-field-radio {
 	display: none;
 }
+
 .upfront-field-select-option .upfront-field-checkbox {
-	float: none !important;
+	float: none;
 	position: absolute;
 	top: 0;
 	bottom: 0;
@@ -284,32 +297,278 @@ input.upfront-field-text:hover,
 	right: 5px;
 	margin: auto;
 }
+
 .upfront-field-select-zebra .upfront-field-select-option-even {
-	background: rgb(218, 231, 242);
 }
+
 .upfront-object-content div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap ul .upfront-field-select-option:hover label,
 .upfront-field-select-option:hover {
-	background: #d4dee8;
-	color: #8899a9;
+	background: rgb(231,234,235);
+	color: rgb(33,33,33);
 }
+
 .upfront-field-select-option label {
 	display: block;
 	font-weight: normal;
-	padding: 2px 20px 2px 10px;
+	padding: 0 20px 0 5px;
 	margin: 0;
+	color: rgb(168,168,168);
 }
+.upfront-field-select-option:hover label {
+	color: rgb(33,33,33);
+}
+
 .upfront-field-select-option-selected label {
-  color: #99b5cc;
+	color: rgb(33,33,33);
 }
+
 .upfront-field-select-option label .upfront-field-icon {
 	margin-top: 0;
 	vertical-align: top;
 }
+
 .upfront-field-select-option-disabled,
 .upfront-field-select-option-disabled:hover {
 	background: none;
-	color: rgb(153, 181, 204);
+	opacity: 0.4;
 }
+
+
+/* Number unit field */
+
+.upfront-field-number-unit-wrapper {
+	position: relative;
+}
+
+.upfront-field-wrap-select.upfront-number-unit-select {
+	position: absolute;
+	top: 6px;
+	right: 21px;
+	margin: 0px;
+}
+
+.typography-panel .upfront-field-wrap-select.upfront-number-unit-select {
+	top: -1px;
+}
+
+.upfront-number-unit-select .upfront-field-select {
+	height: 16px;
+	width: 30px;
+	border: 1px solid #ffffff;
+	text-align: right;
+	padding: 0 5px 0 0;
+	background: none;
+}
+
+#sidebar-ui .upfront-number-unit-select .upfront-field-select-options,
+#element-settings-sidebar .upfront-number-unit-select .upfront-field-select-options {
+	width: 30px !important;
+}
+
+#sidebar-ui .upfront-number-unit-select .upfront-field-select-options label {
+	margin-bottom: 0px !important;
+	height: 16px;
+	line-height: 15px;
+	text-align: right;
+	padding: 0 5px 0 0;
+}
+
+.upfront-number-unit-select .upfront-field-select:hover {
+	border: 1px solid #909090;
+}
+
+.upfront-number-unit-select .upfront-field-select-options {
+	margin-top: -1px !important;
+}
+
+.upfront-number-unit-select .upfront-field-select-options::-webkit-scrollbar {
+	width: 0px;
+}
+
+.upfront-number-unit-select .upfront-field-select .upfront-field-select-value {
+	height: 16px;
+}
+
+.upfront-number-unit-select .upfront-field-select .upfront-field-select-value span {
+	line-height: 14px;
+	display: block;
+}
+
+.upfront-number-unit-select .upfront-field-select:after {
+	display: none;
+}
+
+.upfront-field-number-unit-wrapper:hover .upfront-number-unit-select {
+	display: block;
+}
+
+/* Toggle Field */
+
+.upfront-field-wrap-toggle.upfront_toggle_field {
+	position: relative;
+	padding: 0px;
+	display: inline-table;
+	vertical-align: middle;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	&.hide {
+		display: none;
+	}
+}
+
+.upfront-field-wrap-toggle input.upfront_toggle_checkbox {
+	display: none;
+}
+
+.upfront-field-wrap-toggle .upfront_toggle_field_switch {
+	display: block;
+	width: 10px;
+	height: 10px;
+	background-color: rgb(171, 180, 184);
+	border-radius: 15px;
+	border: none;
+	box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.1), 0 0 2px 0 rgba(0, 0, 0, 0.1);
+	position: absolute;
+	top: 2px;
+	bottom: 0;
+	right: 14px;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	will-change: transform;
+	-webkit-transition: transform 0.5s;
+	transition: transform 0.5s;
+}
+
+.upfront_toggle_checkbox:checked + .upfront_toggle_field_label .upfront_toggle_field_switch {
+	-webkit-transform: translateX(11px);
+	transform: translateX(11px);
+	background-color: #fff;
+	will-change: transform;
+	-webkit-transition: transform 0.5s;
+	transition: transform 0.5s;
+}
+
+.upfront-field-wrap-toggle .upfront_toggle_field_label {
+	display: inline-block;
+	overflow: hidden;
+	cursor: pointer;
+	position: relative;
+	border-radius: 50px;
+	height: 16px;
+	width: 29px;
+	border: 1px solid rgb(219, 219, 219);
+	background: #fff;
+}
+
+.upfront-field-wrap-toggle .upfront_toggle_checkbox:checked + .upfront_toggle_field_label {
+	background-color: rgb(133, 147, 152);
+	border-color: rgb(115, 133, 140);
+}
+
+.upfront-field-wrap-toggle .upfront-field-label-text {
+	position: relative;
+	display: inline-block;
+	margin: 0 5px 0 5px;
+	top: -4px;
+	font-family: "Open Sans", sans-serif;
+	font-size: 11px;
+	line-height: 15px;
+	color: rgba(33, 33, 33, .8);
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.upfront-toggle-wrapper {
+	background: rgb(231, 231, 231);
+	border-radius: 5px;
+	margin: -5px -10px;
+	padding: 10px;
+	clear: both;
+	overflow: hidden;
+	display: none;
+}
+
+.upfront-toggle-wrapper .upfront-field-wrap-color {
+	margin-bottom: 7px;
+}
+
+.upfront-toggle-wrapper .upfront-field-wrap-color:last-of-type {
+	margin-bottom: 0px;
+}
+
+.upfront-toggle-field {
+	margin-top: 12px;
+}
+
+/* Inline Radio Field */
+
+.upfront-field-wrap-radios-inline {
+	margin: 0px !important;
+}
+
+.upfront-field-wrap-radios-wrapper {
+	display: flex;
+	flex-wrap: nowrap;
+	justify-content: center;
+}
+
+.upfront-field-wrap-radios-wrapper input {
+	display: none;
+}
+
+.upfront-field-wrap-radios-wrapper .upfront-field-multiple {
+	width: 100%;
+	margin: auto;
+	padding: 0px;
+}
+
+.upfront-field-wrap-radios-wrapper .upfront-field-multiple:first-child label {
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
+.upfront-field-wrap-radios-wrapper .upfront-field-multiple:last-child label {
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+
+.upfront-field-wrap-radios-wrapper .upfront-field-multiple label {
+	display: block;
+	height: 22px;
+	width: 100%;
+	background: #ffffff;
+	border: 1px solid rgb(225, 225, 225);
+	text-align: center;
+	cursor: pointer;
+}
+
+.upfront-field-wrap-radios-wrapper .upfront-field-multiple label i {
+	margin: 2px auto;
+}
+
+.upfront-field-wrap-radios-wrapper .upfront-field-multiple-selected label {
+	background: rgb(135, 149, 154);
+	border: 1px solid rgb(108, 128, 136);
+	color: #fff;
+}
+
+.upfront-field-wrap-radios-wrapper .upfront-field-multiple label .upfront-field-label-text {
+	display: block;
+	text-align: center;
+	line-height: 20px;
+	font-family: "Open Sans", sans-serif;
+	font-weight: 600;
+}
+
+.upfront-field-wrap-radios-wrapper .upfront-field-multiple-selected label .upfront-field-label-text {
+	color: #ffffff;
+}
+
+/* Checkbox & Radio Fields */
+
 .upfront-field-checkbox, .upfront-field-radio {
 	width: 12px;
 	height: 12px;
@@ -318,6 +577,7 @@ input.upfront-field-text:hover,
 	cursor: pointer;
 	float: none;
 }
+
 .upfront-ui .upfront-field-checkbox:hover, .upfront-ui .upfront-field-radio:hover {
 	border: 2px solid rgb(157, 172, 186);
 }
@@ -325,477 +585,30 @@ input.upfront-field-text:hover,
 .upfront-field-radio {
 	border-radius: 6px;
 }
+
 .upfront-field-radio:focus {
 	border-width: 3px;
 	outline: none;
 }
+
 .upfront-field-radio:checked,
 .upfront-field-radio:checked:hover {
-  border-width: 3px;
-  border-color: rgb(38, 58, 77);
+	border-width: 3px;
+	border-color: rgb(38, 58, 77);
 	background: rgb(31, 205, 143);
 }
 
 .upfront-field-checkbox {
 	border-radius: 2px;
 }
+
 .upfront-field-checkbox:checked {
 	border-width: 0;
 	background: rgb(38, 58, 77);
 }
+
 .upfront-field-checkbox:checked:hover {
-	border-width:0;
-}
-.tile-select {
-	width: 16px;
-	height: 16px;
-	border: 2px solid #7a8d9f;
-}
-.tile-select:hover {
-	border-color: #263a4d;
-}
-.tile-select:checked {
-	border-color: #263a4d;
-	background-color: #263a4d;
-}
-.upfront-field-multiple {
-	display: block;
-	opacity: 0.8;
-	line-height: 12px;
-	padding: 0 0 0 17px;
-	position: relative;
-  margin-bottom: 10px;
-}
-.upfront-field-multiple-vertical {
-	display: inline-block;
-	max-width: 72px;
-	text-align: center;
-	margin: 0 35px 10px 0;
-	padding: 0 0 12px;
-}
-.upfront-field-multiple-horizontal-inline {
-	display: inline-block;
-	vertical-align: baseline;
-	margin: 0 15px 0 0;
-}
-.upfront-field-multiple-horizontal-inline:last-child {
-	margin: 0;
-}
-.upfront-field-multiple:hover,
-.upfront-field-multiple-selected {
-	opacity: 1;
-}
-.upfront-field-multiple-disabled,
-.upfront-field-multiple-disabled:hover {
-	opacity: 0.5;
-}
-.upfront-field-multiple input.upfront-field-checkbox,
-.upfront-field-multiple input.upfront-field-radio {
-	position: absolute;
-	bottom: 0;
-	left: 0;
-}
-.upfront-field-multiple.upfront-field-complex_field-boolean_toggleable_text input.upfront-field-checkbox {
-	bottom: auto;
-	top: 0px;
-}
-.upfront-field-multiple.upfront-field-complex_field-boolean_toggleable_text label.upfront-field-label {
-	display: none;
-}
-.upfront-field-multiple-vertical input.upfront-field-checkbox,
-.upfront-field-multiple-vertical input.upfront-field-radio {
-	position: absolute;
-	bottom: 0;
-	left: 50%;
-	margin: 0 0 0 -6px;
-}
-.upfront-field-multiple label {
-	display: table;
-	color: rgb(48, 71, 94);
-	font-size: 10px;
-	font-weight: 700;
-	letter-spacing: 0.3px;
-	font-family:'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
-	-webkit-font-smoothing: antialiased;
-}
-.upfront-field-multiple label .upfront-field-label-text {
-	display: table-cell;
-	vertical-align: middle;
-    cursor: pointer;
-}
-.upfront-field-multiple-vertical label {
-	display: block;
-	height: auto;
-}
-.upfront-field-multiple-vertical label .upfront-field-label-text {
-	display: block;
-	max-height: 30px;
-	padding: 3px 0;
-	overflow: hidden;
-    line-height: 13px;
-}
-.upfront-field-icon {
-	display: inline-block;
-	vertical-align: middle;
-	margin: 2px 5px 0 5px;
-	width:20px;
-	height:20px;
-}
-.upfront-field-multiple-vertical .upfront-field-icon {
-	margin: 0 auto;
-}
-.upfront-suggest-list-wrap {
-	height: 0;
-	max-height: 0;
-	overflow: hidden;
-	background: rgb(242, 249, 255);
-	-webkit-transition: max-height 0.3s;
-	-moz-transition: max-height 0.3s;
-	-ms-transition: max-height 0.3s;
-	-o-transition: max-height 0.3s;
-	transition: max-height 0.3s;
-}
-.upfront-suggest-list-wrap-expanded,
-.upfront-additive_multiselection .labels_list {
-	height: auto;
-	max-height: 142px;
-}
-.upfront-suggest-lists {
-	border: 1px solid rgb(163, 191, 217);
-	border-top: none;
-	margin: 0;
-	padding: 0;
-	max-height: 113px;
-	overflow-x: hidden;
-	overflow-y: scroll;
-}
-/*.upfront-additive_multiselection {
-	color: rgb(96, 127, 153);
-    cursor: pointer;
-    display: inline-block;
-    font-family: verdana,sans-serif;
-    font-size: 11px;
-    margin: 0;
-    overflow: hidden;
-    position: relative;
-    background: none repeat scroll 0 0 #e6f3fe;
-    border: 1px solid rgb(163, 191, 217);
-    border-radius: 3px;
-    padding: 0 4px;
-    width: 100%;
-}
-.add_labels .upfront-additive_multiselection {
-	padding-bottom: 2px;
-}
-.add_labels .upfront-field-label {
-	margin-top: .6em;
-}
-.add_labels .upfront-additive_multiselection .add_labels {
-	border: none;
-}
-.upfront-additive_multiselection .title {
-    padding: 1px 30px 1px 10px;
-}
-.upfront-additive_multiselection .title:after {
-	border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 4px solid rgb(96, 127, 153);
-    border-bottom: none;
-    content: " ";
-    display: block;
-    position: absolute;
-    right: 11px;
-    top: 11px;
-}
-.upfront-additive_multiselection.active .title:after {
-	border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-bottom: 4px solid rgb(96, 127, 153);
-    border-top: none;
-
-}
-.upfront-additive_multiselection .labels_list,
-.upfront-additive_multiselection input
- {
-	display: none;
-}
-.upfront-additive_multiselection.active .labels_list,
-.upfront-additive_multiselection.active input {
-	display: block;
-}
-.upfront-additive_multiselection {
-	overflow: hidden;
-	-webkit-transition: max-height 0.3s;
-	-moz-transition: max-height 0.3s;
-	-ms-transition: max-height 0.3s;
-	-o-transition: max-height 0.3s;
-	transition: max-height 0.3s;
-}
-.upfront-additive_multiselection .labels_list ul {
-	margin: 0;
-	padding: 0;
-	max-height: 113px;
-	overflow-x: hidden;
-	overflow-y: scroll;
-}
-.upfront-additive_multiselection .labels_list ul.empty {
-	border: none;
-	display: none;
-}*/
-.upfront-suggest-list/*,
-.upfront-additive_multiselection .labels_list li*/ {
-	padding: 0;
-	margin: 0 !important;
-	line-height: 14px;
-	position: relative;
-}
-/*.upfront-additive_multiselection .labels_list li label {
-	font-weight: normal;
-	font-family: verdana,sans-serif;
-    font-size: 11px;
-}*/
-.upfront-suggest-list .upfront-field-checkbox/*,
-.upfront-additive_multiselection .labels_list .upfront-field-checkbox*/  {
-	float: none;
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: auto;
-	right: 10px;
-	margin: auto;
-}
-.upfront-suggest-list label/*,
-.upfront-additive_multiselection .labels_list li label*/ {
-	display: block;
-	padding: 7px 30px 7px 10px;
-}
-
-/*.upfront-additive_multiselection .upfront-field-checkbox { border: none; }*/
-
-.upfront-suggest-match/*,
-.upfront-additive_multiselection .labels_list .selection*/ {
-	background: rgb(31, 205, 143);
-	box-shadow: 0 0 0 1px rgb(31, 205, 143), 0 2px 0 rgb(27, 179, 125), 0 0 0 2px rgb(31, 205, 143);
-	border-radius: 1px;
-	color: rgb(255, 255, 255);
-}
-.upfront-field-wrap {
-	color: rgb(48, 71, 94);
-	font-size: 11px;
-	line-height: 16px;
-	font-weight: normal;
-	font-family: verdana, sans-serif;
-	margin: 13px 0 0;
-}
-
-.inline-radios {
-	margin: 15px 0 0;
-}
-.inline-radios .upfront-field-multiple {
-  margin-bottom: 0;
-}
-
-.upfront-field-wrap-multiple {
-	margin-right: -15px;
-}
-.upfront-suggest-add-wrap/*,
-.upfront-additive_multiselection .add_labels*/ {
-	border: 1px solid rgb(163, 191, 217);
-	border-top: none;
-	background: rgb(204, 230, 255);
-	line-height: 16px;
-	position: relative;
-}
-/*.upfront-additive_multiselection .add_labels.empty {
-	border: none;
-}*/
-.upfront-suggest-add-value/*,
-.upfront-additive_multiselection .add_labels .add_value*/ {
-	display: block;
-	font-weight: bold;
-	padding: 6px 0 6px 12px;
-}
-.upfront-suggest-add/*,
-.upfront-additive_multiselection .add_labels .add_link*/ {
-	display: block;
-	position: absolute;
-	top: 6px;
-	right: 10px;
-	cursor: pointer;
-}
-.upfront-field-wrap .upfront-field-label,
-.upfront-field-label {
-	font-weight: normal;
-	margin: 0;
-}
-.upfront-field-wrap .upfront-field-label-block,
-.upfront-field-label-block {
-	display: block;
-  color: rgb(96, 127, 153);
-	font-size: 11px;
-  font-weight: bold;
-	font-family: verdana, sans-serif;
-	line-height: 1;
-	margin: 0;
-  margin-bottom: 8px;
-}
-
-.upfront-field-wrap-optional span {
-	margin: 20px 0 0 0;
-}
-
-.upfront-field-wrap-color {
-	clear: both;
-  vertical-align: middle;
-  line-height: 24px;
-}
-
-.upfront-field-wrap-color label {
-	/* float: left; */
-  float: none;
-}
-
-.upfront-field-wrap-color .upfront-settings-item {
-	margin-bottom:10px;
-}
-
-.upfront-field-wrap-color .sp-preview {
-	display: inline-block;
-	width:18px;
-	height:18px;
-	vertical-align: bottom;
-  	margin: 0;
-	border-radius:50%;
-	top: 0px;
-	position: absolute;
-	border:1px solid #A2BFDA;
-	box-shadow: inset 0 0 0 1px #fff;
-}
-
-.upfront-field-wrap-color .sp-replacer {
-	line-height: 30px;
-}
-
-.upfront-field-wrap-color .sp-texthint {
-}
-
-
-.upfront-field-slider{
-	height:2px;
-	background: #C2D5E6;
-	position: relative;
-	cursor: pointer;
-}
-
-.upfront-field-slider-vertical {
-	height: 100px;
-	width: 2px;
-	margin-top: 13px;
-}
-
-.upfront-field-slider .ui-slider-range {
-	background: #263A4D;
-	height:2px;
-}
-.upfront-field-slider-vertical .ui-slider-range  {
-	width: 2px;
-	position: absolute;
-	bottom: 0;
-	left: 0;
-}
-.upfront-field-slider .ui-slider-handle {
-	border: 3px solid #263A4D;
-	background: #ADC4D9;
-	width:12px;
-	height:12px;
-	border-radius: 6px;
-	position:absolute;
-	top: -5px;
-	cursor: pointer;
-}
-.upfront-field-slider-vertical .ui-slider-handle {
-	left: -5px;
-	top: auto;
-}
-
-.upfront-field-wrap-slider .upfront-field-info {
-	margin-bottom: 10px;
-}
-
-.upfront-field-slider-value {
-	margin-top: 6px;
-  text-align: center;
-}
-
-.upfront-date_picker {
-	background: #F2F9FF;
-	border: 1px solid #6386A6;
-	z-index:10000;
-	font-size: 14px;
-	display: none;
-	position: absolute;
-	z-index: 10000;
-	text-transform: none !important;
-	text-decoration: none !important;
-}
-
-.upfront-date_picker .ui-datepicker-header {
-	padding: 5px 10px;
-	border-bottom: 1px solid #accae6;
-	text-align: center
-}
-
-.upfront-date_picker table{
-	margin: 5px 10px;
-}
-
-.upfront-date_picker thead{
-	color: #395269;
-}
-
-.upfront-date_picker select{
-	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
-	margin: 0 2px;
-}
-
-.upfront-date_picker .ui-datepicker-prev,
-.upfront-date_picker .ui-datepicker-next {
-	display: none;
-}
-
-.upfront-date_picker .ui-datepicker-prev {
-	float: left;
-}
-.upfront-date_picker .ui-datepicker-next {
-	float: right;
-}
-
-.upfront-date_picker td,
-.upfront-date_picker th{
-	text-align: center;
-}
-
-div.upfront-date_picker td a{
-	padding: 2px 4px;
-	color: #607F99;
-}
-
-.upfront-date_picker td a:hover{
-	padding: 2px 4px;
-	background: #1fcd8f;
-	color: #fff !important;
-	text-decoration: none;
-}
-
-.upfront-date_picker a.ui-state-active {
-	background: #607F99;
-	color: #F2F9FF !important;
-}
-
-.upfront-time_picker {
-	padding: 5px 10px;
-	border-top: 1px solid #accae6;
-	text-align: center;
+	border-width: 0;
 }
 
 .upfront-field-wrap-checkboxes .checkbox-info:before,
@@ -812,12 +625,477 @@ div.upfront-date_picker td a{
 	margin-bottom: -4px;
 }
 
+/* Link Panel */
+
+.upfront-object-content .ulinkpanel-dark ul,
+.upfront-object-content .ulinkpanel ul {
+	color: rgb(96, 127, 153);
+	font-size: 11px;
+	font-family: "Open Sans";
+	line-height: 22px;
+}
+
+.ulinkpanel-dark .upfront-field-multiple label,
+.ulinkpanel .upfront-field-multiple label {
+	color: rgb(83, 97, 109);
+	font-size: 11px;
+	font-family: "Open Sans";
+}
+
+.ulinkpanel input.upfront-field-text[type], .ulinkpanel textarea.upfront-field-text.upfront-field-textarea {
+	border-color: rgb(195, 211, 224);
+}
+
+.ulinkpanel .upfront-field-wrap-radios > label,
+.ulinkpanel-dark .upfront-field-wrap-radios > label {
+	display: inline-block;
+	margin: 0 15px 0 0;
+}
+
+.ulinkpanel-dark .upfront-field-wrap-radios > label,
+.ulinkpanel-dark .upfront-field-wrap-radios > .upfront-field-multiple,
+.ulinkpanel .upfront-field-wrap-radios > label,
+.ulinkpanel .upfront-field-wrap-radios > .upfront-field-multiple {
+	vertical-align: top;
+	color: rgb(83, 97, 109);
+	font-weight: normal;
+}
+
+.tile-select {
+	width: 16px;
+	height: 16px;
+	border: 2px solid #7a8d9f;
+}
+
+.tile-select:hover {
+	border-color: #263a4d;
+}
+
+.tile-select:checked {
+	border-color: #263a4d;
+	background-color: #263a4d;
+}
+
+/* Multiple Field */
+
+.upfront-field-multiple {
+	display: block;
+	opacity: 0.8;
+	line-height: 12px;
+	padding: 0 0 0 17px;
+	position: relative;
+	margin-bottom: 10px;
+}
+
+.upfront-field-multiple-vertical {
+	display: inline-block;
+	max-width: 72px;
+	text-align: center;
+	margin: 0 35px 10px 0;
+	padding: 0 0 12px;
+}
+
+.upfront-field-multiple-horizontal-inline {
+	display: inline-block;
+	vertical-align: baseline;
+	margin: 0 15px 0 0;
+}
+
+.upfront-field-multiple-horizontal-inline:last-child {
+	margin: 0;
+}
+
+.upfront-field-multiple:hover,
+.upfront-field-multiple-selected {
+	opacity: 1;
+}
+
+.upfront-field-multiple-disabled,
+.upfront-field-multiple-disabled:hover {
+	opacity: 0.5;
+}
+
+.upfront-field-multiple input.upfront-field-checkbox,
+.upfront-field-multiple input.upfront-field-radio {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+}
+
+.upfront-field-multiple.upfront-field-complex_field-boolean_toggleable_text input.upfront-field-checkbox {
+	bottom: auto;
+	top: 0px;
+}
+
+.upfront-field-multiple.upfront-field-complex_field-boolean_toggleable_text label.upfront-field-label {
+	display: none;
+}
+
+.upfront-field-multiple-vertical input.upfront-field-checkbox,
+.upfront-field-multiple-vertical input.upfront-field-radio {
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	margin: 0 0 0 -6px;
+}
+
+.upfront-field-multiple label {
+	display: table;
+	color: rgb(48, 71, 94);
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.3px;
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
+}
+
+.upfront-field-multiple label .upfront-field-label-text {
+	display: table-cell;
+	vertical-align: middle;
+	cursor: pointer;
+}
+
+.upfront-field-multiple-vertical label {
+	display: block;
+	height: auto;
+}
+
+.upfront-field-multiple-vertical label .upfront-field-label-text {
+	display: block;
+	max-height: 30px;
+	padding: 3px 0;
+	overflow: hidden;
+	line-height: 13px;
+}
+
+.upfront-field-multiple-vertical .upfront-field-icon {
+	margin: 0 auto;
+}
+
+.upfront-suggest-list-wrap {
+	height: 0;
+	max-height: 0;
+	overflow: hidden;
+	background: rgb(242, 249, 255);
+	-webkit-transition: max-height 0.3s;
+	-moz-transition: max-height 0.3s;
+	-ms-transition: max-height 0.3s;
+	-o-transition: max-height 0.3s;
+	transition: max-height 0.3s;
+}
+
+.upfront-suggest-list-wrap-expanded,
+.upfront-additive_multiselection .labels_list {
+	height: auto;
+	max-height: 142px;
+}
+
+.upfront-suggest-lists {
+	border: 1px solid rgb(163, 191, 217);
+	border-top: none;
+	margin: 0;
+	padding: 0;
+	max-height: 113px;
+	overflow-x: hidden;
+	overflow-y: scroll;
+}
+
+.upfront-suggest-list {
+	padding: 0;
+	margin: 0 !important;
+	line-height: 14px;
+	position: relative;
+}
+
+.upfront-suggest-list .upfront-field-checkbox {
+	float: none;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: auto;
+	right: 10px;
+	margin: auto;
+}
+
+.upfront-suggest-list label {
+	display: block;
+	padding: 7px 30px 7px 10px;
+}
+
+.upfront-suggest-match {
+	background: rgb(31, 205, 143);
+	box-shadow: 0 0 0 1px rgb(31, 205, 143), 0 2px 0 rgb(27, 179, 125), 0 0 0 2px rgb(31, 205, 143);
+	border-radius: 1px;
+	color: rgb(255, 255, 255);
+}
+
+.inline-radios {
+	margin: 15px 0 0;
+}
+
+.inline-radios .upfront-field-multiple {
+	margin-bottom: 0;
+}
+
+.upfront-field-wrap-multiple {
+	margin-right: -15px;
+}
+
+.upfront-suggest-add-wrap {
+	border: 1px solid rgb(163, 191, 217);
+	border-top: none;
+	background: rgb(204, 230, 255);
+	line-height: 16px;
+	position: relative;
+}
+
+.upfront-suggest-add-value {
+	display: block;
+	font-weight: bold;
+	padding: 6px 0 6px 12px;
+}
+
+.upfront-suggest-add {
+	display: block;
+	position: absolute;
+	top: 6px;
+	right: 10px;
+	cursor: pointer;
+}
+
+/* Color Field */
+
+.upfront-field-wrap-color {
+	clear: both;
+	vertical-align: middle;
+	line-height: 24px;
+	overflow: hidden;
+}
+
+.upfront-field-wrap-color label {
+	float: none;
+}
+
+.upfront-field-wrap-color {
+	margin-bottom: 10px;
+}
+
+.upfront-field-wrap-color .sp-replacer {
+	display: inline-block;
+	width: 100%;
+	height: 22px;
+	vertical-align: bottom;
+	margin: 0;
+	border-radius: 3px;
+	top: 0px;
+	background: rgb(255, 255, 255);
+	position: relative;
+	border: 1px solid rgb(144, 144, 144);
+	box-shadow: inset 0 0 0 1px #fff;
+	color: rgb(33, 33, 33);
+	font-size: 11px;
+	font-family: "Open Sans";
+	line-height: 1;
+}
+
+.upfront-field-wrap-color .sp-replacer {
+	line-height: 20px;
+}
+
+
+.theme-colors-color-picker .upfront-field-wrap-color .sp-replacer {
+	border: 1px solid #e2e2e2;
+}
+
+.upfront-field-wrap-color .sp-replacer:hover, .upfront-field-wrap-color .sp-replacer.sp-active {
+	border: 1px solid rgb(144, 144, 144);
+}
+
+.upfront-field-wrap-color .sp-preview {
+	width: 10px;
+	height: 20px;
+	float: left;
+	border-radius: 0;
+	border: none;
+}
+
+.upfront-field-wrap-color .sp-preview:before {
+	content: '';
+	/* magic happens below */
+	background-color: #d2d2d2;
+	background-image:
+			linear-gradient(to top right, #F7F7F7 25%, transparent 25%, transparent 75%, #F7F7F7 75%, #F7F7F7),
+			linear-gradient(to top right, #F7F7F7 25%, transparent 25%, transparent 75%, #F7F7F7 75%, #F7F7F7);
+	
+	-webkit-background-size: 8px 8px;
+	-moz-background-size: 8px 8px;
+	background-size: 8px 8px;
+	
+	background-position: 4px 4px, 8px 8px;
+	width: 10px;
+	height: 20px;
+	position: absolute;
+	z-index: 98;
+}
+
+.upfront-field-wrap-color .sp-preview-inner {
+	display: block !important;
+	position: absolute;
+	z-index: 99;
+}
+
+.upfront-field-wrap-color .upfront-color-field-right {
+	width: 60%;
+	display: block;
+	float: left;
+}
+
+.upfront-field-wrap-color .upfront-color-field-label-right {
+	margin-left: 4%;
+	width: 36%;
+	/* We need important to overwrite preset label styles */
+	font-weight: bold !important;
+	margin-top: 0px !important;
+	line-height: 21px !important;
+	display: block;
+	float: left;
+	height: 20px;
+}
+
+/* Slider field */
+
+.upfront-field-slider {
+	height: 2px;
+	background: #909090;
+	position: relative;
+	cursor: pointer;
+}
+
+.upfront-field-slider-vertical {
+	height: 100px;
+	width: 2px;
+	margin-top: 13px;
+}
+
+.upfront-field-slider .ui-slider-range {
+	background: #263A4D;
+	height: 2px;
+}
+
+.upfront-field-slider-vertical .ui-slider-range {
+	width: 2px;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+}
+
+.upfront-field-slider .ui-slider-handle {
+	border: 1px solid #87959a;
+	background: #fff;
+	width: 12px;
+	height: 12px;
+	border-radius: 6px;
+	position: absolute;
+	top: -5px;
+	cursor: pointer;
+}
+
+.upfront-field-slider-vertical .ui-slider-handle {
+	left: -5px;
+	top: auto;
+}
+
+.upfront-field-wrap-slider .upfront-field-info {
+	margin-bottom: 10px;
+}
+
+.upfront-field-slider-value {
+	margin-top: 6px;
+	text-align: center;
+}
+
+/* Date picker Field */
+
+.upfront-date_picker {
+	background: #F2F9FF;
+	border: 1px solid #6386A6;
+	font-size: 14px;
+	display: none;
+	position: absolute;
+	z-index: 10000;
+	text-transform: none;
+	text-decoration: none;
+}
+
+.upfront-date_picker .ui-datepicker-header {
+	padding: 5px 10px;
+	border-bottom: 1px solid #accae6;
+	text-align: center
+}
+
+.upfront-date_picker table {
+	margin: 5px 10px;
+}
+
+.upfront-date_picker thead {
+	color: #395269;
+}
+
+.upfront-date_picker select {
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+	margin: 0 2px;
+}
+
+.upfront-date_picker .ui-datepicker-prev,
+.upfront-date_picker .ui-datepicker-next {
+	display: none;
+}
+
+.upfront-date_picker .ui-datepicker-prev {
+	float: left;
+}
+
+.upfront-date_picker .ui-datepicker-next {
+	float: right;
+}
+
+.upfront-date_picker td,
+.upfront-date_picker th {
+	text-align: center;
+}
+
+div.upfront-date_picker td a {
+	padding: 2px 4px;
+	color: #607F99;
+}
+
+.upfront-date_picker td a:hover {
+	padding: 2px 4px;
+	background: #1fcd8f;
+	color: #fff;
+	text-decoration: none;
+}
+
+.upfront-date_picker a.ui-state-active {
+	background: #607F99;
+	color: #F2F9FF;
+}
+
+.upfront-time_picker {
+	padding: 5px 10px;
+	border-top: 1px solid #accae6;
+	text-align: center;
+}
+
+/* FIlter */
+
 .upfront-filter_display_control {
 	display: inline-block;
 	margin-top: 0;
 	vertical-align: top;
 	margin-left: 20px;
 }
+
 .upfront-filter_display_control label.upfront-field-label {
 	display: inline-block;
 	vertical-align: top;
@@ -826,6 +1104,7 @@ div.upfront-date_picker td a{
 	font-weight: normal;
 	color: #000;
 }
+
 .upfront-filter_display_control .upfront-field-select {
 	display: inline-block;
 }

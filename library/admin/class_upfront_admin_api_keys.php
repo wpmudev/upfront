@@ -26,6 +26,7 @@ class Upfront_Admin_ApiKeys extends Upfront_Admin_Page {
 
 		if (empty($data)) return false;
 		if (!$this->can_access()) return false;
+		if (empty($data[self::FORM_NONCE_KEY])) return false;
 
 		$services = $this->get_services();
 		$result = array();
@@ -100,6 +101,9 @@ class Upfront_Admin_ApiKeys extends Upfront_Admin_Page {
 		<?php
 	}
 
+	public function render_footer () {
+		wp_nonce_field(self::FORM_NONCE_ACTION, self::FORM_NONCE_KEY);
+	}
 
 
 }

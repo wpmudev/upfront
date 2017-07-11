@@ -9,13 +9,18 @@
     ], function ( Command, overlay_grid_tpl ) {
 
         return Command.extend({
-            className: "command-grid",
-            render: function () {
-                this.$el.addClass('upfront-icon upfront-icon-grid');
-                this.$el.prop("title", l10n.toggle_grid);
+            className: "command-grid sidebar-commands-small-button icon-button",
+
+            initialize: function() {
+                this.constructor.__super__.initialize.apply(this, arguments);
                 this.listenTo(Upfront.Events, "entity:region:added", this.update_grid);
                 this.listenTo(Upfront.Events, "upfront:layout_size:change_breakpoint", this.update_grid);
                 this.listenTo(Upfront.Events, "grid:toggle", this.on_click);
+            },
+
+            render: function () {
+                this.$el.addClass('upfront-icon upfront-icon-grid');
+                this.$el.prop("title", l10n.toggle_grid);
             },
             on_click: function () {
                 if (!$('.upfront-overlay-grid').size()) this.create_grid();

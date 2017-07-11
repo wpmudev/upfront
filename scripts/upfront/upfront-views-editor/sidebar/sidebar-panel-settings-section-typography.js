@@ -7,14 +7,10 @@
         'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section',
         'scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-item-typography-editor',
         'scripts/upfront/upfront-views-editor/commands/command-edit-custom-css',
-        'scripts/upfront/upfront-views-editor/commands/command-edit-layout-background',
-        'scripts/upfront/upfront-views-editor/commands/command-edit-global-regions'
     ], function (
         SidebarPanel_Settings_Section,
         SidebarPanel_Settings_Item_Typography_Editor,
-        Command_EditCustomCSS,
-        Command_EditLayoutBackground,
-        Command_EditGlobalRegions
+        Command_EditCustomCSS
     ) {
 
         return SidebarPanel_Settings_Section.extend({
@@ -26,8 +22,6 @@
                 //if (!Upfront.mainData.userDoneFontsIntro) return;
 
                 this.edit_css = new Command_EditCustomCSS({"model": this.model});
-                this.edit_background = new Command_EditLayoutBackground({"model": this.model});
-                this.edit_global_regions = new Command_EditGlobalRegions({"model": this.model});
             },
             get_title: function () {
                 return l10n.typography;
@@ -41,17 +35,10 @@
                 this.edit_css.delegateEvents();
                 this.$el.find('.panel-section-content').append(this.edit_css.el);
 
-								Upfront.plugins.call('insert-command-after-typography-commands', {
-									rootEl: this.$el,
-									model: this.model
-								});
-
-                this.edit_background.render();
-                this.edit_background.delegateEvents();
-                this.$el.find('.panel-section-content').append(this.edit_background.el);
-                this.edit_global_regions.render();
-                this.edit_global_regions.delegateEvents();
-                this.$el.find('.panel-section-content').append(this.edit_global_regions.el);
+				Upfront.plugins.call('insert-command-after-typography-commands', {
+					rootEl: this.$el,
+					model: this.model
+				});
 				
 				var me = this;
 				// When color spectrum is shown, set positions
@@ -64,7 +51,11 @@
 					me.$el.closest('.sidebar-panel-content.ps-theme-default').css('position', 'relative');
 					me.$el.closest('.sidebar-panel-settings').css('position', 'static');
 				});
-            }
+
+				// Move theme fonts manager button to bottom
+				this.$el.find('.open-theme-fonts-manager').after(this.$el.find('.command-edit-css'));
+				this.$el.find('.command-edit-css').before(this.$el.find('.command-open-font-manager'));
+			}
         });
     });
 }(jQuery));

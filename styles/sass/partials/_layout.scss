@@ -16,6 +16,17 @@
   	margin: 0 0 0 260px;
   	width: auto;
 }
+
+/* Adjust sidebar width for small screen. */
+@media screen and (max-width: 1366px) {
+	.upfront-edit-layout #page,
+	.upfront-edit-theme #page,
+	.upfront-edit-responsive #page,
+	.upfront-edit-postlayout #page {
+		margin: 0 0 0 130px;
+	}
+}
+
 .upfront-edit-responsive #page {
   margin-top: 72px;
 }

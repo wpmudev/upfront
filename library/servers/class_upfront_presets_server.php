@@ -104,6 +104,32 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 
 		$this->_out(new Upfront_JsonResponse_Success($resetpreset));
 	}
+	
+	public function handle_post_parts($presets) {
+		$new_presets = array();
+
+		if(!empty($presets)) {
+			foreach($presets as $preset) {
+				foreach($preset as $key => $prop) {
+					// Check if posts part
+					if (0 === strpos($key, 'post-part-')) {
+						// WARNING!!! This is added to prevent enourmos amount of slashes in preset_style
+						$preset[$key] = str_replace("\\\\\\\\\\\\", "\\", $preset[$key]);
+						// Do it twice just in case we have multiple slashes
+						$preset[$key] = str_replace("\\\\\\\\\\\\", "\\", $preset[$key]);
+						// Do it twice just in case we have multiple slashes
+						$preset[$key] = str_replace("\\\\\\\\\\\\", "\\", $preset[$key]);
+						// Finally clear slashes
+						$preset[$key] = stripslashes_deep(stripslashes($preset[$key]));
+					}
+				}
+				
+				$new_presets[] = $preset;
+			}
+		}
+
+		return $new_presets;
+	}
 
 	public function replace_new_lines($presets) {
 		$new_presets = array();
@@ -169,7 +195,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	 * @return array saved presets
 	 */
 	public function get_presets() {
-		$presets = json_decode(get_option($this->db_key, '[]'), true);
+		$presets = json_decode(Upfront_Cache_Utils::get_option($this->db_key, '[]'), true);
 
 		$presets = apply_filters(
 			'upfront_get_' . $this->elementName . '_presets',
@@ -181,6 +207,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		);
 
 		$presets = $this->replace_new_lines($presets);
+		$presets = $this->handle_post_parts($presets);
 		$presets = $this->_expand_passive_relative_url($presets);
 
 		// Fail-safe
@@ -196,7 +223,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 		$isbuilder = isset($_POST['isbuilder']) ? stripslashes($_POST['isbuilder']) : false;
 
 		if($isbuilder != 'true') {
-			update_option($this->db_key, json_encode($presets));
+			Upfront_Cache_Utils::update_option($this->db_key, json_encode($presets));
 		}
 	}
 
@@ -216,6 +243,19 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			$properties['preset_style'] = Upfront_UFC::utils()->replace_commented_style_with_variable( $properties['preset_style'] );
 		}
 
+		foreach($properties as $key => $prop) {
+			if (0 === strpos($key, 'post-part-')) {
+				// WARNING!!! This is added to prevent enourmos amount of slashes in preset_style
+				$properties[$key] = str_replace("\\\\\\\\\\\\", "\\", $prop);
+				// Do it twice just in case we have multiple slashes
+				$properties[$key] = str_replace("\\\\\\\\\\\\", "\\", $prop);
+				// Do it twice just in case we have multiple slashes
+				$properties[$key] = str_replace("\\\\\\\\\\\\", "\\", $prop);
+				// Finally clear slashes
+				$properties[$key] = stripslashes_deep(stripslashes($prop));
+			}
+		}
+
 		do_action('upfront_save_' . $this->elementName . '_preset', $properties, $this->elementName);
 
 		if (!has_action('upfront_save_' . $this->elementName . '_preset')) {
@@ -231,10 +271,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				$result[] = $preset;
 			}
 
-
 			$result[] = $properties;
-
-
 
 			$this->update_presets($result);
 		}
@@ -408,7 +445,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	}
 
 	public function get_presets_javascript_server() {
-		$presets = get_option('upfront_' . get_stylesheet() . '_' . $this->elementName . '_presets');
+		$presets = Upfront_Cache_Utils::get_option('upfront_' . get_stylesheet() . '_' . $this->elementName . '_presets');
 		$presets = apply_filters(
 			'upfront_get_' . $this->elementName . '_presets',
 			$presets,
@@ -446,6 +483,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			$this->migrate_presets($updatedPresets)
 		);
 		$updatedPresets = $this->_expand_passive_relative_url($updatedPresets);
+		$updatedPresets = $this->handle_post_parts($updatedPresets);
 
 		$updatedPresets = json_encode($updatedPresets);
 
@@ -581,6 +619,7 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			'weight_style' => __('Weight/Style:', 'upfront'),
 			'size' => __('Size:', 'upfront'),
 			'line_height' => __('Line Height: ', 'upfront'),
+			'text_alignment' => __('Text alignment', 'upfront'),
 			'rounded_corners' => __('Round Corners', 'upfront'),
 			'typography' => __('Typography', 'upfront'),
 			'animate_hover_changes' => __('Animate State Changes', 'upfront'),
@@ -609,8 +648,11 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 			'post' => __('Post', 'upfront'),
 			'widget' => __('Widget', 'upfront'),
 			'youtube' => __('YouTube', 'upfront'),
+			'margin' => __('Margin', 'upfront'),
 			'text' => __('Text', 'upfront'),
 			'code' => __('Code', 'upfront'),
+			'posts_label' => __('Post', 'upfront'),
+			'reset_posts' => __('Reset every', 'upfront'),
 			'default_label' => __('Default', 'upfront'),
 			'edit_preset_css' => __('Edit Preset CSS', 'upfront'),
 			'edit_preset_label' => __('Custom CSS', 'upfront'),

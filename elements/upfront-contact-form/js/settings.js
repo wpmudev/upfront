@@ -25,12 +25,13 @@ define([
 			{
 				type: 'SettingsItem',
 				title: l10n.fields.label,
-				className: 'general_settings_item multiple_radio_no_padding',
+				className: 'general_settings_item',
 				fields: [
 					{
-						type: 'Optional',
+						type: 'Toggle',
 						property: 'show_subject',
 						relatedField: 'form_subject_label',
+						className: 'field-grid-half upfront-field-padding-top',
 						values: [
 							{
 								label: l10n.fields.show_subject,
@@ -39,8 +40,9 @@ define([
 						]
 					},
 					{
-						type: 'Optional',
+						type: 'Toggle',
 						property: 'show_captcha',
+						className: 'field-grid-half field-grid-half-last upfront-field-padding-top',
 						relatedField: 'form_captcha_label',
 						values: [
 							{
@@ -62,17 +64,14 @@ define([
 							{
 								label: l10n.apr.above,
 								value: 'above',
-								icon: 'contact-above-field'
 							},
 							{
 								label: l10n.apr.over,
 								value: 'over',
-								icon: 'contact-over-field'
 							},
 							{
 								label: l10n.apr.inline,
 								value: 'inline',
-								icon: 'contact-inline-field'
 							}
 						]
 					}
@@ -84,8 +83,8 @@ define([
 				className: 'general_settings_item',
 				fields: [
 					{
-						type: 'Radios',
-						className: 'inline-radios plaintext-settings',
+						type: 'Radios_Inline',
+						className: 'inline-radios upfront-field-padding-top upfront-field-wrap-radios-inline',
 						property: 'form_validate_when',
 						values: [
 							{
@@ -117,7 +116,7 @@ define([
 	});
 
 	var SMTPAuthenticationSettings = Upfront.Views.Editor.Settings.Item.extend({
-		className: 'no-title general_settings_item smtp-authentication',
+		className: 'no-title smtp_settings_item smtp-authentication',
 		initialize: function(opts) {
 			//var showsettings = this.model.get_property_value_by_name('smtp_authentication');
 			this.update_fields();
@@ -132,21 +131,20 @@ define([
 			this.fields=_([]);
 			
 			if(typeof(show) !== 'undefined' && ((show.length > 0 && show[0] === 'yes') || show === 'yes')) {
-				
-
 				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Text({
 					model: this.model,
 					property: 'smtp_username',
+					className: 'upfront-field-wrap upfront-field-wrap-text smtp_username',
 					label: l10n.smtp.username,
+					label_style: 'inline'
 				});
 
 				this.fields._wrapped[this.fields._wrapped.length] = new PasswordField({
 					model: this.model,
 					property: 'smtp_password',
-					label: l10n.smtp.password
+					label: l10n.smtp.password,
+					label_style: 'inline'
 				});
-
-	
 			}
 
 			if(typeof(show) !== 'undefined') {
@@ -156,10 +154,8 @@ define([
 		}
 	});
 
-
-
 	var SMTPSpecificSettings = Upfront.Views.Editor.Settings.Item.extend({
-		className: 'no-title smtp-configuration',
+		className: 'no-title smtp-configuration smtp_settings_item',
 		initialize: function(opts) {
 			
 			this.authentication = opts.authentication;
@@ -181,6 +177,7 @@ define([
 				this.$el.removeClass('no-title');
 				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Email({
 					model: this.model,
+					className: 'upfront-field-wrap-text',
 					property: 'smtp_from_email',
 					label: l10n.smtp.from_email
 				});
@@ -203,11 +200,12 @@ define([
 					label: l10n.smtp.port
 				});
 
-				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Radios({
+				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Radios_Inline({
 					model: this.model,
-					className: 'inline-radios smtp-secure plaintext-settings upfront-field-wrap',
+					className: 'inline-radios smtp-secure upfront-field-wrap-radios-inline upfront-field-wrap upfront-field-padding-top',
 					property: 'smtp_secure',
 					label: l10n.smtp.secure,
+					label_style: 'inline',
 					default_value: 'none',
 					values: [
 						{
@@ -225,9 +223,9 @@ define([
 					]
 				});
 
-				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Checkboxes({
+				this.fields._wrapped[this.fields._wrapped.length] = new Upfront.Views.Editor.Field.Toggle({
 					model: this.model,
-					className: 'inline-checkbox plaintext-settings upfront-field-wrap enable-authentication',
+					className: 'inline-checkbox plaintext-settings upfront-field-wrap enable-authentication upfront-field-padding-top',
 					property: 'smtp_authentication',
 					default_value: 'no',
 					values: [
@@ -249,7 +247,6 @@ define([
 		}
 	});
 
-
 	var ContactFormSettings = ElementSettings.extend({
 		panels: {
 			General: GeneralPanel,
@@ -267,7 +264,7 @@ define([
 							options: {
 								title: l10n.colors_label,
 								multiple: false,
-								single: false,
+								single: true,
 								abccolors: [
 									{
 										name: 'static-field-bg',
@@ -339,13 +336,13 @@ define([
 							options: {
 								title: l10n.colors_label,
 								multiple: false,
-								single: false,
 								toggle: true,
 								prepend: 'hover-',
 								prefix: 'static',
 								fields: {
 									use: 'hover-use-color'
 								},
+								single: true,
 								abccolors: [
 									{
 										name: 'hover-field-bg',
@@ -437,7 +434,7 @@ define([
 							options: {
 								title: l10n.colors_label,
 								multiple: false,
-								single: false,
+								single: true,
 								toggle: true,
 								prepend: 'focus-',
 								prefix: 'static',
@@ -494,29 +491,20 @@ define([
 			var smtp_enable = new Upfront.Views.Editor.Settings.Item({
 				model: this.model,
 				title: l10n.smtp.enable,
-				className: 'general_smtp_settings',
+				className: 'general_smtp_settings smtp_settings_item',
 				fields: [
-					new Upfront.Views.Editor.Field.Radios({
+					new Upfront.Views.Editor.Field.Toggle({
 						model: this.model,
 						property: 'smtp_enable',
 						className: 'inline-radios plaintext-settings',
 						default_value: 'no',
 						values: [
 							{
-								label: l10n.smtp.no,
-								value: 'no'
-							},
-							{
 								label: l10n.smtp.yes,
 								value: 'yes'
 							}
 						],
 						change: function(value) {
-							if(value === 'yes')
-								smtp_enable.$el.addClass('general_settings_item');
-							else
-								smtp_enable.$el.removeClass('general_settings_item');
-
 							smtp_configuration.update_fields(value);
 							
 							var show_authentication = this.model.get_property_value_by_name('smtp_authentication');

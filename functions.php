@@ -9,8 +9,10 @@
 
 require_once(dirname(__FILE__) . '/library/upfront_functions.php');
 require_once(dirname(__FILE__) . '/library/upfront_functions_theme.php');
+require_once(dirname(__FILE__) . '/library/class_upfront_cache_utils.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_permissions.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_registry.php');
+require_once(dirname(__FILE__) . '/library/class_upfront_logger.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_debug.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_behavior.php');
 require_once(dirname(__FILE__) . '/library/class_upfront_http_response.php');
@@ -98,6 +100,10 @@ class Upfront {
 	 * Add basic set of hooks
 	 */
 	private function _add_hooks () {
+		if (Upfront_Behavior::compression()->get_option('freeze')) {
+			Upfront_DependencyCache_Server::serve();
+		}
+
 		add_filter('body_class', array($this, 'inject_grid_scope_class'));
 		add_action('wp_head', array($this, "inject_global_dependencies"), 0);
 		add_action('wp_footer', array($this, "inject_upfront_dependencies"), 99);
@@ -301,17 +307,20 @@ class Upfront {
 			? '/styles/global.min.css'
 			: '/styles/global.css'
 		;
-		wp_enqueue_style('upfront-global', self::get_root_url() . $global_style, array(), Upfront_ChildTheme::get_version());
+		//wp_enqueue_style('upfront-global', self::get_root_url() . $global_style, array(), Upfront_ChildTheme::get_version());
+		$deps->add_header_style(self::get_root_url() . $global_style);
 
 		if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			// Don't queue the front grid if has permission to boot Upfront, queue editor grid instead
-			wp_enqueue_style('upfront-front-grid', admin_url('admin-ajax.php?action=upfront_load_grid'), array(), Upfront_ChildTheme::get_version());
+			//wp_enqueue_style('upfront-front-grid', admin_url('admin-ajax.php?action=upfront_load_grid'), array(), Upfront_ChildTheme::get_version());
+			$deps->add_header_style(admin_url('admin-ajax.php?action=upfront_load_grid'));
 		}
 
 		if (Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 			do_action('upfront-core-wp_dependencies');
 
-			wp_enqueue_style('upfront-editor-interface', self::get_root_url() . ( $this->_debugger->is_dev()  ?  '/styles/editor-interface.css' : '/styles/editor-interface.min.css' ) , array(), Upfront_ChildTheme::get_version());
+			//wp_enqueue_style('upfront-editor-interface', self::get_root_url() . ( $this->_debugger->is_dev()  ?  '/styles/editor-interface.css' : '/styles/editor-interface.min.css' ) , array(), Upfront_ChildTheme::get_version());
+			$deps->add_header_style(self::get_root_url() . ( $this->_debugger->is_dev()  ?  '/styles/editor-interface.css' : '/styles/editor-interface.min.css' ));
 
 			$link_urls = array(
 				admin_url('admin-ajax.php?action=upfront_load_editor_grid'),

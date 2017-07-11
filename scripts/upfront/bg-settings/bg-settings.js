@@ -22,15 +22,15 @@ define([
 			var me = this,
 				bg_image = this.model.get_breakpoint_property_value('background_image', true),
 				types = [
-					{ label: l10n.solid_color, value: 'color', icon: 'color' },
-					{ label: l10n.image, value: 'image', icon: 'image' },
-					{ label: l10n.video, value: 'video', icon: 'video' },
-					{ label: l10n.image_slider, value: 'slider', icon: 'slider' },
-					{ label: l10n.map, value: 'map', icon: 'map' }
+					{ label: l10n.solid_color, value: 'color' },
+					{ label: l10n.image, value: 'image' },
+					{ label: l10n.video, value: 'video' },
+					{ label: l10n.image_slider, value: 'slider' },
+					{ label: l10n.map, value: 'map' }
 				];
 				
 			if (_upfront_post_data.post_id) {
-				types.push({ label: l10n.featured_image, value: 'featured', icon: 'feat' });
+				types.push({ label: l10n.featured_image, value: 'featured' });
 			}
 			if ( _.isArray(options.enable_types) ) {
 				types = _.filter(types, function(type){
@@ -54,7 +54,7 @@ define([
 						this.model.set_breakpoint_property(this.property_name, value);
 					}
 				}),
-				new Upfront.Views.Editor.Field.Checkboxes({
+				new Upfront.Views.Editor.Field.Toggle({
 					model: this.model,
 					property: 'use_padding',
 					className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-settings-item-content upfront-field-wrap-checkboxes padding-bg-checkbox-field',

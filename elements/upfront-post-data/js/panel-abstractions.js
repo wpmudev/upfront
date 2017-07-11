@@ -38,7 +38,7 @@ define([
 			fields.push({
 				type: "Button",
 				label: l10n.edit_template,
-				className: 'edit_post_markup edit_preset_css',
+				className: 'edit_post_markup edit_preset_css sidebar-commands-small-button',
 				compact: true,
 				on_click: function () {
 					me.spawn_editor();

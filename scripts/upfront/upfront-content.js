@@ -17,21 +17,6 @@ define("content", deps, function(postTpl, ContentTools) {
 
 		_.extend(this, Backbone.Events);
 
-		//If the post is in the cache, prepare it!
-    // Disabled due to a bug where the post name and title
-    // did not update properly when editing again without refresh.
-    /*
-     *    if(Upfront.data.posts[this.postId]){
-     *      this.post = Upfront.data.posts[this.postId];
-     *      if(!this.post.meta.length)
-     *        this.post.meta.fetch();
-     *
-     *      this.loadingPost = new $.Deferred();
-     *      this.loadingPost.resolve(this.post);
-     *    }
-     */
-
-		//this.postView = opts.view;
 		this.contentEditor = false;
 
 		// Make the actual reboot call throttled with a fairly long interval
@@ -41,31 +26,10 @@ define("content", deps, function(postTpl, ContentTools) {
 		this.getPost().done(function(){
 			me.contentEditor = new ContentTools.PostContentEditor({
 				post: me.post,
-				//postView: me.postView,
-				content_mode: me.content_mode/*,
-				authorTpl: this.getTemplate('author'),
-				partOptions: this.postView.partOptions,*/
+				content_mode: me.content_mode
 			});
-/*
-// All these event listeners are moved to `PostEditor.prototype.reboot` method, below!
-			me.listenTo(me.contentEditor, 'cancel', me.cancelChanges);
-			me.listenTo(me.contentEditor, 'publish', me.publish);
-			me.listenTo(me.contentEditor, 'draft', me.saveDraft);
-			me.listenTo(me.contentEditor, 'auto-draft', me.saveAutoDraft);
-			me.listenTo(me.contentEditor, 'trash', me.trash);
-			// Listen to edit start/stop
-			me.listenTo(me.contentEditor, 'edit:start', me.editStart);
-			me.listenTo(me.contentEditor, 'edit:stop', me.editStop);
-			// Specific change event handles
-			me.listenTo(me.contentEditor, 'change:title', me.changeTitle);
-			me.listenTo(me.contentEditor, 'change:content', me.changeContent);
-			me.listenTo(me.contentEditor, 'change:author', me.changeAuthor);
-			me.listenTo(me.contentEditor, 'change:date', me.changeDate);
-			me.listenTo(me.contentEditor, 'bar:date:updated', me.changeDate);
-*/
 			me.reboot();
 		});
-		//this.getPostLayout();
 	};
 
 	PostEditor.prototype = {
@@ -170,16 +134,6 @@ define("content", deps, function(postTpl, ContentTools) {
 			}
 
 			var post = Upfront.data.posts[this.postId];
-    // Disabled due to a bug where the post name and title
-    // did not update properly when editing again without refresh.
-    /*
-     *  if(post){
-     *    this.post = post;
-     *    deferred.resolve(post);
-     *    this.loadingPost = deferred.promise();
-     *    return this.loadingPost;
-     *  }
-     */
 
 			return this.fetchPost();
 		},
@@ -191,9 +145,8 @@ define("content", deps, function(postTpl, ContentTools) {
 
 			this.post = new Upfront.Models.Post({ID: this.postId});
 
-			//this.bindPostEvents();
 			me.loadingPost = deferred.promise();
-			this.post.fetch({withMeta: true/*, filterContent: true*/}).done(function(response){
+			this.post.fetch({withMeta: true}).done(function(response){
 				if(!Upfront.data.posts)
 					Upfront.data.posts = {};
 				Upfront.data.posts[me.postId] = me.post;
@@ -264,19 +217,10 @@ define("content", deps, function(postTpl, ContentTools) {
 				is_auto_draft = status === "auto-draft",
 				post_name = this.post.get("post_name"),
 				$main = $(Upfront.Settings.LayoutEditor.Selectors.main),
-				//loading = new Upfront.Views.Editor.Loading({
-				//	loading: loadingMsg,
-				//	done: Upfront.Settings.l10n.global.content.here_we_are,
-				//	fixed: true
-				//}),
 				postUpdated = false
 			;
 
-			if ( !is_auto_draft ) {
-				// We dont need loading anymore
-				//loading.render();
-				//$main.append(loading.$el);
-			} else {
+			if ( is_auto_draft ) {
 				status = "draft";
 			}
 
@@ -332,7 +276,6 @@ define("content", deps, function(postTpl, ContentTools) {
 				me.post.permalink = result.data.permalink;
 				if ( metaUpdated ) {
 					if( !is_auto_draft ) {
-						//loading.done();
 						Upfront.Views.Editor.notify(successMsg);
 						me.stopEditContents();
 						me.trigger('post:saved');
@@ -346,7 +289,6 @@ define("content", deps, function(postTpl, ContentTools) {
 				me.post.meta.save().done(function(){
 					if ( postUpdated ) {
 						if( !is_auto_draft ) {
-							//loading.done();
 							Upfront.Views.Editor.notify(successMsg);
 							me.stopEditContents();
 							me.trigger('post:saved');

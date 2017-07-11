@@ -1,8 +1,11 @@
 /* Typography panel */
-.typography-panel .upfront-field-select {
-	width: 230px;
-	height: 24px;
-
+.typography-panel {
+	clear: both;
+	overflow: hidden;
+	padding-bottom: 2px;
+	margin-bottom: 12px;
+	padding-top: 10px;
+	border-bottom: 1px solid rgb(229, 229, 229);
 }
 #sidebar-ui .typography-panel .upfront-field-wrap {
 	margin-top: 4px;
@@ -10,21 +13,14 @@
 #sidebar-ui .typography-panel .upfront-field-wrap:first-child {
 	margin-top: 0;
 }
-#sidebar-ui .typography-panel .upfront-typography-fields-left,
-#sidebar-ui .typography-panel .upfront-typography-fields-right {
-	margin-top: 4px;
+#sidebar-ui .typography-panel label {
+	margin-bottom: 3px;
 }
-#sidebar-ui .typography-panel .upfront-typography-fields-left .upfront-field-select {
-	width: 120px;
-}
-.typography-panel .upfront-typography-fields-right .upfront-field-wrap:first-child label {
-	margin-bottom: 2px;
-}
-.typography-panel .upfront-field-wrap-number label {
-	margin-bottom: 5px;
+#sidebar-ui .typography-panel .upfront-typography-fields-right .upfront-field-wrap-color label {
+	margin-bottom: 1px;
 }
 .typography-panel .upfront-field-number[type=number] {
-	height: 26px;
+	height: 22px;
 	font-size: 11px;
 }
 #sidebar-ui .typography-section-content {
@@ -32,4 +28,7 @@
 }
 #sidebar-ui .typography-section-content .sp-container.sp-light.sp-alpha-enabled {
 	z-index: 99999999;
+}
+#sidebar-ui .typography-panel .upfront-field-wrap {
+	margin-bottom: 10px;
 }

@@ -14,6 +14,15 @@ class Upfront_Uwidget {
 		$data = array();
 
 		foreach ($wp_registered_widgets as $key => $widget) {
+			// Temporary disable widgets with JS admin fields
+			if( $widget['name'] === "Image" ||
+				$widget['name'] === "Video" ||
+				$widget['name'] === "Audio" ||
+				$widget['name'] === "Text"
+			) {
+				continue;
+			}
+
 			$cback = $wp_registered_widget_controls[$key]['callback'];
 			$class = !empty($cback[0]) && is_object($cback[0]) && $cback[0] instanceof WP_Widget
 				? get_class($cback[0])
@@ -129,7 +138,9 @@ class Upfront_Uwidget {
 
 		ob_start();
 		call_user_func_array($callback, array($params));
+
 		$markup = ob_get_clean();
+
 		return $this->_get_fields_from_markup($markup);
 	}
 

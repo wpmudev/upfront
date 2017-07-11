@@ -136,7 +136,7 @@
                     chooseButton = new Fields.Button({
                         label: l10n.select_fonts_to_use,
                         compact: true,
-                        classname: 'open-theme-fonts-manager',
+                        classname: 'open-theme-fonts-manager sidebar-commands-small-button field-grid-half',
 
                         on_click: function(e){
                             Upfront.Events.trigger('command:themefontsmanager:open');
@@ -155,7 +155,6 @@
 
                 if ( !this.fields.length ) {
                     this.fields = {
-                        start_font_manager: chooseButton,
                         element: new Fields.Select({
                             label: l10n.type_element,
                             default_value: 'h1',
@@ -190,7 +189,7 @@
                                 }
                                 me.fields.color.set_value( me.colors[value] );
                                 me.fields.color.update_input_border_color(me.colors[value]);
-								
+
 								// Update typeface when element changed
 								var typeface_value = me.fields.typeface.get_value();
 								me.fields.typeface.set_option_font(typeface_value);
@@ -200,7 +199,7 @@
                             label: l10n.typeface,
                             values: Fonts.theme_fonts_collection.get_fonts_for_select(),
                             default_value: me.typefaces['h1'],
-                            select_width: '225px',
+                            select_width: '230px',
                             change: function () {
                                 var value = this.get_value(),
                                     element = me.current_element;
@@ -234,7 +233,6 @@
                             label: l10n.size,
                             min: 0,
                             max: 100,
-                            suffix: l10n.px,
                             default_value: me.sizes['h1'],
                             change: function () {
                                 var value = this.get_value(),
@@ -259,7 +257,8 @@
                                     me.update_typography();
                                 }
                             }
-                        })
+                        }),
+						start_font_manager: chooseButton,
                     };
                 }
                 this.$el.html('');
@@ -295,7 +294,7 @@
                     values: this.get_styles(),
                     default_value: me.get_styles_field_default_value(),
                     font_family: typeface,
-                    select_width: '120px',
+                    select_width: '110px',
                     change: function () {
                         var value = this.get_value(),
                             element = me.current_element;
@@ -362,8 +361,18 @@
                 var me = this,
                     css = [],
                     breakpointCss = [],
-                    options = {}
+                    options = {},
+										ggfonts
                 ;
+
+								// Google fonts load asynchronously, let them load first
+								var gfonts = Fonts.Google.get_fonts();
+								if (!gfonts || !gfonts.length) {
+									setTimeout( function() {
+										me.update_typography(color, updateSilently);
+									}, 100);
+									return;
+								}
 
                 _.each(this.elements, function(element) {
                     var rules = [],
@@ -397,7 +406,7 @@
                     }
                     if (_.isUndefined(font_family)) {
                         // This is a Google font
-                        var ggfonts = Fonts.Google.get_fonts();
+                        ggfonts = Fonts.Google.get_fonts();
                         if (ggfonts && ggfonts.findWhere) {
                             font_family = ggfonts.findWhere({family: typeface});
                         }
