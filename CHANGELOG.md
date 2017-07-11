@@ -1,6 +1,27 @@
 Change Log
 ============
 
+1.9 - 2017-07-12
+-------------------------------------------------------------------------------
+- Add: New design for sidebar, element & region settings.
+- Add: New design for Posts / Pages / Comments.
+- Add: Different popup for Builder & Editor.
+- Add: Performance - reduce the number of requests fired by editor (JS/PHP)
+- Add: Better compatibility with Hustle.
+- Add: Better compatibility with Hummingbird.
+- Performance Improvement: Implement more extensive use of object caching.
+- Performance Improvement: Clear markup bloat to speed up visitors’ performance using freeze mode.
+- Performance Improvement: Implement element html caching for loading on boot.
+- Performance Improvement: Implement element html caching for switching layouts in editor.
+- Performance Improvement: Prevent nav element from making multiple requests on any change and on layout load.
+
+- Fix: Posts element multiple Term fields.
+- Fix: Posts element per category not working.
+- Fix: Lightboxes broken on small resolution.
+- Fix: Floating regions cannot be deleted.
+- Fix: Builder does not save changes.
+- Fix: Redactor bold & italic update only part of selection.
+- Fix: Posts element single posts display multiple posts.
 
 1.8.1 - 2017-05-11
 -------------------------------------------------------------------------------
