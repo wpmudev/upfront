@@ -11632,7 +11632,7 @@ a.upfront-post-layout-trigger:before {
 
 .upfront-search-control .upfront-field-wrap-text {
   float: left;
-  width: 144px;
+  width: 144px !important;
   margin: 0; }
 
 .upfront-search-control .upfront-media-search-button {
