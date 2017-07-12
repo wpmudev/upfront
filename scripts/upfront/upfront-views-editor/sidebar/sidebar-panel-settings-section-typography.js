@@ -22,6 +22,8 @@
                 //if (!Upfront.mainData.userDoneFontsIntro) return;
 
                 this.edit_css = new Command_EditCustomCSS({"model": this.model});
+
+				this.listenTo(Upfront.Events, "entity:breakpoint:change", this.update_buttons_position);
             },
             get_title: function () {
                 return l10n.typography;
@@ -52,9 +54,13 @@
 					me.$el.closest('.sidebar-panel-settings').css('position', 'static');
 				});
 
-				// Move theme fonts manager button to bottom
-				this.$el.find('.open-theme-fonts-manager').after(this.$el.find('.command-edit-css'));
-				this.$el.find('.command-edit-css').before(this.$el.find('.command-open-font-manager'));
+				this.update_buttons_position();
+			},
+
+			update_buttons_position: function() {
+				// Move Theme Fonts Manager button to bottom
+				$('.open-theme-fonts-manager').after($('.command-edit-css'));
+				$('.command-edit-css').before($('.command-open-font-manager'));
 			}
         });
     });
