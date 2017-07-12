@@ -24,18 +24,6 @@
 	width: 30px;
 }
 
-.upfront_map-fields-simple_location .upfront-field-wrap-refresh button:before {
-	content: " ";
-	background-image: url('../../../img/uf-core-el-sprite_new.png');
-	background-image: url('../../../img/uf-core-el-sprite_new.svg');
-	background-repeat: no-repeat;
-	background-position: -477px -73px;
-	width: 25px;
-	height: 20px;
-	display: block;
-	position: relative;
-}
-
 .upfront_map-fields-simple_location .upfront-field-wrap-refresh button img {
 	opacity: 0.7;
 	width: 15px;
