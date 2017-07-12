@@ -133,7 +133,7 @@
 }
 
 .upfront-modal-bg-settings-global .upfront-bg-setting-theme-body input {
-	width: 50px;
+	width: 80px;
 }
 
 .upfront-modal-bg-settings-global .uf-bgsettings-image-style .upfront-field-select {
@@ -1111,11 +1111,17 @@ span.upfront-settings-item-title:after {
 }
 
 .upfront-modal-bg-settings-global .upfront-bg-setting-label {
-	color: #3f617f;
+	color: rgba(33, 33, 33, 0.8);
 	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
-	font-size: 14px;
-	line-height: 20px;
+	font-size: 11px;
+	line-height: 1;
 	font-weight: normal;
+	top: 3px;
+	margin-bottom: 8px;
+}
+
+.upfront-modal-bg-settings-global  .upfront-field-wrap-select {
+	margin: 10px 0 0;
 }
 
 .upfront-modal-bg-settings-fixed .upfront-bg-setting-label {
