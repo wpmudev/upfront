@@ -54,7 +54,8 @@
 					me.$el.closest('.sidebar-panel-settings').css('position', 'static');
 				});
 
-				this.update_buttons_position();
+				this.$el.find('.open-theme-fonts-manager').after(this.$el.find('.command-edit-css'));
+				this.$el.find('.command-edit-css').before(this.$el.find('.command-open-font-manager'));
 			},
 
 			update_buttons_position: function() {
