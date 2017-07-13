@@ -5122,7 +5122,7 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
   margin: 0.5rem 0 0; }
 
 .upfront-modal-bg-settings-global .upfront-bg-setting-theme-body input {
-  width: 50px; }
+  width: 80px; }
 
 .upfront-modal-bg-settings-global .uf-bgsettings-image-style .upfront-field-select {
   margin-top: 13px; }
@@ -18307,7 +18307,7 @@ li#new-custom-breakpoint {
 #sidebar-ui .typography-panel .upfront-field-wrap {
   margin-bottom: 10px; }
 
-/* Chosen */
+§
 #insert-font-widget .chosen-container-single .chosen-single,
 #sidebar-ui .chosen-container-single .chosen-single,
 #upfront-popup .chosen-container-single .chosen-single,
@@ -18572,11 +18572,6 @@ li#new-custom-breakpoint {
 .chosen-container .chosen-results li.highlighted {
   background: #e7eaeb;
   color: black; }
-
-.chosen-container-multi .chosen-choices li.search-choice .search-choice-close {
-  background-image: url("../img/uf-ui-sprite.svg") !important;
-  background-position: -46px -318px !important;
-  opacity: 0.8; }
 
 .chosen-container-multi .chosen-choices li.search-choice .search-choice-close:hover {
   opacity: 1; }
