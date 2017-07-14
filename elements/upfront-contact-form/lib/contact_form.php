@@ -516,7 +516,7 @@ class Upfront_UcontactView extends Upfront_Object {
 				'email' => __('Email Field Text:', 'upfront'),
 				'msg' => __('Message Field Text:', 'upfront'),
 				'show_subject' => __('Subject field', 'upfront'),
-				'show_captcha' => __('CAPTCHA field', 'upfront'),
+				'show_captcha' => __('CAPTCHA', 'upfront'),
 				'subject' => __('Subject Field text:', 'upfront'),
 				'default_subject' => __('Default subject:', 'upfront'),
 				'label_localtion' => __('Field Label Location:', 'upfront')
