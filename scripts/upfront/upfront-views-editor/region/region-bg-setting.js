@@ -316,7 +316,7 @@
 				make_global.render();
 				localize_region.render();
 				name_save.render();
-				$region_name.find('.upfront-region-bg-setting-name-edit').append([region_name.$el, make_global.$el, localize_region.$el, name_save.$el]).hide();
+				$region_name.find('.upfront-region-bg-setting-name-edit').append([region_name.$el, name_save.$el,  make_global.$el, localize_region.$el]).hide();
 				$region_name.find('.upfront-region-name-edit-value').text(this.model.get('title'));
 
 				if ( this.model.get('scope') == 'global' ) {
