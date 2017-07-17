@@ -107,7 +107,6 @@
 }
 
 #sidebar-ui .upfront-tax-new_term:hover {
-	width: 166px !important;
 	height: 22px !important;
 	background-color: #ffffff;
 	border: solid 1px rgb(169, 169, 169);
@@ -129,19 +128,20 @@
 	margin: 0px;
 	position: relative;
 	left: -5px;
-	top: -1px;
-	line-height: 23px;
+	top: 3px;
+	line-height: 20px;
 }
 
 #upfront-taxonomy-parents {
-	width: 207px !important;
+	width: 225px !important;
 	font-size: 11px;
 	color: #334458;
+	background: #fff;
 	font-family: verdana, sans-serif;
 }
 
 #sidebar-ui #upfront-tax-add_term {
-	top: 0px;
+	top: 3px;
 }
 
 #sidebar-ui a.ueditor-btn-edit {
@@ -201,6 +201,10 @@
 	color: #ffffff;
 	text-align: center;
 	margin: 0px;
+}
+
+#upfront-taxonomy-add.upfront-toggle-wrapper {
+	margin: 5px -10px !important;
 }
 
 #sidebar-ui a.chosen-search {

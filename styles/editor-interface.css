@@ -9907,7 +9907,7 @@ i.upfront-field-icon-burger-trigger {
 
 /* have to overwrite what's set on #sidebar-ui .upfront-tax-new_term (_editor-box.scss:80) */
 #upfront-taxonomy-add input.upfront-tax-new_term {
-  width: 77% !important; }
+  width: 80% !important; }
 
 #upfront-taxonomy-add button.ueditor-button-small {
   vertical-align: top; }
@@ -14249,7 +14249,6 @@ a.ueditor-select-option:hover {
   line-height: 1; }
 
 #sidebar-ui .upfront-tax-new_term:hover {
-  width: 166px !important;
   height: 22px !important;
   background-color: #ffffff;
   border: solid 1px darkgray;
@@ -14270,17 +14269,18 @@ a.ueditor-select-option:hover {
   margin: 0px;
   position: relative;
   left: -5px;
-  top: -1px;
-  line-height: 23px; }
+  top: 3px;
+  line-height: 20px; }
 
 #upfront-taxonomy-parents {
-  width: 207px !important;
+  width: 225px !important;
   font-size: 11px;
   color: #334458;
+  background: #fff;
   font-family: verdana, sans-serif; }
 
 #sidebar-ui #upfront-tax-add_term {
-  top: 0px; }
+  top: 3px; }
 
 #sidebar-ui a.ueditor-btn-edit {
   display: none;
@@ -14333,6 +14333,9 @@ a.ueditor-select-option:hover {
   color: #ffffff;
   text-align: center;
   margin: 0px; }
+
+#upfront-taxonomy-add.upfront-toggle-wrapper {
+  margin: 5px -10px !important; }
 
 #sidebar-ui a.chosen-search {
   position: relative; }
