@@ -26,6 +26,7 @@
 			{[ } else { ]}
 
 			{[ } ]}
+				<span data-lightbox="{{lightbox}}" title="View Lightbox" class="link-panel-lightbox-trigger">→</span>
 
 				<div class="new-lightbox">
 						<label>{{Upfront.Settings.l10n.global.content.create_lightbox}}</label>
