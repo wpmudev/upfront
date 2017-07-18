@@ -8374,7 +8374,8 @@ span.upfront-settings-item-title:after {
   margin-top: 0; }
 
 .menu-item-editor .menu-item-type-editor {
-  margin-top: 5px; }
+  margin-top: 5px;
+  position: relative; }
 
 .menu-structure-header {
   margin: 15px 15px 0 10px;
@@ -13616,10 +13617,20 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
   right: 32px;
   text-align: center;
   color: black;
-  font-size: 10px; }
+  font-size: 10px;
+  cursor: pointer; }
+
+.link-panel-lightbox-trigger:hover {
+  font-size: 11px; }
+
+.menu-item-type-editor .link-panel-lightbox-trigger {
+  right: 0; }
 
 .lightbox-selector {
   width: 165px; }
+
+.menu-item-type-editor .lightbox-selector {
+  width: 190px; }
 
 .link-control-panel .upfront-field-icon {
   padding: 0 4px; }

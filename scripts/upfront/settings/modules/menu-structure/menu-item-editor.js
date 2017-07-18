@@ -69,7 +69,8 @@ define([
 			'keydown .menu-item-email-input': 'onEmailNameKeydown',
 			'change .menu-item-email-input': 'onEmailNameChange',
 			'keydown .menu-item-title': 'onItemNameKeydown',
-			'change .menu-item-title': 'onItemNameChange'
+			'change .menu-item-title': 'onItemNameChange',
+			'click .link-panel-lightbox-trigger': 'visit_lightbox'
 		},
 
 		initialize: function(options) {
@@ -78,11 +79,14 @@ define([
 		},
 
 		render: function() {
+			var url = this.model.get('menu-item-url');
+			var lightbox = url.match(/^#ltb-/) !== null ? url : false
 			this.$el.html(_.template(tpl, {
 				title: this.model.get('menu-item-title'),
 				type:  this.type,
 				lightboxes: getLightBoxes(),
-				url: this.model.get('menu-item-url')
+				url: url,
+				lightbox: lightbox
 			}));
 
 			this.renderTypeSelect();
@@ -266,8 +270,9 @@ define([
 				label: '',
 				values: lightboxValues,
 				default_value: lightboxValue,
-				change: function () {
-					me.model.set({'menu-item-url': this.get_value()});
+				change: function (value) {
+					me.model.set({'menu-item-url': value});
+					me.$el.find('.link-panel-lightbox-trigger').data('lightbox', value);
 					me.saveItem();
 				}
 			});
@@ -358,6 +363,35 @@ define([
 				case 'lightbox':
 					return contentL10n.lightbox;
 			}
+		},
+
+		visit_lightbox: function(e) {
+			e.preventDefault();
+			var url = $(e.target).data('lightbox');
+
+			// if there is no url defined, no point going forward
+			if(!url || url==='')
+				return;
+
+			var regions = Upfront.Application.layout.get('regions');
+			region = regions ? regions.get_by_name(this.getUrlanchor(url)) : false;
+			if (region) {
+				//hide other lightboxes
+				_.each(regions.models, function(model) {
+					if(model.attributes.sub == 'lightbox')
+						Upfront.data.region_views[model.cid].hide();
+				});
+				var regionview = Upfront.data.region_views[region.cid];
+				regionview.show();
+			}
+		},
+		getUrlanchor: function(url) {
+			if(typeof(url) == 'undefined') url = $(location).attr('href');
+
+			if(url.indexOf('#') >=0) {
+				var tempurl = url.split('#');
+				return tempurl[1];
+			} else return false;
 		}
 	});
 

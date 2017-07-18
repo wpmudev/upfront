@@ -319,10 +319,22 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 	text-align: center;
 	color: black;
 	font-size: 10px;
+	cursor: pointer;
+}
+.link-panel-lightbox-trigger:hover {
+	font-size: 11px;
+}
+
+.menu-item-type-editor .link-panel-lightbox-trigger {
+	right: 0;
 }
 
 .lightbox-selector {
 	width: 165px;
+}
+
+.menu-item-type-editor .lightbox-selector {
+	width: 190px;
 }
 
 .link-control-panel .upfront-field-icon {
