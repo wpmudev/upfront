@@ -642,7 +642,7 @@ define([
 		renderLightBoxesSelect: function() {
 			var model = this.model,
 				me = this,
-				lightboxValues = []
+				lightboxValues = [{label: Upfront.Settings.l10n.global.content.choose_lightbox, value: false}]
 			;
 
 			_.each(getLightBoxes() || [], function(lightbox) {
