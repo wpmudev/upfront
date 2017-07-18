@@ -311,8 +311,18 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 	min-width:280px;
 }
 .link-panel-lightbox-trigger {
-	color: #00db8f;
-	font-size: 12px;
+	display: block;
+	width: 20px;
+	position: absolute;
+	top: 2px;
+	right: 32px;
+	text-align: center;
+	color: black;
+	font-size: 10px;
+}
+
+.lightbox-selector {
+	width: 165px;
 }
 
 .link-control-panel .upfront-field-icon {
@@ -368,7 +378,7 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap{
 	position: relative;
 }
 .ulinkpanel-dark .icon-apply:before {
-	background-position: -325px -106px; 
+	background-position: -325px -106px;
 }
 .upfront-element-controls .upfront-inline-panel .ulinkpanel-dark {
 	left: 0px;
