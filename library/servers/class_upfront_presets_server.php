@@ -108,8 +108,14 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 	public function handle_post_parts($presets) {
 		$new_presets = array();
 
-		if(!empty($presets)) {
+		if(!empty($presets) && is_array($presets) ) {
+			
 			foreach($presets as $preset) {
+				
+				if ( ! is_array( $preset ) ) {
+					continue;
+				}
+				
 				foreach($preset as $key => $prop) {
 					// Check if posts part
 					if (0 === strpos($key, 'post-part-')) {
@@ -205,15 +211,14 @@ abstract class Upfront_Presets_Server extends Upfront_Server {
 				'as_array' => true
 			)
 		);
+        
+		if ( ! is_array( $presets ) ) {
+			$presets = array();
+		}
 
 		$presets = $this->replace_new_lines($presets);
 		$presets = $this->handle_post_parts($presets);
 		$presets = $this->_expand_passive_relative_url($presets);
-
-		// Fail-safe
-		if (is_array($presets) === false) {
-			$presets = array();
-		}
 
 		return $presets;
 	}
