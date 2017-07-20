@@ -232,7 +232,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		);
 		// Add All CPTs option to start of array.
 		array_unshift($pts_with_counts, $all_cpts_option);
-	
+
 		// Return all CPTs options.
 		return $pts_with_counts;
 	}
@@ -294,13 +294,13 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		", $post_type ) );
 
 		$months = apply_filters( 'months_dropdown_results', $months, $post_type );
- 
+
 		$month_count = count( $months );
 		// Array to return with values and labels of dates.
 		$date_values_and_labels = array();
 		$l10n = Upfront_EditorL10n_Server::add_l10n_strings(array());
 		$l10n = $l10n['global']['content'];
- 
+
 		if ( !$month_count || ( 1 == $month_count && 0 == $months[0]->month ) )
 			return;
 
@@ -314,10 +314,10 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		foreach ( $months as $arc_row ) {
 			if ( 0 == $arc_row->year )
 				continue;
- 
+
 			$month = zeroise( $arc_row->month, 2 );
 			$year = $arc_row->year;
- 
+
 			$value = esc_attr( $year . $month );
 			$label = sprintf( __( '%1$s %2$d' ), $wp_locale->get_month( $month ), $year );
 			$date_values_and_labels[] = array(
@@ -743,7 +743,12 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		}
 
 		// Re-sanitize the whole post
+		$layout = false === empty($data['layout']) ? $data['layout'] : array();
+		unset($data['layout']);
 		$data = sanitize_post($data, 'edit');
+		if (false === empty($layout)) {
+			$data['layout'] = $layout;
+		}
 
 		// Initialize data
 		$post = false;
