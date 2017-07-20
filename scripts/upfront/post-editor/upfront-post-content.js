@@ -1,4 +1,11 @@
-;(function($){define(["upfront/post-editor/upfront-post-edit"], function(Edit){
+;(function($){
+
+		upfrontrjs = window.upfrontrjs || {
+			define: define,
+			require: require,
+			requirejs: requirejs
+		};
+	upfrontrjs.define(["upfront/post-editor/upfront-post-edit"], function(Edit){
 
 // Replaces the tags in the templates
 var PartMarkupCreator = function(){
@@ -348,7 +355,7 @@ PostContentEditor.prototype = {
 					else {
 						this.parent.currentData.content = content;
 					}
-					
+
 					this.parent.currentData.inserts = this.editor.getInsertsData();
 				}
 			},
@@ -649,7 +656,7 @@ PostContentEditor.prototype = {
 							sizes = image;
 							imageId = id;
 						});
-						
+
 						deferred.resolve({
 							src: sizes.medium ? sizes.medium[0] : (sizes.full ? sizes.full[0] : ''),
 							srcFull: sizes.full ? sizes.full[0] : '',

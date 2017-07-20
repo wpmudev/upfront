@@ -54,6 +54,7 @@ class Upfront_JavascriptMain extends Upfront_Server {
 		$paths = array(
 			"backbone" => $includes_url . "js/backbone.min",
 			"underscore" => $includes_url . "js/underscore.min",
+			"jquery.ui.widget" => $includes_url . "js/jquery/ui/widget.min",
 			"upfront-data" => $upfront_data_url,
 			"text" => 'scripts/text',
 			"async" => "scripts/async",
@@ -77,7 +78,9 @@ class Upfront_JavascriptMain extends Upfront_Server {
 			"ueditor" => 'scripts/redactor/ueditor',
 			"chosen" => "scripts/chosen/chosen.jquery.min",
 			"findandreplace" => "scripts/findandreplace/findAndReplaceDOMText",
-			"pako" => "scripts/pako/pako.min"
+			"pako" => "scripts/pako/pako.min",
+			"fileupload" => "scripts/file_upload/jquery.fileupload",
+			"fileuploadiframe" => "scripts/file_upload/jquery.iframe-transport"
 		);
 		$paths = apply_filters('upfront-settings-requirement_paths', $paths + $registered);
 

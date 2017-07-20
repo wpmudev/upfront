@@ -39,7 +39,12 @@
 								this.global = options.global === true;
 								this.toolbar = ( options.toolbar !== false );
 								this.prepareAce = deferred.promise();
-								require([Upfront.Settings.ace_url], function(){
+								upfrontrjs = window.upfrontrjs || {
+									define: define,
+									require: require,
+									requirejs: requirejs
+								};
+								upfrontrjs.require([Upfront.Settings.ace_url], function(){
 										deferred.resolve();
 								});
 

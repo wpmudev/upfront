@@ -201,7 +201,7 @@ var EmbedInsert = Insert.UeditorInsert.extend({
 		this.$el.empty();
 
 		if (!code) return;
-		
+
 		$code.append('<div class="upfront-edit_insert">edit</div>');
 		this.$el.append(
 			$("<div />").append($code).html()
@@ -247,7 +247,12 @@ var EmbedManager = Backbone.View.extend({
 		var me = this,
 			code = opts && opts.code ? opts.code : ''
 		;
-		require([
+		upfrontrjs = window.upfrontrjs || {
+			define: define,
+			require: require,
+			requirejs: requirejs
+		};
+		upfrontrjs.require([
 			Upfront.Settings.ace_url
 		], function () {
 			me.render(code);
@@ -271,7 +276,7 @@ var EmbedManager = Backbone.View.extend({
 
 		$("body").append(this.$el);
 		main.boot_editor();
-		
+
 		//Set correct width without sidebar
 		this.$el.width($(window).width() - parseInt($('#page').css('marginLeft'), 10));
 		bar.on("insert", function (stuff) {
@@ -286,7 +291,7 @@ var EmbedManager = Backbone.View.extend({
 	done: function () {
 		if (!(this._main && this._main.get_value)) return false;
 		var value = this._main.get_value();
-		this.trigger("done", value);		
+		this.trigger("done", value);
 	}
 });
 

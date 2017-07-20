@@ -67,7 +67,12 @@ define([
 			this.global = ( options.global === true );
 
 			this.prepareAce = deferred.promise();
-			require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function(){
+			upfrontrjs = window.upfrontrjs || {
+				define: define,
+				require: require,
+				requirejs: requirejs
+			};
+			upfrontrjs.require(['//cdnjs.cloudflare.com/ajax/libs/ace/1.1.01/ace.js'], function(){
 				deferred.resolve();
 			});
 
