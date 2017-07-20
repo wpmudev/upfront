@@ -1,1 +1,1 @@
-!function(e){var n=function(e,n){};n.prototype={view:!1,model:!1},define(n)}(jQuery);
+!function(e){var n=function(e,n){};n.prototype={view:!1,model:!1},upfrontrjs.define(n)}(jQuery);
