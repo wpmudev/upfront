@@ -85,8 +85,8 @@ var UnewnavigationView = Upfront.Views.ObjectView.extend({
 	get_resize_min_col: function () {
 		// If initial menu view.
 		if(!this.property('menu_id')) {
-			// Minimum of 9 columns.
-			return 9;
+			// Minimum of 1 columns.
+			return 1;
 		}
 	},
 

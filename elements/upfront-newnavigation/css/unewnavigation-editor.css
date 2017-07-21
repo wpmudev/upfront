@@ -2,7 +2,7 @@
 	display: block;
 	margin: auto;
 	max-width: 760px;
-	min-width: 315px;
+	min-width: 50px;
 	float: none;
 	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
 	padding: 15px 0;
@@ -502,6 +502,32 @@ div.upfront-navigation li.menu-item .uimage-controls a {
 .c6 div.upfront-navigation div.new_menu_name, .c5 div.upfront-navigation div.new_menu_name, .c4 div.upfront-navigation div.new_menu_name,
 .c3 div.upfront-navigation div.new_menu_name, .c2 div.upfront-navigation div.new_menu_name, .c1 div.upfront-navigation div.new_menu_name {
 	max-width: 181px;
+}
+
+.c7 div.upfront-navigation div.new_menu_name,
+.c6 div.upfront-navigation div.new_menu_name, .c5 div.upfront-navigation div.new_menu_name, .c4 div.upfront-navigation div.new_menu_name,
+.c3 div.upfront-navigation div.new_menu_name, .c2 div.upfront-navigation div.new_menu_name, .c1 div.upfront-navigation div.new_menu_name {
+	max-width: inherit;
+	width: 100%;
+}
+
+.c7 div.upfront-navigation div.new_menu_button,
+.c6 div.upfront-navigation div.new_menu_button, .c5 div.upfront-navigation div.new_menu_button, .c4 div.upfront-navigation div.new_menu_button,
+.c3 div.upfront-navigation div.new_menu_button, .c2 div.upfront-navigation div.new_menu_button, .c1 div.upfront-navigation div.new_menu_button {
+	margin-left: 0;
+	margin-top: 10px;
+	width: 100%;
+}
+
+.c7 div.upfront-navigation div.new_menu_name input,
+.c6 div.upfront-navigation div.new_menu_name input, .c5 div.upfront-navigation div.new_menu_name input, .c4 div.upfront-navigation div.new_menu_name input,
+.c3 div.upfront-navigation div.new_menu_name input, .c2 div.upfront-navigation div.new_menu_name input, .c1 div.upfront-navigation div.new_menu_name input,
+.c7 div.upfront-navigation div.new_menu_button input,
+.c6 div.upfront-navigation div.new_menu_button input, .c5 div.upfront-navigation div.new_menu_button input, .c4 div.upfront-navigation div.new_menu_button input,
+.c3 div.upfront-navigation div.new_menu_button input, .c2 div.upfront-navigation div.new_menu_button input, .c1 div.upfront-navigation div.new_menu_button input {
+	font-size: 12px;
+	text-overflow: ellipsis;
+	width: 100%;
 }
 
 .c15 .upfront-navigation .existing_menu_list, .c14 .upfront-navigation .existing_menu_list, .c13 .upfront-navigation .existing_menu_list,
