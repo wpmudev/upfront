@@ -761,7 +761,11 @@ body .upfront-edit_layout a {
 	.upfront-field-wrap-radios-inline input[type=radio] + label:before,
 	.upfront-field-wrap-radios-inline input[type=radio]:checked + label:before,
 	.upfront-field-wrap-radios-inline input[type=radio]:disabled + label:before,
-	.upfront-field-wrap-radios-inline input[type=radio]:checked:disabled + label:before
+	.upfront-field-wrap-radios-inline input[type=radio]:checked:disabled + label:before,
+	.upfront-filter_selection-control input[type=radio] + label:before,
+	.upfront-filter_selection-control input[type=radio]:checked + label:before,
+	.additional_sizes input[type=radio] + label:before,
+	.additional_sizes input[type=radio]:checked + label:before
 	{
 		display: none;
 	}
