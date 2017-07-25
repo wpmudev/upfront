@@ -4,14 +4,13 @@ Change Log
 1.9.1 - 2017-07-25
 -------------------------------------------------------------------------------
 - Add: Increase upper limit for gallery thumbnail size
-
 - Fix: Button font color gets reset on opening color picker
 - Fix: YouTube video continues to play when Lightbox is closed
 - Fix: Posts presets are not loading on frontend
 - Fix: Position of Type element dropdown is not correct in Responsive mode sidebar
 - Fix: In Media Info panel Search button is not clickable
 - Fix: Labels and fields are not properly aligned in Global Background Settings
-- Fix: Ok button not properly positioned in Region Background Settings
+- Fix: OK button not properly positioned in Region Background Settings
 - Fix: Map controls field is missing options
 - Fix: Slider controls always visible with show on hover selected
 - Fix: Captcha control is not properly aligned in Contact Element Settings
@@ -19,7 +18,7 @@ Change Log
 - Fix: Resizing image loses text from slide in Slider Element
 - Fix: Slides Order thumbnails are not showing in Slider Element Settings
 - Fix: PHP notice gets logged when Post is deleted
-- Fix: Upfront editor does not load when 3rd party script uses amd
+- Fix: Editor does not load when 3rd party script uses asynchronous module definition
 
 1.9 - 2017-07-12
 -------------------------------------------------------------------------------
