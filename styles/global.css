@@ -681,6 +681,7 @@ body .upfront-edit_layout a {
 		vertical-align: bottom;
 		position: relative;
 		bottom: 0;
+		top: -3px;
 		right: 17px;
 		cursor: pointer;
 	}
@@ -731,8 +732,19 @@ body .upfront-edit_layout a {
 		vertical-align: bottom;
 		position: relative;
 		bottom: 0;
+		top: -3px;
 		right: 17px;
 		cursor: pointer;
+	}
+
+	#post-visibility-select {
+		padding: 5px 0px 5px 25px;
+	}
+
+	#sticky-span {
+		margin-left: -14px;
+		margin-top: 5px;
+		padding-left: 25px !important;
 	}
 
 	input[type=radio]:checked + label:before {
