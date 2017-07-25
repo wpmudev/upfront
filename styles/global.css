@@ -701,20 +701,9 @@ body .upfront-edit_layout a {
 		background-position: 0 0;
 	}
 
-	#element-settings-sidebar .border_radius_lock input[type=checkbox] + label:before {
-		height: 15px;
-		width: 15px;
-		background-image: url("../img/uf-core-el-sprite.png");
-		background-image: url("../img/uf-core-el-sprite.svg"), none;
-		background-position: -661px -172px;
-		background-color: #f7fbff;
-		left: 30px;
-		top: -6px;
-		position: relative;
-	}
-
+	#element-settings-sidebar .border_radius_lock input[type=checkbox] + label:before,
 	#element-settings-sidebar .border_radius_lock input[type=checkbox]:checked + label:before {
-		background-position: -661px -140px
+		display: none;
 	}
 
 	#element-settings-sidebar .padding-lock input[type=checkbox] + label:before,
