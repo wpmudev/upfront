@@ -65,11 +65,12 @@
 }
 
 .ueditor-post-url-text, .ueditor-post-title-text {
-	width: 172px !important;
+	width: 169px !important;
 	height: 22px !important;
 	background-color: #ffffff;
 	border: solid 1px rgb(169, 169, 169);
 	margin: 0px;
+	margin-right: -5px;
 	display: inline-block;
 }
 
@@ -79,10 +80,6 @@
 }
 .ueditor-post-page-metadesc .char-counter.over-limit .current {
 	color: #e75757;
-}
-
-.ueditor-post-title-text {
-	margin-bottom: 10px;
 }
 
 #sidebar-ui .upfront-tax-new_term {
@@ -130,6 +127,10 @@
 	left: -5px;
 	top: 1px;
 	line-height: 20px;
+}
+
+#sidebar-ui .ueditor-save-post-data {
+	left: 0px;
 }
 
 #upfront-taxonomy-parents {
@@ -212,7 +213,7 @@
 }
 
 .upfront-settings-toggled .ueditor-togglable {
-	margin: 0px -10px;
+	margin: 0px;
 	padding: 10px;
 }
 
