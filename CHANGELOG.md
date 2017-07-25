@@ -1,6 +1,11 @@
 Change Log
 ============
 
+1.9.1.1 - 2017-07-26
+-------------------------------------------------------------------------------
+- Fix: Setting element padding to 0px in editor defaults to 15px in live
+
+
 1.9.1 - 2017-07-25
 -------------------------------------------------------------------------------
 - Add: Increase upper limit for gallery thumbnail size
