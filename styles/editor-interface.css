@@ -14233,7 +14233,7 @@ a.ueditor-select-option:hover {
 
 .ueditor-post-url-text, .ueditor-post-title-text {
   width: 172px !important;
-  height: 25px !important;
+  height: 22px !important;
   background-color: #ffffff;
   border: solid 1px darkgray;
   margin: 0px;
@@ -14289,7 +14289,7 @@ a.ueditor-select-option:hover {
   margin: 0px;
   position: relative;
   left: -5px;
-  top: 3px;
+  top: 1px;
   line-height: 20px; }
 
 #upfront-taxonomy-parents {
