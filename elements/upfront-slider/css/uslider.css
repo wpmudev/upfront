@@ -2,6 +2,21 @@
 	display: none;
 }
 
+.uslider-hover .upfront-default-slider-nav,
+.uslider-hover .upfront-default-slider-nav-prev,
+.uslider-hover .upfront-default-slider-nav-next {
+	visibility: hidden;
+	opacity: 0;
+	transition: visibility 0s, opacity 0.2s linear;
+}
+
+.uslider-hover:hover .upfront-default-slider-nav,
+.uslider-hover:hover .upfront-default-slider-nav-prev,
+.uslider-hover:hover .upfront-default-slider-nav-next {
+	visibility: visible;
+	opacity: .7;
+}
+
 .uslider .uslide{
 	opacity: 1;
 	position: absolute;

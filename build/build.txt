@@ -13,6 +13,7 @@ realperson/jquery.realperson.css
 
 main.js
 ----------------
+require.js
 /var/www/local.wordpressmu.dev/wp-includes/js/underscore.min.js
 /var/www/local.wordpressmu.dev/wp-includes/js/backbone.min.js
 upfront/upfront-models.js
@@ -174,7 +175,6 @@ text!upfront/templates/overlay_grid.html
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/draggable-element.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-profile.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section.js
-upfront/upfront-content.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-post-details.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-post-tag-category.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-page-template.js
@@ -221,10 +221,14 @@ jquery/jquery.simulate.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/backbone-query-parameters/backbone-query-parameters.js
 responsive.js
 findandreplace/findAndReplaceDOMText.js
+/var/www/local.wordpressmu.dev/wp-includes/js/jquery/ui/widget.min.js
+file_upload/jquery.fileupload.js
+file_upload/jquery.iframe-transport.js
 upfront/objects/loading.js
 upfront/upfront-objects.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-media/insert-options-item-control.js
 upfront/upfront-media.js
+upfront/upfront-content.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/bg-settings/mixins.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/bg-settings/color-item.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/bg-settings/image-item.js
@@ -428,4 +432,4 @@ pako/pako.min.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-cache.js
 upfront/upfront-util.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/plugins.js
-main.js
+setup.js

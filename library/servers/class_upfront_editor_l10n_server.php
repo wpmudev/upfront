@@ -236,6 +236,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 				'homepage' => __('Home Page', 'upfront'),
 				'email' => __('Email', 'upfront'),
 				'lightbox' => __('Lightbox', 'upfront'),
+				'choose_lightbox' => __('Choose Lightbox', 'upfront'),
 				'gallery_lightbox' => __('Gallery Lightbox', 'upfront'),
 				'lightbox_name' => __('Lightbox Name', 'upfront'),
 				'new_lightbox' => __('New Lightbox', 'upfront'),

@@ -2693,7 +2693,7 @@ div.uinsert-selector a:hover {
 
 .uimage-control-panel-content .upfront-field-radio:checked {
   border-color: #fff;
-} 
+}
 */
 .ueditor-insert:hover .upfront-resize-handle-e,
 .ueditor-insert:hover .upfront-resize-handle-w {
@@ -4263,8 +4263,8 @@ a.upfront-region-name-edit-trigger:hover {
   opacity: 1; }
 
 .upfront-region-bg-setting-name-edit .upfront-field-wrap-text {
-  width: 100px;
-  margin-right: 10px; }
+  width: 82% !important;
+  margin-right: 0px; }
 
 .upfront-region-bg-setting-name-edit .upfront-field-wrap {
   float: left;
@@ -4293,8 +4293,8 @@ a.upfront-region-name-edit-trigger:hover {
 .upfront-region-bg-setting-name-edit .upfront-region-bg-setting-name-save {
   float: right;
   background: #fff;
-  height: 26px;
-  line-height: 26px;
+  height: 22px;
+  line-height: 22px;
   border: 1px solid #a8a8a8;
   border-radius: 2px;
   padding: 0 10px;
@@ -4851,7 +4851,7 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
 .upfront-region-editing .upfront-region.controls-visible .responsive-item-controls {
   display: block; }
 
-/* Hide 'Add Region' triggers & 'Region Resize' handle when settings panel is open 
+/* Hide 'Add Region' triggers & 'Region Resize' handle when settings panel is open
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-region-panel-item-add-region,
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-icon-control-region-resize-e:before,
 .upfront-region-editing .upfront-region-bg-setting-open .upfront-icon-control-region-resize-w:before {
@@ -5122,7 +5122,7 @@ div.upfront-region-bg-setting-floating-restrict, .upfront-region-bg-setting-stic
   margin: 0.5rem 0 0; }
 
 .upfront-modal-bg-settings-global .upfront-bg-setting-theme-body input {
-  width: 50px; }
+  width: 80px; }
 
 .upfront-modal-bg-settings-global .uf-bgsettings-image-style .upfront-field-select {
   margin-top: 13px; }
@@ -5941,11 +5941,16 @@ span.upfront-settings-item-title:after {
   line-height: 10px; }
 
 .upfront-modal-bg-settings-global .upfront-bg-setting-label {
-  color: #3f617f;
+  color: rgba(33, 33, 33, 0.8);
   font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: normal; }
+  font-size: 11px;
+  line-height: 1;
+  font-weight: normal;
+  top: 3px;
+  margin-bottom: 8px; }
+
+.upfront-modal-bg-settings-global .upfront-field-wrap-select {
+  margin: 10px 0 0; }
 
 .upfront-modal-bg-settings-fixed .upfront-bg-setting-label {
   color: #3f617f;
@@ -8369,7 +8374,8 @@ span.upfront-settings-item-title:after {
   margin-top: 0; }
 
 .menu-item-editor .menu-item-type-editor {
-  margin-top: 5px; }
+  margin-top: 5px;
+  position: relative; }
 
 .menu-structure-header {
   margin: 15px 15px 0 10px;
@@ -9893,7 +9899,6 @@ i.upfront-field-icon-burger-trigger {
   right: initial;
   margin-right: 3px; }
 
-#upfront-taxonomy-add input#upfront-new_term,
 .upfront-tax-new_term {
   width: 100%;
   background: #E5F3FE; }
@@ -9903,7 +9908,7 @@ i.upfront-field-icon-burger-trigger {
 
 /* have to overwrite what's set on #sidebar-ui .upfront-tax-new_term (_editor-box.scss:80) */
 #upfront-taxonomy-add input.upfront-tax-new_term {
-  width: 77% !important; }
+  width: 80% !important; }
 
 #upfront-taxonomy-add button.ueditor-button-small {
   vertical-align: top; }
@@ -11632,7 +11637,7 @@ a.upfront-post-layout-trigger:before {
 
 .upfront-search-control .upfront-field-wrap-text {
   float: left;
-  width: 144px;
+  width: 144px !important;
   margin: 0; }
 
 .upfront-search-control .upfront-media-search-button {
@@ -12993,13 +12998,13 @@ License: MIT
   opacity: 1;
   z-index: 0; }
 
-/*  Selectors using uf-core-el-sprite 
+/*  Selectors using uf-core-el-sprite
     ================================= */
 .upfront-element-controls .upfront-inline-panel .upfront-padding-keyboard,
 .upfront-element-controls .upfront-inline-panel .upfront-checkbox-info:before,
 .upfront-element-controls .upfront-inline-panel .padding-lock label,
 div.ugallery-controls i.upfront-icon:before {
-  /* 
+  /*
     background-image: url('../img/uf-core-el-sprite.png');
     background-image: url('../img/uf-core-el-sprite.svg');
     */
@@ -13605,8 +13610,27 @@ div.ulinkpanel.ulinkpanel-dark .upfront-field-wrap {
   min-width: 280px; }
 
 .link-panel-lightbox-trigger {
-  color: #00db8f;
-  font-size: 12px; }
+  display: block;
+  width: 20px;
+  position: absolute;
+  top: 2px;
+  right: 32px;
+  text-align: center;
+  color: black;
+  font-size: 10px;
+  cursor: pointer; }
+
+.link-panel-lightbox-trigger:hover {
+  font-size: 11px; }
+
+.menu-item-type-editor .link-panel-lightbox-trigger {
+  right: 0; }
+
+.lightbox-selector {
+  width: 165px; }
+
+.menu-item-type-editor .lightbox-selector {
+  width: 190px; }
 
 .link-control-panel .upfront-field-icon {
   padding: 0 4px; }
@@ -14245,7 +14269,6 @@ a.ueditor-select-option:hover {
   line-height: 1; }
 
 #sidebar-ui .upfront-tax-new_term:hover {
-  width: 166px !important;
   height: 22px !important;
   background-color: #ffffff;
   border: solid 1px darkgray;
@@ -14266,17 +14289,18 @@ a.ueditor-select-option:hover {
   margin: 0px;
   position: relative;
   left: -5px;
-  top: -1px;
-  line-height: 23px; }
+  top: 3px;
+  line-height: 20px; }
 
 #upfront-taxonomy-parents {
-  width: 207px !important;
+  width: 225px !important;
   font-size: 11px;
   color: #334458;
+  background: #fff;
   font-family: verdana, sans-serif; }
 
 #sidebar-ui #upfront-tax-add_term {
-  top: 0px; }
+  top: 2px; }
 
 #sidebar-ui a.ueditor-btn-edit {
   display: none;
@@ -14329,6 +14353,9 @@ a.ueditor-select-option:hover {
   color: #ffffff;
   text-align: center;
   margin: 0px; }
+
+#upfront-taxonomy-add.upfront-toggle-wrapper {
+  margin: 5px -10px !important; }
 
 #sidebar-ui a.chosen-search {
   position: relative; }
@@ -14684,12 +14711,6 @@ div#ui-datepicker-div td a {
   color: #fff !important;
   border-color: #97b2d1 !important;
   text-shadow: 0 1px 0 #ccc !important; }
-
-#upfront-taxonomy-add {
-  border-left: 2px solid #dce6f1;
-  padding-left: 10px;
-  margin-top: 10px;
-  padding-bottom: 8px; }
 
 .ueditor-taxonomy-wrapper .upfront-taxonomy_item input {
   margin-right: 2px; }
@@ -18302,7 +18323,7 @@ li#new-custom-breakpoint {
 #sidebar-ui .typography-panel .upfront-field-wrap {
   margin-bottom: 10px; }
 
-/* Chosen */
+§
 #insert-font-widget .chosen-container-single .chosen-single,
 #sidebar-ui .chosen-container-single .chosen-single,
 #upfront-popup .chosen-container-single .chosen-single,
@@ -18567,11 +18588,6 @@ li#new-custom-breakpoint {
 .chosen-container .chosen-results li.highlighted {
   background: #e7eaeb;
   color: black; }
-
-.chosen-container-multi .chosen-choices li.search-choice .search-choice-close {
-  background-image: url("../img/uf-ui-sprite.svg") !important;
-  background-position: -46px -318px !important;
-  opacity: 0.8; }
 
 .chosen-container-multi .chosen-choices li.search-choice .search-choice-close:hover {
   opacity: 1; }
@@ -19077,7 +19093,7 @@ div.upfront-regions a#no_region_add_one {
   margin: 20px 30px;
   width: 50px; }
 
-/* hack to fix empty paragraphs collapsing on each other 
+/* hack to fix empty paragraphs collapsing on each other
    note: Commented out since redactor no longer has that bug,
    so this fix is now redundant...
 
@@ -20278,7 +20294,7 @@ div.preset-manager-panel .overlay-button-input:hover {
   display: none; }
 
 /* Inline panels icons */
-/*  Selectors using uf-core-el-sprite 
+/*  Selectors using uf-core-el-sprite
 	================================= */
 #upfront-image-overlay .select-files:before,
 #upfront-image-overlay .icon-picture,
@@ -20291,7 +20307,7 @@ div#page .upfront-object.upfront-image .swap-image-overlay p:before,
 .image-edit-control-panel-item,
 .image-edit-control-panel-item.upfront-control-dialog-open,
 .image-crop-edit-button:before {
-  /* 
+  /*
 	background-image: url(../../../img/uf-core-el-sprite.png);
 	background-image: url('../../../img/uf-core-el-sprite.svg');
 	*/
@@ -20645,3 +20661,4 @@ div#page .upfront-object.upfront-image .swap-image-overlay p:before,
   background-image: linear-gradient(-180deg, rgba(0, 0, 0, 0.08) 0%, transparent 100%); }
 
 /*# sourceMappingURL=editor-interface.css.map */
+

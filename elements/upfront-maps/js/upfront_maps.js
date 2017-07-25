@@ -737,7 +737,8 @@ define([
 			;
 			if (!saved_style) this.model.set_property("style", DEFAULTS.style, true);
 			var controls = [
-				{label: l10n.ctrl.pan, value: "pan"},
+				// Pan is not supported anymore
+				//{label: l10n.ctrl.pan, value: "pan"},
 				{label: l10n.ctrl.zoom, value: "zoom"},
 				{label: l10n.ctrl.type, value: "map_type"},
 				{label: l10n.ctrl.scale, value: "scale"},

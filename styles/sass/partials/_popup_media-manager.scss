@@ -319,7 +319,7 @@
 }
 .upfront-search-control .upfront-field-wrap-text {
 	float: left;
-	width: 144px;
+	width: 144px !important;
 	margin: 0;
 }
 .upfront-search-control .upfront-media-search-button {
@@ -353,7 +353,7 @@
 	margin: 0 30px 0 0;
 }
 .upfront-size-hints .upfront-size-hint-width {
-	
+
 }
 .upfront-size-hints .upfront-size-hint-height {
 	margin-right: 0;
@@ -1020,7 +1020,7 @@
 }
 
 .upfront-media-controls .additional_sizes {
-	
+
 }
 .upfront-media-controls .additional_sizes .upfront-field-wrap {
 	display: -webkit-flex;

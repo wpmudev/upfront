@@ -64,7 +64,7 @@ define([
 						property: 'thumbWidth',
 						className: 'thumb-size-slider',
 						min: 100,
-						max: 250,
+						max: 700,
 						step: 5,
 						label: l10n.thumb.size,
 						default_value: 150,
@@ -81,7 +81,7 @@ define([
 						property: 'thumbWidthNumber',
 						default_value: 0,
 						min: 100,
-						max: 250,
+						max: 700,
 						change: function(value, me) {
 							//Update slider value
 							var s = me.settings._wrapped[1].fields._wrapped[0];
@@ -94,7 +94,7 @@ define([
 							f.get_field().val(value);
 
 							// Lower opacity if value is bigger than the slider MAX_VALUE
-							if(value > 250) {
+							if(value > 700) {
 								me.$el.find('.thumb-size-slider').css('opacity', 0.6);
 							} else {
 								me.$el.find('.thumb-size-slider').css('opacity', 1);
@@ -146,7 +146,7 @@ define([
 						property: 'thumbPadding',
 						className: 'thumb-padding-slider',
 						min: 0,
-						max: 50,
+						max: 150,
 						step: 1,
 						label: l10n.thumb.spacing,
 						default_value: 15,
@@ -176,7 +176,7 @@ define([
 							f.get_field().val(value);
 
 							//Lower opacity if value is bigger than the slider MAX_VALUE
-							if(value > 50) {
+							if(value > 150) {
 								me.$el.find('.thumb-padding-slider').css('opacity', 0.6);
 							} else {
 								me.$el.find('.thumb-padding-slider').css('opacity', 1);
@@ -190,7 +190,7 @@ define([
 						property: 'sidePadding',
 						className: 'thumb-side-padding-slider',
 						min: 0,
-						max: 50,
+						max: 150,
 						step: 1,
 						label: l10n.thumb.side_spacing,
 						change: function(value, me) {
@@ -216,7 +216,7 @@ define([
 							s.trigger('changed', value);
 
 							//Lower opacity if value is bigger than the slider MAX_VALUE
-							if(value > 50) {
+							if(value > 150) {
 								me.$el.find('.thumb-side-padding-slider').css('opacity', 0.6);
 							} else {
 								me.$el.find('.thumb-side-padding-slider').css('opacity', 1);
@@ -230,7 +230,7 @@ define([
 						property: 'bottomPadding',
 						className: 'thumb-bottom-padding-slider',
 						min: 0,
-						max: 50,
+						max: 150,
 						step: 1,
 						label: l10n.thumb.bottom_spacing,
 						change: function(value, me) {
@@ -256,7 +256,7 @@ define([
 							s.trigger('changed', value);
 
 							//Lower opacity if value is bigger than the slider MAX_VALUE
-							if(value > 50) {
+							if(value > 150) {
 								me.$el.find('.thumb-bottom-padding-slider').css('opacity', 0.6);
 							} else {
 								me.$el.find('.thumb-bottom-padding-slider').css('opacity', 1);

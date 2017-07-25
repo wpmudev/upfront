@@ -3,6 +3,7 @@
     appDir: ".",
     dir: "../build",
     optimizeCss: "standard",
+		namespace: "upfrontrjs",
     paths: {
         "scripts": '.',// needed to tell optimizer that this directory is scripts
         "elements": "../elements",
@@ -10,6 +11,7 @@
         "maps_context_menu": "empty:",// Leave out maps context menu or it will not initialize properly
         "backbone": "../../../../wp-includes/js/backbone.min", // this assumes standard wp directory arrangement.
         "underscore": "../../../../wp-includes/js/underscore.min",
+        "jquery.ui.widget": "../../../../wp-includes/js/jquery/ui/widget.min",
         "models": "upfront/upfront-models",
         "views": "upfront/upfront-views",
         "editor_views": "upfront/upfront-views-editor",
@@ -37,7 +39,7 @@
         "utext": "../elements/upfront-text/js/utext",
         "ubutton": "../elements/upfront-button/js/ubutton",
         "uposts": "../elements/upfront-posts/js/posts-list",
-		"upostslist": "../elements/upfront-postslist/js/posts-list",
+				"upostslist": "../elements/upfront-postslist/js/posts-list",
         "usearch": "../elements/upfront-search/js/usearch",
         "upfront-social_media": "../elements/upfront-social-media/js/upfront-social-media",
         "utabs": "../elements/upfront-tabs/js/utabs",
@@ -57,7 +59,10 @@
         "upfront_slider": "../elements/upfront-slider/js/uslider",
         "chosen": "chosen/chosen.jquery.min",
         "findandreplace": "findandreplace/findAndReplaceDOMText",
-        "pako": "pako/pako.min"
+        "pako": "pako/pako.min",
+				requireLib: 'require',
+				fileupload: 'file_upload/jquery.fileupload',
+				fileuploadiframe: 'file_upload/jquery.iframe-transport'
     },
     shim: {
       'underscore': {
@@ -74,7 +79,9 @@
     findNestedDependencies: true, // we need this since we have nested require calls
     modules: [
       {
-        name: "main"
+        name: "main",
+				include: ["requireLib", "setup"],
+				create: true
       }
     ]
 })

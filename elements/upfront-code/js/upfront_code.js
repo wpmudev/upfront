@@ -17,7 +17,12 @@ var CodeView = Upfront.Views.ObjectView.extend({
 			view = false
 		;
 		this.$el.empty().append("Loading...");
-		require([
+		upfrontrjs = window.upfrontrjs || {
+			define: define,
+			require: require,
+			requirejs: requirejs
+		};
+		upfrontrjs.require([
 			Upfront.Settings.ace_url
 		], function () {
 			if (!type) view = me.render_initial_view();

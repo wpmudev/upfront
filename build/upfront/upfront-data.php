@@ -64,7 +64,12 @@ $upfront_data['date'] = array(
 ?>
 
 (function ($, undefined) {
-	define({
+	upfrontrjs = window.upfrontrjs || {
+		define: define,
+		require: require,
+		requirejs: requirejs
+	};
+	upfrontrjs.define({
 		data: <?php echo json_encode($upfront_data); ?>
 	});
 })(jQuery);

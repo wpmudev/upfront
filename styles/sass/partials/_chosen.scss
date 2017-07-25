@@ -1,4 +1,4 @@
-/* Chosen */
+§/* Chosen */
 #insert-font-widget .chosen-container-single .chosen-single,
 #sidebar-ui .chosen-container-single .chosen-single,
 #upfront-popup .chosen-container-single .chosen-single,
@@ -282,11 +282,6 @@
 .chosen-container .chosen-results li.highlighted {
 	background: rgb(231, 234, 235);
 	color: rgb(0, 0, 0);
-}
-.chosen-container-multi .chosen-choices li.search-choice .search-choice-close {
-	background-image: url('../img/uf-ui-sprite.svg') !important;
-	background-position: -46px -318px !important;
-	opacity: 0.8;
 }
 .chosen-container-multi .chosen-choices li.search-choice .search-choice-close:hover {
 	opacity: 1;

@@ -98,7 +98,7 @@ define([
 
 		visit_lightbox: function(e) {
 			e.preventDefault();
-			var url = $(e.target).attr('href');
+			var url = $(e.target).data('lightbox');
 
 			// if there is no url defined, no point going forward
 			if(!url || url==='')
@@ -295,7 +295,7 @@ define([
 				this.handleLightboxCreate();
 			}
 		},
-		
+
 		handleLightboxCreate: function() {
 			this.createLightBox();
 			this.saveControls();
@@ -349,7 +349,7 @@ define([
 			this.$el.html('Error occurred, link panel switch to new style.');
 				return;
 			}
-			
+
 			if (!this.model.get('url') && !this.model.get('type')) {
 				this.model.set({'type': 'external'}, {silent: true});
 			}
@@ -366,13 +366,16 @@ define([
 				linkModel.set('display_url', linkUrl.length > 25 ? linkUrl.substr(0, 25) + '...' : linkUrl, {silent: true});
 			}
 
+			var lightbox = this.model.get('type') === 'lightbox' ? this.model.get('url') : false;
+
 			var tplData = {
 				title: this.title,
 				link: linkModel.toJSON(),
 				checked: 'checked="checked"',
 				lightboxes: getLightBoxes(),
 				button: this.button,
-				type: this.model.get('type')
+				type: this.model.get('type'),
+				lightbox: lightbox
 			};
 
 			this.$el.html(this.tpl(tplData));
@@ -405,12 +408,12 @@ define([
 
 		saveControls: function (e) {
 			var type = this.model.get('type');
-			
+
 			if(type === 'lightbox' && this.$el.find('.js-ulinkpanel-lightbox-input').val() !== '') {
 				e.preventDefault();
 				this.handleLightboxCreate();
 			}
-			
+
 			this.$el.find('.lightbox-selector').show();
 			this.$el.find('.js-ulinkpanel-new-lightbox').hide();
 		},
@@ -522,7 +525,7 @@ define([
 			var tooltipSelect = this.getTooltipSelect('side'),
 				typeSelected = this.model.get('type')
 			;
-			
+
 			if(this.model.get('type') === 'unlink' || !this.model.get('type')) {
 				typeSelected = 'external';
 			}
@@ -535,7 +538,7 @@ define([
 				change: function () {
 					me.model.set({'type': this.get_value()});
 					Upfront.Events.trigger("tooltip:close");
-					
+
 					if(this.get_value() === "unlink") {
 						me.close();
 					}
@@ -642,7 +645,7 @@ define([
 		renderLightBoxesSelect: function() {
 			var model = this.model,
 				me = this,
-				lightboxValues = []
+				lightboxValues = [{label: Upfront.Settings.l10n.global.content.choose_lightbox, value: false}]
 			;
 
 			_.each(getLightBoxes() || [], function(lightbox) {
@@ -658,9 +661,9 @@ define([
 				className: 'upfront-lightbox-select',
 				values: lightboxValues,
 				default_value: lightboxValue,
-				change: function () {
-					model.set({'url': this.get_value()});
-					$('.link-panel-lightbox-trigger').attr('href', this.get_value());
+				change: function (value) {
+					model.set({'url': value});
+					me.$el.find('.link-panel-lightbox-trigger').data('lightbox', value);
 				}
 			});
 			this.lightboxSelect.render();

@@ -232,7 +232,7 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		);
 		// Add All CPTs option to start of array.
 		array_unshift($pts_with_counts, $all_cpts_option);
-	
+
 		// Return all CPTs options.
 		return $pts_with_counts;
 	}
@@ -294,13 +294,13 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		", $post_type ) );
 
 		$months = apply_filters( 'months_dropdown_results', $months, $post_type );
- 
+
 		$month_count = count( $months );
 		// Array to return with values and labels of dates.
 		$date_values_and_labels = array();
 		$l10n = Upfront_EditorL10n_Server::add_l10n_strings(array());
 		$l10n = $l10n['global']['content'];
- 
+
 		if ( !$month_count || ( 1 == $month_count && 0 == $months[0]->month ) )
 			return;
 
@@ -314,10 +314,10 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		foreach ( $months as $arc_row ) {
 			if ( 0 == $arc_row->year )
 				continue;
- 
+
 			$month = zeroise( $arc_row->month, 2 );
 			$year = $arc_row->year;
- 
+
 			$value = esc_attr( $year . $month );
 			$label = sprintf( __( '%1$s %2$d' ), $wp_locale->get_month( $month ), $year );
 			$date_values_and_labels[] = array(
@@ -743,7 +743,12 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		}
 
 		// Re-sanitize the whole post
+		$layout = false === empty($data['layout']) ? $data['layout'] : array();
+		unset($data['layout']);
 		$data = sanitize_post($data, 'edit');
+		if (false === empty($layout)) {
+			$data['layout'] = $layout;
+		}
 
 		// Initialize data
 		$post = false;
@@ -774,25 +779,14 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		if (is_wp_error($id)) $this->_out(new Upfront_JsonResponse_Error($id->get_error_message()));
 
 		// Handle the sticky attribute
-		if (isset($data['sticky'])) {
-			$is_sticky = is_sticky($id);
-			if ($data['sticky'] && !$is_sticky) {
-				// Make post sticky
-				$posts = Upfront_Cache_Utils::get_option('sticky_posts');
-				if ($posts) $posts[] = $id;
-				else $posts = array($id);
-				add_option('sticky_posts', $posts);
-			} else if (!$data['sticky'] && $is_sticky) {
-				// Make previously non-sticky post sticky
-				$posts = Upfront_Cache_Utils::get_option('sticky_posts');
-				$index = array_search($id, $posts);
-				if ($index !== false) {
-					array_splice($posts, $index, 1);
-					if (!sizeof($posts)) Upfront_Cache_Utils::delete_option('sticky_posts');
-					else add_option('sticky_posts', $posts);
-				}
-			}
+		if (isset($data['sticky']) && $data['sticky']) {
+			// Make post sticky
+			stick_post($data['ID']);
+		} else {
+			// Unstick post
+			unstick_post($data['ID']);
 		}
+
 
 		$post = get_post($id);
 		$slug = empty( $post->post_name )

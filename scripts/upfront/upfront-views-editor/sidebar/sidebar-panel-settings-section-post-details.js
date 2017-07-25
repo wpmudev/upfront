@@ -14,7 +14,12 @@
                 var self = this;
 
                 if ( !Upfront.Views.PostDataEditor ) {
-                    require(['content'], function() {
+										upfrontrjs = window.upfrontrjs || {
+											define: define,
+											require: require,
+											requirejs: requirejs
+										};
+                    upfrontrjs.require(['content'], function() {
                         if(self.getPostId() !== false) {
                             setTimeout(self.prepare_editor(self));
                             self.initialize_post_data_editor();

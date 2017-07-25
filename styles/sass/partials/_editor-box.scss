@@ -107,7 +107,6 @@
 }
 
 #sidebar-ui .upfront-tax-new_term:hover {
-	width: 166px !important;
 	height: 22px !important;
 	background-color: #ffffff;
 	border: solid 1px rgb(169, 169, 169);
@@ -129,19 +128,20 @@
 	margin: 0px;
 	position: relative;
 	left: -5px;
-	top: -1px;
-	line-height: 23px;
+	top: 3px;
+	line-height: 20px;
 }
 
 #upfront-taxonomy-parents {
-	width: 207px !important;
+	width: 225px !important;
 	font-size: 11px;
 	color: #334458;
+	background: #fff;
 	font-family: verdana, sans-serif;
 }
 
 #sidebar-ui #upfront-tax-add_term {
-	top: 0px;
+	top: 2px;
 }
 
 #sidebar-ui a.ueditor-btn-edit {
@@ -201,6 +201,10 @@
 	color: #ffffff;
 	text-align: center;
 	margin: 0px;
+}
+
+#upfront-taxonomy-add.upfront-toggle-wrapper {
+	margin: 5px -10px !important;
 }
 
 #sidebar-ui a.chosen-search {
@@ -613,13 +617,6 @@ div#ui-datepicker-div td a{
 	color: #fff !important;
 	border-color: #97b2d1 !important;
 	text-shadow: 0 1px 0 #ccc !important;
-}
-
-#upfront-taxonomy-add {
-	border-left: 2px solid #dce6f1;
-	padding-left: 10px;
-	margin-top: 10px;
-	padding-bottom: 8px;
 }
 
 .ueditor-taxonomy-wrapper .upfront-taxonomy_item input {

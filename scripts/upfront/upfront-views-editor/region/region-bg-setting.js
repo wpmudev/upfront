@@ -66,7 +66,7 @@
 
 				// Preserve background settings element event binding by detaching them before resetting html
 				$content.find('.upfront-region-bg-setting-tab-primary, .upfront-region-bg-setting-tab-secondary').children().detach();
-				
+
 				$content.html(setting);
 				$modal.addClass('upfront-region-modal-bg');
 
@@ -87,7 +87,7 @@
 				if ( $bg_settings_content ) {
 					// Set max height
 					this.set_settings_content_max_height();
-					
+
 					// Add JS Scrollbar.
 					perfectScrollbar.withDebounceUpdate(
 						// Element.
@@ -109,14 +109,14 @@
 						$($bg_settings_content).css('position', 'relative');
 					});
 				}
-				
+
 				// If region settings sidebar.
 				if (this.$el.parent().attr('id') === 'region-settings-sidebar') {
 					// Save region data for later resetting.
 					this.save_current_models();
 				}
 			},
-			
+
 			set_settings_content_max_height: function() {
 				var height = this.$el.height(),
 					titleHeight = this.$el.find('.upfront-region-bg-setting-header').first().outerHeight(true),
@@ -316,7 +316,7 @@
 				make_global.render();
 				localize_region.render();
 				name_save.render();
-				$region_name.find('.upfront-region-bg-setting-name-edit').append([region_name.$el, make_global.$el, localize_region.$el, name_save.$el]).hide();
+				$region_name.find('.upfront-region-bg-setting-name-edit').append([region_name.$el, name_save.$el,  make_global.$el, localize_region.$el]).hide();
 				$region_name.find('.upfront-region-name-edit-value').text(this.model.get('title'));
 
 				if ( this.model.get('scope') == 'global' ) {
@@ -855,7 +855,7 @@
 								thecollection.remove(sub_model);
 						});
 					}
-	
+
 					// Close settings and edit mode.
 					this.close();
 
@@ -921,7 +921,7 @@
 				// resize settings content
 				this.set_settings_content_max_height();
 			},
-			
+
 			// Close Region Settings Sidebar.
 			on_click_cancel: function() {
 				this.reset_models();

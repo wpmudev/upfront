@@ -7,7 +7,7 @@ describe('Models', function () {
 
 
 	describe('Post', function () {
-		
+
 		before(function () {
 			/**
 			 * Mock jQuery as global object
