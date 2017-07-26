@@ -112,8 +112,6 @@
 				
 				// If region settings sidebar.
 				if (this.$el.parent().attr('id') === 'region-settings-sidebar') {
-					// adding class to #sidebar-ui for fixing z-index issues with main dropdown.
-					$('#sidebar-ui').addClass('region-settings-activated');
 					// Save region data for later resetting.
 					this.save_current_models();
 				}
@@ -128,8 +126,6 @@
 			},
 
 			close: function(save) {
-				// removing class from #sidebar-ui that was previously added on showSettings
-				$('#sidebar-ui').removeClass('region-settings-activated');
 				return ModalBgSetting.prototype.close.call(this, save);
 			},
 
@@ -142,11 +138,11 @@
 				var breakpoint = Upfront.Views.breakpoints_storage.get_breakpoints().get_active().toJSON(),
 					bg_type = this.model.get_property_value_by_name('background_type'),
 					types = [
-						{ label: l10n.solid_color, value: 'color', icon: 'color' },
-						{ label: l10n.image, value: 'image', icon: 'image' },
-						{ label: l10n.video, value: 'video', icon: 'video' },
-						{ label: l10n.image_slider, value: 'slider', icon: 'slider' },
-						{ label: l10n.map, value: 'map', icon: 'map' }
+						{ label: l10n.solid_color, value: 'color' },
+						{ label: l10n.image, value: 'image' },
+						{ label: l10n.video, value: 'video' },
+						{ label: l10n.image_slider, value: 'slider' },
+						{ label: l10n.map, value: 'map' }
 					]
 				;
 
@@ -162,7 +158,7 @@
 					)
 				) {
 					if ( !Upfront.Application.is_single('404_page') ) {
-						types.push({ label: l10n.featured_image, value: 'featured', icon: 'feat' });
+						types.push({ label: l10n.featured_image, value: 'featured' });
 					}
 				}
 				return types;
@@ -320,7 +316,7 @@
 				make_global.render();
 				localize_region.render();
 				name_save.render();
-				$region_name.find('.upfront-region-bg-setting-name-edit').append([region_name.$el, make_global.$el, localize_region.$el, name_save.$el]).hide();
+				$region_name.find('.upfront-region-bg-setting-name-edit').append([region_name.$el, name_save.$el,  make_global.$el, localize_region.$el]).hide();
 				$region_name.find('.upfront-region-name-edit-value').text(this.model.get('title'));
 
 				if ( this.model.get('scope') == 'global' ) {
@@ -359,11 +355,6 @@
 				//}
 
 				if ( this.model.is_main() ){
-					$region_auto.on('click', function (e) {
-						e.preventDefault();
-						e.stopPropagation();
-						me.trigger_expand_lock($(this));
-					});
 					this.render_expand_lock($region_auto);
 				}
 				else {
@@ -419,15 +410,15 @@
 					}),
 					// backward compatible with old nav_region property
 					region_nav_value = this.model.get_property_value_by_name('nav_region'),
-					region_nav = new Fields.Checkboxes({
+					region_nav = new Fields.Toggle({
 						model: this.model,
 						property: 'sub_regions',
 						default_value: !this.model.get_property_value_by_name('sub_regions') ? [region_nav_value] : [],
 						layout: 'horizontal-inline',
 						multiple: true,
 						values: [
-							{ label: l10n.top, value: 'top' },
-							{ label: l10n.bottom, value: 'bottom' }
+							{ label: l10n.sub_top, value: 'top' },
+							{ label: l10n.sub_bottom, value: 'bottom' }
 						],
 						change: function () {
 							var value = this.get_value(),
@@ -530,30 +521,35 @@
 					$region_sticky = $region_footer.find('.upfront-region-bg-setting-sticky')
 				;
 
-				if ( !is_responsive && ( this.model.is_main() || sub == 'top' || sub == 'bottom' ) ) {
+				if ( !is_responsive ) {
 					this.render_sticky_settings($region_sticky);
+
+					$region_footer.find('.upfront-region-bg-setting-edit-css').on('click', function(e){
+						e.preventDefault();
+						e.stopPropagation();
+						me.trigger_edit_css();
+					});
+					$region_footer.find('.upfront-region-bg-setting-trash').on('click', function(e){
+						e.preventDefault();
+						e.stopPropagation();
+						me.trigger_trash();
+					});
 				}
 				else {
 					$region_sticky.hide();
 				}
-
-				$region_footer.find('.upfront-region-bg-setting-edit-css').on('click', function(e){
-					e.preventDefault();
-					e.stopPropagation();
-					me.trigger_edit_css();
-				});
 			},
 
 			render_sticky_settings: function ($region_sticky) {
 				var collection = this.model.collection,
 					has_sticky = collection.findWhere({sticky: '1'}),
-					region_sticky = new Fields.Checkboxes({
+					region_sticky = new Fields.Toggle({
 						model: this.model,
 						name: 'sticky',
 						default_value: '',
 						layout: 'horizontal-inline',
 						values: [
-							{ label: l10n.sticky_region + ':', value: '1' }
+							{ label: l10n.sticky_region, value: '1' }
 						],
 						change: function () {
 							var value = this.get_value();
@@ -781,33 +777,36 @@
 			render_expand_lock: function ($el) {
 				var locked = this.model.get_breakpoint_property_value('expand_lock', true),
 					type = this.model.get('type'),
-					$status = $('<span />')
+					disabled = false
 				;
-				if ( type == 'full' ) {
-					$el.addClass('upfront-region-bg-setting-auto-resize-disabled');
-					$el.attr('title', l10n.auto_resize_disabled_title);
-				}
-				else {
-					$el.removeClass('upfront-region-bg-setting-auto-resize-disabled');
-					$el.removeAttr('title');
-				}
-				if ( locked ){
-					$status.addClass('auto-resize-off');
-				}
-				else {
-					$status.addClass('auto-resize-on');
-				}
-				$el.html('');
-				$el.append('<span>' + l10n.auto_resize + '</span>');
-				$el.append($status);
-			},
 
-			trigger_expand_lock: function ($el) {
-				if ( $el.hasClass('upfront-region-bg-setting-auto-resize-disabled') )
-					return;
-				var locked = this.model.get_breakpoint_property_value('expand_lock');
-				this.model.set_breakpoint_property('expand_lock', !locked);
-				this.render_expand_lock($el);
+				if ( type == 'full' ) {
+					disabled = true;
+					//$el.attr('title', l10n.auto_resize_disabled_title);
+				}
+				else {
+					disabled = false;
+				}
+
+				var auto_resize = new Fields.Toggle({
+					model: this.model,
+					property: 'expand_lock',
+					default_value: locked,
+					layout: 'horizontal-inline',
+					values: [
+						{ label: l10n.auto_resize, value: true, disabled: disabled }
+					],
+					change: function() {
+						if (disabled)
+							return;
+						var locked = this.model.get_breakpoint_property_value('expand_lock');
+						this.model.set_breakpoint_property('expand_lock', !locked);
+					}
+				});
+
+				$el.html('');
+				auto_resize.render();
+				$el.append(auto_resize.$el);
 			},
 
 			// Edit CSS trigger
@@ -819,6 +818,96 @@
 				});
 
 				this.listenTo(Upfront.Application.cssEditor, 'updateStyles', this.adjust_grid_padding);
+			},
+			trigger_trash: function () {
+				var main, main_view;
+
+				if(typeof(e) != 'undefined')
+					e.preventDefault();
+
+
+				if ( confirm(l10n.section_delete_nag) ){
+					// Destroy parallax first if exists
+					var $overlay = this.$el.closest('.upfront-region-container-bg').children('.upfront-region-bg-overlay');
+					if ( $overlay.length > 0 ) {
+						if ( $overlay.data('uparallax') ) {
+							$overlay.uparallax('destroy');
+						}
+					}
+
+					var parent_view = this.parent_view; // reserve parent_view before removal as we use it later
+					// if ( this.model.get('container') ){
+						// main = this.model.collection.get_by_name(this.model.get('container'));
+						// main_view = Upfront.data.region_views[main.cid];
+					// }
+					if(this.model.get('type') == 'lightbox')
+						this.hide();
+
+					var thecollection = this.model.collection || this.collection;
+
+					// Make sure sub-regions is also removed if it's main region
+					if ( this.model.is_main() ) {
+						var sub_regions = this.model.get_sub_regions();
+						_.each(sub_regions, function(sub_model, sub){
+							if ( _.isArray(sub_model) )
+								_.each(sub_model, function(sub_model2){ thecollection.remove(sub_model2); });
+							else if ( _.isObject(sub_model) )
+								thecollection.remove(sub_model);
+						});
+					}
+	
+					// Close settings and edit mode.
+					this.close();
+
+					if( 'fixed' === this.model.get('type')  ){ //  If it's a floating region!
+						this.parent_view.get_container_view(this.model).close_edit();
+						thecollection.remove(this.model);
+						//this.remove();
+					}else{
+						thecollection.remove(this.model);
+					}
+
+					var total_container = thecollection.total_container(['shadow', 'lightbox']); // don't include shadow and lightbox region
+					if ( total_container == 0 ) {
+						if ( parent_view.$el.find('#no_region_add_one').length < 1 ) {
+							parent_view.$el.append($('<a>').attr('id', 'no_region_add_one').text(l10n.no_region_add).one('click', function() {
+								var new_title = false,
+									name = 'main',
+									title = l10n.main_area;
+								if ( thecollection.get_by_name(name) ) {
+									new_title = thecollection.get_new_title("Main ", 2);
+									title = new_title.title;
+									name = new_title.name;
+								}
+								var new_region = new Upfront.Models.Region(_.extend(_.clone(Upfront.data.region_default_args), {
+									"name": name,
+									"container": name,
+									"title": title
+								}));
+
+								var options = {};
+								new_region.set_property('row', Upfront.Util.height_to_row($(window).height())); // default to screen height worth of row
+								new_region.add_to(thecollection, 0, options);
+
+								$(this).remove();
+							}));
+
+						}
+
+					}
+
+
+
+					// For single post if floating region is removed, parent region will not re-render and will appear as if everything was removed
+					//if (floating) parent_view.render();
+
+					// if ( main_view ){
+						// Upfront.Events.trigger('command:region:edit_toggle', true);
+						// main_view.trigger('activate_region', main_view);
+					// }
+				}
+				// run layout change event
+				Upfront.Events.trigger('entity:layout:change');
 			},
 			toggle_advanced_settings: function() {
 				// toggle advanced settings content

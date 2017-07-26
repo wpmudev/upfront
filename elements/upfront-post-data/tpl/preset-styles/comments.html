@@ -15,7 +15,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-comment_count-font-size'])) { ?>
-		font-size: <?php echo $properties['static-comment_count-font-size'] ?>px;
+		font-size: <?php echo $properties['static-comment_count-font-size'] ?><?php if(!empty($properties['static-comment_count-font-size-unit'])) { ?><?php echo $properties['static-comment_count-font-size-unit'] ?><?php } else { ?>px<?php } ?>;
 	<?php } ?>
 
 	<?php if (!empty($properties['static-comment_count-font-color'])) { ?>
@@ -23,7 +23,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-comment_count-line-height'])) { ?>
-		line-height: <?php echo $properties['static-comment_count-line-height'] ?>;
+		line-height: <?php echo $properties['static-comment_count-line-height'] ?><?php if(!empty($properties['static-comment_count-line-height-unit'])) { ?><?php echo $properties['static-comment_count-line-height-unit'] ?><?php } ?>;
 	<?php } ?>
 
 }
@@ -53,7 +53,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-comments-font-size'])) { ?>
-		font-size: <?php echo $properties['static-comments-font-size'] ?>px;
+		font-size: <?php echo $properties['static-comments-font-size'] ?><?php if(!empty($properties['static-comments-font-size-unit'])) { ?><?php echo $properties['static-comments-font-size-unit'] ?><?php } else { ?>px<?php } ?>;
 	<?php } ?>
 
 	<?php if (!empty($properties['static-comments-font-color'])) { ?>
@@ -61,7 +61,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-comments-line-height'])) { ?>
-		line-height: <?php echo $properties['static-comments-line-height'] ?>;
+		line-height: <?php echo $properties['static-comments-line-height'] ?><?php if(!empty($properties['static-comments-line-height-unit'])) { ?><?php echo $properties['static-comments-line-height-unit'] ?><?php } ?>;
 	<?php } ?>
 
 }
@@ -90,7 +90,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-comments_pagination-font-size'])) { ?>
-		font-size: <?php echo $properties['static-comments_pagination-font-size'] ?>px;
+		font-size: <?php echo $properties['static-comments_pagination-font-size'] ?><?php if(!empty($properties['static-comments_pagination-font-size-unit'])) { ?><?php echo $properties['static-comments_pagination-font-size-unit'] ?><?php } else { ?>px<?php } ?>;
 	<?php } ?>
 
 	<?php if (!empty($properties['static-comments_pagination-font-color'])) { ?>
@@ -98,7 +98,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-comments_pagination-line-height'])) { ?>
-		line-height: <?php echo $properties['static-comments_pagination-line-height'] ?>;
+		line-height: <?php echo $properties['static-comments_pagination-line-height'] ?><?php if(!empty($properties['static-comments_pagination-line-height-unit'])) { ?><?php echo $properties['static-comments_pagination-line-height-unit'] ?><?php } ?>;
 	<?php } ?>
 
 }
@@ -133,7 +133,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-comment_form-font-size'])) { ?>
-		font-size: <?php echo $properties['static-comment_form-font-size'] ?>px;
+		font-size: <?php echo $properties['static-comment_form-font-size'] ?><?php if(!empty($properties['static-comment_form-font-size-unit'])) { ?><?php echo $properties['static-comment_form-font-size-unit'] ?><?php } else { ?>px<?php } ?>;
 	<?php } ?>
 
 	<?php if (!empty($properties['static-comment_form-font-color'])) { ?>
@@ -141,7 +141,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-comment_form-line-height'])) { ?>
-		line-height: <?php echo $properties['static-comment_form-line-height'] ?>;
+		line-height: <?php echo $properties['static-comment_form-line-height'] ?><?php if(!empty($properties['static-comment_form-line-height-unit'])) { ?><?php echo $properties['static-comment_form-line-height-unit'] ?><?php } ?>;
 	<?php } ?>
 
 }

@@ -524,6 +524,16 @@ div.upfront-region-lightbox, div.upfront-region-side-lightbox,
   display:none;
   top: 50% !important;
   left: 50% !important;
+  max-height: 80vh;
+  max-width: 80%;
+}
+.upfront-region-side-lightbox .upfront-region-wrapper,
+.upfront-region-lightbox .upfront-region-wrapper {
+  overflow: auto;
+  max-height: 100%;
+  max-height: 80vh;
+  height: inherit;
+  pointer-events: auto;
 }
 .upfront-lightbox-bg {
   position:fixed;
@@ -577,6 +587,16 @@ div.upfront-region-lightbox .upfront-icon-popup-close, div.upfront-region-side-l
 
 .upfront-navigation li { display: inline-block;  list-style:none; }
 
+/* Lightbox close button icon at smaller screen size. */
+@media only screen and (max-height: 500px) {
+	div.close_lightbox {
+		top: -40px;
+	}
+	.close_lightbox .upfront-icon-popup-close:before {
+		font-size: 35px;
+	}
+}
+
 .close_lightbox > .upfront-icon-popup-close {
 
     font: 100 30px/16px Helvetica Neue, Helvetica, sans-serif;
@@ -618,21 +638,18 @@ body .upfront-edit_layout a {
 .upfront-object h4 a, .upfront-output-object h4 a,
 .upfront-object h5 a, .upfront-output-object h5 a,
 .upfront-object h6 a, .upfront-output-object h6 a,
-.upfront-object p a, .upfront-output-object p a,
 .upfront-object h1 a:link, .upfront-output-object h1 a:link,
 .upfront-object h2 a:link, .upfront-output-object h2 a:link,
 .upfront-object h3 a:link, .upfront-output-object h3 a:link,
 .upfront-object h4 a:link, .upfront-output-object h4 a:link,
 .upfront-object h5 a:link, .upfront-output-object h5 a:link,
 .upfront-object h6 a:link, .upfront-output-object h6 a:link,
-.upfront-object p a:link, .upfront-output-object p a:link,
 .upfront-object h1 a:hover, .upfront-output-object h1 a:hover,
 .upfront-object h2 a:hover, .upfront-output-object h2 a:hover,
 .upfront-object h3 a:hover, .upfront-output-object h3 a:hover,
 .upfront-object h4 a:hover, .upfront-output-object h4 a:hover,
 .upfront-object h5 a:hover, .upfront-output-object h5 a:hover,
-.upfront-object h6 a:hover, .upfront-output-object h6 a:hover,
-.upfront-object p a:hover, .upfront-output-object p a:hover  {
+.upfront-object h6 a:hover, .upfront-output-object h6 a:hover {
   font-family: inherit;
   font-size: inherit;
   font-weight: inherit;
@@ -667,7 +684,7 @@ body .upfront-edit_layout a {
     right: 17px;
     cursor: pointer;
   }
-  
+
   input[type=checkbox] + label.upfront_toggle_label:before {
 	display: none;
   }
@@ -699,7 +716,7 @@ body .upfront-edit_layout a {
   #element-settings-sidebar .border_radius_lock input[type=checkbox]:checked + label:before {
     background-position: -661px -140px
   }
-	
+
   #element-settings-sidebar .padding-lock input[type=checkbox] + label:before,
   #element-settings-sidebar .gallery-padding-lock input[type=checkbox] + label:before {
 	display: none;

@@ -44,6 +44,7 @@
 }
 .command-open-font-manager:before,
 #insert-font-widget:before {
+	background-image: url(../img/uf-ui-sprite.svg?v=20131127);
 	background-position: -821px -202px;
 	width: 18px;
 	height: 16px;
@@ -51,6 +52,12 @@
 }
 .command-open-font-manager:before {
 	margin: 2px 5px 0 0;
+}
+.command-open-font-manager, .command-edit-css {
+	margin: 0 0 10px 5px !important;
+}
+.command-open-font-manager {
+	margin-left: 0px !important;
 }
 a.upfront-css-font {
 	display: block;
@@ -73,32 +80,22 @@ a.upfront-css-font {
 	height: 500px;
 }
 .sidebar-info-notice{
-    padding-top: 10px;
-    font:normal 11px verdana, sans-serif;
-    line-height: 18px;
-    color: #607F99;
-		position: relative;
-		padding-left: 18px;
-		line-height: 13px;
+    padding: 10px 0px;
+	font: normal 11px/1.5 "Open Sans", sans-serif;
+	color: #000000;
+	position: relative;
+	padding-left: 24px;
 }
 .sidebar-info-notice:before{
     content: "";
-    background-image: url('../img/uf-core-el-sprite.svg') !important;
-		background-position: -484px -141px;
-		display: block;
-		position: absolute;
-		height: 16px;
-		width: 14px;
-		left: 0px;
-		top: 11px;
-}
-.open-theme-fonts-manager input,
-.open-theme-fonts-manager input:hover{
-	line-height: 36px;
-	border: 2px solid #1fcd8f;
-	margin-top: 13px;
-	font-size: 14px;
-	width: 228px;
+	background-image: url('../img/uf-core-el-sprite_new.svg');
+	background-position: -483px -138px;
+	display: block;
+	position: absolute;
+	height: 16px;
+	width: 20px;
+	left: 0px;
+	top: 11px;
 }
 .fonts-manager-panel-title {
 	text-align: center;
@@ -144,5 +141,3 @@ a.upfront-css-font {
 	color: #1fcd8f;
 	cursor: default;
 }
-
-

@@ -16,7 +16,7 @@ define([], function () {
 				],
 				width = 0,
 				height = 0,
-				borderSize = 1;
+				borderSize = 2;
 
 			this.$el.html('');
 			this.collapsedParent = false;

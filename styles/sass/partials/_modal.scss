@@ -160,6 +160,10 @@
 	right: 0;
 	z-index: 10001004;
 }
+/* Resolve fixed region CSS editor z-index issues */
+.upfront-modal-bg-settings-fixed {
+	z-index: 10001000;
+}
 .upfront-inline-modal {
 }
 .upfront-inline-modal-wrap {

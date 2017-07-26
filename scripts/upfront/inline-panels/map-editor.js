@@ -29,7 +29,7 @@ define([
 			this.checkJSon(json);
 		},
 
-		on_render: function () {
+		render: function () {
 			this.start_json_editor();
 		},
 
@@ -46,7 +46,12 @@ define([
 				$('body').append($editor);
 			}
 
-			require([Upfront.Settings.ace_url], function () {
+			upfrontrjs = window.upfrontrjs || {
+				define: define,
+				require: require,
+				requirejs: requirejs
+			};
+			upfrontrjs.require([Upfront.Settings.ace_url], function () {
 				me.createEditor($editor);
 			});
 

@@ -38,7 +38,7 @@
 
                     new Upfront.Views.Editor.Field.Button({
                         model: this.model,
-                        className: 'upfront-css-edit',
+                        className: 'upfront-css-edit upfront-small-button',
                         compact: true,
                         name: 'preset_css',
                         label: l10n.edit_css
@@ -477,7 +477,7 @@
                 // Save button
                 $panel.append(
                     "<div class='upfront-settings-button_panel'>" +
-                    "<button type='button' class='upfront-save_settings'><i class='icon-ok'></i> " + l10n.ok + "</button>" +
+                    "<button type='button' class='upfront-save_settings sidebar-commands-button blue'><i class='icon-ok'></i> " + l10n.ok + "</button>" +
                     '</div>'
                 );
 

@@ -9,7 +9,7 @@
 		], function ( Command_NewPost, Fields ) {
 
 				return Command_NewPost.extend({
-						"className": "command-new-page",
+						"className": "command-new-page sidebar-commands-button light",
 						postType: 'page',
 						_default_label: l10n.new_page,
 						initialize: function () {

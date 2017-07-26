@@ -17,13 +17,17 @@ define([
 				model: this.model,
 				property: 'background_color',
 				use_breakpoint_property: true,
-				default_value: '#ffffff',
+				default_value: 'transparent', // default to transparent color
+				blank_alpha: 0,
 				spectrum: {
 					move: function (color) {
 						me.preview_color(color);
 					},
 					change: function (color) {
 						me.update_color(color);
+						// Update color swatch in header.
+						$('#region-settings-sidebar .upfront-region-type-icon')
+							.css({'backgroundImage': 'none', 'backgroundColor': '#' + color.toHex()});
 					},
 					hide: function (color) {
 						me.reset_color();
@@ -34,7 +38,7 @@ define([
 				}
 			}
 			if (options.hideLabel !== true) {
-				colorFieldOptions.label = l10n.bg_color_short;
+				colorFieldOptions.label = l10n.region_bg_short;
 			}
 
 			options.fields = [

@@ -12,8 +12,8 @@
 				"text!upfront/templates/region_add_panel.html"
 		], function ( RegionPanelItem, Fields, Modal, region_add_panel_tpl ) {
 				return RegionPanelItem.extend({
-						width: 24,
-						height: 24,
+						width: 34,
+						height: 34,
 						events: {
 								'click': 'add_region_modal'
 						},

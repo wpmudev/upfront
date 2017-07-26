@@ -23,9 +23,9 @@ define([
 			});
 
 			this.fields = _([
-				new Upfront.Views.Editor.Field.Checkboxes({
+				new Upfront.Views.Editor.Field.Toggle({
 					model: this.model,
-					className: 'checkbox-module checkbox-title',
+					className: 'checkbox-module checkbox-title upfront-toggle-field',
 					name: me.options.fields.checkbox,
 					label: '',
 					default_value: 1,

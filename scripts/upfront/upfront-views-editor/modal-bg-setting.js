@@ -99,9 +99,21 @@
 								me.render_modal_tab(value, $content.find('.upfront-bg-setting-tab-'+value), $content);
 								// Replace icon with new type's icon.
 								var former_class = $content.find('.upfront-region-type-icon')[0];
-								if (former_class) {
+								var image_url = this.model.get_breakpoint_property_value('background_image');
+								var color = this.model.get_breakpoint_property_value('background_color');
+								if ((value === 'image' || value === 'featured') && image_url && former_class) {
 									former_class = former_class.classList[1];
-									$content.find('.upfront-region-type-icon').addClass('upfront-region-type-icon-'+value).removeClass(former_class);
+									$content.find('.upfront-region-type-icon').addClass('upfront-region-type-icon-image-url').removeClass(former_class).css({'backgroundImage': 'url(' + image_url + ')'});
+								} else if (value === 'color' && color && former_class) {
+									former_class = former_class.classList[1];
+									$content.find('.upfront-region-type-icon').addClass('upfront-region-type-icon-color-swatch').removeClass(former_class).css({
+										'backgroundImage': 'none',
+										'backgroundColor': color
+									});
+								} else if (former_class) {
+									former_class = former_class.classList[1];
+									$content.find('.upfront-region-type-icon').css({'backgroundImage': '', 'backgroundPosition': '', backgroundColor: ''});
+									$content.find('.upfront-region-type-icon').addClass('upfront-region-type-icon-'+value).removeClass(former_class + ' upfront-region-type-icon-image-url upfront-region-type-icon-color-swatch');
 								}
 							}
 							if ( !is_responsive ) {
@@ -110,9 +122,16 @@
 							// Resize Select if image.
 							if (value === 'image' || value === 'featured') {
 								this.$el.addClass('upfront-bg-setting-type-image');
-								this.$el.find('.upfront-field-select').css({'min-width': '140px'});
+								// Narrow select for browse button.
+								if (value === 'image') {
+									this.$el.find('.upfront-field-select').css({'min-width': '140px', 'max-width': '140px'});
+								} else {
+									// Wide select without browse button.
+									this.$el.find('.upfront-field-select').css({'min-width': '100%', 'max-width': '100%'});
+								}
 							} else {
 								this.$el.removeClass('upfront-bg-setting-type-image');
+								this.$el.find('.upfront-field-select').css({'min-width': '100%', 'max-width': '100%'});
 							}
 							Upfront.Events.trigger("region:background:type:changed");
 						}

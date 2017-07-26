@@ -17,9 +17,16 @@ define([
 			this.options = options || {};
 			this.fieldCounter = 0;
 			this.currentElement = '';
+			if(typeof this.options.showLabel === "undefined") { 
+				this.options.showLabel = true; 
+			}
+			
 			var me = this,
 				state = this.options.state,
 				custom_class = '';
+
+			// Border toggle is always true
+			this.options.toggle = true;
 
 			//If fields added increase field counter
 			if(typeof this.options.elements !== "undefined") {
@@ -33,9 +40,9 @@ define([
 			}
 
 			this.fields = _([
-				new Upfront.Views.Editor.Field.Checkboxes({
+				new Upfront.Views.Editor.Field.Toggle({
 					model: this.model,
-					className: 'useBorder checkbox-title',
+					className: 'useBorder checkbox-title upfront-toggle-field',
 					name: me.options.fields.use,
 					label: '',
 					default_value: 1,
@@ -48,29 +55,23 @@ define([
 						me.reset_fields(value);
 					},
 					show: function(value, $el) {
-						var stateSettings = $el.closest('.state_modules');
+						var stateSettings = $el.closest('.upfront-settings-item-content');
 
 						//Toggle border settings when depending on checkbox value
 						if(value == "yes") {
-							stateSettings.find('.' + state + '-border-width').show();
-							stateSettings.find('.' + state + '-border-type').show();
-							stateSettings.find('.' + state + '-border-color').show();
+							stateSettings.find('.' + state + '-toggle-wrapper').show();
 							stateSettings.find('.' + state + '-border-select-element').css("opacity", "1");
 						} else {
-							stateSettings.find('.' + state + '-border-width').hide();
-							stateSettings.find('.' + state + '-border-type').hide();
-							stateSettings.find('.' + state + '-border-color').hide();
+							stateSettings.find('.' + state + '-toggle-wrapper').hide();
 							stateSettings.find('.' + state + '-border-select-element').css("opacity", "0.5");
 						}
 					}
 				}),
-				new Upfront.Views.Editor.Field.Number({
+				new Upfront.Views.Editor.Field.Number_Unit({
 					model: this.model,
 					className: state + '-border-width borderWidth ' + custom_class,
 					name: this.currentElement + me.options.fields.width,
-					label: '',
 					default_value: 1,
-					suffix: l10n.px,
 					values: [
 						{ label: "", value: '1' }
 					],
@@ -90,9 +91,9 @@ define([
 					name: this.currentElement + me.options.fields.type,
 					default_value: "solid",
 					values: [
-						{ label: l10n.solid, value: 'solid' },
-						{ label: l10n.dashed, value: 'dashed' },
-						{ label: l10n.dotted, value: 'dotted' }
+						{ label: '―', value: 'solid' },
+						{ label: '┅', value: 'dashed' },
+						{ label: '⋯', value: 'dotted' }
 					],
 					change: function(value) {
 						me.model.set(me.currentElement + me.options.fields.type, value);
@@ -106,11 +107,10 @@ define([
 
 				new Upfront.Views.Editor.Field.Color({
 					model: this.model,
-					className: state + '-border-color upfront-field-wrap upfront-field-wrap-color sp-cf borderColor ' + custom_class,
+					className: state + '-border-color upfront-field-wrap upfront-field-wrap-color sp-cf borderColor ' + custom_class + ' color-label-' + this.options.showLabel,
 					name: this.currentElement + me.options.fields.color,
 					blank_alpha : 0,
-					label_style: 'inline',
-					label: l10n.color,
+					label: '',
 					default_value: '#000',
 					spectrum: {
 						preferredFormat: 'rgb',

@@ -79,6 +79,10 @@
                     css.left = 'auto';
                     if (css.width > 0 && this.right + css.width <= $(window).width()) { // We need this for smaller screens, such as laptops
                         css.right = this.right;
+                      	// if small screen, push modal over from being cut off.
+												if (window.innerWidth < 1366) {
+													css.right = css.width;
+												}
                     }
                 }
                 $wrap.css(css);

@@ -267,7 +267,7 @@ define([
 			me.listenTo(linkPanel, 'linkpanel:close', function() {
 				control.close();
 			});
-			
+
 			// Update wrapper size
 			me.listenTo(linkPanel, 'linkpanel:update:wrapper', function() {
 				control.updateWrapperSize();
@@ -1023,7 +1023,7 @@ define([
 					this.property('position', {top: margin, left: current_position.left});
 
 				}
-				
+
 				if(sizeCheck === "small" && isDotAlign !== true) {
 					this.property('marginTop', 0);
 				}

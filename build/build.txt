@@ -13,6 +13,7 @@ realperson/jquery.realperson.css
 
 main.js
 ----------------
+require.js
 /var/www/local.wordpressmu.dev/wp-includes/js/underscore.min.js
 /var/www/local.wordpressmu.dev/wp-includes/js/backbone.min.js
 upfront/upfront-models.js
@@ -157,6 +158,7 @@ text!upfront/templates/overlay_grid.html
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/content-editor/content-editor-pagination.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/content-editor/content-editor-posts.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/content-editor/content-editor-pages.js
+/var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/content-editor/content-editor-cpt.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/content-editor/content-editor-comments.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/content-editor.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/commands/command-popup-list.js
@@ -173,7 +175,6 @@ text!upfront/templates/overlay_grid.html
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/draggable-element.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-profile.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section.js
-upfront/upfront-content.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-post-details.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-post-tag-category.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-page-template.js
@@ -189,6 +190,7 @@ upfront/upfront-content.js
 text!upfront/templates/sidebar_settings_theme_colors.html
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-item-colors-editor.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-colors.js
+/var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings-section-misc.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panel-settings.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/sidebar-panels.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-views-editor/sidebar/commands/sidebar-commands-primary-post-type.js
@@ -219,10 +221,14 @@ jquery/jquery.simulate.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/backbone-query-parameters/backbone-query-parameters.js
 responsive.js
 findandreplace/findAndReplaceDOMText.js
+/var/www/local.wordpressmu.dev/wp-includes/js/jquery/ui/widget.min.js
+file_upload/jquery.fileupload.js
+file_upload/jquery.iframe-transport.js
 upfront/objects/loading.js
 upfront/upfront-objects.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-media/insert-options-item-control.js
 upfront/upfront-media.js
+upfront/upfront-content.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/bg-settings/mixins.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/bg-settings/color-item.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/bg-settings/image-item.js
@@ -250,6 +256,7 @@ text!elements/upfront-slider/tpl/backend.html
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/settings/modules/colors.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/settings/modules/element-style.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/settings/modules/padding.js
+/var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/settings/modules/margin.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/settings/modules/anchor.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/elements/upfront-newnavigation/js/menu-util.js
 text!scripts/upfront/settings/modules/menu-structure/menu-item-editor.tpl
@@ -258,6 +265,7 @@ text!scripts/upfront/settings/modules/menu-structure/menu-item.tpl
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/settings/modules/menu-structure/menu-item.js
 text!scripts/upfront/settings/modules/menu-structure/menu-structure.tpl
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/settings/modules/menu-structure.js
+/var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/settings/modules/toggle.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/elements/upfront-newnavigation/js/settings/menu-style.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/settings/module-factory.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/element-settings/root-settings-panel.js
@@ -415,6 +423,13 @@ text!elements/upfront-code/tpl/editor.html
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/elements/upfront-spacer/js/uspacer.js
 upfront/upfront-application.js
 pako/pako.min.js
+/var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/cache/storage-stub.js
+/var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/cache/storage-memory.js
+/var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/cache/storage-persistent.js
+/var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/cache/storage-permanent.js
+/var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/cache/storage.js
+/var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/cache/request.js
+/var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-cache.js
 upfront/upfront-util.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/plugins.js
-main.js
+setup.js

@@ -95,15 +95,18 @@ define([
 
 			PresetManager.prototype.setupItems.apply(this, arguments);
 
-			// Make sure we update hidden objects on preset change
-			if (this.selectPresetModule) this.listenTo(this.selectPresetModule, 'upfront:presets:change', function () {
+			// Make sure we update hidden objects on preset change/delete/reset
+			this.stopListening(Upfront.Events, 'element:preset:updated');
+			this.listenTo(Upfront.Events, 'element:preset:updated', function () {
 				this.model.get("objects").trigger("change");
 				var me = this;
 				setTimeout(function(){
 					me.update_parts();
 				});
 			}, this);
+			
 			// If properties changed (i.e cancel)
+			this.stopListening(this.model, 'change');
 			this.listenTo(this.model, 'change', function (attr) {
 				if ( !('changed' in attr && 'properties' in attr.changed)  ) return;
 				var me = this;
@@ -111,6 +114,7 @@ define([
 					me.update_parts();
 				});
 			}, this);
+			
 			// Yeah, so that's done
 
 			_.each(this.part_panels, function (panel, idx) {
@@ -128,6 +132,7 @@ define([
 				this.settings.push(pnl);
 			}, this);
 		},
+		
 		getTitle: function() {
 			return 'Presets';
 		},
@@ -205,7 +210,7 @@ define([
 							{ name: 'view_class', value: 'PostDataPartView' },
 							{ name: 'part_type', value: type },
 							{ name: 'has_settings', value: 0 },
-							{ name: 'class', value: 'c24 upfront-post-data-part' },
+							{ name: 'class', value: 'c24 upfront-post-data-part part-'+type },
 							{ name: 'wrapper_id', value: wrapper_id }
 						]
 					});

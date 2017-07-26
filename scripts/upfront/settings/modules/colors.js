@@ -37,6 +37,7 @@ define([
 					name: color.name,
 					default_value: me.model.get(color.name),
 					label_style: 'inline',
+					label_position: me.options.label_position || 'right',
 					label: color.label,
 					spectrum: {
 						preferredFormat: 'hex',
@@ -61,9 +62,9 @@ define([
 			if(this.options.toggle === true) {
 				this.group = false;
 				this.fields.unshift(
-					new Upfront.Views.Editor.Field.Checkboxes({
+					new Upfront.Views.Editor.Field.Toggle({
 						model: this.model,
-						className: 'useColors checkbox-title',
+						className: 'useColors checkbox-title upfront-toggle-field',
 						name: me.options.fields.use,
 						label: '',
 						multiple: false,
@@ -79,12 +80,12 @@ define([
 							me.reset_fields(value);
 						},
 						show: function(value, $el) {
-							var stateSettings = $el.closest('.state_modules');
+							var stateSettings = $el.closest('.upfront-settings-item-content');
 							//Toggle color fields
 							if(value == "yes") {
-								stateSettings.find('.'+ state +'-color-field').show();
+								stateSettings.find('.' + state + '-toggle-wrapper').show();
 							} else {
-								stateSettings.find('.'+ state +'-color-field').hide();
+								stateSettings.find('.' + state + '-toggle-wrapper').hide();
 							}
 						}
 					})
@@ -143,7 +144,7 @@ define([
 					field.set_value(color);
 					field.update_input_border_color(Upfront.Util.colors.to_color_value(color));
 				}
-      });
+			});
 		}
 	});
 

@@ -15,6 +15,7 @@ define([
 		},
 
 		render: function () {
+			var me = this;
 			this.$el.html('');
 			if (this.options.title && this.options.toggle !== true) {
 				this.$el.append('<div class="upfront-settings-item-title">' + this.options.title + '</div>');
@@ -22,11 +23,30 @@ define([
 			this.$el.append('<div class="upfront-settings-item-content"></div>');
 
 			var $content = this.$el.find('.upfront-settings-item-content');
-			this.fields.each(function(field){
-				field.render();
-				field.delegateEvents();
-				$content.append(field.el);
-			});
+
+			if(typeof this.fields !== "undefined") {
+				this.fields.each(function (field) {
+					field.render();
+					field.delegateEvents();
+					$content.append(field.el);
+				});
+			}
+
+			// Wrap toggleable fields
+			if(this.options.toggle === true) {
+				var firstField = this.fields._wrapped[0],
+					wrapperStyle = ''
+				;
+
+				// Check if we are dealing with toggle field
+				if(firstField.$el.hasClass('upfront-toggle-field')) {
+					if(firstField.get_value() === 'yes') {
+						wrapperStyle = 'style="display: block"';
+					}
+				}
+
+				$content.children('div').not(':first-child').wrapAll('<div class="'+ this.options.state +'-toggle-wrapper upfront-toggle-wrapper" '+ wrapperStyle +'/>');
+			}
 
 			this.trigger('rendered');
 		},

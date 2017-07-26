@@ -1,5 +1,5 @@
 .upfront-settings-common_panel {
-	background: #f7fbff;
+	background: rgb(242, 242, 242);
 	height: 35px;
 	overflow: hidden;
 	padding: 0 5px;
@@ -120,63 +120,83 @@
 
 /* Padding Settings */
 
-#element-settings-sidebar .padding-lock input[type=checkbox] {
+#element-settings-sidebar .padding-lock input[type=checkbox],
+#element-settings-sidebar .margin-lock input[type=checkbox] {
     position: relative;
     left: 36px;
     top: 6px;
 }
-#element-settings-sidebar .padding-lock input[type=checkbox]:checked {
+#element-settings-sidebar .padding-lock input[type=checkbox]:checked,
+#element-settings-sidebar .margin-lock input[type=checkbox]:checked {
     float:none !important;
     left: 38px;
     top: 7px;
 }
-#element-settings-sidebar .padding-lock input[type=checkbox]{
+#element-settings-sidebar .padding-lock input[type=checkbox],
+#element-settings-sidebar .margin-lock input[type=checkbox] {
     display: none;
 }
-#element-settings-sidebar .padding-lock label {
-    display: block;
-    height: 15px;
-    width: 15px;
-    background-image: url('../img/uf-core-el-sprite.png');
-    background-image: url('../img/uf-core-el-sprite.svg'), none;
-    background-position: -661px -172px;
-    background-color: #f7fbff;
-    left: 30px;
-    top: 3px;
+#element-settings-sidebar .padding-lock label,
+#element-settings-sidebar .margin-lock label {
+	display: block;
+	height: 25px;
+	width: 25px;
+	background-image: url(../img/uf-core-el-sprite_new.svg), none;
+	background-position: -658px -169px;
+	left: 29px;
+	top: 0px;
     position: relative;
     cursor: pointer;
 }
-#element-settings-sidebar .padding-lock .upfront-field-multiple-selected label {
-    background-position: -661px -140px;
+#element-settings-sidebar .padding-lock .upfront-field-multiple-selected label,
+#element-settings-sidebar .margin-lock .upfront-field-multiple-selected label {
+	background-position: -658px -137px;
 }
 #element-settings-sidebar .padding-lock {
     position: relative;
     margin-top: -19px;
-    left: 110px;
+    left: 33px;
+    top: 80px;
 }
 
-#element-settings-sidebar .padding-settings input[type=number] {
-    width: 45px;
+#element-settings-sidebar .margin-lock {
+    position: relative;
+	margin-top: -25px;
+	top: 72px;
+	left: 46px;
+    z-index: 9999;
+}
+
+#element-settings-sidebar .padding-settings input[type=number],
+#element-settings-sidebar .margin-settings input[type=number] {
+    width: 65px;
     font-size: 12px;
 }
-#element-settings-sidebar .padding-settings .padding-top {
+#element-settings-sidebar .padding-settings .padding-top label,
+#element-settings-sidebar .padding-settings .padding-left label,
+#element-settings-sidebar .padding-settings .padding-right label,
+#element-settings-sidebar .padding-settings .padding-bottom label {
+	display: none;
+}
+#element-settings-sidebar .padding-settings .padding-top,
+#element-settings-sidebar .margin-settings .margin-top {
     position: relative;
-    border-left: 2px solid #dae6f2;
-    padding: 1px 10px;
-    padding-left: 60px;
-    top: 2px;
+    padding: 1px 0px;
+    padding-left: 70px;
+	margin-top: -10px;
     z-index: 11;
 }
-#element-settings-sidebar .padding-settings .padding-left {
+#element-settings-sidebar .padding-settings .padding-left,
+#element-settings-sidebar .margin-settings .margin-left {
     position: relative;
-    border-left: 2px solid #dae6f2;
     padding: 1px 10px;
     z-index: 15;
 }
-#element-settings-sidebar .padding-settings .padding-right {
+#element-settings-sidebar .padding-settings .padding-right,
+#element-settings-sidebar .margin-settings .margin-right {
     position: relative;
-    margin-top: -39px;
-    left: 112px;
+    margin-top: -36px;
+    left: 128px;
     z-index: 15;
 }
 #element-settings-sidebar .padding-settings .padding-bottom {
@@ -188,7 +208,14 @@
     margin-top: -18px;
     z-index: 11;
 }
-
+#element-settings-sidebar .margin-bottom {
+    position: relative;
+    padding: 1px 10px;
+    padding-bottom: 5px;
+    padding-left: 70px;
+    margin-top: 0px;
+    z-index: 99;
+}
 #element-settings-sidebar .padding-bottom label {
     display: block;
     width: 25px;
@@ -201,7 +228,8 @@
     left: 10px;
 }
 
-#element-settings-sidebar .padding-slider {
+#element-settings-sidebar .padding-slider,
+#element-settings-sidebar .margin-slider {
     top: -11px;
     padding-top: 10px;
     padding-bottom: 17px;
@@ -211,10 +239,48 @@
     width: 130px;
     float: left;
 }
-#element-settings-sidebar .padding-slider .upfront-field-slider-value {
+#element-settings-sidebar .margin-reset-posts {
+	height: 50px;
+	width: 30px;
+	float: left;
+	margin-left: 10px;
+	padding-top: 19px;
+}
+#element-settings-sidebar .margin-reset-posts-length input {
+	width: 40px !important;
+}
+#element-settings-sidebar .margin-reset-posts-length {
+	position: relative;
+	float: left;
+	width: 170px;
+    top: 15px;
+	left: 12px;
+}
+#element-settings-sidebar .margin-reset-posts-length label {
+	display: inline-block !important;
+}
+#element-settings-sidebar .margin-reset-posts input {
+	top: 20px;
+	left: 10px;
+}
+#element-settings-sidebar .margin-reset-posts-length input {
+	margin: 0px 6px;
+	font-weight: normal;
+}
+#element-settings-sidebar .margin-reset-posts-length,
+#element-settings-sidebar .margin-reset-posts-length label {
+    text-transform: uppercase;
+    font-weight: bold;
+	font-size: 11px;
+	color: #30475e;
+	font-family: 'Open Sans', Helvetica Neueu, Helvetica, Arial, sans-serif;
+}
+#element-settings-sidebar .padding-slider .upfront-field-slider-value,
+#element-settings-sidebar .margin-slider .upfront-field-slider-value {
     display: none;
 }
-#element-settings-sidebar .padding-number, #element-settings-sidebar .padding-number input {
+#element-settings-sidebar .padding-number, #element-settings-sidebar .padding-number input,
+#element-settings-sidebar .margin-number, #element-settings-sidebar .margin-number input {
     width: 60px;
     float: left;
     position: relative;

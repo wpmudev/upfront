@@ -84,7 +84,7 @@ class Upfront_UcontactView extends Upfront_Object {
 			'form_title' => self::_get_l10n('contact_form'),
 			'form_name_label' => self::_get_l10n('name_label'),
 			'form_email_label' => self::_get_l10n('email_label'),
-			'form_email_to' => get_option('admin_email'),
+			'form_email_to' => Upfront_Cache_Utils::get_option('admin_email'),
 			'show_subject' => array(),
 			'show_captcha' => array(),
 			'form_subject_label' => self::_get_l10n('subject_label'),
@@ -159,7 +159,7 @@ class Upfront_UcontactView extends Upfront_Object {
 			);
 		}
 
-		if (update_option($contact_form['element_id'], $_POST['data'])) {
+		if (Upfront_Cache_Utils::update_option($contact_form['element_id'], $_POST['data'])) {
 			return array(
 				'error' => false,
 				'message' => self::_get_l10n('settings_stored'),
@@ -235,7 +235,7 @@ class Upfront_UcontactView extends Upfront_Object {
 			);
 
 			$emailto = trim($this->_get_property('form_email_to'));
-			if (empty($emailto)) $emailto = get_option('admin_email');
+			if (empty($emailto)) $emailto = Upfront_Cache_Utils::get_option('admin_email');
 			if (!is_email($emailto)) $emailto = false;
 
 			$headers[] = 'From: ' . $name . ' <' . $email . ">\r\n";
@@ -515,8 +515,8 @@ class Upfront_UcontactView extends Upfront_Object {
 				'name' => __('Name Field Text:', 'upfront'),
 				'email' => __('Email Field Text:', 'upfront'),
 				'msg' => __('Message Field Text:', 'upfront'),
-				'show_subject' => __('Show subject field', 'upfront'),
-				'show_captcha' => __('Show CAPTCHA field', 'upfront'),
+				'show_subject' => __('Subject field', 'upfront'),
+				'show_captcha' => __('CAPTCHA', 'upfront'),
 				'subject' => __('Subject Field text:', 'upfront'),
 				'default_subject' => __('Default subject:', 'upfront'),
 				'label_localtion' => __('Field Label Location:', 'upfront')

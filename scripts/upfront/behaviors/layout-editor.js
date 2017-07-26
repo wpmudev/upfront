@@ -707,7 +707,7 @@ var LayoutEditor = {
 		Upfront.Application.layout_view.render();
 	},
 
-	save_dialog: function (on_complete, context, layout_changed, is_archive) {
+	save_dialog: function (on_complete, context, layout_changed, is_archive, plugin_layout) {
 		$("body").append("<div id='upfront-save-dialog-background' />");
 		$("body").append("<div id='upfront-save-dialog' />");
 		var $dialog = $("#upfront-save-dialog"),
@@ -717,11 +717,21 @@ var LayoutEditor = {
 		;
 		is_archive = true === is_archive;
 
+		var bl = Upfront.Settings.l10n.global.behaviors;
+
 		if ( is_archive ) {
-			html += '<p>' + Upfront.Settings.l10n.global.behaviors.this_archive_only + '</p>';
-		}
-		else {
-			html += '<p>' + Upfront.Settings.l10n.global.behaviors.this_post_only + '</p>';
+			html += '<p>' + bl.this_archive_only + '</p>';
+		} else if (typeof plugin_layout !== 'undefined') {
+			var lt, ltp, message;
+			var pll = plugin_layout.l10n || {};
+			lt = pll.layout_type || bl.layout;
+			ltp = pll.layout_type_plural || bl.layouts_of_this_type;
+			message = bl.this_layout_only
+					.replace('LAYOUT_TYPE_PLURAL', ltp)
+					.replace(/LAYOUT_TYPE/g, lt);
+			html += '<p>' + message + '</p>';
+		} else {
+			html += '<p>' + bl.this_post_only + '</p>';
 		}
 		$.each(_upfront_post_data.layout, function (idx, el) {
 			//var checked = el == current ? "checked='checked'" : '';
@@ -877,7 +887,7 @@ var LayoutEditor = {
 			'global-region-manager'
 		);
 	},
-	
+
 	open_theme_fonts_manager: function() {
 		var me = {};
 		var textFontsManager = new Upfront.Views.Editor.Fonts.Text_Fonts_Manager({ collection: Upfront.Views.Editor.Fonts.theme_fonts_collection });
@@ -980,8 +990,19 @@ var LayoutEditor = {
 			// don't propagate scroll
 			Upfront.Views.Mixins.Upfront_Scroll_Mixin.stop_scroll_propagation($content);
 		});
+		// Remove previous event listener.
+		$el.off('click', '.region-list-edit');
 		$el.on('click', '.region-list-edit', function(e){
 			e.preventDefault();
+			e.stopPropagation();
+			
+			// Close region manager
+			Upfront.Popup.close();
+
+			// Open lightbox
+			var name = $(this).attr('data-name');
+			Upfront.Application.LayoutEditor.openLightboxRegion(name);
+
 		});
 		// Remove previous event listener.
 		$el.off('click', '.region-list-trash');
@@ -1054,8 +1075,11 @@ var LayoutEditor = {
 				'<li class="' + classes.join(' ') + '">' +
 					'<span class="region-list-name">' + region.title + '</span>' +
 					'<span class="region-list-control">' +
-						//'<a href="#" class="region-list-edit" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.edit + '</a>' +
 						(
+							type === 'lightbox' ?
+							'<a href="#" class="region-list-edit" data-name="' + region.name + '">' + Upfront.Settings.l10n.global.behaviors.edit + '</a>' :
+							''
+						) + (
 							false === Upfront.plugins.isForbiddenByPlugin('show region list trash') ?
 							'<a href="#" class="region-list-trash" data-name="' + region.name + '" data-scope="' + region.scope + '">' + Upfront.Settings.l10n.global.behaviors.trash + '</a>' :
 							''

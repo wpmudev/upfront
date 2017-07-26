@@ -64,7 +64,7 @@ define([
 			);
 		},
 		get_field_html: function () {
-			return '<button type="button"><img src="' + Upfront.data.upfront_maps.root_url + 'img/refresh.png" /></button>';
+			return '<button type="button upfront_map-refresh"><img src="' + Upfront.data.upfront_maps.root_url + 'img/refresh.png" /></button>';
 		},
 		propagate_activation_request: function (e) {
 			e.preventDefault();
@@ -737,7 +737,8 @@ define([
 			;
 			if (!saved_style) this.model.set_property("style", DEFAULTS.style, true);
 			var controls = [
-				{label: l10n.ctrl.pan, value: "pan"},
+				// Pan is not supported anymore
+				//{label: l10n.ctrl.pan, value: "pan"},
 				{label: l10n.ctrl.zoom, value: "zoom"},
 				{label: l10n.ctrl.type, value: "map_type"},
 				{label: l10n.ctrl.scale, value: "scale"},
@@ -772,7 +773,7 @@ define([
 					values: controls,
 					change: function () { this.property.set({value: this.get_value()}); }
 				}),
-				new Upfront.Views.Editor.Field.Checkboxes({
+				new Upfront.Views.Editor.Field.Toggle({
 					model: this.model,
 					label: l10n.draggable_map,
 					property: "draggable",
@@ -782,7 +783,7 @@ define([
 					multiple: false,
 					change: function () { this.property.set({value: this.get_value()}); }
 				}),
-				new Upfront.Views.Editor.Field.Checkboxes({
+				new Upfront.Views.Editor.Field.Toggle({
 					model: this.model,
 					label: l10n.hide_markers,
 					className: 'markers-checkbox',
@@ -792,7 +793,7 @@ define([
 					multiple: false,
 					change: function () { this.property.set({value: this.get_value()}); }
 				}),
-				new Upfront.Views.Editor.Field.Checkboxes({
+				new Upfront.Views.Editor.Field.Toggle({
 					model: this.model,
 					label: l10n.use_custom_map_code,
 					property: "use_custom_map_code",
@@ -817,7 +818,7 @@ define([
 				new Upfront.Views.Editor.Field.Button({
 					model: this.model,
 					label: l10n.open_map_code_panel,
-					className: "open-map-code-panel-button",
+					className: "open-map-code-panel-button sidebar-commands-small-button",
 					compact: true
 				})
 			]);

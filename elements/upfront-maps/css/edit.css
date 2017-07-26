@@ -1,17 +1,26 @@
 .upfront-editable_entity .ufm-gmap-container img {
-  max-width: none !important;
-  max-height: none !important;
+	max-width: none !important;
+	max-height: none !important;
+}
+.upfront-editable_entity .ufm-gmap-container {
+	z-index: -1;
 }
 .upfront_map-fields-simple_location .upfront-field-wrap-text {
 	float: left;
 	width: 80%;
 }
 .upfront_map-fields-simple_location .upfront-field-wrap-refresh button {
-	width: 24px;
-	height: 30px;
-	border: none;
-	background: none;
-	padding: 0;
+	background: rgb(251, 251, 251) !important;
+	border: 1px solid rgb(169, 169, 169);
+	border-left: none;
+	height: 22px;
+	display: inline-block;
+	width: 30px;
+}
+.upfront_map-fields-simple_location .upfront-field-wrap-refresh button img {
+	opacity: 0.7;
+	width: 15px;
+	margin-top: 2px;
 }
 #settings .upfront-settings-item-maps_element-location .upfront-settings-item {
 	border: none;
@@ -24,136 +33,138 @@
 	min-width: 240px;
 }
 .ufpront-maps_element-settings_panel .upfront-settings-css .upfront-field-select-single {
-  width: 180px;
+	width: 180px;
 }
 
 .ufpront-maps_element-settings_panel .upfront-field-select {
 	width: 100%;
 }
 
-.ufm-context-menu{
-background:white;
--webkit-border-radius: 3px;
--moz-border-radius: 3px;
-border-radius: 3px;
+.upfront-field-wrap-text {
+	width: 84% !important;
 }
+
+.ufm-context-menu{
+	background:white;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+}
+
 .ufm-context-menu-item{
-padding:0px 10px;
+	padding:0px 10px;
 }
 
 .ufm-context-menu-item:hover{
-background:#f0f0f0;
+	background:#f0f0f0;
 }
 
 .ufm-context-menu .ufm-context-menu-item:first-child{
--webkit-border-top-left-radius: 3px;
--webkit-border-top-right-radius: 3px;
--moz-border-radius-topleft: 3px;
--moz-border-radius-topright: 3px;
-border-top-left-radius: 3px;
-border-top-right-radius: 3px;
+	-webkit-border-top-left-radius: 3px;
+	-webkit-border-top-right-radius: 3px;
+	-moz-border-radius-topleft: 3px;
+	-moz-border-radius-topright: 3px;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
 }
 .ufm-context-menu .ufm-context-menu-item:last-child{
--webkit-border-bottom-right-radius: 3px;
--webkit-border-bottom-left-radius: 3px;
--moz-border-radius-bottomright: 3px;
--moz-border-radius-bottomleft: 3px;
-border-bottom-right-radius: 3px;
-border-bottom-left-radius: 3px;
+	-webkit-border-bottom-right-radius: 3px;
+	-webkit-border-bottom-left-radius: 3px;
+	-moz-border-radius-bottomright: 3px;
+	-moz-border-radius-bottomleft: 3px;
+	border-bottom-right-radius: 3px;
+	border-bottom-left-radius: 3px;
 }
 
 .ufm-map-marker-select{
-position:absolute;
-background:white;
-border:1px solid #cccccc;
-padding:10px;
+	position:absolute;
+	background:white;
+	border:1px solid #cccccc;
+	padding:10px;
 }
 
 .ufm-map-marker-select .marker-url label{
-display: block;
-line-height: 20px;
+	display: block;
+	line-height: 20px;
 }
 
 .ufm-map-marker-select .marker-url [name="marker-url"]{
-width:100%;
-height:44px;
+	width:100%;
+	height:44px;
 }
 
 .ufm-map-marker-select .marker-url{
-margin-top: 10px;
+	margin-top: 10px;
 }
 
 .ufm-marker-demo{
-width:38px;
-height:38px;
-line-height: 35px;
-border:1px solid transparent;
+	width:38px;
+	height:38px;
+	line-height: 35px;
+	border:1px solid transparent;
 
-text-align:center;
-display:inline-block;
+	text-align:center;
+	display:inline-block;
 }
 .ufm-marker-demo img{
-display:inline-block;
-vertical-align: middle;
+	display:inline-block;
+	vertical-align: middle;
 }
 .ufm-marker-demo:hover{
-border: 1px solid #cccccc;
-cursor: pointer;
+	border: 1px solid #cccccc;
+	cursor: pointer;
 }
 .ufm-marker-demo.ufm-current{
-border: 1px dashed #cccccc;
+	border: 1px dashed #cccccc;
 }
 .ufm-marker-demo.ufm-current:hover{
-border: 1px solid red;
+	border: 1px solid red;
 }
-
-
 
 .ufm-rounded{
--webkit-border-radius: 3px;
--moz-border-radius: 3px;
-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
 }
-
 
 /* override upfront styles that cause visual google maps bugs */
 .upfront-map_module .upfront-editable_entity img {
-max-width: none;
+	max-width: none;
 }
 
 .marker-imgs{
-max-height:120px;
-overflow-x: auto;
+	max-height:120px;
+	overflow-x: auto;
 }
 
 /* triagnle pointer */
 .ufm-map-marker-select{
-position: relative;
+	position: relative;
 }
 .ufm-map-marker-select:after{
-content: '';
-display: block;
-position: absolute;
-top: -20px;
-left: 159px;
-width: 0;
-height: 0;
-border-color: transparent transparent #ffffff transparent;
-border-style: solid;
-border-width: 10px;
+	content: '';
+	display: block;
+	position: absolute;
+	top: -20px;
+	left: 159px;
+	width: 0;
+	height: 0;
+	border-color: transparent transparent #ffffff transparent;
+	border-style: solid;
+	border-width: 10px;
 }
 
 .ufm-map-marker-select:before{
-content: '';
-display: block;
-position: absolute;
-top: -23px;
-left: 158px;
-width: 0;
-height: 0;
-border-color: transparent transparent #cccccc transparent;
-border-style: solid;
-border-width: 11px;
+	content: '';
+	display: block;
+	position: absolute;
+	top: -23px;
+	left: 158px;
+	width: 0;
+	height: 0;
+	border-color: transparent transparent #cccccc transparent;
+	border-style: solid;
+	border-width: 11px;
 }
 
 .ufm-map-main img {
@@ -163,7 +174,7 @@ border-width: 11px;
 
 /* initial experience layout */
 #upfront_map-location_overlay-wrapper, .upfront_map-api_key_element {
-    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.50);
+	box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.50);
 }
 
 #upfront_map-location_overlay-wrapper,
@@ -181,17 +192,17 @@ border-width: 11px;
 /* api key warning */
 
 .upfront_map-api_key_region {
-    margin: auto;
+	margin: auto;
 	box-shadow: none;
 	background-color: #fff;
 }
 
 .upfront_map-api_key_region #upfront_map-api_key_overlay {
-    height: 145px;
+	height: 145px;
 }
 
 #upfront_map-api_key_overlay {
-    max-width: 530px;
+	max-width: 530px;
 	line-height: 1.5;
 	background: transparent;
 	height: 115px;
@@ -202,16 +213,16 @@ border-width: 11px;
 	background-position: -480px -202px;
 }
 .upfront-ui .upfront-icon-map-warning {
-    position: relative;
-    top: -10px;
-    margin: auto;
+	position: relative;
+	top: -10px;
+	margin: auto;
 }
 #upfront_map-api_key_overlay-instruction {
-    margin-bottom: 0px;
-    margin-top: 0px;
+	margin-bottom: 0px;
+	margin-top: 0px;
 }
 #upfront_map-location_overlay-instruction {
-    margin-top: 5px;
+	margin-top: 5px;
 }
 
 /* address input */
@@ -223,14 +234,14 @@ border-width: 11px;
 .uf_el_map_initial-overlay input[type="text"]:focus {
 	background:rgb(255,255,255);
 	color:rgb(100,100,100);
-	font: 1px solid #d0d0d0;
+	border: 1px solid #d0d0d0;
 }
 
 /* refresh button */
 .uf_el_map_initial-overlay button {
 	position: absolute;
 	top: 4px;
-	right: 0;
+	right: 25px;
 	background-color: transparent;
 	padding: 10px;
 	color: rgba(218,224,230,1);
@@ -248,7 +259,7 @@ border-width: 11px;
 }
 
 .upfront-ui.uf-address input {
-    height: 50px;
+	height: 50px;
 	background: rgba(237,240,242,1);
 }
 
@@ -327,52 +338,10 @@ border-width: 11px;
 	float:left;
 }
 
-.upfront_map-fields-simple_location .upfront-field-wrap-refresh button {
-	background-image: linear-gradient(-179deg, #fafdff 0%, #f3faff 100%) !important;
-    border: 1px solid #a2bfda;
-	border-left: none;
-	height: 26px;
-	width: 30px;
-}
-
 .draggable-checkbox {
 	margin-top: 15px;
 }
 
-.upfront_map-fields-simple_location .upfront-field-wrap-refresh button img {
-	opacity: 0.7;
-	width: 15px;
-	margin-top: 3px;
-}
-
 .upfront_map-fields-simple_location .upfront-field-wrap-text {
 	width: 84% !important;
-}
-
-.open-map-code-panel-button {
-	margin-top: -5px;
-	padding: 5px 0px 5px 10px;
-	position: relative;
-	top: 0px;
-	border-left: 2px solid #dae6f2;
-}
-
-.open-map-code-panel-button input {
-	display: inline-block;
-	height: 26px;
-	max-height: 26px;
-	border-radius: 3px;
-	font-size: 11px;
-	font-weight: normal;
-	font-family: verdana, sans-serif;
-	background-image: linear-gradient(-179deg, #fafdff 0%, #f3faff 100%);
-    border: 1px solid #a2bfda;
-    border-radius: 5px;
-    color: #6486a6;
-    padding: 4px 8px;
-    position: relative;
-}
-
-.open-map-code-panel-button input:hover {
-	border: 1px solid #a2bfda;
 }

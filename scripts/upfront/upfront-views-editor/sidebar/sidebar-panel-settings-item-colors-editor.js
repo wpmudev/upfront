@@ -11,9 +11,14 @@
 	], function ( SidebarPanel_Settings_Item, Theme_Colors, Fields, sidebar_settings_theme_colors_tpl ) {
 
 		return SidebarPanel_Settings_Item.extend({
+			// Cache for calculated color styles
+			color_styles: [],
 			initialize : function(){
 				var self = this;
 				this.template = _.template(sidebar_settings_theme_colors_tpl);
+				// Sidebar initializes twice, first time model is empty, to prevent zombie copy of this reacting to events
+				// check if model is empty and do not subscribe to events.
+				if (this.model.get('properties').length === 0) return;
 
 				// Clear old events
 				Upfront.Events.off("command:layout:save", this.on_save);
@@ -24,8 +29,11 @@
 				Upfront.Events.on("command:layout:save_as", this.on_save, this);
 
 				if (Upfront.Settings.Application.NO_SAVE) Upfront.Events.on("preview:build:start", this.on_save, this); // Also build colors on preview, only in anonymous mode
-				this.update_styles();
-				Theme_Colors.colors.bind('change reset add', this.update_styles, this);
+				// Somehow update styles get triggered 4 times in a row, making editor freeze for a while.
+				// Until I find time to fix this properly, here we go with debounce.
+				this.update_styles_debounced = _.debounce(this.update_styles, 500);
+				this.update_styles_debounced();
+				Theme_Colors.colors.bind('change reset add', this.update_styles_debounced, this);
 			},
 			events : {
 				"change .panel-setting-theme-colors-shades-range": "change_range",
@@ -38,27 +46,80 @@
 					this.styles
 				]);
 			},
+			/**
+			 * Checks if color style was generated at least once for theme color with given index.
+			 * @param {Number} - theme color index
+			 * @return {Boolean} - if style is generated at least once
+			 */
+			color_style_is_initialized: function(index) {
+				return typeof this.color_styles[index] !== 'undefined';
+			},
+			/**
+			 * Checks if color has been changed since editor was loaded.
+			 * @param {Object} model - theme color model
+			 * @return {Boolean} if color is original
+			 */
+			color_is_original: function(model) {
+				return typeof model.previous('prev') === 'undefined';
+			},
+			/**
+			 * Checks if color has new value set in theme color editor UI.
+			 * @param {Object} model - theme color model
+			 * @param {String} color - normalized theme color
+			 * @return {Boolean} if color is updated
+			 */
+			color_is_updated: function(model, color) {
+				// Look in previous for prev value, because at this point both prev and color have same value in attributes
+				return this.color_is_original(model) === false && model.previous('prev') !== color;
+			},
+			/**
+			 * Normalizes theme color value.
+			 * @param {Object} model - theme color model
+			 * @return {String} normalized color value
+			 */
+			theme_color_to_string: function(model) {
+				return model.get("color") === '#000000' && model.get("alpha") === 0 ? 'inherit' : model.get("color");
+			},
+			/**
+			 * Generates theme color style from theme color.
+			 * @param {Object} model - theme color model
+			 * @param {Number} - theme color index
+			 * @param {String} color - normalized color value
+			 * @return {String} theme color style
+			 */
+			generate_theme_color_style: function(model, index, color) {
+				var style = '';
+				var hovcol = model.get_hover_color();
+
+				style += " .upfront_theme_color_" + index +"{ color: " + color + ";}";
+				style += " a .upfront_theme_color_" + index +":hover{ color: " + hovcol + ";}";
+				style += " button .upfront_theme_color_" + index +":hover{ color: " + hovcol + ";}";
+				style += " .upfront_theme_bg_color_" + index +"{ background-color: " + color + ";}";
+				style += " a .upfront_theme_bg_color_" + index +":hover{ background-color: " + hovcol + ";}";
+				style += " button .upfront_theme_bg_color_" + index +":hover{ background-color: " + hovcol + ";}";
+
+				return style;
+			},
 			update_styles : function(){
-				// Update the styles
-				this.styles = "";
 				var self = this;
 				Theme_Colors.colors.each(function( item, index ){
-					var color = item.get("color") === '#000000' && item.get("alpha") == 0 ? 'inherit' : item.get("color");
-					self.styles += " .upfront_theme_color_" + index +"{ color: " + color + ";}";
-					self.styles += " a .upfront_theme_color_" + index +":hover{ color: " + item.get_hover_color() + ";}";
-					self.styles += " button .upfront_theme_color_" + index +":hover{ color: " + item.get_hover_color() + ";}";
-					self.styles += " .upfront_theme_bg_color_" + index +"{ background-color: " + color + ";}";
-					self.styles += " a .upfront_theme_bg_color_" + index +":hover{ background-color: " + item.get_hover_color() + ";}";
-					self.styles += " button .upfront_theme_bg_color_" + index +":hover{ background-color: " + item.get_hover_color() + ";}";
+					var color = self.theme_color_to_string(item);
+					// Only do this (very expansive DOM changes) if color is actually updated or
+					// styles need to be initialized!!!
+					if (false === self.color_is_updated(item, color) && self.color_style_is_initialized(index)) return;
+
+					self.color_styles[index] = self.generate_theme_color_style(item, index, color);
 					Upfront.Util.colors.update_colors_in_dom(item.get("prev"), color, index);
+
+					// Now update previous prev value (a bit hacky but what can one do)
+					item._previousAttributes.prev = color;
 				});
+
+				this.styles = this.color_styles.join(' ');
 				$("#upfront_theme_colors_dom_styles").remove();
 				$("<style id='upfront_theme_colors_dom_styles' type='text/css'>" + this.styles + "</style>").appendTo("body");
 
-
 				Upfront.Events.trigger("theme_colors:update");
-
-
 			},
 			on_render : function(){
 				var self = this,
@@ -88,6 +149,7 @@
 					className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch theme_color_swatch_empty',
 					hide_label : true,
 					default_value: '#ffffff',
+					hide_alpha: true,
 					blank_alpha: 0,
 					spectrum: {
 						choose: function (color) {
@@ -105,8 +167,7 @@
 					}
 				});
 				empty_picker.render();
-				this.$(".theme_colors_empty_picker").html(empty_picker.$el)
-					.prepend('<span class="theme-colors-color-name">ufc' + index + '</span>');
+				this.$(".theme_colors_empty_picker").html(empty_picker.$el);
 			},
 			add_unset_color : function(index){
 				var self = this,
@@ -114,7 +175,9 @@
 					className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch',
 					hide_label : true,
 					default_value: '#ffffff', // Need to not be transparent, because theme colors can't be transparent
+					hide_alpha: true,
 					blank_alpha: 0,
+					ufc_index: index,
 					spectrum: {
 						choose: function (color) {
 							if (!_.isObject(color)) return false;
@@ -142,11 +205,10 @@
 				empty_picker.render();
 
 				empty_picker.$(".sp-preview").addClass("uf-unset-color");
+				empty_picker.$(".sp-replacer").addClass("uf-unset-color-wrapper");
 
 				this.$('#theme-colors-swatches').append( empty_picker.$el );
 				empty_picker.$el.wrap( '<span class="theme-colors-color-picker color-index">'.replace( "index", index) );
-				empty_picker.$el.closest('.theme-colors-color-picker').prepend( '<span class="theme-colors-color-name">ufcindex</span>'.replace( "index", index) );
-
 			},
 			add_previous_pickers : function(){
 				var self = this;
@@ -158,7 +220,9 @@
 							className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch',
 							hide_label : true,
 							default_value: color,
+							hide_alpha: true,
 							blank_alpha: 0,
+							ufc_index: index,
 							spectrum: {
 								change: function (color) {
 									self.update_colors(this, color, index);
@@ -184,12 +248,14 @@
 					});
 					if( model.get( 'color' ) === '#000000' && model.get( 'alpha' ) == 0 ) {
 						picker.$(".sp-preview").addClass( 'uf-unset-color' );
+						picker.$(".sp-replacer").addClass("uf-unset-color-wrapper");
 					}
 					else {
 						picker.$(".sp-preview").removeClass( 'uf-unset-color' );
+						picker.$(".sp-replacer").removeClass("uf-unset-color-wrapper");
 					}
+
 					$this.html( picker.$el );
-					$this.prepend('<span class="theme-colors-color-name">ufc' + index + '</span>');
 				});
 			},
 			add_new_color : function( color, index ){
@@ -209,17 +275,18 @@
 				}
 
 				var self = this,
-				model = this.theme_colors.colors.add({
-					color : color.toHexString(),
-					prev : color.toHexString(),
-					highlight : self.color_luminance( color.toHex(), percentage ),
-					shade : self.color_luminance( color.toHex(), (percentage * -1) ),
-					alpha: color.alpha
-				}),
+					model = this.theme_colors.colors.add({
+						color : color.toHexString(),
+						prev : color.toHexString(),
+						highlight : self.color_luminance( color.toHex(), percentage ),
+						shade : self.color_luminance( color.toHex(), (percentage * -1) ),
+						alpha: color.alpha
+					}),
 					new_color_picker = new Fields.Color({
 						className : 'upfront-field-wrap upfront-field-wrap-color sp-cf theme_color_swatch theme-colors-color-picker',
 						hide_label : true,
 						default_value: color.toRgbString(),
+						hide_alpha: true,
 						blank_alpha: 0,
 						change: function (color){
 							var percentage = parseInt( Theme_Colors.range, 10) / 100 || 0;
@@ -239,8 +306,8 @@
 						}
 					}),
 					colorIndex = Theme_Colors.colors.length - 1,
-						$wrapper = $('<span class="theme-colors-color-picker color-' + colorIndex + '" data-index="' + colorIndex + '" data-color="' + color.toHexString() + '"><span class="theme-colors-color-name">ufc' + colorIndex + '</span></span>')
-							;
+					$wrapper = $('<span class="theme-colors-color-picker color-' + colorIndex + '" data-index="' + colorIndex + '" data-color="' + color.toHexString() + '"><span class="theme-colors-color-name">ufc' + colorIndex + '</span></span>')
+				;
 
 				new_color_picker.render();
 				new_color_picker.$(".sp-preview").css({
@@ -249,9 +316,11 @@
 				});
 				if( color.toHexString() === '#000000' && color.alpha == 0 ) {
 					new_color_picker.$(".sp-preview").addClass( 'uf-unset-color' );
+					new_color_picker.$(".sp-replacer").addClass("uf-unset-color-wrapper");
 				}
 				else {
 					new_color_picker.$(".sp-preview").removeClass( 'uf-unset-color' );
+					new_color_picker.$(".sp-replacer").removeClass("uf-unset-color-wrapper");
 				}
 				$wrapper.append(new_color_picker.$el);
 
@@ -364,9 +433,11 @@
 					});
 					if( color.toHexString() === '#000000' && color.alpha == 0 ) {
 						$(picker).parent().find(".sp-preview").addClass( 'uf-unset-color' );
+						$(picker).parent().find(".sp-replacer").addClass("uf-unset-color-wrapper");
 					}
 					else {
 						$(picker).parent().find(".sp-preview").removeClass( 'uf-unset-color' );
+						$(picker).parent().find(".sp-replacer").removeClass("uf-unset-color-wrapper");
 					}
 					picker.default_value = color.toRgbString();
 					this.render_bottom();

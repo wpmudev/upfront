@@ -71,37 +71,41 @@ define([], function() {
 									label: l10n.opts.url_sample,
 									compact: true
 								}),
-								new Upfront.Views.Editor.Field.Checkboxes({
-										model: this.model,
-										property: 'show_friends',
-										label: "",
-										values: [
-											{ label: l10n.opts.show_friends, value: 'yes' }
-										]
+								new Upfront.Views.Editor.Field.Toggle({
+									model: this.model,
+									property: 'show_friends',
+									className: 'field-grid-half',
+									label: "",
+									values: [
+										{ label: l10n.opts.show_friends, value: 'yes' }
+									]
 								}),
-								new Upfront.Views.Editor.Field.Checkboxes({
-										model: this.model,
-										property: 'small_header',
-										label: "",
-										values: [
-											{ label: l10n.opts.small_header, value: 'yes' }
-										]
+								new Upfront.Views.Editor.Field.Toggle({
+									model: this.model,
+									property: 'small_header',
+									className: 'field-grid-half field-grid-half-last',
+									label: "",
+									values: [
+										{ label: l10n.opts.small_header, value: 'yes' }
+									]
 								}),
-								new Upfront.Views.Editor.Field.Checkboxes({
-										model: this.model,
-										property: 'hide_cover',
-										label: "",
-										values: [
-											{ label: l10n.opts.hide_cover, value: 'yes' }
-										]
+								new Upfront.Views.Editor.Field.Toggle({
+									model: this.model,
+									property: 'hide_cover',
+									className: 'field-grid-half',
+									label: "",
+									values: [
+										{ label: l10n.opts.hide_cover, value: 'yes' }
+									]
 								}),
-								new Upfront.Views.Editor.Field.Checkboxes({
-										model: this.model,
-										property: 'show_posts',
-										label: "",
-										values: [
-											{ label: l10n.opts.show_posts, value: 'yes' }
-										]
+								new Upfront.Views.Editor.Field.Toggle({
+									model: this.model,
+									property: 'show_posts',
+									className: 'field-grid-half field-grid-half-last',
+									label: "",
+									values: [
+										{ label: l10n.opts.show_posts, value: 'yes' }
+									]
 								})
 							]
 						})
@@ -118,7 +122,6 @@ define([], function() {
 			return l10n.settings;
 		}
 	});
-
 
 	return LikeBoxSettings;
 });

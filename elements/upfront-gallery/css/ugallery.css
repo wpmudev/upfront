@@ -1,4 +1,4 @@
-.upfront-output-ugallery {
+.upfront-object-content.upfront-output-ugallery {
 	min-height: 240px;
 }
 
@@ -397,39 +397,6 @@ div.ugallery-label-selector {
 	display: none;
 }
 
-/*div.ugallery-controls i.upfront-icon:before {
-	background-image: url(../../../img/uf-core-el-sprite.svg);
-}*/
-
-
-
-div.preset-manager-panel .field-caption-height {
-	border-left: 2px solid #dae6f2;
-	padding: 5px 0px 5px 10px;
-	position: relative;
-	top: -5px;
-}
-div.preset-manager-panel .field-caption-height label {
-	font-weight: normal;
-	top: 0px;
-	position: relative;
-	margin-bottom: 5px;
-}
-div.preset-manager-panel .field-caption-height span label {
-	top: 5px;
-}
-div.preset-manager-panel .field-caption-height {
-	margin-top: 0px;
-	padding-top: 10px;
-}
-div.preset-manager-panel .caption-height-number {
-	position: relative;
-	margin-top: -43px;
-	left: 130px;
-}
-div.preset-manager-panel .caption-height-number input {
-	width: 60px;
-}
 .ugallery-onclick {
 	position: absolute;
 	width: 100%;

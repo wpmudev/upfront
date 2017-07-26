@@ -6,12 +6,14 @@ class Upfront_LikeBoxView extends Upfront_Object {
 		$element_size = $this->_get_property('element_size');
 		$url = $this->_get_property('facebook_url');
 
-
-		$hide_cover = is_array($this->_get_property('hide_cover'))?'true':'false';
-		$show_friends = is_array($this->_get_property('show_friends'))?'true':'false';
-		$small_header = is_array($this->_get_property('small_header'))?'true':'false';
-		$show_posts = is_array($this->_get_property('show_posts'))?'true':'false';
-
+		$hide_cover = ($this->_get_property('hide_cover') == "yes" ||
+							is_array($this->_get_property('hide_cover'))) ? 'true' : 'false';
+		$show_friends = ($this->_get_property('show_friends') == "yes" ||
+							is_array($this->_get_property('show_friends'))) ? 'true' : 'false';
+		$small_header = ($this->_get_property('small_header') == "yes" ||
+							is_array($this->_get_property('small_header'))) ? 'true' : 'false';
+		$show_posts = ($this->_get_property('show_posts') == "yes" ||
+							is_array($this->_get_property('show_posts'))) ? 'true' : 'false';
 
 		$global_settings = Upfront_SocialMedia_Setting::get_globals();
 

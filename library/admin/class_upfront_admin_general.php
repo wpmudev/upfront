@@ -43,6 +43,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 				</div>
 				<?php $this->_render_under_construction_box(); ?>
 				<?php $this->_render_api_options(); ?>
+				<?php $this->_render_response_cache_options(); ?>
 				<?php $this->_render_debug_options(); ?>
 			</div>
 			<div class="upfront-col-right">
@@ -100,6 +101,40 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 				foreach ($services as $service => $label) {
 					$admin_keys->render_key_box($service);
 				}
+				$admin_keys->render_footer();
+				?>
+				<p>
+					<button class="upfront_button">
+						<?php esc_html_e('Save', 'upfront'); ?>
+					</button>
+				</p>
+			</form>
+		</div>
+	</div>
+</div>
+		<?php
+	}
+
+	private function _render_response_cache_options () {
+		$admin = new Upfront_Admin_ResponseCache;
+		if (!$admin->can_access()) return false;
+
+		$levels = $admin->get_levels();
+		if (empty($levels)) return false;
+
+		$admin->process_submissions();
+
+		?>
+<div class="postbox-container response_caching">
+	<div class='postbox'>
+		<h2 class="title"><?php esc_html_e("Request queueing and caching strategy", Upfront::TextDomain) ?></h2>
+		<div class="inside api_keys">
+			<form method="POST">
+				<?php
+				foreach ($levels as $level => $label) {
+					$admin->render_level_box($level);
+				}
+				$admin->render_footer();
 				?>
 				<p>
 					<button class="upfront_button">
@@ -173,7 +208,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 	 * Renders the site under construction box
 	 */
 	private function _render_under_construction_box () {
-		$maintenance_mode = get_option(Upfront_Server::MAINTENANCE_MODE, false);
+		$maintenance_mode = Upfront_Cache_Utils::get_option(Upfront_Server::MAINTENANCE_MODE, false);
 		$enable_maintenance_mode = false;
 		if ( $maintenance_mode ) {
 			$maintenance_mode = json_decode($maintenance_mode);
@@ -285,7 +320,7 @@ class Upfront_Admin_General extends Upfront_Admin_Page {
 	private function _get_changelog () {
 		$entries = $this->_get_raw_changelog_entries();
 		$changelog = array();
-		$df = get_option('date_format');
+		$df = Upfront_Cache_Utils::get_option('date_format');
 		foreach ($entries as $version => $entry) {
 			if (empty($entry)) continue;
 

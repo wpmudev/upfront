@@ -172,6 +172,226 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$this->_out(new Upfront_JsonResponse_Success($updated));
 	}
 
+	public function fetch_filter_data ($data) {
+		$post_type = $data['postType'] ? $data['postType'] : 'post';
+		$statuses = $this->_get_status_filter_data($post_type);
+		$dates = $this->_get_date_filter_data($post_type);
+		$categories = $this->_get_category_filter_data($post_type);
+		// For CPTs filtering.
+		$post_types = $this->_get_post_type_filter_data($post_type);
+
+		return array(
+			'statuses' => $statuses,
+			'dates' => $dates,
+			'categories' => $categories,
+			'post_types' => $post_types,
+		);
+	}
+
+	private function _get_post_type_filter_data($post_type) {
+		// Quit fetching if not cpt.
+		if ($post_type === 'post' || $post_type === 'page') return array();
+
+		$args = array(
+			// Only get public Pts.
+			'public' => true,
+			// Exclude WP core post types.
+			'_builtin' => false,
+		);
+		// List of CPT objects.
+		$post_types = get_post_types($args, 'objects');
+		// Simplify and include counts.
+		$pts_with_counts = array();
+		// Total count of all CPTs.
+		$total_count = 0;
+		// Get data for each CPT.
+		foreach($post_types as $pt) {
+			$name = $pt->name;
+
+			// Count total number of posts.
+			$counts = wp_count_posts($name, 'readable');
+			$count = 0;
+			$count += (int)$counts->publish;
+			$count += (int)$counts->future;
+			$count += (int)$counts->draft;
+			// Total count of all CPTs.
+			$total_count += (int)$count;
+
+			// PT data to Return.
+			$pts_with_counts[] = array(
+				'value' => $name,
+				'label' => $pt->label . " ($count)",
+			);
+		}
+
+		$l10n = Upfront_EditorL10n_Server::add_l10n_strings(array());
+		$l10n = $l10n['global']['content'];
+		$all_cpts_option = array(
+			'value' => 'any',
+			'label' => $l10n['all_cpts'] . " ($total_count)",
+		);
+		// Add All CPTs option to start of array.
+		array_unshift($pts_with_counts, $all_cpts_option);
+
+		// Return all CPTs options.
+		return $pts_with_counts;
+	}
+
+	// Based off of core's method: WP_Posts_List_Table::get_views()
+	private function _get_status_filter_data ($post_type) {
+		$statuses = array();
+		$num_posts = wp_count_posts( $post_type );
+		$total_posts = array_sum( (array) $num_posts );
+		// Subtract post types that are not included in the admin all list.
+		foreach ( get_post_stati( array( 'show_in_admin_all_list' => false ) ) as $state ) {
+			$total_posts -= $num_posts->$state;
+		}
+
+		$l10n = Upfront_EditorL10n_Server::add_l10n_strings(array());
+		$l10n = $l10n['global']['content'];
+		if ($post_type === 'post') {
+			$label = $l10n['all_posts'];
+		} elseif ($post_type === 'page') {
+			$label = $l10n['all_pages'];
+		} else {
+			$label = $l10n['all_cpts'];
+		}
+		// Add All status option.
+		$statuses['all'] = array(
+			'label' => "$label ($total_posts)",
+			'name' => 'all',
+			'value' => 'any',
+		);
+		return array_merge($statuses, get_post_stati(array('show_in_admin_status_list' => true), 'objects'));
+	}
+
+	// Based off of core's method: WP_List_Table::months_dropdown()
+	private function _get_date_filter_data ($post_type) {
+		global $wpdb, $wp_locale;
+
+		$extra_checks = "AND post_status != 'auto-draft'";
+		if ( ! isset( $_GET['post_status'] ) || 'trash' !== $_GET['post_status'] ) {
+			$extra_checks .= " AND post_status != 'trash'";
+		} elseif ( isset( $_GET['post_status'] ) ) {
+			$extra_checks = $wpdb->prepare( ' AND post_status = %s', $_GET['post_status'] );
+		}
+
+		// Prepare Array for SQL via placeholders for post types.
+		if (gettype($post_type) === 'array' && count($post_type) > 1) {
+			$post_type_count = count($post_type);
+			$string_placeholders = array_fill(0, $post_type_count, '%s');
+			$post_type_placeholders = implode(', ', $string_placeholders);
+		} else {
+			$post_type_placeholders = '%s';
+		}
+
+		$months = $wpdb->get_results( $wpdb->prepare( "
+			SELECT DISTINCT YEAR( post_date ) AS year, MONTH( post_date ) AS month
+			FROM $wpdb->posts
+			WHERE post_type IN ($post_type_placeholders)
+			$extra_checks
+			ORDER BY post_date DESC
+		", $post_type ) );
+
+		$months = apply_filters( 'months_dropdown_results', $months, $post_type );
+
+		$month_count = count( $months );
+		// Array to return with values and labels of dates.
+		$date_values_and_labels = array();
+		$l10n = Upfront_EditorL10n_Server::add_l10n_strings(array());
+		$l10n = $l10n['global']['content'];
+
+		if ( !$month_count || ( 1 == $month_count && 0 == $months[0]->month ) )
+			return;
+
+		// Add All Dates option.
+		$date_values_and_labels[] = array(
+			'value' => 0,
+			'name' => 'all',
+			'label' => $l10n['all_dates'],
+		);
+
+		foreach ( $months as $arc_row ) {
+			if ( 0 == $arc_row->year )
+				continue;
+
+			$month = zeroise( $arc_row->month, 2 );
+			$year = $arc_row->year;
+
+			$value = esc_attr( $year . $month );
+			$label = sprintf( __( '%1$s %2$d' ), $wp_locale->get_month( $month ), $year );
+			$date_values_and_labels[] = array(
+				'value' => $value,
+				'name' => $value,
+				'label' => $label,
+			);
+		}
+		return $date_values_and_labels;
+	}
+
+	// Based off of core's function: wp_dropdown_categories
+	private function _get_category_filter_data ($post_type) {
+		$defaults = array(
+			'show_option_all'   => '',
+			'show_option_none'  => '',
+			'orderby'           => 'id',
+			'order'             => 'ASC',
+			'show_count'        => 0,
+			'hide_empty'        => 1,
+			'child_of'          => 0,
+			'exclude'           => '',
+			'echo'              => 1,
+			'selected'          => 0,
+			'hierarchical'      => 0,
+			'name'              => 'cat',
+			'id'                => '',
+			'class'             => 'postform',
+			'depth'             => 0,
+			'tab_index'         => 0,
+			'taxonomy'          => 'category',
+			'hide_if_empty'     => false,
+			'option_none_value' => -1,
+			'value_field'       => 'term_id',
+			'required'          => false,
+		);
+		$args = array();
+
+		$defaults['selected'] = ( is_category() ) ? get_query_var( 'cat' ) : 0;
+
+		$r = wp_parse_args( $args, $defaults );
+
+		if ( ! isset( $r['pad_counts'] ) && $r['show_count'] && $r['hierarchical'] ) {
+			$r['pad_counts'] = true;
+		}
+
+		$tab_index = $r['tab_index'];
+
+		$tab_index_attribute = '';
+		if ( (int) $tab_index > 0 ) {
+			$tab_index_attribute = " tabindex=\"$tab_index\"";
+		}
+
+		// Avoid clashes with the 'name' param of get_terms().
+		$get_terms_args = $r;
+		unset( $get_terms_args['name'] );
+		$categories = get_terms( $r['taxonomy'], $get_terms_args );
+
+		// Add All Categories option.
+		//$l10n = Upfront_EditorL10n_Server::add_l10n_strings(array());
+		$l10n = apply_filters('upfront_l10n', array());
+		$l10n = $l10n['global']['content'];
+		$all_option = (object) array(
+			'name' => $l10n['all_categories'],
+			'value' => 0
+		);
+		// Prepend all categories option to categories array.
+		array_unshift($categories, $all_option);
+
+		return $categories;
+	}
+
+
+
 	function fetch_term($data) {
 		if(!$data['taxonomy'])
 			$this->_out(new Upfront_JsonResponse_Error("Invalid taxonomy."));
@@ -358,9 +578,17 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 			$this->_out(new Upfront_JsonResponse_Error("Invalid post type."));
 
 		$query = $this->_spawn_query($data['postType'], $data);
-		$posts = $query->posts;
-		$limit = isset($data['limit']) ? (int)$data['limit'] : 10;
+		$limit = isset($data['limit']) ? (int)$data['limit'] : 25;
 		$page = isset($data['page']) ? (int)$data['page'] : 0;
+		// For pages hierarchy.
+		$walker = $this->walker($query->posts, $limit, $page);
+		// If hierarchical, pass through query to walker.
+		$posts = isset($data['hierarchical']) ? $walker['posts'] : $query->posts;
+		// If hierarchical, pass through pages number to walker.
+		// This is because child pages are placed on parent page despite page limit.
+		$pages = (isset($data['hierarchical']) ? $walker['pages'] : (int)$query->found_posts / $limit);
+		// Filtering dropdown data for post list.
+		$filtering = $this->fetch_filter_data($data);
 
 		if($posts) {
 			for ($i=0; $i < sizeof($posts); $i++) {
@@ -374,6 +602,10 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 					$posts[$i]->author = $this->remove_private_user_fields(new WP_User($posts[$i]->post_author));
 				}
 
+				if($data['withThumbnail']){
+					$posts[$i]->thumbnail = wp_get_attachment_image_src(get_post_thumbnail_id($posts[$i]->ID));
+				}
+
 				if($data['withMeta']){
 					$posts[$i]->meta = $this->parse_single_meta(get_metadata('post', $posts[$i]->ID));
 				}
@@ -383,13 +615,30 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 
 		$this->_out(new Upfront_JsonResponse_Success(array(
 			"results" => $posts,
+			"filtering" => $filtering,
 			"pagination" => array(
 				"total" => $query->found_posts,
 				"page_size" => $limit,
 				"page" => $page,
+				"pages" => $pages,
 			)
 		)));
 
+	}
+
+	function walker($posts, $limit, $page) {
+		require_once(dirname(dirname(__FILE__)) . '/class_upfront_posts_walker.php');
+		// Order by page hierarchy.
+		$walker = new Upfront_Posts_Walker();
+		// Get number of parent pages divided by pagination limit rounded up.
+		$pages = ceil($walker->get_number_of_root_elements($posts) / $limit);
+		return array(
+			// Pages start with one.
+			// Post order and pagination is handled by paged_walk.
+			'posts' => $walker->paged_walk($posts, 0, $page + 1, $limit),
+			// Max number of pagination pages.
+			'pages' => $pages,
+		);
 	}
 
 	function fetch_page_templates($data){
@@ -494,7 +743,12 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		}
 
 		// Re-sanitize the whole post
+		$layout = false === empty($data['layout']) ? $data['layout'] : array();
+		unset($data['layout']);
 		$data = sanitize_post($data, 'edit');
+		if (false === empty($layout)) {
+			$data['layout'] = $layout;
+		}
 
 		// Initialize data
 		$post = false;
@@ -525,25 +779,14 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		if (is_wp_error($id)) $this->_out(new Upfront_JsonResponse_Error($id->get_error_message()));
 
 		// Handle the sticky attribute
-		if (isset($data['sticky'])) {
-			$is_sticky = is_sticky($id);
-			if ($data['sticky'] && !$is_sticky) {
-				// Make post sticky
-				$posts = get_option('sticky_posts');
-				if ($posts) $posts[] = $id;
-				else $posts = array($id);
-				add_option('sticky_posts', $posts);
-			} else if (!$data['sticky'] && $is_sticky) {
-				// Make previously non-sticky post sticky
-				$posts = get_option('sticky_posts');
-				$index = array_search($id, $posts);
-				if ($index !== false) {
-					array_splice($posts, $index, 1);
-					if (!sizeof($posts)) delete_option('sticky_posts');
-					else add_option('sticky_posts', $posts);
-				}
-			}
+		if (isset($data['sticky']) && $data['sticky']) {
+			// Make post sticky
+			stick_post($data['ID']);
+		} else {
+			// Unstick post
+			unstick_post($data['ID']);
 		}
+
 
 		$post = get_post($id);
 		$slug = empty( $post->post_name )
@@ -769,16 +1012,25 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 	private function _spawn_query ($post_type, $data=array()) {
 		$sort = !empty($data['orderby']) ? str_replace('post_', '', $data['orderby']) : 'date';
 		$direction = !empty($data['order']) ? $data['order'] : 'desc';
-		$limit = isset($data['limit']) ? (int)$data['limit'] : 10;
+		$limit = isset($data['limit']) ? (int)$data['limit'] : 25;
+		$hierarchical = !empty($data['hierarchical']) ? true : false;
+		// Only use limit if not hierarchical (post limit then is handled by walker class).
+		$posts_per_page = ($hierarchical ? -1 : $limit);
 		$page = isset($data['page']) ? (int)$data['page'] + 1 : 1;
 		$search = !empty($data['search']) ? $data['search'] : false;
+		$status = !empty($data['post_status']) ? $data['post_status'] : false;
+		$date = !empty($data['m']) ? $data['m'] : false;
+		$category = !empty($data['cat']) ? $data['cat'] : false;
 
 		$args = array(
 			'orderby' => $sort,
 			'order' => strtoupper($direction),
 			'post_type' => $post_type,
-			'posts_per_page' => $limit,
+			'posts_per_page' => $posts_per_page,
 			'paged' => $page,
+			'post_status' => $status,
+			'm' => $date,
+			'cat' => $category,
 		);
 		if ($search) $args['s'] = $search;
 

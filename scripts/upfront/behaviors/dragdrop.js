@@ -78,7 +78,7 @@ DragDrop.prototype = {
 
 	initialize: function (view, model) {
 		this.view = view;
-		this.model = model;
+		this.model = view.ref_model || model;
 		this.app = Upfront.Application;
 		this.ed = Upfront.Behaviors.GridEditor;
 
@@ -345,6 +345,11 @@ DragDrop.prototype = {
 						max_row_el = ed.get_wrap_el_max(max_row_wrap, false, true),
 						wrap_me_in_row = _.find(row_wraps, function(row_wrap){ return me_wrap && me_wrap._id == row_wrap._id; })
 					;
+
+					if (!min_row_el || !max_row_el) {
+						Upfront.Util.log('Nothing to wrap');
+						return;
+					}
 
 					if ( wrap_me_in_row && that.current_row_wraps === false ) {
 						that.current_row_wraps = row_wraps;
@@ -1228,7 +1233,7 @@ DragDrop.prototype = {
 		this.current_wrappers = this.is_parent_group
 			? this.view.group_view.model.get('wrappers')
 			: ( this.is_object
-				? this.view.object_group_view.model.get('wrappers')
+				? (this.view.object_group_view.ref_model || this.view.object_group_view.model).get('wrappers')
 				: current_region_model_wrapper
 			)
 		;
@@ -1320,7 +1325,7 @@ DragDrop.prototype = {
 				Upfront.data.wrapper_views[wrap_model.cid] = wrap_view;
 				if ( !this.move_region ) {
 					// Keep breakpoint data if not moving region
-					var prev_wrap_model = this.current_wrappers.get_by_wrapper_id(this.$wrap.attr('id'));
+					var prev_wrap_model = this.current_wrappers.get_by_wrapper_id(this.$wrap.attr('ref_id') || this.$wrap.attr('id'));
 					if ( prev_wrap_model ) {
 						wrap_model.set_property('breakpoint', Upfront.Util.clone(prev_wrap_model.get_property_value_by_name('breakpoint')), true);
 					}
@@ -1328,7 +1333,7 @@ DragDrop.prototype = {
 			}
 			else {
 				var $drop_wrap = $drop.closest('.upfront-wrapper'),
-					wrapper_id = $drop_wrap.attr('id'),
+					wrapper_id = $drop_wrap.attr('ref_id') || $drop_wrap.attr('id'),
 					wrap_model = this.current_wrappers.get_by_wrapper_id(wrapper_id),
 					wrap_view = Upfront.data.wrapper_views[wrap_model.cid]
 				;
@@ -1389,7 +1394,7 @@ DragDrop.prototype = {
 
 		// Remove breakpoint value if dropped to other region
 		if ( this.move_region ) {
-			var wrap_model = wrappers.get_by_wrapper_id($wrap.attr('id'));
+			var wrap_model = wrappers.get_by_wrapper_id($wrap.attr('ref_id') || $wrap.attr('id'));
 			if ( wrap_model ) {
 				wrap_model.remove_property('breakpoint', true);
 			}
@@ -1437,8 +1442,9 @@ DragDrop.prototype = {
 			_.each(this.drop.row_wraps, function (row_wrap) {
 				row_wrap.$el.find(that.el_selector).each(function () {
 					if ( $(this).hasClass('upfront-module-spacer') || $(this).hasClass('upfront-object-spacer') ) {
-						var wrap_model = wrappers.get_by_wrapper_id(row_wrap.$el.attr('id')),
-							this_model = ed.get_el_model($(this));
+						var wrap_model = wrappers.get_by_wrapper_id(row_wrap.$el.attr('ref_id') || row_wrap.$el.attr('id')),
+							this_model = ed.get_el_model($(this))
+						;
 						wrappers.remove(wrap_model);
 						that.model.collection.remove(this_model);
 						if ( apply_index == 0 ) {
@@ -1508,7 +1514,7 @@ DragDrop.prototype = {
 						if ( that.wrap.$el.get(0) == row_wrap.$el.get(0) ) return;
 						row_wrap.$el.find(that.el_selector).each(function () {
 							if ( !$(this).hasClass('upfront-module-spacer') && !$(this).hasClass('upfront-object-spacer') ) return;
-							var wrap_model = wrappers.get_by_wrapper_id(row_wrap.$el.attr('id')),
+							var wrap_model = wrappers.get_by_wrapper_id(row_wrap.$el.attr('ref_id') || row_wrap.$el.attr('id')),
 								this_model = ed.get_el_model($(this));
 							wrappers.remove(wrap_model);
 							that.model.collection.remove(this_model, {update: false});
@@ -1522,7 +1528,7 @@ DragDrop.prototype = {
 			ed.update_wrappers(this.view.group_view.model, this.view.group_view.$el);
 		}
 		else if ( this.is_object ) {
-			ed.update_wrappers(this.view.object_group_view.model, this.view.object_group_view.$el);
+			ed.update_wrappers(this.view.object_group_view.ref_model || this.view.object_group_view.model, this.view.object_group_view.$el);
 		}
 		else {
 			ed.update_wrappers(this.current_region_model, this.current_region.$el);
@@ -1543,7 +1549,8 @@ DragDrop.prototype = {
 			}
 			else {
 				var modules = this.current_region_model.get('modules'),
-					models = []
+					models = [],
+					me_id = $me.attr('ref_id') || $me.attr('id')
 				;
 				// Preserve breakpoint order to prevent element shifting due to changing position in collection
 				this.view.region_view._modules_view.preserve_wrappers_breakpoint_order();
@@ -1558,9 +1565,10 @@ DragDrop.prototype = {
 				region_view._modules_view.preserve_wrappers_breakpoint_order();
 				$me.removeAttr('data-shadow');
 				this.$current_container.find('.upfront-wrapper').find(this.el_selector).each(function(){
-					var element_id = $(this).attr('id'),
-						each_model = modules.get_by_element_id(element_id);
-					if ( !each_model && element_id == $me.attr('id') ) {
+					var element_id = $(this).attr('ref_id') || $(this).attr('id'),
+						each_model = modules.get_by_element_id(element_id)
+					;
+					if ( !each_model && element_id == me_id ) {
 						models.push(that.model);
 					}
 					else if ( each_model ) {
@@ -1625,7 +1633,7 @@ DragDrop.prototype = {
 				index++;
 			});
 			_.each(orders, function(each_el){
-				var id = each_el.$el.attr('id'),
+				var id = each_el.$el.attr('ref_id') || each_el.$el.attr('id'),
 					each_model = is_drop_wrapper ? wrappers.get_by_wrapper_id(id) : ed.get_el_model(each_el.$el),
 					model_breakpoint, model_breakpoint_data
 				;

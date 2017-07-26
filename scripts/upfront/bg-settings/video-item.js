@@ -18,7 +18,7 @@ define([
 			var videoSelector = new VideoSelector();
 
 			var pickVideoButton = new Upfront.Views.Editor.Field.Button({
-				label: l10n.pick_video,
+				label: l10n.browse,
 				model: this.model,
 				compact: true,
 				classname: 'uf-button-alt uf-bgsettings-image-pick uf-bgsettings-video-pick',
@@ -46,7 +46,7 @@ define([
 				property: 'background_video',
 				use_breakpoint_property: true,
 				default_value: '',
-				placeholder: l10n.video_source,
+				placeholder: l10n.video_url,
 				change: function () {
 					var value = this.get_value();
 					if ( value ){
@@ -72,7 +72,7 @@ define([
 			fields = {
 					bg_style: new Upfront.Views.Editor.Field.Select({
 						model: this.model,
-						label: 'Video Source',
+						label: l10n.video_source,
 						className: 'upfront-field-wrap upfront-field-wrap-select background-video-style-field',
 						property: 'background_style',
 						use_breakpoint_property: true,
@@ -81,13 +81,17 @@ define([
 						values: this.get_bg_style_values(),
 						change: function () {
 							var value = this.get_value();
-							if ( value == 'upload' ){
+							if ( value === 'upload' ){
 								videoUrlInput.$el.hide();
 								pickVideoButton.$el.show();
+								me.$el.find('.background-video-style-field').css({'minWidth': '138px', 'maxWidth': '138px'});
+								me.$el.find('.background-video-style-field .upfront-field-select').css({'minWidth': '138px', 'maxWidth': '138px'});
 							}
-							else if ( value == 'service' ) {
+							else if ( value === 'service' ) {
 								pickVideoButton.$el.hide();
 								videoUrlInput.$el.show();
+								me.$el.find('.background-video-style-field').css('minWidth', '100%');
+								me.$el.find('.background-video-style-field .upfront-field-select').css({'minWidth': '100%', 'maxWidth': '100%'});
 							}
 							me._bg_style = value;
 							me.update_video();
@@ -95,7 +99,7 @@ define([
 					}),
 					pick_video: pickVideoButton,
 					video: videoUrlInput,
-					mute: new Upfront.Views.Editor.Field.Checkboxes({
+					mute: new Upfront.Views.Editor.Field.Toggle({
 						model: this.model,
 						property: 'background_video_mute',
 						use_breakpoint_property: true,
@@ -111,7 +115,7 @@ define([
 							this.$el.addClass('uf-bgsettings-video-mute');
 						}
 					}),
-					autoplay: new Upfront.Views.Editor.Field.Checkboxes({
+					autoplay: new Upfront.Views.Editor.Field.Toggle({
 						model: this.model,
 						property: 'background_video_autoplay',
 						use_breakpoint_property: true,
@@ -127,7 +131,7 @@ define([
 							this.$el.addClass('uf-bgsettings-video-autoplay');
 						}
 					}),
-					loop: new Upfront.Views.Editor.Field.Checkboxes({
+					loop: new Upfront.Views.Editor.Field.Toggle({
 						model: this.model,
 						property: 'background_video_loop',
 						use_breakpoint_property: true,
@@ -145,6 +149,7 @@ define([
 					}),
 					style: new Upfront.Views.Editor.Field.Select({
 						model: this.model,
+						label: l10n.video_cropping_method,
 						property: 'background_video_style',
 						use_breakpoint_property: true,
 						layout: 'horizontal-inline',
@@ -206,13 +211,16 @@ define([
 				if ( currentStyle === 'upload' ){
 					videoUrlInput.$el.hide();
 					pickVideoButton.$el.show();
+					me.$el.find('.upfront-field-select').css('minWidth', '138px');
 				} else if (currentStyle === 'service' ) {
 					pickVideoButton.$el.hide();
 					videoUrlInput.$el.show();
+					me.$el.find('.upfront-field-select').css('minWidth', '100%');
 				} else {
 					me.model.set_breakpoint_property('background_style', 'upload');
 					videoUrlInput.$el.hide();
 					pickVideoButton.$el.show();
+					me.$el.find('.upfront-field-select').css('minWidth', '138px');
 				}
 			}, 50);
 		},
@@ -224,8 +232,8 @@ define([
 		},
 		get_bg_style_values: function () {
 			var values = [
-				{ label: 'Upload', value: 'upload', icon: 'bg-image-full' },
-				{ label: 'Video Service', value: 'service', icon: 'bg-image-tile' }
+				{ label: l10n.uploaded_video, value: 'upload' },
+				{ label: l10n.video_service, value: 'service' }
 			];
 			return values;
 		},

@@ -6,7 +6,7 @@ if (!Upfront_Permissions::current(Upfront_Permissions::BOOT)) {
 header('Content-Type: application/javascript');
 
 $upfront_data = apply_filters('upfront_data', array('loading' => array(), 'posts' => array()));
-$insert_count = intval(get_option('ueditor_insert_count'));
+$insert_count = intval(Upfront_Cache_Utils::get_option('ueditor_insert_count'));
 if(!$insert_count)
 	$insert_count = 0;
 $upfront_data['ueditor'] = array(
@@ -46,7 +46,7 @@ $upfront_data['region_default_args'] = upfront_get_region_default_args();
 
 //Upfront styles
 $dev = Upfront_Behavior::debug()->is_dev() ? 'dev_' : '';
-$styles = get_option('upfront_' . $dev . get_stylesheet() . '_styles');
+$styles = Upfront_Cache_Utils::get_option('upfront_' . $dev . get_stylesheet() . '_styles');
 $elementTypes = array();
 if($styles) {
 	foreach($styles as $type => $rules){
@@ -59,12 +59,17 @@ $element_styles = apply_filters('upfront_get_theme_styles', $elementTypes);
 
 $upfront_data['styles'] = $elementTypes;
 $upfront_data['date'] = array(
-    'format' => get_option('date_format')
+    'format' => Upfront_Cache_Utils::get_option('date_format')
 );
 ?>
 
 (function ($, undefined) {
-	define({
+	upfrontrjs = window.upfrontrjs || {
+		define: define,
+		require: require,
+		requirejs: requirejs
+	};
+	upfrontrjs.define({
 		data: <?php echo json_encode($upfront_data); ?>
 	});
 })(jQuery);

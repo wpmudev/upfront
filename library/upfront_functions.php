@@ -98,14 +98,15 @@ function upfront_array_to_properties ($the_array, $map=null) {
  *
  * @param string $prop Property name
  * @param array $data Data array
- * @param object $breakpoint Breakpoint object
+ * @param object|string $breakpoint Breakpoint object/id
  * @param bool $return_default Whether to fall back to the default property value
  *
  * @return mixed Breakpoint property value, or (optionally) default property value, or (bool)false
  */
 function upfront_get_breakpoint_property_value ($prop, $data, $breakpoint, $return_default = false) {
 	$model_breakpoint = upfront_get_property_value('breakpoint', $data);
-	$breakpoint_data = $model_breakpoint && !empty($model_breakpoint[$breakpoint->get_id()]) ? $model_breakpoint[$breakpoint->get_id()] : false;
+	$breakpoint_id = is_string($breakpoint) ? $breakpoint : $breakpoint->get_id();
+	$breakpoint_data = $model_breakpoint && !empty($model_breakpoint[$breakpoint_id]) ? $model_breakpoint[$breakpoint_id] : false;
 	if ($breakpoint_data && isset($breakpoint_data[$prop])) {
 		return $breakpoint_data[$prop];
 	}
@@ -121,15 +122,16 @@ function upfront_get_breakpoint_property_value ($prop, $data, $breakpoint, $retu
  * @param string $prop Property name
  * @param mixed $value Value to set
  * @param array $data Data array
- * @param object $breakpoint Breakpoint object
+ * @param object|string $breakpoint Breakpoint object or id
  *
  * @return array
  */
 function upfront_set_breakpoint_property_value ($prop, $value, &$data, $breakpoint) {
 	$model_breakpoint = upfront_get_property_value('breakpoint', $data);
-	$breakpoint_data = $model_breakpoint && !empty($model_breakpoint[$breakpoint->get_id()]) ? $model_breakpoint[$breakpoint->get_id()] : array();
+	$breakpoint_id = is_string($breakpoint) ? $breakpoint : $breakpoint->get_id();
+	$breakpoint_data = $model_breakpoint && !empty($model_breakpoint[$breakpoint_id]) ? $model_breakpoint[$breakpoint_id] : array();
 	$breakpoint_data[$prop] = $value;
-	$model_breakpoint[$breakpoint->get_id()] = $breakpoint_data;
+	$model_breakpoint[$breakpoint_id] = $breakpoint_data;
 	upfront_set_property_value('breakpoint', $model_breakpoint, $data);
 	return $data;
 }
@@ -243,7 +245,7 @@ function upfront_switch_stylesheet ($stylesheet) {
 		$upfront_stylesheet = $stylesheet;
 		add_filter('stylesheet', '_upfront_stylesheet');
 		// Prevent theme mods to current theme being used on theme being previewed
-		add_filter('pre_option_theme_mods_' . get_option( 'stylesheet' ), '__return_empty_array');
+		add_filter('pre_option_theme_mods_' . Upfront_Cache_Utils::get_option( 'stylesheet' ), '__return_empty_array');
 		return true;
 	}
 	return false;
@@ -345,9 +347,9 @@ function upfront_ajax_url ($action, $args = '') {
 	$args = wp_parse_args($args);
 	$args['action'] = $action;
 	$entity_ids = Upfront_EntityResolver::get_entity_ids();
-	
+
 	// if maintenance page, bypass the layout
-	if ( upfront_is_maintenance_page() ) $entity_ids = Upfront_Layout::get_maintenance_mode_layout_cascade(); 
+	if ( upfront_is_maintenance_page() ) $entity_ids = Upfront_Layout::get_maintenance_mode_layout_cascade();
 
 	// if page was still draft and viewed on FE, we should show 404 layout
 	if ( !Upfront_Output::get_post_id() && isset($entity_ids['specificity']) && preg_match('/single-page/i', $entity_ids['specificity']) ) {
@@ -486,6 +488,102 @@ function upfront_get_attachment_image_lazy ($attachment_id, $ref_size = 'full') 
 }
 
 /**
+ * Gets cropped version of post thumbnail
+ *
+ * @param int $post_id Optional post ID
+ * @param string $size Optional size
+ * @param bool $size Optional crop
+ *
+ * @return upfront_build_post_thumbnail_html or get_the_post_thumbnail
+ */
+
+function upfront_get_cropped_post_thumbnail ($post_id = null, $crop_size = null, $crop = true) {
+	$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
+
+	// If crop size is array continue, if not fallback to post thumbnail size
+	if(is_array($crop_size)) {
+		$width = $crop_size[0];
+		$height = $crop_size[1];
+	} else {
+		// Fallback, we do not need resize
+		return get_the_post_thumbnail($post_id, $crop_size);
+	}
+
+	$image_id = get_post_thumbnail_id($post_id);
+	$data = get_post_meta($post_id, '_thumbnail_data', true);
+
+	// Check if file exist
+	$image_src = get_attached_file( $image_id );
+	if ( ! file_exists( $image_src ) ) {
+		return false;
+	}
+
+	// Get base URL
+	$image_src_info = pathinfo( $image_src );
+	$upload_dir    = wp_upload_dir();
+	$base_url  = $upload_dir['baseurl'] . str_replace( $upload_dir['basedir'], '', $image_src_info['dirname'] );
+	$original_image = "{$base_url}/{$image_src_info['basename']}";
+
+	// Check if we already have image
+	$image_meta = wp_get_attachment_metadata( $image_id );
+	foreach ( $image_meta['sizes'] as $key => $size ) {
+		if ( $size['width'] == $width && $size['height'] == $height ) {
+			$image = "{$base_url}/{$size['file']}";
+
+			return upfront_build_post_thumbnail_html($image_id, $data, $image);
+		}
+	}
+
+	// Generate cropped new size
+	$resized_image = image_make_intermediate_size( $image_src, $width, $height, $crop );
+
+	if ( $resized_image && ! is_wp_error( $resized_image ) )
+	{
+		$key = sprintf( 'resized-%dx%d', $width, $height );
+		$image_meta['sizes'][$key] = $resized_image;
+		wp_update_attachment_metadata( $image_id, $image_meta );
+		$image = "{$base_url}/{$resized_image['file']}";
+
+		return upfront_build_post_thumbnail_html($image_id, $data, $image);
+	}
+
+	// Return original image
+	return upfront_build_post_thumbnail_html($image_id, $data, $original_image);
+}
+
+/**
+ * Generate post thumbnail html
+ *
+ * @param $image_id
+ * @param $data
+ * @param $image_url
+ *
+ * @return string
+ */
+function upfront_build_post_thumbnail_html ($image_id, $data, $image_url) {
+	// Build image HTML
+	$post_meta = get_post($image_id);
+	$attr = array(
+		'src' => $image_url,
+		'alt' => trim(strip_tags( get_post_meta($post_meta, '_wp_attachment_image_alt', true) )),
+	);
+	if (false === empty($data['cropSize'])) {
+		$attr['width'] = $data['cropSize']['width'];
+		$attr['height'] = $data['cropSize']['height'];
+	}
+	if ( empty($attr['alt']) )
+		$attr['alt'] = trim(strip_tags( $post_meta->post_excerpt ));
+	if ( empty($attr['alt']) )
+		$attr['alt'] = trim(strip_tags( $post_meta->post_title ));
+	$html = '<img';
+	foreach ( $attr as $name => $value )
+		$html .= ' ' . $name . '="' . $value . '"';
+	$html .= ' />';
+
+	return $html;
+}
+
+/**
  * Gets post thumbnail
  *
  * @param int $post_id Optional post ID
@@ -498,8 +596,9 @@ function upfront_get_edited_post_thumbnail ($post_id = null, $return_src = false
 	$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
 	$image_id = get_post_thumbnail_id($post_id);
 	$data = get_post_meta($post_id, '_thumbnail_data', true);
+
 	if ( true !== (bool)$return_src && (empty($data) || empty( $data['imageId'] ) || $data['imageId'] != $image_id || empty($data['src']) || $size != 'uf_post_featured_image') ) { // no edited thumbnail or don't use edited thumbnail
-		return get_the_post_thumbnail($post_id, $size);
+		return upfront_get_cropped_post_thumbnail($post_id, $size, true);
 	}
 	if ( $return_src ) {
 		if ( !empty($data) && !empty($data['imageId']) && $data['imageId'] == $image_id ) {
@@ -511,22 +610,8 @@ function upfront_get_edited_post_thumbnail ($post_id = null, $return_src = false
 			return '';
 		}
 	}
-	$image = get_post($image_id);
-	$attr = array(
-		'src' => $data['src'],
-		'width' => $data['cropSize']['width'],
-		'height' => $data['cropSize']['height'],
-		'alt' => trim(strip_tags( get_post_meta($image, '_wp_attachment_image_alt', true) )),
-	);
-	if ( empty($attr['alt']) )
-		$attr['alt'] = trim(strip_tags( $image->post_excerpt ));
-	if ( empty($attr['alt']) )
-		$attr['alt'] = trim(strip_tags( $image->post_title ));
-	$html = '<img';
-	foreach ( $attr as $name => $value )
-		$html .= ' ' . $name . '="' . $value . '"';
-	$html .= ' />';
-	return $html;
+
+	return upfront_build_post_thumbnail_html($image_id, $data, $data['src']);
 }
 
 /**
@@ -570,7 +655,7 @@ function upfront_left_shift32 ($number, $steps) {
 
 /**
  * Check if current page is the maintenance page
- * 
+ *
  * @param int $current_page_id page id to check, default is false
  * @return bool
  */
@@ -578,7 +663,7 @@ function upfront_is_maintenance_page ($current_page_id = false) {
 	if ( !$current_page_id ) {
 		$current_page_id = is_singular() ? apply_filters('upfront-data-post_id', get_the_ID()) : false;
 	}
-	$maintenance_data = get_option(Upfront_Server::MAINTENANCE_MODE, false);
+	$maintenance_data = Upfront_Cache_Utils::get_option(Upfront_Server::MAINTENANCE_MODE, false);
 	if ( $maintenance_data ) {
 		$maintenance_data = json_decode($maintenance_data);
 		if ( $maintenance_data && is_object($maintenance_data) ) {

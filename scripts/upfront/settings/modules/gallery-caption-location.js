@@ -11,10 +11,13 @@ define([
 			var me = this,
 				state = this.options.state;
 
+			// Gallery caption toggle is always true
+			this.options.toggle = true;
+
 			this.fields = _([
-				new Upfront.Views.Editor.Field.Checkboxes({
+				new Upfront.Views.Editor.Field.Toggle({
 					model: this.model,
-					className: 'useCaptions checkbox-title',
+					className: 'useCaptions checkbox-title upfront-toggle-field',
 					name: 'use_captions',
 					label: '',
 					default_value: 1,
@@ -26,20 +29,16 @@ define([
 						me.model.set('use_captions', value);
 					},
 					show: function(value, $el) {
-						var stateSettings = $el.closest('.state_modules');
+						var stateSettings = $el.closest('.upfront-settings-item-content');
 						//Toggle color fields
 						if(value == "yes") {
-							stateSettings.find('.'+ state +'-caption-select').show();
-							stateSettings.find('.'+ state +'-caption-trigger').show();
-							stateSettings.find('.'+ state +'-caption-height').show();
+							stateSettings.find('.' + state + '-toggle-wrapper').show();
 							var height_type = me.model.get('caption-height', value);
 							if(height_type === "fixed") {
 								stateSettings.find('.'+ state +'-caption-height-number').show();
 							}
 						} else {
-							stateSettings.find('.'+ state +'-caption-select').hide();
-							stateSettings.find('.'+ state +'-caption-trigger').hide();
-							stateSettings.find('.'+ state +'-caption-height').hide();
+							stateSettings.find('.' + state + '-toggle-wrapper').hide();
 							stateSettings.find('.'+ state +'-caption-height-number').hide();
 						}
 					}
@@ -49,10 +48,11 @@ define([
 					className: state + '-caption-select caption_select',
 					name: 'captionType',
 					default_value: 'below',
+					label_style: 'inline',
 					label: l10n.panel.caption_location,
 					values: [
-						{value: 'over', label: l10n.panel.over, icon: 'over'},
-						{value: 'below', label: l10n.panel.under, icon: 'below'}
+						{value: 'over', label: l10n.panel.over},
+						{value: 'below', label: l10n.panel.under}
 					],
 					change: function(value) {
 						me.model.set('captionType', value);
@@ -72,11 +72,12 @@ define([
 					}
 				}),
 
-				new Upfront.Views.Editor.Field.Radios({
-					className: state + '-caption-trigger field-caption_trigger gallery-caption-on-hover upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios over_image_field',
+				new Upfront.Views.Editor.Field.Radios_Inline({
+					className: state + '-caption-trigger field-caption_trigger gallery-caption-on-hover upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios-inline over_image_field',
 					model: this.model,
 					name: 'showCaptionOnHover',
-					label: '',
+					label: l10n.panel.caption_show,
+					label_style: 'inline',
 					layout: 'horizontal-inline',
 					values: [
 						{
@@ -93,10 +94,11 @@ define([
 					}
 				}),
 
-				new Upfront.Views.Editor.Field.Radios({
-					className: state + '-caption-height field-caption-height upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
+				new Upfront.Views.Editor.Field.Radios_Inline({
+					className: state + '-caption-height field-caption-height upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios-inline',
 					model: this.model,
 					name: 'caption-height',
+					label_style: 'inline',
 					label: l10n.panel.caption_height,
 					layout: 'horizontal-inline',
 					values: [
@@ -127,12 +129,13 @@ define([
 					}
 				}),
 
-				new Upfront.Views.Editor.Field.Number({
+				new Upfront.Views.Editor.Field.Number_Unit({
 					model: this.model,
 					className: state + '-caption-height-number caption-height-number',
 					name: 'thumbCaptionsHeight',
+					label_style: 'inline',
 					min: 1,
-					label: '',
+					label: l10n.panel.caption_height,
 					default_value: 20,
 					values: [
 						{ label: 'px', value: '1' }
@@ -146,20 +149,15 @@ define([
 			this.listenToOnce(this, 'rendered', function() {
 				setTimeout( function() {
 					if(me.model.get('use_captions') === 'yes') {
-						me.$el.find('.'+ state +'-caption-select').show();
-						me.$el.find('.'+ state +'-caption-trigger').show();
-						me.$el.find('.'+ state +'-caption-height').show();
-						var height_type = me.model.get('caption-height');
+						me.$el.find('.' + state + '-toggle-wrapper').show();
+						var height_type = me.model.get('caption-height', value);
 						if(height_type === "fixed") {
 							me.$el.find('.'+ state +'-caption-height-number').show();
 						}
 					} else {
-						me.$el.find('.'+ state +'-caption-select').hide();
-						me.$el.find('.'+ state +'-caption-trigger').hide();
-						me.$el.find('.'+ state +'-caption-height').hide();
+						me.$el.find('.' + state + '-toggle-wrapper').hide();
 						me.$el.find('.'+ state +'-caption-height-number').hide();
 					}
-
 				}, 500);
 			});
 		}

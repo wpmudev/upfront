@@ -34,7 +34,7 @@ define([
 	var MediaCollection_Selection = Backbone.Collection.extend({
 		model: MediaItem_Model,
 		initialize: function () {
-			Upfront.Events.on("media_manager:media:labels_loaded", this.global_labels_loaded, this);
+			this.listenTo(Upfront.Events, "media_manager:media:labels_loaded", this.global_labels_loaded);
 		},
 		get_shared_labels: function () {
 			var known_labels = ActiveFilters.get("label"),
@@ -116,7 +116,7 @@ define([
 					"post_ids": this.invoke("get", "ID")
 				}
 			;
-			Upfront.Util.post(data)
+			return Upfront.Util.post(data)
 				.success(function (response) {
 					me.each(function (model) {
 						var labels = response.data[model.get("ID")];
@@ -188,9 +188,9 @@ define([
 		current_filter_control: 0,
 		initialize: function () {
 			this.to_defaults();
-			Upfront.Events.on("media_manager:media:filters_updated", this.update_active_filters, this);
-			Upfront.Events.on("media_manager:media:labels_updated", this.reload_labels, this);
-			Upfront.Events.on("media_manager:media:toggle_titles", this.toggle_titles, this);
+			this.listenTo(Upfront.Events, "media_manager:media:filters_updated", this.update_active_filters);
+			this.listenTo(Upfront.Events, "media_manager:media:labels_updated", this.reload_labels);
+			this.listenTo(Upfront.Events, "media_manager:media:toggle_titles", this.toggle_titles);
 		},
 		to_defaults: function () {
 			var types = new MediaFilter_Collection([]),
@@ -229,10 +229,10 @@ define([
 			this.set_labels_to_defaults();
 		},
 		set_max_pages: function (max) {
-			this.max_pages = max || 1;
+			this.max_pages = !_.isUndefined(max) ? max : 1;
 		},
 		set_max_items: function (max) {
-			this.max_items = max || 1;
+			this.max_items = !_.isUndefined(max) ? max : 1;
 		},
 		prev_page: function () {
 			if (this.current_page > 1) return this.set_page(this.current_page-1);
@@ -289,6 +289,8 @@ define([
 						}
 					}
 				});
+				// Reset page to 1
+				this.set_page(1);
 			}
 			Upfront.Events.trigger("media_manager:media:list", this);
 		},
@@ -338,8 +340,9 @@ define([
 		className: "upfront-media-controls",
 		is_search_active: false,
 		initialize: function (args) {
-			Upfront.Events.on("media:item:selection_changed", this.switch_controls, this);
-			Upfront.Events.on("media:search:requested", this.switch_to_search, this);
+			this.listenTo(Upfront.Events, "media:item:selection_changed", this.switch_controls);
+			this.listenTo(Upfront.Events, "media:search:requested", this.switch_to_search);
+			this.listenTo(Upfront.Events, "media_manager:load:done", this.render_filters);
             this.options = args.options;
 		},
 		render: function () {
@@ -349,7 +352,9 @@ define([
 			this.render_filters();
 		},
 		render_filters: function () {
+			if (this.search) this.search.remove();
 			this.search = new MediaManager_SearchControl();
+			if (this.control) this.control.remove();
 			this.control = this.is_search_active ? new MediaManager_SearchFiltersControl() : new MediaManager_FiltersControl();
 			this.search.render();
 			this.control.render();
@@ -378,19 +383,18 @@ define([
 		},
 		switch_to_search: function (search) {
 			this.is_search_active = search && search.get("state");
-			this.render_filters();
+			//this.render_filters(); // This will be rendered later in another event to prevent double rendering in a row
 		},
 		remove: function() {
 			if (this.control) this.control.remove();
-			Upfront.Events.off("media:item:selection_changed", this.switch_controls);
-			Upfront.Events.off("media:search:requested", this.switch_to_search);
+			Backbone.View.prototype.remove.call(this);
 		}
 	});
 
 	var MediaManager_AuxControls_View = Backbone.View.extend({
 		className: "upfront-media-aux_controls",
 		initialize: function () {
-			Upfront.Events.on("media:item:selection_changed", this.switch_controls, this);
+			this.listenTo(Upfront.Events, "media:item:selection_changed", this.switch_controls);
 		},
 		render: function () {
 			//this.render_selection();
@@ -412,9 +416,6 @@ define([
 			var positive = media_collection && media_collection.where ? media_collection.where({selected: true}) : [];
 			if (positive.length) this.render_delete(positive);
 			//else this.render_selection();
-		},
-		remove: function() {
-			Upfront.Events.off("media:item:selection_changed", this.switch_controls);
 		}
 	});
 
@@ -537,7 +538,7 @@ define([
 				//"change .additional_sizes select": "select_size"
 			},
 			initialize: function ( opts ) {
-				this.model.on("change", this.render, this);
+				this.listenTo(this.model, "change", this.render);
                 this.options = _.extend( this.options, opts.options );
 			},
 			render: function () {
@@ -943,12 +944,24 @@ define([
 						e.stopPropagation();
 					}
 					if (this._adding_label) return;
-					var $text = this.$el.find(".new_labels :text.add-label"),
+					var me = this,
+						$hub = this.$el.find(".new_labels"),
+						$text = this.$el.find(".new_labels :text.add-label"),
 						selection = $text.val()
 					;
 					this._adding_label = true;
 					$text.attr('disabled', true);
-					this.model.add_new_label(selection);
+					this.model.add_new_label(selection)
+						.always(function(){
+							me._adding_label = false;
+							$text.val('').attr('disabled', false);
+						})
+						.fail(function(jqxhr){
+							var response = jqxhr.responseJSON;
+							if (response && response.error) {
+								Upfront.Views.Editor.notify(response.error, 'error');
+							}
+						});
 				}
 			});
 
@@ -1036,6 +1049,7 @@ define([
 			remove: function() {
 				this.filter_selection.remove();
 				//this.filters_selected.remove();
+				Backbone.View.prototype.remove.call(this);
 			}
 		});
 
@@ -1046,7 +1060,7 @@ define([
 				"click a.all_filters": "drop_all"
 			},
 			initialize: function () {
-				Upfront.Events.on("media_manager:media:list", this.set_filters, this);
+				this.listenTo(Upfront.Events, "media_manager:media:list", this.set_filters);
 			},
 			render: function () {
 				this.$el.empty();
@@ -1100,9 +1114,6 @@ define([
 				e.preventDefault();
 				e.stopPropagation();
 				Upfront.Events.trigger("media_manager:media:filters_updated", false, false);
-			},
-			remove: function() {
-				Upfront.Events.off("media_manager:media:list", this.set_filters);
 			}
 		});
 
@@ -1161,6 +1172,12 @@ define([
 				control.render();
 				this.$control.append(control.$el);
 				return false;
+			},
+			remove: function () {
+				this.controls.each(function (ctrl) {
+					ctrl.remove();
+				});
+				Backbone.View.prototype.remove.call(this);
 			}
 		});
 
@@ -1171,7 +1188,7 @@ define([
 			},
 			initialize_model: function () {
 				this.model = ActiveFilters.get(this.filter_type);
-				this.model.on("change", this.apply_changes, this);
+				this.listenTo(this.model, "change", this.apply_changes);
 			},
 			render: function () {
 				var me = this;
@@ -1303,7 +1320,7 @@ define([
 					var item = new Media_FilterSelection_Uniqueselection_Item({model: model});
 					item.render();
 					me.$el.append(item.$el);
-					item.on("model:unique_state:change", me.change_state, me);
+					me.listenTo(item, "model:unique_state:change", me.change_state);
 				});
 			},
 			change_state: function (model) {
@@ -1322,7 +1339,7 @@ define([
 					"click": "on_click"
 				},
 				initialize: function () {
-					this.model.on("change", this.render, this);
+					this.listenTo(this.model, "change", this.render);
 				},
 				render: function () {
 					var name = this.model.get("filter");
@@ -1391,8 +1408,8 @@ define([
 				this.filter_name = l10n.by_type;
 				this.filter_type = "type";
 				this.initialize_model();
-				Upfront.Events.on("media_manager:media:filters_updated", this.update_selection, this);
-				Upfront.Events.on("media_manager:media:filters_reset", this.initialize_model, this);
+				this.listenTo(Upfront.Events, "media_manager:media:filters_updated", this.update_selection);
+				this.listenTo(Upfront.Events, "media_manager:media:filters_reset", this.initialize_model);
 			},
 			render: function () {
 				var me = this,
@@ -1446,8 +1463,8 @@ define([
 				this.filter_name = l10n.file_name;
 				this.filter_type = "order";
 				this.initialize_model();
-				Upfront.Events.on("media_manager:media:filters_updated", this.update_selection, this);
-				Upfront.Events.on("media_manager:media:filters_reset", this.initialize_model, this);
+				this.listenTo(Upfront.Events, "media_manager:media:filters_updated", this.update_selection);
+				this.listenTo(Upfront.Events, "media_manager:media:filters_reset", this.initialize_model);
 			}
 		});
 
@@ -1456,9 +1473,9 @@ define([
 				this.filter_name = l10n.by_labels;
 				this.filter_type = "label";
 				this.initialize_model();
-				Upfront.Events.on("media_manager:media:filters_updated", this.update_selection, this);
-				Upfront.Events.on("media_manager:media:filters_reset", this.initialize_model, this);
-				Upfront.Events.on("media_manager:media:labels_loaded", this.reinitialize_model, this);
+				this.listenTo(Upfront.Events, "media_manager:media:filters_updated", this.update_selection);
+				this.listenTo(Upfront.Events, "media_manager:media:filters_reset", this.initialize_model);
+				this.listenTo(Upfront.Events, "media_manager:media:labels_loaded", this.reinitialize_model);
 			},
 			reinitialize_model: function () {
 				this.initialize_model();
@@ -1560,15 +1577,16 @@ define([
 		upload_template: _.template(
 			'<button type="button" class="media-upload upfront-icon-control upfront-icon-media-upload">' + l10n.upload + '</button>'
 		),
-		initialize: function () {
-			Upfront.Events.on("media:item:selection_changed", this.switch_delete, this);
+		initialize: function (options) {
+			this.options = options;
+			this.listenTo(Upfront.Events, "media:item:selection_changed", this.switch_delete);
 		},
 		render: function () {
 			this.$el.empty().append(
 				this.info_template({}) +
 				(ActiveFilters.has_upload() ? this.upload_template({}) : '')
 			);
-			this.$el.addClass('clearfix');
+			this.$el.addClass('upfront-no-select clearfix');
 		},
 		remove: function () {
 			this.undelegateEvents();
@@ -1576,8 +1594,9 @@ define([
 				this.delete_control.remove();
 				this.delete_control = false;
 			}
-			Upfront.Events.off("media:item:selection_changed", this.switch_delete, this);
+			// We don't want to remove this element as it belongs to popup, so just empty it out and remove bound events
 			this.$el.empty();
+			this.stopListening();
 		},
 		switch_to_upload: function (e) {
 			e.preventDefault();
@@ -1589,8 +1608,13 @@ define([
 				e.preventDefault();
 				e.stopPropagation();
 			}
+			if (!this.options.can_toggle_control) return;
 			this.$el.find('.media-info').toggleClass('media-info-active');
             this.trigger("media_manager:switcher:toggle_controls");
+		},
+		show_controls: function () {
+			this.$el.find('.media-info').addClass('media-info-active');
+            this.trigger("media_manager:switcher:toggle_controls", true);
 		},
 		switch_delete: function (media_collection) {
 			var positive = media_collection && media_collection.where ? media_collection.where({selected: true}) : [];
@@ -1630,6 +1654,7 @@ define([
 			data = _.extend({
 				type: "PostImage",
 				multiple_selection: false,
+				can_toggle_control: false,
 				show_control: true,
 				show_insert: true
 			}, data);
@@ -1641,10 +1666,15 @@ define([
 			;
 
 			this.popup_data = data.data;
+			this.can_toggle_control = data.can_toggle_control;
 			this.show_control = data.show_control;
 
 			ActiveFilters.to_defaults();
-			this.switcher_view = new MediaManager_Switcher({el: this.popup_data.$top});
+			this.switcher_view = new MediaManager_Switcher({
+				el: this.popup_data.$top,
+				can_toggle_control: this.can_toggle_control,
+				show_control: this.show_control
+			});
 
             this.listenTo(this.switcher_view, "media_manager:switcher:to_upload", this.render_upload, this);
             this.listenTo(this.switcher_view, "media_manager:switcher:toggle_controls", this.toggle_controls, this);
@@ -1672,17 +1702,17 @@ define([
 		remove: function() {
 			this.library_view.remove();
 			this.switcher_view.remove();
+			this.command_view.remove();
 			//this.library_view = new MediaManager_PostImage_View(this.collection);
-			Upfront.Events.off("media_manager:media:list", this.switch_media_type, this);
+			// We don't want to remove this element as it belongs to popup, so just empty it out and remove bound events
+			this.$el.empty();
+			this.stopListening();
 		},
 		render: function () {
 			this.switcher_view.render();
 			this.command_view.render();
 			this.render_library();
-			Upfront.Events
-				.off("media_manager:media:list", this.switch_media_type)
-				.on("media_manager:media:list", this.switch_media_type, this)
-			;
+			this.listenTo(Upfront.Events, "media_manager:media:list", this.switch_media_type);
 		},
 		render_library: function () {
 			this.load();
@@ -1808,12 +1838,13 @@ define([
 		render_markup: function () {
 			//console.log("MARKUP YAY");
 		},
-		toggle_controls: function () {
+		toggle_controls: function (show) {
 			if (!this.library_view) return false;
-			this.library_view.toggle_controls();
+			this.library_view.toggle_controls(show);
 			this.show_control = false;
 		},
 		load: function (data) {
+			Upfront.Events.trigger("media_manager:load:start", data);
 			this._request_in_progress = true;
 			data = data && data.type ? data : ActiveFilters.to_request_json();
 			data.media_limit = ActiveFilters.media_limit;
@@ -1826,11 +1857,13 @@ define([
 					ActiveFilters.set_max_items(response.data.meta.max_items);
 					me.library_view.update(response.data.items);
 					me.command_view.render();
-					if (me.show_control) me.switcher_view.switch_controls();
+					if (me.show_control) me.switcher_view.show_controls();
+					Upfront.Events.trigger("media_manager:load:done", response);
 				})
 				.fail(function (response) {
 					me.library_view.update([]);
 					me.command_view.render();
+					Upfront.Events.trigger("media_manager:load:fail", response);
 				})
 				.always(function () {
 					me._request_in_progress = false;
@@ -1895,10 +1928,16 @@ define([
 			this.$el.empty()
 				.append(pagination.$el)
 				.append(use !== false ? use.$el : '')
+				.addClass('upfront-no-select')
 			;
 		},
 		switch_to_upload: function (e) {
 			this.trigger("media_manager:switcher:to_upload");
+		},
+		remove: function () {
+			// We don't want to remove this element as it belongs to popup, so just empty it out and remove bound events
+			this.$el.empty();
+			this.stopListening();
 		}
 	});
 
@@ -2175,7 +2214,7 @@ define([
 	 * Post images library implementation.
 	 */
 	var MediaManager_PostImage_View = MediaManager_View.extend({
-		className: "upfront-media_manager upfront-media_manager-post_image clearfix",
+		className: "upfront-media_manager upfront-media_manager-post_image upfront-no-select clearfix",
 		_subviews: {
 			media: false,
 			aux: false,
@@ -2230,10 +2269,10 @@ define([
 				me.media_view.render();
 			});
 		},
-		toggle_controls: function () {
-			this.show_controls = !this.show_controls;
-			this._subviews.controls.$el.toggle();
-			this.$el.toggleClass('upfront-media_manager-show_controls');
+		toggle_controls: function (show) {
+			this.show_controls = _.isUndefined(show) ? !this.show_controls : show;
+			this._subviews.controls.$el.toggle(show);
+			this.$el.toggleClass('upfront-media_manager-show_controls', show);
 		},
 		remove: function() {
 			_.each(this._subviews, function(subview, idx) {
@@ -2241,6 +2280,7 @@ define([
 				subview.remove();
 				this._subviews[idx] = false;
 			}, this);
+			Backbone.View.prototype.remove.call(this);
 		}
 	});
 
@@ -2248,10 +2288,10 @@ define([
 		tagName: 'ul',
 		className: 'upfront-media_collection',
 		initialize: function () {
-			this.model.on("add", this.render, this);
-			this.model.on("remove", this.render, this);
-			this.model.on("change", this.update, this);
-			this.model.on("change:selected", this.propagate_selection, this);
+			this.listenTo(this.model, "add", this.render);
+			this.listenTo(this.model, "remove", this.render);
+			this.listenTo(this.model, "change", this.update);
+			this.listenTo(this.model, "change:selected", this.propagate_selection);
 		},
 		render: function () {
 			this.subviews = [];
@@ -2323,6 +2363,11 @@ define([
 					item.set({selected: false}, {silent: true});
 					item.trigger("appearance:update");
 				});
+				// Persistent list also need to be unselected in this case
+				_.each(ActiveFilters.current_models, function(item){
+					item.set({selected: false}, {silent: true});
+					item.trigger("appearance:update");
+				});
 				if (selected) model.set({selected: true}, {silent: true});
 				model.trigger("appearance:update");
 			}
@@ -2336,6 +2381,7 @@ define([
 			_.each(this.subviews, function(subview) {
 				subview.remove();
 			});
+			Backbone.View.prototype.remove.call(this);
 		}
 	});
 		var MediaItem_View = Backbone.View.extend({
@@ -2354,13 +2400,13 @@ define([
 				}
 
 				this.template = _.template("<div class='thumbnail " + cls + "'>{{thumbnail}}</div> <div class='title'>{{post_title}}</div> <div class='upfront-media_item-editor-container' />");
-				Upfront.Events.on("media_manager:media:toggle_titles", this.toggle_title, this);
+				this.listenTo(Upfront.Events, "media_manager:media:toggle_titles", this.toggle_title);
 
-				this.model.on("appearance:update", this.update, this);
+				this.listenTo(this.model, "appearance:update", this.update);
 
-				this.model.on("upload:start", this.upload_start, this);
-				this.model.on("upload:progress", this.upload_progress, this);
-				this.model.on("upload:finish", this.upload_finish, this);
+				this.listenTo(this.model, "upload:start", this.upload_start);
+				this.listenTo(this.model, "upload:progress", this.upload_progress);
+				this.listenTo(this.model, "upload:finish", this.upload_finish);
 			},
 			render: function () {
 				this.$el.empty().append(
@@ -2421,9 +2467,6 @@ define([
 					// redraw media gallery
 					//manager.render_library();
 				}
-			},
-			remove: function() {
-				Upfront.Events.off("media_manager:media:toggle_titles", this.toggle_title);
 			}
 		});
 

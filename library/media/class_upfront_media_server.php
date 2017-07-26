@@ -195,7 +195,7 @@ class Upfront_MediaServer extends Upfront_Server {
 	 * Serve thumbnail custom sizes if was set on Uposts element
 	 */
 	public function serve_custom_size () {
-		$custom_size = get_option('upfront_custom_thumbnail_size', array());
+		$custom_size = Upfront_Cache_Utils::get_option('upfront_custom_thumbnail_size', array());
 
 		if ( !empty($custom_size) ) {
 			$thumbnail_size = json_decode($custom_size);
@@ -234,7 +234,7 @@ class Upfront_MediaServer extends Upfront_Server {
 		if (!$term) $this->_out(new Upfront_JsonResponse_Error("No term"));
 
 		$res = wp_insert_term($term, 'media_label');
-		if (is_wp_error($res)) $this->_out(new Upfront_JsonResponse_Error("Something went wrong" . $res->get_error_message()));
+		if (is_wp_error($res)) $this->_out(new Upfront_JsonResponse_Error("Something went wrong. " . $res->get_error_message()));
 
 		if ($post_ids) {
 			$result = array();
@@ -626,14 +626,14 @@ class Upfront_MediaServer extends Upfront_Server {
 
 		$id = !empty($data['ID']) ? $data['ID'] : false;
 		if (!$id) $this->_out(new Upfront_JsonResponse_Error("Invalid item ID"));
-		
+
 		$alt = !empty($data['alt']) ? $data['alt'] : false;
 
 		$updated = wp_update_post($data);
-		
+
 		// Now, update the attachment alt
 		update_post_meta($id, '_wp_attachment_image_alt', $alt);
-		
+
 		if (!empty($updated)) $this->_out(new Upfront_JsonResponse_Success($updated));
 		else $this->_out(new Upfront_JsonResponse_Error("Error updating the media item"));
 	}
@@ -878,18 +878,6 @@ add_action('init', array('Upfront_MediaServer', 'serve'));
 
 function upfront_media_file_upload () {
 	if (!Upfront_Permissions::current(Upfront_Permissions::UPLOAD)) return false; // Do not inject for users that can't use this
-	$base_url = Upfront::get_root_url();
-
-	$deps = Upfront_CoreDependencies_Registry::get_instance();
-
-	if( Upfront_Debug::get_debugger()->is_dev() ){
-		$deps->add_script("{$base_url}/scripts/file_upload/jquery.fileupload.js");
-		$deps->add_script("{$base_url}/scripts/file_upload/jquery.iframe-transport.js");
-	}else{
-		$deps->add_script("{$base_url}/build/file_upload/jquery.fileupload.js");
-		$deps->add_script("{$base_url}/build/file_upload/jquery.iframe-transport.js");
-	}
-
 
 	echo '<script>var _upfront_media_upload=' . json_encode(array(
 		'normal' => Upfront_UploadHandler::get_action_url('upfront-media-upload'),

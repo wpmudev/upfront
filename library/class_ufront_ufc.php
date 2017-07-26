@@ -38,7 +38,7 @@ class Upfront_UFC {
 	 * @return Upfront_UFC
 	 */
 	public static function init($color = null){
-		self::$_theme_colors = get_option('upfront_' . get_stylesheet() . '_theme_colors');
+		self::$_theme_colors = Upfront_Cache_Utils::get_option('upfront_' . get_stylesheet() . '_theme_colors');
 		self::$_theme_colors = apply_filters(
 			'upfront_get_theme_colors',
 			self::$_theme_colors,

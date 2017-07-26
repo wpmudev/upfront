@@ -1,4 +1,11 @@
-;(function($){define([], function(){
+;(function($){
+	upfrontrjs = window.upfrontrjs || {
+		define: define,
+		require: require,
+		requirejs: requirejs
+	};
+
+	upfrontrjs.define([], function(){
 
 
 var ImageVariants = new Upfront.Collections.ImageVariants( Upfront.mainData.postImageVariants );

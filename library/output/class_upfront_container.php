@@ -159,7 +159,6 @@ abstract class Upfront_Container extends Upfront_Entity {
 					'comments' => Upfront_Comments_Presets_Server::get_instance()->get_presets_ids(),
 					'meta' => Upfront_Meta_Presets_Server::get_instance()->get_presets_ids()
 				),
-				'PostsModel' => Upfront_Posts_Presets_Server::get_instance()->get_presets_ids(),
 				'PlainTxtModel' => Upfront_Text_Presets_Server::get_instance()->get_presets_ids(),
 				'UimageModel' => Upfront_Image_Presets_Server::get_instance()->get_presets_ids(),
 				'UaccordionModel' => Upfront_Accordion_Presets_Server::get_instance()->get_presets_ids(),
@@ -168,6 +167,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 				'UgalleryModel' => Upfront_Gallery_Presets_Server::get_instance()->get_presets_ids(),
 				'USliderModel' => Upfront_Slider_Presets_Server::get_instance()->get_presets_ids(),
 				'UtabsModel' => Upfront_Tab_Presets_Server::get_instance()->get_presets_ids(),
+				'PostsModel' => Upfront_Posts_Presets_Server::get_instance()->get_presets_ids(),
 				'ThisPostModel' => Upfront_Post_Presets_Server::get_instance()->get_presets_ids(),
 				'UwidgetModel' => Upfront_Widget_Presets_Server::get_instance()->get_presets_ids(),
 				'LoginModel' => Upfront_Login_Presets_Server::get_instance()->get_presets_ids(),
@@ -178,11 +178,10 @@ abstract class Upfront_Container extends Upfront_Entity {
 	}
 	
 	public function preset_exist ( $preset, $type, $data_type = '' ) {
-		
 		if( empty( $type ) ) return 'default';
 		
 		$presets = Upfront_Container::_load_presets();
-		
+
 		if ( empty($data_type) ) {
 			$preset_list = isset($presets[$type]) && !empty($presets[$type]) 
 				? $presets[$type] 
@@ -212,7 +211,7 @@ abstract class Upfront_Container extends Upfront_Entity {
 		$data_type = ( 'PostDataModel' === $type ) ? upfront_get_property_value('data_type', $data) : '';
 		if (!empty($raw_preset_map)) foreach ($raw_preset_map as $bp => $pst) {
 			if (empty($pst['preset'])) continue;
-			
+
 			// Check if preset exist, if not use default
 			$pst['preset'] = $this->preset_exist( $pst['preset'], $type, $data_type );
 			
@@ -322,6 +321,14 @@ abstract class Upfront_Container extends Upfront_Entity {
 	public function get_wrapper () {
 		$wrapper_id = $this->_get_property('wrapper_id');
 		return Upfront_Wrapper::get_instance($wrapper_id);
+	}
+
+	public function get_child_data () {
+		return isset($this->_data[$this->_children]) ? $this->_data[$this->_children] : array();
+	}
+
+	public function get_wrappers_data () {
+		return isset($this->_data['wrappers']) ? $this->_data['wrappers'] : array();
 	}
 
 

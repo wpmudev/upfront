@@ -18,7 +18,7 @@ define([
 				new Upfront.Views.Editor.Settings.Item({
 					group: false,
 					fields: [
-						new fields.Checkboxes({
+						new fields.Toggle({
 							model: this.model,
 							className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-checkboxes ugallery-setting-labels',
 							property: 'labelFilters',

@@ -379,7 +379,9 @@
 	box-shadow: none;
 	outline: none;
 }
-.upfront-module-object-group-on-edit .upfront-module {
+.upfront-module-object-group-on-edit .upfront-module,
+.upfront-object-group-on-edit .upfront-object-group-uneditable .upfront-object:hover {
+	background-color: none;
 	box-shadow: none;
 }
 .upfront-module-disabled-all .upfront-entity_meta,
@@ -401,6 +403,9 @@
 .upfront-module-object-group-on-edit .upfront-module.upfront-module-disabled-edit {
   outline: 1px dotted #7f7f7f;
   z-index: 10;
+}
+.upfront-object-group-on-edit.upfront-object-group-editable > .upfront-object-group {
+	outline: 1px dotted #7f7f7f;
 }
 .upfront-objects_container {
 	width: 100%;
@@ -593,7 +598,8 @@
 .upfront-module-group-on-edit > .upfront-entity_meta > .upfront-icon-button,
 .upfront-module-group.controls-visible > .upfront-entity_meta > .upfront-icon-button,
 .upfront-object-group-on-edit > .upfront-object-group > .ui-resizable-handle,
-.upfront-object-group-on-edit > .upfront-object-group > .upfront-entity_meta > .upfront-icon-button {
+.upfront-object-group-on-edit > .upfront-object-group > .upfront-entity_meta > .upfront-icon-button,
+.upfront-object-group-on-edit .upfront-object-group-uneditable .ui-resizable-handle {
   visibility: hidden !important;
 }
 .upfront-module-group-on-edit .upfront-modules_container > .upfront-editable_entities_container > .upfront-wrapper > .ui-resizable-handle,
@@ -936,11 +942,14 @@
 .upfront-module:hover .upfront-object-group .upfront-object-view .upfront-entity-size-hint,
 /* Image size hint within group upon resizing */
 .upfront-wrapper.ui-resizable-resizing .upfront-module-parent-group .uimage-resize-hint {
-  display: none;
+	display: none;
 }
 .upfront-object-group-on-edit .upfront-object-group .upfront-object-view:hover > .upfront-entity-size-hint,
 .upfront-object-group-on-edit .upfront-object-group .upfront-object.ui-resizable-resizing ~ .upfront-entity-size-hint {
 	display: block;
+}
+.upfront-object-group-on-edit .upfront-object-group-uneditable .upfront-object-view:hover > .upfront-entity-size-hint {
+	display: none;
 }
 
 

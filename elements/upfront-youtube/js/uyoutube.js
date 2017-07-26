@@ -254,12 +254,12 @@ var BehaviorPanel = RootSettingsPanel.extend({
 				className: 'optional-field align-center general_settings_item',
 				title: l10n.apperance_title,
 				fields: [
-					new Fields.Radios({
+					new Fields.Radios_Inline({
 						model: this.model,
 						property: 'display_style',
 						layout: "horizontal",
 						label: l10n.display_style,
-						className: 'field-display_style upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios',
+						className: 'field-display_style upfront-field-wrap upfront-field-wrap-multiple upfront-field-padding-top upfront-field-wrap-radios-inline',
 						values: [
 							{
 								label: l10n.gallery_label,
@@ -272,10 +272,10 @@ var BehaviorPanel = RootSettingsPanel.extend({
 						]
 					}),
 
-					new Fields.Checkboxes({
+					new Fields.Toggle({
 						model: this.model,
 						property: 'first_to_thumbnails',
-						className: 'first-video-to-thumbnails',
+						className: 'first-video-to-thumbnails upfront-field-padding-top',
 						default_value: ['1'],
 						values: [
 							{ label: l10n.first_to_thumbnails, value: '1' }
@@ -285,7 +285,7 @@ var BehaviorPanel = RootSettingsPanel.extend({
 						}
 					}),
 
-					new Fields.Checkboxes({
+					new Fields.Toggle({
 						model: this.model,
 						property: 'multiple_show_title',
 						label: "",
@@ -334,10 +334,10 @@ var BehaviorPanel = RootSettingsPanel.extend({
 				title: l10n.playback,
 				className: 'loop-video general_settings_item',
 				fields: [
-					new Fields.Checkboxes({
+					new Fields.Toggle({
 						model: this.model,
 							property: 'autoplay',
-							className: 'autoplay upfront-field-wrap',
+							className: 'autoplay upfront-field-padding-top',
 							values: [
 								{ label: l10n.autoplay, value: 'autoplay' }
 							],
@@ -345,10 +345,10 @@ var BehaviorPanel = RootSettingsPanel.extend({
 								this.model.set_property('autoplay', value);
 							}
 					}),
-					new Fields.Checkboxes({
+					new Fields.Toggle({
 						model: this.model,
 							property: 'loop',
-							className: 'loop upfront-field-wrap',
+							className: 'loop',
 							values: [
 								{ label: l10n.loop, value: 'loop' }
 							],
@@ -366,7 +366,7 @@ var BehaviorPanel = RootSettingsPanel.extend({
 					new Fields.Text({
 						model: this.model,
 						label: l10n.default_video,
-						className: 'multiple_sources yt_first_video',
+						className: 'multiple_sources yt_first_video upfront-field-padding-top',
 						property: 'multiple_source_1',
 						placeholder: l10n.video_placeholder
 					})
@@ -374,13 +374,15 @@ var BehaviorPanel = RootSettingsPanel.extend({
 			}),
 			new SettingsItem({
 				model: this.model,
-				className: 'upfront-add-another-wrapper',
+				className: 'upfront-add-another-wrapper general_settings_item',
 				fields: [
 				new Fields.Button({
-					className: 'upfront-add-another',
+					className: 'upfront-small-button',
 					label: l10n.add_video,
 					compact: true,
-					on_click: function(){
+					on_click: function(event) {
+						if (false === $(event.target).is('input')) return;
+
 						me.cloneMultipleVideo();
 					}
 				})
@@ -420,7 +422,6 @@ var BehaviorPanel = RootSettingsPanel.extend({
 		// Inline checkboxes
 		this.$el.find('[name^=multiple_show_title], [name^=show_title], [name^=show_description]').parent().css({
 		'float': 'left',
-		'margin-top': '22px'
 		});
 	},
 

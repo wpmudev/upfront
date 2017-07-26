@@ -26,7 +26,16 @@ define([
 			this.currentElement = '';
 			var me = this,
 				state = this.options.state,
-				toggleClass = 'no-toggle';
+				toggleClass = 'no-toggle'
+			;
+
+			var globalFont = {
+				typeFace: '',
+				fontStyle: '',
+				fontSize: '',
+				lineHeight: '',
+				fontColor: ''
+			};
 
 			//Increase field counter if inner elements
 			if(typeof me.options.elements !== "undefined") {
@@ -48,12 +57,33 @@ define([
 				toggleClass = 'element-toggled';
 			}
 
+			if(this.options.alignment === true) {
+				this.fieldCounter++;
+			}
+
+			if(typeof this.options.global_typography !== "undefined") {
+				var font_settings = Upfront.mainData.global_typography[this.options.global_typography];
+
+				if(typeof font_settings !== "undefined") {
+
+					// Set global font properties
+					globalFont = {
+						typeFace: font_settings.font_face,
+						fontStyle: font_settings.weight + ' ' + font_settings.style,
+						fontSize: font_settings.size,
+						lineHeight: font_settings.line_height,
+						fontColor: font_settings.color
+					};
+
+				}
+			}
+
 			this.fields = _([
 				new Upfront.Views.Editor.Field.Typeface_Chosen_Select({
 					name: this.currentElement + this.options.fields.typeface,
 					model: this.model,
 					values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_fonts_for_select(),
-					default_value: this.model.get(this.currentElement + this.options.fields.typeface),
+					default_value: this.model.get(this.currentElement + this.options.fields.typeface) || globalFont.typeFace,
 					label: l10n.typeface,
 					select_width: '225px',
 					label_style: 'inline',
@@ -94,7 +124,7 @@ define([
 					model: this.model,
 					name: this.currentElement + this.options.fields.fontstyle,
 					values: Upfront.Views.Editor.Fonts.theme_fonts_collection.get_variants_for_select(me.model.get(this.currentElement + me.options.fields.typeface)),
-					default_value: this.model.get(this.currentElement + this.options.fields.fontstyle),
+					default_value: this.model.get(this.currentElement + this.options.fields.fontstyle) || globalFont.fontStyle,
 					label: l10n.weight_style,
 					font_family: me.model.get(this.options.fields.typeface),
 					select_width: '225px',
@@ -115,28 +145,28 @@ define([
 					}
 				}),
 
-				new Upfront.Views.Editor.Field.Number({
+				new Upfront.Views.Editor.Field.Number_Unit({
 					model: this.model,
-					className: state + '-font-size fontSize ' + toggleClass,
+					className: state + '-font-size field-grid-half fontSize ' + toggleClass,
 					name: this.currentElement + this.options.fields.size,
-					default_value: this.model.get(this.currentElement + this.options.fields.size),
+					default_value: this.model.get(this.currentElement + this.options.fields.size) || globalFont.fontSize,
 					label: l10n.size,
 					label_style: 'inline',
-					suffix: l10n.px,
 					change: function(value) {
 						me.model.set(me.currentElement + me.options.fields.size, value);
 					}
 				}),
 
-				new Upfront.Views.Editor.Field.Number({
+				new Upfront.Views.Editor.Field.Number_Unit({
 					model: this.model,
-					className: state + '-font-lineheight lineHeight ' + toggleClass,
+					className: state + '-font-lineheight field-grid-half field-grid-half-last ' + toggleClass,
 					name: this.currentElement + this.options.fields.line_height,
 					label: l10n.line_height,
 					label_style: 'inline',
-					default_value: this.model.get(this.currentElement + this.options.fields.line_height),
+					default_value: this.model.get(this.currentElement + this.options.fields.line_height) || globalFont.lineHeight,
 					min: 0,
 					step: 0.1,
+
 					change: function(value) {
 						me.model.set(me.currentElement + me.options.fields.line_height, value);
 					}
@@ -146,9 +176,10 @@ define([
 					model: this.model,
 					className: state + '-font-color upfront-field-wrap upfront-field-wrap-color sp-cf fontColor ' + toggleClass,
 					name: this.currentElement + this.options.fields.color,
-					default_value: this.model.get(this.currentElement + this.options.fields.color),
+					default_value: this.model.get(this.currentElement + this.options.fields.color) || globalFont.fontColor,
 					blank_alpha : 0,
 					label_style: 'inline',
+					label_position: 'right',
 					label: l10n.color,
 					spectrum: {
 						preferredFormat: 'rgb',
@@ -167,6 +198,39 @@ define([
 
 			]);
 
+			//Add field positions
+			if(this.options.alignment === true) {
+				this.fields.unshift(
+					new Upfront.Views.Editor.Field.Radios_Inline({
+						className: 'upfront-field-wrap upfront-field-wrap-multiple upfront-field-wrap-radios-inline',
+						model: this.model,
+						name: me.options.fields.alignment,
+						label: l10n.text_alignment,
+						label_style: 'inline',
+						layout: 'horizontal-inline',
+						values: [
+							{
+								value: 'left',
+								label: '',
+								icon: 'align-left'
+							},
+							{
+								value: 'center',
+								label: '',
+								icon: 'align-center'
+							},
+							{
+								value: 'right',
+								label: '',
+								icon: 'align-right'
+							}
+						],
+						change: function (value) {
+							me.model.set(me.options.fields.alignment, value);
+						}
+					})
+				);
+			}
 
 			//Add fields select box
 			if(typeof me.options.elements !== "undefined") {
@@ -197,9 +261,9 @@ define([
 			if(this.options.toggle === true) {
 				this.group = false;
 				this.fields.unshift(
-					new Upfront.Views.Editor.Field.Checkboxes({
+					new Upfront.Views.Editor.Field.Toggle({
 						model: this.model,
-						className: 'useTypography checkbox-title ' + toggleClass,
+						className: 'useTypography upfront-toggle-field checkbox-title ' + toggleClass,
 						name: me.options.fields.use,
 						label: '',
 						multiple: false,
@@ -216,22 +280,12 @@ define([
 							me.reset_fields(value);
 						},
 						show: function(value, $el) {
-							var stateSettings = $el.closest('.state_modules');
+							var stateSettings = $el.closest('.upfront-settings-item-content');
 							//Toggle typography fields
 							if(value == "yes") {
-								stateSettings.find('.'+ state +'-select-element').show();
-								stateSettings.find('.'+ state +'-font-face').show();
-								stateSettings.find('.'+ state +'-font-style').show();
-								stateSettings.find('.'+ state +'-font-size').show();
-								stateSettings.find('.'+ state +'-font-lineheight').show();
-								stateSettings.find('.'+ state +'-font-color').show();
+								stateSettings.find('.'+ state +'-toggle-wrapper').show();
 							} else {
-								stateSettings.find('.'+ state +'-select-element').hide();
-								stateSettings.find('.'+ state +'-font-face').hide();
-								stateSettings.find('.'+ state +'-font-style').hide();
-								stateSettings.find('.'+ state +'-font-size').hide();
-								stateSettings.find('.'+ state +'-font-lineheight').hide();
-								stateSettings.find('.'+ state +'-font-color').hide();
+								stateSettings.find('.'+ state +'-toggle-wrapper').hide();
 							}
 						}
 					})
@@ -242,6 +296,7 @@ define([
 		reset_fields: function(value) {
 			var settings,
 				me = this;
+
 			if(typeof value !== "undefined" && value === "yes") {
 				if(typeof this.options.elements !== "undefined") {
 					_.each(this.options.elements, function(element) {

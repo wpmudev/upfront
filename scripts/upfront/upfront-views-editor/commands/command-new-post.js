@@ -8,7 +8,7 @@
 		], function ( Command ) {
 
 			 return Command.extend({
-						className: "command-new-post",
+						className: "command-new-post sidebar-commands-button light",
 						postView: false,
 						postType: 'post',
 						setMode: false,

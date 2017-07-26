@@ -15,7 +15,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-date_posted-font-size'])) { ?>
-		font-size: <?php echo $properties['static-date_posted-font-size'] ?>px;
+		font-size: <?php echo $properties['static-date_posted-font-size'] ?><?php if(!empty($properties['static-date_posted-font-size-unit'])) { ?><?php echo $properties['static-date_posted-font-size-unit'] ?><?php } else { ?>px<?php } ?>;
 	<?php } ?>
 
 	<?php if (!empty($properties['static-date_posted-font-color'])) { ?>
@@ -23,7 +23,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-date_posted-line-height'])) { ?>
-		line-height: <?php echo $properties['static-date_posted-line-height'] ?>;
+		line-height: <?php echo $properties['static-date_posted-line-height'] ?><?php if(!empty($properties['static-date_posted-line-height-unit'])) { ?><?php echo $properties['static-date_posted-line-height-unit'] ?><?php } ?>;
 	<?php } ?>
 
 }
@@ -47,7 +47,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-title-font-size'])) { ?>
-		font-size: <?php echo $properties['static-title-font-size'] ?>px;
+		font-size: <?php echo $properties['static-title-font-size'] ?><?php if(!empty($properties['static-title-font-size-unit'])) { ?><?php echo $properties['static-title-font-size-unit'] ?><?php } else { ?>px<?php } ?>;
 	<?php } ?>
 
 	<?php if (!empty($properties['static-title-font-color'])) { ?>
@@ -55,7 +55,7 @@
 	<?php } ?>
 
 	<?php if (!empty($properties['static-title-line-height'])) { ?>
-		line-height: <?php echo $properties['static-title-line-height'] ?>;
+		line-height: <?php echo $properties['static-title-line-height'] ?><?php if(!empty($properties['static-title-line-height-unit'])) { ?><?php echo $properties['static-title-line-height-unit'] ?><?php } ?>;
 	<?php } ?>
 
 }

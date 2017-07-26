@@ -3,12 +3,12 @@
 <div class="uslider-slides-setting">
 {[ slides.each(function(slide){ ]}
 <div class="uslider_content_imgslide uslider_content_slide" rel="{{slide.id}}">
-		<div class="uslider_content_img" style="background-image:url({{slide.get('src')}});"></div>
+		<div class="uslider_content_img" style="background-image:url({{slide.get('src').replace(/\(/g, '\\(').replace(/\)/g, '\\)')}});"></div>
 		<img src="{{slide.get('src')}}" />
 		<span class="remove-slide"></span>
 	</div>
 {[ }) ]}
-<div class="uslider-add upfront-bg-slider-add-image upfront-icon upfront-icon-region-add-slide">{{l10n.add_slide}}</div>
+<div class="uslider-add upfront-bg-slider-add-image upfront-icon upfront-icon-add-slide">{{l10n.add_slide}}</div>
 </div>
 </script>
 

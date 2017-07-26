@@ -9,7 +9,7 @@
 	], function ( Command ) {
 
 		return Command.extend({
-			"className": "command-save",
+			"className": "command-save sidebar-commands-button blue",
 			render: function () {
 				Upfront.Events.on("upfront:save:label", this.update_label, this);
 				this.$el.html(l10n.save);

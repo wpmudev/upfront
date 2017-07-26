@@ -14,7 +14,12 @@
                 var self = this;
 
                 if ( !Upfront.Views.PostDataEditor ) {
-                    require(['content'], function() {
+										upfrontrjs = window.upfrontrjs || {
+											define: define,
+											require: require,
+											requirejs: requirejs
+										};
+                    upfrontrjs.require(['content'], function() {
                         if(self.getPostId() !== false) {
                             setTimeout(self.prepare_editor(self));
                             self.initialize_post_data_editor();
@@ -61,9 +66,9 @@
             },
             get_title: function () {
 				if ( Upfront.Application.is_single( "page" ) ) {
-                    return l10n.page_settings;
+                    return Upfront.Settings.l10n.global.content.general;
                 }
-				return l10n.post_settings;
+                return Upfront.Settings.l10n.global.content.general;
             },
 
             on_render: function () {

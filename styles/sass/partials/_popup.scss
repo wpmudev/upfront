@@ -5,8 +5,7 @@
 	height:100%;
 	top: 0;
 	left: 0;
-	background: #263a4d;
-	opacity: .75;
+	background: rgba(33,33,33,0.8);
 	z-index: 100010041;
 }
 #upfront-popup {
@@ -148,6 +147,32 @@ box-shadow: inset 0 2px 0 0 #fff;
 
 #upfront-popup-content .upfront-settings-item-title span {
 	background: #e5f3fe;
+}
+
+
+.upfront-popup-meta .use_selection_container {
+	float: right;
+	text-align: center;
+	background: rgb(31, 205, 143);
+	height: 50px;
+	line-height: 50px;
+}
+.upfront-popup-meta .use_selection_container:hover {
+	background: #3ea;
+}
+.upfront-popup-meta .use_selection_container.inactive {
+	background: #cee1f2;
+}
+
+.upfront-popup-meta .use_selection_container.inactive a{
+	color: #99b3cc;
+	cursor: default;
+}
+.upfront-popup-meta .use_selection_container a {
+	display: block;
+	padding: 0 32px;
+	color: #fff;
+	text-decoration: none;
 }
 
 /* Warning Popup */

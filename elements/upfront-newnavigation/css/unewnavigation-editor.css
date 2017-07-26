@@ -51,7 +51,6 @@ div.upfront-navigation.upfront-editable_entity  ul.menu > li > i.navigation-add-
   z-index:9999;
 }
 
-
 div.upfront-navigation.upfront-editable_entity ul.sub-menu > li > i.navigation-add-item {
 	left: 10px;
 	bottom: -22px !important;
@@ -555,8 +554,8 @@ div.upfront-navigation li.menu-item .uimage-controls a {
 	right:15px;
 }
 
-div.preset-manager-panel .menustyle_settings_item {
-	padding-top: 15px;
+div.preset-manager-panel .upfront-settings-item-title {
+	margin: 0px;
 }
 
 div.preset-manager-panel .menustyle_settings_item .upfront-field-label {
@@ -571,14 +570,22 @@ div.preset-manager-panel .menustyle_settings_item .menu_style {
 
 div.preset-manager-panel .menustyle_settings_item .menu_alignment {
 	width: 90px;
-	margin-top: -45px;
+	margin-top: -40px;
 	position: relative;
 	left: 125px;
+}
+
+div.preset-manager-panel div.menustyle_settings_item .upfront-settings-item-title span {
+	color: #
 }
 
 div.preset-manager-panel .menustyle_settings_item  .burger_alignment {
 	margin-top: 5px;
 	width: 215px;
+}
+
+.select-menu-box .upfront-settings-item-content {
+	padding: 0px 15px !important;
 }
 
 .umenu-controls {
