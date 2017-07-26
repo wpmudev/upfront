@@ -434,7 +434,7 @@ class Upfront_UcontactView extends Upfront_Object {
 			foreach ($layout['regions'] as $region) {
 				if (sizeof($region['modules'])) {
 					foreach ($region['modules'] as $module) {
-						if (sizeof($module['objects'])) {
+						if (isset($module['objects']) && sizeof($module['objects'])) {
 							foreach ($module['objects'] as $object) {
 								if (sizeof($object['properties'])) {
 									foreach ($object['properties'] as $prop) {
