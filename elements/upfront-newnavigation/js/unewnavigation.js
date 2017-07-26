@@ -1302,46 +1302,6 @@
 				}
 
 				me.$el.find('li.new_menu_item i.upfront-icon-region-labelEdit').click(); // enable edit mode via panel
-
-				var me = this,
-					newItem = {
-						'menu-item-object': 'custom',
-						'menu-item-parent-id': 0,
-						//'menu-item-position': -1,
-						'menu-item-target': '',
-						'menu-item-title': 'New Item',
-						'menu-item-type': 'custom',
-						'menu-item-url': ''
-					};
-
-				Upfront.Util.post({
-					action: 'upfront_update_single_menu_item',
-					menuId: menu_id,
-					menuItemData: newItem
-				}).done(
-					function(response) {
-						newItem['menu-item-db-id'] = response.data.itemId;
-						newItem['menu-item-object-id'] = response.data.itemId + '';
-
-						// Gotta do this to save item now with id to make it published
-						Upfront.Util.post({
-							action: 'upfront_update_single_menu_item',
-							menuId: menu_id,
-							menuItemData: newItem
-						}).done(function() {
-							/**
-							 * This will flag the settings panel to scroll down
-							 * to the position of the newly added menu item i.e.,
-							 * at the bottom of the list
-							 */
-						});
-
-					}
-				).fail(
-					function(response) {
-						Upfront.Util.log('Failed saving menu items.');
-					}
-				);
 			},
 
 			getControlItems: function(){
