@@ -261,9 +261,7 @@
 						if ( blurred_editor ) blurred_editor.stop();
 
 						target.closest('li').removeClass('edit_mode');
-						if(!target.hasClass('new_menu_item')) {
-							target.closest('li').data('backboneview').saveLink();
-						}
+						target.closest('li').data('backboneview').saveLink();
 
 
 					}).on('stop', function() {
