@@ -1,1 +1,1 @@
-define(["scripts/upfront/cache/storage-stub"],function(e){return _.extend({},e,{get_storage:function(){return JSON.parse(sessionStorage.getItem(e.get_storage_id())||"{}")},set_storage:function(t){return sessionStorage.setItem(e.get_storage_id(),JSON.stringify(t))}})});
+upfrontrjs.define(["scripts/upfront/cache/storage-stub"],function(t){return _.extend({},t,{get_storage:function(){return JSON.parse(sessionStorage.getItem(t.get_storage_id())||"{}")},set_storage:function(e){return sessionStorage.setItem(t.get_storage_id(),JSON.stringify(e))}})});

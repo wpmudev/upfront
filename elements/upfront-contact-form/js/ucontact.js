@@ -11,7 +11,12 @@ var template = upfront_data.data && upfront_data.data.ucontact && upfront_data.d
 	upfront_data.data.ucontact.template
 	: 'elements/upfront-contact-form/templates/ucontact.html'
 ;
-require(['text!' + template], function(tpl){
+upfrontrjs = window.upfrontrjs || {
+	define: define,
+	require: require,
+	requirejs: requirejs
+};
+upfrontrjs.require(['text!' + template], function(tpl){
 
 var l10n = Upfront.Settings.l10n.contact_element;
 

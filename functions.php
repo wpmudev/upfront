@@ -366,12 +366,17 @@ class Upfront {
 			$save_storage_key .= '_dev';
 		}
 
-		$main_source = $this->_debugger->is_dev() ? "scripts/main.js" : "build/main.js";
-		$script_urls = array(
-			"{$url}/scripts/require.js",
-			admin_url('admin-ajax.php?action=upfront_load_main' . $is_ssl),
-			"{$url}/{$main_source}",
-		);
+		$is_dev = $this->_debugger->is_dev();
+		$main_source = $is_dev ? "scripts/setup.js" : "build/main.js";
+		$script_urls = array();
+
+		// We only need require.js on dev, for build it gets baked into main.js now
+		if ($is_dev) {
+			$script_urls[] = "{$url}/scripts/require.js";
+		}
+		$script_urls[] = admin_url('admin-ajax.php?action=upfront_load_main' . $is_ssl);
+		$script_urls[] = "{$url}/{$main_source}";
+
 		$deps = Upfront_CoreDependencies_Registry::get_instance();
 		foreach ($script_urls as $url) {
 			$deps->add_script($url);

@@ -1545,6 +1545,13 @@
 					status: this.status,
 					post_password: this.post_password
 				})));
+
+				if(this.postVisibility === "sticky") {
+					this.$el.find('#visibility-radio-public').click();
+					this.$el.find('#sticky-span').css('display', 'inline-block');
+					this.$el.find('#sticky-span input').click();
+				}
+
 				return this;
 			},
 			getVisibilityOptions: function () {

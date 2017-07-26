@@ -684,14 +684,14 @@ class Upfront_GridBreakpoint {
 
 	public function __construct ($data) {
 		$this->_debugger = Upfront_Debug::get_debugger();
-		
+
 		if (isset($data['name'])) $this->_name = $data['name'];
 		if (isset($data['short_name'])) $this->_short_name = $data['short_name'];
 		if (isset($data['id'])) $this->_id = $data['id'];
 		if (isset($data['width'])) $this->_width = $data['width'];
 		if (isset($data['columns'])) $this->_columns = $data['columns'];
 		if (isset($data['column_padding'])) $this->_column_padding = $data['column_padding']; // Special-case handling to allow zero-width column paddings
-		
+
 		if (!empty($data['default'])) $this->_default = $data['default'];
 		if (!empty($data['enabled'])) $this->_enabled = $data['enabled'];
 		if (!empty($data['column_width'])) $this->_column_width = $data['column_width'];
@@ -1089,6 +1089,16 @@ class Upfront_GridBreakpoint {
 				$left_padding_use = $breakpoint_data['left_padding_use'];
 			}
 		}
+
+		// When in editor padding is set to 0 it will fallback to default 15px in live
+		//if 0 is recorded as null or false, make sure 0 is 0 if padding is used.
+		if ($top_padding_use || $right_padding_use || $bottom_padding_use || $left_padding_use) {
+			if (false === is_numeric($top_padding)) $top_padding = 0;
+			if (false === is_numeric($right_padding)) $right_padding = 0;
+			if (false === is_numeric($left_padding)) $left_padding = 0;
+			if (false === is_numeric($bottom_padding)) $bottom_padding = 0;
+		}
+
 
 		if ( !in_array('top_padding', $exception) && $top_padding_use && isset($top_padding) && is_numeric($top_padding) ){
 			$style = $this->_top_padding_to_style($top_padding);
