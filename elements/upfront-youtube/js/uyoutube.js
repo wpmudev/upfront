@@ -125,7 +125,7 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 
 		//Call resize function to match player width with object width
 		me.onResizeStop();
-		
+
 		// wait for the video to be added before showing the settings
 		this.listenTo(Upfront.Events, "upfront:youtube:added:done", function(){
 			me.on_settings_click();
@@ -378,7 +378,9 @@ var BehaviorPanel = RootSettingsPanel.extend({
 					className: 'upfront-small-button',
 					label: l10n.add_video,
 					compact: true,
-					on_click: function(){
+					on_click: function(event) {
+						if (false === $(event.target).is('input')) return;
+
 						me.cloneMultipleVideo();
 					}
 				})
@@ -529,7 +531,7 @@ var YoutubeSettings = ElementSettings.extend({
 
 	initialize: function (options) {
 		this.constructor.__super__.initialize.call(this, options);
-		
+
 		this.listenTo(Upfront.Events, "upfront:youtube:added", this.multipleVideos);
 	},
 
