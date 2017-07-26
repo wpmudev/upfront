@@ -81,7 +81,7 @@ class Upfront_Uwidget {
 		));
 
 		if( defined( "DOING_AJAX" ) && DOING_AJAX && is_a($callback[0], "WP_Widget_Calendar")  ){
-			Upfront_Uwidget_WP_Defaults::increment_calendar_widget_instance( $callback[0] );
+			//Upfront_Uwidget_WP_Defaults::increment_calendar_widget_instance( $callback[0] );
 		}
 
 
