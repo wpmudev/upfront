@@ -322,6 +322,13 @@ input.upfront-like-box_url:-ms-input-placeholder {
 	fill: #cc181e;
 	fill-opacity: 1;
 }
+.ufyt_main-video-placeholder .ufyt_main-video-thumb {
+	width: 110%;
+	max-height: none;
+	margin-top: -11%;
+	max-width: 200%;
+	margin-left: -5%;
+}
 .upfront-youtube-container[data-first-hidden="true"] .uyoutube-list-item:first-child,
 .upfront-youtube-container[data-first-hidden="true"] .uyoutube-gallery-item:first-child {
 	display: none;
