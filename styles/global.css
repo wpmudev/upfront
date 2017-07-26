@@ -737,4 +737,8 @@ body .upfront-edit_layout a {
 	{
 		display: none;
 	}
+
+	.upfront-output-upfront-map_element {
+		overflow: hidden;
+	}
 }
