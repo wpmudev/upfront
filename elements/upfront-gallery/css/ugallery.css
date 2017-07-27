@@ -23,6 +23,10 @@
 	display: block;
 }
 
+.ugallery_border .redactor-selection-marker {
+	display: none !important;
+}
+
 .ugallery_item img,
 .ugallery_item a {
 	display: block;
