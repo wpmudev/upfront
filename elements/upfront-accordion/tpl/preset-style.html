@@ -85,7 +85,7 @@
 		background: <?php echo $properties['active-content-bg-color'] ?>;
 	<?php } ?>
 	<?php if(!empty($properties['global-useborder'])) { ?>
-        <?php if(!empty($properties['global-borderwidth']) && !empty($properties['global-bordertype']) && !empty($properties['global-bordercolor'])) { ?>border: <?php echo $properties['global-borderwidth'] ?><?php if(!empty($properties['global-borderwidth-unit'])) { ?><?php echo $properties['global-borderwidth-unit'] ?><?php } else { ?>px<?php } ?><?php echo $properties['global-bordertype'] ?> <?php echo $properties['global-bordercolor'] ?>;<?php } ?>
+        <?php if(!empty($properties['global-borderwidth']) && !empty($properties['global-bordertype']) && !empty($properties['global-bordercolor'])) { ?>border: <?php echo $properties['global-borderwidth'] ?><?php if(!empty($properties['global-borderwidth-unit'])) { ?><?php echo $properties['global-borderwidth-unit'] ?><?php } else { ?>px<?php } ?> <?php echo $properties['global-bordertype'] ?> <?php echo $properties['global-bordercolor'] ?>;<?php } ?>
 	<?php } ?>
 }
 #page .upfront-accordion-container.accordion-preset-<?php echo $properties['id'] ?> .accordion-panel-title:after {
