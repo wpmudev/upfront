@@ -157,6 +157,7 @@
                     this.fields = {
                         element: new Fields.Select({
                             label: l10n.type_element,
+                            className: 'upfront-field-wrap upfront-field-wrap-select upfront-typography-elements',
                             default_value: 'h1',
                             values: [
                                 { label: l10n.h1, value: "h1" },
