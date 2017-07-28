@@ -511,7 +511,7 @@ define([
 							}
 						],
 						change: function(value) {
-							smtp_configuration.update_fields(value);
+							smtp_configuration.update_fields(value === 'yes' ? 'yes' : 'no');
 							
 							var show_authentication = this.model.get_property_value_by_name('smtp_authentication');
 							smtp_authentication.update_fields((show_authentication.length > 0 && show_authentication[0] === 'yes' && value ==='yes') ?'yes':'no');
