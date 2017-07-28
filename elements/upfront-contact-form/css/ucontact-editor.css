@@ -61,6 +61,10 @@ div.no-title div.upfront-settings-item-title {
   padding-bottom: 8px;
 }
 
+#settings .smtp_wrapper_settings_item {
+	margin: 0 15px 0px 15px;
+}
+
 #settings .general_settings_item.smtp-authentication input {
   width: 95%;
 }
