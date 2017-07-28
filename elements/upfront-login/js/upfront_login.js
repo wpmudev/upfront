@@ -455,7 +455,7 @@ define([
 		render: function () {
 			Upfront.Views.Editor.Settings.Item.prototype.render.call(this);
 			this.$el
-				.addClass("upfront_login-item-display_behavior")
+				.addClass("upfront_login-item-display_behavior general_settings_item")
 				.find(".upfront-settings-item-content").addClass("clearfix").end()
 				.hide()
 			;

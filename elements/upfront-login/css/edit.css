@@ -30,12 +30,9 @@
 	width: 80%;
 }
 
-/*.upfront_login-item-display_behavior .upfront-field-multiple,
-.upfront_login-logout_style .upfront-field-multiple {
-	max-width: 48%;
-	margin-right: 1%;
-	float: left;
-}*/
+.upfront_login-item-display_behavior .upfront-settings-item-title {
+	padding-bottom: 8px;
+}
 
 .upfront_login-logout_text {
 	clear:both;
