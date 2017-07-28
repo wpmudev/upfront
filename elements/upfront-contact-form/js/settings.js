@@ -32,6 +32,9 @@ define([
 						property: 'show_subject',
 						relatedField: 'form_subject_label',
 						className: 'field-grid-half upfront-field-padding-top',
+						change : function(value, parent){
+							parent.model.set_property("show_subject", value);
+						},
 						values: [
 							{
 								label: l10n.fields.show_subject,
@@ -44,6 +47,9 @@ define([
 						property: 'show_captcha',
 						className: 'field-grid-half field-grid-half-last upfront-field-padding-top',
 						relatedField: 'form_captcha_label',
+						change : function(value, parent){
+							parent.model.set_property("show_captcha", value);
+						},
 						values: [
 							{
 								label: l10n.fields.show_captcha,
