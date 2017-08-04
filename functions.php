@@ -367,7 +367,8 @@ class Upfront {
 		}
 
 		$is_dev = $this->_debugger->is_dev();
-		$main_source = $is_dev ? "scripts/setup.js" : "build/main.js";
+		$upfront = $theme = wp_get_theme('upfront');
+		$main_source = $is_dev ? "scripts/setup.js" : "build/main-$upfront->version.js";
 		$script_urls = array();
 
 		// We only need require.js on dev, for build it gets baked into main.js now
