@@ -2,9 +2,9 @@
 # This file is distributed under the GNU General Public License v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Upfront 1.9.1.1\n"
+"Project-Id-Version: Upfront 1.9.2-BETA\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/theme/style\n"
-"POT-Creation-Date: 2017-07-26 08:58:32+00:00\n"
+"POT-Creation-Date: 2017-08-04 06:28:09+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -203,7 +203,7 @@ msgid "<p>Content</p>"
 msgstr ""
 
 #: elements/upfront-accordion/lib/uaccordion.php:143
-#: elements/upfront-contact-form/lib/contact_form.php:525
+#: elements/upfront-contact-form/lib/contact_form.php:530
 msgid "Appearance"
 msgstr ""
 
@@ -244,7 +244,7 @@ msgstr ""
 
 #: elements/upfront-accordion/lib/uaccordion.php:150
 #: elements/upfront-button/lib/ubutton.php:104
-#: elements/upfront-contact-form/lib/contact_form.php:531
+#: elements/upfront-contact-form/lib/contact_form.php:536
 #: elements/upfront-image/lib/uimage.php:259
 #: elements/upfront-newnavigation/lib/unewnavigation.php:300
 #: elements/upfront-tabs/lib/utabs.php:143
@@ -268,7 +268,7 @@ msgstr ""
 
 #: elements/upfront-button/lib/ubutton.php:91
 #: elements/upfront-button/lib/upfront_button.php:109
-#: elements/upfront-contact-form/lib/contact_form.php:537
+#: elements/upfront-contact-form/lib/contact_form.php:542
 #: elements/upfront-login/lib/upfront_login.php:178
 #: elements/upfront-login/lib/upfront_login.php:226
 #: library/servers/class_upfront_editor_l10n_server.php:560
@@ -320,7 +320,7 @@ msgid "Textbox Appearance"
 msgstr ""
 
 #: elements/upfront-button/lib/ubutton.php:105
-#: elements/upfront-contact-form/lib/contact_form.php:534
+#: elements/upfront-contact-form/lib/contact_form.php:539
 #: elements/upfront-newnavigation/lib/unewnavigation.php:299
 #: elements/upfront-text/lib/upfront_text.php:154
 #: library/servers/class_upfront_editor_l10n_server.php:495
@@ -341,7 +341,7 @@ msgid "Border"
 msgstr ""
 
 #: elements/upfront-button/lib/upfront_button.php:119
-#: elements/upfront-contact-form/lib/contact_form.php:553
+#: elements/upfront-contact-form/lib/contact_form.php:558
 #: elements/upfront-image/lib/uimage.php:252
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:171
 #: elements/upfront-slider/lib/upfront_slider.php:208
@@ -429,7 +429,7 @@ msgid "Write Custom Code"
 msgstr ""
 
 #: elements/upfront-code/lib/upfront_code.php:121
-#: elements/upfront-contact-form/lib/contact_form.php:545
+#: elements/upfront-contact-form/lib/contact_form.php:550
 #: elements/upfront-maps/lib/upfront_maps.php:124
 #: library/servers/class_upfront_editor_l10n_server.php:854
 msgid "Click to change"
@@ -777,133 +777,133 @@ msgstr ""
 msgid "Reply"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:467
+#: elements/upfront-contact-form/lib/contact_form.php:472
 msgid "Contact"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:468
+#: elements/upfront-contact-form/lib/contact_form.php:473
 msgid "Contact form"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:469
+#: elements/upfront-contact-form/lib/contact_form.php:474
 msgid "Contact Details"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:470
+#: elements/upfront-contact-form/lib/contact_form.php:475
 msgid "Name:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:471
+#: elements/upfront-contact-form/lib/contact_form.php:476
 msgid "Email:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:472
+#: elements/upfront-contact-form/lib/contact_form.php:477
 msgid "Subject:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:473
+#: elements/upfront-contact-form/lib/contact_form.php:478
 msgid "CAPTCHA:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:474
+#: elements/upfront-contact-form/lib/contact_form.php:479
 msgid "Sent from the website"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:475
+#: elements/upfront-contact-form/lib/contact_form.php:480
 msgid "Message:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:476
+#: elements/upfront-contact-form/lib/contact_form.php:481
 msgid "Send"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:477
+#: elements/upfront-contact-form/lib/contact_form.php:482
 msgid "Unknown contact form."
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:478
+#: elements/upfront-contact-form/lib/contact_form.php:483
 msgid "The contact form data is not valid."
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:479
+#: elements/upfront-contact-form/lib/contact_form.php:484
 msgid "Contact form settings stored."
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:480
+#: elements/upfront-contact-form/lib/contact_form.php:485
 msgid "There was a problem storing the contact form settings."
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:481
+#: elements/upfront-contact-form/lib/contact_form.php:486
 msgid "There was an error sending the email."
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:482
+#: elements/upfront-contact-form/lib/contact_form.php:487
 msgid "The CAPTCHA field is not valid."
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:483
+#: elements/upfront-contact-form/lib/contact_form.php:488
 msgid "The email has been sent successfully."
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:484
-#: elements/upfront-contact-form/lib/contact_form.php:541
+#: elements/upfront-contact-form/lib/contact_form.php:489
+#: elements/upfront-contact-form/lib/contact_form.php:546
 msgid "You must write your name."
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:485
+#: elements/upfront-contact-form/lib/contact_form.php:490
 msgid "Your email address is not valid."
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:486
-#: elements/upfront-contact-form/lib/contact_form.php:543
+#: elements/upfront-contact-form/lib/contact_form.php:491
+#: elements/upfront-contact-form/lib/contact_form.php:548
 msgid "You must write a subject for the message."
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:487
+#: elements/upfront-contact-form/lib/contact_form.php:492
 msgid "You forgot to write the message."
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:489
+#: elements/upfront-contact-form/lib/contact_form.php:494
 msgid "Field labels"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:490
+#: elements/upfront-contact-form/lib/contact_form.php:495
 msgid "Text info for every field"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:491
+#: elements/upfront-contact-form/lib/contact_form.php:496
 msgid "Fields"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:492
+#: elements/upfront-contact-form/lib/contact_form.php:497
 msgid "Field inputs"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:493
+#: elements/upfront-contact-form/lib/contact_form.php:498
 msgid "Mesage Field"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:494
+#: elements/upfront-contact-form/lib/contact_form.php:499
 msgid "Mesasge field"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:495
+#: elements/upfront-contact-form/lib/contact_form.php:500
 msgid "Error fields"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:496
+#: elements/upfront-contact-form/lib/contact_form.php:501
 msgid "Fields with errors."
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:497
+#: elements/upfront-contact-form/lib/contact_form.php:502
 msgid "Submit button"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:498
+#: elements/upfront-contact-form/lib/contact_form.php:503
 msgid "Form's submit button"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:501
+#: elements/upfront-contact-form/lib/contact_form.php:506
 #: elements/upfront-like-box/lib/upfront-like-box.php:125
 #: elements/upfront-login/lib/upfront_login.php:191
 #: elements/upfront-maps/lib/upfront_maps.php:95
@@ -918,190 +918,190 @@ msgstr ""
 msgid "General Settings"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:502
+#: elements/upfront-contact-form/lib/contact_form.php:507
 msgid "Send form content to:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:503
+#: elements/upfront-contact-form/lib/contact_form.php:508
 msgid "Contact form submit button text:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:504
+#: elements/upfront-contact-form/lib/contact_form.php:509
 msgid "Use form title"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:505
+#: elements/upfront-contact-form/lib/contact_form.php:510
 msgid "Contact form title:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:508
+#: elements/upfront-contact-form/lib/contact_form.php:513
 msgid "Form validation"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:509
+#: elements/upfront-contact-form/lib/contact_form.php:514
 msgid "Inline"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:510
+#: elements/upfront-contact-form/lib/contact_form.php:515
 msgid "On Submit"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:513
+#: elements/upfront-contact-form/lib/contact_form.php:518
 msgid "Form Fields"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:514
+#: elements/upfront-contact-form/lib/contact_form.php:519
 msgid "Contact Form Fields"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:515
+#: elements/upfront-contact-form/lib/contact_form.php:520
 msgid "Name Field Text:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:516
+#: elements/upfront-contact-form/lib/contact_form.php:521
 msgid "Email Field Text:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:517
+#: elements/upfront-contact-form/lib/contact_form.php:522
 msgid "Message Field Text:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:518
+#: elements/upfront-contact-form/lib/contact_form.php:523
 msgid "Subject field"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:519
+#: elements/upfront-contact-form/lib/contact_form.php:524
 msgid "CAPTCHA"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:520
+#: elements/upfront-contact-form/lib/contact_form.php:525
 msgid "Subject Field text:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:521
+#: elements/upfront-contact-form/lib/contact_form.php:526
 msgid "Default subject:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:522
+#: elements/upfront-contact-form/lib/contact_form.php:527
 msgid "Field Label Location:"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:526
+#: elements/upfront-contact-form/lib/contact_form.php:531
 msgid "Above the field"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:527
+#: elements/upfront-contact-form/lib/contact_form.php:532
 msgid "Over the field"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:528
+#: elements/upfront-contact-form/lib/contact_form.php:533
 msgid "Inline with field"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:530
+#: elements/upfront-contact-form/lib/contact_form.php:535
 msgid "Contact form settings"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:532
+#: elements/upfront-contact-form/lib/contact_form.php:537
 msgid "Field BG"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:533
+#: elements/upfront-contact-form/lib/contact_form.php:538
 msgid "Button BG"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:535
+#: elements/upfront-contact-form/lib/contact_form.php:540
 #: elements/upfront-login/lib/upfront_login.php:174
 #: elements/upfront-login/lib/upfront_login.php:224
 msgid "Field Labels"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:536
+#: elements/upfront-contact-form/lib/contact_form.php:541
 msgid "Field Values"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:538
+#: elements/upfront-contact-form/lib/contact_form.php:543
 msgid "Field & Button"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:539
+#: elements/upfront-contact-form/lib/contact_form.php:544
 #: elements/upfront-search/lib/upfront_search.php:67
 msgid "Field"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:542
+#: elements/upfront-contact-form/lib/contact_form.php:547
 msgid "The email address is not valid."
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:544
+#: elements/upfront-contact-form/lib/contact_form.php:549
 msgid "You forgot to write a message."
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:548
+#: elements/upfront-contact-form/lib/contact_form.php:553
 msgid "Enable SMTP"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:549
+#: elements/upfront-contact-form/lib/contact_form.php:554
 msgid "SMTP Settings"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:550
+#: elements/upfront-contact-form/lib/contact_form.php:555
 msgid "From (Email)"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:551
+#: elements/upfront-contact-form/lib/contact_form.php:556
 msgid "From (Name)"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:552
+#: elements/upfront-contact-form/lib/contact_form.php:557
 msgid "SMTP Host"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:554
+#: elements/upfront-contact-form/lib/contact_form.php:559
 msgid "SSL"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:555
+#: elements/upfront-contact-form/lib/contact_form.php:560
 msgid "TLS"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:556
+#: elements/upfront-contact-form/lib/contact_form.php:561
 msgid "SMTP Port"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:557
+#: elements/upfront-contact-form/lib/contact_form.php:562
 #: library/servers/class_upfront_editor_l10n_server.php:644
 #: library/servers/class_upfront_editor_l10n_server.php:786
 msgid "No"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:558
+#: elements/upfront-contact-form/lib/contact_form.php:563
 #: library/servers/class_upfront_editor_l10n_server.php:645
 #: library/servers/class_upfront_editor_l10n_server.php:785
 msgid "Yes"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:559
+#: elements/upfront-contact-form/lib/contact_form.php:564
 #: elements/upfront-login/lib/upfront_login.php:203
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:37
 msgid "Username"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:560
+#: elements/upfront-contact-form/lib/contact_form.php:565
 #: elements/upfront-login/lib/upfront_login.php:204
 #: library/servers/class_upfront_editor_l10n_server.php:245
 msgid "Password"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:561
+#: elements/upfront-contact-form/lib/contact_form.php:566
 msgid "Configuration"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:562
+#: elements/upfront-contact-form/lib/contact_form.php:567
 msgid "SMTP Secure"
 msgstr ""
 
-#: elements/upfront-contact-form/lib/contact_form.php:563
+#: elements/upfront-contact-form/lib/contact_form.php:568
 msgid "Enable SMTP Authentication"
 msgstr ""
 
@@ -4698,7 +4698,7 @@ msgstr ""
 msgid "Upfront"
 msgstr ""
 
-#: functions.php:395
+#: functions.php:396
 msgid "Please, hold on for just a little bit more"
 msgstr ""
 
