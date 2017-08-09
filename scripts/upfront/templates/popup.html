@@ -316,7 +316,7 @@
 
 			<a class="upfront-pagination_item upfront-pagination_item-skip upfront-pagination_item-next"></a>
 
-			<small>{{totalElements}} <span data-posttype="{{this.options.postType.toLowerCase()}}">{{this.options.postType}}</span></small>
+			<small>{{totalElements}} <span {[ if(this.options.postType){ ]}data-posttype="{{this.options.postType.toLowerCase()}}"{[ } ]}>{{this.options.postType}}</span></small>
 		</div>
 	</script>
 
