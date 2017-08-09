@@ -14987,6 +14987,10 @@ a.ueditor-action-trash:before {
 .upfront-selector-option {
   padding: 5px; }
 
+#upfront-selector-post_type {
+  position: relative;
+  z-index: 9; }
+
 #upfront-selector-post_type .upfront-field-select {
   min-width: 200px;
   margin-left: 10px; }
