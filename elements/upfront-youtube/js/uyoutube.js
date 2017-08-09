@@ -65,8 +65,8 @@ var UyoutubeView = Upfront.Views.ObjectView.extend({
 
 		var multiple_videos = this.model.get_property_value_by_name('multiple_videos');
 		var video_id = multiple_videos.length > 0 ? multiple_videos[0]['id'] : '';
-		var loop = this.model.get_property_value_by_name('loop').length > 0 ? true : false;
-		var autoplay = this.model.get_property_value_by_name('autoplay').length > 0 ? true : false;
+		var loop = (this.model.get_property_value_by_name('loop') && this.model.get_property_value_by_name('loop').length > 0) ? true : false;
+		var autoplay = (this.model.get_property_value_by_name('autoplay') && this.model.get_property_value_by_name('autoplay').length > 0) ? true : false;
 		// Enable or Disable Looping/Autoplay.
 		props.loop_string = loop ? '&loop=1&playlist=' + video_id : '';
 		props.autoplay_string = autoplay ? '&autoplay=1' : '';
