@@ -121,3 +121,7 @@ div.no-title div.upfront-settings-item-title {
 #settings .general_settings_item.smtp-authentication {
   padding-bottom: 17px;
 }
+
+.upfront-field-name-container {
+	margin-top: 25px;
+}
