@@ -109,8 +109,10 @@ define([
 						model: this.model,
 						property: specific_fields[key]['name'],
 						label: '',
+						multiple_field: true,
+						default_value: "",
 						label_style: 'inline',
-						values: [{ label: specific_fields[key]['label'], value: specific_fields[key]['value'] }],
+						values: [{ label: specific_fields[key]['label'], value: 'yes' }],
 						change: this.clear_cache
 					});
 				}

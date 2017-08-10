@@ -1844,7 +1844,19 @@
 					classes += ' upfront-field-multiple-selected';
 				}
 				return '<div class="' + classes + ' upfront_toggle_field"><input ' + this.get_field_attr_html(attr) + ' />' + '<label for="' + id + '" class="upfront_toggle_field_label"><span class="upfront_toggle_field_inner"></span><span class="upfront_toggle_field_switch"></span></label><span class="upfront-field-label-text">' + value.label + '</span></div>';
-			}
+			},
+
+			get_value: function () {
+				var $field = this.get_field();
+
+				if( typeof this.options.multiple_field !== "undefined" && this.options.multiple_field) {
+					return _.map($field, function (el) { return $(el).val(); });
+				} else {
+					return $field.val();
+				}
+
+				return false;
+			},
         });
 
         var OptionalField = Field_Checkboxes.extend({
