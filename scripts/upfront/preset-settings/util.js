@@ -63,9 +63,18 @@ function() {
 		 * @param styleTpl String - style template
 		 */
 		generatePresetsToPage: function(element, styleTpl) {
-			_.each(Upfront.mainData[element + 'Presets'], function(properties) {
-				Util.updatePresetStyle(element, expandBreakpoints(properties), styleTpl);
-			});
+			var elementPresets = Upfront.mainData[element + 'Presets'],
+				elementDefaults = Upfront.mainData['presetDefaults'][element]
+			;
+
+			// Render preset defaults if 'Default' preset missing
+			if ((typeof elementPresets === 'undefined' || !elementPresets) && elementDefaults) {
+				Util.updatePresetStyle(element, elementDefaults, styleTpl);
+			} else {
+				_.each(elementPresets, function (properties) {
+					Util.updatePresetStyle(element, expandBreakpoints(properties), styleTpl);
+				});
+			}
 		},
 
 		getPresetProperties: function (element, preset_id) {

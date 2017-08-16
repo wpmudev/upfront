@@ -32,6 +32,9 @@ define([
 						property: 'show_subject',
 						relatedField: 'form_subject_label',
 						className: 'field-grid-half upfront-field-padding-top',
+						change : function(value, parent){
+							parent.model.set_property("show_subject", value);
+						},
 						values: [
 							{
 								label: l10n.fields.show_subject,
@@ -44,6 +47,9 @@ define([
 						property: 'show_captcha',
 						className: 'field-grid-half field-grid-half-last upfront-field-padding-top',
 						relatedField: 'form_captcha_label',
+						change : function(value, parent){
+							parent.model.set_property("show_captcha", value);
+						},
 						values: [
 							{
 								label: l10n.fields.show_captcha,
@@ -116,7 +122,7 @@ define([
 	});
 
 	var SMTPAuthenticationSettings = Upfront.Views.Editor.Settings.Item.extend({
-		className: 'no-title smtp_settings_item smtp-authentication',
+		className: 'no-title smtp_settings_item smtp-authentication smtp_wrapper_settings_item',
 		initialize: function(opts) {
 			//var showsettings = this.model.get_property_value_by_name('smtp_authentication');
 			this.update_fields();
@@ -155,7 +161,7 @@ define([
 	});
 
 	var SMTPSpecificSettings = Upfront.Views.Editor.Settings.Item.extend({
-		className: 'no-title smtp-configuration smtp_settings_item',
+		className: 'no-title smtp-configuration smtp_settings_item smtp_wrapper_settings_item',
 		initialize: function(opts) {
 			
 			this.authentication = opts.authentication;
@@ -491,7 +497,7 @@ define([
 			var smtp_enable = new Upfront.Views.Editor.Settings.Item({
 				model: this.model,
 				title: l10n.smtp.enable,
-				className: 'general_smtp_settings smtp_settings_item',
+				className: 'general_smtp_settings smtp_settings_item smtp_wrapper_settings_item',
 				fields: [
 					new Upfront.Views.Editor.Field.Toggle({
 						model: this.model,
@@ -505,7 +511,7 @@ define([
 							}
 						],
 						change: function(value) {
-							smtp_configuration.update_fields(value);
+							smtp_configuration.update_fields(value === 'yes' ? 'yes' : 'no');
 							
 							var show_authentication = this.model.get_property_value_by_name('smtp_authentication');
 							smtp_authentication.update_fields((show_authentication.length > 0 && show_authentication[0] === 'yes' && value ==='yes') ?'yes':'no');

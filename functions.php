@@ -367,14 +367,15 @@ class Upfront {
 		}
 
 		$is_dev = $this->_debugger->is_dev();
-		$main_source = $is_dev ? "scripts/setup.js" : "build/main.js";
+		$upfront = $theme = wp_get_theme('upfront');
+		$main_source = $is_dev ? "scripts/setup.js" : "build/main-$upfront->version.js";
 		$script_urls = array();
 
 		// We only need require.js on dev, for build it gets baked into main.js now
 		if ($is_dev) {
 			$script_urls[] = "{$url}/scripts/require.js";
 		}
-		$script_urls[] = admin_url('admin-ajax.php?action=upfront_load_main' . $is_ssl);
+		$script_urls[] = admin_url('admin-ajax.php?action=upfront_load_main&ufver=' . $upfront->version . $is_ssl);
 		$script_urls[] = "{$url}/{$main_source}";
 
 		$deps = Upfront_CoreDependencies_Registry::get_instance();

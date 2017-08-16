@@ -234,6 +234,11 @@ class Upfront_UcontactView extends Upfront_Object {
 				)
 			);
 
+			// Add name and email to email body
+			$name_label = self::_get_l10n('name_label');
+			$email_label = self::_get_l10n('email_label');
+			$message = $message . "\n\n{$name_label} {$name} \n{$email_label} {$email}";
+
 			$emailto = trim($this->_get_property('form_email_to'));
 			if (empty($emailto)) $emailto = Upfront_Cache_Utils::get_option('admin_email');
 			if (!is_email($emailto)) $emailto = false;
@@ -429,7 +434,7 @@ class Upfront_UcontactView extends Upfront_Object {
 			foreach ($layout['regions'] as $region) {
 				if (sizeof($region['modules'])) {
 					foreach ($region['modules'] as $module) {
-						if (sizeof($module['objects'])) {
+						if (isset($module['objects']) && sizeof($module['objects'])) {
 							foreach ($module['objects'] as $object) {
 								if (sizeof($object['properties'])) {
 									foreach ($object['properties'] as $prop) {

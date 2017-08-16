@@ -664,6 +664,10 @@ a.image-edit-button.deactivated:hover {
 	cursor: pointer;
 }
 
+.upfront-ui.uimage-control-panel .ugallery-magnific-add label {
+	cursor: default;
+}
+
 .uimage-control-panel-light:before {
 	content: ' ';
 	position: absolute;

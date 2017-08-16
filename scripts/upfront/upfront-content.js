@@ -1,12 +1,10 @@
 ;(function ($, undefined) {
 
-var deps = [
+define("content", [
 	"text!upfront/templates/content.html",
 	'upfront/post-editor/upfront-post-content',
 	'upfront/post-editor/upfront-post-layout'
-];
-
-define("content", deps, function(postTpl, ContentTools) {
+] , function(postTpl, ContentTools) {
 
 	var PostEditor = function (opts) {
 		var me = this;
