@@ -11,7 +11,7 @@ realperson/jquery.realperson.css
 ----------------
 realperson/jquery.realperson.css
 
-main.js
+main-1.9.2.js
 ----------------
 require.js
 /var/www/local.wordpressmu.dev/wp-includes/js/underscore.min.js
@@ -228,6 +228,9 @@ upfront/objects/loading.js
 upfront/upfront-objects.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/upfront-media/insert-options-item-control.js
 upfront/upfront-media.js
+text!upfront/templates/content.html
+upfront/post-editor/upfront-post-content.js
+upfront/post-editor/upfront-post-layout.js
 upfront/upfront-content.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/bg-settings/mixins.js
 /var/www/local.wordpressmu.dev/wp-content/themes/upfront/scripts/upfront/bg-settings/color-item.js
