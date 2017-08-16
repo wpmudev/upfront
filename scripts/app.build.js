@@ -79,7 +79,7 @@
 	findNestedDependencies: true, // we need this since we have nested require calls
 	modules: [
 	{
-		name: "main-1.9.2-BETA",
+		name: "main-1.9.2",
 		include: ["requireLib", "setup"],
 		create: true
 	}
