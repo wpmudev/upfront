@@ -183,7 +183,19 @@ class Upfront_Uyoutube_Server extends Upfront_Server {
 		);
 		try {
 			$response = wp_remote_get($gdata_video_url);
-			//TODO check errors
+
+			if (is_wp_error($response) && $this->yt_requests !== 3) {
+				// Try again
+				if (isset($this->yt_requests) === false) {
+					$this->yt_requests = 1;
+				} else {
+					$this->yt_requests++;
+				}
+				$this->get_single_video_data();
+				return;
+			} else if (is_wp_error($response)) {
+				return $this->_out(new Upfront_JsonResponse_Error("something fucked up " . json_encode($response)));
+			}
 			$response_json = json_decode($response['body'], true);
 			$data = array(
 				'title' => $response_json['title'],
