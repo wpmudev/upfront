@@ -375,7 +375,7 @@ class Upfront {
 		if ($is_dev) {
 			$script_urls[] = "{$url}/scripts/require.js";
 		}
-		$script_urls[] = admin_url('admin-ajax.php?action=upfront_load_main' . $is_ssl);
+		$script_urls[] = admin_url('admin-ajax.php?action=upfront_load_main&ufver=' . $upfront->version . $is_ssl);
 		$script_urls[] = "{$url}/{$main_source}";
 
 		$deps = Upfront_CoreDependencies_Registry::get_instance();

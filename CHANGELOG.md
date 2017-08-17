@@ -1,6 +1,33 @@
 Change Log
 ============
 
+1.9.2 - 2017-08-16
+-------------------------------------------------------------------------------
+- Fix: YouTube Element adds video on add video control outside click
+- Fix: Accordion Element border options
+- Fix: Post Part Settings - parts are missing
+- Fix: Gallery Element images can get accidentally swapped when editing caption
+- Fix: Posts Element author part cuts off text
+- Fix: Manage Fonts button is not always active
+- Fix: Selecting calendar in Widget Element causes error
+- Fix: Menu Element added to post does not show on front end
+- Fix: Contact Form does not send emails properly in some cases
+- Fix: Map Element map breaks out of element borders
+- Fix: Checkbox is missing in "This is Editor Interface..." dialog
+- Fix: Page Settings radio buttons are cut off
+- Fix: Button Element Settings round corners locked icon is not aligned
+- Fix: Page Settings buttons are misaligned
+- Fix: Contact Form Element is not displaying sender email
+- Fix: Contact Form Element form validation options are not aligned
+- Fix: Media Gallery filter options overlap
+- Fix: Slider Element show controls options are not aligned
+- Fix: Post Settings radio buttons are not aligned
+- Fix: Accordion Element background color not applied properly
+- Fix: Contact Form Element disabling SMTP does not hide related settings
+- Fix: Contact Form Element subject and captcha are not showing until settings are closed
+- Fix: Tab and Accordion Element do not apply preset until they are activated
+- Fix: Menu Element breaks out of narrow regions
+
 1.9.1.1 - 2017-07-26
 -------------------------------------------------------------------------------
 - Fix: Setting element padding to 0px in editor defaults to 15px in live

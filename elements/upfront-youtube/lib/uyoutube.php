@@ -96,7 +96,7 @@ class Upfront_UyoutubeView extends Upfront_Object {
 					$out[$prop['name']] = $prop['value'];
 			return $out;
 	}
-	
+
 	public static function add_l10n_strings ($strings) {
 		if (!empty($strings['youtube_element'])) return $strings;
 		$strings['youtube_element'] = self::_get_l10n();
@@ -142,7 +142,7 @@ class Upfront_UyoutubeView extends Upfront_Object {
 				'thumbnail_label' => __('Thumbnail', 'upfront'),
 				'thumbnail_info' => __('The layer that contains thumbnail image and title.', 'upfront'),
 			),
-		
+
 			'edit_text' => __('Edit Text', 'upfront'),
 		);
 		return !empty($key)
@@ -150,7 +150,7 @@ class Upfront_UyoutubeView extends Upfront_Object {
 			: $l10n
 		;
 	}
-	
+
 
 	public static function add_styles_scripts() {
 		upfront_add_element_style('uyoutube-style', array('css/uyoutube.css', dirname(__FILE__)));
@@ -179,11 +179,23 @@ class Upfront_Uyoutube_Server extends Upfront_Server {
 
 		$gdata_video_url = sprintf(
 			'http://www.youtube.com/oembed?url=%s&format=json',
-			$data['data']['video_id']
+			rawurlencode($data['data']['video_id'])
 		);
 		try {
 			$response = wp_remote_get($gdata_video_url);
-			//TODO check errors
+
+			if (is_wp_error($response) && $this->yt_requests !== 3) {
+				// Try again
+				if (isset($this->yt_requests) === false) {
+					$this->yt_requests = 1;
+				} else {
+					$this->yt_requests++;
+				}
+				$this->get_single_video_data();
+				return;
+			} else if (is_wp_error($response)) {
+				return $this->_out(new Upfront_JsonResponse_Error("something fucked up " . json_encode($response)));
+			}
 			$response_json = json_decode($response['body'], true);
 			$data = array(
 				'title' => $response_json['title'],
