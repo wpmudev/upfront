@@ -2,9 +2,9 @@
 # This file is distributed under the GNU General Public License v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Upfront 1.9.2\n"
+"Project-Id-Version: Upfront 1.9.3-BETA-1\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/theme/style\n"
-"POT-Creation-Date: 2017-08-16 08:31:40+00:00\n"
+"POT-Creation-Date: 2017-08-17 20:05:16+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -2658,7 +2658,7 @@ msgstr ""
 #: elements/upfront-post-data/lib/class_upfront_post_data_l10n_server.php:245
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:191
 #: elements/upfront-posts/lib/class_upfront_posts_data.php:212
-#: library/models/class_upfront_entity_resolver.php:225
+#: library/models/class_upfront_entity_resolver.php:231
 #: library/servers/class_upfront_editor_l10n_server.php:75
 #: library/servers/class_upfront_editor_l10n_server.php:183
 #: library/servers/class_upfront_editor_l10n_server.php:279
@@ -3719,7 +3719,7 @@ msgstr ""
 #: elements/upfront-search/lib/upfront_search.php:54
 #: elements/upfront-search/lib/upfront_search.php:55
 #: library/media/class_upfront_media_server.php:105
-#: library/models/class_upfront_entity_resolver.php:220
+#: library/models/class_upfront_entity_resolver.php:226
 #: library/servers/class_upfront_editor_l10n_server.php:562
 #: library/servers/class_upfront_presets_server.php:648
 msgid "Search"
@@ -5595,24 +5595,24 @@ msgstr ""
 msgid "Sorry, this file type is not permitted for security reasons."
 msgstr ""
 
-#: library/models/class_upfront_entity_resolver.php:181
+#: library/models/class_upfront_entity_resolver.php:187
 msgid "404 Page"
 msgstr ""
 
-#: library/models/class_upfront_entity_resolver.php:185
+#: library/models/class_upfront_entity_resolver.php:191
 msgid "Maintenance Mode"
 msgstr ""
 
-#: library/models/class_upfront_entity_resolver.php:188
+#: library/models/class_upfront_entity_resolver.php:194
 msgid "Single Generic"
 msgstr ""
 
-#: library/models/class_upfront_entity_resolver.php:211
+#: library/models/class_upfront_entity_resolver.php:217
 #: library/servers/class_upfront_editor_l10n_server.php:236
 msgid "Home Page"
 msgstr ""
 
-#: library/models/class_upfront_entity_resolver.php:215
+#: library/models/class_upfront_entity_resolver.php:221
 msgid "Archive"
 msgstr ""
 
