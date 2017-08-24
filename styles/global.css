@@ -663,10 +663,10 @@ body .upfront-edit_layout a {
 @-moz-document url-prefix() {
 	input[type=checkbox] {
 		/* original check box are push outside the viexport */
-		position: absolute;
+		position: relative;
 		z-index: 9999999;
-		margin-left: -17px;
-		margin-top: 3px;
+		margin-left: 0px;
+		margin-top: 14px;
 	}
 
 	#element-settings-sidebar .border_radius_lock input[type=checkbox] + label:before,
