@@ -146,9 +146,10 @@ class Upfront_Compat_CoursePress {
 	public function add_cp_class_to_body($classes) {
 		$layout = Upfront_Layout::get_parsed_cascade();
 
-		$i = str_replace('single-', '', $layout['item']);
+		if( !isset($layout['item']) ) $layout['item'] = '';
+		$i = str_replace( 'single-', '', $layout['item'] );
 
-		if (empty($this->cp_layouts[$i])) return $classes;
+		if ( empty($this->cp_layouts[$i]) ) return $classes;
 
 		$classes[] = 'coursepress';
 
