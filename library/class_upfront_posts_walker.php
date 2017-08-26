@@ -33,6 +33,6 @@ class Upfront_Posts_Walker extends Walker_Page {
 	}
 
 	// Keep from unnecessary processing of $output.
-	public function end_el($output, $item, $depth = 0, $args = array(), $id = 0) {
+	public function end_el($output, $item, $depth = 0, $args = array()) {
 	}
 }
