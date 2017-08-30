@@ -11,7 +11,7 @@ class Upfront_EditorL10n_Server implements IUpfront_Server {
 		add_filter('upfront_l10n', array($this, 'add_l10n_strings'));
 	}
 
-	public function add_l10n_strings ($strings) {
+	public static function add_l10n_strings ($strings) {
 		if (!empty($strings['global'])) return $strings;
 		$strings['global'] = self::_get_l10n();
 		return $strings;
