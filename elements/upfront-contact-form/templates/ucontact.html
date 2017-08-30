@@ -4,7 +4,7 @@
 <?php } ?>
 	<form action="" method="POST">
 		<div class="ucontact-message-container">
-		<?php if ($message) { ?>
+		<?php if ($message && $message_class) { ?>
 			<div class="ucontact-msg msg <?php echo $message_class ?>"><?php echo $message ?></div>
 		<?php } ?>
 		</div>

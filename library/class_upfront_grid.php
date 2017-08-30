@@ -1052,6 +1052,10 @@ class Upfront_GridBreakpoint {
 		$left_padding_use = false;
 		$bottom_padding_use = false;
 		$right_padding_use = false;
+		$top_padding = 0;
+		$right_padding = 0;
+		$left_padding = 0;
+		$bottom_padding = 0;
 
 		if ( $this->is_default() ){
 			$top_padding = $this->_get_property('top_padding_num', $entity);

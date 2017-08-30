@@ -198,6 +198,7 @@ var UcontactView = Upfront.Views.ObjectView.extend({
 	get_content_markup: function() {
 		var args = _.extend({}, this.extract_properties(), {
 			message: false,
+			message_class: false,
 			field_classes: this.getFieldStyleClass(),
 			validate: '',
 			entity_id: '',

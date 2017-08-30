@@ -30,7 +30,7 @@ class Upfront_CodeView extends Upfront_Object {
 	}
 
 	private function _to_scoped_style ($raw, $id) {
-		$id = !empty($id) ? "#{$id}" : '';
+		$id = !empty($id) ? "#{$id} .upfront_code-element" : '.upfront_code-element';
 		$scoped = '';
 		$raw = explode('}', $raw);
 		if (empty($raw)) return $scoped;

@@ -1,6 +1,21 @@
 Change Log
 ============
 
+1.9.3 - 2017-08-23
+-------------------------------------------------------------------------------
+- Add: Load video only when user clicks on play in YouTube Element
+- Add: Properly show post content when there is "more" tag in content
+- Fix: Broken archive URL does not resolve to 404 properly
+- Fix: Import images dialog shows when Editor is started
+- Fix: Tabs Element text now saves correctly
+- Fix: Setting YouTube Element display style to list triggers JavaScript error
+- Fix: Code Element does not look the same in Editor and in front-end
+- Fix: Category and Archives widget options are now working properly
+- Fix: Gallery Element resize and Editor quit causes PHP notices to show
+- Fix: Menu Element post type dropdown hidden behind other elements
+- Fix: Contact Element "Name" label is not editable
+- Fix: YouTube Element setting auto play breaks OK button
+
 1.9.2 - 2017-08-16
 -------------------------------------------------------------------------------
 - Fix: YouTube Element adds video on add video control outside click
