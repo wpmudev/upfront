@@ -38,12 +38,12 @@ class Upfront_Cache_Utils {
 	}
 
 	/**
- 	 * Checks cache for option data first.
- 	 * If none, gets option and caches it.
- 	 * @param string $key The key to the cached data.
- 	 * @param mixed $default The default value to return if no option.
- 	 * @return mixed $result
- 	 */
+	 * Checks cache for option data first.
+	 * If none, gets option and caches it.
+	 * @param string $key The key to the cached data.
+	 * @param mixed $default The default value to return if no option.
+	 * @return mixed $result
+	 */
 	public static function get_option($key, $default = false) {
 		$group = 'upfront_options';
 		// Use default expiration.
@@ -54,6 +54,37 @@ class Upfront_Cache_Utils {
 
 		// Get the option.
 		$result = get_option($key, $default);
+
+		// Cache results if not empty.
+		if (!empty($result) && $result !== '[]' && $result !== '{}') {
+			wp_cache_set($key, $result, $group, $expire);
+		}
+
+		// Return results.
+		return $result;
+	}
+
+	/**
+	 * Checks cache for option data first and replace @n and @r with \n and \r
+	 * If none, gets option and caches it.
+	 * @param string $key The key to the cached data.
+	 * @param mixed $default The default value to return if no option.
+	 * @return mixed $result
+	 */
+	public static function get_option_replaced($key, $default = false) {
+		$group = 'upfront_options';
+		// Use default expiration.
+		$expire = self::$expire;
+		$cached = wp_cache_get($key, $group);
+		// If cached, use that.
+		if (!empty($cached)) return $cached;
+
+		// Get the option.
+		$result = get_option($key, $default);
+
+		// Replace \n and \r with @n and @r
+		$result = str_replace("@n", "\n", $result);
+		$result = str_replace("@r", "\r", $result);
 
 		// Cache results if not empty.
 		if (!empty($result) && $result !== '[]' && $result !== '{}') {
@@ -78,6 +109,37 @@ class Upfront_Cache_Utils {
 		// Delete the old cache item.
 		self::clear_cache($key, $group);
 	
+		// Update the actual option.
+		$result = update_option($key, $value, $autoload);
+		// Cache results if not empty/false.
+		// Caching on update removes the need to run another call for first get_option.
+		// Caching should only take place if update_option does not fail.
+		if (!empty($result) && $result !== '[]' && $result !== '{}') {
+			wp_cache_set($key, $value, $group, $expire);
+		}
+
+		// Return the option updating success.
+		return $result;
+	}
+
+	/**
+	 * Deletes cache then updates the option and replace \n and \r with @n and @r
+	 * @param string $key The key to the cached data.
+	 * @param mixed $value The value to save as the option.
+	 * @return boolean success of deletion.
+	 */
+	public static function update_option_replaced($key, $value, $autoload = null) {
+		$group = 'upfront_options';
+		// Use default expiration.
+		$expire = self::$expire;
+
+		// Delete the old cache item.
+		self::clear_cache($key, $group);
+
+		// Replace \n and \r with @n and @r
+		$value = str_replace("\n", "@n", $value);
+		$value = str_replace("\r", "@r", $value);
+
 		// Update the actual option.
 		$result = update_option($key, $value, $autoload);
 		// Cache results if not empty/false.

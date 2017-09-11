@@ -41,7 +41,7 @@ class Upfront_Server_ResponsiveServer extends Upfront_Server {
 			}
 		}
 
-		$responsive_settings = Upfront_Cache_Utils::get_option('upfront_' . get_stylesheet() . '_responsive_settings');
+		$responsive_settings = Upfront_Cache_Utils::get_option_replaced('upfront_' . get_stylesheet() . '_responsive_settings');
 		$responsive_settings = apply_filters('upfront_get_responsive_settings', $responsive_settings);
 		if (empty($responsive_settings)) {
 			$responsive_settings = array('breakpoints' => $breakpoints);
@@ -56,7 +56,7 @@ class Upfront_Server_ResponsiveServer extends Upfront_Server {
 		do_action('upfront_update_responsive_settings', $responsive_settings);
 
 		if (!has_action('upfront_update_responsive_settings')) {
-			Upfront_Cache_Utils::update_option('upfront_' . get_stylesheet() . '_responsive_settings', json_encode($responsive_settings));
+			Upfront_Cache_Utils::update_option_replaced('upfront_' . get_stylesheet() . '_responsive_settings', json_encode($responsive_settings));
 		}
 
 		$this->_out(new Upfront_JsonResponse_Success(get_stylesheet() . ' responsive settings updated'));
