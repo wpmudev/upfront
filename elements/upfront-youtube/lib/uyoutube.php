@@ -33,8 +33,8 @@ class Upfront_UyoutubeView extends Upfront_Object {
 			'thumbOffset' => 8,
 			'single_video_url' => '',
 			'single_video_id' => '',
-			'player_width' => 384,
-			'player_height' => 240,
+			'player_width' => 0,
+			'player_height' => 0,
 			'youtube_status' => 'starting',
 			'loop' => false,
 			'autoplay' => false
