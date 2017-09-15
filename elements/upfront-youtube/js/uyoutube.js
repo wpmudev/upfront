@@ -276,7 +276,7 @@ var BehaviorPanel = RootSettingsPanel.extend({
 						model: this.model,
 						property: 'first_to_thumbnails',
 						className: 'first-video-to-thumbnails upfront-field-padding-top',
-						default_value: ['1'],
+						default_value: '1',
 						values: [
 							{ label: l10n.first_to_thumbnails, value: '1' }
 						],
