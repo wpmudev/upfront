@@ -76,6 +76,7 @@ jQuery(function($){
 		$(document).on("upfront-breakpoint-change", function (e, breakpoint) {
 			onBreakpointChange(slider, breakpoint);
 			updateSlider(slider);
+			updateBreakpointHeight(slider);
 		});
 
 		setupSlider(slider);
@@ -84,6 +85,7 @@ jQuery(function($){
 			slider.find('.uslides').upfront_default_slider(options);
 			onBreakpointChange(slider, upfront_get_breakpoint());
 			updateSlider(slider);
+			updateBreakpointHeight(slider);
 		}
 
 		function updateSlider(slider) {
@@ -135,6 +137,15 @@ jQuery(function($){
 					slide.removeClass(all_styles.join(' ')).addClass('uslide-' + map[breakpoint]['style']);
 				}
 			});
+		}
+
+		function updateBreakpointHeight(slider) {
+			var textHeight = slider.find('.uslider-texts').height() || 0;
+			var uslides = slider.find('.uslides');
+			// Get height set for the breakpoint.
+			var height = parseInt(slider.css('min-height'), 10);
+			// Update height per breakpoint.
+			uslides.css('padding-top', height - textHeight - 60);
 		}
 	});
 	

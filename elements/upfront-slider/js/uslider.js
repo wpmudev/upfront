@@ -42,7 +42,6 @@ var Uslider_Slide = Backbone.Model.extend({
 var Uslider_Slides = Backbone.Collection.extend({
 	model: Uslider_Slide
 });
-
 /**
  * Define the model - initialize properties to their default values.
  * @type {Upfront.Models.ObjectModel}
@@ -504,6 +503,10 @@ var USliderView = Upfront.Views.ObjectView.extend({
 					: 0
 				;
 			this.$('.uslides').css({ 'padding-top' : wrapper.outerHeight(true) + textHeight});
+
+			// Resize slider to prevent incorrect sizes when changing breakpoints.
+			var attr = this.model.get_breakpoint_property_value('element_attr', true);
+			this.on_element_resizing(attr);
 		}
 	},
 
@@ -658,7 +661,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 					grid: [colWidth, 100], //Second number is never used (fixed height)
 					handles: style == 'right' ? 'e' : 'w',
 					helper: 'uslider-resize-handler',
-					minHeigth: height,
+					minHeight: height,
 					maxHeight: height
 				});
 			},
@@ -1112,6 +1115,9 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			wrapperSize = {width: style == 'side' ? imageWrapper.width() : newElementSize.width, height: newElementSize.height},
 			wrapperCss = {height: wrapperSize.height}
 		;
+
+		// Set element_attr for later use.
+		this.model.set_breakpoint_property('element_attr', attr);
 
 		if(style == 'side') {
 			current.find('.uslide-caption').height(newElementSize.height);
