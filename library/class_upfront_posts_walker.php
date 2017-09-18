@@ -18,7 +18,7 @@ class Upfront_Posts_Walker extends Walker_Page {
 		// Return the list instead of $output.
 		return $this->list;
 	}
-	
+
 	// Keep from unnecessary processing of $output.
 	public function start_lvl( &$output, $depth = 0, $args = array() ) {
 	}
@@ -33,6 +33,6 @@ class Upfront_Posts_Walker extends Walker_Page {
 	}
 
 	// Keep from unnecessary processing of $output.
-	public function end_el($output, $item, $depth = 0, $args = array()) {
+	public function end_el(&$output, $item, $depth = 0, $args = array()) {
 	}
 }
