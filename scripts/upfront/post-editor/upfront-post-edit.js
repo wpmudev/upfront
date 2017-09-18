@@ -1399,7 +1399,7 @@
 
 			render: function () {
 				var self = this,
-					base = this.post.get("guid"),
+					base = this.post.get("permalink"),
 					postTitle = this.post.get("post_title")
 				;
 
