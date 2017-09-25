@@ -836,8 +836,10 @@ jQuery(document).ready(function($){
 					css.position = 'fixed';
 					if ( is_top )
 						css.top = top + body_off.top;
-					else
+					else {
+						css.top = 'auto';
 						css.bottom = bottom;
+					}
 				}
 				if ( is_sub_container ){
 					css.left = 0;
@@ -886,9 +888,9 @@ jQuery(document).ready(function($){
 
 					// If sticky subregion.
 					if ($(this).data('sticky') === 1) {
-						// If scrolled to top of page, switch to position relative.
-						if ($(window).scrollTop() < body_off.top) {
-							$(this).find('.upfront-region-container-bg').css({position: 'relative', top: 0});
+						// If scrolled to top of subregion's home, switch to position relative.
+						if (is_top ? $(window).scrollTop() < body_off.top : $(window).scrollTop() < container_bottom - $(this).height()) {
+							$(this).find('.upfront-region-container-bg').css({position: 'relative', top: ''});
 							// Make sure subregion is on top of page (scrolling fast made it forget to go to the top).
 							css.top = 0;
 						} else {
