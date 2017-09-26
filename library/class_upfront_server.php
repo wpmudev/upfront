@@ -77,6 +77,9 @@ abstract class Upfront_Server implements IUpfront_Server {
 			header('Expires: ' . gmdate( "D, d M Y H:i:s", time() + $offset ) . ' GMT');
 			header("Cache-Control: private, max-age={$offset}");
 			header("Pragma: cache");
+
+			$signature = $out->get_signature();
+			if (!empty($signature)) header(sprintf('ETag: "%s"', $signature));
 		}
 
 		die($out->get_output());
