@@ -246,10 +246,14 @@ define([
 			update_background_image: function ($type, $overlay) {
 				var $bg = typeof this.$bg != 'undefined' ? this.$bg : this.$el,
 					image = this.model.get_breakpoint_property_value('background_image', true),
-					ratio = parseFloat(this.model.get_breakpoint_property_value('background_image_ratio', true))
+					ratio = parseFloat(this.model.get_breakpoint_property_value('background_image_ratio', true)),
+					style = this.model.get_breakpoint_property_value('background_style', true)
 				;
 				this.remove_api_key_overlay();
-				this.update_background_color();
+				// Only set background color for non-parallax bgs to avoid covering it up in some instances.
+				if (style !== 'parallax') {
+					this.update_background_color();
+				}
 				this._update_background_image_from_data({
 					image: image,
 					ratio: ratio
