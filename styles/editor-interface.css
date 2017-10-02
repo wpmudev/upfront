@@ -660,7 +660,8 @@ em {
   font-weight: 600; }
 
 #sidebar-ui .sidebar-commands-control .exit-responsive {
-  margin-left: 18px !important; }
+  margin-left: 18px !important;
+  margin-right: 75px !important; }
 
 #sidebar-ui .sidebar-commands-control .command-start-responsive:before {
   opacity: 1; }

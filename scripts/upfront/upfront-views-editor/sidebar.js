@@ -211,8 +211,9 @@
             initialize: function () {
                 if (Upfront.Application.user_can_modify_layout()) {
 									var cs = [
-										new Commands.Command_ResponsiveUndo({"model": this.model}),
-										new Commands.Command_ResponsiveRedo({"model": this.model}),
+									    //
+										//new Commands.Command_ResponsiveUndo({"model": this.model}),
+										//new Commands.Command_ResponsiveRedo({"model": this.model}),
 										new Commands.Command_StopResponsiveMode({"model": this.model}),
 										new Commands.Command_ToggleGrid({"model": this.model})
 									];

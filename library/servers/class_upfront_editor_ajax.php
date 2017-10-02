@@ -244,7 +244,9 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		$total_posts = array_sum( (array) $num_posts );
 		// Subtract post types that are not included in the admin all list.
 		foreach ( get_post_stati( array( 'show_in_admin_all_list' => false ) ) as $state ) {
-			$total_posts -= $num_posts->$state;
+			if ( isset( $num_posts->$state ) && ! empty( $num_posts->$state ) ) {
+				$total_posts -= $num_posts->$state;
+			}
 		}
 
 		$l10n = Upfront_EditorL10n_Server::add_l10n_strings(array());
