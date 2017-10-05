@@ -69,9 +69,12 @@ jQuery(function($){
 	};
 
 	var bindShuffle = function($ugallery_grid, force) {
-		if (Modernizr.mq('only all and (max-width: 1079px)')) {
-			return;
-		}
+		/*
+		 * Disables following for small screens. Commented out as this breaks labels functionality.
+		 *if (Modernizr.mq('only all and (max-width: 1079px)')) {
+		 *  return;
+		 *}
+		 */
 		if (!force) {
 			if (resizedInDesktop) {
 				return;
