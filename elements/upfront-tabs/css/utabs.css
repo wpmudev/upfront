@@ -69,3 +69,7 @@
 .utab-content-active {
 	display: block;
 }
+
+.upfront-tabs_module .upfront-element-controls .upfront-inline-panel {
+	top: -32px;
+}

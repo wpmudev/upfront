@@ -119,3 +119,8 @@
 	vertical-align: middle;
 	width: 87px;
 }
+
+.upfront-accordion_module .upfront-element-controls .upfront-inline-panel {
+	top: -32px;
+}
+
