@@ -47,7 +47,7 @@ define([
 					selected_widget = widget;
 					current_widget = widget;
 
-					self.udpate_fields();
+					self.update_fields();
 
 					self.render();
 
@@ -64,9 +64,9 @@ define([
 		},
 		initialize: function() {
 			selected_widget = current_widget;
-			this.udpate_fields();
+			this.update_fields();
 		},
-		udpate_fields: function() {
+		update_fields: function() {
 			var self = this;
 			this.fields=_([]);
 			var specific_fields = this.model.get_property_value_by_name('current_widget_specific_fields') || this.model.get_property_value_by_name('widget_specific_fields');

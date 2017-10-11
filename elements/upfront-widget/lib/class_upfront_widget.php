@@ -7,6 +7,21 @@ class Upfront_Uwidget {
 
 	public function __construct ($widget) {
 		$this->_widget_name = $widget;
+		$this->force_legacy_text();
+	}
+
+	/**
+	 * In WP 4.8.0 visual editor for text widget was introduced and only way to make it compatible
+	 * with our parsing of settings is to force legacy text widget.
+	 */
+	private function force_legacy_text() {
+		add_filter('widget_form_callback', array($this, 'modify_text_instance'), 10, 2);
+	}
+
+	public function modify_text_instance($instance, $widget) {
+		if ($widget->option_name !== 'widget_text') return $instance;
+		$instance['visual'] = false;
+		return $instance;
 	}
 
 	public static function get_widget_list () {
@@ -14,11 +29,10 @@ class Upfront_Uwidget {
 		$data = array();
 
 		foreach ($wp_registered_widgets as $key => $widget) {
-			// Temporary disable widgets with JS admin fields
+			// Don't include media widgets added in 4.8.0, they're not compatible
 			if( $widget['name'] === "Image" ||
 				$widget['name'] === "Video" ||
-				$widget['name'] === "Audio" ||
-				$widget['name'] === "Text"
+				$widget['name'] === "Audio"
 			) {
 				continue;
 			}
