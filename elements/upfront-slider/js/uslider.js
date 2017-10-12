@@ -272,16 +272,16 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		props.slidesLength = props.slides.length;
 
 		props.imageWidth = '100%';
-		props.textWidth = '100%';		
-		
+		props.textWidth = '100%';
+
 		if(props.primaryStyle == 'side') {
 			var imgPercent = Math.round(props.rightImageWidth / props.rightWidth * 100)
 				textPercent = Math.round((props.rightWidth - props.rightImageWidth) / props.rightWidth * 100)
 			;
-			
+
 			props.imageWidth = imgPercent + '%';
 			props.textWidth = textPercent + '%';
-			
+
 			// If total is 101 because of the round we decrease textWidth with 1%
 			if((imgPercent + textPercent) > 100) {
 				props.textWidth = (textPercent - 1) + '%';
@@ -649,7 +649,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				elementCols = me.get_element_columns();
 				colWidth = me.get_element_max_columns_px() / me.get_element_max_columns();
 				height = $slide.height();
-								
+
 				ui.element.parent().closest('.ui-resizable').resizable('disable');
 
 				$slide.resizable('option', {
@@ -665,13 +665,13 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			resize: function(e, ui){
 				if(!ui.element.hasClass('uslide-image'))
 					return;
-				
+
 				var padding_left = parseInt( me.model.get_breakpoint_property_value("left_padding_use", true) ?  me.model.get_breakpoint_property_value('left_padding_num', true) : 0, 10 ),
 					padding_right = parseInt( me.model.get_breakpoint_property_value("right_padding_use", true) ? me.model.get_breakpoint_property_value('right_padding_num', true) : 0, 10 ),
 					newElementWidth = parseInt( elementWidth - ( padding_left + padding_right ) ),
 					imageWidth = ui.helper.width(),
 					textWidth = newElementWidth - imageWidth - 20,
-					textCss = {width: textWidth},	
+					textCss = {width: textWidth},
 					imgCss = {width: imageWidth}
 				;
 
@@ -890,7 +890,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		me.listenTo(link, 'change', function(data) {
 			// If we have boolean type return
 			if(data === true) return;
-			
+
 			slide.set({link: data.toJSON()}, {silent:true});
 			// Rather than changing template rendering set properties that tempalte uses also
 			slide.set({
@@ -916,12 +916,12 @@ var USliderView = Upfront.Views.ObjectView.extend({
 			me.$el.find('.upfront-default-slider-item-current a')
 				.attr('target', data.get('target'));
 		});
-		
+
 		// Update wrapper size
 		me.listenTo(linkPanel, 'linkpanel:update:wrapper', function() {
 			control.updateWrapperSize();
 		});
-			
+
 		this.currentSlideLink = link;
 
 		control.icon = 'link';
@@ -1311,15 +1311,17 @@ var USliderView = Upfront.Views.ObjectView.extend({
 	},
 
 	// removeSlide: function(item) {
-	removeSlide: function() {
-		this.startingHeight = this.$('.upfront-slider').height();
+	removeSlide: function(slide) {
+		if (false === confirm(l10n.delete_slide_confirm)) return;
 
-		if (confirm(l10n.delete_slide_confirm)) {
-			// It's very important that next line goes before removing slide from collection
-			var currentSlide = this.getCurrentSlide();
-			this.setCurrentSlide( currentSlide > 0 ? currentSlide - 1 : 0 );
-			this.model.slideCollection.remove(this.model.slideCollection.at(currentSlide).id);
+		if (typeof slide === 'undefined') {
+			slide = this.getCurrentSlide();
 		}
+
+		// It's very important that next line goes before removing slide from collection
+		this.setCurrentSlide( slide > 0 ? slide - 1 : 0 );
+
+		this.model.slideCollection.remove(this.model.slideCollection.at(slide).id);
 	},
 
 	getCurrentSlide: function() {
@@ -1535,18 +1537,18 @@ var USliderView = Upfront.Views.ObjectView.extend({
 		moreOptions.tooltip = Upfront.Settings.l10n.global.views.more_options;
 		moreOptions.sub_items = {};
 
-		
+
 		moreOptions.sub_items['crop'] = this.createControl('crop', l10n.edit_img, 'imageEditMask');
-		
+
 
 		if( multiControls ) {
 			moreOptions.sub_items['caption'] = captionControl;
 		}
 
 		moreOptions.sub_items['link'] = this.createLinkControl();
-		
+
 		moreOptions.sub_items['add'] = this.createControl('add', l10n.add_slide, 'openImageSelector');
-		
+
 		moreOptions.sub_items['remove'] = this.createControl('remove', l10n.remove_slide, 'onRemoveSlide');
 
 		var controls = _([
