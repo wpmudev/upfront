@@ -970,8 +970,10 @@ PostContentEditor.prototype = {
 					view.trigger(e);
 				});
 				var results = {};
+				// Sometimes title gets updated in sidebar but is not reflected in me.currentData, hard check for that
+				var title = $('input.ueditor-post-title-text').val();
 				if( (e=='publish' || e=='draft' || e=='auto-draft') ){
-					results.title = me.currentData.title;
+					results.title = title || me.currentData.title;
 					results.content = me.currentData.content;
 					results.excerpt = me.currentData.excerpt;
 					results.author = me.currentData.author;

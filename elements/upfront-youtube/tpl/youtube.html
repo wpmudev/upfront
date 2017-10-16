@@ -1,6 +1,6 @@
 <div class="upfront-youtube-container <?php if ($multiple_videos && count($multiple_videos) < 2) { ?>uyoutube-single<?php } else { ?>uyoutube-multiple-<?php echo $display_style ?><?php } ?>"
 	<?php if(count($multiple_videos) > 0) { ?>
-		<?php if(empty($first_to_thumbnails[0])) { ?>data-first-hidden="true"<?php } ?>
+		<?php if(empty($first_to_thumbnails)) { ?>data-first-hidden="true"<?php } ?>
 	<?php } ?>
 	>
 
@@ -45,7 +45,7 @@
 						<div class="uyoutube-content-holder">
 					<?php } ?>
 
-						<?php if(!empty($multiple_show_title[0])){ ?>
+						<?php if(!empty($multiple_show_title)){ ?>
 						<h4 class="uyoutube-title"><?php echo $multiple_videos[$i]['title'] ?></h4>
 						<?php } ?>
 					</div>

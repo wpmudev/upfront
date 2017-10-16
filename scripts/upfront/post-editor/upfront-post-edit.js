@@ -1399,7 +1399,7 @@
 
 			render: function () {
 				var self = this,
-					base = this.post.get("guid"),
+					base = this.post.get("permalink"),
 					postTitle = this.post.get("post_title")
 				;
 
@@ -1536,7 +1536,7 @@
 				this.render();
 			},
 			render: function () {
-				this.postVisibility = !this.postVisibility ? this.post.getVisibility() : this.postVisibility;
+				this.postVisibility = this.post.getVisibility();
 				this.status = this.visibilityOptions[this.postVisibility];
 				if (this.postVisibility == 'password')
 					this.post_password = this.post.get('post_password');
@@ -1545,7 +1545,6 @@
 					status: this.status,
 					post_password: this.post_password
 				})));
-
 				if(this.postVisibility === "sticky") {
 					this.$el.find('#visibility-radio-public').click();
 					this.$el.find('#sticky-span').css('display', 'inline-block');
@@ -1575,7 +1574,8 @@
 			update: function () {
 				var $pass = this.$(".ueditor-post-pass"),
 					pass = $pass.val();
-				this.postVisibility = this.$("input[name='sticky']").is(":checked") ? this.postVisibility = "sticky" : this.postVisibility;
+
+				this.postVisibility = (this.$("input[name='sticky']").is(":checked") && this.postVisibility === 'public') ? this.postVisibility = "sticky" : this.postVisibility;
 
 				if (!this.visibilityOptions.hasOwnProperty(this.postVisibility)) return;
 

@@ -660,7 +660,8 @@ em {
   font-weight: 600; }
 
 #sidebar-ui .sidebar-commands-control .exit-responsive {
-  margin-left: 18px !important; }
+  margin-left: 18px !important;
+  margin-right: 75px !important; }
 
 #sidebar-ui .sidebar-commands-control .command-start-responsive:before {
   opacity: 1; }
@@ -5618,7 +5619,7 @@ div.upfront-bg-setting-tab-slider .upfront-field-wrap label.upfront-field-label-
 
 .uf-bgsettings-slideritem .uf-bgsettings-slider-time {
   display: inline-block;
-  margin-left: 15px;
+  margin-left: 12px;
   margin-top: 0;
   width: 50%; }
 

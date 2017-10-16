@@ -24,18 +24,19 @@
 						},
 						on_click: function () {
 								var me = this,
-										popup = Upfront.Popup.open(function (data, $top, $bottom) {
-												var $me = $(this);
-												$me.empty()
-														.append('<p class="upfront-popup-placeholder">' + l10n.popup_preloader + '</p>')
-												;
-												me.$popup = {
-														"top": $top,
-														"content": $me,
-														"bottom": $bottom
-												};
-										})
-										;
+									postTypes = '',
+									popup = Upfront.Popup.open(function (data, $top, $bottom) {
+											var $me = $(this);
+											$me.empty()
+													.append('<p class="upfront-popup-placeholder">' + l10n.popup_preloader + '</p>')
+											;
+											me.$popup = {
+													"top": $top,
+													"content": $me,
+													"bottom": $bottom
+											};
+									})
+								;
 								// Add class for styling purposes.
 								me.$popup.top.parent().addClass('upfront-popup-posts');
 								var has_comments = false,
@@ -50,12 +51,19 @@
 												: false
 										;
 								}
+
+								if(typeof Upfront.mainData.content_settings.post_types !== "undefined") {
+									if(Upfront.mainData.content_settings.post_types.length > 3) {
+										postTypes = '<li data-type="cpts">' + l10n.cpts + '</li>';
+									}
+								}
+
 								me.$popup.top.html(
 										'<ul class="upfront-tabs">' +
 											'<li data-type="posts" class="active">' + l10n.posts + '</li>' +
 											'<li data-type="pages">' + l10n.pages + '</li>' +
 											// If Custom Post Type, display tab.
-											(Upfront.mainData.content_settings.post_types.length > 3 ? '<li data-type="cpts">' + l10n.cpts + '</li>': '') +
+											postTypes +
 											// Comment out comments functionality for now.
 											//(has_comments ? '<li data-type="comments">' + l10n.comments + '</li>' : '') +
 										'</ul>' +

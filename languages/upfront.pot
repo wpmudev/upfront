@@ -2,9 +2,9 @@
 # This file is distributed under the GNU General Public License v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Upfront 1.9.3-BETA-1\n"
+"Project-Id-Version: Upfront 1.9.4\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/theme/style\n"
-"POT-Creation-Date: 2017-08-17 20:05:16+00:00\n"
+"POT-Creation-Date: 2017-10-16 08:18:14+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -5240,7 +5240,7 @@ msgstr ""
 msgid "Install Snapshot"
 msgstr ""
 
-#: library/compat/class_upfront_compat_coursepress.php:293
+#: library/compat/class_upfront_compat_coursepress.php:294
 msgid "This is virtual page handled by CoursePress."
 msgstr ""
 
@@ -5645,7 +5645,7 @@ msgid ""
 "so <a href=\"%s\">here</a>"
 msgstr ""
 
-#: library/servers/class_upfront_editor_ajax.php:322
+#: library/servers/class_upfront_editor_ajax.php:324
 msgid "%1$s %2$d"
 msgstr ""
 
