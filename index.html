@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width">
+		<title>test css parsing</title>
+	<style>
+	textarea {
+		height: 100%;
+		width: 50%;
+	}
+	</style>
+		link
+	</head>
+	<body>
+<style id="css">
+/*
+oddly broken up comment
+*/
+/* starting comment */
+* {
+  -webkit-box-sizing: border-box;
+  /* in line between rules */
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; /* at the end of rule */
+}
+*:before,  *:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+html {
+  /* first member of the fule */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* one */
+/* two */
+/* typo */
+.upfront-object h1,
+.upfront-output-object h1 {
+  letter-spacing: -0.025em;
+}
+.upfront-object blockquote.upfront-quote-alternative,
+.upfront-output-object blockquote.upfront-quote-alternative {
+  border-left: 1px solid #ufc1;
+  padding: 0 0 0 15px;
+}
+
+/* some code commented out */
+
+/*
+.upfront-object a,
+.upfront-output-object a {
+    -webkit-transition: color 0.25s ease-out;
+    -moz-transition: color 0.25s ease-out;
+    -o-transition: color 0.25s ease-out;
+    transition: color 0.25s ease-out;
+}
+*/
+
+
+ /* links */
+.upfront-object a,
+.upfront-output-object a {
+    -webkit-transition: color 0.25s ease-out;
+    -moz-transition: color 0.25s ease-out;
+    -o-transition: color 0.25s ease-out;
+    transition: color 0.25s ease-out;
+}
+.upfront-object a:focus,
+.upfront-output-object a:focus {
+    color: #ufc1;
+}
+
+/* lists */
+.upfront-object ul ul,
+.upfront-output-object ul ul {
+  list-style-type: disc;
+  margin-left: 1.5em;
+}
+.upfront-object ol,
+.upfront-output-object ol {
+  margin-left: 1.5em;
+}
+.upfront-object ul li,
+.upfront-output-object ul li,
+.upfront-object ol li,
+.upfront-output-object ol li {
+  padding-left: 10px;
+}
+
+/* forms */
+.upfront-object input:not(.upfront-field-text)::-moz-input-placeholder,
+.upfront-output-object input:not(.upfront-field-text)::-moz-input-placeholder {
+  color: #ufc1;
+  font-family: \\\'Lato\\\', Arial, sans-serif;
+  font-weight: 400;
+}
+.upfront-object textarea:not(.upfront-field-textarea)::-moz-input-placeholder,
+.upfront-output-object textarea:not(.upfront-field-textarea)::-moz-input-placeholder {
+  color: #ufc1;
+  font-family: \\\'Lato\\\', Arial, sans-serif;
+  font-weight: 400;
+}
+.upfront-object input:not(.upfront-field-text):-moz-input-placeholder,
+.upfront-output-object input:not(.upfront-field-text):-moz-input-placeholder {
+  color: #ufc1;
+  font-family: \\\'Lato\\\', Arial, sans-serif;
+  font-weight: 400;
+}
+.upfront-object textarea:not(.upfront-field-textarea):-moz-input-placeholder,
+.upfront-output-object textarea:not(.upfront-field-textarea):-moz-input-placeholder {
+  color: #ufc1;
+  font-family: \\\'Lato\\\', Arial, sans-serif;
+  font-weight: 400;
+}
+.upfront-object input:not(.upfront-field-text)::-ms-input-placeholder,
+.upfront-output-object input:not(.upfront-field-text)::-ms-input-placeholder {
+  color: #ufc1;
+  font-family: \\\'Lato\\\', Arial, sans-serif;
+  font-weight: 400;
+}
+.upfront-object textarea:not(.upfront-field-textarea)::-ms-input-placeholder,
+.upfront-output-object textarea:not(.upfront-field-textarea)::-ms-input-placeholder {
+  color: #ufc1;
+  font-family: \\\'Lato\\\', Arial, sans-serif;
+  font-weight: 400;
+}
+.upfront-object input:not(.upfront-field-text)::-webkit-input-placeholder,
+.upfront-output-object input:not(.upfront-field-text)::-webkit-input-placeholder {
+  color: #ufc1;
+  font-family: \\\'Lato\\\', Arial, sans-serif;
+  font-weight: 400;
+}
+.upfront-object textarea:not(.upfront-field-textarea)::-webkit-input-placeholder,
+.upfront-output-object textarea:not(.upfront-field-textarea)::-webkit-input-placeholder {
+  color: #ufc1;
+  font-family: \\\'Lato\\\', Arial, sans-serif;
+  font-weight: 400;
+}
+.upfront-object input[type="text"]:not(.upfront-field-text),
+.upfront-object input[type="email"],
+.upfront-object input[type="password"],
+.upfront-object input[type="search"],
+.upfront-object input[type="number"],
+.upfront-object input[type="tel"],
+.upfront-object textarea:not(.upfront-field-textarea),
+.upfront-output-object input[type="text"]:not(.upfront-field-text),
+.upfront-output-object input[type="email"],
+.upfront-output-object input[type="password"],
+.upfront-output-object input[type="search"],
+.upfront-output-object input[type="number"],
+.upfront-output-object input[type="tel"],
+.upfront-output-object textarea:not(.upfront-field-textarea) {
+  border-radius: 20px;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  color: #ufc0;
+  display: block;
+  font-family: \\\'Lato\\\', Arial, sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  font-style: normal;
+  height: 35px;
+  line-height: 2.5em;
+  padding: 0 20px;
+  width: 100%;
+}
+.upfront-object textarea:not(.upfront-field-textarea),
+.upfront-output-object textarea:not(.upfront-field-textarea) {
+  height: 10em;
+  padding: 10px 20px;
+  resize: vertical;
+}
+.upfront-object input[type="submit"],
+.upfront-output-object input[type="submit"],
+.upfront-object button[type="submit"],
+.upfront-output-object button[type="submit"] {
+  background: #ufc0;
+  color: #ufc3;
+  font-family: \\\'Lato\\\', Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 2.5em;
+  -webkit-transition: all 0.25s ease-out;
+  -moz-transition: all 0.25s ease-out;
+  -o-transition: all 0.25s ease-out;
+  transition: all 0.25s ease-out;
+}
+.upfront-object input[type="submit"]:hover,
+.upfront-output-object input[type="submit"]:hover,
+.upfront-object button[type="submit"]:hover,
+.upfront-output-object button[type="submit"]:hover {
+  background: #ufc5;
+}
+
+/* gallery lightbox */
+.mfp-bg {
+    background: rgba(255,255,255,0.8) !important;
+}
+.mfp-arrow-left.mfp-arrow:after,
+.mfp-arrow-right.mfp-arrow:after {
+    content: "";
+    display: none;
+}
+.mfp-arrow-right.mfp-arrow:before,
+.mfp-arrow-left.mfp-arrow:before {
+  background: url("UPFRONT_THEME_BASE/ui/gillie-sprite_v2.png") no-repeat;
+  background-image: url("UPFRONT_THEME_BASE/ui/gillie-sprite_v2.svg"), none;
+  border: none;
+  content: "";
+  display: block;
+  height: 20px;
+  margin: 10px auto;
+  position: relative;
+  width: 10px;
+}
+button.mfp-arrow.mfp-arrow-right,
+button.mfp-arrow.mfp-arrow-left {
+    background: #faf5f0;
+    border-radius: 50%;
+    height: 40px;
+    opacity: 1;
+    transition: background-color .25s;
+    width: 40px;
+}
+button.mfp-arrow.mfp-arrow-left {
+  margin-left: 2em;
+}
+button.mfp-arrow.mfp-arrow-left:before {
+    background-position: -75px -70px;
+}
+
+</style>
+<textarea id="result"></textarea>
+<script src="test.js" type="text/javascript"></script>
+		body
+	</body>
+</html>
