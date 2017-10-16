@@ -1,12 +1,13 @@
-.gallery-padding-lock input[type=checkbox] {
-	position: relative;
-	left: 36px;
-	top: 6px;
+.gallery-padding-lock > span {
+	padding-left: 0;
+}
+
+.gallery-padding-lock .upfront-field-multiple input[type=checkbox] {
+	position: static;
+	margin-top: 10px;
 }
 .gallery-padding-lock input[type=checkbox]:checked {
-	float:none !important;
-	left: 38px;
-	top: 7px;
+	float: none !important;
 }
 .gallery-padding-lock input[type=checkbox]:after {
 	content: '';
@@ -30,10 +31,11 @@
 	left: 100px;
 }
 
-.thumb-size-slider,
-.thumb-padding-slider,
-.thumb-bottom-padding-slider,
-.thumb-side-padding-slider  {
+
+.upfront-ui .thumb-size-slider,
+.upfront-ui .thumb-padding-slider,
+.upfront-ui .thumb-bottom-padding-slider,
+.upfront-ui .thumb-side-padding-slider  {
 	width: 150px;
 	float: left;
 	margin-top: 10px;
@@ -50,13 +52,13 @@
 	}
 }
 
-.thumb-size-number,
-.thumb-padding-number,
-.thumb-bottom-padding-number,
-.thumb-side-padding-number  {
-	margin-top: 15px;
+.upfront-ui .thumb-size-number,
+.upfront-ui .thumb-padding-number,
+.upfront-ui .thumb-bottom-padding-number,
+.upfront-ui .thumb-side-padding-number  {
+	margin-top: 10px;
 	width: 50px;
-	float: left;
+	float: right;
 	position: relative;
 	margin-left: 25px;
 }

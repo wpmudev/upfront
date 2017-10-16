@@ -37,8 +37,12 @@ class Upfront_Admin
 	 *
 	 */
 	function enqueue_scripts( $hook ){
+		// using preg_replace instead str_replace("upfront_page_" since sometimes word upfront gets translated
+		// to other languages e.g. chinese taiwan
+		$is_upfront_admin_subpage =  in_array( preg_replace("#.+_page_#", "", $hook), self::$menu_slugs);
+		$is_upfront_admin_mainpage = "toplevel_page_upfront" === $hook;
 
-		if( !( in_array( str_replace("upfront_page_", "", $hook), self::$menu_slugs ) || "toplevel_page_upfront" === $hook ) ) return;
+		if ( false === ( $is_upfront_admin_subpage || $is_upfront_admin_mainpage ) ) return;
 
 		wp_enqueue_style( 'upfront_admin', Upfront::get_root_url() . "/styles/build/admin.css", array(), Upfront_ChildTheme::get_version() );// todo Sam: add proper version
 		wp_register_script( 'upfront_admin_js', Upfront::get_root_url() . "/scripts/admin.js", array("jquery"), Upfront_ChildTheme::get_version(), true);

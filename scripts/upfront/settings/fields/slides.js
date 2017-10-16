@@ -14,8 +14,23 @@ define([
 			this.listenTo(this.model.slideCollection, 'add remove sort reset', this.render);
 		},
 
+		getSlideIndex: function(slide) {
+			var index;
+			$('.uslider_content_imgslide', slide.parent()).each(function(i, el) {
+				if (el === slide[0]) {
+					index = i;
+				}
+			});
+
+			return index;
+		},
+
 		onRemoveSlide: function(event) {
-			this.model.view.removeSlide($(event.currentTarget).parent());
+			this.model.view.removeSlide(
+					this.getSlideIndex(
+						$(event.currentTarget).parent()
+					)
+				);
 		},
 
 		render: function() {
