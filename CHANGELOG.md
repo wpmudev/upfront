@@ -1,6 +1,20 @@
 Change Log
 ============
 
+1.9.4 - 2017-10-16
+-------------------------------------------------------------------------------
+- Add: Clean up PHP function calls
+- Fix: Accordion Element UI buttons overlap
+- Fix: Styling for checkbox in "This is editor..." popup in Firefox
+- Fix: Posts/Pages popup sometimes does not load properly on subsites
+- Fix: Renaming Page in sidebar does not work
+- Fix: WooCommerce products page shows posts instead products
+- Fix: Video Element "Add 1st video to thumbnails" can not be turned off
+- Fix: Undo/Redo commands should not be visible in responsive mode
+- Fix: Page Settings visibility option "Sticky" can not be saved
+- Fix: Fullscreen region image disappears after some time
+
+
 1.9.3 - 2017-08-23
 -------------------------------------------------------------------------------
 - Add: Load video only when user clicks on play in YouTube Element

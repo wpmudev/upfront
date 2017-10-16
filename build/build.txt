@@ -11,7 +11,7 @@ realperson/jquery.realperson.css
 ----------------
 realperson/jquery.realperson.css
 
-main-1.9.4-BETA-2.js
+main-1.9.4.js
 ----------------
 require.js
 /var/www/singlewp/wp-includes/js/underscore.min.js
