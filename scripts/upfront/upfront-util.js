@@ -27,6 +27,9 @@ _.mixin({
 
 		if(_.isNumber( val ) )
 			return 0 !== val;
+	},
+	isFalse: function( val ) {
+		return !_.isTrue( val );
 	}
 });
 
