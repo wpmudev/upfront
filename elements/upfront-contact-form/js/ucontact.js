@@ -9,7 +9,7 @@ define([
 ], function (upfront_data, Settings, settingsStyleTpl, PresetUtil) {
 var template = upfront_data.data && upfront_data.data.ucontact && upfront_data.data.ucontact.template ?
 	upfront_data.data.ucontact.template
-	: 'elements/upfront-contact-form/templates/ucontact.html'
+	: 'elements/upfront-contact-form/templates/ucontact.html.tpl'
 ;
 upfrontrjs = window.upfrontrjs || {
 	define: define,

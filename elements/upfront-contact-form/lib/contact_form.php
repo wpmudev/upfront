@@ -73,7 +73,7 @@ class Upfront_UcontactView extends Upfront_Object {
 	public function add_js_defaults ($data){
 		$data['ucontact'] = array(
 			'defaults' => self::default_properties(),
-			'template' => upfront_get_template_url('ucontact', upfront_element_url('templates/ucontact.html', dirname(__FILE__))),
+			'template' => upfront_get_template_url('ucontact', upfront_element_url('templates/ucontact.html.tpl', dirname(__FILE__))),
 		);
 		return $data;
 	}
@@ -181,7 +181,7 @@ class Upfront_UcontactView extends Upfront_Object {
 	}
 
 	private function check_form_received () {
-		
+
 		if (isset($_POST['ucontact']) && $_POST['ucontact'] == 'sent' && $_POST['contactformid'] == $this->_get_property('element_id')) {
 			//Get all the needed fields and sanitize them
 			$_POST = stripslashes_deep( $_POST );
@@ -245,11 +245,11 @@ class Upfront_UcontactView extends Upfront_Object {
 
 			$headers[] = 'From: ' . $name . ' <' . $email . ">\r\n";
 			$this->msg = $this->check_fields($name, $email, $subject, $message);
-			
+
 			if ($this->msg) {
 				$this->msg_class = 'error';
 			} else if (!empty($emailto)) {
-				
+
 				// Let's first force mail callbacks
 				if (!empty($name)) {
 					$email_callback = create_function('$email', "return '{$email}';");
@@ -262,7 +262,7 @@ class Upfront_UcontactView extends Upfront_Object {
 				$smtp_enable = $this->_get_property_t('smtp_enable') == 'yes' ? true : false;
 
 				if($smtp_enable) {
-					add_action('phpmailer_init', array($this, 'kick_in_smtp'));					
+					add_action('phpmailer_init', array($this, 'kick_in_smtp'));
 				}
 
 				// ... then send email
@@ -288,14 +288,14 @@ class Upfront_UcontactView extends Upfront_Object {
 		$_POST = stripslashes_deep( $_POST );
 		$name = preg_replace('/\n\r/', ' ', sanitize_text_field($_POST['sendername']));
 		$email = is_email($_POST['senderemail']);
-		
+
 		$smtp_from_email = $this->_get_property_t('smtp_from_email');
 		$smtp_host = $this->_get_property_t('smtp_host');
 		if( !is_email($smtp_from_email) || empty($smtp_host) ){
 			return;
 		}
 
-		$phpmailer->isSMTP();   
+		$phpmailer->isSMTP();
 		$phpmailer->Mailer = "smtp";
 		$phpmailer->SetFrom($email, $name);
 		$phpmailer->AddReplyTo($email, $name); //Reply-To
@@ -330,7 +330,7 @@ class Upfront_UcontactView extends Upfront_Object {
 				'strong' => array(),
 			)
 		);
-		
+
 		// Add name and email to email body
 		$name_label = self::_get_l10n('name_label');
 		$email_label = self::_get_l10n('email_label');
@@ -367,7 +367,7 @@ class Upfront_UcontactView extends Upfront_Object {
 	 * Parses the PHP file output to a variable
 	 */
 	private function get_template ($templatename, $args = array()){
-		return upfront_get_template('ucontact', $args, dirname(dirname(__FILE__)) . '/templates/ucontact.html');
+		return upfront_get_template('ucontact', $args, dirname(dirname(__FILE__)) . '/templates/ucontact.html.tpl');
 	}
 
 	public function get_entity_ids_value () {
