@@ -1,7 +1,8 @@
 (function() {
 	var css = document.getElementById('css');
+	var original = document.getElementById('original');
 	var result = document.getElementById('result');
-	var gotit = 'gotit';
+	original.value = css.innerText;
 
 	var brokenByStart = css.innerText.split('/*');
 	var sortedByStart = [];
@@ -79,10 +80,36 @@
 		lastDone = i;
 	});
 
-	console.log(brokenByStart, sortedByStart, brokenByEnd, separated);
+	var spacesep = [];
+
+	separated.forEach( function(arg, i) {
+		if (arg.trim() === '') {
+			spacesep.push(arg);
+			return;
+		}
+		if (arg.charAt(0) === "/") {
+			spacesep.push(arg);
+			return;
+		}
+		/* Trim start */
+		while(arg.charAt(0).trim() === '') {
+			spacesep.push(arg.charAt(0));
+			arg = arg.substring(1);
+		}
+		/* Trim end */
+		var end = '';
+		while (arg.charAt(arg.length - 1).trim() === '') {
+			end += arg.charAt(arg.length - 1);
+			arg = arg.substring(0, arg.length - 1);
+		}
+		spacesep.push(arg);
+		spacesep.push(end);
+	});
+
+	console.log(brokenByStart, sortedByStart, brokenByEnd, separated, spacesep);
 
 
 
-	result.value = separated.join('');
+	result.value = spacesep.join('');
 
 }());

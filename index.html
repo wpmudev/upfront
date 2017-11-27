@@ -6,13 +6,17 @@
 		<title>test css parsing</title>
 	<style>
 	textarea {
-		height: 100%;
+		position: absolute;
 		width: 50%;
+		top:0;
+		bottom: 0;
+		left: 0;
+	}
+	#result {
+		left: auto;
+		right: 0;
 	}
 	</style>
-		link
-	</head>
-	<body>
 <style id="css">
 /*
 oddly broken up comment
@@ -233,10 +237,11 @@ button.mfp-arrow.mfp-arrow-left {
 button.mfp-arrow.mfp-arrow-left:before {
     background-position: -75px -70px;
 }
-
 </style>
-<textarea id="result"></textarea>
-<script src="test.js" type="text/javascript"></script>
-		body
-	</body>
+</head>
+<body>
+	<textarea id="original"></textarea>
+	<textarea id="result"></textarea>
+	<script src="test.js" type="text/javascript"></script>
+</body>
 </html>
