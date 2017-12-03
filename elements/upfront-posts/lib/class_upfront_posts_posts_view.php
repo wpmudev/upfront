@@ -18,8 +18,12 @@ class Upfront_Posts_PostsView {
 
 		$view = new Upfront_Posts_PostView($data);
 
-		foreach($posts as $idx => $post) {
-			$posts_markup[$idx] = $view->get_markup($post);
+		foreach($posts as $idx => $_post) {
+			global $post;
+			$post = get_post( $_post->ID, OBJECT );
+			setup_postdata( $post );
+			$posts_markup[$idx] = $view->get_markup($_post);
+			wp_reset_postdata();
 		}
 
 		return $posts_markup;
