@@ -48,7 +48,12 @@ define([
 			Upfront.Events.trigger("entity:settings:beforedeactivate");
 
 			var styleType = Upfront.Application.cssEditor.getElementType(this.model);
-			var styleName = styleType.label.toLowerCase() + '-preset-' + this.options.preset.get('id');
+			var styleName;
+			if ( typeof styleType.label == "undefined" ) {
+				styleName = 'widget-preset-' + this.options.preset.get('id');
+			} else {
+				styleName = styleType.label.toLowerCase() + '-preset-' + this.options.preset.get('id');
+			}
 
 			this.presetCSSEditor = new PresetCSSEditor({
 				model: this.model,
