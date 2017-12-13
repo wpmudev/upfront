@@ -175,11 +175,11 @@ jQuery(document).ready(function($) {
 		}
 	});
 
-	$('body').on('touchstart click', '.burger_nav_close, .burger_overlay', null, function() {
+	$('body').on('touchend click', '.burger_nav_close, .burger_overlay', null, function() {
 		$(this).closest('.upfront-navigation').find('.responsive_nav_toggler').trigger('click');
 	});
 
-	$('body').on('touchstart click', '.upfront-navigation .upfront-navigation .responsive_nav_toggler', null, function(e) {
+	$('body').on('touchend click', '.upfront-navigation .upfront-navigation .responsive_nav_toggler', null, function(e) {
 		e.preventDefault();
 		if($(this).parent().find('ul.menu').css('display') == 'none') {
 			$(this).closest('div.upfront-output-wrapper').addClass('on_the_top');
