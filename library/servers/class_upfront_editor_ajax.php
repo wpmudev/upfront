@@ -781,9 +781,16 @@ class Upfront_Editor_Ajax extends Upfront_Server {
 		if (is_wp_error($id)) $this->_out(new Upfront_JsonResponse_Error($id->get_error_message()));
 
 		// Handle the sticky attribute
-		if (isset($data['sticky']) && $data['sticky']) {
-			// Make post sticky
-			stick_post($data['ID']);
+		if (isset($data['sticky']) && $data['sticky']) {	
+		
+			if($data['sticky']=='false'){
+				unstick_post($data['ID']);
+			}
+			else{
+				// Make post sticky
+				stick_post($data['ID']);
+			}
+					
 		} else {
 			// Unstick post
 			unstick_post($data['ID']);
