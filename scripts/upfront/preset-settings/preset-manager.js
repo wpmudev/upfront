@@ -199,6 +199,19 @@ define([
 				presetModel = this.presets.findWhere({id: 'default'});
 			}
 
+			// Fixing responsive presets issue - don't even try to understand - black magic
+			var p = this.model.get_property_by_name('breakpoint_presets');
+			if (false === (typeof p === 'undefined' || typeof p.get !== 'function' || typeof p.set !== 'function')) {
+				p =  p.get('value');
+				var n = {
+					desktop: p.desktop || '',
+					mobile: p.mobile || '',
+					tablet: p.tablet || ''
+				};
+				this.model.get_property_by_name('breakpoint_presets').set('value', n);
+			}
+			// end of black magic
+
 			// Add items
 			if (this.selectPresetModule && this.selectPresetModule.stopListening) {
 				this.selectPresetModule.stopListening();
@@ -284,7 +297,7 @@ define([
 				this.editPresetModule,
 				this.presetCssModule
 			]);
-			
+
 			this.stopListening(Upfront.Events, 'element:settings:canceled');
 			this.listenToOnce(Upfront.Events, 'element:settings:canceled', function() {
 				_.each(this.backupPreset, function (backupPreset) {
@@ -329,7 +342,7 @@ define([
 			this.debouncedSavePreset(properties);
 
 			this.updateMainDataCollectionPreset(properties);
-			
+
 			this.presets.findWhere({id: properties.id}).clear().set(properties);
 		},
 
