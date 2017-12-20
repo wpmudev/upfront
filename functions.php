@@ -388,7 +388,6 @@ class Upfront {
 			'post_id' => (is_singular() ? apply_filters('upfront-data-post_id', get_the_ID()) : false),
 		));
 
-		$exclude_google_maps_api = Upfront_Cache_Utils::get_option( 'upfront_exclude_google_maps_api', 0 );
 		echo '<script type="text/javascript">
 			var _upfront_post_data=' . $layout_post_data . ';
 			var _upfront_storage_key = "' . esc_js($storage_key) . '";
@@ -396,7 +395,6 @@ class Upfront {
 			var _upfront_stylesheet = "' . esc_js(get_stylesheet()) . '";
 			var _upfront_debug_mode = ' . (int)Upfront_Behavior::debug()->is_debug() . ';
 			var _upfront_please_hold_on = ' . json_encode(__('Please, hold on for just a little bit more', 'upfront')) . ';
-			var _upfront_exclude_google_maps_api = ' . $exclude_google_maps_api . ';
 		</script>';
 		echo <<<EOAdditivemarkup
 	<div id="sidebar-ui" class="upfront-ui"></div>
