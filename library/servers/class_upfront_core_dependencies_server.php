@@ -114,12 +114,21 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	}
 
 	/**
+	 * Inject exclude google maps api option.
+	 */
+	private function _output_option_exclude_google_maps_api () {
+		$exclude_google_maps_api = Upfront_Cache_Utils::get_option( 'upfront_exclude_google_maps_api', 0 );
+		echo '<script type="text/javascript">_upfront_exclude_google_maps_api=' . $exclude_google_maps_api . ';</script>';
+	}
+
+	/**
 	 * Output "normal" (non-optimized) script and style dependencies.
 	 *
 	 * @param Upfront_CoreDependencies_Registry $deps Dependencies registry
 	 */
 	private function _output_normal ($deps) {
 		$this->_output_api_keys();
+		$this->_output_option_exclude_google_maps_api();
 
 		$styles = $deps->get_styles();
 		$link_tpl = '<link rel="stylesheet"  href="%url%" type="text/css" media="all" />';
@@ -141,6 +150,7 @@ class Upfront_CoreDependencies_Server extends Upfront_Server {
 	 */
 	private function _output_experimental ($deps) {
 		$this->_output_api_keys();
+		$this->_output_option_exclude_google_maps_api();
 
 		// Is this already handled?
 		if (apply_filters('upfront-output-experimental-done', false, $deps)) return true;
