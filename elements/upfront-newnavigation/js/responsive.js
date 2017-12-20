@@ -435,8 +435,6 @@ jQuery(document).ready(function($) {
 					//$(this).closest('div.upfront-newnavigation_module').css('z-index', '');
 				}
 
-				// $(this).find('ul.menu').siblings('.burger_overlay').remove();
-
 				if(preset.is_floating && preset.is_floating == 'yes')
 					$(this).addClass('upfront-navigation-float');
 				else
@@ -529,11 +527,6 @@ jQuery(document).ready(function($) {
 	roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
 
 	$(window).smartresize(function() {
-		// $('div#page').css('margin-top', '');
-		// $('.responsive_nav_toggler').css({position: '', left: '', top: ''});
-		// $('ul.menu').css('padding-top', '');
-		// $('.burger_nav_close').parent('li.wrap_burger_nav_close').remove();
-
 		roll_responsive_nav(".upfront-output-unewnavigation > .upfront-navigation");
 		floatInit();
 	});
