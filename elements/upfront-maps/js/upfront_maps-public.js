@@ -83,8 +83,12 @@ function init_map ($el) {
 
 
 function load_google_maps () {
-	if(1 === _upfront_exclude_google_maps_api) return false;
-	if ($(document).data("upfront-google_maps-loading") || $(".ufm-gmap-container").length < 1) return false;
+	// Check if admin bar is loaded.
+	if( $("#wpadminbar").length < 1){
+		if (1 === _upfront_exclude_google_maps_api) return false;
+		if ($(".ufm-gmap-container").length < 1) return false;
+	}
+	if ($(document).data("upfront-google_maps-loading")) return false;
 	$(document).data("upfront-google_maps-loading", true);
 	if (typeof google === 'object' && typeof google.maps === 'object' && typeof google.maps.Map === 'object') return upfront_maps_public_init();
 	var protocol = '',
