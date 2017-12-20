@@ -36,6 +36,7 @@ class Upfront_Ajax extends Upfront_Server {
 			upfront_add_ajax('upfront_delete_page_template', array($this, "delete_page_template"));
 			upfront_add_ajax('upfront_reset_layout', array($this, "reset_layout"));
 			upfront_add_ajax('upfront_reset_cache', array($this, "reset_cache"));
+			upfront_add_ajax('upfront_exclude_google_maps_api', array($this, "exclude_google_maps_api"));
 			upfront_add_ajax('upfront_reset_all_from_db', array($this, "reset_all_from_db"));
 			upfront_add_ajax('upfront_update_layout_element', array($this, "update_layout_element"));
 			upfront_add_ajax('upfront_add_custom_thumbnail_size', array($this, "add_custom_thumbnail_size"));
@@ -173,7 +174,7 @@ class Upfront_Ajax extends Upfront_Server {
 		}
 		// if still empty then load it from `options` table or from tpl file
 		if ( !$layout || $layout->is_empty() ) {
-			
+
 			// if maintenance page, bypass the layout
 			if ( upfront_is_maintenance_page($post_id) ) $layout_ids = Upfront_Layout::get_maintenance_mode_layout_cascade();
 			$layout = Upfront_Layout::from_entity_ids($layout_ids, $storage_key, $load_dev);
@@ -197,7 +198,7 @@ class Upfront_Ajax extends Upfront_Server {
 				}
 			}
 		}
-		if ( !$layout_change || empty($layout_change) ) $layout_change = 0; 
+		if ( !$layout_change || empty($layout_change) ) $layout_change = 0;
 
 		$response = array(
 			'post' => $post,
@@ -214,7 +215,7 @@ class Upfront_Ajax extends Upfront_Server {
 
 		$this->_out(new Upfront_JsonResponse_Success($response));
 	}
-	
+
 	private function _load_page_template ($data) {
 		$post_id = (isset($data['post_id'])) ? (int)$data['post_id'] : false;
 		$load_dev = ( isset($data['load_dev']) && is_numeric($data['load_dev']) && $data['load_dev'] == 1 ) ? true : false;
@@ -371,7 +372,7 @@ class Upfront_Ajax extends Upfront_Server {
 		$layout = Upfront_Layout::from_php($data);
 		// get layout keys from layout data passed
 		$layout_ids = $layout->get('layout');
-		
+
 		$store_key = str_replace('_dev','',Upfront_Layout::get_storage_key());
 		// for all non-virtual page use post_id passed not the one from layout data
 		$layout_slug = ( $post_id )
@@ -381,19 +382,19 @@ class Upfront_Ajax extends Upfront_Server {
 
 		$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $save_dev);
 		$layout_post_id = Upfront_Server_PageLayout::get_instance()->save_layout($layout_post_id, $layout, $save_dev, $layout_slug);
-		
+
 		// we need to save global regions to DB, so can be reused to other page
 		$layout->save_global_region();
-		
-		// if saving maintenance page, save it with key like 'single-page-id' not 'single-maintenance-mode_page' to avoid double entry on UF Admin - Reset Layout 
+
+		// if saving maintenance page, save it with key like 'single-page-id' not 'single-maintenance-mode_page' to avoid double entry on UF Admin - Reset Layout
 		if ( upfront_is_maintenance_page($post_id) ) {
 			$layout_ids['specificity'] = 'single-page-' . $post_id;
 			$layout->set('layout', $layout_ids);
 		}
-		
+
 		// We need to save global layout options
 		$layout->save();
-		
+
 		// if there is a layout change
 		$layout_change_meta_name = strtolower($store_key . '-layout-change-flag');
 		if ( $layout_change ) {
@@ -673,9 +674,9 @@ class Upfront_Ajax extends Upfront_Server {
 		$include_global = ( isset($data['include_global']) && is_numeric($data['include_global']) && $data['include_global'] == 1 ) ? true : false;
 		$store_key = strtolower(str_replace('_dev','',Upfront_Layout::get_storage_key()));
 		$layout_change_meta_name = strtolower($store_key . '-layout-change-flag');
-		
+
 		if ( empty($layout) ) $this->_out(new Upfront_JsonResponse_Error("Please specify layout to reset"));
-		
+
 		if ( is_array($layout) && $post_id ) {
 			$layout_slug = $store_key . '-single-page-' . $post_id;
 			$layout_post_id = Upfront_Server_PageLayout::get_instance()->get_layout_id_by_slug($layout_slug, $is_dev);
@@ -685,7 +686,7 @@ class Upfront_Ajax extends Upfront_Server {
 			delete_post_meta($layout_post_id, $layout_change_meta_name);
 			// delete layout
 			Upfront_Server_PageLayout::get_instance()->delete_layout((int)$layout_post_id, $is_dev);
-			
+
 			$this->_out(new Upfront_JsonResponse_Success("Layout {$layout_slug} reset"));
 
 		} else {
@@ -719,7 +720,7 @@ class Upfront_Ajax extends Upfront_Server {
 			$this->_out(new Upfront_JsonResponse_Success("Layout {$layout} reset"));
 		}
 	}
-	
+
 	private function _reset_global_layout ($layout_post_id, $is_dev) {
 		if ( $layout_post_id ) {
 			$save_storage_key = apply_filters('upfront-data-storage-key', Upfront_Layout::STORAGE_KEY);
@@ -736,7 +737,7 @@ class Upfront_Ajax extends Upfront_Server {
 			}
 		}
 	}
-	
+
 	private function _reset_global_layout_from_options ($layout_key) {
 		$save_storage_key = apply_filters('upfront-data-storage-key', Upfront_Layout::STORAGE_KEY);
 		if (Upfront_Behavior::debug()->is_dev() && current_user_can('switch_themes') && apply_filters('upfront-enable-dev-saving', true)) {
@@ -777,6 +778,14 @@ class Upfront_Ajax extends Upfront_Server {
 
 		$sql = "DELETE FROM {$wpdb->options} WHERE option_name REGEXP %s";
 		return $wpdb->query($wpdb->prepare($sql, $rx));
+	}
+
+	function exclude_google_maps_api() {
+		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
+		$data = !empty($_POST) ? stripslashes_deep($_POST) : false;
+		$exclude_google_maps_api = ( isset( $data['exclude_google_maps_api'] ) && 'true' === $data['exclude_google_maps_api'] ) ? 1 : 0;
+		Upfront_Cache_Utils::update_option('upfront_exclude_google_maps_api', $exclude_google_maps_api);
+		$this->_out(new Upfront_JsonResponse_Success("All is well"));
 	}
 
 	function reset_all_from_db () {
@@ -942,17 +951,17 @@ class Upfront_Ajax extends Upfront_Server {
 		Upfront_Cache_Utils::update_option('ueditor_insert_count', $insertcount);
 		$this->_out(new Upfront_JsonResponse_Success("Insert count updated"));
 	}
-	
+
 	function site_under_construction() {
 		if (!Upfront_Permissions::current(Upfront_Permissions::SAVE)) $this->_reject();
-		
+
 		$data = !empty($_POST) ? stripslashes_deep($_POST) : false;
-		
+
 		if(!$data)
 			return $this->_out(new Upfront_JsonResponse_Error("No data"));
 		if( !isset($data['enable_maintenance']) )
 			return $this->_out(new Upfront_JsonResponse_Error("No mode given"));
-		
+
 		$maintenance_mode = ( is_numeric($data['enable_maintenance']) && $data['enable_maintenance'] == 1 ) ? true : false;
 		$maintenance_data = Upfront_Cache_Utils::get_option(Upfront_Server::MAINTENANCE_MODE, array());
 		if ( empty($maintenance_data) ) {
@@ -966,13 +975,13 @@ class Upfront_Ajax extends Upfront_Server {
 		if ( $maintenance_post && !empty($maintenance_post) ) {
 			$maintenance_data['page_id'] = $maintenance_post['ID'];
 			$maintenance_data['permalink'] = get_permalink($maintenance_post['ID']);
-		}		
+		}
 		$maintenance_data['enabled'] = ( $maintenance_mode ) ? 1 : 0 ;
 		Upfront_Cache_Utils::update_option(Upfront_Server::MAINTENANCE_MODE, json_encode($maintenance_data));
-		
+
 		$this->_out(new Upfront_JsonResponse_Success("All is well"));
 	}
-	
+
 	private function _create_maintenance_page () {
 		// creating maintenance page
 		$maintenance_post = Upfront_PostModel::create('page','maintenance', ' ');
@@ -982,7 +991,7 @@ class Upfront_Ajax extends Upfront_Server {
 		}
 		return $maintenance_post;
 	}
-	
+
 	private function _delete_under_construction() {
 		// deleting maintenance page and options
 		$maintenance_data = Upfront_Cache_Utils::get_option(Upfront_Server::MAINTENANCE_MODE, false);
