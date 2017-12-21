@@ -33,6 +33,11 @@ function gm_authFailure() {return google_maps_auth_error = true};
 	}
 
 	function load_google_maps () {
+      // Check if admin bar is loaded.
+		if( $("#wpadminbar").length < 1){
+			if (1 === _upfront_exclude_google_maps_api) return false;
+			if ($("[data-bg-map]").length < 1) return false;
+		}
 		if ($(document).data("upfront-google_maps-loading")) return false;
 		$(document).data("upfront-google_maps-loading", true);
 		if (typeof google === 'object' && typeof google.maps === 'object' && typeof google.maps.Map === 'object') return upfront_bg_map_init();

@@ -387,6 +387,7 @@ class Upfront {
 			'layout' => Upfront_EntityResolver::get_entity_ids(),
 			'post_id' => (is_singular() ? apply_filters('upfront-data-post_id', get_the_ID()) : false),
 		));
+
 		echo '<script type="text/javascript">
 			var _upfront_post_data=' . $layout_post_data . ';
 			var _upfront_storage_key = "' . esc_js($storage_key) . '";

@@ -27,6 +27,15 @@
 
 	});
 
+	$(document).on('change','#upfront_exclude_google_maps_api', function(e){
+		e.preventDefault();
+		var state = $("#upfront_exclude_google_maps_api").is(':checked');
+		Upfront.post(  {
+			action: "upfront_exclude_google_maps_api",
+			exclude_google_maps_api: state
+		});
+	});
+
 	/**
 	 * Reset layout
 	 */
@@ -93,18 +102,18 @@
 		} );
 
 	});
-	
-	
+
+
 	/**
 	 * Site Maintenance
 	 */
 	$(document).on("click", "#upfront_save_under_construction", function(e){
 		e.preventDefault();
-		
+
 		var $this = $(this),
 			$maintenance_mode = $("#upfront_under_construction").is(':checked'),
 			enable_maintenance = ($maintenance_mode) ? 1 : 0;
-		
+
 		$this.addClass("loading");
 
 		Upfront.post(  {
@@ -116,22 +125,22 @@
 		}).fail( function(res){
 			$this.removeClass("loading");
 		} );
-		
+
 	});
-	
+
 	$(document).on("change", "#upfront_under_construction", function(e){
 		var $this = $(this),
 			current = ( parseInt($this.data('current'),10) == 1 ) ? true : false,
 			changed = $this.is(':checked');
-			
+
 			if ( current !== changed ) {
 				$('#upfront_save_under_construction').removeAttr('disabled');
 			} else {
 				$('#upfront_save_under_construction').attr('disabled','disabled');
 			}
 	});
-	
-	
+
+
 }(jQuery));
 
 
