@@ -2093,14 +2093,14 @@
 					prevblock_html = $.trim( $prevBlock.html() ) || '',
 					show_tooltip = true;
 
-				$image_embed_insert_wrappers.each(function(){
-					var $this = $(this),
-						height = $this.find(".ueditor-insert-variant-group").height(),
-						top = $this.offset().top;
-					if( block_top <= ( height + top + 20) && block_top >= ( top - 5)  ){
-						show_tooltip = false;
-					}
-				});
+				// $image_embed_insert_wrappers.each(function(){
+				// 	var $this = $(this),
+				// 		height = $this.find(".ueditor-insert-variant-group").height(),
+				// 		top = $this.offset().top;
+				// 	if( block_top <= ( height + top + 20) && block_top >= ( top - 5)  ){
+				// 		show_tooltip = false;
+				// 	}
+				// });
 
 				return 	show_tooltip
 					&& 	$block.closest(".ueditor-insert").length === 0
