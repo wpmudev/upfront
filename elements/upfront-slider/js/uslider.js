@@ -1379,6 +1379,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 					size: result.imageSize,
 					cropSize: result.cropSize
 				};
+				me.imageProps[slide.id].cropOffset.left = 0;
 				me.render();
 			})
 			.fail(function(data){
