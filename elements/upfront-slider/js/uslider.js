@@ -1175,9 +1175,10 @@ var USliderView = Upfront.Views.ObjectView.extend({
 				cropSize: slide.get('cropSize')
 			}
 		;
-		if ( !breakpoint.default ) { // No resizing on responsive, return default
+      // Commented condition as resizing was not saved in responsive.
+		/*if ( !breakpoint.default ) { // No resizing on responsive, return default
 			return defaults;
-		}
+		}*/
 		var img = this.$('.uslide[rel=' + slide.id + ']').find('img'),
 			currentPosition = img.position(),
 			imgSize = slide.get('size'),
@@ -1378,6 +1379,7 @@ var USliderView = Upfront.Views.ObjectView.extend({
 					size: result.imageSize,
 					cropSize: result.cropSize
 				};
+				me.imageProps[slide.id].cropOffset.left = 0;
 				me.render();
 			})
 			.fail(function(data){
