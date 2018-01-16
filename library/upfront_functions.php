@@ -177,6 +177,10 @@ function upfront_replace_class_num ($classname, $val, $classes) {
  */
 function upfront_element_relative_path ($relpath, $filepath) {
 	$templatepath = str_replace('|/+|','/',str_replace('\\','/',get_template_directory())); // normalize slashes
+
+	// Prevent broken paths when WordPress is installed in root of the server
+	$templatepath = str_replace('//', '/', $templatepath);
+
 	$filepath = trailingslashit(str_replace('|/+|','/',str_replace('\\','/',dirname($filepath)))); // normalize slashes
 	$element_path = preg_replace('/' . preg_quote(trailingslashit($templatepath), '/') . '/i', '', $filepath);
 	$relpath = ($element_path ? trim($element_path, '/') . '/' : '') . trim($relpath, '/');
