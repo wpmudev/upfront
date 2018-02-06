@@ -127,7 +127,12 @@ class Upfront_Compat_CoursePress {
 		}
 
 		// Force always loading CP styles in builder
-		if (function_exists('upfront_exporter_is_running') && upfront_exporter_is_running() && class_exists('CoursePress_Core')) CoursePress_Core::$is_cp_page = true;
+		if (
+			function_exists('upfront_exporter_is_running') && upfront_exporter_is_running() &&
+			class_exists('CoursePress_Core')
+		) {
+		 	CoursePress_Core::$is_cp_page = true;
+		}
 
 		add_filter('upfront-plugins_layouts', array($this, 'add_plugins_layouts'));
 		add_filter('upfront-forbidden_post_data_types', array($this, 'forbidden_post_data_types'));
@@ -225,6 +230,9 @@ class Upfront_Compat_CoursePress {
 	 */
 	private $discussion_page_query_call_no = 0;
 	public function kill_double_discussion_querying($content) {
+		$post = get_post();
+		if (false === $this->is_coursepress_page($post)) return $content;
+
 		$layout = Upfront_Layout::get_parsed_cascade();
 
 		if ($layout['item'] !== 'single-course_discussion') return '';
