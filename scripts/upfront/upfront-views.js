@@ -1182,7 +1182,9 @@ define([
 			},
 			updateAdvancedPadding: function() {
 				var me = this;
-				me.model.set_breakpoint_property('use_padding', 'yes', true);
+				if ( me.model.get_breakpoint_property_value('use_padding') != 0 ) {
+					me.model.set_breakpoint_property('use_padding', 'yes', true);
+				}
 				if ( me.$control_el ) {
 					var advancedPaddingControl = me.$control_el.find('.upfront-element-controls .upfront-field-advanced-padding');
 					if ( advancedPaddingControl.length > 0 ) {
