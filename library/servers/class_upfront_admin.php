@@ -32,7 +32,6 @@ class Upfront_Server_Admin implements IUpfront_Server {
 		// Kill the damn customizer. It's like cancer, popping out randomly all over the place
 		add_action('customize_controls_init', array($this, 'refuse_customizer'));
 
-		$this->dashboard_notice();
 	}
 
 	public function pagetemplate_notice() {
@@ -40,13 +39,6 @@ class Upfront_Server_Admin implements IUpfront_Server {
 		if( ($GLOBALS['pagenow'] == "post.php" || $GLOBALS['pagenow'] == "post-new.php") && $screen && $screen->post_type == "page" && post_type_supports($screen->post_type,'page-attributes') ) {
 			echo '<div class="error"><p>'. __('WARNING: If you change the template associated with this post then any content or changes you have made using the drag and drop Upfront editor will be lost.', 'upfront'). '</p></div>';
 		}
-	}
-
-	public function dashboard_notice () {
-		$path = wp_normalize_path(Upfront::get_root_dir() . '/library/external/dashboard-notice/wpmudev-dash-notification.php');
-		if (!file_exists($path)) return false;
-
-		require_once($path);
 	}
 
 	/**
